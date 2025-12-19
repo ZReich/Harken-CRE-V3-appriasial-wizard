@@ -1,0 +1,1126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review & Finalize - Harken Appraisal Wizard</title>
+    <link rel="stylesheet" href="assets/wizard-shared.css">
+    <link rel="stylesheet" href="assets/enhanced-textarea.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="assets/enhanced-textarea.js"></script>
+    <style>
+        /* Custom Scrollbar - Subtle & Thin */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(200, 200, 200, 0.3) transparent;
+        }
+        *::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        *::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        *::-webkit-scrollbar-thumb {
+            background: rgba(180, 180, 180, 0.4);
+            border-radius: 10px;
+        }
+        *::-webkit-scrollbar-thumb:hover {
+            background: rgba(150, 150, 150, 0.6);
+        }
+        
+        body { margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        
+        /* Top Progress Bar */
+        .top-progress {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 1rem 2rem;
+        }
+        .phase-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+        }
+        .phase-circle {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        .phase-circle.active {
+            background: #0da1c7;
+            color: white;
+        }
+        .phase-circle.inactive {
+            background: #e5e7eb;
+            color: #9ca3af;
+        }
+        .phase-circle.completed {
+            background: #10b981;
+            color: white;
+        }
+        .phase-connector {
+            width: 4rem;
+            height: 2px;
+            background: #e5e7eb;
+        }
+        .phase-connector.active {
+            background: #0da1c7;
+        }
+        
+        /* Header Section */
+        .wizard-header {
+            background: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 1.5rem 2rem;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: #dcfce7;
+            color: #166534;
+        }
+        
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: white; }
+        .content-area { flex: 1; overflow-y: auto; padding: 2rem; background: white; }
+        
+        .summary-card {
+            background: linear-gradient(135deg, #4db8d1 0%, #7fcce0 100%);
+            color: white;
+            padding: 2rem;
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px rgba(13, 161, 199, 0.15);
+        }
+        
+        .value-box {
+            background: white;
+            border: 2px solid #e5e7eb;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        /* Certification Button Styles - Soft Theme */
+        .cert-btn.selected {
+            border-color: #0da1c7;
+            background: rgba(13, 161, 199, 0.08);
+        }
+        .cert-btn.selected .cert-check {
+            background: #0da1c7;
+            border-color: #0da1c7;
+        }
+        .cert-btn.selected .cert-check svg {
+            display: block;
+        }
+
+        /* Tag Button Styles - Soft Theme */
+        .tag-btn.selected {
+            border-color: #6366f1;
+            background: rgba(99, 102, 241, 0.1);
+            color: #4f46e5;
+            font-weight: 500;
+        }
+
+        /* Softer card borders */
+        .bg-white.p-6.rounded-lg.border {
+            border-color: #e8eaed;
+        }
+
+        /* Softer section headers */
+        h3.text-lg.font-semibold {
+            color: #374151;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Progress Bar -->
+    <div class="top-progress">
+        <div class="flex items-center justify-center gap-2">
+            <div class="phase-indicator cursor-pointer hover:opacity-80 transition-opacity" onclick="WizardNav.goToPage('template')">
+                <div class="phase-circle completed">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+                <span class="text-xs font-medium text-gray-600">Template</span>
+            </div>
+            <div class="phase-connector active"></div>
+            
+            <div class="phase-indicator cursor-pointer hover:opacity-80 transition-opacity" onclick="WizardNav.goToPage('setup')">
+                <div class="phase-circle completed">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+                <span class="text-xs font-medium text-gray-600">Setup</span>
+            </div>
+            <div class="phase-connector active"></div>
+            
+            <div class="phase-indicator cursor-pointer hover:opacity-80 transition-opacity" onclick="WizardNav.goToPage('subject')">
+                <div class="phase-circle completed">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+                <span class="text-xs font-medium text-gray-600">Subject Data</span>
+            </div>
+            <div class="phase-connector active"></div>
+            
+            <div class="phase-indicator cursor-pointer hover:opacity-80 transition-opacity" onclick="WizardNav.goToPage('analysis')">
+                <div class="phase-circle completed">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+                <span class="text-xs font-medium text-gray-600">Analysis</span>
+            </div>
+            <div class="phase-connector active"></div>
+            
+            <div class="phase-indicator cursor-pointer hover:opacity-80 transition-opacity" onclick="WizardNav.goToPage('review')">
+                <div class="phase-circle active">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <span class="text-xs font-semibold text-gray-900">Review</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header Section -->
+    <div class="wizard-header">
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="flex items-center gap-3 mb-1">
+                    <h1 class="text-2xl font-bold text-gray-900">Review & Finalize</h1>
+                    <span class="status-badge">Almost Done!</span>
+                </div>
+                <p class="text-sm text-gray-600">Phase 5 of 5 • Final Review & Reconciliation</p>
+            </div>
+            
+            <!-- Right Action Buttons -->
+            <div class="flex items-center gap-3">
+                <button onclick="window.location.href='../super-admin-appraisals-list.html'" class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    Exit
+                </button>
+                <button onclick="openReportEditor()" class="px-4 py-2 text-sm font-medium text-white bg-indigo-600 border border-indigo-600 rounded-lg hover:bg-indigo-700 flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+                    Preview & Edit Report
+                </button>
+                <button class="px-6 py-2 text-sm font-semibold text-white bg-green-600 rounded-lg hover:bg-green-700 flex items-center gap-2" onclick="finalizeReport()">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                    Finalize Report
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-area" id="content-area">
+            <div class="max-w-6xl mx-auto space-y-6 animate-fade-in">
+                <!-- Summary Card -->
+                <div class="summary-card">
+                    <div class="flex items-center justify-between mb-6">
+                        <div>
+                            <h2 class="text-3xl font-bold mb-2">Canyon Creek Industrial Complex</h2>
+                            <p class="text-blue-100">Billings, Yellowstone County, Montana</p>
+                        </div>
+                        <div class="text-right">
+                            <div class="text-sm opacity-90 mb-1">Valuation Scenarios</div>
+                            <div class="flex gap-2">
+                                <span class="bg-white/20 px-3 py-1 rounded-full text-sm font-medium">As Is</span>
+                                <span class="bg-white/20 px-3 py-1 rounded-full text-sm font-medium">As Completed</span>
+                                <span class="bg-white/20 px-3 py-1 rounded-full text-sm font-medium">As Stabilized</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-4 gap-4">
+                        <div class="bg-white/10 rounded-lg p-3 backdrop-blur-sm">
+                            <div class="text-xs opacity-75 mb-1">Property Type</div>
+                            <div class="font-semibold">Commercial - Industrial</div>
+                        </div>
+                        <div class="bg-white/10 rounded-lg p-3 backdrop-blur-sm text-center">
+                            <div class="text-xs opacity-75 mb-1">As Is Value</div>
+                            <div class="font-bold text-lg">$1,140,000</div>
+                            <div class="text-xs opacity-75">12/15/2024</div>
+                        </div>
+                        <div class="bg-white/10 rounded-lg p-3 backdrop-blur-sm text-center">
+                            <div class="text-xs opacity-75 mb-1">As Completed</div>
+                            <div class="font-bold text-lg">$1,550,000</div>
+                            <div class="text-xs opacity-75">06/15/2025</div>
+                        </div>
+                        <div class="bg-white/10 rounded-lg p-3 backdrop-blur-sm text-center">
+                            <div class="text-xs opacity-75 mb-1">As Stabilized</div>
+                            <div class="font-bold text-lg">$2,000,000</div>
+                            <div class="text-xs opacity-75">12/15/2025</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Value Conclusions Summary Table -->
+                <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 pb-3 border-b border-gray-200">Value Conclusions Summary</h3>
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse">
+                            <thead>
+                                <tr class="bg-gradient-to-r from-gray-50 to-gray-100">
+                                    <th class="text-left px-4 py-3 font-semibold text-gray-700 border-b-2 border-gray-200"></th>
+                                    <th class="text-center px-4 py-3 font-semibold text-gray-900 border-b-2 border-gray-200">
+                                        <div class="flex flex-col items-center">
+                                            <span class="text-blue-600">As Is</span>
+                                        </div>
+                                    </th>
+                                    <th class="text-center px-4 py-3 font-semibold text-gray-900 border-b-2 border-gray-200">
+                                        <div class="flex flex-col items-center">
+                                            <span class="text-green-600">As Completed</span>
+                                        </div>
+                                    </th>
+                                    <th class="text-center px-4 py-3 font-semibold text-gray-900 border-b-2 border-gray-200">
+                                        <div class="flex flex-col items-center">
+                                            <span class="text-purple-600">As Stabilized</span>
+                                        </div>
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="border-b border-gray-100 bg-gray-50">
+                                    <td class="px-4 py-3 font-medium text-gray-700">Effective Date</td>
+                                    <td class="px-4 py-3 text-center text-sm text-gray-600">12/15/2024</td>
+                                    <td class="px-4 py-3 text-center text-sm text-gray-600">06/15/2025</td>
+                                    <td class="px-4 py-3 text-center text-sm text-gray-600">12/15/2025</td>
+                                </tr>
+                                <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                    <td class="px-4 py-3 font-medium text-gray-700">
+                                        <div class="flex items-center gap-2">
+                                            <svg class="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path></svg>
+                                            Sales Comparison
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-3 text-center font-semibold text-gray-900">$1,130,000</td>
+                                    <td class="px-4 py-3 text-center font-semibold text-gray-900">$1,550,000</td>
+                                    <td class="px-4 py-3 text-center text-gray-400 italic">N/A</td>
+                                </tr>
+                                <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                    <td class="px-4 py-3 font-medium text-gray-700">
+                                        <div class="flex items-center gap-2">
+                                            <svg class="w-4 h-4 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                            Income Approach
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-3 text-center font-semibold text-gray-900">$1,140,000</td>
+                                    <td class="px-4 py-3 text-center font-semibold text-gray-900">$1,583,000</td>
+                                    <td class="px-4 py-3 text-center font-semibold text-gray-900">$2,036,000</td>
+                                </tr>
+                                <tr class="border-b border-gray-100 hover:bg-gray-50">
+                                    <td class="px-4 py-3 font-medium text-gray-700">
+                                        <div class="flex items-center gap-2">
+                                            <svg class="w-4 h-4 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                                            Cost Approach
+                                        </div>
+                                    </td>
+                                    <td class="px-4 py-3 text-center font-semibold text-gray-900">$1,052,000</td>
+                                    <td class="px-4 py-3 text-center font-semibold text-gray-900">$1,310,000</td>
+                                    <td class="px-4 py-3 text-center text-gray-400 italic">N/A</td>
+                                </tr>
+                                <tr class="bg-gradient-to-r from-emerald-50 to-teal-50">
+                                    <td class="px-4 py-4 font-bold text-gray-900 uppercase text-sm">Concluded Value</td>
+                                    <td class="px-4 py-4 text-center">
+                                        <span class="text-xl font-bold text-blue-600">$1,140,000</span>
+                                    </td>
+                                    <td class="px-4 py-4 text-center">
+                                        <span class="text-xl font-bold text-green-600">$1,550,000</span>
+                                    </td>
+                                    <td class="px-4 py-4 text-center">
+                                        <span class="text-xl font-bold text-purple-600">$2,000,000</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Reconciliation by Scenario -->
+                <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 pb-3 border-b border-gray-200">Reconciliation by Scenario</h3>
+                    
+                    <!-- Tabs for each scenario -->
+                    <div class="flex gap-2 mb-6 border-b border-gray-200">
+                        <button class="px-4 py-2 text-sm font-semibold text-blue-600 border-b-2 border-blue-600 -mb-px" onclick="showReconciliation('as-is')">As Is</button>
+                        <button class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700" onclick="showReconciliation('as-completed')">As Completed</button>
+                        <button class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700" onclick="showReconciliation('as-stabilized')">As Stabilized</button>
+                    </div>
+                    
+                    <!-- As Is Reconciliation (shown by default) -->
+                    <div id="reconciliation-as-is" class="reconciliation-panel">
+                        <div class="grid grid-cols-3 gap-4 mb-6">
+                            <div class="value-box">
+                                <div class="text-xs text-gray-500 uppercase mb-2">Sales Comparison</div>
+                                <div class="text-xl font-bold text-blue-600 mb-3">$1,130,000</div>
+                                <div class="form-group">
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">Weight (%)</label>
+                                    <input type="number" min="0" max="100" value="30" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-center text-sm text-gray-900 focus:ring-2 focus:ring-harken-accent focus:border-harken-accent">
+                                </div>
+                            </div>
+                            <div class="value-box">
+                                <div class="text-xs text-gray-500 uppercase mb-2">Income Approach</div>
+                                <div class="text-xl font-bold text-green-600 mb-3">$1,140,000</div>
+                                <div class="form-group">
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">Weight (%)</label>
+                                    <input type="number" min="0" max="100" value="50" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-center text-sm text-gray-900 focus:ring-2 focus:ring-harken-accent focus:border-harken-accent">
+                                </div>
+                            </div>
+                            <div class="value-box">
+                                <div class="text-xs text-gray-500 uppercase mb-2">Cost Approach</div>
+                                <div class="text-xl font-bold text-purple-600 mb-3">$1,052,000</div>
+                                <div class="form-group">
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">Weight (%)</label>
+                                    <input type="number" min="0" max="100" value="20" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-center text-sm text-gray-900 focus:ring-2 focus:ring-harken-accent focus:border-harken-accent">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Reconciliation Comments - As Is <span class="text-red-500">*</span></label>
+                            <textarea rows="4" required placeholder="Explain your reasoning for the As Is value conclusion..." class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-harken-accent focus:border-harken-accent">The As Is value conclusion of $1,140,000 is primarily supported by the Income Approach, which best reflects how investors typically analyze this property type. The Sales Comparison Approach provides good support, while the Cost Approach is given less weight due to accrued depreciation considerations.</textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- As Completed Reconciliation (hidden by default) -->
+                    <div id="reconciliation-as-completed" class="reconciliation-panel hidden">
+                        <div class="grid grid-cols-3 gap-4 mb-6">
+                            <div class="value-box">
+                                <div class="text-xs text-gray-500 uppercase mb-2">Sales Comparison</div>
+                                <div class="text-xl font-bold text-blue-600 mb-3">$1,550,000</div>
+                                <div class="form-group">
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">Weight (%)</label>
+                                    <input type="number" min="0" max="100" value="40" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-center text-sm text-gray-900 focus:ring-2 focus:ring-harken-accent focus:border-harken-accent">
+                                </div>
+                            </div>
+                            <div class="value-box">
+                                <div class="text-xs text-gray-500 uppercase mb-2">Income Approach</div>
+                                <div class="text-xl font-bold text-green-600 mb-3">$1,583,000</div>
+                                <div class="form-group">
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">Weight (%)</label>
+                                    <input type="number" min="0" max="100" value="40" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-center text-sm text-gray-900 focus:ring-2 focus:ring-harken-accent focus:border-harken-accent">
+                                </div>
+                            </div>
+                            <div class="value-box">
+                                <div class="text-xs text-gray-500 uppercase mb-2">Cost Approach</div>
+                                <div class="text-xl font-bold text-purple-600 mb-3">$1,310,000</div>
+                                <div class="form-group">
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">Weight (%)</label>
+                                    <input type="number" min="0" max="100" value="20" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-center text-sm text-gray-900 focus:ring-2 focus:ring-harken-accent focus:border-harken-accent">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Reconciliation Comments - As Completed <span class="text-red-500">*</span></label>
+                            <textarea rows="4" required placeholder="Explain your reasoning for the As Completed value conclusion..." class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-harken-accent focus:border-harken-accent">The As Completed value of $1,550,000 assumes all proposed renovations are complete. Equal weight is given to Sales Comparison and Income approaches as both provide reliable indications for the improved property condition.</textarea>
+                        </div>
+                    </div>
+                    
+                    <!-- As Stabilized Reconciliation (hidden by default) -->
+                    <div id="reconciliation-as-stabilized" class="reconciliation-panel hidden">
+                        <div class="grid grid-cols-3 gap-4 mb-6">
+                            <div class="value-box bg-gray-50 opacity-60">
+                                <div class="text-xs text-gray-500 uppercase mb-2">Sales Comparison</div>
+                                <div class="text-xl font-bold text-gray-400 mb-3">N/A</div>
+                                <p class="text-xs text-gray-400">Not applicable for this scenario</p>
+                            </div>
+                            <div class="value-box">
+                                <div class="text-xs text-gray-500 uppercase mb-2">Income Approach</div>
+                                <div class="text-xl font-bold text-green-600 mb-3">$2,036,000</div>
+                                <div class="form-group">
+                                    <label class="block text-xs font-medium text-gray-700 mb-1">Weight (%)</label>
+                                    <input type="number" min="0" max="100" value="100" class="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-center text-sm text-gray-900 focus:ring-2 focus:ring-harken-accent focus:border-harken-accent">
+                                </div>
+                            </div>
+                            <div class="value-box bg-gray-50 opacity-60">
+                                <div class="text-xs text-gray-500 uppercase mb-2">Cost Approach</div>
+                                <div class="text-xl font-bold text-gray-400 mb-3">N/A</div>
+                                <p class="text-xs text-gray-400">Not applicable for this scenario</p>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Reconciliation Comments - As Stabilized <span class="text-red-500">*</span></label>
+                            <textarea rows="4" required placeholder="Explain your reasoning for the As Stabilized value conclusion..." class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-harken-accent focus:border-harken-accent">The As Stabilized value of $2,000,000 is based entirely on the Income Approach as it best reflects the property's income-producing potential at stabilized occupancy. The Sales and Cost approaches are not applicable for prospective stabilized valuations.</textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Exposure Time -->
+                <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 pb-3 border-b border-gray-200">Exposure & Marketing Time</h3>
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div class="form-group">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Estimated Exposure Period (Months) <span class="text-red-500">*</span></label>
+                            <input type="number" required placeholder="12" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-harken-accent focus:border-harken-accent">
+                        </div>
+                        <div class="form-group">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Estimated Marketing Time (Months)</label>
+                            <input type="number" placeholder="12" class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-harken-accent focus:border-harken-accent">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Exposure Time Rationale</label>
+                        <textarea rows="3" placeholder="Explain the basis for your exposure time estimate..." class="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-harken-accent focus:border-harken-accent"></textarea>
+                    </div>
+                </div>
+
+                <!-- Certification -->
+                <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-4 pb-3 border-b border-gray-200">Final Certifications</h3>
+                    <p class="text-sm text-gray-500 mb-4">Click each certification to confirm your compliance with USPAP requirements.</p>
+                    <div class="space-y-3" id="certifications-container">
+                        <div class="cert-btn p-4 border-2 border-gray-200 rounded-lg cursor-pointer transition-all hover:border-harken-accent/50 hover:bg-harken-accent/5" onclick="toggleCertification(this)">
+                            <div class="flex items-start gap-3">
+                                <div class="cert-check w-6 h-6 rounded-full border-2 border-gray-300 flex-shrink-0 flex items-center justify-center transition-all">
+                                    <svg class="w-4 h-4 text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                </div>
+                                <span class="text-sm text-gray-700">I certify that the statements of fact contained in this report are true and correct</span>
+                            </div>
+                        </div>
+                        <div class="cert-btn p-4 border-2 border-gray-200 rounded-lg cursor-pointer transition-all hover:border-harken-accent/50 hover:bg-harken-accent/5" onclick="toggleCertification(this)">
+                            <div class="flex items-start gap-3">
+                                <div class="cert-check w-6 h-6 rounded-full border-2 border-gray-300 flex-shrink-0 flex items-center justify-center transition-all">
+                                    <svg class="w-4 h-4 text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                </div>
+                                <span class="text-sm text-gray-700">I certify that the analyses, opinions, and conclusions are limited only by the assumptions and limiting conditions stated in this report</span>
+                            </div>
+                        </div>
+                        <div class="cert-btn p-4 border-2 border-gray-200 rounded-lg cursor-pointer transition-all hover:border-harken-accent/50 hover:bg-harken-accent/5" onclick="toggleCertification(this)">
+                            <div class="flex items-start gap-3">
+                                <div class="cert-check w-6 h-6 rounded-full border-2 border-gray-300 flex-shrink-0 flex items-center justify-center transition-all">
+                                    <svg class="w-4 h-4 text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                </div>
+                                <span class="text-sm text-gray-700">I certify that I have no present or prospective interest in the property</span>
+                            </div>
+                        </div>
+                        <div class="cert-btn p-4 border-2 border-gray-200 rounded-lg cursor-pointer transition-all hover:border-harken-accent/50 hover:bg-harken-accent/5" onclick="toggleCertification(this)">
+                            <div class="flex items-start gap-3">
+                                <div class="cert-check w-6 h-6 rounded-full border-2 border-gray-300 flex-shrink-0 flex items-center justify-center transition-all">
+                                    <svg class="w-4 h-4 text-white hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                                </div>
+                                <span class="text-sm text-gray-700">I certify that I have performed no services regarding the property within the three-year period immediately preceding acceptance of this assignment</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Save as Template Section -->
+                <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm" id="template-save-section">
+                    <div class="flex items-center justify-between mb-4 pb-3 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                            <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path>
+                            </svg>
+                            Save as Template
+                        </h3>
+                        <span class="text-xs text-gray-500 bg-gray-100 px-2 py-1 rounded">Optional</span>
+                    </div>
+                    <p class="text-sm text-gray-600 mb-4">Save your current appraisal settings as a reusable template. This will capture your scenario configurations, approach selections, and custom settings for future appraisals.</p>
+                    
+                    <div class="grid grid-cols-2 gap-4 mb-4">
+                        <div class="form-group">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Template Name <span class="text-red-500">*</span></label>
+                            <input type="text" id="template-name" placeholder="e.g., Industrial Warehouse - Construction Loan" class="w-full border border-gray-300 rounded-lg px-3 py-2 bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                        </div>
+                        <div class="form-group">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Property Type</label>
+                            <select id="template-property-type" class="w-full border border-gray-300 rounded-lg px-3 py-2 bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500">
+                                <option value="Commercial">Commercial</option>
+                                <option value="Residential">Residential</option>
+                                <option value="Land">Land</option>
+                                <option value="Mixed-Use">Mixed-Use</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                        <textarea id="template-description" rows="2" placeholder="Describe when to use this template..." class="w-full border border-gray-300 rounded-lg px-3 py-2 bg-white focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"></textarea>
+                    </div>
+                    
+                    <div class="form-group mb-4">
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Use Case Tags</label>
+                        <div class="flex flex-wrap gap-2" id="use-case-tags">
+                            <button type="button" class="tag-btn px-4 py-2 border-2 border-gray-200 rounded-lg text-sm text-gray-700 transition-all hover:border-indigo-400 hover:bg-indigo-50" data-value="construction-loan" onclick="toggleTag(this)">
+                                Construction Loan
+                            </button>
+                            <button type="button" class="tag-btn px-4 py-2 border-2 border-gray-200 rounded-lg text-sm text-gray-700 transition-all hover:border-indigo-400 hover:bg-indigo-50" data-value="refinance" onclick="toggleTag(this)">
+                                Refinance
+                            </button>
+                            <button type="button" class="tag-btn px-4 py-2 border-2 border-gray-200 rounded-lg text-sm text-gray-700 transition-all hover:border-indigo-400 hover:bg-indigo-50" data-value="acquisition" onclick="toggleTag(this)">
+                                Acquisition
+                            </button>
+                            <button type="button" class="tag-btn px-4 py-2 border-2 border-gray-200 rounded-lg text-sm text-gray-700 transition-all hover:border-indigo-400 hover:bg-indigo-50" data-value="estate" onclick="toggleTag(this)">
+                                Estate/Litigation
+                            </button>
+                            <button type="button" class="tag-btn px-4 py-2 border-2 border-gray-200 rounded-lg text-sm text-gray-700 transition-all hover:border-indigo-400 hover:bg-indigo-50" data-value="portfolio" onclick="toggleTag(this)">
+                                Portfolio
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-4 mb-4">
+                        <h4 class="text-sm font-semibold text-indigo-900 mb-2">What will be saved:</h4>
+                        <ul class="text-xs text-indigo-700 space-y-1">
+                            <li class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                Scenario configurations (As Is, As Completed, As Stabilized)
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                Selected valuation approaches per scenario
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                Report section selections
+                            </li>
+                            <li class="flex items-center gap-2">
+                                <svg class="w-4 h-4 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
+                                Default boilerplate text (certifications, limiting conditions)
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="flex justify-end">
+                        <button onclick="saveAsTemplate()" class="px-6 py-2 text-sm font-semibold text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 flex items-center gap-2 transition-colors">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
+                            </svg>
+                            Save Template
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Completion Summary -->
+                <div id="improvements-quality-slot"></div>
+
+                <div class="bg-green-50 border-2 border-green-200 rounded-lg p-6">
+                    <div class="flex items-start gap-4">
+                        <svg class="w-12 h-12 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <div>
+                            <h3 class="text-lg font-bold text-green-900 mb-2">Ready to Finalize</h3>
+                            <p class="text-sm text-green-800 mb-4">You've completed all required sections. Review your work and click "Finalize Report" to generate the final PDF.</p>
+                            <ul class="text-xs text-green-700 space-y-1">
+                                <li>✓ Template Selected</li>
+                                <li>✓ Assignment Setup Complete</li>
+                                <li>✓ Subject Property Data Entered</li>
+                                <li>✓ Valuation Analysis Complete</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Bottom Navigation -->
+    <div style="padding: 1.5rem 2rem; background: white; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-between;">
+        <button class="btn btn-outline" onclick="WizardNav.goPrevious()">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            Previous
+        </button>
+        <button class="btn btn-primary" style="background: #10b981;" onclick="finalizeReport()">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            Finalize Report
+        </button>
+    </div>
+
+    <script src="assets/wizard-shared.js"></script>
+    <script src="assets/improvements-contract.js"></script>
+    <script>
+        function showReconciliation(scenario) {
+            // Hide all panels
+            document.querySelectorAll('.reconciliation-panel').forEach(panel => {
+                panel.classList.add('hidden');
+            });
+            
+            // Show selected panel
+            const targetPanel = document.getElementById('reconciliation-' + scenario);
+            if (targetPanel) {
+                targetPanel.classList.remove('hidden');
+            }
+            
+            // Update tab styles
+            const tabs = document.querySelectorAll('[onclick^="showReconciliation"]');
+            tabs.forEach(tab => {
+                tab.classList.remove('text-blue-600', 'border-b-2', 'border-blue-600', '-mb-px', 'font-semibold');
+                tab.classList.add('text-gray-500', 'font-medium');
+            });
+            
+            // Highlight active tab
+            const activeTab = document.querySelector(`[onclick="showReconciliation('${scenario}')"]`);
+            if (activeTab) {
+                activeTab.classList.remove('text-gray-500', 'font-medium');
+                activeTab.classList.add('text-blue-600', 'border-b-2', 'border-blue-600', '-mb-px', 'font-semibold');
+            }
+        }
+
+        /**
+         * Toggle certification button selection
+         * @param {HTMLElement} btn - The certification button element
+         */
+        function toggleCertification(btn) {
+            btn.classList.toggle('selected');
+        }
+
+        /**
+         * Toggle tag button selection
+         * @param {HTMLElement} btn - The tag button element
+         */
+        function toggleTag(btn) {
+            btn.classList.toggle('selected');
+        }
+        
+        function finalizeReport() {
+            // Minimal hard checks (prototype): block finalize only for critical structural gaps
+            const gate = getImprovementsGate();
+            if (gate.shouldBlock) {
+                alert(gate.message);
+                const slot = document.getElementById('improvements-quality-slot');
+                if (slot) slot.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                return;
+            }
+
+            const scenarioGate = getScenarioConclusionsGate();
+            if (scenarioGate.shouldBlock) {
+                alert(scenarioGate.message);
+                // Try to jump to the first failing scenario panel
+                if (scenarioGate.panelId) {
+                    const panel = document.getElementById(scenarioGate.panelId);
+                    if (panel) panel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+                return;
+            }
+
+            // Show success animation
+            const contentArea = document.getElementById('content-area');
+            contentArea.innerHTML = `
+                <div class="flex items-center justify-center h-full">
+                    <div class="text-center animate-fade-in">
+                        <div class="mb-6">
+                            <svg class="w-32 h-32 mx-auto text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                            </svg>
+                        </div>
+                        <h2 class="text-3xl font-bold text-gray-900 mb-3">Report Finalized!</h2>
+                        <p class="text-lg text-gray-600 mb-8">Your appraisal report has been successfully generated.</p>
+                        <div class="flex gap-4 justify-center">
+                            <button class="btn btn-primary" onclick="window.location.href='../super-admin-appraisals-list.html'">
+                                View Report
+                            </button>
+                            <button class="btn btn-outline" onclick="window.location.href='index.html'">
+                                Create Another
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Trigger confetti or celebration effect
+            triggerCelebration();
+        }
+
+        function triggerCelebration() {
+            // Simple confetti effect
+            const colors = ['#0da1c7', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444'];
+            for (let i = 0; i < 50; i++) {
+                setTimeout(() => {
+                    const confetti = document.createElement('div');
+                    confetti.style.position = 'fixed';
+                    confetti.style.left = Math.random() * window.innerWidth + 'px';
+                    confetti.style.top = '-20px';
+                    confetti.style.width = '10px';
+                    confetti.style.height = '10px';
+                    confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+                    confetti.style.borderRadius = '50%';
+                    confetti.style.pointerEvents = 'none';
+                    confetti.style.zIndex = '9999';
+                    document.body.appendChild(confetti);
+                    
+                    const duration = 2000 + Math.random() * 1000;
+                    const endY = window.innerHeight + 20;
+                    
+                    confetti.animate([
+                        { transform: 'translateY(0) rotate(0deg)', opacity: 1 },
+                        { transform: `translateY(${endY}px) rotate(${Math.random() * 720}deg)`, opacity: 0 }
+                    ], {
+                        duration: duration,
+                        easing: 'cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+                    }).onfinish = () => confetti.remove();
+                }, i * 30);
+            }
+        }
+
+        /**
+         * Opens the Report Preview & Editor in a new tab
+         */
+        function openReportEditor() {
+            window.open('appraisal-report-editor.html', '_blank');
+        }
+
+        // =================================================================
+        // IMPROVEMENTS QUALITY (warnings + minimal gate)
+        // =================================================================
+        function getImprovementsGate() {
+            try {
+                if (typeof WizardState === 'undefined' || !window.ImprovementsContract) {
+                    // Can't evaluate; don't block
+                    return { shouldBlock: false, message: '' };
+                }
+
+                const templateId = String(WizardState.get('template') || '').toLowerCase();
+                const requireImprovements = templateId !== 'land';
+                const inv = (typeof WizardState.getImprovementsInventory === 'function')
+                    ? WizardState.getImprovementsInventory()
+                    : WizardState.get('improvementsInventory');
+
+                const { issues } = window.ImprovementsContract.validateInventory(inv, { requireImprovements });
+                const errors = (issues || []).filter(i => i.severity === 'error');
+
+                if (!errors.length) return { shouldBlock: false, message: '' };
+
+                // Minimal: show first few errors
+                const lines = errors.slice(0, 3).map(e => `- ${e.code}: ${e.message}`).join('\\n');
+                return {
+                    shouldBlock: true,
+                    message: `Finalize blocked: fix Improvements structure before finalizing.\\n\\n${lines}`,
+                };
+            } catch (e) {
+                return { shouldBlock: false, message: '' };
+            }
+        }
+
+        function getScenarioConclusionsGate() {
+            try {
+                // In production this should check concluded values per approach/scenario.
+                // In prototype: ensure each required scenario has a reconciliation explanation filled in.
+                if (typeof ScenarioManager === 'undefined') return { shouldBlock: false, message: '', panelId: null };
+
+                const scenarios = ScenarioManager.getScenarios();
+                for (const s of scenarios) {
+                    if (!s || !s.isRequired) continue;
+                    const slug = String(s.name || '').toLowerCase().replace(/\s+/g, '-');
+                    const panelId = `reconciliation-${slug}`;
+                    const panel = document.getElementById(panelId);
+                    if (!panel) continue;
+
+                    const requiredText = panel.querySelector('textarea[required]');
+                    if (requiredText) {
+                        const val = String(requiredText.value || '').trim();
+                        if (val.length < 15) {
+                            return {
+                                shouldBlock: true,
+                                panelId,
+                                message: `Finalize blocked: add a reconciliation explanation for the ${s.name} scenario.`,
+                            };
+                        }
+                    }
+                }
+
+                return { shouldBlock: false, message: '', panelId: null };
+            } catch (e) {
+                return { shouldBlock: false, message: '', panelId: null };
+            }
+        }
+
+        function renderImprovementsQuality() {
+            if (typeof WizardState === 'undefined' || !window.ImprovementsContract) return '';
+
+            const templateId = String(WizardState.get('template') || '').toLowerCase();
+            const requireImprovements = templateId !== 'land';
+            const inv = (typeof WizardState.getImprovementsInventory === 'function')
+                ? WizardState.getImprovementsInventory()
+                : WizardState.get('improvementsInventory');
+
+            if (!inv) return '';
+
+            const rollups = window.ImprovementsContract.computeRollups(inv);
+            const { issues } = window.ImprovementsContract.validateInventory(inv, { requireImprovements });
+            const errors = (issues || []).filter(i => i.severity === 'error');
+            const warnings = (issues || []).filter(i => i.severity === 'warning');
+
+            const sfTotal = Number(rollups.subjectTotals.sfTotal || 0);
+
+            const list = (arr, tone) => {
+                if (!arr.length) return `<div class="text-sm text-gray-500 mt-2">None.</div>`;
+                return `
+                    <ul class="mt-2 space-y-2">
+                        ${arr.map(i => `
+                            <li class="text-sm text-gray-700">
+                                <span class="font-semibold">${i.code}:</span> ${i.message}
+                            </li>
+                        `).join('')}
+                    </ul>
+                `;
+            };
+
+            const badge = errors.length
+                ? `<span class="px-2 py-0.5 text-xs font-bold rounded-full bg-red-100 text-red-700">Action Required</span>`
+                : warnings.length
+                    ? `<span class="px-2 py-0.5 text-xs font-bold rounded-full bg-amber-100 text-amber-700">Warnings</span>`
+                    : `<span class="px-2 py-0.5 text-xs font-bold rounded-full bg-green-100 text-green-700">Looks Good</span>`;
+
+            return `
+                <div class="bg-white p-6 rounded-lg border border-gray-200 shadow-sm mb-6">
+                    <div class="flex items-start justify-between gap-4">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <h3 class="text-lg font-semibold text-gray-900">Improvements Data Quality</h3>
+                                ${badge}
+                            </div>
+                            <p class="text-sm text-gray-600">Review improvements inventory before finalizing. Totals are derived from areas.</p>
+                        </div>
+                        <button onclick="goToImprovements()" class="px-4 py-2 text-sm font-semibold text-white bg-harken-accent rounded-lg hover:bg-harken-accent-light">
+                            Review Improvements
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-3 gap-4 mt-4">
+                        <div class="p-3 rounded-lg bg-gray-50 border border-gray-200">
+                            <div class="text-xs text-gray-500">Parcels</div>
+                            <div class="text-xl font-bold text-gray-900">${Number(rollups.subjectTotals.parcels || 0)}</div>
+                        </div>
+                        <div class="p-3 rounded-lg bg-gray-50 border border-gray-200">
+                            <div class="text-xs text-gray-500">Buildings</div>
+                            <div class="text-xl font-bold text-gray-900">${Number(rollups.subjectTotals.buildings || 0)}</div>
+                        </div>
+                        <div class="p-3 rounded-lg bg-gray-50 border border-gray-200">
+                            <div class="text-xs text-gray-500">Total SF</div>
+                            <div class="text-xl font-bold text-gray-900">${sfTotal.toLocaleString()}</div>
+                        </div>
+                    </div>
+
+                    ${errors.length ? `
+                        <div class="mt-5 p-4 bg-red-50 border border-red-200 rounded-lg">
+                            <div class="text-xs font-bold uppercase tracking-wide text-red-700">Blocking Issues</div>
+                            <div class="text-sm text-red-800 mt-1">These must be fixed to finalize.</div>
+                            ${list(errors)}
+                        </div>
+                    ` : ''}
+
+                    <div class="mt-5 p-4 bg-amber-50 border border-amber-200 rounded-lg">
+                        <div class="text-xs font-bold uppercase tracking-wide text-amber-700">Warnings</div>
+                        <div class="text-sm text-amber-800 mt-1">These won’t block, but they’re worth addressing.</div>
+                        ${list(warnings)}
+                    </div>
+                </div>
+            `;
+        }
+
+        function goToImprovements() {
+            try {
+                if (typeof WizardState !== 'undefined' && typeof WizardState.setSubjectActiveTab === 'function') {
+                    WizardState.setSubjectActiveTab('improvements');
+                } else if (typeof WizardState !== 'undefined') {
+                    WizardState.set('subjectActiveTab', 'improvements');
+                }
+                if (typeof WizardNav !== 'undefined') {
+                    WizardNav.goToPage('subject');
+                } else {
+                    window.location.href = 'subject-data.html';
+                }
+            } catch (e) {
+                window.location.href = 'subject-data.html';
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const slot = document.getElementById('improvements-quality-slot');
+            if (slot) {
+                slot.innerHTML = renderImprovementsQuality();
+            }
+        });
+
+        // =================================================================
+        // TEMPLATE SAVING (React-Ready Pattern)
+        // =================================================================
+
+        /**
+         * @typedef {Object} AppraisalTemplate
+         * @property {string} id - Unique identifier
+         * @property {string} name - Template name
+         * @property {string} description - Template description
+         * @property {string} propertyType - Property type
+         * @property {string[]} useCases - Use case tags
+         * @property {Date} createdAt - Creation timestamp
+         * @property {Object} configuration - Template configuration
+         */
+
+        /**
+         * Save current appraisal settings as a template
+         */
+        function saveAsTemplate() {
+            const name = document.getElementById('template-name').value.trim();
+            const description = document.getElementById('template-description').value.trim();
+            const propertyType = document.getElementById('template-property-type').value;
+            
+            // Get selected use case tags (from button selections)
+            const useCases = [];
+            document.querySelectorAll('#use-case-tags .tag-btn.selected').forEach(btn => {
+                useCases.push(btn.getAttribute('data-value'));
+            });
+
+            // Validate
+            if (!name) {
+                alert('Please enter a template name.');
+                document.getElementById('template-name').focus();
+                return;
+            }
+
+            // Build template object
+            const template = {
+                id: 'template_' + Date.now(),
+                name: name,
+                description: description,
+                propertyType: propertyType,
+                useCases: useCases,
+                createdAt: new Date().toISOString(),
+                configuration: gatherTemplateConfiguration()
+            };
+
+            // Save to localStorage (API-ready structure)
+            saveTemplateToStorage(template);
+
+            // Show success feedback
+            showTemplateSavedNotification(name);
+        }
+
+        /**
+         * Gather current appraisal configuration for template
+         * @returns {Object} Configuration object
+         */
+        function gatherTemplateConfiguration() {
+            // In production, this would gather from WizardState
+            return {
+                scenarios: [
+                    { name: 'As Is', enabled: true, approaches: ['sales', 'income', 'cost'] },
+                    { name: 'As Completed', enabled: true, approaches: ['sales', 'income'] },
+                    { name: 'As Stabilized', enabled: true, approaches: ['income'] }
+                ],
+                reportSections: {
+                    cover: true,
+                    letter: true,
+                    summary: true,
+                    property: true,
+                    site: true,
+                    improvements: true,
+                    market: true,
+                    hbu: true,
+                    sales: true,
+                    income: true,
+                    cost: true,
+                    reconciliation: true,
+                    certification: true,
+                    exhibits: true
+                },
+                defaultTexts: {
+                    limitingConditions: getSelectedLimitingConditions(),
+                    marketValueDefinition: 'standard'
+                }
+            };
+        }
+
+        /**
+         * Get selected limiting conditions
+         * @returns {string[]} Array of selected conditions
+         */
+        function getSelectedLimitingConditions() {
+            // Would gather from the certifications tab in production
+            return [
+                'The appraiser assumes no responsibility for matters legal in character.',
+                'The appraiser has made no survey of the property.',
+                'Information was obtained from sources considered reliable.'
+            ];
+        }
+
+        /**
+         * Save template to localStorage
+         * @param {AppraisalTemplate} template 
+         */
+        function saveTemplateToStorage(template) {
+            // Get existing templates
+            const existingTemplates = JSON.parse(localStorage.getItem('appraisalTemplates') || '[]');
+            
+            // Add new template
+            existingTemplates.push(template);
+            
+            // Save back
+            localStorage.setItem('appraisalTemplates', JSON.stringify(existingTemplates));
+            
+            console.log('Template saved:', template);
+        }
+
+        /**
+         * Get all saved templates
+         * @returns {AppraisalTemplate[]}
+         */
+        function getSavedTemplates() {
+            return JSON.parse(localStorage.getItem('appraisalTemplates') || '[]');
+        }
+
+        /**
+         * Delete a template by ID
+         * @param {string} templateId 
+         */
+        function deleteTemplate(templateId) {
+            const templates = getSavedTemplates();
+            const filtered = templates.filter(t => t.id !== templateId);
+            localStorage.setItem('appraisalTemplates', JSON.stringify(filtered));
+        }
+
+        /**
+         * Show success notification after saving template
+         * @param {string} templateName 
+         */
+        function showTemplateSavedNotification(templateName) {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.className = 'fixed bottom-6 right-6 bg-green-600 text-white px-6 py-4 rounded-lg shadow-lg flex items-center gap-3 z-50';
+            notification.innerHTML = `
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                </svg>
+                <div>
+                    <div class="font-semibold">Template Saved!</div>
+                    <div class="text-sm opacity-90">"${templateName}" is now available in your templates.</div>
+                </div>
+            `;
+            notification.style.animation = 'slideInRight 0.3s ease-out';
+            
+            document.body.appendChild(notification);
+
+            // Remove after 4 seconds
+            setTimeout(() => {
+                notification.style.animation = 'slideOutRight 0.3s ease-in';
+                setTimeout(() => notification.remove(), 300);
+            }, 4000);
+
+            // Clear form
+            document.getElementById('template-name').value = '';
+            document.getElementById('template-description').value = '';
+            document.querySelectorAll('#use-case-tags .tag-btn.selected').forEach(btn => {
+                btn.classList.remove('selected');
+            });
+        }
+    </script>
+
+    <style>
+        @keyframes slideInRight {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        @keyframes slideOutRight {
+            from { transform: translateX(0); opacity: 1; }
+            to { transform: translateX(100%); opacity: 0; }
+        }
+    </style>
+</body>
+</html>
+

@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Valuation Analysis - Harken Appraisal Wizard</title>
+    <link rel="stylesheet" href="assets/wizard-shared.css?v=20241218">
+    <link rel="stylesheet" href="assets/enhanced-textarea.css?v=20241218">
+    <link rel="stylesheet" href="assets/expandable-selector.css?v=20241218">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="assets/enhanced-textarea.js?v=20241218"></script>
+    <script src="assets/expandable-selector.js?v=20241218"></script>
+    <style>
+        /* Custom Scrollbar - Subtle & Thin */
+        * {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(200, 200, 200, 0.3) transparent;
+        }
+        *::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+        *::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        *::-webkit-scrollbar-thumb {
+            background: rgba(180, 180, 180, 0.4);
+            border-radius: 10px;
+        }
+        *::-webkit-scrollbar-thumb:hover {
+            background: rgba(150, 150, 150, 0.6);
+        }
+        
+        body { margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        
+        /* Top Progress Bar */
+        .top-progress {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 1rem 2rem;
+        }
+        .phase-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+        }
+        .phase-circle {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        .phase-circle.active {
+            background: #0da1c7;
+            color: white;
+        }
+        .phase-circle.inactive {
+            background: #e5e7eb;
+            color: #9ca3af;
+        }
+        .phase-circle.completed {
+            background: #10b981;
+            color: white;
+        }
+        .phase-connector {
+            width: 4rem;
+            height: 2px;
+            background: #e5e7eb;
+        }
+        .phase-connector.active {
+            background: #0da1c7;
+        }
+        
+        /* Header Section */
+        .wizard-header {
+            background: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 1.5rem 2rem;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        /* Layout */
+        .wizard-layout { display: flex; flex: 1; overflow: hidden; }
+        .sidebar { width: 17rem; background: white; border-right: 1px solid #e5e7eb; overflow-y: auto; flex-shrink: 0; transition: all 0.3s; position: relative; scrollbar-width: none; -ms-overflow-style: none; }
+        .sidebar::-webkit-scrollbar { display: none; }
+        .sidebar.collapsed { width: 0; overflow: hidden; }
+        .sidebar-content { padding: 1.5rem; }
+        
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: white; }
+        .content-area { flex: 1; overflow-y: auto; padding: 2rem; background: white; }
+        
+        .help-sidebar { width: 20rem; background: white; border-left: 1px solid #e5e7eb; overflow-y: auto; flex-shrink: 0; transition: all 0.3s; display: flex; flex-direction: column; position: relative; }
+        .help-sidebar.collapsed { width: 0; overflow: hidden; }
+        .help-content-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+        }
+        
+        /* Sidebar Toggle */
+        .sidebar-toggle-btn {
+            position: absolute;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 50%;
+            padding: 0.25rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 50;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .sidebar-toggle-btn:hover { background: #f3f4f6; }
+        .sidebar-toggle-btn svg { width: 1rem; height: 1rem; transition: transform 0.3s; }
+        
+        /* Nav Items */
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            color: #4b5563;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+        }
+        .nav-item:hover {
+            background: #f3f4f6;
+        }
+        .nav-item.active {
+            background: rgba(13, 161, 199, 0.1);
+            color: #0da1c7;
+            font-weight: 500;
+        }
+        .nav-item svg {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+        
+        /* Sales Comparison Grid Styles - Match AppraisePro Modern Grid */
+        .sales-grid-wrapper {
+            position: relative;
+            background: #f8fafc;
+            border-radius: 0.5rem;
+            overflow: hidden;
+        }
+        .sales-grid-container {
+            overflow: auto;
+            position: relative;
+            background: white;
+            height: calc(100vh - 450px);
+        }
+        .sales-grid-container.fullscreen {
+            height: calc(100vh - 200px);
+        }
+        /* Custom Scrollbar */
+        .sales-grid-container::-webkit-scrollbar {
+            height: 10px;
+            width: 10px;
+        }
+        .sales-grid-container::-webkit-scrollbar-track {
+            background: #f1f5f9;
+        }
+        .sales-grid-container::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 5px;
+        }
+        .sales-grid-container::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        
+        .sales-grid {
+            display: grid;
+            min-width: max-content;
+        }
+        .grid-cell {
+            border-right: 1px solid #e2e8f0;
+            border-bottom: 1px solid #e2e8f0;
+            padding: 0.75rem;
+            min-height: 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            font-size: 0.875rem;
+            color: #334155;
+        }
+        
+        /* Property Card Headers with Photos */
+        .property-card-header {
+            padding: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            min-height: 180px;
+        }
+        .property-photo {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            border-radius: 0.375rem;
+            background: #e2e8f0;
+        }
+        .property-card-header .property-name {
+            font-weight: 700;
+            font-size: 0.875rem;
+            color: #0f172a;
+            line-height: 1.2;
+        }
+        .property-card-header .property-address {
+            font-size: 0.75rem;
+            color: #64748b;
+            line-height: 1.3;
+        }
+        .property-card-header .property-status {
+            font-size: 0.625rem;
+            font-weight: 600;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            text-align: center;
+        }
+        
+        /* Sticky Positioning */
+        .grid-label-col {
+            position: sticky;
+            left: 0;
+            background: white;
+            z-index: 30;
+            font-weight: 500;
+            border-right: 1px solid #cbd5e1;
+        }
+        .grid-subject-col {
+            position: sticky;
+            left: 200px;
+            background: #dbeafe;
+            z-index: 30;
+            border-right: 2px solid #60a5fa;
+            box-shadow: 4px 0 24px rgba(0,0,0,0.05);
+        }
+        .grid-header-cell {
+            position: sticky;
+            top: 0;
+            z-index: 40;
+            background: white;
+            border-bottom: 1px solid #cbd5e1;
+        }
+        .grid-header-cell.grid-label-col {
+            z-index: 50;
+            background: white;
+        }
+        .grid-header-cell.grid-subject-col {
+            z-index: 50;
+            background: #dbeafe;
+        }
+        
+        /* Section Headers */
+        .section-header-row {
+            background: linear-gradient(to right, #f1f5f9, #e2e8f0);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            letter-spacing: 0.05em;
+            color: #475569;
+            grid-column: 1 / -1;
+            padding: 0.75rem 1rem;
+            border-top: 2px solid #cbd5e1;
+            border-bottom: 2px solid #cbd5e1;
+            position: sticky;
+            left: 0;
+            z-index: 25;
+        }
+        
+        /* Row Hover */
+        .grid-row {
+            display: contents;
+        }
+        .grid-row:hover .grid-cell:not(.grid-header-cell):not(.section-header-row) {
+            background: #f8fafc;
+        }
+        .grid-row:hover .grid-subject-col:not(.grid-header-cell) {
+            background: #bfdbfe;
+        }
+        
+        /* Flag Badges - Match AppraisePro Design */
+        .flag-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.25rem;
+            padding: 0.125rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.625rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.15s;
+            border: 1px solid;
+            user-select: none;
+        }
+        .flag-superior {
+            background: #d1fae5;
+            color: #065f46;
+            border-color: #6ee7b7;
+        }
+        .flag-superior:hover {
+            background: #a7f3d0;
+            border-color: #34d399;
+        }
+        .flag-inferior {
+            background: #fee2e2;
+            color: #991b1b;
+            border-color: #fca5a5;
+        }
+        .flag-inferior:hover {
+            background: #fecaca;
+            border-color: #f87171;
+        }
+        .flag-similar {
+            background: #f1f5f9;
+            color: #475569;
+            border-color: #cbd5e1;
+        }
+        .flag-similar:hover {
+            background: #e2e8f0;
+            border-color: #94a3b8;
+            color: #1e293b;
+        }
+        
+        /* Adjustment Input */
+        .adjustment-input {
+            width: 100%;
+            padding: 0.375rem 0.5rem;
+            border: 1px solid transparent;
+            border-bottom: 1px solid #cbd5e1;
+            background: transparent;
+            font-size: 0.875rem;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .adjustment-input:hover {
+            background: #f8fafc;
+            border-bottom-color: #94a3b8;
+        }
+        .adjustment-input:focus {
+            outline: none;
+            background: white;
+            border: 1px solid #0da1c7;
+            border-radius: 0.25rem;
+            box-shadow: 0 0 0 3px rgba(13, 161, 199, 0.1);
+        }
+        
+        /* Total/Summary Rows */
+        .summary-row {
+            background: #fef3c7;
+            font-weight: 600;
+            border-top: 2px solid #f59e0b;
+        }
+        .total-row {
+            background: #d1fae5;
+            font-weight: 700;
+            font-size: 1rem;
+            border-top: 3px solid #10b981;
+            border-bottom: 3px solid #10b981;
+        }
+        .total-row .grid-cell {
+            padding: 1rem 0.75rem;
+        }
+        
+        /* Scenario Tabs Styling */
+        .scenario-tabs-container {
+            background: linear-gradient(to right, #f0f9ff, #e0f2fe);
+            border-bottom: 1px solid #bae6fd;
+            padding: 0.75rem 2rem;
+        }
+        .scenario-tabs {
+            display: flex;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+        .scenario-tab {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0.75rem 1.25rem;
+            border: 2px solid #e0e7ff;
+            border-radius: 0.5rem;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            min-width: 140px;
+            position: relative;
+        }
+        .scenario-tab:hover {
+            border-color: #0da1c7;
+            box-shadow: 0 2px 8px rgba(13, 161, 199, 0.15);
+            transform: translateY(-1px);
+        }
+        .scenario-tab.active {
+            border-color: #0da1c7;
+            background: linear-gradient(to bottom, #f0fdfa, #ccfbf1);
+            box-shadow: 0 2px 8px rgba(13, 161, 199, 0.2);
+        }
+        .scenario-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -3px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60%;
+            height: 3px;
+            background: #0da1c7;
+            border-radius: 2px;
+        }
+        .scenario-tab .scenario-name {
+            font-weight: 700;
+            font-size: 0.875rem;
+            color: #1e293b;
+            margin-bottom: 0.25rem;
+        }
+        .scenario-tab.active .scenario-name {
+            color: #0e7490;
+        }
+        .scenario-tab .scenario-date {
+            font-size: 0.7rem;
+            color: #64748b;
+        }
+        .scenario-tab .scenario-approaches {
+            font-size: 0.625rem;
+            color: #94a3b8;
+            margin-top: 0.25rem;
+        }
+        .scenario-tab .scenario-badge {
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            width: 20px;
+            height: 20px;
+            background: #0da1c7;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transform: scale(0.5);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .scenario-tab.active .scenario-badge {
+            opacity: 1;
+            transform: scale(1);
+        }
+        .scenario-tab .scenario-badge svg {
+            width: 12px;
+            height: 12px;
+            color: white;
+        }
+        
+        /* Scenario Context Banner */
+        .scenario-context-banner {
+            background: linear-gradient(to right, #fef3c7, #fde68a);
+            border-left: 4px solid #f59e0b;
+            padding: 0.75rem 1rem;
+            border-radius: 0.375rem;
+            margin-bottom: 1rem;
+        }
+        .scenario-context-banner.as-is {
+            background: linear-gradient(to right, #dbeafe, #bfdbfe);
+            border-left-color: #3b82f6;
+        }
+        .scenario-context-banner.as-completed {
+            background: linear-gradient(to right, #d1fae5, #a7f3d0);
+            border-left-color: #10b981;
+        }
+        .scenario-context-banner.as-stabilized {
+            background: linear-gradient(to right, #ede9fe, #ddd6fe);
+            border-left-color: #8b5cf6;
+        }
+        .scenario-context-banner.as-proposed {
+            background: linear-gradient(to right, #fce7f3, #fbcfe8);
+            border-left-color: #ec4899;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Progress Bar -->
+    <div class="top-progress">
+        <div class="flex items-center justify-center gap-2">
+            <div class="phase-indicator cursor-pointer hover:opacity-80 transition-opacity" onclick="WizardNav.goToPage('template')">
+                <div class="phase-circle completed">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+                <span class="text-xs font-medium text-gray-600">Template</span>
+            </div>
+            <div class="phase-connector active"></div>
+            
+            <div class="phase-indicator cursor-pointer hover:opacity-80 transition-opacity" onclick="WizardNav.goToPage('setup')">
+                <div class="phase-circle completed">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+                <span class="text-xs font-medium text-gray-600">Setup</span>
+            </div>
+            <div class="phase-connector active"></div>
+            
+            <div class="phase-indicator cursor-pointer hover:opacity-80 transition-opacity" onclick="WizardNav.goToPage('subject')">
+                <div class="phase-circle completed">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+                <span class="text-xs font-medium text-gray-600">Subject Data</span>
+            </div>
+            <div class="phase-connector active"></div>
+            
+            <div class="phase-indicator cursor-pointer hover:opacity-80 transition-opacity" onclick="WizardNav.goToPage('analysis')">
+                <div class="phase-circle active">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                </div>
+                <span class="text-xs font-semibold text-gray-900">Analysis</span>
+            </div>
+            <div class="phase-connector"></div>
+            
+            <div class="phase-indicator cursor-pointer hover:opacity-80 transition-opacity" onclick="WizardNav.goToPage('review')">
+                <div class="phase-circle inactive">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <span class="text-xs text-gray-500">Review</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header Section -->
+    <div class="wizard-header">
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="flex items-center gap-3 mb-1">
+                    <h1 class="text-2xl font-bold text-gray-900">Valuation Analysis</h1>
+                    <span class="status-badge">In Progress</span>
+                </div>
+                <p class="text-sm text-gray-600">Phase 4 of 5 • Valuation Approaches</p>
+            </div>
+            
+            <!-- Center Controls -->
+            <div class="flex items-center gap-3">
+                <div class="flex items-center bg-gray-100 rounded-lg p-1">
+                    <button onclick="switchHelpMode('guidance')" id="header-tab-guidance" class="px-3 py-1.5 text-sm font-medium rounded-md bg-white text-gray-900 shadow-sm">
+                        Guidance
+                    </button>
+                    <button onclick="switchHelpMode('values')" id="header-tab-values" class="px-3 py-1.5 text-sm font-medium rounded-md text-gray-600">
+                        Values
+                    </button>
+                </div>
+                <button onclick="toggleFullScreen()" class="p-2 text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-50">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
+                </button>
+            </div>
+            
+            <!-- Right Action Buttons -->
+            <div class="flex items-center gap-3">
+                <button onclick="window.location.href='../super-admin-appraisals-list.html'" class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    Exit
+                </button>
+                <button class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+                    Save Draft
+                </button>
+                <button class="px-6 py-2 text-sm font-semibold text-white bg-harken-accent rounded-lg hover:bg-harken-accent-light flex items-center gap-2" onclick="WizardNav.goNext()">
+                    Continue
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Scenario Tabs -->
+    <div class="scenario-tabs-container" id="scenario-tabs-container">
+        <!-- Scenario tabs will be rendered by JavaScript -->
+    </div>
+
+    <!-- Wizard Layout -->
+    <div class="wizard-layout">
+        <!-- Left Sidebar -->
+        <aside id="left-sidebar" class="sidebar">
+            <button class="sidebar-toggle-btn" style="right: -0.75rem; top: 1rem;" onclick="toggleSidebar('left-sidebar')">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+            </button>
+            <div class="sidebar-content">
+                <div class="mb-6">
+                    <h2 class="text-lg font-bold text-gray-900">Valuation Analysis</h2>
+                    <p class="text-sm text-gray-500">3 Approaches Selected</p>
+                </div>
+                <nav class="space-y-1">
+                    <button onclick="switchTab('hbu')" id="nav-hbu" class="nav-item active">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"></path></svg>
+                        Highest & Best Use
+                    </button>
+                    <button onclick="switchTab('land')" id="nav-land" class="nav-item">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Land Valuation
+                    </button>
+                    <button onclick="switchTab('market')" id="nav-market" class="nav-item">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
+                        Market Analysis
+                    </button>
+                    <button onclick="switchTab('sales')" id="nav-sales" class="nav-item">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                        Sales Comparison
+                    </button>
+                    <button onclick="switchTab('income')" id="nav-income" class="nav-item">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Income Approach
+                    </button>
+                    <button onclick="switchTab('cost')" id="nav-cost" class="nav-item">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                        Cost Approach
+                    </button>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-area" id="content-area">
+                <!-- Content will be dynamically loaded here -->
+            </div>
+        </main>
+
+        <!-- Right Help Sidebar -->
+        <aside id="help-sidebar" class="help-sidebar">
+            <button class="sidebar-toggle-btn" style="left: -0.75rem; top: 1rem;" onclick="toggleSidebar('help-sidebar')">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </button>
+            <div class="help-content-wrapper" id="help-content">
+                <h3 class="text-lg font-bold text-gray-900 mb-3">Help & Guidance</h3>
+                <p class="text-sm text-gray-600">Select an approach to see specific guidance.</p>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div style="padding: 1.5rem 2rem; background: white; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-between;">
+        <button class="btn btn-outline" onclick="WizardNav.goPrevious()">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            Previous
+        </button>
+        <button class="btn btn-primary" onclick="WizardNav.goNext()">
+            Save & Continue
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+        </button>
+    </div>
+
+    <script src="assets/wizard-shared.js"></script>
+    <script src="assets/improvements-contract.js"></script>
+    <script src="analysis-content.js"></script>
+</body>
+</html>
+

@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subject Property Data - Harken Appraisal Wizard</title>
+    <link rel="stylesheet" href="assets/wizard-shared.css?v=20241218">
+    <link rel="stylesheet" href="assets/subject-data-styles.css?v=20241218">
+    <link rel="stylesheet" href="assets/enhanced-textarea.css?v=20241218">
+    <link rel="stylesheet" href="assets/expandable-selector.css?v=20241218">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="assets/enhanced-textarea.js?v=20241218"></script>
+    <script src="assets/expandable-selector.js?v=20241218"></script>
+    <style>
+        body { margin: 0; display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+        
+        /* Top Progress Bar */
+        .top-progress {
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 1rem 2rem;
+        }
+        .phase-indicator {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            position: relative;
+        }
+        .phase-circle {
+            width: 2.5rem;
+            height: 2.5rem;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 0.875rem;
+        }
+        .phase-circle.active {
+            background: #0da1c7;
+            color: white;
+        }
+        .phase-circle.inactive {
+            background: #e5e7eb;
+            color: #9ca3af;
+        }
+        .phase-circle.completed {
+            background: #10b981;
+            color: white;
+        }
+        .phase-connector {
+            width: 4rem;
+            height: 2px;
+            background: #e5e7eb;
+        }
+        .phase-connector.active {
+            background: #0da1c7;
+        }
+        
+        /* Header Section */
+        .wizard-header {
+            background: #f9fafb;
+            border-bottom: 1px solid #e5e7eb;
+            padding: 1.5rem 2rem;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 600;
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        
+        /* Layout */
+        .wizard-layout { display: flex; flex: 1; overflow: hidden; }
+        .sidebar { width: 17rem; background: white; border-right: 1px solid #e5e7eb; overflow-y: auto; flex-shrink: 0; transition: all 0.3s; position: relative; }
+        .sidebar.collapsed { width: 0; overflow: hidden; }
+        .sidebar-content { padding: 1.5rem; }
+        
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: white; }
+        .content-area { flex: 1; overflow-y: auto; padding: 2rem; background: white; }
+        
+        .help-sidebar { width: 20rem; background: white; border-left: 1px solid #e5e7eb; overflow-y: auto; flex-shrink: 0; transition: all 0.3s; display: flex; flex-direction: column; position: relative; }
+        .help-sidebar.collapsed { width: 0; overflow: hidden; }
+        .help-content-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.5rem;
+        }
+        
+        /* Sidebar Toggle */
+        .sidebar-toggle-btn {
+            position: absolute;
+            background: white;
+            border: 1px solid #e5e7eb;
+            border-radius: 50%;
+            padding: 0.25rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            z-index: 50;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .sidebar-toggle-btn:hover { background: #f3f4f6; }
+        .sidebar-toggle-btn svg { width: 1rem; height: 1rem; transition: transform 0.3s; }
+        
+        /* Nav Items */
+        .nav-item {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            color: #4b5563;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+            background: transparent;
+            width: 100%;
+            text-align: left;
+        }
+        .nav-item:hover {
+            background: #f3f4f6;
+        }
+        .nav-item.active {
+            background: rgba(13, 161, 199, 0.1);
+            color: #0da1c7;
+            font-weight: 500;
+        }
+        .nav-item svg {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Progress Bar -->
+    <div class="top-progress">
+        <div class="flex items-center justify-center gap-2">
+            <div class="phase-indicator cursor-pointer hover:opacity-80 transition-opacity" onclick="WizardNav.goToPage('template')">
+                <div class="phase-circle completed">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+                <span class="text-xs font-medium text-gray-600">Template</span>
+            </div>
+            <div class="phase-connector active"></div>
+            
+            <div class="phase-indicator cursor-pointer hover:opacity-80 transition-opacity" onclick="WizardNav.goToPage('setup')">
+                <div class="phase-circle completed">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>
+                </div>
+                <span class="text-xs font-medium text-gray-600">Setup</span>
+            </div>
+            <div class="phase-connector active"></div>
+            
+            <div class="phase-indicator cursor-pointer hover:opacity-80 transition-opacity" onclick="WizardNav.goToPage('subject')">
+                <div class="phase-circle active">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                </div>
+                <span class="text-xs font-semibold text-gray-900">Subject Data</span>
+            </div>
+            <div class="phase-connector"></div>
+            
+            <div class="phase-indicator cursor-pointer hover:opacity-80 transition-opacity" onclick="WizardNav.goToPage('analysis')">
+                <div class="phase-circle inactive">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                </div>
+                <span class="text-xs text-gray-500">Analysis</span>
+            </div>
+            <div class="phase-connector"></div>
+            
+            <div class="phase-indicator cursor-pointer hover:opacity-80 transition-opacity" onclick="WizardNav.goToPage('review')">
+                <div class="phase-circle inactive">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                </div>
+                <span class="text-xs text-gray-500">Review</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header Section -->
+    <div class="wizard-header">
+        <div class="flex items-center justify-between">
+            <div>
+                <div class="flex items-center gap-3 mb-1">
+                    <h1 class="text-2xl font-bold text-gray-900">Subject Property Data</h1>
+                    <span class="status-badge">In Progress</span>
+                </div>
+                <p class="text-sm text-gray-600">Phase 3 of 5 • Detailed Property Information</p>
+            </div>
+            
+            <!-- Center Controls -->
+            <div class="flex items-center gap-3">
+                <!-- Guidance/Values Toggle -->
+                <div class="flex items-center bg-gray-100 rounded-lg p-1">
+                    <button onclick="switchHelpMode('guidance')" id="header-tab-guidance" class="px-3 py-1.5 text-sm font-medium rounded-md bg-white text-gray-900 shadow-sm">
+                        Guidance
+                    </button>
+                    <button onclick="switchHelpMode('values')" id="header-tab-values" class="px-3 py-1.5 text-sm font-medium rounded-md text-gray-600">
+                        Values
+                    </button>
+                </div>
+                <!-- Full Screen Toggle -->
+                <button onclick="toggleFullScreen()" class="p-2 text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-50">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
+                </button>
+            </div>
+            
+            <!-- Right Action Buttons -->
+            <div class="flex items-center gap-3">
+                <button onclick="window.location.href='../super-admin-appraisals-list.html'" class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    Exit
+                </button>
+                <button class="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path></svg>
+                    Save Draft
+                </button>
+                <button class="px-6 py-2 text-sm font-semibold text-white bg-harken-accent rounded-lg hover:bg-harken-accent-light flex items-center gap-2" onclick="WizardNav.goNext()">
+                    Continue
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Wizard Layout -->
+    <div class="wizard-layout">
+        <!-- Left Sidebar -->
+        <aside id="left-sidebar" class="sidebar">
+            <button class="sidebar-toggle-btn" style="right: -0.75rem; top: 1rem;" onclick="toggleSidebar('left-sidebar')">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+                </svg>
+            </button>
+            <div class="sidebar-content">
+                <div class="mb-6">
+                    <h2 class="text-lg font-bold text-gray-900">Subject Property</h2>
+                    <p class="text-sm text-gray-500">Commercial • Industrial</p>
+                </div>
+                <nav class="space-y-1">
+                    <button onclick="switchTab('location')" id="nav-location" class="nav-item active">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        Location & Area
+                    </button>
+                    <button onclick="switchTab('site')" id="nav-site" class="nav-item">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        Site Details
+                    </button>
+                    <button onclick="switchTab('improvements')" id="nav-improvements" class="nav-item">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                        Improvements
+                    </button>
+                    <button onclick="switchTab('tax')" id="nav-tax" class="nav-item">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+                        Tax & Ownership
+                    </button>
+                    <button onclick="switchTab('photos')" id="nav-photos" class="nav-item">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"></path></svg>
+                        Photos & Maps
+                    </button>
+                    <button onclick="switchTab('exhibits')" id="nav-exhibits" class="nav-item">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                        Exhibits & Docs
+                    </button>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <div class="content-area" id="content-area">
+                <!-- Content will be dynamically loaded here -->
+            </div>
+        </main>
+
+        <!-- Right Help Sidebar -->
+        <aside id="help-sidebar" class="help-sidebar">
+            <button class="sidebar-toggle-btn" style="left: -0.75rem; top: 1rem;" onclick="toggleSidebar('help-sidebar')">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </button>
+            <div class="help-content-wrapper" id="help-content">
+                <h3 class="text-lg font-bold text-gray-900 mb-3">Help & Guidance</h3>
+                <p class="text-sm text-gray-600">Navigate through the tabs to enter subject property details.</p>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Bottom Navigation -->
+    <div style="padding: 1.5rem 2rem; background: white; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-between;">
+        <button class="btn btn-outline" onclick="WizardNav.goPrevious()">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+            Previous
+        </button>
+        <button class="btn btn-primary" onclick="WizardNav.goNext()">
+            Save & Continue
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+        </button>
+    </div>
+
+    <script src="assets/wizard-shared.js"></script>
+    <script src="assets/improvements-contract.js"></script>
+    <script src="subject-data-content.js"></script>
+</body>
+</html>
+
