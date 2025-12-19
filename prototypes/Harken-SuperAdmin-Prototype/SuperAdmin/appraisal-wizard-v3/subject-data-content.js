@@ -1628,15 +1628,29 @@ function switchHelpMode(mode) {
 }
 
 function toggleFullScreen() {
+    const body = document.body;
     const leftSidebar = document.getElementById('left-sidebar');
     const helpSidebar = document.getElementById('help-sidebar');
+    const isFullscreen = body.classList.toggle('wizard-fullscreen');
     
-    if (leftSidebar.classList.contains('collapsed')) {
-        leftSidebar.classList.remove('collapsed');
-        helpSidebar.classList.remove('collapsed');
-    } else {
+    // Toggle sidebars
+    if (isFullscreen) {
         leftSidebar.classList.add('collapsed');
         helpSidebar.classList.add('collapsed');
+    } else {
+        leftSidebar.classList.remove('collapsed');
+        helpSidebar.classList.remove('collapsed');
+    }
+    
+    // Persist state
+    if (typeof WizardState !== 'undefined') {
+        WizardState.set('isFullscreen', isFullscreen);
+    }
+    
+    // Update button title
+    const toggleBtn = document.querySelector('.fullscreen-toggle-btn');
+    if (toggleBtn) {
+        toggleBtn.setAttribute('title', isFullscreen ? 'Exit Full Screen' : 'Enter Full Screen');
     }
 }
 

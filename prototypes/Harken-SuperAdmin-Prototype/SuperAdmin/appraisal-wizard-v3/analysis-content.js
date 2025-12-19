@@ -2012,20 +2012,32 @@ function switchHelpMode(mode) {
 }
 
 function toggleFullScreen() {
+    const body = document.body;
     const leftSidebar = document.getElementById('left-sidebar');
     const helpSidebar = document.getElementById('help-sidebar');
     const gridContainer = document.getElementById('sales-grid-container');
+    const isFullscreen = body.classList.toggle('wizard-fullscreen');
     
-    if (leftSidebar.classList.contains('collapsed')) {
-        // Exit full screen
-        leftSidebar.classList.remove('collapsed');
-        helpSidebar.classList.remove('collapsed');
-        if (gridContainer) gridContainer.classList.remove('fullscreen');
-    } else {
-        // Enter full screen
+    // Toggle sidebars
+    if (isFullscreen) {
         leftSidebar.classList.add('collapsed');
         helpSidebar.classList.add('collapsed');
         if (gridContainer) gridContainer.classList.add('fullscreen');
+    } else {
+        leftSidebar.classList.remove('collapsed');
+        helpSidebar.classList.remove('collapsed');
+        if (gridContainer) gridContainer.classList.remove('fullscreen');
+    }
+    
+    // Persist state
+    if (typeof WizardState !== 'undefined') {
+        WizardState.set('isFullscreen', isFullscreen);
+    }
+    
+    // Update button title
+    const toggleBtn = document.querySelector('.fullscreen-toggle-btn');
+    if (toggleBtn) {
+        toggleBtn.setAttribute('title', isFullscreen ? 'Exit Full Screen' : 'Enter Full Screen');
     }
 }
 
