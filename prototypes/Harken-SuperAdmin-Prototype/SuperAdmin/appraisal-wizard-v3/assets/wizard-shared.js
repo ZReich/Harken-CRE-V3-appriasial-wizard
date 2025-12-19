@@ -262,10 +262,13 @@ const WizardNav = {
 function toggleSidebar(sidebarId) {
     const sidebar = document.getElementById(sidebarId);
     if (sidebar) {
+        const isCollapsing = !sidebar.classList.contains('collapsed');
         sidebar.classList.toggle('collapsed');
-        const content = sidebar.querySelector('.sidebar-content');
-        if (content) {
-            content.classList.toggle('hidden');
+        
+        // Also toggle the external toggle button's collapsed state
+        const toggleBtn = document.getElementById(sidebarId + '-toggle');
+        if (toggleBtn) {
+            toggleBtn.classList.toggle('collapsed', isCollapsing);
         }
     }
 }

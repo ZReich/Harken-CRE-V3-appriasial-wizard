@@ -122,20 +122,20 @@
             padding: 1.5rem;
         }
         
-        /* Sidebar Toggle Buttons */
+        /* Sidebar Toggle Buttons - Fixed position relative to viewport */
         .sidebar-toggle-btn {
-            position: absolute;
-            top: 1rem;
+            position: fixed;
+            top: 50%;
+            transform: translateY(-50%);
             background: #0da1c7;
             color: white;
             border: none;
-            border-radius: 0 6px 6px 0;
             width: 24px;
-            height: 48px;
-            box-shadow: 2px 0 8px rgba(0,0,0,0.15);
-            z-index: 100;
+            height: 56px;
+            box-shadow: 2px 0 8px rgba(0,0,0,0.2);
+            z-index: 1000;
             cursor: pointer;
-            transition: all 0.3s ease;
+            transition: all 0.2s ease;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -150,27 +150,28 @@
             transition: transform 0.3s; 
         }
         
-        /* Left sidebar toggle - positioned on right edge */
-        .sidebar .sidebar-toggle-btn {
-            right: -24px;
+        /* Left toggle - on left edge */
+        .sidebar-toggle-btn.left-toggle {
+            left: 17rem; /* matches sidebar width */
+            border-radius: 0 6px 6px 0;
         }
-        .sidebar.collapsed .sidebar-toggle-btn {
-            right: -24px;
+        .sidebar-toggle-btn.left-toggle.collapsed {
+            left: 0;
         }
-        .sidebar.collapsed .sidebar-toggle-btn svg { 
+        .sidebar-toggle-btn.left-toggle.collapsed svg { 
             transform: rotate(180deg); 
         }
         
-        /* Right sidebar toggle - positioned on left edge */
-        .help-sidebar .sidebar-toggle-btn {
-            left: -24px;
+        /* Right toggle - on right edge */
+        .sidebar-toggle-btn.right-toggle {
+            right: 20rem; /* matches help-sidebar width */
             border-radius: 6px 0 0 6px;
-            box-shadow: -2px 0 8px rgba(0,0,0,0.15);
+            box-shadow: -2px 0 8px rgba(0,0,0,0.2);
         }
-        .help-sidebar.collapsed .sidebar-toggle-btn {
-            left: -24px;
+        .sidebar-toggle-btn.right-toggle.collapsed {
+            right: 0;
         }
-        .help-sidebar.collapsed .sidebar-toggle-btn svg { 
+        .sidebar-toggle-btn.right-toggle.collapsed svg { 
             transform: rotate(180deg); 
         }
         
@@ -298,13 +299,15 @@
 
     <!-- Wizard Layout -->
     <div class="wizard-layout">
+        <!-- Left Sidebar Toggle (outside sidebar for visibility) -->
+        <button id="left-sidebar-toggle" class="sidebar-toggle-btn left-toggle" onclick="toggleSidebar('left-sidebar')">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
+            </svg>
+        </button>
+        
         <!-- Left Sidebar -->
         <aside id="left-sidebar" class="sidebar">
-            <button class="sidebar-toggle-btn" onclick="toggleSidebar('left-sidebar')">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
-                </svg>
-            </button>
             <div class="sidebar-content">
                 <div class="mb-6">
                     <h2 class="text-lg font-bold text-gray-900">Subject Property</h2>
@@ -348,16 +351,18 @@
 
         <!-- Right Help Sidebar -->
         <aside id="help-sidebar" class="help-sidebar">
-            <button class="sidebar-toggle-btn" onclick="toggleSidebar('help-sidebar')">
-                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
-                </svg>
-            </button>
             <div class="help-content-wrapper" id="help-content">
                 <h3 class="text-lg font-bold text-gray-900 mb-3">Help & Guidance</h3>
                 <p class="text-sm text-gray-600">Navigate through the tabs to enter subject property details.</p>
             </div>
         </aside>
+        
+        <!-- Right Sidebar Toggle (outside sidebar for visibility) -->
+        <button id="help-sidebar-toggle" class="sidebar-toggle-btn right-toggle" onclick="toggleSidebar('help-sidebar')">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+            </svg>
+        </button>
     </div>
 
     <script src="assets/wizard-shared.js"></script>
