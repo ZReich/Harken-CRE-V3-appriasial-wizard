@@ -617,11 +617,55 @@ function toggleButtonState(button) {
 // Make toggle function globally accessible
 window.toggleButtonState = toggleButtonState;
 
+// =================================================================
+// FULLSCREEN MODE
+// =================================================================
+
+/**
+ * Toggle fullscreen mode for the wizard
+ * Hides progress stepper, collapses header to single line, hides bottom nav
+ */
+function toggleFullScreen() {
+    const body = document.body;
+    const isFullscreen = body.classList.toggle('wizard-fullscreen');
+    
+    // Store state in WizardState for persistence across page navigations
+    WizardState.set('isFullscreen', isFullscreen);
+    
+    // Update the toggle button icon if needed
+    const toggleBtn = document.querySelector('.fullscreen-toggle-btn');
+    if (toggleBtn) {
+        toggleBtn.setAttribute('title', isFullscreen ? 'Exit Full Screen' : 'Enter Full Screen');
+    }
+    
+    console.log('Fullscreen mode:', isFullscreen ? 'ON' : 'OFF');
+}
+
+/**
+ * Initialize fullscreen state from WizardState on page load
+ */
+function initFullscreenState() {
+    const isFullscreen = WizardState.get('isFullscreen');
+    if (isFullscreen) {
+        document.body.classList.add('wizard-fullscreen');
+        const toggleBtn = document.querySelector('.fullscreen-toggle-btn');
+        if (toggleBtn) {
+            toggleBtn.setAttribute('title', 'Exit Full Screen');
+        }
+    }
+}
+
+// Initialize fullscreen state on DOMContentLoaded
+document.addEventListener('DOMContentLoaded', function() {
+    initFullscreenState();
+});
+
 // Export for use in other scripts
 window.WizardState = WizardState;
 window.WizardNav = WizardNav;
 window.ScenarioManager = ScenarioManager;
 window.toggleSidebar = toggleSidebar;
+window.toggleFullScreen = toggleFullScreen;
 window.renderField = renderField;
 window.formatCurrency = formatCurrency;
 window.deepClone = deepClone;

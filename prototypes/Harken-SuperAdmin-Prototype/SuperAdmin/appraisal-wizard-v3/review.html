@@ -197,6 +197,15 @@
                 <p class="text-sm text-gray-600">Phase 5 of 5 • Final Review & Reconciliation</p>
             </div>
             
+            <!-- Center Controls -->
+            <div class="flex items-center gap-3">
+                <!-- Full Screen Toggle -->
+                <button onclick="toggleFullScreen()" class="fullscreen-toggle-btn p-2 text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-50" title="Enter Full Screen">
+                    <svg class="expand-icon w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8V4m0 0h4M4 4l5 5m11-1V4m0 0h-4m4 0l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"></path></svg>
+                    <svg class="collapse-icon w-5 h-5 hidden" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 9V4.5M9 9H4.5M9 9L3.75 3.75M9 15v4.5M9 15H4.5M9 15l-5.25 5.25M15 9h4.5M15 9V4.5M15 9l5.25-5.25M15 15h4.5M15 15v4.5m0-4.5l5.25 5.25"></path></svg>
+                </button>
+            </div>
+            
             <!-- Right Action Buttons -->
             <div class="flex items-center gap-3">
                 <button onclick="window.location.href='../super-admin-appraisals-list.html'" class="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 flex items-center gap-2">
@@ -619,7 +628,7 @@
     </main>
 
     <!-- Bottom Navigation -->
-    <div style="padding: 1.5rem 2rem; background: white; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-between;">
+    <div class="wizard-bottom-nav" style="padding: 1.5rem 2rem; background: white; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-between;">
         <button class="btn btn-outline" onclick="WizardNav.goPrevious()">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path>
