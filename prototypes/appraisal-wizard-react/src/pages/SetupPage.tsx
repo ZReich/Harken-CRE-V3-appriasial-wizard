@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import WizardLayout from '../components/WizardLayout';
 import EnhancedTextArea from '../components/EnhancedTextArea';
 import { useWizard } from '../context/WizardContext';
-import { Trash2, Plus, Lock, Unlock } from 'lucide-react';
+import { Trash2, Plus, Lock } from 'lucide-react';
 import {
   ClipboardCheckIcon,
   ScaleIcon,
@@ -279,7 +279,7 @@ const scenarioNameOptions = [
 // MAIN COMPONENT
 // ==========================================
 export default function SetupPage() {
-  const { state: wizardState, addOwner, updateOwner, removeOwner, getExtractedField } = useWizard();
+  const { state: wizardState, addOwner, updateOwner, removeOwner } = useWizard();
   const [activeTab, setActiveTab] = useState('basics');
   
   // Track which fields are locked (pre-filled from extraction)

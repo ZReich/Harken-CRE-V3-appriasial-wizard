@@ -39,45 +39,7 @@ interface AIPreview {
   isVisible: boolean;
 }
 
-// ==========================================
-// AI PROMPT TEMPLATES
-// ==========================================
-const AIPromptTemplates: Record<string, { system: string; prompt: string }> = {
-  'legal_description': {
-    system: 'You are a professional real estate appraiser. Generate a properly formatted legal description based on the provided information.',
-    prompt: 'Generate a professional legal description for a property.'
-  },
-  'area_description': {
-    system: 'You are a professional real estate appraiser writing market area descriptions.',
-    prompt: 'Write a professional general area description for an appraisal report.'
-  },
-  'neighborhood_characteristics': {
-    system: 'You are a professional real estate appraiser describing neighborhood characteristics.',
-    prompt: 'Write a detailed neighborhood characteristics description.'
-  },
-  'site_description': {
-    system: 'You are a professional real estate appraiser describing property sites.',
-    prompt: 'Write a professional site description for an appraisal report.'
-  },
-  'improvement_description': {
-    system: 'You are a professional real estate appraiser describing property improvements.',
-    prompt: 'Write a detailed improvement description for an appraisal report.'
-  },
-  'hbu_analysis': {
-    system: 'You are a professional real estate appraiser conducting highest and best use analysis.',
-    prompt: 'Write a highest and best use analysis considering the four tests.'
-  },
-  'reconciliation': {
-    system: 'You are a professional real estate appraiser writing value reconciliation narratives.',
-    prompt: 'Write a professional reconciliation narrative.'
-  },
-  'default': {
-    system: 'You are a professional real estate appraiser writing content for an appraisal report.',
-    prompt: 'Write professional appraisal content for this section.'
-  }
-};
-
-// Simulated AI responses for demo
+// Simulated AI responses for demo (templates reserved for future API integration)
 const SimulatedAIDrafts: Record<string, string> = {
   'legal_description': 'Lot 12, Block 4, of CANYON CREEK INDUSTRIAL PARK, according to the plat thereof, filed in Plat Book 45, at Page 123, records of Yellowstone County, Montana, located in the Southeast Quarter of Section 15, Township 1 South, Range 26 East, Principal Meridian, Montana.',
   'area_description': 'The subject property is located in the Billings Heights area of Billings, Montana, an established commercial and industrial corridor along South 30th Street West. The immediate neighborhood is characterized by a mix of light industrial, warehouse, and commercial uses. The area benefits from excellent access to Interstate 90 and major arterial roads. The local economy is diverse, supported by agriculture, energy, healthcare, and manufacturing sectors.',
