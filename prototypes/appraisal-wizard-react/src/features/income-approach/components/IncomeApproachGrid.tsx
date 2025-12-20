@@ -21,7 +21,7 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
   showGuidancePanel = true
 }) => {
   // --- State ---
-  const [showGuidance, setShowGuidance] = useState(true);
+  const [showGuidance] = useState(true);
   const [scenario, setScenario] = useState<ValuationScenario>(initialData?.scenario || 'as-stabilized');
 
   const [propertyMeta, setPropertyMeta] = useState<PropertyMeta>(

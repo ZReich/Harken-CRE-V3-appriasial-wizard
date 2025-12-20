@@ -27,7 +27,7 @@ export const FinancialChart: React.FC<Props> = ({ summary }) => {
           <Tooltip 
             cursor={{ fill: 'transparent' }}
             contentStyle={{ borderRadius: '8px', border: '1px solid #e2e8f0', boxShadow: '0 4px 6px -1px rgb(0 0 0 / 0.1)' }}
-            formatter={(value: number) => [`$${Math.abs(value).toLocaleString()}`, 'Amount']}
+            formatter={(value) => [`$${Math.abs(value ?? 0).toLocaleString()}`, 'Amount']}
           />
           <ReferenceLine y={0} stroke="#cbd5e1" />
           <Bar dataKey="value" radius={[4, 4, 4, 4]}>
