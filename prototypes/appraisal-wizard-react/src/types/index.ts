@@ -19,26 +19,26 @@ export interface HeightZone {
 }
 
 export interface ExteriorFeatures {
-  foundation?: string;
-  roof?: string;
-  walls?: string;
-  windows?: string;
+  foundation?: string[];
+  roof?: string[];
+  walls?: string[];
+  windows?: string[];
   description?: string;
 }
 
 export interface InteriorFeatures {
-  ceilings?: string;
-  flooring?: string;
-  walls?: string;
+  ceilings?: string[];
+  flooring?: string[];
+  walls?: string[];
   description?: string;
 }
 
 export interface MechanicalSystems {
-  electrical?: string;
-  heating?: string;
-  cooling?: string;
-  sprinkler?: string;
-  elevators?: string;
+  electrical?: string[];
+  heating?: string[];
+  cooling?: string[];
+  sprinkler?: string[];
+  elevators?: string[];
   description?: string;
 }
 
@@ -91,6 +91,47 @@ export interface ImprovementsInventory {
   parcels: ImprovementParcel[];
 }
 
+// =================================================================
+// DOCUMENT EXTRACTION TYPES
+// =================================================================
+
+export interface ExtractedField {
+  value: string;
+  confidence: number;
+  edited?: boolean;
+  source?: string;
+}
+
+export interface ExtractedData {
+  [key: string]: ExtractedField;
+}
+
+export interface UploadedDocument {
+  id: string;
+  name: string;
+  size: number;
+  type: string;
+  slotId: string;
+  status: 'pending' | 'processing' | 'extracted' | 'error';
+  extractedData?: ExtractedData;
+  includeInReport?: boolean;
+}
+
+// =================================================================
+// OWNER TYPES
+// =================================================================
+
+export interface Owner {
+  id: string;
+  name: string;
+  ownershipType: 'individual' | 'corporation' | 'llc' | 'partnership' | 'trust' | 'government' | 'other';
+  percentage: number;
+}
+
+// =================================================================
+// WIZARD STATE
+// =================================================================
+
 export interface WizardState {
   // Template & Property
   template: string | null;
@@ -103,6 +144,13 @@ export interface WizardState {
   
   // Improvements
   improvementsInventory: ImprovementsInventory;
+  
+  // Extracted Document Data
+  extractedData: Record<string, ExtractedData>;
+  uploadedDocuments: UploadedDocument[];
+  
+  // Owners
+  owners: Owner[];
   
   // Navigation
   currentPage: string;
@@ -121,6 +169,15 @@ export type WizardAction =
   | { type: 'UPDATE_SCENARIO'; payload: Partial<AppraisalScenario> & { id: number } }
   | { type: 'SET_ACTIVE_SCENARIO'; payload: number }
   | { type: 'SET_IMPROVEMENTS_INVENTORY'; payload: ImprovementsInventory }
+  | { type: 'SET_EXTRACTED_DATA'; payload: { slotId: string; data: ExtractedData } }
+  | { type: 'SET_ALL_EXTRACTED_DATA'; payload: Record<string, ExtractedData> }
+  | { type: 'ADD_UPLOADED_DOCUMENT'; payload: UploadedDocument }
+  | { type: 'UPDATE_UPLOADED_DOCUMENT'; payload: { id: string; updates: Partial<UploadedDocument> } }
+  | { type: 'REMOVE_UPLOADED_DOCUMENT'; payload: string }
+  | { type: 'ADD_OWNER'; payload: Owner }
+  | { type: 'UPDATE_OWNER'; payload: { id: string; updates: Partial<Owner> } }
+  | { type: 'REMOVE_OWNER'; payload: string }
+  | { type: 'SET_OWNERS'; payload: Owner[] }
   | { type: 'SET_CURRENT_PAGE'; payload: string }
   | { type: 'SET_SUBJECT_TAB'; payload: string }
   | { type: 'TOGGLE_FULLSCREEN' }

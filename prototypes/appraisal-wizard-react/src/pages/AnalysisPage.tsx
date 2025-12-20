@@ -93,8 +93,8 @@ export default function AnalysisPage() {
   return (
     <WizardLayout
       title="Valuation Analysis"
-      subtitle="Phase 4 of 5 • Valuation Approaches"
-      phase={4}
+      subtitle="Phase 5 of 6 • Valuation Approaches"
+      phase={5}
       sidebar={isSalesComparison ? undefined : sidebar}
       helpSidebar={isSalesComparison ? undefined : helpSidebar}
       noPadding={isSalesComparison}

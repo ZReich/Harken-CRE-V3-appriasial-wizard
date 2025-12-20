@@ -34,6 +34,7 @@ export default function WizardLayout({
 
   const pages = [
     { path: '/template', label: 'Template' },
+    { path: '/document-intake', label: 'Documents' },
     { path: '/setup', label: 'Setup' },
     { path: '/subject-data', label: 'Subject Data' },
     { path: '/analysis', label: 'Analysis' },
@@ -65,7 +66,7 @@ export default function WizardLayout({
   }, [state.isFullscreen]);
 
   const handleNext = () => {
-    if (phase < 5) {
+    if (phase < 6) {
       navigate(pages[phase].path);
     }
   };

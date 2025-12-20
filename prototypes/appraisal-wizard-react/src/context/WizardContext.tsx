@@ -1,5 +1,5 @@
 import { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
-import type { WizardState, WizardAction, ImprovementsInventory } from '../types';
+import type { WizardState, WizardAction, ImprovementsInventory, Owner, ExtractedData, UploadedDocument } from '../types';
 import { createDefaultInventory } from '../contracts/improvements';
 
 // =================================================================
@@ -26,6 +26,11 @@ const getInitialState = (): WizardState => {
     ],
     activeScenarioId: 1,
     improvementsInventory: createDefaultInventory(),
+    extractedData: {},
+    uploadedDocuments: [],
+    owners: [
+      { id: 'owner_1', name: '', ownershipType: 'individual', percentage: 100 }
+    ],
     currentPage: 'template',
     subjectActiveTab: 'location',
     isFullscreen: false,
@@ -73,6 +78,64 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
       case 'SET_IMPROVEMENTS_INVENTORY':
         return { ...state, improvementsInventory: action.payload };
 
+      case 'SET_EXTRACTED_DATA':
+        return {
+          ...state,
+          extractedData: {
+            ...state.extractedData,
+            [action.payload.slotId]: {
+              ...state.extractedData[action.payload.slotId],
+              ...action.payload.data,
+            },
+          },
+        };
+
+      case 'SET_ALL_EXTRACTED_DATA':
+        return { ...state, extractedData: action.payload };
+
+      case 'ADD_UPLOADED_DOCUMENT':
+        return {
+          ...state,
+          uploadedDocuments: [...state.uploadedDocuments, action.payload],
+        };
+
+      case 'UPDATE_UPLOADED_DOCUMENT':
+        return {
+          ...state,
+          uploadedDocuments: state.uploadedDocuments.map(doc =>
+            doc.id === action.payload.id ? { ...doc, ...action.payload.updates } : doc
+          ),
+        };
+
+      case 'REMOVE_UPLOADED_DOCUMENT':
+        return {
+          ...state,
+          uploadedDocuments: state.uploadedDocuments.filter(doc => doc.id !== action.payload),
+        };
+
+      case 'ADD_OWNER':
+        return {
+          ...state,
+          owners: [...state.owners, action.payload],
+        };
+
+      case 'UPDATE_OWNER':
+        return {
+          ...state,
+          owners: state.owners.map(owner =>
+            owner.id === action.payload.id ? { ...owner, ...action.payload.updates } : owner
+          ),
+        };
+
+      case 'REMOVE_OWNER':
+        return {
+          ...state,
+          owners: state.owners.filter(owner => owner.id !== action.payload),
+        };
+
+      case 'SET_OWNERS':
+        return { ...state, owners: action.payload };
+
       case 'SET_CURRENT_PAGE':
         return { ...state, currentPage: action.payload };
 
@@ -108,6 +171,16 @@ interface WizardContextValue {
   setImprovementsInventory: (inventory: ImprovementsInventory) => void;
   toggleFullscreen: () => void;
   goToPage: (page: string) => void;
+  
+  // Document extraction helpers
+  setExtractedData: (slotId: string, data: ExtractedData) => void;
+  getExtractedField: (slotId: string, field: string) => string | undefined;
+  addUploadedDocument: (doc: UploadedDocument) => void;
+  
+  // Owner management helpers
+  addOwner: () => void;
+  updateOwner: (id: string, updates: Partial<Owner>) => void;
+  removeOwner: (id: string) => void;
 }
 
 const WizardContext = createContext<WizardContextValue | null>(null);
@@ -145,6 +218,55 @@ export function WizardProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'SET_CURRENT_PAGE', payload: page });
   };
 
+  // Document extraction helpers
+  const setExtractedData = (slotId: string, data: ExtractedData) => {
+    dispatch({ type: 'SET_EXTRACTED_DATA', payload: { slotId, data } });
+  };
+
+  const getExtractedField = (slotId: string, field: string): string | undefined => {
+    return state.extractedData[slotId]?.[field]?.value;
+  };
+
+  const addUploadedDocument = (doc: UploadedDocument) => {
+    dispatch({ type: 'ADD_UPLOADED_DOCUMENT', payload: doc });
+  };
+
+  // Owner management helpers
+  const addOwner = () => {
+    const newOwner: Owner = {
+      id: `owner_${Date.now()}`,
+      name: '',
+      ownershipType: 'individual',
+      percentage: 0,
+    };
+    
+    // Recalculate percentages
+    const currentOwners = state.owners;
+    if (currentOwners.length === 1 && currentOwners[0].percentage === 100) {
+      // Split 50/50
+      dispatch({ type: 'UPDATE_OWNER', payload: { id: currentOwners[0].id, updates: { percentage: 50 } } });
+      newOwner.percentage = 50;
+    }
+    
+    dispatch({ type: 'ADD_OWNER', payload: newOwner });
+  };
+
+  const updateOwner = (id: string, updates: Partial<Owner>) => {
+    dispatch({ type: 'UPDATE_OWNER', payload: { id, updates } });
+  };
+
+  const removeOwner = (id: string) => {
+    if (state.owners.length <= 1) return;
+    
+    dispatch({ type: 'REMOVE_OWNER', payload: id });
+    
+    // If only one owner left, set percentage to 100
+    const remainingOwners = state.owners.filter(o => o.id !== id);
+    if (remainingOwners.length === 1) {
+      dispatch({ type: 'UPDATE_OWNER', payload: { id: remainingOwners[0].id, updates: { percentage: 100 } } });
+    }
+  };
+
   return (
     <WizardContext.Provider
       value={{
@@ -155,6 +277,12 @@ export function WizardProvider({ children }: { children: ReactNode }) {
         setImprovementsInventory,
         toggleFullscreen,
         goToPage,
+        setExtractedData,
+        getExtractedField,
+        addUploadedDocument,
+        addOwner,
+        updateOwner,
+        removeOwner,
       }}
     >
       {children}

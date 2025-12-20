@@ -1,5 +1,8 @@
 import { useState, useEffect } from 'react';
 import WizardLayout from '../components/WizardLayout';
+import EnhancedTextArea from '../components/EnhancedTextArea';
+import { useWizard } from '../context/WizardContext';
+import { Trash2, Plus, Lock, Unlock } from 'lucide-react';
 import {
   ClipboardCheckIcon,
   ScaleIcon,
@@ -276,7 +279,11 @@ const scenarioNameOptions = [
 // MAIN COMPONENT
 // ==========================================
 export default function SetupPage() {
+  const { state: wizardState, addOwner, updateOwner, removeOwner, getExtractedField } = useWizard();
   const [activeTab, setActiveTab] = useState('basics');
+  
+  // Track which fields are locked (pre-filled from extraction)
+  const [lockedFields, setLockedFields] = useState<Record<string, boolean>>({});
   
   // Assignment context state
   const [context, setContext] = useState<AssignmentContext>({
@@ -291,18 +298,92 @@ export default function SetupPage() {
     intendedUsers: '',
   });
   
-  // Form field state
+  // Form field state - will be pre-filled from extraction
   const [address, setAddress] = useState({ street: '', city: '', state: '', zip: '', county: '' });
   const [dates, setDates] = useState({ reportDate: '', inspectionDate: '', effectiveDate: '' });
   
-  // Property ID state
+  // Property ID state - will be pre-filled from extraction
   const [propertyName, setPropertyName] = useState('');
   const [legalDescription, setLegalDescription] = useState('');
-  const [currentOwner, setCurrentOwner] = useState('');
   const [taxId, setTaxId] = useState('');
   const [lastSaleDate, setLastSaleDate] = useState('');
   const [lastSalePrice, setLastSalePrice] = useState('');
   const [salesHistory, setSalesHistory] = useState('');
+  
+  // Pre-fill from extracted data on mount
+  useEffect(() => {
+    // Check sessionStorage for extracted data (from DocumentIntakePage)
+    const storedExtracted = sessionStorage.getItem('harken_extracted_data');
+    if (storedExtracted) {
+      try {
+        const extracted = JSON.parse(storedExtracted);
+        const newLocks: Record<string, boolean> = {};
+        
+        // Pre-fill from cadastral data
+        if (extracted.cadastral) {
+          const cad = extracted.cadastral;
+          if (cad.propertyAddress?.value) {
+            // Parse address if it's a full string
+            const addrParts = cad.propertyAddress.value.split(',').map((s: string) => s.trim());
+            if (addrParts.length >= 3) {
+              setAddress({
+                street: addrParts[0] || '',
+                city: addrParts[1] || '',
+                state: addrParts[2]?.split(' ')[0] || '',
+                zip: addrParts[2]?.split(' ')[1] || '',
+                county: cad.county?.value || '',
+              });
+              newLocks['address'] = true;
+            }
+          }
+          if (cad.legalDescription?.value) {
+            setLegalDescription(cad.legalDescription.value);
+            newLocks['legalDescription'] = true;
+          }
+          if (cad.taxId?.value) {
+            setTaxId(cad.taxId.value);
+            newLocks['taxId'] = true;
+          }
+          if (cad.owner?.value && wizardState.owners.length > 0) {
+            updateOwner(wizardState.owners[0].id, { name: cad.owner.value });
+            newLocks['owner'] = true;
+          }
+          if (cad.landArea?.value) {
+            setPropertyName(cad.landArea.value);
+          }
+        }
+        
+        // Pre-fill from engagement letter
+        if (extracted.engagement) {
+          const eng = extracted.engagement;
+          if (eng.effectiveDate?.value) {
+            setDates(prev => ({ ...prev, effectiveDate: eng.effectiveDate.value }));
+            newLocks['effectiveDate'] = true;
+          }
+          if (eng.appraisalPurpose?.value) {
+            // Could map to appraisalPurpose context
+          }
+        }
+        
+        // Pre-fill from sale agreement
+        if (extracted.sale) {
+          const sale = extracted.sale;
+          if (sale.saleDate?.value) {
+            setLastSaleDate(sale.saleDate.value);
+            newLocks['lastSaleDate'] = true;
+          }
+          if (sale.salePrice?.value) {
+            setLastSalePrice(sale.salePrice.value);
+            newLocks['lastSalePrice'] = true;
+          }
+        }
+        
+        setLockedFields(newLocks);
+      } catch (e) {
+        console.warn('Failed to parse extracted data', e);
+      }
+    }
+  }, []);
   
   // Inspection state
   const [inspectionType, setInspectionType] = useState('interior_exterior');
@@ -1007,71 +1088,210 @@ export default function SetupPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Legal Description</label>
-            <textarea
+            <EnhancedTextArea
+              id="legal-description"
+              label="Legal Description"
               value={legalDescription}
-              onChange={(e) => setLegalDescription(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
-              rows={3}
+              onChange={setLegalDescription}
               placeholder="Enter legal description..."
+              rows={4}
+              sectionContext="legal_description"
+              helperText="Include lot, block, subdivision, section, township and range information"
             />
           </div>
         </div>
       </div>
 
+      {/* Ownership Section - Multiple Owners */}
+      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+        <div className="flex items-center justify-between border-b-2 border-gray-200 pb-3 mb-4">
+          <h3 className="text-lg font-bold text-[#1c3643]">Property Ownership</h3>
+          <button
+            onClick={addOwner}
+            className="text-sm text-[#0da1c7] hover:text-[#0b8fb0] font-medium flex items-center gap-1"
+          >
+            <Plus className="w-4 h-4" />
+            Add Owner
+          </button>
+        </div>
+        
+        <div className="space-y-4">
+          {wizardState.owners.map((owner, index) => (
+            <div key={owner.id} className="p-4 border border-gray-200 rounded-lg bg-gray-50">
+              <div className="flex items-start justify-between mb-3">
+                <span className="text-sm font-medium text-gray-700">Owner {index + 1}</span>
+                {wizardState.owners.length > 1 && (
+                  <button
+                    onClick={() => removeOwner(owner.id)}
+                    className="text-gray-400 hover:text-red-500 transition-colors"
+                    title="Remove Owner"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Owner Name <span className="text-red-500">*</span>
+                    {lockedFields['owner'] && index === 0 && (
+                      <button
+                        onClick={() => setLockedFields(prev => ({ ...prev, owner: false }))}
+                        className="ml-2 text-[#0da1c7]"
+                        title="Unlock to edit (pre-filled from document)"
+                      >
+                        <Lock className="w-3 h-3 inline" />
+                      </button>
+                    )}
+                  </label>
+                  <input
+                    type="text"
+                    value={owner.name}
+                    onChange={(e) => updateOwner(owner.id, { name: e.target.value })}
+                    disabled={lockedFields['owner'] && index === 0}
+                    className={`w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent ${
+                      lockedFields['owner'] && index === 0 ? 'bg-blue-50 border-blue-200' : ''
+                    }`}
+                    placeholder="Full legal name as shown on title"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Ownership Type</label>
+                  <select
+                    value={owner.ownershipType}
+                    onChange={(e) => updateOwner(owner.id, { ownershipType: e.target.value as any })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white"
+                  >
+                    <option value="individual">Individual</option>
+                    <option value="corporation">Corporation</option>
+                    <option value="llc">LLC</option>
+                    <option value="partnership">Partnership</option>
+                    <option value="trust">Trust</option>
+                    <option value="government">Government Entity</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
+              </div>
+              {wizardState.owners.length > 1 && (
+                <div className="mt-3">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Ownership Percentage</label>
+                  <div className="flex items-center gap-2">
+                    <input
+                      type="number"
+                      value={owner.percentage}
+                      onChange={(e) => updateOwner(owner.id, { percentage: parseFloat(e.target.value) || 0 })}
+                      min="0"
+                      max="100"
+                      step="0.01"
+                      className="w-24 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                    />
+                    <span className="text-gray-500">%</span>
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* Tax & Sale History Section */}
       <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
         <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
-          Ownership & Tax
+          Tax & Sale History
         </h3>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Current Owner</label>
-            <input
-              type="text"
-              value={currentOwner}
-              onChange={(e) => setCurrentOwner(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
-              placeholder="Enter current owner..."
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Tax ID / Parcel #</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Tax ID / Parcel #
+              {lockedFields['taxId'] && (
+                <button
+                  onClick={() => setLockedFields(prev => ({ ...prev, taxId: false }))}
+                  className="ml-2 text-[#0da1c7]"
+                  title="Unlock to edit"
+                >
+                  <Lock className="w-3 h-3 inline" />
+                </button>
+              )}
+            </label>
             <input
               type="text"
               value={taxId}
               onChange={(e) => setTaxId(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+              disabled={lockedFields['taxId']}
+              className={`w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent ${
+                lockedFields['taxId'] ? 'bg-blue-50 border-blue-200' : ''
+              }`}
               placeholder="Enter tax ID..."
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Last Sale Date</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">Property Name (Optional)</label>
+            <input
+              type="text"
+              value={propertyName}
+              onChange={(e) => setPropertyName(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+              placeholder="e.g., Canyon Creek Industrial Complex"
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Last Sale Date
+              {lockedFields['lastSaleDate'] && (
+                <button
+                  onClick={() => setLockedFields(prev => ({ ...prev, lastSaleDate: false }))}
+                  className="ml-2 text-[#0da1c7]"
+                  title="Unlock to edit"
+                >
+                  <Lock className="w-3 h-3 inline" />
+                </button>
+              )}
+            </label>
             <input
               type="date"
               value={lastSaleDate}
               onChange={(e) => setLastSaleDate(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+              disabled={lockedFields['lastSaleDate']}
+              className={`w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent ${
+                lockedFields['lastSaleDate'] ? 'bg-blue-50 border-blue-200' : ''
+              }`}
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Last Sale Price</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Last Sale Price
+              {lockedFields['lastSalePrice'] && (
+                <button
+                  onClick={() => setLockedFields(prev => ({ ...prev, lastSalePrice: false }))}
+                  className="ml-2 text-[#0da1c7]"
+                  title="Unlock to edit"
+                >
+                  <Lock className="w-3 h-3 inline" />
+                </button>
+              )}
+            </label>
             <input
               type="text"
               value={lastSalePrice}
               onChange={(e) => setLastSalePrice(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+              disabled={lockedFields['lastSalePrice']}
+              className={`w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent ${
+                lockedFields['lastSalePrice'] ? 'bg-blue-50 border-blue-200' : ''
+              }`}
               placeholder="$0.00"
             />
           </div>
         </div>
         <div className="mt-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">3-Year Sales History</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">
+            Transaction History (Last 3 Years) <span className="text-red-500">*</span>
+          </label>
           <textarea
             value={salesHistory}
             onChange={(e) => setSalesHistory(e.target.value)}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
-            rows={3}
-            placeholder="Describe any transfers in the last 3 years..."
+            rows={4}
+            placeholder="Document any sales, transfers, listings, or offers within the past 3 years per USPAP requirements..."
           />
         </div>
       </div>
@@ -1375,8 +1595,8 @@ export default function SetupPage() {
   return (
     <WizardLayout
       title="Appraisal Setup"
-      subtitle="Phase 2 of 5 • Assignment Details"
-      phase={2}
+      subtitle="Phase 3 of 6 • Assignment Details"
+      phase={3}
       sidebar={sidebar}
       helpSidebar={helpSidebar}
     >

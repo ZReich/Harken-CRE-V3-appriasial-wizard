@@ -59,8 +59,8 @@ export default function ReviewPage() {
   return (
     <WizardLayout
       title="Review & Finalize"
-      subtitle="Phase 5 of 5 • Final Review & Reconciliation"
-      phase={5}
+      subtitle="Phase 6 of 6 • Final Review & Reconciliation"
+      phase={6}
       sidebar={sidebar}
       helpSidebar={helpSidebar}
     >

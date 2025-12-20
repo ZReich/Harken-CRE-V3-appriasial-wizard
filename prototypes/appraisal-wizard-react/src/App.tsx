@@ -3,6 +3,7 @@ import { WizardProvider } from './context/WizardContext';
 
 // Pages
 import TemplatePage from './pages/TemplatePage';
+import DocumentIntakePage from './pages/DocumentIntakePage';
 import SetupPage from './pages/SetupPage';
 import SubjectDataPage from './pages/SubjectDataPage';
 import AnalysisPage from './pages/AnalysisPage';
@@ -14,6 +15,7 @@ function App() {
       <Routes>
         <Route path="/" element={<Navigate to="/template" replace />} />
         <Route path="/template" element={<TemplatePage />} />
+        <Route path="/document-intake" element={<DocumentIntakePage />} />
         <Route path="/setup" element={<SetupPage />} />
         <Route path="/subject-data" element={<SubjectDataPage />} />
         <Route path="/analysis" element={<AnalysisPage />} />
