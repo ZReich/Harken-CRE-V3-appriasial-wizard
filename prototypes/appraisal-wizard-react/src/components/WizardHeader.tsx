@@ -11,11 +11,11 @@ interface WizardHeaderProps {
 export default function WizardHeader({
   title,
   subtitle,
-  phase,
+  phase: _phase,
   isFullscreen,
   onToggleFullscreen,
   onContinue,
-  onPrevious,
+  onPrevious: _onPrevious,
 }: WizardHeaderProps) {
   return (
     <div

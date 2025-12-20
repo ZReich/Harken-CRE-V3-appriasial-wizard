@@ -15,7 +15,6 @@ export default function ProgressStepper({ currentPhase, pages }: ProgressStepper
           const phaseNum = idx + 1;
           const isCompleted = phaseNum < currentPhase;
           const isActive = phaseNum === currentPhase;
-          const isInactive = phaseNum > currentPhase;
 
           return (
             <div key={page.path} className="flex items-center gap-2">

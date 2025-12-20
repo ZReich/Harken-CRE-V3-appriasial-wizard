@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import { createPortal } from 'react-dom';
-import { ChevronDown, Check, X } from 'lucide-react';
+import { ChevronDown, Check, X, Star } from 'lucide-react';
 
 interface ExpandableSelectorProps {
   id: string;
@@ -14,6 +14,8 @@ interface ExpandableSelectorProps {
   placeholder?: string;
   compact?: boolean;
   multiple?: boolean;
+  customOptions?: string[];
+  onCustomAdd?: (value: string, category: string) => void;
 }
 
 const categoryColors: Record<string, { bg: string; border: string; text: string }> = {
@@ -24,6 +26,41 @@ const categoryColors: Record<string, { bg: string; border: string; text: string 
   interior: { bg: 'bg-purple-50', border: 'border-purple-200', text: 'text-purple-700' },
   market: { bg: 'bg-rose-50', border: 'border-rose-200', text: 'text-rose-700' },
 };
+
+// Local storage key for custom options
+const CUSTOM_OPTIONS_KEY = 'harken-custom-selector-options';
+
+// Load custom options from localStorage
+export function loadCustomOptions(): Record<string, string[]> {
+  try {
+    const stored = localStorage.getItem(CUSTOM_OPTIONS_KEY);
+    return stored ? JSON.parse(stored) : {};
+  } catch {
+    return {};
+  }
+}
+
+// Save custom option to localStorage
+export function saveCustomOption(category: string, value: string): void {
+  try {
+    const current = loadCustomOptions();
+    if (!current[category]) {
+      current[category] = [];
+    }
+    if (!current[category].includes(value)) {
+      current[category].push(value);
+      localStorage.setItem(CUSTOM_OPTIONS_KEY, JSON.stringify(current));
+    }
+  } catch (e) {
+    console.error('Failed to save custom option:', e);
+  }
+}
+
+// Get custom options for a specific category
+export function getCustomOptionsForCategory(category: string): string[] {
+  const all = loadCustomOptions();
+  return all[category] || [];
+}
 
 export default function ExpandableSelector({
   id,
@@ -37,14 +74,26 @@ export default function ExpandableSelector({
   placeholder = 'Enter custom value...',
   compact = false,
   multiple = true,
+  customOptions: externalCustomOptions,
+  onCustomAdd,
 }: ExpandableSelectorProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [customValue, setCustomValue] = useState('');
   const [dropdownStyle, setDropdownStyle] = useState<React.CSSProperties>({});
+  const [localCustomOptions, setLocalCustomOptions] = useState<string[]>([]);
   const containerRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+
+  // Load custom options on mount
+  useEffect(() => {
+    const stored = getCustomOptionsForCategory(id);
+    setLocalCustomOptions(stored);
+  }, [id]);
+
+  // Merge all options: default + external custom + local custom
+  const allCustomOptions = [...new Set([...(externalCustomOptions || []), ...localCustomOptions])];
 
   // Normalize value to array for multi-select
   const selectedValues: string[] = multiple 
@@ -59,11 +108,20 @@ export default function ExpandableSelector({
   const updateDropdownPosition = useCallback(() => {
     if (buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
+      const viewportHeight = window.innerHeight;
+      const spaceBelow = viewportHeight - rect.bottom;
+      const spaceAbove = rect.top;
+      const dropdownHeight = 320; // estimated max height
+
+      // Position above if not enough space below
+      const showAbove = spaceBelow < dropdownHeight && spaceAbove > spaceBelow;
+
       setDropdownStyle({
         position: 'fixed',
-        top: rect.bottom + 8,
+        top: showAbove ? 'auto' : rect.bottom + 8,
+        bottom: showAbove ? viewportHeight - rect.top + 8 : 'auto',
         left: rect.left,
-        width: rect.width,
+        width: Math.max(rect.width, 280),
         zIndex: 9999,
       });
     }
@@ -143,10 +201,22 @@ export default function ExpandableSelector({
 
   const handleAddCustom = () => {
     if (customValue.trim()) {
+      const trimmedValue = customValue.trim();
+      
+      // Save to localStorage for future use
+      saveCustomOption(id, trimmedValue);
+      setLocalCustomOptions(prev => [...prev, trimmedValue]);
+      
+      // Notify parent if callback provided
+      if (onCustomAdd) {
+        onCustomAdd(trimmedValue, category);
+      }
+      
+      // Add to selection
       if (multiple) {
-        onChange([...selectedValues.filter(v => v !== 'Type My Own'), customValue.trim()]);
+        onChange([...selectedValues.filter(v => v !== 'Type My Own'), trimmedValue]);
       } else {
-        onChange(customValue.trim());
+        onChange(trimmedValue);
       }
       setCustomValue('');
     }
@@ -182,7 +252,32 @@ export default function ExpandableSelector({
       style={dropdownStyle}
       className="bg-white rounded-xl border border-gray-200 shadow-2xl overflow-hidden animate-fade-in"
     >
+      {/* Selected items header (for multi-select) */}
+      {multiple && selectedValues.length > 0 && (
+        <div className="border-b border-gray-200 px-3 py-2 bg-[#0da1c7]/5">
+          <div className="text-xs font-medium text-gray-500 mb-1.5">Selected ({selectedValues.length})</div>
+          <div className="flex flex-wrap gap-1.5">
+            {selectedValues.filter(v => v !== 'Type My Own').map((val) => (
+              <span
+                key={val}
+                className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-[#0da1c7]/10 text-[#0da1c7] rounded-full"
+              >
+                {val.length > 15 ? val.substring(0, 12) + '...' : val}
+                <button
+                  type="button"
+                  onClick={(e) => handleRemoveValue(val, e)}
+                  className="hover:bg-[#0da1c7]/20 rounded-full p-0.5"
+                >
+                  <X className="w-3 h-3" />
+                </button>
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="max-h-64 overflow-y-auto py-1">
+        {/* Standard options */}
         {options.map((option) => (
           <button
             key={option}
@@ -203,8 +298,41 @@ export default function ExpandableSelector({
           </button>
         ))}
 
+        {/* Custom options (previously saved) */}
+        {allCustomOptions.length > 0 && (
+          <>
+            <div className="px-4 py-1.5 text-xs font-semibold text-gray-400 uppercase tracking-wide bg-gray-50 border-t border-b border-gray-100">
+              Your Custom Options
+            </div>
+            {allCustomOptions.filter(o => !options.includes(o)).map((option) => (
+              <button
+                key={option}
+                type="button"
+                onClick={() => handleSelect(option)}
+                className={`w-full flex items-center justify-between px-4 py-2.5 text-left text-sm transition-colors ${
+                  isSelected(option)
+                    ? 'bg-[#0da1c7]/10 text-[#0da1c7] font-semibold'
+                    : 'text-gray-700 hover:bg-gray-50'
+                }`}
+                role="option"
+                aria-selected={isSelected(option)}
+              >
+                <span className="flex items-center gap-2">
+                  <Star className="w-3 h-3 text-amber-400" />
+                  {option}
+                </span>
+                {isSelected(option) && (
+                  <Check className="w-4 h-4 text-[#0da1c7]" />
+                )}
+              </button>
+            ))}
+          </>
+        )}
+
+        {/* Add custom value */}
         {allowCustom && (
-          <div className="border-t border-gray-100 px-4 py-2.5">
+          <div className="border-t border-gray-100 px-4 py-3 bg-gray-50">
+            <div className="text-xs font-medium text-gray-500 mb-2">Add custom option (saved for future use)</div>
             <div className="flex items-center gap-2">
               <input
                 ref={inputRef}
@@ -213,7 +341,7 @@ export default function ExpandableSelector({
                 onChange={(e) => handleCustomChange(e.target.value)}
                 onKeyDown={handleCustomKeyDown}
                 placeholder={placeholder}
-                className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white"
                 onClick={(e) => e.stopPropagation()}
               />
               <button
@@ -228,28 +356,6 @@ export default function ExpandableSelector({
           </div>
         )}
       </div>
-
-      {multiple && selectedValues.length > 0 && (
-        <div className="border-t border-gray-200 px-3 py-2 bg-gray-50">
-          <div className="flex flex-wrap gap-1.5">
-            {selectedValues.filter(v => v !== 'Type My Own').map((val) => (
-              <span
-                key={val}
-                className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-[#0da1c7]/10 text-[#0da1c7] rounded-full"
-              >
-                {val.length > 15 ? val.substring(0, 12) + '...' : val}
-                <button
-                  type="button"
-                  onClick={(e) => handleRemoveValue(val, e)}
-                  className="hover:bg-[#0da1c7]/20 rounded-full p-0.5"
-                >
-                  <X className="w-3 h-3" />
-                </button>
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
     </div>
   );
 
@@ -352,4 +458,3 @@ export function YearSelector({
     />
   );
 }
-

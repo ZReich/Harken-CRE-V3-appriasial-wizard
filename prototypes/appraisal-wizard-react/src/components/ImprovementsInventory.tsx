@@ -17,9 +17,6 @@ import type {
   ImprovementBuilding,
   ImprovementArea,
   ImprovementsInventory as ImprovementsInventoryType,
-  ExteriorFeatures,
-  InteriorFeatures,
-  MechanicalSystems,
 } from '../types';
 import {
   CONSTRUCTION_TYPES,
@@ -714,12 +711,12 @@ function BuildingCard({
           <CollapsibleSection title="Exterior Features" icon={<Home className="w-4 h-4" />} isExpanded={expandedSections.has('exterior')} onToggle={() => toggleSection('exterior')}>
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
-                <ExpandableSelector id={`foundation-${building.id}`} label="Foundation/Floor" options={FOUNDATION_OPTIONS} value={building.exteriorFeatures?.foundation || ''} onChange={(v) => onUpdate({ exteriorFeatures: { ...building.exteriorFeatures, foundation: Array.isArray(v) ? v.join(', ') : v } as ExteriorFeatures })} category="structure" />
-                <ExpandableSelector id={`roof-${building.id}`} label="Roof" options={ROOF_OPTIONS} value={building.exteriorFeatures?.roof || ''} onChange={(v) => onUpdate({ exteriorFeatures: { ...building.exteriorFeatures, roof: Array.isArray(v) ? v.join(', ') : v } as ExteriorFeatures })} category="structure" />
-                <ExpandableSelector id={`ext-walls-${building.id}`} label="Exterior Walls" options={EXTERIOR_WALL_OPTIONS} value={building.exteriorFeatures?.walls || ''} onChange={(v) => onUpdate({ exteriorFeatures: { ...building.exteriorFeatures, walls: Array.isArray(v) ? v.join(', ') : v } as ExteriorFeatures })} category="structure" />
-                <ExpandableSelector id={`windows-${building.id}`} label="Windows" options={WINDOW_OPTIONS} value={building.exteriorFeatures?.windows || ''} onChange={(v) => onUpdate({ exteriorFeatures: { ...building.exteriorFeatures, windows: Array.isArray(v) ? v.join(', ') : v } as ExteriorFeatures })} category="structure" />
+                <ExpandableSelector id={`foundation-${building.id}`} label="Foundation/Floor" options={FOUNDATION_OPTIONS} value={building.exteriorFeatures?.foundation || []} onChange={(v) => onUpdate({ exteriorFeatures: { ...building.exteriorFeatures, foundation: Array.isArray(v) ? v : [v] } })} category="structure" multiple />
+                <ExpandableSelector id={`roof-${building.id}`} label="Roof" options={ROOF_OPTIONS} value={building.exteriorFeatures?.roof || []} onChange={(v) => onUpdate({ exteriorFeatures: { ...building.exteriorFeatures, roof: Array.isArray(v) ? v : [v] } })} category="structure" multiple />
+                <ExpandableSelector id={`ext-walls-${building.id}`} label="Exterior Walls" options={EXTERIOR_WALL_OPTIONS} value={building.exteriorFeatures?.walls || []} onChange={(v) => onUpdate({ exteriorFeatures: { ...building.exteriorFeatures, walls: Array.isArray(v) ? v : [v] } })} category="structure" multiple />
+                <ExpandableSelector id={`windows-${building.id}`} label="Windows" options={WINDOW_OPTIONS} value={building.exteriorFeatures?.windows || []} onChange={(v) => onUpdate({ exteriorFeatures: { ...building.exteriorFeatures, windows: Array.isArray(v) ? v : [v] } })} category="structure" multiple />
               </div>
-              <EnhancedTextArea id={`exterior-desc-${building.id}`} label="Exterior Features Description" value={building.exteriorFeatures?.description || ''} onChange={(v) => onUpdate({ exteriorFeatures: { ...building.exteriorFeatures, description: v } as ExteriorFeatures })} placeholder="Describe the building exterior..." sectionContext="exterior_description" rows={4} />
+              <EnhancedTextArea id={`exterior-desc-${building.id}`} label="Exterior Features Description" value={building.exteriorFeatures?.description || ''} onChange={(v) => onUpdate({ exteriorFeatures: { ...building.exteriorFeatures, description: v } })} placeholder="Describe the building exterior..." sectionContext="exterior_description" rows={4} />
             </div>
           </CollapsibleSection>
 
@@ -727,13 +724,13 @@ function BuildingCard({
           <CollapsibleSection title="Mechanical Systems" icon={<Wrench className="w-4 h-4" />} isExpanded={expandedSections.has('mechanical')} onToggle={() => toggleSection('mechanical')}>
             <div className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
-                <ExpandableSelector id={`electrical-${building.id}`} label="Electrical" options={ELECTRICAL_OPTIONS} value={building.mechanicalSystems?.electrical || ''} onChange={(v) => onUpdate({ mechanicalSystems: { ...building.mechanicalSystems, electrical: Array.isArray(v) ? v.join(', ') : v } as MechanicalSystems })} category="systems" />
-                <ExpandableSelector id={`heating-${building.id}`} label="Heating" options={HVAC_OPTIONS} value={building.mechanicalSystems?.heating || ''} onChange={(v) => onUpdate({ mechanicalSystems: { ...building.mechanicalSystems, heating: Array.isArray(v) ? v.join(', ') : v } as MechanicalSystems })} category="systems" />
-                <ExpandableSelector id={`cooling-${building.id}`} label="Cooling" options={HVAC_OPTIONS} value={building.mechanicalSystems?.cooling || ''} onChange={(v) => onUpdate({ mechanicalSystems: { ...building.mechanicalSystems, cooling: Array.isArray(v) ? v.join(', ') : v } as MechanicalSystems })} category="systems" />
-                <ExpandableSelector id={`sprinkler-${building.id}`} label="Sprinkler System" options={SPRINKLER_OPTIONS} value={building.mechanicalSystems?.sprinkler || ''} onChange={(v) => onUpdate({ mechanicalSystems: { ...building.mechanicalSystems, sprinkler: Array.isArray(v) ? v.join(', ') : v } as MechanicalSystems })} category="systems" />
-                <ExpandableSelector id={`elevators-${building.id}`} label="Elevators" options={ELEVATOR_OPTIONS} value={building.mechanicalSystems?.elevators || ''} onChange={(v) => onUpdate({ mechanicalSystems: { ...building.mechanicalSystems, elevators: Array.isArray(v) ? v.join(', ') : v } as MechanicalSystems })} category="systems" />
+                <ExpandableSelector id={`electrical-${building.id}`} label="Electrical" options={ELECTRICAL_OPTIONS} value={building.mechanicalSystems?.electrical || []} onChange={(v) => onUpdate({ mechanicalSystems: { ...building.mechanicalSystems, electrical: Array.isArray(v) ? v : [v] } })} category="systems" multiple />
+                <ExpandableSelector id={`heating-${building.id}`} label="Heating" options={HVAC_OPTIONS} value={building.mechanicalSystems?.heating || []} onChange={(v) => onUpdate({ mechanicalSystems: { ...building.mechanicalSystems, heating: Array.isArray(v) ? v : [v] } })} category="systems" multiple />
+                <ExpandableSelector id={`cooling-${building.id}`} label="Cooling" options={HVAC_OPTIONS} value={building.mechanicalSystems?.cooling || []} onChange={(v) => onUpdate({ mechanicalSystems: { ...building.mechanicalSystems, cooling: Array.isArray(v) ? v : [v] } })} category="systems" multiple />
+                <ExpandableSelector id={`sprinkler-${building.id}`} label="Sprinkler System" options={SPRINKLER_OPTIONS} value={building.mechanicalSystems?.sprinkler || []} onChange={(v) => onUpdate({ mechanicalSystems: { ...building.mechanicalSystems, sprinkler: Array.isArray(v) ? v : [v] } })} category="systems" multiple />
+                <ExpandableSelector id={`elevators-${building.id}`} label="Elevators" options={ELEVATOR_OPTIONS} value={building.mechanicalSystems?.elevators || []} onChange={(v) => onUpdate({ mechanicalSystems: { ...building.mechanicalSystems, elevators: Array.isArray(v) ? v : [v] } })} category="systems" multiple />
               </div>
-              <EnhancedTextArea id={`mechanical-desc-${building.id}`} label="Mechanical Systems Description" value={building.mechanicalSystems?.description || ''} onChange={(v) => onUpdate({ mechanicalSystems: { ...building.mechanicalSystems, description: v } as MechanicalSystems })} placeholder="Describe the mechanical systems..." sectionContext="mechanical_description" rows={4} />
+              <EnhancedTextArea id={`mechanical-desc-${building.id}`} label="Mechanical Systems Description" value={building.mechanicalSystems?.description || ''} onChange={(v) => onUpdate({ mechanicalSystems: { ...building.mechanicalSystems, description: v } })} placeholder="Describe the mechanical systems..." sectionContext="mechanical_description" rows={4} />
             </div>
           </CollapsibleSection>
 
@@ -921,11 +918,11 @@ function AreaCard({ area, canRemove, onUpdate, onRemove }: AreaCardProps) {
       {showInterior && (
         <div className="pl-4 border-l-2 border-[#0da1c7]/20 space-y-4">
           <div className="grid grid-cols-3 gap-3">
-            <ExpandableSelector id={`ceilings-${area.id}`} label="Ceilings" options={CEILING_OPTIONS} value={area.interiorFeatures?.ceilings || ''} onChange={(v) => onUpdate({ interiorFeatures: { ...area.interiorFeatures, ceilings: Array.isArray(v) ? v.join(', ') : v } as InteriorFeatures })} category="interior" compact />
-            <ExpandableSelector id={`flooring-${area.id}`} label="Flooring" options={FLOORING_OPTIONS} value={area.interiorFeatures?.flooring || ''} onChange={(v) => onUpdate({ interiorFeatures: { ...area.interiorFeatures, flooring: Array.isArray(v) ? v.join(', ') : v } as InteriorFeatures })} category="interior" compact />
-            <ExpandableSelector id={`int-walls-${area.id}`} label="Walls" options={INTERIOR_WALL_OPTIONS} value={area.interiorFeatures?.walls || ''} onChange={(v) => onUpdate({ interiorFeatures: { ...area.interiorFeatures, walls: Array.isArray(v) ? v.join(', ') : v } as InteriorFeatures })} category="interior" compact />
+            <ExpandableSelector id={`ceilings-${area.id}`} label="Ceilings" options={CEILING_OPTIONS} value={area.interiorFeatures?.ceilings || []} onChange={(v) => onUpdate({ interiorFeatures: { ...area.interiorFeatures, ceilings: Array.isArray(v) ? v : [v] } })} category="interior" compact multiple />
+            <ExpandableSelector id={`flooring-${area.id}`} label="Flooring" options={FLOORING_OPTIONS} value={area.interiorFeatures?.flooring || []} onChange={(v) => onUpdate({ interiorFeatures: { ...area.interiorFeatures, flooring: Array.isArray(v) ? v : [v] } })} category="interior" compact multiple />
+            <ExpandableSelector id={`int-walls-${area.id}`} label="Walls" options={INTERIOR_WALL_OPTIONS} value={area.interiorFeatures?.walls || []} onChange={(v) => onUpdate({ interiorFeatures: { ...area.interiorFeatures, walls: Array.isArray(v) ? v : [v] } })} category="interior" compact multiple />
           </div>
-          <EnhancedTextArea id={`interior-desc-${area.id}`} label="Interior Finish Description" value={area.interiorFeatures?.description || ''} onChange={(v) => onUpdate({ interiorFeatures: { ...area.interiorFeatures, description: v } as InteriorFeatures })} placeholder="Describe the interior finishes..." sectionContext="interior_description" rows={3} />
+          <EnhancedTextArea id={`interior-desc-${area.id}`} label="Interior Finish Description" value={area.interiorFeatures?.description || ''} onChange={(v) => onUpdate({ interiorFeatures: { ...area.interiorFeatures, description: v } })} placeholder="Describe the interior finishes..." sectionContext="interior_description" rows={3} />
         </div>
       )}
     </div>
