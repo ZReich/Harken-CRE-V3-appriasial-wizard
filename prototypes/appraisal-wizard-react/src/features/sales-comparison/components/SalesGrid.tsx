@@ -7,7 +7,16 @@ import {
   Sparkles,
   Loader2,
   X,
-  FileText
+  FileText,
+  Trash2,
+  AlertTriangle,
+  Bold,
+  Italic,
+  Underline,
+  AlignLeft,
+  AlignCenter,
+  List,
+  MessageSquare
 } from 'lucide-react';
 import { Property, GridRowData, PropertyValues, ComparisonValue, Section } from '../types';
 import { PropertyCard } from './PropertyCard';
@@ -21,13 +30,98 @@ interface SalesGridProps {
 }
 
 export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initialValues, analysisMode = 'standard' }) => {
-  const [rows] = useState<GridRowData[]>(INITIAL_ROWS);
+  const [rows, setRows] = useState<GridRowData[]>(INITIAL_ROWS);
   const [sections] = useState<Section[]>(SECTIONS);
   const [values, setValues] = useState<PropertyValues>(initialValues);
   const [reconciliationText, setReconciliationText] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
   const [activePopover, setActivePopover] = useState<{rowId: string, propId: string, field: 'value' | 'adjustment'} | null>(null);
+  const [hiddenSections, setHiddenSections] = useState<Set<string>>(new Set());
+  const [confirmDelete, setConfirmDelete] = useState<{ isOpen: boolean; sectionId: string; sectionTitle: string } | null>(null);
+  const [notesEditor, setNotesEditor] = useState<{ isOpen: boolean; propId: string; propName: string; rowKey: string } | null>(null);
+  const [notesContent, setNotesContent] = useState<string>('');
+
+  const removeRow = (rowId: string) => {
+    setRows(prev => prev.filter(r => r.id !== rowId));
+  };
+
+  const handleSectionDeleteClick = (sectionId: string, sectionTitle: string) => {
+    setConfirmDelete({ isOpen: true, sectionId, sectionTitle });
+  };
+
+  const confirmSectionDelete = () => {
+    if (confirmDelete) {
+      setHiddenSections(prev => new Set([...prev, confirmDelete.sectionId]));
+      setConfirmDelete(null);
+    }
+  };
+
+  const cancelSectionDelete = () => {
+    setConfirmDelete(null);
+  };
+
+  const openNotesEditor = (propId: string, propName: string, rowKey: string) => {
+    const currentValue = values[propId]?.[rowKey]?.value || '';
+    // Clear placeholder text - start with empty if it's a default placeholder
+    const isPlaceholder = typeof currentValue === 'string' && 
+      (currentValue.toLowerCase().includes('click to') || currentValue === '');
+    setNotesContent(isPlaceholder ? '' : (typeof currentValue === 'string' ? currentValue : ''));
+    setNotesEditor({ isOpen: true, propId, propName, rowKey });
+  };
+
+  const saveNotes = () => {
+    if (notesEditor) {
+      setValues(prev => ({
+        ...prev,
+        [notesEditor.propId]: {
+          ...prev[notesEditor.propId],
+          [notesEditor.rowKey]: { ...prev[notesEditor.propId]?.[notesEditor.rowKey], value: notesContent }
+        }
+      }));
+      setNotesEditor(null);
+      setNotesContent('');
+    }
+  };
+
+  const closeNotesEditor = () => {
+    setNotesEditor(null);
+    setNotesContent('');
+  };
+
+  const applyFormatting = (format: string) => {
+    // Simple formatting - in a real app, you'd use a rich text editor library
+    const textarea = document.getElementById('notes-textarea') as HTMLTextAreaElement;
+    if (!textarea) return;
+    
+    const start = textarea.selectionStart;
+    const end = textarea.selectionEnd;
+    const selectedText = notesContent.substring(start, end);
+    
+    let formattedText = selectedText;
+    switch (format) {
+      case 'bold':
+        formattedText = `**${selectedText}**`;
+        break;
+      case 'italic':
+        formattedText = `*${selectedText}*`;
+        break;
+      case 'underline':
+        formattedText = `__${selectedText}__`;
+        break;
+      case 'bullet':
+        formattedText = `\n• ${selectedText}`;
+        break;
+    }
+    
+    const newContent = notesContent.substring(0, start) + formattedText + notesContent.substring(end);
+    setNotesContent(newContent);
+  };
+
+  const getPropertyName = (propId: string) => {
+    const prop = properties.find(p => p.id === propId);
+    return prop?.name || propId;
+  };
 
   const LABEL_COL_WIDTH = 160;
   const SUBJECT_COL_WIDTH = 180;
@@ -225,8 +319,9 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
             ))}
 
             {/* Sections */}
-            {sections.map(section => {
+            {sections.filter(s => !hiddenSections.has(s.id)).map(section => {
               const hasResidualRows = visibleRows.some(r => r.category === section.id && r.mode === 'residual');
+              const canDeleteSection = section.id === 'quantitative' || section.id === 'qualitative';
               return (
                 <React.Fragment key={section.id}>
                   {/* Section Header - Full Width */}
@@ -237,7 +332,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                       hasResidualRows ? 'bg-purple-50' : section.color
                     }`}></div>
                     <div 
-                      className={`sticky left-0 w-fit px-4 py-2 font-bold text-xs uppercase tracking-widest backdrop-blur-sm ${
+                      className={`sticky left-0 w-fit px-4 py-2 font-bold text-xs uppercase tracking-widest backdrop-blur-sm flex items-center gap-2 ${
                         hasResidualRows 
                           ? 'bg-purple-50/95 text-purple-700' 
                           : 'bg-gray-50/95 text-slate-700'
@@ -245,6 +340,15 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                       style={{ zIndex: 51 }}
                     >
                         {section.title}
+                        {canDeleteSection && (
+                          <button
+                            onClick={() => handleSectionDeleteClick(section.id, section.title)}
+                            className="ml-2 p-1 rounded hover:bg-red-100 text-slate-400 hover:text-red-500 transition-colors"
+                            title={`Remove ${section.title} section`}
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                          </button>
+                        )}
                     </div>
                   </div>
 
@@ -255,7 +359,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                     <React.Fragment key={row.id}>
                       {/* Label Column - Sticky Left */}
                       <div 
-                        className={`sticky left-0 z-[60] border-r border-b border-slate-100 flex items-center px-2 py-1.5 ${
+                        className={`sticky left-0 z-[60] border-r border-b border-slate-100 flex items-center justify-between px-2 py-1.5 group ${
                           row.key === 'total_value' 
                             ? 'border-t-2 border-t-slate-800 bg-slate-50' 
                             : isResidualRow 
@@ -271,41 +375,67 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                             ? 'font-semibold text-purple-700' 
                             : 'font-medium text-slate-600'
                         }`}>{row.label}</span>
+                        <button
+                          onClick={() => removeRow(row.id)}
+                          className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-red-100 text-slate-300 hover:text-red-500 transition-all"
+                          title={`Remove ${row.label}`}
+                        >
+                          <Trash2 className="w-3 h-3" />
+                        </button>
                       </div>
                       
                       {/* Data Cells */}
-                      {properties.map(prop => (
-                        <div 
-                          key={`${row.id}-${prop.id}`} 
-                          className={`border-r border-b border-slate-100 p-2 flex items-center text-xs ${
-                            prop.type === 'subject' 
-                              ? `z-[55] shadow-[4px_0_16px_rgba(0,0,0,0.05)] ${
-                                isResidualRow ? 'bg-purple-50' : 'bg-blue-50'
-                              }` 
-                              : isResidualRow 
-                              ? 'bg-purple-50' 
-                              : 'bg-white'
-                          } ${
-                            row.key === 'total_value' 
-                              ? 'border-t-2 border-t-slate-800 bg-slate-50 font-bold' 
-                              : isResidualRow 
-                              ? 'border-purple-200' 
-                              : ''
-                          }`} 
-                          style={prop.type === 'subject' ? { left: LABEL_COL_WIDTH, width: SUBJECT_COL_WIDTH, position: 'sticky' } : {}}
-                        >
-                           {section.id === 'quantitative' && prop.type !== 'subject' 
-                             ? renderQuantitativeCell(prop.id, row, values[prop.id]?.[row.key] || { value: 0 }) 
-                             : <span className={
-                                 row.key === 'total_value' 
-                                   ? 'font-bold text-emerald-700' 
-                                   : isResidualRow 
-                                   ? 'font-semibold text-purple-700' 
-                                   : 'font-medium'
-                               }>{formatValue(values[prop.id]?.[row.key]?.value ?? getCalculatedValue(prop.id, row.key), row.format)}</span>
-                           }
-                        </div>
-                      ))}
+                      {properties.map(prop => {
+                        const isNotesRow = row.key === 'notes';
+                        const noteValue = values[prop.id]?.[row.key]?.value;
+                        const hasNotes = noteValue && 
+                          typeof noteValue === 'string' && 
+                          noteValue.trim() !== '' && 
+                          !noteValue.toLowerCase().includes('click to');
+                        
+                        return (
+                          <div 
+                            key={`${row.id}-${prop.id}`} 
+                            className={`border-r border-b border-slate-100 p-2 flex items-center text-xs ${
+                              prop.type === 'subject' 
+                                ? `z-[55] shadow-[4px_0_16px_rgba(0,0,0,0.05)] ${
+                                  isResidualRow ? 'bg-purple-50' : 'bg-blue-50'
+                                }` 
+                                : isResidualRow 
+                                ? 'bg-purple-50' 
+                                : 'bg-white'
+                            } ${
+                              row.key === 'total_value' 
+                                ? 'border-t-2 border-t-slate-800 bg-slate-50 font-bold' 
+                                : isResidualRow 
+                                ? 'border-purple-200' 
+                                : ''
+                            } ${isNotesRow ? 'cursor-pointer hover:bg-slate-50 transition-colors' : ''}`} 
+                            style={prop.type === 'subject' ? { left: LABEL_COL_WIDTH, width: SUBJECT_COL_WIDTH, position: 'sticky' } : {}}
+                            onClick={isNotesRow ? () => openNotesEditor(prop.id, getPropertyName(prop.id), row.key) : undefined}
+                          >
+                             {isNotesRow ? (
+                               <div className="flex items-center gap-1.5 w-full">
+                                 <MessageSquare className={`w-3 h-3 flex-shrink-0 ${hasNotes ? 'text-[#0da1c7]' : 'text-slate-300'}`} />
+                                 <span className={`truncate ${hasNotes ? 'text-slate-700' : 'text-slate-400 italic'}`}>
+                                   {hasNotes && typeof noteValue === 'string' 
+                                     ? (noteValue.length > 25 ? noteValue.substring(0, 25) + '...' : noteValue) 
+                                     : 'Click to add notes'}
+                                 </span>
+                               </div>
+                             ) : section.id === 'quantitative' && prop.type !== 'subject' 
+                               ? renderQuantitativeCell(prop.id, row, values[prop.id]?.[row.key] || { value: 0 }) 
+                               : <span className={
+                                   row.key === 'total_value' 
+                                     ? 'font-bold text-emerald-700' 
+                                     : isResidualRow 
+                                     ? 'font-semibold text-purple-700' 
+                                     : 'font-medium'
+                                 }>{formatValue(values[prop.id]?.[row.key]?.value ?? getCalculatedValue(prop.id, row.key), row.format)}</span>
+                             }
+                          </div>
+                        );
+                      })}
                     </React.Fragment>
                   );
                 })}
@@ -393,6 +523,163 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                   <span>Changes are saved automatically</span>
                 </div>
             </div>
+        </div>
+      )}
+
+      {/* NOTES EDITOR MODAL */}
+      {notesEditor?.isOpen && (
+        <div className="fixed inset-0 z-[1100] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
+          <div 
+            className="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Header */}
+            <div className="bg-gradient-to-r from-[#0da1c7] to-[#0b8dad] px-5 py-3 flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <MessageSquare className="w-4 h-4 text-white/80" />
+                <h3 className="text-white font-semibold text-sm uppercase tracking-wide">
+                  Editing Notes: {notesEditor.propName}
+                </h3>
+              </div>
+              <button 
+                onClick={closeNotesEditor}
+                className="p-1 rounded hover:bg-white/20 transition-colors"
+              >
+                <X className="w-4 h-4 text-white" />
+              </button>
+            </div>
+            
+            {/* Formatting Toolbar */}
+            <div className="px-5 py-3 border-b border-slate-200 flex items-center gap-1">
+              <button 
+                onClick={() => applyFormatting('bold')}
+                className="p-2 rounded hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition-colors"
+                title="Bold"
+              >
+                <Bold className="w-4 h-4" />
+              </button>
+              <button 
+                onClick={() => applyFormatting('italic')}
+                className="p-2 rounded hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition-colors"
+                title="Italic"
+              >
+                <Italic className="w-4 h-4" />
+              </button>
+              <button 
+                onClick={() => applyFormatting('underline')}
+                className="p-2 rounded hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition-colors"
+                title="Underline"
+              >
+                <Underline className="w-4 h-4" />
+              </button>
+              <div className="w-px h-5 bg-slate-200 mx-1"></div>
+              <button 
+                className="p-2 rounded bg-slate-100 text-[#0da1c7] transition-colors"
+                title="Align Left"
+              >
+                <AlignLeft className="w-4 h-4" />
+              </button>
+              <button 
+                className="p-2 rounded hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition-colors"
+                title="Align Center"
+              >
+                <AlignCenter className="w-4 h-4" />
+              </button>
+              <button 
+                onClick={() => applyFormatting('bullet')}
+                className="p-2 rounded hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition-colors"
+                title="Bullet List"
+              >
+                <List className="w-4 h-4" />
+              </button>
+              <div className="flex-1"></div>
+              <button 
+                className="p-2 rounded hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors"
+                title="Full Screen"
+              >
+                <Maximize2 className="w-4 h-4" />
+              </button>
+            </div>
+            
+            {/* Text Area */}
+            <div className="p-5">
+              <textarea
+                id="notes-textarea"
+                value={notesContent}
+                onChange={(e) => setNotesContent(e.target.value)}
+                placeholder="Type your analysis and assumptions here..."
+                className="w-full h-48 px-4 py-3 border border-slate-200 rounded-lg text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/30 focus:border-[#0da1c7] resize-none transition-all"
+                autoFocus
+              />
+            </div>
+            
+            {/* Actions */}
+            <div className="px-5 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-3">
+              <button
+                onClick={closeNotesEditor}
+                className="px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-200 transition-colors"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={saveNotes}
+                className="px-5 py-2 rounded-lg text-sm font-semibold text-white bg-[#0da1c7] hover:bg-[#0b8dad] shadow-sm hover:shadow transition-all"
+              >
+                Save Notes
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* SECTION DELETE CONFIRMATION MODAL */}
+      {confirmDelete?.isOpen && (
+        <div className="fixed inset-0 z-[1100] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
+          <div 
+            className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Warning Header */}
+            <div className="bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-4 flex items-center gap-3">
+              <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                <AlertTriangle className="w-5 h-5 text-white" />
+              </div>
+              <div>
+                <h3 className="text-white font-bold text-lg">Remove Section?</h3>
+                <p className="text-white/80 text-sm">This action cannot be undone</p>
+              </div>
+            </div>
+            
+            {/* Content */}
+            <div className="px-6 py-5">
+              <p className="text-slate-600 text-sm leading-relaxed">
+                Are you sure you want to remove the <span className="font-semibold text-slate-800">"{confirmDelete.sectionTitle}"</span> section? 
+                All rows within this section will be hidden from the grid.
+              </p>
+              <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg flex items-start gap-2">
+                <AlertTriangle className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                <p className="text-amber-800 text-xs">
+                  This will remove all adjustment data from your analysis. You may need to refresh the page to restore this section.
+                </p>
+              </div>
+            </div>
+            
+            {/* Actions */}
+            <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-3">
+              <button
+                onClick={cancelSectionDelete}
+                className="px-5 py-2.5 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-200 transition-colors"
+              >
+                No, Keep It
+              </button>
+              <button
+                onClick={confirmSectionDelete}
+                className="px-5 py-2.5 rounded-lg text-sm font-bold text-white bg-gradient-to-r from-red-500 to-red-600 hover:from-red-600 hover:to-red-700 shadow-md hover:shadow-lg transition-all"
+              >
+                Yes, Remove Section
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

@@ -69,8 +69,6 @@ export default function SubjectDataPage() {
   const [easements, setEasements] = useState('');
 
   // Tax tab state
-  const [taxId, setTaxId] = useState('');
-  const [propertyName, setPropertyName] = useState('');
   const [taxYear, setTaxYear] = useState(new Date().getFullYear().toString());
   const [taxAmount, setTaxAmount] = useState('');
   const [assessedLand, setAssessedLand] = useState('');
@@ -104,7 +102,6 @@ export default function SubjectDataPage() {
     if (stored) {
       try {
         const data = JSON.parse(stored);
-        if (data.cadastral?.taxId?.value) setTaxId(data.cadastral.taxId.value);
         if (data.cadastral?.owner?.value) setGrantee(data.cadastral.owner.value);
       } catch (e) {
         console.warn('Failed to load extracted data');
@@ -262,10 +259,6 @@ export default function SubjectDataPage() {
           />
         ) : activeTab === 'tax' ? (
           <TaxContent
-            taxId={taxId}
-            setTaxId={setTaxId}
-            propertyName={propertyName}
-            setPropertyName={setPropertyName}
             taxYear={taxYear}
             setTaxYear={setTaxYear}
             taxAmount={taxAmount}
@@ -686,10 +679,6 @@ function SiteContent({
 // TAX CONTENT - Complete with Sale History
 // ==========================================
 interface TaxProps {
-  taxId: string;
-  setTaxId: (v: string) => void;
-  propertyName: string;
-  setPropertyName: (v: string) => void;
   taxYear: string;
   setTaxYear: (v: string) => void;
   taxAmount: string;
@@ -715,8 +704,6 @@ interface TaxProps {
 }
 
 function TaxContent({
-  taxId, setTaxId,
-  propertyName, setPropertyName,
   taxYear, setTaxYear,
   taxAmount, setTaxAmount,
   assessedLand, setAssessedLand,
@@ -734,37 +721,6 @@ function TaxContent({
 
   return (
     <div className="space-y-6">
-      {/* Property Identification */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
-          Property Identification
-        </h3>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Tax ID / Parcel Number <span className="text-red-500">*</span>
-            </label>
-            <input
-              type="text"
-              value={taxId}
-              onChange={(e) => setTaxId(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
-              placeholder="e.g., 123-45-678-00"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Property Name</label>
-            <input
-              type="text"
-              value={propertyName}
-              onChange={(e) => setPropertyName(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
-              placeholder="e.g., Canyon Creek Industrial Complex"
-            />
-          </div>
-        </div>
-      </div>
-
       {/* Property Tax Information */}
       <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
         <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
