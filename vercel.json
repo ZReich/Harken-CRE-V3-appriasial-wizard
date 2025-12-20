@@ -1,0 +1,6 @@
+{
+  "installCommand": "cd prototypes/appraisal-wizard-react && npm install",
+  "buildCommand": "cd prototypes/appraisal-wizard-react && npm run build",
+  "outputDirectory": "prototypes/appraisal-wizard-react/dist",
+  "framework": "vite"
+}
