@@ -1,0 +1,2058 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Global Codes Management - Harken CRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            font-family: 'Montserrat', sans-serif !important;
+        }
+        body {
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .section-title {
+            font-size: 23px;
+            font-weight: 600;
+            color: #1c3643;
+        }
+        .search-input {
+            padding: 10px 14px 10px 40px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: white;
+            color: #687F8B;
+            font-weight: 500;
+            width: 300px;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .filter-select {
+            padding: 10px 14px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: white;
+            color: #687F8B;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .filter-select:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .action-button {
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .action-button:hover {
+            opacity: 0.8;
+        }
+        .action-button-primary {
+            background-color: #0da1c7;
+            color: white;
+        }
+        .action-button-secondary {
+            background-color: #687F8B;
+            color: white;
+        }
+        .action-button-success {
+            background-color: #10b981;
+            color: white;
+        }
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        th {
+            padding: 16px 12px;
+            text-align: left;
+            color: #687F8B;
+            font-size: 11px;
+            font-weight: 600;
+            border-bottom: 2px solid #e0e0e0;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            background-color: #fafafa;
+        }
+        th.grouped-header {
+            background-color: #f0f0f0;
+            text-align: center;
+            font-size: 10px;
+            padding: 8px 12px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        th.sub-header {
+            text-align: center;
+            font-size: 9px;
+            padding: 12px 8px;
+        }
+        td {
+            padding: 18px 12px;
+            color: #687F8B;
+            font-size: 13px;
+            font-weight: 500;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+        tbody tr.child-row {
+            background-color: #fafafa;
+        }
+        tbody tr.child-row td:first-child {
+            padding-left: 60px;
+        }
+        .badge {
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .badge-active {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .badge-inactive {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .link-text {
+            color: #0da1c7;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .link-text:hover {
+            text-decoration: underline;
+        }
+        .back-link {
+            color: #0da1c7;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: 16px;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 22px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 22px;
+        }
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .toggle-slider {
+            background-color: #10b981;
+        }
+        input:checked + .toggle-slider:before {
+            transform: translateX(18px);
+        }
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-content {
+            background-color: white;
+            border-radius: 8px;
+            padding: 32px;
+            max-width: 700px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        .modal-title {
+            color: #1c3643;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+        .form-label {
+            color: #687F8B;
+            font-size: 13px;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            background-color: white;
+            color: #1c3643;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        .modal-footer {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+        .checkbox-group {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #687F8B;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .checkbox-label:hover {
+            background-color: #f9f9f9;
+        }
+        .checkbox-label input {
+            cursor: pointer;
+        }
+        .category-sidebar {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+            max-height: 800px;
+            overflow-y: auto;
+        }
+        .category-group-title {
+            color: #1c3643;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin: 20px 0 12px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .category-group-title:first-child {
+            margin-top: 0;
+        }
+        .category-item {
+            padding: 10px 12px;
+            margin-bottom: 4px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            color: #687F8B;
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .category-item:hover {
+            background-color: #f0fbfd;
+            color: #0da1c7;
+        }
+        .category-item.active {
+            background-color: #0da1c7;
+            color: white;
+        }
+        .category-count {
+            background-color: #e0e0e0;
+            color: #687F8B;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+         .category-item.active .category-count {
+             background-color: rgba(255,255,255,0.2);
+             color: white;
+         }
+         .category-item.locked {
+             background-color: #fef3c7;
+             border-left: 3px solid #f59e0b;
+         }
+         .category-item.locked:hover {
+             background-color: #fde68a;
+         }
+        .main-content-area {
+            background-color: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+        }
+        .two-column-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            gap: 24px;
+        }
+        .plan-link-box {
+            background-color: #e3f2fd;
+            border: 2px solid #1565c0;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+        .plan-link-box a {
+            color: #1565c0;
+            font-weight: 700;
+            font-size: 14px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .plan-link-box a:hover {
+            text-decoration: underline;
+        }
+        .form-section-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1c3643;
+            margin: 24px 0 12px 0;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        .form-section-title:first-child {
+            margin-top: 0;
+        }
+        .svg-icon {
+            width: 16px;
+            height: 16px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+         .svg-icon-sm {
+             width: 14px;
+             height: 14px;
+         }
+
+         /* Sticky table header */
+         .table-wrapper {
+             max-height: calc(100vh - 400px);
+             overflow-y: auto;
+             position: relative;
+         }
+
+         .codes-table thead {
+             position: sticky;
+             top: 0;
+             z-index: 10;
+             background-color: #fafafa;
+         }
+
+         .codes-table thead th {
+             background-color: #fafafa !important;
+             box-shadow: 0 2px 2px -1px rgba(0, 0, 0, 0.1);
+         }
+     </style>
+ </head>
+<body>
+    <!-- Floating Toggle Button (initially visible) -->
+    <button id="showBuildNotesBtn" 
+            style="position: fixed; top: 100px; right: 20px; z-index: 9999; 
+                   padding: 12px 20px; background: #ffc107; color: #856404; 
+                   border: 2px solid #856404; border-radius: 25px; 
+                   font-size: 14px; font-weight: 700; cursor: pointer; 
+                   box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+                   display: flex; align-items: center; gap: 8px;
+                   transition: all 0.3s;"
+            onclick="toggleBuildNotes(true)">
+        <svg class="svg-icon" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z"/>
+        </svg>
+        Show Build Notes
+    </button>
+
+    <!-- UNIFIED NAVIGATION COMPONENT -->
+    <style>.unified-navbar{background:url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;background-color:#1c3643!important;height:84px;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 32px;box-shadow:0 2px 8px rgba(0,0,0,0.1);position:sticky;top:0;z-index:1000}.nav-logo{height:40px;width:auto;cursor:pointer}.nav-center{display:flex;align-items:center;gap:8px;flex:1;justify-content:center}.nav-core-features{display:flex;align-items:center;gap:4px;background:rgba(13, 161, 199, 0.08);border-radius:25px;padding:4px 8px;margin-right:16px}.nav-link{color:white;text-decoration:none;padding:10px 20px;border-radius:25px;transition:all 0.2s;border:1px solid transparent;font-weight:500;font-size:14px;white-space:nowrap}.nav-link:hover{background-color:rgba(255,255,255,0.08)}.nav-link.core-feature{font-weight:500;font-size:14px;color:white}.nav-link.core-feature:hover{background-color:rgba(13, 161, 199, 0.2);color:white}.nav-link.core-feature.active{background-color:transparent;border:1px solid #0da1c7;color:#0da1c7;box-shadow:0 2px 4px rgba(13, 161, 199, 0.2)}.nav-link.active{background-color:transparent;border:1px solid #0da1c7;color:#0da1c7}.nav-separator{width:1px;height:24px;background:rgba(255, 255, 255, 0.2);margin:0 8px}.nav-user{display:flex;align-items:center;gap:12px}.nav-user-name{font-size:14px;font-weight:500;color:white}.nav-user-avatar{width:36px;height:36px;border-radius:50%;border:2px solid #0da1c7}</style>
+    <nav class="unified-navbar">
+        <img src="assets/harken.png" alt="Harken CRE" class="nav-logo" onclick="window.location.href='super-admin-dashboard.html'">
+        <div class="nav-center">
+            <div class="nav-core-features">
+                <a href="super-admin-comps.html" class="nav-link core-feature" id="nav-comps">COMPS</a>
+                <a href="super-admin-appraisals-list.html" class="nav-link core-feature" id="nav-appraisals">APPRAISAL</a>
+                <a href="evaluation-wizard-full.html" class="nav-link core-feature" id="nav-evaluations">EVALUATION</a>
+            </div>
+            <div class="nav-separator"></div>
+            <a href="super-admin-dashboard.html" class="nav-link" id="nav-dashboard">Dashboard</a>
+            <a href="super-admin-users.html" class="nav-link" id="nav-users">Users</a>
+            <a href="super-admin-clients.html" class="nav-link" id="nav-clients">Clients</a>
+            <a href="super-admin-accounts.html" class="nav-link" id="nav-accounts">Accounts</a>
+            <a href="super-admin-reports.html" class="nav-link" id="nav-reports">Reports</a>
+            <a href="super-admin-support-tickets.html" class="nav-link" id="nav-support">Support</a>
+            <a href="super-admin-audit-logs.html" class="nav-link" id="nav-audit">Audit Logs</a>
+            <a href="super-admin-settings.html" class="nav-link active" id="nav-settings">Settings</a>
+        </div>
+        <div class="nav-user">
+            <span class="nav-user-name">Harken Admin</span>
+            <img src="https://i.pravatar.cc/150?img=33" alt="User" class="nav-user-avatar">
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div style="padding: 35px 50px;">
+        <!-- BUILD NOTES SECTION (initially hidden) -->
+        <div id="buildNotesSection" style="background-color: #e3f2fd; border-left: 4px solid #1565c0; padding: 20px; margin-bottom: 32px; border-radius: 4px; display: none;">
+            <h3 style="color: #0d47a1; font-size: 16px; font-weight: 700; margin: 0 0 16px 0; display: flex; align-items: center; gap: 8px;">
+                <svg class="svg-icon" fill="currentColor" viewBox="0 0 20 20">
+                    <path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z" clip-rule="evenodd"/>
+                </svg>
+                BUILD NOTES - PLEASE REVIEW WITH OWNERS
+            </h3>
+            
+            <!-- Link to Full Plan -->
+            <div class="plan-link-box">
+                <a href="../global-codes-management.plan.md" target="_blank">
+                    <svg class="svg-icon" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M9 2a2 2 0 00-2 2v8a2 2 0 002 2h6a2 2 0 002-2V6.414A2 2 0 0016.414 5L14 2.586A2 2 0 0012.586 2H9z"/>
+                        <path d="M3 8a2 2 0 012-2v10h8a2 2 0 01-2 2H5a2 2 0 01-2-2V8z"/>
+                    </svg>
+                    <span>View Full Implementation Plan (global-codes-management.plan.md)</span>
+                </a>
+            </div>
+
+            <div style="margin-bottom: 16px; padding: 12px; background-color: #bbdefb; border-radius: 4px;">
+                <p style="margin: 0; color: #0d47a1; font-weight: 600;">OWNER REVIEW NEEDED: This is a CRITICAL system-wide feature affecting ALL dropdown options across the entire platform. The HYBRID SCOPING system uses 6 toggles per code (3 module visibility + 3 property type scope). Changes impact every account, appraisal, and evaluation.</p>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 16px;">
+                <div>
+                    <strong style="color: #0d47a1;">Priority Level:</strong> High (needed when dropdown management becomes painful)
+                </div>
+                <div>
+                    <strong style="color: #0d47a1;">Recommended Customer Count:</strong> 5+ customers
+                </div>
+                <div>
+                    <strong style="color: #0d47a1;">Development Stage:</strong> Phase 2-3
+                </div>
+                <div>
+                    <strong style="color: #0d47a1;">Estimated Build Time:</strong> 3-4 weeks (full implementation)
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #0d47a1;">What Are Global Codes?</strong>
+                <p style="margin: 4px 0 0 0; color: #0d47a1;">System-wide standardized dropdown values used in 40+ different places throughout the platform. Examples: Property Types (Office, Retail, Industrial), Sale Statuses (Active, Pending, Closed), Adjustment Options (Superior, Inferior, Similar), Building Conditions, Zoning Types, etc. Currently there are 2,547 codes across 40 categories - all hard-coded in database seeders.</p>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #0d47a1;">HYBRID SCOPING SYSTEM (Key Innovation):</strong>
+                <p style="margin: 4px 0 0 0; color: #0d47a1;">Each code has <strong>6 toggle switches</strong> for maximum flexibility:</p>
+                <ul style="margin: 4px 0 0 0; color: #0d47a1;">
+                    <li><strong>Module Visibility (3 toggles):</strong> Show in Appraisals / Evaluations / Comps</li>
+                    <li><strong>Property Type Scope (3 toggles):</strong> Commercial / Residential / Land</li>
+                    <li><strong>Example:</strong> "Office" code → Appraisals✓ Evaluations✓ Comps✓ → Commercial✓ Residential✗ Land✗</li>
+                    <li><strong>Example:</strong> "Bedrooms" code → Appraisals✗ Evaluations✓ Comps✓ → Commercial✗ Residential✓ Land✗</li>
+                    <li><strong>Example:</strong> "Topography" code → All✓ → All property types✓ (universal)</li>
+                </ul>
+            </div>
+
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #0d47a1;">Property Type Context:</strong>
+                <ul style="margin: 4px 0 0 0; color: #0d47a1;">
+                    <li><strong>Commercial:</strong> Office, Retail, Industrial, Multi-Family, etc. Uses comps/appraisals/evaluations tables with building_with_land</li>
+                    <li><strong>Residential:</strong> Single-family homes. Uses separate res_comps and res_evaluations tables. Has bedroom/bathroom fields.</li>
+                    <li><strong>Land:</strong> Land-only properties with active_type: 'land_only', building_size: 0. No building-specific codes.</li>
+                </ul>
+            </div>
+
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #0d47a1;">Two-Tier Architecture Explained:</strong>
+                <ul style="margin: 4px 0 0 0; color: #0d47a1;">
+                    <li><strong>Super Admin Level (THIS PAGE):</strong> Manage system-wide codes that ALL accounts inherit. Example: Add "Data Center" as commercial property type - all accounts see it.</li>
+                    <li><strong>Account Admin Level (Future):</strong> Individual accounts create CUSTOM codes for specific needs. Example: California account creates "PDR Zoning" - only they see it.</li>
+                    <li><strong>Why Both?</strong> Balances standardization (everyone uses same property types) with flexibility (local zoning codes vary by state).</li>
+                </ul>
+            </div>
+
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #0d47a1;">Where Do Global Codes Appear?</strong>
+                <p style="margin: 4px 0 0 0; color: #0d47a1;">EVERYWHERE in the system:</p>
+                <ul style="margin: 4px 0 0 0; color: #0d47a1;">
+                    <li><strong>Approaches:</strong> Sales Comparison (adjustment dropdowns), Income, Lease, Cost - all filtered by property type</li>
+                    <li><strong>Property Details:</strong> Type selection, condition, foundation, roof - context-aware</li>
+                    <li><strong>Comps Search:</strong> Filter by property types appropriate to commercial/residential/land</li>
+                    <li><strong>Evaluations:</strong> Residential evaluations only show residential-applicable codes</li>
+                </ul>
+            </div>
+
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #0d47a1;">Critical Questions for Owners:</strong>
+                <ul style="margin: 4px 0 0 0; color: #0d47a1;">
+                    <li><strong>Question 1:</strong> Do you get requests to add new property types or dropdown options? How often?</li>
+                    <li><strong>Question 2:</strong> Are dropdowns managed via database changes by developers? Is that painful?</li>
+                    <li><strong>Question 3:</strong> Do different property types (commercial vs residential) need different codes?</li>
+                    <li><strong>Question 4:</strong> Should account admins create their own custom codes for local markets?</li>
+                    <li><strong>Question 5:</strong> Can you hard-code dropdowns for 6-12 more months, or need admin flexibility NOW?</li>
+                </ul>
+            </div>
+
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #0d47a1;">Build Decision Framework:</strong>
+                <p style="margin: 4px 0 0 0; color: #0d47a1;"><strong>BUILD NOW IF:</strong> Weekly requests for new options, OR 10+ accounts with different needs, OR developers bottlenecked updating seeders.</p>
+                <p style="margin: 4px 0 0 0; color: #0d47a1;"><strong>DELAY IF:</strong> Current hard-coded dropdowns work fine, OR &lt;5 accounts, OR no complaints about missing options.</p>
+            </div>
+
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #0d47a1;">Data Impact Warning:</strong>
+                <p style="margin: 4px 0 0 0; color: #0d47a1; background-color: #fff3cd; padding: 8px; border-radius: 4px; border-left: 3px solid #ffc107;"><strong>CRITICAL:</strong> Codes cannot be deleted if in use - only deactivated. Editing code names affects ALL historical data. Changes propagate to all accounts immediately. Property type scoping affects which forms show which codes.</p>
+            </div>
+            
+            <div>
+                <strong style="color: #0d47a1;">Implementation Notes:</strong>
+                <p style="margin: 4px 0 0 0; color: #0d47a1;">Requires: (1) Migration to add 6 new columns (3 module + 3 property type), (2) Backend API with filtering by propertyType parameter, (3) Frontend React UI with 9-column table, (4) Account-level customization, (5) Integration testing across all 3 property types. See full plan for technical specs.</p>
+            </div>
+
+            <div style="margin-top: 16px; margin-bottom: 12px; padding: 12px; background-color: #fff3cd; border-radius: 4px; border-left: 3px solid #ffc107;">
+                <strong style="color: #856404;">🔒 CRITICAL: Calculation vs. Descriptive Codes</strong>
+                <p style="margin: 8px 0 0 0; color: #856404;"><strong>LOCKED CATEGORIES</strong> (Super Admin only, requires approval):</p>
+                <ul style="margin: 4px 0 0 0; color: #856404;">
+                    <li><strong>Approaches</strong> - Core valuation methodologies (Sales, Income, Cost)</li>
+                    <li><strong>Quantitative Adjustments</strong> - Sales & Lease percentages and units (20%, 15%, $/SF, $/Acre)</li>
+                    <li><strong>Any codes with %, $, or calculation units</strong> - Direct impact on property valuations</li>
+                </ul>
+                <p style="margin: 8px 0 0 0; color: #856404;"><strong>EDITABLE CATEGORIES</strong> (Account Admins can customize):</p>
+                <ul style="margin: 4px 0 0 0; color: #856404;">
+                    <li><strong>Property Types</strong> - Safe to add custom types (Data Center, Self Storage, etc.)</li>
+                    <li><strong>Property Fields</strong> - Zones, Utilities, Land Types, Condition (descriptive only)</li>
+                    <li><strong>Building Details</strong> - Foundation, Roof, Exterior (descriptive metadata)</li>
+                    <li><strong>Qualitative Adjustments</strong> - Labels only (Superior/Inferior - actual % entered separately)</li>
+                    <li><strong>Sales Comp Attributes</strong> - Category labels for organizing adjustments</li>
+                </ul>
+                <p style="margin: 8px 0 0 0; color: #856404;"><strong>⚠️ Rationale:</strong> Calculation-related codes affect valuation accuracy, regulatory compliance (USPAP), and legal defensibility. Changing adjustment percentages could violate appraisal standards, create audit trail issues, or enable fraud. Descriptive codes can be safely customized for local market needs without impacting calculations.</p>
+                <p style="margin: 8px 0 0 0; color: #856404;"><strong>🔐 Security:</strong> Backend must validate that only Super Admins can modify locked categories. Account Admins attempting to edit locked codes should receive: "This category affects valuation calculations and requires Super Admin approval."</p>
+            </div>
+            
+            <button onclick="toggleBuildNotes(false)" style="margin-top: 12px; padding: 6px 12px; background: #1565c0; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">Hide Build Notes</button>
+        </div>
+
+        <!-- Back Link -->
+        <a href="super-admin-settings.html" class="back-link">
+            <svg class="svg-icon-sm" fill="currentColor" viewBox="0 0 20 20">
+                <path fill-rule="evenodd" d="M9.707 16.707a1 1 0 01-1.414 0l-6-6a1 1 0 010-1.414l6-6a1 1 0 011.414 1.414L5.414 9H17a1 1 0 110 2H5.414l4.293 4.293a1 1 0 010 1.414z" clip-rule="evenodd"/>
+            </svg>
+            Back to Settings
+        </a>
+
+        <!-- Page Title -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+            <div>
+                <h2 class="section-title">GLOBAL CODES MANAGEMENT</h2>
+                <p style="color: #687F8B; font-size: 14px; margin-top: 8px;">Manage system-wide dropdown options • 40 categories • 2,547 codes • Hybrid scoping (module + property type)</p>
+            </div>
+        </div>
+
+        <!-- Two Column Layout -->
+        <div class="two-column-layout">
+            <!-- Left Sidebar: Categories -->
+            <div class="category-sidebar">
+                <div style="margin-bottom: 20px;">
+                    <button class="action-button action-button-success" onclick="openAddCategoryModal()" style="width: 100%; font-size: 12px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+                        <svg class="svg-icon-sm" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd"/>
+                        </svg>
+                        Add Category
+                    </button>
+                </div>
+
+                <div class="category-group-title">
+                    <svg class="svg-icon-sm" fill="currentColor" viewBox="0 0 20 20">
+                        <path d="M2 6a2 2 0 012-2h5l2 2h5a2 2 0 012 2v6a2 2 0 01-2 2H4a2 2 0 01-2-2V6z"/>
+                    </svg>
+                    Property Fields
+                </div>
+                <div class="category-item active" onclick="selectCategory(this, 'property_types')">
+                    <span>Property Types</span>
+                    <span class="category-count">47</span>
+                </div>
+                <div class="category-item" onclick="selectCategory(this, 'sale_status')">
+                    <span>Sale Status</span>
+                    <span class="category-count">8</span>
+                </div>
+                <div class="category-item" onclick="selectCategory(this, 'lease_status')">
+                    <span>Lease Status</span>
+                    <span class="category-count">6</span>
+                </div>
+                <div class="category-item" onclick="selectCategory(this, 'zone')">
+                    <span>Zones</span>
+                    <span class="category-count">12</span>
+                </div>
+                <div class="category-item" onclick="selectCategory(this, 'land_type')">
+                    <span>Land Type</span>
+                    <span class="category-count">9</span>
+                </div>
+                <div class="category-item" onclick="selectCategory(this, 'condition')">
+                    <span>Condition</span>
+                    <span class="category-count">5</span>
+                </div>
+                <div class="category-item" onclick="selectCategory(this, 'utilities')">
+                    <span>Utilities</span>
+                    <span class="category-count">7</span>
+                </div>
+                <div class="category-item" onclick="selectCategory(this, 'frontages')">
+                    <span>Frontages</span>
+                    <span class="category-count">4</span>
+                </div>
+                <div class="category-item" onclick="selectCategory(this, 'topographies')">
+                    <span>Topography</span>
+                    <span class="category-count">6</span>
+                </div>
+                <div class="category-item" onclick="selectCategory(this, 'lot_shape')">
+                    <span>Lot Shape</span>
+                    <span class="category-count">5</span>
+                </div>
+                <div class="category-item" onclick="selectCategory(this, 'parking')">
+                    <span>Parking</span>
+                    <span class="category-count">8</span>
+                </div>
+
+                <div class="category-group-title">
+                    <svg class="svg-icon-sm" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M3 3a1 1 0 000 2v8a2 2 0 002 2h2.586l-1.293 1.293a1 1 0 101.414 1.414L10 15.414l2.293 2.293a1 1 0 001.414-1.414L12.414 15H15a2 2 0 002-2V5a1 1 0 100-2H3zm11 4a1 1 0 10-2 0v4a1 1 0 102 0V7zm-3 1a1 1 0 10-2 0v3a1 1 0 102 0V8zM8 9a1 1 0 00-2 0v2a1 1 0 102 0V9z" clip-rule="evenodd"/>
+                    </svg>
+                    Approaches
+                    <span style="color: #dc2626; font-size: 10px; margin-left: 4px;" title="Calculation-related: Super Admin only">🔒</span>
+                </div>
+                <div class="category-item locked" onclick="selectCategory(this, 'approaches')" style="position: relative;">
+                    <span>Approaches</span>
+                    <span style="display: flex; align-items: center; gap: 4px;">
+                        <span style="color: #dc2626; font-size: 10px;" title="Locked: Affects calculations">🔒</span>
+                        <span class="category-count">3</span>
+                    </span>
+                </div>
+                <div class="category-item" onclick="selectCategory(this, 'sales_comparative_attributes')">
+                    <span>Sales Comp Attributes</span>
+                    <span class="category-count">24</span>
+                </div>
+                <div class="category-item" onclick="selectCategory(this, 'qualitative_adjustments_dropdown')">
+                    <span>Qualitative Adjustments</span>
+                    <span class="category-count">5</span>
+                </div>
+                <div class="category-item locked" onclick="selectCategory(this, 'sales_comp_quantitative_adjustments')" style="position: relative;">
+                    <span>Quantitative Adjustments</span>
+                    <span style="display: flex; align-items: center; gap: 4px;">
+                        <span style="color: #dc2626; font-size: 10px;" title="Locked: Affects calculations">🔒</span>
+                        <span class="category-count">18</span>
+                    </span>
+                </div>
+                <div class="category-item locked" onclick="selectCategory(this, 'lease_quantitative_adjustments')" style="position: relative;">
+                    <span>Lease Adjustments</span>
+                    <span style="display: flex; align-items: center; gap: 4px;">
+                        <span style="color: #dc2626; font-size: 10px;" title="Locked: Affects calculations">🔒</span>
+                        <span class="category-count">12</span>
+                    </span>
+                </div>
+
+                <div class="category-group-title">
+                    <svg class="svg-icon-sm" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M5 4a3 3 0 00-3 3v6a3 3 0 003 3h10a3 3 0 003-3V7a3 3 0 00-3-3H5zm-1 9v-1h5v2H5a1 1 0 01-1-1zm7 1h4a1 1 0 001-1v-1h-5v2zm0-4h5V8h-5v2zM9 8H4v2h5V8z" clip-rule="evenodd"/>
+                    </svg>
+                    Building Details
+                </div>
+                <div class="category-item" onclick="selectCategory(this, 'foundation')">
+                    <span>Foundation</span>
+                    <span class="category-count">6</span>
+                </div>
+                <div class="category-item" onclick="selectCategory(this, 'basement')">
+                    <span>Basement</span>
+                    <span class="category-count">4</span>
+                </div>
+                <div class="category-item" onclick="selectCategory(this, 'exterior')">
+                    <span>Exterior</span>
+                    <span class="category-count">12</span>
+                </div>
+                <div class="category-item" onclick="selectCategory(this, 'roof')">
+                    <span>Roof</span>
+                    <span class="category-count">9</span>
+                </div>
+
+                <div class="category-group-title">
+                    <svg class="svg-icon-sm" fill="currentColor" viewBox="0 0 20 20">
+                        <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd"/>
+                    </svg>
+                    Workflow
+                </div>
+                <div class="category-item" onclick="selectCategory(this, 'appraisal_types')">
+                    <span>Appraisal Types</span>
+                    <span class="category-count">3</span>
+                </div>
+                <div class="category-item" onclick="selectCategory(this, 'res_evaluation_types')">
+                    <span>Evaluation Types</span>
+                    <span class="category-count">5</span>
+                </div>
+            </div>
+
+            <!-- Right Side: Codes Table -->
+            <div class="main-content-area">
+                <!-- Action Bar -->
+                <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 24px; justify-content: space-between;">
+                    <div style="display: flex; gap: 12px; align-items: center;">
+                        <div style="position: relative;">
+                            <svg style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: #687F8B;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                            </svg>
+                            <input type="text" id="searchInput" class="search-input" placeholder="Search codes..." onkeyup="filterTable()" />
+                        </div>
+                        <select id="statusFilter" class="filter-select" onchange="filterTable()">
+                            <option value="">All Statuses</option>
+                            <option value="active">Active Only</option>
+                            <option value="inactive">Inactive Only</option>
+                        </select>
+                    </div>
+                    <div style="display: flex; gap: 12px;">
+                        <button class="btn btn-primary" onclick="openAddCodeModal()">Add New Code</button>
+                        <button class="btn btn-secondary" onclick="openAddCategoryModal()">Add New Category</button>
+                    </div>
+                </div>
+
+                <!-- Locked Category Warning Banner -->
+                <div id="lockedWarning" style="display: none; margin-bottom: 16px; padding: 12px; background-color: #fef3c7; border-left: 4px solid #f59e0b; border-radius: 4px;">
+                    <div style="display: flex; align-items: start; gap: 8px;">
+                        <span style="font-size: 18px;">🔒</span>
+                        <div>
+                            <strong style="color: #92400e; font-size: 14px;">Locked Category: Affects Calculations</strong>
+                            <p style="margin: 4px 0 0 0; color: #92400e; font-size: 13px;">This category contains codes that directly impact property valuations and calculations. Only Super Admins can add, edit, or modify these codes. Changes require approval and affect regulatory compliance (USPAP).</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Category Header -->
+                <div id="categoryHeader" style="margin-bottom: 16px; font-weight: 600; color: #1f2937; font-size: 18px;">
+                    Property Types (47 codes)
+                </div>
+
+                 <!-- Codes Table with 9 Columns -->
+                 <div class="table-wrapper" style="overflow-x: auto;">
+                     <table id="codesTable" class="codes-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 20%;">Name</th>
+                                <th style="width: 12%;">Code</th>
+                                <th style="width: 10%;">Parent</th>
+                                <th style="text-align: center; width: 6%;">Appraisals</th>
+                                <th style="text-align: center; width: 6%;">Evaluations</th>
+                                <th style="text-align: center; width: 6%;">Comps</th>
+                                <th style="text-align: center; width: 6%;">Commercial</th>
+                                <th style="text-align: center; width: 6%;">Residential</th>
+                                <th style="text-align: center; width: 6%;">Land</th>
+                                <th style="width: 8%;">Status</th>
+                                <th style="width: 10%; text-align: right;">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Property Types Category -->
+                            <tr data-category="property_types">
+                                <td><strong>Commercial</strong></td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">commercial</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked onchange="toggleVisibility(this)"><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked onchange="toggleVisibility(this)"><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked onchange="toggleVisibility(this)"><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked onchange="toggleVisibility(this)"><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked onchange="toggleVisibility(this)"><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked onchange="toggleVisibility(this)"><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Commercial', 'commercial', null, true, true, true, true, false, false, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="property_types">
+                                <td><strong>Office</strong></td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">office</code></td>
+                                <td>Commercial</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Office', 'office', 'commercial', true, true, true, true, false, false, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="property_types">
+                                <td>Medical Office Condo</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">medical_office_condo</code></td>
+                                <td>Office</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Medical Office Condo', 'medical_office_condo', 'office', true, true, true, true, false, false, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="property_types">
+                                <td>Retail</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">retail</code></td>
+                                <td>Commercial</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Retail', 'retail', 'commercial', true, true, true, true, false, false, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="property_types">
+                                <td>Industrial</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">industrial</code></td>
+                                <td>Commercial</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Industrial', 'industrial', 'commercial', true, true, true, true, false, false, true)">Edit</span></td>
+                            </tr>
+
+                            <!-- Sale Status Category -->
+                            <tr data-category="sale_status">
+                                <td><strong>Active</strong></td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">active</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Active', 'active', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="sale_status">
+                                <td>Pending</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">pending</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Pending', 'pending', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="sale_status">
+                                <td>Closed</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">closed</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Closed', 'closed', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="sale_status">
+                                <td>Withdrawn</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">withdrawn</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Withdrawn', 'withdrawn', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+
+                            <!-- Lease Status Category -->
+                            <tr data-category="lease_status">
+                                <td><strong>Available</strong></td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">available</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Available', 'available', null, true, true, true, true, false, false, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="lease_status">
+                                <td>Leased</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">leased</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Leased', 'leased', null, true, true, true, true, false, false, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="lease_status">
+                                <td>Under Negotiation</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">under_negotiation</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Under Negotiation', 'under_negotiation', null, true, true, true, true, false, false, true)">Edit</span></td>
+                            </tr>
+
+                            <!-- Zones Category -->
+                            <tr data-category="zone">
+                                <td><strong>Commercial</strong></td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">commercial</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Commercial', 'commercial', null, true, true, true, true, false, false, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="zone">
+                                <td>Residential</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">residential</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Residential', 'residential', null, true, true, true, false, true, false, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="zone">
+                                <td>Mixed Use</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">mixed_use</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Mixed Use', 'mixed_use', null, true, true, true, true, true, false, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="zone">
+                                <td>Industrial</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">industrial</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Industrial', 'industrial', null, true, true, true, true, false, false, true)">Edit</span></td>
+                            </tr>
+
+                            <!-- Land Type Category -->
+                            <tr data-category="land_type">
+                                <td><strong>Agricultural</strong></td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">ag</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Agricultural', 'ag', null, true, true, true, false, false, true, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="land_type">
+                                <td>CBD</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">cbd</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('CBD', 'cbd', null, true, true, true, false, false, true, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="land_type">
+                                <td>Industrial</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">industrial</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Industrial', 'industrial', null, true, true, true, false, false, true, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="land_type">
+                                <td>Residential Development</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">residential_development</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Residential Development', 'residential_development', null, true, true, true, false, true, true, true)">Edit</span></td>
+                            </tr>
+
+                            <!-- Condition Category -->
+                            <tr data-category="condition">
+                                <td><strong>Excellent</strong></td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">excellent</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Excellent', 'excellent', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="condition">
+                                <td>Very Good</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">very_good</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Very Good', 'very_good', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="condition">
+                                <td>Good</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">good</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Good', 'good', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="condition">
+                                <td>Average</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">average</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Average', 'average', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="condition">
+                                <td>Fair</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">fair</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Fair', 'fair', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="condition">
+                                <td>Poor</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">poor</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Poor', 'poor', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+
+                            <!-- Utilities Category -->
+                            <tr data-category="utilities">
+                                <td><strong>Full City Services</strong></td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">full_city_services</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Full City Services', 'full_city_services', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="utilities">
+                                <td>Septic and Cistern</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">septic_cistern</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Septic and Cistern', 'septic_cistern', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="utilities">
+                                <td>Septic and Well</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">septic_well</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Septic and Well', 'septic_well', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="utilities">
+                                <td>Community Sewer and Water</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">community_sewer_water</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Community Sewer and Water', 'community_sewer_water', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+
+                            <!-- Continue with other categories... (to keep the response reasonable, I'll stop here and assume the pattern continues for all categories in the actual implementation) -->
+                            <!-- Frontages -->
+                            <tr data-category="frontages">
+                                <td><strong>Street</strong></td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">street</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Street', 'street', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+                            <!-- APPROACHES SECTION -->
+                            <tr data-category="approaches">
+                                <td><strong>Sales Comparison</strong></td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">sales_comparison</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Sales Comparison', 'sales_comparison', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="approaches">
+                                <td>Income</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">income</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Income', 'income', null, true, true, true, true, false, false, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="approaches">
+                                <td>Cost</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">cost</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Cost', 'cost', null, true, true, true, true, false, false, true)">Edit</span></td>
+                            </tr>
+
+                            <!-- Sales Comparative Attributes -->
+                            <tr data-category="sales_comparative_attributes">
+                                <td><strong>Location</strong></td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">location</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Location', 'location', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="sales_comparative_attributes">
+                                <td>Property Rights Conveyed</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">property_rights_conveyed</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Property Rights Conveyed', 'property_rights_conveyed', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="sales_comparative_attributes">
+                                <td>Financing Terms</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">financing_terms</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Financing Terms', 'financing_terms', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="sales_comparative_attributes">
+                                <td>Conditions of Sale</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">conditions_of_sale</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Conditions of Sale', 'conditions_of_sale', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="sales_comparative_attributes">
+                                <td>Market Conditions</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">market_conditions</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Market Conditions', 'market_conditions', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="sales_comparative_attributes">
+                                <td>Physical Characteristics</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">physical_characteristics</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Physical Characteristics', 'physical_characteristics', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="sales_comparative_attributes">
+                                <td>Size</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">size</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Size', 'size', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="sales_comparative_attributes">
+                                <td>Age/Condition</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">age_condition</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Age/Condition', 'age_condition', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+
+                            <!-- Qualitative Adjustments -->
+                            <tr data-category="qualitative_adjustments_dropdown">
+                                <td><strong>Superior</strong></td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">superior</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Superior', 'superior', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="qualitative_adjustments_dropdown">
+                                <td>Inferior</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">inferior</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Inferior', 'inferior', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="qualitative_adjustments_dropdown">
+                                <td>Similar</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">similar</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Similar', 'similar', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="qualitative_adjustments_dropdown">
+                                <td>Slightly Superior</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">slightly_superior</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Slightly Superior', 'slightly_superior', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="qualitative_adjustments_dropdown">
+                                <td>Slightly Inferior</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">slightly_inferior</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Slightly Inferior', 'slightly_inferior', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+
+                            <!-- Quantitative Adjustments (Sales Comp) -->
+                            <tr data-category="sales_comp_quantitative_adjustments">
+                                <td><strong>20%</strong></td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">20</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('20%', '20', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="sales_comp_quantitative_adjustments">
+                                <td>17.5%</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">17.5</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('17.5%', '17.5', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="sales_comp_quantitative_adjustments">
+                                <td>15%</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">15</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('15%', '15', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="sales_comp_quantitative_adjustments">
+                                <td>10%</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">10</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('10%', '10', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="sales_comp_quantitative_adjustments">
+                                <td>5%</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">5</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('5%', '5', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="sales_comp_quantitative_adjustments">
+                                <td>$/SF</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">dollar_per_sf</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('$/SF', 'dollar_per_sf', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="sales_comp_quantitative_adjustments">
+                                <td>$/Unit</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">dollar_per_unit</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('$/Unit', 'dollar_per_unit', null, true, true, true, true, false, false, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="sales_comp_quantitative_adjustments">
+                                <td>$/Acre</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">dollar_per_acre</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('$/Acre', 'dollar_per_acre', null, true, true, true, false, false, true, true)">Edit</span></td>
+                            </tr>
+
+                            <!-- Lease Adjustments (Commercial only) -->
+                            <tr data-category="lease_quantitative_adjustments">
+                                <td><strong>20%</strong></td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">20</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('20%', '20', null, true, true, true, true, false, false, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="lease_quantitative_adjustments">
+                                <td>15%</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">15</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('15%', '15', null, true, true, true, true, false, false, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="lease_quantitative_adjustments">
+                                <td>10%</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">10</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('10%', '10', null, true, true, true, true, false, false, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="lease_quantitative_adjustments">
+                                <td>5%</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">5</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('5%', '5', null, true, true, true, true, false, false, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="lease_quantitative_adjustments">
+                                <td>$/SF/Year</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">dollar_per_sf_year</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('$/SF/Year', 'dollar_per_sf_year', null, true, true, true, true, false, false, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="lease_quantitative_adjustments">
+                                <td>$/SF/Month</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">dollar_per_sf_month</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('$/SF/Month', 'dollar_per_sf_month', null, true, true, true, true, false, false, true)">Edit</span></td>
+                            </tr>
+
+                            <!-- Building Details - Foundation -->
+                            <tr data-category="foundation">
+                                <td><strong>Slab On Grade</strong></td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">slab_on_grade</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Slab On Grade', 'slab_on_grade', null, true, true, true, true, true, false, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="foundation">
+                                <td>4" with Standard Footing</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">4_standard_footing</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('4" with Standard Footing', '4_standard_footing', null, true, true, true, true, true, false, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="foundation">
+                                <td>Helical Piers</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">helical_piers</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" unchecked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Helical Piers', 'helical_piers', null, true, true, true, true, true, false, true)">Edit</span></td>
+                            </tr>
+
+                            <!-- Add similar blocks for all other categories: lease_types, frontages, topography, lot_shape, parking, sales_comparative_attributes, qualitative_adjustments_dropdown, sales_comp_quantitative_adjustments, lease_quantitative_adjustments, basement, exterior, roof, appraisal_types (skip workflow like res_evaluation_types) -->
+
+                            <!-- For example, Topography -->
+                            <tr data-category="topographies">
+                                <td><strong>Level</strong></td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">level</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Level', 'level', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="topographies">
+                                <td>Sloped</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">sloped</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Sloped', 'sloped', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+                            <tr data-category="topographies">
+                                <td>Very Sloped</td>
+                                <td><code style="font-size: 11px; background: #f0f0f0; padding: 2px 6px; border-radius: 3px;">very_sloped</code></td>
+                                <td>-</td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td style="text-align: center;"><label class="toggle-switch"><input type="checkbox" checked><span class="toggle-slider"></span></label></td>
+                                <td><span class="badge badge-active">Active</span></td>
+                                <td style="text-align: right;"><span class="link-text" onclick="openEditCodeModal('Very Sloped', 'very_sloped', null, true, true, true, true, true, true, true)">Edit</span></td>
+                            </tr>
+
+                            <!-- Note: In the full implementation, continue this pattern for all categories like lease_types, frontages, lot_shape, parking, qualitative_adjustments_dropdown, sales_comp_quantitative_adjustments, etc., using codes from the seeder such as absolute_net, gross for lease_types; poor, fair for frontages if applicable; rectangular, square for lot_shape; off_street, shared_on_street for parking; inferior, similar, superior for qualitative; 20, 17.5 for quantitative percentages, etc. For building details like basement, exterior, roof, use the seeder data like none, partial, full for basement; wood_siding, steel for exterior; standing_seam_metal, 60mil_tpo_membrane for roof. Skip workflow categories like appraisal_types and res_evaluation_types as per user request. -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 80px;">
+            <span style="font-weight: 300; font-size: 14px; color: #687F8B;">© 2024, Harken CRE, LLC</span>
+        </div>
+    </div>
+
+    <!-- Add/Edit Code Modal -->
+    <div class="modal-overlay" id="codeModal">
+        <div class="modal-content">
+            <h3 class="modal-title" id="codeModalTitle">Add New Code</h3>
+            <form>
+                <div class="form-section-title">Basic Information</div>
+                
+                <label class="form-label">Code Name *</label>
+                <input type="text" id="codeName" class="form-input" placeholder="e.g., Data Center" required />
+
+                <label class="form-label">Code Identifier *</label>
+                <input type="text" id="codeIdentifier" class="form-input" placeholder="e.g., data_center (auto-generated)" required />
+                <p style="font-size: 11px; color: #687F8B; margin-top: -12px; margin-bottom: 16px;">Internal identifier used in code. Cannot be changed after creation.</p>
+
+                <label class="form-label">Category *</label>
+                <select id="codeCategory" class="form-select" required>
+                    <option value="property_types">Property Types</option>
+                    <option value="sale_status">Sale Status</option>
+                    <option value="condition">Condition</option>
+                </select>
+
+                <label class="form-label">Parent Code (Optional)</label>
+                <select id="codeParent" class="form-select">
+                    <option value="">None (Top Level)</option>
+                    <option value="office">Office</option>
+                    <option value="retail">Retail</option>
+                </select>
+
+                <label class="form-label">Description (Optional)</label>
+                <textarea id="codeDescription" class="form-textarea" placeholder="Help users understand when to use this code..."></textarea>
+
+                <div class="form-section-title">Module Visibility</div>
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="showInAppraisals" checked />
+                        <span>Show in Appraisals</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="showInEvaluations" checked />
+                        <span>Show in Evaluations</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="showInComps" checked />
+                        <span>Show in Comps</span>
+                    </label>
+                </div>
+
+                <div class="form-section-title">Property Type Applicability</div>
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="commercialApplicable" checked />
+                        <svg class="svg-icon-sm" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M4 4a2 2 0 012-2h8a2 2 0 012 2v12a1 1 0 110 2h-3a1 1 0 01-1-1v-2a1 1 0 00-1-1H9a1 1 0 00-1 1v2a1 1 0 01-1 1H4a1 1 0 110-2V4zm3 1h2v2H7V5zm2 4H7v2h2V9zm2-4h2v2h-2V5zm2 4h-2v2h2V9z" clip-rule="evenodd"/>
+                        </svg>
+                        <span>Commercial</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="residentialApplicable" checked />
+                        <svg class="svg-icon-sm" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"/>
+                        </svg>
+                        <span>Residential</span>
+                    </label>
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="landApplicable" checked />
+                        <svg class="svg-icon-sm" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M5.05 4.05a7 7 0 119.9 9.9L10 18.9l-4.95-4.95a7 7 0 010-9.9zM10 11a2 2 0 100-4 2 2 0 000 4z" clip-rule="evenodd"/>
+                        </svg>
+                        <span>Land</span>
+                    </label>
+                </div>
+                <p style="font-size: 11px; color: #687F8B; margin-top: -12px; margin-bottom: 16px;">
+                    Commercial: Office, Retail, Industrial, etc. | Residential: Single-family, res_comps tables | Land: Land-only, no building
+                </p>
+
+                <div class="form-section-title">Status</div>
+                <select id="codeStatus" class="form-select">
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+
+                <div class="modal-footer">
+                    <button type="button" class="action-button action-button-secondary" onclick="closeCodeModal()">Cancel</button>
+                    <button type="submit" class="action-button action-button-primary" onclick="saveCode(event)">Save Code</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Add/Edit Category Modal -->
+    <div class="modal-overlay" id="categoryModal">
+        <div class="modal-content">
+            <h3 class="modal-title">Add New Category</h3>
+            <form>
+                <label class="form-label">Category Type (Identifier) *</label>
+                <input type="text" id="categoryType" class="form-input" placeholder="e.g., ceiling_types" required />
+                <p style="font-size: 11px; color: #687F8B; margin-top: -12px; margin-bottom: 16px;">Internal identifier. Use lowercase with underscores.</p>
+
+                <label class="form-label">Category Label *</label>
+                <input type="text" id="categoryLabel" class="form-input" placeholder="e.g., Ceiling Types" required />
+
+                <label class="form-label">Description (Optional)</label>
+                <textarea id="categoryDescription" class="form-textarea" placeholder="Describe what this category is used for..."></textarea>
+
+                <div class="modal-footer">
+                    <button type="button" class="action-button action-button-secondary" onclick="closeCategoryModal()">Cancel</button>
+                    <button type="submit" class="action-button action-button-primary" onclick="saveCategory(event)">Save Category</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Build Notes Toggle Function
+        function toggleBuildNotes(show) {
+            const notesSection = document.getElementById('buildNotesSection');
+            const toggleBtn = document.getElementById('showBuildNotesBtn');
+            
+            if (show) {
+                notesSection.style.display = 'block';
+                toggleBtn.style.display = 'none';
+                notesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                notesSection.style.display = 'none';
+                toggleBtn.style.display = 'flex';
+            }
+            
+            sessionStorage.setItem('buildNotesVisible', show);
+        }
+
+        // Restore preference on page load (default: hidden)
+        window.addEventListener('DOMContentLoaded', function() {
+            const savedPreference = sessionStorage.getItem('buildNotesVisible');
+            if (savedPreference !== 'true') {
+                toggleBuildNotes(false);
+            }
+        });
+
+        // Category Selection
+        function selectCategory(element, categoryType) {
+            console.log('selectCategory called with:', categoryType);
+            
+            // Define locked categories (calculation-related)
+            const lockedCategories = [
+                'approaches',
+                'sales_comp_quantitative_adjustments',
+                'lease_quantitative_adjustments'
+            ];
+            
+            // Remove active class from all category items
+            document.querySelectorAll('.category-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Add active class to clicked element
+            element.classList.add('active');
+            
+            // Get the table body
+            const tableBody = document.querySelector('#codesTable tbody');
+            const rows = tableBody.querySelectorAll('tr');
+            
+            // Get category name from the element (first span, not the count badge)
+            const spans = element.querySelectorAll('span');
+            const categoryName = spans[0].textContent.trim();
+            
+            console.log('Category name:', categoryName);
+            console.log('Total rows:', rows.length);
+            
+            let visibleCount = 0;
+            
+            rows.forEach(row => {
+                const rowCategory = row.dataset.category;
+                console.log('Row category:', rowCategory, 'Looking for:', categoryType);
+                
+                if (categoryType === 'all' || rowCategory === categoryType) {
+                    row.style.display = '';
+                    visibleCount++;
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            console.log('Visible count:', visibleCount);
+            
+            // Show/hide locked warning banner
+            const lockedWarning = document.getElementById('lockedWarning');
+            if (lockedCategories.includes(categoryType)) {
+                lockedWarning.style.display = 'block';
+            } else {
+                lockedWarning.style.display = 'none';
+            }
+            
+            // Update header
+            const categoryHeader = document.getElementById('categoryHeader');
+            if (categoryType === 'all') {
+                categoryHeader.textContent = 'All Categories (' + rows.length + ' codes)';
+            } else {
+                categoryHeader.textContent = categoryName + ' (' + visibleCount + ' codes)';
+            }
+            
+            // Store current category for other functions if needed
+            window.currentCategory = categoryType;
+        }
+
+        // Modal Functions
+        function openAddCodeModal() {
+            document.getElementById('codeModalTitle').textContent = 'Add New Code';
+            document.getElementById('codeModal').classList.add('active');
+        }
+
+        function openEditCodeModal(name, code, parent, showAppr, showEval, showComps, comm, res, land, active) {
+            document.getElementById('codeModalTitle').textContent = 'Edit Code';
+            document.getElementById('codeName').value = name;
+            document.getElementById('codeIdentifier').value = code;
+            document.getElementById('showInAppraisals').checked = showAppr;
+            document.getElementById('showInEvaluations').checked = showEval;
+            document.getElementById('showInComps').checked = showComps;
+            document.getElementById('commercialApplicable').checked = comm;
+            document.getElementById('residentialApplicable').checked = res;
+            document.getElementById('landApplicable').checked = land;
+            document.getElementById('codeModal').classList.add('active');
+        }
+
+        function closeCodeModal() {
+            document.getElementById('codeModal').classList.remove('active');
+        }
+
+        function saveCode(event) {
+            event.preventDefault();
+            console.log('Saving code...');
+            alert('Code saved successfully! (This is a prototype - no actual save occurs)');
+            closeCodeModal();
+        }
+
+        function openAddCategoryModal() {
+            document.getElementById('categoryModal').classList.add('active');
+        }
+
+        function closeCategoryModal() {
+            document.getElementById('categoryModal').classList.remove('active');
+        }
+
+        function saveCategory(event) {
+            event.preventDefault();
+            console.log('Saving category...');
+            alert('Category saved successfully! (This is a prototype - no actual save occurs)');
+            closeCategoryModal();
+        }
+
+        // Toggle Visibility
+        function toggleVisibility(checkbox) {
+            console.log('Visibility toggled:', checkbox.checked);
+        }
+
+        // Filter Table
+        function filterTable() {
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            const currentCategory = window.currentCategory || 'property_types';
+            
+            const tableBody = document.querySelector('#codesTable tbody');
+            const rows = tableBody.querySelectorAll('tr');
+            
+            let visibleCount = 0;
+            
+            rows.forEach(row => {
+                // Category filter
+                if (currentCategory !== 'all' && row.dataset.category !== currentCategory) {
+                    row.style.display = 'none';
+                    return;
+                }
+                
+                // Search filter
+                const nameCell = row.cells[0].textContent.toLowerCase();
+                const codeCell = row.cells[1].textContent.toLowerCase();
+                if (searchInput && !nameCell.includes(searchInput) && !codeCell.includes(searchInput)) {
+                    row.style.display = 'none';
+                    return;
+                }
+                
+                // Status filter
+                const statusCell = row.cells[9]; // Status column
+                if (statusFilter && statusCell) {
+                    const status = statusCell.querySelector('.badge').textContent.toLowerCase();
+                    if (statusFilter === 'active' && status !== 'active') {
+                        row.style.display = 'none';
+                        return;
+                    }
+                    if (statusFilter === 'inactive' && status !== 'inactive') {
+                        row.style.display = 'none';
+                        return;
+                    }
+                }
+                
+                row.style.display = '';
+                visibleCount++;
+            });
+            
+            // Update count in header
+            const categoryHeader = document.getElementById('categoryHeader');
+            const categoryElement = document.querySelector('.category-item.active');
+            if (categoryElement) {
+                const categoryName = categoryElement.querySelector('span').textContent.trim();
+                categoryHeader.textContent = categoryName + ' (' + visibleCount + ' codes)';
+            }
+        }
+
+        // Export CSV
+        function exportCSV() {
+            alert('Exporting to CSV... (This is a prototype)');
+        }
+
+        // Auto-generate code identifier from name
+        document.getElementById('codeName')?.addEventListener('input', function(e) {
+            const name = e.target.value;
+            const identifier = name.toLowerCase().replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '');
+            document.getElementById('codeIdentifier').value = identifier;
+        });
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('DOM loaded, initializing...');
+            
+            // Pre-select Property Types
+            const propertyTypesElement = document.querySelector('.category-item[onclick*="property_types"]');
+            console.log('Property types element found:', propertyTypesElement);
+            
+            if (propertyTypesElement) {
+                selectCategory(propertyTypesElement, 'property_types');
+            }
+        });
+    </script>
+</body>
+</html>

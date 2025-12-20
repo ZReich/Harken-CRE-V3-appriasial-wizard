@@ -1,0 +1,1506 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Land Property Details - Harken Comps</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .material-icons {
+            font-family: 'Material Icons' !important;
+        }
+
+        body {
+            background: #f5f7fa;
+            color: #1c3643;
+            overflow-x: hidden;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Navigation Bar */
+        nav {
+            background: #1c3643;
+            color: white;
+            padding: 0 24px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0da1c7;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #0da1c7;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            height: 400px;
+            background-size: cover;
+            background-position: center;
+            background-image: url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=1200');
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(28, 54, 67, 0.7), rgba(28, 54, 67, 0.85));
+        }
+
+        .hero-content {
+            position: relative;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 13px;
+        }
+
+        .breadcrumb a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .breadcrumb a:hover {
+            color: #0da1c7;
+        }
+
+        .hero-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .hero-info h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 8px;
+        }
+
+        .hero-location {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            gap: 6px;
+        }
+
+        .status-active {
+            background: #10b981;
+            color: white;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .hero-btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #0da1c7;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0b8aad;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.2);
+            color: white;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-danger:hover {
+            background: #ef4444;
+        }
+
+        /* Quick Stats Bar */
+        .stats-bar {
+            position: sticky;
+            top: 0;
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            z-index: 100;
+        }
+
+        .stats-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            flex-wrap: wrap;
+        }
+
+        .stat-chip {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #687F8B;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1c3643;
+        }
+
+        .stat-value.primary {
+            font-size: 28px;
+            color: #0da1c7;
+        }
+
+        /* Main Content */
+        .content-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 32px 24px;
+            display: grid;
+            grid-template-columns: 1fr 450px;
+            gap: 24px;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Card Styles */
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.2s;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #1c3643;
+        }
+
+        .card-title .material-icons {
+            color: #0da1c7;
+            font-size: 24px;
+        }
+
+        .collapse-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #687F8B;
+            transition: transform 0.3s;
+        }
+
+        .collapse-btn.active {
+            transform: rotate(180deg);
+        }
+
+        .card-body {
+            overflow: visible;
+            transition: max-height 0.3s ease;
+        }
+
+        .card-body.collapsed {
+            max-height: 0 !important;
+            overflow: hidden;
+        }
+
+        /* Property Info Grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .info-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #687F8B;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 15px;
+            font-weight: 500;
+            color: #1c3643;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            word-break: break-word;
+        }
+
+        .info-value.large {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .info-value p {
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            word-break: break-word;
+            white-space: normal;
+        }
+
+        .property-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            background: #0da1c7;
+            color: white;
+        }
+
+        .condition-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .condition-excellent {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .condition-good {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .condition-fair {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        /* Financial Highlights */
+        .financial-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .financial-box {
+            background: linear-gradient(135deg, #0da1c7 0%, #0b8aad 100%);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            color: white;
+        }
+
+        .financial-label {
+            font-size: 12px;
+            font-weight: 600;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .financial-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        /* Timeline */
+        .timeline {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+            margin-top: 16px;
+        }
+
+        .timeline-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .timeline-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #687F8B;
+            text-transform: uppercase;
+        }
+
+        .timeline-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1c3643;
+        }
+
+        .timeline-arrow {
+            color: #0da1c7;
+            font-size: 32px;
+        }
+
+        /* Map Container */
+        .map-container {
+            width: 100%;
+            height: 350px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #e0e0e0;
+            position: relative;
+        }
+
+        /* Property Timeline Styles */
+        .timeline-entry {
+            display: flex;
+            gap: 12px;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 12px;
+            position: relative;
+            border-left: 3px solid #0da1c7;
+        }
+
+        .timeline-entry:hover {
+            background: #e5e7eb;
+            transform: translateX(4px);
+        }
+
+        .timeline-entry.land {
+            border-left-color: #f59e0b;
+        }
+
+        .timeline-entry.improved {
+            border-left-color: #10b981;
+        }
+
+        .timeline-entry-image {
+            width: 80px;
+            height: 60px;
+            border-radius: 4px;
+            object-fit: cover;
+        }
+
+        .timeline-entry-info {
+            flex: 1;
+        }
+
+        .timeline-entry-year {
+            font-size: 11px;
+            font-weight: 700;
+            color: #0da1c7;
+            margin-bottom: 2px;
+        }
+
+        .timeline-entry-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1c3643;
+            margin-bottom: 4px;
+        }
+
+        .timeline-entry-price {
+            font-size: 14px;
+            font-weight: 700;
+            color: #0da1c7;
+        }
+
+        .timeline-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .timeline-badge.land {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .timeline-badge.improved {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .timeline-badge.current {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .last-modified-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 20px;
+            font-size: 11px;
+            color: #0369a1;
+            margin-left: 16px;
+        }
+
+        /* Audit History Modal */
+        .audit-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .audit-modal.active {
+            display: flex;
+        }
+        .audit-modal-content {
+            background-color: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .audit-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .audit-modal-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1c3643;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .audit-modal-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #687F8B;
+            padding: 4px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        .audit-modal-close:hover {
+            background: #f5f5f5;
+        }
+        .audit-modal-body {
+            padding: 24px;
+            overflow-y: auto;
+            flex: 1;
+        }
+        .audit-filter-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .audit-filter-select {
+            padding: 8px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 13px;
+            background-color: white;
+            color: #687F8B;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .audit-filter-select:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .audit-timeline-modal {
+            position: relative;
+        }
+        .audit-entry {
+            position: relative;
+            padding-left: 32px;
+            padding-bottom: 24px;
+            border-left: 2px solid #e0e0e0;
+            margin-left: 8px;
+        }
+        .audit-entry:last-child {
+            border-left: 2px solid transparent;
+            padding-bottom: 0;
+        }
+        .audit-entry::before {
+            content: '';
+            position: absolute;
+            left: -7px;
+            top: 4px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #0da1c7;
+            border: 2px solid white;
+            box-shadow: 0 0 0 2px #e0e0e0;
+        }
+        .audit-entry.create::before {
+            background-color: #10b981;
+        }
+        .audit-entry.update::before {
+            background-color: #0da1c7;
+        }
+        .audit-header-modal {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+        .audit-user {
+            font-weight: 600;
+            color: #1c3643;
+            font-size: 14px;
+        }
+        .audit-action {
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .audit-action.create {
+            background-color: #d1fae5;
+            color: #059669;
+        }
+        .audit-action.update {
+            background-color: #dbeafe;
+            color: #2563eb;
+        }
+        .audit-timestamp {
+            font-size: 12px;
+            color: #687F8B;
+            margin-bottom: 8px;
+        }
+        .audit-changes {
+            background-color: #f9f9f9;
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 8px;
+        }
+        .audit-change-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 0;
+            font-size: 13px;
+            flex-wrap: wrap;
+        }
+        .audit-change-item:not(:last-child) {
+            border-bottom: 1px solid #e8e8e8;
+        }
+        .change-field {
+            font-weight: 600;
+            color: #1c3643;
+            min-width: 100px;
+        }
+        .change-old {
+            color: #dc2626;
+            text-decoration: line-through;
+            background-color: #fef2f2;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        .change-arrow {
+            color: #687F8B;
+        }
+        .change-new {
+            color: #059669;
+            background-color: #f0fdf4;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        .audit-note {
+            margin-top: 12px;
+            padding: 12px;
+            background-color: #fffbeb;
+            border-left: 3px solid #f59e0b;
+            border-radius: 0 6px 6px 0;
+            font-size: 13px;
+            color: #92400e;
+        }
+        .audit-note-label {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .expand-btn {
+            background: none;
+            border: none;
+            color: #0da1c7;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 0;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .expand-btn:hover {
+            text-decoration: underline;
+        }
+        .audit-changes.collapsed {
+            display: none;
+        }
+        .audit-modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #e0e0e0;
+            text-align: center;
+        }
+        .btn-load-more {
+            background-color: white;
+            color: #687F8B;
+            border: 1px solid #e0e0e0;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .btn-load-more:hover {
+            background-color: #f9f9f9;
+            border-color: #d0d0d0;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .financial-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .hero-actions,
+            nav,
+            .sidebar,
+            .collapse-btn {
+                display: none !important;
+            }
+
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- UNIFIED NAVIGATION COMPONENT -->
+    <style>.unified-navbar{background:url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;background-color:#1c3643!important;height:84px;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 24px;box-shadow:0 2px 8px rgba(0,0,0,0.1);position:sticky;top:0;z-index:1000;width:100%;box-sizing:border-box;margin:0;left:0}.nav-logo{height:40px;width:auto;cursor:pointer}.nav-center{display:flex;align-items:center;gap:6px;flex:1;justify-content:center}.nav-core-features{display:flex;align-items:center;gap:3px;background:rgba(13, 161, 199, 0.08);border-radius:25px;padding:4px 6px;margin-right:12px}.nav-link{color:white;text-decoration:none;padding:8px 16px;border-radius:25px;transition:all 0.2s;border:1px solid transparent;font-weight:500;font-size:13px;white-space:nowrap}.nav-link:hover{background-color:rgba(255,255,255,0.08)}.nav-link.core-feature{font-weight:500;font-size:13px;color:white}.nav-link.core-feature:hover{background-color:rgba(13, 161, 199, 0.2);color:white}.nav-link.core-feature.active{background-color:transparent;border:1px solid #0da1c7;color:#0da1c7;box-shadow:0 2px 4px rgba(13, 161, 199, 0.2)}.nav-link.active{background-color:transparent;border:1px solid #0da1c7;color:#0da1c7}.nav-separator{width:1px;height:24px;background:rgba(255, 255, 255, 0.2);margin:0 6px}.nav-user{display:flex;align-items:center;gap:10px}.nav-user-name{font-size:13px;font-weight:500;color:white}.nav-user-avatar{width:36px;height:36px;border-radius:50%;border:2px solid #0da1c7}@media (max-width: 1400px){.nav-link{padding:8px 12px;font-size:12px}.nav-link.core-feature{font-size:12px}.nav-center{gap:4px}.nav-core-features{gap:2px;padding:4px 4px;margin-right:8px}.nav-separator{margin:0 4px}.nav-user-name{font-size:12px}.nav-user{gap:8px}}@media (max-width: 1200px){.unified-navbar{padding:0 16px}.nav-link{padding:6px 10px;font-size:11px}.nav-link.core-feature{font-size:11px}.nav-center{gap:3px}.nav-separator{margin:0 3px}.nav-user-name{font-size:11px}}</style><nav class="unified-navbar"><img src="assets/harken.png" alt="Harken CRE" class="nav-logo" onclick="window.location.href='super-admin-dashboard.html'"><div class="nav-center"><div class="nav-core-features"><a href="super-admin-comps.html" class="nav-link core-feature active" id="nav-comps">COMPS</a><a href="super-admin-appraisals-list.html" class="nav-link core-feature" id="nav-appraisals">APPRAISAL</a><a href="super-admin-evaluations-list.html" class="nav-link core-feature" id="nav-evaluations">EVALUATION</a></div><div class="nav-separator"></div><a href="super-admin-dashboard.html" class="nav-link" id="nav-dashboard">Dashboard</a><a href="super-admin-users.html" class="nav-link" id="nav-users">Users</a><a href="super-admin-clients.html" class="nav-link" id="nav-clients">Clients</a><a href="super-admin-accounts.html" class="nav-link" id="nav-accounts">Accounts</a><a href="super-admin-reports.html" class="nav-link" id="nav-reports">Reports</a><a href="super-admin-support-tickets.html" class="nav-link" id="nav-support">Support</a><a href="super-admin-audit-logs.html" class="nav-link" id="nav-audit">Audit Logs</a><a href="super-admin-settings.html" class="nav-link" id="nav-settings">Settings</a></div><div class="nav-user"><span class="nav-user-name">Harken Admin</span><img src="https://i.pravatar.cc/150?img=33" alt="User" class="nav-user-avatar"></div></nav>
+
+    <!-- Hero Section -->
+    <div class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <div class="breadcrumb">
+                <a href="super-admin-comps.html">Comps</a>
+                <i class="material-icons" style="font-size: 16px;">chevron_right</i>
+                <a href="super-admin-comps.html">Land</a>
+                <i class="material-icons" style="font-size: 16px;">chevron_right</i>
+                <span>Property Details</span>
+            </div>
+
+            <div class="hero-bottom">
+                <div class="hero-info">
+                    <h1>Mountain Vista Development Land</h1>
+                    <div class="hero-location">
+                        <i class="material-icons">location_on</i>
+                        <span>Highway 285 & County Road 43, Evergreen, CO 80439</span>
+                    </div>
+                    <span class="status-badge status-active">
+                        <i class="material-icons" style="font-size: 16px;">check_circle</i>
+                        Available
+                    </span>
+                    <span class="last-modified-badge">
+                        <i class="material-icons" style="font-size: 14px;">schedule</i>
+                        Last modified by <strong>Mike Davis</strong> on Feb 20, 2024
+                    </span>
+                </div>
+
+                <div class="hero-actions">
+                    <button class="hero-btn btn-primary" onclick="editProperty(1)">
+                        <i class="material-icons">edit</i>
+                        Edit Property
+                    </button>
+                    <button class="hero-btn btn-secondary" onclick="window.print()">
+                        <i class="material-icons">print</i>
+                        Print
+                    </button>
+                    <button class="hero-btn btn-secondary" onclick="shareProperty()">
+                        <i class="material-icons">share</i>
+                        Share
+                    </button>
+                    <button class="hero-btn btn-danger" onclick="deleteProperty(1)">
+                        <i class="material-icons">delete</i>
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats Bar -->
+    <div class="stats-bar">
+        <div class="stats-container">
+            <div class="stat-chip">
+                <span class="stat-label">Sale Price</span>
+                <span class="stat-value primary">$875,000</span>
+            </div>
+            <div class="stat-chip">
+                <span class="stat-label">Price / Acre</span>
+                <span class="stat-value">$43,750</span>
+            </div>
+            <div class="stat-chip">
+                <span class="stat-label">Land Size</span>
+                <span class="stat-value">20.0 AC</span>
+            </div>
+            <div class="stat-chip">
+                <span class="stat-label">Zoning</span>
+                <span class="stat-value">R-2 Residential</span>
+            </div>
+            <div class="stat-chip">
+                <span class="stat-label">Land Type</span>
+                <span class="stat-value">Residential Dev</span>
+            </div>
+            <div class="stat-chip">
+                <span class="stat-label">Topography</span>
+                <span class="stat-value">Rolling</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content-wrapper">
+        <div class="main-content">
+            <!-- Property Overview -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="material-icons">landscape</i>
+                        Property Overview
+                    </div>
+                    <button class="collapse-btn" onclick="toggleCard(this)">
+                        <i class="material-icons">expand_less</i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Street Address</span>
+                            <span class="info-value">Highway 285 & County Road 43</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">City</span>
+                            <span class="info-value">Evergreen</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">State</span>
+                            <span class="info-value">Colorado</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Zipcode</span>
+                            <span class="info-value">80439</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">County</span>
+                            <span class="info-value">Jefferson County</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Property Type</span>
+                            <span class="property-badge">Land Only</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Land Type</span>
+                            <span class="property-badge" style="background: #16a34a;">Residential Development</span>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 20px;">
+                        <div class="info-item">
+                            <span class="info-label">Property Summary</span>
+                            <p class="info-value" style="line-height: 1.8; margin-top: 8px; white-space: pre-wrap; word-wrap: break-word;">Prime 20-acre development parcel with stunning mountain views and excellent access. Ideal for residential subdivision with potential for 8-10 single-family lots based on current zoning. Rolling topography with mature pine and aspen trees. Public utilities available at property line. Located in highly desirable mountain community with strong real estate market. Close to national forest, hiking trails, and recreational amenities. Just 35 minutes from Denver metro area via Highway 285.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Site/Land Details -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="material-icons">terrain</i>
+                        Site & Land Details
+                    </div>
+                    <button class="collapse-btn" onclick="toggleCard(this)">
+                        <i class="material-icons">expand_less</i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Land Size</span>
+                            <span class="info-value large">20.0 ACRES</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Dimension Unit</span>
+                            <span class="info-value">Acres</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Land Type</span>
+                            <span class="info-value">Residential Development</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Topography</span>
+                            <span class="info-value">Rolling</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Lot Shape</span>
+                            <span class="info-value">Irregular</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Frontage</span>
+                            <span class="condition-indicator condition-excellent">
+                                <i class="material-icons" style="font-size: 16px;">check_circle</i>
+                                Excellent - Highway & County Road
+                            </span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Utilities</span>
+                            <span class="info-value">Electric & Water Available</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Site Access</span>
+                            <span class="info-value">Paved Highway Access</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Zoning Type</span>
+                            <span class="info-value">R-2 Residential (Low Density)</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Road Access</span>
+                            <span class="info-value">Direct Highway Frontage</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Water Source</span>
+                            <span class="info-value">Public Water District</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Sewer Type</span>
+                            <span class="info-value">Individual Septic Required</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Soil Type</span>
+                            <span class="info-value">Loam - Good Drainage</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Environmental</span>
+                            <span class="info-value">Phase I Clear</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Elevation</span>
+                            <span class="info-value">7,800 ft</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Vegetation</span>
+                            <span class="info-value">Pine, Aspen, Natural Grasses</span>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 20px;">
+                        <div class="info-item">
+                            <span class="info-label">Site Comments</span>
+                            <p class="info-value" style="line-height: 1.8; margin-top: 8px; white-space: pre-wrap; word-wrap: break-word;">Exceptional development opportunity in high-demand mountain market. Current R-2 zoning allows minimum 2-acre lots with potential for 8-10 single-family homes. Topography provides natural building sites with privacy and views. Mature trees throughout property add significant value. Soil tests on file show excellent percolation for septic systems. Property borders national forest on west boundary providing permanent open space. Wildlife includes deer, elk, and various birds. Minimal site work required due to gentle rolling terrain. Strong comparable sales in area support current pricing. Surrounded by executive homes valued $800K-$2M+.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transaction Details -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="material-icons">payments</i>
+                        Transaction Details
+                    </div>
+                    <button class="collapse-btn" onclick="toggleCard(this)">
+                        <i class="material-icons">expand_less</i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <!-- Financial Highlights -->
+                    <div class="financial-grid">
+                        <div class="financial-box">
+                            <div class="financial-label">Sale Price</div>
+                            <div class="financial-value">$875,000</div>
+                        </div>
+                        <div class="financial-box">
+                            <div class="financial-label">Price / Acre</div>
+                            <div class="financial-value">$43,750</div>
+                        </div>
+                    </div>
+
+                    <!-- Transaction Timeline -->
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <span class="timeline-label">Listed</span>
+                            <span class="timeline-value">Nov 1, 2023</span>
+                        </div>
+                        <i class="material-icons timeline-arrow">arrow_forward</i>
+                        <div class="timeline-item">
+                            <span class="timeline-label">Days on Market</span>
+                            <span class="timeline-value">180 Days</span>
+                        </div>
+                        <i class="material-icons timeline-arrow">arrow_forward</i>
+                        <div class="timeline-item">
+                            <span class="timeline-label">Sold</span>
+                            <span class="timeline-value">Apr 28, 2024</span>
+                        </div>
+                    </div>
+
+                    <!-- Detailed Info -->
+                    <div class="info-grid" style="margin-top: 24px;">
+                        <div class="info-item">
+                            <span class="info-label">List Price</span>
+                            <span class="info-value large">$950,000</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Sale Status</span>
+                            <span class="property-badge">Closed</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Estimated Land Value</span>
+                            <span class="info-value">$875,000</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Total Concessions</span>
+                            <span class="info-value">$0</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Seller Type</span>
+                            <span class="info-value">Private Landowner</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Buyer Type</span>
+                            <span class="info-value">Developer</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Tax ID / Parcel</span>
+                            <span class="info-value">123-45-678-901</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Annual Property Tax</span>
+                            <span class="info-value">$6,500</span>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <div class="info-item">
+                            <span class="info-label">Financing Details</span>
+                            <p class="info-value" style="line-height: 1.8; margin-top: 8px; white-space: pre-wrap; word-wrap: break-word;">Cash purchase by development company. No financing contingencies. Buyer conducted extensive due diligence including soils testing, survey, and preliminary plat review with county planning department. All mineral rights convey with property. Water rights included for residential development. 60-day close with no delays. Clean title with professional title insurance. Seller provided survey, environmental Phase I, and preliminary subdivision concept approved by county.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <!-- Map -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="material-icons">map</i>
+                        Location
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="map-container">
+                        <img src="https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v11/static/pin-l-marker+0da1c7(-105.3272,39.6347)/-105.3272,39.6347,13,0/450x350?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw" alt="Map" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Property Timeline -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="material-icons">timeline</i>
+                        Property History
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="timeline-entry land" onclick="viewPropertyDetail(1)">
+                        <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=200" alt="Land" class="timeline-entry-image">
+                        <div class="timeline-entry-info">
+                            <div class="timeline-entry-year" style="color: #f59e0b;">2024</div>
+                            <span class="timeline-badge current">Current Sale</span>
+                            <div class="timeline-entry-label">Residential Dev Land</div>
+                            <div class="timeline-entry-price">$875,000</div>
+                        </div>
+                    </div>
+                    
+                    <div class="timeline-entry land" onclick="viewPropertyDetail(101)">
+                        <img src="https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=200" alt="Land" class="timeline-entry-image">
+                        <div class="timeline-entry-info">
+                            <div class="timeline-entry-year" style="color: #f59e0b;">2018</div>
+                            <span class="timeline-badge land">Vacant Land</span>
+                            <div class="timeline-entry-label">Agricultural Parcel</div>
+                            <div class="timeline-entry-price">$425,000</div>
+                        </div>
+                    </div>
+
+                    <div class="timeline-entry land" onclick="viewPropertyDetail(102)">
+                        <img src="https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=200" alt="Land" class="timeline-entry-image">
+                        <div class="timeline-entry-info">
+                            <div class="timeline-entry-year" style="color: #f59e0b;">2010</div>
+                            <span class="timeline-badge land">Raw Land</span>
+                            <div class="timeline-entry-label">Unimproved Acreage</div>
+                            <div class="timeline-entry-price">$185,000</div>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; padding-top: 12px; border-top: 1px solid #e0e0e0; margin-top: 8px;">
+                        <span style="font-size: 11px; color: #687F8B;">Total Appreciation: </span>
+                        <span style="font-size: 13px; font-weight: 700; color: #10b981;">+373% since 2010</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Audit History -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="material-icons">history</i>
+                        Change History
+                    </div>
+                    <button class="collapse-btn" onclick="toggleCard(this)">
+                        <i class="material-icons">expand_less</i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div style="padding: 10px 0; border-bottom: 1px solid #f0f0f0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                            <span style="font-size: 13px; font-weight: 600; color: #1c3643;">Mike Davis</span>
+                            <span style="font-size: 10px; font-weight: 600; color: white; background: #3b82f6; padding: 2px 6px; border-radius: 3px;">UPDATED</span>
+                        </div>
+                        <div style="font-size: 11px; color: #687F8B; margin-bottom: 6px;">Feb 20, 2024 at 3:15 PM</div>
+                        <div style="font-size: 12px; color: #1c3643;">
+                            Land Size: <span style="color: #dc2626; text-decoration: line-through;">19.5 AC</span>
+                            <span style="color: #687F8B; margin: 0 4px;">--></span>
+                            <span style="color: #10b981;">20.3 AC</span>
+                        </div>
+                        <div style="font-size: 11px; color: #92400e; background: #fef3c7; padding: 6px 8px; border-radius: 4px; margin-top: 6px;">
+                            Corrected per new survey
+                        </div>
+                    </div>
+                    <div style="padding: 10px 0; border-bottom: 1px solid #f0f0f0;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                            <span style="font-size: 13px; font-weight: 600; color: #1c3643;">Sarah Johnson</span>
+                            <span style="font-size: 10px; font-weight: 600; color: white; background: #10b981; padding: 2px 6px; border-radius: 3px;">CREATED</span>
+                        </div>
+                        <div style="font-size: 11px; color: #687F8B;">Jan 28, 2024 at 10:45 AM</div>
+                        <div style="font-size: 12px; color: #687F8B; margin-top: 4px;">Record created manually</div>
+                    </div>
+                    <div style="text-align: center; padding-top: 12px;">
+                        <a href="#" onclick="openAuditHistoryModal(); return false;" style="font-size: 12px; color: #0da1c7; text-decoration: none; font-weight: 600;">View Full History</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Collapse/Expand Cards
+        function toggleCard(button) {
+            const card = button.closest('.card');
+            const body = card.querySelector('.card-body');
+            const icon = button.querySelector('.material-icons');
+            
+            if (body.classList.contains('collapsed')) {
+                body.style.maxHeight = body.scrollHeight + 'px';
+                body.classList.remove('collapsed');
+                icon.textContent = 'expand_less';
+                button.classList.remove('active');
+            } else {
+                body.style.maxHeight = body.scrollHeight + 'px';
+                setTimeout(() => {
+                    body.style.maxHeight = '0';
+                }, 10);
+                body.classList.add('collapsed');
+                icon.textContent = 'expand_more';
+                button.classList.add('active');
+            }
+        }
+
+        // Initialize card body heights
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.card-body').forEach(body => {
+                body.style.maxHeight = body.scrollHeight + 'px';
+            });
+        });
+
+        // Navigation Functions
+        function editProperty(id) {
+            window.location.href = `comp-edit-full-page.html?id=${id}`;
+        }
+
+        function viewPropertyDetail(id) {
+            window.location.href = `super-admin-comp-view-detail-land.html?id=${id}`;
+        }
+
+        function deleteProperty(id) {
+            if (confirm('Are you sure you want to delete this property? This action cannot be undone.')) {
+                alert('Property deleted successfully');
+                window.location.href = '../comps-premium-with-clustering.html';
+            }
+        }
+
+        function shareProperty() {
+            const url = window.location.href;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(url).then(() => {
+                    alert('Link copied to clipboard!');
+                });
+            } else {
+                alert('Share link: ' + url);
+            }
+        }
+
+        // Get property ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const propertyId = urlParams.get('id');
+        console.log('Viewing land property:', propertyId);
+
+        // Audit History Modal Functions
+        function openAuditHistoryModal() {
+            document.getElementById('auditHistoryModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeAuditHistoryModal() {
+            document.getElementById('auditHistoryModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function toggleAuditChanges(btn) {
+            const changes = btn.nextElementSibling;
+            const icon = btn.querySelector('.material-icons');
+            
+            if (changes.classList.contains('collapsed')) {
+                changes.classList.remove('collapsed');
+                icon.textContent = 'expand_less';
+                btn.innerHTML = btn.innerHTML.replace('Show', 'Hide');
+            } else {
+                changes.classList.add('collapsed');
+                icon.textContent = 'expand_more';
+                btn.innerHTML = btn.innerHTML.replace('Hide', 'Show');
+            }
+        }
+
+        // Close modal on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeAuditHistoryModal();
+            }
+        });
+
+        // Close modal on backdrop click
+        document.addEventListener('click', function(e) {
+            const modal = document.getElementById('auditHistoryModal');
+            if (e.target === modal) {
+                closeAuditHistoryModal();
+            }
+        });
+    </script>
+
+    <!-- Audit History Modal -->
+    <div class="audit-modal" id="auditHistoryModal">
+        <div class="audit-modal-content">
+            <div class="audit-modal-header">
+                <h3>
+                    <i class="material-icons" style="color: #0da1c7;">history</i>
+                    Change History
+                </h3>
+                <button class="audit-modal-close" onclick="closeAuditHistoryModal()">
+                    <i class="material-icons">close</i>
+                </button>
+            </div>
+            <div class="audit-modal-body">
+                <div class="audit-filter-bar">
+                    <span style="font-size: 13px; color: #687F8B;">Showing all changes for this land comp</span>
+                    <select class="audit-filter-select">
+                        <option>All Changes</option>
+                        <option>Price Changes</option>
+                        <option>Acreage Changes</option>
+                        <option>Last 30 Days</option>
+                    </select>
+                </div>
+
+                <div class="audit-timeline-modal">
+                    <!-- Entry 1 - Most Recent -->
+                    <div class="audit-entry update">
+                        <div class="audit-header-modal">
+                            <div>
+                                <div class="audit-user">John Smith</div>
+                                <div class="audit-timestamp">March 15, 2024 at 2:34 PM</div>
+                            </div>
+                            <span class="audit-action update">Updated</span>
+                        </div>
+                        <button class="expand-btn" onclick="toggleAuditChanges(this)">
+                            <span class="material-icons" style="font-size: 16px;">expand_more</span>
+                            Show 2 changes
+                        </button>
+                        <div class="audit-changes collapsed">
+                            <div class="audit-change-item">
+                                <span class="change-field">Sale Price</span>
+                                <span class="change-old">$425,000</span>
+                                <span class="change-arrow">--></span>
+                                <span class="change-new">$450,000</span>
+                            </div>
+                            <div class="audit-change-item">
+                                <span class="change-field">Price/Acre</span>
+                                <span class="change-old">$26,562</span>
+                                <span class="change-arrow">--></span>
+                                <span class="change-new">$28,125</span>
+                            </div>
+                        </div>
+                        <div class="audit-note">
+                            <div class="audit-note-label">Note:</div>
+                            Updated per final closing docs from county records.
+                        </div>
+                    </div>
+
+                    <!-- Entry 2 -->
+                    <div class="audit-entry update">
+                        <div class="audit-header-modal">
+                            <div>
+                                <div class="audit-user">Sarah Johnson</div>
+                                <div class="audit-timestamp">February 28, 2024 at 10:15 AM</div>
+                            </div>
+                            <span class="audit-action update">Updated</span>
+                        </div>
+                        <button class="expand-btn" onclick="toggleAuditChanges(this)">
+                            <span class="material-icons" style="font-size: 16px;">expand_more</span>
+                            Show 1 change
+                        </button>
+                        <div class="audit-changes collapsed">
+                            <div class="audit-change-item">
+                                <span class="change-field">Zoning</span>
+                                <span class="change-old">Agricultural</span>
+                                <span class="change-arrow">--></span>
+                                <span class="change-new">C-2 Commercial</span>
+                            </div>
+                        </div>
+                        <div class="audit-note">
+                            <div class="audit-note-label">Note:</div>
+                            Zoning changed after city council approval Jan 2024.
+                        </div>
+                    </div>
+
+                    <!-- Entry 3 -->
+                    <div class="audit-entry update">
+                        <div class="audit-header-modal">
+                            <div>
+                                <div class="audit-user">Mike Davis</div>
+                                <div class="audit-timestamp">January 20, 2024 at 4:45 PM</div>
+                            </div>
+                            <span class="audit-action update">Updated</span>
+                        </div>
+                        <button class="expand-btn" onclick="toggleAuditChanges(this)">
+                            <span class="material-icons" style="font-size: 16px;">expand_more</span>
+                            Show 2 changes
+                        </button>
+                        <div class="audit-changes collapsed">
+                            <div class="audit-change-item">
+                                <span class="change-field">Acreage</span>
+                                <span class="change-old">15.8 AC</span>
+                                <span class="change-arrow">--></span>
+                                <span class="change-new">16.0 AC</span>
+                            </div>
+                            <div class="audit-change-item">
+                                <span class="change-field">Topography</span>
+                                <span class="change-old">Flat</span>
+                                <span class="change-arrow">--></span>
+                                <span class="change-new">Rolling</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Entry 4 - Creation -->
+                    <div class="audit-entry create">
+                        <div class="audit-header-modal">
+                            <div>
+                                <div class="audit-user">Sarah Johnson</div>
+                                <div class="audit-timestamp">January 15, 2024 at 9:22 AM</div>
+                            </div>
+                            <span class="audit-action create">Created</span>
+                        </div>
+                        <div style="font-size: 13px; color: #687F8B;">
+                            Land comp record created manually
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="audit-modal-footer">
+                <button class="btn-load-more">Load Earlier Changes</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

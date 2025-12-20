@@ -1,0 +1,51 @@
+import { currentDateTime } from '../utils/common/Time';
+
+const eval_lease_approach_qualitative_sub_adj = (sequelize, DataTypes) => {
+	const eval_lease_approach_qualitative_sub_adj = sequelize.define(
+		'eval_lease_approach_qualitative_sub_adj',
+		{
+			id: {
+				type: DataTypes.INTEGER(11),
+				primaryKey: true,
+				allowNull: false,
+				autoIncrement: true,
+			},
+			evaluation_lease_approach_id: {
+				type: DataTypes.INTEGER(11),
+				allowNull: false,
+			},
+			adj_key: {
+				type: DataTypes.STRING(50),
+			},
+			adj_value: {
+				type: DataTypes.STRING(50),
+			},
+			subject_property_value: {
+				type: DataTypes.STRING(50),
+			},
+			order: {
+				type: DataTypes.INTEGER(11),
+			},
+			date_created: {
+				type: DataTypes.DATE,
+				allowNull: false,
+				defaultValue: sequelize.literal('CURRENT_TIMESTAMP'),
+			},
+			last_updated: {
+				type: DataTypes.DATE,
+				defaultValue: sequelize.literal('CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP'),
+			},
+		},
+		{
+			timestamps: false, // Disable createdAt and updatedAt
+			tableName: 'eval_lease_approach_qualitative_sub_adj',
+			hooks: {
+				beforeCreate: (instance) => {
+					instance.last_updated = currentDateTime();
+				},
+			},
+		},
+	);
+	return eval_lease_approach_qualitative_sub_adj;
+};
+export default eval_lease_approach_qualitative_sub_adj;

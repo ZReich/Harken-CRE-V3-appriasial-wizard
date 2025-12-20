@@ -1,0 +1,25 @@
+{
+	"development": {
+		"username": "root",
+		"password": "admin",
+		"database": "harkendev",
+		"host": "127.0.0.1",
+		"dialect": "mysql",
+		"port": 6033
+	},
+	"test": {
+		"username": "root",
+		"password": "admin",
+		"database": "harkendev",
+		"host": "127.0.0.1",
+		"dialect": "mysql",
+		"port": 6033
+	},
+	"production": {
+		"username": "root",
+		"password": "",
+		"database": "database_production",
+		"host": "127.0.0.1",
+		"dialect": "mysql"
+	}
+}

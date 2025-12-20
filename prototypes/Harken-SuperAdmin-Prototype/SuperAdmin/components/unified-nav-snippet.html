@@ -1,0 +1,267 @@
+<!-- UNIFIED NAVIGATION COMPONENT -->
+<!-- Copy this entire block into each Super Admin prototype page -->
+
+<style>
+    .unified-navbar {
+        background: url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;
+        background-color: #1c3643 !important;
+        height: 84px;
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 32px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+    }
+    
+    .nav-logo {
+        height: 40px;
+        width: auto;
+        cursor: pointer;
+    }
+    
+    .nav-center {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        flex: 1;
+        justify-content: center;
+    }
+    
+    /* Core Features Group */
+    .nav-core-features {
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        background: rgba(13, 161, 199, 0.08);
+        border-radius: 25px;
+        padding: 4px 8px;
+        margin-right: 16px;
+    }
+    
+    .nav-link {
+        color: white;
+        text-decoration: none;
+        padding: 10px 20px;
+        border-radius: 25px;
+        transition: all 0.2s;
+        border: 1px solid transparent;
+        font-weight: 500;
+        font-size: 14px;
+        white-space: nowrap;
+    }
+    
+    .nav-link:hover {
+        background-color: rgba(255,255,255,0.08);
+    }
+    
+    /* Core features styling - matches other nav items */
+    .nav-link.core-feature {
+        font-weight: 500;
+        font-size: 14px;
+        color: white;
+    }
+    
+    .nav-link.core-feature:hover {
+        background-color: rgba(13, 161, 199, 0.2);
+        color: white;
+    }
+    
+    .nav-link.core-feature.active {
+        background-color: transparent;
+        border: 1px solid #0da1c7;
+        color: #0da1c7;
+        box-shadow: 0 2px 4px rgba(13, 161, 199, 0.2);
+    }
+    
+    /* Standard nav items */
+    .nav-link.active {
+        background-color: transparent;
+        border: 1px solid #0da1c7;
+        color: #0da1c7;
+    }
+    
+    .nav-separator {
+        width: 1px;
+        height: 24px;
+        background: rgba(255, 255, 255, 0.2);
+        margin: 0 8px;
+    }
+    
+    .nav-user {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    
+    .nav-user-name {
+        font-size: 14px;
+        font-weight: 500;
+        color: white;
+    }
+    
+    .nav-user-avatar {
+        width: 36px;
+        height: 36px;
+        border-radius: 50%;
+        border: 2px solid #0da1c7;
+    }
+    
+    /* Property Type Tabs - Second Tier */
+    .property-tabs-container {
+        background: white;
+        border-bottom: 2px solid #e0e0e0;
+        display: none; /* Hidden by default */
+        padding: 0 32px;
+    }
+    
+    .property-tabs-container.show {
+        display: flex;
+    }
+    
+    .property-tab {
+        padding: 16px 24px;
+        border: none;
+        background: transparent;
+        color: #687F8B;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        border-bottom: 3px solid transparent;
+        margin-bottom: -2px;
+        font-family: 'Montserrat', sans-serif;
+    }
+    
+    .property-tab:hover {
+        color: #0da1c7;
+        background: #f0fbfd;
+    }
+    
+    .property-tab.active {
+        color: #0da1c7;
+        border-bottom-color: #0da1c7;
+        background: #f0fbfd;
+    }
+</style>
+
+<!-- Navigation Bar -->
+<nav class="unified-navbar">
+    <img src="assets/harken.png" alt="Harken CRE" class="nav-logo" onclick="window.location.href='super-admin-dashboard.html'">
+    
+    <div class="nav-center">
+        <!-- Core Features Group - Purple -->
+        <div class="nav-core-features">
+            <a href="../comps-premium-with-clustering.html" class="nav-link core-feature" id="nav-comps">COMPS</a>
+            <a href="super-admin-appraisals-list.html" class="nav-link core-feature" id="nav-appraisals">APPRAISAL</a>
+            <a href="super-admin-evaluations-list.html" class="nav-link core-feature" id="nav-evaluations">EVALUATION</a>
+        </div>
+        
+        <div class="nav-separator"></div>
+        
+        <!-- Management Items - Standard -->
+        <a href="super-admin-dashboard.html" class="nav-link" id="nav-dashboard">Dashboard</a>
+        <a href="super-admin-users.html" class="nav-link" id="nav-users">Users</a>
+        <a href="super-admin-clients.html" class="nav-link" id="nav-clients">Clients</a>
+        <a href="super-admin-accounts.html" class="nav-link" id="nav-accounts">Accounts</a>
+        <a href="super-admin-reports.html" class="nav-link" id="nav-reports">Reports</a>
+        <a href="super-admin-support.html" class="nav-link" id="nav-support">Support</a>
+        <a href="super-admin-audit-logs.html" class="nav-link" id="nav-audit">Audit Logs</a>
+        <a href="super-admin-settings.html" class="nav-link" id="nav-settings">Settings</a>
+    </div>
+    
+    <div class="nav-user">
+        <span class="nav-user-name">Harken Admin</span>
+        <img src="https://i.pravatar.cc/150?img=33" alt="User" class="nav-user-avatar">
+    </div>
+</nav>
+
+<!-- Property Type Tabs (conditionally shown) -->
+<div class="property-tabs-container" id="propertyTabsContainer">
+    <button class="property-tab active" data-type="commercial" onclick="switchPropertyType('commercial')">
+        <i class="material-icons" style="font-size: 18px;">business</i>
+        Commercial
+    </button>
+    <button class="property-tab" data-type="residential" onclick="switchPropertyType('residential')">
+        <i class="material-icons" style="font-size: 18px;">home</i>
+        Residential
+    </button>
+    <button class="property-tab" data-type="land" onclick="switchPropertyType('land')">
+        <i class="material-icons" style="font-size: 18px;">terrain</i>
+        Land
+    </button>
+</div>
+
+<script>
+    // Navigation state management
+    (function() {
+        // Determine which page we're on
+        const currentPage = window.location.pathname.split('/').pop() || 'super-admin-dashboard.html';
+        
+        // Show property tabs only on COMPS, APPRAISAL, EVALUATION pages
+        const showPropertyTabsOn = ['super-admin-comps.html', 'super-admin-appraisals-list.html', 'super-admin-evaluations-list.html'];
+        if (showPropertyTabsOn.some(page => currentPage.includes(page) || currentPage.includes('comps-') || currentPage.includes('appraisal-') || currentPage.includes('evaluation-'))) {
+            document.getElementById('propertyTabsContainer').classList.add('show');
+        }
+        
+        // Highlight active nav item
+        const navMapping = {
+            'super-admin-dashboard.html': 'nav-dashboard',
+            'super-admin-comps.html': 'nav-comps',
+            'comps-premium-with-clustering.html': 'nav-comps',
+            'super-admin-appraisals-list.html': 'nav-appraisals',
+            'super-admin-evaluations-list.html': 'nav-evaluations',
+            'evaluation-wizard-full.html': 'nav-evaluations',
+            'super-admin-users.html': 'nav-users',
+            'super-admin-user-detail.html': 'nav-users',
+            'super-admin-clients.html': 'nav-clients',
+            'super-admin-accounts.html': 'nav-accounts',
+            'super-admin-account-detail.html': 'nav-accounts',
+            'super-admin-reports.html': 'nav-reports',
+            'super-admin-support.html': 'nav-support',
+            'super-admin-audit-logs.html': 'nav-audit',
+            'super-admin-settings.html': 'nav-settings'
+        };
+        
+        // Find matching nav item
+        for (const [page, navId] of Object.entries(navMapping)) {
+            if (currentPage.includes(page)) {
+                const navElement = document.getElementById(navId);
+                if (navElement) {
+                    navElement.classList.add('active');
+                }
+                break;
+            }
+        }
+    })();
+    
+    // Property type switching
+    function switchPropertyType(type) {
+        // Update active tab
+        document.querySelectorAll('.property-tab').forEach(tab => {
+            tab.classList.remove('active');
+        });
+        document.querySelector(`[data-type="${type}"]`).classList.add('active');
+        
+        // Store in localStorage
+        localStorage.setItem('activePropertyType', type);
+        
+        // In a real app, this would filter/reload data based on property type
+        console.log('Switched to property type:', type);
+    }
+    
+    // Load saved property type on page load
+    window.addEventListener('load', function() {
+        const savedType = localStorage.getItem('activePropertyType');
+        if (savedType) {
+            switchPropertyType(savedType);
+        }
+    });
+</script>
+

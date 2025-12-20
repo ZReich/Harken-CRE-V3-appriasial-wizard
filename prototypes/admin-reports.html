@@ -1,0 +1,197 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reports & Analytics - Harken CRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            font-family: 'Montserrat', sans-serif !important;
+        }
+        body {
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background: url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;
+            background-color: #1c3643 !important;
+            max-height: 84px;
+            height: 84px;
+            color: #fff;
+        }
+        .section-title {
+            font-size: 23px;
+            font-weight: 600;
+            color: #1c3643;
+        }
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 10px 24px;
+            border-radius: 25px;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+        .nav-link.active {
+            background-color: transparent;
+            border: 1px solid #0da1c7;
+            color: #0da1c7;
+        }
+        .placeholder-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 40px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+            text-align: center;
+            margin: 40px 0;
+        }
+        .placeholder-message {
+            font-size: 18px;
+            color: #687F8B;
+            margin-bottom: 16px;
+        }
+        .link-text {
+            color: #0da1c7;
+            text-decoration: none;
+        }
+        .link-text:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Toggle Button (initially hidden) -->
+    <button id="showBuildNotesBtn" 
+            style="position: fixed; top: 100px; right: 20px; z-index: 9999; 
+                   padding: 12px 20px; background: #ffc107; color: #856404; 
+                   border: 2px solid #856404; border-radius: 25px; 
+                   font-size: 14px; font-weight: 700; cursor: pointer; 
+                   box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+                   display: none; transition: all 0.3s;"
+            onclick="toggleBuildNotes(true)">
+        🔨 Show Build Notes
+    </button>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar flex items-center justify-between px-8">
+        <div class="flex items-center">
+            <img src="harken.png" alt="Harken" style="height: 40px; width: auto;" />
+        </div>
+        <div class="flex items-center gap-6">
+            <a href="admin-dashboard.html" class="nav-link">Dashboard</a>
+            <a href="admin-users.html" class="nav-link">Users</a>
+            <a href="admin-accounts.html" class="nav-link">Accounts & Billing</a>
+            <a href="admin-reports.html" class="nav-link active">Reports</a>
+            <a href="admin-support-tickets.html" class="nav-link" style="position: relative;">
+                Support
+                <span style="position: absolute; top: 4px; right: 14px; background-color: #c62828; color: white; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 10px; min-width: 18px; text-align: center;">7</span>
+            </a>
+            <a href="admin-audit-logs.html" class="nav-link">Audit Logs</a>
+            <a href="admin-settings.html" class="nav-link">Settings</a>
+        </div>
+        <div class="flex items-center gap-4">
+            <span class="text-sm">Super Administrator</span>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div style="padding: 35px 50px;">
+        <!-- BUILD NOTES SECTION -->
+        <div id="buildNotesSection" style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 20px; margin-bottom: 32px; border-radius: 4px;">
+            <h3 style="color: #856404; font-size: 16px; font-weight: 700; margin: 0 0 16px 0;">🔨 BUILD NOTES</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 16px;">
+                <div>
+                    <strong style="color: #856404;">Priority Level:</strong> Low
+                </div>
+                <div>
+                    <strong style="color: #856404;">Recommended Customer Count:</strong> 15-20 customers
+                </div>
+                <div>
+                    <strong style="color: #856404;">Development Stage:</strong> Phase 3
+                </div>
+                <div>
+                    <strong style="color: #856404;">Estimated Build Time:</strong> N/A (currently redirects)
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #856404;">Purpose & Use Case:</strong>
+                <p style="margin: 4px 0 0 0; color: #856404;">Analytics and business intelligence beyond what's in the dashboard. Examples: revenue reports, feature adoption analysis, customer health scores, usage trends by industry. Currently this just redirects to the dashboard because the dashboard has sufficient metrics for early stage.</p>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #856404;">Key Features Explained:</strong>
+                <ul style="margin: 4px 0 0 0; color: #856404;">
+                    <li><strong>Custom Report Builder:</strong> Let admins create ad-hoc reports for specific questions. Complex to build.</li>
+                    <li><strong>Scheduled Reports:</strong> Email weekly/monthly summaries automatically. Useful for investors/board.</li>
+                    <li><strong>Comparative Analysis:</strong> Compare time periods, accounts, or cohorts. Advanced analytics.</li>
+                    <li><strong>Export Options:</strong> CSV, PDF, Excel for external analysis or presentations.</li>
+                    <li><strong>Saved Reports:</strong> Reuse common report configurations. Saves time.</li>
+                </ul>
+            </div>
+            
+            <div>
+                <strong style="color: #856404;">Implementation Notes:</strong>
+                <p style="margin: 4px 0 0 0; color: #856404;">SKIP ENTIRELY INITIALLY. Dashboard has everything you need. When/if you need more: Consider BI tools (Metabase, Tableau, Looker) instead of building custom. Much cheaper and faster. If building custom: Start with 3-5 predefined report templates based on actual requests. Don't build flexible report builder until you have 50+ customers and clear patterns of what reports are needed.</p>
+            </div>
+            
+            <button onclick="toggleBuildNotes(false)" style="margin-top: 12px; padding: 6px 12px; background: #856404; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">Hide Build Notes</button>
+        </div>
+
+        <!-- Header Section -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+            <h2 class="section-title">REPORTS & ANALYTICS</h2>
+        </div>
+
+        <!-- Placeholder Content -->
+        <div class="placeholder-card">
+            <div class="placeholder-message">
+                Reports and analytics data has been consolidated into the <a href="admin-dashboard.html" class="link-text">Dashboard</a> for a streamlined experience.
+                </div>
+            <div style="font-size: 14px; color: #687F8B;">
+                Please navigate to the Dashboard to view user activity, content creation, revenue metrics, and top accounts/users reports.
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 50px;">
+            <span style="font-weight: 300; font-size: 14px; color: #687F8B;">© 2024, Harken CRE, LLC</span>
+        </div>
+    </div>
+
+    <script>
+        // Build Notes Toggle Function
+        function toggleBuildNotes(show) {
+            const notesSection = document.getElementById('buildNotesSection');
+            const toggleBtn = document.getElementById('showBuildNotesBtn');
+            
+            if (show) {
+                notesSection.style.display = 'block';
+                toggleBtn.style.display = 'none';
+                notesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                notesSection.style.display = 'none';
+                toggleBtn.style.display = 'block';
+            }
+            
+            sessionStorage.setItem('buildNotesVisible', show);
+        }
+
+        // Restore preference on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            const savedPreference = sessionStorage.getItem('buildNotesVisible');
+            if (savedPreference === 'false') {
+                toggleBuildNotes(false);
+            }
+        });
+    </script>
+</body>
+</html>
+

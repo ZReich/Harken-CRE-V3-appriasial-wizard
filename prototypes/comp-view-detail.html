@@ -1,0 +1,1998 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Property Details - Harken Comps</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .material-icons {
+            font-family: 'Material Icons' !important;
+        }
+
+        body {
+            background: #f5f7fa;
+            color: #1c3643;
+        }
+
+        /* Navigation Bar */
+        nav {
+            background: #1c3643;
+            color: white;
+            padding: 0 24px;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0da1c7;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 32px;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .nav-link:hover {
+            color: #0da1c7;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Hero Section */
+        .hero {
+            position: relative;
+            height: 400px;
+            background-size: cover;
+            background-position: center;
+            background-image: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=1200');
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to bottom, rgba(28, 54, 67, 0.7), rgba(28, 54, 67, 0.85));
+        }
+
+        .hero-content {
+            position: relative;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 13px;
+        }
+
+        .breadcrumb a {
+            color: rgba(255, 255, 255, 0.9);
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+
+        .breadcrumb a:hover {
+            color: #0da1c7;
+        }
+
+        .hero-bottom {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+        }
+
+        .hero-info h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 8px;
+        }
+
+        .hero-location {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: rgba(255, 255, 255, 0.9);
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            gap: 6px;
+        }
+
+        .status-active {
+            background: #10b981;
+            color: white;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .hero-btn {
+            padding: 10px 20px;
+            border-radius: 6px;
+            border: none;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #0da1c7;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #0b8aad;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-danger {
+            background: rgba(239, 68, 68, 0.2);
+            color: white;
+            backdrop-filter: blur(10px);
+        }
+
+        .btn-danger:hover {
+            background: #ef4444;
+        }
+
+        /* Quick Stats Bar */
+        .stats-bar {
+            position: sticky;
+            top: 0;
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            z-index: 100;
+        }
+
+        .stats-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 32px;
+            flex-wrap: wrap;
+        }
+
+        .stat-chip {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #687F8B;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1c3643;
+        }
+
+        .stat-value.primary {
+            font-size: 28px;
+            color: #0da1c7;
+        }
+
+        /* Main Content */
+        .content-wrapper {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 32px 24px;
+            display: grid;
+            grid-template-columns: 1fr 450px;
+            gap: 24px;
+        }
+
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Card Styles */
+        .card {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            transition: all 0.2s;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .card-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 18px;
+            font-weight: 700;
+            color: #1c3643;
+        }
+
+        .card-title .material-icons {
+            color: #0da1c7;
+            font-size: 24px;
+        }
+
+        .collapse-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #687F8B;
+            transition: transform 0.3s;
+        }
+
+        .collapse-btn.active {
+            transform: rotate(180deg);
+        }
+
+        .card-body {
+            overflow: visible;
+            transition: max-height 0.3s ease;
+        }
+
+        .card-body.collapsed {
+            max-height: 0 !important;
+            overflow: hidden;
+        }
+
+        /* Property Info Grid */
+        .info-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .info-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #687F8B;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .info-value {
+            font-size: 15px;
+            font-weight: 500;
+            color: #1c3643;
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            word-break: break-word;
+        }
+
+        .info-value.large {
+            font-size: 18px;
+            font-weight: 700;
+        }
+
+        .info-value p {
+            overflow-wrap: break-word;
+            word-wrap: break-word;
+            word-break: break-word;
+            white-space: normal;
+        }
+
+        .property-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 600;
+            background: #0da1c7;
+            color: white;
+        }
+
+        .condition-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .condition-excellent {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .condition-good {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+
+        .condition-fair {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        /* Financial Highlights */
+        .financial-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .financial-box {
+            background: linear-gradient(135deg, #0da1c7 0%, #0b8aad 100%);
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            color: white;
+        }
+
+        .financial-label {
+            font-size: 12px;
+            font-weight: 600;
+            opacity: 0.9;
+            margin-bottom: 8px;
+        }
+
+        .financial-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        /* Timeline */
+        .timeline {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 8px;
+            margin-top: 16px;
+        }
+
+        .timeline-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .timeline-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #687F8B;
+            text-transform: uppercase;
+        }
+
+        .timeline-value {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1c3643;
+        }
+
+        .timeline-arrow {
+            color: #0da1c7;
+            font-size: 32px;
+        }
+
+        /* Map Container */
+        .map-container {
+            width: 100%;
+            height: 350px;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #e0e0e0;
+            position: relative;
+        }
+
+        .map-pin {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -100%);
+            color: #ef4444;
+            font-size: 48px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        /* Property Timeline Styles */
+        .timeline-entry {
+            display: flex;
+            gap: 12px;
+            padding: 12px;
+            background: #f8fafc;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 12px;
+            position: relative;
+            border-left: 3px solid #0da1c7;
+        }
+
+        .timeline-entry:hover {
+            background: #e5e7eb;
+            transform: translateX(4px);
+        }
+
+        .timeline-entry.land {
+            border-left-color: #f59e0b;
+        }
+
+        .timeline-entry.improved {
+            border-left-color: #10b981;
+        }
+
+        .timeline-entry-image {
+            width: 80px;
+            height: 60px;
+            border-radius: 4px;
+            object-fit: cover;
+        }
+
+        .timeline-entry-info {
+            flex: 1;
+        }
+
+        .timeline-entry-year {
+            font-size: 11px;
+            font-weight: 700;
+            color: #0da1c7;
+            margin-bottom: 2px;
+        }
+
+        .timeline-entry-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1c3643;
+            margin-bottom: 4px;
+        }
+
+        .timeline-entry-price {
+            font-size: 14px;
+            font-weight: 700;
+            color: #0da1c7;
+        }
+
+        .timeline-badge {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 4px;
+        }
+
+        .timeline-badge.land {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .timeline-badge.improved {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .timeline-badge.current {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .last-modified-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 20px;
+            font-size: 11px;
+            color: #0369a1;
+            margin-left: 16px;
+        }
+
+        .no-history {
+            text-align: center;
+            padding: 24px;
+            color: #687F8B;
+            font-size: 13px;
+        }
+
+        /* Unified Property Timeline with Audit History */
+        .unified-timeline {
+            position: relative;
+            padding-bottom: 10px;
+        }
+
+        .unified-timeline::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 30px;
+            bottom: 80px;
+            width: 2px;
+            background: linear-gradient(to bottom, #0da1c7 0%, #10b981 50%, #f59e0b 100%);
+            border-radius: 2px;
+        }
+        
+        /* Override card-body max-height for timeline */
+        .timeline-card-body {
+            max-height: none !important;
+            overflow: visible !important;
+            transition: none !important;
+        }
+        
+        .card:has(.unified-timeline) .card-body {
+            max-height: none !important;
+            overflow: visible !important;
+        }
+
+        .timeline-node {
+            position: relative;
+            padding-left: 50px;
+            margin-bottom: 8px;
+        }
+
+        .timeline-node:last-of-type {
+            margin-bottom: 0;
+        }
+
+        .timeline-node-dot {
+            position: absolute;
+            left: 12px;
+            top: 20px;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #0da1c7;
+            border: 3px solid white;
+            box-shadow: 0 0 0 2px #0da1c7;
+            z-index: 1;
+        }
+
+        .timeline-node.improved .timeline-node-dot {
+            background: #10b981;
+            box-shadow: 0 0 0 2px #10b981;
+        }
+
+        .timeline-node.land .timeline-node-dot {
+            background: #f59e0b;
+            box-shadow: 0 0 0 2px #f59e0b;
+        }
+
+        .timeline-node-content {
+            background: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        .timeline-node-content:hover {
+            border-color: #cbd5e1;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .timeline-node-content.expanded {
+            background: white;
+        }
+
+        .timeline-node-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            cursor: pointer;
+        }
+
+        .timeline-node-image {
+            width: 70px;
+            height: 52px;
+            border-radius: 6px;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        .timeline-node-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .timeline-node-year {
+            font-size: 11px;
+            font-weight: 700;
+            color: #0da1c7;
+            margin-bottom: 2px;
+        }
+
+        .timeline-node.improved .timeline-node-year {
+            color: #10b981;
+        }
+
+        .timeline-node.land .timeline-node-year {
+            color: #f59e0b;
+        }
+
+        .timeline-node-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #1c3643;
+            margin-bottom: 2px;
+        }
+
+        .timeline-node-price {
+            font-size: 15px;
+            font-weight: 700;
+            color: #0da1c7;
+        }
+
+        .timeline-node-badge {
+            display: inline-block;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 9px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-left: auto;
+            flex-shrink: 0;
+        }
+
+        .timeline-node-badge.current {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .timeline-node-badge.improved {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .timeline-node-badge.land {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .timeline-changes-toggle {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            background: #f1f5f9;
+            border: none;
+            border-top: 1px solid #e2e8f0;
+            width: 100%;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748b;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .timeline-changes-toggle:hover {
+            background: #e2e8f0;
+            color: #1c3643;
+        }
+
+        .timeline-changes-toggle i {
+            font-size: 16px;
+            transition: transform 0.2s;
+        }
+
+        .timeline-changes-toggle.expanded i {
+            transform: rotate(180deg);
+        }
+
+        .timeline-changes-list {
+            display: none;
+            background: white;
+            border-top: 1px solid #e2e8f0;
+        }
+
+        .timeline-changes-list.expanded {
+            display: block;
+        }
+
+        .timeline-change-item {
+            padding: 12px;
+            border-bottom: 1px solid #f1f5f9;
+            position: relative;
+            padding-left: 28px;
+        }
+
+        .timeline-change-item:last-child {
+            border-bottom: none;
+        }
+
+        .timeline-change-item::before {
+            content: '';
+            position: absolute;
+            left: 12px;
+            top: 18px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #cbd5e1;
+        }
+
+        .timeline-change-item.update::before {
+            background: #3b82f6;
+        }
+
+        .timeline-change-item.create::before {
+            background: #10b981;
+        }
+
+        .timeline-change-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 4px;
+        }
+
+        .timeline-change-user {
+            font-size: 12px;
+            font-weight: 600;
+            color: #1c3643;
+        }
+
+        .timeline-change-action {
+            font-size: 9px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 3px;
+            text-transform: uppercase;
+        }
+
+        .timeline-change-action.update {
+            background: #dbeafe;
+            color: #2563eb;
+        }
+
+        .timeline-change-action.create {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .timeline-change-date {
+            font-size: 10px;
+            color: #94a3b8;
+            margin-bottom: 6px;
+        }
+
+        .timeline-change-detail {
+            font-size: 11px;
+            color: #475569;
+        }
+
+        .timeline-change-values {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            margin-top: 4px;
+        }
+
+        .timeline-change-old {
+            color: #dc2626;
+            text-decoration: line-through;
+            font-size: 11px;
+        }
+
+        .timeline-change-arrow {
+            color: #94a3b8;
+            font-size: 10px;
+        }
+
+        .timeline-change-new {
+            color: #10b981;
+            font-weight: 600;
+            font-size: 11px;
+        }
+
+        .timeline-change-note {
+            margin-top: 6px;
+            padding: 6px 8px;
+            background: #fef3c7;
+            border-radius: 4px;
+            font-size: 10px;
+            color: #92400e;
+            font-style: italic;
+        }
+
+        .timeline-gap {
+            display: flex;
+            align-items: center;
+            padding: 4px 0 4px 50px;
+            position: relative;
+        }
+
+        .timeline-gap-line {
+            flex: 1;
+            height: 1px;
+            background: #e2e8f0;
+            margin: 0 12px;
+        }
+
+        .timeline-gap-text {
+            font-size: 10px;
+            color: #94a3b8;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        .timeline-appreciation {
+            text-align: center;
+            padding: 16px;
+            margin-top: 12px;
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border-radius: 8px;
+            border: 1px solid #bbf7d0;
+        }
+
+        .timeline-appreciation-label {
+            font-size: 11px;
+            color: #166534;
+            font-weight: 500;
+        }
+
+        .timeline-appreciation-value {
+            font-size: 18px;
+            font-weight: 700;
+            color: #15803d;
+            margin-top: 2px;
+        }
+
+        /* Audit History Modal */
+        .audit-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .audit-modal.active {
+            display: flex;
+        }
+        .audit-modal-content {
+            background-color: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 700px;
+            max-height: 85vh;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        .audit-modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 24px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .audit-modal-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1c3643;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .audit-modal-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #687F8B;
+            padding: 4px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        .audit-modal-close:hover {
+            background: #f5f5f5;
+        }
+        .audit-modal-body {
+            padding: 24px;
+            overflow-y: auto;
+            flex: 1;
+        }
+        .audit-filter-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .audit-filter-select {
+            padding: 8px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 13px;
+            background-color: white;
+            color: #687F8B;
+            cursor: pointer;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .audit-filter-select:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .audit-timeline {
+            position: relative;
+        }
+        .audit-entry {
+            position: relative;
+            padding-left: 32px;
+            padding-bottom: 24px;
+            border-left: 2px solid #e0e0e0;
+            margin-left: 8px;
+        }
+        .audit-entry:last-child {
+            border-left: 2px solid transparent;
+            padding-bottom: 0;
+        }
+        .audit-entry::before {
+            content: '';
+            position: absolute;
+            left: -7px;
+            top: 4px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #0da1c7;
+            border: 2px solid white;
+            box-shadow: 0 0 0 2px #e0e0e0;
+        }
+        .audit-entry.create::before {
+            background-color: #10b981;
+        }
+        .audit-entry.update::before {
+            background-color: #0da1c7;
+        }
+        .audit-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+        .audit-user {
+            font-weight: 600;
+            color: #1c3643;
+            font-size: 14px;
+        }
+        .audit-action {
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .audit-action.create {
+            background-color: #d1fae5;
+            color: #059669;
+        }
+        .audit-action.update {
+            background-color: #dbeafe;
+            color: #2563eb;
+        }
+        .audit-timestamp {
+            font-size: 12px;
+            color: #687F8B;
+            margin-bottom: 8px;
+        }
+        .audit-changes {
+            background-color: #f9f9f9;
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 8px;
+        }
+        .audit-change-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 0;
+            font-size: 13px;
+            flex-wrap: wrap;
+        }
+        .audit-change-item:not(:last-child) {
+            border-bottom: 1px solid #e8e8e8;
+        }
+        .change-field {
+            font-weight: 600;
+            color: #1c3643;
+            min-width: 100px;
+        }
+        .change-old {
+            color: #dc2626;
+            text-decoration: line-through;
+            background-color: #fef2f2;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        .change-arrow {
+            color: #687F8B;
+        }
+        .change-new {
+            color: #059669;
+            background-color: #f0fdf4;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        .audit-note {
+            margin-top: 12px;
+            padding: 12px;
+            background-color: #fffbeb;
+            border-left: 3px solid #f59e0b;
+            border-radius: 0 6px 6px 0;
+            font-size: 13px;
+            color: #92400e;
+        }
+        .audit-note-label {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .expand-btn {
+            background: none;
+            border: none;
+            color: #0da1c7;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 0;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .expand-btn:hover {
+            text-decoration: underline;
+        }
+        .audit-changes.collapsed {
+            display: none;
+        }
+        .audit-modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #e0e0e0;
+            text-align: center;
+        }
+        .btn-load-more {
+            background-color: white;
+            color: #687F8B;
+            border: 1px solid #e0e0e0;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Montserrat', sans-serif;
+        }
+        .btn-load-more:hover {
+            background-color: #f9f9f9;
+            border-color: #d0d0d0;
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .financial-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Print Styles */
+        @media print {
+            .hero-actions,
+            nav,
+            .sidebar,
+            .collapse-btn {
+                display: none !important;
+            }
+
+            .content-wrapper {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">HARKEN</div>
+        <div class="nav-links">
+            <a href="comps-premium-with-clustering.html" class="nav-link">COMPS</a>
+            <a href="#" class="nav-link">APPRAISAL</a>
+            <a href="#" class="nav-link">EVALUATION</a>
+        </div>
+        <div class="user-info">
+            <span style="font-size: 14px; font-weight: 500;">Zach Reichert</span>
+            <img src="https://i.pravatar.cc/150?img=12" alt="User" class="user-avatar">
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-content">
+            <div class="breadcrumb">
+                <a href="comps-premium-with-clustering.html">Comps</a>
+                <i class="material-icons" style="font-size: 16px;">chevron_right</i>
+                <a href="comps-premium-with-clustering.html">Commercial</a>
+                <i class="material-icons" style="font-size: 16px;">chevron_right</i>
+                <span>Property Details</span>
+            </div>
+
+            <div class="hero-bottom">
+                <div class="hero-info">
+                    <h1>123 Downtown Office Plaza</h1>
+                    <div class="hero-location">
+                        <i class="material-icons">location_on</i>
+                        <span>123 Main Street, San Francisco, CA 94105</span>
+                    </div>
+                    <span class="status-badge status-active">
+                        <i class="material-icons" style="font-size: 16px;">check_circle</i>
+                        Active Listing
+                    </span>
+                    <span class="last-modified-badge">
+                        <i class="material-icons" style="font-size: 14px;">schedule</i>
+                        Last modified by <strong>John Smith</strong> on Mar 15, 2024
+                    </span>
+                </div>
+
+                <div class="hero-actions">
+                    <button class="hero-btn btn-primary" onclick="editProperty(1)">
+                        <i class="material-icons">edit</i>
+                        Edit Property
+                    </button>
+                    <button class="hero-btn btn-secondary" onclick="window.print()">
+                        <i class="material-icons">print</i>
+                        Print
+                    </button>
+                    <button class="hero-btn btn-secondary" onclick="shareProperty()">
+                        <i class="material-icons">share</i>
+                        Share
+                    </button>
+                    <button class="hero-btn btn-danger" onclick="deleteProperty(1)">
+                        <i class="material-icons">delete</i>
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats Bar -->
+    <div class="stats-bar">
+        <div class="stats-container">
+            <div class="stat-chip">
+                <span class="stat-label">Sale Price</span>
+                <span class="stat-value primary">$4,250,000</span>
+            </div>
+            <div class="stat-chip">
+                <span class="stat-label">Price / SF</span>
+                <span class="stat-value">$425</span>
+            </div>
+            <div class="stat-chip">
+                <span class="stat-label">Building Size</span>
+                <span class="stat-value">10,000 SF</span>
+            </div>
+            <div class="stat-chip">
+                <span class="stat-label">Land Size</span>
+                <span class="stat-value">15,000 SF</span>
+            </div>
+            <div class="stat-chip">
+                <span class="stat-label">Year Built</span>
+                <span class="stat-value">2015</span>
+            </div>
+            <div class="stat-chip">
+                <span class="stat-label">Condition</span>
+                <span class="condition-indicator condition-excellent">
+                    <i class="material-icons" style="font-size: 16px;">star</i>
+                    Excellent
+                </span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="content-wrapper">
+        <div class="main-content">
+            <!-- Property Overview -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="material-icons">info</i>
+                        Property Overview
+                    </div>
+                    <button class="collapse-btn" onclick="toggleCard(this)">
+                        <i class="material-icons">expand_less</i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Street Address</span>
+                            <span class="info-value">123 Main Street</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Suite/Unit</span>
+                            <span class="info-value">Suite 200</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">City</span>
+                            <span class="info-value">San Francisco</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">State</span>
+                            <span class="info-value">California</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Zipcode</span>
+                            <span class="info-value">94105</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">County</span>
+                            <span class="info-value">San Francisco</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Property Type</span>
+                            <span class="property-badge">Office</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Subtype</span>
+                            <span class="info-value">Class A Office</span>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 20px;">
+                        <div class="info-item">
+                            <span class="info-label">Property Summary</span>
+                            <p class="info-value" style="line-height: 1.8; margin-top: 8px; white-space: pre-wrap; word-wrap: break-word;">Prime downtown office space featuring modern amenities, high ceilings, and abundant natural light. Located in the heart of the financial district with excellent access to public transportation. Building features include 24/7 security, underground parking, and state-of-the-art HVAC systems.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Building Details -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="material-icons">apartment</i>
+                        Building Details
+                    </div>
+                    <button class="collapse-btn" onclick="toggleCard(this)">
+                        <i class="material-icons">expand_less</i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Gross Building Area</span>
+                            <span class="info-value large">10,500 SF</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Net Building Area</span>
+                            <span class="info-value large">10,000 SF</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Stories</span>
+                            <span class="info-value">3</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Construction Class</span>
+                            <span class="info-value">Class A</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Year Built</span>
+                            <span class="info-value">2015</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Year Remodeled</span>
+                            <span class="info-value">2022</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Effective Age</span>
+                            <span class="info-value">3 Years</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Condition</span>
+                            <span class="condition-indicator condition-excellent">
+                                <i class="material-icons" style="font-size: 16px;">star</i>
+                                Excellent
+                            </span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Parking</span>
+                            <span class="info-value">Underground Garage</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Parking Spaces</span>
+                            <span class="info-value">25 Spaces</span>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 20px;">
+                        <div class="info-item">
+                            <span class="info-label">Building Comments</span>
+                            <p class="info-value" style="line-height: 1.8; margin-top: 8px; white-space: pre-wrap; word-wrap: break-word;">Recently renovated with modern finishes throughout. Energy-efficient systems installed in 2022. LEED certified building with sustainable features. Excellent tenant mix with long-term leases.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Site Details -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="material-icons">terrain</i>
+                        Site Details
+                    </div>
+                    <button class="collapse-btn" onclick="toggleCard(this)">
+                        <i class="material-icons">expand_less</i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Land Size</span>
+                            <span class="info-value large">15,000 SF</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Dimension Unit</span>
+                            <span class="info-value">Square Feet</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Land Type</span>
+                            <span class="info-value">Commercial - Office</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Topography</span>
+                            <span class="info-value">Level</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Lot Shape</span>
+                            <span class="info-value">Rectangular</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Frontage</span>
+                            <span class="condition-indicator condition-excellent">
+                                <i class="material-icons" style="font-size: 16px;">check_circle</i>
+                                Excellent
+                            </span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Utilities</span>
+                            <span class="info-value">All Public</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Site Access</span>
+                            <span class="info-value">Main Street & Alley</span>
+                        </div>
+                    </div>
+                    
+                    <div style="margin-top: 20px;">
+                        <div class="info-item">
+                            <span class="info-label">Site Comments</span>
+                            <p class="info-value" style="line-height: 1.8; margin-top: 8px; white-space: pre-wrap; word-wrap: break-word;">Corner lot with excellent visibility and access. Adjacent to major transit hub. All utilities are public and readily available. Zoning allows for mixed-use development.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Transaction Details -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="material-icons">payments</i>
+                        Transaction Details
+                    </div>
+                    <button class="collapse-btn" onclick="toggleCard(this)">
+                        <i class="material-icons">expand_less</i>
+                    </button>
+                </div>
+                <div class="card-body">
+                    <!-- Financial Highlights -->
+                    <div class="financial-grid">
+                        <div class="financial-box">
+                            <div class="financial-label">Sale Price</div>
+                            <div class="financial-value">$4.25M</div>
+                        </div>
+                        <div class="financial-box">
+                            <div class="financial-label">Price / SF</div>
+                            <div class="financial-value">$425</div>
+                        </div>
+                        <div class="financial-box">
+                            <div class="financial-label">Cap Rate</div>
+                            <div class="financial-value">6.5%</div>
+                        </div>
+                    </div>
+
+                    <!-- Transaction Timeline -->
+                    <div class="timeline">
+                        <div class="timeline-item">
+                            <span class="timeline-label">Listed</span>
+                            <span class="timeline-value">Jan 15, 2024</span>
+                        </div>
+                        <i class="material-icons timeline-arrow">arrow_forward</i>
+                        <div class="timeline-item">
+                            <span class="timeline-label">Days on Market</span>
+                            <span class="timeline-value">45 Days</span>
+                        </div>
+                        <i class="material-icons timeline-arrow">arrow_forward</i>
+                        <div class="timeline-item">
+                            <span class="timeline-label">Sold</span>
+                            <span class="timeline-value">Mar 1, 2024</span>
+                        </div>
+                    </div>
+
+                    <!-- Detailed Info -->
+                    <div class="info-grid" style="margin-top: 24px;">
+                        <div class="info-item">
+                            <span class="info-label">List Price</span>
+                            <span class="info-value large">$4,500,000</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Sale Status</span>
+                            <span class="property-badge">Closed</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Net Operating Income</span>
+                            <span class="info-value">$276,250</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Total Operating Expense</span>
+                            <span class="info-value">$125,000</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Operating Expense $/SF</span>
+                            <span class="info-value">$12.50</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Estimated Land Value</span>
+                            <span class="info-value">$1,500,000</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Estimated Building Value</span>
+                            <span class="info-value">$2,750,000</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Total Concessions</span>
+                            <span class="info-value">$0</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Seller Type</span>
+                            <span class="info-value">Private Investor</span>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Buyer Type</span>
+                            <span class="info-value">REIT</span>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 20px;">
+                        <div class="info-item">
+                            <span class="info-label">Financing Details</span>
+                            <p class="info-value" style="line-height: 1.8; margin-top: 8px; white-space: pre-wrap; word-wrap: break-word;">Conventional financing with 30% down payment. 20-year fixed rate mortgage at 5.5%. No seller financing. Clean title transfer with no encumbrances.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <!-- Map -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="material-icons">map</i>
+                        Location
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="map-container">
+                        <img src="https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/pin-l-building+0da1c7(-122.3964,37.7914)/- 122.3964,37.7914,14,0/450x350?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw" alt="Map" style="width: 100%; height: 100%; object-fit: cover;">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Unified Property Timeline with Audit History -->
+            <div class="card">
+                <div class="card-header">
+                    <div class="card-title">
+                        <i class="material-icons">timeline</i>
+                        Property Timeline
+                    </div>
+                </div>
+                <div class="card-body timeline-card-body" style="padding: 16px;">
+                    <div class="unified-timeline">
+                        <!-- 2024 Sale Node -->
+                        <div class="timeline-node">
+                            <div class="timeline-node-dot"></div>
+                            <div class="timeline-node-content">
+                                <div class="timeline-node-header" onclick="viewPropertyDetail(1)">
+                                    <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=200" alt="Office Building" class="timeline-node-image">
+                                    <div class="timeline-node-info">
+                                        <div class="timeline-node-year">2024</div>
+                                        <div class="timeline-node-title">Class A Office</div>
+                                        <div class="timeline-node-price">$4,250,000</div>
+                                    </div>
+                                    <span class="timeline-node-badge current">Current</span>
+                                </div>
+                                <button class="timeline-changes-toggle" onclick="event.stopPropagation(); toggleTimelineChanges(this)">
+                                    <i class="material-icons">expand_more</i>
+                                    <span>2 changes to this record</span>
+                                </button>
+                                <div class="timeline-changes-list">
+                                    <div class="timeline-change-item update">
+                                        <div class="timeline-change-header">
+                                            <span class="timeline-change-user">John Smith</span>
+                                            <span class="timeline-change-action update">Updated</span>
+                                        </div>
+                                        <div class="timeline-change-date">Mar 15, 2024 at 2:34 PM</div>
+                                        <div class="timeline-change-detail">Sale Price updated</div>
+                                        <div class="timeline-change-values">
+                                            <span class="timeline-change-old">$4,100,000</span>
+                                            <span class="timeline-change-arrow">--></span>
+                                            <span class="timeline-change-new">$4,250,000</span>
+                                        </div>
+                                        <div class="timeline-change-note">"Updated per final closing docs"</div>
+                                    </div>
+                                    <div class="timeline-change-item create">
+                                        <div class="timeline-change-header">
+                                            <span class="timeline-change-user">Sarah Johnson</span>
+                                            <span class="timeline-change-action create">Created</span>
+                                        </div>
+                                        <div class="timeline-change-date">Jan 15, 2024 at 9:22 AM</div>
+                                        <div class="timeline-change-detail">Record created via bulk upload</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Gap indicator -->
+                        <div class="timeline-gap">
+                            <span class="timeline-gap-text">5 years</span>
+                            <div class="timeline-gap-line"></div>
+                        </div>
+
+                        <!-- 2019 Sale Node -->
+                        <div class="timeline-node improved">
+                            <div class="timeline-node-dot"></div>
+                            <div class="timeline-node-content">
+                                <div class="timeline-node-header" onclick="viewPropertyDetail(101)">
+                                    <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=200" alt="Office Building" class="timeline-node-image">
+                                    <div class="timeline-node-info">
+                                        <div class="timeline-node-year">2019</div>
+                                        <div class="timeline-node-title">Tech Startup HQ</div>
+                                        <div class="timeline-node-price">$3,100,000</div>
+                                    </div>
+                                    <span class="timeline-node-badge improved">Building</span>
+                                </div>
+                                <button class="timeline-changes-toggle" onclick="event.stopPropagation(); toggleTimelineChanges(this)">
+                                    <i class="material-icons">expand_more</i>
+                                    <span>1 change to this record</span>
+                                </button>
+                                <div class="timeline-changes-list">
+                                    <div class="timeline-change-item create">
+                                        <div class="timeline-change-header">
+                                            <span class="timeline-change-user">Mike Davis</span>
+                                            <span class="timeline-change-action create">Created</span>
+                                        </div>
+                                        <div class="timeline-change-date">Jun 20, 2019 at 10:15 AM</div>
+                                        <div class="timeline-change-detail">Record created manually</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Gap indicator -->
+                        <div class="timeline-gap">
+                            <span class="timeline-gap-text">4 years</span>
+                            <div class="timeline-gap-line"></div>
+                        </div>
+
+                        <!-- 2015 Sale Node -->
+                        <div class="timeline-node land">
+                            <div class="timeline-node-dot"></div>
+                            <div class="timeline-node-content">
+                                <div class="timeline-node-header" onclick="viewPropertyDetail(102)">
+                                    <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=200" alt="Vacant Land" class="timeline-node-image">
+                                    <div class="timeline-node-info">
+                                        <div class="timeline-node-year">2015</div>
+                                        <div class="timeline-node-title">Commercial Lot</div>
+                                        <div class="timeline-node-price">$850,000</div>
+                                    </div>
+                                    <span class="timeline-node-badge land">Land</span>
+                                </div>
+                                <button class="timeline-changes-toggle" onclick="event.stopPropagation(); toggleTimelineChanges(this)">
+                                    <i class="material-icons">expand_more</i>
+                                    <span>1 change to this record</span>
+                                </button>
+                                <div class="timeline-changes-list">
+                                    <div class="timeline-change-item create">
+                                        <div class="timeline-change-header">
+                                            <span class="timeline-change-user">Admin Import</span>
+                                            <span class="timeline-change-action create">Created</span>
+                                        </div>
+                                        <div class="timeline-change-date">Mar 10, 2015 at 8:00 AM</div>
+                                        <div class="timeline-change-detail">Imported from county records</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Appreciation Summary -->
+                    <div class="timeline-appreciation">
+                        <div class="timeline-appreciation-label">Total Appreciation</div>
+                        <div class="timeline-appreciation-value">+400% since 2015</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Collapse/Expand Cards
+        function toggleCard(button) {
+            const card = button.closest('.card');
+            const body = card.querySelector('.card-body');
+            const icon = button.querySelector('.material-icons');
+            
+            if (body.classList.contains('collapsed')) {
+                body.style.maxHeight = body.scrollHeight + 'px';
+                body.classList.remove('collapsed');
+                icon.textContent = 'expand_less';
+                button.classList.remove('active');
+            } else {
+                body.style.maxHeight = body.scrollHeight + 'px';
+                setTimeout(() => {
+                    body.style.maxHeight = '0';
+                }, 10);
+                body.classList.add('collapsed');
+                icon.textContent = 'expand_more';
+                button.classList.add('active');
+            }
+        }
+
+        // Initialize card body heights
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.card-body').forEach(body => {
+                body.style.maxHeight = body.scrollHeight + 'px';
+            });
+        });
+
+        // Navigation Functions
+        function editProperty(id) {
+            window.location.href = `comp-edit-full-page.html?id=${id}`;
+        }
+
+        function viewPropertyDetail(id) {
+            window.location.href = `comp-view-detail.html?id=${id}`;
+        }
+
+        function deleteProperty(id) {
+            if (confirm('Are you sure you want to delete this property? This action cannot be undone.')) {
+                alert('Property deleted successfully');
+                window.location.href = 'comps-premium-with-clustering.html';
+            }
+        }
+
+        function shareProperty() {
+            const url = window.location.href;
+            if (navigator.clipboard) {
+                navigator.clipboard.writeText(url).then(() => {
+                    alert('Link copied to clipboard!');
+                });
+            } else {
+                alert('Share link: ' + url);
+            }
+        }
+
+        // Get property ID from URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const propertyId = urlParams.get('id');
+        console.log('Viewing property:', propertyId);
+
+        // Timeline Changes Toggle
+        function toggleTimelineChanges(btn) {
+            const changesList = btn.nextElementSibling;
+            const nodeContent = btn.closest('.timeline-node-content');
+            
+            if (changesList.classList.contains('expanded')) {
+                changesList.classList.remove('expanded');
+                btn.classList.remove('expanded');
+                if (nodeContent) nodeContent.classList.remove('expanded');
+            } else {
+                changesList.classList.add('expanded');
+                btn.classList.add('expanded');
+                if (nodeContent) nodeContent.classList.add('expanded');
+            }
+        }
+
+        // Audit History Modal Functions
+        function openAuditHistoryModal() {
+            document.getElementById('auditHistoryModal').classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeAuditHistoryModal() {
+            document.getElementById('auditHistoryModal').classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        function toggleAuditChanges(btn) {
+            const changes = btn.nextElementSibling;
+            const icon = btn.querySelector('.material-icons');
+            
+            if (changes.classList.contains('collapsed')) {
+                changes.classList.remove('collapsed');
+                icon.textContent = 'expand_less';
+                btn.innerHTML = btn.innerHTML.replace('Show', 'Hide');
+            } else {
+                changes.classList.add('collapsed');
+                icon.textContent = 'expand_more';
+                btn.innerHTML = btn.innerHTML.replace('Hide', 'Show');
+            }
+        }
+
+        // Close modal on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeAuditHistoryModal();
+            }
+        });
+
+        // Close modal on backdrop click
+        document.addEventListener('click', function(e) {
+            const modal = document.getElementById('auditHistoryModal');
+            if (e.target === modal) {
+                closeAuditHistoryModal();
+            }
+        });
+    </script>
+
+    <!-- Audit History Modal -->
+    <div class="audit-modal" id="auditHistoryModal">
+        <div class="audit-modal-content">
+            <div class="audit-modal-header">
+                <h3>
+                    <i class="material-icons" style="color: #0da1c7;">history</i>
+                    Change History
+                </h3>
+                <button class="audit-modal-close" onclick="closeAuditHistoryModal()">
+                    <i class="material-icons">close</i>
+                </button>
+            </div>
+            <div class="audit-modal-body">
+                <div class="audit-filter-bar">
+                    <span style="font-size: 13px; color: #687F8B;">Showing all changes for this comp</span>
+                    <select class="audit-filter-select">
+                        <option>All Changes</option>
+                        <option>Price Changes</option>
+                        <option>Date Changes</option>
+                        <option>Last 30 Days</option>
+                    </select>
+                </div>
+
+                <div class="audit-timeline">
+                    <!-- Entry 1 - Most Recent -->
+                    <div class="audit-entry update">
+                        <div class="audit-header">
+                            <div>
+                                <div class="audit-user">John Smith</div>
+                                <div class="audit-timestamp">March 15, 2024 at 2:34 PM</div>
+                            </div>
+                            <span class="audit-action update">Updated</span>
+                        </div>
+                        <button class="expand-btn" onclick="toggleAuditChanges(this)">
+                            <span class="material-icons" style="font-size: 16px;">expand_more</span>
+                            Show 2 changes
+                        </button>
+                        <div class="audit-changes collapsed">
+                            <div class="audit-change-item">
+                                <span class="change-field">Sale Price</span>
+                                <span class="change-old">$4,100,000</span>
+                                <span class="change-arrow">--></span>
+                                <span class="change-new">$4,250,000</span>
+                            </div>
+                            <div class="audit-change-item">
+                                <span class="change-field">Date Sold</span>
+                                <span class="change-old">Jan 10, 2024</span>
+                                <span class="change-arrow">--></span>
+                                <span class="change-new">Mar 15, 2024</span>
+                            </div>
+                        </div>
+                        <div class="audit-note">
+                            <div class="audit-note-label">Note:</div>
+                            Updated per final closing docs from county records.
+                        </div>
+                    </div>
+
+                    <!-- Entry 2 -->
+                    <div class="audit-entry update">
+                        <div class="audit-header">
+                            <div>
+                                <div class="audit-user">Sarah Johnson</div>
+                                <div class="audit-timestamp">February 28, 2024 at 10:15 AM</div>
+                            </div>
+                            <span class="audit-action update">Updated</span>
+                        </div>
+                        <button class="expand-btn" onclick="toggleAuditChanges(this)">
+                            <span class="material-icons" style="font-size: 16px;">expand_more</span>
+                            Show 1 change
+                        </button>
+                        <div class="audit-changes collapsed">
+                            <div class="audit-change-item">
+                                <span class="change-field">Cap Rate</span>
+                                <span class="change-old">6.8%</span>
+                                <span class="change-arrow">--></span>
+                                <span class="change-new">6.5%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Entry 3 -->
+                    <div class="audit-entry update">
+                        <div class="audit-header">
+                            <div>
+                                <div class="audit-user">Mike Davis</div>
+                                <div class="audit-timestamp">January 20, 2024 at 4:45 PM</div>
+                            </div>
+                            <span class="audit-action update">Updated</span>
+                        </div>
+                        <button class="expand-btn" onclick="toggleAuditChanges(this)">
+                            <span class="material-icons" style="font-size: 16px;">expand_more</span>
+                            Show 3 changes
+                        </button>
+                        <div class="audit-changes collapsed">
+                            <div class="audit-change-item">
+                                <span class="change-field">Building Size</span>
+                                <span class="change-old">14,800 SF</span>
+                                <span class="change-arrow">--></span>
+                                <span class="change-new">15,200 SF</span>
+                            </div>
+                            <div class="audit-change-item">
+                                <span class="change-field">Year Built</span>
+                                <span class="change-old">1996</span>
+                                <span class="change-arrow">--></span>
+                                <span class="change-new">1998</span>
+                            </div>
+                            <div class="audit-change-item">
+                                <span class="change-field">Stories</span>
+                                <span class="change-old">2</span>
+                                <span class="change-arrow">--></span>
+                                <span class="change-new">3</span>
+                            </div>
+                        </div>
+                        <div class="audit-note">
+                            <div class="audit-note-label">Note:</div>
+                            Verified building specs against tax assessor records.
+                        </div>
+                    </div>
+
+                    <!-- Entry 4 - Creation -->
+                    <div class="audit-entry create">
+                        <div class="audit-header">
+                            <div>
+                                <div class="audit-user">Sarah Johnson</div>
+                                <div class="audit-timestamp">January 15, 2024 at 9:22 AM</div>
+                            </div>
+                            <span class="audit-action create">Created</span>
+                        </div>
+                        <div style="font-size: 13px; color: #687F8B;">
+                            Comp record created via bulk PDF upload
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="audit-modal-footer">
+                <button class="btn-load-more">Load Earlier Changes</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+

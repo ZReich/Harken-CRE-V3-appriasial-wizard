@@ -1,0 +1,184 @@
+<%
+    const summary_raw = evaluation.summary || "";
+    const summary_paras = summary_raw.split("<p>");
+    const summary = summary_raw.replace(/<\/?[^>]+(>|$)/g, (tag) => {
+        return tag === "<p>" ? "<p>" : "";
+    });
+
+    const summaryLength = summary.length;
+    const zoningDescLength = evaluation.zoning_description?.length || 0;
+
+    const shouldPaginate = summaryLength > 1500 || zoningDescLength > 1100 || summary_paras.length > 10;
+
+    let count = 1;
+    if (summaryLength > 2300) {
+        count = summaryLength / 2300;
+    }
+
+    let startLen = 0;
+    let endLength = 2300;
+    let limit = 2300;
+%>
+
+<% if (shouldPaginate) { %>
+    <% for (let i = 0; i <= count; i++) {
+        const cleanSummary = summary.replace('<p><br></p>', '');
+        const string = cleanSummary.trim().substring(startLen, startLen + limit);
+        if (string.length) {
+%>
+        <div class="new-page executive-summary" data-type="executive-summary">
+            <div class="page-header">
+                <%- chapter %>
+            </div>
+             <%- section %>
+            <div class="description">
+                <% if (i === 0) { %>
+                    <p class="title"><%= evaluation.street_address %> - <%= evaluation.city %></p>
+                    <div id="outer" class="container" style="width:100%; height:60px;">
+                        <p class="subtitle output" style="word-break: break-all; word-wrap: break-word;"><%= evaluation.property_name %></p>
+                    </div>
+                <% } %>
+
+                <% if (summary) {
+                    let chars_per_line = 115;
+                    if (theme === 'nai' || theme === 'nai_portland') {
+                        chars_per_line = 120;
+                    }
+
+                    const lineSpacing = 1.9;
+                    const fontSize = 13;
+                    const pageHeightMM = 203;
+                    const mmToInch = 0.0393701;
+                    const pointsToInch = 1 / 72;
+                    const fontHeightInInches = fontSize * pointsToInch;
+                    const lineSpacingInInches = fontHeightInInches * lineSpacing;
+                    const pageHeightInInches = pageHeightMM * mmToInch;
+                    let lines = Math.floor(pageHeightInInches / lineSpacingInInches);
+                    if (i === 0) lines = 18;
+
+                    const paras = string.split("<p>");
+                    if (paras.length > 13) lines -= 3;
+
+                    let total_page_lines = 0;
+                    let p_counts_total = 0;
+                    let check_para_count = 0;
+                    for (let j = 0; j < paras.length; j++) {
+                        const para = paras[j].trim();
+                        if (para) {
+                            const p_counts = para.length;
+                            const total_lines = p_counts / chars_per_line;
+                            total_page_lines += Math.ceil(total_lines);
+                            p_counts_total += p_counts;
+                        }
+                        if (total_page_lines <= lines) {
+                            check_para_count = j;
+                        }
+                    }
+
+                    if (total_page_lines >= lines) {
+                        let char_limit = 0;
+                        let selected_lines = 0;
+                        for (let k = 0; k <= check_para_count; k++) {
+                            const check_p_length = paras[k].length + 3;
+                            char_limit += check_p_length;
+                            selected_lines += Math.ceil(check_p_length / chars_per_line);
+                        }
+
+                        if (selected_lines < lines && paras[check_para_count + 1]) {
+                            const get_lines = lines - selected_lines;
+                            const chars = get_lines * chars_per_line;
+                            char_limit += chars;
+                        }
+
+                        limit = char_limit;
+                        endLength = startLen + limit;
+                        if (paras.length < 20) lines -= 3;
+                    }
+
+                    let check_string = cleanSummary.trim().substring(startLen, startLen + limit);
+                    const last_dot = check_string.lastIndexOf(' ');
+                    const end_part = check_string.substring(last_dot);
+                    if (end_part.length < 10) {
+                        limit -= end_part.length;
+                        endLength -= end_part.length;
+                    }
+
+                    let data = summary.replace('<p><br></p>', '').substring(startLen, startLen + limit);
+
+                    if (i !== 0) {
+                        if (data.startsWith('>')) {
+                            data = data.slice(1);
+                        } else if (data.startsWith('p>')) {
+                            data = data.slice(2);
+                        } else if (data.startsWith('<p>')) {
+                            data = data.slice(3);
+                        }
+                        data = '<p>' + data + '</p>';
+                    }
+                %>
+                    <p class="main-description main-description_p"><%- data %></p>
+                <% } else { %>
+                    <p class="main-description main-description_p">N/A</p>
+                <% } %>
+            </div>
+            <!-- Footer Partial -->
+            <%- watermark %>
+        </div>
+    <%
+        }
+        startLen = endLength;
+        limit = 2600;
+        endLength = startLen + limit;
+        if (summaryLength > startLen && count > i) {
+            count++;
+        }
+    } %>
+
+    <% if (evaluation.zoning_type || evaluation.zoning_description) { %>
+    <div class="new-page executive-summary" data-type="executive-summary">
+        <div class="page-header">
+            <%- chapter %>
+        </div>
+        <%- section %>
+        <div class="description">
+            <% if (evaluation.zoning_type) { %>
+                <p class="main-description main-description_p"><span>Zoning: </span><%= evaluation.zoning_type.substring(0, 500) %></p>
+            <% } %>
+            <% if (evaluation.zoning_description) { %> 
+                <p class="main-description main-description_p"><span>Zoning Description: </span><%- evaluation.zoning_description.substring(0, 2600) %></p>
+            <% } %>
+        </div>
+
+        <!-- Footer Partial -->
+        <%- watermark %>
+        </div>
+        <% } %>
+
+<% } else { %>
+    <div class="new-page executive-summary" data-type="executive-summary">
+        <div class="page-header">
+            <%- chapter %>
+        </div>
+        <%- section %>
+        <div class="description">
+            <p class="title"><%= evaluation.street_address %> - <%= evaluation.city %></p>
+            <div id="outer" class="container" style="width:100%; height:60px;">
+                <p class="subtitle output" style="word-break: break-all; word-wrap: break-word;"><%= evaluation.property_name %></p>
+            </div>
+            <% if (summary) { %>
+                <p class="main-description main-description_p"><%- summary.substring(0, 2300) %></p>
+            <% } else { %>
+                <p class="main-description main-description_p">N/A</p>
+            <% } %>
+
+            <% if (evaluation.zoning_type) { %>
+                <p class="main-description main-description_p"><span>Zoning: </span><%= evaluation.zoning_type.substring(0, 500) %></p>
+            <% } %>
+            <% if (evaluation.zoning_description) { %>
+                <p class="main-description main-description_p"><span>Zoning Description: </span><%- evaluation.zoning_description.substring(0, 2600) %></p>
+            <% } %>
+        </div>
+        <!-- Footer Partial -->
+        <%- watermark %>
+    </div>
+<% } %>

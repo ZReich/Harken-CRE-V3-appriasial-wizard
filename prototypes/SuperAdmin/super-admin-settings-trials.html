@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Trial Settings - Harken CRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            font-family: 'Montserrat', sans-serif !important;
+        }
+        body {
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .section-title {
+            font-size: 23px;
+            font-weight: 600;
+            color: #1c3643;
+        }
+        .back-link {
+            color: #0da1c7;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: 16px;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .section-card {
+            background-color: white;
+            border-radius: 8px;
+            margin-bottom: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+            overflow: hidden;
+        }
+        .section-header {
+            padding: 20px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: white;
+            transition: background-color 0.2s;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .section-header:hover {
+            background-color: #f9f9f9;
+        }
+        .section-header-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1c3643;
+        }
+        .section-header-icon {
+            font-size: 20px;
+            color: #687F8B;
+            transition: transform 0.3s;
+        }
+        .section-header-icon.expanded {
+            transform: rotate(180deg);
+        }
+        .section-content {
+            padding: 24px;
+            display: block;
+        }
+        .form-label {
+            color: #687F8B;
+            font-size: 13px;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            background-color: white;
+            color: #1c3643;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            color: #687F8B;
+        }
+        .checkbox-label input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+        .info-box {
+            background-color: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 16px;
+            border-radius: 4px;
+            margin-bottom: 16px;
+        }
+        .info-box-title {
+            font-weight: 600;
+            color: #856404;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+        .info-box-text {
+            color: #856404;
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        .action-button {
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .action-button:hover {
+            opacity: 0.85;
+        }
+        .action-button-primary {
+            background-color: #0da1c7;
+            color: white;
+        }
+        .help-text {
+            font-size: 12px;
+            color: #687F8B;
+            margin-top: -12px;
+            margin-bottom: 16px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <!-- UNIFIED NAVIGATION COMPONENT -->
+    <style>.unified-navbar{background:url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;background-color:#1c3643!important;height:84px;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 32px;box-shadow:0 2px 8px rgba(0,0,0,0.1);position:sticky;top:0;z-index:1000}.nav-logo{height:40px;width:auto;cursor:pointer}.nav-center{display:flex;align-items:center;gap:8px;flex:1;justify-content:center}.nav-core-features{display:flex;align-items:center;gap:4px;background:rgba(13, 161, 199, 0.08);border-radius:25px;padding:4px 8px;margin-right:16px}.nav-link{color:white;text-decoration:none;padding:10px 20px;border-radius:25px;transition:all 0.2s;border:1px solid transparent;font-weight:500;font-size:14px;white-space:nowrap}.nav-link:hover{background-color:rgba(255,255,255,0.08)}.nav-link.core-feature{font-weight:500;font-size:14px;color:white}.nav-link.core-feature:hover{background-color:rgba(13, 161, 199, 0.2);color:white}.nav-link.core-feature.active{background-color:transparent;border:1px solid #0da1c7;color:#0da1c7;box-shadow:0 2px 4px rgba(13, 161, 199, 0.2)}.nav-link.active{background-color:transparent;border:1px solid #0da1c7;color:#0da1c7}.nav-separator{width:1px;height:24px;background:rgba(255, 255, 255, 0.2);margin:0 8px}.nav-user{display:flex;align-items:center;gap:12px}.nav-user-name{font-size:14px;font-weight:500;color:white}.nav-user-avatar{width:36px;height:36px;border-radius:50%;border:2px solid #0da1c7}.property-tabs-container{background:white;border-bottom:2px solid #e0e0e0;display:none;padding:0 32px}.property-tabs-container.show{display:flex}.property-tab{padding:16px 24px;border:none;background:transparent;color:#687F8B;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:8px;border-bottom:3px solid transparent;margin-bottom:-2px;font-family:'Montserrat', sans-serif}.property-tab:hover{color:#0da1c7;background:#f0fbfd}.property-tab.active{color:#0da1c7;border-bottom-color:#0da1c7;background:#f0fbfd}</style><nav class="unified-navbar"><img src="assets/harken.png" alt="Harken CRE" class="nav-logo" onclick="window.location.href='super-admin-dashboard.html'"><div class="nav-center"><div class="nav-core-features"><a href="super-admin-comps.html" class="nav-link core-feature" id="nav-comps">COMPS</a><a href="super-admin-appraisals-list.html" class="nav-link core-feature" id="nav-appraisals">APPRAISAL</a><a href="evaluation-wizard-full.html" class="nav-link core-feature" id="nav-evaluations">EVALUATION</a></div><div class="nav-separator"></div><a href="super-admin-dashboard.html" class="nav-link" id="nav-dashboard">Dashboard</a><a href="super-admin-users.html" class="nav-link" id="nav-users">Users</a><a href="super-admin-clients.html" class="nav-link" id="nav-clients">Clients</a><a href="super-admin-accounts.html" class="nav-link" id="nav-accounts">Accounts</a><a href="super-admin-reports.html" class="nav-link" id="nav-reports">Reports</a><a href="super-admin-support-tickets.html" class="nav-link" id="nav-support">Support</a><a href="super-admin-audit-logs.html" class="nav-link" id="nav-audit">Audit Logs</a><a href="super-admin-settings.html" class="nav-link" id="nav-settings">Settings</a></div><div class="nav-user"><span class="nav-user-name">Harken Admin</span><img src="https://i.pravatar.cc/150?img=33" alt="User" class="nav-user-avatar"></div></nav><div class="property-tabs-container" id="propertyTabsContainer"></div><script>(function(){const currentPage=window.location.pathname.split('/').pop()||'super-admin-dashboard.html';const navMapping={'super-admin-settings-trials.html':'nav-settings','super-admin-settings.html':'nav-settings','super-admin-settings-billing.html':'nav-settings','super-admin-settings-amenities.html':'nav-settings'};for(const[page,navId]of Object.entries(navMapping)){if(currentPage.includes(page)){const navElement=document.getElementById(navId);if(navElement){navElement.classList.add('active');}break;}})();
+
+    <!-- Main Content -->
+    <div style="padding: 35px 50px;">
+        <!-- Back Link -->
+        <a href="super-admin-settings.html" class="back-link">← Back to Settings</a>
+
+        <!-- Page Title -->
+        <div style="margin-bottom: 32px;">
+            <h2 class="section-title">TRIAL SETTINGS</h2>
+            <p style="color: #687F8B; font-size: 14px; margin-top: 8px;">Configure global defaults for free trials, conversion settings, and expiration reminders</p>
+        </div>
+
+        <!-- Section 1: Default Trial Configuration -->
+        <div class="section-card">
+            <div class="section-header">
+                <div class="section-header-title">Default Trial Configuration</div>
+                <div class="section-header-icon expanded">▼</div>
+            </div>
+            <div class="section-content">
+                <div class="info-box">
+                    <div class="info-box-title">Global Defaults</div>
+                    <div class="info-box-text">
+                        These settings are used as defaults when creating new accounts with free trials. Superadmins can override these values for individual accounts during account creation.
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div>
+                        <label class="form-label">Default Trial Duration (Days)</label>
+                        <select class="form-select">
+                            <option value="7">7 Days</option>
+                            <option value="14">14 Days</option>
+                            <option value="30" selected>30 Days</option>
+                            <option value="60">60 Days</option>
+                            <option value="90">90 Days</option>
+                        </select>
+                        <p class="help-text">Default trial period for new accounts</p>
+                    </div>
+                    <div>
+                        <label class="form-label">Default Trial Type</label>
+                        <select class="form-select">
+                            <option value="no-cc" selected>No Credit Card Required</option>
+                            <option value="cc-required">Credit Card Required (Auto-convert)</option>
+                        </select>
+                        <p class="help-text">Default trial conversion behavior</p>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div>
+                        <label class="form-label">Default Feature Access</label>
+                        <select class="form-select">
+                            <option value="full" selected>Full Access</option>
+                            <option value="limited">Limited Access</option>
+                        </select>
+                        <p class="help-text">Feature access level during trial period</p>
+                    </div>
+                    <div>
+                        <label class="form-label">Auto-convert on Trial End</label>
+                        <select class="form-select">
+                            <option value="false" selected>No (Manual Upgrade Required)</option>
+                            <option value="true">Yes (Automatic Conversion)</option>
+                        </select>
+                        <p class="help-text">Only applies to credit card required trials</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 2: Trial Conversion Reminders -->
+        <div class="section-card">
+            <div class="section-header">
+                <div class="section-header-title">Trial Conversion Reminders</div>
+                <div class="section-header-icon expanded">▼</div>
+            </div>
+            <div class="section-content">
+                <div class="info-box">
+                    <div class="info-box-title">Email Notifications</div>
+                    <div class="info-box-text">
+                        Configure automated email reminders sent to trial accounts before expiration. These emails help improve conversion rates by reminding customers to upgrade.
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label class="form-label">Send Reminder Emails</label>
+                    <div class="checkbox-label">
+                        <input type="checkbox" checked />
+                        <span>Enable automated trial expiration reminders</span>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div>
+                        <label class="form-label">3 Days Before Expiration</label>
+                        <div class="checkbox-label">
+                            <input type="checkbox" checked />
+                            <span>Send reminder email</span>
+                        </div>
+                        <select class="form-select" style="margin-top: 8px;">
+                            <option selected>Standard Reminder Template</option>
+                            <option>Custom Template</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label">1 Day Before Expiration</label>
+                        <div class="checkbox-label">
+                            <input type="checkbox" checked />
+                            <span>Send reminder email</span>
+                        </div>
+                        <select class="form-select" style="margin-top: 8px;">
+                            <option selected>Urgent Reminder Template</option>
+                            <option>Custom Template</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div>
+                        <label class="form-label">On Expiration Day</label>
+                        <div class="checkbox-label">
+                            <input type="checkbox" checked />
+                            <span>Send expiration notice</span>
+                        </div>
+                        <select class="form-select" style="margin-top: 8px;">
+                            <option selected>Trial Expired Template</option>
+                            <option>Custom Template</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="form-label">After Expiration</label>
+                        <div class="checkbox-label">
+                            <input type="checkbox" />
+                            <span>Send follow-up email (after 3 days)</span>
+                        </div>
+                        <select class="form-select" style="margin-top: 8px;">
+                            <option selected>Win-Back Template</option>
+                            <option>Custom Template</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Section 3: Auto-Convert Behavior -->
+        <div class="section-card">
+            <div class="section-header">
+                <div class="section-header-title">Auto-Convert Behavior</div>
+                <div class="section-header-icon expanded">▼</div>
+            </div>
+            <div class="section-content">
+                <div class="info-box">
+                    <div class="info-box-title">Credit Card Required Trials</div>
+                    <div class="info-box-text">
+                        Configure how trials with credit cards on file behave when the trial period ends.
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label class="form-label">Default Auto-Convert Behavior</label>
+                    <select class="form-select">
+                        <option value="auto" selected>Automatically convert to paid subscription</option>
+                        <option value="pause">Pause subscription, require manual activation</option>
+                        <option value="notify">Send notification, require customer confirmation</option>
+                    </select>
+                    <p class="help-text">Action taken when credit card trial expires</p>
+                </div>
+
+                <div style="margin-bottom: 20px;">
+                    <label class="form-label">Grace Period (Days)</label>
+                    <input type="number" class="form-input" value="0" min="0" max="7" />
+                    <p class="help-text">Number of days after expiration before access is revoked (0 = immediate)</p>
+                </div>
+
+                <div>
+                    <label class="form-label">Failed Payment Handling</label>
+                    <div class="checkbox-label">
+                        <input type="checkbox" checked />
+                        <span>Retry payment 3 times before suspending account</span>
+                    </div>
+                    <div class="checkbox-label">
+                        <input type="checkbox" />
+                        <span>Send email notification on payment failure</span>
+                    </div>
+                    <div class="checkbox-label">
+                        <input type="checkbox" />
+                        <span>Allow account to continue for 7 days after payment failure</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Save Button -->
+        <div style="margin-top: 32px; display: flex; justify-content: flex-end;">
+            <button class="action-button action-button-primary">Save Trial Settings</button>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 80px;">
+            <span style="font-weight: 300; font-size: 14px; color: #687F8B;">© 2024, Harken CRE, LLC</span>
+        </div>
+    </div>
+
+    <script>
+        // Navigation state management
+        (function() {
+            const currentPage = window.location.pathname.split('/').pop() || 'super-admin-dashboard.html';
+            const navMapping = {
+                'super-admin-settings-trials.html': 'nav-settings',
+                'super-admin-settings.html': 'nav-settings',
+                'super-admin-settings-billing.html': 'nav-settings',
+                'super-admin-settings-amenities.html': 'nav-settings',
+                'super-admin-settings-white-label.html': 'nav-settings'
+            };
+            
+            for (const [page, navId] of Object.entries(navMapping)) {
+                if (currentPage.includes(page)) {
+                    const navElement = document.getElementById(navId);
+                    if (navElement) {
+                        navElement.classList.add('active');
+                    }
+                    break;
+                }
+            }
+        })();
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+

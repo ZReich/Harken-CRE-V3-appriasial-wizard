@@ -1,0 +1,1002 @@
+<%
+for(let index = 0; index < evaluation.scenarios.length; index++){
+    const scenario = evaluation.scenarios[index];
+    if(scenario?.has_cap_approach){
+    let label = '';
+    if (evaluation && evaluation.scenarios && evaluation.scenarios.length > 1 && label === '') {
+        label = evaluation.scenarios[index].name;
+    }
+    const evaluation_cap_approach = scenario?.evaluation_cap_approach;
+    const evaluation_rent_roll_approach = scenario?.evaluation_rent_roll_approach;
+    if(evaluation_cap_approach){
+        let notesLength = evaluation_cap_approach.cap_rate_notes?.length || 0;
+        let count = 1;
+        if (notesLength > 2300) {
+            count = notesLength / 2300;
+        }
+        let startLen = 0;
+        let endLength = 2300;
+        let limit = 2300;
+
+        for (let loop = 0; loop <= count; loop++) {
+            let cap_notes = evaluation_cap_approach.cap_rate_notes?.replace(/<p><br><\/p>/g, '').trim() || '';
+            if (!loop || cap_notes.substr(startLen, limit).length) {
+%>
+<%
+    let stateName='';
+    const attribute = evaluation?.state;
+    stateName = attribute?.toUpperCase();
+    <!-- const matchState = states.find((obj) => obj?.code === attribute); -->
+    <!-- if (!matchState)  -->
+    <!-- { -->
+    <!-- stateName = attribute; -->
+    <!-- } else { -->
+    <!-- stateName = matchState?.name; -->
+    <!-- } -->
+%>
+<div class="new-page valuations_page_3" data-type="sales-approach">
+    <div class="page-header" style="<%= (loop > 0 && loop <= 5) ? 'padding-bottom:5rem ; margin-left: 50rem;' : '' %>">
+        <%- chapter %>
+    </div>
+
+    <div class="description">
+        <% if (loop === 0) { %>
+        <p class="title">CAP Rate <span class="subtitle">Comps</span></p>
+        <p class="label"><%= label %></p>
+        <p class="regular-description">
+            When valuing a property through the income approach the author will use either the existing lease on the property if said lease 
+            is confirmed to be at market or the author will research leased properties that fall within the comparable scope of the subject 
+            property and adjust them to fall in line with the subject property.
+        </p>
+        <table class="comps-table">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>Subject Property</th>
+                    <% if (
+                        evaluation_cap_approach &&
+                        (Array.isArray(evaluation_cap_approach.comps) ||
+                        typeof evaluation_cap_approach.comps === 'object')
+                    ) { %>
+                        <% evaluation_cap_approach.comps.forEach((comp, i) => { %>
+                        <th>Comparable #<%= i + 1 %></th>
+                        <% }) %>
+                    <% } %>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td></td>
+                    <% let url = evaluation.coverImage || '/images/default-placeholder.png'; %>
+                    <td>
+                        <img width="150" height="80" src="<%= url %>" onerror="replaceImage(this)" class="image-added"/>
+                    </td>
+                    
+                    <% let comp_image_url = ''; %>
+                    <% if (
+                        evaluation_cap_approach &&
+                        (Array.isArray(evaluation_cap_approach.comps) ||
+                        typeof evaluation_cap_approach.comps === 'object')
+                    ) { %>
+                        <% evaluation_cap_approach.comps.forEach((comp, i) => { 
+                            const capComp = comp.comp_details;
+                            if (capComp?.property_image_url) {
+                                const url = capComp?.property_image_url;
+                                comp_image_url = evaluation.baseUrl + url;
+                            }else {
+                                comp_image_url = '/images/default-placeholder.png';
+                            }
+                        %>
+                        <td>
+                            <img width="150" height="80" src="<%= comp_image_url %>" onerror="replaceImage(this)"/>
+                        </td>
+                        <% }) %>
+                    <% } %>
+                </tr>
+                <tr>
+                    <td class="blue bold">Location</td>
+                    <td>
+                        <div style="white-space: initial;">
+                            <%= evaluation.street_address %>, <br/>
+                            <%= evaluation.city %>, <%= stateName %> <%= evaluation.zipcode %>
+                        </div>
+                    </td>
+                    <% if (
+                        evaluation_cap_approach &&
+                        (Array.isArray(evaluation_cap_approach.comps) ||
+                        typeof evaluation_cap_approach.comps === 'object')
+                    ) { %>
+                        <% evaluation_cap_approach.comps.forEach((comp, i) => { 
+                            const capComp = comp.comp_details;
+                            let fullStateName='';
+                            const {state} = capComp;
+                            fullStateName = state?.toUpperCase();
+                            <!-- const matchState = states.find((obj) => obj?.code === state); -->
+                            <!-- if (!matchState)  -->
+                            <!-- { -->
+                            <!-- fullStateName = state; -->
+                            <!-- } else { -->
+                            <!-- fullStateName = matchState?.name; -->
+                            <!-- } -->
+                            if (capComp && capComp.street_address) { %>
+                            <td>
+                                <div style="white-space: initial;">
+                                    <%= capComp.street_address %>, <br/>
+                                    <%= capComp.city %>, <%= fullStateName %> <%= capComp.zipcode %>
+                                </div>
+                            </td>
+                            <% } else { %>
+                                <td>Address Not Provided</td>
+                            <% } %>
+                        <% }) %>
+                    <% } %>
+                </tr>
+                <tr class="odd">
+                    <td>Date Sold</td>
+                    <td></td>
+                    <% if (
+                        evaluation_cap_approach &&
+                        (Array.isArray(evaluation_cap_approach.comps) ||
+                        typeof evaluation_cap_approach?.comps === 'object')
+                    ) { %>
+                        <% evaluation_cap_approach.comps.forEach((comp, i) => { 
+                            const capComp = comp.comp_details;
+                        %>
+                        <% if (capComp && capComp.sale_status === 'Pending') { %>
+                            <td><%= formatDate(capComp?.date_sold, true) %> ( P )</td>
+                        <% } else if (capComp && capComp.sale_status === 'Closed' && capComp.date_sold) { %>
+                            <td><%= formatDate(capComp.date_sold, true) %></td>
+                        <% } else { %>
+                            <td><%= getNotAvailableLabel() %></td>
+                        <% } %>
+                        <% }) %>
+                    <% } %>
+                </tr>
+                <tr>
+                    <td>
+                        Property Type
+                        <%
+                            let zoneString = '';
+                            let zoneValue = '';
+                            let subZoneValue = '';
+
+                            if (evaluation && evaluation.zonings && evaluation.zonings[0]) {
+                                zoneString = evaluation.zonings[0].zone;
+
+                                const zone = zoneOptions.find((obj) => obj?.code === zoneString);
+                                zoneValue = zone ? zone.name : zoneString;
+
+                                const sub_options = zone?.sub_options || [];
+                                const subZone = sub_options.find((obj) => obj?.code === evaluation.zonings[0]?.sub_zone);
+                                subZoneValue = subZone ? subZone.name : evaluation.zonings[0]?.sub_zone;
+                            }
+
+                            const displayZoneText = zoneValue
+                                ? zoneValue + ' / ' + (subZoneValue || getNotAvailableLabel())
+                                : '';
+                        %>
+                    </td>
+                    <td>
+                        <div style="white-space: initial;">
+                            <%= displayZoneText %>
+                        </div>
+                    </td>
+                        <% 
+                        if (Array.isArray(evaluation_cap_approach?.comps) || typeof evaluation_cap_approach?.comps === 'object') {
+                            evaluation_cap_approach?.comps.forEach((comp, i) => {
+                                const compData = comp.comp_details;
+                                if (compData) {
+                                    const zonings = compData.zonings;
+                                    let zoneString = '';
+                                    let zoneValue = '';
+                                    let subZoneValue = '';
+
+                                    if (zonings && zonings[0]) {
+                                        zoneString = zonings[0].zone;
+
+                                        const zone = zoneOptions.find((obj) => obj?.code === zoneString);
+                                        zoneValue = zone ? zone.name : zoneString;
+
+                                        const sub_options = zone?.sub_options || [];
+                                        const subZone = sub_options.find((obj) => obj?.code === zonings[0]?.sub_zone);
+                                        subZoneValue = subZone ? subZone.name : zonings[0]?.sub_zone;
+                                    }
+
+                                    const displayZoneText = zoneValue
+                                        ? zoneValue + ' / ' + (subZoneValue || 'N/A')
+                                        : '';
+                        %>
+                        <td>
+                            <div style="white-space: initial;">
+                                <%= displayZoneText %>
+                            </div>
+                        </td>
+                        <% 
+                                } else { 
+                        %>
+                        <td><%= getNotAvailableLabel() %></td>
+                        <% 
+                                }
+                            });
+                        } 
+                        %>
+                </tr>
+                <% 
+                let rowIndex = 0;
+                evaluation_cap_approach?.comparison_attributes.forEach(attr => { 
+                    rowIndex++;
+                    const key = attr.comparison_key;
+                    const name = attr.comparison_value;
+                %>
+                <tr class="<%= rowIndex % 2 === 0 ? '' : 'odd' %>">
+                    <td><%= name %></td>
+                    <!-- Subject property cell -->
+                    <td>
+                        <% let totalSqFt = 0; %>
+                                <% if (evaluation_rent_roll_approach) {
+                                    const rent_roll_type = evaluation_rent_roll_approach?.type;
+                                    if (Array.isArray(evaluation_rent_roll_approach?.rent_rolls) && rent_roll_type === 'summary') {
+                                        totalSqFt = evaluation_rent_roll_approach.rent_rolls.reduce((sum, item) => {
+                                            const sqFt = parseFloat(item?.sq_ft) || 0;
+                                            return sum + sqFt;
+                                        }, 0);
+                                        }
+                                    } %>
+                        <% 
+                        let subjectValue = evaluation[key];
+                        if(key === 'building_size'){
+                            subjectValue = numberFormat(evaluation[key]); 
+                        }
+                        else if (key === 'land_size_sf') {
+                            const landSizeSfValue =
+                                evaluation.land_dimension === 'SF'
+                                ? evaluation.land_size
+                                : evaluation.land_dimension === 'ACRE'
+                                ? evaluation.land_size * 43560 : 0;
+                            subjectValue = numberFormat(landSizeSfValue); // Optional: round to 2 decimal places
+                        }
+                        else if (key === 'land_size_acre') {
+                            const landSize = evaluation.land_size;
+                            const landDimension = evaluation.land_dimension;
+
+                            if (!landSize) {
+                                subjectValue = getNotAvailableLabel(); // Show 'N/A' if land size is missing
+                            } else {
+                                const landSizeAcreValue =
+                                    landDimension === 'SF'
+                                        ? landSize / 43560
+                                        : landDimension === 'ACRE'
+                                        ? landSize
+                                        : 0;
+
+                                const unit =
+                                    landDimension === 'SF' || landDimension === 'ACRE'
+                                        ? ' AC'
+                                        : ' SF';
+
+                                subjectValue = numberFormat(landSizeAcreValue, 3) + unit;
+                            }
+                        }
+                        else if (key === 'unit' && evaluation.comparison_basis === 'Unit'){
+                            subjectValue = numberFormat(evaluation.total_units);  
+                        }
+                        else if (key === 'services') {
+                            subjectValue = evaluation.utilities_select;
+                        }
+                        else if (key === 'city_county') {
+                            const city = evaluation?.city || 'N/A';
+                            const county = evaluation?.county || 'N/A';
+                            subjectValue = `${city}, ${county}`;
+                        }
+                        else if(key === 'unit_size_sq_ft'){
+                            subjectValue = totalSqFt ? numberFormat(totalSqFt) : 'N/A';  
+                        }
+                        else if(key === 'building_size_land_size'){
+                            const { building_size, land_size, land_dimension } = evaluation;
+                            let formattedLandSize = getNotAvailableLabel();
+                            if (land_size && land_dimension === 'SF') {
+                                formattedLandSize = `${land_size?.toLocaleString()} SF`;
+                            } else if (land_size && land_dimension === 'ACRE') {
+                                formattedLandSize = `${Number(land_size).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 })} AC`;
+                            }
+                            const formattedBuildingSize = building_size ? numberFormat(building_size) + ' SF' : getNotAvailableLabel();
+                            <!-- const formattedLandSize = land_size ? numberFormat(land_size) : 'N/A'; -->
+                            subjectValue = `${formattedBuildingSize} / ${formattedLandSize}`;
+                        }
+                        else if(key === 'city_state'){
+                            subjectValue = evaluation.city +', '+ stateName;
+                        }
+                        else if(key === 'year_built_year_remodeled'){
+                            const year_built = evaluation.year_built ? evaluation.year_built : getNotAvailableLabel(); 
+                            const year_remodeled = evaluation.year_remodeled ? evaluation.year_remodeled : getNotAvailableLabel(); 
+                            subjectValue =  year_built+' / ' + year_remodeled;
+                        }
+                        else if(key === 'highest_best_use'){
+                        subjectValue = evaluation?.high_and_best_user;
+                        }
+                        else if (key === 'beds') {
+                        subjectValue = evaluation.total_beds ?
+                        evaluation?.total_beds.toLocaleString(2) // Show total beds for 'beds'
+                        : ''
+                        }
+                        else if(key === 'quality_condition'){
+                        const condition = evaluation.condition || '';
+                        const matchCondition = conditionOptions.find(obj => obj?.code === condition);
+                        const conditionValue = matchCondition?.name === '--Select--'
+                        ? 'N/A'
+                        : !matchCondition
+                            ? condition
+                            : matchCondition.name || 'N/A';
+
+                        subjectValue = conditionValue; 
+                        }
+                        else if (key === 'topography') {
+                            const topography = evaluation.topography || '';
+                            const matchTopography = topographyOptions.find(obj => obj?.code === topography);
+                            const topographyValue = matchTopography?.name === '--Select--'
+                            ? getNotAvailableLabel()
+                            : !matchTopography
+                            ? topography
+                            : matchTopography.name || getNotAvailableLabel();
+                            subjectValue = topographyValue;
+                        }
+                        else if(key === 'frontage'){
+                        const frontage = evaluation?.frontage || '';
+                        const matchFrontage = frontageOptions.find(obj => obj?.code === frontage);
+                        const frontageValue = matchFrontage?.name === '--Select--'
+                        ? 'N/A'
+                        : !matchFrontage
+                            ? frontage
+                            : matchFrontage.name || 'N/A';
+
+                        subjectValue = frontageValue; 
+                        }
+                        if (typeof subjectValue === 'undefined' || subjectValue === null || subjectValue === '') {
+                            subjectValue = '';
+                        }
+                        %>
+                        <%= subjectValue %>
+                    </td>
+                    <!-- Comps cells -->
+                    <% if (
+                        evaluation_cap_approach &&
+                        (Array.isArray(evaluation_cap_approach.comps) ||
+                        typeof evaluation_cap_approach.comps === 'object')
+                    ) { %>
+                        <% evaluation_cap_approach.comps.forEach((comp, i) => {
+                        const capComp = comp.comp_details;
+                            let fullStateName='';
+                            const {state} = capComp;
+                            fullStateName = state?.toUpperCase();
+                            <!-- const matchState = states.find((obj) => obj?.code === state); -->
+                            <!-- if (!matchState)  -->
+                            <!-- { -->
+                            <!-- fullStateName = state; -->
+                            <!-- } else { -->
+                            <!-- fullStateName = matchState?.name; -->
+                            <!-- } -->
+                        let value = capComp ? capComp[key] : null;
+                        if(key === 'building_size'){
+                            value = numberFormat(capComp[key]); 
+                        }
+                        else if(key === 'date_sold'){
+                            value = formatDate(capComp.date_sold, true);
+                        }
+                        else if(key === 'city_state'){
+                            value = capComp.city +', '+ fullStateName;
+                        }
+                        else if(key === 'space'){
+                            value = capComp.space ? numberFormat(capComp.space) + ' SF' : getNotAvailableLabel();
+                        }
+                        else if (key === 'building_size_land_size') {
+                            const { building_size, land_size, land_dimension } = capComp;
+                            let formattedLandSize = getNotAvailableLabel();
+                            if (land_size) {
+                                if (
+                                    evaluation.land_dimension == 'SF' &&
+                                    land_dimension == 'ACRE'
+                                ) {
+                                    formattedLandSize = (land_size * 43560)?.toLocaleString() + ' SF';
+                                } else if (
+                                    evaluation.land_dimension == 'ACRE' &&
+                                    land_dimension == 'SF'
+                                ) {
+                                    formattedLandSize =
+                                    (land_size / 43560)?.toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }) +
+                                    ' AC';
+                                } else {
+                                    if (land_dimension == 'SF') {
+                                        formattedLandSize = land_size?.toLocaleString() + ' SF';
+                                    } else if (land_dimension == 'ACRE') {
+                                        formattedLandSize =
+                                            land_size?.toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }) + ' AC';
+                                    }
+                                }
+                            }
+                            const formattedBuildingSize = building_size ? numberFormat(building_size) + ' SF' : getNotAvailableLabel();
+                            <!-- const formattedLandSize = land_size ? numberFormat(land_size) : 'N/A'; -->
+                            value = `${formattedBuildingSize} / ${formattedLandSize}`;
+                        }
+                        else if(key === 'unit' && evaluation.comparison_basis === 'Unit'){
+                            value = numberFormat(capComp?.total_units);
+                        }
+                        else if (key === 'price_per_unit') {
+                            value = capComp?.total_units ? toCurrency((capComp.sale_price / capComp.total_units) || 0) : '';
+                        }
+                        else if(key === 'unit_size_sq_ft'){
+                            const{property_units = []} = capComp;
+                            const sqFt = property_units.length ? property_units[0]?.sq_ft : null;
+                            value = numberFormat(sqFt);
+                        }
+                        else if (key === 'land_size_sf') {
+                            const landSizeAcreValue =
+                                capComp.land_dimension === 'SF'
+                                ? capComp.land_size
+                                : capComp.land_dimension === 'ACRE'
+                                    ? capComp.land_size * 43560
+                                    : 0;
+                            value = numberFormat(landSizeAcreValue); // Optional: round to 2 decimal places
+                        }
+                        else if (key === 'land_size_acre') {
+                            const landSize = capComp.land_size;
+                            const landDimension = capComp.land_dimension;
+                            if (!landSize) {
+                                value = getNotAvailableLabel(); // Show 'N/A' if land size is missing
+                            } else {
+                                const landSizeAcreValue =
+                                    landDimension === 'SF'
+                                        ? landSize / 43560
+                                        : landDimension === 'ACRE'
+                                        ? landSize
+                                        : 0;
+                                const unit =
+                                    landDimension === 'SF' || landDimension === 'ACRE'
+                                        ? ' AC'
+                                        : ' SF';
+                                value = numberFormat(landSizeAcreValue, 3) + unit;
+                            }
+                        }
+                        else if (key === 'beds') {
+                            value = capComp.total_beds ?
+                            capComp.total_beds.toLocaleString(2) // Show total beds for 'beds'
+                            : ''
+                        }
+                        else if (key === 'dollar_per_unit') { 
+                            const price = capComp.type === 'sale' ? capComp.sale_price : capComp.lease_rate;
+                            let dollarPerUnit = 0;
+
+                            if (capComp.type === 'sale') {
+                                if (!price || !capComp.total_units) {
+                                    dollarPerUnit = 0;
+                                } else {
+                                    dollarPerUnit = price / capComp.total_units;
+                                }
+                            } else {
+                                if (capComp.lease_rate === 0 || capComp.total_units === 0) {
+                                    dollarPerUnit = 0;
+                                } else {
+                                    if (capComp.lease_rate_unit === 'monthly') {
+                                        dollarPerUnit = price / capComp.total_units / 12;
+                                    } else {
+                                        dollarPerUnit = price / capComp.total_units;
+                                    }
+                                }
+                            }
+                            value = dollarPerUnit ? toCurrency(dollarPerUnit) : ''; // Optional: round to 2 decimal places
+                        }
+                        else if (key === 'price_per_sf_land') {
+                            let newValue = 0;
+                            if (capComp.land_dimension === 'SF') {
+                                if (capComp.land_size === null || capComp.land_size === 0) {
+                                    newValue = 0; // If land_size is null or 0, show $0.00
+                                } else {
+                                    newValue = capComp.sale_price / capComp.land_size;
+                                }
+                            } else {
+                                if (capComp.land_size === null || capComp.land_size === 0) {
+                                    newValue = 0; // If land_size is null or 0, show $0.00
+                                } else {
+                                    newValue = capComp.sale_price / (capComp.land_size * 43560); // Assuming this part was cut off
+                                }
+                            }
+                            value = toCurrency(newValue);
+                        }
+
+                        else if (key === 'price_per_acre') {
+                            let landSizeAcre = 0;
+
+                            if (capComp?.land_dimension === 'SF') {
+                                landSizeAcre = capComp?.land_size ? parseFloat((capComp?.sale_price / capComp?.land_size).toFixed(2)) * 43560 : 0;
+                            } else {
+                                landSizeAcre = capComp?.land_size ? parseFloat((capComp?.sale_price / capComp?.land_size).toFixed(2)) : 0;
+                            }
+                            value = toCurrency(landSizeAcre);
+                        }
+                        else if (key === 'price_sf_per_year') {
+                            value = toCurrency(capComp.price_square_foot || 0); 
+                        }
+                        else if(key === 'price_acre_per_year'){
+                            value = toCurrency(parseFloat(((capComp?.price_square_foot || 0) * 43560).toFixed(2)));
+                        }
+                        else if (key === 'cap_rate') {
+                            value = toPercentage(capComp.cap_rate || 0); 
+                        }
+                        else if (key === 'city_county') {
+                        const city = capComp?.city || 'N/A';
+                        const county = capComp?.county || 'N/A';
+                        value = `${city}, ${county}`;
+                        }
+                        else if (key === 'dollar_per_bed') {
+                            const price = capComp.type === 'sale' ? capComp.sale_price : capComp.lease_rate;
+                            let dollarPerBed = 0;
+
+                            if (capComp.type === 'sale') {
+                                if (!price || !capComp.total_beds) {
+                                    dollarPerBed = 0;
+                                } else {
+                                    dollarPerBed = price / capComp.total_beds;
+                                }
+                            } else {
+                                if (capComp.lease_rate === 0 || capComp.total_beds === 0) {
+                                    dollarPerBed = 0;
+                                } else {
+                                    if (capComp.lease_rate_unit === 'monthly') {
+                                        dollarPerBed = price / capComp.total_beds / 12;
+                                    } else {
+                                        dollarPerBed = price / capComp.total_beds;
+                                    }
+                                }
+                            }
+                            value = dollarPerBed ? toCurrency(dollarPerBed) : ''; // Optional: round to 2 decimal places
+                        }else if (key === 'sale_price') {
+                            value = toCurrency(capComp.sale_price);
+                        }else if (key === 'services') {
+                            value = capComp.utilities_select;
+                        }else if (key === 'net_operating_income') {
+                            value = toCurrency(capComp.net_operating_income);
+                        }
+                        else if(key === 'year_built_year_remodeled'){
+                            const year_built = capComp.year_built ? capComp.year_built : getNotAvailableLabel(); 
+                            const year_remodeled = capComp.year_remodeled ? capComp.year_remodeled : getNotAvailableLabel(); 
+                            value =  year_built+' / ' + year_remodeled;
+                        }
+                        else if(key === 'quality_condition'){
+                             const condition = capComp.condition || '';
+                                const matchCondition = conditionOptions.find(obj => obj?.code === condition);
+                                const conditionValue = matchCondition?.name === '--Select--'
+                                ? 'N/A'
+                                : !matchCondition
+                                    ? condition
+                                    : matchCondition.name || getNotAvailableLabel();
+
+                                value = conditionValue;
+                        }
+                        else if(key === 'topography'){
+                          const topography = capComp.topography || '';
+                            const matchTopography = topographyOptions.find(obj => obj?.code === topography);
+                            const topographyValue = matchTopography?.name === '--Select--'
+                            ? getNotAvailableLabel()
+                            : !matchTopography
+                            ? topography
+                            : matchTopography.name || getNotAvailableLabel();
+                            value = topographyValue; 
+                        } 
+                        else if(key === 'frontage'){
+                                const frontage = capComp.frontage || '';
+                                const matchFrontage = frontageOptions.find(obj => obj?.code === frontage);
+                                const frontageValue = matchFrontage?.name === '--Select--'
+                                ? 'N/A'
+                                : !matchFrontage
+                                    ? frontage
+                                    : matchFrontage.name || 'N/A';
+                                value = frontageValue; 
+                        }
+                        else if(key === 'price_per_sf'){
+                            value = toCurrency(capComp.price_square_foot);
+                        }
+                        else if (key === 'lease_type') {
+                            const leaseType = capComp.lease_type || '';
+                            const matchLeaseType = leaseTypeOptions.find(obj => obj?.code === leaseType);
+                            const leaseTypeValue = 
+                                            capComp.lease_type == 'select' ? ''
+                                            : !matchLeaseType ? leaseType
+                                            : matchLeaseType?.name || '';
+                            value = leaseTypeValue;
+                        }   
+                        if ((!value || value === '')&& key != 'lease_type') {
+                            value = getNotAvailableLabel();
+                        }
+                        %>
+                        <td><%= value %></td>
+                        <% }) %>
+                    <% } %>
+                </tr>
+                <% }) %>
+                <tr>
+                    <td class="blue bold">CAP Rate</td>
+                    <td></td>
+                    <% if (
+                        evaluation_cap_approach &&
+                        (Array.isArray(evaluation_cap_approach.comps) ||
+                         typeof evaluation_cap_approach.comps === 'object')
+                    ) { %>
+                        <% evaluation_cap_approach.comps.forEach((comp, i) => { %>
+                            <td></td>
+                        <% }) %>
+                    <% } %>
+                </tr>
+                <tr class="odd">
+                    <td>
+                        <% if (evaluation.comparison_basis !== 'SF') { %>
+                            $/<%= evaluation.comparison_basis %>
+                        <% } else { %>
+                            $/SF
+                        <% } %>
+                    </td>
+                    <td></td>
+                    <% if (
+                        evaluation_cap_approach &&
+                        (Array.isArray(evaluation_cap_approach.comps) ||
+                         typeof evaluation_cap_approach.comps === 'object')
+                    ) { %>
+                        <% evaluation_cap_approach.comps.forEach((comp, i) => { 
+                            const compData = comp.comp_details;
+                            const basis = evaluation.comparison_basis;
+                            let valueToDisplay = '';
+                            
+                            if (basis !== 'SF') {
+                                let size = 1;
+                                const compZonings = compData?.zonings || [];
+                                if (compZonings.length > 0) {
+                                    const comparison_basis = basis.toLowerCase().replace(/\s/g, '_');
+                                    size = compZonings.reduce((sum, z) => sum + (z[comparison_basis] || 0), 0);
+                                }
+                
+                                const salePrice = compData?.sale_price || 0;
+                                const sf = size !== 0 ? (salePrice / size) : 0;
+                                valueToDisplay = toCurrency(Number(sf));
+                            } else if (compData?.price_square_foot) {
+                                valueToDisplay = toCurrency(compData.price_square_foot) + '/SF';
+                            } else {
+                                valueToDisplay = getNotAvailableLabel();
+                            }
+                        %>
+                            <td><%- valueToDisplay %></td>
+                        <% }) %>
+                    <% } %>
+                </tr><tr>
+                    <td>Net Operating Income</td>
+                    <td></td>
+                    <% if (Array.isArray(evaluation_cap_approach?.comps) || typeof evaluation_cap_approach?.comps === 'object') { %>
+                        <% evaluation_cap_approach.comps.forEach((comp) => { 
+                            const compData = comp.comp_details;
+                        %>
+                            <% if (compData?.net_operating_income) { %>
+                                <td><%= toCurrency(compData.net_operating_income) %></td>
+                            <% } else { %>
+                                <td><%= getNotAvailableLabel() %></td>
+                            <% } %>
+                        <% }) %>
+                    <% } %>
+                </tr>
+                <tr class="odd">
+                    <td>Capitalization Rate</td>
+                    <td></td>
+                    <% if (Array.isArray(evaluation_cap_approach?.comps) || typeof evaluation_cap_approach?.comps === 'object') { %>
+                        <% evaluation_cap_approach.comps.forEach((comp) => { 
+                            const compData = comp.comp_details;
+                        %>
+                            <% if (compData?.cap_rate) { %>
+                                <td><%= toPercentage(compData.cap_rate) %></td>
+                            <% } else { %>
+                                <td><%= getNotAvailableLabel() %></td>
+                            <% } %>
+                        <% }) %>
+                    <% } %>
+                </tr>
+                <tr>
+                    <td class="blue bold">Summary</td>
+                    <td></td>
+                    <% if (
+                        evaluation_cap_approach &&
+                        (Array.isArray(evaluation_cap_approach.comps) ||
+                         typeof evaluation_cap_approach.comps === 'object')
+                    ) { %>
+                        <% evaluation_cap_approach.comps.forEach((comp, i) => { %>
+                            <td></td>
+                        <% }) %>
+                    <% } %>
+                    </tr><tr class="odd">
+                    <td>High</td>
+                    <td>
+                        <% if (evaluation_cap_approach?.comps && evaluation_cap_approach.comps.length > 0) { %>
+                            <%= toPercentage(evaluation_cap_approach?.high_cap_rate) %>
+                        <% } else { %>
+                            <!-- show blank if no comps -->
+                        <% } %>
+                    </td>
+                    <% if (Array.isArray(evaluation_cap_approach?.comps) || typeof evaluation_cap_approach?.comps === 'object') { %>
+                        <% evaluation_cap_approach.comps.forEach(() => { %>
+                            <td></td>
+                        <% }) %>
+                    <% } %>
+                </tr>
+              <tr>
+               <td>Low</td>
+                    <td>
+                        <% if (evaluation_cap_approach?.comps && evaluation_cap_approach.comps.length > 0) { %>
+                            <%= toPercentage(evaluation_cap_approach?.low_cap_rate) %>
+                        <% } else { %>
+                            <!-- show blank if no comps -->
+                        <% } %>
+                    </td>
+                    <% if (Array.isArray(evaluation_cap_approach?.comps) || typeof evaluation_cap_approach?.comps === 'object') { %>
+                        <% evaluation_cap_approach.comps.forEach(() => { %>
+                            <td></td>
+                        <% }) %>
+                    <% } %>
+                </tr>
+                <tr class="odd">
+                    <td>Rounded Average</td>
+                    <td><%= toPercentage(evaluation_cap_approach?.rounded_average || 0) %></td>
+                    <% if (Array.isArray(evaluation_cap_approach?.comps) || typeof evaluation_cap_approach?.comps === 'object') { %>
+                        <% evaluation_cap_approach.comps.forEach(() => { %>
+                            <td></td>
+                        <% }) %>
+                    <% } %>
+                </tr>
+                <tr>
+                    <td>Weighted Average</td>
+                    <td><%= toPercentage(evaluation_cap_approach?.weigted_average || 0) %></td>
+                    <% if (Array.isArray(evaluation_cap_approach?.comps) || typeof evaluation_cap_approach?.comps === 'object') { %>
+                        <% evaluation_cap_approach.comps.forEach(() => { %>
+                            <td></td>
+                        <% }) %>
+                    <% } %>
+                </tr>
+                
+            </tbody>
+        </table>
+        <p class="regular-description hide"><span>Notes:</span> <%= evaluation_cap_approach.cap_rate_notes %></p>
+        <% } %>
+
+        <% if (evaluation_cap_approach.cap_rate_notes) {
+            let chars_per_line = 115;
+            if (theme === 'nai' || theme === 'nai_portland') chars_per_line = 120;
+            let lines = 30;
+            let string = cap_notes.substring(startLen, limit);
+            let paras = string.split("<p>");
+            let check_para_count;
+            if (loop === 0) lines = 5;
+            if (paras.length > 12) {
+                lines = 16;
+                if (loop === 0) lines = 2;
+                if (loop > 0) lines = 20;
+            }
+
+            let total_page_lines = 0, p_counts_total = 0, selected_lines = 0;
+            for (let j = 0; j < paras.length; j++) {
+                if (paras[j]) {
+                    let p_counts = paras[j].trim().length;
+                    let total_lines = p_counts / chars_per_line;
+                    total_page_lines += Math.ceil(total_lines);
+                    p_counts_total += p_counts;
+                }
+                if (total_page_lines <= lines) {
+                    check_para_count = j;
+                }
+            }
+
+            if (total_page_lines >= lines && check_para_count < paras.length - 1) {
+                let char_limit = 0;
+                for (let k = 0; k <= check_para_count; k++) {
+                    let check_p_length = paras[k].length + 3;
+                    char_limit += check_p_length;
+                    selected_lines += Math.ceil(check_p_length / chars_per_line);
+                }
+                if (selected_lines < lines) {
+                    let chars = (lines - selected_lines) * chars_per_line;
+                    char_limit += chars;
+                }
+                limit = char_limit;
+                endLength = startLen + limit;
+            }
+
+            let check_string = cap_notes.substring(startLen, limit).trim();
+            let last_dot = check_string.lastIndexOf(' ');
+            let end_part = check_string.substring(last_dot);
+            if (end_part.length < 10) {
+                limit -= end_part.length;
+                endLength -= end_part.length;
+            }
+
+            let data = cap_notes.substring(startLen, limit).trim();
+            if (loop !== 0) {
+                if (data.startsWith('>')) data = data.substring(1);
+                else if (data.startsWith('p>')) data = data.substring(2);
+                else if (data.startsWith('<p>')) data = data.substring(3);
+                data = '<p>' + data + '</p>';
+            }
+        %>
+        <p>
+            <span class="<%= loop === 0 ? 'nots' : '' %>"><%= loop === 0 ? 'CAP Rate Notes - ' : '' %></span>
+            <%- data.substring(3) %>
+        </p>
+        <%- watermark %>
+
+        <% 
+            // Move logic here where paras is defined
+            if (!paras) {
+                limit = 0;
+            } else if (paras.length > 12) {
+                limit = 2300;
+            } else {
+                limit = 3800;
+            }
+        } // end if cap_rate_notes
+        %>
+    </div>
+</div>
+
+<%
+            } // end if (!loop || ...)
+            startLen = endLength;
+            endLength = startLen + limit;
+            if (notesLength > startLen && count > loop) {
+                count++;
+            }
+        } // end loop
+    } // end if evaluation_cap_approach
+    %>
+    <div class="new-page valuations_page_3">
+        <div class="page-header">
+            <%- chapter %>
+        </div>
+        <div class="description">
+            <p class="title">CAP Rate <span class="subtitle">Comps</span></p>
+            <p class="label"><%= label %></p>
+            <p class="regular-description">
+                The below CAP Rate comparables for the subject property have been adjusted based on the following criteria noted by the author.
+            </p>
+    
+            <% if (
+                evaluation_cap_approach &&
+                (Array.isArray(evaluation_cap_approach.comps) ||
+                 typeof evaluation_cap_approach.comps === 'object')
+            ) { %>
+                <% evaluation_cap_approach.comps.forEach((comp, i) => { %>
+                    <table class="comparable-table">
+                        <tr>
+                            <td class="comparable-number">Comparable #<%= i + 1 %></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td width="20%">
+                                <% 
+                                let imgUrl = '/images/default-placeholder.png';
+                                const capComp = comp.comp_details;
+                                if (capComp?.property_image_url) {
+                                   const url = capComp?.property_image_url;
+                                    imgUrl = evaluation.baseUrl+url;
+                                }
+                            %>
+                            <img width="210" height="120" src="<%= imgUrl %>" class="image-added" />
+                            </td>
+                            <td width="80%" class="comparable-info">
+                                <p class="comparable-title"><%= capComp?.street_address || '' %></p>
+                                <p class="comparable-description"><%- capComp?.summary || '' %></p>
+                                <p class="comparable-description"><%- comp.weighting_note || '' %></p>
+                            </td>
+                        </tr>
+                    </table>
+                <% }); %>
+            <% } %>
+        </div>
+        <%- watermark %>
+    </div>
+    
+    <div class="new-page valuations_page_3 cap_comps_map" data-type="cap_comps_map">
+        <%
+        const locations = [];
+        // Default map settings
+        locations.push({ lat: evaluation.map_pin_lat, lng: evaluation.map_pin_lng, color: 'red' });
+        let comps = [];
+        let zoom = 20;
+        let area_map_zoom = evaluation_cap_approach?.area_map_zoom ? evaluation_cap_approach.area_map_zoom : 12;
+        const map_type = evaluation_cap_approach?.map_type ?  evaluation_cap_approach.map_type : 'roadmap';
+        const map_center_lat_position = evaluation_cap_approach?.map_center_lat
+            ? evaluation_cap_approach.map_center_lat
+            : evaluation.map_pin_lat;
+        const map_center_lng_position = evaluation_cap_approach?.map_center_lng
+            ? evaluation_cap_approach.map_center_lng
+            : evaluation.map_pin_lng;
+
+        if (area_map_zoom) {
+            zoom = area_map_zoom - 2;
+        }
+
+        const colors = [
+            { color: 'blue' },
+            { color: 'green' }, { color: 'yellow' },
+            { color: 'purple' }, { color: 'orange' }
+        ]; 
+        if (evaluation_cap_approach && Array.isArray(evaluation_cap_approach.comps)) {
+            let capComps = evaluation_cap_approach.comps;
+            capComps.forEach((comp, index) => {
+                let { map_pin_lat, map_pin_lng } = comp.comp_details;
+                const color = colors[index % colors.length];
+                if (!map_pin_lat) {
+                    map_pin_lat = evaluation?.map_pin_lat;
+                }
+                if (!map_pin_lng) {
+                    map_pin_lng = evaluation?.map_pin_lng;
+                }
+                locations.push({ lat: map_pin_lat, lng: map_pin_lng, color });
+            });
+        } %>
+        <% // Construct the URL with markers
+        const markers = locations
+            .map((location) => `markers=size:small|color:${location.color.color}%7C${location.lat},${location.lng}`)
+            .join('&');
+
+        const url = `https://maps.googleapis.com/maps/api/staticmap?center=${map_center_lat_position},${map_center_lng_position}&zoom=${zoom}&scale=2&size=600x400&maptype=${map_type}&${markers}&key=${googleApiKey}`;
+
+        %>
+        
+        <div class="page-header">
+            <%- chapter %>
+        </div>
+        
+        <div class="description">
+            <p class="title">CAP Rate <span class="subtitle">Comps Map</span></p>
+            <p class="label"><%= label %></p>
+        </div>
+        
+        <div id="cap_comps_map">
+            <img style="width: 100%; height: 130mm;" src="<%= url %>">
+        </div>        
+        <div id="map-landmarks">
+        <span class="label">Key</span>
+            <div class="map-landmark">
+                <div class="el">
+                    <div class="list subject-text">
+                        <span class="img">
+                        <img src="https://maps.google.com/mapfiles/ms/icons/pink-dot.png" />
+                        </span>
+                        <strong>Subject Property: </strong>
+                        <% 
+                           let address = evaluation?.street_address?.trim() || '';
+                            if (evaluation?.city?.trim()) address += `, ${evaluation?.city.trim()}`;
+                             if (evaluation?.state?.trim()) address += `, ${evaluation?.state.trim().toUpperCase()}`;
+                        %>
+                        <span class="ellip"><%= address %></span>
+                    </div>
+                    <% let n = 1; 
+                    if (evaluation_cap_approach && Array.isArray(evaluation_cap_approach.comps)) {
+                        let capComps = evaluation_cap_approach.comps;
+                        capComps.forEach(comp => { 
+                           const compDetails = comp.comp_details || {};
+                            const state = compDetails.state || '';
+                            const color = colors[n - 1]?.color || '6b94ff';
+                            let address = compDetails.street_address?.trim() || '';
+                            if (compDetails.city?.trim()) address += `, ${compDetails.city.trim()}`;
+                            if (state?.trim()) address += `, ${state.trim().toUpperCase()}`;
+                        %>
+                        <div class="list">
+                            <span class="img">
+                                <img src="https://maps.google.com/mapfiles/ms/icons/<%= color %>-dot.png" />
+                            </span>
+                            <strong>Comp #<%= n %>:</strong>
+                            <span class="ellip"><%= address %></span>
+                        </div>
+                        <% if (n % 3 === 0) { %></div><div class="el"><% } %>
+                    <% n++; });
+                     } %>
+                </div>
+            </div>
+        </div>
+        <%- watermark %>
+    </div>
+<% }
+} // end scenario loop
+%>

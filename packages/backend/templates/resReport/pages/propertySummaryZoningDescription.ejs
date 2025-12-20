@@ -1,0 +1,229 @@
+<% 
+  let total_space = 0;
+  let totalsqft = 0;
+
+  if (evaluation.building_size) {
+    totalsqft = evaluation.building_size;
+  }
+
+%>
+<%
+const condition = evaluation.condition;
+const matchCondition = conditionOptions.find(obj => obj?.code === condition);
+
+const conditionValue =
+  matchCondition?.name === '--Select--'
+    ? getNotAvailableLabel()
+    : !matchCondition
+      ? condition
+      : matchCondition.name || getNotAvailableLabel();
+%>
+
+<div class="new-page property-summary">
+
+  <div class="page-header">
+    <%- chapter %>
+  </div>
+  <%- section %>
+
+  <div class="description-right">
+    <table>
+      <tr>
+        <td class="title-image-container" valign="top">
+          <p class="section-title red-styl-font">
+            <%= evaluation.street_address || '&nbsp;' %>
+          </p>
+
+          <% if (evaluation.propertySummaryImage) { %>
+            <img 
+              class="section-image image-added middle-fixed-img" 
+              src="<%= evaluation.propertySummaryImage %>" 
+              data-image-name="PROPERTY_SUMMARY_TOP_IMAGE"
+              data-image
+            />
+          <% } else { %>
+            <img 
+              class="section-image middle-fixed-img" 
+              src="/images/default-placeholder.png" 
+              data-image-name="PROPERTY_SUMMARY_TOP_IMAGE"
+              data-image
+            />
+          <% } %>
+        </td>
+
+        <td valign="top" class="property-description-right vlign-tp">
+          <p class="section-title red-styl-font mb-remove">Property Specifics</p>
+          <%
+            let zone_string = '';
+            if (evaluation && evaluation.res_zonings && evaluation.res_zonings[0]) {
+              zone_string = evaluation.res_zonings[0].zone;
+
+              const zone = zoneOptions.find((obj) => obj?.code === zone_string);
+              zoneValue = zone ? zone.name : zone_string;
+
+              const sub_options = zone?.sub_options || [];
+              const subZone = sub_options.find((obj) => obj?.code === evaluation.res_zonings[0]?.sub_zone);
+              subZoneValue = subZone ? subZone.name : evaluation.res_zonings[0]?.sub_zone;
+            }
+            
+            const displayZoneText = zoneValue
+              ? zoneValue + ' / ' + (subZoneValue || getNotAvailableLabel())
+              : '';
+            %>
+          <div class="horizontal_dotted_line">
+            <label class="label-right-side contant-list-ft-12">Property Type:</label>
+            <span class="dot"></span>
+            <label class="content-right-side contant-list-ft-12">
+              <%= displayZoneText || getNotAvailableLabel() %>
+            </label>
+          </div>
+          <div class="horizontal_dotted_line">
+            <label class="label-right-side contant-list-ft-12">Year Built / Remodeled :</label>
+            <span class="dot"></span>
+            <label class="content-right-side contant-list-ft-12">
+              <%= evaluation.year_built || getNotAvailableLabel() %> / <%= evaluation.year_remodeled || getNotAvailableLabel() %>
+            </label>
+          </div>
+
+            <div class="horizontal_dotted_line">
+                <label class="label-right-side contant-list-ft-12">Bed / Bath :</label>
+                <span class="dot"></span>
+                <% if (evaluation.bedrooms || evaluation.bathrooms) { %>
+                    <label class="content-right-side contant-list-ft-12">
+                        <%= evaluation.bedrooms ? evaluation.bedrooms : getNotAvailableLabel() %> /
+                        <%= evaluation.bathrooms ? evaluation.bathrooms : getNotAvailableLabel() %> 
+                    </label>
+                <% } else { %>
+                    <label class="content-right-side contant-list-ft-12"><%= getNotAvailableLabel() %></label>
+                <% } %>
+            </div>
+
+            <div class="horizontal_dotted_line">
+                <label class="label-right-side contant-list-ft-12">Garage :</label>
+                <span class="dot"></span>
+                <label class="content-right-side contant-list-ft-12">
+                    <%= evaluation.garage ? evaluation.garage : getNotAvailableLabel() %>
+                </label>
+            </div>
+            <div class="horizontal_dotted_line">
+                <label class="label-right-side contant-list-ft-12">Above Grade Square Footage :</label>
+                <span class="dot"></span>
+                <% if (evaluation.res_zonings) {
+                    let totalGrossSqft = 0;
+                    evaluation.res_zonings.forEach(z => totalGrossSqft += z.gross_living_sq_ft);
+                %>
+                    <label class="content-right-side contant-list-ft-12"><%= totalGrossSqft ? to_area(totalGrossSqft) : getNotAvailableLabel() %></label>
+                <% } else { %>
+                    <label class="content-right-side contant-list-ft-12"><%= getNotAvailableLabel() %></label>
+                <% } %>
+            </div>
+
+            <div class="horizontal_dotted_line">
+              <label class="label-right-side contant-list-ft-12">Total Square Footage:</label>
+              <span class="dot"></span>
+              <label class="content-right-side contant-list-ft-12"><%= totalsqft ? to_area(totalsqft) : getNotAvailableLabel() %></label>
+            </div>
+
+            <% const fields = [
+                ['Parking', evaluation.parking],
+                ['Property Condition', conditionValue],
+                ['Height (Stories)', evaluation.no_stories],
+                ['Basement Description', evaluation.basement],
+                ['Structure Construction Type', evaluation.main_structure_base],
+                ['Foundation', evaluation.foundation]
+            ]; %>
+
+            <% fields.forEach(([label, value]) => { %>
+                <div class="horizontal_dotted_line">
+                    <label class="label-right-side contant-list-ft-12"><%= label %>:</label>
+                    <span class="dot"></span>
+                    <label class="content-right-side contant-list-ft-12"><%= value || getNotAvailableLabel() %></label>
+                </div>
+            <% }) %>
+        </td>
+      </tr>
+      <tr>
+        <td class="property-description" valign="bottom">
+            <p class="section-title red-styl-font mb-remove tooltipped" data-tooltip="Property Amenities" data-placement="bottom" data-delay="50">Property Amenities</p>
+
+            <% let fireplace = ''; %>
+            <% if (evaluation.fireplace) {
+                fireplace = evaluation.fireplace;
+            } else if (evaluation.fireplace === 0) {
+                fireplace = 'None';
+            } else {
+                fireplace = getNotAvailableLabel();
+            } %>
+
+            <div class="horizontal_dotted_line">
+                <label class="label-right-side contant-list-ft-12">Fireplace:</label>
+                <span class="dot"></span>
+                <label class="content-right-side contant-list-ft-12"><%= fireplace %></label>
+            </div>
+
+            <div class="horizontal_dotted_line">
+                <label class="label-right-side contant-list-ft-12">Fencing:</label>
+                <span class="dot"></span>
+                <label class="content-right-side contant-list-ft-12">
+                    <%= evaluation.fencing ? evaluation.fencing : getNotAvailableLabel() %>
+                </label>
+            </div>
+
+            <div class="horizontal_dotted_line">
+                <label class="set-content contant-list-ft-12">
+                    <span class="label-side contant-list-ft-12">Amenities:</span>
+                    <span>
+                        <% if (evaluation.res_evaluation_amenities || evaluation.other_amenities) {
+                            const amenitiesArray = (evaluation.res_evaluation_amenities || []).map(a => a.additional_amenities);
+                            const amenitiesText = amenitiesArray.join(', ');
+                            %>
+                            <%= amenitiesText %><%= (amenitiesText && evaluation.other_amenities) ? ', ' : '' %><%= evaluation.other_amenities || '' %>
+                        <% } else { %>
+                            <%= getNotAvailableLabel() %>
+                        <% } %>
+                    </span>
+                </label>
+            </div>
+
+          <p class="section-title red-styl-font mb-remove tooltipped" data-tooltip="Construction Amenities" data-placement="bottom" data-delay="50">Construction Components</p>
+
+            <% const components = [
+                ['Exterior', evaluation.exterior],
+                ['Roof', evaluation.roof],
+                ['Heating/Cooling', evaluation.heating_cooling],
+                ['Windows', evaluation.windows],
+                ['Electrical', evaluation.electrical],
+                ['Plumbing', evaluation.plumbing]
+            ]; %>
+
+            <% components.forEach(([label, value]) => { %>
+                <div class="horizontal_dotted_line">
+                    <label class="label-right-side contant-list-ft-12"><%= label %>:</label>
+                    <span class="dot"></span>
+                    <label class="content-right-side contant-list-ft-12"><%= value || getNotAvailableLabel() %></label>
+                </div>
+            <% }) %>
+        </td>
+
+        <td class="property-image-two-area" valign="top">
+          <% if (evaluation.propertySummaryBottomImage) { %>
+            <img 
+              class="property-image-two image-added" 
+              src="<%= evaluation.propertySummaryBottomImage %>" 
+              data-image-name="PROPERTY_SUMMARY_BOTTOM_IMAGE"
+              data-image
+            />
+          <% } else { %>
+            <img 
+              class="property-image-two" 
+              src="/images/default-placeholder.png" 
+              data-image-name="PROPERTY_SUMMARY_BOTTOM_IMAGE"
+              data-image
+            />
+          <% } %>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <%- watermark %>
+</div>

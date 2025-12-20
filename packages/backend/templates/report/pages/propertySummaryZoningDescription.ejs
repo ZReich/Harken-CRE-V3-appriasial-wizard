@@ -1,0 +1,176 @@
+
+<% 
+  let total_space = 0;
+  let totalsqft = 0;
+
+  if (evaluation.comparison_basis !== 'SF') {
+    const comparison_basis = evaluation.comparison_basis.toLowerCase().replace(/ /g, '_');
+    for (const zone of evaluation.zonings) {
+      total_space += zone[comparison_basis] || 0;
+    }
+  }
+
+  if (evaluation.building_size) {
+    totalsqft = evaluation.building_size;
+  }
+
+%>
+<%
+const condition = evaluation.condition || '';
+const matchCondition = conditionOptions.find(obj => obj?.code === condition);
+
+const conditionValue = matchCondition?.name === '--Select--'
+  ? getNotAvailableLabel()
+  : !matchCondition
+    ? condition
+    : matchCondition.name || getNotAvailableLabel();
+%>
+
+<div class="new-page property-summary">
+
+  <div class="page-header">
+    <%- chapter %>
+  </div>
+  <%- section %>
+
+  <div class="description-right">
+    <table>
+      <tr>
+        <td class="title-image-container" valign="top">
+          <p class="section-title red-styl-font">
+            <%= evaluation.street_address || '&nbsp;' %>
+          </p>
+
+          <% if (evaluation.propertySummaryImage) { %>
+            <img 
+              class="section-image image-added middle-fixed-img" 
+              src="<%= evaluation.propertySummaryImage %>" 
+              data-image-name="PROPERTY_SUMMARY_TOP_IMAGE"
+              data-image 
+            />
+          <% } else { %>
+            <img 
+              class="section-image middle-fixed-img" 
+              src="/images/default-placeholder.png" 
+              data-image-name="PROPERTY_SUMMARY_TOP_IMAGE"
+              data-image 
+            />
+          <% } %>
+        </td>
+
+        <td valign="top" class="property-description-right vlign-tp">
+          <p class="section-title red-styl-font mb-remove">Property Specifics</p>
+         <%
+            let zone_string = '';
+            let zoneValue = '';
+            let subZoneValue = '';
+
+            if (evaluation && evaluation.zonings && evaluation.zonings[0]) {
+              zone_string = evaluation.zonings[0].zone;
+
+              const zone = zoneOptions.find((obj) => obj?.code === zone_string);
+              zoneValue = zone ? zone.name : zone_string;
+
+              const sub_options = zone?.sub_options || [];
+              const subZone = sub_options.find((obj) => obj?.code === evaluation.zonings[0]?.sub_zone);
+              subZoneValue = subZone ? subZone.name : evaluation.zonings[0]?.sub_zone;
+            }
+
+            const displayZoneText = zoneValue
+              ? zoneValue + ' / ' + (subZoneValue || getNotAvailableLabel())
+              : '';
+          %>
+
+          <div class="horizontal_dotted_line">
+            <label class="label-right-side contant-list-ft-12">Property Type:</label>
+            <span class="dot"></span>
+            <label class="content-right-side contant-list-ft-12">
+              <%= displayZoneText || getNotAvailableLabel() %>
+            </label>
+          </div>
+
+          <div class="horizontal_dotted_line">
+            <label class="label-right-side contant-list-ft-12">Year Built / Remodeled :</label>
+            <span class="dot"></span>
+            <label class="content-right-side contant-list-ft-12">
+              <%= evaluation.year_built || getNotAvailableLabel() %> / <%= evaluation.year_remodeled || getNotAvailableLabel() %>
+            </label>
+          </div>
+
+          <% if (evaluation.comparison_basis !== 'SF') { %>
+            <div class="horizontal_dotted_line">
+              <label class="label-right-side contant-list-ft-12">Total <%= evaluation.comparison_basis + 's' %>:</label>
+              <span class="dot"></span>
+              <label class="content-right-side contant-list-ft-12">
+                <%= total_space ? total_space.toLocaleString() : getNotAvailableLabel() %>
+              </label>
+            </div>
+          <% } %>
+
+          <div class="horizontal_dotted_line">
+            <label class="label-right-side contant-list-ft-12">Total SF:</label>
+            <span class="dot"></span>
+            <label class="content-right-side contant-list-ft-12">
+              <%= totalsqft ? numberFormat(totalsqft) + ' SF' : getNotAvailableLabel() %>
+            </label>
+          </div>
+
+          <% const displayAttr = (label, value) => `
+            <div class="horizontal_dotted_line">
+              <label class="label-right-side contant-list-ft-12">${label}:</label>
+              <span class="dot"></span>
+              <label class="content-right-side contant-list-ft-12">${value || getNotAvailableLabel()}</label>
+            </div>
+          ` %>
+
+          <%- displayAttr('Parking', evaluation.parking) %>
+          <%
+            let value = evaluation.property_class || '';
+            if(value){
+              const matchLeaseType = propertyClassOptions.find(obj => obj?.code === value);
+              value = matchLeaseType?.name || '';
+            }
+          %>
+          <%- displayAttr('Property Class', value) %>
+          <%- displayAttr('Property Condition', conditionValue) %>
+          <%- displayAttr('Height (Stories)', evaluation.no_stories) %>
+          <%- displayAttr('Ceiling Height (Feet)', evaluation.height) %>
+          <%- displayAttr('Basement Description', evaluation.basement) %>
+          <%- displayAttr('Structure Construction Type', evaluation.main_structure_base) %>
+          <%- displayAttr('Foundation', evaluation.foundation) %>
+        </td>
+      </tr>
+      <tr>
+        <td class="property-description" valign="bottom">
+          <p class="section-title red-styl-font mb-remove tooltipped" data-tooltip="Construction Amenities" data-placement="bottom" data-delay="50">Construction Components</p>
+
+          <%- displayAttr('Exterior', evaluation.exterior) %>
+          <%- displayAttr('Roof', evaluation.roof) %>
+          <%- displayAttr('Heating/Cooling', evaluation.heating_cooling) %>
+          <%- displayAttr('Windows', evaluation.windows) %>
+          <%- displayAttr('Electrical', evaluation.electrical) %>
+          <%- displayAttr('Plumbing', evaluation.plumbing) %>
+        </td>
+
+        <td class="property-image-two-area" valign="top">
+          <% if (evaluation.propertySummaryBottomImage) { %>
+            <img 
+              class="property-image-two image-added" 
+              src="<%= evaluation.propertySummaryBottomImage %>" 
+              data-image-name="PROPERTY_SUMMARY_BOTTOM_IMAGE"
+              data-image 
+            />
+          <% } else { %>
+            <img 
+              class="property-image-two" 
+              src="/images/default-placeholder.png" 
+              data-image-name="PROPERTY_SUMMARY_BOTTOM_IMAGE"
+              data-image 
+            />
+          <% } %>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <%- watermark %>
+</div>

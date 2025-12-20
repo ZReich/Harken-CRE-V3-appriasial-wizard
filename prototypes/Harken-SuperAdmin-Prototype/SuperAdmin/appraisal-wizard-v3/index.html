@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Template Selection - Harken Appraisal Wizard</title>
+    <link rel="stylesheet" href="assets/wizard-shared.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .template-card {
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .template-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+        }
+        .template-card.selected {
+            border-color: #0da1c7;
+            background-color: rgba(13, 161, 199, 0.05);
+            box-shadow: 0 0 0 3px rgba(13, 161, 199, 0.2);
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <!-- Unified Navigation -->
+    <nav style="background:url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;height:84px;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 32px;box-shadow:0 2px 8px rgba(0,0,0,0.1);">
+        <img src="../assets/harken.png" alt="Harken CRE" style="height:40px;cursor:pointer;" onclick="window.location.href='../super-admin-appraisals-list.html'" title="Back to Appraisals">
+        <div style="display:flex;align-items:center;gap:32px;">
+            <a href="../super-admin-appraisals-list.html" style="color:white;text-decoration:none;font-weight:500;display:flex;align-items:center;gap:8px;">
+                <svg style="width:20px;height:20px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                Back to Appraisals
+            </a>
+            <span style="font-weight:600;font-size:18px;">Appraisal Wizard</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px;">
+            <span style="font-size:14px;">Harken Admin</span>
+            <img src="https://i.pravatar.cc/150?img=33" alt="User" style="width:36px;height:36px;border-radius:50%;border:2px solid #0da1c7;">
+        </div>
+    </nav>
+
+    <!-- Main Container -->
+    <div class="max-w-6xl mx-auto py-12 px-6">
+        <!-- Header -->
+        <div class="text-center mb-12 animate-fade-in">
+            <h1 class="text-4xl font-bold text-harken-dark mb-3">Create New Appraisal</h1>
+            <p class="text-lg text-gray-600">Select a template to begin your appraisal report</p>
+        </div>
+
+        <!-- Progress Indicator -->
+        <div class="mb-8">
+            <div class="flex items-center justify-center gap-3 mb-2">
+                <div class="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity" onclick="WizardNav.goToPage('template')">
+                    <div class="w-8 h-8 rounded-full bg-harken-accent text-white flex items-center justify-center font-bold">1</div>
+                    <span class="text-sm font-semibold text-harken-dark">Template</span>
+                </div>
+                <div class="w-16 h-1 bg-gray-300 rounded"></div>
+                <div class="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity" onclick="WizardNav.goToPage('setup')">
+                    <div class="w-8 h-8 rounded-full bg-gray-300 text-gray-500 flex items-center justify-center font-bold">2</div>
+                    <span class="text-sm text-gray-500">Setup</span>
+                </div>
+                <div class="w-16 h-1 bg-gray-300 rounded"></div>
+                <div class="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity" onclick="WizardNav.goToPage('subject')">
+                    <div class="w-8 h-8 rounded-full bg-gray-300 text-gray-500 flex items-center justify-center font-bold">3</div>
+                    <span class="text-sm text-gray-500">Subject Data</span>
+                </div>
+                <div class="w-16 h-1 bg-gray-300 rounded"></div>
+                <div class="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity" onclick="WizardNav.goToPage('analysis')">
+                    <div class="w-8 h-8 rounded-full bg-gray-300 text-gray-500 flex items-center justify-center font-bold">4</div>
+                    <span class="text-sm text-gray-500">Analysis</span>
+                </div>
+                <div class="w-16 h-1 bg-gray-300 rounded"></div>
+                <div class="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity" onclick="WizardNav.goToPage('review')">
+                    <div class="w-8 h-8 rounded-full bg-gray-300 text-gray-500 flex items-center justify-center font-bold">5</div>
+                    <span class="text-sm text-gray-500">Review</span>
+                </div>
+            </div>
+            <div class="progress-bar">
+                <div class="progress-fill" style="width: 20%;"></div>
+            </div>
+        </div>
+
+        <!-- Template Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8 animate-slide-in">
+            <!-- Commercial Template -->
+            <div class="template-card card" onclick="selectTemplate('commercial')">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-harken-dark">Commercial</h3>
+                    <svg class="w-12 h-12 text-harken-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path>
+                    </svg>
+                </div>
+                <p class="text-sm text-gray-600 mb-4">For income-producing properties: office, retail, industrial, multi-family</p>
+                <ul class="text-xs text-gray-500 space-y-1">
+                    <li>✓ Income Approach (DCF, Direct Cap)</li>
+                    <li>✓ Sales Comparison Approach</li>
+                    <li>✓ Cost Approach</li>
+                    <li>✓ Rent Roll & Expense Analysis</li>
+                </ul>
+            </div>
+
+            <!-- Residential Template -->
+            <div class="template-card card" onclick="selectTemplate('residential')">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-harken-dark">Residential</h3>
+                    <svg class="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
+                    </svg>
+                </div>
+                <p class="text-sm text-gray-600 mb-4">For 1-4 family residential properties, condos, and townhomes</p>
+                <ul class="text-xs text-gray-500 space-y-1">
+                    <li>✓ Sales Comparison Approach</li>
+                    <li>✓ Cost Approach</li>
+                    <li>✓ Income Approach (if applicable)</li>
+                    <li>✓ USPAP Compliant</li>
+                </ul>
+            </div>
+
+            <!-- Land Template -->
+            <div class="template-card card" onclick="selectTemplate('land')">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-xl font-bold text-harken-dark">Land / Vacant</h3>
+                    <svg class="w-12 h-12 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <p class="text-sm text-gray-600 mb-4">For vacant land, lots, and development sites</p>
+                <ul class="text-xs text-gray-500 space-y-1">
+                    <li>✓ Sales Comparison Approach</li>
+                    <li>✓ Allocation / Extraction Method</li>
+                    <li>✓ Highest & Best Use Analysis</li>
+                    <li>✓ Development Feasibility</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Saved Templates Section -->
+        <div id="saved-templates-section" class="mb-8">
+            <div class="flex items-center justify-between mb-4">
+                <h2 class="text-xl font-bold text-harken-dark flex items-center gap-2">
+                    <svg class="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path>
+                    </svg>
+                    Your Saved Templates
+                </h2>
+                <span id="saved-count" class="text-sm text-gray-500"></span>
+            </div>
+            <div id="saved-templates-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <!-- Populated by JavaScript -->
+            </div>
+            <div id="no-saved-templates" class="hidden text-center py-8 bg-gray-50 rounded-lg border-2 border-dashed border-gray-300">
+                <svg class="w-12 h-12 mx-auto text-gray-400 mb-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4m0 5c0 2.21-3.582 4-8 4s-8-1.79-8-4"></path>
+                </svg>
+                <p class="text-gray-500 mb-2">No saved templates yet</p>
+                <p class="text-sm text-gray-400">Complete an appraisal and save it as a template from the Review page</p>
+            </div>
+        </div>
+
+        <!-- Continue Button -->
+        <div class="text-center">
+            <button id="continue-btn" class="btn btn-primary" onclick="continueToSetup()" disabled>
+                Continue to Setup
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                </svg>
+            </button>
+        </div>
+    </div>
+
+    <script src="assets/wizard-shared.js"></script>
+    <script>
+        // =================================================================
+        // STATE (React: useState)
+        // =================================================================
+        
+        let selectedTemplate = null;
+
+        // =================================================================
+        // RENDER FUNCTIONS (React: JSX return)
+        // =================================================================
+
+        /**
+         * Load and render saved templates from localStorage
+         */
+        function loadSavedTemplates() {
+            const savedTemplates = JSON.parse(localStorage.getItem('appraisalTemplates') || '[]');
+            const grid = document.getElementById('saved-templates-grid');
+            const noTemplates = document.getElementById('no-saved-templates');
+            const countSpan = document.getElementById('saved-count');
+            
+            if (savedTemplates.length === 0) {
+                grid.classList.add('hidden');
+                noTemplates.classList.remove('hidden');
+                countSpan.textContent = '';
+                return;
+            }
+            
+            grid.classList.remove('hidden');
+            noTemplates.classList.add('hidden');
+            countSpan.textContent = `${savedTemplates.length} saved`;
+            
+            grid.innerHTML = savedTemplates.map(template => renderSavedTemplateCard(template)).join('');
+        }
+
+        /**
+         * Render a single saved template card
+         * @param {Object} template - Template object
+         * @returns {string} HTML string
+         */
+        function renderSavedTemplateCard(template) {
+            const createdDate = new Date(template.createdAt).toLocaleDateString();
+            const propertyTypeColors = {
+                'Commercial': 'text-harken-accent',
+                'Residential': 'text-green-600',
+                'Land': 'text-yellow-600',
+                'Mixed-Use': 'text-purple-600'
+            };
+            const iconColor = propertyTypeColors[template.propertyType] || 'text-indigo-600';
+            
+            return `
+                <div class="template-card card relative" onclick="selectSavedTemplate('${template.id}', event)" data-template-id="${template.id}">
+                    <button class="absolute top-3 right-3 p-1.5 rounded-full hover:bg-red-50 text-gray-400 hover:text-red-500 transition-colors" 
+                            onclick="deleteSavedTemplate('${template.id}', event)" title="Delete template">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path>
+                        </svg>
+                    </button>
+                    <div class="flex items-center justify-between mb-4 pr-8">
+                        <h3 class="text-lg font-bold text-harken-dark">${template.name}</h3>
+                        <svg class="w-10 h-10 ${iconColor}" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 7v10c0 2.21 3.582 4 8 4s8-1.79 8-4V7M4 7c0 2.21 3.582 4 8 4s8-1.79 8-4M4 7c0-2.21 3.582-4 8-4s8 1.79 8 4"></path>
+                        </svg>
+                    </div>
+                    <div class="flex items-center gap-2 mb-3">
+                        <span class="px-2 py-0.5 text-xs font-medium rounded-full bg-gray-100 text-gray-700">${template.propertyType}</span>
+                        <span class="text-xs text-gray-400">Created ${createdDate}</span>
+                    </div>
+                    ${template.description ? `<p class="text-sm text-gray-600 mb-3">${template.description}</p>` : ''}
+                    ${template.useCases && template.useCases.length > 0 ? `
+                        <div class="flex flex-wrap gap-1.5">
+                            ${template.useCases.map(uc => `
+                                <span class="px-2 py-0.5 text-xs rounded-full bg-indigo-50 text-indigo-700">${formatUseCase(uc)}</span>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        /**
+         * Format use case slug to readable text
+         * @param {string} useCase 
+         * @returns {string}
+         */
+        function formatUseCase(useCase) {
+            return useCase.split('-').map(word => word.charAt(0).toUpperCase() + word.slice(1)).join(' ');
+        }
+
+        // =================================================================
+        // EVENT HANDLERS (React: event handlers)
+        // =================================================================
+
+        function selectTemplate(templateId) {
+            selectedTemplate = templateId;
+            
+            // Update UI
+            document.querySelectorAll('.template-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            
+            // Enable continue button
+            document.getElementById('continue-btn').disabled = false;
+            
+            // Save to state
+            WizardState.set('template', templateId);
+            WizardState.set('savedTemplateId', null); // Clear saved template
+            
+            console.log('Standard template selected:', templateId);
+        }
+
+        /**
+         * Select a saved template
+         * @param {string} templateId - Template ID
+         * @param {Event} event - Click event
+         */
+        function selectSavedTemplate(templateId, event) {
+            // Prevent selection if clicking delete button
+            if (event.target.closest('button')) return;
+            
+            selectedTemplate = 'saved_' + templateId;
+            
+            // Update UI
+            document.querySelectorAll('.template-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            
+            // Enable continue button
+            document.getElementById('continue-btn').disabled = false;
+            
+            // Get saved template data
+            const savedTemplates = JSON.parse(localStorage.getItem('appraisalTemplates') || '[]');
+            const template = savedTemplates.find(t => t.id === templateId);
+            
+            if (template) {
+                // Save to state
+                WizardState.set('template', template.propertyType.toLowerCase());
+                WizardState.set('savedTemplateId', templateId);
+                WizardState.set('savedTemplateConfig', template.configuration);
+                
+                console.log('Saved template selected:', template.name);
+            }
+        }
+
+        /**
+         * Delete a saved template
+         * @param {string} templateId - Template ID
+         * @param {Event} event - Click event
+         */
+        function deleteSavedTemplate(templateId, event) {
+            event.stopPropagation();
+            
+            if (!confirm('Are you sure you want to delete this template? This action cannot be undone.')) {
+                return;
+            }
+            
+            const savedTemplates = JSON.parse(localStorage.getItem('appraisalTemplates') || '[]');
+            const filtered = savedTemplates.filter(t => t.id !== templateId);
+            localStorage.setItem('appraisalTemplates', JSON.stringify(filtered));
+            
+            // If this template was selected, clear selection
+            if (selectedTemplate === 'saved_' + templateId) {
+                selectedTemplate = null;
+                document.getElementById('continue-btn').disabled = true;
+            }
+            
+            // Reload the templates
+            loadSavedTemplates();
+        }
+
+        function continueToSetup() {
+            if (!selectedTemplate) {
+                alert('Please select a template first.');
+                return;
+            }
+            WizardNav.goNext();
+        }
+
+        // =================================================================
+        // INITIALIZATION (React: useEffect)
+        // =================================================================
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSavedTemplates();
+        });
+    </script>
+</body>
+</html>
+

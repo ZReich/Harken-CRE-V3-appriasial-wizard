@@ -1,0 +1,792 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Request New Service - Customer Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            font-family: 'Montserrat', sans-serif !important;
+        }
+        body {
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background: url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;
+            background-color: #1c3643 !important;
+            max-height: 84px;
+            height: 84px;
+            color: #fff;
+        }
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 10px 24px;
+            border-radius: 25px;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+        .nav-link.active {
+            background-color: transparent;
+            border: 1px solid #0da1c7;
+            color: #0da1c7;
+        }
+        .section-title {
+            font-size: 23px;
+            font-weight: 600;
+            color: #1c3643;
+            margin-bottom: 24px;
+        }
+        .form-card {
+            background: white;
+            border-radius: 12px;
+            padding: 32px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            margin-bottom: 24px;
+        }
+        .form-group {
+            margin-bottom: 24px;
+        }
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1c3643;
+            margin-bottom: 8px;
+        }
+        .form-label .required {
+            color: #ef4444;
+        }
+        .form-input,
+        .form-select,
+        .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.2s;
+        }
+        .form-input:focus,
+        .form-select:focus,
+        .form-textarea:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .form-textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .form-hint {
+            font-size: 12px;
+            color: #687F8B;
+            margin-top: 4px;
+        }
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .radio-option {
+            display: flex;
+            align-items: center;
+            padding: 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .radio-option:hover {
+            border-color: #0da1c7;
+            background-color: #f0f9ff;
+        }
+        .radio-option input[type="radio"] {
+            margin-right: 12px;
+            width: 18px;
+            height: 18px;
+        }
+        .radio-option.selected {
+            border-color: #0da1c7;
+            background-color: #f0f9ff;
+        }
+        .upload-area {
+            border: 2px dashed #ddd;
+            border-radius: 8px;
+            padding: 32px;
+            text-align: center;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .upload-area:hover {
+            border-color: #0da1c7;
+            background-color: #f0f9ff;
+        }
+        .upload-area.dragover {
+            border-color: #0da1c7;
+            background-color: #f0f9ff;
+        }
+        .btn-primary {
+            background-color: #0da1c7;
+            color: white;
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 15px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #0c8aa8;
+            transform: translateY(-1px);
+        }
+        .btn-secondary {
+            background-color: white;
+            color: #1c3643;
+            padding: 14px 32px;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 15px;
+            border: 1px solid #ddd;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-secondary:hover {
+            background-color: #f9f9f9;
+        }
+        .pricing-badge {
+            display: inline-block;
+            background: #10b981;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+        .pricing-badge.addon {
+            background: #f59e0b;
+        }
+        .file-list {
+            margin-top: 16px;
+        }
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        .file-item button {
+            background: transparent;
+            border: none;
+            color: #ef4444;
+            cursor: pointer;
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Toggle Button (initially hidden) -->
+    <button id="showBuildNotesBtn" 
+            style="position: fixed; top: 100px; right: 20px; z-index: 9999; 
+                   padding: 12px 20px; background: #ffc107; color: #856404; 
+                   border: 2px solid #856404; border-radius: 25px; 
+                   font-size: 14px; font-weight: 700; cursor: pointer; 
+                   box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+                   display: none; transition: all 0.3s;"
+            onclick="toggleBuildNotes(true)">
+        🔨 Show Build Notes
+    </button>
+
+    <!-- Navbar -->
+    <nav class="navbar flex items-center justify-between px-8">
+        <div class="flex items-center gap-6">
+            <img src="https://app.harkenbov.com/assets/img/harken-logo-white.png" alt="Harken" style="height: 45px;">
+        </div>
+        <div class="flex items-center gap-2" style="font-size: 14px; font-weight: 500;">
+            <a href="#" class="nav-link">Dashboard</a>
+            <a href="#" class="nav-link active">My Requests</a>
+            <a href="#" class="nav-link">Documents</a>
+            <a href="#" class="nav-link">Invoices</a>
+            <div class="relative" style="margin-left: 12px;">
+                <button class="nav-link">
+                    Acme Appraisals ▼
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div style="max-width: 1200px; margin: 0 auto; padding: 32px;">
+        
+        <!-- BUILD NOTES SECTION -->
+        <div id="buildNotesSection" style="background-color: #e3f2fd; border-left: 4px solid #1565c0; padding: 24px; margin-bottom: 32px; border-radius: 8px;">
+            <h3 style="color: #0d47a1; font-size: 18px; font-weight: 700; margin: 0 0 20px 0;">🔨 BUILD NOTES - CUSTOMER PORTAL INTAKE SYSTEM</h3>
+            
+            <div style="margin-bottom: 20px; padding: 16px; background-color: #bbdefb; border-radius: 8px;">
+                <p style="margin: 0; color: #0d47a1; font-weight: 600; font-size: 14px;">📋 OVERVIEW: This is the customer-facing portal where YOUR customers' clients submit work requests. This is NOT where your customers manage their business - that's the admin panel. Think: "Acme Appraisals' clients come here to request appraisals from Acme."</p>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 20px;">
+                <div>
+                    <strong style="color: #0d47a1;">Priority Level:</strong> CRITICAL
+                </div>
+                <div>
+                    <strong style="color: #0d47a1;">Recommended Customer Count:</strong> 1+ customers (immediate)
+                </div>
+                <div>
+                    <strong style="color: #0d47a1;">Development Stage:</strong> Phase 1 (basic) → Phase 3 (white-label)
+                </div>
+                <div>
+                    <strong style="color: #0d47a1;">Estimated Build Time:</strong> 3-4 weeks (Phase 1), 2 weeks (white-label)
+                </div>
+            </div>
+            
+            <!-- MULTI-PHASE IMPLEMENTATION -->
+            <div style="margin-bottom: 16px;">
+                <strong style="color: #0d47a1; font-size: 15px;">📅 IMPLEMENTATION PHASES:</strong>
+                <div style="margin-top: 8px; padding: 12px; background-color: #e3f2fd; border-radius: 6px;">
+                    <p style="margin: 0 0 8px 0; color: #0d47a1;"><strong>Phase 1 (MVP - Months 1-2):</strong> Basic portal with request form + email fallback. Use YOUR branding.</p>
+                    <p style="margin: 0 0 8px 0; color: #0d47a1;"><strong>Phase 2 (Months 3-4):</strong> Add auto-assignment, status tracking, mobile app, saved drafts.</p>
+                    <p style="margin: 0 0 8px 0; color: #0d47a1;"><strong>Phase 3 (Months 5-6):</strong> White-label branding options (logo, colors, custom domain).</p>
+                    <p style="margin: 0; color: #0d47a1;"><strong>Phase 4 (Year 2):</strong> Advanced features (API access, webhooks, custom workflows).</p>
+                </div>
+            </div>
+
+            <!-- MULTI-CHANNEL STRATEGY -->
+            <div style="margin-bottom: 16px;">
+                <strong style="color: #0d47a1; font-size: 15px;">📬 MULTI-CHANNEL INTAKE STRATEGY:</strong>
+                <ul style="margin: 8px 0 0 0; color: #0d47a1; padding-left: 20px;">
+                    <li><strong>Primary:</strong> Customer portal form (this page) - structured data, reduces errors, 24/7 availability</li>
+                    <li><strong>Secondary:</strong> Email intake (requests@customerfirm.com) - auto-parsed to create tickets, backup for less tech-savvy clients</li>
+                    <li><strong>Optional:</strong> Public website "Get Quote" form for prospects (leads, not authenticated clients)</li>
+                    <li><strong>Manual:</strong> Admin-created tickets (for phone calls, in-person conversations)</li>
+                </ul>
+                <p style="margin: 8px 0 0 0; color: #0d47a1; font-size: 13px;">💡 <em>Strategy: Accept all channels, but nudge clients toward portal via auto-replies with tracking links.</em></p>
+            </div>
+
+            <!-- WHITE-LABEL BRANDING -->
+            <div style="margin-bottom: 16px;">
+                <strong style="color: #0d47a1; font-size: 15px;">🎨 WHITE-LABEL BRANDING STRATEGY:</strong>
+                <div style="margin-top: 8px;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 13px;">
+                        <thead>
+                            <tr style="background-color: #90caf9;">
+                                <th style="padding: 10px; text-align: left; color: #0d47a1; font-weight: 700; border: 1px solid #64b5f6;">Feature</th>
+                                <th style="padding: 10px; text-align: left; color: #0d47a1; font-weight: 700; border: 1px solid #64b5f6;">Basic (Free)</th>
+                                <th style="padding: 10px; text-align: left; color: #0d47a1; font-weight: 700; border: 1px solid #64b5f6;">Professional (+$30/mo)</th>
+                                <th style="padding: 10px; text-align: left; color: #0d47a1; font-weight: 700; border: 1px solid #64b5f6;">Enterprise (+$60/mo)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td style="padding: 8px; color: #0d47a1; border: 1px solid #90caf9;">Logo Upload</td>
+                                <td style="padding: 8px; color: #0d47a1; border: 1px solid #90caf9;">❌</td>
+                                <td style="padding: 8px; color: #0d47a1; border: 1px solid #90caf9;">✅</td>
+                                <td style="padding: 8px; color: #0d47a1; border: 1px solid #90caf9;">✅</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px; color: #0d47a1; border: 1px solid #90caf9;">Primary Brand Color</td>
+                                <td style="padding: 8px; color: #0d47a1; border: 1px solid #90caf9;">❌</td>
+                                <td style="padding: 8px; color: #0d47a1; border: 1px solid #90caf9;">✅</td>
+                                <td style="padding: 8px; color: #0d47a1; border: 1px solid #90caf9;">✅</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px; color: #0d47a1; border: 1px solid #90caf9;">Custom Domain</td>
+                                <td style="padding: 8px; color: #0d47a1; border: 1px solid #90caf9;">❌</td>
+                                <td style="padding: 8px; color: #0d47a1; border: 1px solid #90caf9;">✅ portal.customerfirm.com</td>
+                                <td style="padding: 8px; color: #0d47a1; border: 1px solid #90caf9;">✅</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px; color: #0d47a1; border: 1px solid #90caf9;">Email Branding</td>
+                                <td style="padding: 8px; color: #0d47a1; border: 1px solid #90caf9;">❌</td>
+                                <td style="padding: 8px; color: #0d47a1; border: 1px solid #90caf9;">✅</td>
+                                <td style="padding: 8px; color: #0d47a1; border: 1px solid #90caf9;">✅</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px; color: #0d47a1; border: 1px solid #90caf9;">Full Color Palette</td>
+                                <td style="padding: 8px; color: #0d47a1; border: 1px solid #90caf9;">❌</td>
+                                <td style="padding: 8px; color: #0d47a1; border: 1px solid #90caf9;">❌</td>
+                                <td style="padding: 8px; color: #0d47a1; border: 1px solid #90caf9;">✅</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px; color: #0d47a1; border: 1px solid #90caf9;">Custom Fonts</td>
+                                <td style="padding: 8px; color: #0d47a1; border: 1px solid #90caf9;">❌</td>
+                                <td style="padding: 8px; color: #0d47a1; border: 1px solid #90caf9;">❌</td>
+                                <td style="padding: 8px; color: #0d47a1; border: 1px solid #90caf9;">✅</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px; color: #0d47a1; border: 1px solid #90caf9;">Remove "Powered By"</td>
+                                <td style="padding: 8px; color: #0d47a1; border: 1px solid #90caf9;">❌</td>
+                                <td style="padding: 8px; color: #0d47a1; border: 1px solid #90caf9;">❌</td>
+                                <td style="padding: 8px; color: #0d47a1; border: 1px solid #90caf9;">✅</td>
+                            </tr>
+                            <tr>
+                                <td style="padding: 8px; color: #0d47a1; border: 1px solid #90caf9;">Custom CSS Override</td>
+                                <td style="padding: 8px; color: #0d47a1; border: 1px solid #90caf9;">❌</td>
+                                <td style="padding: 8px; color: #0d47a1; border: 1px solid #90caf9;">❌</td>
+                                <td style="padding: 8px; color: #0d47a1; border: 1px solid #90caf9;">✅</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p style="margin: 12px 0 0 0; color: #0d47a1; font-size: 13px;"><strong>💰 Pricing Strategy:</strong> Basic tier at $60/user, Professional at $90/user (+50%), Enterprise at $120/user (+100%). White-label becomes revenue driver, not just feature.</p>
+            </div>
+
+            <!-- TECHNICAL ARCHITECTURE -->
+            <div style="margin-bottom: 16px;">
+                <strong style="color: #0d47a1; font-size: 15px;">⚙️ TECHNICAL ARCHITECTURE:</strong>
+                <ul style="margin: 8px 0 0 0; color: #0d47a1; padding-left: 20px;">
+                    <li><strong>Database:</strong> work_requests table (account_id, type, property_details JSON, status, priority, deadline, assigned_to)</li>
+                    <li><strong>File Storage:</strong> AWS S3 / CloudFront for attachments (photos, docs, prior reports)</li>
+                    <li><strong>Email Integration:</strong> SendGrid Inbound Parse or Mailgun Routes for email-to-ticket conversion</li>
+                    <li><strong>Authentication:</strong> Session-based or OAuth 2.0, per-account isolation (multi-tenancy)</li>
+                    <li><strong>API Endpoints:</strong> POST /api/work-requests, GET /api/work-requests/:id, POST /api/attachments</li>
+                </ul>
+            </div>
+
+            <!-- CUSTOMER EXPERIENCE FLOW -->
+            <div style="margin-bottom: 16px;">
+                <strong style="color: #0d47a1; font-size: 15px;">👤 CUSTOMER EXPERIENCE FLOW:</strong>
+                <div style="margin-top: 8px; padding: 12px; background-color: #e3f2fd; border-radius: 6px; font-size: 13px;">
+                    <p style="margin: 0 0 6px 0; color: #0d47a1;">1. <strong>Client submits request</strong> via portal form (or email)</p>
+                    <p style="margin: 0 0 6px 0; color: #0d47a1;">2. <strong>Instant confirmation</strong> with ticket # and estimated completion</p>
+                    <p style="margin: 0 0 6px 0; color: #0d47a1;">3. <strong>Auto-assignment</strong> to appraiser based on region/workload/specialty</p>
+                    <p style="margin: 0 0 6px 0; color: #0d47a1;">4. <strong>Status updates</strong> via email: Assigned → In Progress → Review → Completed</p>
+                    <p style="margin: 0 0 6px 0; color: #0d47a1;">5. <strong>Client tracks</strong> progress in "My Requests" dashboard (real-time or daily updates)</p>
+                    <p style="margin: 0 0 6px 0; color: #0d47a1;">6. <strong>Notification</strong> when report ready with download link</p>
+                    <p style="margin: 0; color: #0d47a1;">7. <strong>Automated invoice</strong> sent via Stripe, payment processed</p>
+                </div>
+            </div>
+
+            <!-- ROI JUSTIFICATION -->
+            <div style="margin-bottom: 16px;">
+                <strong style="color: #0d47a1; font-size: 15px;">💡 ROI & BUSINESS JUSTIFICATION:</strong>
+                <ul style="margin: 8px 0 0 0; color: #0d47a1; padding-left: 20px;">
+                    <li><strong>Reduces support calls by 40%:</strong> Clients self-serve status checks instead of calling</li>
+                    <li><strong>Eliminates data entry errors:</strong> Structured form vs. parsing emails/notes</li>
+                    <li><strong>24/7 availability:</strong> Clients submit requests outside business hours</li>
+                    <li><strong>Professional appearance:</strong> Competitive advantage vs. email-only competitors</li>
+                    <li><strong>White-label upsell:</strong> $30-60/month premium × 50 accounts = $18K-36K/year ARR</li>
+                    <li><strong>Faster turnaround:</strong> Auto-assignment reduces manual triage time by 60%</li>
+                </ul>
+            </div>
+
+            <!-- COMPETITIVE ANALYSIS -->
+            <div style="margin-bottom: 16px;">
+                <strong style="color: #0d47a1; font-size: 15px;">🏆 INDUSTRY STANDARDS & COMPETITION:</strong>
+                <div style="margin-top: 8px; font-size: 13px;">
+                    <p style="margin: 0 0 8px 0; color: #0d47a1;"><strong>Similar B2B platforms:</strong></p>
+                    <ul style="margin: 0; color: #0d47a1; padding-left: 20px;">
+                        <li>Clio (legal): Client portal with request intake, white-label at ~$89/user</li>
+                        <li>TaxDome (accounting): Full white-label portal at $50/user</li>
+                        <li>Practice Ignition (professional services): Portal + branding in standard plan</li>
+                        <li>AppFolio (property mgmt): Tenant portal with work orders, enterprise white-label</li>
+                    </ul>
+                    <p style="margin: 8px 0 0 0; color: #0d47a1;"><strong>Key takeaway:</strong> Customer portals are TABLE STAKES in B2B SaaS. White-labeling is standard at Pro tier ($80-100/user). Without this, you're competing with one hand tied behind your back.</p>
+                </div>
+            </div>
+
+            <!-- FORM BEST PRACTICES -->
+            <div style="margin-bottom: 16px;">
+                <strong style="color: #0d47a1; font-size: 15px;">📝 FORM DESIGN BEST PRACTICES:</strong>
+                <ul style="margin: 8px 0 0 0; color: #0d47a1; padding-left: 20px;">
+                    <li><strong>Required fields:</strong> Service type, property address, completion date. Keep it minimal.</li>
+                    <li><strong>Validation:</strong> Address autocomplete (Google Places API), date must be future, file size limits</li>
+                    <li><strong>Progressive disclosure:</strong> Show relevant fields based on service type (appraisal vs BOV)</li>
+                    <li><strong>Mobile responsive:</strong> 40% of submissions may be mobile (on-site property visits)</li>
+                    <li><strong>Auto-save drafts:</strong> Phase 2 feature - don't lose work if browser closes</li>
+                    <li><strong>Accessibility:</strong> WCAG 2.1 AA compliance, keyboard navigation, screen reader support</li>
+                </ul>
+            </div>
+
+            <!-- IMPLEMENTATION NOTES -->
+            <div>
+                <strong style="color: #0d47a1; font-size: 15px;">🔧 IMPLEMENTATION NOTES:</strong>
+                <p style="margin: 8px 0 0 0; color: #0d47a1; font-size: 13px;"><strong>Phase 1 (Weeks 1-4):</strong> Build basic form, database tables, file upload, email notifications. Use YOUR branding everywhere. Simple assignment (manual or round-robin). No white-label yet.</p>
+                <p style="margin: 8px 0 0 0; color: #0d47a1; font-size: 13px;"><strong>Phase 2 (Weeks 5-8):</strong> Add status tracking dashboard, email parsing for inbound requests, automated assignment rules, mobile optimization.</p>
+                <p style="margin: 8px 0 0 0; color: #0d47a1; font-size: 13px;"><strong>Phase 3 (Weeks 9-12):</strong> Build white-label system: logo upload in admin panel, CSS variable injection, custom domain routing (Cloudflare), email template branding. Market as paid add-on.</p>
+                <p style="margin: 8px 0 0 0; color: #0d47a1; font-size: 13px;"><strong>Quick Wins:</strong> Even Phase 1 delivers 80% of value. White-label can wait until 10-15 customers demand it. Focus on form working perfectly first.</p>
+            </div>
+            
+            <button onclick="toggleBuildNotes(false)" style="margin-top: 16px; padding: 8px 16px; background: #1565c0; color: white; border: none; border-radius: 6px; cursor: pointer; font-size: 13px; font-weight: 600;">Hide Build Notes</button>
+        </div>
+
+        <!-- Page Header -->
+        <div style="margin-bottom: 32px;">
+            <h1 class="section-title">Request New Service</h1>
+            <p style="color: #687F8B; font-size: 14px;">Complete the form below to submit a new appraisal, evaluation, or BOV request. You'll receive confirmation via email with a tracking number.</p>
+        </div>
+
+        <!-- Service Request Form -->
+        <form id="serviceRequestForm">
+            
+            <!-- Service Type Selection -->
+            <div class="form-card">
+                <h3 style="font-size: 17px; font-weight: 600; color: #1c3643; margin-bottom: 20px;">Service Type</h3>
+                <div class="form-group">
+                    <label class="form-label">Select the type of service you need <span class="required">*</span></label>
+                    <div class="radio-group">
+                        <label class="radio-option" onclick="selectService(this)">
+                            <input type="radio" name="serviceType" value="appraisal" required>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; font-size: 14px; color: #1c3643;">Commercial Appraisal</div>
+                                <div style="font-size: 12px; color: #687F8B; margin-top: 4px;">Full appraisal report for financing, sale, or legal purposes</div>
+                            </div>
+                            <span class="pricing-badge">$2,500 - $5,000</span>
+                        </label>
+                        <label class="radio-option" onclick="selectService(this)">
+                            <input type="radio" name="serviceType" value="evaluation" required>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; font-size: 14px; color: #1c3643;">Evaluation / BPO</div>
+                                <div style="font-size: 12px; color: #687F8B; margin-top: 4px;">Broker's price opinion or evaluation for internal use</div>
+                            </div>
+                            <span class="pricing-badge">$800 - $1,500</span>
+                        </label>
+                        <label class="radio-option" onclick="selectService(this)">
+                            <input type="radio" name="serviceType" value="bov" required>
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600; font-size: 14px; color: #1c3643;">Broker Opinion of Value (BOV)</div>
+                                <div style="font-size: 12px; color: #687F8B; margin-top: 4px;">Quick market value estimate based on comparable sales</div>
+                            </div>
+                            <span class="pricing-badge">$400 - $800</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Property Information -->
+            <div class="form-card">
+                <h3 style="font-size: 17px; font-weight: 600; color: #1c3643; margin-bottom: 20px;">Property Information</h3>
+                
+                <div class="form-group">
+                    <label class="form-label">Property Address <span class="required">*</span></label>
+                    <input type="text" class="form-input" placeholder="123 Main Street" required>
+                    <p class="form-hint">Start typing to search for address</p>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 16px;">
+                    <div class="form-group">
+                        <label class="form-label">City <span class="required">*</span></label>
+                        <input type="text" class="form-input" placeholder="Los Angeles" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">State <span class="required">*</span></label>
+                        <select class="form-select" required>
+                            <option value="">Select</option>
+                            <option value="CA">CA</option>
+                            <option value="NY">NY</option>
+                            <option value="TX">TX</option>
+                            <option value="FL">FL</option>
+                            <!-- Add all states -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">ZIP Code <span class="required">*</span></label>
+                        <input type="text" class="form-input" placeholder="90001" required>
+                    </div>
+                </div>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="form-group">
+                        <label class="form-label">Property Type <span class="required">*</span></label>
+                        <select class="form-select" required>
+                            <option value="">Select property type</option>
+                            <option value="office">Office</option>
+                            <option value="retail">Retail</option>
+                            <option value="industrial">Industrial / Warehouse</option>
+                            <option value="multifamily">Multifamily</option>
+                            <option value="mixed-use">Mixed Use</option>
+                            <option value="land">Land / Development</option>
+                            <option value="hospitality">Hospitality</option>
+                            <option value="special">Special Purpose</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Square Footage <span class="required">*</span></label>
+                        <input type="number" class="form-input" placeholder="50,000" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Year Built</label>
+                    <input type="number" class="form-input" placeholder="1995" min="1800" max="2025">
+                    <p class="form-hint">Optional - helps with comparable selection</p>
+                </div>
+            </div>
+
+            <!-- Project Details -->
+            <div class="form-card">
+                <h3 style="font-size: 17px; font-weight: 600; color: #1c3643; margin-bottom: 20px;">Project Details</h3>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="form-group">
+                        <label class="form-label">Requested Completion Date <span class="required">*</span></label>
+                        <input type="date" class="form-input" required>
+                        <p class="form-hint">Standard turnaround: 10-14 business days</p>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Priority Level <span class="required">*</span></label>
+                        <select class="form-select" required onchange="updatePricing(this)">
+                            <option value="normal">Normal - Standard turnaround (FREE)</option>
+                            <option value="urgent">Urgent - 7 day turnaround (+$200)</option>
+                            <option value="rush">Rush - 3-5 day turnaround (+$500)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Purpose of Report <span class="required">*</span></label>
+                    <select class="form-select" required>
+                        <option value="">Select purpose</option>
+                        <option value="financing">Financing / Loan</option>
+                        <option value="sale">Sale / Purchase</option>
+                        <option value="insurance">Insurance</option>
+                        <option value="litigation">Litigation / Legal</option>
+                        <option value="tax">Tax Assessment</option>
+                        <option value="portfolio">Portfolio Review</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Special Instructions / Additional Details</label>
+                    <textarea class="form-textarea" placeholder="Include any specific requirements, deadlines, or information about the property that would be helpful..."></textarea>
+                    <p class="form-hint"><span id="charCount">0</span> / 1000 characters</p>
+                </div>
+            </div>
+
+            <!-- Attachments -->
+            <div class="form-card">
+                <h3 style="font-size: 17px; font-weight: 600; color: #1c3643; margin-bottom: 20px;">Attachments</h3>
+                
+                <div class="form-group">
+                    <label class="form-label">Upload Property Documents</label>
+                    <div class="upload-area" id="uploadArea">
+                        <div style="font-size: 40px; margin-bottom: 12px;">📎</div>
+                        <div style="font-weight: 600; color: #1c3643; margin-bottom: 8px;">Drag & drop files here or click to browse</div>
+                        <div style="font-size: 12px; color: #687F8B;">
+                            Accepted formats: PDF, JPG, PNG, DOCX • Max 25MB per file • Up to 10 files
+                        </div>
+                        <input type="file" id="fileInput" multiple style="display: none;" accept=".pdf,.jpg,.jpeg,.png,.docx">
+                    </div>
+                    <p class="form-hint">Examples: Property photos, prior appraisals, lease documents, floor plans, rent rolls</p>
+                    
+                    <div class="file-list" id="fileList" style="display: none;">
+                        <!-- Files will be listed here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Contact Information -->
+            <div class="form-card">
+                <h3 style="font-size: 17px; font-weight: 600; color: #1c3643; margin-bottom: 20px;">Contact Information</h3>
+                
+                <p style="font-size: 13px; color: #687F8B; margin-bottom: 16px;">We'll use this contact for any questions about this specific request.</p>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                    <div class="form-group">
+                        <label class="form-label">Contact Name <span class="required">*</span></label>
+                        <input type="text" class="form-input" value="John Doe" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Phone Number <span class="required">*</span></label>
+                        <input type="tel" class="form-input" value="(555) 123-4567" required>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Email Address <span class="required">*</span></label>
+                    <input type="email" class="form-input" value="john@acmeappraisals.com" required>
+                </div>
+            </div>
+
+            <!-- Estimated Total -->
+            <div class="form-card" style="background: #f0f9ff; border: 2px solid #0da1c7;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <div style="font-size: 13px; color: #687F8B; margin-bottom: 4px;">Estimated Total</div>
+                        <div style="font-size: 24px; font-weight: 700; color: #1c3643;" id="estimatedTotal">$2,500 - $5,000</div>
+                        <div style="font-size: 12px; color: #687F8B; margin-top: 4px;">Final pricing confirmed after property review</div>
+                    </div>
+                    <div style="text-align: right;">
+                        <button type="submit" class="btn-primary" style="font-size: 16px; padding: 16px 40px;">
+                            Submit Request →
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Alternative Actions -->
+            <div style="text-align: center; margin-top: 24px;">
+                <button type="button" class="btn-secondary">Save as Draft</button>
+                <button type="button" class="btn-secondary" style="margin-left: 12px;">Cancel</button>
+            </div>
+
+        </form>
+
+        <!-- Help Section -->
+        <div style="margin-top: 48px; padding: 24px; background: #f9f9f9; border-radius: 12px; text-align: center;">
+            <div style="font-weight: 600; color: #1c3643; margin-bottom: 8px;">Need Help?</div>
+            <div style="font-size: 13px; color: #687F8B;">
+                Questions about the request process? Contact our support team at 
+                <a href="mailto:support@acmeappraisals.com" style="color: #0da1c7; text-decoration: none;">support@acmeappraisals.com</a> 
+                or call <a href="tel:555-123-4567" style="color: #0da1c7; text-decoration: none;">(555) 123-4567</a>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Build Notes Toggle
+        function toggleBuildNotes(show) {
+            const notesSection = document.getElementById('buildNotesSection');
+            const toggleBtn = document.getElementById('showBuildNotesBtn');
+            
+            if (show) {
+                notesSection.style.display = 'block';
+                toggleBtn.style.display = 'none';
+                notesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                notesSection.style.display = 'none';
+                toggleBtn.style.display = 'block';
+            }
+            
+            sessionStorage.setItem('buildNotesVisible', show);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const savedPreference = sessionStorage.getItem('buildNotesVisible');
+            if (savedPreference === 'false') {
+                toggleBuildNotes(false);
+            }
+        });
+
+        // Service Type Selection
+        function selectService(element) {
+            document.querySelectorAll('.radio-option').forEach(opt => {
+                opt.classList.remove('selected');
+            });
+            element.classList.add('selected');
+        }
+
+        // File Upload
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileList = document.getElementById('fileList');
+        let uploadedFiles = [];
+
+        uploadArea.addEventListener('click', () => fileInput.click());
+
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files);
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            handleFiles(e.target.files);
+        });
+
+        function handleFiles(files) {
+            Array.from(files).forEach(file => {
+                if (uploadedFiles.length >= 10) {
+                    alert('Maximum 10 files allowed');
+                    return;
+                }
+                if (file.size > 25 * 1024 * 1024) {
+                    alert(`${file.name} is too large (max 25MB)`);
+                    return;
+                }
+                uploadedFiles.push(file);
+                addFileToList(file);
+            });
+            fileList.style.display = uploadedFiles.length > 0 ? 'block' : 'none';
+        }
+
+        function addFileToList(file) {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            fileItem.innerHTML = `
+                <div>
+                    <strong>${file.name}</strong>
+                    <span style="color: #687F8B; margin-left: 8px;">(${formatFileSize(file.size)})</span>
+                </div>
+                <button onclick="removeFile('${file.name}')">Remove</button>
+            `;
+            fileList.appendChild(fileItem);
+        }
+
+        function removeFile(fileName) {
+            uploadedFiles = uploadedFiles.filter(f => f.name !== fileName);
+            renderFileList();
+        }
+
+        function renderFileList() {
+            fileList.innerHTML = '';
+            uploadedFiles.forEach(file => addFileToList(file));
+            fileList.style.display = uploadedFiles.length > 0 ? 'block' : 'none';
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes < 1024) return bytes + ' B';
+            if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+            return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+        }
+
+        // Character Counter
+        document.querySelector('.form-textarea').addEventListener('input', function(e) {
+            const count = e.target.value.length;
+            document.getElementById('charCount').textContent = count;
+            if (count > 1000) {
+                e.target.value = e.target.value.substring(0, 1000);
+                document.getElementById('charCount').textContent = '1000';
+            }
+        });
+
+        // Form Submission
+        document.getElementById('serviceRequestForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Show success message
+            alert('Request submitted successfully!\n\nYour request #WR-' + Math.floor(Math.random() * 10000) + ' has been created.\n\nYou\'ll receive a confirmation email shortly with tracking information.');
+            
+            // In real implementation, this would POST to /api/work-requests
+        });
+
+        // Pricing Update
+        function updatePricing(select) {
+            const priority = select.value;
+            let addon = '';
+            if (priority === 'urgent') addon = ' + $200';
+            if (priority === 'rush') addon = ' + $500';
+            
+            const serviceType = document.querySelector('input[name="serviceType"]:checked');
+            if (serviceType) {
+                const badge = serviceType.parentElement.querySelector('.pricing-badge').textContent;
+                document.getElementById('estimatedTotal').textContent = badge + addon;
+            }
+        }
+    </script>
+</body>
+</html>
+

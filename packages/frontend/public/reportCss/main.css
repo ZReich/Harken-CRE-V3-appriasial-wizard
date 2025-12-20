@@ -1,0 +1,4140 @@
+/* montserrat-100 - latin */
+@font-face {
+  font-family: 'Montserrat Thin';
+  font-style: normal;
+  font-weight: 100;
+  src:
+    local('Montserrat Thin'),
+    url('../fonts/montserrat/montserrat-v11-latin-100.ttf') format('truetype');
+}
+/* montserrat-100italic - latin */
+@font-face {
+  font-family: 'Montserrat Thin Italic';
+  font-style: italic;
+  font-weight: 100;
+  src:
+    local('Montserrat Thin Italic'),
+    url('../fonts/montserrat/montserrat-v11-latin-100italic.ttf')
+      format('truetype');
+}
+/* montserrat-200 - latin */
+@font-face {
+  font-family: 'Montserrat ExtraLight';
+  font-style: normal;
+  font-weight: 200;
+  src:
+    local('Montserrat ExtraLight'),
+    url('../fonts/montserrat/montserrat-v11-latin-200.ttf') format('truetype');
+}
+/* montserrat-200italic - latin */
+@font-face {
+  font-family: 'Montserrat ExtraLight Italic';
+  font-style: italic;
+  font-weight: 200;
+  src:
+    local('Montserrat ExtraLight Italic'),
+    url('../fonts/montserrat/montserrat-v11-latin-200italic.ttf')
+      format('truetype');
+}
+/* montserrat-300 - latin */
+@font-face {
+  font-family: 'Montserrat Light';
+  font-style: normal;
+  font-weight: 300;
+  src:
+    local('Montserrat Light'),
+    url('../fonts/montserrat/montserrat-v11-latin-300.ttf') format('truetype');
+}
+/* montserrat-300italic - latin */
+@font-face {
+  font-family: 'Montserrat Light Italic';
+  font-style: italic;
+  font-weight: 300;
+  src:
+    local('Montserrat Light Italic'),
+    url('../fonts/montserrat/montserrat-v11-latin-300italic.ttf')
+      format('truetype');
+}
+/* montserrat-regular - latin */
+@font-face {
+  font-family: 'Montserrat Regular';
+  font-style: normal;
+  font-weight: 400;
+  src:
+    local('Montserrat Regular'),
+    url('../fonts/montserrat/montserrat-v11-latin-regular.ttf')
+      format('truetype');
+}
+/* montserrat-italic - latin */
+@font-face {
+  font-family: 'Montserrat Italic';
+  font-style: italic;
+  font-weight: 400;
+  src:
+    local('Montserrat Italic'),
+    url('../fonts/montserrat/montserrat-v11-latin-italic.ttf')
+      format('truetype');
+}
+/* montserrat-500 - latin */
+@font-face {
+  font-family: 'Montserrat Medium';
+  font-style: normal;
+  font-weight: 500;
+  src:
+    local('Montserrat Medium'),
+    url('../fonts/montserrat/montserrat-v11-latin-500.ttf') format('truetype');
+}
+/* montserrat-500italic - latin */
+@font-face {
+  font-family: 'Montserrat Medium Italic';
+  font-style: italic;
+  font-weight: 500;
+  src:
+    local('Montserrat Medium Italic'),
+    url('../fonts/montserrat/montserrat-v11-latin-500italic.ttf')
+      format('truetype');
+}
+/* montserrat-600 - latin */
+@font-face {
+  font-family: 'Montserrat SemiBold';
+  font-style: normal;
+  font-weight: 600;
+  src:
+    local('Montserrat SemiBold'),
+    url('../fonts/montserrat/montserrat-v11-latin-600.ttf') format('truetype');
+}
+/* montserrat-600italic - latin */
+@font-face {
+  font-family: 'Montserrat SemiBold Italic';
+  font-style: italic;
+  font-weight: 600;
+  src:
+    local('Montserrat SemiBold Italic'),
+    url('../fonts/montserrat/montserrat-v11-latin-600italic.ttf')
+      format('truetype');
+}
+/* montserrat-700 - latin */
+@font-face {
+  font-family: 'Montserrat Bold';
+  font-style: normal;
+  font-weight: 700;
+  src:
+    local('Montserrat Bold'),
+    url('../fonts/montserrat/montserrat-v11-latin-700.ttf') format('truetype');
+}
+/* montserrat-700italic - latin */
+@font-face {
+  font-family: 'Montserrat Bold Italic';
+  font-style: italic;
+  font-weight: 700;
+  src:
+    local('Montserrat Bold Italic'),
+    url('../fonts/montserrat/montserrat-v11-latin-700italic.ttf')
+      format('truetype');
+}
+/* montserrat-800 - latin */
+@font-face {
+  font-family: 'Montserrat ExtraBold';
+  font-style: normal;
+  font-weight: 800;
+  src:
+    local('Montserrat ExtraBold'),
+    url('../fonts/montserrat/montserrat-v11-latin-800.ttf') format('truetype');
+}
+/* *montserrat-800italic - latin */
+@font-face {
+  font-family: 'Montserrat ExtraBold Italic';
+  font-style: italic;
+  font-weight: 800;
+  src:
+    local('Montserrat ExtraBold Italic'),
+    url('../fonts/montserrat/montserrat-v11-latin-800italic.ttf')
+      format('truetype');
+}
+/* montserrat-900 - latin */
+@font-face {
+  font-family: 'Montserrat Black';
+  font-style: normal;
+  font-weight: 900;
+  src:
+    local('Montserrat Black'),
+    url('../fonts/montserrat/montserrat-v11-latin-900.ttf') format('truetype');
+}
+/* montserrat-900italic - latin */
+@font-face {
+  font-family: 'Montserrat Black Italic';
+  font-style: italic;
+  font-weight: 900;
+  src:
+    local('Montserrat Black Italic'),
+    url('../fonts/montserrat/montserrat-v11-latin-900italic.ttf')
+      format('truetype');
+}
+/* roboto-slab-100 - latin */
+@font-face {
+  font-family: 'Roboto Slab Thin';
+  font-style: normal;
+  font-weight: 100;
+  src:
+    local('Roboto Slab Thin'),
+    url('../fonts/roboto/roboto-slab-v7-latin-100.ttf') format('truetype');
+}
+/* roboto-slab-regular - latin */
+@font-face {
+  font-family: 'Roboto Slab Regular';
+  font-style: normal;
+  font-weight: 400;
+  src:
+    local('Roboto Slab Regular'),
+    url('../fonts/roboto/roboto-slab-v7-latin-regular.ttf') format('truetype');
+}
+/* roboto-slab-300 - latin */
+@font-face {
+  font-family: 'Roboto Slab Light';
+  font-style: normal;
+  font-weight: 300;
+  src:
+    local('Roboto Slab Light'),
+    url('../fonts/roboto/roboto-slab-v7-latin-300.ttf') format('truetype');
+}
+/* roboto-slab-700 - latin */
+@font-face {
+  font-family: 'Roboto Slab Bold';
+  font-style: normal;
+  font-weight: 700;
+  src:
+    local('Roboto Slab Bold'),
+    url('../fonts/roboto/roboto-slab-v7-latin-700.ttf') format('truetype');
+}
+@font-face {
+  font-family: 'Centennial LT W05_45 Light';
+  src:
+    local('Centennial LT W05_45 Light'),
+    url('../fonts/centennial/Fonts/6148008/db84ff7a-d4c4-4e4f-ae49-7d7699575e97.woff2')
+      format('woff2'),
+    url('../fonts/centennial/Fonts/6148008/b28ec0f3-5b75-45ff-b2c2-157fea120a4d.woff')
+      format('woff');
+}
+@font-face {
+  font-family: 'Centennial LT W05_46 Light It';
+  src:
+    local('Centennial LT W05_46 Light It'),
+    url('../fonts/centennial/Fonts/6148012/6f1217b4-ecbe-42a2-b0e5-2f34e90ccd42.woff2')
+      format('woff2'),
+    url('../fonts/centennial/Fonts/6148012/7c325128-ba2b-4837-97fc-47f2e7c0eea8.woff')
+      format('woff');
+}
+@font-face {
+  font-family: 'Centennial LT W05_55 Roman';
+  src:
+    local('Centennial LT W05_55 Roman'),
+    url('../fonts/centennial/Fonts/6148016/0b52121b-db1c-4fe1-bc60-4271f3fe985c.woff2')
+      format('woff2'),
+    url('../fonts/centennial/Fonts/6148016/ce0a5dca-036b-42ed-9246-ffc221799426.woff')
+      format('woff');
+}
+@font-face {
+  font-family: 'Centennial LT W05_56 Italic';
+  src:
+    local('Centennial LT W05_56 Italic'),
+    url('../fonts/centennial/Fonts/6148020/359fe1c6-a666-4501-bf71-ea1d34ccb1b3.woff22')
+      format('woff2'),
+    url('../fonts/centennial/Fonts/6148020/50d8f81f-7102-4b55-ade9-3e56d2e965f7.woff')
+      format('woff');
+}
+@font-face {
+  font-family: 'Centennial LT W05_75 Bold';
+  src:
+    local('Centennial LT W05_75 Bold'),
+    url('../fonts/centennial/Fonts/6148024/694c422f-11f0-4205-8e6d-94fce5e5dff0.woff2')
+      format('woff2'),
+    url('../fonts/centennial/Fonts/6148024/5add6b0c-985a-4d4e-908c-33c1d7125311.woff')
+      format('woff');
+}
+@font-face {
+  font-family: 'Centennial LT W05_76 Bold It';
+  src:
+    local('Centennial LT W05_76 Bold It'),
+    url('../fonts/centennial/Fonts/6148027/3c285900-c99d-4522-b677-9db6f91b52e2.woff2')
+      format('woff2'),
+    url('../fonts/centennial/Fonts/6148027/bd6ef71b-b729-464c-b349-3f0d6679f96e.woff')
+      format('woff');
+}
+@font-face {
+  font-family: 'Centennial LT W05_95 Black';
+  src:
+    local('Centennial LT W05_95 Black'),
+    url('../fonts/centennial/Fonts/6148033/add87918-6a12-4434-804b-190dad172074.woff2')
+      format('woff2'),
+    url('../fonts/centennial/Fonts/6148033/2d621701-a5c7-4077-8f28-a9378a0b9b73.woff')
+      format('woff');
+}
+@font-face {
+  font-family: 'Centennial LT W05_96 Black It';
+  src:
+    local('Centennial LT W05_96 Black It'),
+    url('../fonts/centennial/Fonts/6148037/cd17d8a8-c935-4466-9fd7-45043a7b29fb.woff2')
+      format('woff2'),
+    url('../fonts/centennial/Fonts/6148037/9506713b-f5bb-45d3-b0e4-1017bcc8f339.woff')
+      format('woff');
+}
+@font-face {
+  font-family: 'Helvetica Neue LT W05_36 Th It';
+  src:
+    local('Helvetica Neue LT W05_36 Th It'),
+    url('../fonts/helvetica/Fonts/5664067/2a7e8f89-c0b2-4334-9c34-7a2078d2b959.woff2')
+      format('woff2'),
+    url('../fonts/helvetica/Fonts/5664067/32aad9d8-5fec-4b9d-ad53-4cf7a5b53698.woff')
+      format('woff');
+}
+@font-face {
+  font-family: 'Helvetica Neue LT W05 25 Ult Lt';
+  src:
+    local('Helvetica Neue LT W05 25 Ult Lt'),
+    url('../fonts/helvetica/Fonts/5664070/ec6281a0-c9c4-4477-a360-156acd53093f.woff2')
+      format('woff2'),
+    url('../fonts/helvetica/Fonts/5664070/11066b40-10f7-4123-ba58-d9cbf5e89ceb.woff')
+      format('woff');
+}
+@font-face {
+  font-family: 'Helvetica Neue LT W05 26UltLtIt';
+  src:
+    local('Helvetica Neue LT W05 26UltLtIt'),
+    url('../fonts/helvetica/Fonts/5664077/2707a251-2d32-4bb6-a3c4-87114ba2365f.woff2')
+      format('woff2'),
+    url('../fonts/helvetica/Fonts/5664077/40f50724-486b-4e7b-9366-237e06eabfc8.woff')
+      format('woff');
+}
+@font-face {
+  font-family: 'Helvetica Neue LT W05 35 Thin';
+  src:
+    local('Helvetica Neue LT W05 35 Thin'),
+    url('../fonts/helvetica/Fonts/5664081/7d63ccf8-e0ae-4dee-ad4d-bbc798aa5803.woff2')
+      format('woff2'),
+    url('../fonts/helvetica/Fonts/5664081/b2c1327f-ab3d-4230-93d7-eee8596e1498.woff')
+      format('woff');
+}
+@font-face {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+  src:
+    local('Helvetica Neue LT W05 45 Light'),
+    url('../fonts/helvetica/Fonts/5664085/f9c5199e-a996-4c08-9042-1eb845bb7495.woff2')
+      format('woff2'),
+    url('../fonts/helvetica/Fonts/5664085/2a34f1f8-d701-4949-b12d-133c1c2636eb.woff')
+      format('woff');
+}
+@font-face {
+  font-family: 'Helvetica Neue LT W05 46 Lt It';
+  src:
+    local('Helvetica Neue LT W05 46 Lt It'),
+    url('../fonts/helvetica/Fonts/5664089/5e4f385b-17ff-4d27-a63a-9ee28546c9a8.woff2')
+      format('woff2'),
+    url('../fonts/helvetica/Fonts/5664089/116cde47-4a07-44a5-9fac-cbdcc1f14f79.woff')
+      format('woff');
+}
+@font-face {
+  font-family: 'Helvetica Neue LT W05 55 Roman';
+  src:
+    local('Helvetica Neue LT W05 55 Roman'),
+    url('../fonts/helvetica/Fonts/5664093/08b57253-2e0d-4c12-9c57-107f6c67bc49.woff2')
+      format('woff2'),
+    url('../fonts/helvetica/Fonts/5664093/08edde9d-c27b-4731-a27f-d6cd9b01cd06.woff')
+      format('woff');
+}
+@font-face {
+  font-family: 'Helvetica Neue LT W05 56 Italic';
+  src:
+    local('Helvetica Neue LT W05 56 Italic'),
+    url('../fonts/helvetica/Fonts/5664098/4bd56f95-e7ab-4a32-91fd-b8704cbd38bc.woff2')
+      format('woff2'),
+    url('../fonts/helvetica/Fonts/5664098/4fe1c328-1f21-434a-8f0d-5e0cf6c70dfb.woff')
+      format('woff');
+}
+@font-face {
+  font-family: 'Helvetica Neue LT W05 65 Medium';
+  src:
+    local('Helvetica Neue LT W05 65 Medium'),
+    url('../fonts/helvetica/Fonts/5664103/240c57a0-fdce-440d-9ce3-85e0cb56f470.woff2')
+      format('woff2'),
+    url('../fonts/helvetica/Fonts/5664103/7802e576-2ffa-4f22-a409-534355fbea79.woff')
+      format('woff');
+}
+@font-face {
+  font-family: 'Helvetica Neue LT W05 66 Md It';
+  src:
+    local('Helvetica Neue LT W05 66 Md It'),
+    url('../fonts/helvetica/Fonts/5664107/de68be2a-5d0e-4b8d-b3eb-940f75503e2a.woff2')
+      format('woff2'),
+    url('../fonts/helvetica/Fonts/5664107/31029e78-79a0-4940-b82d-2e3c238e1355.woff')
+      format('woff');
+}
+@font-face {
+  font-family: 'Helvetica Neue LT W05 76 Bd It';
+  src:
+    local('Helvetica Neue LT W05 76 Bd It'),
+    url('../fonts/helvetica/Fonts/5664111/13ab58b4-b5ba-4c95-afde-ab2608fbbbd9.woff2')
+      format('woff2'),
+    url('../fonts/helvetica/Fonts/5664111/5018b5b5-c821-4653-bc74-d0b11d735f1a.woff')
+      format('woff');
+}
+@font-face {
+  font-family: 'Helvetica Neue LT W05 85 Heavy';
+  src:
+    local('Helvetica Neue LT W05 85 Heavy'),
+    url('../fonts/helvetica/Fonts/5664115/7e42a406-9133-48c0-a705-4264ac520b43.woff2')
+      format('woff2'),
+    url('../fonts/helvetica/Fonts/5664115/837750e9-3227-455d-a04e-dc76764aefcf.woff')
+      format('woff');
+}
+@font-face {
+  font-family: 'Helvetica Neue LT W05 86 Hv It';
+  src:
+    local('Helvetica Neue LT W05 86 Hv It'),
+    url('../fonts/helvetica/Fonts/5664119/0acba88f-0de4-4d43-81fd-920d7427f665.woff2')
+      format('woff2'),
+    url('../fonts/helvetica/Fonts/5664119/713c9c40-9cbd-4276-819e-d0efaf5d3923.woff')
+      format('woff');
+}
+@font-face {
+  font-family: 'Helvetica Neue LT W05 95 Black';
+  src:
+    local('Helvetica Neue LT W05 95 Black'),
+    url('../fonts/helvetica/Fonts/5664121/fc4fb6ca-f981-4115-b882-c78e9f08be52.woff2')
+      format('woff2'),
+    url('../fonts/helvetica/Fonts/5664121/6ed03453-f512-45ba-84bf-fe4ea45d5e6a.woff')
+      format('woff');
+}
+@font-face {
+  font-family: 'Helvetica Neue LT W05 96 Blk It';
+  src:
+    local('Helvetica Neue LT W05 96 Blk It'),
+    url('../fonts/helvetica/Fonts/5664128/995add04-59cc-41ea-abd2-4712eaddf2a8.woff2')
+      format('woff2'),
+    url('../fonts/helvetica/Fonts/5664128/7090e465-f6bf-4664-8b5a-d877a6915d87.woff')
+      format('woff');
+}
+@font-face {
+  font-family: 'Helvetica Neue LT W05 75 Bold';
+  src:
+    local('Helvetica Neue LT W05 75 Bold'),
+    url('../fonts/helvetica/Fonts/5664150/800da3b0-675f-465f-892d-d76cecbdd5b1.woff2')
+      format('woff2'),
+    url('../fonts/helvetica/Fonts/5664150/7b415a05-784a-4a4c-8c94-67e9288312f5.woff')
+      format('woff');
+}
+@page {
+  size: letter landscape;
+}
+@media print {
+  body,
+  .new-page[size='letter'] {
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+  }
+}
+body {
+  counter-reset: page;
+  font-family: 'Montserrat Regular', sans-serif;
+  color: #1c3643;
+}
+
+p,
+a {
+  font-family: 'Montserrat Regular', sans-serif;
+  color: #1c3643;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: 'Roboto Slab Regular', serif;
+  color: var(--primary);
+}
+
+table {
+  border-collapse: unset !important;
+}
+table td {
+  padding: 0 !important;
+}
+
+#evaluation-report-data {
+  width: 279mm;
+  margin: 0 auto;
+}
+
+.new-page {
+  counter-increment: page;
+  position: relative;
+  background: white;
+  width: 279mm;
+  height: 215mm;
+  display: block;
+  margin: 0 auto;
+  box-shadow: 0 0 1cm rgba(0, 0, 0, 0.1);
+  page-break-after: always;
+  margin-bottom: 10px;
+  padding: 10px;
+}
+.new-page .file-number {
+  float: right;
+  margin: 20px;
+}
+
+.preface-header {
+  float: right;
+  width: 290px;
+  height: 55px;
+  position: relative;
+}
+.preface-header svg polygon {
+  fill: var(--primary);
+}
+.preface-header .section-name {
+  font-family: 'Roboto Slab Light', serif;
+  font-size: 24px;
+  margin-top: 10px;
+  vertical-align: middle;
+  color: #ffffff;
+  padding-left: 40px;
+}
+
+.page-header {
+  top: 0;
+  right: 0;
+  width: 290px;
+  height: 55px;
+  float: right;
+  position: relative;
+}
+.page-header svg polygon {
+  fill: var(--primary);
+}
+.page-header .section-name {
+  font-family: 'Montserrat SemiBold', sans-serif;
+  color: #ffffff;
+  font-size: 14px;
+  padding-left: 50px;
+  margin: 2px 0 -28px 0;
+}
+.page-header .section-title {
+  font-family: 'Roboto Slab Light', serif;
+  color: #ffffff;
+  font-size: 20px;
+  margin-top: 30px;
+  padding-left: 50px;
+}
+
+.report-page-footer {
+  font-size: 13px;
+  position: absolute;
+  bottom: 5px;
+  right: 15px;
+}
+.report-page-footer span {
+  color: var(--primary);
+  font-weight: bold;
+}
+.report-page-footer .pagenum:before {
+  content: counter(page);
+}
+.report-page-footer .pagenum.without-before-element:before {
+  content: none;
+}
+
+.section-area {
+  width: 20%;
+  height: 100%;
+  float: left;
+  position: relative;
+  text-align: center;
+  color: white;
+}
+.section-area .section-image {
+  width: 100%;
+  height: 100%;
+  background-color: var(--tertiary);
+}
+.section-area div {
+  position: absolute;
+  top: 18%;
+  right: -10%;
+  transform: rotate(90deg);
+  font-size: 60px;
+  font-weight: bold;
+  width: 400px;
+}
+
+.h1 {
+  font-family: 'Roboto Slab Regular', serif;
+  color: var(--primary);
+  font-size: 52px;
+}
+
+.clear {
+  clear: both;
+}
+
+.image-added {
+  object-fit: cover !important;
+}
+
+/*Cover Page */
+.cover-header {
+  margin-top: -30px;
+  margin-left: 60px;
+  margin-right: 60px;
+}
+.cover-header .cover-title {
+  font-family: 'Roboto Slab Bold', sans-serif;
+  color: var(--primary);
+  font-size: 52px;
+  margin-bottom: 0;
+  margin-top: 30px;
+  word-break: break-word;
+}
+.cover-header .cover-subtitle {
+  font-weight: 400;
+  margin-top: 0;
+  font-size: 24px;
+}
+
+.cover-body {
+  margin-top: 35px;
+  margin-bottom: 35px;
+}
+.cover-body .cover-image {
+  object-fit: contain;
+  background-color: #e9eef1;
+  width: 98%;
+  height: 350px;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+}
+
+.cover-footer {
+  margin-top: 30px;
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-bottom: 20px;
+  position: absolute;
+  bottom: 0;
+}
+
+.cover-footer-image {
+  background-color: black;
+}
+
+.cover-footer .cover-right .cover-user-name {
+  font-family: 'Montserrat SemiBold', serif;
+  color: var(--primary);
+  font-size: 14px;
+  margin: 0;
+  text-align: right;
+}
+.cover-footer .cover-right .cover-user-name i {
+  font-family: 'Montserrat Italic', serif;
+  color: var(--primary);
+  font-size: 12px;
+}
+.cover-footer .cover-right .cover-business-name {
+  font-family: 'Montserrat SemiBold', serif;
+  color: #1c3643;
+  font-size: 14px;
+  margin: 0;
+  text-align: right;
+}
+.cover-footer .cover-right .cover-email {
+  font-family: 'Montserrat Regular', sans-serif;
+  color: #1c3643;
+  font-size: 12px;
+  margin: 0;
+  text-align: right;
+}
+.cover-footer .cover-left {
+  float: left;
+  width: 50%;
+}
+.cover-footer .cover-left .cover-logo {
+  margin-top: 10px;
+  margin-bottom: 30px;
+  height: 50px;
+  background-size: contain;
+}
+.cover-footer .cover-right {
+  float: right;
+  margin-right: 20px;
+}
+
+.cover-image {
+  width: 1024px;
+  height: 30px;
+}
+.cover-image .item {
+  width: 33%;
+  height: 30px;
+  display: inline-block;
+  margin-left: -5px;
+}
+.cover-image .item.harken-blue {
+  background-color: var(--primary);
+}
+.cover-image .item.mid-blue {
+  background-color: var(--secondary);
+}
+.cover-image .item.dark-blue {
+  background-color: var(--tertiary);
+}
+.cover-image .triangle {
+  border-bottom-color: var(--primary);
+  position: absolute;
+  display: inline-block;
+  height: 30px;
+  border-right: 18px solid transparent;
+  z-index: 1;
+  margin-left: -5px;
+}
+.cover-image .triangle.harken-blue {
+  border-top: 30px solid var(--primary);
+}
+.cover-image .triangle.mid-blue {
+  border-top: 30px solid var(--secondary);
+}
+
+/*TABLE OF CONTENTS */
+/*Table of Contents */
+.table-of-contents .image-area {
+  float: left;
+  height: 100%;
+  width: 60%;
+}
+.table-of-contents .image-area .image {
+  object-fit: contain;
+  background-color: #e9eef1;
+  width: 100%;
+  height: 100%;
+}
+.table-of-contents .index {
+  float: right;
+  margin-top: 5%;
+  width: 30%;
+}
+.table-of-contents .index .index-item .index-text {
+  display: inline-block;
+  margin-top: 0;
+}
+.table-of-contents .index .index-item .index-number {
+  display: inline-block;
+  vertical-align: top;
+  font-family: 'Roboto Slab Bold', sans-serif;
+  color: var(--primary);
+  margin-right: 20px;
+}
+.table-of-contents .index .index-item .number {
+  font-family: 'Roboto Slab Regular', serif;
+  color: var(--primary);
+  font-size: 24px;
+  margin: 0;
+  width: 27px;
+}
+.table-of-contents .index .index-item .index-text .section-text-one {
+  font-family: 'Montserrat Medium', sans-serif;
+  font-size: 14px;
+  margin-bottom: 0;
+  margin-top: 10px;
+  font-weight: bold;
+}
+.table-of-contents .index .index-item .index-text .section-text-two {
+  font-size: 12px;
+  margin-top: 0;
+  margin-bottom: 0;
+  margin-left: 10px;
+}
+.table-of-contents .index .index-item .index-text .section-text-three {
+  font-size: 12px;
+  margin: 5px;
+  margin-left: 30px;
+}
+
+/*ENGAGEMENT LETTER */
+.evaluation-engagement-letter {
+  font-size: 13px;
+}
+.evaluation-engagement-letter .email-date {
+  color: #b1bac0;
+  padding-top: 15px;
+}
+.evaluation-engagement-letter .email-header {
+  font-family: 'Montserrat SemiBold', serif;
+  padding-top: 5px;
+}
+.evaluation-engagement-letter .email-greeting {
+  color: var(--primary);
+}
+.evaluation-engagement-letter .email-body {
+  font-weight: 400;
+}
+.evaluation-engagement-letter .email-body .signature {
+  width: 200px;
+  height: 50px;
+}
+.evaluation-engagement-letter .logo {
+  height: 40px;
+  margin-top: 5px;
+}
+.evaluation-engagement-letter .letter-logo {
+  background: url('../../../../assets/img/logo-black.png') center left no-repeat;
+  background-size: contain;
+}
+
+/*Executive Summary */
+.executive-summary .body .left {
+  float: left;
+  position: relative;
+  width: 56%;
+  min-height: 480px;
+  margin-top: 4%;
+  /*.most-likely */
+  /*  position: absolute */
+  /*  bottom: 0 */
+  /*  left: 0 */
+}
+.executive-summary .body .title {
+  margin: 0;
+  font-size: 32px;
+  font-family: 'Montserrat Light', serif;
+}
+.executive-summary .body .left .subtitle,
+.executive-summary .body .top-heading .subtitle {
+  margin: 0;
+  margin-top: -15px;
+  font-size: 52px;
+  font-family: 'Roboto Slab Regular', serif;
+  color: var(--primary);
+}
+.executive-summary .body .left .item,
+.executive-summary .body .top-heading .item {
+  color: #1c3643;
+  font-family: 'Montserrat SemiBold', serif;
+  margin: 0;
+  font-size: 14px;
+}
+.executive-summary .body .left .item-description,
+.executive-summary .body .top-heading .item-description {
+  font-family: 'Montserrat Regular', sans-serif;
+  font-size: 14px;
+}
+.executive-summary .body .left .key-highlights,
+.executive-summary .body .top-heading .key-highlights {
+  color: #1c3643;
+  font-family: 'Montserrat Light', serif;
+}
+.executive-summary .body .left .highlights-list,
+.executive-summary .body .top-heading .highlights-list {
+  margin-left: 20px;
+}
+.executive-summary .body .left .highlights-list p,
+.executive-summary .body .top-heading .highlights-list p {
+  font-family: 'Montserrat Light', serif;
+}
+.executive-summary .body .left .highlight-item,
+.executive-summary .body .top-heading .highlight-item {
+  color: #000000;
+  font-family: 'Montserrat Regular', sans-serif;
+  list-style-type: circle;
+}
+.executive-summary .body .right {
+  float: right;
+  width: 40%;
+  padding: 20px 20px 0 20px;
+}
+.executive-summary .body .right .place-image {
+  width: 100%;
+  height: 500px;
+  margin-left: 0;
+  margin-right: 0px;
+  object-fit: contain;
+  background-color: #e9eef1;
+}
+.executive-summary .body .bottom {
+  padding-top: 0px;
+}
+.executive-summary .body .bottom .summary-content {
+  font-family: 'Montserrat Light', serif;
+  text-align: justify;
+  color: #000000;
+  padding-right: 17px;
+  font-size: 14px;
+}
+.executive-summary .body .bottom .summary-content p {
+  margin-top: 0px;
+}
+.executive-summary .description {
+  margin-left: 30px;
+  margin-right: 20px;
+  width: 75%;
+  float: left;
+}
+.executive-summary .description .title {
+  font-family: 'Montserrat Light', serif;
+  font-size: 32px;
+}
+
+/*     margin-bottom: -50px */
+.valuations-page-1 .description .title {
+  font-family: 'Montserrat Light', serif;
+  font-size: 32px;
+}
+
+.valuations-page-1 .description .label {
+  font-family: 'Roboto Slab Regular', serif;
+  color: var(--primary);
+  font-size: 20px;
+  margin: 0;
+}
+
+/*     margin-bottom: -50px */
+.executive-summary .description .subtitle,
+.valuations-page-1 .description .subtitle {
+  font-family: 'Roboto Slab Regular', serif;
+  color: var(--primary);
+  font-size: 52px;
+  margin: 0;
+  margin-top: -30px;
+}
+
+.executive-summary .description .main-description {
+  font-family: 'Montserrat SemiBold', serif;
+  text-align: justify;
+  font-size: 14px;
+}
+.executive-summary .description .extra-description {
+  font-family: 'Montserrat Regular', serif;
+  text-align: justify;
+  font-size: 14px;
+  margin-left: 30px;
+}
+.executive-summary .description .main-description_p {
+  font-family: 'Montserrat Regular', serif;
+}
+.executive-summary .description .main-description_p span {
+  font-family: 'Roboto Slab Regular', serif;
+  font-size: 16px;
+  color: var(--primary);
+}
+.executive-summary .description p {
+  text-align: justify;
+}
+
+/*Property Summary */
+.property-summary .overview-image {
+  width: 20%;
+  height: 100%;
+  float: left;
+}
+.property-summary .overview-image .image-section {
+  width: 100%;
+  height: 100%;
+}
+.property-summary .overview-body {
+  width: 75%;
+  margin: 20px;
+  float: left;
+}
+.property-summary .overview-body .title {
+  width: 100%;
+  text-align: center;
+  background-color: transparent;
+  font-family: 'Roboto Slab Regular', serif;
+  color: var(--primary);
+  font-size: 52px;
+  text-align: left;
+}
+.property-summary .overview-body .label {
+  font-family: 'Roboto Slab Regular', serif;
+  color: var(--primary);
+  font-size: 20px;
+  margin: 0;
+}
+.property-summary .overview-body .top-table-container {
+  width: 370px;
+  height: 300px;
+  vertical-align: top;
+}
+.property-summary .overview-body .top-table-container .label-left-side {
+  font-family: 'Roboto Slab Regular', serif;
+  font-size: 16px;
+  color: var(--primary);
+  text-align: left;
+  margin-bottom: 0;
+  margin-top: 10px;
+}
+.property-summary .overview-body .top-table-container .content-left-side {
+  font-family: 'Montserrat Regular', serif;
+  font-size: 12px;
+  color: #000000;
+  margin-left: 10px;
+  margin-top: 0px;
+}
+.property-summary .overview-body .top-table-container .label-right-side {
+  font-family: 'Montserrat Regular', serif;
+  font-size: 12px;
+  color: #000000;
+  text-align: right;
+  margin: 0;
+  float: left;
+  margin-left: 10px;
+}
+.property-summary .overview-body .top-table-container .content-right-side {
+  font-family: 'Montserrat Regular', serif;
+  font-size: 12px;
+  color: #000000;
+  text-align: right;
+  margin: 0;
+  display: block;
+}
+.property-summary
+  .overview-body
+  .top-table-container.site-spec
+  .horizontal_dotted_line {
+  margin: 8px 0px;
+}
+.property-summary .overview-body .bottom-title {
+  width: 370px;
+  height: 5px;
+}
+.property-summary .overview-body .bottom-title .label-left-side {
+  font-family: 'Roboto Slab Regular', serif;
+  font-size: 16px;
+  color: var(--primary);
+  text-align: left;
+  margin-bottom: 0;
+  margin-top: 0;
+}
+.property-summary .overview-body .bottom-table {
+  margin-top: 10px;
+}
+.property-summary .overview-body .bottom-table-container {
+  width: 370px;
+}
+.property-summary .overview-body .bottom-table-container .value-bottom {
+  margin-left: 0 !important;
+  text-align: left;
+}
+.property-summary
+  .overview-body
+  .bottom-table-container
+  .bottom-left-first-table-container {
+  float: left;
+  margin-left: 10px;
+  float: left;
+  margin-left: 10px;
+}
+.property-summary
+  .overview-body
+  .bottom-table-container
+  .bottom-left-first-table-container
+  .label-bottom {
+  font-family: 'Montserrat SemiBold', serif;
+  font-size: 12px;
+  color: #1c3643;
+  text-align: left;
+  margin: 0;
+}
+.property-summary
+  .overview-body
+  .bottom-table-container
+  .bottom-left-second-table-container
+  .label-bottom,
+.property-summary
+  .overview-body
+  .bottom-table-container
+  .bottom-right-table-container
+  .label-bottom {
+  font-family: 'Montserrat SemiBold', serif;
+  font-size: 12px;
+  color: #1c3643;
+  text-align: left;
+  margin: 0;
+}
+.property-summary
+  .overview-body
+  .bottom-table-container
+  .bottom-left-first-table-container
+  .value-bottom,
+.property-summary
+  .overview-body
+  .bottom-table-container
+  .bottom-left-second-table-container
+  .value-bottom,
+.property-summary
+  .overview-body
+  .bottom-table-container
+  .bottom-right-table-container
+  .value-bottom {
+  font-family: 'Montserrat Regular', serif;
+  font-size: 12px;
+  color: #000000;
+  margin-left: 10px;
+  margin-top: 0px;
+}
+.property-summary
+  .overview-body
+  .bottom-table-container
+  .bottom-left-second-table-container {
+  display: inline-block;
+  float: right;
+  margin-right: 45px;
+}
+.property-summary
+  .overview-body
+  .bottom-table-container
+  .bottom-right-table-container {
+  display: inline-block;
+  margin-left: 10px;
+  border-left: 1px solid var(--primary);
+  padding-left: 10px;
+}
+.property-summary .overview-body .bottom-table-container.first {
+  width: 700px;
+}
+.property-summary .description-left {
+  float: left;
+  width: 25%;
+}
+.property-summary .description-right {
+  float: left;
+  width: 77%;
+  margin-left: 20px;
+}
+.property-summary .description-right .label {
+  font-family: 'Roboto Slab Regular', serif;
+  color: var(--primary);
+  font-size: 20px;
+  margin: 0;
+}
+.property-summary .description-left .property-zoning-title {
+  font-family: 'Montserrat SemiBold', serif;
+  font-size: 28px;
+  color: #000000;
+  margin: 0;
+}
+.property-summary .description-left .property-zoning-description {
+  font-family: 'Montserrat Regular', serif;
+  font-size: 12px;
+  color: #000000;
+  margin-top: 0;
+  text-align: justify;
+}
+.property-summary .description-left .property-zoning-section {
+  background-color: #f1f3f4;
+  padding-left: 15px !important;
+  padding-right: 15px !important;
+  padding-top: 15px !important;
+  padding-bottom: 15px !important;
+}
+.property-summary .description-left .zonging-description-padding-zero {
+  padding-bottom: 0px !important;
+}
+
+/*Page 2 of Property Summary */
+.section-title {
+  font-family: 'Roboto Slab Regular', serif;
+  color: var(--primary);
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+.property-description {
+  padding: 20px 20px 0 0 !important;
+  vertical-align: top;
+}
+.property-description .set-content {
+  color: #000000;
+  text-wrap: wrap;
+  justify-content: space-between;
+  display: flex;
+  text-align: right;
+  width: 100%;
+}
+.property-description .label-right-side {
+  font-family: 'Montserrat Regular', serif;
+  font-size: 10px;
+  color: #000000;
+  text-align: right;
+  margin: 0;
+  float: left;
+  margin-bottom: 5px;
+}
+.property-description .label-side {
+  color: #000000;
+  margin-right: 20px;
+}
+.property-description .content-right-side {
+  font-family: 'Montserrat Regular', serif;
+  font-size: 10px;
+  color: #000000;
+  text-align: right;
+  margin: 0;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.property-description-right {
+  width: 400px;
+  margin-left: 20px;
+}
+.property-description-right .label-right-side {
+  font-family: 'Montserrat Regular', serif;
+  font-size: 10px;
+  color: #000000;
+  text-align: right;
+  margin: 0;
+  float: left;
+  margin-bottom: 5px;
+}
+.property-description-right .content-right-side {
+  font-family: 'Montserrat Regular', serif;
+  font-size: 10px;
+  color: #000000;
+  text-align: right;
+  margin: 0;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.property-summary .description-right .section-title {
+  margin-top: 0px;
+}
+.property-summary .description-right .title-image-container .section-image {
+  width: 300px;
+  height: 225px;
+  object-fit: contain;
+  background-color: #e9eef1;
+}
+.property-summary .description-right .property-image-two-area {
+  padding-top: 20px !important;
+  padding-left: 5px !important;
+}
+.property-summary
+  .description-right
+  .property-image-two-area
+  .property-image-two {
+  width: 420px;
+  height: 315px;
+  object-fit: contain !important;
+  background-color: #e9eef1;
+}
+.property-summary .top-table {
+  width: 100%;
+}
+.property-summary .top-table .info-title {
+  font-family: 'Montserrat Light', serif;
+  font-size: 38px;
+  color: #000000;
+}
+.property-summary .top-table .section-title {
+  font-family: 'Roboto Slab Regular', serif;
+  color: var(--primary);
+  font-size: 46px;
+}
+.property-summary .top-table .label {
+  font-family: 'Roboto Slab Regular', serif;
+  color: var(--primary);
+  font-size: 20px;
+  margin: 0;
+}
+.property-summary .top-table .area-info {
+  font-family: 'Montserrat Light', serif;
+  font-size: 13px;
+  color: #000000;
+  text-align: justify;
+  width: 50%;
+  vertical-align: top;
+}
+.property-summary .top-table .space {
+  padding-right: 40px !important;
+}
+.property-summary .bottom-table-fix {
+  position: absolute !important;
+  bottom: 80px !important;
+}
+.property-summary .bottom-table {
+  width: 100%;
+}
+.property-summary .bottom-table tbody tr td {
+  text-align: center;
+}
+.property-summary .bottom-table .property-info-arrow-image {
+  height: 80px;
+  width: 120px;
+  fill: #1c3643;
+}
+.property-summary .bottom-table .property-info-image {
+  width: 1070px;
+  height: 180px;
+  margin: 0;
+  padding: 0;
+  padding-top: 20px;
+  object-fit: contain;
+  background-color: #e9eef1;
+}
+.property-summary .info-body .top-table .property-map-aerials {
+  text-align: center;
+}
+.property-summary
+  .info-body
+  .top-table
+  .property-map-aerials
+  .property-map-aerials-image {
+  width: 100%;
+  height: 158mm;
+  object-fit: contain;
+  background-color: #e9eef1;
+}
+.property-summary .details-body .top-table {
+  height: 300px;
+  width: 100%;
+}
+.property-summary .details-body .bottom-table .property-details-image {
+  height: 350px;
+  width: 100%;
+  object-fit: contain;
+  background-color: #e9eef1;
+}
+.property-summary .details-body .top-table .image-area {
+  height: 580px;
+  width: 100%;
+}
+.property-summary .details-body .top-table .image-area .image {
+  height: 580px;
+  width: 1030px;
+  object-fit: contain;
+  background-color: #e9eef1;
+}
+.property-summary .details-body .top-table .details-area {
+  height: 300px;
+  width: 500px;
+  padding-left: 15px !important;
+}
+.property-summary .details-body .top-table .details-area .section-title {
+  font-family: 'Roboto Slab Regular', serif;
+  color: var(--primary);
+  font-size: 18px;
+  margin: 0;
+  padding: 0;
+}
+.property-summary .details-body .top-table .details-area .section-subtitle {
+  font-family: 'Montserrat Regular', serif;
+  font-size: 14px;
+  color: #000000;
+  margin: 0;
+  padding: 0;
+  margin-left: 10px;
+  margin-bottom: 5px;
+}
+.property-summary .details-body .top-table .details-area .property-label {
+  font-family: 'Montserrat Regular', serif;
+  font-size: 12px;
+  color: #000000;
+  text-align: right;
+  margin: 0;
+  float: left;
+  margin-left: 10px;
+}
+.property-summary .details-body .top-table .details-area .property-value {
+  font-family: 'Montserrat SemiBold', serif;
+  font-size: 12px;
+  color: #000000;
+  text-align: right;
+  margin: 0;
+  display: block;
+  /*         margin-bottom: -20px */
+  margin-left: 10px;
+}
+.property-summary .details-body .top-table .details-area .footnote {
+  font-family: 'Montserrat Italic', serif;
+  font-size: 10px;
+  color: var(--primary);
+  text-align: left;
+  margin: 0;
+}
+
+/*Page 3 of Property Summary */
+/*Page 4 of Property Summary */
+/*Page 5 of property summary */
+/*Valuations page 1 (Determinants) */
+.valuations-page-1 .description {
+  margin-left: 30px;
+  margin-right: 20px;
+  float: left;
+  width: 75%;
+}
+.valuations-page-1 .description ul {
+  list-style-type: inherit;
+  margin-left: 20px;
+}
+.valuations-page-1 .description ul li {
+  list-style-type: inherit;
+  font-size: 14px;
+}
+.valuations-page-1 .subtitle {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.valuations-page-1 .no-margin-top {
+  margin-top: 0;
+}
+.valuations-page-1 .description .title {
+  font-family: 'Montserrat Light', serif;
+  font-size: 32px;
+  margin: 0;
+}
+.valuations-page-1 .description .subtitle {
+  font-family: 'Roboto Slab Regular', serif;
+  color: var(--primary);
+  font-size: 52px;
+  margin: 0;
+  margin-top: -20px;
+}
+.valuations-page-1 .regular-description {
+  font-size: 14px;
+  margin-bottom: -5px;
+}
+.valuations-page-1 .bold {
+  font-weight: bold;
+}
+.valuations-page-1 .regular-description span {
+  font-family: 'Roboto Slab Regular', serif;
+  font-size: 16px;
+  color: var(--primary);
+  margin: 0;
+}
+.valuations-page-1 .foot-note {
+  font-size: 14px;
+  color: #1c3643;
+}
+
+/*Valuations Page 2 (Explanation) */
+.valuations-page-2 {
+  /*            margin-top: -35px */
+}
+.valuations-page-2 .description {
+  /*            margin-top: -30px */
+  margin-left: 30px;
+  margin-right: 20px;
+  /*   margin-top: -15px */
+  /*   margin-bottom: -50px */
+}
+.valuations-page-2 .description .title {
+  font-family: 'Montserrat Light', serif;
+  font-size: 32px;
+  margin: 0;
+}
+.valuations-page-2 .description .subtitle {
+  font-family: 'Roboto Slab Regular', serif;
+  color: var(--primary);
+  font-size: 52px;
+  margin: 0;
+}
+.valuations-page-2 .main-description {
+  font-size: 16px;
+  line-height: 16px;
+}
+.valuations-page-2 .regular-description {
+  font-size: 14px;
+  margin-bottom: 10px;
+  line-height: 18px;
+}
+.valuations-page-2 .regular-description span {
+  font-family: 'Roboto Slab Regular', serif;
+  font-size: 16px;
+  color: var(--primary);
+  margin: 0;
+  line-height: 50px;
+}
+.valuations-page-2 .valuation-img {
+  height: 300px;
+  width: 93%;
+  position: absolute !important;
+  right: 3%;
+  bottom: 100px;
+}
+.valuations-page-2 .valuation-img img {
+  height: 100%;
+  width: 100%;
+  object-fit: contain;
+  background-color: #e9eef1;
+}
+.valuations-page-2 small {
+  font-size: 12px;
+  line-height: 12px;
+}
+
+/*Valuations Page 3 (Income Approach) */
+.valuations_page_3 {
+  /*            margin-top: -35px */
+}
+.valuations_page_3 #map,
+.valuations_page_3 #lease_map,
+.valuations_page_3 #cap_comps_map,
+.valuations_page_3 #cost_map,
+.valuations_page_3 #multi_family_map {
+  height: 130mm;
+  pointer-events: none;
+}
+.valuations_page_3 #map .gm-style,
+.valuations_page_3 #lease_map .gm-style,
+.valuations_page_3 #cap_comps_map .gm-style,
+.valuations_page_3 #cost_map .gm-style,
+.valuations_page_3 #multi_family_map .gm-style {
+  height: 130mm;
+}
+.valuations_page_3 img {
+  object-fit: cover;
+}
+.valuations_page_3 .pad-left-10 {
+  padding-left: 10px !important;
+}
+.valuations_page_3 .description {
+  margin-top: -10px;
+  margin-left: 30px;
+  margin-right: 20px;
+  /*            margin-top: -15px
+    * *          margin-bottom: -50px */
+}
+.valuations_page_3 .description .title {
+  font-family: 'Montserrat Light', serif;
+  font-size: 32px;
+  margin: 0;
+}
+.valuations_page_3 .description .label {
+  font-family: 'Roboto Slab Regular', serif;
+  color: var(--primary);
+  font-size: 20px;
+  margin: 0;
+}
+.valuations_page_3 .description .subtitle {
+  font-family: 'Roboto Slab Regular', serif;
+  color: var(--primary);
+  font-size: 51px;
+  margin: 0;
+}
+.valuations_page_3 .description .subtitle.land-improvement-value {
+  font-size: 40px;
+}
+.valuations_page_3 .main-description {
+  font-size: 14px;
+  line-height: 16px;
+}
+.valuations_page_3 .regular-description {
+  font-size: 12px;
+  margin-bottom: 10px;
+  line-height: 15px;
+}
+.valuations_page_3 .regular-description span {
+  font-family: 'Roboto Slab Regular', serif;
+  font-size: 16px;
+  color: var(--primary);
+  margin: 0;
+}
+.valuations_page_3 .regular-description span.text {
+  color: black;
+}
+.valuations_page_3 .section-image {
+  max-width: 100%;
+  width: 100%;
+  height: 300px;
+  display: block;
+}
+.valuations_page_3 small {
+  font-size: 12px;
+  line-height: 12px;
+}
+.valuations_page_3 .type-table thead tr th {
+  font-family: 'Roboto Slab bold', serif !important;
+}
+.valuations_page_3 table {
+  width: 100%;
+}
+.valuations_page_3 table thead tr th {
+  text-align: left;
+  color: var(--primary);
+  font-family: 'Roboto Slab Thin', serif;
+  padding: 0 0 5px 0;
+}
+.valuations_page_3 table tbody tr td:first-of-type {
+  font-size: 14px;
+  text-align: left;
+}
+.valuations_page_3 table tbody tr td {
+  font-size: 14px;
+  text-align: center;
+}
+.valuations_page_3 table tbody tr td.total-sum {
+  border-bottom: 1px solid;
+}
+.valuations_page_3 table tbody tr td.percentage-cell {
+  position: relative !important;
+}
+.valuations_page_3 table tbody tr td .blue {
+  font-size: 14px;
+  color: var(--primary);
+  font-family: 'Roboto Slab Light', serif;
+}
+.valuations_page_3 table tbody tr td .background-text {
+  position: absolute;
+  top: -28px;
+  left: 0;
+  right: 0;
+  overflow: hidden;
+  font-size: 70px;
+  text-align: center;
+  color: rgba(13, 161, 199, 0.15);
+}
+.valuations_page_3 table tbody .bold {
+  font-weight: bold;
+}
+.valuations_page_3 table .odd {
+  background-color: #f1f3f4;
+}
+.valuations_page_3 table .percentage {
+  height: 50px;
+}
+.valuations_page_3 table tbody .totals {
+  color: var(--primary);
+}
+.valuations_page_3 .space-table tbody tr td:first-of-type {
+  border-left: none;
+}
+.valuations_page_3 .space-table tbody tr td {
+  border-left: 2px solid var(--primary);
+  text-align: left;
+  padding-left: 5px !important;
+}
+.valuations_page_3 .comps-table tbody tr td {
+  font-size: 12px !important;
+  border-left: 2px solid var(--primary);
+  max-width: 100px;
+}
+.valuations_page_3 .comps-table tbody tr td:first-of-type {
+  border-left: none;
+}
+.valuations_page_3 .comps-table tbody tr td.bold {
+  font-weight: bold;
+  font-family: 'Roboto Slab Bold', sans-serif !important;
+}
+.valuations_page_3 .comps-table tbody tr td.bold.mont-bold {
+  font-family: 'Montserrat Bold', serif !important;
+}
+.valuations_page_3 .comps-table tbody tr td.br {
+  padding-top: 10px !important;
+}
+.valuations_page_3 .comps-table tbody tr td.blue {
+  font-size: 12px !important;
+  color: var(--primary);
+  font-family: 'Roboto Slab Light', serif;
+  background-color: transparent !important;
+}
+.valuations_page_3 .comps-table tbody tr td.plus {
+  color: #0da1c7;
+}
+.valuations_page_3 .comps-table tbody tr td.minus {
+  color: #bd3026;
+}
+.valuations_page_3 .comps-table thead tr th {
+  text-align: center !important;
+}
+
+.comparable-table {
+  background-color: #f9f9f9;
+  margin: 5px 0 5px 0;
+}
+.comparable-table tr td {
+  text-align: left !important;
+}
+
+.comparable-info {
+  vertical-align: top;
+  padding-left: 10px !important;
+}
+
+.comparable-title {
+  color: var(--primary);
+  margin: 0;
+}
+
+.comparable-description {
+  margin: 0;
+}
+
+.comparable-number {
+  color: var(--primary);
+  font-weight: bold;
+}
+
+.sales-comparison-map {
+  width: 100%;
+  height: 85%;
+}
+
+.inline-block {
+  display: inline-block;
+}
+
+.inline-block-width {
+  float: left;
+  width: 18% !important;
+}
+
+.land-valuation-container {
+  float: left;
+  width: 75% !important;
+}
+
+.bottom-image img {
+  margin-top: 20px;
+  width: 99%;
+  height: 150px;
+  object-fit: contain;
+  background-color: #e9eef1;
+}
+
+.weighted-value table {
+  width: 100%;
+}
+.weighted-value table thead tr th {
+  text-align: left;
+  color: var(--primary);
+  font-family: 'Roboto Slab Thin', serif;
+  padding-left: 0;
+  padding-bottom: 0;
+}
+.weighted-value table tbody tr td {
+  font-size: 14px;
+  padding-left: 5px !important;
+}
+.weighted-value table tbody tr td.has-border {
+  border-left: 1px solid var(--primary);
+}
+.weighted-value table tbody tr td.has-underline {
+  text-decoration: underline;
+  text-decoration-color: var(--primary);
+}
+.weighted-value table tbody tr td.has-bottom-border {
+  border-bottom: 1px solid var(--primary);
+}
+.weighted-value table tbody tr .blue {
+  font-size: 14px;
+  color: var(--primary);
+  font-family: 'Roboto Slab Light', serif;
+  background-color: transparent !important;
+}
+.weighted-value table tbody .bold {
+  font-weight: bold;
+}
+.weighted-value table .odd {
+  background-color: #f1f3f4;
+}
+.weighted-value table tbody .totals {
+  color: var(--primary);
+}
+.weighted-value .weighted-total-table tbody tr td.br {
+  padding-top: 20px !important;
+}
+.weighted-value .weighted-total-table tbody .mid {
+  width: 25%;
+}
+.weighted-value .weighted-total-table tbody .right-align {
+  text-align: right;
+}
+.weighted-value .weighted-total-table tbody .left-align {
+  text-align: left;
+}
+.weighted-value .weighted-total-table tbody .padding-left {
+  padding-left: 20px !important;
+}
+.weighted-value .weighted-total-table tbody hr {
+  color: lightgrey;
+  background-color: lightgrey;
+  border: transparent;
+  height: 0.5px;
+}
+
+/*Business Properties */
+.business-properties {
+  /*            margin-top: -15px
+    * *          margin-bottom: -50px */
+  /*            margin-top: -15px
+    * *          margin-bottom: -50px */
+  /*            margin-top: -35px */
+}
+.business-properties .description {
+  /*       margin-top: -30px */
+  margin-left: 80px;
+  margin-right: 20px;
+  float: left;
+  width: 50%;
+}
+.business-properties .left {
+  /*       margin-top: -30px */
+  margin-left: 20px !important;
+  margin-right: 20px;
+  float: left;
+  width: 70%;
+}
+.business-properties .description .no-margin {
+  margin: 0;
+}
+.business-properties .description .title {
+  font-family: 'Roboto Slab Regular', serif;
+  font-size: 36px;
+  margin: 0;
+}
+.business-properties .description p {
+  font-size: 12px;
+}
+.business-properties .description p.main-description {
+  font-size: 14px;
+}
+.business-properties .left .title {
+  font-family: 'Roboto Slab Regular', serif;
+  font-size: 36px;
+  margin: 0;
+}
+.business-properties .description .subtitle,
+.business-properties .left .subtitle {
+  font-family: 'Montserrat Light', serif;
+  color: var(--primary);
+  font-size: 24px;
+  margin: 0;
+}
+.business-properties .main-description {
+  font-family: 'Roboto Slab Regular', serif;
+  font-size: 16px;
+  color: var(--primary);
+  line-height: 16px;
+}
+.business-properties .single-description {
+  font-family: 'Roboto Slab Regular', serif;
+  font-size: 16px;
+  color: #1c3643;
+  text-decoration: underline;
+  font-weight: bold;
+  line-height: 16px;
+}
+.business-properties .regular-description {
+  font-size: 14px;
+  margin-bottom: 10px;
+  line-height: 14px;
+}
+.business-properties .regular-description span {
+  font-family: 'Roboto Slab Regular', serif;
+  font-size: 16px;
+  color: var(--primary);
+  margin: 0;
+}
+.business-properties .description-right {
+  float: left;
+  width: 20%;
+  padding-top: 10%;
+}
+.business-properties .description-right .property-zoning-title {
+  font-family: 'Roboto Slab Regular', serif;
+  font-size: 16px;
+  color: var(--primary);
+  margin: 0;
+}
+.business-properties .description-right .property-zoning-description {
+  font-family: 'Montserrat Regular', serif;
+  font-size: 12px;
+  color: #000000;
+  margin-top: 0;
+  text-align: justify;
+}
+.business-properties .description-right .property-zoning-section {
+  background-color: #f1f3f4;
+  padding-left: 15px !important;
+  padding-right: 15px !important;
+  padding-top: 15px !important;
+  padding-bottom: 15px !important;
+}
+.business-properties .description-right .property-zoning-section p {
+  font-size: 12px;
+}
+.business-properties
+  .description-right
+  .property-zoning-section
+  p.property-zoning-title {
+  font-size: 14px;
+}
+.business-properties .profile-image img {
+  position: absolute;
+  top: 65px;
+  left: 90px;
+}
+.business-properties table {
+  width: 100%;
+}
+.business-properties table thead tr th {
+  text-align: left;
+  color: var(--primary);
+  font-family: 'Roboto Slab Thin', serif;
+}
+.business-properties table tbody tr td {
+  font-size: 14px;
+  padding: 5px !important;
+  width: 70%;
+  word-break: break-word;
+}
+.business-properties table tbody .bold {
+  font-weight: bold;
+}
+.business-properties table .odd {
+  background-color: #f1f3f4;
+}
+.business-properties table tbody .totals {
+  color: var(--primary);
+}
+
+.deco-image {
+  float: left;
+  width: 25%;
+  height: 90%;
+  position: absolute;
+  top: 162px;
+  right: 30px;
+}
+.deco-image img {
+  height: 80%;
+  width: 100%;
+}
+
+.new-page .assumption-description {
+  width: 95%;
+  margin-top: -40px;
+}
+
+.image-container {
+  position: relative;
+  text-align: center;
+  color: white;
+}
+
+.image-label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.ql-container {
+  height: 200px !important;
+}
+
+.text-input-label {
+  font-size: 1.1rem;
+  color: #000000;
+}
+
+.overlay {
+  width: 100%;
+  height: 100%;
+  display: inline-block;
+  left: 0;
+  z-index: 100;
+  background-color: #cececeb0;
+  position: absolute;
+  top: 0;
+  text-align: center;
+  font-weight: bold;
+  font-size: 18px;
+  padding: inherit;
+}
+
+#arrows {
+  overflow: hidden;
+  height: 400px !important;
+  width: 350px !important;
+}
+
+#arrow-carousel {
+  height: 300px !important;
+  width: 300px !important;
+}
+
+strong {
+  font-weight: bold !important;
+}
+
+#map {
+  height: 170mm;
+}
+#map .gm-style {
+  height: 170mm;
+}
+#map img {
+  max-width: none !important;
+}
+
+.popup .row {
+  margin-bottom: 0;
+}
+.popup .row img {
+  width: 150px;
+  height: 100px;
+  object-fit: cover;
+}
+.popup .row p {
+  margin: 0;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-size: 14px;
+  width: 150px;
+}
+
+.popup-tip-anchor {
+  height: 0;
+  position: absolute;
+  /* The max width of the info window. */
+  width: 200px;
+}
+
+/* The bubble is anchored above the tip. */
+.popup-bubble-anchor {
+  position: absolute;
+  width: 100%;
+  bottom: 8px;
+  left: 0;
+}
+.popup-bubble-anchor::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  /* Center the tip horizontally. */
+  transform: translate(-50%, 0);
+  /* The tip is a https://css-tricks.com/snippets/css/css-triangle/ */
+  width: 0;
+  height: 0;
+  /* The tip is 8px high, and 12px wide. */
+  border-left: 6px solid transparent;
+  border-right: 6px solid transparent;
+  border-top: 8px solid white;
+}
+
+/* Draw the tip. */
+/* The popup bubble itself. */
+.popup-bubble-content {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform: translate(-50%, -100%);
+  /* Style the info window. */
+  background-color: white;
+  padding: 5px;
+  border-radius: 5px;
+  font-family: sans-serif;
+  overflow-y: auto;
+  max-height: 260px;
+  box-shadow: 0px 2px 10px 1px rgba(0, 0, 0, 0.5);
+}
+
+.type-table tbody tr td {
+  text-align: left !important;
+  border-left: 2px solid var(--primary);
+  padding-left: 5px !important;
+}
+.type-table tbody tr td:first-of-type {
+  border-left: none;
+}
+
+.improvements-table tbody tr td {
+  padding-left: 5px !important;
+  text-align: left !important;
+  border-left: 2px solid var(--primary);
+}
+.improvements-table tbody tr td.blue {
+  color: var(--primary);
+  background-color: transparent !important;
+}
+.improvements-table tbody tr td.underline {
+  text-decoration: underline !important;
+}
+.improvements-table tbody tr td:first-of-type {
+  border-left: none;
+}
+
+.images-cost-approach-table img {
+  object-fit: cover;
+  background-color: #e9eef1;
+  width: 100%;
+}
+
+.exhibits-image {
+  height: 550px;
+  max-width: 1040px;
+}
+
+#exhibits {
+  width: 700px !important;
+  height: 490px !important;
+}
+#exhibits .modal-content {
+  padding: 10px;
+}
+
+.carousel {
+  height: 400px !important;
+}
+.carousel .carousel-item {
+  min-height: 100% !important;
+  background-color: #dedede;
+  padding: 5px;
+  border: 5px solid #fafafa;
+  text-align: center;
+}
+.carousel .carousel-item img {
+  max-height: 380px;
+  max-width: 600px;
+  width: unset !important;
+}
+
+#print-bov {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  margin-right: 40px;
+  margin-bottom: 40px;
+}
+#print-bov .btn {
+  background-color: var(--primary);
+  border-radius: 40px;
+  height: 80px;
+}
+
+.fixed-action-btn {
+  position: relative !important;
+  right: auto !important;
+  bottom: auto !important;
+  padding-top: 0 !important;
+  margin-bottom: auto !important;
+  z-index: auto !important;
+}
+.fixed-action-btn ul {
+  left: auto !important;
+  right: auto !important;
+  text-align: center !important;
+  position: absolute !important;
+  bottom: auto !important;
+  margin: auto !important;
+  margin-left: 0 !important;
+  width: 100%;
+  padding-top: 25px;
+}
+.fixed-action-btn ul li {
+  display: inline-block;
+}
+
+strong.salesminus {
+  color: #bd3026;
+}
+
+strong.salesplus {
+  color: #0da1c7;
+}
+
+#arialmap {
+  height: 150mm;
+  width: 100%;
+  pointer-events: none;
+}
+
+.pdf-png-row .subtitle {
+  font-size: 30px !important;
+  text-overflow: ellipsis;
+  width: 730px;
+  line-height: 48px;
+}
+.pdf-png-row .pdf-png-section {
+  width: calc(100% - 50px);
+  height: calc(100% - 130px);
+}
+.pdf-png-row .pdf-png-section .flex {
+  display: flex;
+  justify-content: space-between;
+  height: 100%;
+  align-items: flex-start;
+}
+.pdf-png-row .pdf-png-section .flex .portrait {
+  max-width: 50% !important;
+  width: auto !important;
+  height: auto !important;
+  border: 1px solid #ccc;
+  padding: 1px;
+  max-height: 100% !important;
+}
+.pdf-png-row .pdf-png-section .flex .landscape {
+  width: 100% !important;
+  height: auto !important;
+  max-height: 100% !important;
+  border: 1px solid #ccc;
+  padding: 2px;
+}
+.pdf-png-row .pdf-png-section .flex .square {
+  height: 100%;
+  width: auto;
+}
+
+.cap-rate-table .net-operating-row b {
+  font-family: 'Montserrat Bold';
+}
+.cap-rate-table td {
+  border: none !important;
+}
+
+.new-page.pdf-png-row .description .regular-description strong {
+  font-family: 'Montserrat Bold';
+}
+
+td.property-des-block {
+  margin-top: 30px;
+  display: block;
+  min-height: 490px;
+  margin-bottom: 10px;
+}
+
+.property-summary .description-right .title-image-container .middle-fixed-img {
+  width: 375px;
+  height: 275px;
+  margin-bottom: 10px;
+}
+
+body.theme-blue-default span.red-stylish-dec {
+  color: var(--primary) !important;
+  font-family: 'Roboto Slab Regular', serif;
+}
+
+span.red-stylish-dec {
+  display: inline-block;
+  font-size: 24px;
+  line-height: 22px;
+  margin-bottom: 10px;
+  font-weight: 600;
+}
+
+.property-summary .description-left .ft-size-20 {
+  font-size: 23px;
+  font-family: 'Montserrat Regular', serif;
+}
+
+body.theme-nai .red-styl-font.mb-remove,
+body.theme-blue-default .red-styl-font.mb-remove {
+  margin-top: 0;
+}
+
+body.theme-blue-default .red-styl-font {
+  font-size: 20px;
+  font-family: 'Roboto Slab Regular', serif;
+  margin-top: 18px;
+}
+
+td.property-description-right.vlign-tp {
+  vertical-align: top;
+  margin-top: 18px;
+  display: inline-block;
+}
+
+.property-description-right .contant-list-ft-12,
+.property-description .contant-list-ft-12 {
+  font-size: 12px;
+}
+
+.property-summary .description-left .property-zoning-section {
+  background-color: #dedede !important;
+}
+
+div.horizontal_dotted_line {
+  width: auto;
+  display: flex;
+}
+
+span.dot {
+  flex: 1;
+  height: 1em;
+}
+
+.executive-summary-item {
+  display: inline-block;
+  max-width: 260px;
+  width: 100%;
+  font-weight: bold;
+}
+
+ul.leaders {
+  max-width: 37em;
+  padding: 0;
+  overflow-x: hidden;
+  list-style: none;
+  margin: 0px;
+}
+ul.leaders li {
+  margin: 16px 0px;
+}
+ul.leaders li:before {
+  float: left;
+  width: 0;
+  white-space: nowrap;
+  content: '..................................................................................';
+}
+ul.leaders span:first-child {
+  padding-right: 0.33em;
+  background: white;
+  margin-left: 0px !important;
+  float: none !important;
+}
+ul.leaders span + span {
+  float: right;
+  padding-left: 0.33em;
+  background: white;
+  padding-top: 0.1em;
+}
+
+.property-summary .bottom-table .pt-0-blank {
+  padding-top: 0;
+  width: 1125px;
+  margin-top: 20px;
+}
+
+.property-summary .top-table .mb-bottom-block {
+  margin-bottom: 20px;
+}
+
+.no-block-space {
+  padding: 0 !important;
+}
+
+.extra-pd-10 {
+  padding: 10px;
+}
+
+.floating-extra-pd-10 {
+  padding: 10px;
+  right: 20px;
+}
+
+.property-summary .description-left .ft-size-20 {
+  font-family: 'Montserrat Light', serif;
+  letter-spacing: 0.1px;
+  font-size: 22px !important;
+}
+
+span.red-stylish-dec {
+  letter-spacing: 0.1px;
+  line-height: 15px;
+  font-weight: 300;
+  font-size: 23px;
+}
+
+.property-description .label-right-side.text-lbl-left {
+  text-align: left;
+}
+
+.property-zoning-description-div {
+  font-size: 12px;
+}
+
+.truncate-overflow {
+  position: relative;
+  overflow: hidden;
+}
+
+.truncate-overflow-text::before {
+  position: absolute;
+  content: '...';
+  right: 0;
+  bottom: 0;
+}
+
+.label-right-side.contant-list-ft-12.text-lbl-left {
+  min-width: 58px;
+}
+
+.property-description .content-right-side {
+  font-family: inherit;
+  text-align: unset;
+  padding-left: 3px;
+}
+
+.comps-modal-table tbody tr td,
+.evals-modal-table tbody tr td {
+  font-size: 12px;
+  border-left: 2px solid var(--primary);
+}
+.comps-modal-table tbody tr td:first-of-type,
+.evals-modal-table tbody tr td:first-of-type {
+  border-left: none;
+}
+.comps-modal-table tbody tr td.bold,
+.evals-modal-table tbody tr td.bold {
+  font-weight: bold;
+  font-family: 'Roboto Slab Bold', serif !important;
+}
+.comps-modal-table tbody tr td.bold.mont-bold,
+.evals-modal-table tbody tr td.bold.mont-bold {
+  font-family: 'Montserrat Bold', serif !important;
+}
+.comps-modal-table tbody tr td.br,
+.evals-modal-table tbody tr td.br {
+  padding-top: 10px !important;
+}
+.comps-modal-table tbody tr td.blue,
+.evals-modal-table tbody tr td.blue {
+  font-size: 12px;
+  color: var(--primary);
+  font-family: 'Roboto Slab Light', serif;
+  background-color: transparent !important;
+}
+.comps-modal-table tbody tr td.plus,
+.evals-modal-table tbody tr td.plus {
+  color: var(--primary);
+}
+.comps-modal-table tbody tr td.minus,
+.evals-modal-table tbody tr td.minus {
+  color: #bd3026;
+}
+.comps-modal-table thead tr th,
+.evals-modal-table thead tr th {
+  text-align: center !important;
+}
+
+td.noBorder {
+  border: none !important;
+}
+
+.fix-line-height {
+  line-height: 26px !important;
+}
+
+.traffic-label {
+  font-size: 12px;
+}
+
+.side_graphic .section-image {
+  height: 100% !important;
+}
+.side_graphic .description {
+  margin-top: 0 !important;
+  float: left;
+  width: 75%;
+}
+
+.sloganIcon {
+  position: relative;
+  font-size: 20px;
+  color: #fff;
+  height: 60px;
+  display: flex;
+  justify-content: flex-start;
+}
+.sloganIcon img {
+  position: relative;
+  right: -27px;
+  z-index: 999;
+  height: 70px;
+  width: 30px;
+  top: -8px;
+}
+.sloganIcon .sloganWrapper {
+  position: relative;
+  z-index: 99;
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  min-height: 60px;
+  background-color: var(--primary);
+  padding: 0 15px 0 40px;
+  width: 100%;
+}
+
+.sloganIcon h2 {
+  font-size: 20px;
+  color: #ffffff;
+  margin: 0;
+}
+.sloganIcon p {
+  font-size: 15px;
+  color: #ffffff;
+  margin: 0;
+}
+
+.valuations_page_3 .regular-description-res {
+  font-size: 13px;
+  margin-bottom: 0px !important;
+  line-height: 13px;
+  margin-top: 0px !important;
+}
+.valuations_page_3 table thead tr th {
+  padding: 0 0 0 0 !important;
+  font-size: 13px;
+}
+
+.nots {
+  color: var(--primary) !important;
+  font-family: 'Roboto Slab Regular', serif;
+  font-size: 16px;
+}
+
+.zoning_text {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.regular-description span.income_type {
+  font-size: 14px !important;
+}
+.regular-description span.income_text {
+  font-size: 14px !important;
+}
+
+body.theme-nai {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai .page-header svg polygon,
+body.theme-nai .preface-header svg polygon {
+  fill: var(--primary);
+}
+body.theme-nai .report-page-footer span {
+  color: var(--primary);
+}
+body.theme-nai .cover-header .cover-title {
+  color: var(--primary);
+}
+body.theme-nai .cover-image .item.harken-blue {
+  background-color: var(--primary);
+}
+body.theme-nai .cover-image .item.mid-blue {
+  background-color: var(--secondary);
+}
+body.theme-nai .cover-image .item.dark-blue {
+  background-color: var(--tertiary);
+}
+body.theme-nai .cover-image .triangle.harken-blue {
+  border-top-color: var(--primary);
+}
+body.theme-nai .cover-image .triangle.mid-blue {
+  border-top-color: var(--secondary);
+}
+body.theme-nai .cover-image .triangle.dark-blue {
+  border-top-color: var(--tertiary);
+}
+body.theme-nai .cover-footer .cover-right .cover-user-name {
+  color: var(--primary);
+}
+body.theme-nai .cover-footer .cover-right .cover-user-name i {
+  color: var(--primary);
+}
+body.theme-nai .table-of-contents .index .index-item .number {
+  color: var(--primary);
+}
+body.theme-nai .evaluation-engagement-letter .email-greeting {
+  color: var(--primary);
+}
+body.theme-nai .evaluation-engagement-letter .letter-logo {
+  background-image: url('../../../../../assets/img/report/themes/logo-nai.png');
+}
+body.theme-nai .executive-summary .description .subtitle {
+  color: var(--primary);
+}
+body.theme-nai .executive-summary .body .left .subtitle {
+  color: var(--primary);
+}
+body.theme-nai .section-area .section-image {
+  background-color: var(--tertiary);
+}
+body.theme-nai .property-summary .overview-body .title {
+  color: var(--primary);
+}
+body.theme-nai
+  .property-summary
+  .overview-body
+  .top-table-container
+  .label-left-side {
+  color: var(--primary);
+}
+body.theme-nai .property-summary .overview-body .bottom-title .label-left-side {
+  color: var(--primary);
+}
+body.theme-nai
+  .property-summary
+  .overview-body
+  .bottom-table-container
+  .bottom-right-table-container {
+  border-left: 1px solid var(--primary);
+}
+body.theme-nai
+  .property-summary
+  .details-body
+  .top-table
+  .details-area
+  .section-title {
+  color: var(--primary);
+}
+body.theme-nai
+  .property-summary
+  .details-body
+  .top-table
+  .details-area
+  .footnote {
+  color: var(--primary);
+}
+body.theme-nai .property-summary .top-table .section-title {
+  color: var(--primary);
+}
+body.theme-nai .section-title {
+  color: white;
+}
+body.theme-nai .valuations_page_3 .space-table tbody tr td,
+body.theme-nai .valuations_page_3 .comps-table tbody tr td,
+body.theme-nai .type-table tbody tr td,
+body.theme-nai .improvements-table tbody tr td,
+body.theme-nai .improvements-table tbody tr td,
+body.theme-nai .weighted-value table tbody tr td {
+  border-left-color: var(--primary);
+}
+body.theme-nai .valuations_page_3 .space-table tbody tr td.has-border,
+body.theme-nai .valuations_page_3 .comps-table tbody tr td.has-border,
+body.theme-nai .type-table tbody tr td.has-border,
+body.theme-nai .improvements-table tbody tr td.has-border,
+body.theme-nai .improvements-table tbody tr td.has-border,
+body.theme-nai .weighted-value table tbody tr td.has-border {
+  border-left-color: var(--primary);
+}
+body.theme-nai .valuations_page_3 .space-table tbody tr td.has-bottom-border,
+body.theme-nai .valuations_page_3 .comps-table tbody tr td.has-bottom-border,
+body.theme-nai .type-table tbody tr td.has-bottom-border,
+body.theme-nai .improvements-table tbody tr td.has-bottom-border,
+body.theme-nai .improvements-table tbody tr td.has-bottom-border,
+body.theme-nai .weighted-value table tbody tr td.has-bottom-border {
+  border-bottom-color: var(--primary);
+}
+body.theme-nai .valuations_page_3 .space-table tbody tr td.has-underline,
+body.theme-nai .valuations_page_3 .comps-table tbody tr td.has-underline,
+body.theme-nai .type-table tbody tr td.has-underline,
+body.theme-nai .improvements-table tbody tr td.has-underline,
+body.theme-nai .improvements-table tbody tr td.has-underline,
+body.theme-nai .weighted-value table tbody tr td.has-underline {
+  text-decoration-color: var(--primary);
+}
+body.theme-nai .valuations_page_3 .space-table tbody tr td.blue,
+body.theme-nai .valuations_page_3 .comps-table tbody tr td.blue,
+body.theme-nai .type-table tbody tr td.blue,
+body.theme-nai .improvements-table tbody tr td.blue,
+body.theme-nai .improvements-table tbody tr td.blue,
+body.theme-nai .weighted-value table tbody tr td.blue {
+  color: var(--primary);
+  background-color: transparent !important;
+}
+body.theme-nai .comps-table tbody tr:nth-child(1) td {
+  white-space: normal;
+}
+body.theme-nai .valuations-page-1 .description .subtitle,
+body.theme-nai .valuations-page-2 .description .subtitle,
+body.theme-nai .valuations_page_3 .description .subtitle {
+  color: var(--primary);
+}
+body.theme-nai .valuations-page-1 .regular-description span,
+body.theme-nai .valuations-page-2 .regular-description span,
+body.theme-nai .valuations_page_3 .regular-description span {
+  color: var(--primary);
+}
+body.theme-nai .valuations-page-1 .regular-description span.text,
+body.theme-nai .valuations-page-2 .regular-description span.text,
+body.theme-nai .valuations_page_3 .regular-description span.text {
+  color: black;
+}
+body.theme-nai .valuations-page-1 table thead tr th,
+body.theme-nai .valuations-page-2 table thead tr th,
+body.theme-nai .valuations_page_3 table thead tr th {
+  color: var(--primary);
+}
+body.theme-nai .valuations-page-1 table tbody .totals,
+body.theme-nai .valuations-page-2 table tbody .totals,
+body.theme-nai .valuations_page_3 table tbody .totals {
+  color: var(--primary);
+}
+body.theme-nai .valuations-page-1 table tbody tr td .background-text,
+body.theme-nai .valuations-page-2 table tbody tr td .background-text,
+body.theme-nai .valuations_page_3 table tbody tr td .background-text {
+  color: rgba(var(--primary), 0.15);
+}
+body.theme-nai .comparable-number,
+body.theme-nai .comparable-title {
+  color: var(--primary);
+}
+body.theme-nai .business-properties .description .subtitle,
+body.theme-nai .business-properties .left .subtitle {
+  color: var(--primary);
+}
+body.theme-nai .business-properties .main-description {
+  color: var(--primary);
+}
+body.theme-nai #print-bov .btn {
+  background-color: var(--primary);
+}
+body.theme-nai #print-bov .btn:hover {
+  background-color: var(--primary);
+}
+
+body.theme-nai p,
+body.theme-nai a {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai h1,
+body.theme-nai h2,
+body.theme-nai h3,
+body.theme-nai h4,
+body.theme-nai h5,
+body.theme-nai h6 {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai .preface-header .section-name {
+  font-family: 'Centennial LT W05_56 Black';
+}
+body.theme-nai .page-header .section-name {
+  font-family: 'Helvetica Neue LT W05 75 Bold';
+}
+body.theme-nai .page-header .section-title {
+  font-family: 'Centennial LT W05_56 Black';
+}
+body.theme-nai .h1 {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai .cover-header .cover-title {
+  font-family: 'Centennial LT W05_75 Bold';
+}
+body.theme-nai .cover-footer .cover-right .cover-user-name {
+  font-family: 'Helvetica Neue LT W05 75 Bold';
+}
+body.theme-nai .cover-footer .cover-right i {
+  font-family: 'Helvetica Neue LT W05 46 Lt It';
+}
+body.theme-nai .cover-footer .cover-business-name {
+  font-family: 'Helvetica Neue LT W05 75 Bold';
+}
+body.theme-nai .cover-footer .cover-email {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai .table-of-contents .index .index-item .index-number {
+  font-family: 'Helvetica Neue LT W05 75 Bold';
+}
+body.theme-nai .table-of-contents .index .number {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai .table-of-contents .index .index-text .section-text-one {
+  font-family: 'Helvetica Neue LT W05 75 Bold';
+}
+body.theme-nai .evaluation-engagement-letter .email-header {
+  font-family: 'Helvetica Neue LT W05 75 Bold';
+}
+body.theme-nai .executive-summary .body .title {
+  font-family: 'Helvetica Neue LT W05 55 Roman';
+}
+body.theme-nai .executive-summary .body .left .subtitle {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai .executive-summary .body .left .item {
+  font-family: 'Helvetica Neue LT W05 75 Bold';
+}
+body.theme-nai .executive-summary .body .left .item-description {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai .executive-summary .body .left .key-highlights {
+  font-family: 'Helvetica Neue LT W05 55 Roman';
+}
+body.theme-nai .executive-summary .body .left .highlights-list p {
+  font-family: 'Helvetica Neue LT W05 55 Roman';
+}
+body.theme-nai .executive-summary .body .left .highlight-item {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai .executive-summary .body .bottom .summary-content {
+  font-family: 'Helvetica Neue LT W05 55 Roman';
+}
+body.theme-nai .executive-summary .description .title {
+  font-family: 'Helvetica Neue LT W05 55 Roman';
+}
+body.theme-nai .valuations-page-1 .description .title {
+  font-family: 'Helvetica Neue LT W05 55 Roman';
+}
+body.theme-nai .executive-summary .description .subtitle,
+body.theme-nai .valuations-page-1 .description .subtitle {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai .executive-summary .description .main-description {
+  font-family: 'Helvetica Neue LT W05 75 Bold';
+}
+body.theme-nai .executive-summary .description .extra-description {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai .executive-summary .description .main-description_p {
+  font-family: 'Helvetica Neue LT W05 45 Light' !important;
+}
+body.theme-nai .executive-summary .description .main-description_p span {
+  font-family: 'Centennial LT W05_55 Roman' !important;
+  font-size: 16px !important;
+  color: var(--primary) !important;
+}
+body.theme-nai .property-summary .overview-body .title {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai
+  .property-summary
+  .overview-body
+  .top-table-container
+  .label-left-side {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai .property-summary .overview-body .content-left-side {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai .property-summary .overview-body .label-right-side {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai .property-summary .overview-body .content-right-side {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai .property-summary .overview-body .bottom-title .label-left-side {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai
+  .property-summary
+  .overview-body
+  .bottom-table-container
+  .bottom-left-first-table-container
+  .label-bottom {
+  font-family: 'Helvetica Neue LT W05 75 Bold';
+}
+body.theme-nai
+  .property-summary
+  .overview-body
+  .bottom-table-container
+  .bottom-left-second-table-container
+  .label-bottom,
+body.theme-nai
+  .property-summary
+  .overview-body
+  .bottom-table-container
+  .bottom-right-table-container
+  .label-bottom {
+  font-family: 'Helvetica Neue LT W05 75 Bold';
+}
+body.theme-nai
+  .property-summary
+  .overview-body
+  .bottom-table-container
+  .bottom-left-first-table-container
+  .value-bottom,
+body.theme-nai
+  .property-summary
+  .overview-body
+  .bottom-table-container
+  .bottom-left-second-table-container
+  .value-bottom,
+body.theme-nai
+  .property-summary
+  .overview-body
+  .bottom-table-container
+  .bottom-right-table-container
+  .value-bottom {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai .property-summary .description-left .property-zoning-title {
+  font-family: 'Helvetica Neue LT W05 75 Bold';
+}
+body.theme-nai
+  .property-summary
+  .description-left
+  .property-zoning-description {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai .section-title {
+  font-family: 'Centennial LT W05_56 Black';
+}
+body.theme-nai .property-description .label-right-side {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai .property-description .content-right-side {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai .property-description-right .label-right-side {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai .property-description-right .content-right-side {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai .property-summary .top-table .info-title {
+  font-family: 'Helvetica Neue LT W05 55 Roman';
+}
+body.theme-nai .property-summary .top-table .section-title {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai .property-summary .top-table .area-info {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai
+  .property-summary
+  .details-body
+  .top-table
+  .details-area
+  .section-title {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai
+  .property-summary
+  .details-body
+  .top-table
+  .details-area
+  .section-subtitle {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai
+  .property-summary
+  .details-body
+  .top-table
+  .details-area
+  .property-label {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai
+  .property-summary
+  .details-body
+  .top-table
+  .details-area
+  .property-value {
+  font-family: 'Helvetica Neue LT W05 75 Bold';
+}
+body.theme-nai
+  .property-summary
+  .details-body
+  .top-table
+  .details-area
+  .footnote {
+  font-family: 'Helvetica Neue LT W05 46 Lt It';
+}
+body.theme-nai .valuations-page-1 .description .title {
+  font-family: 'Helvetica Neue LT W05 55 Roman';
+}
+body.theme-nai .valuations-page-1 .description .subtitle {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai .valuations-page-1 .regular-description span {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai .valuations-page-2 .description .title {
+  font-family: 'Helvetica Neue LT W05 55 Roman';
+}
+body.theme-nai .valuations-page-2 .description .subtitle {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai .valuations-page-2 .regular-description span {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai .valuations_page_3 .description .title {
+  font-family: 'Helvetica Neue LT W05 55 Roman';
+}
+body.theme-nai .valuations_page_3 .description .subtitle {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai .valuations_page_3 .regular-description span {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai .valuations_page_3 .regular-description span.text {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai .valuations_page_3 table thead tr th {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai .valuations_page_3 table tbody tr td:first-of-type {
+  font-size: 14px;
+  text-align: left;
+}
+body.theme-nai .valuations_page_3 table tbody tr td {
+  font-size: 14px;
+}
+body.theme-nai .valuations_page_3 table tbody tr td .blue {
+  font-family: 'Centennial LT W05_56 Black';
+}
+body.theme-nai .valuations_page_3 .comps-table tbody tr td:first-of-type {
+  border-left: none;
+}
+body.theme-nai .valuations_page_3 .comps-table tbody tr td.bold {
+  font-family: 'Helvetica Neue LT W05 75 Bold' !important;
+}
+body.theme-nai .valuations_page_3 .comps-table tbody tr td.bold.mont-bold {
+  font-family: 'Helvetica Neue LT W05 75 Bold', serif !important;
+}
+body.theme-nai .valuations_page_3 .comps-table tbody tr td.blue {
+  font-family: 'Centennial LT W05_56 Black';
+}
+body.theme-nai .weighted-value table thead tr th {
+  font-family: 'Centennial LT W05_45 Light';
+}
+body.theme-nai .business-properties .description .title {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai .business-properties .left .title {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai .business-properties .description .subtitle,
+body.theme-nai .business-properties .left .subtitle {
+  font-family: 'Helvetica Neue LT W05 55 Roman';
+}
+body.theme-nai .business-properties .main-description {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai .business-properties .single-description {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai .business-properties .regular-description span {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai .business-properties .description-right .property-zoning-title {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai
+  .business-properties
+  .description-right
+  .property-zoning-description {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai .business-properties table thead tr th {
+  font-family: 'Centennial LT W05_45 Light';
+}
+body.theme-nai .cap-rate-table .net-operating-row b {
+  font-family: 'Helvetica Neue LT W05 75 Bold';
+}
+body.theme-nai .new-page.pdf-png-row .description .regular-description strong {
+  font-family: 'Helvetica Neue LT W05 75 Bold';
+}
+body.theme-nai span.red-stylish-dec {
+  font-family: 'Centennial LT W05_55 Roman';
+  color: var(--primary) !important;
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai .property-summary .description-left .ft-size-20 {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai .red-styl-font {
+  color: var(--primary) !important;
+  font-size: 20px;
+  font-family: 'Centennial LT W05_55 Roman';
+  margin-top: 18px;
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai .property-summary .description-left .ft-size-20 {
+  font-family: 'Helvetica Neue LT W05 55 Roman';
+}
+body.theme-nai .comps-modal-table tbody tr td {
+  font-size: 12px;
+  border-left: 2px solid #0da1c7;
+}
+body.theme-nai .comps-modal-table tbody tr td:first-of-type {
+  border-left: none;
+}
+body.theme-nai .comps-modal-table tbody tr td.bold {
+  font-weight: bold;
+  font-family: 'Helvetica Neue LT W05 75 Bold' !important;
+}
+body.theme-nai .comps-modal-table tbody tr td.bold.mont-bold {
+  font-family: 'Helvetica Neue LT W05 75 Bold' !important;
+}
+body.theme-nai .comps-modal-table tbody tr td.blue {
+  font-family: 'Centennial LT W05_56 Black';
+}
+
+.description table tr .amount-col {
+  width: 120px;
+}
+.description table tr .amount-gross-col {
+  width: 125px;
+}
+.description table tr .type-col {
+  width: 300px;
+}
+.description table tr .amount-sf-col {
+  width: 100px;
+}
+.description table tr td .text-col {
+  display: inline-block;
+  width: 165px;
+  text-align: right;
+  padding-right: 10px;
+}
+.description table tr td .text-col:first-letter {
+  float: left;
+}
+.description table tr:nth-last-child(2) td .text-col {
+  border-bottom: 1px solid;
+}
+.description table tr:nth-last-child(2) .gross-border {
+  text-decoration: none;
+}
+.description table tr:nth-last-child(2) .gross-border span {
+  border-bottom: 1px solid;
+}
+
+.property-summary .fixed-action-btn .btn-floating img {
+  width: 100%;
+}
+
+#map-landmarks {
+  margin-top: 10px;
+  padding: 10px;
+  display: flex;
+  border: 0.5px solid #bdbdbd;
+}
+#map-landmarks .label {
+  margin-right: 2px;
+  font-weight: bold;
+  padding-top: 4px;
+}
+#map-landmarks .map-landmark {
+  display: flex;
+  width: 100%;
+}
+#map-landmarks .map-landmark .el {
+  width: 33.33%;
+  display: inline-block;
+  border-right: 1px solid #e7e7e7;
+  padding-right: 5px;
+  padding-left: 5px;
+}
+#map-landmarks .map-landmark .list {
+  width: 100%;
+  display: flex;
+  font-size: 12px;
+  line-height: 26px;
+  align-items: flex-start;
+}
+#map-landmarks .map-landmark .list strong {
+  white-space: nowrap;
+}
+#map-landmarks .map-landmark .list .ellip {
+  margin-left: 5px;
+  word-break: break-word;
+}
+#map-landmarks .map-landmark .list .img {
+  max-width: 35px;
+  text-align: center;
+  display: inline-flex;
+  padding: 4px 2px;
+  margin-right: 2px;
+}
+#map-landmarks .map-landmark .list .img img {
+  width: auto;
+  max-height: 18px;
+}
+#map-landmarks .map-landmark .list.subject-text .img {
+  width: 23px;
+  margin-left: -3px;
+  margin-right: 0;
+}
+
+body.theme-stockman .page-header svg polygon,
+body.theme-stockman .preface-header svg polygon {
+  fill: var(--primary);
+}
+body.theme-stockman .report-page-footer span {
+  color: var(--primary);
+}
+body.theme-stockman .cover-header .cover-title {
+  color: var(--primary);
+}
+body.theme-stockman .cover-image .item.harken-blue {
+  background-color: var(--primary);
+}
+body.theme-stockman .cover-image .item.mid-blue {
+  background-color: var(--secondary);
+}
+body.theme-stockman .cover-image .item.dark-blue {
+  background-color: var(--tertiary);
+}
+body.theme-stockman .cover-image .triangle.harken-blue {
+  border-top-color: var(--primary);
+}
+body.theme-stockman .cover-image .triangle.mid-blue {
+  border-top-color: var(--secondary);
+}
+body.theme-stockman .cover-image .triangle.dark-blue {
+  border-top-color: var(--tertiary);
+}
+body.theme-stockman .cover-footer .cover-right .cover-user-name {
+  color: var(--primary);
+}
+body.theme-stockman .cover-footer .cover-right .cover-user-name i {
+  color: var(--primary);
+}
+body.theme-stockman .table-of-contents .index .index-item .number {
+  color: var(--primary);
+}
+body.theme-stockman .evaluation-engagement-letter .email-greeting {
+  color: var(--primary);
+}
+body.theme-stockman .evaluation-engagement-letter .letter-logo {
+  background-image: url('../../../../../assets/img/report/themes/logo-nai.png');
+}
+body.theme-stockman .executive-summary .description .subtitle {
+  color: var(--primary);
+}
+body.theme-stockman .executive-summary .body .left .subtitle {
+  color: var(--primary);
+}
+body.theme-stockman .executive-summary .main-description_p span {
+  color: var(--primary) !important;
+}
+body.theme-stockman .section-area .section-image {
+  background-color: var(--tertiary);
+}
+body.theme-stockman .property-summary .overview-body .title {
+  color: var(--primary);
+}
+body.theme-stockman
+  .property-summary
+  .overview-body
+  .top-table-container
+  .label-left-side {
+  color: var(--primary);
+}
+body.theme-stockman
+  .property-summary
+  .overview-body
+  .bottom-title
+  .label-left-side {
+  color: var(--primary);
+}
+body.theme-stockman
+  .property-summary
+  .overview-body
+  .bottom-table-container
+  .bottom-right-table-container {
+  border-left: 1px solid var(--primary);
+}
+body.theme-stockman
+  .property-summary
+  .details-body
+  .top-table
+  .details-area
+  .section-title {
+  color: var(--primary);
+}
+body.theme-stockman
+  .property-summary
+  .details-body
+  .top-table
+  .details-area
+  .footnote {
+  color: var(--primary);
+}
+body.theme-stockman .property-summary .top-table .section-title {
+  color: var(--primary);
+}
+body.theme-stockman .section-title {
+  color: var(--primary);
+}
+body.theme-stockman .valuations_page_3 .space-table tbody tr td,
+body.theme-stockman .valuations_page_3 .comps-table tbody tr td,
+body.theme-stockman .type-table tbody tr td,
+body.theme-stockman .improvements-table tbody tr td,
+body.theme-stockman .improvements-table tbody tr td,
+body.theme-stockman .weighted-value table tbody tr td {
+  border-left-color: var(--primary);
+}
+body.theme-stockman .valuations_page_3 .space-table tbody tr td.has-border,
+body.theme-stockman .valuations_page_3 .comps-table tbody tr td.has-border,
+body.theme-stockman .type-table tbody tr td.has-border,
+body.theme-stockman .improvements-table tbody tr td.has-border,
+body.theme-stockman .improvements-table tbody tr td.has-border,
+body.theme-stockman .weighted-value table tbody tr td.has-border {
+  border-left-color: var(--primary);
+}
+body.theme-stockman
+  .valuations_page_3
+  .space-table
+  tbody
+  tr
+  td.has-bottom-border,
+body.theme-stockman
+  .valuations_page_3
+  .comps-table
+  tbody
+  tr
+  td.has-bottom-border,
+body.theme-stockman .type-table tbody tr td.has-bottom-border,
+body.theme-stockman .improvements-table tbody tr td.has-bottom-border,
+body.theme-stockman .improvements-table tbody tr td.has-bottom-border,
+body.theme-stockman .weighted-value table tbody tr td.has-bottom-border {
+  border-bottom-color: var(--primary);
+}
+body.theme-stockman .valuations_page_3 .space-table tbody tr td.has-underline,
+body.theme-stockman .valuations_page_3 .comps-table tbody tr td.has-underline,
+body.theme-stockman .type-table tbody tr td.has-underline,
+body.theme-stockman .improvements-table tbody tr td.has-underline,
+body.theme-stockman .improvements-table tbody tr td.has-underline,
+body.theme-stockman .weighted-value table tbody tr td.has-underline {
+  text-decoration-color: var(--primary);
+}
+body.theme-stockman .valuations_page_3 .space-table tbody tr td.blue,
+body.theme-stockman .valuations_page_3 .comps-table tbody tr td.blue,
+body.theme-stockman .type-table tbody tr td.blue,
+body.theme-stockman .improvements-table tbody tr td.blue,
+body.theme-stockman .improvements-table tbody tr td.blue,
+body.theme-stockman .weighted-value table tbody tr td.blue {
+  color: var(--primary);
+  background-color: transparent !important;
+}
+body.theme-stockman .comps-table tbody tr:nth-child(1) td {
+  white-space: normal;
+}
+body.theme-stockman .valuations-page-1 .description .subtitle,
+body.theme-stockman .valuations-page-2 .description .subtitle,
+body.theme-stockman .valuations_page_3 .description .subtitle {
+  color: var(--primary);
+}
+body.theme-stockman .valuations-page-1 .regular-description span,
+body.theme-stockman .valuations-page-2 .regular-description span,
+body.theme-stockman .valuations_page_3 .regular-description span {
+  color: var(--primary);
+}
+body.theme-stockman .valuations-page-1 .regular-description span.text,
+body.theme-stockman .valuations-page-2 .regular-description span.text,
+body.theme-stockman .valuations_page_3 .regular-description span.text {
+  color: black;
+}
+body.theme-stockman .valuations-page-1 table thead tr th,
+body.theme-stockman .valuations-page-2 table thead tr th,
+body.theme-stockman .valuations_page_3 table thead tr th {
+  color: var(--primary);
+}
+body.theme-stockman .valuations-page-1 table tbody .totals,
+body.theme-stockman .valuations-page-2 table tbody .totals,
+body.theme-stockman .valuations_page_3 table tbody .totals {
+  color: var(--primary);
+}
+body.theme-stockman .valuations-page-1 table tbody tr td .background-text,
+body.theme-stockman .valuations-page-2 table tbody tr td .background-text,
+body.theme-stockman .valuations_page_3 table tbody tr td .background-text {
+  color: rgba(var(--primary), 0.15);
+}
+body.theme-stockman .comparable-number,
+body.theme-stockman .comparable-title {
+  color: var(--primary);
+}
+body.theme-stockman .business-properties .description .subtitle,
+body.theme-stockman .business-properties .left .subtitle {
+  color: var(--primary);
+}
+body.theme-stockman .business-properties .main-description {
+  color: var(--primary);
+}
+body.theme-stockman #print-bov .btn {
+  background-color: var(--primary);
+}
+body.theme-stockman #print-bov .btn:hover {
+  background-color: var(--primary);
+}
+
+.description table tr .amount-col {
+  width: 120px;
+}
+.description table tr .amount-gross-col {
+  width: 125px;
+}
+.description table tr .type-col {
+  width: 300px;
+}
+.description table tr .amount-sf-col {
+  width: 100px;
+}
+.description table tr td .text-col {
+  display: inline-block;
+  width: 165px;
+  text-align: right;
+  padding-right: 10px;
+}
+.description table tr td .text-col:first-letter {
+  float: left;
+}
+.description table tr:nth-last-child(2) td .text-col {
+  border-bottom: 1px solid;
+}
+.description table tr:nth-last-child(2) .gross-border {
+  text-decoration: none;
+}
+.description table tr:nth-last-child(2) .gross-border span {
+  border-bottom: 1px solid;
+}
+
+.property-summary .fixed-action-btn .btn-floating img {
+  width: 100%;
+}
+
+#map-landmarks {
+  margin-top: 10px;
+  padding: 10px;
+  display: flex;
+  border: 0.5px solid #bdbdbd;
+}
+#map-landmarks .label {
+  margin-right: 2px;
+  font-weight: bold;
+  padding-top: 4px;
+}
+#map-landmarks .map-landmark {
+  display: flex;
+  width: 100%;
+}
+#map-landmarks .map-landmark .el {
+  width: 33.33%;
+  display: inline-block;
+  border-right: 1px solid #e7e7e7;
+  padding-right: 5px;
+  padding-left: 5px;
+}
+#map-landmarks .map-landmark .list {
+  width: 100%;
+  display: flex;
+  font-size: 12px;
+  line-height: 26px;
+  align-items: flex-start;
+}
+#map-landmarks .map-landmark .list strong {
+  white-space: nowrap;
+}
+#map-landmarks .map-landmark .list .ellip {
+  margin-left: 5px;
+  word-break: break-word;
+}
+#map-landmarks .map-landmark .list .img {
+  max-width: 35px;
+  text-align: center;
+  display: inline-flex;
+  padding: 4px 2px;
+  margin-right: 2px;
+}
+#map-landmarks .map-landmark .list .img img {
+  width: auto;
+  max-height: 18px;
+}
+#map-landmarks .map-landmark .list.subject-text .img {
+  width: 23px;
+  margin-left: -3px;
+  margin-right: 0;
+}
+
+body.theme-nai_portland {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai_portland .page-header svg polygon,
+body.theme-nai_portland .preface-header svg polygon {
+  fill: var(--primary);
+}
+body.theme-nai_portland .report-page-footer span {
+  color: var(--primary);
+}
+body.theme-nai_portland .cover-header .cover-title {
+  color: var(--primary);
+}
+body.theme-nai_portland .cover-image .item.harken-blue {
+  background-color: var(--primary);
+}
+body.theme-nai_portland .cover-image .item.mid-blue {
+  background-color: var(--secondary);
+}
+body.theme-nai_portland .cover-image .item.dark-blue {
+  background-color: var(--tertiary);
+}
+body.theme-nai_portland .cover-image .triangle.harken-blue {
+  border-top-color: var(--primary);
+}
+body.theme-nai_portland .cover-image .triangle.mid-blue {
+  border-top-color: var(--secondary);
+}
+body.theme-nai_portland .cover-image .triangle.dark-blue {
+  border-top-color: var(--tertiary);
+}
+body.theme-nai_portland .cover-footer .cover-right .cover-user-name {
+  color: var(--primary);
+}
+body.theme-nai_portland .cover-footer .cover-right .cover-user-name i {
+  color: var(--primary);
+}
+body.theme-nai_portland .table-of-contents .index .index-item .number {
+  color: var(--primary);
+}
+body.theme-nai_portland .evaluation-engagement-letter .email-greeting {
+  color: var(--primary);
+}
+body.theme-nai_portland .evaluation-engagement-letter .letter-logo {
+  background-image: url('../../../../../assets/img/report/themes/logo-nai.png');
+}
+body.theme-nai_portland .executive-summary .description .subtitle {
+  color: var(--primary);
+}
+body.theme-nai_portland .executive-summary .body .left .subtitle {
+  color: var(--primary);
+}
+body.theme-nai_portland .section-area .section-image {
+  background-color: var(--tertiary);
+}
+body.theme-nai_portland .property-summary .overview-body .title {
+  color: var(--primary);
+}
+body.theme-nai_portland
+  .property-summary
+  .overview-body
+  .top-table-container
+  .label-left-side {
+  color: var(--primary);
+}
+body.theme-nai_portland
+  .property-summary
+  .overview-body
+  .bottom-title
+  .label-left-side {
+  color: var(--primary);
+}
+body.theme-nai_portland
+  .property-summary
+  .overview-body
+  .bottom-table-container
+  .bottom-right-table-container {
+  border-left: 1px solid var(--primary);
+}
+body.theme-nai_portland
+  .property-summary
+  .details-body
+  .top-table
+  .details-area
+  .section-title {
+  color: var(--primary);
+}
+body.theme-nai_portland
+  .property-summary
+  .details-body
+  .top-table
+  .details-area
+  .footnote {
+  color: var(--primary);
+}
+body.theme-nai_portland .property-summary .top-table .section-title {
+  color: var(--primary);
+}
+body.theme-nai_portland .section-title {
+  color: var(--primary);
+}
+body.theme-nai_portland .valuations_page_3 .space-table tbody tr td,
+body.theme-nai_portland .valuations_page_3 .comps-table tbody tr td,
+body.theme-nai_portland .type-table tbody tr td,
+body.theme-nai_portland .improvements-table tbody tr td,
+body.theme-nai_portland .improvements-table tbody tr td,
+body.theme-nai_portland .weighted-value table tbody tr td {
+  border-left-color: var(--primary);
+}
+body.theme-nai_portland .valuations_page_3 .space-table tbody tr td.has-border,
+body.theme-nai_portland .valuations_page_3 .comps-table tbody tr td.has-border,
+body.theme-nai_portland .type-table tbody tr td.has-border,
+body.theme-nai_portland .improvements-table tbody tr td.has-border,
+body.theme-nai_portland .improvements-table tbody tr td.has-border,
+body.theme-nai_portland .weighted-value table tbody tr td.has-border {
+  border-left-color: var(--primary);
+}
+body.theme-nai_portland
+  .valuations_page_3
+  .space-table
+  tbody
+  tr
+  td.has-bottom-border,
+body.theme-nai_portland
+  .valuations_page_3
+  .comps-table
+  tbody
+  tr
+  td.has-bottom-border,
+body.theme-nai_portland .type-table tbody tr td.has-bottom-border,
+body.theme-nai_portland .improvements-table tbody tr td.has-bottom-border,
+body.theme-nai_portland .improvements-table tbody tr td.has-bottom-border,
+body.theme-nai_portland .weighted-value table tbody tr td.has-bottom-border {
+  border-bottom-color: var(--primary);
+}
+body.theme-nai_portland
+  .valuations_page_3
+  .space-table
+  tbody
+  tr
+  td.has-underline,
+body.theme-nai_portland
+  .valuations_page_3
+  .comps-table
+  tbody
+  tr
+  td.has-underline,
+body.theme-nai_portland .type-table tbody tr td.has-underline,
+body.theme-nai_portland .improvements-table tbody tr td.has-underline,
+body.theme-nai_portland .improvements-table tbody tr td.has-underline,
+body.theme-nai_portland .weighted-value table tbody tr td.has-underline {
+  text-decoration-color: var(--primary);
+}
+body.theme-nai_portland .valuations_page_3 .space-table tbody tr td.blue,
+body.theme-nai_portland .valuations_page_3 .comps-table tbody tr td.blue,
+body.theme-nai_portland .type-table tbody tr td.blue,
+body.theme-nai_portland .improvements-table tbody tr td.blue,
+body.theme-nai_portland .improvements-table tbody tr td.blue,
+body.theme-nai_portland .weighted-value table tbody tr td.blue {
+  color: var(--primary);
+  background-color: transparent !important;
+}
+body.theme-nai_portland .comps-table tbody tr:nth-child(1) td {
+  white-space: normal;
+}
+body.theme-nai_portland .valuations-page-1 .description .subtitle,
+body.theme-nai_portland .valuations-page-2 .description .subtitle,
+body.theme-nai_portland .valuations_page_3 .description .subtitle {
+  color: var(--primary);
+}
+body.theme-nai_portland .valuations-page-1 .regular-description span,
+body.theme-nai_portland .valuations-page-2 .regular-description span,
+body.theme-nai_portland .valuations_page_3 .regular-description span {
+  color: var(--primary);
+}
+body.theme-nai_portland .valuations-page-1 .regular-description span.text,
+body.theme-nai_portland .valuations-page-2 .regular-description span.text,
+body.theme-nai_portland .valuations_page_3 .regular-description span.text {
+  color: black;
+}
+body.theme-nai_portland .valuations-page-1 table thead tr th,
+body.theme-nai_portland .valuations-page-2 table thead tr th,
+body.theme-nai_portland .valuations_page_3 table thead tr th {
+  color: var(--primary);
+}
+body.theme-nai_portland .valuations-page-1 table tbody .totals,
+body.theme-nai_portland .valuations-page-2 table tbody .totals,
+body.theme-nai_portland .valuations_page_3 table tbody .totals {
+  color: var(--primary);
+}
+body.theme-nai_portland .valuations-page-1 table tbody tr td .background-text,
+body.theme-nai_portland .valuations-page-2 table tbody tr td .background-text,
+body.theme-nai_portland .valuations_page_3 table tbody tr td .background-text {
+  color: rgba(var(--primary), 0.15);
+}
+body.theme-nai_portland .comparable-number,
+body.theme-nai_portland .comparable-title {
+  color: var(--primary);
+}
+body.theme-nai_portland .business-properties .description .subtitle,
+body.theme-nai_portland .business-properties .left .subtitle {
+  color: var(--primary);
+}
+body.theme-nai_portland .business-properties .main-description {
+  color: var(--primary);
+}
+body.theme-nai_portland #print-bov .btn {
+  background-color: var(--primary);
+}
+body.theme-nai_portland #print-bov .btn:hover {
+  background-color: var(--primary);
+}
+
+body.theme-nai_portland p,
+body.theme-nai_portland a {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai_portland h1,
+body.theme-nai_portland h2,
+body.theme-nai_portland h3,
+body.theme-nai_portland h4,
+body.theme-nai_portland h5,
+body.theme-nai_portland h6 {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai_portland .preface-header .section-name {
+  font-family: 'Centennial LT W05_56 Black';
+}
+body.theme-nai_portland .page-header .section-name {
+  font-family: 'Helvetica Neue LT W05 75 Bold';
+}
+body.theme-nai_portland .page-header .section-title {
+  font-family: 'Centennial LT W05_56 Black';
+}
+body.theme-nai_portland .h1 {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai_portland .cover-header .cover-title {
+  font-family: 'Centennial LT W05_75 Bold';
+}
+body.theme-nai_portland .cover-footer .cover-right .cover-user-name {
+  font-family: 'Helvetica Neue LT W05 75 Bold';
+}
+body.theme-nai_portland .cover-footer .cover-right i {
+  font-family: 'Helvetica Neue LT W05 46 Lt It';
+}
+body.theme-nai_portland .cover-footer .cover-business-name {
+  font-family: 'Helvetica Neue LT W05 75 Bold';
+}
+body.theme-nai_portland .cover-footer .cover-email {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai_portland .table-of-contents .index .index-item .index-number {
+  font-family: 'Helvetica Neue LT W05 75 Bold';
+}
+body.theme-nai_portland .table-of-contents .index .number {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai_portland
+  .table-of-contents
+  .index
+  .index-text
+  .section-text-one {
+  font-family: 'Helvetica Neue LT W05 75 Bold';
+}
+body.theme-nai_portland .evaluation-engagement-letter .email-header {
+  font-family: 'Helvetica Neue LT W05 75 Bold';
+}
+body.theme-nai_portland .executive-summary .body .title {
+  font-family: 'Helvetica Neue LT W05 55 Roman';
+}
+body.theme-nai_portland .executive-summary .body .left .subtitle {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai_portland .executive-summary .body .left .item {
+  font-family: 'Helvetica Neue LT W05 75 Bold';
+}
+body.theme-nai_portland .executive-summary .body .left .item-description {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai_portland .executive-summary .body .left .key-highlights {
+  font-family: 'Helvetica Neue LT W05 55 Roman';
+}
+body.theme-nai_portland .executive-summary .body .left .highlights-list p {
+  font-family: 'Helvetica Neue LT W05 55 Roman';
+}
+body.theme-nai_portland .executive-summary .body .left .highlight-item {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai_portland .executive-summary .body .bottom .summary-content {
+  font-family: 'Helvetica Neue LT W05 55 Roman';
+}
+body.theme-nai_portland .executive-summary .description .title {
+  font-family: 'Helvetica Neue LT W05 55 Roman';
+}
+body.theme-nai_portland .valuations-page-1 .description .title {
+  font-family: 'Helvetica Neue LT W05 55 Roman';
+}
+body.theme-nai_portland .executive-summary .description .subtitle,
+body.theme-nai_portland .valuations-page-1 .description .subtitle {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai_portland .executive-summary .description .main-description {
+  font-family: 'Helvetica Neue LT W05 75 Bold';
+}
+body.theme-nai_portland .executive-summary .description .extra-description {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai_portland .executive-summary .description .main-description_p {
+  font-family: 'Helvetica Neue LT W05 45 Light' !important;
+}
+body.theme-nai_portland
+  .executive-summary
+  .description
+  .main-description_p
+  span {
+  font-family: 'Centennial LT W05_55 Roman' !important;
+  font-size: 16px !important;
+  color: var(--primary) !important;
+}
+body.theme-nai_portland .property-summary .overview-body .title {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai_portland
+  .property-summary
+  .overview-body
+  .top-table-container
+  .label-left-side {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai_portland .property-summary .overview-body .content-left-side {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai_portland .property-summary .overview-body .label-right-side {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai_portland .property-summary .overview-body .content-right-side {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai_portland
+  .property-summary
+  .overview-body
+  .bottom-title
+  .label-left-side {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai_portland
+  .property-summary
+  .overview-body
+  .bottom-table-container
+  .bottom-left-first-table-container
+  .label-bottom {
+  font-family: 'Helvetica Neue LT W05 75 Bold';
+}
+body.theme-nai_portland
+  .property-summary
+  .overview-body
+  .bottom-table-container
+  .bottom-left-second-table-container
+  .label-bottom,
+body.theme-nai_portland
+  .property-summary
+  .overview-body
+  .bottom-table-container
+  .bottom-right-table-container
+  .label-bottom {
+  font-family: 'Helvetica Neue LT W05 75 Bold';
+}
+body.theme-nai_portland
+  .property-summary
+  .overview-body
+  .bottom-table-container
+  .bottom-left-first-table-container
+  .value-bottom,
+body.theme-nai_portland
+  .property-summary
+  .overview-body
+  .bottom-table-container
+  .bottom-left-second-table-container
+  .value-bottom,
+body.theme-nai_portland
+  .property-summary
+  .overview-body
+  .bottom-table-container
+  .bottom-right-table-container
+  .value-bottom {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai_portland
+  .property-summary
+  .description-left
+  .property-zoning-title {
+  font-family: 'Helvetica Neue LT W05 75 Bold';
+  color: var(--primary);
+}
+body.theme-nai_portland
+  .property-summary
+  .description-left
+  .property-zoning-description {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai_portland .section-title {
+  font-family: 'Centennial LT W05_56 Black';
+}
+body.theme-nai_portland .property-description .label-right-side {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai_portland .property-description .content-right-side {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai_portland .property-description-right .label-right-side {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai_portland .property-description-right .content-right-side {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai_portland .property-summary .top-table .info-title {
+  font-family: 'Helvetica Neue LT W05 55 Roman';
+}
+body.theme-nai_portland .property-summary .top-table .section-title {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai_portland .property-summary .top-table .area-info {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai_portland
+  .property-summary
+  .details-body
+  .top-table
+  .details-area
+  .section-title {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai_portland
+  .property-summary
+  .details-body
+  .top-table
+  .details-area
+  .section-subtitle {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai_portland
+  .property-summary
+  .details-body
+  .top-table
+  .details-area
+  .property-label {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai_portland
+  .property-summary
+  .details-body
+  .top-table
+  .details-area
+  .property-value {
+  color: var(--primary);
+  font-family: 'Helvetica Neue LT W05 75 Bold';
+}
+body.theme-nai_portland
+  .property-summary
+  .details-body
+  .top-table
+  .details-area
+  .footnote {
+  font-family: 'Helvetica Neue LT W05 46 Lt It';
+}
+body.theme-nai_portland .valuations-page-1 .description .title {
+  font-family: 'Helvetica Neue LT W05 55 Roman';
+}
+body.theme-nai_portland .valuations-page-1 .description .subtitle {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai_portland .valuations-page-1 .regular-description span {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai_portland .valuations-page-2 .description .title {
+  font-family: 'Helvetica Neue LT W05 55 Roman';
+}
+body.theme-nai_portland .valuations-page-2 .description .subtitle {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai_portland .valuations-page-2 .regular-description span {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai_portland .valuations_page_3 .description .title {
+  font-family: 'Helvetica Neue LT W05 55 Roman';
+}
+body.theme-nai_portland .valuations_page_3 .description .subtitle {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai_portland .valuations_page_3 .regular-description span {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai_portland .valuations_page_3 .regular-description span.text {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai_portland .valuations_page_3 table thead tr th {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai_portland .valuations_page_3 table tbody tr td:first-of-type {
+  font-size: 14px;
+  text-align: left;
+}
+body.theme-nai_portland .valuations_page_3 table tbody tr td {
+  font-size: 14px;
+}
+body.theme-nai_portland .valuations_page_3 table tbody tr td .blue {
+  font-family: 'Centennial LT W05_56 Black';
+}
+body.theme-nai_portland
+  .valuations_page_3
+  .comps-table
+  tbody
+  tr
+  td:first-of-type {
+  border-left: none;
+}
+body.theme-nai_portland .valuations_page_3 .comps-table tbody tr td.bold {
+  font-family: 'Helvetica Neue LT W05 75 Bold' !important;
+}
+body.theme-nai_portland
+  .valuations_page_3
+  .comps-table
+  tbody
+  tr
+  td.bold.mont-bold {
+  font-family: 'Helvetica Neue LT W05 75 Bold', serif !important;
+}
+body.theme-nai_portland .valuations_page_3 .comps-table tbody tr td.blue {
+  font-family: 'Centennial LT W05_56 Black';
+}
+body.theme-nai_portland .weighted-value table thead tr th {
+  font-family: 'Centennial LT W05_45 Light';
+}
+body.theme-nai_portland .business-properties .description .title {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai_portland .business-properties .left .title {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai_portland .business-properties .description .subtitle,
+body.theme-nai_portland .business-properties .left .subtitle {
+  font-family: 'Helvetica Neue LT W05 55 Roman';
+}
+body.theme-nai_portland .business-properties .main-description {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai_portland .business-properties .single-description {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai_portland .business-properties .regular-description span {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai_portland
+  .business-properties
+  .description-right
+  .property-zoning-title {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai_portland
+  .business-properties
+  .description-right
+  .property-zoning-description {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai_portland .business-properties table thead tr th {
+  font-family: 'Centennial LT W05_45 Light';
+}
+body.theme-nai_portland .cap-rate-table .net-operating-row b {
+  font-family: 'Helvetica Neue LT W05 75 Bold';
+}
+body.theme-nai_portland
+  .new-page.pdf-png-row
+  .description
+  .regular-description
+  strong {
+  font-family: 'Helvetica Neue LT W05 75 Bold';
+}
+body.theme-nai_portland span.red-stylish-dec {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai_portland .property-summary .description-left .ft-size-20 {
+  font-family: 'Helvetica Neue LT W05 45 Light';
+}
+body.theme-nai_portland .red-styl-font {
+  font-family: 'Centennial LT W05_55 Roman';
+}
+body.theme-nai_portland .property-summary .description-left .ft-size-20 {
+  font-family: 'Helvetica Neue LT W05 55 Roman';
+}
+body.theme-nai_portland .comps-modal-table tbody tr td {
+  font-size: 12px;
+  border-left: 2px solid #0da1c7;
+}
+body.theme-nai_portland .comps-modal-table tbody tr td:first-of-type {
+  border-left: none;
+}
+body.theme-nai_portland .comps-modal-table tbody tr td.bold {
+  font-weight: bold;
+  font-family: 'Helvetica Neue LT W05 75 Bold' !important;
+}
+body.theme-nai_portland .comps-modal-table tbody tr td.bold.mont-bold {
+  font-family: 'Helvetica Neue LT W05 75 Bold' !important;
+}
+body.theme-nai_portland .comps-modal-table tbody tr td.blue {
+  font-family: 'Centennial LT W05_56 Black';
+}
+
+.description table tr .amount-col {
+  width: 120px;
+}
+.description table tr .amount-gross-col {
+  width: 125px;
+}
+.description table tr .type-col {
+  width: 300px;
+}
+.description table tr .amount-sf-col {
+  width: 100px;
+}
+.description table tr td .text-col {
+  display: inline-block;
+  width: 165px;
+  text-align: right;
+  padding-right: 10px;
+}
+.description table tr td .text-col:first-letter {
+  float: left;
+}
+.description table tr:nth-last-child(2) td .text-col {
+  border-bottom: 1px solid;
+}
+.description table tr:nth-last-child(2) .gross-border {
+  text-decoration: none;
+}
+.description table tr:nth-last-child(2) .gross-border span {
+  border-bottom: 1px solid;
+}
+
+.property-summary .fixed-action-btn .btn-floating img {
+  width: 100%;
+}
+
+#map-landmarks {
+  margin-top: 10px;
+  padding: 10px;
+  display: flex;
+  border: 0.5px solid #bdbdbd;
+}
+#map-landmarks .label {
+  margin-right: 2px;
+  font-weight: bold;
+  padding-top: 4px;
+}
+#map-landmarks .map-landmark {
+  display: flex;
+  width: 100%;
+}
+#map-landmarks .map-landmark .el {
+  width: 33.33%;
+  display: inline-block;
+  border-right: 1px solid #e7e7e7;
+  padding-right: 5px;
+  padding-left: 5px;
+}
+#map-landmarks .map-landmark .list {
+  width: 100%;
+  display: flex;
+  font-size: 12px;
+  line-height: 26px;
+  align-items: flex-start;
+}
+#map-landmarks .map-landmark .list strong {
+  white-space: nowrap;
+}
+#map-landmarks .map-landmark .list .ellip {
+  margin-left: 5px;
+  word-break: break-word;
+}
+#map-landmarks .map-landmark .list .img {
+  max-width: 35px;
+  text-align: center;
+  display: inline-flex;
+  padding: 4px 2px;
+  margin-right: 2px;
+}
+#map-landmarks .map-landmark .list .img img {
+  width: auto;
+  max-height: 18px;
+}
+#map-landmarks .map-landmark .list.subject-text .img {
+  width: 23px;
+  margin-left: -3px;
+  margin-right: 0;
+}
+/*# sourceMappingURL=main.css.map */

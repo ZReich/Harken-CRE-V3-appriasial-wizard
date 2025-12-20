@@ -1,0 +1,1655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Comp - Harken CRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Quill Rich Text Editor -->
+    <link href="https://cdn.quilljs.com/1.3.7/quill.snow.css" rel="stylesheet">
+    <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #1c3643;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;
+            height: 70px;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 25px;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+            font-weight: 500;
+            font-size: 14px;
+            margin: 0 4px;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+
+        .nav-link.active {
+            background-color: transparent;
+            border: 1px solid #0da1c7;
+            color: #0da1c7;
+        }
+
+        /* Page Header */
+        .create-comp-header {
+            background: white;
+            padding: 24px 48px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .create-comp-header h1 {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1c3643;
+        }
+
+        .help-text {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #687F8B;
+            font-size: 14px;
+        }
+
+        .help-text .material-icons {
+            font-size: 18px;
+        }
+
+        /* Main Container */
+        .create-comp-container {
+            display: flex;
+            min-height: calc(100vh - 140px);
+        }
+
+        /* Sidebar */
+        .comp-sidebar {
+            width: 220px;
+            background: #f5f7f9;
+            position: sticky;
+            top: 70px;
+            height: calc(100vh - 70px);
+            padding: 32px 0;
+            border-right: 1px solid #e0e0e0;
+        }
+
+        .section-nav {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .nav-item {
+            padding: 14px 28px;
+            color: #687F8B;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 0.3px;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+            position: relative;
+        }
+
+        .nav-item:hover {
+            background: rgba(13, 161, 199, 0.05);
+            color: #0da1c7;
+        }
+
+        .nav-item.active {
+            color: #0da1c7;
+            border-left-color: #0da1c7;
+            background: rgba(13, 161, 199, 0.08);
+            font-weight: 700;
+        }
+
+        /* Main Content */
+        .comp-main-content {
+            flex: 1;
+            background: white;
+            padding: 40px 60px;
+            max-width: 1400px;
+        }
+
+        /* Header Row (Image + Toggle) */
+        .comp-header-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+            margin-bottom: 48px;
+        }
+
+        .image-upload-box {
+            background: #fafbfc;
+            border: 2px dashed #d0d5dd;
+            border-radius: 8px;
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .image-upload-box:hover {
+            border-color: #0da1c7;
+            background: #f0f9fc;
+        }
+
+        .image-upload-box .material-icons {
+            font-size: 48px;
+            color: #687F8B;
+            margin-bottom: 12px;
+        }
+
+        .image-upload-box span {
+            color: #687F8B;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .lease-sale-toggle-container {
+            background: #fafbfc;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .lease-sale-toggle-container label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #687F8B;
+            margin-bottom: 16px;
+        }
+
+        .toggle-buttons {
+            display: flex;
+            gap: 0;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 2px solid #0da1c7;
+        }
+
+        .toggle-btn {
+            padding: 12px 40px;
+            border: none;
+            background: white;
+            color: #687F8B;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s;
+            letter-spacing: 0.5px;
+        }
+
+        .toggle-btn:first-child {
+            border-right: 1px solid #0da1c7;
+        }
+
+        .toggle-btn:hover:not(.active) {
+            background: #f0f9fc;
+            color: #0da1c7;
+        }
+
+        .toggle-btn.active {
+            background: #0da1c7;
+            color: white;
+        }
+
+        /* Sections */
+        .comp-section {
+            margin-bottom: 60px;
+            padding-bottom: 40px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .comp-section:last-of-type {
+            border-bottom: none;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1c3643;
+            margin-bottom: 28px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        /* Form Fields */
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-row.three-col {
+            grid-template-columns: repeat(3, 1fr);
+        }
+
+        .form-row.four-col {
+            grid-template-columns: repeat(4, 1fr);
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-field.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #687F8B;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .required {
+            color: #ff6b35;
+            font-size: 14px;
+        }
+
+        .form-input, .form-textarea, .form-select {
+            padding: 10px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #1c3643;
+            transition: all 0.2s;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: #0da1c7;
+            box-shadow: 0 0 0 3px rgba(13, 161, 199, 0.1);
+        }
+
+        .form-input:disabled {
+            background: #f9fafb;
+            color: #9ca3af;
+            cursor: not-allowed;
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-hint {
+            font-size: 11px;
+            color: #9ca3af;
+            margin-top: 4px;
+        }
+
+        /* Map Container */
+        .map-container {
+            position: relative;
+            height: 250px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid #e0e0e0;
+            margin: 24px 0;
+        }
+
+        .map-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .map-pin-button {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .map-pin-button:hover {
+            background: #0da1c7;
+            color: white;
+        }
+
+        .map-pin-button .material-icons {
+            font-size: 20px;
+            color: #0da1c7;
+        }
+
+        .map-pin-button:hover .material-icons {
+            color: white;
+        }
+
+        .map-pin-button span {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        /* Property Type Table */
+        .property-type-table {
+            background: #fafbfc;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .property-type-row {
+            display: grid;
+            grid-template-columns: 2fr 2fr 1fr 40px;
+            gap: 16px;
+            align-items: end;
+            margin-bottom: 16px;
+        }
+
+        .add-zone-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 16px;
+            background: white;
+            border: 2px dashed #0da1c7;
+            border-radius: 6px;
+            color: #0da1c7;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .add-zone-btn:hover {
+            background: #f0f9fc;
+        }
+
+        .add-zone-btn .material-icons {
+            font-size: 18px;
+        }
+
+        /* Seller/Buyer Section */
+        .contact-field {
+            display: grid;
+            grid-template-columns: 200px 1fr auto;
+            gap: 12px;
+            align-items: end;
+        }
+
+        .add-new-btn {
+            padding: 10px 16px;
+            background: white;
+            border: 2px dashed #0da1c7;
+            border-radius: 6px;
+            color: #0da1c7;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .add-new-btn:hover {
+            background: #f0f9fc;
+        }
+
+        .add-new-btn .material-icons {
+            font-size: 18px;
+        }
+
+        /* Radio Buttons */
+        .radio-group {
+            display: flex;
+            gap: 24px;
+            align-items: center;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .radio-option input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .radio-option label {
+            font-size: 14px;
+            color: #1c3643;
+            cursor: pointer;
+            margin: 0;
+        }
+
+        /* Footer Actions */
+        .comp-footer-actions {
+            margin-top: 60px;
+            padding-top: 32px;
+            border-top: 2px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn-cancel, .btn-primary {
+            padding: 12px 32px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .btn-cancel {
+            background: white;
+            border: 2px solid #d0d5dd;
+            color: #687F8B;
+        }
+
+        .btn-cancel:hover {
+            background: #f9fafb;
+            border-color: #9ca3af;
+        }
+
+        .btn-primary {
+            background: #0da1c7;
+            color: white;
+            padding: 12px 48px;
+            box-shadow: 0 2px 8px rgba(13, 161, 199, 0.3);
+        }
+
+        .btn-primary:hover {
+            background: #0b8eb3;
+            box-shadow: 0 4px 12px rgba(13, 161, 199, 0.4);
+        }
+
+        /* Scroll to top button */
+        .scroll-to-top {
+            position: fixed;
+            bottom: 32px;
+            right: 32px;
+            width: 48px;
+            height: 48px;
+            background: #0da1c7;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: all 0.3s;
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        .scroll-to-top.visible {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .scroll-to-top:hover {
+            background: #0b8eb3;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+
+        /* ======================================
+           Rich Text Editor Styles
+           ====================================== */
+        .rich-text-container {
+            position: relative;
+            margin-top: 6px;
+        }
+
+        .rich-text-container .ql-toolbar {
+            border: 1px solid #e0e0e0;
+            border-bottom: none;
+            border-radius: 4px 4px 0 0;
+            background: #fafbfc;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .rich-text-container .ql-container {
+            border: 1px solid #e0e0e0;
+            border-radius: 0 0 4px 4px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 14px;
+            min-height: 100px;
+        }
+
+        .rich-text-container .ql-editor {
+            min-height: 100px;
+            color: #1c3643;
+            line-height: 1.6;
+        }
+
+        .rich-text-container .ql-editor.ql-blank::before {
+            color: #9ca3af;
+            font-style: normal;
+        }
+
+        .rich-text-container:focus-within .ql-toolbar {
+            border-color: #0da1c7;
+        }
+
+        .rich-text-container:focus-within .ql-container {
+            border-color: #0da1c7;
+            box-shadow: 0 0 0 3px rgba(13, 161, 199, 0.1);
+        }
+
+        /* Expand Button */
+        .expand-editor-btn {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            z-index: 10;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 10px;
+            background: white;
+            border: 1px solid #d0d5dd;
+            border-radius: 4px;
+            color: #687F8B;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .expand-editor-btn:hover {
+            background: #0da1c7;
+            border-color: #0da1c7;
+            color: white;
+        }
+
+        .expand-editor-btn .material-icons {
+            font-size: 16px;
+        }
+
+        /* ======================================
+           Fullscreen Modal Overlay
+           ====================================== */
+        .fullscreen-editor-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(28, 54, 67, 0.95);
+            z-index: 10000;
+            display: none;
+            flex-direction: column;
+            padding: 24px;
+            animation: fadeIn 0.2s ease;
+        }
+
+        .fullscreen-editor-overlay.active {
+            display: flex;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        .fullscreen-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .fullscreen-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: white;
+        }
+
+        .fullscreen-close-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #0da1c7;
+            border: none;
+            border-radius: 6px;
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .fullscreen-close-btn:hover {
+            background: #0b8eb3;
+            box-shadow: 0 4px 12px rgba(13, 161, 199, 0.4);
+        }
+
+        .fullscreen-close-btn .material-icons {
+            font-size: 18px;
+        }
+
+        .fullscreen-editor-wrapper {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+        }
+
+        .fullscreen-editor-wrapper .ql-toolbar {
+            border: none;
+            border-bottom: 1px solid #e0e0e0;
+            background: #fafbfc;
+            padding: 12px 16px;
+        }
+
+        .fullscreen-editor-wrapper .ql-container {
+            flex: 1;
+            border: none;
+            font-size: 16px;
+        }
+
+        .fullscreen-editor-wrapper .ql-editor {
+            padding: 24px;
+            min-height: 100%;
+            line-height: 1.8;
+        }
+
+        .fullscreen-word-count {
+            padding: 12px 16px;
+            background: #fafbfc;
+            border-top: 1px solid #e0e0e0;
+            font-size: 13px;
+            color: #687F8B;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .fullscreen-word-count .word-stats {
+            display: flex;
+            gap: 24px;
+        }
+
+        .fullscreen-word-count .stat {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .fullscreen-word-count .stat-value {
+            font-weight: 600;
+            color: #1c3643;
+        }
+
+        /* Tooltip for expand button */
+        .expand-editor-btn::after {
+            content: 'Click to expand into fullscreen editing mode';
+            position: absolute;
+            bottom: calc(100% + 8px);
+            right: 0;
+            background: #1c3643;
+            color: white;
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.2s;
+            pointer-events: none;
+        }
+
+        .expand-editor-btn:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div style="display: flex; align-items: center;">
+            <img src="harken.png" alt="Harken CRE" style="height: 35px; width: auto;" onerror="this.style.display='none'">
+        </div>
+        <div style="display: flex; align-items: center; gap: 4px;">
+            <a href="comps-premium-with-clustering.html" class="nav-link active">COMPS</a>
+            <a href="#" class="nav-link">APPRAISAL</a>
+            <a href="#" class="nav-link">EVALUATION</a>
+        </div>
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <span style="font-size: 13px; font-weight: 500;">Zach Reichert</span>
+            <img src="https://i.pravatar.cc/150?img=12" style="width: 36px; height: 36px; border-radius: 50%; border: 2px solid #0da1c7;" alt="Zach Reichert">
+        </div>
+    </nav>
+
+    <!-- Page Header -->
+    <div class="create-comp-header">
+        <h1>CREATE COMP | OVERVIEW</h1>
+        <div class="help-text">
+            <i class="material-icons">info_outline</i>
+            <span>Lets get started! Enter some general information for this Comp.</span>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="create-comp-container">
+        <!-- Sticky Sidebar -->
+        <aside class="comp-sidebar">
+            <nav class="section-nav">
+                <a href="#location" class="nav-item active">LOCATION</a>
+                <a href="#property" class="nav-item">PROPERTY</a>
+                <a href="#building" class="nav-item">BUILDING</a>
+                <a href="#site" class="nav-item">SITE</a>
+                <a href="#transaction" class="nav-item">TRANSACTION</a>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="comp-main-content">
+            <!-- Image Upload & Lease/Sale Toggle -->
+            <div class="comp-header-row">
+                <div class="image-upload-box">
+                    <i class="material-icons">add_photo_alternate</i>
+                    <span>Add Image</span>
+                </div>
+                <div class="lease-sale-toggle-container">
+                    <label>This Property is on</label>
+                    <div class="toggle-buttons">
+                        <button class="toggle-btn" data-type="lease">Lease</button>
+                        <button class="toggle-btn active" data-type="sale">Sale</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LOCATION Section -->
+            <section id="location" class="comp-section">
+                <h2 class="section-title">LOCATION DETAILS</h2>
+                
+                <div class="form-row">
+                    <div class="form-field full-width">
+                        <label class="form-label">Street Address <span class="required">*</span></label>
+                        <input type="text" class="form-input" placeholder="123 Main Street">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-field">
+                        <label class="form-label">Suite Number</label>
+                        <input type="text" class="form-input" placeholder="Suite 100">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">City <span class="required">*</span></label>
+                        <input type="text" class="form-input" placeholder="San Francisco">
+                    </div>
+                </div>
+
+                <div class="form-row four-col">
+                    <div class="form-field">
+                        <label class="form-label">State <span class="required">*</span></label>
+                        <select class="form-select">
+                            <option value="">Select State</option>
+                            <option value="CA">California</option>
+                            <option value="NY">New York</option>
+                            <option value="TX">Texas</option>
+                            <option value="FL">Florida</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">Zipcode <span class="required">*</span></label>
+                        <input type="text" class="form-input" placeholder="94102">
+                    </div>
+                    <div class="form-field" style="grid-column: span 2;">
+                        <label class="form-label">County</label>
+                        <input type="text" class="form-input" placeholder="San Francisco County">
+                    </div>
+                </div>
+
+                <!-- Map -->
+                <div class="map-container">
+                    <img src="https://api.mapbox.com/styles/v1/mapbox/streets-v11/static/-122.4194,37.7749,12/1200x250@2x?access_token=pk.eyJ1IjoibWFwYm94IiwiYSI6ImNpejY4NXVycTA2emYycXBndHRqcmZ3N3gifQ.rJcFIG214AriISLbB6B5aw" alt="Map">
+                    <div class="map-pin-button">
+                        <i class="material-icons">location_on</i>
+                        <span>Click to place pin</span>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-field full-width">
+                        <label class="form-label">Location Description</label>
+                        <div class="rich-text-container">
+                            <button type="button" class="expand-editor-btn" onclick="openFullscreenEditor('location-description-editor', 'Location Description')">
+                                <i class="material-icons">fullscreen</i>
+                                Expand
+                            </button>
+                            <div id="location-description-editor" data-placeholder="Describe the property's location, nearby landmarks, accessibility..."></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-field full-width">
+                        <label class="form-label">Legal Description</label>
+                        <div class="rich-text-container">
+                            <button type="button" class="expand-editor-btn" onclick="openFullscreenEditor('legal-description-editor', 'Legal Description')">
+                                <i class="material-icons">fullscreen</i>
+                                Expand
+                            </button>
+                            <div id="legal-description-editor" data-placeholder="Enter the legal description of the property..."></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- PROPERTY Section -->
+            <section id="property" class="comp-section">
+                <h2 class="section-title">PROPERTY DETAILS</h2>
+                
+                <div class="form-row">
+                    <div class="form-field full-width">
+                        <label class="form-label">Property Summary</label>
+                        <div class="rich-text-container">
+                            <button type="button" class="expand-editor-btn" onclick="openFullscreenEditor('property-summary-editor', 'Property Summary')">
+                                <i class="material-icons">fullscreen</i>
+                                Expand
+                            </button>
+                            <div id="property-summary-editor" data-placeholder="Brief description of the property..."></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-field">
+                        <label class="form-label">Site Coverage Ratio</label>
+                        <input type="text" class="form-input" placeholder="50.5%">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">Zoning Type</label>
+                        <input type="text" class="form-input" placeholder="C-2">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-field">
+                        <label class="form-label">Occupancy</label>
+                        <input type="text" class="form-input" placeholder="Owner Occupied">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">Parcel #</label>
+                        <input type="text" class="form-input" placeholder="123-456-789">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-field">
+                        <label class="form-label">Grantor</label>
+                        <input type="text" class="form-input" placeholder="Seller Name">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">Grantee</label>
+                        <input type="text" class="form-input" placeholder="Buyer Name">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-field">
+                        <label class="form-label">Instrument</label>
+                        <input type="text" class="form-input" placeholder="Document Number">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">Confirmed By</label>
+                        <input type="text" class="form-input" placeholder="Appraiser Name">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-field">
+                        <label class="form-label">Confirmed With</label>
+                        <input type="text" class="form-input" placeholder="Broker/Party Name">
+                    </div>
+                </div>
+            </section>
+
+            <!-- BUILDING Section -->
+            <section id="building" class="comp-section">
+                <h2 class="section-title">BUILDING DETAILS</h2>
+                
+                <div class="form-row">
+                    <div class="form-field">
+                        <label class="form-label">Comparison Basis</label>
+                        <select class="form-select">
+                            <option value="SF">SF</option>
+                            <option value="Unit">Unit</option>
+                            <option value="Bed">Bed</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Property Type Table -->
+                <div class="property-type-table">
+                    <div class="property-type-row">
+                        <div class="form-field">
+                            <label class="form-label">Property Type <span class="required">*</span></label>
+                            <select class="form-select">
+                                <option value="">Select Type</option>
+                                <option value="office">Office</option>
+                                <option value="retail">Retail</option>
+                                <option value="industrial">Industrial</option>
+                                <option value="hospitality">Hospitality</option>
+                                <option value="multi_family">Multi-Family</option>
+                                <option value="special">Special</option>
+                            </select>
+                        </div>
+                        <div class="form-field">
+                            <label class="form-label">Sub Property</label>
+                            <select class="form-select">
+                                <option value="">--Select a Subtype--</option>
+                                <option value="medical">Medical Office</option>
+                                <option value="multi_tenant">Multi-Tenant</option>
+                            </select>
+                        </div>
+                        <div class="form-field">
+                            <label class="form-label">SQ/FT</label>
+                            <input type="text" class="form-input" placeholder="10,000">
+                        </div>
+                        <div style="display: flex; align-items: end;">
+                            <button class="add-zone-btn" style="padding: 10px; width: 40px; justify-content: center;">
+                                <i class="material-icons">add_circle_outline</i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-field">
+                        <label class="form-label">Built Year</label>
+                        <input type="number" class="form-input" placeholder="2020">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">Remodeled Year</label>
+                        <input type="number" class="form-input" placeholder="2023">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">Construction Class</label>
+                        <select class="form-select">
+                            <option value="">Select Class</option>
+                            <option value="a">Class A</option>
+                            <option value="b">Class B</option>
+                            <option value="c">Class C</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">Stories</label>
+                        <input type="number" class="form-input" placeholder="2">
+                    </div>
+                </div>
+
+                <div class="form-row three-col">
+                    <div class="form-field">
+                        <label class="form-label">Gross Area</label>
+                        <input type="text" class="form-input" placeholder="10,500">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">Net Area</label>
+                        <input type="text" class="form-input" placeholder="10,000">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">Effective Age</label>
+                        <input type="number" class="form-input" placeholder="15">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-field full-width">
+                        <label class="form-label">Building Comments</label>
+                        <div class="rich-text-container">
+                            <button type="button" class="expand-editor-btn" onclick="openFullscreenEditor('building-comments-editor', 'Building Comments')">
+                                <i class="material-icons">fullscreen</i>
+                                Expand
+                            </button>
+                            <div id="building-comments-editor" data-placeholder="Additional building details, features, or notes..."></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-field">
+                        <label class="form-label">Condition <span class="required">*</span></label>
+                        <select class="form-select">
+                            <option value="">--Select Property Condition--</option>
+                            <option value="excellent">Excellent</option>
+                            <option value="very_good">Very Good</option>
+                            <option value="good">Good</option>
+                            <option value="average">Average</option>
+                            <option value="fair">Fair</option>
+                            <option value="poor">Poor</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">Parking</label>
+                        <select class="form-select">
+                            <option value="">Select Parking</option>
+                            <option value="surface">Surface Lot</option>
+                            <option value="covered">Covered</option>
+                            <option value="garage">Garage</option>
+                            <option value="underground">Underground</option>
+                            <option value="street">Street</option>
+                        </select>
+                    </div>
+                </div>
+            </section>
+
+            <!-- SITE Section -->
+            <section id="site" class="comp-section">
+                <h2 class="section-title">SITE DETAILS</h2>
+                
+                <div class="form-row">
+                    <div class="form-field">
+                        <label class="form-label">Land Size <span class="required">*</span></label>
+                        <input type="text" class="form-input" placeholder="20,000">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">Size Type</label>
+                        <select class="form-select">
+                            <option value="SF">SF</option>
+                            <option value="ACRE">AC</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-field">
+                        <label class="form-label">Topography</label>
+                        <select class="form-select">
+                            <option value="">--Select Topography--</option>
+                            <option value="level">Level</option>
+                            <option value="sloped">Sloped</option>
+                            <option value="very_sloped">Very Sloped</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">Lot Shape</label>
+                        <select class="form-select">
+                            <option value="">--Select Lot Shape--</option>
+                            <option value="rectangular">Rectangular</option>
+                            <option value="square">Square</option>
+                            <option value="irregular">Irregular</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-field">
+                        <label class="form-label">Frontage</label>
+                        <select class="form-select">
+                            <option value="">--Select Frontage--</option>
+                            <option value="poor">Poor</option>
+                            <option value="fair">Fair</option>
+                            <option value="average">Average</option>
+                            <option value="good">Good</option>
+                            <option value="very_good">Very Good</option>
+                            <option value="excellent">Excellent</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">Access</label>
+                        <input type="text" class="form-input" placeholder="Paved Road">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-field">
+                        <label class="form-label">Utilities</label>
+                        <select class="form-select">
+                            <option value="">--Select Utilities--</option>
+                            <option value="full">Full City Services</option>
+                            <option value="septic_cistern">Septic and Cistern</option>
+                            <option value="septic_well">Septic and Well</option>
+                            <option value="community">Community Sewer and Water</option>
+                            <option value="none">No City Services</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-field full-width">
+                        <label class="form-label">Other Included Utilities</label>
+                        <input type="text" class="form-input" placeholder="Water, Electric, Gas, Sewer">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-field full-width">
+                        <label class="form-label">Site Comments</label>
+                        <div class="rich-text-container">
+                            <button type="button" class="expand-editor-btn" onclick="openFullscreenEditor('site-comments-editor', 'Site Comments')">
+                                <i class="material-icons">fullscreen</i>
+                                Expand
+                            </button>
+                            <div id="site-comments-editor" data-placeholder="Additional site details or notes..."></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- TRANSACTION Section -->
+            <section id="transaction" class="comp-section">
+                <h2 class="section-title">TRANSACTION DETAILS</h2>
+                
+                <div class="form-row">
+                    <div class="form-field">
+                        <label class="form-label">Sale Price <span class="required">*</span></label>
+                        <input type="text" class="form-input" placeholder="$5,000,000">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">Date Sold <span class="required">*</span></label>
+                        <input type="date" class="form-input">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">Sale Status</label>
+                        <select class="form-select">
+                            <option value="closed">Closed</option>
+                            <option value="pending">Pending</option>
+                        </select>
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">List Price</label>
+                        <input type="text" class="form-input" placeholder="$5,500,000">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-field">
+                        <label class="form-label">CAP Rate</label>
+                        <input type="text" class="form-input" placeholder="5.5%">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">Total Operating Expense</label>
+                        <input type="text" class="form-input" placeholder="$150,000">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">Operating Expense(PSF)</label>
+                        <input type="text" class="form-input" placeholder="$15.00">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">Net Operating Income(NOI)</label>
+                        <input type="text" class="form-input" placeholder="$450,000">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-field">
+                        <label class="form-label">List Date</label>
+                        <input type="date" class="form-input">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">Days on Market</label>
+                        <input type="number" class="form-input" placeholder="45" disabled>
+                        <span class="form-hint">Calculated automatically</span>
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">Total Concessions</label>
+                        <input type="text" class="form-input" placeholder="$50,000">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">Financing</label>
+                        <input type="text" class="form-input" placeholder="Cash">
+                    </div>
+                </div>
+
+                <div class="form-row three-col">
+                    <div class="form-field">
+                        <label class="form-label">Marketing Time</label>
+                        <input type="text" class="form-input" placeholder="6 months">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">Estimated Land Value</label>
+                        <input type="text" class="form-input" placeholder="$2,000,000">
+                    </div>
+                    <div class="form-field">
+                        <label class="form-label">Building Residual</label>
+                        <input type="text" class="form-input" placeholder="$3,000,000">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-field full-width">
+                        <label class="form-label">Sales Notes</label>
+                        <div class="rich-text-container">
+                            <button type="button" class="expand-editor-btn" onclick="openFullscreenEditor('sales-notes-editor', 'Sales Notes')">
+                                <i class="material-icons">fullscreen</i>
+                                Expand
+                            </button>
+                            <div id="sales-notes-editor" data-placeholder="Additional transaction notes..."></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Seller -->
+                <div style="margin-top: 32px;">
+                    <div class="contact-field">
+                        <div class="form-field">
+                            <label class="form-label">Seller Type</label>
+                            <select class="form-select">
+                                <option value="">--Select Seller Type--</option>
+                                <option value="person">Person</option>
+                                <option value="company">Company</option>
+                            </select>
+                        </div>
+                        <div class="form-field">
+                            <label class="form-label">Name</label>
+                            <select class="form-select">
+                                <option value="">Search or select...</option>
+                            </select>
+                        </div>
+                        <button class="add-new-btn">
+                            <i class="material-icons">add</i>
+                            ADD NEW...
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Buyer -->
+                <div style="margin-top: 20px; margin-bottom: 32px;">
+                    <div class="contact-field">
+                        <div class="form-field">
+                            <label class="form-label">Buyer Type</label>
+                            <select class="form-select">
+                                <option value="">--Select Buyer Type--</option>
+                                <option value="person">Person</option>
+                                <option value="company">Company</option>
+                            </select>
+                        </div>
+                        <div class="form-field">
+                            <label class="form-label">Name</label>
+                            <select class="form-select">
+                                <option value="">Search or select...</option>
+                            </select>
+                        </div>
+                        <button class="add-new-btn">
+                            <i class="material-icons">add</i>
+                            ADD NEW...
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Mark Private -->
+                <div style="display: flex; align-items: center; gap: 12px; margin-top: 24px;">
+                    <label class="form-label" style="margin: 0; display: flex; align-items: center; gap: 8px;">
+                        Mark this comp private
+                        <i class="material-icons" style="font-size: 16px; color: #687F8B; cursor: help;" title="Private comps are only visible to you">help_outline</i>
+                    </label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" name="private" id="private-no" value="no" checked>
+                            <label for="private-no">No</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" name="private" id="private-yes" value="yes">
+                            <label for="private-yes">Yes</label>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Footer Actions -->
+            <div class="comp-footer-actions">
+                <button class="btn-cancel" onclick="window.location.href='comps-premium-with-clustering.html'">Cancel</button>
+                <button class="btn-primary" onclick="alert('Comp created successfully!')">CREATE</button>
+            </div>
+        </main>
+    </div>
+
+    <!-- Scroll to Top Button -->
+    <div class="scroll-to-top" id="scrollTopBtn">
+        <i class="material-icons">arrow_upward</i>
+    </div>
+
+    <!-- Fullscreen Editor Modal -->
+    <div class="fullscreen-editor-overlay" id="fullscreenEditorOverlay">
+        <div class="fullscreen-header">
+            <h2 class="fullscreen-title" id="fullscreenTitle">Edit Content</h2>
+            <button type="button" class="fullscreen-close-btn" onclick="closeFullscreenEditor()">
+                <i class="material-icons">fullscreen_exit</i>
+                Save & Close
+            </button>
+        </div>
+        <div class="fullscreen-editor-wrapper">
+            <div id="fullscreen-editor"></div>
+            <div class="fullscreen-word-count">
+                <div class="word-stats">
+                    <div class="stat">
+                        <span>Words:</span>
+                        <span class="stat-value" id="wordCount">0</span>
+                    </div>
+                    <div class="stat">
+                        <span>Characters:</span>
+                        <span class="stat-value" id="charCount">0</span>
+                    </div>
+                </div>
+                <div style="color: #0da1c7; font-weight: 500;">
+                    <i class="material-icons" style="font-size: 14px; vertical-align: middle;">keyboard</i>
+                    Press ESC to close
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ======================================
+        // Rich Text Editor Configuration
+        // ======================================
+        
+        // Quill toolbar configuration
+        const toolbarOptions = [
+            [{ 'header': [1, 2, 3, false] }],
+            ['bold', 'italic', 'underline', 'strike'],
+            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+            [{ 'indent': '-1'}, { 'indent': '+1' }],
+            [{ 'align': [] }],
+            ['clean']
+        ];
+
+        // Full toolbar for fullscreen mode
+        const fullToolbarOptions = [
+            [{ 'header': [1, 2, 3, 4, 5, 6, false] }],
+            [{ 'font': [] }],
+            ['bold', 'italic', 'underline', 'strike'],
+            [{ 'color': [] }, { 'background': [] }],
+            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+            [{ 'indent': '-1'}, { 'indent': '+1' }],
+            [{ 'align': [] }],
+            ['blockquote', 'code-block'],
+            ['link'],
+            ['clean']
+        ];
+
+        // Store all editor instances
+        const editors = {};
+        let fullscreenEditor = null;
+        let currentEditorId = null;
+
+        // Initialize all rich text editors on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeRichTextEditors();
+        });
+
+        function initializeRichTextEditors() {
+            const editorConfigs = [
+                'location-description-editor',
+                'legal-description-editor',
+                'property-summary-editor',
+                'building-comments-editor',
+                'site-comments-editor',
+                'sales-notes-editor'
+            ];
+
+            editorConfigs.forEach(editorId => {
+                const container = document.getElementById(editorId);
+                if (container) {
+                    const placeholder = container.dataset.placeholder || 'Enter text...';
+                    editors[editorId] = new Quill('#' + editorId, {
+                        theme: 'snow',
+                        modules: {
+                            toolbar: toolbarOptions
+                        },
+                        placeholder: placeholder
+                    });
+                }
+            });
+
+            // Initialize fullscreen editor (hidden initially)
+            fullscreenEditor = new Quill('#fullscreen-editor', {
+                theme: 'snow',
+                modules: {
+                    toolbar: fullToolbarOptions
+                },
+                placeholder: 'Start typing...'
+            });
+
+            // Update word count in fullscreen mode
+            fullscreenEditor.on('text-change', updateWordCount);
+        }
+
+        function openFullscreenEditor(editorId, title) {
+            currentEditorId = editorId;
+            const sourceEditor = editors[editorId];
+            
+            if (!sourceEditor) return;
+
+            // Set the title
+            document.getElementById('fullscreenTitle').textContent = title;
+
+            // Copy content from source editor to fullscreen editor
+            fullscreenEditor.setContents(sourceEditor.getContents());
+
+            // Show the overlay
+            const overlay = document.getElementById('fullscreenEditorOverlay');
+            overlay.classList.add('active');
+            document.body.style.overflow = 'hidden';
+
+            // Update word count
+            updateWordCount();
+
+            // Focus the fullscreen editor
+            setTimeout(() => {
+                fullscreenEditor.focus();
+            }, 100);
+        }
+
+        function closeFullscreenEditor() {
+            if (currentEditorId && editors[currentEditorId]) {
+                // Copy content back to source editor
+                editors[currentEditorId].setContents(fullscreenEditor.getContents());
+            }
+
+            // Hide the overlay
+            const overlay = document.getElementById('fullscreenEditorOverlay');
+            overlay.classList.remove('active');
+            document.body.style.overflow = '';
+
+            currentEditorId = null;
+        }
+
+        function updateWordCount() {
+            const text = fullscreenEditor.getText().trim();
+            const words = text ? text.split(/\s+/).length : 0;
+            const chars = text.length;
+
+            document.getElementById('wordCount').textContent = words.toLocaleString();
+            document.getElementById('charCount').textContent = chars.toLocaleString();
+        }
+
+        // Close fullscreen editor with ESC key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                const overlay = document.getElementById('fullscreenEditorOverlay');
+                if (overlay.classList.contains('active')) {
+                    closeFullscreenEditor();
+                }
+            }
+        });
+
+        // ======================================
+        // Scroll Spy for Sidebar
+        const sections = document.querySelectorAll('.comp-section');
+        const navItems = document.querySelectorAll('.nav-item');
+
+        function updateActiveSection() {
+            let current = '';
+            const scrollPosition = window.scrollY + 120;
+
+            sections.forEach(section => {
+                const sectionTop = section.offsetTop;
+                const sectionHeight = section.clientHeight;
+                
+                if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
+                    current = section.getAttribute('id');
+                }
+            });
+
+            navItems.forEach(item => {
+                item.classList.remove('active');
+                if (item.getAttribute('href') === '#' + current) {
+                    item.classList.add('active');
+                }
+            });
+        }
+
+        window.addEventListener('scroll', updateActiveSection);
+
+        // Smooth Scrolling
+        navItems.forEach(item => {
+            item.addEventListener('click', (e) => {
+                e.preventDefault();
+                const targetId = item.getAttribute('href').substring(1);
+                const targetSection = document.getElementById(targetId);
+                
+                if (targetSection) {
+                    const offsetTop = targetSection.offsetTop - 90;
+                    window.scrollTo({
+                        top: offsetTop,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Lease/Sale Toggle
+        const toggleBtns = document.querySelectorAll('.toggle-btn');
+        
+        toggleBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                toggleBtns.forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                
+                // In a real app, this would show/hide different fields based on Lease vs Sale
+                console.log('Selected:', btn.dataset.type);
+            });
+        });
+
+        // Scroll to Top Button
+        const scrollTopBtn = document.getElementById('scrollTopBtn');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                scrollTopBtn.classList.add('visible');
+            } else {
+                scrollTopBtn.classList.remove('visible');
+            }
+        });
+
+        scrollTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Image Upload (visual feedback)
+        const imageUploadBox = document.querySelector('.image-upload-box');
+        imageUploadBox.addEventListener('click', () => {
+            alert('Image upload functionality would be implemented here');
+        });
+
+        // Map Pin Button
+        const mapPinButton = document.querySelector('.map-pin-button');
+        mapPinButton.addEventListener('click', () => {
+            alert('Map pin placement would be activated here');
+        });
+
+        // Add Zone Button
+        const addZoneBtn = document.querySelector('.add-zone-btn');
+        addZoneBtn.addEventListener('click', () => {
+            alert('Add another property type/zone row');
+        });
+
+        // Add New Buttons
+        const addNewBtns = document.querySelectorAll('.add-new-btn');
+        addNewBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                alert('Add new contact form would open here');
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

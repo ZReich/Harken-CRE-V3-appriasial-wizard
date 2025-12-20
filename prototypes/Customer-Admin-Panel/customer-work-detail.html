@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Work Request Details - Rove Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            font-family: 'Montserrat', sans-serif !important;
+        }
+        body {
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background: url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;
+            background-color: #1c3643 !important;
+            max-height: 84px;
+            height: 84px;
+            color: #fff;
+        }
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 10px 24px;
+            border-radius: 25px;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+        .nav-link.active {
+            background-color: transparent;
+            border: 1px solid #0da1c7;
+            color: #0da1c7;
+        }
+        .section-title {
+            font-size: 23px;
+            font-weight: 600;
+            color: #1c3643;
+        }
+        .info-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+            margin-bottom: 24px;
+        }
+        .info-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #687F8B;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            margin-bottom: 6px;
+        }
+        .info-value {
+            font-size: 14px;
+            color: #1c3643;
+            font-weight: 500;
+            margin-bottom: 16px;
+        }
+        .action-button {
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .action-button:hover {
+            opacity: 0.8;
+        }
+        .action-button-primary {
+            background-color: #0da1c7;
+            color: white;
+        }
+        .action-button-secondary {
+            background-color: #687F8B;
+            color: white;
+        }
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-block;
+            color: white;
+        }
+        .service-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .service-badge.appraisal {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .timeline-item {
+            padding-left: 24px;
+            border-left: 2px solid #e5e7eb;
+            padding-bottom: 16px;
+            position: relative;
+        }
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -5px;
+            top: 0;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #0da1c7;
+        }
+        .timeline-item:last-child {
+            border-left-color: transparent;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar flex items-center justify-between px-8">
+        <div class="flex items-center">
+            <img src="harken.png" alt="Harken" style="height: 40px; width: auto;" />
+            <span style="margin-left: 12px; font-size: 14px; color: #0da1c7; font-weight: 600;">Rove Management</span>
+            <span style="margin-left: 8px; font-size: 11px; color: #687F8B; background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 10px;">ADMIN</span>
+        </div>
+        <div class="flex items-center gap-6">
+            <a href="#" class="nav-link">Dashboard</a>
+            <a href="customer-admin-work-requests.html" class="nav-link active">Work Requests</a>
+            <a href="#" class="nav-link">Team Members</a>
+            <a href="#" class="nav-link">Reports & Analytics</a>
+            <a href="#" class="nav-link">Settings</a>
+        </div>
+        <div class="flex items-center gap-4">
+            <span class="text-sm">Mike Johnson (Owner)</span>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div style="padding: 35px 50px;">
+        <!-- Header Section -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+            <div>
+                <div style="margin-bottom: 8px;">
+                    <a href="customer-admin-work-requests.html" style="color: #0da1c7; text-decoration: none; font-size: 14px;">← Back to Work Requests</a>
+                </div>
+                <h2 class="section-title">#WR-2025-045 - Commercial Office Building Appraisal</h2>
+                <div style="margin-top: 12px; display: flex; gap: 8px;">
+                    <span class="service-badge appraisal">Appraisal</span>
+                    <span class="status-badge" style="background-color: #f57c00;">In Progress</span>
+                </div>
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <button class="action-button action-button-secondary">Reassign</button>
+                <button class="action-button action-button-primary">Message Appraiser</button>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+            <!-- Left Column -->
+            <div>
+                <!-- Property Information -->
+                <div class="info-card">
+                    <h3 style="font-size: 16px; font-weight: 600; color: #1c3643; margin-bottom: 20px;">Property Information</h3>
+                    
+                    <div class="info-label">Property Address</div>
+                    <div class="info-value">123 Main St, Los Angeles, CA 90012</div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div>
+                            <div class="info-label">Property Type</div>
+                            <div class="info-value">Office Building</div>
+                        </div>
+                        <div>
+                            <div class="info-label">Square Footage</div>
+                            <div class="info-value">25,000 SF</div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-label">Property Description</div>
+                    <div class="info-value">Class A office building in downtown Los Angeles. Built in 2015, recently renovated. Features modern amenities, underground parking for 50 vehicles, and panoramic city views.</div>
+                </div>
+
+                <!-- Client Information -->
+                <div class="info-card">
+                    <h3 style="font-size: 16px; font-weight: 600; color: #1c3643; margin-bottom: 20px;">Client Information</h3>
+                    
+                    <div class="info-label">Client Name</div>
+                    <div class="info-value">ABC Corporation</div>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                        <div>
+                            <div class="info-label">Contact Person</div>
+                            <div class="info-value">Robert Johnson</div>
+                        </div>
+                        <div>
+                            <div class="info-label">Email</div>
+                            <div class="info-value">robert.j@abccorp.com</div>
+                        </div>
+                    </div>
+                    
+                    <div class="info-label">Phone</div>
+                    <div class="info-value">(555) 123-4567</div>
+                    
+                    <div class="info-label">Special Instructions</div>
+                    <div class="info-value">Client needs this for financing deadline on Feb 5. Please coordinate site visit with property manager (John Smith, 555-987-6543).</div>
+                </div>
+
+                <!-- Activity Timeline -->
+                <div class="info-card">
+                    <h3 style="font-size: 16px; font-weight: 600; color: #1c3643; margin-bottom: 20px;">Activity Timeline</h3>
+                    
+                    <div class="timeline-item">
+                        <div style="font-size: 13px; font-weight: 600; color: #1c3643;">Work in Progress</div>
+                        <div style="font-size: 12px; color: #687F8B; margin-top: 4px;">Sarah Chen started working on this request</div>
+                        <div style="font-size: 11px; color: #687F8B; margin-top: 4px;">Jan 26, 2025 at 10:30 AM</div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div style="font-size: 13px; font-weight: 600; color: #1c3643;">Assigned to Appraiser</div>
+                        <div style="font-size: 12px; color: #687F8B; margin-top: 4px;">Mike Johnson assigned to Sarah Chen</div>
+                        <div style="font-size: 11px; color: #687F8B; margin-top: 4px;">Jan 26, 2025 at 9:15 AM</div>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <div style="font-size: 13px; font-weight: 600; color: #1c3643;">Request Submitted</div>
+                        <div style="font-size: 12px; color: #687F8B; margin-top: 4px;">Client submitted request via portal</div>
+                        <div style="font-size: 11px; color: #687F8B; margin-top: 4px;">Jan 26, 2025 at 8:00 AM</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div>
+                <!-- Request Details -->
+                <div class="info-card">
+                    <h3 style="font-size: 16px; font-weight: 600; color: #1c3643; margin-bottom: 20px;">Request Details</h3>
+                    
+                    <div class="info-label">Service Type</div>
+                    <div class="info-value">Commercial Appraisal</div>
+                    
+                    <div class="info-label">Estimated Price</div>
+                    <div class="info-value" style="color: #10b981; font-size: 18px; font-weight: 700;">$3,200</div>
+                    
+                    <div class="info-label">Deadline</div>
+                    <div class="info-value" style="color: #c62828; font-weight: 600;">January 30, 2025</div>
+                    
+                    <div class="info-label">Days Remaining</div>
+                    <div class="info-value" style="color: #c62828; font-weight: 600;">2 days</div>
+                    
+                    <div class="info-label">Request ID</div>
+                    <div class="info-value">#WR-2025-045</div>
+                    
+                    <div class="info-label">Requested By</div>
+                    <div class="info-value">John Smith (Rove Admin)</div>
+                    
+                    <div class="info-label">Date Requested</div>
+                    <div class="info-value">January 26, 2025</div>
+                </div>
+
+                <!-- Assignment Info -->
+                <div class="info-card">
+                    <h3 style="font-size: 16px; font-weight: 600; color: #1c3643; margin-bottom: 20px;">Assignment Info</h3>
+                    
+                    <div class="info-label">Assigned To</div>
+                    <div class="info-value">
+                        <div style="display: flex; align-items: center; gap: 8px;">
+                            <span style="width: 32px; height: 32px; border-radius: 50%; background-color: #0da1c7; color: white; display: inline-flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600;">SC</span>
+                            <span>Sarah Chen</span>
+                        </div>
+                    </div>
+                    
+                    <div class="info-label">Date Assigned</div>
+                    <div class="info-value">January 26, 2025 at 9:15 AM</div>
+                    
+                    <div class="info-label">Appraiser Status</div>
+                    <div class="info-value" style="color: #10b981; font-weight: 600;">Active - Working on site visit</div>
+                    
+                    <button class="action-button action-button-secondary" style="width: 100%; margin-top: 16px;">Reassign to Different Appraiser</button>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="info-card">
+                    <h3 style="font-size: 16px; font-weight: 600; color: #1c3643; margin-bottom: 20px;">Quick Actions</h3>
+                    
+                    <button class="action-button action-button-primary" style="width: 100%; margin-bottom: 12px;">Send Message to Client</button>
+                    <button class="action-button action-button-primary" style="width: 100%; margin-bottom: 12px;">Send Message to Appraiser</button>
+                    <button class="action-button action-button-secondary" style="width: 100%;">Cancel Request</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 50px;">
+            <span style="font-weight: 300; font-size: 14px; color: #687F8B;">© 2024, Harken CRE, LLC</span>
+        </div>
+    </div>
+</body>
+</html>
+

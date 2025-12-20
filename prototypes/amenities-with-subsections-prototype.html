@@ -1,0 +1,1457 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amenities with Subsections - Design Prototype</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            /* Harken brand colors */
+            --harken-teal: #0da1c7;
+            --harken-teal-dark: #0b8bac;
+            --harken-slate: #1c3643;
+            --harken-gray: #687F8B;
+            --harken-light-gray: #9CA8B0;
+            --harken-bg: #f5f7fa;
+            
+            /* Category colors */
+            --structure-primary: #4a6fa5;
+            --structure-light: #e8f0f8;
+            --structure-border: #a8c4e0;
+            
+            --systems-primary: #7b6b8e;
+            --systems-light: #f5f2f8;
+            --systems-border: #d4c9de;
+            
+            --features-primary: #2e8b7d;
+            --features-light: #e8f6f4;
+            --features-border: #a8d5ce;
+            
+            --additional-primary: #b8763e;
+            --additional-light: #fef8f1;
+            --additional-border: #e8d4bb;
+        }
+        
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--harken-bg);
+            padding: 40px;
+            color: var(--harken-slate);
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 1300px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        
+        .header {
+            margin-bottom: 32px;
+            border-bottom: 1px solid #e8eaed;
+            padding-bottom: 24px;
+        }
+        
+        .title {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--harken-slate);
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            font-size: 15px;
+            color: var(--harken-gray);
+            line-height: 1.5;
+        }
+        
+        .design-note {
+            background: linear-gradient(135deg, #e3f2fd 0%, #f0f8ff 100%);
+            border-left: 4px solid var(--harken-teal);
+            padding: 20px 24px;
+            margin-bottom: 32px;
+            border-radius: 0 8px 8px 0;
+        }
+        
+        .design-note h3 {
+            color: var(--harken-teal);
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .design-note p {
+            color: var(--harken-slate);
+            font-size: 13px;
+            line-height: 1.6;
+        }
+        
+        .design-note ul {
+            margin-top: 12px;
+            margin-left: 20px;
+            font-size: 13px;
+            color: var(--harken-slate);
+        }
+        
+        .design-note li {
+            margin-bottom: 6px;
+            line-height: 1.5;
+        }
+        
+        /* Search Bar */
+        .search-container {
+            position: relative;
+            margin-bottom: 28px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 14px 14px 14px 48px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+            color: var(--harken-slate);
+            transition: all 0.2s ease;
+            background-color: #fafbfc;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--harken-teal);
+            background-color: white;
+            box-shadow: 0 0 0 4px rgba(13, 161, 199, 0.1);
+        }
+        
+        .search-input::placeholder {
+            color: var(--harken-light-gray);
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--harken-gray);
+            font-size: 22px;
+        }
+        
+        /* Category Grid */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 24px;
+            margin-top: 24px;
+        }
+        
+        @media (max-width: 1200px) {
+            .categories-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+        
+        @media (max-width: 700px) {
+            .categories-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .category-column {
+            background-color: #fafbfc;
+            border-radius: 12px;
+            padding: 0;
+            border: 1px solid #e8eaed;
+            overflow: hidden;
+        }
+        
+        .category-header {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .category-header.structure {
+            background: linear-gradient(135deg, var(--structure-light) 0%, #f4f8fc 100%);
+            color: var(--structure-primary);
+            border-bottom: 2px solid var(--structure-border);
+        }
+        
+        .category-header.systems {
+            background: linear-gradient(135deg, var(--systems-light) 0%, #faf8fc 100%);
+            color: var(--systems-primary);
+            border-bottom: 2px solid var(--systems-border);
+        }
+        
+        .category-header.features {
+            background: linear-gradient(135deg, var(--features-light) 0%, #f4fbf9 100%);
+            color: var(--features-primary);
+            border-bottom: 2px solid var(--features-border);
+        }
+        
+        .category-header.additional {
+            background: linear-gradient(135deg, var(--additional-light) 0%, #fffcf8 100%);
+            color: var(--additional-primary);
+            border-bottom: 2px solid var(--additional-border);
+        }
+        
+        .category-content {
+            padding: 16px;
+        }
+        
+        /* Amenity Items with Subsections */
+        .amenity-group {
+            margin-bottom: 12px;
+        }
+        
+        .amenity-group:last-child {
+            margin-bottom: 0;
+        }
+        
+        .amenity-parent {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+            user-select: none;
+            background-color: white;
+            position: relative;
+        }
+        
+        .amenity-parent:hover {
+            transform: translateX(4px);
+        }
+        
+        .amenity-parent .expand-icon {
+            margin-left: auto;
+            font-size: 20px;
+            transition: transform 0.3s ease;
+            opacity: 0.6;
+        }
+        
+        .amenity-parent.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+        
+        .amenity-parent.has-selection {
+            background-color: #f0fdf9;
+            border-color: #10b981;
+        }
+        
+        .amenity-parent.has-selection::after {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 70%;
+            background-color: #10b981;
+            border-radius: 2px;
+        }
+        
+        .selected-value {
+            font-size: 11px;
+            font-weight: 500;
+            color: #10b981;
+            margin-left: 8px;
+            background-color: rgba(16, 185, 129, 0.1);
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+        
+        /* Structure styles */
+        .amenity-parent.structure {
+            color: var(--structure-primary);
+        }
+        
+        .amenity-parent.structure:hover {
+            background-color: var(--structure-light);
+            border-color: var(--structure-border);
+        }
+        
+        /* Systems styles */
+        .amenity-parent.systems {
+            color: var(--systems-primary);
+        }
+        
+        .amenity-parent.systems:hover {
+            background-color: var(--systems-light);
+            border-color: var(--systems-border);
+        }
+        
+        /* Features styles */
+        .amenity-parent.features {
+            color: var(--features-primary);
+        }
+        
+        .amenity-parent.features:hover {
+            background-color: var(--features-light);
+            border-color: var(--features-border);
+        }
+        
+        /* Additional styles */
+        .amenity-parent.additional {
+            color: var(--additional-primary);
+        }
+        
+        .amenity-parent.additional:hover {
+            background-color: var(--additional-light);
+            border-color: var(--additional-border);
+        }
+        
+        /* Subsections */
+        .amenity-suboptions {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+            background-color: white;
+            border-radius: 0 0 8px 8px;
+            margin-top: -2px;
+        }
+        
+        .amenity-suboptions.expanded {
+            max-height: 600px;
+            padding: 8px 0;
+        }
+        
+        .suboption {
+            display: flex;
+            align-items: center;
+            padding: 10px 16px 10px 36px;
+            font-size: 12px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.15s ease;
+            color: var(--harken-gray);
+            position: relative;
+        }
+        
+        .suboption::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: #d1d5db;
+            transition: all 0.2s ease;
+        }
+        
+        .suboption:hover {
+            background-color: #f9fafb;
+            color: var(--harken-slate);
+        }
+        
+        .suboption:hover::before {
+            background-color: var(--harken-teal);
+            transform: translateY(-50%) scale(1.2);
+        }
+        
+        .suboption.selected {
+            background-color: #ecfdf5;
+            color: #047857;
+            font-weight: 600;
+        }
+        
+        .suboption.selected::before {
+            background-color: #10b981;
+            transform: translateY(-50%) scale(1.3);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+        }
+        
+        .suboption .check-icon {
+            margin-left: auto;
+            font-size: 16px;
+            color: #10b981;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        
+        .suboption.selected .check-icon {
+            opacity: 1;
+        }
+        
+        /* Type My Own Input */
+        .type-my-own-container {
+            padding: 8px 16px 8px 36px;
+            display: none;
+        }
+        
+        .type-my-own-container.visible {
+            display: block;
+        }
+        
+        .type-my-own-input {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 12px;
+            font-family: inherit;
+            color: var(--harken-slate);
+            transition: all 0.2s ease;
+        }
+        
+        .type-my-own-input:focus {
+            outline: none;
+            border-color: var(--harken-teal);
+            box-shadow: 0 0 0 3px rgba(13, 161, 199, 0.1);
+        }
+        
+        .type-my-own-input::placeholder {
+            color: var(--harken-light-gray);
+        }
+        
+        /* Simple amenities (no subsections) */
+        .amenity-simple {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid transparent;
+            user-select: none;
+            background-color: white;
+            margin-bottom: 8px;
+        }
+        
+        .amenity-simple:last-child {
+            margin-bottom: 0;
+        }
+        
+        .amenity-simple:hover {
+            transform: translateX(4px);
+        }
+        
+        .amenity-simple .checkmark {
+            margin-left: auto;
+            font-size: 18px;
+            opacity: 0;
+            transition: opacity 0.2s ease;
+        }
+        
+        .amenity-simple.selected .checkmark {
+            opacity: 1;
+        }
+        
+        /* Additional styles for simple items */
+        .amenity-simple.additional {
+            color: var(--additional-primary);
+        }
+        
+        .amenity-simple.additional:hover {
+            background-color: var(--additional-light);
+            border-color: var(--additional-border);
+        }
+        
+        .amenity-simple.additional.selected {
+            background-color: #fef3e4;
+            border-color: var(--additional-primary);
+            color: #8a5a2e;
+        }
+        
+        /* Output Section */
+        .output-section {
+            margin-top: 40px;
+            padding-top: 32px;
+            border-top: 2px solid #e8eaed;
+        }
+        
+        .output-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--harken-gray);
+            margin-bottom: 16px;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+        }
+        
+        .output-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+        
+        @media (max-width: 700px) {
+            .output-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .output-box {
+            background-color: #f9fafb;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 16px 20px;
+        }
+        
+        .output-box h4 {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--harken-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+        
+        .output-box .value {
+            font-size: 14px;
+            color: var(--harken-slate);
+            font-weight: 500;
+        }
+        
+        .output-box .value.empty {
+            color: var(--harken-light-gray);
+            font-style: italic;
+        }
+        
+        /* Comparison Section */
+        .comparison-section {
+            margin-top: 48px;
+            padding-top: 32px;
+            border-top: 2px solid #e8eaed;
+        }
+        
+        .comparison-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--harken-slate);
+            margin-bottom: 8px;
+        }
+        
+        .comparison-subtitle {
+            font-size: 13px;
+            color: var(--harken-gray);
+            margin-bottom: 24px;
+        }
+        
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 32px;
+        }
+        
+        @media (max-width: 900px) {
+            .comparison-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .comparison-panel {
+            border: 2px solid #e8eaed;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        
+        .comparison-panel.current {
+            border-color: #fecaca;
+        }
+        
+        .comparison-panel.new {
+            border-color: #bbf7d0;
+        }
+        
+        .comparison-panel-header {
+            padding: 16px 20px;
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .comparison-panel.current .comparison-panel-header {
+            background-color: #fef2f2;
+            color: #dc2626;
+        }
+        
+        .comparison-panel.new .comparison-panel-header {
+            background-color: #f0fdf4;
+            color: #16a34a;
+        }
+        
+        .comparison-panel-content {
+            padding: 20px;
+        }
+        
+        .dropdown-example {
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px 16px;
+            font-size: 13px;
+            color: var(--harken-slate);
+            background-color: #fafbfc;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+        
+        .dropdown-example:last-child {
+            margin-bottom: 0;
+        }
+        
+        .dropdown-label {
+            font-weight: 500;
+            color: var(--harken-gray);
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 6px;
+        }
+        
+        .chip-preview {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        
+        .mini-chip {
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            font-weight: 500;
+            background-color: white;
+            border: 2px solid #e0e0e0;
+            color: var(--harken-slate);
+        }
+        
+        .mini-chip.selected {
+            background-color: #ecfdf5;
+            border-color: #10b981;
+            color: #047857;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">Amenities with Subsections - Design Prototype</h1>
+            <p class="subtitle">Chip-based selection design for amenities that require sub-option selection (replacing dropdowns)</p>
+        </div>
+        
+        <div class="design-note">
+            <h3>
+                <i class="material-icons" style="font-size: 18px;">info</i>
+                DESIGN SPECIFICATIONS FOR DEVELOPER
+            </h3>
+            <p>This prototype demonstrates how to handle amenity categories with subsections using the chip-based design pattern. Key features:</p>
+            <ul>
+                <li><strong>Expandable Categories:</strong> Click on an amenity category (e.g., "Exterior") to reveal its sub-options</li>
+                <li><strong>Single Selection Per Category:</strong> Only one sub-option can be selected per category (radio-button behavior)</li>
+                <li><strong>"Type My Own" Support:</strong> When selected, shows an inline text input for custom values</li>
+                <li><strong>Visual Feedback:</strong> Selected categories show a green indicator bar and the selected value as a tag</li>
+                <li><strong>Search Support:</strong> Search filters both parent categories and sub-options</li>
+            </ul>
+        </div>
+        
+        <!-- Search Bar -->
+        <div class="search-container">
+            <i class="material-icons search-icon">search</i>
+            <input 
+                type="text" 
+                class="search-input" 
+                id="searchInput"
+                placeholder="Search amenities..." 
+            />
+        </div>
+        
+        <!-- Category Grid -->
+        <div class="categories-grid">
+            <!-- Structure Column -->
+            <div class="category-column">
+                <div class="category-header structure">
+                    <i class="material-icons" style="font-size: 18px;">architecture</i>
+                    Structure
+                </div>
+                <div class="category-content">
+                    <!-- Exterior -->
+                    <div class="amenity-group" data-category="exterior">
+                        <div class="amenity-parent structure" onclick="toggleExpand(this)">
+                            <span>Exterior</span>
+                            <span class="selected-value" id="exterior-value" style="display: none;"></span>
+                            <i class="material-icons expand-icon">expand_more</i>
+                        </div>
+                        <div class="amenity-suboptions" id="exterior-options">
+                            <div class="suboption" data-value="Wood Siding" onclick="selectSuboption(this, 'exterior')">
+                                Wood Siding
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="Steel" onclick="selectSuboption(this, 'exterior')">
+                                Steel
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="Brick" onclick="selectSuboption(this, 'exterior')">
+                                Brick
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="Masonry" onclick="selectSuboption(this, 'exterior')">
+                                Masonry
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="Concrete Block" onclick="selectSuboption(this, 'exterior')">
+                                Concrete Block
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="Glass" onclick="selectSuboption(this, 'exterior')">
+                                Glass
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="Type My Own" onclick="selectSuboption(this, 'exterior')">
+                                Type My Own
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="type-my-own-container" id="exterior-custom">
+                                <input type="text" class="type-my-own-input" placeholder="Enter custom exterior type..." oninput="updateCustomValue(this, 'exterior')">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Roof -->
+                    <div class="amenity-group" data-category="roof">
+                        <div class="amenity-parent structure" onclick="toggleExpand(this)">
+                            <span>Roof</span>
+                            <span class="selected-value" id="roof-value" style="display: none;"></span>
+                            <i class="material-icons expand-icon">expand_more</i>
+                        </div>
+                        <div class="amenity-suboptions" id="roof-options">
+                            <div class="suboption" data-value="Standing Seam Metal" onclick="selectSuboption(this, 'roof')">
+                                Standing Seam Metal
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="60mil TPO Membrane" onclick="selectSuboption(this, 'roof')">
+                                60mil TPO Membrane
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="EPDM Membrane" onclick="selectSuboption(this, 'roof')">
+                                EPDM Membrane
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="Asphalt Shingle" onclick="selectSuboption(this, 'roof')">
+                                Asphalt Shingle
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="Tar and Gravel" onclick="selectSuboption(this, 'roof')">
+                                Tar and Gravel
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="Type My Own" onclick="selectSuboption(this, 'roof')">
+                                Type My Own
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="type-my-own-container" id="roof-custom">
+                                <input type="text" class="type-my-own-input" placeholder="Enter custom roof type..." oninput="updateCustomValue(this, 'roof')">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Basement -->
+                    <div class="amenity-group" data-category="basement">
+                        <div class="amenity-parent structure" onclick="toggleExpand(this)">
+                            <span>Basement</span>
+                            <span class="selected-value" id="basement-value" style="display: none;"></span>
+                            <i class="material-icons expand-icon">expand_more</i>
+                        </div>
+                        <div class="amenity-suboptions" id="basement-options">
+                            <div class="suboption" data-value="None" onclick="selectSuboption(this, 'basement')">
+                                None
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="Partial" onclick="selectSuboption(this, 'basement')">
+                                Partial
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="Full" onclick="selectSuboption(this, 'basement')">
+                                Full
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="Daylight" onclick="selectSuboption(this, 'basement')">
+                                Daylight
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="Type My Own" onclick="selectSuboption(this, 'basement')">
+                                Type My Own
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="type-my-own-container" id="basement-custom">
+                                <input type="text" class="type-my-own-input" placeholder="Enter custom basement type..." oninput="updateCustomValue(this, 'basement')">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Systems Column -->
+            <div class="category-column">
+                <div class="category-header systems">
+                    <i class="material-icons" style="font-size: 18px;">settings</i>
+                    Systems
+                </div>
+                <div class="category-content">
+                    <!-- Heating/Cooling -->
+                    <div class="amenity-group" data-category="heating_cooling">
+                        <div class="amenity-parent systems" onclick="toggleExpand(this)">
+                            <span>Heating/Cooling</span>
+                            <span class="selected-value" id="heating_cooling-value" style="display: none;"></span>
+                            <i class="material-icons expand-icon">expand_more</i>
+                        </div>
+                        <div class="amenity-suboptions" id="heating_cooling-options">
+                            <div class="suboption" data-value="GFA with Cooling" onclick="selectSuboption(this, 'heating_cooling')">
+                                GFA with Cooling
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="GFA without Cooling" onclick="selectSuboption(this, 'heating_cooling')">
+                                GFA without Cooling
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="HVAC System" onclick="selectSuboption(this, 'heating_cooling')">
+                                HVAC System
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="Boiler & Chiller" onclick="selectSuboption(this, 'heating_cooling')">
+                                Boiler & Chiller System
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="Electric" onclick="selectSuboption(this, 'heating_cooling')">
+                                Electric
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="In Floor Radiant" onclick="selectSuboption(this, 'heating_cooling')">
+                                In Floor Radiant Heating
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="No Heating" onclick="selectSuboption(this, 'heating_cooling')">
+                                No Heating
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="Type My Own" onclick="selectSuboption(this, 'heating_cooling')">
+                                Type My Own
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="type-my-own-container" id="heating_cooling-custom">
+                                <input type="text" class="type-my-own-input" placeholder="Enter custom HVAC type..." oninput="updateCustomValue(this, 'heating_cooling')">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Electrical -->
+                    <div class="amenity-group" data-category="electrical">
+                        <div class="amenity-parent systems" onclick="toggleExpand(this)">
+                            <span>Electrical</span>
+                            <span class="selected-value" id="electrical-value" style="display: none;"></span>
+                            <i class="material-icons expand-icon">expand_more</i>
+                        </div>
+                        <div class="amenity-suboptions" id="electrical-options">
+                            <div class="suboption" data-value="Single Phase" onclick="selectSuboption(this, 'electrical')">
+                                Single Phase
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="Three Phase" onclick="selectSuboption(this, 'electrical')">
+                                Three Phase
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="Type My Own" onclick="selectSuboption(this, 'electrical')">
+                                Type My Own
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="type-my-own-container" id="electrical-custom">
+                                <input type="text" class="type-my-own-input" placeholder="Enter custom electrical type..." oninput="updateCustomValue(this, 'electrical')">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Plumbing -->
+                    <div class="amenity-group" data-category="plumbing">
+                        <div class="amenity-parent systems" onclick="toggleExpand(this)">
+                            <span>Plumbing</span>
+                            <span class="selected-value" id="plumbing-value" style="display: none;"></span>
+                            <i class="material-icons expand-icon">expand_more</i>
+                        </div>
+                        <div class="amenity-suboptions" id="plumbing-options">
+                            <div class="suboption" data-value="No Plumbing" onclick="selectSuboption(this, 'plumbing')">
+                                No Plumbing
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="Average per Code" onclick="selectSuboption(this, 'plumbing')">
+                                Average per Code
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="Above Average" onclick="selectSuboption(this, 'plumbing')">
+                                Above Average
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="Type My Own" onclick="selectSuboption(this, 'plumbing')">
+                                Type My Own
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="type-my-own-container" id="plumbing-custom">
+                                <input type="text" class="type-my-own-input" placeholder="Enter custom plumbing type..." oninput="updateCustomValue(this, 'plumbing')">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Windows -->
+                    <div class="amenity-group" data-category="windows">
+                        <div class="amenity-parent systems" onclick="toggleExpand(this)">
+                            <span>Windows</span>
+                            <span class="selected-value" id="windows-value" style="display: none;"></span>
+                            <i class="material-icons expand-icon">expand_more</i>
+                        </div>
+                        <div class="amenity-suboptions" id="windows-options">
+                            <div class="suboption" data-value="Insulated Double Pane" onclick="selectSuboption(this, 'windows')">
+                                Insulated Double Pane
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="Insulated & Cased" onclick="selectSuboption(this, 'windows')">
+                                Insulated & Cased
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="Single Pane" onclick="selectSuboption(this, 'windows')">
+                                Single Pane
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="No Windows" onclick="selectSuboption(this, 'windows')">
+                                No Windows
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="Type My Own" onclick="selectSuboption(this, 'windows')">
+                                Type My Own
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="type-my-own-container" id="windows-custom">
+                                <input type="text" class="type-my-own-input" placeholder="Enter custom window type..." oninput="updateCustomValue(this, 'windows')">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Features Column -->
+            <div class="category-column">
+                <div class="category-header features">
+                    <i class="material-icons" style="font-size: 18px;">home</i>
+                    Features
+                </div>
+                <div class="category-content">
+                    <!-- Garage -->
+                    <div class="amenity-group" data-category="garage">
+                        <div class="amenity-parent features" onclick="toggleExpand(this)">
+                            <span>Garage</span>
+                            <span class="selected-value" id="garage-value" style="display: none;"></span>
+                            <i class="material-icons expand-icon">expand_more</i>
+                        </div>
+                        <div class="amenity-suboptions" id="garage-options">
+                            <div class="suboption" data-value="None" onclick="selectSuboption(this, 'garage')">
+                                None
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="Single Car Attached" onclick="selectSuboption(this, 'garage')">
+                                Single Car Attached
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="Single Car Detached" onclick="selectSuboption(this, 'garage')">
+                                Single Car Detached
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="Two Car Attached" onclick="selectSuboption(this, 'garage')">
+                                Two Car Attached
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="Two Car Detached" onclick="selectSuboption(this, 'garage')">
+                                Two Car Detached
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="Three Car Attached" onclick="selectSuboption(this, 'garage')">
+                                Three Car Attached
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="Three Car Detached" onclick="selectSuboption(this, 'garage')">
+                                Three Car Detached
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="Type My Own" onclick="selectSuboption(this, 'garage')">
+                                Type My Own
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="type-my-own-container" id="garage-custom">
+                                <input type="text" class="type-my-own-input" placeholder="Enter custom garage type..." oninput="updateCustomValue(this, 'garage')">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Fencing -->
+                    <div class="amenity-group" data-category="fencing">
+                        <div class="amenity-parent features" onclick="toggleExpand(this)">
+                            <span>Fencing</span>
+                            <span class="selected-value" id="fencing-value" style="display: none;"></span>
+                            <i class="material-icons expand-icon">expand_more</i>
+                        </div>
+                        <div class="amenity-suboptions" id="fencing-options">
+                            <div class="suboption" data-value="Aluminum" onclick="selectSuboption(this, 'fencing')">
+                                Aluminum
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="Wood" onclick="selectSuboption(this, 'fencing')">
+                                Wood
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="PVC" onclick="selectSuboption(this, 'fencing')">
+                                PVC
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="Wrought Iron" onclick="selectSuboption(this, 'fencing')">
+                                Wrought Iron
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="Vinyl" onclick="selectSuboption(this, 'fencing')">
+                                Vinyl
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="Chain Link" onclick="selectSuboption(this, 'fencing')">
+                                Chain Link
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="None" onclick="selectSuboption(this, 'fencing')">
+                                None
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="Type My Own" onclick="selectSuboption(this, 'fencing')">
+                                Type My Own
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="type-my-own-container" id="fencing-custom">
+                                <input type="text" class="type-my-own-input" placeholder="Enter custom fence type..." oninput="updateCustomValue(this, 'fencing')">
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Fireplace -->
+                    <div class="amenity-group" data-category="fireplace">
+                        <div class="amenity-parent features" onclick="toggleExpand(this)">
+                            <span>Fireplace</span>
+                            <span class="selected-value" id="fireplace-value" style="display: none;"></span>
+                            <i class="material-icons expand-icon">expand_more</i>
+                        </div>
+                        <div class="amenity-suboptions" id="fireplace-options">
+                            <div class="suboption" data-value="0" onclick="selectSuboption(this, 'fireplace')">
+                                None (0)
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="1" onclick="selectSuboption(this, 'fireplace')">
+                                1 Fireplace
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="2" onclick="selectSuboption(this, 'fireplace')">
+                                2 Fireplaces
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="3" onclick="selectSuboption(this, 'fireplace')">
+                                3 Fireplaces
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="4" onclick="selectSuboption(this, 'fireplace')">
+                                4 Fireplaces
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                            <div class="suboption" data-value="5+" onclick="selectSuboption(this, 'fireplace')">
+                                5+ Fireplaces
+                                <i class="material-icons check-icon">check</i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Additional Amenities Column (Simple Multi-Select) -->
+            <div class="category-column">
+                <div class="category-header additional">
+                    <i class="material-icons" style="font-size: 18px;">add_circle</i>
+                    Additional
+                </div>
+                <div class="category-content">
+                    <div class="amenity-simple additional" data-amenity="Pool" onclick="toggleSimple(this)">
+                        <span>Pool</span>
+                        <i class="material-icons checkmark">check_circle</i>
+                    </div>
+                    <div class="amenity-simple additional" data-amenity="Hot Tub" onclick="toggleSimple(this)">
+                        <span>Hot Tub</span>
+                        <i class="material-icons checkmark">check_circle</i>
+                    </div>
+                    <div class="amenity-simple additional" data-amenity="Outdoor Kitchen" onclick="toggleSimple(this)">
+                        <span>Outdoor Kitchen</span>
+                        <i class="material-icons checkmark">check_circle</i>
+                    </div>
+                    <div class="amenity-simple additional" data-amenity="Deck (Covered)" onclick="toggleSimple(this)">
+                        <span>Deck (Covered)</span>
+                        <i class="material-icons checkmark">check_circle</i>
+                    </div>
+                    <div class="amenity-simple additional" data-amenity="Patio (Covered)" onclick="toggleSimple(this)">
+                        <span>Patio (Covered)</span>
+                        <i class="material-icons checkmark">check_circle</i>
+                    </div>
+                    <div class="amenity-simple additional" data-amenity="Sprinkler System" onclick="toggleSimple(this)">
+                        <span>Sprinkler System</span>
+                        <i class="material-icons checkmark">check_circle</i>
+                    </div>
+                    <div class="amenity-simple additional" data-amenity="Landscaping" onclick="toggleSimple(this)">
+                        <span>Landscaping</span>
+                        <i class="material-icons checkmark">check_circle</i>
+                    </div>
+                    <div class="amenity-simple additional" data-amenity="Shed" onclick="toggleSimple(this)">
+                        <span>Shed</span>
+                        <i class="material-icons checkmark">check_circle</i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Output Section -->
+        <div class="output-section">
+            <div class="output-title">Selected Values (What Gets Saved)</div>
+            <div class="output-grid">
+                <div class="output-box">
+                    <h4>Exterior</h4>
+                    <div class="value" id="output-exterior"><span class="empty">Not selected</span></div>
+                </div>
+                <div class="output-box">
+                    <h4>Roof</h4>
+                    <div class="value" id="output-roof"><span class="empty">Not selected</span></div>
+                </div>
+                <div class="output-box">
+                    <h4>Basement</h4>
+                    <div class="value" id="output-basement"><span class="empty">Not selected</span></div>
+                </div>
+                <div class="output-box">
+                    <h4>Heating/Cooling</h4>
+                    <div class="value" id="output-heating_cooling"><span class="empty">Not selected</span></div>
+                </div>
+                <div class="output-box">
+                    <h4>Electrical</h4>
+                    <div class="value" id="output-electrical"><span class="empty">Not selected</span></div>
+                </div>
+                <div class="output-box">
+                    <h4>Plumbing</h4>
+                    <div class="value" id="output-plumbing"><span class="empty">Not selected</span></div>
+                </div>
+                <div class="output-box">
+                    <h4>Windows</h4>
+                    <div class="value" id="output-windows"><span class="empty">Not selected</span></div>
+                </div>
+                <div class="output-box">
+                    <h4>Garage</h4>
+                    <div class="value" id="output-garage"><span class="empty">Not selected</span></div>
+                </div>
+                <div class="output-box">
+                    <h4>Fencing</h4>
+                    <div class="value" id="output-fencing"><span class="empty">Not selected</span></div>
+                </div>
+                <div class="output-box">
+                    <h4>Fireplace</h4>
+                    <div class="value" id="output-fireplace"><span class="empty">Not selected</span></div>
+                </div>
+                <div class="output-box" style="grid-column: span 2;">
+                    <h4>Additional Amenities</h4>
+                    <div class="value" id="output-additional"><span class="empty">None selected</span></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Comparison Section -->
+        <div class="comparison-section">
+            <h2 class="comparison-title">Before & After Comparison</h2>
+            <p class="comparison-subtitle">How this design improves upon the current dropdown approach</p>
+            
+            <div class="comparison-grid">
+                <div class="comparison-panel current">
+                    <div class="comparison-panel-header">
+                        Current: Dropdown Selects
+                    </div>
+                    <div class="comparison-panel-content">
+                        <div class="dropdown-label">Exterior</div>
+                        <div class="dropdown-example">
+                            <span>Brick</span>
+                            <i class="material-icons" style="color: #9CA8B0;">arrow_drop_down</i>
+                        </div>
+                        <div class="dropdown-label">Garage</div>
+                        <div class="dropdown-example">
+                            <span>Two Car Attached</span>
+                            <i class="material-icons" style="color: #9CA8B0;">arrow_drop_down</i>
+                        </div>
+                        <div class="dropdown-label">Fencing</div>
+                        <div class="dropdown-example">
+                            <span>Wood</span>
+                            <i class="material-icons" style="color: #9CA8B0;">arrow_drop_down</i>
+                        </div>
+                        <p style="font-size: 12px; color: var(--harken-gray); margin-top: 16px; line-height: 1.5;">
+                            <strong>Issues:</strong> Options hidden until clicked, requires many clicks, hard to scan available options quickly, inconsistent with simple amenity chip design.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="comparison-panel new">
+                    <div class="comparison-panel-header">
+                        New: Expandable Chip Groups
+                    </div>
+                    <div class="comparison-panel-content">
+                        <div class="chip-preview">
+                            <div class="mini-chip selected">
+                                Exterior: Brick ✓
+                            </div>
+                            <div class="mini-chip selected">
+                                Garage: Two Car Attached ✓
+                            </div>
+                            <div class="mini-chip selected">
+                                Fencing: Wood ✓
+                            </div>
+                        </div>
+                        <p style="font-size: 12px; color: var(--harken-gray); margin-top: 16px; line-height: 1.5;">
+                            <strong>Benefits:</strong> Visual consistency with simple amenity chips, expandable to show all options, clear selection state visible at a glance, "Type My Own" inline input, searchable across all categories.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // State management
+        const selections = {
+            exterior: null,
+            roof: null,
+            basement: null,
+            heating_cooling: null,
+            electrical: null,
+            plumbing: null,
+            windows: null,
+            garage: null,
+            fencing: null,
+            fireplace: null
+        };
+        
+        const customValues = {};
+        const additionalAmenities = new Set();
+        
+        // Toggle expand/collapse for parent amenity
+        function toggleExpand(parentEl) {
+            const group = parentEl.closest('.amenity-group');
+            const optionsEl = group.querySelector('.amenity-suboptions');
+            
+            const wasExpanded = parentEl.classList.contains('expanded');
+            
+            // Close all other expanded groups
+            document.querySelectorAll('.amenity-parent.expanded').forEach(el => {
+                if (el !== parentEl) {
+                    el.classList.remove('expanded');
+                    el.closest('.amenity-group').querySelector('.amenity-suboptions').classList.remove('expanded');
+                }
+            });
+            
+            // Toggle current
+            if (wasExpanded) {
+                parentEl.classList.remove('expanded');
+                optionsEl.classList.remove('expanded');
+            } else {
+                parentEl.classList.add('expanded');
+                optionsEl.classList.add('expanded');
+            }
+        }
+        
+        // Select a suboption
+        function selectSuboption(suboptionEl, category) {
+            const value = suboptionEl.getAttribute('data-value');
+            const optionsContainer = document.getElementById(`${category}-options`);
+            const customContainer = document.getElementById(`${category}-custom`);
+            
+            // Remove selection from all suboptions in this category
+            optionsContainer.querySelectorAll('.suboption').forEach(el => {
+                el.classList.remove('selected');
+            });
+            
+            // Add selection to clicked suboption
+            suboptionEl.classList.add('selected');
+            
+            // Handle "Type My Own"
+            if (value === 'Type My Own') {
+                if (customContainer) {
+                    customContainer.classList.add('visible');
+                    customContainer.querySelector('input').focus();
+                }
+                selections[category] = customValues[category] || 'Type My Own';
+            } else {
+                if (customContainer) {
+                    customContainer.classList.remove('visible');
+                    customContainer.querySelector('input').value = '';
+                }
+                customValues[category] = null;
+                selections[category] = value;
+            }
+            
+            // Update parent visual
+            updateParentVisual(category);
+            
+            // Update output
+            updateOutput(category);
+        }
+        
+        // Update custom value
+        function updateCustomValue(inputEl, category) {
+            customValues[category] = inputEl.value;
+            selections[category] = inputEl.value || 'Type My Own';
+            updateParentVisual(category);
+            updateOutput(category);
+        }
+        
+        // Update parent visual to show selection
+        function updateParentVisual(category) {
+            const group = document.querySelector(`[data-category="${category}"]`);
+            const parentEl = group.querySelector('.amenity-parent');
+            const valueEl = document.getElementById(`${category}-value`);
+            
+            if (selections[category]) {
+                parentEl.classList.add('has-selection');
+                valueEl.style.display = 'inline-block';
+                
+                // Truncate long values
+                let displayValue = selections[category];
+                if (displayValue.length > 15) {
+                    displayValue = displayValue.substring(0, 12) + '...';
+                }
+                valueEl.textContent = displayValue;
+            } else {
+                parentEl.classList.remove('has-selection');
+                valueEl.style.display = 'none';
+            }
+        }
+        
+        // Toggle simple amenity (multi-select)
+        function toggleSimple(el) {
+            const amenity = el.getAttribute('data-amenity');
+            
+            if (el.classList.contains('selected')) {
+                el.classList.remove('selected');
+                additionalAmenities.delete(amenity);
+            } else {
+                el.classList.add('selected');
+                additionalAmenities.add(amenity);
+            }
+            
+            updateAdditionalOutput();
+        }
+        
+        // Update output for a category
+        function updateOutput(category) {
+            const outputEl = document.getElementById(`output-${category}`);
+            if (selections[category]) {
+                outputEl.innerHTML = selections[category];
+            } else {
+                outputEl.innerHTML = '<span class="empty">Not selected</span>';
+            }
+        }
+        
+        // Update additional amenities output
+        function updateAdditionalOutput() {
+            const outputEl = document.getElementById('output-additional');
+            if (additionalAmenities.size > 0) {
+                outputEl.innerHTML = Array.from(additionalAmenities).join(', ');
+            } else {
+                outputEl.innerHTML = '<span class="empty">None selected</span>';
+            }
+        }
+        
+        // Search functionality
+        document.getElementById('searchInput').addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+            
+            // Search in parent items
+            document.querySelectorAll('.amenity-group').forEach(group => {
+                const parentText = group.querySelector('.amenity-parent span:first-child').textContent.toLowerCase();
+                const suboptions = group.querySelectorAll('.suboption');
+                let hasMatch = parentText.includes(searchTerm);
+                
+                // Check suboptions
+                suboptions.forEach(sub => {
+                    const subText = sub.textContent.toLowerCase();
+                    if (subText.includes(searchTerm)) {
+                        hasMatch = true;
+                        sub.classList.remove('hidden');
+                    } else if (searchTerm) {
+                        sub.classList.add('hidden');
+                    } else {
+                        sub.classList.remove('hidden');
+                    }
+                });
+                
+                if (hasMatch || !searchTerm) {
+                    group.classList.remove('hidden');
+                } else {
+                    group.classList.add('hidden');
+                }
+            });
+            
+            // Search in simple amenities
+            document.querySelectorAll('.amenity-simple').forEach(item => {
+                const text = item.getAttribute('data-amenity').toLowerCase();
+                if (text.includes(searchTerm) || !searchTerm) {
+                    item.classList.remove('hidden');
+                } else {
+                    item.classList.add('hidden');
+                }
+            });
+        });
+        
+        // Demo: Pre-select some values
+        setTimeout(() => {
+            // Select Brick for Exterior
+            const brickOption = document.querySelector('[data-category="exterior"] .suboption[data-value="Brick"]');
+            if (brickOption) selectSuboption(brickOption, 'exterior');
+            
+            // Select Two Car Attached for Garage
+            const garageOption = document.querySelector('[data-category="garage"] .suboption[data-value="Two Car Attached"]');
+            if (garageOption) selectSuboption(garageOption, 'garage');
+            
+            // Select Pool as additional
+            const poolOption = document.querySelector('.amenity-simple[data-amenity="Pool"]');
+            if (poolOption) toggleSimple(poolOption);
+        }, 500);
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+

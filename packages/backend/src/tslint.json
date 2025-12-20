@@ -1,0 +1,22 @@
+{
+	"extends": "tslint-config-airbnb",
+	"rules": {
+		"quotemark": [true, "single"],
+		"max-line-length": {
+			"options": [120]
+		},
+		"no-console": false,
+		"ban": [
+			true,
+			{
+				"name": ["Math", "random"],
+				"message": "Use a better RNG, perhaps UUID?"
+			}
+		]
+	},
+	"jsRules": {
+		"max-line-length": {
+			"options": [120]
+		}
+	}
+}

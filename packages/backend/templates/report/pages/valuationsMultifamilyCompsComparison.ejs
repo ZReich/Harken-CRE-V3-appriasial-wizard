@@ -1,0 +1,1047 @@
+<%
+let paras = [];
+for(let index = 0; index < evaluation.scenarios.length; index++){
+    const scenario = evaluation.scenarios[index];
+    if(scenario.has_multi_family_approach){
+    let label = '';
+    if (evaluation && evaluation.scenarios && evaluation.scenarios.length > 1 && label === '') {
+        label = evaluation.scenarios[index].name;
+    }
+    const evaluation_multi_family_approach = scenario?.evaluation_multi_family_approach;
+    const evaluation_rent_roll_approach = scenario?.evaluation_rent_roll_approach;
+    if(evaluation_multi_family_approach){
+        const notes = evaluation_multi_family_approach.notes ? evaluation_multi_family_approach.notes : getMultiFamilyNotes();
+        let notesLength = notes.length;
+        let count = 1;
+        if (notesLength > 2300) {
+            count = Math.ceil(notesLength / 2300);
+        }
+        let startLen = 0;
+        let endLength = 2300;
+        let limit = 2300;
+        for (let loop = 0; loop <= count; loop++) {
+            const trimmedNotes = notes.replace(/<p><br><\/p>/g, '').trim();
+            if (!loop || trimmedNotes.substr(startLen, limit).length) {
+                const multiFamilyComps = evaluation_multi_family_approach.comps;
+        %>
+        <%
+        let stateName='';
+        const {state} = evaluation;
+        stateName = state?.toUpperCase();
+        <!-- const matchState = states.find((obj) => obj?.code === state); -->
+        <!-- if (!matchState)  -->
+        <!-- { -->
+        <!-- stateName = state; -->
+        <!-- } else { -->
+        <!-- stateName = matchState?.name; -->
+        <!-- } -->
+        %>
+        <%
+     const condition = evaluation.condition || '';
+    const matchCondition = conditionOptions.find(obj => obj?.code === condition);
+
+    const conditionValue = matchCondition?.name === '--Select--'
+    ? 'N/A'
+    : !matchCondition
+        ? condition
+        : matchCondition.name || 'N/A';
+        %>
+            <div class="new-page valuations_page_3" data-type="sales-approach">
+                <div class="page-header" style="<%= (loop > 0 && loop <= 5) ? 'padding-bottom:5rem ; margin-left: 50rem;' : '' %>">
+                    <%- chapter %>
+                </div>
+
+                <div class="description">
+                    <% if (loop === 0) { %>
+                        <p class="title">Multi-Family <span class="subtitle">Approach</span></p>
+                        <p class="label"><%= label %></p>
+                        <p class="regular-description">When valuing a property through the income approach the author will use either the existing lease on the property if said lease 
+                            is confirmed to be at market or the author will research leased properties that fall within the comparable scope of the subject property and adjust them to fall 
+                            in line with the subject property.
+                        </p>
+                        <table class="comps-table">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Subject Property</th>
+                                    <% if (
+                                        evaluation_multi_family_approach &&
+                                        (Array.isArray(evaluation_multi_family_approach.comps) ||
+                                            typeof evaluation_multi_family_approach.comps === 'object')
+                                    ) { %>
+                                        <% evaluation_multi_family_approach.comps.forEach((comp, i) => { %>
+                                        <th>Comparable #<%= i + 1 %></th>
+                                        <% }) %>
+                                    <% } %>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td></td>
+                                    <% let url = ''; %>
+                                    <% if (evaluation.coverImage) {
+                                        url = evaluation.coverImage;
+                                    } else {
+                                        url = '/images/default-placeholder.png';
+                                    } %>
+                                    <td>
+                                        <img width="150" height="80" src="<%= url %>" class="image-added"/>
+                                    </td>
+                                    
+                                    <% let comp_image_url = ''; %>
+                                    <% if (
+                                        evaluation_multi_family_approach &&
+                                        (Array.isArray(evaluation_multi_family_approach.comps) ||
+                                            typeof evaluation_multi_family_approach.comps === 'object')
+                                    ) { %>
+                                        <% evaluation_multi_family_approach.comps.forEach((comp, i) => { 
+                                            const multiFamilyComp = comp?.comp_details;
+                                            if (multiFamilyComp?.property_image_url) {
+                                                const url = multiFamilyComp?.property_image_url;
+                                                comp_image_url = evaluation.baseUrl+url;
+                                            }else {
+                                                comp_image_url = '/images/default-placeholder.png';
+                                            }
+                                        %>
+                                        <td>
+                                            <img width="150" height="80" src="<%= comp_image_url %>" />
+                                        </td>
+                                        <% }) %>
+                                    <% } %>
+                                </tr>
+                                <tr>
+                                    <td class="blue bold">Location</td>
+                                    <td>
+                                        <div style="white-space: initial;">
+                                        <%= evaluation.street_address %>, <br/>
+                                        <%= evaluation.city %>, <%= stateName %> <%= evaluation.zipcode %>
+                                        </div>
+                                    </td>
+                                    
+                                    <% if (
+                                        evaluation_multi_family_approach &&
+                                        (Array.isArray(evaluation_multi_family_approach.comps) ||
+                                            typeof evaluation_multi_family_approach.comps === 'object')
+                                    ) { %>
+                                        <% evaluation_multi_family_approach.comps.forEach((comp, i) => { 
+                                            const multiFamilyComp = comp.comp_details;
+                                            if (multiFamilyComp && multiFamilyComp.street_address) { %>
+                                            <td>
+                                                <div style="white-space: initial;">
+                                                    <%= multiFamilyComp.street_address %>, <br/>
+                                                    <%= multiFamilyComp.city %>, <%= multiFamilyComp?.state?.toUpperCase() %> <%= multiFamilyComp.zipcode %>
+                                                </div>
+                                            </td>
+                                            <% } else { %>
+                                                <td>Address Not Provided</td>
+                                            <% } %>
+                                        <% }) %>
+                                    <% } %>
+                                </tr>
+                                <tr class="odd">
+                                    <td>
+                                        Property Type
+                                        <%
+                                            let zone_string = '';
+                                            if (evaluation && evaluation.zonings && evaluation.zonings[0]) {                                             
+                                            zone_string = evaluation.zonings[0].zone;
+
+                                            const zone = zoneOptions.find((obj) => obj?.code === zone_string);
+                                            zoneValue = zone ? zone.name : zone_string;
+
+                                            const sub_options = zone?.sub_options || [];
+                                            const subZone = sub_options.find((obj) => obj?.code === evaluation.zonings[0]?.sub_zone);
+                                            subZoneValue = subZone ? subZone.name : evaluation.zonings[0]?.sub_zone;
+                                            
+
+                                            const displayZoneText = zoneValue
+                                            ? zoneValue + ' / ' + (subZoneValue || getNotAvailableLabel())
+                                            : '';
+                                            }
+                                        %>
+                                    </td>
+                                    <td>
+                                        <div style="white-space: initial;">
+                                            <%= zoneValue %>
+                                        </div>
+                                    </td>
+                                    <% 
+                                    if (Array.isArray(multiFamilyComps) || typeof multiFamilyComps === 'object') {
+                                        multiFamilyComps.forEach((comp, i) => {
+                                            const compData = comp.comp_details;
+                                            if (compData) {
+                                                const land_type = compData.land_type;
+                                                const zonings = compData.zonings;
+                                                let zones = [];
+                                                let sub_zones = [];
+                                
+                                                if (zonings && zonings.length > 0) {
+                                                    zones = zonings.map(z => z.zone);
+                                                    sub_zones = zonings.map(z => z.sub_zone);
+                                                }
+                                
+                                                let zone_string = '';
+                                                let sub_zone_string = '';
+                                
+                                                if (zones.length > 0) {
+                                                    const zone = zoneOptions.find((obj) => obj?.code === zones[0]);
+                                                    zone_string = zone ? zone.name : zones[0];
+                                                }
+                                
+                                                if (sub_zones.length > 0) {
+                                                     const zone = zoneOptions.find((obj) => obj?.code === zones[0]);
+                                                    const sub_options = zone?.sub_options || [];
+                                                    const subZone = sub_options.find((obj) => obj?.code === sub_zones[0]);
+                                                    sub_zone_string = subZone ? subZone.name : (sub_zones[0] || getNotAvailableLabel());
+                                                }
+                                    %>
+                                    <td>
+                                        <div style="white-space: initial;">
+                                            <% if (zone_string && sub_zone_string) { %>
+                                                <%= zone_string %> / <%= sub_zone_string %>
+                                            <% } %>
+                                        </div>
+                                    </td>
+                                    <% 
+                                            } else { 
+                                    %>
+                                    <td><%= getNotAvailableLabel() %></td>
+                                    <% 
+                                            }
+                                        });
+                                    } 
+                                    %>
+                                </tr>  
+                                <tr>
+                                    <td>Bed / Bath</td>
+                                    <td>
+                                        <% if(evaluation_rent_roll_approach){
+                                            const rent_roll_type = evaluation_rent_roll_approach.type;
+                                            let formatted_value = evaluation_rent_roll_approach.rent_rolls.map(rr => `(${rr.unit}) ${rr.beds}/${rr.baths}`).join(', ');
+                                            if(evaluation_rent_roll_approach.rent_rolls && rent_roll_type == 'summary'){
+                                                formatted_value = evaluation_rent_roll_approach.rent_rolls.map(rr => `(${rr.unit_count}) ${rr.beds}/${rr.baths}`).join(', ');
+                                            } %>
+                                            <%= formatted_value %>
+                                        <% } %>
+                                    </td>
+                                    <% 
+                                    const comps = evaluation_multi_family_approach.comps;
+                                    if (Array.isArray(comps) || typeof comps === 'object') {
+                                        comps.forEach((comp, i) => { %>
+                                    <td>
+                                        <% if (comp.property_unit_id) { 
+                                            const filteredUnits = (comp.comp_details.property_units || []).filter(u => u.id === comp.property_unit_id);
+                                            if (filteredUnits.length) {
+                                            filteredUnits.forEach((property_val, key) => {
+                                                const unit_count = property_val.unit_count || 0;
+                                                const beds = property_val.beds || 0;
+                                                const baths = property_val.baths || 0;
+                                        %>
+                                            (<%= unit_count %>) <%= beds %>/<%= baths %><%= (key < filteredUnits.length - 1) ? ', ' : '' %>
+                                        <% 
+                                            });
+                                        } else { 
+                                        %>
+                                            <%= getNotAvailableLabel() %>
+                                        <% 
+                                        } 
+                                        } else { 
+                                        %>
+                                        <%= getNotAvailableLabel() %>
+                                        <% } %>
+                                    </td>
+                                    <%
+                                    });
+                                }
+                                %>
+                                </tr>      
+                                <tr class="odd">
+                                    <td>
+                                        Included Utilities
+                                    </td>
+                                    <td>
+                                        <div style="white-space: initial;">
+                                            <% if (evaluation?.evaluation_included_utilities && evaluation?.evaluation_included_utilities?.length) { 
+                                                const utilitiesArray = evaluation.evaluation_included_utilities.map(u => u.utility);
+                                                const utilities = utilitiesArray.join(', ');
+                                            %>
+                                                <%= utilities %>
+                                            <% } %>
+                                            <%= (evaluation?.evaluation_included_utilities && evaluation?.evaluation_included_utilities?.length && evaluation.other_include_utilities) ? ', ' : '' %>
+                                            <%= evaluation.other_include_utilities || '' %>
+                                        </div>
+                                    </td>
+                                    <% 
+                                    if (Array.isArray(multiFamilyComps) || typeof multiFamilyComps === 'object') {
+                                        multiFamilyComps.forEach((comp, i) => {
+                                            const compData = comp.comp_details;
+                                            const includedUtils = compData?.comps_included_utilities;
+                                            const otherUtils = compData?.other_include_utilities; 
+                                            if (compData && (includedUtils?.length || otherUtils)) { %>
+                                        <td>
+                                            <div style="white-space: initial;">
+                                                <% if (includedUtils?.length) {
+                                                    const utilNames = includedUtils.map(u => u.utility).join(', ');
+                                                %>
+                                                <%= utilNames %>
+                                                <% } %>
+                                                <%= (includedUtils?.length && otherUtils) ? ', ' : '' %>
+                                                <%= otherUtils || '' %>
+                                            </div>
+                                        </td>
+                                        <% } 
+                                        else { 
+                                        %>
+                                        <td><%= getNotAvailableLabel() %></td>
+                                        <% 
+                                            }
+                                        });
+                                    } 
+                                    %>
+                                </tr>
+                                <tr>
+                                    <td>Rental Rates $/Mo.</td>
+                                    <td></td>
+                                    <% 
+                                    if (Array.isArray(multiFamilyComps) || typeof multiFamilyComps === 'object') {
+                                        multiFamilyComps.forEach((comp, i) => {
+                                        const avgRent = comp?.avg_monthly_rent;
+                                    %>
+                                    <td>
+                                        <%= typeof avgRent === 'number' ? toCurrency(avgRent) : '$0.00' %>
+                                    </td>
+                                    <% }); } %>
+                                </tr>
+                                <% 
+                                let rowIndex = 0;
+                                evaluation_multi_family_approach?.comparison_attributes.forEach(attr => { 
+                                    rowIndex++;
+                                    const key = attr.comparison_key;
+                                    const name = attr.comparison_value;
+                                %>
+                                <tr class="<%= rowIndex % 2 === 0 ? '' : 'odd' %>">
+                                    <td><%= name %></td>
+                                    <!-- Subject property cell -->
+                                    <td>
+                                <% let totalSqFt = 0; %>
+                                <% if (evaluation_rent_roll_approach) {
+                                    const rent_roll_type = evaluation_rent_roll_approach?.type;
+                                    if (Array.isArray(evaluation_rent_roll_approach?.rent_rolls) && rent_roll_type === 'summary') {
+                                        totalSqFt = evaluation_rent_roll_approach.rent_rolls.reduce((sum, item) => {
+                                            const sqFt = parseFloat(item?.sq_ft) || 0;
+                                            return sum + sqFt;
+                                        }, 0);
+                                        }
+                                       } %>
+                                        <% 
+                                        let subjectValue = evaluation[key];
+                                        if(key === 'building_size'){
+                                            subjectValue = numberFormat(evaluation[key]); 
+                                        }
+                                        else if (key === 'services') {
+                                            subjectValue = evaluation.utilities_select;
+                                        } 
+                                         else if (key === 'unit' && evaluation.comparison_basis === 'Unit') {
+                                            subjectValue = numberFormat(evaluation?.total_units);
+                                        }
+                                        else if (key === 'city_county') {
+                                        const city = evaluation?.city || 'N/A';
+                                        const county = evaluation?.county || 'N/A';
+                                        subjectValue = `${city}, ${county}`;
+                                        }
+                                        else if(key === 'city_state'){
+                                            subjectValue = evaluation.city +', '+ stateName;
+                                        }
+                                        else if(key === 'building_size_land_size'){
+                                            const { building_size, land_size, land_dimension } = evaluation;
+                                            let formattedLandSize = getNotAvailableLabel();
+                                            if (land_size && land_dimension === 'SF') {
+                                                formattedLandSize = `${land_size?.toLocaleString()} SF`;
+                                            } else if (land_size && land_dimension === 'ACRE') {
+                                                formattedLandSize = `${Number(land_size).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 })} AC`;
+                                            }
+                                            const formattedBuildingSize = building_size ? numberFormat(building_size) + ' SF' : getNotAvailableLabel();
+                                            <!-- const formattedLandSize = land_size ? numberFormat(land_size) : 'N/A'; -->
+                                            subjectValue = `${formattedBuildingSize} / ${formattedLandSize}`;
+                                        }
+                                        else if(key === 'highest_best_use'){
+                                        subjectValue = evaluation?.high_and_best_user;
+                                        }
+                                        else if(key === 'unit_size_sq_ft'){
+                                            subjectValue = totalSqFt ? numberFormat(totalSqFt) : 'N/A';  
+                                        }
+                                        else if(key === 'year_built_year_remodeled'){
+                                            const year_built = evaluation.year_built ? evaluation.year_built : getNotAvailableLabel(); 
+                                            const year_remodeled = evaluation.year_remodeled ? evaluation.year_remodeled : getNotAvailableLabel(); 
+                                            subjectValue =  year_built+' / ' + year_remodeled;
+                                        }
+                                       else if (key === 'quality_condition') {
+                                        const condition = evaluation.condition || '';
+                                        const matchCondition = conditionOptions.find(obj => obj?.code === condition);
+
+                                        subjectValue = matchCondition?.name === '--Select--'
+                                            ? 'N/A'
+                                            : matchCondition?.name || condition || 'N/A';
+                                        }
+                                        else if (key === 'beds') {
+                                            subjectValue = evaluation.total_beds ?
+                                            evaluation?.total_beds.toLocaleString(2) // Show total beds for 'beds'
+                                            : ''
+                                        }
+                                        else if (key === 'topography') {
+                                            const topography = evaluation.topography || '';
+                                            const matchTopography = topographyOptions.find(obj => obj?.code === topography);
+                                            const topographyValue = matchTopography?.name === '--Select--'
+                                                ? getNotAvailableLabel()
+                                                : !matchTopography
+                                                    ? topography
+                                                    : matchTopography.name || getNotAvailableLabel();
+                                            subjectValue = topographyValue;
+                                        }
+                                        else if(key === 'frontage'){
+                                            const frontage = evaluation?.frontage || '';
+                                            const matchFrontage = frontageOptions.find(obj => obj?.code === frontage);
+                                            const frontageValue = matchFrontage?.name === '--Select--'
+                                            ? 'N/A'
+                                            : !matchFrontage
+                                                ? frontage
+                                                : matchFrontage.name || 'N/A';
+                                            subjectValue = frontageValue; 
+                                        }
+                                        else if (key === 'land_size_sf') {
+                                            const landSizeSfValue =
+                                                evaluation.land_dimension === 'SF'
+                                                ? evaluation.land_size
+                                                : evaluation.land_dimension === 'ACRE'
+                                                ? evaluation.land_size * 43560 : 0;
+                                            subjectValue = numberFormat(landSizeSfValue); // Optional: round to 2 decimal places
+                                        }
+                                        else if (key === 'land_size_acre') {
+                                            const landSizeAcreValue =
+                                                evaluation.land_dimension === 'SF'
+                                                ? evaluation.land_size / 43560
+                                                : evaluation.land_dimension === 'ACRE'
+                                                ? evaluation.land_size : 0;
+                                            subjectValue = landSizeAcreValue ? numberFormat(landSizeAcreValue,3) : getNotAvailableLabel(); // Optional: round to 2 decimal places
+                                        }
+                                        if (typeof subjectValue === 'undefined' || subjectValue === null || subjectValue === '') {
+                                            subjectValue = '';
+                                        }
+                                        %>
+                                        <%= subjectValue %>
+                                    </td>
+                                    <!-- Comps cells -->
+                                    <% if (Array.isArray(evaluation_multi_family_approach.comps)) { %>
+                                        <% evaluation_multi_family_approach.comps.forEach((comp, i) => {
+                                        const multiFamilyComp = comp.comp_details;
+                                        let fullStateName='';
+                                        const {state} = multiFamilyComp;
+                                        fullStateName = state?.toUpperCase();
+                                        <!-- const matchState = states.find((obj) => obj?.code === state); -->
+                                        <!-- if (!matchState)  -->
+                                        <!-- { -->
+                                        <!-- fullStateName = state; -->
+                                        <!-- } else { -->
+                                        <!-- fullStateName = matchState?.name; -->
+                                        <!-- } -->
+                                        let value = multiFamilyComp ? multiFamilyComp[key] : null;
+                                        if(key === 'building_size'){
+                                            value = numberFormat(multiFamilyComp[key]); 
+                                        }
+                                        else if(key === 'date_sold'){
+                                            value = formatDate(multiFamilyComp.date_sold, true);
+                                        }
+                                        else if(key === 'unit_size_sq_ft'){
+                                        const{property_units = []} = multiFamilyComp;
+                                        const sqFt = property_units.length ? property_units[0]?.sq_ft : null;
+                                        value = numberFormat(sqFt);
+                                        }
+                                        else if (key === 'unit' && evaluation.comparison_basis === 'Unit') {
+                                            value = numberFormat(multiFamilyComp?.total_units);
+                                        }
+                                        else if(key === 'city_state'){
+                                            value = multiFamilyComp.city +', '+ fullStateName;
+                                        }
+                                        else if(key === 'space'){
+                                            value = multiFamilyComp.space ? numberFormat(multiFamilyComp.space) + ' SF' : getNotAvailableLabel();
+                                        }
+                                        else if (key === 'building_size_land_size') {
+                                            const { building_size, land_size, land_dimension } = multiFamilyComp;
+                                            let formattedLandSize = getNotAvailableLabel();
+                                            if (land_size) {
+                                                if (
+                                                    evaluation.land_dimension == 'SF' &&
+                                                    land_dimension == 'ACRE'
+                                                ) {
+                                                    formattedLandSize = (land_size * 43560)?.toLocaleString() + ' SF';
+                                                } else if (
+                                                    evaluation.land_dimension == 'ACRE' &&
+                                                    land_dimension == 'SF'
+                                                ) {
+                                                    formattedLandSize =
+                                                    (land_size / 43560)?.toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }) +
+                                                    ' AC';
+                                                } else {
+                                                    if (land_dimension == 'SF') {
+                                                        formattedLandSize = land_size?.toLocaleString() + ' SF';
+                                                    } else if (land_dimension == 'ACRE') {
+                                                        formattedLandSize =
+                                                            land_size?.toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }) + ' AC';
+                                                    }
+                                                }
+                                            }
+                                            const formattedBuildingSize = building_size ? numberFormat(building_size) + ' SF' : getNotAvailableLabel();
+                                            <!-- const formattedLandSize = land_size ? numberFormat(land_size) : 'N/A'; -->
+                                            value = `${formattedBuildingSize} / ${formattedLandSize}`;
+                                        }
+                                        else if (key === 'price_per_unit') {
+                                            value = multiFamilyComp?.total_units ? toCurrency((multiFamilyComp.sale_price / multiFamilyComp.total_units) || 0) : '';
+                                        }
+                                        else if (key === 'land_size_sf') {
+                                            const landSizeAcreValue =
+                                                multiFamilyComp.land_dimension === 'SF'
+                                                ? multiFamilyComp.land_size
+                                                : multiFamilyComp.land_dimension === 'ACRE'
+                                                    ? multiFamilyComp.land_size * 43560
+                                                    : 0;
+                                            value = numberFormat(landSizeAcreValue); // Optional: round to 2 decimal places
+                                        }
+                                        else if (key === 'land_size_acre') {
+                                            const landSizeAcreValue =
+                                                multiFamilyComp.land_dimension === 'SF'
+                                                ? multiFamilyComp.land_size / 43560
+                                                : multiFamilyComp.land_dimension === 'ACRE'
+                                                    ? multiFamilyComp.land_size
+                                                    : 0;
+                                            value = landSizeAcreValue ? numberFormat(landSizeAcreValue, 3) : getNotAvailableLabel();
+                                        }
+                                        else if (key === 'dollar_per_unit') { 
+                                            const price = multiFamilyComp.type === 'sale' ? multiFamilyComp.sale_price : multiFamilyComp.lease_rate;
+                                            let dollarPerUnit = 0;
+                
+                                            if (multiFamilyComp.type === 'sale') {
+                                                if (!price || !multiFamilyComp.total_units) {
+                                                    dollarPerUnit = 0;
+                                                } else {
+                                                    dollarPerUnit = price / multiFamilyComp.total_units;
+                                                }
+                                            } else {
+                                                if (multiFamilyComp.lease_rate === 0 || multiFamilyComp.total_units === 0) {
+                                                    dollarPerUnit = 0;
+                                                } else {
+                                                    if (multiFamilyComp.lease_rate_unit === 'monthly') {
+                                                        dollarPerUnit = price / multiFamilyComp.total_units / 12;
+                                                    } else {
+                                                        dollarPerUnit = price / multiFamilyComp.total_units;
+                                                    }
+                                                }
+                                            }
+                
+                                            value = dollarPerUnit ? toCurrency(dollarPerUnit) : ''; // Optional: round to 2 decimal places
+                                        }
+                                        else if (key === 'dollar_per_bed') {
+                                            const price = multiFamilyComp.type === 'sale' ? multiFamilyComp.sale_price : multiFamilyComp.lease_rate;
+                                            let dollarPerBed = 0;
+
+                                            if (multiFamilyComp.type === 'sale') {
+                                                if (!price || !multiFamilyComp.total_beds) {
+                                                    dollarPerBed = 0;
+                                                } else {
+                                                    dollarPerBed = price / multiFamilyComp.total_beds;
+                                                }
+                                            } else {
+                                                if (multiFamilyComp.lease_rate === 0 || multiFamilyComp.total_beds === 0) {
+                                                    dollarPerBed = 0;
+                                                } else {
+                                                    if (multiFamilyComp.lease_rate_unit === 'monthly') {
+                                                        dollarPerBed = price / multiFamilyComp.total_beds / 12;
+                                                    } else {
+                                                        dollarPerBed = price / multiFamilyComp.total_beds;
+                                                    }
+                                                }
+                                            }
+                                            value = dollarPerBed ? toCurrency(dollarPerBed) : ''; // Optional: round to 2 decimal places
+                                        }
+                                        else if (key === 'price_sf_per_year') {
+                                            value = toCurrency(multiFamilyComp.price_square_foot || 0); 
+                                        }
+                                        else if(key === 'price_acre_per_year'){
+                                            value = toCurrency(parseFloat(((multiFamilyComp?.price_square_foot || 0) * 43560).toFixed(2)));
+                                        }
+                                        else if (key === 'cap_rate') {
+                                            value = toPercentage(multiFamilyComp.cap_rate || 0); 
+                                        }
+                                        else if (key === 'city_county') {
+                                        const city = multiFamilyComp?.city || 'N/A';
+                                        const county = multiFamilyComp?.county || 'N/A';
+                                        value = `${city}, ${county}`;
+                                        }
+                                        else if (key === 'price_per_sf_land') {
+                                            let newValue = 0;
+                                            if (multiFamilyComp.land_dimension === 'SF') {
+                                                if (multiFamilyComp.land_size === null || multiFamilyComp.land_size === 0) {
+                                                    newValue = 0; // If land_size is null or 0, show $0.00
+                                                } else {
+                                                    newValue = multiFamilyComp.sale_price / multiFamilyComp.land_size;
+                                                }
+                                            } else {
+                                                if (multiFamilyComp.land_size === null || multiFamilyComp.land_size === 0) {
+                                                    newValue = 0; // If land_size is null or 0, show $0.00
+                                                } else {
+                                                    newValue = multiFamilyComp.sale_price / (multiFamilyComp.land_size * 43560); // Assuming this part was cut off
+                                                }
+                                            }
+                                            value = toCurrency(newValue);
+                                        }
+                                        else if (key === 'price_per_acre') {
+                                            let landSizeAcre = 0;
+                
+                                            if (multiFamilyComp?.land_dimension === 'SF') {
+                                                landSizeAcre = multiFamilyComp?.land_size ? parseFloat((multiFamilyComp?.sale_price / multiFamilyComp?.land_size).toFixed(2)) * 43560 : 0;
+                                            } else {
+                                                landSizeAcre = multiFamilyComp?.land_size ? parseFloat((multiFamilyComp?.sale_price / multiFamilyComp?.land_size).toFixed(2)) : 0;
+                                            }
+                                            value = toCurrency(landSizeAcre);
+                                        }else if (key === 'sale_price') {
+                                            value = toCurrency(multiFamilyComp.sale_price);
+                                        }else if (key === 'services') {
+                                            value = multiFamilyComp.utilities_select;
+                                        }else if (key === 'services') {
+                                            value = multiFamilyComp.utilities_select;
+                                        }else if (key === 'net_operating_income') {
+                                            value = toCurrency(multiFamilyComp.net_operating_income);
+                                        }else if (key === 'beds') {
+                                            value = multiFamilyComp.total_beds ?
+                                            multiFamilyComp.total_beds.toLocaleString(2) // Show total beds for 'beds'
+                                            : ''
+                                        }
+                                        else if(key === 'year_built_year_remodeled'){
+                                            const year_built = multiFamilyComp.year_built ? multiFamilyComp.year_built : getNotAvailableLabel(); 
+                                            const year_remodeled = multiFamilyComp.year_remodeled ? multiFamilyComp.year_remodeled : getNotAvailableLabel(); 
+                                            value =  year_built+' / ' + year_remodeled;
+                                        }
+                                        else if (key === 'quality_condition') {
+                                        const condition = multiFamilyComp.condition || '';
+                                        const matchCondition = conditionOptions.find(obj => obj?.code === condition);
+
+                                        value = matchCondition?.name === '--Select--'
+                                            ? 'N/A'
+                                            : matchCondition?.name || condition || 'N/A';
+                                        }
+                                        else if (key === 'topography') {
+                                            const topography = multiFamilyComp.topography || '';
+                                            const matchTopography = topographyOptions.find(obj => obj?.code === topography);
+                                            const topographyValue = matchTopography?.name === '--Select--'
+                                                ? getNotAvailableLabel()
+                                                : !matchTopography
+                                                    ? topography
+                                                    : matchTopography.name || getNotAvailableLabel();
+                                            value = topographyValue;
+                                        }
+                                        else if(key === 'frontage'){
+                                            const frontage = multiFamilyComp?.frontage || '';
+                                            const matchFrontage = frontageOptions.find(obj => obj?.code === frontage);
+                                            const frontageValue = matchFrontage?.name === '--Select--'
+                                            ? 'N/A'
+                                            : !matchFrontage
+                                                ? frontage
+                                                : matchFrontage.name || 'N/A';
+                                            value = frontageValue; 
+                                        }
+                                        else if(key === 'price_per_sf'){
+                                            value = toCurrency(multiFamilyComp.price_square_foot);
+                                        }
+                                        else if (key === 'lease_type') {
+                                            const leaseType = multiFamilyComp.lease_type || '';
+                                            const matchLeaseType = leaseTypeOptions.find(obj => obj?.code === leaseType);
+                                            const leaseTypeValue = 
+                                                            multiFamilyComp.lease_type == 'select' ? ''
+                                                            : !matchLeaseType ? leaseType
+                                                            : matchLeaseType?.name || '';
+                                            value = leaseTypeValue;
+                                        } 
+                                        if (!value || value === '') {
+                                            value = getNotAvailableLabel();
+                                        }
+                                        %>
+                                        <td><% key %><%= value %></td>
+                                        <% }) %>
+                                    <% } %>
+                                </tr>
+                                <% }) %>
+                                <tr>
+                                    <td class="blue bold">Comparison Criteria</td>
+                                    <td></td>
+                                    <% if (
+                                        evaluation_multi_family_approach &&
+                                        (Array.isArray(evaluation_multi_family_approach.comps) ||
+                                            typeof evaluation_multi_family_approach.comps === 'object')
+                                    ) { %>
+                                        <% evaluation_multi_family_approach.comps.forEach((comp, i) => { %>
+                                        <td></td>
+                                        <% }) %>
+                                    <% } %>
+                                </tr>
+                                <% 
+                                let criteriaIndex = 0;
+                                evaluation_multi_family_approach?.subject_property_adjustments.forEach(adjustment => { %>
+                                    <tr class="<%= criteriaIndex % 2 === 0 ? 'odd' : '' %>">
+                                        <td><%= adjustment.adj_value %></td>
+                                        <td></td>
+                                        <% if (
+                                            evaluation_multi_family_approach &&
+                                            (Array.isArray(evaluation_multi_family_approach.comps) ||
+                                                typeof evaluation_multi_family_approach.comps === 'object')
+                                        ) { %>
+                                            <% evaluation_multi_family_approach.comps.forEach((comp, i) => { 
+                                                const multiFamilyComp = comp;
+                                                let matched = null;
+
+                                                if (multiFamilyComp && Array.isArray(multiFamilyComp.comps_adjustments)) {
+                                                    matched = multiFamilyComp.comps_adjustments.find(ca => ca.adj_key === adjustment.adj_key);
+                                                }
+
+                                                let perclass = '';
+                                                if(matched.adj_value > 0){
+                                                    perclass = 'plus';
+                                                }else if(matched.adj_value < 0){
+                                                    perclass = 'minus';
+                                                }
+                                            %>
+                                            <td class='<%= perclass %>'>
+                                                <% if (matched) { %>
+                                                    <% if (evaluation.comp_adjustment_mode === 'Dollar') { %>
+                                                    <%= toCurrency( matched.adj_value) %>
+                                                    <% } else { %>
+                                                    <%= toPercentage( matched.adj_value) %>
+                                                    <% } %>
+                                                <% } else { %>
+                                                    N/A
+                                                <% } %>
+                                            </td>
+                                            <% }) %>
+                                        <% } %>
+                                    </tr>
+                                <% 
+                                criteriaIndex++; }) %>
+                                <tr>
+                                    <td class="blue bold">Overall Adjustment</td>
+                                    <td></td>
+                                    <% if (
+                                        evaluation_multi_family_approach &&
+                                        (Array.isArray(evaluation_multi_family_approach.comps) ||
+                                            typeof evaluation_multi_family_approach.comps === 'object')
+                                    ) { %>
+                                        <% evaluation_multi_family_approach.comps.forEach((comp, i) => { 
+                                            const multiFamilyComp = comp;
+                                            const totalAdjustment = multiFamilyComp?.total_adjustment ?? 0;
+                                    %>
+                                        <td>
+                                            <% if (evaluation.comp_adjustment_mode === 'Dollar') { %>
+                                            <%= toCurrency(totalAdjustment) %>
+                                            <% } else { %>
+                                            <%= toPercentage(totalAdjustment) %>
+                                            <% } %>
+                                        </td>
+                                    <% }) %>
+                                <% } %>
+                                </tr>
+                                <tr class="odd">
+                                    <td>Adjusted Rental Rates $Mo</td>
+                                    <td></td>
+                                    <% 
+                                        const dimension = '';
+                                        if (Array.isArray(multiFamilyComps) || typeof multiFamilyComps === 'object') {
+                                            multiFamilyComps.forEach(comp => {
+                                                const val = comp?.adjusted_montly_val;
+                                    %>
+                                    <td>
+                                        <%= typeof val === 'number' ? toCurrency(val) + dimension : '$0.00' %>
+                                    </td>
+                                    <% }); } %>
+                                </tr>
+                                <tr>
+                                <td>Adjusted Comp Range</td>
+                                <td>
+                                    <% 
+                                    let adjustedVals = [];
+                                
+                                    if (Array.isArray(multiFamilyComps) || typeof multiFamilyComps === 'object') {
+                                        adjustedVals = multiFamilyComps.map(comp => 
+                                        typeof comp?.adjusted_montly_val === 'number' ? comp.adjusted_montly_val : 0
+                                        );
+                                
+                                        const minVal = Math.min(...adjustedVals);
+                                        const maxVal = Math.max(...adjustedVals);
+                                    %>
+                                    <%= toCurrency(minVal) %> - <%= toCurrency(maxVal) %><%= dimension %>
+                                    <% } %>
+                                </td>
+                                
+                                <% if (Array.isArray(multiFamilyComps) || typeof multiFamilyComps === 'object') { %>
+                                    <td colspan="3"></td>
+                                <% } %>
+                                </tr>
+                            </tbody>
+                        </table>
+                    <% } %>
+                    <%
+                        // Split notes into paragraphs
+                        let string = trimmedNotes.substr(startLen, limit);
+                        paras = string.split('<p>');
+                        let chars_per_line = 115;
+                        if (theme === 'nai' || theme === 'nai_portland') chars_per_line = 120;
+                        let lineSpacing = 1.9;
+                        let fontSize = 13;
+                        let pageHeight = 203; // mm
+                        let mmToInch = 0.0393701;
+                        let pointsToInch = 1 / 72;
+                        let fontHeightInInches = fontSize * pointsToInch;
+                        let lineSpacingInInches = fontHeightInInches * lineSpacing;
+                        let pageHeightInInches = pageHeight * mmToInch;
+                        let lines = Math.floor(pageHeightInInches / lineSpacingInInches);
+                        let total_page_lines = 0;
+                        let check_para_count = 0;
+                        lines = 30;
+                        if (loop === 0) {
+                            lines = 3;
+                            if (evaluation.getmultiFamilyComps && evaluation_multi_family_approach.subject_property_adjustments) {
+                                const labels = Object.keys(JSON.parse(evaluation_multi_family_approach.subject_property_adjustments || '{}')).length;
+                                if (labels < 8) {
+                                    lines += 8 - labels;
+                                } else {
+                                    lines -= labels - 8;
+                                }
+                            }
+                        }
+                        if (paras.length > 12) {
+                            lines = 16;
+                            if (loop === 0) lines = 2;
+                            if (loop > 0) lines = 20;
+                        }
+                        let p_counts_total = 0;
+                        let selected_lines = 0;
+                        for (let j = 0; j < paras.length; j++) {
+                            if (paras[j]) {
+                                let p_counts = paras[j].trim().length;
+                                let total_lines = p_counts / chars_per_line;
+                                total_page_lines += Math.ceil(total_lines);
+                                p_counts_total += p_counts;
+                            }
+                            if (total_page_lines <= lines) {
+                                check_para_count = j;
+                            }
+                        }
+                        if (total_page_lines >= lines) {
+                            let overflow_lines = total_page_lines - lines;
+                            let para_length = paras.length - 1;
+                            let last_p_length = paras[para_length].length;
+                            if (check_para_count < para_length) {
+                                let char_limit = 0;
+                                for (let k = 0; k <= check_para_count; k++) {
+                                    let check_p_length = paras[k].length + 3;
+                                    char_limit += check_p_length;
+                                    let total_lines = check_p_length / chars_per_line;
+                                    selected_lines += Math.ceil(total_lines);
+                                }
+                                if (selected_lines < lines) {
+                                    let check_p_len = paras[check_para_count + 1].length + 3;
+                                    let get_lines = lines - selected_lines;
+                                    let chars = get_lines * chars_per_line;
+                                    char_limit += chars;
+                                }
+                                limit = char_limit;
+                                endLength = startLen + limit;
+                            }
+                        }
+                        let check_string = trimmedNotes.substr(startLen, limit);
+                        let last_dot = check_string.lastIndexOf(' ');
+                        let end_part = check_string.substr(last_dot);
+                        let chars = end_part.length;
+                        if (chars < 10) {
+                            limit -= chars;
+                            endLength -= chars;
+                        }
+                        let data = trimmedNotes.substr(startLen, limit);
+                        if (loop !== 0) {
+                            if (data.startsWith('>')) {
+                                data = data.substr(1);
+                            } else if (data.startsWith('p>')) {
+                                data = data.substr(2);
+                            } else if (data.startsWith('<p>')) {
+                                data = data.substr(3);
+                            }
+                            data = '<p>' + data + '</p>';
+                        }
+                    %>
+                    <p><span class="<%= (loop === 0) ? 'nots' : '' %>"><%= (loop === 0) ? 'Lease Notes - ' : '' %></span><%- data.trim().substr(3) %></p>
+                    <%- watermark %>
+                </div>
+            </div>
+        <%
+            }
+            if (!paras) {
+                limit = 0;
+            } else if (paras.length > 12) {
+                limit = 2300;
+            } else {
+                limit = 3800;
+            }
+            startLen = endLength;
+            endLength = startLen + limit;
+            if (notesLength > startLen && count > loop) {
+                count++;
+            }
+        }
+    %>
+    <div class="new-page valuations_page_3">
+        <div class="page-header">
+            <%- chapter %>
+        </div>
+        <div class="description">
+            <p class="title">Multi-Family <span class="subtitle">Comps</span></p>
+            <p class="label"><%= label %></p>
+            <p class="regular-description">
+                The below Multi-Family comparables for the subject property have been adjusted based on the following criteria noted by the author.
+            </p>
+
+            <% if (
+                evaluation_multi_family_approach &&
+                (Array.isArray(evaluation_multi_family_approach.comps) ||
+                    typeof evaluation_multi_family_approach.comps === 'object')
+            ) { %>
+            <% evaluation_multi_family_approach.comps.forEach((comp, i) => { %>
+                <table class="comparable-table">
+                <tr>
+                    <td class="comparable-number">Comparable #<%= i + 1 %></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td width="20%">
+                    <% 
+                        let imgUrl = '/images/default-placeholder.png';
+                        const multiFamilyComp = comp.comp_details;
+                        if (multiFamilyComp?.property_image_url) {
+                            const url = multiFamilyComp?.property_image_url;
+                            imgUrl = evaluation.baseUrl+url;
+                        }
+                    %>
+                    <img width="210" height="120" src="<%= imgUrl %>" class="image-added" />
+                    </td>
+                    <td width="80%" class="comparable-info">
+                    <p class="comparable-title"><%= multiFamilyComp?.street_address || '' %></p>
+                    <p class="comparable-description"><%- multiFamilyComp?.summary || '' %></p>
+                    <p class="comparable-description"><%- comp.adjustment_note || '' %></p>
+                    </td>
+                </tr>
+                </table>
+            <% }); %>
+            <% } %>
+        </div>
+        <%- watermark %>
+    </div>
+    <div class="new-page valuations_page_3 multi_family_map" data-type="multi_family_map">
+        <%
+        const locations = [];
+        // Default map settings
+        locations.push({ lat: evaluation.map_pin_lat, lng: evaluation.map_pin_lng, color: 'red' });
+        let comps = [];
+        let zoom = 20;
+        let area_map_zoom = evaluation_multi_family_approach?.area_map_zoom ? evaluation_multi_family_approach.area_map_zoom : 12;
+        const map_type = evaluation_multi_family_approach?.map_type ?  evaluation_multi_family_approach.map_type : 'roadmap';
+        const map_center_lat_position = evaluation_multi_family_approach?.map_center_lat
+            ? evaluation_multi_family_approach.map_center_lat
+            : evaluation.map_pin_lat;
+        const map_center_lng_position = evaluation_multi_family_approach?.map_center_lng
+            ? evaluation_multi_family_approach.map_center_lng
+            : evaluation.map_pin_lng;
+
+        if (area_map_zoom) {
+            zoom = area_map_zoom - 2;
+        }
+
+        const colors = [
+            { color: 'blue' },
+            { color: 'green' }, { color: 'yellow' },
+            { color: 'purple' }, { color: 'orange' }
+        ]; 
+        if (evaluation_multi_family_approach && Array.isArray(evaluation_multi_family_approach.comps)) {
+            let multiFamilyComps = evaluation_multi_family_approach.comps;
+            multiFamilyComps.forEach((comp, index) => {
+                let { map_pin_lat, map_pin_lng } = comp.comp_details;
+                const color = colors[index % colors.length];
+                if (!map_pin_lat) {
+                    map_pin_lat = evaluation?.map_pin_lat;
+                }
+                if (!map_pin_lng) {
+                    map_pin_lng = evaluation?.map_pin_lng;
+                }
+                locations.push({ lat: map_pin_lat, lng: map_pin_lng, color });
+            });
+        } %>
+        <% // Construct the URL with markers
+        const markers = locations
+            .map((location) => `markers=size:small|color:${location.color.color}%7C${location.lat},${location.lng}`)
+            .join('&');
+
+        const url = `https://maps.googleapis.com/maps/api/staticmap?center=${map_center_lat_position},${map_center_lng_position}&zoom=${zoom}&scale=2&size=600x400&maptype=${map_type}&${markers}&key=${googleApiKey}`;
+
+        %>
+        
+        <div class="page-header">
+            <%- chapter %>
+        </div>
+        
+        <div class="description">
+            <p class="title">Muti-Family <span class="subtitle">Comps Map</span></p>
+            <p class="label"><%= label %></p>
+        </div>
+        
+        <div id="multi_family_map">
+            <img style="width: 100%; height: 130mm;" src="<%= url %>">
+        </div>        
+        <div id="map-landmarks">
+        <span class="label">Key</span>
+            <div class="map-landmark">
+                <div class="el">
+                    <div class="list subject-text">
+                        <span class="img">
+                        <img src="https://maps.google.com/mapfiles/ms/icons/pink-dot.png" />
+                        </span>
+                        <strong>Subject Property: </strong>
+                         <% 
+                            const state = evaluation?.state;
+                           let address = evaluation.street_address?.trim() || '';
+                            if (evaluation.city?.trim()) address += `, ${evaluation.city.trim()}`;
+                             if (state?.trim()) address += `, ${state.trim().toUpperCase()}`;
+                        %>
+                        <span class="ellip"><%= address %></span>
+                    </div>
+        
+                    <% let n = 1; 
+                    if (evaluation_multi_family_approach && Array.isArray(evaluation_multi_family_approach.comps)) {
+                        let multiFamilyComps = evaluation_multi_family_approach.comps;
+                        multiFamilyComps.forEach(comp => { 
+                            const compDetails = comp.comp_details;
+                            const {state} = compDetails;
+                            const color = colors[n - 1]?.color || '6b94ff';
+                            let address = compDetails.street_address?.trim() || '';
+                            if (compDetails.city?.trim()) address += `, ${compDetails.city.trim()}`;
+                            if (state?.trim()) address += `, ${state.trim().toUpperCase()}`;
+                        %>
+                        <div class="list">
+                            <span class="img">
+                                <img src="https://maps.google.com/mapfiles/ms/icons/<%= color %>-dot.png" />
+                            </span>
+                            <strong>Comp #<%= n %>:</strong>
+                            <span class="ellip"><%= address %></span>
+                        </div>
+                        <% if (n % 3 === 0) { %></div><div class="el"><% } %>
+                    <% n++; });
+                    } %>
+                </div>
+            </div>
+        </div>
+        <%- watermark %>
+    </div>
+<% } } } %>

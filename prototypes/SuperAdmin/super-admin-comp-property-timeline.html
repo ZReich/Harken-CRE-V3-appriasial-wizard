@@ -1,0 +1,828 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Property Timeline - Harken CRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .material-icons { font-family: 'Material Icons' !important; }
+        * {
+            font-family: 'Montserrat', sans-serif !important;
+        }
+        body {
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .section-title {
+            font-size: 23px;
+            font-weight: 600;
+            color: #1c3643;
+        }
+        .subsection-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #687F8B;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 10px 24px;
+            border-radius: 25px;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+        .nav-link.active {
+            background-color: transparent;
+            border: 1px solid #0da1c7;
+            color: #0da1c7;
+        }
+        .btn-primary {
+            background-color: #0da1c7;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary:hover {
+            background-color: #0b8eb0;
+            transform: translateY(-1px);
+        }
+        .btn-secondary {
+            background-color: white;
+            color: #687F8B;
+            border: 1px solid #e0e0e0;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-secondary:hover {
+            background-color: #f9f9f9;
+            border-color: #d0d0d0;
+        }
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 24px;
+        }
+        .link-text {
+            color: #0da1c7;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .link-text:hover {
+            text-decoration: underline;
+        }
+        
+        /* Timeline Specific Styles */
+        .property-header {
+            background: linear-gradient(135deg, #1c3643 0%, #2d5a6e 100%);
+            border-radius: 12px;
+            padding: 32px;
+            color: white;
+            margin-bottom: 32px;
+            position: relative;
+            overflow: hidden;
+        }
+        .property-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 300px;
+            height: 100%;
+            background: url('https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=400') center/cover;
+            opacity: 0.15;
+        }
+        .property-header-content {
+            position: relative;
+            z-index: 1;
+        }
+        .property-address {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .property-location {
+            font-size: 16px;
+            opacity: 0.9;
+            margin-bottom: 16px;
+        }
+        .property-meta {
+            display: flex;
+            gap: 32px;
+        }
+        .property-meta-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .property-meta-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            opacity: 0.7;
+            letter-spacing: 0.5px;
+        }
+        .property-meta-value {
+            font-size: 16px;
+            font-weight: 600;
+        }
+        
+        .timeline-container {
+            position: relative;
+            padding: 0 40px;
+        }
+        .timeline-line {
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: linear-gradient(to bottom, #0da1c7, #10b981);
+            border-radius: 2px;
+            transform: translateX(-50%);
+        }
+        .timeline-entry {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 48px;
+            position: relative;
+        }
+        .timeline-entry:nth-child(odd) {
+            flex-direction: row;
+        }
+        .timeline-entry:nth-child(even) {
+            flex-direction: row-reverse;
+        }
+        .timeline-entry:nth-child(odd) .timeline-card {
+            margin-right: 60px;
+        }
+        .timeline-entry:nth-child(even) .timeline-card {
+            margin-left: 60px;
+        }
+        .timeline-card {
+            flex: 1;
+            max-width: calc(50% - 60px);
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            overflow: hidden;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .timeline-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        }
+        .timeline-marker {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 24px;
+            height: 24px;
+            background: white;
+            border: 4px solid #0da1c7;
+            border-radius: 50%;
+            z-index: 10;
+        }
+        .timeline-marker.land {
+            border-color: #f59e0b;
+        }
+        .timeline-marker.improved {
+            border-color: #10b981;
+        }
+        .timeline-marker.redevelopment {
+            border-color: #8b5cf6;
+        }
+        .timeline-year {
+            position: absolute;
+            left: 50%;
+            transform: translateX(-50%);
+            top: 28px;
+            background: #1c3643;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 700;
+            z-index: 5;
+        }
+        .timeline-card-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+        }
+        .timeline-card-content {
+            padding: 20px;
+        }
+        .timeline-label {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+        .timeline-label.land {
+            background-color: #fef3c7;
+            color: #d97706;
+        }
+        .timeline-label.improved {
+            background-color: #d1fae5;
+            color: #059669;
+        }
+        .timeline-label.redevelopment {
+            background-color: #ede9fe;
+            color: #7c3aed;
+        }
+        .timeline-card-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1c3643;
+            margin-bottom: 8px;
+        }
+        .timeline-card-price {
+            font-size: 24px;
+            font-weight: 700;
+            color: #0da1c7;
+            margin-bottom: 12px;
+        }
+        .timeline-card-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8px;
+            font-size: 13px;
+            color: #687F8B;
+        }
+        .timeline-card-detail {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .timeline-card-detail .material-icons {
+            font-size: 16px;
+            color: #0da1c7;
+        }
+        .timeline-card-footer {
+            padding: 12px 20px;
+            background: #f9f9f9;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .timeline-card-date {
+            font-size: 12px;
+            color: #687F8B;
+            font-weight: 500;
+        }
+        .timeline-card-link {
+            color: #0da1c7;
+            font-size: 12px;
+            font-weight: 600;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .timeline-card-link:hover {
+            text-decoration: underline;
+        }
+        
+        .value-change {
+            background: linear-gradient(135deg, #f0fdf4 0%, #dcfce7 100%);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 32px;
+        }
+        .value-change-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1c3643;
+            margin-bottom: 12px;
+        }
+        .value-change-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+        .value-change-item {
+            text-align: center;
+        }
+        .value-change-value {
+            font-size: 20px;
+            font-weight: 700;
+            color: #059669;
+        }
+        .value-change-value.negative {
+            color: #dc2626;
+        }
+        .value-change-label {
+            font-size: 11px;
+            color: #687F8B;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+        
+        .summary-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .summary-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1c3643;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .summary-title .material-icons {
+            color: #0da1c7;
+        }
+        .summary-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .summary-list li {
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+            color: #687F8B;
+            display: flex;
+            justify-content: space-between;
+        }
+        .summary-list li:last-child {
+            border-bottom: none;
+        }
+        .summary-list li strong {
+            color: #1c3643;
+        }
+    </style>
+</head>
+<body>
+    <!-- UNIFIED NAVIGATION COMPONENT -->
+    <style>
+        .unified-navbar { background: url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643; background-color: #1c3643 !important; height: 84px; color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+        .nav-logo { height: 40px; width: auto; cursor: pointer; }
+        .nav-center { display: flex; align-items: center; gap: 8px; flex: 1; justify-content: center; }
+        .nav-core-features { display: flex; align-items: center; gap: 4px; background: rgba(13, 161, 199, 0.08); border-radius: 25px; padding: 4px 8px; margin-right: 16px; }
+        .nav-link { color: white; text-decoration: none; padding: 10px 20px; border-radius: 25px; transition: all 0.2s; border: 1px solid transparent; font-weight: 500; font-size: 14px; white-space: nowrap; }
+        .nav-link:hover { background-color: rgba(255,255,255,0.08); }
+        .nav-link.core-feature { font-weight: 500; font-size: 14px; color: white; }
+        .nav-link.core-feature:hover { background-color: rgba(13, 161, 199, 0.2); color: white; }
+        .nav-link.core-feature.active { background-color: transparent; border: 1px solid #0da1c7; color: #0da1c7; box-shadow: 0 2px 4px rgba(13, 161, 199, 0.2); }
+        .nav-link.active { background-color: transparent; border: 1px solid #0da1c7; color: #0da1c7; }
+        .nav-separator { width: 1px; height: 24px; background: rgba(255, 255, 255, 0.2); margin: 0 8px; }
+        .nav-user { display: flex; align-items: center; gap: 12px; }
+        .nav-user-name { font-size: 14px; font-weight: 500; color: white; }
+        .nav-user-avatar { width: 36px; height: 36px; border-radius: 50%; border: 2px solid #0da1c7; }
+    </style>
+    <nav class="unified-navbar">
+        <img src="assets/harken.png" alt="Harken CRE" class="nav-logo" onclick="window.location.href='super-admin-dashboard.html'">
+        <div class="nav-center">
+            <div class="nav-core-features">
+                <a href="super-admin-comps.html" class="nav-link core-feature active">COMPS</a>
+                <a href="super-admin-appraisals-list.html" class="nav-link core-feature">APPRAISAL</a>
+                <a href="evaluation-wizard-full.html" class="nav-link core-feature">EVALUATION</a>
+            </div>
+            <div class="nav-separator"></div>
+            <a href="super-admin-dashboard.html" class="nav-link">Dashboard</a>
+            <a href="super-admin-users.html" class="nav-link">Users</a>
+            <a href="super-admin-clients.html" class="nav-link">Clients</a>
+            <a href="super-admin-accounts.html" class="nav-link">Accounts</a>
+            <a href="super-admin-settings.html" class="nav-link">Settings</a>
+        </div>
+        <div class="nav-user">
+            <span class="nav-user-name">Sarah Johnson</span>
+            <img src="https://i.pravatar.cc/150?img=47" alt="User" class="nav-user-avatar">
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div style="padding: 35px 50px;">
+        <!-- BUILD NOTES SECTION -->
+        <div id="buildNotesSection" style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 20px; margin-bottom: 32px; border-radius: 4px;">
+            <h3 style="color: #856404; font-size: 16px; font-weight: 700; margin: 0 0 16px 0;">BUILD NOTES - Property Timeline View</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 16px;">
+                <div>
+                    <strong style="color: #856404;">Priority Level:</strong> High
+                </div>
+                <div>
+                    <strong style="color: #856404;">Development Stage:</strong> Prototype
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #856404;">Purpose:</strong>
+                <p style="margin: 4px 0 0 0; color: #856404;">Shows the complete history of a single physical property over time. Multiple comps (sales) are linked to the same property_id, allowing users to see progression: "land in 2015, gas station 2020, coffee shop 2024" - exactly as the owner envisioned.</p>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #856404;">Key Features:</strong>
+                <ul style="margin: 4px 0 0 0; color: #856404;">
+                    <li><strong>Visual Timeline:</strong> Chronological display with alternating left/right cards</li>
+                    <li><strong>Timeline Labels:</strong> Each sale has a label describing property state (Vacant Land, Gas Station, etc.)</li>
+                    <li><strong>Date-Specific Photos:</strong> Each comp shows the property image at that point in time</li>
+                    <li><strong>Value Progression:</strong> Summary showing how property value changed over time</li>
+                    <li><strong>Click to Detail:</strong> Each card links to full comp detail with audit history</li>
+                </ul>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #856404;">Owner's Vision:</strong>
+                <p style="margin: 4px 0 0 0; color: #856404; font-style: italic;">"Maybe that date has a pic with it so you can see land in 2015, gas station 2020, coffee shop, 2024"</p>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #856404;">Industry Alignment:</strong>
+                <p style="margin: 4px 0 0 0; color: #856404;">Matches CoStar and CoreLogic data models where all transactions are linked to a master property entity. Provides analysts with complete property history for market analysis and valuation.</p>
+            </div>
+            
+            <button onclick="toggleBuildNotes(false)" style="margin-top: 12px; padding: 6px 12px; background: #856404; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">Hide Build Notes</button>
+        </div>
+
+        <!-- Header -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+            <div>
+                <a href="super-admin-comps.html" class="link-text" style="font-size: 13px;">Comps</a>
+                <span style="color: #687F8B; margin: 0 8px;">/</span>
+                <a href="../super-admin-comp-view-detail-commercial.html?id=1" class="link-text" style="font-size: 13px;">1250 Commerce Drive</a>
+                <span style="color: #687F8B; margin: 0 8px;">/</span>
+                <span style="color: #1c3643; font-size: 13px; font-weight: 500;">Property Timeline</span>
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <button class="btn-secondary" onclick="window.history.back()">
+                    <span class="material-icons" style="font-size: 18px;">arrow_back</span>
+                    Back to Comp
+                </button>
+                <button class="btn-primary">
+                    <span class="material-icons" style="font-size: 18px;">add</span>
+                    Add Historical Sale
+                </button>
+            </div>
+        </div>
+
+        <!-- Property Header -->
+        <div class="property-header">
+            <div class="property-header-content">
+                <div class="property-address">1250 Commerce Drive</div>
+                <div class="property-location">Denver, CO 80204</div>
+                <div class="property-meta">
+                    <div class="property-meta-item">
+                        <span class="property-meta-label">APN</span>
+                        <span class="property-meta-value">0234-567-89-001</span>
+                    </div>
+                    <div class="property-meta-item">
+                        <span class="property-meta-label">Total Transactions</span>
+                        <span class="property-meta-value">4 Sales</span>
+                    </div>
+                    <div class="property-meta-item">
+                        <span class="property-meta-label">Time Span</span>
+                        <span class="property-meta-value">2015 - 2024</span>
+                    </div>
+                    <div class="property-meta-item">
+                        <span class="property-meta-label">Current Use</span>
+                        <span class="property-meta-value">Coffee Shop</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Value Change Summary -->
+        <div class="value-change">
+            <div class="value-change-title">Value Progression Analysis</div>
+            <div class="value-change-grid">
+                <div class="value-change-item">
+                    <div class="value-change-value">+412%</div>
+                    <div class="value-change-label">Total Appreciation</div>
+                </div>
+                <div class="value-change-item">
+                    <div class="value-change-value">$875,000</div>
+                    <div class="value-change-label">Value Increase</div>
+                </div>
+                <div class="value-change-item">
+                    <div class="value-change-value">+46% / yr</div>
+                    <div class="value-change-label">Avg Annual Growth</div>
+                </div>
+                <div class="value-change-item">
+                    <div class="value-change-value">$22.50</div>
+                    <div class="value-change-label">Price/SF to $87.50</div>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 300px; gap: 32px;">
+            <!-- Timeline -->
+            <div>
+                <h2 class="section-title" style="margin-bottom: 32px;">PROPERTY HISTORY</h2>
+                
+                <div class="timeline-container">
+                    <div class="timeline-line"></div>
+
+                    <!-- Entry 1 - 2024 - Most Recent -->
+                    <div class="timeline-entry">
+                        <div class="timeline-card" onclick="window.location.href='super-admin-comp-audit-history.html'">
+                            <img src="https://images.unsplash.com/photo-1559925393-8be0ec4767c8?w=600" alt="Coffee Shop" class="timeline-card-image">
+                            <div class="timeline-card-content">
+                                <span class="timeline-label redevelopment">Coffee Shop</span>
+                                <div class="timeline-card-title">Specialty Coffee Roaster</div>
+                                <div class="timeline-card-price">$1,050,000</div>
+                                <div class="timeline-card-details">
+                                    <div class="timeline-card-detail">
+                                        <span class="material-icons">square_foot</span>
+                                        12,000 SF
+                                    </div>
+                                    <div class="timeline-card-detail">
+                                        <span class="material-icons">monetization_on</span>
+                                        $87.50/SF
+                                    </div>
+                                    <div class="timeline-card-detail">
+                                        <span class="material-icons">trending_up</span>
+                                        7.2% Cap
+                                    </div>
+                                    <div class="timeline-card-detail">
+                                        <span class="material-icons">calendar_today</span>
+                                        Feb 2024
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="timeline-card-footer">
+                                <span class="timeline-card-date">Sold February 15, 2024</span>
+                                <a href="super-admin-comp-audit-history.html" class="timeline-card-link">
+                                    View Comp <span class="material-icons" style="font-size: 14px;">arrow_forward</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="timeline-marker redevelopment"></div>
+                        <div class="timeline-year">2024</div>
+                    </div>
+
+                    <!-- Entry 2 - 2020 -->
+                    <div class="timeline-entry">
+                        <div class="timeline-card">
+                            <img src="https://images.unsplash.com/photo-1545558014-8692077e9b5c?w=600" alt="Gas Station" class="timeline-card-image">
+                            <div class="timeline-card-content">
+                                <span class="timeline-label improved">Gas Station</span>
+                                <div class="timeline-card-title">Quick Stop Fuel Center</div>
+                                <div class="timeline-card-price">$685,000</div>
+                                <div class="timeline-card-details">
+                                    <div class="timeline-card-detail">
+                                        <span class="material-icons">square_foot</span>
+                                        12,000 SF
+                                    </div>
+                                    <div class="timeline-card-detail">
+                                        <span class="material-icons">monetization_on</span>
+                                        $57.08/SF
+                                    </div>
+                                    <div class="timeline-card-detail">
+                                        <span class="material-icons">trending_up</span>
+                                        6.8% Cap
+                                    </div>
+                                    <div class="timeline-card-detail">
+                                        <span class="material-icons">calendar_today</span>
+                                        Aug 2020
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="timeline-card-footer">
+                                <span class="timeline-card-date">Sold August 22, 2020</span>
+                                <a href="#" class="timeline-card-link">
+                                    View Comp <span class="material-icons" style="font-size: 14px;">arrow_forward</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="timeline-marker improved"></div>
+                        <div class="timeline-year">2020</div>
+                    </div>
+
+                    <!-- Entry 3 - 2017 -->
+                    <div class="timeline-entry">
+                        <div class="timeline-card">
+                            <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600" alt="Auto Shop" class="timeline-card-image">
+                            <div class="timeline-card-content">
+                                <span class="timeline-label improved">Auto Repair Shop</span>
+                                <div class="timeline-card-title">Denver Auto Service</div>
+                                <div class="timeline-card-price">$425,000</div>
+                                <div class="timeline-card-details">
+                                    <div class="timeline-card-detail">
+                                        <span class="material-icons">square_foot</span>
+                                        8,500 SF
+                                    </div>
+                                    <div class="timeline-card-detail">
+                                        <span class="material-icons">monetization_on</span>
+                                        $50.00/SF
+                                    </div>
+                                    <div class="timeline-card-detail">
+                                        <span class="material-icons">trending_up</span>
+                                        7.5% Cap
+                                    </div>
+                                    <div class="timeline-card-detail">
+                                        <span class="material-icons">calendar_today</span>
+                                        Mar 2017
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="timeline-card-footer">
+                                <span class="timeline-card-date">Sold March 10, 2017</span>
+                                <a href="#" class="timeline-card-link">
+                                    View Comp <span class="material-icons" style="font-size: 14px;">arrow_forward</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="timeline-marker improved"></div>
+                        <div class="timeline-year">2017</div>
+                    </div>
+
+                    <!-- Entry 4 - 2015 - Oldest -->
+                    <div class="timeline-entry">
+                        <div class="timeline-card">
+                            <img src="https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=600" alt="Vacant Land" class="timeline-card-image">
+                            <div class="timeline-card-content">
+                                <span class="timeline-label land">Vacant Land</span>
+                                <div class="timeline-card-title">Commercial Lot</div>
+                                <div class="timeline-card-price">$175,000</div>
+                                <div class="timeline-card-details">
+                                    <div class="timeline-card-detail">
+                                        <span class="material-icons">terrain</span>
+                                        0.75 Acres
+                                    </div>
+                                    <div class="timeline-card-detail">
+                                        <span class="material-icons">monetization_on</span>
+                                        $5.35/SF
+                                    </div>
+                                    <div class="timeline-card-detail">
+                                        <span class="material-icons">category</span>
+                                        C-2 Zoning
+                                    </div>
+                                    <div class="timeline-card-detail">
+                                        <span class="material-icons">calendar_today</span>
+                                        Jun 2015
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="timeline-card-footer">
+                                <span class="timeline-card-date">Sold June 5, 2015</span>
+                                <a href="#" class="timeline-card-link">
+                                    View Comp <span class="material-icons" style="font-size: 14px;">arrow_forward</span>
+                                </a>
+                            </div>
+                        </div>
+                        <div class="timeline-marker land"></div>
+                        <div class="timeline-year">2015</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sidebar -->
+            <div>
+                <div class="summary-card" style="margin-bottom: 24px;">
+                    <div class="summary-title">
+                        <span class="material-icons">info</span>
+                        Property Summary
+                    </div>
+                    <ul class="summary-list">
+                        <li>
+                            <span>Property ID</span>
+                            <strong>PROP-78234</strong>
+                        </li>
+                        <li>
+                            <span>Current Owner</span>
+                            <strong>Sunrise Ventures LLC</strong>
+                        </li>
+                        <li>
+                            <span>Land Area</span>
+                            <strong>0.75 Acres</strong>
+                        </li>
+                        <li>
+                            <span>Current Building</span>
+                            <strong>12,000 SF</strong>
+                        </li>
+                        <li>
+                            <span>Year Built</span>
+                            <strong>2019</strong>
+                        </li>
+                        <li>
+                            <span>Zoning</span>
+                            <strong>C-2 Commercial</strong>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="summary-card" style="margin-bottom: 24px;">
+                    <div class="summary-title">
+                        <span class="material-icons">show_chart</span>
+                        Transaction History
+                    </div>
+                    <ul class="summary-list">
+                        <li>
+                            <span>2024 - Coffee Shop</span>
+                            <strong>$1,050,000</strong>
+                        </li>
+                        <li>
+                            <span>2020 - Gas Station</span>
+                            <strong>$685,000</strong>
+                        </li>
+                        <li>
+                            <span>2017 - Auto Shop</span>
+                            <strong>$425,000</strong>
+                        </li>
+                        <li>
+                            <span>2015 - Vacant Land</span>
+                            <strong>$175,000</strong>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="summary-card">
+                    <div class="summary-title">
+                        <span class="material-icons">link</span>
+                        Related Properties
+                    </div>
+                    <p style="font-size: 13px; color: #687F8B; margin: 0;">No adjacent parcels or related properties found.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 50px;">
+            <span style="font-weight: 300; font-size: 14px; color: #687F8B;">2024, Harken CRE, LLC</span>
+        </div>
+    </div>
+
+    <!-- Show Build Notes Button -->
+    <button id="showBuildNotesBtn" 
+            style="position: fixed; top: 100px; right: 20px; z-index: 9999; 
+                   padding: 12px 20px; background: #ffc107; color: #856404; 
+                   border: 2px solid #856404; border-radius: 25px; 
+                   font-size: 14px; font-weight: 700; cursor: pointer; 
+                   box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+                   display: none; transition: all 0.3s;"
+            onclick="toggleBuildNotes(true)">
+        Show Build Notes
+    </button>
+
+    <script>
+        // Build Notes Toggle
+        function toggleBuildNotes(show) {
+            const notesSection = document.getElementById('buildNotesSection');
+            const toggleBtn = document.getElementById('showBuildNotesBtn');
+            
+            if (show) {
+                notesSection.style.display = 'block';
+                toggleBtn.style.display = 'none';
+                notesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                notesSection.style.display = 'none';
+                toggleBtn.style.display = 'block';
+            }
+            
+            sessionStorage.setItem('buildNotesVisible', show);
+        }
+
+        // Restore preference on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            const savedPreference = sessionStorage.getItem('buildNotesVisible');
+            if (savedPreference === 'false') {
+                toggleBuildNotes(false);
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+

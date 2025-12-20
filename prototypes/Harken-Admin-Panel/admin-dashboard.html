@@ -1,0 +1,1520 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - Harken CRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            font-family: 'Montserrat', sans-serif !important;
+        }
+        body {
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background: url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;
+            background-color: #1c3643 !important;
+            max-height: 84px;
+            height: 84px;
+            color: #fff;
+        }
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 10px 24px;
+            border-radius: 25px;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+        .nav-link.active {
+            background-color: transparent;
+            border: 1px solid #0da1c7;
+            color: #0da1c7;
+        }
+        .section-title {
+            font-size: 23px;
+            font-weight: 600;
+            color: #1c3643;
+        }
+        .subsection-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #687F8B;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+        }
+        .report-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+        }
+        .metric-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1c3643;
+            margin: 8px 0;
+        }
+        .metric-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #687F8B;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .positive-change {
+            font-size: 12px;
+            color: #10b981;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+        .filter-select {
+            padding: 10px 14px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: white;
+            color: #687F8B;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .filter-select:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        /* Date Input Styling */
+        input[type="date"] {
+            font-family: 'Montserrat', sans-serif;
+            color: #687F8B;
+            font-weight: 500;
+        }
+        input[type="date"]::-webkit-calendar-picker-indicator {
+            cursor: pointer;
+            filter: invert(52%) sepia(8%) saturate(866%) hue-rotate(160deg) brightness(92%) contrast(87%);
+        }
+        input[type="date"]:hover::-webkit-calendar-picker-indicator {
+            filter: invert(53%) sepia(97%) saturate(1245%) hue-rotate(157deg) brightness(94%) contrast(94%);
+        }
+        input[type="date"]:focus {
+            border-color: #0da1c7;
+        }
+        /* Custom date picker colors for Chrome/Edge */
+        ::-webkit-datetime-edit {
+            color: #687F8B;
+            font-family: 'Montserrat', sans-serif;
+            font-weight: 500;
+        }
+        ::-webkit-datetime-edit-fields-wrapper {
+            color: #687F8B;
+        }
+        ::-webkit-datetime-edit-text {
+            color: #687F8B;
+        }
+        ::-webkit-datetime-edit-month-field {
+            color: #687F8B;
+        }
+        ::-webkit-datetime-edit-day-field {
+            color: #687F8B;
+        }
+        ::-webkit-datetime-edit-year-field {
+            color: #687F8B;
+        }
+        ::-webkit-calendar-picker-indicator:hover {
+            background-color: rgba(13, 161, 199, 0.1);
+            border-radius: 4px;
+        }
+        /* Custom Date Picker Modal */
+        .date-picker-modal {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 8px;
+            z-index: 1000;
+        }
+        .date-picker-modal.active {
+            display: block;
+        }
+        .date-picker-content {
+            background-color: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            width: 380px;
+        }
+        .date-picker-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        .date-picker-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1c3643;
+        }
+        .date-picker-nav {
+            background: none;
+            border: none;
+            color: #0da1c7;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+        .date-picker-nav:hover {
+            background-color: rgba(13, 161, 199, 0.1);
+        }
+        .date-range-display {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+            margin-bottom: 16px;
+            padding: 12px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #687F8B;
+            font-weight: 500;
+        }
+        .date-range-display input {
+            border: 1px solid #e0e0e0;
+            background: white;
+            color: #1c3643;
+            font-weight: 600;
+            width: 130px;
+            text-align: center;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 13px;
+            padding: 8px;
+            border-radius: 4px;
+            cursor: text;
+        }
+        .date-range-display input:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 4px;
+        }
+        .calendar-day-header {
+            text-align: center;
+            font-size: 11px;
+            font-weight: 600;
+            color: #687F8B;
+            padding: 8px 0;
+            text-transform: uppercase;
+        }
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 13px;
+            color: #1c3643;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            border: 1px solid transparent;
+        }
+        .calendar-day:hover:not(.disabled):not(.in-range):not(.range-start):not(.range-end) {
+            background-color: rgba(13, 161, 199, 0.1);
+            border-color: #0da1c7;
+        }
+        .calendar-day.disabled {
+            color: #d0d0d0;
+            cursor: not-allowed;
+        }
+        .calendar-day.today {
+            border-color: #0da1c7;
+        }
+        .calendar-day.range-start,
+        .calendar-day.range-end {
+            background-color: #0da1c7;
+            color: white;
+            font-weight: 600;
+        }
+        .calendar-day.in-range {
+            background-color: rgba(13, 161, 199, 0.15);
+            color: #0da1c7;
+        }
+        .calendar-day.other-month {
+            color: #d0d0d0;
+        }
+        .action-button {
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .action-button:hover {
+            opacity: 0.8;
+        }
+        .action-button-primary {
+            background-color: #0da1c7;
+            color: white;
+        }
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        th {
+            padding: 16px 20px;
+            text-align: left;
+            color: #687F8B;
+            font-size: 13px;
+            font-weight: 600;
+            border-bottom: 2px solid #e0e0e0;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        td {
+            padding: 18px 20px;
+            color: #687F8B;
+            font-size: 13px;
+            font-weight: 500;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+        .link-text {
+            color: #0da1c7;
+            text-decoration: none;
+        }
+        .link-text:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Toggle Button (initially hidden) -->
+    <button id="showBuildNotesBtn" 
+            style="position: fixed; top: 100px; right: 20px; z-index: 9999; 
+                   padding: 12px 20px; background: #ffc107; color: #856404; 
+                   border: 2px solid #856404; border-radius: 25px; 
+                   font-size: 14px; font-weight: 700; cursor: pointer; 
+                   box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+                   display: none; transition: all 0.3s;"
+            onclick="toggleBuildNotes(true)">
+        🔨 Show Build Notes
+    </button>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar flex items-center justify-between px-8">
+        <div class="flex items-center">
+            <img src="harken.png" alt="Harken" style="height: 40px; width: auto;" />
+        </div>
+        <div class="flex items-center gap-6">
+            <a href="admin-dashboard.html" class="nav-link active">Dashboard</a>
+            <a href="admin-users.html" class="nav-link">Users</a>
+            <a href="admin-accounts.html" class="nav-link">Accounts & Billing</a>
+            <a href="admin-reports.html" class="nav-link">Reports</a>
+            <a href="admin-support-tickets.html" class="nav-link" style="position: relative;">
+                Support
+                <span style="position: absolute; top: 4px; right: 14px; background-color: #c62828; color: white; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 10px; min-width: 18px; text-align: center;">7</span>
+            </a>
+            <a href="admin-audit-logs.html" class="nav-link">Audit Logs</a>
+            <a href="admin-settings.html" class="nav-link">Settings</a>
+        </div>
+        <div class="flex items-center gap-4">
+            <span class="text-sm">Super Administrator</span>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div style="padding: 35px 50px;">
+        <!-- BUILD NOTES SECTION -->
+        <div id="buildNotesSection" style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 20px; margin-bottom: 32px; border-radius: 4px;">
+            <h3 style="color: #856404; font-size: 16px; font-weight: 700; margin: 0 0 16px 0;">🔨 BUILD NOTES</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 16px;">
+                <div>
+                    <strong style="color: #856404;">Priority Level:</strong> High
+                </div>
+                <div>
+                    <strong style="color: #856404;">Recommended Customer Count:</strong> 1+ customers (immediate)
+                </div>
+                <div>
+                    <strong style="color: #856404;">Development Stage:</strong> Phase 1
+                </div>
+                <div>
+                    <strong style="color: #856404;">Estimated Build Time:</strong> 1-2 weeks
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #856404;">Purpose & Use Case:</strong>
+                <p style="margin: 4px 0 0 0; color: #856404;">Provides a high-level overview of platform usage and health. Essential for monitoring system activity, identifying trends, and quickly spotting issues. This is your command center for understanding how the platform is being used across all customer accounts.</p>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #856404;">Key Features Explained:</strong>
+                <ul style="margin: 4px 0 0 0; color: #856404;">
+                    <li><strong>Content Creation Metrics:</strong> Track appraisals, evaluations, and comps created. Helps identify which features customers use most.</li>
+                    <li><strong>User Activity:</strong> Monitor login frequency, active users, and session times. Low engagement may indicate onboarding issues or feature problems.</li>
+                    <li><strong>Top Users/Accounts:</strong> See power users and most active accounts. Useful for identifying upsell opportunities and success stories.</li>
+                    <li><strong>Revenue Tracking:</strong> Monthly revenue, annual run rate, and per-user metrics. Critical for business health monitoring.</li>
+                    <li><strong>Date Range Filters:</strong> Analyze trends over custom time periods to spot seasonal patterns or the impact of new features.</li>
+                </ul>
+            </div>
+            
+            <div>
+                <strong style="color: #856404;">Implementation Notes:</strong>
+                <p style="margin: 4px 0 0 0; color: #856404;">Start with simple metrics from existing database queries. Charts use Chart.js (already loaded). Can use cached/pre-aggregated data for performance. Real-time updates not critical - daily aggregation is fine for few customers. Add complexity as customer count grows.</p>
+            </div>
+            
+            <button onclick="toggleBuildNotes(false)" style="margin-top: 12px; padding: 6px 12px; background: #856404; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">Hide Build Notes</button>
+        </div>
+
+        <!-- Header Section -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+            <h2 class="section-title">ADMIN DASHBOARD</h2>
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <select id="periodSelect" class="filter-select">
+                    <option value="7">Last 7 Days</option>
+                    <option value="30" selected>Last 30 Days</option>
+                    <option value="90">Last 90 Days</option>
+                    <option value="365">Last Year</option>
+                    <option value="custom">Custom Range</option>
+                </select>
+                <div id="dateRangeContainer" style="display: none; gap: 8px; align-items: center; position: relative;">
+                    <button type="button" id="customRangeBtn" class="filter-select" style="width: 260px; text-align: left; padding: 10px 14px; cursor: pointer;">
+                        <span id="customRangeText">Select Date Range</span>
+                    </button>
+                    <!-- Date Picker Modal (moved here to align properly) -->
+                    <div id="datePickerModal" class="date-picker-modal">
+                        <div class="date-picker-content">
+                            <div class="date-picker-header">
+                                <button class="date-picker-nav" onclick="previousMonth()">‹</button>
+                                <div class="date-picker-title" id="calendarMonth">September 2025</div>
+                                <button class="date-picker-nav" onclick="nextMonth()">›</button>
+                            </div>
+                            
+                            <div class="date-range-display">
+                                <input type="text" id="rangeStartDisplay" placeholder="MM/DD/YYYY" />
+                                <span>to</span>
+                                <input type="text" id="rangeEndDisplay" placeholder="MM/DD/YYYY" />
+                            </div>
+                            
+                            <div id="calendarGrid"></div>
+                            
+                            <div style="display: flex; gap: 12px; margin-top: 20px;">
+                                <button onclick="closeDatePicker()" style="flex: 1; padding: 10px; border: 1px solid #e0e0e0; background: white; color: #687F8B; border-radius: 4px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Montserrat', sans-serif;">Cancel</button>
+                                <button onclick="applyDateRange()" style="flex: 1; padding: 10px; border: none; background: #0da1c7; color: white; border-radius: 4px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: 'Montserrat', sans-serif;">Apply</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button id="exportBtn" class="action-button action-button-primary">Export CSV</button>
+        </div>
+            </div>
+
+        <!-- Content Metrics (Moved to Top) -->
+        <div style="margin-bottom: 40px;">
+            <h3 class="subsection-title">CONTENT CREATION</h3>
+            <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 24px;">
+                <div class="report-card">
+                    <div class="metric-label">Appraisals Created</div>
+                    <div class="metric-value" id="appraisalsValue">8,924</div>
+                    <div class="positive-change" id="appraisalsGrowth">↑ 18% from last period</div>
+            </div>
+                <div class="report-card">
+                    <div class="metric-label">Evaluations Created</div>
+                    <div class="metric-value" id="evaluationsValue">5,631</div>
+                    <div class="positive-change" id="evaluationsGrowth">↑ 22% from last period</div>
+            </div>
+                <div class="report-card">
+                    <div class="metric-label">Comps Created By Type</div>
+                    
+                    <!-- Commercial Comps -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin: 12px 0 8px 0;">
+                        <span style="display: flex; align-items: center; gap: 6px;">
+                            <div style="width: 12px; height: 12px; background-color: #0ea5e9; border-radius: 2px;"></div>
+                            <span style="font-size: 12px; color: #687F8B; font-weight: 500;">Commercial</span>
+                        </span>
+                        <div style="text-align: right;">
+                            <div class="metric-value" style="font-size: 24px; margin: 0;" id="commercialValue">4,523</div>
+                            <div style="font-size: 11px; color: #687F8B;" id="commercialPercent">36%</div>
+            </div>
+        </div>
+
+                    <!-- Residential Comps -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin: 8px 0;">
+                        <span style="display: flex; align-items: center; gap: 6px;">
+                            <div style="width: 12px; height: 12px; background-color: #10b981; border-radius: 2px;"></div>
+                            <span style="font-size: 12px; color: #687F8B; font-weight: 500;">Residential</span>
+                        </span>
+                        <div style="text-align: right;">
+                            <div class="metric-value" style="font-size: 24px; margin: 0;" id="residentialValue">5,678</div>
+                            <div style="font-size: 11px; color: #687F8B;" id="residentialPercent">45%</div>
+            </div>
+            </div>
+
+                    <!-- Land Comps -->
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin: 8px 0;">
+                        <span style="display: flex; align-items: center; gap: 6px;">
+                            <div style="width: 12px; height: 12px; background-color: #f59e0b; border-radius: 2px;"></div>
+                            <span style="font-size: 12px; color: #687F8B; font-weight: 500;">Land</span>
+                        </span>
+                        <div style="text-align: right;">
+                            <div class="metric-value" style="font-size: 24px; margin: 0;" id="landValue">2,257</div>
+                            <div style="font-size: 11px; color: #687F8B;" id="landPercent">18%</div>
+            </div>
+        </div>
+
+                    <!-- Total Separator and Total -->
+                    <div style="border-top: 1px solid #e5e7eb; padding-top: 12px; margin-top: 12px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center;">
+                            <span class="metric-label">Total Comps</span>
+                            <div class="metric-value" style="font-size: 24px; margin: 0;" id="compsTotalValue">12,458</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="report-card">
+                <canvas id="contentCreationChart" style="max-height: 350px;"></canvas>
+                        </div>
+                    </div>
+
+        <!-- Usage Metrics -->
+        <div style="margin-bottom: 40px;">
+            <h3 class="subsection-title">USER ACTIVITY</h3>
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 24px;">
+                <div class="report-card">
+                    <div class="metric-label">Total Logins</div>
+                    <div class="metric-value" id="loginsValue">8,924</div>
+                    <div class="positive-change" id="loginsGrowth">↑ 12% from last period</div>
+                </div>
+                <div class="report-card">
+                    <div class="metric-label">Active Users</div>
+                    <div class="metric-value" id="activeUsersValue">1,089</div>
+                    <div class="positive-change" id="activeUsersGrowth">↑ 8% from last period</div>
+                </div>
+                <div class="report-card">
+                    <div class="metric-label">Avg. Sessions/User</div>
+                    <div class="metric-value" id="sessionsValue">3.2</div>
+                    <div class="positive-change" id="sessionsGrowth">↑ 5% from last period</div>
+                </div>
+                <div class="report-card">
+                    <div class="metric-label">Avg. Session Time</div>
+                    <div class="metric-value" id="sessionTimeValue">24m 35s</div>
+                    <div class="positive-change" id="sessionTimeGrowth">↑ 15% from last period</div>
+                </div>
+            </div>
+            <div class="report-card">
+                <canvas id="userActivityChart" style="max-height: 350px;"></canvas>
+                        </div>
+                    </div>
+
+        <!-- Top Users by Activity -->
+        <div style="margin-bottom: 40px;">
+            <h3 class="subsection-title">TOP USERS BY ACTIVITY</h3>
+            <div class="report-card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="text-align: left;">User</th>
+                            <th>Email</th>
+                            <th>Account</th>
+                            <th>Logins (30d)</th>
+                            <th>Appraisals</th>
+                            <th>Evaluations</th>
+                            <th>Comps</th>
+                            <th>Last Active</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style="text-align: left;"><a href="admin-user-edit.html" class="link-text">Sarah Johnson</a></td>
+                            <td>sarah.j@downtown.com</td>
+                            <td><a href="admin-account-manage.html" class="link-text">Downtown Commercial Partners</a></td>
+                            <td>156</td>
+                            <td>87</td>
+                            <td>64</td>
+                            <td>423</td>
+                            <td>2 hours ago</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: left;"><a href="admin-user-edit.html" class="link-text">Michael Chen</a></td>
+                            <td>m.chen@acmeproperties.com</td>
+                            <td><a href="admin-account-manage.html" class="link-text">Acme Properties LLC</a></td>
+                            <td>142</td>
+                            <td>76</td>
+                            <td>58</td>
+                            <td>389</td>
+                            <td>5 hours ago</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: left;"><a href="admin-user-edit.html" class="link-text">Jennifer Martinez</a></td>
+                            <td>j.martinez@metrorealty.com</td>
+                            <td><a href="admin-account-manage.html" class="link-text">Metro Realty Group</a></td>
+                            <td>128</td>
+                            <td>68</td>
+                            <td>52</td>
+                            <td>341</td>
+                            <td>1 day ago</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: left;"><a href="admin-user-edit.html" class="link-text">David Thompson</a></td>
+                            <td>d.thompson@landmark.com</td>
+                            <td><a href="admin-account-manage.html" class="link-text">Landmark Property Advisors</a></td>
+                            <td>119</td>
+                            <td>62</td>
+                            <td>47</td>
+                            <td>298</td>
+                            <td>3 hours ago</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: left;"><a href="admin-user-edit.html" class="link-text">Emily Rodriguez</a></td>
+                            <td>e.rodriguez@skyline.com</td>
+                            <td><a href="admin-account-manage.html" class="link-text">Skyline Investments</a></td>
+                            <td>107</td>
+                            <td>54</td>
+                            <td>43</td>
+                            <td>267</td>
+                            <td>6 hours ago</td>
+                        </tr>
+                        <tr>
+                            <td style="text-align: left;"><a href="admin-user-edit.html" class="link-text">Robert Kim</a></td>
+                            <td>r.kim@primevaluation.com</td>
+                            <td><a href="admin-account-manage.html" class="link-text">Prime Valuation Services</a></td>
+                            <td>98</td>
+                            <td>49</td>
+                            <td>38</td>
+                            <td>234</td>
+                            <td>4 hours ago</td>
+                        </tr>
+                    </tbody>
+                </table>
+                        </div>
+                    </div>
+
+        <!-- Top Accounts Table -->
+        <div style="margin-bottom: 40px;">
+            <h3 class="subsection-title">TOP ACCOUNTS BY ACTIVITY</h3>
+            <div class="report-card">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Account Name</th>
+                            <th>Users</th>
+                            <th>Logins (30d)</th>
+                            <th>Appraisals</th>
+                            <th>Evaluations</th>
+                            <th>Comps</th>
+                            <th>Revenue</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><a href="admin-account-manage.html" class="link-text">Downtown Commercial Partners</a></td>
+                            <td>32</td>
+                            <td>1,245</td>
+                            <td>342</td>
+                            <td>287</td>
+                            <td>2,143</td>
+                            <td>$3,840</td>
+                        </tr>
+                        <tr>
+                            <td><a href="admin-account-manage.html" class="link-text">Acme Properties LLC</a></td>
+                            <td>24</td>
+                            <td>987</td>
+                            <td>298</td>
+                            <td>245</td>
+                            <td>1,847</td>
+                            <td>$2,880</td>
+                        </tr>
+                        <tr>
+                            <td><a href="admin-account-manage.html" class="link-text">Metro Realty Group</a></td>
+                            <td>18</td>
+                            <td>756</td>
+                            <td>187</td>
+                            <td>156</td>
+                            <td>956</td>
+                            <td>$1,620</td>
+                        </tr>
+                        <tr>
+                            <td><a href="admin-account-manage.html" class="link-text">Landmark Property Advisors</a></td>
+                            <td>15</td>
+                            <td>623</td>
+                            <td>145</td>
+                            <td>132</td>
+                            <td>678</td>
+                            <td>$1,350</td>
+                        </tr>
+                        <tr>
+                            <td><a href="admin-account-manage.html" class="link-text">Skyline Investments</a></td>
+                            <td>12</td>
+                            <td>489</td>
+                            <td>112</td>
+                            <td>98</td>
+                            <td>523</td>
+                            <td>$1,080</td>
+                        </tr>
+                        <tr>
+                            <td><a href="admin-account-manage.html" class="link-text">Prime Valuation Services</a></td>
+                            <td>10</td>
+                            <td>412</td>
+                            <td>89</td>
+                            <td>76</td>
+                            <td>445</td>
+                            <td>$900</td>
+                        </tr>
+                    </tbody>
+                </table>
+                        </div>
+                    </div>
+
+        <!-- Billing Metrics -->
+        <div style="margin-bottom: 40px;">
+            <h3 class="subsection-title">REVENUE & BILLING</h3>
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 24px;">
+                <div class="report-card">
+                    <div class="metric-label">Monthly Revenue</div>
+                    <div class="metric-value" id="revenueValue">$124.5K</div>
+                    <div class="positive-change" id="revenueGrowth">↑ 15% from last month</div>
+                </div>
+                <div class="report-card">
+                    <div class="metric-label">Annual Run Rate</div>
+                    <div class="metric-value" id="runRateValue">$1.49M</div>
+                    <div class="positive-change" id="runRateGrowth">↑ 15% from last month</div>
+                </div>
+                <div class="report-card">
+                    <div class="metric-label">Revenue Per User</div>
+                    <div class="metric-value" id="perUserValue">$92</div>
+                    <div class="positive-change" id="perUserGrowth">↑ 3% from last month</div>
+                </div>
+                <div class="report-card">
+                    <div class="metric-label">Retention Rate</div>
+                    <div class="metric-value" id="retentionValue">97.2%</div>
+                    <div class="positive-change" id="retentionGrowth">↑ 1.2% from last month</div>
+                </div>
+            </div>
+            <div class="report-card">
+                <canvas id="revenueGrowthChart" style="max-height: 350px;"></canvas>
+                        </div>
+                    </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 50px;">
+            <span style="font-weight: 300; font-size: 14px; color: #687F8B;">© 2024, Harken CRE, LLC</span>
+        </div>
+    </div>
+
+    <script>
+        // Wait for DOM to be ready
+        document.addEventListener('DOMContentLoaded', function() {
+            // Chart.js Global Configuration
+            Chart.defaults.font.family = 'Montserrat';
+            Chart.defaults.color = '#687F8B';
+
+            // Dashboard Data Store
+            const dashboardData = {
+                '7': {
+                    appraisals: { value: 1248, growth: '2%' },
+                    evaluations: { value: 789, growth: '3%' },
+                    comps: { commercial: 632, residential: 789, land: 316 },
+                    logins: { value: 1248, growth: '2%' },
+                    activeUsers: { value: 152, growth: '1%' },
+                    sessions: { value: '2.1', growth: '0.2' },
+                    sessionTime: { value: '18m 45s', growth: '12%' },
+                    revenue: { value: '$17.4K', growth: '4%' },
+                    runRate: { value: '$208.8K', growth: '4%' },
+                    perUser: { value: '$91', growth: '2%' },
+                    retention: { value: '96.8%', growth: '0.8%' },
+                    periodText: 'week'
+                },
+                '30': {
+                    appraisals: { value: 8924, growth: '18%' },
+                    evaluations: { value: 5631, growth: '22%' },
+                    comps: { commercial: 4523, residential: 5678, land: 2257 },
+                    logins: { value: 8924, growth: '12%' },
+                    activeUsers: { value: 1089, growth: '8%' },
+                    sessions: { value: '3.2', growth: '5%' },
+                    sessionTime: { value: '24m 35s', growth: '15%' },
+                    revenue: { value: '$124.5K', growth: '15%' },
+                    runRate: { value: '$1.49M', growth: '15%' },
+                    perUser: { value: '$92', growth: '3%' },
+                    retention: { value: '97.2%', growth: '1.2%' },
+                    periodText: 'period'
+                },
+                '90': {
+                    appraisals: { value: 25673, growth: '25%' },
+                    evaluations: { value: 16284, growth: '28%' },
+                    comps: { commercial: 13074, residential: 16423, land: 6519 },
+                    logins: { value: 25673, growth: '18%' },
+                    activeUsers: { value: 3147, growth: '12%' },
+                    sessions: { value: '3.5', growth: '7%' },
+                    sessionTime: { value: '26m 12s', growth: '20%' },
+                    revenue: { value: '$372K', growth: '20%' },
+                    runRate: { value: '$4.46M', growth: '20%' },
+                    perUser: { value: '$94', growth: '4%' },
+                    retention: { value: '97.8%', growth: '1.5%' },
+                    periodText: 'quarter'
+                },
+                '365': {
+                    appraisals: { value: 89240, growth: '35%' },
+                    evaluations: { value: 56310, growth: '42%' },
+                    comps: { commercial: 45230, residential: 56780, land: 22570 },
+                    logins: { value: 89240, growth: '25%' },
+                    activeUsers: { value: 12380, growth: '20%' },
+                    sessions: { value: '3.8', growth: '10%' },
+                    sessionTime: { value: '28m 50s', growth: '28%' },
+                    revenue: { value: '$1.49M', growth: '35%' },
+                    runRate: { value: '$17.88M', growth: '35%' },
+                    perUser: { value: '$98', growth: '6%' },
+                    retention: { value: '98.5%', growth: '2%' },
+                    periodText: 'year'
+                },
+                'custom': {
+                    appraisals: { value: 12456, growth: '20%' },
+                    evaluations: { value: 7890, growth: '25%' },
+                    comps: { commercial: 6321, residential: 7934, land: 3156 },
+                    logins: { value: 12456, growth: '14%' },
+                    activeUsers: { value: 1523, growth: '9%' },
+                    sessions: { value: '3.0', growth: '6%' },
+                    sessionTime: { value: '22m 15s', growth: '16%' },
+                    revenue: { value: '$174K', growth: '17%' },
+                    runRate: { value: '$2.09M', growth: '17%' },
+                    perUser: { value: '$93', growth: '3.5%' },
+                    retention: { value: '97%', growth: '1.3%' },
+                    periodText: 'period'
+                }
+            };
+
+            let currentPeriod = '30';
+            let chartInstances = {};
+            
+            // Custom Date Picker Variables
+            let currentCalendarDate = new Date();
+            let rangeStart = null;
+            let rangeEnd = null;
+            let selectingStart = true;
+
+            // Update Dashboard Data Function
+            function updateDashboardData() {
+                const data = dashboardData[currentPeriod];
+                const periodText = data.periodText;
+
+                // Update Content Creation cards
+                document.getElementById('appraisalsValue').textContent = data.appraisals.value.toLocaleString();
+                document.getElementById('appraisalsGrowth').textContent = `↑ ${data.appraisals.growth} from last ${periodText}`;
+                document.getElementById('evaluationsValue').textContent = data.evaluations.value.toLocaleString();
+                document.getElementById('evaluationsGrowth').textContent = `↑ ${data.evaluations.growth} from last ${periodText}`;
+
+                // Update Comps breakdown
+                const totalComps = data.comps.commercial + data.comps.residential + data.comps.land;
+                document.getElementById('commercialValue').textContent = data.comps.commercial.toLocaleString();
+                document.getElementById('commercialPercent').textContent = Math.round((data.comps.commercial / totalComps) * 100) + '%';
+                document.getElementById('residentialValue').textContent = data.comps.residential.toLocaleString();
+                document.getElementById('residentialPercent').textContent = Math.round((data.comps.residential / totalComps) * 100) + '%';
+                document.getElementById('landValue').textContent = data.comps.land.toLocaleString();
+                document.getElementById('landPercent').textContent = Math.round((data.comps.land / totalComps) * 100) + '%';
+                document.getElementById('compsTotalValue').textContent = totalComps.toLocaleString();
+
+                // Update User Activity cards
+                document.getElementById('loginsValue').textContent = data.logins.value.toLocaleString();
+                document.getElementById('loginsGrowth').textContent = `↑ ${data.logins.growth} from last ${periodText}`;
+                document.getElementById('activeUsersValue').textContent = data.activeUsers.value.toLocaleString();
+                document.getElementById('activeUsersGrowth').textContent = `↑ ${data.activeUsers.growth} from last ${periodText}`;
+                document.getElementById('sessionsValue').textContent = data.sessions.value;
+                document.getElementById('sessionsGrowth').textContent = `↑ ${data.sessions.growth} from last ${periodText}`;
+                document.getElementById('sessionTimeValue').textContent = data.sessionTime.value;
+                document.getElementById('sessionTimeGrowth').textContent = `↑ ${data.sessionTime.growth} from last ${periodText}`;
+
+                // Update Revenue & Billing cards
+                document.getElementById('revenueValue').textContent = data.revenue.value;
+                document.getElementById('revenueGrowth').textContent = `↑ ${data.revenue.growth} from last ${periodText}`;
+                document.getElementById('runRateValue').textContent = data.runRate.value;
+                document.getElementById('runRateGrowth').textContent = `↑ ${data.runRate.growth} from last ${periodText}`;
+                document.getElementById('perUserValue').textContent = data.perUser.value;
+                document.getElementById('perUserGrowth').textContent = `↑ ${data.perUser.growth} from last ${periodText}`;
+                document.getElementById('retentionValue').textContent = data.retention.value;
+                document.getElementById('retentionGrowth').textContent = `↑ ${data.retention.growth} from last ${periodText}`;
+
+                // Update charts
+                updateCharts();
+            }
+
+            // Update Charts Function
+            function updateCharts() {
+                const days = currentPeriod === '7' ? 7 : currentPeriod === '30' ? 30 : currentPeriod === '90' ? 90 : currentPeriod === '365' ? 365 : 30;
+                const labels = generateLabels(days);
+                const data = dashboardData[currentPeriod];
+
+                // Calculate scale for chart data
+                const scale = currentPeriod === '7' ? 0.14 : currentPeriod === '30' ? 1 : currentPeriod === '90' ? 2.89 : currentPeriod === '365' ? 10 : 1.4;
+
+                // Update Content Creation Chart
+                if (chartInstances.contentCreation) {
+                    chartInstances.contentCreation.data.labels = labels;
+                    chartInstances.contentCreation.data.datasets[0].data = generateTrendData(150 * scale, 30 * scale, 1.018);
+                    chartInstances.contentCreation.data.datasets[1].data = generateTrendData(190 * scale, 40 * scale, 1.022);
+                    chartInstances.contentCreation.data.datasets[2].data = generateTrendData(75 * scale, 15 * scale, 1.01);
+                    chartInstances.contentCreation.update('none'); // Update without animation
+                }
+
+                // Update User Activity Chart
+                if (chartInstances.userActivity) {
+                    chartInstances.userActivity.data.labels = labels;
+                    chartInstances.userActivity.data.datasets[0].data = generateTrendData(280 * scale, 40 * scale, 1.015);
+                    chartInstances.userActivity.data.datasets[1].data = generateTrendData(35 * scale, 5 * scale, 1.01);
+                    chartInstances.userActivity.data.datasets[2].data = generateTrendData(12 * scale, 3 * scale, 1.02);
+                    chartInstances.userActivity.update('none');
+                }
+
+                // Update Revenue Chart
+                if (chartInstances.revenue) {
+                    chartInstances.revenue.data.labels = labels;
+                    chartInstances.revenue.data.datasets[0].data = generateTrendData(4100 * scale, 300 * scale, 1.015);
+                    chartInstances.revenue.update('none');
+                }
+            }
+
+            // Generate labels based on period
+            function generateLabels(days) {
+                const labels = [];
+                const today = new Date();
+                const step = days > 90 ? Math.floor(days / 30) : days > 30 ? 3 : 1;
+                
+                for (let i = days - 1; i >= 0; i -= step) {
+                    const date = new Date(today);
+                    date.setDate(date.getDate() - i);
+                    labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+                }
+                return labels;
+            }
+
+            // Period Select Event Listener
+            document.getElementById('periodSelect').addEventListener('change', function() {
+                currentPeriod = this.value;
+                const dateRangeContainer = document.getElementById('dateRangeContainer');
+                
+                if (currentPeriod === 'custom') {
+                    dateRangeContainer.style.display = 'flex';
+                    // Initialize date range
+                    const end = new Date();
+                    const start = new Date();
+                    start.setDate(end.getDate() - 30);
+                    rangeStart = start;
+                    rangeEnd = end;
+                    updateCustomRangeDisplay();
+                    
+                    // Automatically open the calendar
+                    setTimeout(() => {
+                        openDatePicker();
+                    }, 100);
+                } else {
+                    dateRangeContainer.style.display = 'none';
+                    closeDatePicker();
+                    updateDashboardData();
+                }
+            });
+
+            // Custom Range Button Click
+            document.getElementById('customRangeBtn').addEventListener('click', function(e) {
+                e.stopPropagation();
+                const modal = document.getElementById('datePickerModal');
+                if (modal.classList.contains('active')) {
+                    closeDatePicker();
+                } else {
+                    openDatePicker();
+                }
+            });
+
+            // Close date picker when clicking outside
+            document.addEventListener('click', function(e) {
+                const modal = document.getElementById('datePickerModal');
+                const button = document.getElementById('customRangeBtn');
+                
+                if (modal && modal.classList.contains('active')) {
+                    if (!modal.contains(e.target) && !button.contains(e.target)) {
+                        closeDatePicker();
+                    }
+                }
+            });
+
+            // Custom Date Picker Functions
+            window.openDatePicker = function() {
+                currentCalendarDate = rangeStart || new Date();
+                renderCalendar();
+                document.getElementById('datePickerModal').classList.add('active');
+            };
+
+            window.closeDatePicker = function() {
+                document.getElementById('datePickerModal').classList.remove('active');
+            };
+
+            window.applyDateRange = function() {
+                // Parse manual inputs if they've been edited
+                parseManualDates();
+                
+                if (rangeStart && rangeEnd) {
+                    updateCustomRangeDisplay();
+                    closeDatePicker();
+                    updateDashboardData();
+                } else {
+                    alert('Please select both start and end dates');
+                }
+            };
+
+            window.previousMonth = function() {
+                currentCalendarDate.setMonth(currentCalendarDate.getMonth() - 1);
+                renderCalendar();
+            };
+
+            window.nextMonth = function() {
+                currentCalendarDate.setMonth(currentCalendarDate.getMonth() + 1);
+                renderCalendar();
+            };
+
+            function parseManualDates() {
+                const startInput = document.getElementById('rangeStartDisplay').value;
+                const endInput = document.getElementById('rangeEndDisplay').value;
+                
+                // Try to parse MM/DD/YYYY format
+                if (startInput && startInput !== 'Start Date') {
+                    const startParts = startInput.split('/');
+                    if (startParts.length === 3) {
+                        const startDate = new Date(startParts[2], startParts[0] - 1, startParts[1]);
+                        if (!isNaN(startDate.getTime())) {
+                            rangeStart = startDate;
+                        }
+                    }
+                }
+                
+                if (endInput && endInput !== 'End Date') {
+                    const endParts = endInput.split('/');
+                    if (endParts.length === 3) {
+                        const endDate = new Date(endParts[2], endParts[0] - 1, endParts[1]);
+                        if (!isNaN(endDate.getTime())) {
+                            rangeEnd = endDate;
+                        }
+                    }
+                }
+                
+                // Ensure start is before end
+                if (rangeStart && rangeEnd && rangeStart > rangeEnd) {
+                    const temp = rangeStart;
+                    rangeStart = rangeEnd;
+                    rangeEnd = temp;
+                }
+            }
+
+            function updateCustomRangeDisplay() {
+                const startStr = rangeStart ? rangeStart.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Start Date';
+                const endStr = rangeEnd ? rangeEnd.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'End Date';
+                document.getElementById('customRangeText').textContent = `${startStr} - ${endStr}`;
+                
+                // Update manual input fields with MM/DD/YYYY format
+                updateDateInputFields();
+            }
+
+            function updateDateInputFields() {
+                // Update start date field
+                if (rangeStart) {
+                    const month = String(rangeStart.getMonth() + 1).padStart(2, '0');
+                    const day = String(rangeStart.getDate()).padStart(2, '0');
+                    const year = rangeStart.getFullYear();
+                    document.getElementById('rangeStartDisplay').value = `${month}/${day}/${year}`;
+                } else {
+                    document.getElementById('rangeStartDisplay').value = '';
+                }
+                
+                // Update end date field
+                if (rangeEnd) {
+                    const month = String(rangeEnd.getMonth() + 1).padStart(2, '0');
+                    const day = String(rangeEnd.getDate()).padStart(2, '0');
+                    const year = rangeEnd.getFullYear();
+                    document.getElementById('rangeEndDisplay').value = `${month}/${day}/${year}`;
+                } else {
+                    document.getElementById('rangeEndDisplay').value = '';
+                }
+            }
+
+            function renderCalendar() {
+                const year = currentCalendarDate.getFullYear();
+                const month = currentCalendarDate.getMonth();
+                
+                // Update month title with year
+                const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 
+                                  'July', 'August', 'September', 'October', 'November', 'December'];
+                document.getElementById('calendarMonth').textContent = `${monthNames[month]} ${year}`;
+                
+                // Build calendar grid
+                const grid = document.getElementById('calendarGrid');
+                grid.innerHTML = '';
+                grid.className = 'calendar-grid';
+                
+                // Day headers
+                const dayNames = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+                dayNames.forEach(day => {
+                    const header = document.createElement('div');
+                    header.className = 'calendar-day-header';
+                    header.textContent = day;
+                    grid.appendChild(header);
+                });
+                
+                // Get first day of month and number of days
+                const firstDay = new Date(year, month, 1).getDay();
+                const daysInMonth = new Date(year, month + 1, 0).getDate();
+                const today = new Date();
+                
+                // Add empty cells for days before month starts
+                for (let i = 0; i < firstDay; i++) {
+                    const emptyCell = document.createElement('div');
+                    emptyCell.className = 'calendar-day disabled other-month';
+                    grid.appendChild(emptyCell);
+                }
+                
+                // Add days of the month
+                for (let day = 1; day <= daysInMonth; day++) {
+                    const dayCell = document.createElement('div');
+                    dayCell.className = 'calendar-day';
+                    dayCell.textContent = day;
+                    
+                    const cellDate = new Date(year, month, day);
+                    cellDate.setHours(0, 0, 0, 0);
+                    
+                    // Check if today
+                    const todayDate = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+                    if (cellDate.getTime() === todayDate.getTime()) {
+                        dayCell.classList.add('today');
+                    }
+                    
+                    // Check if in selected range
+                    if (rangeStart && rangeEnd) {
+                        const startTime = new Date(rangeStart).setHours(0, 0, 0, 0);
+                        const endTime = new Date(rangeEnd).setHours(0, 0, 0, 0);
+                        const cellTime = cellDate.getTime();
+                        
+                        if (cellTime === startTime) {
+                            dayCell.classList.add('range-start');
+                        } else if (cellTime === endTime) {
+                            dayCell.classList.add('range-end');
+                        } else if (cellTime > startTime && cellTime < endTime) {
+                            dayCell.classList.add('in-range');
+                        }
+                    }
+                    
+                    // Add click handler
+                    dayCell.addEventListener('click', function() {
+                        if (selectingStart || !rangeStart) {
+                            rangeStart = new Date(cellDate);
+                            rangeEnd = null;
+                            selectingStart = false;
+                        } else {
+                            if (cellDate < rangeStart) {
+                                rangeEnd = rangeStart;
+                                rangeStart = new Date(cellDate);
+                            } else {
+                                rangeEnd = new Date(cellDate);
+                            }
+                            selectingStart = true;
+                        }
+                        
+                        // Update the input fields immediately to show selection
+                        updateDateInputFields();
+                        
+                        // Re-render calendar to show visual feedback
+                        renderCalendar();
+                    });
+                    
+                    grid.appendChild(dayCell);
+                }
+            }
+
+            // Export CSV Function
+            document.getElementById('exportBtn').addEventListener('click', function() {
+                const data = dashboardData[currentPeriod];
+                const timestamp = new Date().toISOString().split('T')[0];
+                
+                let csvContent = "data:text/csv;charset=utf-8,";
+                csvContent += "Harken CRE - Admin Dashboard Report\n";
+                csvContent += `Period: ${currentPeriod === '7' ? 'Last 7 Days' : currentPeriod === '30' ? 'Last 30 Days' : currentPeriod === '90' ? 'Last 90 Days' : currentPeriod === '365' ? 'Last Year' : 'Custom Range'}\n`;
+                csvContent += `Generated: ${timestamp}\n\n`;
+                
+                csvContent += "Section,Metric,Value,Growth\n";
+                
+                // Content Creation
+                csvContent += `CONTENT CREATION,Appraisals Created,${data.appraisals.value},${data.appraisals.growth}\n`;
+                csvContent += `CONTENT CREATION,Evaluations Created,${data.evaluations.value},${data.evaluations.growth}\n`;
+                csvContent += `CONTENT CREATION,Commercial Comps,${data.comps.commercial},-\n`;
+                csvContent += `CONTENT CREATION,Residential Comps,${data.comps.residential},-\n`;
+                csvContent += `CONTENT CREATION,Land Comps,${data.comps.land},-\n`;
+                csvContent += `CONTENT CREATION,Total Comps,${data.comps.commercial + data.comps.residential + data.comps.land},-\n\n`;
+                
+                // User Activity
+                csvContent += `USER ACTIVITY,Total Logins,${data.logins.value},${data.logins.growth}\n`;
+                csvContent += `USER ACTIVITY,Active Users,${data.activeUsers.value},${data.activeUsers.growth}\n`;
+                csvContent += `USER ACTIVITY,Avg Sessions/User,${data.sessions.value},${data.sessions.growth}\n`;
+                csvContent += `USER ACTIVITY,Avg Session Time,${data.sessionTime.value},${data.sessionTime.growth}\n\n`;
+                
+                // Revenue & Billing
+                csvContent += `REVENUE & BILLING,Monthly Revenue,${data.revenue.value},${data.revenue.growth}\n`;
+                csvContent += `REVENUE & BILLING,Annual Run Rate,${data.runRate.value},${data.runRate.growth}\n`;
+                csvContent += `REVENUE & BILLING,Revenue Per User,${data.perUser.value},${data.perUser.growth}\n`;
+                csvContent += `REVENUE & BILLING,Retention Rate,${data.retention.value},${data.retention.growth}\n`;
+                
+                const encodedUri = encodeURI(csvContent);
+                const link = document.createElement("a");
+                link.setAttribute("href", encodedUri);
+                link.setAttribute("download", `harken-dashboard-${timestamp}.csv`);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            });
+
+        // Generate last 30 days labels
+        function getLast30Days() {
+            const labels = [];
+            const today = new Date();
+            for (let i = 29; i >= 0; i--) {
+                const date = new Date(today);
+                date.setDate(date.getDate() - i);
+                labels.push(date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }));
+            }
+            return labels;
+        }
+
+        // Generate realistic data with trend
+        function generateTrendData(baseValue, variance, trend = 1.02) {
+            const data = [];
+            let value = baseValue;
+            for (let i = 0; i < 30; i++) {
+                value = value * trend + (Math.random() - 0.5) * variance;
+                data.push(Math.round(value));
+            }
+            return data;
+        }
+
+        const last30Days = getLast30Days();
+
+        // 1. Content Creation Bar Chart
+        const contentCreationCtx = document.getElementById('contentCreationChart').getContext('2d');
+        chartInstances.contentCreation = new Chart(contentCreationCtx, {
+            type: 'bar',
+            data: {
+                labels: last30Days,
+                datasets: [
+                    {
+                        label: 'Commercial',
+                        data: generateTrendData(150, 30, 1.018),
+                        backgroundColor: 'rgba(14, 165, 233, 0.8)',
+                        borderColor: '#0ea5e9',
+                        borderWidth: 0,
+                        borderRadius: 4,
+                        barThickness: 'flex',
+                        maxBarThickness: 20
+                    },
+                    {
+                        label: 'Residential',
+                        data: generateTrendData(190, 40, 1.022),
+                        backgroundColor: 'rgba(16, 185, 129, 0.8)',
+                        borderColor: '#10b981',
+                        borderWidth: 0,
+                        borderRadius: 4,
+                        barThickness: 'flex',
+                        maxBarThickness: 20
+                    },
+                    {
+                        label: 'Land',
+                        data: generateTrendData(75, 15, 1.01),
+                        backgroundColor: 'rgba(245, 158, 11, 0.8)',
+                        borderColor: '#f59e0b',
+                        borderWidth: 0,
+                        borderRadius: 4,
+                        barThickness: 'flex',
+                        maxBarThickness: 20
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        align: 'end',
+                        labels: {
+                            boxWidth: 12,
+                            boxHeight: 12,
+                            padding: 15,
+                            font: {
+                                size: 12,
+                                weight: '500'
+                            }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Content Creation Trends',
+                        align: 'start',
+                        font: {
+                            size: 14,
+                            weight: '600'
+                        },
+                        padding: {
+                            bottom: 20
+                        },
+                        color: '#687F8B'
+                    }
+                },
+                scales: {
+                    x: {
+                        stacked: true,
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            maxRotation: 0,
+                            autoSkip: true,
+                            maxTicksLimit: 15,
+                            font: {
+                                size: 11
+                            }
+                        }
+                    },
+                    y: {
+                        stacked: true,
+                        beginAtZero: true,
+                        grid: {
+                            color: '#f0f0f0'
+                        },
+                        ticks: {
+                            font: {
+                                size: 11
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // 2. User Activity Line Chart
+        const userActivityCtx = document.getElementById('userActivityChart').getContext('2d');
+        chartInstances.userActivity = new Chart(userActivityCtx, {
+            type: 'line',
+            data: {
+                labels: last30Days,
+                datasets: [
+                    {
+                        label: 'Total Logins',
+                        data: generateTrendData(280, 40, 1.015),
+                        borderColor: '#0ea5e9',
+                        backgroundColor: 'rgba(14, 165, 233, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        pointHoverRadius: 4
+                    },
+                    {
+                        label: 'Active Users',
+                        data: generateTrendData(35, 5, 1.01),
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        pointHoverRadius: 4
+                    },
+                    {
+                        label: 'Avg. Session Time (min)',
+                        data: generateTrendData(12, 3, 1.02),
+                        borderColor: '#f59e0b',
+                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        pointHoverRadius: 4
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: true,
+                        position: 'top',
+                        align: 'end',
+                        labels: {
+                            boxWidth: 12,
+                            boxHeight: 12,
+                            padding: 15,
+                            font: {
+                                size: 12,
+                                weight: '500'
+                            }
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'User Activity Over Time',
+                        align: 'start',
+                        font: {
+                            size: 14,
+                            weight: '600'
+                        },
+                        padding: {
+                            bottom: 20
+                        },
+                        color: '#687F8B'
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            maxRotation: 0,
+                            autoSkip: true,
+                            maxTicksLimit: 15,
+                            font: {
+                                size: 11
+                            }
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: '#f0f0f0'
+                        },
+                        ticks: {
+                            font: {
+                                size: 11
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // 3. Revenue Growth Line Chart
+        const revenueGrowthCtx = document.getElementById('revenueGrowthChart').getContext('2d');
+        chartInstances.revenue = new Chart(revenueGrowthCtx, {
+            type: 'line',
+            data: {
+                labels: last30Days,
+                datasets: [
+                    {
+                        label: 'Daily Revenue ($)',
+                        data: generateTrendData(4100, 300, 1.015),
+                        borderColor: '#0ea5e9',
+                        backgroundColor: 'rgba(14, 165, 233, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        pointHoverRadius: 5,
+                        pointHoverBackgroundColor: '#0ea5e9',
+                        pointHoverBorderColor: 'white',
+                        pointHoverBorderWidth: 2
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: true,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    title: {
+                        display: true,
+                        text: 'Revenue Growth Trend',
+                        align: 'start',
+                        font: {
+                            size: 14,
+                            weight: '600'
+                        },
+                        padding: {
+                            bottom: 20
+                        },
+                        color: '#687F8B'
+                    }
+                },
+                scales: {
+                    x: {
+                        grid: {
+                            display: false
+                        },
+                        ticks: {
+                            maxRotation: 0,
+                            autoSkip: true,
+                            maxTicksLimit: 15,
+                            font: {
+                                size: 11
+                            }
+                        }
+                    },
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            color: '#f0f0f0'
+                        },
+                        ticks: {
+                            font: {
+                                size: 11
+                            },
+                            callback: function(value) {
+                                return '$' + value.toLocaleString();
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        }); // End DOMContentLoaded
+
+        // Build Notes Toggle Function
+        function toggleBuildNotes(show) {
+            const notesSection = document.getElementById('buildNotesSection');
+            const toggleBtn = document.getElementById('showBuildNotesBtn');
+            
+            if (show) {
+                notesSection.style.display = 'block';
+                toggleBtn.style.display = 'none';
+                notesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                notesSection.style.display = 'none';
+                toggleBtn.style.display = 'block';
+            }
+            
+            sessionStorage.setItem('buildNotesVisible', show);
+        }
+
+        // Restore preference on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            const savedPreference = sessionStorage.getItem('buildNotesVisible');
+            if (savedPreference === 'false') {
+                toggleBuildNotes(false);
+            }
+        });
+    </script>
+</body>
+</html>

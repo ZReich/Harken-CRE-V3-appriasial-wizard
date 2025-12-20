@@ -1,0 +1,1748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create New Evaluation - Harken CRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .material-icons {
+            font-family: 'Material Icons' !important;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+        }
+
+        /* Navbar */
+        .navbar {
+            background: url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;
+            background-color: #1c3643 !important;
+            height: 70px;
+            color: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 25px;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+
+        .nav-link.active {
+            background-color: transparent;
+            border: 1px solid #0da1c7;
+            color: #0da1c7;
+        }
+
+        /* Progress Container */
+        .progress-container {
+            background: white;
+            padding: 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+            position: sticky;
+            top: 70px;
+            z-index: 999;
+        }
+
+        .stepper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 16px;
+            max-width: 1000px;
+            margin: 0 auto 16px;
+            flex-wrap: wrap;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .step-circle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            color: #687F8B;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .step-circle.active {
+            background: linear-gradient(135deg, #0da1c7 0%, #38bfd9 100%);
+            color: white;
+            box-shadow: 0 4px 12px rgba(13, 161, 199, 0.4);
+        }
+
+        .step-circle.completed {
+            background: #2e7d32;
+            color: white;
+        }
+
+        .step-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #687F8B;
+        }
+
+        .step-item.active .step-label {
+            color: #0da1c7;
+        }
+
+        .progress-bar {
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #0da1c7 0%, #38bfd9 100%);
+            transition: width 0.5s ease;
+        }
+
+        /* Dropdown Navigation */
+        .dropdown-nav {
+            position: relative;
+            display: inline-block;
+            margin-bottom: 24px;
+        }
+
+        .dropdown-toggle {
+            background: white;
+            border: 2px solid #0da1c7;
+            color: #0da1c7;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .dropdown-toggle:hover {
+            background: #e8f5f7;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            min-width: 240px;
+            z-index: 1000;
+            display: none;
+        }
+
+        .dropdown-menu.show {
+            display: block;
+        }
+
+        .dropdown-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            color: #1c3643;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: all 0.2s;
+        }
+
+        .dropdown-item:hover {
+            background: #e8f5f7;
+        }
+
+        .dropdown-item.active {
+            background: #e8f5f7;
+            color: #0da1c7;
+        }
+
+        /* Left Sidebar Navigation */
+        .overview-layout {
+            display: flex;
+            gap: 24px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+
+        .left-sidebar {
+            width: 240px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            padding: 20px 0;
+            position: sticky;
+            top: 200px;
+            height: fit-content;
+            max-height: calc(100vh - 250px);
+            overflow-y: auto;
+        }
+
+        .sidebar-item {
+            padding: 14px 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #687F8B;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-left: 3px solid transparent;
+        }
+
+        .sidebar-item:hover {
+            background: #f9f9f9;
+        }
+
+        .sidebar-item.active {
+            color: #0da1c7;
+            background: #e8f5f7;
+            border-left-color: #0da1c7;
+        }
+
+        .sidebar-item.completed .sidebar-check {
+            display: inline;
+        }
+
+        .sidebar-check {
+            color: #2e7d32;
+            font-size: 18px;
+            display: none;
+        }
+
+        /* Main Content Area */
+        .main-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        /* Page Sections */
+        .page-section {
+            display: none;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Form Elements */
+        .form-section {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .form-section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1c3643;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1c3643;
+            margin-bottom: 8px;
+        }
+
+        .required {
+            color: #dc3545;
+            margin-left: 4px;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: #0da1c7;
+            box-shadow: 0 0 0 3px rgba(13, 161, 199, 0.1);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+        }
+
+        .form-row-3 {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: linear-gradient(135deg, #0da1c7 0%, #38bfd9 100%);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(13, 161, 199, 0.3);
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #1c3643;
+            border: 1px solid #e0e0e0;
+            padding: 12px 28px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-secondary:hover {
+            border-color: #0da1c7;
+            color: #0da1c7;
+        }
+
+        /* Drag & Drop Zone */
+        .drag-drop-zone {
+            border: 2px dashed #0da1c7;
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            background: #f9fdfe;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 24px;
+        }
+
+        .drag-drop-zone:hover,
+        .drag-drop-zone.drag-over {
+            background: #e8f5f7;
+            border-color: #38bfd9;
+        }
+
+        .drag-drop-icon {
+            font-size: 48px;
+            color: #0da1c7;
+            margin-bottom: 12px;
+        }
+
+        .drag-drop-text {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1c3643;
+            margin-bottom: 8px;
+        }
+
+        .drag-drop-hint {
+            font-size: 13px;
+            color: #687F8B;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #1565c0;
+            border-radius: 8px;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+        }
+
+        .info-box-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1565c0;
+            margin-bottom: 8px;
+        }
+
+        .info-box-text {
+            font-size: 13px;
+            color: #1c3643;
+            line-height: 1.6;
+        }
+
+        /* AI Button */
+        .btn-ai {
+            background: linear-gradient(135deg, #6a1b9a 0%, #9c27b0 100%);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.2s;
+        }
+
+        .btn-ai:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(106, 27, 154, 0.3);
+        }
+
+        .ai-badge {
+            background: linear-gradient(135deg, #6a1b9a 0%, #9c27b0 100%);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Map Tools */
+        .map-container {
+            position: relative;
+            height: 500px;
+            background: #e0e0e0;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .map-tools {
+            position: absolute;
+            left: 16px;
+            top: 16px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            padding: 8px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .map-tool-btn {
+            width: 48px;
+            height: 48px;
+            border: none;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .map-tool-btn:hover {
+            background: #e8f5f7;
+        }
+
+        .map-tool-btn.active {
+            background: #0da1c7;
+            color: white;
+        }
+
+        .map-tool-btn .material-icons {
+            font-size: 24px;
+        }
+
+        .map-tool-btn:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            left: calc(100% + 10px);
+            top: 50%;
+            transform: translateY(-50%);
+            background: #1c3643;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            white-space: nowrap;
+            z-index: 1000;
+        }
+
+        /* Approach Cards */
+        .approach-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 32px;
+        }
+
+        .approach-card {
+            background: white;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .approach-card:hover {
+            border-color: #0da1c7;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(13, 161, 199, 0.15);
+        }
+
+        .approach-card.selected {
+            border-color: #0da1c7;
+            background: #e8f5f7;
+        }
+
+        .approach-checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid #e0e0e0;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .approach-card.selected .approach-checkbox {
+            background: #0da1c7;
+            border-color: #0da1c7;
+        }
+
+        .approach-card.selected .approach-checkbox::after {
+            content: '✓';
+            color: white;
+            font-weight: 700;
+        }
+
+        /* Footer Navigation */
+        .wizard-footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 998;
+            box-shadow: 0 -2px 8px rgba(0,0,0,0.05);
+        }
+
+        .content-wrapper {
+            padding-bottom: 80px;
+        }
+
+        /* Character Counter */
+        .char-counter {
+            font-size: 12px;
+            color: #687F8B;
+            margin-top: 6px;
+        }
+
+        .char-counter.warning {
+            color: #ff9800;
+        }
+
+        .char-counter.danger {
+            color: #dc3545;
+        }
+
+        /* Save Status */
+        .save-status {
+            font-size: 13px;
+            color: #687F8B;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .save-status.saving {
+            color: #ff9800;
+        }
+
+        .save-status.saved {
+            color: #2e7d32;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .overview-layout {
+                flex-direction: column;
+            }
+
+            .left-sidebar {
+                width: 100%;
+                position: static;
+            }
+
+            .form-row, .form-row-3 {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar flex items-center justify-between px-8">
+        <div class="flex items-center gap-8">
+            <h1 class="text-xl font-bold">HARKEN</h1>
+            <div class="flex gap-2">
+                <a href="#" class="nav-link">Dashboard</a>
+                <a href="#" class="nav-link active">Evaluations</a>
+                <a href="#" class="nav-link">Comps</a>
+            </div>
+        </div>
+        <div class="flex items-center gap-4">
+            <span class="save-status saved" id="saveStatus">
+                <i class="material-icons" style="font-size: 16px;">check_circle</i>
+                All changes saved
+            </span>
+            <button class="btn-secondary">Exit</button>
+        </div>
+    </nav>
+
+    <!-- Progress Container -->
+    <div class="progress-container">
+        <div class="stepper" id="stepperContainer">
+            <div class="step-item active">
+                <div class="step-circle active">1</div>
+                <span class="step-label">Setup</span>
+            </div>
+            <div class="step-item">
+                <div class="step-circle">2</div>
+                <span class="step-label">Overview</span>
+            </div>
+            <div class="step-item">
+                <div class="step-circle">3</div>
+                <span class="step-label">Exhibits</span>
+            </div>
+            <div class="step-item">
+                <div class="step-circle">4</div>
+                <span class="step-label">Review</span>
+            </div>
+        </div>
+        <div class="progress-bar">
+            <div class="progress-fill" id="progressFill" style="width: 25%;"></div>
+        </div>
+    </div>
+
+    <div class="content-wrapper">
+        <!-- STEP 1: SETUP -->
+        <div class="page-section active" id="step-setup" style="max-width: 1200px; margin: 0 auto; padding: 40px 24px;">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Evaluation Setup</h2>
+            
+            <div class="form-section">
+                <div class="form-section-title">
+                    <i class="material-icons">business</i>
+                    Basic Information
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Evaluation Type<span class="required">*</span></label>
+                    <select class="form-select" id="evaluationType">
+                        <option value="">Select type</option>
+                        <option value="commercial">Commercial</option>
+                        <option value="residential">Residential</option>
+                        <option value="land">Land</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Client<span class="required">*</span></label>
+                    <input type="text" class="form-input" placeholder="Search for client..." />
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="form-section-title">
+                    <i class="material-icons">assessment</i>
+                    Select Valuation Approaches
+                </div>
+                
+                <p style="font-size: 14px; color: #687F8B; margin-bottom: 24px;">Choose all valuation methods you'll use for this evaluation. You can select multiple approaches.</p>
+
+                <div class="approach-grid">
+                    <div class="approach-card selected" onclick="toggleApproach(this)">
+                        <div class="approach-checkbox"></div>
+                        <div style="margin-top: 12px;">
+                            <div style="font-size: 16px; font-weight: 700; color: #1c3643; margin-bottom: 6px;">Sales Comparison</div>
+                            <div style="font-size: 13px; color: #687F8B;">Compare to similar sold properties</div>
+                        </div>
+                        <div style="position: absolute; top: 12px; right: 12px; background: #2e7d32; color: white; font-size: 10px; font-weight: 700; padding: 4px 8px; border-radius: 4px;">RECOMMENDED</div>
+                    </div>
+
+                    <div class="approach-card" onclick="toggleApproach(this)">
+                        <div class="approach-checkbox"></div>
+                        <div style="margin-top: 12px;">
+                            <div style="font-size: 16px; font-weight: 700; color: #1c3643; margin-bottom: 6px;">Cost Approach</div>
+                            <div style="font-size: 13px; color: #687F8B;">Replacement cost less depreciation</div>
+                        </div>
+                    </div>
+
+                    <div class="approach-card" onclick="toggleApproach(this)">
+                        <div class="approach-checkbox"></div>
+                        <div style="margin-top: 12px;">
+                            <div style="font-size: 16px; font-weight: 700; color: #1c3643; margin-bottom: 6px;">Income Approach</div>
+                            <div style="font-size: 13px; color: #687F8B;">Based on income generation potential</div>
+                        </div>
+                    </div>
+
+                    <div class="approach-card" onclick="toggleApproach(this)">
+                        <div class="approach-checkbox"></div>
+                        <div style="margin-top: 12px;">
+                            <div style="font-size: 16px; font-weight: 700; color: #1c3643; margin-bottom: 6px;">Lease Comps</div>
+                            <div style="font-size: 13px; color: #687F8B;">Compare to similar leased properties</div>
+                        </div>
+                    </div>
+
+                    <div class="approach-card" onclick="toggleApproach(this)">
+                        <div class="approach-checkbox"></div>
+                        <div style="margin-top: 12px;">
+                            <div style="font-size: 16px; font-weight: 700; color: #1c3643; margin-bottom: 6px;">Cap Rate Analysis</div>
+                            <div style="font-size: 13px; color: #687F8B;">Capitalization rate valuation</div>
+                        </div>
+                    </div>
+
+                    <div class="approach-card" onclick="toggleApproach(this)">
+                        <div class="approach-checkbox"></div>
+                        <div style="margin-top: 12px;">
+                            <div style="font-size: 16px; font-weight: 700; color: #1c3643; margin-bottom: 6px;">Multi-Family</div>
+                            <div style="font-size: 13px; color: #687F8B;">Multi-family property analysis</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 2: OVERVIEW WITH DROPDOWN & SIDEBAR -->
+        <div class="page-section" id="step-overview">
+            <div style="max-width: 1400px; margin: 0 auto; padding: 24px;">
+                <!-- Dropdown Navigation -->
+                <div class="dropdown-nav" id="overviewDropdown">
+                    <button class="dropdown-toggle" onclick="toggleDropdown()">
+                        <span id="currentPageName">Overview Page</span>
+                        <i class="material-icons">expand_more</i>
+                    </button>
+                    <div class="dropdown-menu" id="dropdownMenu">
+                        <div class="dropdown-item active" onclick="switchPage('overview-main')">
+                            <span>Overview Page</span>
+                            <i class="material-icons sidebar-check">check_circle</i>
+                        </div>
+                        <div class="dropdown-item" onclick="switchPage('overview-images')">
+                            <span>Images</span>
+                            <i class="material-icons sidebar-check">check_circle</i>
+                        </div>
+                        <div class="dropdown-item" onclick="switchPage('overview-photos')">
+                            <span>Photos</span>
+                            <i class="material-icons sidebar-check">check_circle</i>
+                        </div>
+                        <div class="dropdown-item" onclick="switchPage('overview-map-boundary')">
+                            <span>Map Boundary</span>
+                            <i class="material-icons sidebar-check">check_circle</i>
+                        </div>
+                        <div class="dropdown-item" onclick="switchPage('overview-aerial')">
+                            <span>Aerial Map</span>
+                            <i class="material-icons sidebar-check">check_circle</i>
+                        </div>
+                        <div class="dropdown-item" onclick="switchPage('overview-area-info')">
+                            <span>Area Info</span>
+                            <i class="material-icons sidebar-check">check_circle</i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Overview Main Page with Left Sidebar -->
+                <div class="overview-page active" id="overview-main">
+                    <div class="overview-layout">
+                        <!-- Left Sidebar -->
+                        <div class="left-sidebar">
+                            <div class="sidebar-item active" onclick="scrollToSection('property-details')">
+                                <span>PROPERTY DETAILS</span>
+                                <i class="material-icons sidebar-check">check_circle</i>
+                            </div>
+                            <div class="sidebar-item" onclick="scrollToSection('specifications')">
+                                <span>SPECIFICATIONS</span>
+                                <i class="material-icons sidebar-check">check_circle</i>
+                            </div>
+                            <div class="sidebar-item" onclick="scrollToSection('analysis')">
+                                <span>ANALYSIS</span>
+                                <i class="material-icons sidebar-check">check_circle</i>
+                            </div>
+                            <div class="sidebar-item" onclick="scrollToSection('amenities')">
+                                <span>AMENITIES</span>
+                                <i class="material-icons sidebar-check">check_circle</i>
+                            </div>
+                            <div class="sidebar-item" onclick="scrollToSection('zoning')">
+                                <span>ZONING</span>
+                                <i class="material-icons sidebar-check">check_circle</i>
+                            </div>
+                            <div class="sidebar-item" onclick="scrollToSection('tax-assessment')">
+                                <span>TAX ASSESSMENT</span>
+                                <i class="material-icons sidebar-check">check_circle</i>
+                            </div>
+                            <div class="sidebar-item" onclick="scrollToSection('map-boundaries')">
+                                <span>MAP BOUNDARIES</span>
+                                <i class="material-icons sidebar-check">check_circle</i>
+                            </div>
+                        </div>
+
+                        <!-- Main Content -->
+                        <div class="main-content">
+                            <!-- Property Details Section -->
+                            <div class="form-section" id="property-details" data-section="property-details">
+                                <div class="form-section-title">
+                                    <i class="material-icons">business</i>
+                                    PROPERTY DETAILS
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Business/Property Name</label>
+                                    <input type="text" class="form-input" placeholder="Enter property name" />
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">Street Address<span class="required">*</span></label>
+                                        <input type="text" class="form-input" placeholder="Start typing address..." />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Suite Number</label>
+                                        <input type="text" class="form-input" placeholder="Suite/Unit #" />
+                                    </div>
+                                </div>
+
+                                <div class="form-row-3">
+                                    <div class="form-group">
+                                        <label class="form-label">City</label>
+                                        <input type="text" class="form-input" placeholder="City" readonly />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">State</label>
+                                        <input type="text" class="form-input" placeholder="State" readonly />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">ZIP Code</label>
+                                        <input type="text" class="form-input" placeholder="ZIP" />
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">County</label>
+                                        <input type="text" class="form-input" placeholder="County" readonly />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">File Number</label>
+                                        <input type="text" class="form-input" placeholder="File #" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Type</label>
+                                    <select class="form-select">
+                                        <option value="sale">Sale</option>
+                                        <option value="lease">Lease</option>
+                                    </select>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">Under Contract Price</label>
+                                        <input type="text" class="form-input" placeholder="$" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Close Date</label>
+                                        <input type="date" class="form-input" />
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">APN / Parcel ID / Tax ID</label>
+                                    <input type="text" class="form-input" placeholder="Enter APN" />
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Owner of Record</label>
+                                    <textarea class="form-textarea" placeholder="Enter owner information"></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Specifications Section -->
+                            <div class="form-section" id="specifications" data-section="specifications">
+                                <div class="form-section-title">
+                                    <i class="material-icons">domain</i>
+                                    SPECIFICATIONS
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">Property Class</label>
+                                        <select class="form-select">
+                                            <option value="">Select class</option>
+                                            <option value="A">Class A</option>
+                                            <option value="B">Class B</option>
+                                            <option value="C">Class C</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Condition</label>
+                                        <select class="form-select">
+                                            <option value="">Select condition</option>
+                                            <option value="excellent">Excellent</option>
+                                            <option value="good">Good</option>
+                                            <option value="fair">Fair</option>
+                                            <option value="poor">Poor</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">Year Built</label>
+                                        <input type="text" class="form-input" placeholder="YYYY" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Year Remodeled</label>
+                                        <input type="text" class="form-input" placeholder="YYYY" />
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">Building Size (SF)</label>
+                                        <input type="text" class="form-input" placeholder="Square feet" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Land Size (SF/AC)</label>
+                                        <input type="text" class="form-input" placeholder="Enter size" />
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">Number of Stories</label>
+                                        <input type="text" class="form-input" placeholder="# of stories" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Parking Spaces</label>
+                                        <input type="text" class="form-input" placeholder="# of spaces" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Analysis Section -->
+                            <div class="form-section" id="analysis" data-section="analysis">
+                                <div class="form-section-title">
+                                    <i class="material-icons">analytics</i>
+                                    ANALYSIS
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">High and Best Use</label>
+                                    <textarea class="form-textarea" placeholder="Describe highest and best use"></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Intended Use</label>
+                                    <textarea class="form-textarea" placeholder="Describe intended use"></textarea>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">Date of Analysis</label>
+                                        <input type="date" class="form-input" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Inspector Name</label>
+                                        <input type="text" class="form-input" placeholder="Name" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Amenities Section -->
+                            <div class="form-section" id="amenities" data-section="amenities">
+                                <div class="form-section-title">
+                                    <i class="material-icons">star</i>
+                                    AMENITIES
+                                </div>
+                                
+                                <div class="form-group">
+                                    <label class="form-label">Additional Features</label>
+                                    <textarea class="form-textarea" placeholder="List amenities and features"></textarea>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Key Highlights</label>
+                                    <textarea class="form-textarea" placeholder="Key selling points"></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Zoning Section -->
+                            <div class="form-section" id="zoning" data-section="zoning">
+                                <div class="form-section-title">
+                                    <i class="material-icons">location_city</i>
+                                    ZONING
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">Zoning Type</label>
+                                        <input type="text" class="form-input" placeholder="e.g., C-2, R-1" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Zoning Classification</label>
+                                        <select class="form-select">
+                                            <option value="">Select classification</option>
+                                            <option value="commercial">Commercial</option>
+                                            <option value="residential">Residential</option>
+                                            <option value="industrial">Industrial</option>
+                                            <option value="mixed">Mixed Use</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">Zoning Description</label>
+                                    <textarea class="form-textarea" placeholder="Describe zoning details"></textarea>
+                                </div>
+                            </div>
+
+                            <!-- Tax Assessment Section -->
+                            <div class="form-section" id="tax-assessment" data-section="tax-assessment">
+                                <div class="form-section-title">
+                                    <i class="material-icons">receipt_long</i>
+                                    TAX ASSESSMENT
+                                </div>
+                                
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">Land Value</label>
+                                        <input type="text" class="form-input" placeholder="$" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Improvement Value</label>
+                                        <input type="text" class="form-input" placeholder="$" />
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">Assessment Year</label>
+                                        <input type="text" class="form-input" placeholder="YYYY" />
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Annual Tax Amount</label>
+                                        <input type="text" class="form-input" placeholder="$" />
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Map Boundaries Section -->
+                            <div class="form-section" id="map-boundaries" data-section="map-boundaries">
+                                <div class="form-section-title">
+                                    <i class="material-icons">map</i>
+                                    MAP BOUNDARIES
+                                </div>
+                                
+                                <p style="font-size: 14px; color: #687F8B; margin-bottom: 16px;">Current boundary has been set. Click "Edit Boundary" to modify.</p>
+                                
+                                <button class="btn-primary" onclick="switchPage('overview-map-boundary')">
+                                    <i class="material-icons">edit</i>
+                                    Edit Boundary
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Images Page -->
+                <div class="overview-page" id="overview-images">
+                    <div class="info-box">
+                        <div class="info-box-title">IMAGES</div>
+                        <div class="info-box-text">
+                            <strong>FOR BEST RESULTS, WE RECOMMEND PHOTO SIZE TO BE BETWEEN 2MB - 5MB, IF POSSIBLE.</strong><br><br>
+                            <strong>Photos Needed:</strong><br>
+                            • Cover Photo: Main property image (horizontal orientation preferred)<br>
+                            • Table of Contents: Secondary property view (any orientation)<br>
+                            • Executive Summary: Professional exterior shot (horizontal)<br>
+                            • Property Summary: Additional view or detail shot (any orientation)<br><br>
+                            These images will appear in your final PDF report in high quality.
+                        </div>
+                    </div>
+
+                    <div class="drag-drop-zone" onclick="document.getElementById('imageUpload').click()">
+                        <div class="drag-drop-icon">
+                            <i class="material-icons" style="font-size: 48px;">cloud_upload</i>
+                        </div>
+                        <div class="drag-drop-text">Drag images here or click to upload</div>
+                        <div class="drag-drop-hint">Multiple files supported • 2MB - 5MB recommended</div>
+                        <input type="file" id="imageUpload" multiple accept="image/*" style="display: none;" />
+                    </div>
+
+                    <div class="form-section">
+                        <table style="width: 100%; border-collapse: collapse;">
+                            <thead>
+                                <tr style="border-bottom: 2px solid #e0e0e0;">
+                                    <th style="padding: 12px; text-align: left; font-size: 13px; font-weight: 600; color: #687F8B;">Image</th>
+                                    <th style="padding: 12px; text-align: left; font-size: 13px; font-weight: 600; color: #687F8B;">Description</th>
+                                    <th style="padding: 12px; text-align: left; font-size: 13px; font-weight: 600; color: #687F8B;">Orientation</th>
+                                    <th style="padding: 12px; text-align: left; font-size: 13px; font-weight: 600; color: #687F8B;">Page</th>
+                                    <th style="padding: 12px; text-align: left; font-size: 13px; font-weight: 600; color: #687F8B;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr style="border-bottom: 1px solid #e0e0e0;">
+                                    <td style="padding: 12px;">
+                                        <div style="width: 60px; height: 60px; background: #f5f5f5; border-radius: 4px; display: flex; align-items: center; justify-content: center;">
+                                            <i class="material-icons" style="color: #e0e0e0;">image</i>
+                                        </div>
+                                    </td>
+                                    <td style="padding: 12px;">
+                                        <input type="text" class="form-input" value="Sub. Property 1" />
+                                    </td>
+                                    <td style="padding: 12px;">
+                                        <select class="form-select">
+                                            <option value="horizontal">Horizontal</option>
+                                            <option value="vertical">Vertical</option>
+                                        </select>
+                                    </td>
+                                    <td style="padding: 12px;">
+                                        <select class="form-select">
+                                            <option value="1">1 - Cover Photo</option>
+                                            <option value="2">2 - Table of Contents</option>
+                                            <option value="5">5 - Executive Summary</option>
+                                            <option value="7">7 - Property Summary</option>
+                                        </select>
+                                    </td>
+                                    <td style="padding: 12px;">
+                                        <button style="background: none; border: none; cursor: pointer; color: #dc3545;">
+                                            <i class="material-icons">delete</i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Photos Page -->
+                <div class="overview-page" id="overview-photos">
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <i class="material-icons">photo_library</i>
+                            Photo Information
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Photo Taken By<span class="required">*</span></label>
+                                <input type="text" class="form-input" placeholder="Photographer name" />
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Photo Date<span class="required">*</span></label>
+                                <input type="date" class="form-input" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="drag-drop-zone" onclick="document.getElementById('photoUpload').click()">
+                        <div class="drag-drop-icon">
+                            <i class="material-icons" style="font-size: 48px;">add_photo_alternate</i>
+                        </div>
+                        <div class="drag-drop-text">Drag photos here or click to upload</div>
+                        <div class="drag-drop-hint">Multiple files supported • JPG, PNG accepted</div>
+                        <input type="file" id="photoUpload" multiple accept="image/*" style="display: none;" />
+                    </div>
+
+                    <div id="photoGrid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-top: 24px;">
+                        <!-- Uploaded photos will appear here -->
+                    </div>
+                </div>
+
+                <!-- Map Boundary Page -->
+                <div class="overview-page" id="overview-map-boundary">
+                    <div class="info-box">
+                        <div class="info-box-title">Select the boundaries of the property</div>
+                        <div class="info-box-text">
+                            Click to place boundary points, drag to adjust vertices. Use the drawing tools to create the property boundary.
+                        </div>
+                    </div>
+
+                    <div class="map-container">
+                        <div class="map-tools">
+                            <button class="map-tool-btn active" data-tooltip="Polygon Tool">
+                                <i class="material-icons">pentagon</i>
+                            </button>
+                            <button class="map-tool-btn" data-tooltip="Rectangle Tool">
+                                <i class="material-icons">crop_square</i>
+                            </button>
+                            <button class="map-tool-btn" data-tooltip="Circle Tool">
+                                <i class="material-icons">circle</i>
+                            </button>
+                            <div style="height: 1px; background: #e0e0e0; margin: 8px 0;"></div>
+                            <button class="map-tool-btn" data-tooltip="Undo">
+                                <i class="material-icons">undo</i>
+                            </button>
+                            <button class="map-tool-btn" data-tooltip="Redo">
+                                <i class="material-icons">redo</i>
+                            </button>
+                            <button class="map-tool-btn" data-tooltip="Clear All" style="color: #dc3545;">
+                                <i class="material-icons">delete</i>
+                            </button>
+                        </div>
+                        
+                        <div style="position: absolute; top: 16px; right: 16px; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); padding: 8px;">
+                            <button class="btn-secondary" style="padding: 8px 16px; margin-right: 8px;">Map</button>
+                            <button class="btn-primary" style="padding: 8px 16px;">Satellite</button>
+                        </div>
+
+                        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #687F8B;">
+                            [Interactive Map View - Auto-saves on change]
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aerial Map Page -->
+                <div class="overview-page" id="overview-aerial">
+                    <div class="info-box">
+                        <div class="info-box-title">Set the aerial map view for PDF display</div>
+                        <div class="info-box-text">
+                            Zoom and orient the map as it should appear in your final report. The view saves automatically.
+                        </div>
+                    </div>
+
+                    <div class="map-container">
+                        <div style="position: absolute; top: 16px; right: 16px; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); padding: 8px;">
+                            <button class="btn-secondary" style="padding: 8px 16px; margin-right: 8px;">Map</button>
+                            <button class="btn-primary" style="padding: 8px 16px;">Hybrid</button>
+                        </div>
+
+                        <div style="position: absolute; bottom: 16px; left: 50%; transform: translateX(-50%); background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.15); padding: 12px 20px;">
+                            <div style="font-size: 12px; color: #687F8B; margin-bottom: 4px;">Auto-saving view position</div>
+                            <div style="font-size: 13px; color: #1c3643; font-weight: 600;">Zoom: 16 • Center: 40.7128° N, 74.0060° W</div>
+                        </div>
+
+                        <div style="width: 100%; height: 100%; display: flex; align-items: center; justify-content: center; color: #687F8B;">
+                            [Interactive Aerial Map View]
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Area Info Page -->
+                <div class="overview-page" id="overview-area-info">
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <i class="material-icons">location_on</i>
+                            City Information
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <label class="form-label" style="margin-bottom: 0;">City Info (1200 characters max)</label>
+                            <button class="btn-ai">
+                                <span>✨</span>
+                                Generate with AI
+                            </button>
+                        </div>
+
+                        <textarea class="form-textarea" id="cityInfo" placeholder="Enter city information or use AI to generate..." style="min-height: 120px;"></textarea>
+                        <div class="char-counter" id="cityCharCount">0/1200 characters</div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <i class="material-icons">location_on</i>
+                            County Information
+                        </div>
+
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                            <label class="form-label" style="margin-bottom: 0;">County Info (1200 characters max)</label>
+                            <button class="btn-ai">
+                                <span>✨</span>
+                                Generate with AI
+                            </button>
+                        </div>
+
+                        <textarea class="form-textarea" id="countyInfo" placeholder="Enter county information or use AI to generate..." style="min-height: 120px;"></textarea>
+                        <div class="char-counter" id="countyCharCount">0/1200 characters</div>
+                    </div>
+
+                    <div class="form-section">
+                        <div class="form-section-title">
+                            <i class="material-icons">trending_up</i>
+                            Market Trends
+                        </div>
+
+                        <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; margin-bottom: 16px;">
+                            <div class="form-group">
+                                <label class="form-label">Sales</label>
+                                <select class="form-select">
+                                    <option value="up">↑ Up</option>
+                                    <option value="down">↓ Down</option>
+                                    <option value="stable">→ Stable</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Vacancy</label>
+                                <select class="form-select">
+                                    <option value="up">↑ Up</option>
+                                    <option value="down">↓ Down</option>
+                                    <option value="stable">→ Stable</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Absorption</label>
+                                <select class="form-select">
+                                    <option value="up">↑ Up</option>
+                                    <option value="down">↓ Down</option>
+                                    <option value="stable">→ Stable</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Construction</label>
+                                <select class="form-select">
+                                    <option value="up">↑ Up</option>
+                                    <option value="down">↓ Down</option>
+                                    <option value="stable">→ Stable</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">Lease Rates</label>
+                                <select class="form-select">
+                                    <option value="up">↑ Up</option>
+                                    <option value="down">↓ Down</option>
+                                    <option value="stable">→ Stable</option>
+                                </select>
+                            </div>
+                        </div>
+
+                        <button class="btn-ai">
+                            <span>✨</span>
+                            AI Analyze Trends
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- STEP 3: EXHIBITS -->
+        <div class="page-section" id="step-exhibits" style="max-width: 1200px; margin: 0 auto; padding: 40px 24px;">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Upload Exhibits</h2>
+            
+            <div class="drag-drop-zone" onclick="document.getElementById('exhibitUpload').click()">
+                <div class="drag-drop-icon">
+                    <i class="material-icons" style="font-size: 48px;">upload_file</i>
+                </div>
+                <div class="drag-drop-text">Drag files here or click to upload</div>
+                <div class="drag-drop-hint">.pdf, .jpg, .png accepted • Multiple files supported</div>
+                <input type="file" id="exhibitUpload" multiple accept=".pdf,.jpg,.jpeg,.png" style="display: none;" />
+            </div>
+
+            <div class="form-section">
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid #e0e0e0;">
+                            <th style="padding: 12px; text-align: left; font-size: 13px; font-weight: 600; color: #687F8B; width: 50px;">Order</th>
+                            <th style="padding: 12px; text-align: left; font-size: 13px; font-weight: 600; color: #687F8B;">Title</th>
+                            <th style="padding: 12px; text-align: left; font-size: 13px; font-weight: 600; color: #687F8B;">File</th>
+                            <th style="padding: 12px; text-align: left; font-size: 13px; font-weight: 600; color: #687F8B; width: 100px;">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid #e0e0e0;">
+                            <td style="padding: 12px;">
+                                <i class="material-icons" style="cursor: move; color: #687F8B;">drag_indicator</i>
+                            </td>
+                            <td style="padding: 12px;">
+                                <input type="text" class="form-input" placeholder="Exhibit title" />
+                            </td>
+                            <td style="padding: 12px;">
+                                <div style="font-size: 13px; color: #1c3643;">document.pdf <span style="color: #687F8B; font-size: 12px;">(2.4 MB)</span></div>
+                            </td>
+                            <td style="padding: 12px;">
+                                <button style="background: none; border: none; cursor: pointer; color: #0da1c7; margin-right: 8px;">
+                                    <i class="material-icons">visibility</i>
+                                </button>
+                                <button style="background: none; border: none; cursor: pointer; color: #dc3545;">
+                                    <i class="material-icons">delete</i>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- STEP 4: REVIEW -->
+        <div class="page-section" id="step-review" style="max-width: 1200px; margin: 0 auto; padding: 40px 24px;">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6">Final Value Review</h2>
+            
+            <div class="info-box">
+                <div class="info-box-text">
+                    You're all done! Review your valuation, make any final adjustments, and complete the evaluation.
+                </div>
+            </div>
+
+            <div class="form-section">
+                <div class="form-section-title">
+                    <i class="material-icons">assessment</i>
+                    Valuation Summary
+                </div>
+
+                <table style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                        <tr style="border-bottom: 2px solid #e0e0e0;">
+                            <th style="padding: 12px; text-align: left; font-size: 13px; font-weight: 600; color: #687F8B;">Approach</th>
+                            <th style="padding: 12px; text-align: right; font-size: 13px; font-weight: 600; color: #687F8B;">Value Indicated</th>
+                            <th style="padding: 12px; text-align: right; font-size: 13px; font-weight: 600; color: #687F8B;">Weighting</th>
+                            <th style="padding: 12px; text-align: right; font-size: 13px; font-weight: 600; color: #687F8B;">Incremental Value</th>
+                            <th style="padding: 12px; text-align: right; font-size: 13px; font-weight: 600; color: #687F8B;">$/SF</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom: 1px solid #e0e0e0;">
+                            <td style="padding: 12px; font-weight: 600;">Sales Approach</td>
+                            <td style="padding: 12px; text-align: right;">$0</td>
+                            <td style="padding: 12px; text-align: right;">
+                                <input type="text" class="form-input" value="100" style="width: 80px; text-align: right;" /> %
+                            </td>
+                            <td style="padding: 12px; text-align: right;">$0</td>
+                            <td style="padding: 12px; text-align: right;">$0</td>
+                        </tr>
+                        <tr style="background: #e8f5f7; font-weight: 700;">
+                            <td style="padding: 12px;">Market Value</td>
+                            <td style="padding: 12px; text-align: right;">$0</td>
+                            <td style="padding: 12px; text-align: right;">100%</td>
+                            <td style="padding: 12px; text-align: right;">$0</td>
+                            <td style="padding: 12px; text-align: right;">$0</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div style="margin-top: 32px;">
+                    <div style="font-size: 18px; font-weight: 700; color: #1c3643; margin-bottom: 16px;">Final Market Value: $0</div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Review Notes</label>
+                        <textarea class="form-textarea" placeholder="Add any final review notes..."></textarea>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Reviewed By</label>
+                            <select class="form-select">
+                                <option value="">Select reviewer</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Review Date</label>
+                            <input type="date" class="form-input" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div style="text-align: right; margin-top: 32px;">
+                <button class="btn-primary" style="padding: 16px 40px; font-size: 16px;">
+                    COMPLETE EVALUATION
+                    <i class="material-icons">check_circle</i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer Navigation -->
+    <div class="wizard-footer">
+        <button class="btn-secondary" onclick="previousStep()">
+            <i class="material-icons">arrow_back</i>
+            Back
+        </button>
+        <div>
+            <button class="btn-secondary" onclick="saveDraft()" style="margin-right: 12px;">Save Draft</button>
+            <button class="btn-primary" onclick="nextStep()">
+                Continue
+                <i class="material-icons">arrow_forward</i>
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let currentStep = 1;
+        const totalSteps = 4;
+
+        // Approach Card Toggle
+        function toggleApproach(card) {
+            card.classList.toggle('selected');
+        }
+
+        // Navigation Functions
+        function nextStep() {
+            if (currentStep < totalSteps) {
+                document.querySelectorAll('.page-section')[currentStep - 1].classList.remove('active');
+                currentStep++;
+                document.querySelectorAll('.page-section')[currentStep - 1].classList.add('active');
+                updateProgress();
+                updateStepIndicator();
+                window.scrollTo(0, 0);
+            }
+        }
+
+        function previousStep() {
+            if (currentStep > 1) {
+                document.querySelectorAll('.page-section')[currentStep - 1].classList.remove('active');
+                currentStep--;
+                document.querySelectorAll('.page-section')[currentStep - 1].classList.add('active');
+                updateProgress();
+                updateStepIndicator();
+                window.scrollTo(0, 0);
+            }
+        }
+
+        function updateProgress() {
+            const progress = (currentStep / totalSteps) * 100;
+            document.getElementById('progressFill').style.width = progress + '%';
+        }
+
+        function updateStepIndicator() {
+            const steps = document.querySelectorAll('.step-item');
+            steps.forEach((step, index) => {
+                const circle = step.querySelector('.step-circle');
+                if (index < currentStep - 1) {
+                    circle.classList.add('completed');
+                    circle.classList.remove('active');
+                    circle.innerHTML = '<i class="material-icons" style="font-size: 20px;">check</i>';
+                } else if (index === currentStep - 1) {
+                    circle.classList.add('active');
+                    circle.classList.remove('completed');
+                    circle.textContent = index + 1;
+                    step.classList.add('active');
+                } else {
+                    circle.classList.remove('active', 'completed');
+                    circle.textContent = index + 1;
+                    step.classList.remove('active');
+                }
+            });
+        }
+
+        // Dropdown Toggle
+        function toggleDropdown() {
+            document.getElementById('dropdownMenu').classList.toggle('show');
+        }
+
+        // Close dropdown when clicking outside
+        window.onclick = function(event) {
+            if (!event.target.matches('.dropdown-toggle') && !event.target.closest('.dropdown-toggle')) {
+                const dropdowns = document.getElementsByClassName("dropdown-menu");
+                for (let i = 0; i < dropdowns.length; i++) {
+                    dropdowns[i].classList.remove('show');
+                }
+            }
+        }
+
+        // Switch Overview Pages
+        function switchPage(pageId) {
+            // Hide all pages
+            document.querySelectorAll('.overview-page').forEach(page => page.classList.remove('active'));
+            
+            // Show selected page
+            document.getElementById(pageId).classList.add('active');
+            
+            // Update dropdown items
+            document.querySelectorAll('.dropdown-item').forEach(item => item.classList.remove('active'));
+            event.target.closest('.dropdown-item').classList.add('active');
+            
+            // Update dropdown toggle text
+            const pageNames = {
+                'overview-main': 'Overview Page',
+                'overview-images': 'Images',
+                'overview-photos': 'Photos',
+                'overview-map-boundary': 'Map Boundary',
+                'overview-aerial': 'Aerial Map',
+                'overview-area-info': 'Area Info'
+            };
+            document.getElementById('currentPageName').textContent = pageNames[pageId];
+            
+            // Close dropdown
+            document.getElementById('dropdownMenu').classList.remove('show');
+            
+            window.scrollTo(0, 0);
+        }
+
+        // Scroll to Section
+        function scrollToSection(sectionId) {
+            const section = document.getElementById(sectionId);
+            if (section) {
+                section.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                
+                // Update active sidebar item
+                document.querySelectorAll('.sidebar-item').forEach(item => item.classList.remove('active'));
+                event.target.closest('.sidebar-item').classList.add('active');
+            }
+        }
+
+        // Character Counter
+        document.getElementById('cityInfo')?.addEventListener('input', function() {
+            const count = this.value.length;
+            const counter = document.getElementById('cityCharCount');
+            counter.textContent = count + '/1200 characters';
+            
+            if (count > 1080) counter.classList.add('warning');
+            if (count > 1150) counter.classList.add('danger');
+            if (count <= 1080) counter.classList.remove('warning', 'danger');
+        });
+
+        document.getElementById('countyInfo')?.addEventListener('input', function() {
+            const count = this.value.length;
+            const counter = document.getElementById('countyCharCount');
+            counter.textContent = count + '/1200 characters';
+            
+            if (count > 1080) counter.classList.add('warning');
+            if (count > 1150) counter.classList.add('danger');
+            if (count <= 1080) counter.classList.remove('warning', 'danger');
+        });
+
+        // Auto-save
+        let autoSaveTimer;
+        function triggerAutoSave() {
+            clearTimeout(autoSaveTimer);
+            const status = document.getElementById('saveStatus');
+            status.innerHTML = '<i class="material-icons" style="font-size: 16px;">sync</i> Saving...';
+            status.className = 'save-status saving';
+            
+            autoSaveTimer = setTimeout(() => {
+                status.innerHTML = '<i class="material-icons" style="font-size: 16px;">check_circle</i> All changes saved';
+                status.className = 'save-status saved';
+            }, 2000);
+        }
+
+        // Attach auto-save to all inputs
+        document.querySelectorAll('.form-input, .form-select, .form-textarea').forEach(input => {
+            input.addEventListener('blur', triggerAutoSave);
+        });
+
+        // Save Draft
+        function saveDraft() {
+            const status = document.getElementById('saveStatus');
+            status.innerHTML = '<i class="material-icons" style="font-size: 16px;">sync</i> Saving draft...';
+            status.className = 'save-status saving';
+            
+            setTimeout(() => {
+                status.innerHTML = '<i class="material-icons" style="font-size: 16px;">check_circle</i> Draft saved';
+                status.className = 'save-status saved';
+            }, 1000);
+        }
+
+        // Scroll tracking for sidebar
+        let sections = [];
+        let observerOptions = {
+            root: null,
+            rootMargin: '-50% 0px -50% 0px',
+            threshold: 0
+        };
+
+        function initScrollTracking() {
+            sections = Array.from(document.querySelectorAll('[data-section]'));
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        const sectionId = entry.target.getAttribute('data-section');
+                        document.querySelectorAll('.sidebar-item').forEach(item => {
+                            item.classList.remove('active');
+                        });
+                        const activeItem = Array.from(document.querySelectorAll('.sidebar-item')).find(item => {
+                            return item.getAttribute('onclick')?.includes(sectionId);
+                        });
+                        if (activeItem) {
+                            activeItem.classList.add('active');
+                        }
+                    }
+                });
+            }, observerOptions);
+
+            sections.forEach(section => observer.observe(section));
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', () => {
+            initScrollTracking();
+        });
+    </script>
+</body>
+</html>
+

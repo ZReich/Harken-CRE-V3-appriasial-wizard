@@ -1,0 +1,1190 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Visual Report Template Editor - Harken CRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            font-family: 'Montserrat', sans-serif !important;
+            box-sizing: border-box;
+        }
+        body {
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        /* Top Toolbar */
+        .top-toolbar {
+            background: #1c3643;
+            color: white;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            height: 60px;
+        }
+        .toolbar-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .toolbar-logo {
+            height: 32px;
+        }
+        .template-name {
+            background: rgba(255,255,255,0.15);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            min-width: 300px;
+        }
+        .template-name:focus {
+            outline: none;
+            background: rgba(255,255,255,0.25);
+        }
+        .toolbar-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.3);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .toolbar-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        .toolbar-btn.primary {
+            background: #0da1c7;
+            border-color: #0da1c7;
+        }
+        .toolbar-btn.primary:hover {
+            background: #0890a8;
+        }
+
+        /* Main Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 360px 1fr;
+            height: calc(100vh - 60px);
+            overflow: hidden;
+        }
+
+        /* Left Panel */
+        .left-panel {
+            background: white;
+            border-right: 1px solid #e0e0e0;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+        }
+        .panel-header {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            background: #f9f9f9;
+        }
+        .panel-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1c3643;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .control-buttons {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+        .control-btn {
+            padding: 6px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            background: white;
+            color: #687F8B;
+            font-size: 11px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .control-btn:hover {
+            background: #0da1c7;
+            color: white;
+            border-color: #0da1c7;
+        }
+
+        .sections-container {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        /* Section Item */
+        .section-item {
+            margin-bottom: 12px;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .section-header:hover {
+            background: #e8f5f7;
+            border-color: #0da1c7;
+        }
+        .section-header.expanded {
+            background: #e8f5f7;
+            border-color: #0da1c7;
+        }
+        .section-checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #0da1c7;
+        }
+        .section-icon {
+            color: #687F8B;
+            font-size: 12px;
+            transition: transform 0.2s;
+        }
+        .section-icon.expanded {
+            transform: rotate(90deg);
+        }
+        .section-label {
+            flex: 1;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1c3643;
+        }
+
+        .section-content {
+            display: none;
+            padding: 12px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-top: none;
+        }
+        .section-content.expanded {
+            display: block;
+        }
+
+        /* Fields */
+        .field-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 8px;
+            border-radius: 3px;
+            margin-bottom: 4px;
+        }
+        .field-item:hover {
+            background: #f9f9f9;
+        }
+        .field-checkbox {
+            width: 15px;
+            height: 15px;
+            cursor: pointer;
+            accent-color: #0da1c7;
+        }
+        .field-label {
+            font-size: 12px;
+            color: #687F8B;
+            cursor: pointer;
+        }
+
+        /* Design Panel */
+        .design-panel {
+            margin-top: 12px;
+            padding: 16px;
+            background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            border-left: 3px solid #0da1c7;
+            border-radius: 4px;
+        }
+        .design-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #0da1c7;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .design-group {
+            margin-bottom: 14px;
+        }
+        .design-label {
+            font-size: 10px;
+            font-weight: 700;
+            color: #687F8B;
+            margin-bottom: 6px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .color-swatches {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+        }
+        .color-swatch {
+            height: 32px;
+            border-radius: 4px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .color-swatch:hover {
+            transform: scale(1.08);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+        }
+        .color-swatch.selected {
+            border-color: #1c3643;
+            box-shadow: 0 0 0 2px rgba(28, 54, 67, 0.3);
+        }
+        .design-input, .design-select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #cbd5e1;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .design-slider {
+            width: 100%;
+            accent-color: #0da1c7;
+        }
+        .slider-value {
+            font-size: 11px;
+            color: #687F8B;
+            text-align: right;
+            margin-top: 4px;
+        }
+
+        /* Right Panel - Preview */
+        .preview-panel {
+            background: #d0d0d0;
+            overflow: auto;
+            padding: 30px;
+            position: relative;
+        }
+
+        /* Report Page Styles - Matching Evaluation PDF */
+        .report-page {
+            background: white;
+            width: 8.5in;
+            min-height: 11in;
+            margin: 0 auto 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            position: relative;
+            cursor: default;
+        }
+
+        /* Cover Page */
+        .cover-page {
+            padding: 0;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        .cover-title-section {
+            padding: 60px 40px 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .cover-title {
+            font-size: 42px;
+            font-weight: 300;
+            color: #2e7d32;
+            margin: 0 0 20px 0;
+        }
+        .cover-address {
+            font-size: 16px;
+            color: #687F8B;
+            margin: 0;
+        }
+        .cover-image-section {
+            flex: 1;
+            min-height: 400px;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+        .cover-image-section img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .cover-footer {
+            padding: 30px 40px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+        }
+        .cover-footer-bar {
+            height: 12px;
+            background: linear-gradient(to right, #2e7d32 0%, #4caf50 50%, #1c3643 100%);
+        }
+        .powered-by {
+            text-align: right;
+            font-size: 11px;
+            color: #687F8B;
+            margin-top: 10px;
+        }
+
+        /* Section Page with Green Sidebar */
+        .section-page {
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            min-height: 11in;
+        }
+        .green-sidebar {
+            background: #2e7d32;
+            color: white;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: 700;
+            letter-spacing: 8px;
+        }
+        .section-content {
+            padding: 60px 50px;
+            position: relative;
+        }
+        .section-header-box {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: #2e7d32;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 4px;
+            text-align: right;
+        }
+        .section-number {
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .section-name {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        /* Content Typography */
+        .content-heading {
+            font-size: 32px;
+            font-weight: 300;
+            color: #1c3643;
+            margin: 0 0 30px 0;
+        }
+        .content-subheading {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2e7d32;
+            margin: 30px 0 15px 0;
+        }
+        .content-text {
+            font-size: 13px;
+            line-height: 1.8;
+            color: #1c3643;
+            margin-bottom: 15px;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        .info-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #687F8B;
+        }
+        .info-value {
+            font-size: 12px;
+            color: #1c3643;
+        }
+
+        /* Table Styles */
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            font-size: 11px;
+        }
+        .comparison-table th {
+            background: #f9f9f9;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            font-weight: 600;
+            color: #687F8B;
+            text-align: left;
+        }
+        .comparison-table td {
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            color: #1c3643;
+        }
+
+        /* Editable Section Wrapper */
+        .editable-section {
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .editable-section:hover {
+            outline: 2px solid #0da1c7;
+            outline-offset: -2px;
+        }
+        .editable-section.selected {
+            outline: 3px solid #0da1c7;
+            outline-offset: -3px;
+            background: rgba(13, 161, 199, 0.03);
+        }
+        .section-controls {
+            position: absolute;
+            top: 8px;
+            right: 8px;
+            display: none;
+            gap: 6px;
+            z-index: 10;
+        }
+        .editable-section:hover .section-controls,
+        .editable-section.selected .section-controls {
+            display: flex;
+        }
+        .control-icon {
+            width: 32px;
+            height: 32px;
+            background: #0da1c7;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .control-icon:hover {
+            background: #0890a8;
+            transform: scale(1.05);
+        }
+
+        /* Page Footer */
+        .page-footer {
+            position: absolute;
+            bottom: 20px;
+            right: 40px;
+            font-size: 11px;
+            color: #687F8B;
+        }
+
+        /* Zoom Controls */
+        .zoom-controls {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 10px;
+            display: flex;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+        }
+        .zoom-btn {
+            width: 36px;
+            height: 36px;
+            background: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .zoom-btn:hover {
+            background: #0da1c7;
+            color: white;
+        }
+        .zoom-level {
+            padding: 0 12px;
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1c3643;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Toolbar -->
+    <div class="top-toolbar">
+        <div class="toolbar-left">
+            <img src="harken.png" alt="Harken" class="toolbar-logo" />
+            <input type="text" class="template-name" value="Standard Evaluation Template" />
+        </div>
+        <div style="display: flex; gap: 12px;">
+            <button class="toolbar-btn" onclick="window.location.href='super-admin-account-report-templates.html'">← Back</button>
+            <button class="toolbar-btn primary">💾 Save Template</button>
+            <button class="toolbar-btn primary">Done Editing</button>
+        </div>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+        <!-- Left Panel: Pages & Sections -->
+        <div class="left-panel">
+            <div class="panel-header">
+                <div class="panel-title">Report Sections & Fields</div>
+                <div class="control-buttons">
+                    <button class="control-btn" onclick="expandAllSections()">Expand All</button>
+                    <button class="control-btn" onclick="collapseAllSections()">Collapse All</button>
+                    <button class="control-btn" onclick="selectAllSections()">Select All</button>
+                    <button class="control-btn" onclick="deselectAllSections()">Deselect All</button>
+                </div>
+            </div>
+
+            <div class="sections-container" id="sectionsContainer">
+                <!-- Sections will be dynamically rendered here -->
+            </div>
+        </div>
+
+        <!-- Right Panel: Visual Preview -->
+        <div class="preview-panel" id="previewPanel">
+            <div id="reportPages">
+                <!-- Pages will be rendered here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Zoom Controls -->
+    <div class="zoom-controls">
+        <button class="zoom-btn" onclick="zoomOut()">−</button>
+        <div class="zoom-level" id="zoomLevel">100%</div>
+        <button class="zoom-btn" onclick="zoomIn()">+</button>
+        <button class="zoom-btn" onclick="resetZoom()">⟲</button>
+    </div>
+
+    <script>
+        // Report sections configuration
+        const reportSections = [
+            {
+                id: 'cover',
+                label: 'Cover Page',
+                type: 'cover',
+                enabled: true,
+                expanded: false,
+                fields: [
+                    { id: 'cover_title', label: 'Property Title', enabled: true },
+                    { id: 'cover_address', label: 'Property Address', enabled: true },
+                    { id: 'cover_image', label: 'Cover Photo', enabled: true },
+                    { id: 'cover_footer', label: 'Footer Bar', enabled: true }
+                ],
+                design: {
+                    titleColor: '#2e7d32',
+                    footerGradient: 'green-to-blue'
+                }
+            },
+            {
+                id: 'toc',
+                label: 'Table of Contents',
+                type: 'toc',
+                enabled: true,
+                expanded: false,
+                fields: [
+                    { id: 'toc_auto', label: 'Auto-generated TOC', enabled: true }
+                ]
+            },
+            {
+                id: 'exec_summary',
+                label: 'Section 01: Executive Summary',
+                type: 'section',
+                enabled: true,
+                expanded: false,
+                sectionNumber: '01',
+                sectionName: 'Executive Summary',
+                fields: [
+                    { id: 'exec_date', label: 'Date of Inspection', enabled: true },
+                    { id: 'exec_inspector', label: 'Inspector', enabled: true },
+                    { id: 'exec_users', label: 'Intended Users', enabled: true },
+                    { id: 'exec_use', label: 'Intended Use', enabled: true },
+                    { id: 'exec_client', label: 'Client', enabled: true },
+                    { id: 'exec_owner', label: 'Owner of Record', enabled: true },
+                    { id: 'exec_rights', label: 'Property Rights', enabled: true },
+                    { id: 'exec_highlights', label: 'Key Highlights', enabled: true },
+                    { id: 'exec_image', label: 'Property Image', enabled: true },
+                    { id: 'exec_summary', label: 'Summary Text', enabled: true }
+                ],
+                design: {
+                    sidebarColor: '#2e7d32',
+                    headerColor: '#2e7d32',
+                    layout: 'two-column'
+                }
+            },
+            {
+                id: 'prop_summary',
+                label: 'Section 02: Property Summary',
+                type: 'section',
+                enabled: true,
+                expanded: false,
+                sectionNumber: '02',
+                sectionName: 'Property Summary',
+                fields: [
+                    { id: 'prop_overview', label: 'Overview', enabled: true },
+                    { id: 'prop_address_detail', label: 'Address Details', enabled: true },
+                    { id: 'prop_site_specs', label: 'Site Specifications', enabled: true },
+                    { id: 'prop_property_specs', label: 'Property Specifics', enabled: true },
+                    { id: 'prop_construction', label: 'Construction Components', enabled: true },
+                    { id: 'prop_area_info', label: 'Area Information', enabled: true },
+                    { id: 'prop_aerials', label: 'Aerials & Maps', enabled: true },
+                    { id: 'prop_boundary', label: 'Property Boundary', enabled: true }
+                ],
+                design: {
+                    sidebarColor: '#2e7d32',
+                    headerColor: '#2e7d32'
+                }
+            },
+            {
+                id: 'valuations',
+                label: 'Section 03: Valuations',
+                type: 'section',
+                enabled: true,
+                expanded: false,
+                sectionNumber: '03',
+                sectionName: 'Valuations',
+                fields: [
+                    { id: 'val_determinants', label: 'Market Value Determinants', enabled: true },
+                    { id: 'val_explanation', label: 'Valuation Explanation', enabled: true },
+                    { id: 'val_income', label: 'Income Approach', enabled: true },
+                    { id: 'val_sales', label: 'Sales Comparison Approach', enabled: true },
+                    { id: 'val_cost', label: 'Cost Approach', enabled: true },
+                    { id: 'val_maps', label: 'Comparison Maps', enabled: true }
+                ],
+                design: {
+                    sidebarColor: '#2e7d32',
+                    headerColor: '#2e7d32',
+                    tableStyle: 'bordered'
+                }
+            }
+        ];
+
+        let currentZoom = 100;
+        let selectedSectionId = null;
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            renderSections();
+            renderPreview();
+        });
+
+        // Render sections in left panel
+        function renderSections() {
+            const container = document.getElementById('sectionsContainer');
+            container.innerHTML = '';
+
+            reportSections.forEach(section => {
+                // Section Item
+                const sectionDiv = document.createElement('div');
+                sectionDiv.className = 'section-item';
+
+                // Section Header
+                const headerDiv = document.createElement('div');
+                headerDiv.className = 'section-header' + (section.expanded ? ' expanded' : '');
+                headerDiv.onclick = (e) => {
+                    if (e.target.type !== 'checkbox') {
+                        toggleSectionExpand(section.id);
+                    }
+                };
+
+                headerDiv.innerHTML = `
+                    <input type="checkbox" class="section-checkbox" ${section.enabled ? 'checked' : ''} 
+                           onchange="toggleSectionEnabled('${section.id}', this.checked); event.stopPropagation();" />
+                    <span class="section-icon ${section.expanded ? 'expanded' : ''}">▶</span>
+                    <span class="section-label">${section.label}</span>
+                `;
+
+                // Section Content (fields + design options)
+                const contentDiv = document.createElement('div');
+                contentDiv.className = 'section-content' + (section.expanded ? ' expanded' : '');
+
+                // Fields
+                let fieldsHTML = '';
+                section.fields.forEach(field => {
+                    fieldsHTML += `
+                        <div class="field-item">
+                            <input type="checkbox" class="field-checkbox" ${field.enabled ? 'checked' : ''}
+                                   onchange="toggleFieldEnabled('${section.id}', '${field.id}', this.checked)" />
+                            <label class="field-label">${field.label}</label>
+                        </div>
+                    `;
+                });
+
+                // Design Panel
+                const designHTML = getDesignPanel(section);
+
+                contentDiv.innerHTML = fieldsHTML + designHTML;
+
+                sectionDiv.appendChild(headerDiv);
+                sectionDiv.appendChild(contentDiv);
+                container.appendChild(sectionDiv);
+            });
+        }
+
+        function getDesignPanel(section) {
+            if (section.type === 'cover') {
+                return `
+                    <div class="design-panel">
+                        <div class="design-title">🎨 Cover Page Design</div>
+                        <div class="design-group">
+                            <div class="design-label">Title Color</div>
+                            <div class="color-swatches">
+                                <div class="color-swatch" style="background: #1c3643;" onclick="updateDesign('${section.id}', 'titleColor', '#1c3643', this)"></div>
+                                <div class="color-swatch selected" style="background: #2e7d32;" onclick="updateDesign('${section.id}', 'titleColor', '#2e7d32', this)"></div>
+                                <div class="color-swatch" style="background: #0da1c7;" onclick="updateDesign('${section.id}', 'titleColor', '#0da1c7', this)"></div>
+                                <div class="color-swatch" style="background: #dc2626;" onclick="updateDesign('${section.id}', 'titleColor', '#dc2626', this)"></div>
+                                <div class="color-swatch" style="background: #6b46c1;" onclick="updateDesign('${section.id}', 'titleColor', '#6b46c1', this)"></div>
+                            </div>
+                        </div>
+                        <div class="design-group">
+                            <div class="design-label">Footer Style</div>
+                            <select class="design-select" onchange="updateDesign('${section.id}', 'footerGradient', this.value)">
+                                <option value="green-to-blue">Green to Blue</option>
+                                <option value="blue-to-dark">Blue to Dark</option>
+                                <option value="single-green">Solid Green</option>
+                            </select>
+                        </div>
+                    </div>
+                `;
+            } else if (section.type === 'section') {
+                return `
+                    <div class="design-panel">
+                        <div class="design-title">🎨 ${section.label} Design</div>
+                        <div class="design-group">
+                            <div class="design-label">Sidebar Color</div>
+                            <div class="color-swatches">
+                                <div class="color-swatch" style="background: #1c3643;" onclick="updateDesign('${section.id}', 'sidebarColor', '#1c3643', this)"></div>
+                                <div class="color-swatch selected" style="background: #2e7d32;" onclick="updateDesign('${section.id}', 'sidebarColor', '#2e7d32', this)"></div>
+                                <div class="color-swatch" style="background: #0da1c7;" onclick="updateDesign('${section.id}', 'sidebarColor', '#0da1c7', this)"></div>
+                                <div class="color-swatch" style="background: #dc2626;" onclick="updateDesign('${section.id}', 'sidebarColor', '#dc2626', this)"></div>
+                                <div class="color-swatch" style="background: #6b46c1;" onclick="updateDesign('${section.id}', 'sidebarColor', '#6b46c1', this)"></div>
+                            </div>
+                        </div>
+                        <div class="design-group">
+                            <div class="design-label">Header Color</div>
+                            <div class="color-swatches">
+                                <div class="color-swatch" style="background: #1c3643;" onclick="updateDesign('${section.id}', 'headerColor', '#1c3643', this)"></div>
+                                <div class="color-swatch selected" style="background: #2e7d32;" onclick="updateDesign('${section.id}', 'headerColor', '#2e7d32', this)"></div>
+                                <div class="color-swatch" style="background: #0da1c7;" onclick="updateDesign('${section.id}', 'headerColor', '#0da1c7', this)"></div>
+                                <div class="color-swatch" style="background: #dc2626;" onclick="updateDesign('${section.id}', 'headerColor', '#dc2626', this)"></div>
+                                <div class="color-swatch" style="background: #6b46c1;" onclick="updateDesign('${section.id}', 'headerColor', '#6b46c1', this)"></div>
+                            </div>
+                        </div>
+                        ${section.id === 'exec_summary' ? `
+                        <div class="design-group">
+                            <div class="design-label">Layout</div>
+                            <select class="design-select" onchange="updateDesign('${section.id}', 'layout', this.value)">
+                                <option value="two-column">Two Column</option>
+                                <option value="single-column">Single Column</option>
+                            </select>
+                        </div>
+                        ` : ''}
+                        ${section.id === 'valuations' ? `
+                        <div class="design-group">
+                            <div class="design-label">Table Style</div>
+                            <select class="design-select" onchange="updateDesign('${section.id}', 'tableStyle', this.value)">
+                                <option value="bordered">Bordered</option>
+                                <option value="striped">Striped Rows</option>
+                                <option value="minimal">Minimal</option>
+                            </select>
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+            }
+            return '';
+        }
+
+        // Render preview
+        function renderPreview() {
+            const container = document.getElementById('reportPages');
+            container.innerHTML = '';
+
+            reportSections.forEach(section => {
+                if (!section.enabled) return;
+
+                const pageDiv = document.createElement('div');
+                pageDiv.className = 'report-page editable-section';
+                pageDiv.id = `page_${section.id}`;
+                pageDiv.onclick = () => selectSection(section.id);
+
+                if (section.type === 'cover') {
+                    pageDiv.innerHTML = renderCoverPage(section);
+                } else if (section.type === 'section') {
+                    pageDiv.innerHTML = renderSectionPage(section);
+                } else if (section.type === 'toc') {
+                    pageDiv.innerHTML = renderTOCPage(section);
+                }
+
+                container.appendChild(pageDiv);
+            });
+        }
+
+        function renderCoverPage(section) {
+            const titleColor = section.design.titleColor || '#2e7d32';
+            return `
+                <div class="section-controls">
+                    <button class="control-icon" onclick="event.stopPropagation(); editSection('${section.id}')">✎</button>
+                </div>
+                <div class="cover-page">
+                    <div class="cover-title-section">
+                        <h1 class="cover-title" style="color: ${titleColor};">As Stabilized</h1>
+                        <p class="cover-address">171 Baldwin Lane | Columbia Falls, Montana 59912</p>
+                    </div>
+                    <div class="cover-image-section">
+                        <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200" alt="Property" />
+                    </div>
+                    <div class="cover-footer">
+                        <div class="cover-footer-bar"></div>
+                        <div class="powered-by">Powered by Harken CRE | 1</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderTOCPage(section) {
+            return `
+                <div class="section-controls">
+                    <button class="control-icon" onclick="event.stopPropagation(); editSection('${section.id}')">✎</button>
+                </div>
+                <div style="padding: 80px 60px;">
+                    <div style="position: absolute; top: 30px; right: 30px; background: #2e7d32; color: white; padding: 12px 24px; border-radius: 4px; text-align: right;">
+                        <div style="font-size: 16px; font-weight: 700;">Table of Contents</div>
+                    </div>
+                    <h2 style="font-size: 32px; font-weight: 300; color: #1c3643; margin-bottom: 40px;">Table of Contents</h2>
+                    <div style="font-size: 14px; line-height: 2.5; color: #1c3643;">
+                        <div style="display: flex; justify-content: space-between; border-bottom: 1px dotted #e0e0e0; padding: 8px 0;">
+                            <span>03</span><span style="flex: 1; margin: 0 20px; font-weight: 600;">Engagement Letter</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; border-bottom: 1px dotted #e0e0e0; padding: 8px 0;">
+                            <span>04</span><span style="flex: 1; margin: 0 20px; font-weight: 600;">Section 01: Executive Summary</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; border-bottom: 1px dotted #e0e0e0; padding: 8px 0;">
+                            <span>07</span><span style="flex: 1; margin: 0 20px; font-weight: 600;">Section 02: Property Summary</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; border-bottom: 1px dotted #e0e0e0; padding: 8px 0;">
+                            <span>12</span><span style="flex: 1; margin: 0 20px; font-weight: 600;">Section 03: Valuations</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; border-bottom: 1px dotted #e0e0e0; padding: 8px 0;">
+                            <span>19</span><span style="flex: 1; margin: 0 20px; font-weight: 600;">Section 04: Weighted Value</span>
+                        </div>
+                    </div>
+                    <div class="page-footer">Powered by Harken CRE | 2</div>
+                </div>
+            `;
+        }
+
+        function renderSectionPage(section) {
+            const sidebarColor = section.design.sidebarColor || '#2e7d32';
+            const headerColor = section.design.headerColor || '#2e7d32';
+            
+            let content = '';
+            if (section.id === 'exec_summary') {
+                content = `
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                        <div>
+                            <h2 class="content-heading">Executive <span style="color: #2e7d32;">Summary</span></h2>
+                            <div class="info-grid">
+                                <div class="info-label">Date of Inspection:</div>
+                                <div class="info-value">07/06/2025 / 07/06/2025</div>
+                            </div>
+                            <div class="info-grid">
+                                <div class="info-label">Inspector:</div>
+                                <div class="info-value">N/A</div>
+                            </div>
+                            <div class="info-grid">
+                                <div class="info-label">Client:</div>
+                                <div class="info-value">Chantelle Thomas (Valley Bank)</div>
+                            </div>
+                            <div class="info-grid">
+                                <div class="info-label">Property Rights:</div>
+                                <div class="info-value">Fee Simple</div>
+                            </div>
+                            <h3 class="content-subheading">Key Highlights:</h3>
+                            <ul style="font-size: 12px; color: #1c3643; line-height: 1.8;">
+                                <li>Property SF: 3,830 SF</li>
+                                <li>Lot Acres: 8.490 AC</li>
+                                <li>Year Built: 1971, 1992, 2025</li>
+                                <li>Zoning: SR - Suburban Residential</li>
+                            </ul>
+                        </div>
+                        <div style="display: flex; align-items: center; justify-content: center; background: #f0f0f0; min-height: 300px;">
+                            <div style="width: 200px; height: 150px; background: #e0e0e0; border: 2px dashed #ccc; display: flex; align-items: center; justify-content: center; color: #999;">
+                                <svg width="60" height="60" viewBox="0 0 24 24" fill="#ccc">
+                                    <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <p class="content-text" style="margin-top: 30px;">The author's analysis and assumptions of: use/condition factors of the property, current market data, actual and market income information and general assessment of the property; results in the following:</p>
+                    <p class="content-text" style="font-weight: 700;">Final Market Value of $853,535.00 ($222.86 PSF).</p>
+                `;
+            } else if (section.id === 'prop_summary') {
+                content = `
+                    <h2 class="content-heading">Property <span style="color: #2e7d32;">Overview</span></h2>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                        <div>
+                            <h3 class="content-subheading">Address</h3>
+                            <div class="info-grid">
+                                <div class="info-label">Street:</div>
+                                <div class="info-value">3752 Valley Drive</div>
+                            </div>
+                            <div class="info-grid">
+                                <div class="info-label">City, State:</div>
+                                <div class="info-value">Helena, Montana 59602</div>
+                            </div>
+                            <h3 class="content-subheading">Site Specs</h3>
+                            <div class="info-grid">
+                                <div class="info-label">Land Size:</div>
+                                <div class="info-value">369,824 SF</div>
+                            </div>
+                            <div class="info-grid">
+                                <div class="info-label">Acres:</div>
+                                <div class="info-value">8.490 AC</div>
+                            </div>
+                            <div class="info-grid">
+                                <div class="info-label">Zoning:</div>
+                                <div class="info-value">SR - Suburban Residential</div>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="content-subheading">Property Specifics</h3>
+                            <div class="info-grid">
+                                <div class="info-label">Property Type:</div>
+                                <div class="info-value">Multi-Family / 2-4 Units</div>
+                            </div>
+                            <div class="info-grid">
+                                <div class="info-label">Year Built:</div>
+                                <div class="info-value">1971, 1992, 2025 / N/A</div>
+                            </div>
+                            <div class="info-grid">
+                                <div class="info-label">Total SF:</div>
+                                <div class="info-value">3,830 SF</div>
+                            </div>
+                            <div class="info-grid">
+                                <div class="info-label">Property Class:</div>
+                                <div class="info-value">Class B</div>
+                            </div>
+                            <div class="info-grid">
+                                <div class="info-label">Property Condition:</div>
+                                <div class="info-value">Average/New</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (section.id === 'valuations') {
+                content = `
+                    <h2 class="content-heading">Income <span style="color: #2e7d32;">Approach</span></h2>
+                    <table class="comparison-table">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Monthly Income</th>
+                                <th>Annual Income</th>
+                                <th>$/SF/YR</th>
+                                <th>Total SF</th>
+                                <th>Comments</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Multi-Family - Building 1</td>
+                                <td>$1,581.25</td>
+                                <td>$18,975.00</td>
+                                <td>$63.25</td>
+                                <td>300 SF</td>
+                                <td>Per Lease</td>
+                            </tr>
+                            <tr>
+                                <td>Multi-Family - Building 2</td>
+                                <td>$3,000.00</td>
+                                <td>$36,000.00</td>
+                                <td>$0.00</td>
+                                <td>0 SF</td>
+                                <td>Per Lease</td>
+                            </tr>
+                            <tr>
+                                <td>Multi-Family - Building 3</td>
+                                <td>$2,500.00</td>
+                                <td>$30,000.00</td>
+                                <td>$0.00</td>
+                                <td>0 SF</td>
+                                <td>Future Rate</td>
+                            </tr>
+                            <tr style="background: #f9f9f9; font-weight: 600;">
+                                <td>Total and Average</td>
+                                <td>$7,081.25</td>
+                                <td>$84,975.00</td>
+                                <td>$22.19</td>
+                                <td>3,830 SF</td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <p class="content-text" style="font-style: italic;">Income is based on a blend of actual and projected rates received at the property.</p>
+                `;
+            }
+
+            return `
+                <div class="section-controls">
+                    <button class="control-icon" onclick="event.stopPropagation(); editSection('${section.id}')">✎</button>
+                </div>
+                <div class="section-page">
+                    <div class="green-sidebar" style="background: ${sidebarColor};">
+                        SECTION ${section.sectionNumber || ''}
+                    </div>
+                    <div class="section-content">
+                        <div class="section-header-box" style="background: ${headerColor};">
+                            <div class="section-number">Section ${section.sectionNumber}</div>
+                            <div class="section-name">${section.sectionName}</div>
+                        </div>
+                        ${content}
+                        <div class="page-footer">Powered by Harken CRE | ${section.sectionNumber || '1'}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Section interactions
+        function toggleSectionExpand(sectionId) {
+            const section = reportSections.find(s => s.id === sectionId);
+            section.expanded = !section.expanded;
+            renderSections();
+        }
+
+        function toggleSectionEnabled(sectionId, enabled) {
+            const section = reportSections.find(s => s.id === sectionId);
+            section.enabled = enabled;
+            renderPreview();
+        }
+
+        function toggleFieldEnabled(sectionId, fieldId, enabled) {
+            const section = reportSections.find(s => s.id === sectionId);
+            const field = section.fields.find(f => f.id === fieldId);
+            field.enabled = enabled;
+            renderPreview();
+        }
+
+        function selectSection(sectionId) {
+            selectedSectionId = sectionId;
+            document.querySelectorAll('.editable-section').forEach(el => {
+                el.classList.remove('selected');
+            });
+            document.getElementById(`page_${sectionId}`)?.classList.add('selected');
+            
+            // Expand section in left panel
+            const section = reportSections.find(s => s.id === sectionId);
+            if (!section.expanded) {
+                section.expanded = true;
+                renderSections();
+            }
+        }
+
+        function updateDesign(sectionId, property, value, element) {
+            const section = reportSections.find(s => s.id === sectionId);
+            section.design[property] = value;
+            
+            // Update color swatch selection
+            if (element && element.classList.contains('color-swatch')) {
+                element.parentElement.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+                element.classList.add('selected');
+            }
+            
+            renderPreview();
+        }
+
+        // Bulk actions
+        function expandAllSections() {
+            reportSections.forEach(s => s.expanded = true);
+            renderSections();
+        }
+
+        function collapseAllSections() {
+            reportSections.forEach(s => s.expanded = false);
+            renderSections();
+        }
+
+        function selectAllSections() {
+            reportSections.forEach(s => {
+                s.enabled = true;
+                s.fields.forEach(f => f.enabled = true);
+            });
+            renderSections();
+            renderPreview();
+        }
+
+        function deselectAllSections() {
+            reportSections.forEach(s => {
+                s.enabled = false;
+                s.fields.forEach(f => f.enabled = false);
+            });
+            renderSections();
+            renderPreview();
+        }
+
+        // Zoom controls
+        function zoomIn() {
+            currentZoom = Math.min(150, currentZoom + 10);
+            updateZoom();
+        }
+
+        function zoomOut() {
+            currentZoom = Math.max(50, currentZoom - 10);
+            updateZoom();
+        }
+
+        function resetZoom() {
+            currentZoom = 100;
+            updateZoom();
+        }
+
+        function updateZoom() {
+            const pages = document.getElementById('reportPages');
+            pages.style.transform = `scale(${currentZoom / 100})`;
+            pages.style.transformOrigin = 'top center';
+            document.getElementById('zoomLevel').textContent = currentZoom + '%';
+        }
+
+        function editSection(sectionId) {
+            alert('Edit section: ' + sectionId);
+        }
+    </script>
+</body>
+</html>
+
+

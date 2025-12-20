@@ -1,0 +1,1013 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bulk Upload Review - Harken CRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .material-icons { font-family: 'Material Icons' !important; }
+        * {
+            font-family: 'Montserrat', sans-serif !important;
+        }
+        body {
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background: url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;
+            background-color: #1c3643 !important;
+            max-height: 84px;
+            height: 84px;
+            color: #fff;
+        }
+        .section-title {
+            font-size: 23px;
+            font-weight: 600;
+            color: #1c3643;
+        }
+        .subsection-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #687F8B;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        table {
+            width: 100%;
+            background-color: white;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        thead {
+            background-color: #f9f9f9;
+        }
+        th {
+            padding: 14px 20px;
+            text-align: left;
+            color: #687F8B;
+            font-size: 12px;
+            font-weight: 600;
+            border-bottom: 2px solid #e0e0e0;
+            text-transform: uppercase;
+        }
+        td {
+            padding: 16px 20px;
+            color: #1c3643;
+            font-size: 13px;
+            font-weight: 500;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: middle;
+        }
+        tbody tr:hover {
+            background-color: #f9fbfc;
+        }
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 10px 24px;
+            border-radius: 25px;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+        .nav-link.active {
+            background-color: transparent;
+            border: 1px solid #0da1c7;
+            color: #0da1c7;
+        }
+        .btn-primary {
+            background-color: #0da1c7;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-primary:hover {
+            background-color: #0b8eb0;
+            transform: translateY(-1px);
+        }
+        .btn-secondary {
+            background-color: white;
+            color: #687F8B;
+            border: 1px solid #e0e0e0;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-secondary:hover {
+            background-color: #f9f9f9;
+            border-color: #d0d0d0;
+        }
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+        .match-badge {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .match-exact {
+            background-color: #fee2e2;
+            color: #dc2626;
+        }
+        .match-high {
+            background-color: #fef3c7;
+            color: #d97706;
+        }
+        .match-medium {
+            background-color: #e0f2fe;
+            color: #0284c7;
+        }
+        .action-select {
+            padding: 8px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 500;
+            background-color: white;
+            color: #1c3643;
+            cursor: pointer;
+            min-width: 160px;
+        }
+        .action-select:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .progress-bar-container {
+            width: 100%;
+            height: 8px;
+            background-color: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background-color: #0da1c7;
+            border-radius: 4px;
+            transition: width 0.3s ease;
+        }
+        .step-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .step-number {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .step-active .step-number {
+            background-color: #0da1c7;
+            color: white;
+        }
+        .step-complete .step-number {
+            background-color: #10b981;
+            color: white;
+        }
+        .step-pending .step-number {
+            background-color: #e0e0e0;
+            color: #687F8B;
+        }
+        .step-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #687F8B;
+        }
+        .step-active .step-label {
+            color: #0da1c7;
+            font-weight: 600;
+        }
+        .step-complete .step-label {
+            color: #10b981;
+        }
+        .step-connector {
+            width: 40px;
+            height: 2px;
+            background-color: #e0e0e0;
+        }
+        .step-connector.complete {
+            background-color: #10b981;
+        }
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 24px;
+        }
+        .summary-stat {
+            text-align: center;
+            padding: 16px;
+        }
+        .summary-stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1c3643;
+        }
+        .summary-stat-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #687F8B;
+            text-transform: uppercase;
+            margin-top: 4px;
+        }
+        .comparison-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .comparison-modal.active {
+            display: flex;
+        }
+        .comparison-content {
+            background-color: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 1100px;
+            max-height: 85vh;
+            overflow-y: auto;
+        }
+        .comparison-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            background: white;
+            z-index: 10;
+        }
+        .comparison-body {
+            padding: 24px;
+        }
+        .comparison-grid {
+            display: grid;
+            grid-template-columns: 200px 1fr 1fr;
+            gap: 0;
+        }
+        .comparison-row {
+            display: contents;
+        }
+        .comparison-row > div {
+            padding: 12px 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .comparison-row:hover > div {
+            background-color: #f9fbfc;
+        }
+        .comparison-label {
+            font-weight: 600;
+            color: #687F8B;
+            font-size: 12px;
+            text-transform: uppercase;
+            background-color: #f9f9f9;
+        }
+        .comparison-uploaded {
+            background-color: #f0fdf4;
+            border-left: 3px solid #10b981;
+        }
+        .comparison-existing {
+            background-color: #fef3c7;
+            border-left: 3px solid #f59e0b;
+        }
+        .diff-highlight {
+            background-color: #fef9c3;
+            padding: 2px 4px;
+            border-radius: 2px;
+        }
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #687F8B;
+            cursor: pointer;
+            padding: 4px;
+            line-height: 1;
+        }
+        .close-btn:hover {
+            color: #1c3643;
+        }
+        .link-text {
+            color: #0da1c7;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .link-text:hover {
+            text-decoration: underline;
+        }
+        .checkbox-cell {
+            width: 40px;
+        }
+        input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #0da1c7;
+            cursor: pointer;
+        }
+        .bulk-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 20px;
+            background-color: #f0f9ff;
+            border-bottom: 1px solid #bae6fd;
+        }
+        .bulk-actions.hidden {
+            display: none;
+        }
+        .note-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 60px;
+        }
+        .note-input:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .info-banner {
+            background-color: #eff6ff;
+            border-left: 4px solid #3b82f6;
+            padding: 16px 20px;
+            margin-bottom: 24px;
+            border-radius: 0 6px 6px 0;
+        }
+        .info-banner-title {
+            font-weight: 600;
+            color: #1e40af;
+            margin-bottom: 4px;
+        }
+        .info-banner-text {
+            font-size: 13px;
+            color: #3b82f6;
+        }
+    </style>
+</head>
+<body>
+    <!-- UNIFIED NAVIGATION COMPONENT -->
+    <style>
+        .unified-navbar { background: url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643; background-color: #1c3643 !important; height: 84px; color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+        .nav-logo { height: 40px; width: auto; cursor: pointer; }
+        .nav-center { display: flex; align-items: center; gap: 8px; flex: 1; justify-content: center; }
+        .nav-core-features { display: flex; align-items: center; gap: 4px; background: rgba(13, 161, 199, 0.08); border-radius: 25px; padding: 4px 8px; margin-right: 16px; }
+        .nav-link { color: white; text-decoration: none; padding: 10px 20px; border-radius: 25px; transition: all 0.2s; border: 1px solid transparent; font-weight: 500; font-size: 14px; white-space: nowrap; }
+        .nav-link:hover { background-color: rgba(255,255,255,0.08); }
+        .nav-link.core-feature { font-weight: 500; font-size: 14px; color: white; }
+        .nav-link.core-feature:hover { background-color: rgba(13, 161, 199, 0.2); color: white; }
+        .nav-link.core-feature.active { background-color: transparent; border: 1px solid #0da1c7; color: #0da1c7; box-shadow: 0 2px 4px rgba(13, 161, 199, 0.2); }
+        .nav-link.active { background-color: transparent; border: 1px solid #0da1c7; color: #0da1c7; }
+        .nav-separator { width: 1px; height: 24px; background: rgba(255, 255, 255, 0.2); margin: 0 8px; }
+        .nav-user { display: flex; align-items: center; gap: 12px; }
+        .nav-user-name { font-size: 14px; font-weight: 500; color: white; }
+        .nav-user-avatar { width: 36px; height: 36px; border-radius: 50%; border: 2px solid #0da1c7; }
+    </style>
+    <nav class="unified-navbar">
+        <img src="assets/harken.png" alt="Harken CRE" class="nav-logo" onclick="window.location.href='super-admin-dashboard.html'">
+        <div class="nav-center">
+            <div class="nav-core-features">
+                <a href="super-admin-comps.html" class="nav-link core-feature active">COMPS</a>
+                <a href="super-admin-appraisals-list.html" class="nav-link core-feature">APPRAISAL</a>
+                <a href="evaluation-wizard-full.html" class="nav-link core-feature">EVALUATION</a>
+            </div>
+            <div class="nav-separator"></div>
+            <a href="super-admin-dashboard.html" class="nav-link">Dashboard</a>
+            <a href="super-admin-users.html" class="nav-link">Users</a>
+            <a href="super-admin-clients.html" class="nav-link">Clients</a>
+            <a href="super-admin-accounts.html" class="nav-link">Accounts</a>
+            <a href="super-admin-settings.html" class="nav-link">Settings</a>
+        </div>
+        <div class="nav-user">
+            <span class="nav-user-name">Sarah Johnson</span>
+            <img src="https://i.pravatar.cc/150?img=47" alt="User" class="nav-user-avatar">
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div style="padding: 35px 50px;">
+        <!-- BUILD NOTES SECTION -->
+        <div id="buildNotesSection" style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 20px; margin-bottom: 32px; border-radius: 4px;">
+            <h3 style="color: #856404; font-size: 16px; font-weight: 700; margin: 0 0 16px 0;">BUILD NOTES - Bulk Upload Duplicate Review</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 16px;">
+                <div>
+                    <strong style="color: #856404;">Priority Level:</strong> High
+                </div>
+                <div>
+                    <strong style="color: #856404;">Development Stage:</strong> Prototype
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #856404;">Purpose:</strong>
+                <p style="margin: 4px 0 0 0; color: #856404;">When users bulk upload comps, this screen appears if any uploaded addresses match existing records. Users can review each potential duplicate and decide: create as new record, update existing record, or skip. This prevents silent data conflicts and gives users control over their data.</p>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #856404;">Key Features:</strong>
+                <ul style="margin: 4px 0 0 0; color: #856404;">
+                    <li><strong>Match Confidence:</strong> Shows how the duplicate was detected (APN match = exact, Address match = high confidence)</li>
+                    <li><strong>Side-by-Side Comparison:</strong> Click "Compare" to see uploaded data vs existing data with differences highlighted</li>
+                    <li><strong>Per-Row Actions:</strong> Each duplicate can be handled independently</li>
+                    <li><strong>Bulk Actions:</strong> Select multiple rows and apply same action to all</li>
+                    <li><strong>Optional Notes:</strong> Add context when updating existing records (logged in audit trail)</li>
+                </ul>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #856404;">Industry Alignment:</strong>
+                <p style="margin: 4px 0 0 0; color: #856404;">Follows CDC De-Duplication Best Practices: "front-end matching" where duplicates are identified and presented to users BEFORE insertion. Similar to data import patterns in Salesforce, HubSpot, and CRE platforms like CoStar.</p>
+            </div>
+            
+            <button onclick="toggleBuildNotes(false)" style="margin-top: 12px; padding: 6px 12px; background: #856404; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">Hide Build Notes</button>
+        </div>
+
+        <!-- Header -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+            <div>
+                <a href="super-admin-comps.html" style="color: #687F8B; text-decoration: none; font-size: 13px;">Comps</a>
+                <span style="color: #687F8B; margin: 0 8px;">/</span>
+                <span style="color: #1c3643; font-size: 13px; font-weight: 500;">Bulk Upload Review</span>
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <button class="btn-secondary" onclick="window.history.back()">Cancel Upload</button>
+            </div>
+        </div>
+
+        <h1 class="section-title" style="margin-bottom: 24px;">REVIEW POTENTIAL DUPLICATES</h1>
+
+        <!-- Step Indicator -->
+        <div style="margin-bottom: 32px;">
+            <div class="step-indicator">
+                <div class="step step-complete">
+                    <div class="step-number"><span class="material-icons" style="font-size: 16px;">check</span></div>
+                    <span class="step-label">Upload File</span>
+                </div>
+                <div class="step-connector complete"></div>
+                <div class="step step-complete">
+                    <div class="step-number"><span class="material-icons" style="font-size: 16px;">check</span></div>
+                    <span class="step-label">Extract Data</span>
+                </div>
+                <div class="step-connector complete"></div>
+                <div class="step step-active">
+                    <div class="step-number">3</div>
+                    <span class="step-label">Review Duplicates</span>
+                </div>
+                <div class="step-connector"></div>
+                <div class="step step-pending">
+                    <div class="step-number">4</div>
+                    <span class="step-label">Confirm & Save</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 32px;">
+            <div class="card">
+                <div class="summary-stat">
+                    <div class="summary-stat-value">24</div>
+                    <div class="summary-stat-label">Total Uploaded</div>
+                </div>
+            </div>
+            <div class="card" style="border-left: 4px solid #10b981;">
+                <div class="summary-stat">
+                    <div class="summary-stat-value" style="color: #10b981;">17</div>
+                    <div class="summary-stat-label">New Records</div>
+                </div>
+            </div>
+            <div class="card" style="border-left: 4px solid #f59e0b;">
+                <div class="summary-stat">
+                    <div class="summary-stat-value" style="color: #f59e0b;">7</div>
+                    <div class="summary-stat-label">Potential Duplicates</div>
+                </div>
+            </div>
+            <div class="card" style="border-left: 4px solid #0da1c7;">
+                <div class="summary-stat">
+                    <div class="summary-stat-value" style="color: #0da1c7;">0</div>
+                    <div class="summary-stat-label">Actions Pending</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Info Banner -->
+        <div class="info-banner">
+            <div class="info-banner-title">Duplicates Detected</div>
+            <div class="info-banner-text">We found 7 uploaded records that may match existing comps in your database. Please review each match and select an action. You can compare the data side-by-side before deciding.</div>
+        </div>
+
+        <!-- Duplicates Table -->
+        <div class="card" style="padding: 0; overflow: hidden;">
+            <!-- Bulk Actions Bar -->
+            <div class="bulk-actions hidden" id="bulkActionsBar">
+                <span style="font-size: 13px; font-weight: 600; color: #0369a1;"><span id="selectedCount">0</span> selected</span>
+                <div style="height: 20px; width: 1px; background: #bae6fd;"></div>
+                <button class="btn-secondary btn-small" onclick="bulkAction('create')">Create All as New</button>
+                <button class="btn-secondary btn-small" onclick="bulkAction('update')">Update All Existing</button>
+                <button class="btn-secondary btn-small" onclick="bulkAction('skip')">Skip All</button>
+                <button class="btn-secondary btn-small" onclick="clearSelection()" style="margin-left: auto;">Clear Selection</button>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th class="checkbox-cell"><input type="checkbox" id="selectAll" onchange="toggleSelectAll()"></th>
+                        <th>Uploaded Address</th>
+                        <th>Match Type</th>
+                        <th>Existing Record</th>
+                        <th>Key Differences</th>
+                        <th style="width: 180px;">Action</th>
+                        <th style="width: 100px;"></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="checkbox-cell"><input type="checkbox" class="row-checkbox" onchange="updateBulkActions()"></td>
+                        <td>
+                            <div style="font-weight: 600; color: #1c3643;">123 Main Street</div>
+                            <div style="font-size: 12px; color: #687F8B;">Denver, CO 80202</div>
+                        </td>
+                        <td><span class="match-badge match-exact">APN Match</span></td>
+                        <td>
+                            <a href="../super-admin-comp-view-detail-commercial.html?id=4521" class="link-text">Comp #4521</a>
+                            <div style="font-size: 12px; color: #687F8B;">Created Jan 15, 2024</div>
+                        </td>
+                        <td>
+                            <div style="font-size: 12px;">
+                                <span style="color: #dc2626;">Sale Price:</span> $485,000 vs $520,000<br>
+                                <span style="color: #dc2626;">Date Sold:</span> 2024-01-10 vs 2024-03-15
+                            </div>
+                        </td>
+                        <td>
+                            <select class="action-select" onchange="updatePendingCount()">
+                                <option value="">Select Action...</option>
+                                <option value="create">Create as New</option>
+                                <option value="update">Update Existing</option>
+                                <option value="skip">Skip</option>
+                            </select>
+                        </td>
+                        <td>
+                            <button class="btn-secondary btn-small" onclick="showComparison(1)">Compare</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="checkbox-cell"><input type="checkbox" class="row-checkbox" onchange="updateBulkActions()"></td>
+                        <td>
+                            <div style="font-weight: 600; color: #1c3643;">456 Oak Avenue</div>
+                            <div style="font-size: 12px; color: #687F8B;">Boulder, CO 80301</div>
+                        </td>
+                        <td><span class="match-badge match-high">Address Match</span></td>
+                        <td>
+                            <a href="../super-admin-comp-view-detail-commercial.html?id=3892" class="link-text">Comp #3892</a>
+                            <div style="font-size: 12px; color: #687F8B;">Created Dec 8, 2023</div>
+                        </td>
+                        <td>
+                            <div style="font-size: 12px;">
+                                <span style="color: #dc2626;">Building Size:</span> 12,500 SF vs 12,800 SF
+                            </div>
+                        </td>
+                        <td>
+                            <select class="action-select" onchange="updatePendingCount()">
+                                <option value="">Select Action...</option>
+                                <option value="create">Create as New</option>
+                                <option value="update">Update Existing</option>
+                                <option value="skip">Skip</option>
+                            </select>
+                        </td>
+                        <td>
+                            <button class="btn-secondary btn-small" onclick="showComparison(2)">Compare</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="checkbox-cell"><input type="checkbox" class="row-checkbox" onchange="updateBulkActions()"></td>
+                        <td>
+                            <div style="font-weight: 600; color: #1c3643;">789 Commerce Blvd</div>
+                            <div style="font-size: 12px; color: #687F8B;">Aurora, CO 80012</div>
+                        </td>
+                        <td><span class="match-badge match-exact">Place ID Match</span></td>
+                        <td>
+                            <a href="../super-admin-comp-view-detail-commercial.html?id=5103" class="link-text">Comp #5103</a>
+                            <div style="font-size: 12px; color: #687F8B;">Created Feb 22, 2024</div>
+                        </td>
+                        <td>
+                            <div style="font-size: 12px;">
+                                <span style="color: #059669;">No differences detected</span>
+                            </div>
+                        </td>
+                        <td>
+                            <select class="action-select" onchange="updatePendingCount()">
+                                <option value="">Select Action...</option>
+                                <option value="create">Create as New</option>
+                                <option value="update">Update Existing</option>
+                                <option value="skip" selected>Skip</option>
+                            </select>
+                        </td>
+                        <td>
+                            <button class="btn-secondary btn-small" onclick="showComparison(3)">Compare</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="checkbox-cell"><input type="checkbox" class="row-checkbox" onchange="updateBulkActions()"></td>
+                        <td>
+                            <div style="font-weight: 600; color: #1c3643;">321 Industrial Pkwy</div>
+                            <div style="font-size: 12px; color: #687F8B;">Lakewood, CO 80215</div>
+                        </td>
+                        <td><span class="match-badge match-medium">Date + Address</span></td>
+                        <td>
+                            <a href="../super-admin-comp-view-detail-commercial.html?id=4788" class="link-text">Comp #4788</a>
+                            <div style="font-size: 12px; color: #687F8B;">Created Jan 30, 2024</div>
+                        </td>
+                        <td>
+                            <div style="font-size: 12px;">
+                                <span style="color: #dc2626;">Cap Rate:</span> 6.2% vs 6.8%<br>
+                                <span style="color: #dc2626;">NOI:</span> $125,000 vs $138,000
+                            </div>
+                        </td>
+                        <td>
+                            <select class="action-select" onchange="updatePendingCount()">
+                                <option value="">Select Action...</option>
+                                <option value="create">Create as New</option>
+                                <option value="update">Update Existing</option>
+                                <option value="skip">Skip</option>
+                            </select>
+                        </td>
+                        <td>
+                            <button class="btn-secondary btn-small" onclick="showComparison(4)">Compare</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="checkbox-cell"><input type="checkbox" class="row-checkbox" onchange="updateBulkActions()"></td>
+                        <td>
+                            <div style="font-weight: 600; color: #1c3643;">555 Market Street</div>
+                            <div style="font-size: 12px; color: #687F8B;">Denver, CO 80204</div>
+                        </td>
+                        <td><span class="match-badge match-exact">APN Match</span></td>
+                        <td>
+                            <a href="../super-admin-comp-view-detail-commercial.html?id=2156" class="link-text">Comp #2156</a>
+                            <div style="font-size: 12px; color: #687F8B;">Created Nov 5, 2023</div>
+                        </td>
+                        <td>
+                            <div style="font-size: 12px;">
+                                <span style="color: #dc2626;">Sale Price:</span> $1,250,000 vs $1,100,000<br>
+                                <span style="color: #dc2626;">Year Built:</span> 1985 vs 1982
+                            </div>
+                        </td>
+                        <td>
+                            <select class="action-select" onchange="updatePendingCount()">
+                                <option value="">Select Action...</option>
+                                <option value="create">Create as New</option>
+                                <option value="update">Update Existing</option>
+                                <option value="skip">Skip</option>
+                            </select>
+                        </td>
+                        <td>
+                            <button class="btn-secondary btn-small" onclick="showComparison(5)">Compare</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="checkbox-cell"><input type="checkbox" class="row-checkbox" onchange="updateBulkActions()"></td>
+                        <td>
+                            <div style="font-weight: 600; color: #1c3643;">888 Tech Center Dr</div>
+                            <div style="font-size: 12px; color: #687F8B;">Englewood, CO 80112</div>
+                        </td>
+                        <td><span class="match-badge match-high">Address Match</span></td>
+                        <td>
+                            <a href="super-admin-comp-view-detail-land.html?id=5892" class="link-text">Comp #5892</a>
+                            <div style="font-size: 12px; color: #687F8B;">Created Mar 1, 2024</div>
+                        </td>
+                        <td>
+                            <div style="font-size: 12px;">
+                                <span style="color: #dc2626;">Land Size:</span> 2.5 AC vs 2.3 AC
+                            </div>
+                        </td>
+                        <td>
+                            <select class="action-select" onchange="updatePendingCount()">
+                                <option value="">Select Action...</option>
+                                <option value="create">Create as New</option>
+                                <option value="update">Update Existing</option>
+                                <option value="skip">Skip</option>
+                            </select>
+                        </td>
+                        <td>
+                            <button class="btn-secondary btn-small" onclick="showComparison(6)">Compare</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="checkbox-cell"><input type="checkbox" class="row-checkbox" onchange="updateBulkActions()"></td>
+                        <td>
+                            <div style="font-weight: 600; color: #1c3643;">100 Retail Plaza</div>
+                            <div style="font-size: 12px; color: #687F8B;">Westminster, CO 80031</div>
+                        </td>
+                        <td><span class="match-badge match-medium">Date + Address</span></td>
+                        <td>
+                            <a href="super-admin-comp-view-detail-residential.html?id=4102" class="link-text">Comp #4102</a>
+                            <div style="font-size: 12px; color: #687F8B;">Created Dec 20, 2023</div>
+                        </td>
+                        <td>
+                            <div style="font-size: 12px;">
+                                <span style="color: #dc2626;">Property Class:</span> A vs B<br>
+                                <span style="color: #dc2626;">Condition:</span> Excellent vs Good
+                            </div>
+                        </td>
+                        <td>
+                            <select class="action-select" onchange="updatePendingCount()">
+                                <option value="">Select Action...</option>
+                                <option value="create">Create as New</option>
+                                <option value="update">Update Existing</option>
+                                <option value="skip">Skip</option>
+                            </select>
+                        </td>
+                        <td>
+                            <button class="btn-secondary btn-small" onclick="showComparison(7)">Compare</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Update Note Section -->
+        <div class="card" style="margin-top: 24px;">
+            <h3 style="font-size: 15px; font-weight: 600; color: #1c3643; margin-bottom: 12px;">Update Note (Optional)</h3>
+            <p style="font-size: 13px; color: #687F8B; margin-bottom: 12px;">Add a note explaining why you're updating existing records. This will be logged in the audit trail for each updated comp.</p>
+            <textarea class="note-input" placeholder="e.g., Updated with corrected sale data from county records..."></textarea>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 32px; padding-top: 24px; border-top: 1px solid #e0e0e0;">
+            <button class="btn-secondary" onclick="window.history.back()">
+                <span class="material-icons" style="font-size: 18px; vertical-align: middle; margin-right: 4px;">arrow_back</span>
+                Back
+            </button>
+            <div style="display: flex; gap: 12px;">
+                <button class="btn-secondary" onclick="skipAllDuplicates()">Skip All Duplicates</button>
+                <button class="btn-primary" onclick="proceedToConfirm()" id="proceedBtn" disabled>
+                    Proceed to Confirmation
+                    <span class="material-icons" style="font-size: 18px; vertical-align: middle; margin-left: 4px;">arrow_forward</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 50px;">
+            <span style="font-weight: 300; font-size: 14px; color: #687F8B;">2024, Harken CRE, LLC</span>
+        </div>
+    </div>
+
+    <!-- Comparison Modal -->
+    <div class="comparison-modal" id="comparisonModal">
+        <div class="comparison-content">
+            <div class="comparison-header">
+                <h2 style="font-size: 18px; font-weight: 600; color: #1c3643; margin: 0;">Side-by-Side Comparison</h2>
+                <button class="close-btn" onclick="hideComparison()">&times;</button>
+            </div>
+            <div class="comparison-body">
+                <div style="display: flex; gap: 16px; margin-bottom: 20px;">
+                    <div style="flex: 1; padding: 12px; background: #f0fdf4; border-radius: 6px; border-left: 4px solid #10b981;">
+                        <div style="font-weight: 600; color: #10b981; font-size: 13px; text-transform: uppercase;">Uploaded Data</div>
+                        <div style="font-size: 12px; color: #687F8B; margin-top: 4px;">From your PDF upload</div>
+                    </div>
+                    <div style="flex: 1; padding: 12px; background: #fef3c7; border-radius: 6px; border-left: 4px solid #f59e0b;">
+                        <div style="font-weight: 600; color: #d97706; font-size: 13px; text-transform: uppercase;">Existing Record</div>
+                        <div style="font-size: 12px; color: #687F8B; margin-top: 4px;">Comp #4521 - Created Jan 15, 2024</div>
+                    </div>
+                </div>
+
+                <div class="comparison-grid">
+                    <div class="comparison-row">
+                        <div class="comparison-label">Address</div>
+                        <div class="comparison-uploaded">123 Main Street, Denver, CO 80202</div>
+                        <div class="comparison-existing">123 Main Street, Denver, CO 80202</div>
+                    </div>
+                    <div class="comparison-row">
+                        <div class="comparison-label">Sale Price</div>
+                        <div class="comparison-uploaded"><span class="diff-highlight">$520,000</span></div>
+                        <div class="comparison-existing"><span class="diff-highlight">$485,000</span></div>
+                    </div>
+                    <div class="comparison-row">
+                        <div class="comparison-label">Date Sold</div>
+                        <div class="comparison-uploaded"><span class="diff-highlight">March 15, 2024</span></div>
+                        <div class="comparison-existing"><span class="diff-highlight">January 10, 2024</span></div>
+                    </div>
+                    <div class="comparison-row">
+                        <div class="comparison-label">Building Size</div>
+                        <div class="comparison-uploaded">15,200 SF</div>
+                        <div class="comparison-existing">15,200 SF</div>
+                    </div>
+                    <div class="comparison-row">
+                        <div class="comparison-label">Land Size</div>
+                        <div class="comparison-uploaded">0.85 Acres</div>
+                        <div class="comparison-existing">0.85 Acres</div>
+                    </div>
+                    <div class="comparison-row">
+                        <div class="comparison-label">Year Built</div>
+                        <div class="comparison-uploaded">1998</div>
+                        <div class="comparison-existing">1998</div>
+                    </div>
+                    <div class="comparison-row">
+                        <div class="comparison-label">Property Class</div>
+                        <div class="comparison-uploaded">Class B</div>
+                        <div class="comparison-existing">Class B</div>
+                    </div>
+                    <div class="comparison-row">
+                        <div class="comparison-label">Cap Rate</div>
+                        <div class="comparison-uploaded">6.5%</div>
+                        <div class="comparison-existing">6.5%</div>
+                    </div>
+                    <div class="comparison-row">
+                        <div class="comparison-label">APN</div>
+                        <div class="comparison-uploaded">0234-567-89-001</div>
+                        <div class="comparison-existing">0234-567-89-001</div>
+                    </div>
+                    <div class="comparison-row">
+                        <div class="comparison-label">Zoning</div>
+                        <div class="comparison-uploaded">C-2 Commercial</div>
+                        <div class="comparison-existing">C-2 Commercial</div>
+                    </div>
+                </div>
+
+                <div style="margin-top: 24px; padding: 16px; background: #f9f9f9; border-radius: 6px;">
+                    <div style="font-weight: 600; color: #1c3643; margin-bottom: 8px;">Analysis</div>
+                    <p style="font-size: 13px; color: #687F8B; margin: 0;">The uploaded record appears to be a <strong>more recent sale</strong> of the same property. The sale price increased from $485,000 to $520,000 (+7.2%), and the sale date is 2 months later. This could represent a legitimate resale or updated/corrected data.</p>
+                </div>
+
+                <div style="display: flex; gap: 12px; margin-top: 24px; justify-content: flex-end;">
+                    <button class="btn-secondary" onclick="hideComparison()">Cancel</button>
+                    <button class="btn-secondary" onclick="selectAction('skip')">Skip This Record</button>
+                    <button class="btn-secondary" onclick="selectAction('update')">Update Existing</button>
+                    <button class="btn-primary" onclick="selectAction('create')">Create as New Comp</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Show Build Notes Button -->
+    <button id="showBuildNotesBtn" 
+            style="position: fixed; top: 100px; right: 20px; z-index: 9999; 
+                   padding: 12px 20px; background: #ffc107; color: #856404; 
+                   border: 2px solid #856404; border-radius: 25px; 
+                   font-size: 14px; font-weight: 700; cursor: pointer; 
+                   box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+                   display: none; transition: all 0.3s;"
+            onclick="toggleBuildNotes(true)">
+        Show Build Notes
+    </button>
+
+    <script>
+        // Build Notes Toggle
+        function toggleBuildNotes(show) {
+            const notesSection = document.getElementById('buildNotesSection');
+            const toggleBtn = document.getElementById('showBuildNotesBtn');
+            
+            if (show) {
+                notesSection.style.display = 'block';
+                toggleBtn.style.display = 'none';
+                notesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                notesSection.style.display = 'none';
+                toggleBtn.style.display = 'block';
+            }
+            
+            sessionStorage.setItem('buildNotesVisible', show);
+        }
+
+        // Restore preference on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            const savedPreference = sessionStorage.getItem('buildNotesVisible');
+            if (savedPreference === 'false') {
+                toggleBuildNotes(false);
+            }
+        });
+
+        // Comparison Modal
+        function showComparison(id) {
+            document.getElementById('comparisonModal').classList.add('active');
+        }
+
+        function hideComparison() {
+            document.getElementById('comparisonModal').classList.remove('active');
+        }
+
+        function selectAction(action) {
+            hideComparison();
+            // In real implementation, this would set the action for the specific row
+            updatePendingCount();
+        }
+
+        // Bulk Actions
+        function toggleSelectAll() {
+            const selectAll = document.getElementById('selectAll');
+            const checkboxes = document.querySelectorAll('.row-checkbox');
+            checkboxes.forEach(cb => cb.checked = selectAll.checked);
+            updateBulkActions();
+        }
+
+        function updateBulkActions() {
+            const checkboxes = document.querySelectorAll('.row-checkbox:checked');
+            const bulkBar = document.getElementById('bulkActionsBar');
+            const selectedCount = document.getElementById('selectedCount');
+            
+            if (checkboxes.length > 0) {
+                bulkBar.classList.remove('hidden');
+                selectedCount.textContent = checkboxes.length;
+            } else {
+                bulkBar.classList.add('hidden');
+            }
+        }
+
+        function clearSelection() {
+            document.getElementById('selectAll').checked = false;
+            document.querySelectorAll('.row-checkbox').forEach(cb => cb.checked = false);
+            updateBulkActions();
+        }
+
+        function bulkAction(action) {
+            const checkboxes = document.querySelectorAll('.row-checkbox:checked');
+            checkboxes.forEach(cb => {
+                const row = cb.closest('tr');
+                const select = row.querySelector('.action-select');
+                select.value = action;
+            });
+            clearSelection();
+            updatePendingCount();
+        }
+
+        // Update pending count and button state
+        function updatePendingCount() {
+            const selects = document.querySelectorAll('.action-select');
+            let pending = 0;
+            selects.forEach(select => {
+                if (select.value === '') pending++;
+            });
+            
+            // Update the pending count in summary
+            document.querySelectorAll('.summary-stat-value')[3].textContent = pending;
+            
+            // Enable/disable proceed button
+            const proceedBtn = document.getElementById('proceedBtn');
+            proceedBtn.disabled = pending > 0;
+        }
+
+        function skipAllDuplicates() {
+            document.querySelectorAll('.action-select').forEach(select => {
+                select.value = 'skip';
+            });
+            updatePendingCount();
+        }
+
+        function proceedToConfirm() {
+            alert('Proceeding to confirmation screen...\n\nIn the real implementation, this would show a final summary before saving all comps.');
+        }
+
+        // Close modal on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                hideComparison();
+            }
+        });
+
+        // Close modal on backdrop click
+        document.getElementById('comparisonModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideComparison();
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+

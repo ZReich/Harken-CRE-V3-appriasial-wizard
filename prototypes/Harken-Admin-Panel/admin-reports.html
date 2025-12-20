@@ -1,0 +1,155 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Reports - Harken CRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { font-family: 'Montserrat', sans-serif !important; }
+        body { background-color: #f9f9f9; margin: 0; padding: 0; }
+        .section-title { font-size: 23px; font-weight: 600; color: #1c3643; }
+    </style>
+</head>
+<body>
+    <!-- UNIFIED NAVIGATION COMPONENT -->
+    <style>.unified-navbar{background:url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;background-color:#1c3643!important;height:84px;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 32px;box-shadow:0 2px 8px rgba(0,0,0,0.1);position:sticky;top:0;z-index:1000}.nav-logo{height:40px;width:auto;cursor:pointer}.nav-center{display:flex;align-items:center;gap:8px;flex:1;justify-content:center}.nav-core-features{display:flex;align-items:center;gap:4px;background:rgba(13, 161, 199, 0.08);border-radius:25px;padding:4px 8px;margin-right:16px}.nav-link{color:white;text-decoration:none;padding:10px 20px;border-radius:25px;transition:all 0.2s;border:1px solid transparent;font-weight:500;font-size:14px;white-space:nowrap}.nav-link:hover{background-color:rgba(255,255,255,0.08)}.nav-link.core-feature{font-weight:500;font-size:14px;color:white}.nav-link.core-feature:hover{background-color:rgba(13, 161, 199, 0.2);color:white}.nav-link.core-feature.active{background-color:transparent;border:1px solid #0da1c7;color:#0da1c7;box-shadow:0 2px 4px rgba(13, 161, 199, 0.2)}.nav-link.active{background-color:transparent;border:1px solid #0da1c7;color:#0da1c7}.nav-separator{width:1px;height:24px;background:rgba(255, 255, 255, 0.2);margin:0 8px}.nav-user{display:flex;align-items:center;gap:12px}.nav-user-name{font-size:14px;font-weight:500;color:white}.nav-user-avatar{width:36px;height:36px;border-radius:50%;border:2px solid #0da1c7}</style><nav class="unified-navbar"><img src="harken.png" alt="Harken CRE" class="nav-logo" onclick="window.location.href='admin-dashboard.html'"><div class="nav-center"><div class="nav-core-features"><a href="../comps-premium-with-clustering.html" class="nav-link core-feature" id="nav-comps">COMPS</a><a href="admin-appraisals.html" class="nav-link core-feature" id="nav-appraisals">APPRAISAL</a><a href="../evaluation-wizard-full.html" class="nav-link core-feature" id="nav-evaluations">EVALUATION</a></div><div class="nav-separator"></div><a href="admin-dashboard.html" class="nav-link" id="nav-dashboard">Dashboard</a><a href="admin-users.html" class="nav-link" id="nav-users">Users</a><a href="admin-clients.html" class="nav-link" id="nav-clients">Clients</a><a href="admin-accounts.html" class="nav-link" id="nav-accounts">Account</a><a href="admin-reports.html" class="nav-link active" id="nav-reports">Reports</a><a href="admin-support-tickets.html" class="nav-link" id="nav-support">Support</a><a href="admin-settings.html" class="nav-link" id="nav-settings">Settings</a></div><div class="nav-user"><span class="nav-user-name">Admin User</span><img src="https://i.pravatar.cc/150?img=12" alt="User" class="nav-user-avatar"></div></nav>
+
+    <div style="padding: 35px 50px;">
+        <h2 class="section-title">CLIENT WORK REPORT</h2>
+        
+        <!-- Summary Cards -->
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin: 32px 0;">
+            <div style="background: linear-gradient(135deg, #0da1c7 0%, #0891b2 100%); color: white; border-radius: 8px; padding: 24px; text-align: center;">
+                <div style="font-size: 36px; font-weight: 700; margin-bottom: 8px;">20</div>
+                <div style="font-size: 14px; opacity: 0.9;">Total Active Clients</div>
+            </div>
+            <div style="background: linear-gradient(135deg, #0da1c7 0%, #0891b2 100%); color: white; border-radius: 8px; padding: 24px; text-align: center;">
+                <div style="font-size: 36px; font-weight: 700; margin-bottom: 8px;">15</div>
+                <div style="font-size: 14px; opacity: 0.9;">Recent Activity (30d)</div>
+            </div>
+            <div style="background: linear-gradient(135deg, #0da1c7 0%, #0891b2 100%); color: white; border-radius: 8px; padding: 24px; text-align: center;">
+                <div style="font-size: 36px; font-weight: 700; margin-bottom: 8px;">356</div>
+                <div style="font-size: 14px; opacity: 0.9;">Total Work Items</div>
+            </div>
+            <div style="background: linear-gradient(135deg, #0da1c7 0%, #0891b2 100%); color: white; border-radius: 8px; padding: 24px; text-align: center;">
+                <div style="font-size: 36px; font-weight: 700; margin-bottom: 8px;">17.8</div>
+                <div style="font-size: 14px; opacity: 0.9;">Avg Work/Client</div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div style="background: white; border-radius: 8px; padding: 24px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.12);">
+            <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+                <select style="padding: 8px 12px; border: 1px solid #e0e0e0; border-radius: 4px; font-size: 14px; cursor: pointer;">
+                    <option value="30">Last 30 Days</option>
+                    <option value="90" selected>Last 90 Days</option>
+                    <option value="365">Last Year</option>
+                    <option value="all">All Time</option>
+                </select>
+
+                <select style="padding: 8px 12px; border: 1px solid #e0e0e0; border-radius: 4px; font-size: 14px; cursor: pointer;">
+                    <option value="all">All Work Types</option>
+                    <option value="evaluations">Evaluations Only</option>
+                    <option value="appraisals">Appraisals Only</option>
+                    <option value="comps">Comps Only</option>
+                </select>
+
+                <select style="padding: 8px 12px; border: 1px solid #e0e0e0; border-radius: 4px; font-size: 14px; cursor: pointer;">
+                    <option value="all">All Clients</option>
+                    <option value="active">Active Clients Only</option>
+                    <option value="inactive">Inactive Clients</option>
+                </select>
+
+                <div style="margin-left: auto; display: flex; gap: 12px;">
+                    <button style="padding: 8px 16px; border-radius: 4px; font-size: 12px; font-weight: 600; border: none; cursor: pointer; background-color: #687F8B; color: white;">Export to CSV</button>
+                    <button style="padding: 8px 16px; border-radius: 4px; font-size: 12px; font-weight: 600; border: none; cursor: pointer; background-color: #0da1c7; color: white;">Export to PDF</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Integration Point -->
+        <!-- API Call: GET /api/v1/reports/client-work?account_id=:current_account&date_range=90&work_type=all&status=all -->
+
+        <!-- Client Work Table -->
+        <div style="background: white; border-radius: 8px; padding: 0; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); overflow-x: auto;">
+            <table style="width: 100%; border-collapse: separate; border-spacing: 0;">
+                <thead style="background-color: #f9f9f9;">
+                    <tr>
+                        <th style="padding: 14px 20px; text-align: left; color: #687F8B; font-size: 12px; font-weight: 600; border-bottom: 2px solid #e0e0e0;">Client Name</th>
+                        <th style="padding: 14px 20px; text-align: left; color: #687F8B; font-size: 12px; font-weight: 600; border-bottom: 2px solid #e0e0e0;">Company</th>
+                        <th style="padding: 14px 20px; text-align: left; color: #687F8B; font-size: 12px; font-weight: 600; border-bottom: 2px solid #e0e0e0;">Evaluations</th>
+                        <th style="padding: 14px 20px; text-align: left; color: #687F8B; font-size: 12px; font-weight: 600; border-bottom: 2px solid #e0e0e0;">Appraisals</th>
+                        <th style="padding: 14px 20px; text-align: left; color: #687F8B; font-size: 12px; font-weight: 600; border-bottom: 2px solid #e0e0e0;">Comps</th>
+                        <th style="padding: 14px 20px; text-align: left; color: #687F8B; font-size: 12px; font-weight: 600; border-bottom: 2px solid #e0e0e0;">Total</th>
+                        <th style="padding: 14px 20px; text-align: left; color: #687F8B; font-size: 12px; font-weight: 600; border-bottom: 2px solid #e0e0e0;">Date Range</th>
+                        <th style="padding: 14px 20px; text-align: left; color: #687F8B; font-size: 12px; font-weight: 600; border-bottom: 2px solid #e0e0e0;">Last Activity</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr style="cursor: pointer;" onclick="window.location.href='admin-client-detail.html?id=1'">
+                        <td style="padding: 16px 20px; border-bottom: 1px solid #f0f0f0;"><a href="admin-client-detail.html?id=1" style="color: #0da1c7; text-decoration: none; font-weight: 600;">Emily Thompson</a></td>
+                        <td style="padding: 16px 20px; color: #687F8B; border-bottom: 1px solid #f0f0f0;">Metro Realty Group</td>
+                        <td style="padding: 16px 20px; color: #687F8B; border-bottom: 1px solid #f0f0f0;">31 <span style="font-size: 11px; color: #999;">(20C/8A/3P)</span></td>
+                        <td style="padding: 16px 20px; color: #687F8B; border-bottom: 1px solid #f0f0f0;">18 <span style="font-size: 11px; color: #999;">(12C/5A/1P)</span></td>
+                        <td style="padding: 16px 20px; color: #687F8B; border-bottom: 1px solid #f0f0f0;">45</td>
+                        <td style="padding: 16px 20px; color: #687F8B; border-bottom: 1px solid #f0f0f0;"><strong>94</strong></td>
+                        <td style="padding: 16px 20px; color: #687F8B; border-bottom: 1px solid #f0f0f0;">Jan 2024 - Oct 2025</td>
+                        <td style="padding: 16px 20px; color: #687F8B; border-bottom: 1px solid #f0f0f0;">Oct 22, 2025</td>
+                    </tr>
+                    <tr style="cursor: pointer;" onclick="window.location.href='admin-client-detail.html?id=2'">
+                        <td style="padding: 16px 20px; border-bottom: 1px solid #f0f0f0;"><a href="admin-client-detail.html?id=2" style="color: #0da1c7; text-decoration: none; font-weight: 600;">Andrew Clark</a></td>
+                        <td style="padding: 16px 20px; color: #687F8B; border-bottom: 1px solid #f0f0f0;">Urban Development Corp</td>
+                        <td style="padding: 16px 20px; color: #687F8B; border-bottom: 1px solid #f0f0f0;">29 <span style="font-size: 11px; color: #999;">(18C/8A/3P)</span></td>
+                        <td style="padding: 16px 20px; color: #687F8B; border-bottom: 1px solid #f0f0f0;">16 <span style="font-size: 11px; color: #999;">(10C/5A/1P)</span></td>
+                        <td style="padding: 16px 20px; color: #687F8B; border-bottom: 1px solid #f0f0f0;">42</td>
+                        <td style="padding: 16px 20px; color: #687F8B; border-bottom: 1px solid #f0f0f0;"><strong>87</strong></td>
+                        <td style="padding: 16px 20px; color: #687F8B; border-bottom: 1px solid #f0f0f0;">Feb 2024 - Oct 2025</td>
+                        <td style="padding: 16px 20px; color: #687F8B; border-bottom: 1px solid #f0f0f0;">Oct 27, 2025</td>
+                    </tr>
+                    <tr style="cursor: pointer;">
+                        <td style="padding: 16px 20px; border-bottom: 1px solid #f0f0f0;"><a href="admin-client-detail.html?id=3" style="color: #0da1c7; text-decoration: none; font-weight: 600;">Rachel Young</a></td>
+                        <td style="padding: 16px 20px; color: #687F8B; border-bottom: 1px solid #f0f0f0;">Crown Commercial</td>
+                        <td style="padding: 16px 20px; color: #687F8B; border-bottom: 1px solid #f0f0f0;">21 <span style="font-size: 11px; color: #999;">(14C/5A/2P)</span></td>
+                        <td style="padding: 16px 20px; color: #687F8B; border-bottom: 1px solid #f0f0f0;">12 <span style="font-size: 11px; color: #999;">(8C/3A/1P)</span></td>
+                        <td style="padding: 16px 20px; color: #687F8B; border-bottom: 1px solid #f0f0f0;">30</td>
+                        <td style="padding: 16px 20px; color: #687F8B; border-bottom: 1px solid #f0f0f0;"><strong>63</strong></td>
+                        <td style="padding: 16px 20px; color: #687F8B; border-bottom: 1px solid #f0f0f0;">Mar 2024 - Oct 2025</td>
+                        <td style="padding: 16px 20px; color: #687F8B; border-bottom: 1px solid #f0f0f0;">Oct 22, 2025</td>
+                    </tr>
+                    <tr style="cursor: pointer;">
+                        <td style="padding: 16px 20px; border-bottom: 1px solid #f0f0f0;"><a href="admin-client-detail.html?id=4" style="color: #0da1c7; text-decoration: none; font-weight: 600;">Daniel Martinez</a></td>
+                        <td style="padding: 16px 20px; color: #687F8B; border-bottom: 1px solid #f0f0f0;">Summit Development</td>
+                        <td style="padding: 16px 20px; color: #687F8B; border-bottom: 1px solid #f0f0f0;">18 <span style="font-size: 11px; color: #999;">(12C/4A/2P)</span></td>
+                        <td style="padding: 16px 20px; color: #687F8B; border-bottom: 1px solid #f0f0f0;">10 <span style="font-size: 11px; color: #999;">(7C/2A/1P)</span></td>
+                        <td style="padding: 16px 20px; color: #687F8B; border-bottom: 1px solid #f0f0f0;">27</td>
+                        <td style="padding: 16px 20px; color: #687F8B; border-bottom: 1px solid #f0f0f0;"><strong>55</strong></td>
+                        <td style="padding: 16px 20px; color: #687F8B; border-bottom: 1px solid #f0f0f0;">Apr 2024 - Oct 2025</td>
+                        <td style="padding: 16px 20px; color: #687F8B; border-bottom: 1px solid #f0f0f0;">Oct 20, 2025</td>
+                    </tr>
+                    <tr style="cursor: pointer;">
+                        <td style="padding: 16px 20px; border-bottom: 1px solid #f0f0f0;"><a href="admin-client-detail.html?id=5" style="color: #0da1c7; text-decoration: none; font-weight: 600;">Michael Brown</a></td>
+                        <td style="padding: 16px 20px; color: #687F8B; border-bottom: 1px solid #f0f0f0;">Landmark Realty</td>
+                        <td style="padding: 16px 20px; color: #687F8B; border-bottom: 1px solid #f0f0f0;">25 <span style="font-size: 11px; color: #999;">(16C/7A/2P)</span></td>
+                        <td style="padding: 16px 20px; color: #687F8B; border-bottom: 1px solid #f0f0f0;">14 <span style="font-size: 11px; color: #999;">(9C/4A/1P)</span></td>
+                        <td style="padding: 16px 20px; color: #687F8B; border-bottom: 1px solid #f0f0f0;">36</td>
+                        <td style="padding: 16px 20px; color: #687F8B; border-bottom: 1px solid #f0f0f0;"><strong>75</strong></td>
+                        <td style="padding: 16px 20px; color: #687F8B; border-bottom: 1px solid #f0f0f0;">Feb 2024 - Oct 2025</td>
+                        <td style="padding: 16px 20px; color: #687F8B; border-bottom: 1px solid #f0f0f0;">Oct 24, 2025</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div style="text-align: center; color: #687F8B; font-size: 14px; margin-top: 24px;">
+            Showing 5 of 20 clients. <a href="admin-clients.html" style="color: #0da1c7; text-decoration: none;">View All Clients</a>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 50px;">
+            <span style="font-weight: 300; font-size: 14px; color: #687F8B;">© 2024, Harken CRE, LLC</span>
+        </div>
+    </div>
+</body>
+</html>

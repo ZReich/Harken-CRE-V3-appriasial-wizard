@@ -1,0 +1,170 @@
+<%
+if(evaluation.user.significant_in_pdf){
+  const user = evaluation.user;
+  const landlordRepresentative = filterByType(user.users_transactions, 'landlord_representative');
+  const tenantRepresentative = filterByType(user.users_transactions, 'tenant_representative');
+  const sellerRepresentative = filterByType(user.users_transactions, 'seller_representative');
+  const buyerRepresentative = filterByType(user.users_transactions, 'buyer_representative');
+  const total =
+    landlordRepresentative.length +
+    tenantRepresentative.length +
+    sellerRepresentative.length +
+    buyerRepresentative.length;
+  %>
+
+  <% if (total > 0) { %>
+    <% if (total < 24) { %>
+      <div class="new-page business-properties">
+        <div class="page-header">
+          <%- chapter %>
+        </div>
+
+        <div class="left">
+          <p class="title"><%= user.first_name %> <%= user.last_name %></p>
+          <p class="subtitle"><%= user.position %></p>
+          <br />
+          <p class="main-description">SIGNIFICANT TRANSACTIONS</p>
+
+          <% if (landlordRepresentative.length) { %>
+            <p class="single-description">Landlord Representative</p>
+            <table>
+              <tbody>
+                <% landlordRepresentative.forEach((transaction, i) => { %>
+                  <tr class="<%= i % 2 === 0 ? 'odd' : '' %>">
+                    <td>
+                      <%= transaction.name %> -
+                      <%= transaction?.category
+                        ? (transaction.category.toLowerCase() === 'multi_family'
+                            ? 'Multi-Family'
+                            : capitalizeFirstLetter(transaction.category))
+                        : 'N/A' %>
+                    </td>
+                    <td><%= transaction.sf ? to_area(transaction.sf.replace(/,/g, '')) : '' %></td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          <% } %>
+          <% if (tenantRepresentative.length) { %>
+            <p class="single-description">Tenant Representative</p>
+            <table>
+              <tbody>
+                <% tenantRepresentative.forEach((transaction, i) => { %>
+                  <tr class="<%= i % 2 === 0 ? 'odd' : '' %>">
+                    <td>
+                      <%= transaction.name %> -
+                      <%= transaction?.category
+                        ? (transaction.category.toLowerCase() === 'multi_family'
+                            ? 'Multi-Family'
+                            : capitalizeFirstLetter(transaction.category))
+                        : 'N/A' %>
+                    </td>
+                    <td><%= to_area(transaction.sf.replace(/,/g, '')) %></td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          <% } %>
+
+          <% if (sellerRepresentative.length) { %>
+            <p class="single-description">Seller Representative</p>
+            <table>
+              <tbody>
+                <% sellerRepresentative.forEach((transaction, i) => { %>
+                  <tr class="<%= i % 2 === 0 ? 'odd' : '' %>">
+                    <td>
+                      <%= transaction.name %> -
+                      <%= transaction?.category
+                        ? (transaction.category.toLowerCase() === 'multi_family'
+                            ? 'Multi-Family'
+                            : capitalizeFirstLetter(transaction.category))
+                        : 'N/A' %>
+                    </td>
+                    <td><%= to_area(transaction.sf.replace(/,/g, '')) %></td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          <% } %>
+
+          <% if (buyerRepresentative.length) { %>
+            <p class="single-description">Buyer Representative</p>
+            <table>
+              <tbody>
+                <% buyerRepresentative.forEach((transaction, i) => { %>
+                  <tr class="<%= i % 2 === 0 ? 'odd' : '' %>">
+                    <td>
+                      <%= transaction.name %> -
+                      <%= transaction?.category
+                        ? (transaction.category.toLowerCase() === 'multi_family'
+                            ? 'Multi-Family'
+                            : capitalizeFirstLetter(transaction.category))
+                        : 'N/A' %>
+                    </td>
+                    <td><%= to_area(transaction.sf.replace(/,/g, '')) %></td>
+                  </tr>
+                <% }) %>
+              </tbody>
+            </table>
+          <% } %>
+        </div>
+
+        <div class="deco-image">
+          <img src="/images/buildings.png" />
+        </div>
+
+        <%- watermark %>
+      </div>
+    <% } else { %>
+      <% const sections = [
+        { label: 'Landlord Representative', list: landlordRepresentative },
+        { label: 'Tenant Representative', list: tenantRepresentative },
+        { label: 'Seller Representative', list: sellerRepresentative },
+        { label: 'Buyer Representative', list: buyerRepresentative }
+      ]; %>
+
+      <% sections.forEach((section) => { %>
+        <% if (section.list.length) { %>
+          <div class="new-page business-properties">
+            <div class="page-header">
+              <p class="section-name">Section 05</p>
+              <p class="section-title">About Us</p>
+            </div>
+
+            <div class="left">
+              <p class="title"><%= user.name %></p>
+              <p class="subtitle"><%= user.position %></p>
+              <br />
+              <p class="main-description">SIGNIFICANT TRANSACTIONS</p>
+
+              <p class="single-description"><%= section.label %></p>
+              <table>
+                <tbody>
+                  <% section.list.forEach((transaction, i) => { %>
+                    <tr class="<%= i % 2 === 0 ? 'odd' : '' %>">
+                      <td>
+                      <%= transaction.name %> -
+                      <%= transaction?.category
+                        ? (transaction.category.toLowerCase() === 'multi_family'
+                            ? 'Multi-Family'
+                            : capitalizeFirstLetter(transaction.category))
+                        : 'N/A' %>
+                    </td>
+                      <td><%= to_area(transaction.sf.replace(/,/g, '')) %></td>
+                    </tr>
+                  <% }) %>
+                </tbody>
+              </table>
+            </div>
+
+            <div class="deco-image">
+              <img src="/images/buildings.png" />
+            </div>
+
+            <%- watermark %>
+          </div>
+        <% } %>
+      <% }) %>
+    <% } %>
+  <% } %>
+<% } %>

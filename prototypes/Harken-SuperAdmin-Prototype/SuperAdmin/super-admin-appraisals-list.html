@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Appraisals - Harken CRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { font-family: 'Montserrat', sans-serif !important; box-sizing: border-box; }
+        .material-icons { font-family: 'Material Icons' !important; }
+        body { background-color: #f9f9f9; margin: 0; padding: 0; }
+        
+        /* Property Type Tabs */
+        .comp-tabs { background: white; border-bottom: 2px solid #e0e0e0; display: flex; padding: 0 24px; gap: 4px; }
+        .comp-tab { padding: 16px 24px; border: none; background: transparent; color: #687F8B; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; border-bottom: 3px solid transparent; margin-bottom: -2px; }
+        .comp-tab:hover { color: #0da1c7; background: #f0fbfd; }
+        .comp-tab.active { color: #0da1c7; border-bottom-color: #0da1c7; background: #f0fbfd; }
+        
+        /* Control Bar */
+        .control-bar { background: white; padding: 20px 32px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+        .search-container { position: relative; }
+        .search-container .material-icons { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #9CA3AF; font-size: 20px; }
+        .search-input { padding: 10px 12px 10px 40px; border: 1px solid #E5E7EB; border-radius: 6px; font-size: 14px; width: 320px; }
+        .search-input:focus { outline: none; border-color: #0da1c7; }
+        
+        .filter-select { padding: 10px 16px; border: 1px solid #E5E7EB; border-radius: 6px; font-size: 14px; color: #374151; background: white; cursor: pointer; }
+        .filter-select:focus { outline: none; border-color: #0da1c7; }
+        
+        .btn-filters { background: white; border: 1px solid #E5E7EB; color: #374151; padding: 10px 20px; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s; }
+        .btn-filters:hover { background: #F9FAFB; border-color: #0da1c7; color: #0da1c7; }
+        
+        .btn-primary { background: linear-gradient(135deg, #0da1c7 0%, #0891b2 100%); color: white; padding: 10px 24px; border-radius: 6px; font-size: 14px; font-weight: 600; border: none; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s; box-shadow: 0 2px 4px rgba(13, 161, 199, 0.2); }
+        .btn-primary:hover { box-shadow: 0 4px 8px rgba(13, 161, 199, 0.3); transform: translateY(-1px); }
+        .btn-secondary:hover { background: #f0fbfd !important; transform: translateY(-1px); box-shadow: 0 2px 4px rgba(13, 161, 199, 0.15); }
+        
+        /* Table View */
+        .table-container { background: white; margin: 24px 32px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); overflow: hidden; }
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table thead { background: #F9FAFB; border-bottom: 1px solid #E5E7EB; }
+        .data-table th { text-align: left; padding: 14px 20px; font-size: 12px; font-weight: 600; color: #6B7280; text-transform: uppercase; letter-spacing: 0.5px; }
+        .data-table td { padding: 16px 20px; border-bottom: 1px solid #F3F4F6; font-size: 14px; color: #374151; }
+        .data-table tbody tr { transition: background 0.15s; cursor: pointer; }
+        .data-table tbody tr:hover { background: #F9FAFB; }
+        
+        .status-badge { padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; display: inline-block; }
+        .status-badge.draft { background: #FEF3C7; color: #92400E; }
+        .status-badge.in-progress { background: #DBEAFE; color: #1E40AF; }
+        .status-badge.completed { background: #D1FAE5; color: #065F46; }
+        .status-badge.under-review { background: #E0E7FF; color: #3730A3; }
+        
+        .property-type-badge { padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; background: #F3F4F6; color: #4B5563; }
+        
+        .action-btn { background: none; border: none; color: #6B7280; cursor: pointer; padding: 4px; border-radius: 4px; transition: all 0.2s; }
+        .action-btn:hover { background: #F3F4F6; color: #0da1c7; }
+    </style>
+</head>
+<body>
+    <!-- UNIFIED NAVIGATION COMPONENT -->
+    <style>.unified-navbar{background:url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;background-color:#1c3643!important;height:84px;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 32px;box-shadow:0 2px 8px rgba(0,0,0,0.1);position:sticky;top:0;z-index:1000}.nav-logo{height:40px;width:auto;cursor:pointer}.nav-center{display:flex;align-items:center;gap:8px;flex:1;justify-content:center}.nav-core-features{display:flex;align-items:center;gap:4px;background:rgba(13, 161, 199, 0.08);border-radius:25px;padding:4px 8px;margin-right:16px}.nav-link{color:white;text-decoration:none;padding:10px 20px;border-radius:25px;transition:all 0.2s;border:1px solid transparent;font-weight:500;font-size:14px;white-space:nowrap}.nav-link:hover{background-color:rgba(255,255,255,0.08)}.nav-link.core-feature{font-weight:500;font-size:14px;color:white}.nav-link.core-feature:hover{background-color:rgba(13, 161, 199, 0.2);color:white}.nav-link.core-feature.active{background-color:transparent;border:1px solid #0da1c7;color:#0da1c7;box-shadow:0 2px 4px rgba(13, 161, 199, 0.2)}.nav-link.active{background-color:transparent;border:1px solid #0da1c7;color:#0da1c7}.nav-separator{width:1px;height:24px;background:rgba(255, 255, 255, 0.2);margin:0 8px}.nav-user{display:flex;align-items:center;gap:12px}.nav-user-name{font-size:14px;font-weight:500;color:white}.nav-user-avatar{width:36px;height:36px;border-radius:50%;border:2px solid #0da1c7}</style><nav class="unified-navbar"><img src="assets/harken.png" alt="Harken CRE" class="nav-logo" onclick="window.location.href='super-admin-dashboard.html'"><div class="nav-center"><div class="nav-core-features"><a href="super-admin-comps.html" class="nav-link core-feature" id="nav-comps">COMPS</a><a href="super-admin-appraisals-list.html" class="nav-link core-feature active" id="nav-appraisals">APPRAISAL</a><a href="super-admin-evaluations-list.html" class="nav-link core-feature" id="nav-evaluations">EVALUATION</a></div><div class="nav-separator"></div><a href="super-admin-dashboard.html" class="nav-link" id="nav-dashboard">Dashboard</a><a href="super-admin-users.html" class="nav-link" id="nav-users">Users</a><a href="super-admin-clients.html" class="nav-link" id="nav-clients">Clients</a><a href="super-admin-accounts.html" class="nav-link" id="nav-accounts">Accounts</a><a href="super-admin-reports.html" class="nav-link" id="nav-reports">Reports</a><a href="super-admin-support-tickets.html" class="nav-link" id="nav-support">Support</a><a href="super-admin-audit-logs.html" class="nav-link" id="nav-audit">Audit Logs</a><a href="super-admin-settings.html" class="nav-link" id="nav-settings">Settings</a></div><div class="nav-user"><span class="nav-user-name">Harken Admin</span><img src="https://i.pravatar.cc/150?img=33" alt="User" class="nav-user-avatar"></div></nav>
+
+    <!-- Property Type Tabs -->
+    <div class="comp-tabs">
+        <button class="comp-tab active" data-type="commercial" onclick="switchPropertyType('commercial')">
+            <i class="material-icons" style="font-size: 18px;">business</i>
+            Commercial
+        </button>
+        <button class="comp-tab" data-type="residential" onclick="switchPropertyType('residential')">
+            <i class="material-icons" style="font-size: 18px;">home</i>
+            Residential
+        </button>
+        <button class="comp-tab" data-type="land" onclick="switchPropertyType('land')">
+            <i class="material-icons" style="font-size: 18px;">terrain</i>
+            Land
+        </button>
+    </div>
+
+    <!-- Page Header -->
+    <div style="background: white; padding: 24px 32px; border-bottom: 1px solid #E5E7EB;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+                <h1 style="font-size: 28px; font-weight: 700; color: #1c3643; margin: 0 0 8px 0;">Appraisals</h1>
+                <p style="font-size: 14px; color: #6B7280; margin: 0;">USPAP-compliant appraisal reports</p>
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <button class="btn-secondary" onclick="location.href='super-admin-appraisal-templates.html'" style="background: white; color: #0da1c7; border: 1.5px solid #0da1c7; padding: 10px 20px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s;">
+                    <i class="material-icons" style="font-size: 18px;">description</i>
+                    View Templates
+                </button>
+                <button class="btn-primary" onclick="location.href='appraisal-wizard-v3/index.html'">
+                    <i class="material-icons" style="font-size: 18px;">add</i>
+                    New Appraisal
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Control Bar -->
+    <div class="control-bar">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div class="search-container">
+                <i class="material-icons">search</i>
+                <input type="text" class="search-input" placeholder="Search appraisals by property, address, or client...">
+            </div>
+            
+            <select class="filter-select">
+                <option value="">All Statuses</option>
+                <option value="draft">Draft</option>
+                <option value="in-progress">In Progress</option>
+                <option value="under-review">Under Review</option>
+                <option value="completed">Completed</option>
+            </select>
+
+            <select class="filter-select">
+                <option value="">Sort By</option>
+                <option value="date-desc">Date (Newest)</option>
+                <option value="date-asc">Date (Oldest)</option>
+                <option value="value-desc">Value (High to Low)</option>
+                <option value="value-asc">Value (Low to High)</option>
+            </select>
+
+            <button class="btn-filters">
+                <i class="material-icons" style="font-size: 16px;">filter_list</i>
+                More Filters
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Appraisals Table -->
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Property</th>
+                    <th>Address</th>
+                    <th>Client</th>
+                    <th>Appraiser</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Due Date</th>
+                    <th>Value</th>
+                    <th style="text-align: center;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- COMMERCIAL APPRAISALS -->
+                <tr data-property-type="commercial" onclick="alert('View appraisal details')">
+                    <td><strong>One Commerce Square</strong></td>
+                    <td>2005 Market St, Philadelphia, PA</td>
+                    <td>CBRE Investment Management</td>
+                    <td>Sarah Chen</td>
+                    <td><span class="property-type-badge">Commercial</span></td>
+                    <td><span class="status-badge in-progress">In Progress</span></td>
+                    <td>Jan 25, 2025</td>
+                    <td><strong>$145M</strong></td>
+                    <td style="text-align: center;">
+                        <button class="action-btn" title="Edit"><i class="material-icons" style="font-size: 18px;">edit</i></button>
+                        <button class="action-btn" title="View Report"><i class="material-icons" style="font-size: 18px;">description</i></button>
+                        <button class="action-btn" title="More"><i class="material-icons" style="font-size: 18px;">more_vert</i></button>
+                    </td>
+                </tr>
+                <tr data-property-type="commercial" onclick="alert('View appraisal details')">
+                    <td><strong>Gateway Office Park</strong></td>
+                    <td>1500 Market St, Denver, CO</td>
+                    <td>Blackstone Real Estate</td>
+                    <td>Michael Torres</td>
+                    <td><span class="property-type-badge">Commercial</span></td>
+                    <td><span class="status-badge under-review">Under Review</span></td>
+                    <td>Jan 30, 2025</td>
+                    <td><strong>$87.5M</strong></td>
+                    <td style="text-align: center;">
+                        <button class="action-btn" title="Edit"><i class="material-icons" style="font-size: 18px;">edit</i></button>
+                        <button class="action-btn" title="View Report"><i class="material-icons" style="font-size: 18px;">description</i></button>
+                        <button class="action-btn" title="More"><i class="material-icons" style="font-size: 18px;">more_vert</i></button>
+                    </td>
+                </tr>
+                <tr data-property-type="commercial" onclick="alert('View appraisal details')">
+                    <td><strong>Riverside Industrial Center</strong></td>
+                    <td>8900 Industrial Pkwy, Austin, TX</td>
+                    <td>Prologis</td>
+                    <td>David Kim</td>
+                    <td><span class="property-type-badge">Commercial</span></td>
+                    <td><span class="status-badge completed">Completed</span></td>
+                    <td>Jan 15, 2025</td>
+                    <td><strong>$42.3M</strong></td>
+                    <td style="text-align: center;">
+                        <button class="action-btn" title="Edit"><i class="material-icons" style="font-size: 18px;">edit</i></button>
+                        <button class="action-btn" title="View Report"><i class="material-icons" style="font-size: 18px;">description</i></button>
+                        <button class="action-btn" title="More"><i class="material-icons" style="font-size: 18px;">more_vert</i></button>
+                    </td>
+                </tr>
+                <tr data-property-type="commercial" onclick="alert('View appraisal details')">
+                    <td><strong>Tech Campus Phase II</strong></td>
+                    <td>3200 Mission College Blvd, Santa Clara, CA</td>
+                    <td>Google Real Estate</td>
+                    <td>Jennifer Park</td>
+                    <td><span class="property-type-badge">Commercial</span></td>
+                    <td><span class="status-badge in-progress">In Progress</span></td>
+                    <td>Feb 5, 2025</td>
+                    <td><strong>$285M</strong></td>
+                    <td style="text-align: center;">
+                        <button class="action-btn" title="Edit"><i class="material-icons" style="font-size: 18px;">edit</i></button>
+                        <button class="action-btn" title="View Report"><i class="material-icons" style="font-size: 18px;">description</i></button>
+                        <button class="action-btn" title="More"><i class="material-icons" style="font-size: 18px;">more_vert</i></button>
+                    </td>
+                </tr>
+                <tr data-property-type="commercial" onclick="alert('View appraisal details')">
+                    <td><strong>Downtown Retail Plaza</strong></td>
+                    <td>455 Main St, Seattle, WA</td>
+                    <td>Simon Property Group</td>
+                    <td>Robert Martinez</td>
+                    <td><span class="property-type-badge">Commercial</span></td>
+                    <td><span class="status-badge draft">Draft</span></td>
+                    <td>Feb 10, 2025</td>
+                    <td><strong>$52.8M</strong></td>
+                    <td style="text-align: center;">
+                        <button class="action-btn" title="Edit"><i class="material-icons" style="font-size: 18px;">edit</i></button>
+                        <button class="action-btn" title="View Report"><i class="material-icons" style="font-size: 18px;">description</i></button>
+                        <button class="action-btn" title="More"><i class="material-icons" style="font-size: 18px;">more_vert</i></button>
+                    </td>
+                </tr>
+
+                <!-- RESIDENTIAL APPRAISALS -->
+                <tr data-property-type="residential" onclick="alert('View appraisal details')" style="display: none;">
+                    <td><strong>Luxury Mountain Estate</strong></td>
+                    <td>4200 Alpine Ridge Rd, Aspen, CO</td>
+                    <td>Elite Properties LLC</td>
+                    <td>Amanda Stevens</td>
+                    <td><span class="property-type-badge">Residential</span></td>
+                    <td><span class="status-badge in-progress">In Progress</span></td>
+                    <td>Feb 1, 2025</td>
+                    <td><strong>$8.5M</strong></td>
+                    <td style="text-align: center;">
+                        <button class="action-btn" title="Edit"><i class="material-icons" style="font-size: 18px;">edit</i></button>
+                        <button class="action-btn" title="View Report"><i class="material-icons" style="font-size: 18px;">description</i></button>
+                        <button class="action-btn" title="More"><i class="material-icons" style="font-size: 18px;">more_vert</i></button>
+                    </td>
+                </tr>
+                <tr data-property-type="residential" onclick="alert('View appraisal details')" style="display: none;">
+                    <td><strong>Lakefront Custom Home</strong></td>
+                    <td>1850 Lakeshore Dr, Boulder, CO</td>
+                    <td>Mountain View Realty</td>
+                    <td>Brian Taylor</td>
+                    <td><span class="property-type-badge">Residential</span></td>
+                    <td><span class="status-badge completed">Completed</span></td>
+                    <td>Jan 18, 2025</td>
+                    <td><strong>$2.8M</strong></td>
+                    <td style="text-align: center;">
+                        <button class="action-btn" title="Edit"><i class="material-icons" style="font-size: 18px;">edit</i></button>
+                        <button class="action-btn" title="View Report"><i class="material-icons" style="font-size: 18px;">description</i></button>
+                        <button class="action-btn" title="More"><i class="material-icons" style="font-size: 18px;">more_vert</i></button>
+                    </td>
+                </tr>
+                <tr data-property-type="residential" onclick="alert('View appraisal details')" style="display: none;">
+                    <td><strong>Historic Craftsman Home</strong></td>
+                    <td>825 Park Ave, Denver, CO</td>
+                    <td>Heritage Home Buyers</td>
+                    <td>Christine Lee</td>
+                    <td><span class="property-type-badge">Residential</span></td>
+                    <td><span class="status-badge under-review">Under Review</span></td>
+                    <td>Jan 28, 2025</td>
+                    <td><strong>$1.2M</strong></td>
+                    <td style="text-align: center;">
+                        <button class="action-btn" title="Edit"><i class="material-icons" style="font-size: 18px;">edit</i></button>
+                        <button class="action-btn" title="View Report"><i class="material-icons" style="font-size: 18px;">description</i></button>
+                        <button class="action-btn" title="More"><i class="material-icons" style="font-size: 18px;">more_vert</i></button>
+                    </td>
+                </tr>
+                <tr data-property-type="residential" onclick="alert('View appraisal details')" style="display: none;">
+                    <td><strong>Modern Downtown Penthouse</strong></td>
+                    <td>2100 Larimer St #PH1, Denver, CO</td>
+                    <td>Urban Living Group</td>
+                    <td>Mark Johnson</td>
+                    <td><span class="property-type-badge">Residential</span></td>
+                    <td><span class="status-badge in-progress">In Progress</span></td>
+                    <td>Feb 6, 2025</td>
+                    <td><strong>$1.85M</strong></td>
+                    <td style="text-align: center;">
+                        <button class="action-btn" title="Edit"><i class="material-icons" style="font-size: 18px;">edit</i></button>
+                        <button class="action-btn" title="View Report"><i class="material-icons" style="font-size: 18px;">description</i></button>
+                        <button class="action-btn" title="More"><i class="material-icons" style="font-size: 18px;">more_vert</i></button>
+                    </td>
+                </tr>
+
+                <!-- LAND APPRAISALS -->
+                <tr data-property-type="land" onclick="alert('View appraisal details')" style="display: none;">
+                    <td><strong>Industrial Land Parcel</strong></td>
+                    <td>15500 E Colfax Ave, Aurora, CO</td>
+                    <td>Metro Industrial Development</td>
+                    <td>Patrick O'Brien</td>
+                    <td><span class="property-type-badge">Land</span></td>
+                    <td><span class="status-badge in-progress">In Progress</span></td>
+                    <td>Jan 29, 2025</td>
+                    <td><strong>$3.2M</strong></td>
+                    <td style="text-align: center;">
+                        <button class="action-btn" title="Edit"><i class="material-icons" style="font-size: 18px;">edit</i></button>
+                        <button class="action-btn" title="View Report"><i class="material-icons" style="font-size: 18px;">description</i></button>
+                        <button class="action-btn" title="More"><i class="material-icons" style="font-size: 18px;">more_vert</i></button>
+                    </td>
+                </tr>
+                <tr data-property-type="land" onclick="alert('View appraisal details')" style="display: none;">
+                    <td><strong>Corner Commercial Land</strong></td>
+                    <td>Highway 36 & 120th Ave, Westminster, CO</td>
+                    <td>Gateway Developments</td>
+                    <td>Rachel Martinez</td>
+                    <td><span class="property-type-badge">Land</span></td>
+                    <td><span class="status-badge completed">Completed</span></td>
+                    <td>Jan 14, 2025</td>
+                    <td><strong>$2.5M</strong></td>
+                    <td style="text-align: center;">
+                        <button class="action-btn" title="Edit"><i class="material-icons" style="font-size: 18px;">edit</i></button>
+                        <button class="action-btn" title="View Report"><i class="material-icons" style="font-size: 18px;">description</i></button>
+                        <button class="action-btn" title="More"><i class="material-icons" style="font-size: 18px;">more_vert</i></button>
+                    </td>
+                </tr>
+                <tr data-property-type="land" onclick="alert('View appraisal details')" style="display: none;">
+                    <td><strong>Agricultural Ranch Land</strong></td>
+                    <td>County Road 9, Fort Lupton, CO</td>
+                    <td>Colorado Ranch Holdings</td>
+                    <td>William Ford</td>
+                    <td><span class="property-type-badge">Land</span></td>
+                    <td><span class="status-badge draft">Draft</span></td>
+                    <td>Feb 12, 2025</td>
+                    <td><strong>$1.8M</strong></td>
+                    <td style="text-align: center;">
+                        <button class="action-btn" title="Edit"><i class="material-icons" style="font-size: 18px;">edit</i></button>
+                        <button class="action-btn" title="View Report"><i class="material-icons" style="font-size: 18px;">description</i></button>
+                        <button class="action-btn" title="More"><i class="material-icons" style="font-size: 18px;">more_vert</i></button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function filterAppraisalsByPropertyType(type) {
+            // Get all table rows with data-property-type attribute
+            const rows = document.querySelectorAll('tbody tr[data-property-type]');
+            
+            rows.forEach(row => {
+                const rowType = row.getAttribute('data-property-type');
+                if (rowType === type) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        function switchPropertyType(type) {
+            // Remove active class from all tabs
+            document.querySelectorAll('.comp-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            // Add active class to selected tab
+            document.querySelector(`[data-type="${type}"]`).classList.add('active');
+            
+            // Store preference
+            localStorage.setItem('activePropertyType', type);
+            
+            // Filter appraisals
+            filterAppraisalsByPropertyType(type);
+            
+            console.log('Switched to property type:', type);
+        }
+
+        // Restore saved property type and filter on page load
+        window.addEventListener('load', function() {
+            const savedType = localStorage.getItem('activePropertyType') || 'commercial';
+            
+            // Update active tab
+            document.querySelectorAll('.comp-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            const activeTab = document.querySelector(`[data-type="${savedType}"]`);
+            if (activeTab) {
+                activeTab.classList.add('active');
+            }
+            
+            // Filter appraisals
+            filterAppraisalsByPropertyType(savedType);
+        });
+    </script>
+</body>
+</html>

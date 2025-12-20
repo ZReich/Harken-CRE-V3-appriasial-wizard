@@ -1,0 +1,538 @@
+/* =================================================================
+   ENHANCED TEXTAREA COMPONENT
+   Features: Fullscreen, Rich Text, Spell Check, Snippets, AI
+   ================================================================= */
+
+/* Container */
+.enhanced-textarea-container {
+    position: relative;
+    margin-bottom: 1rem;
+}
+
+.enhanced-textarea-container.fullscreen {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    background: white;
+    margin: 0;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Label Row */
+.eta-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.eta-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: #374151;
+}
+
+.eta-label .required {
+    color: #ef4444;
+    margin-left: 2px;
+}
+
+/* Toolbar */
+.eta-toolbar {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.5rem;
+    background: #f9fafb;
+    border: 1px solid #e5e7eb;
+    border-bottom: none;
+    border-radius: 0.5rem 0.5rem 0 0;
+    flex-wrap: wrap;
+}
+
+.eta-toolbar-group {
+    display: flex;
+    align-items: center;
+    gap: 0.125rem;
+    padding-right: 0.5rem;
+    border-right: 1px solid #e5e7eb;
+}
+
+.eta-toolbar-group:last-child {
+    border-right: none;
+    margin-left: auto;
+}
+
+.eta-toolbar-btn {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    background: transparent;
+    color: #6b7280;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.eta-toolbar-btn:hover {
+    background: #e5e7eb;
+    color: #374151;
+}
+
+.eta-toolbar-btn.active {
+    background: #4db8d1;
+    color: white;
+}
+
+.eta-toolbar-btn svg {
+    width: 16px;
+    height: 16px;
+}
+
+/* Special Buttons */
+.eta-snippet-btn,
+.eta-ai-btn {
+    height: 28px;
+    padding: 0 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+    transition: all 0.15s;
+    border: 1px solid;
+}
+
+.eta-snippet-btn {
+    background: white;
+    color: #6366f1;
+    border-color: #6366f1;
+}
+
+.eta-snippet-btn:hover {
+    background: #eef2ff;
+}
+
+.eta-ai-btn {
+    background: linear-gradient(135deg, #4db8d1 0%, #7fcce0 100%);
+    color: white;
+    border-color: transparent;
+}
+
+.eta-ai-btn:hover {
+    background: linear-gradient(135deg, #3da8c1 0%, #6fc0d4 100%);
+}
+
+.eta-ai-btn:disabled {
+    background: #d1d5db;
+    cursor: not-allowed;
+}
+
+.eta-fullscreen-btn {
+    background: white;
+    color: #6b7280;
+    border-color: #e5e7eb;
+}
+
+.eta-fullscreen-btn:hover {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+/* Textarea */
+.eta-textarea {
+    width: 100%;
+    min-height: 120px;
+    padding: 0.75rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0 0 0.5rem 0.5rem;
+    font-size: 0.875rem;
+    line-height: 1.6;
+    color: #374151;
+    background: white;
+    resize: vertical;
+    font-family: inherit;
+}
+
+.eta-textarea:focus {
+    outline: none;
+    border-color: #4db8d1;
+    box-shadow: 0 0 0 3px rgba(77, 184, 209, 0.15);
+}
+
+.enhanced-textarea-container.fullscreen .eta-textarea {
+    flex: 1;
+    min-height: unset;
+    font-size: 1rem;
+    border-radius: 0 0 0.5rem 0.5rem;
+}
+
+/* Contenteditable for rich text */
+.eta-editor {
+    width: 100%;
+    min-height: 150px;
+    max-height: 400px;
+    padding: 1rem;
+    border: 1px solid #e5e7eb;
+    border-radius: 0 0 0.5rem 0.5rem;
+    font-size: 0.9375rem;
+    line-height: 1.7;
+    color: #374151;
+    background: white;
+    overflow-y: auto;
+    word-wrap: break-word;
+    white-space: pre-wrap;
+}
+
+.eta-editor:focus {
+    outline: none;
+    border-color: #4db8d1;
+    box-shadow: 0 0 0 3px rgba(77, 184, 209, 0.15);
+}
+
+/* Placeholder styling */
+.eta-editor:empty:before {
+    content: attr(data-placeholder);
+    color: #9ca3af;
+    font-style: italic;
+    pointer-events: none;
+}
+
+.eta-editor:focus:empty:before {
+    content: '';
+}
+
+.enhanced-textarea-container.fullscreen .eta-editor {
+    flex: 1;
+    min-height: unset;
+    max-height: unset;
+    font-size: 1.0625rem;
+    padding: 1.5rem;
+    line-height: 1.8;
+}
+
+.enhanced-textarea-container.fullscreen .eta-toolbar {
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem 0.5rem 0 0;
+}
+
+.enhanced-textarea-container.fullscreen .eta-label-row {
+    margin-bottom: 1rem;
+}
+
+.enhanced-textarea-container.fullscreen .eta-label {
+    font-size: 1.125rem;
+    font-weight: 600;
+}
+
+/* Helper text */
+.eta-helper {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-top: 0.375rem;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.eta-helper svg {
+    width: 14px;
+    height: 14px;
+    color: #9ca3af;
+}
+
+/* Snippets Dropdown */
+.eta-snippets-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    max-height: 300px;
+    overflow-y: auto;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 0.5rem;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    display: none;
+}
+
+.eta-snippets-dropdown.open {
+    display: block;
+}
+
+.eta-snippets-header {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: #f9fafb;
+}
+
+.eta-snippets-title {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+.eta-add-snippet-btn {
+    font-size: 0.75rem;
+    color: #4db8d1;
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.eta-add-snippet-btn:hover {
+    color: #3da8c1;
+}
+
+.eta-snippet-item {
+    padding: 0.75rem 1rem;
+    border-bottom: 1px solid #f3f4f6;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.eta-snippet-item:hover {
+    background: #f9fafb;
+}
+
+.eta-snippet-item:last-child {
+    border-bottom: none;
+}
+
+.eta-snippet-name {
+    font-size: 0.8125rem;
+    font-weight: 500;
+    color: #374151;
+    margin-bottom: 0.25rem;
+}
+
+.eta-snippet-preview {
+    font-size: 0.75rem;
+    color: #6b7280;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.eta-no-snippets {
+    padding: 1.5rem;
+    text-align: center;
+    color: #9ca3af;
+    font-size: 0.8125rem;
+}
+
+/* AI Loading State */
+.eta-ai-loading {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: rgba(77, 184, 209, 0.1);
+    border-radius: 0.375rem;
+    font-size: 0.75rem;
+    color: #4db8d1;
+    margin-top: 0.5rem;
+}
+
+.eta-ai-spinner {
+    width: 14px;
+    height: 14px;
+    border: 2px solid rgba(77, 184, 209, 0.3);
+    border-top-color: #4db8d1;
+    border-radius: 50%;
+    animation: eta-spin 0.8s linear infinite;
+}
+
+@keyframes eta-spin {
+    to { transform: rotate(360deg); }
+}
+
+/* AI Draft Preview */
+.eta-ai-preview {
+    margin-top: 0.75rem;
+    padding: 1rem;
+    background: #f0fdf4;
+    border: 1px solid #86efac;
+    border-radius: 0.5rem;
+}
+
+.eta-ai-preview-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.eta-ai-preview-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: #166534;
+    display: flex;
+    align-items: center;
+    gap: 0.375rem;
+}
+
+.eta-ai-preview-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.eta-ai-accept,
+.eta-ai-reject {
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 500;
+    border-radius: 0.25rem;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.eta-ai-accept {
+    background: #22c55e;
+    color: white;
+    border: none;
+}
+
+.eta-ai-accept:hover {
+    background: #16a34a;
+}
+
+.eta-ai-reject {
+    background: white;
+    color: #6b7280;
+    border: 1px solid #e5e7eb;
+}
+
+.eta-ai-reject:hover {
+    background: #f9fafb;
+    color: #374151;
+}
+
+.eta-ai-preview-text {
+    font-size: 0.8125rem;
+    color: #374151;
+    line-height: 1.6;
+    white-space: pre-wrap;
+}
+
+/* Add Snippet Modal */
+.eta-modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10000;
+}
+
+.eta-modal {
+    background: white;
+    border-radius: 0.75rem;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
+}
+
+.eta-modal-header {
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.eta-modal-title {
+    font-size: 1rem;
+    font-weight: 600;
+    color: #374151;
+}
+
+.eta-modal-close {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: none;
+    color: #6b7280;
+    cursor: pointer;
+    border-radius: 0.375rem;
+}
+
+.eta-modal-close:hover {
+    background: #f3f4f6;
+    color: #374151;
+}
+
+.eta-modal-body {
+    padding: 1.5rem;
+}
+
+.eta-modal-footer {
+    padding: 1rem 1.5rem;
+    border-top: 1px solid #e5e7eb;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+.eta-modal-cancel,
+.eta-modal-save {
+    padding: 0.5rem 1rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border-radius: 0.375rem;
+    cursor: pointer;
+    transition: all 0.15s;
+}
+
+.eta-modal-cancel {
+    background: white;
+    color: #6b7280;
+    border: 1px solid #e5e7eb;
+}
+
+.eta-modal-cancel:hover {
+    background: #f9fafb;
+}
+
+.eta-modal-save {
+    background: #4db8d1;
+    color: white;
+    border: none;
+}
+
+.eta-modal-save:hover {
+    background: #3da8c1;
+}
+
+/* Character/Word Count */
+.eta-counter {
+    font-size: 0.6875rem;
+    color: #9ca3af;
+    text-align: right;
+    margin-top: 0.25rem;
+}
+

@@ -1,0 +1,1215 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Visual Report Builder - Harken CRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            font-family: 'Montserrat', sans-serif !important;
+        }
+        body {
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+        }
+        .navbar {
+            background: url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;
+            background-color: #1c3643 !important;
+            max-height: 70px;
+            height: 70px;
+            color: #fff;
+        }
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 8px 20px;
+            border-radius: 25px;
+            transition: all 0.2s;
+            font-size: 14px;
+        }
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+        .nav-link.active {
+            background-color: transparent;
+            border: 1px solid #0da1c7;
+            color: #0da1c7;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            background: #6b46c1;
+            color: white;
+            padding: 12px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .top-bar-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .top-bar-title {
+            font-weight: 700;
+            font-size: 14px;
+            background: white;
+            color: #6b46c1;
+            padding: 8px 16px;
+            border-radius: 4px;
+        }
+        .top-bar-controls {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .top-bar-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .top-bar-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+        .top-bar-btn.primary {
+            background: white;
+            color: #6b46c1;
+        }
+        .top-bar-btn.primary:hover {
+            background: #f0f0f0;
+        }
+
+        /* Template Type Toggle - Compact for Top Bar */
+        .template-type-toggle-compact {
+            display: inline-flex;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            padding: 2px;
+            gap: 2px;
+        }
+        .toggle-option-compact {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+        }
+        .toggle-option-compact input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .toggle-option-compact span {
+            padding: 6px 16px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.7);
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .toggle-option-compact input:checked + span {
+            background: white;
+            color: #6b46c1;
+        }
+        .toggle-option-compact:hover span {
+            color: white;
+        }
+        .toggle-option-compact input:checked + span:hover {
+            color: #6b46c1;
+        }
+
+        /* Main Layout */
+        .builder-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr 320px;
+            height: calc(100vh - 70px - 52px);
+            overflow: hidden;
+        }
+
+        /* Left Panel - Pages List */
+        .pages-panel {
+            background: white;
+            border-right: 1px solid #e0e0e0;
+            overflow-y: auto;
+            padding: 16px;
+        }
+        .pages-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #687F8B;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+            letter-spacing: 0.5px;
+        }
+        .page-item {
+            background: #f9f9f9;
+            border: 2px solid #e0e0e0;
+            border-radius: 4px;
+            padding: 12px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .page-item:hover {
+            border-color: #0da1c7;
+            background: #e8f5f7;
+        }
+        .page-item.active {
+            border-color: #0da1c7;
+            background: #e8f5f7;
+            box-shadow: 0 2px 4px rgba(13, 161, 199, 0.2);
+        }
+        .page-item.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .page-checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #0da1c7;
+        }
+        .page-label {
+            flex: 1;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1c3643;
+        }
+        .page-label.disabled {
+            color: #687F8B;
+        }
+
+        /* Center Panel - Visual Preview */
+        .preview-panel {
+            background: #e0e0e0;
+            overflow: auto;
+            padding: 40px;
+            position: relative;
+        }
+        .preview-page {
+            background: white;
+            width: 8.5in;
+            min-height: 11in;
+            margin: 0 auto;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            position: relative;
+            cursor: default;
+        }
+
+        /* Editable Sections */
+        .report-section {
+            position: relative;
+            padding: 20px;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+            cursor: pointer;
+        }
+        .report-section:hover {
+            border-color: #0da1c7;
+            background: rgba(13, 161, 199, 0.05);
+        }
+        .report-section.selected {
+            border-color: #0da1c7;
+            background: rgba(13, 161, 199, 0.08);
+            box-shadow: inset 0 0 0 1px #0da1c7;
+        }
+        .report-section.dragging {
+            opacity: 0.5;
+        }
+        .section-controls {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            display: none;
+            gap: 4px;
+            z-index: 10;
+        }
+        .report-section:hover .section-controls,
+        .report-section.selected .section-controls {
+            display: flex;
+        }
+        .section-control-btn {
+            background: #0da1c7;
+            border: none;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .section-control-btn:hover {
+            background: #0890a8;
+        }
+        .section-control-btn.delete {
+            background: #dc2626;
+        }
+        .section-control-btn.delete:hover {
+            background: #b91c1c;
+        }
+
+        /* Drag Handle */
+        .drag-handle {
+            position: absolute;
+            left: 4px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 40px;
+            background: #0da1c7;
+            border-radius: 4px;
+            cursor: move;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 16px;
+        }
+        .report-section:hover .drag-handle,
+        .report-section.selected .drag-handle {
+            display: flex;
+        }
+
+        /* Report Elements */
+        .report-header {
+            background: #dc2626;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .report-banner-logo {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        .report-banner-text {
+            font-size: 14px;
+            font-weight: 400;
+        }
+        .report-hero-image {
+            width: 100%;
+            height: 300px;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #687F8B;
+            font-size: 14px;
+            position: relative;
+            overflow: hidden;
+        }
+        .report-hero-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .report-title-bar {
+            background: #374151;
+            color: white;
+            padding: 16px 20px;
+        }
+        .report-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin: 0;
+        }
+        .report-subtitle {
+            font-size: 14px;
+            margin: 4px 0 0 0;
+        }
+        .report-content-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 20px;
+        }
+        .content-box {
+            border: 1px solid #e0e0e0;
+            padding: 16px;
+            border-radius: 4px;
+        }
+        .content-box-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #dc2626;
+            margin-bottom: 12px;
+        }
+        .content-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .content-list li {
+            padding: 6px 0;
+            font-size: 13px;
+            color: #1c3643;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .content-list li:last-child {
+            border-bottom: none;
+        }
+
+        /* Right Panel - Options */
+        .options-panel {
+            background: white;
+            border-left: 1px solid #e0e0e0;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .options-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1c3643;
+            margin-bottom: 20px;
+        }
+        .option-group {
+            margin-bottom: 24px;
+        }
+        .option-label {
+            font-size: 12px;
+            font-weight: 700;
+            color: #687F8B;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            letter-spacing: 0.5px;
+        }
+        .option-input {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+        .option-input:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .option-select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 13px;
+            background: white;
+            cursor: pointer;
+        }
+        .option-select:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .option-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .option-toggle input {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: #0da1c7;
+        }
+        .option-toggle label {
+            font-size: 13px;
+            color: #1c3643;
+            cursor: pointer;
+        }
+        .color-picker-group {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 8px;
+        }
+        .color-box {
+            width: 100%;
+            height: 40px;
+            border-radius: 4px;
+            border: 2px solid #e0e0e0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .color-box:hover {
+            border-color: #0da1c7;
+        }
+        .color-box.selected {
+            border-color: #0da1c7;
+            box-shadow: 0 0 0 2px rgba(13, 161, 199, 0.3);
+        }
+
+        /* Action Buttons */
+        .action-button {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 8px;
+        }
+        .action-button-primary {
+            background: #0da1c7;
+            color: white;
+        }
+        .action-button-primary:hover {
+            background: #0890a8;
+        }
+        .action-button-danger {
+            background: #dc2626;
+            color: white;
+        }
+        .action-button-danger:hover {
+            background: #b91c1c;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #687F8B;
+        }
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+        .empty-state-text {
+            font-size: 14px;
+        }
+
+        /* Tooltips */
+        .tooltip {
+            position: relative;
+            display: inline-block;
+        }
+        .tooltip .tooltiptext {
+            visibility: hidden;
+            width: 200px;
+            background-color: #1c3643;
+            color: #fff;
+            text-align: center;
+            border-radius: 4px;
+            padding: 8px;
+            position: absolute;
+            z-index: 1000;
+            bottom: 125%;
+            left: 50%;
+            margin-left: -100px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 12px;
+        }
+        .tooltip:hover .tooltiptext {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        /* Zoom Controls */
+        .zoom-controls {
+            position: fixed;
+            bottom: 20px;
+            right: 360px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            padding: 8px;
+            display: flex;
+            gap: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            z-index: 100;
+        }
+        .zoom-btn {
+            background: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            width: 32px;
+            height: 32px;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .zoom-btn:hover {
+            background: #0da1c7;
+            color: white;
+            border-color: #0da1c7;
+        }
+        .zoom-level {
+            padding: 0 12px;
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1c3643;
+        }
+
+        /* Success Message */
+        .success-toast {
+            position: fixed;
+            top: 90px;
+            right: 20px;
+            background: #2e7d32;
+            color: white;
+            padding: 16px 20px;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: none;
+            align-items: center;
+            gap: 12px;
+            z-index: 1000;
+            animation: slideIn 0.3s ease-out;
+        }
+        .success-toast.active {
+            display: flex;
+        }
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Toggle Button (initially hidden) -->
+    <button id="showBuildNotesBtn" 
+            style="position: fixed; top: 100px; right: 20px; z-index: 9999; 
+                   padding: 12px 20px; background: #ffc107; color: #856404; 
+                   border: 2px solid #856404; border-radius: 25px; 
+                   font-size: 14px; font-weight: 700; cursor: pointer; 
+                   box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+                   display: none; transition: all 0.3s;"
+            onclick="toggleBuildNotes(true)">
+        🔨 Show Build Notes
+    </button>
+
+    <!-- UNIFIED NAVIGATION COMPONENT -->
+    <style>.unified-navbar{background:url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;background-color:#1c3643!important;height:84px;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 32px;box-shadow:0 2px 8px rgba(0,0,0,0.1);position:sticky;top:0;z-index:1000}.nav-logo{height:40px;width:auto;cursor:pointer}.nav-center{display:flex;align-items:center;gap:8px;flex:1;justify-content:center}.nav-core-features{display:flex;align-items:center;gap:4px;background:rgba(13, 161, 199, 0.08);border-radius:25px;padding:4px 8px;margin-right:16px}.nav-link{color:white;text-decoration:none;padding:10px 20px;border-radius:25px;transition:all 0.2s;border:1px solid transparent;font-weight:500;font-size:14px;white-space:nowrap}.nav-link:hover{background-color:rgba(255,255,255,0.08)}.nav-link.core-feature{font-weight:500;font-size:14px;color:white}.nav-link.core-feature:hover{background-color:rgba(13, 161, 199, 0.2);color:white}.nav-link.core-feature.active{background-color:transparent;border:1px solid #0da1c7;color:#0da1c7;box-shadow:0 2px 4px rgba(13, 161, 199, 0.2)}.nav-link.active{background-color:transparent;border:1px solid #0da1c7;color:#0da1c7}.nav-separator{width:1px;height:24px;background:rgba(255, 255, 255, 0.2);margin:0 8px}.nav-user{display:flex;align-items:center;gap:12px}.nav-user-name{font-size:14px;font-weight:500;color:white}.nav-user-avatar{width:36px;height:36px;border-radius:50%;border:2px solid #0da1c7}.property-tabs-container{background:white;border-bottom:2px solid #e0e0e0;display:none;padding:0 32px}.property-tabs-container.show{display:flex}.property-tab{padding:16px 24px;border:none;background:transparent;color:#687F8B;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:8px;border-bottom:3px solid transparent;margin-bottom:-2px;font-family:'Montserrat', sans-serif}.property-tab:hover{color:#0da1c7;background:#f0fbfd}.property-tab.active{color:#0da1c7;border-bottom-color:#0da1c7;background:#f0fbfd}</style><nav class="unified-navbar"><img src="assets/harken.png" alt="Harken CRE" class="nav-logo" onclick="window.location.href='super-admin-dashboard.html'"><div class="nav-center"><div class="nav-core-features"><a href="super-admin-comps.html" class="nav-link core-feature" id="nav-comps">COMPS</a><a href="super-admin-appraisals-list.html" class="nav-link core-feature" id="nav-appraisals">APPRAISAL</a><a href="evaluation-wizard-full.html" class="nav-link core-feature" id="nav-evaluations">EVALUATION</a></div><div class="nav-separator"></div><a href="super-admin-dashboard.html" class="nav-link" id="nav-dashboard">Dashboard</a><a href="super-admin-users.html" class="nav-link" id="nav-users">Users</a><a href="super-admin-clients.html" class="nav-link" id="nav-clients">Clients</a><a href="super-admin-accounts.html" class="nav-link" id="nav-accounts">Accounts</a><a href="super-admin-reports.html" class="nav-link" id="nav-reports">Reports</a><a href="super-admin-support-tickets.html" class="nav-link" id="nav-support">Support</a><a href="super-admin-audit-logs.html" class="nav-link" id="nav-audit">Audit Logs</a><a href="super-admin-settings.html" class="nav-link" id="nav-settings">Settings</a></div><div class="nav-user"><span class="nav-user-name">Harken Admin</span><img src="https://i.pravatar.cc/150?img=33" alt="User" class="nav-user-avatar"></div></nav><div class="property-tabs-container" id="propertyTabsContainer"><button class="property-tab active" data-type="commercial" onclick="switchPropertyType('commercial')"><span style="font-size: 18px;">🏢</span>Commercial</button><button class="property-tab" data-type="residential" onclick="switchPropertyType('residential')"><span style="font-size: 18px;">🏠</span>Residential</button><button class="property-tab" data-type="land" onclick="switchPropertyType('land')"><span style="font-size: 18px;">🏞️</span>Land</button></div><script>(function(){const currentPage=window.location.pathname.split('/').pop()||'super-admin-dashboard.html';const showPropertyTabsOn=['comps-premium-with-clustering.html','super-admin-appraisals-list.html','evaluation-wizard-full.html'];if(showPropertyTabsOn.some(page=>currentPage.includes(page)||currentPage.includes('comps-')||currentPage.includes('appraisal-')||currentPage.includes('evaluation-'))){document.getElementById('propertyTabsContainer').classList.add('show');}const navMapping={'super-admin-dashboard.html':'nav-dashboard','comps-premium-with-clustering.html':'nav-comps','super-admin-appraisals-list.html':'nav-appraisals','evaluation-wizard-full.html':'nav-evaluations','super-admin-users.html':'nav-users','super-admin-user-edit.html':'nav-users','super-admin-clients.html':'nav-clients','super-admin-accounts.html':'nav-accounts','super-admin-account-manage.html':'nav-accounts','super-admin-account-amenities.html':'nav-accounts','super-admin-account-report-templates.html':'nav-accounts','super-admin-reports.html':'nav-reports','super-admin-support-tickets.html':'nav-support','super-admin-support-create-ticket.html':'nav-support','super-admin-support-ticket-detail.html':'nav-support','super-admin-audit-logs.html':'nav-audit','super-admin-settings.html':'nav-settings','super-admin-settings-billing.html':'nav-settings','super-admin-settings-amenities.html':'nav-settings','super-admin-settings-white-label.html':'nav-settings'};for(const[page,navId]of Object.entries(navMapping)){if(currentPage.includes(page)){const navElement=document.getElementById(navId);if(navElement){navElement.classList.add('active');}break;}}})();function switchPropertyType(type){document.querySelectorAll('.property-tab').forEach(tab=>{tab.classList.remove('active');});document.querySelector(`[data-type="${type}"]`).classList.add('active');localStorage.setItem('activePropertyType',type);console.log('Switched to property type:',type);}window.addEventListener('load',function(){const savedType=localStorage.getItem('activePropertyType');if(savedType){switchPropertyType(savedType);}});</script>
+
+    <!-- BUILD NOTES SECTION -->
+    <div style="padding: 20px 35px 0 35px;">
+        <div id="buildNotesSection" style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 20px; margin-bottom: 24px; border-radius: 4px;">
+            <h3 style="color: #856404; font-size: 16px; font-weight: 700; margin: 0 0 16px 0;">🔨 BUILD NOTES - VISUAL EDITOR (MOST ADVANCED)</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 16px;">
+                <div>
+                    <strong style="color: #856404;">Priority Level:</strong> Low
+                </div>
+                <div>
+                    <strong style="color: #856404;">Recommended Customer Count:</strong> 20+ customers
+                </div>
+                <div>
+                    <strong style="color: #856404;">Development Stage:</strong> Phase 4
+                </div>
+                <div>
+                    <strong style="color: #856404;">Estimated Build Time:</strong> 6-8 weeks
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #856404;">Purpose & Use Case:</strong>
+                <p style="margin: 4px 0 0 0; color: #856404;">Full visual page editor for report templates - like Canva for appraisal reports. Drag-drop elements, resize, position anywhere. This is the "power user" version of super-admin-account-report-templates.html. Extremely complex to build and maintain. Only consider if you have enterprise customers willing to pay premium for complete design control.</p>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #856404;">Key Features Explained:</strong>
+                <ul style="margin: 4px 0 0 0; color: #856404;">
+                    <li><strong>Visual Canvas:</strong> WYSIWYG editor for page layout. Like Microsoft Word or Canva. Very complex.</li>
+                    <li><strong>Element Palette:</strong> Drag text boxes, images, charts, tables onto page. Each element type needs custom code.</li>
+                    <li><strong>Property Inspector:</strong> Adjust fonts, colors, sizes, positioning. Hundreds of settings to manage.</li>
+                    <li><strong>Page Management:</strong> Add/remove/reorder pages. Template state management.</li>
+                    <li><strong>Live Preview:</strong> See changes in real-time. Performance challenge with large documents.</li>
+                    <li><strong>Data Binding:</strong> Connect visual elements to property data fields. Complex mapping logic.</li>
+                </ul>
+            </div>
+            
+            <div>
+                <strong style="color: #856404;">Implementation Notes:</strong>
+                <p style="margin: 4px 0 0 0; color: #856404;">DEFINITELY SKIP. This is a 2-3 month project minimum. Alternative: Use existing tools like Webflow, Canva API, or PandaDoc for custom layouts. Or manually create templates in InDesign/Word per customer request. Only build if: (1) You have 50+ customers, (2) Template customization is primary selling point, (3) You're charging premium ($500+/month) for this feature. Even then, consider buying/integrating existing PDF template editor (Carbone.io, PDF.co, etc.) instead of building from scratch.</p>
+            </div>
+            
+            <button onclick="toggleBuildNotes(false)" style="margin-top: 12px; padding: 6px 12px; background: #856404; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">Hide Build Notes</button>
+        </div>
+    </div>
+
+    <!-- Top Bar -->
+    <div class="top-bar">
+        <div class="top-bar-left">
+            <div class="top-bar-title">Page 1: Property Summary</div>
+            <div class="top-bar-controls">
+                <div class="template-type-toggle-compact">
+                    <label class="toggle-option-compact">
+                        <input type="radio" name="visualTemplateType" value="evaluation" checked onchange="switchVisualTemplateType('evaluation')" />
+                        <span>Evaluation</span>
+                    </label>
+                    <label class="toggle-option-compact">
+                        <input type="radio" name="visualTemplateType" value="appraisal" onchange="switchVisualTemplateType('appraisal')" />
+                        <span>Appraisal</span>
+                    </label>
+                </div>
+                <select class="top-bar-btn" style="cursor: pointer;">
+                    <option>Page</option>
+                    <option>Add New Page</option>
+                </select>
+                <button class="top-bar-btn" onclick="duplicatePage()">📋 Duplicate</button>
+                <button class="top-bar-btn" onclick="deletePage()">🗑️ Delete</button>
+            </div>
+        </div>
+        <div class="top-bar-controls">
+            <button class="top-bar-btn" onclick="showList()">← Back to Templates</button>
+            <button class="top-bar-btn primary" onclick="saveTemplate()">💾 Save Template</button>
+            <button class="top-bar-btn primary" onclick="doneEditing()">Done Editing</button>
+        </div>
+    </div>
+
+    <!-- Main Builder Layout -->
+    <div class="builder-layout">
+        <!-- Left Panel: Pages -->
+        <div class="pages-panel">
+            <div class="pages-title">Document Pages</div>
+            
+            <div class="page-item active" onclick="selectPage(this, 'property-summary')">
+                <input type="checkbox" class="page-checkbox" checked onclick="event.stopPropagation(); togglePage(this)" />
+                <div class="page-label">Property Summary</div>
+            </div>
+
+            <div class="page-item" onclick="selectPage(this, 'site-plans')">
+                <input type="checkbox" class="page-checkbox" checked onclick="event.stopPropagation(); togglePage(this)" />
+                <div class="page-label">Site Plans</div>
+            </div>
+
+            <div class="page-item" onclick="selectPage(this, 'highlights')">
+                <input type="checkbox" class="page-checkbox" checked onclick="event.stopPropagation(); togglePage(this)" />
+                <div class="page-label">Property Highlights</div>
+            </div>
+
+            <div class="page-item" onclick="selectPage(this, 'description')">
+                <input type="checkbox" class="page-checkbox" checked onclick="event.stopPropagation(); togglePage(this)" />
+                <div class="page-label">Description</div>
+            </div>
+
+            <div class="page-item" onclick="selectPage(this, 'demographics')">
+                <input type="checkbox" class="page-checkbox" onclick="event.stopPropagation(); togglePage(this)" />
+                <div class="page-label disabled">Demographics</div>
+            </div>
+
+            <div class="page-item" onclick="selectPage(this, 'location-map')">
+                <input type="checkbox" class="page-checkbox" checked onclick="event.stopPropagation(); togglePage(this)" />
+                <div class="page-label">Location Map</div>
+            </div>
+
+            <div class="page-item" onclick="selectPage(this, 'aerials')">
+                <input type="checkbox" class="page-checkbox" checked onclick="event.stopPropagation(); togglePage(this)" />
+                <div class="page-label">Property Aerials</div>
+            </div>
+
+            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
+                <button class="action-button action-button-primary" onclick="addNewPage()">+ Add New Page</button>
+            </div>
+        </div>
+
+        <!-- Center Panel: Visual Preview -->
+        <div class="preview-panel" id="previewPanel">
+            <div class="preview-page" id="reportPreview">
+                <!-- Banner Section (Editable) -->
+                <div class="report-section selected" id="section-banner" data-section="banner" onclick="selectSection(this)">
+                    <div class="drag-handle">⋮⋮</div>
+                    <div class="section-controls">
+                        <button class="section-control-btn" onclick="event.stopPropagation(); editSection('banner')" title="Edit">✎</button>
+                        <button class="section-control-btn delete" onclick="event.stopPropagation(); deleteSection('banner')" title="Delete">×</button>
+                    </div>
+                    <div class="report-header">
+                        <div class="report-banner-logo">NAI Business Properties</div>
+                        <div class="report-banner-text">FOR LEASE • OFFICE BUILDING • 11,009 SF</div>
+                    </div>
+                </div>
+
+                <!-- Hero Image Section (Editable) -->
+                <div class="report-section" id="section-hero" data-section="hero" onclick="selectSection(this)">
+                    <div class="drag-handle">⋮⋮</div>
+                    <div class="section-controls">
+                        <button class="section-control-btn" onclick="event.stopPropagation(); editSection('hero')" title="Edit">✎</button>
+                        <button class="section-control-btn delete" onclick="event.stopPropagation(); deleteSection('hero')" title="Delete">×</button>
+                    </div>
+                    <div class="report-hero-image">
+                        <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800" alt="Property" />
+                    </div>
+                </div>
+
+                <!-- Title Bar Section (Editable) -->
+                <div class="report-section" id="section-title" data-section="title" onclick="selectSection(this)">
+                    <div class="drag-handle">⋮⋮</div>
+                    <div class="section-controls">
+                        <button class="section-control-btn" onclick="event.stopPropagation(); editSection('title')" title="Edit">✎</button>
+                        <button class="section-control-btn delete" onclick="event.stopPropagation(); deleteSection('title')" title="Delete">×</button>
+                    </div>
+                    <div class="report-title-bar">
+                        <h1 class="report-title">Millennium Building</h1>
+                        <p class="report-subtitle">2913 Millennium Circle | Billings, Montana 59102</p>
+                    </div>
+                </div>
+
+                <!-- Content Row Section (Editable) -->
+                <div class="report-section" id="section-content" data-section="content" onclick="selectSection(this)">
+                    <div class="drag-handle">⋮⋮</div>
+                    <div class="section-controls">
+                        <button class="section-control-btn" onclick="event.stopPropagation(); editSection('content')" title="Edit">✎</button>
+                        <button class="section-control-btn delete" onclick="event.stopPropagation(); deleteSection('content')" title="Delete">×</button>
+                    </div>
+                    <div class="report-content-row">
+                        <div class="content-box">
+                            <div class="content-box-title">Highlights</div>
+                            <ul class="content-list">
+                                <li>11,009 Rentable SF</li>
+                                <li>11 offices & conference room</li>
+                                <li>Shared storage room</li>
+                                <li>Shared restrooms</li>
+                                <li>Shared break room</li>
+                                <li>Convenient parking</li>
+                            </ul>
+                        </div>
+                        <div class="content-box">
+                            <div class="content-box-title">Offering Summary</div>
+                            <ul class="content-list">
+                                <li><strong>Lease Rate:</strong> $19.00 SF/yr (NNN)</li>
+                                <li><strong>Available SF:</strong> 11,009 SF</li>
+                                <li><strong>Building Size:</strong> 20,000 SF</li>
+                            </ul>
+                            <div class="content-box-title" style="margin-top: 16px;">Demographics</div>
+                            <ul class="content-list">
+                                <li><strong>0.3 miles:</strong> 2,230 households</li>
+                                <li><strong>0.5 miles:</strong> 4,680 population</li>
+                                <li><strong>1 mile:</strong> $75,000 avg income</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Options -->
+        <div class="options-panel">
+            <div class="options-title" id="optionsTitle">Banner Options</div>
+
+            <div id="optionsContent">
+                <!-- Banner Options -->
+                <div id="options-banner">
+                    <div class="option-group">
+                        <div class="option-label">Background Color</div>
+                        <div class="color-picker-group">
+                            <div class="color-box selected" style="background: #dc2626;" onclick="selectColor(this, '#dc2626')"></div>
+                            <div class="color-box" style="background: #0da1c7;" onclick="selectColor(this, '#0da1c7')"></div>
+                            <div class="color-box" style="background: #1c3643;" onclick="selectColor(this, '#1c3643')"></div>
+                            <div class="color-box" style="background: #6b46c1;" onclick="selectColor(this, '#6b46c1')"></div>
+                            <div class="color-box" style="background: #2e7d32;" onclick="selectColor(this, '#2e7d32')"></div>
+                            <div class="color-box" style="background: #f59e0b;" onclick="selectColor(this, '#f59e0b')"></div>
+                        </div>
+                    </div>
+
+                    <div class="option-group">
+                        <div class="option-label">Logo Text</div>
+                        <input type="text" class="option-input" value="NAI Business Properties" onchange="updateBannerLogo(this.value)" />
+                    </div>
+
+                    <div class="option-group">
+                        <div class="option-label">Banner Text</div>
+                        <input type="text" class="option-input" value="FOR LEASE • OFFICE BUILDING • 11,009 SF" onchange="updateBannerText(this.value)" />
+                    </div>
+
+                    <div class="option-group">
+                        <div class="option-label">Text Alignment</div>
+                        <select class="option-select" onchange="updateBannerAlignment(this.value)">
+                            <option value="center">Center</option>
+                            <option value="left">Left</option>
+                            <option value="right">Right</option>
+                        </select>
+                    </div>
+
+                    <div class="option-group">
+                        <div class="option-label">Display Options</div>
+                        <div class="option-toggle">
+                            <input type="checkbox" id="showLogo" checked onchange="toggleBannerLogo(this.checked)" />
+                            <label for="showLogo">Show Logo</label>
+                        </div>
+                        <div class="option-toggle">
+                            <input type="checkbox" id="showBannerText" checked onchange="toggleBannerSubtext(this.checked)" />
+                            <label for="showBannerText">Show Banner Text</label>
+                        </div>
+                    </div>
+
+                    <div class="option-group" style="margin-top: 24px;">
+                        <button class="action-button action-button-danger" onclick="deleteSection('banner')">🗑️ Delete Section</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Zoom Controls -->
+    <div class="zoom-controls">
+        <button class="zoom-btn" onclick="zoomOut()">-</button>
+        <div class="zoom-level" id="zoomLevel">100%</div>
+        <button class="zoom-btn" onclick="zoomIn()">+</button>
+        <button class="zoom-btn" onclick="zoomReset()">⟲</button>
+    </div>
+
+    <!-- Success Toast -->
+    <div class="success-toast" id="successToast">
+        <span style="font-size: 20px;">✓</span>
+        <span id="toastMessage">Changes saved successfully!</span>
+    </div>
+
+    <script>
+        let currentZoom = 100;
+        let selectedSection = 'banner';
+        let activeVisualTemplateType = 'evaluation'; // 'evaluation' or 'appraisal'
+
+        // Initialize drag and drop and load saved template type
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load saved template type from localStorage
+            const savedType = localStorage.getItem('visualTemplateType');
+            if (savedType && (savedType === 'appraisal' || savedType === 'evaluation')) {
+                activeVisualTemplateType = savedType;
+                document.querySelector(`input[name="visualTemplateType"][value="${savedType}"]`).checked = true;
+            }
+            
+            initDragAndDrop();
+            updateTemplateTypeDisplay();
+        });
+
+        // Template Type Switching
+        function switchVisualTemplateType(type) {
+            activeVisualTemplateType = type;
+            localStorage.setItem('visualTemplateType', type);
+            
+            // Update page title to reflect type
+            updateTemplateTypeDisplay();
+            
+            // Show success message
+            showToast(`Switched to ${type === 'appraisal' ? 'Appraisal' : 'Evaluation'} template mode`);
+        }
+
+        function updateTemplateTypeDisplay() {
+            const title = document.querySelector('.top-bar-title');
+            const typeLabel = activeVisualTemplateType === 'appraisal' ? 'Appraisal' : 'Evaluation';
+            if (title && !title.textContent.includes(typeLabel)) {
+                title.textContent = title.textContent + ` (${typeLabel})`;
+            }
+        }
+
+        function initDragAndDrop() {
+            const sections = document.querySelectorAll('.report-section');
+            
+            sections.forEach(section => {
+                section.setAttribute('draggable', 'true');
+                
+                section.addEventListener('dragstart', function(e) {
+                    this.classList.add('dragging');
+                    e.dataTransfer.effectAllowed = 'move';
+                    e.dataTransfer.setData('text/html', this.innerHTML);
+                });
+                
+                section.addEventListener('dragend', function() {
+                    this.classList.remove('dragging');
+                });
+                
+                section.addEventListener('dragover', function(e) {
+                    e.preventDefault();
+                    e.dataTransfer.dropEffect = 'move';
+                    
+                    const dragging = document.querySelector('.dragging');
+                    const afterElement = getDragAfterElement(this.parentElement, e.clientY);
+                    
+                    if (afterElement == null) {
+                        this.parentElement.appendChild(dragging);
+                    } else {
+                        this.parentElement.insertBefore(dragging, afterElement);
+                    }
+                });
+            });
+        }
+
+        function getDragAfterElement(container, y) {
+            const draggableElements = [...container.querySelectorAll('.report-section:not(.dragging)')];
+            
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+                
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+
+        function selectSection(element) {
+            // Remove previous selection
+            document.querySelectorAll('.report-section').forEach(s => {
+                s.classList.remove('selected');
+            });
+            
+            // Add selection to clicked section
+            element.classList.add('selected');
+            
+            // Get section type
+            const sectionType = element.getAttribute('data-section');
+            selectedSection = sectionType;
+            
+            // Update options panel
+            updateOptionsPanel(sectionType);
+        }
+
+        function updateOptionsPanel(sectionType) {
+            const optionsTitle = document.getElementById('optionsTitle');
+            const optionsContent = document.getElementById('optionsContent');
+            
+            // Update title
+            const titles = {
+                'banner': 'Banner Options',
+                'hero': 'Hero Image Options',
+                'title': 'Title Bar Options',
+                'content': 'Content Options'
+            };
+            optionsTitle.textContent = titles[sectionType] || 'Section Options';
+            
+            // Show relevant options
+            document.querySelectorAll('[id^="options-"]').forEach(opt => {
+                opt.style.display = 'none';
+            });
+            
+            const optionsId = `options-${sectionType}`;
+            const optionsElement = document.getElementById(optionsId);
+            if (optionsElement) {
+                optionsElement.style.display = 'block';
+            } else {
+                // Show generic options
+                optionsContent.innerHTML = `
+                    <div class="option-group">
+                        <div class="option-label">Section Type</div>
+                        <div style="font-size: 13px; color: #1c3643; padding: 10px; background: #f9f9f9; border-radius: 4px;">
+                            ${sectionType}
+                        </div>
+                    </div>
+                    <div class="option-group">
+                        <div class="option-label">Display</div>
+                        <div class="option-toggle">
+                            <input type="checkbox" checked />
+                            <label>Show this section</label>
+                        </div>
+                    </div>
+                    <div class="option-group" style="margin-top: 24px;">
+                        <button class="action-button action-button-danger" onclick="deleteSection('${sectionType}')">🗑️ Delete Section</button>
+                    </div>
+                `;
+            }
+        }
+
+        function selectColor(element, color) {
+            // Remove previous selection
+            element.parentElement.querySelectorAll('.color-box').forEach(box => {
+                box.classList.remove('selected');
+            });
+            
+            // Select new color
+            element.classList.add('selected');
+            
+            // Update banner color
+            const banner = document.querySelector('.report-header');
+            if (banner) {
+                banner.style.background = color;
+            }
+            
+            showToast('Color updated');
+        }
+
+        function updateBannerLogo(value) {
+            const logo = document.querySelector('.report-banner-logo');
+            if (logo) {
+                logo.textContent = value;
+                showToast('Logo text updated');
+            }
+        }
+
+        function updateBannerText(value) {
+            const text = document.querySelector('.report-banner-text');
+            if (text) {
+                text.textContent = value;
+                showToast('Banner text updated');
+            }
+        }
+
+        function updateBannerAlignment(value) {
+            const banner = document.querySelector('.report-header');
+            if (banner) {
+                banner.style.textAlign = value;
+                showToast('Alignment updated');
+            }
+        }
+
+        function toggleBannerLogo(checked) {
+            const logo = document.querySelector('.report-banner-logo');
+            if (logo) {
+                logo.style.display = checked ? 'block' : 'none';
+                showToast(checked ? 'Logo shown' : 'Logo hidden');
+            }
+        }
+
+        function toggleBannerSubtext(checked) {
+            const text = document.querySelector('.report-banner-text');
+            if (text) {
+                text.style.display = checked ? 'block' : 'none';
+                showToast(checked ? 'Text shown' : 'Text hidden');
+            }
+        }
+
+        function editSection(sectionId) {
+            showToast('Opening editor for ' + sectionId);
+        }
+
+        function deleteSection(sectionId) {
+            if (confirm('Delete this section? This cannot be undone.')) {
+                const section = document.getElementById('section-' + sectionId);
+                if (section) {
+                    section.remove();
+                    showToast('Section deleted');
+                }
+            }
+        }
+
+        function selectPage(element, pageId) {
+            document.querySelectorAll('.page-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            element.classList.add('active');
+            showToast('Switched to page: ' + pageId);
+        }
+
+        function togglePage(checkbox) {
+            const pageItem = checkbox.closest('.page-item');
+            const label = pageItem.querySelector('.page-label');
+            
+            if (checkbox.checked) {
+                pageItem.classList.remove('disabled');
+                label.classList.remove('disabled');
+                showToast('Page enabled');
+            } else {
+                pageItem.classList.add('disabled');
+                label.classList.add('disabled');
+                showToast('Page disabled');
+            }
+        }
+
+        function addNewPage() {
+            showToast('Add new page functionality');
+        }
+
+        function duplicatePage() {
+            showToast('Page duplicated');
+        }
+
+        function deletePage() {
+            if (confirm('Delete this page?')) {
+                showToast('Page deleted');
+            }
+        }
+
+        function zoomIn() {
+            currentZoom = Math.min(200, currentZoom + 10);
+            updateZoom();
+        }
+
+        function zoomOut() {
+            currentZoom = Math.max(50, currentZoom - 10);
+            updateZoom();
+        }
+
+        function zoomReset() {
+            currentZoom = 100;
+            updateZoom();
+        }
+
+        function updateZoom() {
+            const preview = document.getElementById('reportPreview');
+            preview.style.transform = `scale(${currentZoom / 100})`;
+            preview.style.transformOrigin = 'top center';
+            document.getElementById('zoomLevel').textContent = currentZoom + '%';
+        }
+
+        function saveTemplate() {
+            showToast('Template saved successfully!');
+        }
+
+        function doneEditing() {
+            window.location.href = 'super-admin-account-report-templates.html';
+        }
+
+        function showList() {
+            window.location.href = 'super-admin-account-report-templates.html';
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById('successToast');
+            const messageEl = document.getElementById('toastMessage');
+            messageEl.textContent = message;
+            toast.classList.add('active');
+            
+            setTimeout(() => {
+                toast.classList.remove('active');
+            }, 3000);
+        }
+
+        // Build Notes Toggle Function
+        function toggleBuildNotes(show) {
+            const notesSection = document.getElementById('buildNotesSection');
+            const toggleBtn = document.getElementById('showBuildNotesBtn');
+            
+            if (show) {
+                notesSection.style.display = 'block';
+                toggleBtn.style.display = 'none';
+                notesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                notesSection.style.display = 'none';
+                toggleBtn.style.display = 'block';
+            }
+            
+            sessionStorage.setItem('buildNotesVisible', show);
+        }
+
+        // Restore preference on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            const savedPreference = sessionStorage.getItem('buildNotesVisible');
+            if (savedPreference === 'false') {
+                toggleBuildNotes(false);
+            }
+        });
+    </script>
+</body>
+</html>
+
+

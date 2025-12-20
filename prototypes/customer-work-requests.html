@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Work Requests - Harken CRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            font-family: 'Montserrat', sans-serif !important;
+        }
+        body {
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background: url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;
+            background-color: #1c3643 !important;
+            max-height: 84px;
+            height: 84px;
+            color: #fff;
+        }
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 10px 24px;
+            border-radius: 25px;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+            position: relative;
+        }
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+        .nav-link.active {
+            background-color: transparent;
+            border: 1px solid #0da1c7;
+            color: #0da1c7;
+        }
+        .section-title {
+            font-size: 23px;
+            font-weight: 600;
+            color: #1c3643;
+        }
+        .metric-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+        }
+        .metric-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1c3643;
+            margin: 8px 0;
+        }
+        .metric-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #687F8B;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .action-button {
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .action-button:hover {
+            opacity: 0.8;
+        }
+        .action-button-primary {
+            background-color: #0da1c7;
+            color: white;
+        }
+        .action-button-secondary {
+            background-color: #687F8B;
+            color: white;
+        }
+        .filter-select {
+            padding: 10px 14px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: white;
+            color: #687F8B;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .filter-select:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .search-input {
+            width: 320px;
+            padding: 10px 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-block;
+            color: white;
+        }
+        .status-pending {
+            background-color: #1565c0;
+        }
+        .status-assigned {
+            background-color: #7c3aed;
+        }
+        .status-in-progress {
+            background-color: #f57c00;
+        }
+        .status-review {
+            background-color: #c2185b;
+        }
+        .status-completed {
+            background-color: #2e7d32;
+        }
+        .service-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .service-badge.appraisal {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .service-badge.evaluation {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+        .service-badge.bov {
+            background: #fce7f3;
+            color: #9f1239;
+        }
+        .work-request-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border-left: 4px solid #10b981;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+            transition: all 0.2s;
+        }
+        .work-request-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1c3643;
+            margin-bottom: 6px;
+        }
+        .card-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 12px;
+            color: #687F8B;
+            margin-top: 12px;
+        }
+        .card-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .icon-small {
+            width: 14px;
+            height: 14px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .property-address {
+            font-size: 13px;
+            color: #687F8B;
+            font-weight: 500;
+        }
+        .deadline {
+            font-size: 13px;
+            color: #c62828;
+            font-weight: 600;
+        }
+        .estimated-price {
+            font-size: 13px;
+            color: #10b981;
+            font-weight: 600;
+        }
+        .appraiser-info {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            background: #f0f0f0;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #1c3643;
+        }
+        .avatar {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background-color: #0da1c7;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 600;
+        }
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+        }
+        .empty-state-icon {
+            font-size: 64px;
+            color: #e0e0e0;
+            margin-bottom: 16px;
+        }
+        .empty-state-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1c3643;
+            margin-bottom: 8px;
+        }
+        .empty-state-text {
+            font-size: 14px;
+            color: #687F8B;
+            margin-bottom: 24px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar flex items-center justify-between px-8">
+        <div class="flex items-center">
+            <img src="harken.png" alt="Harken" style="height: 40px; width: auto;" />
+            <span style="margin-left: 12px; font-size: 14px; color: #0da1c7; font-weight: 600;">Acme Properties LLC</span>
+        </div>
+        <div class="flex items-center gap-6">
+            <a href="#" class="nav-link">Dashboard</a>
+            <a href="customer-work-requests.html" class="nav-link active">My Work Requests</a>
+            <a href="#" class="nav-link">Billing & Invoices</a>
+            <a href="#" class="nav-link">Users & Settings</a>
+            <a href="#" class="nav-link" style="background-color: rgba(255,193,7,0.1); border-color: #ffc107; color: #ffc107;">Help</a>
+        </div>
+        <div class="flex items-center gap-4">
+            <span class="text-sm">John Smith</span>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div style="padding: 35px 50px;">
+        <!-- Header Section -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+            <div>
+                <h2 class="section-title">MY WORK REQUESTS</h2>
+                <p style="color: #687F8B; font-size: 14px; margin-top: 4px;">Track and manage your appraisal, evaluation, and BOV requests</p>
+            </div>
+            <a href="customer-request-service.html" class="action-button action-button-primary" style="text-decoration: none; display: inline-block; font-size: 15px; padding: 12px 24px;">+ Request Service</a>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 32px;">
+            <div class="metric-card">
+                <div class="metric-label">In Progress</div>
+                <div class="metric-value">3</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Pending</div>
+                <div class="metric-value">2</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Completed This Month</div>
+                <div class="metric-value">8</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Total Requests</div>
+                <div class="metric-value">24</div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div style="display: flex; gap: 12px; margin-bottom: 24px; align-items: center; flex-wrap: wrap;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#0da1c7" viewBox="0 0 24 24">
+                <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+            </svg>
+            <input type="text" class="search-input" id="searchInput" placeholder="Search work requests..." />
+            <select class="filter-select" id="serviceFilter">
+                <option value="">All Services</option>
+                <option value="appraisal">Appraisals</option>
+                <option value="evaluation">Evaluations</option>
+                <option value="bov">BOV</option>
+            </select>
+            <select class="filter-select" id="statusFilter">
+                <option value="">All Statuses</option>
+                <option value="pending">Pending</option>
+                <option value="assigned">Assigned</option>
+                <option value="in-progress">In Progress</option>
+                <option value="review">Under Review</option>
+                <option value="completed">Completed</option>
+            </select>
+            <select class="filter-select" id="dateFilter">
+                <option value="">All Time</option>
+                <option value="week">Past Week</option>
+                <option value="month">Past Month</option>
+                <option value="quarter">Past Quarter</option>
+            </select>
+        </div>
+
+        <!-- Work Requests List -->
+        <div id="workRequestsList">
+            <!-- Work Request 1 - In Progress Appraisal -->
+            <div class="work-request-card" data-service="appraisal" data-status="in-progress">
+                <div class="card-header">
+                    <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                            <span class="service-badge appraisal">Appraisal</span>
+                            <span class="status-badge status-in-progress">In Progress</span>
+                        </div>
+                        <div class="card-title">#WR-2025-045 - Commercial Office Building Appraisal</div>
+                        <div class="property-address">
+                            <svg class="icon-small" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 4px;">
+                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                            </svg>
+                            123 Main St, Los Angeles, CA 90012 • Office Building - 25,000 SF
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div class="estimated-price" style="margin-bottom: 4px;">$3,200</div>
+                        <div class="deadline">Due: Jan 30, 2025</div>
+                    </div>
+                </div>
+                <div class="card-meta">
+                    <span class="appraiser-info">
+                        <span class="avatar">SC</span>
+                        <span>Assigned to: Sarah Chen</span>
+                    </span>
+                    <span>
+                        <svg class="icon-small" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                        </svg>
+                        Requested: 2 days ago
+                    </span>
+                    <span>
+                        <svg class="icon-small" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                        Requested by: John Smith
+                    </span>
+                    <button class="action-button action-button-primary" style="margin-left: auto;">View Details</button>
+                </div>
+            </div>
+
+            <!-- Work Request 2 - Assigned Evaluation -->
+            <div class="work-request-card" data-service="evaluation" data-status="assigned" style="border-left-color: #7c3aed;">
+                <div class="card-header">
+                    <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                            <span class="service-badge evaluation">Evaluation</span>
+                            <span class="status-badge status-assigned">Assigned</span>
+                        </div>
+                        <div class="card-title">#WR-2025-043 - Retail Property Evaluation</div>
+                        <div class="property-address">
+                            <svg class="icon-small" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 4px;">
+                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                            </svg>
+                            456 Shopping Plaza, San Francisco, CA 94102 • Retail - 12,500 SF
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div class="estimated-price" style="margin-bottom: 4px;">$1,200</div>
+                        <div class="deadline">Due: Jan 28, 2025</div>
+                    </div>
+                </div>
+                <div class="card-meta">
+                    <span class="appraiser-info">
+                        <span class="avatar" style="background-color: #7c3aed;">MR</span>
+                        <span>Assigned to: Michael Rodriguez</span>
+                    </span>
+                    <span>
+                        <svg class="icon-small" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                        </svg>
+                        Requested: 3 days ago
+                    </span>
+                    <span>
+                        <svg class="icon-small" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                        Requested by: Jane Doe
+                    </span>
+                    <button class="action-button action-button-primary" style="margin-left: auto;">View Details</button>
+                </div>
+            </div>
+
+            <!-- Work Request 3 - In Progress BOV -->
+            <div class="work-request-card" data-service="bov" data-status="in-progress">
+                <div class="card-header">
+                    <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                            <span class="service-badge bov">BOV</span>
+                            <span class="status-badge status-in-progress">In Progress</span>
+                        </div>
+                        <div class="card-title">#WR-2025-041 - Industrial Warehouse BOV</div>
+                        <div class="property-address">
+                            <svg class="icon-small" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 4px;">
+                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                            </svg>
+                            789 Industrial Pkwy, Austin, TX 78701 • Warehouse - 45,000 SF
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div class="estimated-price" style="margin-bottom: 4px;">$650</div>
+                        <div class="deadline">Due: Feb 2, 2025</div>
+                    </div>
+                </div>
+                <div class="card-meta">
+                    <span class="appraiser-info">
+                        <span class="avatar" style="background-color: #c2185b;">DK</span>
+                        <span>Assigned to: David Kim</span>
+                    </span>
+                    <span>
+                        <svg class="icon-small" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                        </svg>
+                        Requested: 5 days ago
+                    </span>
+                    <span>
+                        <svg class="icon-small" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                        Requested by: John Smith
+                    </span>
+                    <button class="action-button action-button-primary" style="margin-left: auto;">View Details</button>
+                </div>
+            </div>
+
+            <!-- Work Request 4 - Pending Appraisal -->
+            <div class="work-request-card" data-service="appraisal" data-status="pending" style="border-left-color: #1565c0;">
+                <div class="card-header">
+                    <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                            <span class="service-badge appraisal">Appraisal</span>
+                            <span class="status-badge status-pending">Pending</span>
+                        </div>
+                        <div class="card-title">#WR-2025-040 - Mixed-Use Development Appraisal</div>
+                        <div class="property-address">
+                            <svg class="icon-small" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 4px;">
+                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                            </svg>
+                            321 Downtown Blvd, Chicago, IL 60601 • Mixed-Use - 80,000 SF
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div class="estimated-price" style="margin-bottom: 4px;">$4,500</div>
+                        <div class="deadline">Due: Feb 10, 2025</div>
+                    </div>
+                </div>
+                <div class="card-meta">
+                    <span class="appraiser-info" style="background-color: #fff3cd; color: #856404;">
+                        <svg class="icon-small" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                        </svg>
+                        <span>Awaiting Assignment</span>
+                    </span>
+                    <span>
+                        <svg class="icon-small" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                        </svg>
+                        Requested: 1 hour ago
+                    </span>
+                    <span>
+                        <svg class="icon-small" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                        Requested by: Jane Doe
+                    </span>
+                    <button class="action-button action-button-primary" style="margin-left: auto;">View Details</button>
+                </div>
+            </div>
+
+            <!-- Work Request 5 - Completed -->
+            <div class="work-request-card" data-service="evaluation" data-status="completed" style="border-left-color: #2e7d32; opacity: 0.7;">
+                <div class="card-header">
+                    <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                            <span class="service-badge evaluation">Evaluation</span>
+                            <span class="status-badge status-completed">Completed</span>
+                        </div>
+                        <div class="card-title">#WR-2025-038 - Medical Office Evaluation</div>
+                        <div class="property-address">
+                            <svg class="icon-small" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 4px;">
+                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                            </svg>
+                            1200 Healthcare Dr, Denver, CO 80202 • Medical - 18,000 SF
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div class="estimated-price" style="margin-bottom: 4px; color: #2e7d32;">Completed</div>
+                        <div style="font-size: 12px; color: #687F8B;">Jan 15, 2025</div>
+                    </div>
+                </div>
+                <div class="card-meta">
+                    <span class="appraiser-info">
+                        <span class="avatar" style="background-color: #2e7d32;">SC</span>
+                        <span>Completed by: Sarah Chen</span>
+                    </span>
+                    <span>
+                        <svg class="icon-small" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                        </svg>
+                        Requested: 2 weeks ago
+                    </span>
+                    <button class="action-button action-button-primary" style="margin-left: auto; background-color: #2e7d32;">Download Report</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 50px;">
+            <span style="font-weight: 300; font-size: 14px; color: #687F8B;">© 2024, Harken CRE, LLC</span>
+        </div>
+    </div>
+
+    <script>
+        // Simple filtering functionality
+        const serviceFilter = document.getElementById('serviceFilter');
+        const statusFilter = document.getElementById('statusFilter');
+        const searchInput = document.getElementById('searchInput');
+
+        function filterRequests() {
+            const serviceValue = serviceFilter.value;
+            const statusValue = statusFilter.value;
+            const searchValue = searchInput.value.toLowerCase();
+            
+            const cards = document.querySelectorAll('.work-request-card');
+            
+            cards.forEach(card => {
+                const service = card.dataset.service;
+                const status = card.dataset.status;
+                const text = card.textContent.toLowerCase();
+                
+                const matchesService = !serviceValue || service === serviceValue;
+                const matchesStatus = !statusValue || status === statusValue;
+                const matchesSearch = !searchValue || text.includes(searchValue);
+                
+                if (matchesService && matchesStatus && matchesSearch) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        serviceFilter.addEventListener('change', filterRequests);
+        statusFilter.addEventListener('change', filterRequests);
+        searchInput.addEventListener('input', filterRequests);
+    </script>
+</body>
+</html>
+

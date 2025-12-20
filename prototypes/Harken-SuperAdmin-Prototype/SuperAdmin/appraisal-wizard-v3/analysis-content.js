@@ -1418,7 +1418,7 @@ function renderSalesGrid() {
     const displayComps = [gridData.subject, ...selectedComps];
     const numCols = displayComps.length;
     
-    let html = `<div class="sales-grid" style="grid-template-columns: 200px 260px repeat(${selectedComps.length}, 240px);">`;
+    let html = `<div class="sales-grid" style="grid-template-columns: 160px 180px repeat(${selectedComps.length}, 170px);">`;
     
     // HEADER ROW WITH PHOTOS
     html += '<div class="grid-cell grid-header-cell grid-label-col"><span class="text-xs uppercase tracking-wide text-gray-500 font-bold">Elements</span></div>';

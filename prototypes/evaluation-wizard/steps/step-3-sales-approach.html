@@ -1,0 +1,719 @@
+<!-- Sales Comparison Approach Step -->
+<div class="sales-approach-container">
+    <!-- Header -->
+    <div class="sales-approach-header">
+        <h2>SALES COMPARISON APPROACH</h2>
+        <div class="sales-approach-info">
+            <i class="material-icons">info</i>
+            <span>Value of the property based on applicable sales comps</span>
+        </div>
+    </div>
+
+    <!-- 7-Panel Layout -->
+    <div class="sales-panels-container">
+        <!-- Panel 1: Field List (Leftmost) -->
+        <div class="field-list-panel">
+            <div class="field-list-header">Fields</div>
+            <div class="field-list-content">
+                <div class="field-item">
+                    <span class="field-label">Location</span>
+                </div>
+                <div class="field-item">
+                    <span class="field-label">Date Sold</span>
+                </div>
+                <div class="field-item">
+                    <span class="field-label">Property Type</span>
+                </div>
+                <div class="field-item">
+                    <span class="field-label">Building $/SF</span>
+                    <i class="material-icons info-icon">info</i>
+                </div>
+                <div class="field-item">
+                    <span class="field-label">Building Size / Lot Size</span>
+                    <i class="material-icons info-icon">info</i>
+                </div>
+                <div class="field-item">
+                    <span class="field-label">Quality / Condition</span>
+                    <i class="material-icons info-icon">info</i>
+                </div>
+                <div class="field-item">
+                    <span class="field-label">Sales Price</span>
+                    <i class="material-icons info-icon">info</i>
+                </div>
+                <div class="field-item">
+                    <span class="field-label">Year Built / Remodeled</span>
+                    <i class="material-icons info-icon">info</i>
+                </div>
+                <div class="field-item">
+                    <span class="field-label">Zoning</span>
+                    <i class="material-icons info-icon">info</i>
+                    <i class="material-icons add-icon">add</i>
+                </div>
+                <div class="field-item">
+                    <span class="field-label">Condition</span>
+                    <i class="material-icons info-icon">info</i>
+                </div>
+                <div class="field-item">
+                    <span class="field-label">Construction</span>
+                    <i class="material-icons info-icon">info</i>
+                </div>
+                <div class="field-item">
+                    <span class="field-label">Economies of Scale</span>
+                    <i class="material-icons info-icon">info</i>
+                </div>
+                <div class="field-item">
+                    <span class="field-label">Location</span>
+                    <i class="material-icons info-icon">info</i>
+                </div>
+                <div class="field-item">
+                    <span class="field-label">Time</span>
+                    <i class="material-icons info-icon">info</i>
+                </div>
+                <div class="field-item">
+                    <span class="field-label">Type / Use</span>
+                    <i class="material-icons info-icon">info</i>
+                    <i class="material-icons add-icon">add</i>
+                </div>
+                <div class="field-item">
+                    <span class="field-label">% Office Area</span>
+                    <i class="material-icons info-icon">info</i>
+                </div>
+                <div class="field-item">
+                    <span class="field-label">Building Size</span>
+                    <i class="material-icons info-icon">info</i>
+                </div>
+                <div class="field-item">
+                    <span class="field-label">Effective Age</span>
+                    <i class="material-icons info-icon">info</i>
+                </div>
+                <div class="field-item">
+                    <span class="field-label">Location</span>
+                    <i class="material-icons info-icon">info</i>
+                </div>
+                <div class="field-item">
+                    <span class="field-label">Quality / Condition</span>
+                    <i class="material-icons info-icon">info</i>
+                </div>
+                <div class="field-item">
+                    <span class="field-label">Sidewall Height</span>
+                    <i class="material-icons info-icon">info</i>
+                    <i class="material-icons add-icon">add</i>
+                    <span class="field-unit">ft.</span>
+                </div>
+                <div class="field-item">
+                    <span class="field-label">Notes</span>
+                </div>
+                <div class="field-item">
+                    <span class="field-label">Overall Comparability</span>
+                </div>
+                <div class="field-item">
+                    <span class="field-label">Overall Adjustment</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel 2: Subject Property (Gray) -->
+        <div class="subject-property-panel">
+            <div class="property-image">
+                <i class="material-icons placeholder-icon">landscape</i>
+            </div>
+            <div class="property-content">
+                <div class="property-field">
+                    <span class="field-label">Location:</span>
+                    <span class="field-value">No address available</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Date Sold:</span>
+                    <span class="field-value">/</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Property Type:</span>
+                    <span class="field-value"></span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Building $/SF:</span>
+                    <span class="field-value"></span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Building Size / Lot Size:</span>
+                    <span class="field-value">undefined SF / N/A</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Quality / Condition:</span>
+                    <span class="field-value"></span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Sales Price:</span>
+                    <span class="field-value"></span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Year Built / Remodeled:</span>
+                    <span class="field-value">N/A / N/A</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Zoning:</span>
+                    <span class="field-value">N/A</span>
+                </div>
+                
+                <!-- Adjustment Fields -->
+                <div class="adjustment-section">
+                    <div class="adjustment-field">
+                        <span class="adjustment-label">Condition:</span>
+                        <span class="adjustment-value">0%</span>
+                        <select class="adjustment-select">
+                            <option>Equal</option>
+                        </select>
+                    </div>
+                    <div class="adjustment-field">
+                        <span class="adjustment-label">Construction:</span>
+                        <span class="adjustment-value">0%</span>
+                        <select class="adjustment-select">
+                            <option>Equal</option>
+                        </select>
+                    </div>
+                    <div class="adjustment-field">
+                        <span class="adjustment-label">Economies of Scale:</span>
+                        <span class="adjustment-value">0%</span>
+                        <select class="adjustment-select">
+                            <option>Equal</option>
+                        </select>
+                    </div>
+                    <div class="adjustment-field">
+                        <span class="adjustment-label">Location:</span>
+                        <span class="adjustment-value">0%</span>
+                        <select class="adjustment-select">
+                            <option>Equal</option>
+                        </select>
+                    </div>
+                    <div class="adjustment-field">
+                        <span class="adjustment-label">Time:</span>
+                        <span class="adjustment-value">0%</span>
+                        <select class="adjustment-select">
+                            <option>Equal</option>
+                        </select>
+                    </div>
+                    <div class="adjustment-field">
+                        <span class="adjustment-label">Type / Use:</span>
+                        <span class="adjustment-value">0%</span>
+                        <select class="adjustment-select">
+                            <option>Equal</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="property-field">
+                    <span class="field-label">Notes:</span>
+                    <span class="field-value">Click to Enter Property Notes</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Overall Comparability:</span>
+                    <span class="field-value">Similar</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Overall Adjustment:</span>
+                    <span class="field-value">0.00%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel 3: Comp 1 -->
+        <div class="comp-property-panel">
+            <div class="property-image">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjIwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIyMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMjAiIGhlaWdodD0iMTUwIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik0xMTAgNzVMMTAwIDY1TDEyMCA2NUwxMTAgNzVaIiBmaWxsPSIjQ0NDQ0NDIi8+CjxjaXJjbGUgY3g9IjExMCIgY3k9IjkwIiByPSIxNSIgZmlsbD0iI0NDQ0NDQyIvPgo8L3N2Zz4K" alt="Property 1">
+            </div>
+            <div class="property-content">
+                <div class="property-field">
+                    <span class="field-label">Location:</span>
+                    <span class="field-value">317 East 4th Street (Active), Dell Rapids, SD, 57022</span>
+                    <div class="property-actions">
+                        <i class="material-icons">visibility</i>
+                        <i class="material-icons">delete</i>
+                    </div>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Date Sold:</span>
+                    <span class="field-value">01/01/2122</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Property Type:</span>
+                    <span class="field-value">Office / Bank</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Building $/SF:</span>
+                    <span class="field-value">$75.41</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Building Size / Lot Size:</span>
+                    <span class="field-value">9,283 SF / 10,000 SF</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Quality / Condition:</span>
+                    <span class="field-value">Good</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Sales Price:</span>
+                    <span class="field-value">$700,000.00</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Year Built / Remodeled:</span>
+                    <span class="field-value">1976 / N/A</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Zoning:</span>
+                    <span class="field-value">N/A</span>
+                </div>
+                
+                <!-- Adjustment Fields -->
+                <div class="adjustment-section">
+                    <div class="adjustment-field">
+                        <span class="adjustment-label">Condition:</span>
+                        <span class="adjustment-value">0%</span>
+                        <select class="adjustment-select">
+                            <option>Equal</option>
+                        </select>
+                    </div>
+                    <div class="adjustment-field">
+                        <span class="adjustment-label">Construction:</span>
+                        <span class="adjustment-value">0%</span>
+                        <select class="adjustment-select">
+                            <option>Equal</option>
+                        </select>
+                    </div>
+                    <div class="adjustment-field">
+                        <span class="adjustment-label">Economies of Scale:</span>
+                        <span class="adjustment-value">0%</span>
+                        <select class="adjustment-select">
+                            <option>Equal</option>
+                        </select>
+                    </div>
+                    <div class="adjustment-field">
+                        <span class="adjustment-label">Location:</span>
+                        <span class="adjustment-value">0%</span>
+                        <select class="adjustment-select">
+                            <option>Equal</option>
+                        </select>
+                    </div>
+                    <div class="adjustment-field">
+                        <span class="adjustment-label">Time:</span>
+                        <span class="adjustment-value">0%</span>
+                        <select class="adjustment-select">
+                            <option>Equal</option>
+                        </select>
+                    </div>
+                    <div class="adjustment-field">
+                        <span class="adjustment-label">Type / Use:</span>
+                        <span class="adjustment-value">0%</span>
+                        <select class="adjustment-select">
+                            <option>Equal</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="property-field">
+                    <span class="field-label">Notes:</span>
+                    <span class="field-value">Click to add adjustment notes</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Overall Comparability:</span>
+                    <span class="field-value">Similar</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Overall Adjustment:</span>
+                    <span class="field-value">0.00%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel 4: Comp 2 -->
+        <div class="comp-property-panel">
+            <div class="property-image">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjIwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIyMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMjAiIGhlaWdodD0iMTUwIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik0xMTAgNzVMMTAwIDY1TDEyMCA2NUwxMTAgNzVaIiBmaWxsPSIjQ0NDQ0NDIi8+CjxjaXJjbGUgY3g9IjExMCIgY3k9IjkwIiByPSIxNSIgZmlsbD0iI0NDQ0NDQyIvPgo8L3N2Zz4K" alt="Property 2">
+            </div>
+            <div class="property-content">
+                <div class="property-field">
+                    <span class="field-label">Location:</span>
+                    <span class="field-value">229 South 6th Street (Active), Missouri Valley, IA, 51555</span>
+                    <div class="property-actions">
+                        <i class="material-icons">visibility</i>
+                        <i class="material-icons">delete</i>
+                    </div>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Date Sold:</span>
+                    <span class="field-value">01/01/2122</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Property Type:</span>
+                    <span class="field-value">Retail / Restaurant</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Building $/SF:</span>
+                    <span class="field-value">$14.79</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Building Size / Lot Size:</span>
+                    <span class="field-value">11,158 SF / 42,476 SF</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Quality / Condition:</span>
+                    <span class="field-value">Average</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Sales Price:</span>
+                    <span class="field-value">$165,000.00</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Year Built / Remodeled:</span>
+                    <span class="field-value">1970 / N/A</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Zoning:</span>
+                    <span class="field-value">N/A</span>
+                </div>
+                
+                <!-- Adjustment Fields -->
+                <div class="adjustment-section">
+                    <div class="adjustment-field">
+                        <span class="adjustment-label">Condition:</span>
+                        <span class="adjustment-value">0%</span>
+                        <select class="adjustment-select">
+                            <option>Equal</option>
+                        </select>
+                    </div>
+                    <div class="adjustment-field">
+                        <span class="adjustment-label">Construction:</span>
+                        <span class="adjustment-value">0%</span>
+                        <select class="adjustment-select">
+                            <option>Equal</option>
+                        </select>
+                    </div>
+                    <div class="adjustment-field">
+                        <span class="adjustment-label">Economies of Scale:</span>
+                        <span class="adjustment-value">0%</span>
+                        <select class="adjustment-select">
+                            <option>Equal</option>
+                        </select>
+                    </div>
+                    <div class="adjustment-field">
+                        <span class="adjustment-label">Location:</span>
+                        <span class="adjustment-value">0%</span>
+                        <select class="adjustment-select">
+                            <option>Equal</option>
+                        </select>
+                    </div>
+                    <div class="adjustment-field">
+                        <span class="adjustment-label">Time:</span>
+                        <span class="adjustment-value">0%</span>
+                        <select class="adjustment-select">
+                            <option>Equal</option>
+                        </select>
+                    </div>
+                    <div class="adjustment-field">
+                        <span class="adjustment-label">Type / Use:</span>
+                        <span class="adjustment-value">0%</span>
+                        <select class="adjustment-select">
+                            <option>Equal</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="property-field">
+                    <span class="field-label">Notes:</span>
+                    <span class="field-value">Click to add adjustment notes</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Overall Comparability:</span>
+                    <span class="field-value">Similar</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Overall Adjustment:</span>
+                    <span class="field-value">0.00%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel 5: Comp 3 -->
+        <div class="comp-property-panel">
+            <div class="property-image">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjIwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIyMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMjAiIGhlaWdodD0iMTUwIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik0xMTAgNzVMMTAwIDY1TDEyMCA2NUwxMTAgNzVaIiBmaWxsPSIjQ0NDQ0NDIi8+CjxjaXJjbGUgY3g9IjExMCIgY3k9IjkwIiByPSIxNSIgZmlsbD0iI0NDQ0NDQyIvPgo8L3N2Zz4K" alt="Property 3">
+            </div>
+            <div class="property-content">
+                <div class="property-field">
+                    <span class="field-label">Location:</span>
+                    <span class="field-value">317 East 4th Street (Active), Dell Rapids, SD, 57022</span>
+                    <div class="property-actions">
+                        <i class="material-icons">visibility</i>
+                        <i class="material-icons">delete</i>
+                    </div>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Date Sold:</span>
+                    <span class="field-value">01/01/2122</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Property Type:</span>
+                    <span class="field-value">Office / Bank</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Building $/SF:</span>
+                    <span class="field-value">$75.41</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Building Size / Lot Size:</span>
+                    <span class="field-value">9,283 SF / 10,000 SF</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Quality / Condition:</span>
+                    <span class="field-value">Good</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Sales Price:</span>
+                    <span class="field-value">$700,000.00</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Year Built / Remodeled:</span>
+                    <span class="field-value">1976 / N/A</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Zoning:</span>
+                    <span class="field-value">N/A</span>
+                </div>
+                
+                <!-- Adjustment Fields -->
+                <div class="adjustment-section">
+                    <div class="adjustment-field">
+                        <span class="adjustment-label">Condition:</span>
+                        <span class="adjustment-value">0%</span>
+                        <select class="adjustment-select">
+                            <option>Equal</option>
+                        </select>
+                    </div>
+                    <div class="adjustment-field">
+                        <span class="adjustment-label">Construction:</span>
+                        <span class="adjustment-value">0%</span>
+                        <select class="adjustment-select">
+                            <option>Equal</option>
+                        </select>
+                    </div>
+                    <div class="adjustment-field">
+                        <span class="adjustment-label">Economies of Scale:</span>
+                        <span class="adjustment-value">0%</span>
+                        <select class="adjustment-select">
+                            <option>Equal</option>
+                        </select>
+                    </div>
+                    <div class="adjustment-field">
+                        <span class="adjustment-label">Location:</span>
+                        <span class="adjustment-value">0%</span>
+                        <select class="adjustment-select">
+                            <option>Equal</option>
+                        </select>
+                    </div>
+                    <div class="adjustment-field">
+                        <span class="adjustment-label">Time:</span>
+                        <span class="adjustment-value">0%</span>
+                        <select class="adjustment-select">
+                            <option>Equal</option>
+                        </select>
+                    </div>
+                    <div class="adjustment-field">
+                        <span class="adjustment-label">Type / Use:</span>
+                        <span class="adjustment-value">0%</span>
+                        <select class="adjustment-select">
+                            <option>Equal</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="property-field">
+                    <span class="field-label">Notes:</span>
+                    <span class="field-value">Click to add adjustment notes</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Overall Comparability:</span>
+                    <span class="field-value">Similar</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Overall Adjustment:</span>
+                    <span class="field-value">0.00%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel 6: Comp 4 -->
+        <div class="comp-property-panel">
+            <div class="property-image">
+                <img src="data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjIwIiBoZWlnaHQ9IjE1MCIgdmlld0JveD0iMCAwIDIyMCAxNTAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIyMjAiIGhlaWdodD0iMTUwIiBmaWxsPSIjRjVGNUY1Ii8+CjxwYXRoIGQ9Ik0xMTAgNzVMMTAwIDY1TDEyMCA2NUwxMTAgNzVaIiBmaWxsPSIjQ0NDQ0NDIi8+CjxjaXJjbGUgY3g9IjExMCIgY3k9IjkwIiByPSIxNSIgZmlsbD0iI0NDQ0NDQyIvPgo8L3N2Zz4K" alt="Property 4">
+            </div>
+            <div class="property-content">
+                <div class="property-field">
+                    <span class="field-label">Location:</span>
+                    <span class="field-value">229 South 6th Street (Active), Missouri Valley, IA, 51555</span>
+                    <div class="property-actions">
+                        <i class="material-icons">visibility</i>
+                        <i class="material-icons">delete</i>
+                    </div>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Date Sold:</span>
+                    <span class="field-value">01/01/2122</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Property Type:</span>
+                    <span class="field-value">Retail / Restaurant</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Building $/SF:</span>
+                    <span class="field-value">$14.79</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Building Size / Lot Size:</span>
+                    <span class="field-value">11,158 SF / 42,476 SF</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Quality / Condition:</span>
+                    <span class="field-value">Average</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Sales Price:</span>
+                    <span class="field-value">$165,000.00</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Year Built / Remodeled:</span>
+                    <span class="field-value">1970 / N/A</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Zoning:</span>
+                    <span class="field-value">N/A</span>
+                </div>
+                
+                <!-- Adjustment Fields -->
+                <div class="adjustment-section">
+                    <div class="adjustment-field">
+                        <span class="adjustment-label">Condition:</span>
+                        <span class="adjustment-value">0%</span>
+                        <select class="adjustment-select">
+                            <option>Equal</option>
+                        </select>
+                    </div>
+                    <div class="adjustment-field">
+                        <span class="adjustment-label">Construction:</span>
+                        <span class="adjustment-value">0%</span>
+                        <select class="adjustment-select">
+                            <option>Equal</option>
+                        </select>
+                    </div>
+                    <div class="adjustment-field">
+                        <span class="adjustment-label">Economies of Scale:</span>
+                        <span class="adjustment-value">0%</span>
+                        <select class="adjustment-select">
+                            <option>Equal</option>
+                        </select>
+                    </div>
+                    <div class="adjustment-field">
+                        <span class="adjustment-label">Location:</span>
+                        <span class="adjustment-value">0%</span>
+                        <select class="adjustment-select">
+                            <option>Equal</option>
+                        </select>
+                    </div>
+                    <div class="adjustment-field">
+                        <span class="adjustment-label">Time:</span>
+                        <span class="adjustment-value">0%</span>
+                        <select class="adjustment-select">
+                            <option>Equal</option>
+                        </select>
+                    </div>
+                    <div class="adjustment-field">
+                        <span class="adjustment-label">Type / Use:</span>
+                        <span class="adjustment-value">0%</span>
+                        <select class="adjustment-select">
+                            <option>Equal</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="property-field">
+                    <span class="field-label">Notes:</span>
+                    <span class="field-value">Click to add adjustment notes</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Overall Comparability:</span>
+                    <span class="field-value">Similar</span>
+                </div>
+                <div class="property-field">
+                    <span class="field-label">Overall Adjustment:</span>
+                    <span class="field-value">0.00%</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Panel 7: Weighted Totals (Rightmost) -->
+        <div class="totals-panel">
+            <div class="totals-header">Weighted Totals</div>
+            <div class="totals-content">
+                <div class="total-section">
+                    <div class="total-label">INCOME:</div>
+                    <div class="total-value">$0</div>
+                    <div class="total-percentage">
+                        <span>25%</span>
+                        <i class="material-icons edit-icon">edit</i>
+                    </div>
+                    <div class="total-per-sf">$0/SF</div>
+                </div>
+                
+                <div class="total-section">
+                    <div class="total-label">SALES:</div>
+                    <div class="total-value">$0</div>
+                    <div class="total-percentage">
+                        <span>50%</span>
+                        <i class="material-icons edit-icon">edit</i>
+                    </div>
+                    <div class="total-per-sf">$NaN/SF</div>
+                </div>
+                
+                <div class="total-section">
+                    <div class="total-label">COST:</div>
+                    <div class="total-value">$0</div>
+                    <div class="total-percentage">
+                        <span>25%</span>
+                        <i class="material-icons edit-icon">edit</i>
+                    </div>
+                    <div class="total-per-sf">$0/SF</div>
+                </div>
+                
+                <div class="total-section weighted-total">
+                    <div class="total-label">WEIGHTED TOTAL:</div>
+                    <div class="total-value large">$0</div>
+                    <div class="total-per-sf">$0/SF</div>
+                </div>
+            </div>
+            
+            <div class="navigation-buttons">
+                <button class="btn-secondary">
+                    <i class="material-icons">arrow_back</i>
+                </button>
+                <button class="btn-primary">
+                    NEXT <i class="material-icons">arrow_forward</i>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

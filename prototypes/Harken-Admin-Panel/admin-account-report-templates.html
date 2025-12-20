@@ -1,0 +1,2919 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Report Templates - Harken CRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            font-family: 'Montserrat', sans-serif !important;
+        }
+        body {
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background: url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;
+            background-color: #1c3643 !important;
+            max-height: 84px;
+            height: 84px;
+            color: #fff;
+        }
+        .section-title {
+            font-size: 23px;
+            font-weight: 600;
+            color: #1c3643;
+        }
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 10px 24px;
+            border-radius: 25px;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+        .nav-link.active {
+            background-color: transparent;
+            border: 1px solid #0da1c7;
+            color: #0da1c7;
+        }
+        .back-link {
+            color: #0da1c7;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: 16px;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+
+        /* Template Builder Styles */
+        .builder-container {
+            display: grid;
+            grid-template-columns: 320px 1fr 380px;
+            gap: 24px;
+            height: calc(100vh - 250px);
+            min-height: 600px;
+        }
+        .section-panel {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+            overflow-y: auto;
+        }
+        .preview-panel {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .properties-panel {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .preview-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .preview-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        /* Section Tree Styles */
+        .section-item {
+            margin-bottom: 12px;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+        }
+        .section-item.active {
+            background: #e8f5f7;
+            border-left-color: #0da1c7;
+            border-radius: 4px;
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+            user-select: none;
+        }
+        .section-header:hover {
+            background: #f9f9f9;
+        }
+        .section-checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #0da1c7;
+            flex-shrink: 0;
+        }
+        .section-expand-btn {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: #687F8B;
+            font-size: 14px;
+            padding: 0;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+        .section-expand-btn:hover {
+            color: #0da1c7;
+            background: #f0f0f0;
+            border-radius: 3px;
+        }
+        .section-expand-btn.expanded {
+            transform: rotate(90deg);
+        }
+        .section-label {
+            flex: 1;
+            font-weight: 600;
+            color: #1c3643;
+            font-size: 14px;
+            cursor: pointer;
+            padding: 4px;
+            border-radius: 3px;
+            transition: all 0.2s;
+        }
+        .section-label:hover {
+            color: #0da1c7;
+            background: #f0f0f0;
+        }
+        .field-list {
+            margin-left: 30px;
+            margin-top: 8px;
+            display: none;
+        }
+        .field-list.expanded {
+            display: block;
+        }
+        .field-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background 0.2s;
+        }
+        .field-item:hover {
+            background: #f9f9f9;
+        }
+        .field-checkbox {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: #0da1c7;
+        }
+        .field-label {
+            font-size: 13px;
+            color: #687F8B;
+            cursor: pointer;
+        }
+
+        /* Properties Panel Styles (Right Sidebar) */
+        .properties-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e0e0e0;
+            background: #f9f9f9;
+        }
+        .properties-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1c3643;
+        }
+        .properties-tabs {
+            display: flex;
+            border-bottom: 2px solid #e0e0e0;
+            padding: 0 20px;
+            background: #fafafa;
+        }
+        .prop-tab {
+            padding: 12px 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #687F8B;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s;
+        }
+        .prop-tab:hover {
+            color: #0da1c7;
+        }
+        .prop-tab.active {
+            color: #0da1c7;
+            border-bottom-color: #0da1c7;
+        }
+        .properties-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .prop-group {
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .prop-group:last-child {
+            border-bottom: none;
+        }
+        .prop-group-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #687F8B;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .prop-control {
+            margin-bottom: 16px;
+        }
+        .prop-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #687F8B;
+            margin-bottom: 6px;
+        }
+        .prop-input, .prop-select {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1px solid #d0d0d0;
+            border-radius: 4px;
+            font-size: 13px;
+            background: white;
+        }
+        .prop-input:focus, .prop-select:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .prop-slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            cursor: pointer;
+            accent-color: #0da1c7;
+        }
+        .prop-slider-value {
+            text-align: right;
+            font-size: 11px;
+            color: #687F8B;
+            margin-top: 4px;
+        }
+        .color-swatches {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 6px;
+        }
+        .color-swatch {
+            width: 100%;
+            height: 32px;
+            border-radius: 4px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .color-swatch:hover {
+            border-color: #1c3643;
+            transform: scale(1.05);
+        }
+        .color-swatch.selected {
+            border-color: #1c3643;
+            box-shadow: 0 0 0 2px rgba(28, 54, 67, 0.3);
+        }
+        .prop-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 8px;
+        }
+        .prop-toggle input {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: #0da1c7;
+        }
+        .prop-toggle label {
+            font-size: 12px;
+            color: #1c3643;
+            cursor: pointer;
+        }
+        .properties-tab-content {
+            display: block;
+        }
+
+        /* Control Buttons */
+        .control-buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .control-btn {
+            padding: 6px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            background: white;
+            color: #687F8B;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .control-btn:hover {
+            background: #f9f9f9;
+            border-color: #0da1c7;
+            color: #0da1c7;
+        }
+
+        /* Toggle Switch */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .3s;
+            border-radius: 26px;
+        }
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+        input:checked + .toggle-slider {
+            background-color: #0da1c7;
+        }
+        input:checked + .toggle-slider:before {
+            transform: translateX(24px);
+        }
+
+        /* Preview Report Styles - ACTUAL REPORT PAGES! */
+        .preview-page {
+            background: white;
+            width: 8.5in;
+            min-height: 11in;
+            margin: 0 auto 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            position: relative;
+        }
+
+        /* Cover Page Styles */
+        .cover-page-content {
+            display: flex;
+            flex-direction: column;
+            min-height: 11in;
+        }
+        .cover-title-area {
+            padding: 60px 50px 30px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .cover-main-title {
+            font-size: 48px;
+            font-weight: 300;
+            color: #2e7d32;
+            margin: 0 0 20px 0;
+        }
+        .cover-subtitle {
+            font-size: 18px;
+            color: #687F8B;
+            margin: 0;
+        }
+        .cover-image-area {
+            flex: 1;
+            background: linear-gradient(to bottom, #f9f9f9, #e0e0e0);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 400px;
+        }
+        .image-placeholder {
+            width: 80%;
+            height: 300px;
+            background: white;
+            border: 3px dashed #ccc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 14px;
+        }
+        .cover-footer-area {
+            padding: 30px 50px;
+            background: white;
+        }
+        .cover-gradient-bar {
+            height: 14px;
+            background: linear-gradient(to right, #2e7d32 0%, #66bb6a 40%, #0da1c7 70%, #1c3643 100%);
+            margin-bottom: 15px;
+        }
+        .cover-powered-by {
+            text-align: right;
+            font-size: 11px;
+            color: #687F8B;
+        }
+
+        /* Section Page with Green Sidebar */
+        .section-page-layout {
+            display: grid;
+            grid-template-columns: 85px 1fr;
+            min-height: 11in;
+        }
+        .green-sidebar {
+            background: #2e7d32;
+            color: white;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 0;
+        }
+        .sidebar-text {
+            font-size: 52px;
+            font-weight: 700;
+            letter-spacing: 10px;
+        }
+        .section-main-content {
+            padding: 50px 50px 60px;
+            position: relative;
+        }
+        .section-header-badge {
+            position: absolute;
+            top: 25px;
+            right: 30px;
+            background: #2e7d32;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 4px;
+            text-align: right;
+            z-index: 10;
+        }
+        .badge-section-num {
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .badge-section-name {
+            font-size: 15px;
+            font-weight: 700;
+        }
+        .section-page-title {
+            font-size: 36px;
+            font-weight: 300;
+            color: #1c3643;
+            margin: 0 0 30px 0;
+        }
+        .section-page-title span {
+            color: #2e7d32;
+            font-weight: 600;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: 220px 1fr;
+            gap: 12px;
+            margin-bottom: 10px;
+            font-size: 13px;
+        }
+        .info-grid-label {
+            font-weight: 600;
+            color: #687F8B;
+        }
+        .info-grid-value {
+            color: #1c3643;
+        }
+        .section-subheading {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2e7d32;
+            margin: 25px 0 15px 0;
+        }
+        .highlights-list {
+            font-size: 13px;
+            line-height: 1.8;
+            color: #1c3643;
+            padding-left: 20px;
+        }
+        .page-footer {
+            position: absolute;
+            bottom: 25px;
+            right: 50px;
+            font-size: 11px;
+            color: #687F8B;
+        }
+
+        /* Comparison Tables */
+        .income-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 11px;
+        }
+        .income-table th {
+            background: #f5f5f5;
+            padding: 10px 12px;
+            border: 1px solid #d0d0d0;
+            font-weight: 600;
+            color: #687F8B;
+            text-align: left;
+        }
+        .income-table td {
+            padding: 10px 12px;
+            border: 1px solid #d0d0d0;
+            color: #1c3643;
+        }
+        .income-table tr.total-row {
+            background: #f9f9f9;
+            font-weight: 600;
+        }
+
+        /* Template Library */
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 24px;
+        }
+        .template-card {
+            background: white;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .template-card:hover {
+            border-color: #0da1c7;
+            box-shadow: 0 4px 12px rgba(13, 161, 199, 0.15);
+        }
+        .template-card.default {
+            border-color: #0da1c7;
+            background: linear-gradient(to bottom, #e8f5f7 0%, white 100%);
+        }
+        .template-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        .template-card-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1c3643;
+        }
+        .template-card-badge {
+            background: #0da1c7;
+            color: white;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        .template-card-desc {
+            font-size: 12px;
+            color: #687F8B;
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+        .template-card-meta {
+            font-size: 11px;
+            color: #687F8B;
+            margin-bottom: 12px;
+        }
+        .template-card-actions {
+            display: flex;
+            gap: 8px;
+        }
+        .template-action-btn {
+            flex: 1;
+            padding: 8px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            background: white;
+            color: #687F8B;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .template-action-btn:hover {
+            background: #0da1c7;
+            color: white;
+            border-color: #0da1c7;
+        }
+
+        /* Action Buttons */
+        .action-button {
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .action-button:hover {
+            opacity: 0.85;
+        }
+        .action-button-primary {
+            background-color: #0da1c7;
+            color: white;
+        }
+        .action-button-secondary {
+            background-color: #687F8B;
+            color: white;
+        }
+        .action-button-success {
+            background-color: #2e7d32;
+            color: white;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+            margin-bottom: 24px;
+        }
+        .top-bar-content {
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+        .template-name-input {
+            flex: 1;
+            padding: 10px 14px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .template-name-input:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+
+        /* Loading State */
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255,255,255,0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #0da1c7;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Success Message */
+        .success-message {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+            padding: 12px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            margin-bottom: 16px;
+            display: none;
+            align-items: center;
+            gap: 8px;
+        }
+        .success-message.active {
+            display: flex;
+        }
+
+        /* Template Type Toggle */
+        .template-type-toggle {
+            display: inline-flex;
+            background: white;
+            border-radius: 6px;
+            padding: 4px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            gap: 4px;
+        }
+        .toggle-option {
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            position: relative;
+        }
+        .toggle-option input[type="radio"] {
+            position: absolute;
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .toggle-option span {
+            padding: 10px 24px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #687F8B;
+            transition: all 0.2s;
+            white-space: nowrap;
+        }
+        .toggle-option input:checked + span {
+            background: #0da1c7;
+            color: white;
+            box-shadow: 0 2px 4px rgba(13, 161, 199, 0.3);
+        }
+        .toggle-option:hover span {
+            color: #1c3643;
+        }
+        .toggle-option input:checked + span:hover {
+            color: white;
+        }
+
+        /* Type Badge for Templates */
+        .template-type-badge {
+            font-size: 9px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 3px;
+            margin-left: 8px;
+        }
+        .template-type-badge.appraisal {
+            background: #3b82f6;
+            color: white;
+        }
+        .template-type-badge.evaluation {
+            background: #10b981;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Toggle Button (initially hidden) -->
+    <button id="showBuildNotesBtn" 
+            style="position: fixed; top: 100px; right: 20px; z-index: 9999; 
+                   padding: 12px 20px; background: #ffc107; color: #856404; 
+                   border: 2px solid #856404; border-radius: 25px; 
+                   font-size: 14px; font-weight: 700; cursor: pointer; 
+                   box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+                   display: none; transition: all 0.3s;"
+            onclick="toggleBuildNotes(true)">
+        🔨 Show Build Notes
+    </button>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar flex items-center justify-between px-8">
+        <div class="flex items-center">
+            <img src="harken.png" alt="Harken" style="height: 40px; width: auto;" />
+        </div>
+        <div class="flex items-center gap-6">
+            <a href="admin-dashboard.html" class="nav-link">Dashboard</a>
+            <a href="admin-users.html" class="nav-link">Users</a>
+            <a href="admin-accounts.html" class="nav-link active">Accounts & Billing</a>
+            <a href="admin-reports.html" class="nav-link">Reports</a>
+            <a href="admin-support-tickets.html" class="nav-link" style="position: relative;">
+                Support
+                <span style="position: absolute; top: 4px; right: 14px; background-color: #c62828; color: white; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 10px; min-width: 18px; text-align: center;">7</span>
+            </a>
+            <a href="admin-audit-logs.html" class="nav-link">Audit Logs</a>
+            <a href="admin-settings.html" class="nav-link">Settings</a>
+        </div>
+        <div class="flex items-center gap-4">
+            <span class="text-sm">Super Administrator</span>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div style="padding: 35px 50px;">
+        <!-- BUILD NOTES SECTION -->
+        <div id="buildNotesSection" style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 20px; margin-bottom: 32px; border-radius: 4px;">
+            <h3 style="color: #856404; font-size: 16px; font-weight: 700; margin: 0 0 16px 0;">🔨 BUILD NOTES - ADVANCED FEATURE</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 16px;">
+                <div>
+                    <strong style="color: #856404;">Priority Level:</strong> Low
+                </div>
+                <div>
+                    <strong style="color: #856404;">Recommended Customer Count:</strong> 20+ customers
+                </div>
+                <div>
+                    <strong style="color: #856404;">Development Stage:</strong> Phase 4
+                </div>
+                <div>
+                    <strong style="color: #856404;">Estimated Build Time:</strong> 3-4 weeks
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #856404;">Purpose & Use Case:</strong>
+                <p style="margin: 4px 0 0 0; color: #856404;">Let individual accounts customize their appraisal/evaluation report layouts, sections, and page order. Advanced customization for enterprise customers who want reports matching their brand guidelines or specific client requirements. Reality: Most accounts are happy with standard templates. Build this when multiple customers are paying for custom report layouts.</p>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #856404;">Key Features Explained:</strong>
+                <ul style="margin: 4px 0 0 0; color: #856404;">
+                    <li><strong>Template Builder:</strong> Visual editor for arranging report sections, pages, and content blocks. Complex to build and maintain.</li>
+                    <li><strong>Section Library:</strong> Pre-built report sections (property summary, market analysis, etc.) that can be reordered.</li>
+                    <li><strong>Conditional Sections:</strong> Show/hide sections based on property type or data availability. Advanced logic.</li>
+                    <li><strong>Custom Fields:</strong> Account-specific data fields beyond standard ones. Database schema changes.</li>
+                    <li><strong>Template Preview:</strong> See how report looks with sample data before saving. Requires PDF generation.</li>
+                    <li><strong>Version History:</strong> Track template changes over time. Rollback if needed.</li>
+                </ul>
+            </div>
+            
+            <div>
+                <strong style="color: #856404;">Implementation Notes:</strong>
+                <p style="margin: 4px 0 0 0; color: #856404;">SKIP UNTIL PHASE 4. Start with 2-3 fixed report templates that work for 95% of customers. When customers request custom layouts: Initially do it manually via code for paying enterprise customers. Build UI only when you have 5+ customers requesting unique layouts and the manual work becomes expensive. Consider: Template stored as JSON, sections as components, PDF generation from template + data. Very complex feature - easier to hire designer to create custom templates on request.</p>
+            </div>
+            
+            <button onclick="toggleBuildNotes(false)" style="margin-top: 12px; padding: 6px 12px; background: #856404; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">Hide Build Notes</button>
+        </div>
+
+        <!-- Back Link -->
+        <a href="admin-account-manage.html" class="back-link">← Back to Account Management</a>
+
+        <!-- Success Message -->
+        <div id="successMessage" class="success-message">
+            <span style="font-size: 18px;">✓</span>
+            <span id="successMessageText"></span>
+        </div>
+
+        <!-- Page Title -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+            <div>
+                <h2 class="section-title">REPORT TEMPLATES</h2>
+                <div style="margin-top: 8px; color: #687F8B; font-size: 13px;">
+                    Manage evaluation and appraisal report templates for <strong>Acme Properties LLC</strong>
+                </div>
+            </div>
+        </div>
+
+        <!-- Template Type Toggle -->
+        <div style="margin-bottom: 24px;">
+            <div class="template-type-toggle">
+                <label class="toggle-option">
+                    <input type="radio" name="templateType" value="evaluation" checked onchange="switchTemplateType('evaluation')" />
+                    <span>Evaluation Templates</span>
+                </label>
+                <label class="toggle-option">
+                    <input type="radio" name="templateType" value="appraisal" onchange="switchTemplateType('appraisal')" />
+                    <span>Appraisal Templates</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- View Toggle -->
+        <div id="viewToggle" style="margin-bottom: 24px;">
+            <button class="action-button action-button-primary" onclick="showTemplateLibrary()">
+                ← Back to Template Library
+            </button>
+        </div>
+
+        <!-- Template Library View -->
+        <div id="templateLibraryView">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+                <div style="color: #687F8B; font-size: 14px;">
+                    Create and manage reusable report templates for this account
+                </div>
+                <div style="display: flex; gap: 12px;">
+                    <button class="action-button action-button-primary" onclick="window.location.href='admin-report-editor-pro.html'" style="background: #0da1c7;">
+                        🎨 Professional Editor
+                    </button>
+                    <button class="action-button action-button-primary" onclick="createNewTemplate()">
+                        + Create New Template
+                    </button>
+                </div>
+            </div>
+
+            <!-- Template Cards -->
+            <div class="template-grid" id="templateCardsContainer">
+                <!-- Evaluation Templates -->
+                <div class="template-card default" data-type="evaluation" onclick="editTemplate('standard', 'evaluation')">
+                    <div class="template-card-header">
+                        <div class="template-card-title">
+                            Standard Full Report
+                            <span class="template-type-badge evaluation">EVALUATION</span>
+                        </div>
+                        <div class="template-card-badge">DEFAULT</div>
+                    </div>
+                    <div class="template-card-desc">
+                        Complete evaluation report with all sections including executive summary, valuations, and exhibits.
+                    </div>
+                    <div class="template-card-meta">
+                        Last modified: Jan 15, 2025 • 7 sections enabled
+                    </div>
+                    <div class="template-card-actions">
+                        <button class="template-action-btn" onclick="event.stopPropagation(); editTemplate('standard', 'evaluation')">Edit</button>
+                        <button class="template-action-btn" onclick="event.stopPropagation(); duplicateTemplate('standard', 'evaluation')">Duplicate</button>
+                        <button class="template-action-btn" onclick="event.stopPropagation(); deleteTemplate('standard', 'evaluation')">Delete</button>
+                    </div>
+                </div>
+
+                <div class="template-card" data-type="evaluation" onclick="editTemplate('quick', 'evaluation')">
+                    <div class="template-card-header">
+                        <div class="template-card-title">
+                            Quick Valuation
+                            <span class="template-type-badge evaluation">EVALUATION</span>
+                        </div>
+                    </div>
+                    <div class="template-card-desc">
+                        Streamlined evaluation report focusing on property summary and valuation approaches only.
+                    </div>
+                    <div class="template-card-meta">
+                        Last modified: Jan 12, 2025 • 3 sections enabled
+                    </div>
+                    <div class="template-card-actions">
+                        <button class="template-action-btn" onclick="event.stopPropagation(); editTemplate('quick', 'evaluation')">Edit</button>
+                        <button class="template-action-btn" onclick="event.stopPropagation(); duplicateTemplate('quick', 'evaluation')">Duplicate</button>
+                        <button class="template-action-btn" onclick="event.stopPropagation(); deleteTemplate('quick', 'evaluation')">Delete</button>
+                    </div>
+                </div>
+
+                <div class="template-card" data-type="evaluation" onclick="editTemplate('bank', 'evaluation')">
+                    <div class="template-card-header">
+                        <div class="template-card-title">
+                            Bank Submission
+                            <span class="template-type-badge evaluation">EVALUATION</span>
+                        </div>
+                    </div>
+                    <div class="template-card-desc">
+                        Comprehensive evaluation optimized for bank underwriting requirements with detailed assumptions.
+                    </div>
+                    <div class="template-card-meta">
+                        Last modified: Jan 10, 2025 • 6 sections enabled
+                    </div>
+                    <div class="template-card-actions">
+                        <button class="template-action-btn" onclick="event.stopPropagation(); editTemplate('bank', 'evaluation')">Edit</button>
+                        <button class="template-action-btn" onclick="event.stopPropagation(); duplicateTemplate('bank', 'evaluation')">Duplicate</button>
+                        <button class="template-action-btn" onclick="event.stopPropagation(); deleteTemplate('bank', 'evaluation')">Delete</button>
+                    </div>
+                </div>
+
+                <div class="template-card" data-type="evaluation" onclick="editTemplate('internal', 'evaluation')">
+                    <div class="template-card-header">
+                        <div class="template-card-title">
+                            Internal Use Only
+                            <span class="template-type-badge evaluation">EVALUATION</span>
+                        </div>
+                    </div>
+                    <div class="template-card-desc">
+                        Minimal evaluation for internal review without client-facing sections.
+                    </div>
+                    <div class="template-card-meta">
+                        Last modified: Jan 8, 2025 • 4 sections enabled
+                    </div>
+                    <div class="template-card-actions">
+                        <button class="template-action-btn" onclick="event.stopPropagation(); editTemplate('internal', 'evaluation')">Edit</button>
+                        <button class="template-action-btn" onclick="event.stopPropagation(); duplicateTemplate('internal', 'evaluation')">Duplicate</button>
+                        <button class="template-action-btn" onclick="event.stopPropagation(); deleteTemplate('internal', 'evaluation')">Delete</button>
+                    </div>
+                </div>
+
+                <!-- Appraisal Templates -->
+                <div class="template-card default" data-type="appraisal" onclick="editTemplate('comprehensive', 'appraisal')" style="display: none;">
+                    <div class="template-card-header">
+                        <div class="template-card-title">
+                            Comprehensive Appraisal
+                            <span class="template-type-badge appraisal">APPRAISAL</span>
+                        </div>
+                        <div class="template-card-badge">DEFAULT</div>
+                    </div>
+                    <div class="template-card-desc">
+                        Full USPAP-compliant appraisal report with all approaches to value and detailed analysis.
+                    </div>
+                    <div class="template-card-meta">
+                        Last modified: Jan 14, 2025 • 11 sections enabled
+                    </div>
+                    <div class="template-card-actions">
+                        <button class="template-action-btn" onclick="event.stopPropagation(); editTemplate('comprehensive', 'appraisal')">Edit</button>
+                        <button class="template-action-btn" onclick="event.stopPropagation(); duplicateTemplate('comprehensive', 'appraisal')">Duplicate</button>
+                        <button class="template-action-btn" onclick="event.stopPropagation(); deleteTemplate('comprehensive', 'appraisal')">Delete</button>
+                    </div>
+                </div>
+
+                <div class="template-card" data-type="appraisal" onclick="editTemplate('restricted', 'appraisal')" style="display: none;">
+                    <div class="template-card-header">
+                        <div class="template-card-title">
+                            Restricted Appraisal
+                            <span class="template-type-badge appraisal">APPRAISAL</span>
+                        </div>
+                    </div>
+                    <div class="template-card-desc">
+                        Streamlined appraisal with limited scope and selected valuation approaches.
+                    </div>
+                    <div class="template-card-meta">
+                        Last modified: Jan 11, 2025 • 8 sections enabled
+                    </div>
+                    <div class="template-card-actions">
+                        <button class="template-action-btn" onclick="event.stopPropagation(); editTemplate('restricted', 'appraisal')">Edit</button>
+                        <button class="template-action-btn" onclick="event.stopPropagation(); duplicateTemplate('restricted', 'appraisal')">Duplicate</button>
+                        <button class="template-action-btn" onclick="event.stopPropagation(); deleteTemplate('restricted', 'appraisal')">Delete</button>
+                    </div>
+                </div>
+
+                <div class="template-card" data-type="appraisal" onclick="editTemplate('market-value', 'appraisal')" style="display: none;">
+                    <div class="template-card-header">
+                        <div class="template-card-title">
+                            Market Value Appraisal
+                            <span class="template-type-badge appraisal">APPRAISAL</span>
+                        </div>
+                    </div>
+                    <div class="template-card-desc">
+                        Standard market value appraisal for lending and acquisition purposes.
+                    </div>
+                    <div class="template-card-meta">
+                        Last modified: Jan 9, 2025 • 10 sections enabled
+                    </div>
+                    <div class="template-card-actions">
+                        <button class="template-action-btn" onclick="event.stopPropagation(); editTemplate('market-value', 'appraisal')">Edit</button>
+                        <button class="template-action-btn" onclick="event.stopPropagation(); duplicateTemplate('market-value', 'appraisal')">Duplicate</button>
+                        <button class="template-action-btn" onclick="event.stopPropagation(); deleteTemplate('market-value', 'appraisal')">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Template Builder View -->
+        <div id="templateBuilderView" style="display: none;">
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div class="top-bar-content">
+                    <input type="text" id="templateName" class="template-name-input" placeholder="Template Name" value="Standard Full Report" />
+                    <button class="action-button action-button-primary" onclick="saveTemplate()">Save Template</button>
+                    <button class="action-button action-button-secondary" onclick="saveTemplateAs()">Save As...</button>
+                </div>
+            </div>
+
+            <!-- Builder Container -->
+            <div class="builder-container">
+                <!-- Left Panel: Section/Field Tree -->
+                <div class="section-panel">
+                    <h3 style="font-size: 16px; font-weight: 700; color: #1c3643; margin-bottom: 16px;">Report Sections & Fields</h3>
+                    
+                    <!-- Control Buttons -->
+                    <div class="control-buttons">
+                        <button class="control-btn" onclick="expandAll()">Expand All</button>
+                        <button class="control-btn" onclick="collapseAll()">Collapse All</button>
+                        <button class="control-btn" onclick="selectAll()">Select All</button>
+                        <button class="control-btn" onclick="deselectAll()">Deselect All</button>
+                        <button class="control-btn" onclick="resetToDefault()">Reset to Default</button>
+                    </div>
+
+                    <!-- Section Tree -->
+                    <div id="sectionTree"></div>
+                </div>
+
+                <!-- Right Panel: Preview -->
+                <div class="preview-panel">
+                    <div class="preview-header">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span style="font-weight: 600; color: #1c3643; font-size: 14px;">Preview Mode:</span>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="previewToggle" onchange="togglePreviewMode()" checked />
+                                <span class="toggle-slider"></span>
+                            </label>
+                            <span id="previewModeLabel" style="font-size: 13px; color: #687F8B;">Live Preview</span>
+                        </div>
+                        <div style="display: flex; gap: 8px;">
+                            <button class="control-btn" id="generatePreviewBtn" onclick="generatePreview()" style="display: none;">
+                                Generate Preview
+                            </button>
+                            <button class="control-btn" onclick="downloadPreview()">
+                                ⬇ Download PDF
+                            </button>
+                        </div>
+                    </div>
+                    <div class="preview-content" id="previewContent">
+                        <div class="preview-page">
+                            <div style="text-align: center; color: #687F8B; padding: 60px 20px;">
+                                Select sections from the left to see your report preview
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Properties Panel (Right Sidebar) -->
+                <div class="properties-panel">
+                    <div class="properties-header">
+                        <div class="properties-title" id="propertiesTitle">Section Properties</div>
+                    </div>
+                    <div class="properties-tabs">
+                        <div class="prop-tab active" onclick="switchPropertiesTab('design')">Design</div>
+                        <div class="prop-tab" onclick="switchPropertiesTab('content')">Content</div>
+                        <div class="prop-tab" onclick="switchPropertiesTab('advanced')">Advanced</div>
+                    </div>
+                    <div class="properties-content" id="propertiesContent">
+                        <!-- Design Tab -->
+                        <div id="designTab" class="properties-tab-content">
+                            <div class="prop-group">
+                                <div class="prop-group-title">TYPOGRAPHY</div>
+                                <div class="prop-control">
+                                    <div class="prop-label">Font Family</div>
+                                    <select class="prop-select" onchange="applyProperty('fontFamily', this.value)">
+                                        <option value="montserrat" selected>Montserrat</option>
+                                        <option value="helvetica">Helvetica</option>
+                                        <option value="times">Times New Roman</option>
+                                        <option value="georgia">Georgia</option>
+                                    </select>
+                                </div>
+                                <div class="prop-control">
+                                    <div class="prop-label">Font Size</div>
+                                    <input type="range" class="prop-slider" min="10" max="20" value="13" 
+                                        oninput="applyProperty('fontSize', this.value); this.nextElementSibling.textContent = this.value + 'px'" />
+                                    <div class="prop-slider-value">13px</div>
+                                </div>
+                                <div class="prop-control">
+                                    <div class="prop-label">Font Weight</div>
+                                    <input type="range" class="prop-slider" min="300" max="700" step="100" value="400" 
+                                        oninput="applyProperty('fontWeight', this.value); this.nextElementSibling.textContent = this.value" />
+                                    <div class="prop-slider-value">400</div>
+                                </div>
+                                <div class="prop-control">
+                                    <div class="prop-label">Line Height</div>
+                                    <input type="range" class="prop-slider" min="1.2" max="2.0" step="0.1" value="1.6" 
+                                        oninput="applyProperty('lineHeight', this.value); this.nextElementSibling.textContent = this.value" />
+                                    <div class="prop-slider-value">1.6</div>
+                                </div>
+                            </div>
+
+                            <div class="prop-group">
+                                <div class="prop-group-title">COLORS</div>
+                                <div class="prop-control">
+                                    <div class="prop-label">Accent Color</div>
+                                    <div class="color-swatches">
+                                        <div class="color-swatch selected" style="background: #1c3643;" onclick="selectColor(this, '#1c3643')"></div>
+                                        <div class="color-swatch" style="background: #0da1c7;" onclick="selectColor(this, '#0da1c7')"></div>
+                                        <div class="color-swatch" style="background: #dc2626;" onclick="selectColor(this, '#dc2626')"></div>
+                                        <div class="color-swatch" style="background: #2e7d32;" onclick="selectColor(this, '#2e7d32')"></div>
+                                        <div class="color-swatch" style="background: #6b46c1;" onclick="selectColor(this, '#6b46c1')"></div>
+                                        <div class="color-swatch" style="background: #f59e0b;" onclick="selectColor(this, '#f59e0b')"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="prop-group">
+                                <div class="prop-group-title">LAYOUT</div>
+                                <div class="prop-control">
+                                    <div class="prop-label">Layout Style</div>
+                                    <select class="prop-select" onchange="applyProperty('layout', this.value)">
+                                        <option value="single">Single Column</option>
+                                        <option value="two-column" selected>Two Column</option>
+                                        <option value="grid">Grid Layout</option>
+                                    </select>
+                                </div>
+                                <div class="prop-control">
+                                    <div class="prop-label">Image Position</div>
+                                    <select class="prop-select" onchange="applyProperty('imagePosition', this.value)">
+                                        <option value="top">Top</option>
+                                        <option value="right" selected>Right Side</option>
+                                        <option value="left">Left Side</option>
+                                        <option value="bottom">Bottom</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="prop-group">
+                                <div class="prop-group-title">DISPLAY OPTIONS</div>
+                                <div class="prop-toggle">
+                                    <input type="checkbox" id="showImages" checked onchange="applyProperty('showImages', this.checked)" />
+                                    <label for="showImages">Show Property Images</label>
+                                </div>
+                                <div class="prop-toggle">
+                                    <input type="checkbox" id="showMaps" checked onchange="applyProperty('showMaps', this.checked)" />
+                                    <label for="showMaps">Show Maps</label>
+                                </div>
+                                <div class="prop-toggle">
+                                    <input type="checkbox" id="showSignatures" checked onchange="applyProperty('showSignatures', this.checked)" />
+                                    <label for="showSignatures">Show Signature Lines</label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Content Tab -->
+                        <div id="contentTab" class="properties-tab-content" style="display: none;">
+                            <div class="prop-group">
+                                <div class="prop-group-title">SECTION CONTENT</div>
+                                <p style="font-size: 12px; color: #687F8B; line-height: 1.6;">
+                                    Content options will appear here based on the selected section.
+                                </p>
+                            </div>
+                        </div>
+
+                        <!-- Advanced Tab -->
+                        <div id="advancedTab" class="properties-tab-content" style="display: none;">
+                            <div class="prop-group">
+                                <div class="prop-group-title">ADVANCED SETTINGS</div>
+                                <p style="font-size: 12px; color: #687F8B; line-height: 1.6;">
+                                    Advanced options will appear here based on the selected section.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 50px;">
+            <span style="font-weight: 300; font-size: 14px; color: #687F8B;">© 2024, Harken CRE, LLC</span>
+        </div>
+    </div>
+
+    <script>
+        // =========================================
+        // DATA SOURCES DOCUMENTATION
+        // =========================================
+        // APPRAISAL DATA: GET /api/v1/appraisals/:id
+        // MODEL: packages/backend/src/models/appraisals.sequelize.ts
+        // MERGE FIELDS: seeders/20241024112142-appraisal-merge-fields.js
+        //
+        // EVALUATION DATA: GET /api/v1/evaluations/:id
+        // MODEL: packages/backend/src/models/evaluations.sequelize.ts
+        // =========================================
+
+        // Current active template type
+        let activeTemplateType = 'evaluation'; // 'evaluation' or 'appraisal'
+
+        // Evaluation Template Sections (Commercial Evaluations)
+        const evaluationTemplateSections = [
+            {
+                id: 'cover',
+                label: 'Cover Page',
+                fields: [
+                    { id: 'cover_file_number', label: 'File Number' },
+                    { id: 'cover_property_name', label: 'Property Name' },
+                    { id: 'cover_address', label: 'Property Address' },
+                    { id: 'cover_image', label: 'Cover Image' },
+                    { id: 'cover_logo', label: 'Company Logo' },
+                    { id: 'cover_contact', label: 'Contact Information' }
+                ]
+            },
+            {
+                id: 'engagement',
+                label: 'Letter of Engagement',
+                fields: [
+                    { id: 'engagement_letter', label: 'Full Engagement Letter' }
+                ]
+            },
+            {
+                id: 'toc',
+                label: 'Table of Contents',
+                fields: [
+                    { id: 'toc_auto', label: 'Auto-generated TOC' }
+                ]
+            },
+            {
+                id: 'section01',
+                label: 'Section 01: Executive Summary',
+                fields: [
+                    { id: 'exec_inspection_date', label: 'Date of Inspection/Effective Date' },
+                    { id: 'exec_inspector', label: 'Inspector Name' },
+                    { id: 'exec_intended_users', label: 'Intended User(s)' },
+                    { id: 'exec_intended_use', label: 'Intended Use' },
+                    { id: 'exec_client', label: 'Client Information' },
+                    { id: 'exec_owner', label: 'Owner of Record' },
+                    { id: 'exec_property_rights', label: 'Property Rights' },
+                    { id: 'exec_property_sf', label: 'Property SF' },
+                    { id: 'exec_lot_size', label: 'Lot Acres / SF' },
+                    { id: 'exec_year_built', label: 'Year Built / Remodeled' },
+                    { id: 'exec_zoning', label: 'Zoning' },
+                    { id: 'exec_most_likely_user', label: 'Most Likely User' },
+                    { id: 'exec_summary_text', label: 'Summary Analysis Text' },
+                    { id: 'exec_market_value', label: 'Final Market Value' },
+                    { id: 'exec_property_image', label: 'Property Image' }
+                ]
+            },
+            {
+                id: 'section02',
+                label: 'Section 02: Property Summary',
+                fields: [
+                    { id: 'prop_overview', label: 'Overview' },
+                    { id: 'prop_address', label: 'Address' },
+                    { id: 'prop_legal', label: 'Property Legal' },
+                    { id: 'prop_geocode', label: 'Property GeoCode/Tax ID' },
+                    { id: 'prop_sales_notes', label: 'Previous Sales Notes' },
+                    { id: 'prop_assessed_value', label: 'Assessed Market Value' },
+                    { id: 'prop_land_size', label: 'Land Size' },
+                    { id: 'prop_acres', label: 'Acres' },
+                    { id: 'prop_topography', label: 'Topography' },
+                    { id: 'prop_lot_shape', label: 'Lot Shape' },
+                    { id: 'prop_utilities', label: 'Utilities' },
+                    { id: 'prop_zoning', label: 'Zoning' },
+                    { id: 'prop_lot_frontage', label: 'Lot Frontage' },
+                    { id: 'prop_lot_depth', label: 'Lot Depth' },
+                    { id: 'prop_frontage_desc', label: 'Frontage Description' },
+                    { id: 'prop_traffic_counts', label: 'Traffic Counts' },
+                    { id: 'prop_specifics', label: 'Property Specifics' },
+                    { id: 'prop_type', label: 'Property Type' },
+                    { id: 'prop_year_built', label: 'Year Built / Remodeled' },
+                    { id: 'prop_total_sf', label: 'Total SF' },
+                    { id: 'prop_parking', label: 'Parking' },
+                    { id: 'prop_class', label: 'Property Class' },
+                    { id: 'prop_condition', label: 'Property Condition' },
+                    { id: 'prop_height', label: 'Height (Stories)' },
+                    { id: 'prop_ceiling', label: 'Ceiling Height (Feet)' },
+                    { id: 'prop_basement', label: 'Basement Description' },
+                    { id: 'prop_construction', label: 'Structure Construction Type' },
+                    { id: 'prop_foundation', label: 'Foundation' },
+                    { id: 'prop_construction_components', label: 'Construction Components' },
+                    { id: 'prop_area_info', label: 'Area Info (Sales/Vacancy/etc.)' },
+                    { id: 'prop_aerials_map', label: 'Property Aerials & Map' },
+                    { id: 'prop_boundary', label: 'Property Boundary' }
+                ]
+            },
+            {
+                id: 'section03',
+                label: 'Section 03: Valuations',
+                fields: [
+                    { id: 'val_determinants', label: 'Market Value Determinants' },
+                    { id: 'val_explanation', label: 'Valuation Explanation' },
+                    { id: 'val_income_approach', label: 'Income Approach' },
+                    { id: 'val_income_table', label: 'Income Approach Table' },
+                    { id: 'val_income_notes', label: 'Income Notes' },
+                    { id: 'val_income_vacancy', label: 'Vacancy Rate' },
+                    { id: 'val_other_income', label: 'Other Income' },
+                    { id: 'val_other_income_table', label: 'Other Income Table' },
+                    { id: 'val_effective_income', label: 'Effective Income' },
+                    { id: 'val_income_expenses', label: 'Operating Expenses' },
+                    { id: 'val_expense_notes', label: 'Expense Notes' },
+                    { id: 'val_income_cap_rate', label: 'Cap Rate Analysis' },
+                    { id: 'val_sales_approach', label: 'Sales Comparison Approach' },
+                    { id: 'val_sales_table', label: 'Sales Comparison Table' },
+                    { id: 'val_sales_comps', label: 'Comparable Properties' },
+                    { id: 'val_sales_adjustments', label: 'Adjustment Grid' },
+                    { id: 'val_sales_map', label: 'Sales Comparison Map' },
+                    { id: 'val_cost_approach', label: 'Cost Approach' },
+                    { id: 'val_cost_table', label: 'Cost Approach Table' },
+                    { id: 'val_lease_approach', label: 'Lease Comparison Approach' },
+                    { id: 'val_multifamily_approach', label: 'Multifamily Comparison' }
+                ]
+            },
+            {
+                id: 'section04',
+                label: 'Section 04: Weighted Value',
+                fields: [
+                    { id: 'weighted_total', label: 'Weighted Total Valuations' },
+                    { id: 'weighted_breakdown', label: 'Market Value Breakdown' },
+                    { id: 'weighted_approach_values', label: 'Approach to Value Table' },
+                    { id: 'weighted_blended', label: 'Blended Values' },
+                    { id: 'weighted_final', label: 'Final Market Value' },
+                    { id: 'weighted_signatures', label: 'Signature Lines' }
+                ]
+            },
+            {
+                id: 'section05',
+                label: 'Section 05: About Us',
+                fields: [
+                    { id: 'about_company', label: 'About Company' },
+                    { id: 'about_broker_profile', label: 'Broker Profile' },
+                    { id: 'about_photo', label: 'Broker Photo' },
+                    { id: 'about_transactions', label: 'Significant Transactions' }
+                ]
+            },
+            {
+                id: 'section06',
+                label: 'Section 06: Assumptions',
+                fields: [
+                    { id: 'assumptions_general', label: 'General Assumptions' },
+                    { id: 'assumptions_continued', label: 'Assumptions Continued' }
+                ]
+            },
+            {
+                id: 'section07',
+                label: 'Section 07: Exhibits',
+                fields: [
+                    { id: 'exhibits_photos', label: 'Property Photos' },
+                    { id: 'exhibits_documents', label: 'Supporting Documents' },
+                    { id: 'exhibits_maps', label: 'Additional Maps' }
+                ]
+            }
+        ];
+
+        // Appraisal Template Sections (USPAP-Compliant Appraisals)
+        const appraisalTemplateSections = [
+            {
+                id: 'cover',
+                label: 'Cover Page',
+                fields: [
+                    { id: 'cover_file_number', label: 'File Number' },
+                    { id: 'cover_property_name', label: 'Property Name' },
+                    { id: 'cover_address', label: 'Property Address' },
+                    { id: 'cover_image', label: 'Cover Image' },
+                    { id: 'cover_logo', label: 'Company Logo' },
+                    { id: 'cover_appraisal_type', label: 'Appraisal Type' }
+                ]
+            },
+            {
+                id: 'transmittal',
+                label: 'Letter of Transmittal',
+                fields: [
+                    { id: 'transmittal_letter', label: 'Full Transmittal Letter' },
+                    { id: 'transmittal_date', label: 'Transmittal Date' },
+                    { id: 'transmittal_recipient', label: 'Recipient Information' }
+                ]
+            },
+            {
+                id: 'toc',
+                label: 'Table of Contents',
+                fields: [
+                    { id: 'toc_auto', label: 'Auto-generated TOC' }
+                ]
+            },
+            {
+                id: 'section01',
+                label: 'Section 01: Executive Summary',
+                fields: [
+                    { id: 'exec_file_number', label: 'File Number' },
+                    { id: 'exec_date_of_analysis', label: 'Date of Analysis' },
+                    { id: 'exec_effective_date', label: 'Effective Date' },
+                    { id: 'exec_report_date', label: 'Report Date' },
+                    { id: 'exec_inspector', label: 'Inspector Name' },
+                    { id: 'exec_intended_user', label: 'Intended User(s)' },
+                    { id: 'exec_intended_use', label: 'Intended Use' },
+                    { id: 'exec_client', label: 'Client Information' },
+                    { id: 'exec_owner_of_record', label: 'Owner of Record' },
+                    { id: 'exec_property_rights', label: 'Property Rights Appraised' },
+                    { id: 'exec_building_size', label: 'Building Size' },
+                    { id: 'exec_land_size', label: 'Land Size' },
+                    { id: 'exec_year_built', label: 'Year Built/Remodeled' },
+                    { id: 'exec_zoning', label: 'Zoning' },
+                    { id: 'exec_high_best_use', label: 'Highest & Best Use' },
+                    { id: 'exec_value_conclusion', label: 'Value Conclusion' },
+                    { id: 'exec_property_image', label: 'Property Image' }
+                ]
+            },
+            {
+                id: 'section02',
+                label: 'Section 02: Property Description & Analysis',
+                fields: [
+                    { id: 'prop_identification', label: 'Property Identification' },
+                    { id: 'prop_address', label: 'Street Address' },
+                    { id: 'prop_city_state', label: 'City, State, Zip' },
+                    { id: 'prop_county', label: 'County' },
+                    { id: 'prop_legal_description', label: 'Legal Description' },
+                    { id: 'prop_parcel_id', label: 'Parcel ID/APN/Tax ID' },
+                    { id: 'prop_geocode', label: 'Property Geocode' },
+                    { id: 'prop_ownership', label: 'Current Ownership' },
+                    { id: 'prop_history', label: 'Sales History' },
+                    { id: 'prop_transfer_dates', label: 'Transfer History' },
+                    { id: 'prop_under_contract', label: 'Under Contract Information' },
+                    { id: 'prop_assessed_value', label: 'Assessed Value' },
+                    { id: 'prop_tax_info', label: 'Tax Information' },
+                    { id: 'prop_description', label: 'Property Description' },
+                    { id: 'prop_images', label: 'Property Images' }
+                ]
+            },
+            {
+                id: 'section03',
+                label: 'Section 03: Market Analysis',
+                fields: [
+                    { id: 'market_area', label: 'Market Area Definition' },
+                    { id: 'market_trends', label: 'Market Trends' },
+                    { id: 'market_supply_demand', label: 'Supply & Demand Analysis' },
+                    { id: 'market_economic', label: 'Economic Factors' },
+                    { id: 'market_vacancy', label: 'Vacancy Rates' },
+                    { id: 'market_rental_rates', label: 'Market Rental Rates' },
+                    { id: 'market_sales_data', label: 'Recent Sales Data' }
+                ]
+            },
+            {
+                id: 'section04',
+                label: 'Section 04: Site Valuation',
+                fields: [
+                    { id: 'site_description', label: 'Site Description' },
+                    { id: 'site_size', label: 'Site Size' },
+                    { id: 'site_dimensions', label: 'Site Dimensions' },
+                    { id: 'site_topography', label: 'Topography' },
+                    { id: 'site_lot_shape', label: 'Lot Shape' },
+                    { id: 'site_frontage', label: 'Frontage' },
+                    { id: 'site_depth', label: 'Lot Depth' },
+                    { id: 'site_utilities', label: 'Utilities Available' },
+                    { id: 'site_zoning', label: 'Zoning Classification' },
+                    { id: 'site_zoning_desc', label: 'Zoning Description' },
+                    { id: 'site_conforming_use', label: 'Conforming Use Determination' },
+                    { id: 'site_easements', label: 'Easements & Restrictions' },
+                    { id: 'site_environmental', label: 'Environmental Concerns' },
+                    { id: 'site_access', label: 'Access & Traffic' }
+                ]
+            },
+            {
+                id: 'section05',
+                label: 'Section 05: Improvement Valuation',
+                fields: [
+                    { id: 'imp_description', label: 'Improvement Description' },
+                    { id: 'imp_type', label: 'Property Type' },
+                    { id: 'imp_year_built', label: 'Year Built' },
+                    { id: 'imp_year_remodeled', label: 'Year Remodeled' },
+                    { id: 'imp_building_size', label: 'Building Size' },
+                    { id: 'imp_stories', label: 'Number of Stories' },
+                    { id: 'imp_height', label: 'Ceiling Height' },
+                    { id: 'imp_class', label: 'Property Class' },
+                    { id: 'imp_condition', label: 'Condition Rating' },
+                    { id: 'imp_construction', label: 'Construction Type' },
+                    { id: 'imp_foundation', label: 'Foundation Type' },
+                    { id: 'imp_exterior', label: 'Exterior Materials' },
+                    { id: 'imp_roof', label: 'Roof Type' },
+                    { id: 'imp_mechanical', label: 'Mechanical Systems' },
+                    { id: 'imp_electrical', label: 'Electrical System' },
+                    { id: 'imp_plumbing', label: 'Plumbing System' },
+                    { id: 'imp_hvac', label: 'Heating/Cooling' },
+                    { id: 'imp_windows', label: 'Windows' },
+                    { id: 'imp_parking', label: 'Parking Facilities' },
+                    { id: 'imp_ada', label: 'ADA Compliance' },
+                    { id: 'imp_basement', label: 'Basement Description' }
+                ]
+            },
+            {
+                id: 'section06',
+                label: 'Section 06: Sales Comparison Approach',
+                fields: [
+                    { id: 'sales_methodology', label: 'Methodology' },
+                    { id: 'sales_notes', label: 'Sales Approach Notes' },
+                    { id: 'sales_comps_table', label: 'Comparable Sales Table' },
+                    { id: 'sales_comp_details', label: 'Comparable Property Details' },
+                    { id: 'sales_adjustments', label: 'Adjustment Grid' },
+                    { id: 'sales_adjustment_explanation', label: 'Adjustment Explanations' },
+                    { id: 'sales_map', label: 'Sales Comparison Map' },
+                    { id: 'sales_weighting', label: 'Weighting Analysis' },
+                    { id: 'sales_conclusion', label: 'Sales Approach Conclusion' },
+                    { id: 'sales_indicated_value', label: 'Indicated Value by Sales Approach' }
+                ]
+            },
+            {
+                id: 'section07',
+                label: 'Section 07: Income Capitalization Approach',
+                fields: [
+                    { id: 'income_methodology', label: 'Methodology' },
+                    { id: 'income_notes', label: 'Income Approach Notes' },
+                    { id: 'income_rent_roll', label: 'Rent Roll' },
+                    { id: 'income_sources', label: 'Income Sources' },
+                    { id: 'income_vacancy', label: 'Vacancy & Credit Loss' },
+                    { id: 'income_effective', label: 'Effective Gross Income' },
+                    { id: 'income_expenses', label: 'Operating Expenses' },
+                    { id: 'income_noi', label: 'Net Operating Income' },
+                    { id: 'income_cap_rate', label: 'Capitalization Rate' },
+                    { id: 'income_cap_rate_support', label: 'Cap Rate Support' },
+                    { id: 'income_conclusion', label: 'Income Approach Conclusion' },
+                    { id: 'income_indicated_value', label: 'Indicated Value by Income Approach' }
+                ]
+            },
+            {
+                id: 'section08',
+                label: 'Section 08: Cost Approach',
+                fields: [
+                    { id: 'cost_methodology', label: 'Methodology' },
+                    { id: 'cost_notes', label: 'Cost Approach Notes' },
+                    { id: 'cost_site_value', label: 'Site Value' },
+                    { id: 'cost_reproduction', label: 'Reproduction Cost New' },
+                    { id: 'cost_replacement', label: 'Replacement Cost New' },
+                    { id: 'cost_improvements', label: 'Improvements Analysis' },
+                    { id: 'cost_depreciation', label: 'Depreciation Analysis' },
+                    { id: 'cost_physical', label: 'Physical Depreciation' },
+                    { id: 'cost_functional', label: 'Functional Obsolescence' },
+                    { id: 'cost_external', label: 'External Obsolescence' },
+                    { id: 'cost_conclusion', label: 'Cost Approach Conclusion' },
+                    { id: 'cost_indicated_value', label: 'Indicated Value by Cost Approach' }
+                ]
+            },
+            {
+                id: 'section09',
+                label: 'Section 09: Reconciliation & Final Value Opinion',
+                fields: [
+                    { id: 'recon_approach_comparison', label: 'Comparison of Approaches' },
+                    { id: 'recon_weighting', label: 'Weighting of Approaches' },
+                    { id: 'recon_analysis', label: 'Reconciliation Analysis' },
+                    { id: 'recon_final_value', label: 'Final Value Opinion' },
+                    { id: 'recon_value_psf', label: 'Value Per SF' },
+                    { id: 'recon_rounding', label: 'Rounding Explanation' },
+                    { id: 'recon_exposure_time', label: 'Exposure Time' },
+                    { id: 'recon_marketing_time', label: 'Marketing Time' }
+                ]
+            },
+            {
+                id: 'section10',
+                label: 'Section 10: Certification & Assumptions',
+                fields: [
+                    { id: 'cert_statement', label: 'Certification Statement' },
+                    { id: 'cert_signature', label: 'Appraiser Signature' },
+                    { id: 'cert_date', label: 'Signature Date' },
+                    { id: 'cert_license', label: 'License Information' },
+                    { id: 'assumptions_general', label: 'General Assumptions' },
+                    { id: 'assumptions_limiting', label: 'Limiting Conditions' },
+                    { id: 'assumptions_extraordinary', label: 'Extraordinary Assumptions' },
+                    { id: 'assumptions_hypothetical', label: 'Hypothetical Conditions' }
+                ]
+            },
+            {
+                id: 'section11',
+                label: 'Section 11: Addenda & Exhibits',
+                fields: [
+                    { id: 'addenda_photos', label: 'Property Photos' },
+                    { id: 'addenda_maps', label: 'Maps' },
+                    { id: 'addenda_plats', label: 'Plats & Legal Documents' },
+                    { id: 'addenda_comps', label: 'Comparable Data Sheets' },
+                    { id: 'addenda_qualifications', label: 'Appraiser Qualifications' },
+                    { id: 'addenda_licenses', label: 'Licenses & Certifications' },
+                    { id: 'addenda_engagement', label: 'Engagement Letter' },
+                    { id: 'addenda_additional', label: 'Additional Documentation' }
+                ]
+            }
+        ];
+
+        // Get the active template sections based on type
+        function getActiveTemplateSections() {
+            return activeTemplateType === 'appraisal' ? appraisalTemplateSections : evaluationTemplateSections;
+        }
+
+        // State management
+        let templateState = {};
+        let previewMode = 'live'; // 'live' or 'ondemand'
+        let previewDebounceTimer = null;
+        let currentView = 'library'; // 'library' or 'builder'
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load saved template type from localStorage
+            const savedType = localStorage.getItem('templateType');
+            if (savedType && (savedType === 'appraisal' || savedType === 'evaluation')) {
+                activeTemplateType = savedType;
+                document.querySelector(`input[value="${savedType}"]`).checked = true;
+            }
+            
+            initializeTemplateState();
+            renderSectionTree();
+            updateViewToggle();
+            filterTemplateCards();
+            
+            // Initialize scroll-spy when preview is ready
+            setTimeout(() => {
+                initScrollSpy();
+            }, 500);
+        });
+
+        function initializeTemplateState() {
+            // Initialize all sections as checked by default
+            const sections = getActiveTemplateSections();
+            templateState = {}; // Reset state
+            sections.forEach(section => {
+                templateState[section.id] = { 
+                    checked: true, 
+                    expanded: false,
+                    design: {} // Store design properties here
+                };
+                section.fields.forEach(field => {
+                    templateState[field.id] = true;
+                });
+            });
+        }
+
+        function renderSectionTree() {
+            const container = document.getElementById('sectionTree');
+            container.innerHTML = '';
+
+            const sections = getActiveTemplateSections();
+            sections.forEach(section => {
+                const sectionDiv = document.createElement('div');
+                sectionDiv.className = 'section-item';
+                sectionDiv.setAttribute('data-section-id', section.id);
+
+                // Section Header
+                const headerDiv = document.createElement('div');
+                headerDiv.className = 'section-header';
+
+                // Checkbox - Toggle section on/off
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.className = 'section-checkbox';
+                checkbox.checked = templateState[section.id]?.checked !== false;
+                checkbox.onclick = (e) => e.stopPropagation();
+                checkbox.onchange = () => toggleSectionCheck(section.id);
+
+                // Expand Button - Show/hide field checkboxes
+                const expandBtn = document.createElement('button');
+                expandBtn.className = 'section-expand-btn' + (templateState[section.id]?.expanded ? ' expanded' : '');
+                expandBtn.textContent = '▸';
+                expandBtn.onclick = (e) => {
+                    e.stopPropagation();
+                    toggleSectionExpand(section.id);
+                };
+
+                // Section Label - Navigate to section in preview
+                const label = document.createElement('span');
+                label.className = 'section-label';
+                label.textContent = section.label;
+                label.onclick = (e) => {
+                    e.stopPropagation();
+                    navigateToSection(section.id);
+                };
+
+                headerDiv.appendChild(checkbox);
+                headerDiv.appendChild(expandBtn);
+                headerDiv.appendChild(label);
+
+                // Field List
+                const fieldList = document.createElement('div');
+                fieldList.className = 'field-list' + (templateState[section.id]?.expanded ? ' expanded' : '');
+
+                section.fields.forEach(field => {
+                    const fieldDiv = document.createElement('div');
+                    fieldDiv.className = 'field-item';
+
+                    const fieldCheckbox = document.createElement('input');
+                    fieldCheckbox.type = 'checkbox';
+                    fieldCheckbox.className = 'field-checkbox';
+                    fieldCheckbox.checked = templateState[field.id] !== false;
+                    fieldCheckbox.onchange = () => toggleFieldCheck(section.id, field.id);
+
+                    const fieldLabel = document.createElement('label');
+                    fieldLabel.className = 'field-label';
+                    fieldLabel.textContent = field.label;
+                    fieldLabel.onclick = () => fieldCheckbox.click();
+
+                    fieldDiv.appendChild(fieldCheckbox);
+                    fieldDiv.appendChild(fieldLabel);
+                    fieldList.appendChild(fieldDiv);
+                });
+
+                sectionDiv.appendChild(headerDiv);
+                sectionDiv.appendChild(fieldList);
+                container.appendChild(sectionDiv);
+            });
+        }
+
+        // =========================================
+        // PROPERTIES PANEL FUNCTIONS
+        // =========================================
+        
+        let currentSelectedSection = null;
+
+        function switchPropertiesTab(tabName) {
+            // Update tab active states
+            document.querySelectorAll('.prop-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Show/hide tab content
+            document.getElementById('designTab').style.display = tabName === 'design' ? 'block' : 'none';
+            document.getElementById('contentTab').style.display = tabName === 'content' ? 'block' : 'none';
+            document.getElementById('advancedTab').style.display = tabName === 'advanced' ? 'block' : 'none';
+        }
+
+        function selectColor(element, color) {
+            // Remove previous selection
+            element.parentElement.querySelectorAll('.color-swatch').forEach(swatch => {
+                swatch.classList.remove('selected');
+            });
+            
+            // Select new color
+            element.classList.add('selected');
+            
+            // Apply property
+            applyProperty('accentColor', color);
+        }
+
+        function applyProperty(property, value) {
+            if (currentSelectedSection) {
+                // Store design property
+                if (!templateState[currentSelectedSection].design) {
+                    templateState[currentSelectedSection].design = {};
+                }
+                templateState[currentSelectedSection].design[property] = value;
+                
+                // Update preview
+                triggerPreviewUpdate();
+                
+                console.log(`Section ${currentSelectedSection} ${property} updated to ${value}`);
+            }
+        }
+
+        function updatePropertiesPanel(sectionId) {
+            currentSelectedSection = sectionId;
+            const sections = getActiveTemplateSections();
+            const section = sections.find(s => s.id === sectionId);
+            
+            if (section) {
+                document.getElementById('propertiesTitle').textContent = section.label + ' Properties';
+            }
+        }
+
+        // =========================================
+        // NAVIGATION & SCROLL-SPY FUNCTIONS
+        // =========================================
+        
+        let scrollSpyObserver = null;
+
+        function initScrollSpy() {
+            // Clean up existing observer
+            if (scrollSpyObserver) {
+                scrollSpyObserver.disconnect();
+            }
+
+            // Create intersection observer for scroll-spy
+            scrollSpyObserver = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach(entry => {
+                        if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
+                            const sectionId = entry.target.getAttribute('data-section-id');
+                            if (sectionId) {
+                                highlightSectionInPanel(sectionId);
+                            }
+                        }
+                    });
+                },
+                {
+                    root: document.getElementById('previewContent'),
+                    threshold: [0.5],
+                    rootMargin: '-20% 0px -20% 0px'
+                }
+            );
+
+            // Observe all preview pages
+            document.querySelectorAll('.preview-page[data-section-id]').forEach(page => {
+                scrollSpyObserver.observe(page);
+            });
+        }
+
+        function highlightSectionInPanel(sectionId) {
+            // Remove active class from all sections
+            document.querySelectorAll('.section-item').forEach(item => {
+                item.classList.remove('active');
+            });
+
+            // Add active class to current section
+            const sectionItem = document.querySelector(`.section-item[data-section-id="${sectionId}"]`);
+            if (sectionItem) {
+                sectionItem.classList.add('active');
+                updatePropertiesPanel(sectionId);
+            }
+        }
+
+        function navigateToSection(sectionId) {
+            const previewContent = document.getElementById('previewContent');
+            const targetPage = previewContent.querySelector(`[data-section-id="${sectionId}"]`);
+            
+            if (targetPage) {
+                targetPage.scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                });
+                
+                // Manually highlight since smooth scroll may delay intersection observer
+                setTimeout(() => {
+                    highlightSectionInPanel(sectionId);
+                }, 100);
+            }
+        }
+
+        function toggleSectionExpand(sectionId) {
+            templateState[sectionId].expanded = !templateState[sectionId].expanded;
+            renderSectionTree();
+        }
+
+        // Template Type Switching
+        function switchTemplateType(type) {
+            activeTemplateType = type;
+            localStorage.setItem('templateType', type);
+            
+            // Re-initialize state for new template type
+            initializeTemplateState();
+            
+            // Update UI
+            if (currentView === 'builder') {
+                renderSectionTree();
+                triggerPreviewUpdate();
+            } else {
+                filterTemplateCards();
+            }
+        }
+
+        function filterTemplateCards() {
+            const cards = document.querySelectorAll('.template-card');
+            cards.forEach(card => {
+                const cardType = card.getAttribute('data-type');
+                if (cardType === activeTemplateType) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        }
+
+        function toggleSection(sectionId) {
+            templateState[sectionId].expanded = !templateState[sectionId].expanded;
+            renderSectionTree();
+        }
+
+        function toggleSectionCheck(sectionId) {
+            const sections = getActiveTemplateSections();
+            const section = sections.find(s => s.id === sectionId);
+            const newState = !templateState[sectionId].checked;
+            
+            templateState[sectionId].checked = newState;
+            section.fields.forEach(field => {
+                templateState[field.id] = newState;
+            });
+
+            renderSectionTree();
+            triggerPreviewUpdate();
+        }
+
+        function toggleFieldCheck(sectionId, fieldId) {
+            templateState[fieldId] = !templateState[fieldId];
+            
+            // Update section checkbox state
+            const sections = getActiveTemplateSections();
+            const section = sections.find(s => s.id === sectionId);
+            const allChecked = section.fields.every(f => templateState[f.id]);
+            const noneChecked = section.fields.every(f => !templateState[f.id]);
+            
+            if (allChecked || noneChecked) {
+                templateState[sectionId].checked = allChecked;
+            }
+
+            renderSectionTree();
+            triggerPreviewUpdate();
+        }
+
+        function expandAll() {
+            const sections = getActiveTemplateSections();
+            sections.forEach(section => {
+                templateState[section.id].expanded = true;
+            });
+            renderSectionTree();
+        }
+
+        function collapseAll() {
+            const sections = getActiveTemplateSections();
+            sections.forEach(section => {
+                templateState[section.id].expanded = false;
+            });
+            renderSectionTree();
+        }
+
+        function selectAll() {
+            const sections = getActiveTemplateSections();
+            sections.forEach(section => {
+                templateState[section.id].checked = true;
+                section.fields.forEach(field => {
+                    templateState[field.id] = true;
+                });
+            });
+            renderSectionTree();
+            triggerPreviewUpdate();
+        }
+
+        function deselectAll() {
+            const sections = getActiveTemplateSections();
+            sections.forEach(section => {
+                templateState[section.id].checked = false;
+                section.fields.forEach(field => {
+                    templateState[field.id] = false;
+                });
+            });
+            renderSectionTree();
+            triggerPreviewUpdate();
+        }
+
+        function resetToDefault() {
+            if (confirm('Reset to default template configuration? This will enable all sections and fields.')) {
+                initializeTemplateState();
+                renderSectionTree();
+                triggerPreviewUpdate();
+            }
+        }
+
+        function togglePreviewMode() {
+            const toggle = document.getElementById('previewToggle');
+            const label = document.getElementById('previewModeLabel');
+            const generateBtn = document.getElementById('generatePreviewBtn');
+            
+            if (toggle.checked) {
+                previewMode = 'live';
+                label.textContent = 'Live Preview';
+                generateBtn.style.display = 'none';
+                updatePreview();
+            } else {
+                previewMode = 'ondemand';
+                label.textContent = 'On-Demand';
+                generateBtn.style.display = 'inline-block';
+            }
+        }
+
+        function triggerPreviewUpdate() {
+            if (previewMode === 'live') {
+                // Debounce for performance
+                clearTimeout(previewDebounceTimer);
+                previewDebounceTimer = setTimeout(() => {
+                    updatePreview();
+                }, 300);
+            }
+        }
+
+        function generatePreview() {
+            updatePreview();
+        }
+
+        function updatePreview() {
+            const previewContent = document.getElementById('previewContent');
+            previewContent.innerHTML = '';
+
+            // Check which sections are enabled
+            const sections = getActiveTemplateSections();
+            const enabledSections = sections.filter(section => 
+                templateState[section.id]?.checked !== false
+            );
+
+            if (enabledSections.length === 0) {
+                previewContent.innerHTML = '<div class="preview-page"><div style="text-align: center; color: #687F8B; padding: 60px 20px;">No sections selected. Choose sections from the left to build your report.</div></div>';
+                return;
+            }
+
+            // Render each enabled section as a full page
+            enabledSections.forEach(section => {
+                const pageDiv = document.createElement('div');
+                pageDiv.className = 'preview-page';
+                pageDiv.setAttribute('data-section-id', section.id); // Add data attribute for scroll-spy
+
+                if (section.id === 'cover') {
+                    pageDiv.innerHTML = renderCoverPagePreview();
+                } else if (section.id === 'engagement' || section.id === 'transmittal') {
+                    pageDiv.innerHTML = renderEngagementPagePreview();
+                } else if (section.id === 'toc') {
+                    pageDiv.innerHTML = renderTOCPagePreview();
+                } else if (section.id === 'section01') {
+                    pageDiv.innerHTML = renderExecutiveSummaryPreview();
+                } else if (section.id === 'section02') {
+                    pageDiv.innerHTML = renderPropertySummaryPreview();
+                } else if (section.id === 'section03') {
+                    pageDiv.innerHTML = renderValuationsPreview();
+                } else {
+                    pageDiv.innerHTML = renderGenericSectionPreview(section);
+                }
+
+                previewContent.appendChild(pageDiv);
+            });
+            
+            // Re-initialize scroll-spy after preview updates
+            setTimeout(() => {
+                initScrollSpy();
+            }, 100);
+        }
+
+        function renderCoverPagePreview() {
+            return `
+                <div class="cover-page-content">
+                    <div class="cover-title-area">
+                        <h1 class="cover-main-title">As Stabilized</h1>
+                        <p class="cover-subtitle">171 Baldwin Lane | Columbia Falls, Montana 59912</p>
+                    </div>
+                    <div class="cover-image-area">
+                        <div class="image-placeholder">Property Photo</div>
+                    </div>
+                    <div class="cover-footer-area">
+                        <div class="cover-gradient-bar"></div>
+                        <div class="cover-powered-by">Powered by Harken CRE | 1</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderTOCPagePreview() {
+            return `
+                <div style="padding: 60px 50px; position: relative; min-height: 11in;">
+                    <div class="section-header-badge">
+                        <div class="badge-section-name">Table of Contents</div>
+                    </div>
+                    <h2 class="section-page-title">Table of Contents</h2>
+                    <div style="font-size: 14px; line-height: 2.5;">
+                        <div style="display: flex; padding: 10px 0; border-bottom: 1px dotted #d0d0d0;">
+                            <span style="color: #2e7d32; font-weight: 700; width: 40px;">03</span>
+                            <span style="flex: 1; font-weight: 600;">Engagement Letter</span>
+                        </div>
+                        <div style="display: flex; padding: 10px 0; border-bottom: 1px dotted #d0d0d0;">
+                            <span style="color: #2e7d32; font-weight: 700; width: 40px;">04</span>
+                            <span style="flex: 1; font-weight: 600;">Section 01: Executive Summary</span>
+                        </div>
+                        <div style="display: flex; padding: 10px 0; border-bottom: 1px dotted #d0d0d0;">
+                            <span style="color: #2e7d32; font-weight: 700; width: 40px;">07</span>
+                            <span style="flex: 1; font-weight: 600;">Section 02: Property Summary</span>
+                        </div>
+                        <div style="display: flex; padding: 10px 0; border-bottom: 1px dotted #d0d0d0;">
+                            <span style="color: #2e7d32; font-weight: 700; width: 40px;">12</span>
+                            <span style="flex: 1; font-weight: 600;">Section 03: Valuations</span>
+                        </div>
+                    </div>
+                    <div class="page-footer">Powered by Harken CRE | 2</div>
+                </div>
+            `;
+        }
+
+        function renderExecutiveSummaryPreview() {
+            return `
+                <div class="section-page-layout">
+                    <div class="green-sidebar">
+                        <div class="sidebar-text">SECTION 1</div>
+                    </div>
+                    <div class="section-main-content">
+                        <div class="section-header-badge">
+                            <div class="badge-section-num">Section 01</div>
+                            <div class="badge-section-name">Executive Summary</div>
+                        </div>
+                        
+                        <h2 class="section-page-title">Executive <span>Summary</span></h2>
+                        
+                        <div class="info-grid">
+                            <div class="info-grid-label">Date of Inspection/Effective Date:</div>
+                            <div class="info-grid-value">07/06/2025 / 07/06/2025</div>
+                        </div>
+                        <div class="info-grid">
+                            <div class="info-grid-label">Inspector:</div>
+                            <div class="info-grid-value">N/A</div>
+                        </div>
+                        <div class="info-grid">
+                            <div class="info-grid-label">Intended User(s):</div>
+                            <div class="info-grid-value">N/A</div>
+                        </div>
+                        <div class="info-grid">
+                            <div class="info-grid-label">Client:</div>
+                            <div class="info-grid-value">Chantelle Thomas (Valley Bank)</div>
+                        </div>
+                        <div class="info-grid">
+                            <div class="info-grid-label">Property Rights:</div>
+                            <div class="info-grid-value">Fee Simple</div>
+                        </div>
+                        
+                        <h3 class="section-subheading">Key Highlights:</h3>
+                        <ul class="highlights-list">
+                            <li>Property SF: 3,830 SF</li>
+                            <li>Lot Acres: 8.490 AC</li>
+                            <li>Year Built / Remodeled: 1971, 1992, 2025 / N/A</li>
+                            <li>Zoning: SR - Suburban Residential Mixed-use</li>
+                        </ul>
+                        
+                        <p style="margin-top: 30px; font-size: 13px; line-height: 1.7; color: #1c3643;">
+                            The author's analysis and assumptions of: use/condition factors of the property, current market data, 
+                            actual and market income information and general assessment of the property; results in the following:
+                        </p>
+                        <p style="font-size: 14px; font-weight: 700; color: #1c3643; margin-top: 15px;">
+                            Final Market Value of $853,535.00 ($222.86 PSF).
+                        </p>
+                        
+                        <div class="page-footer">Powered by Harken CRE | 4</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderPropertySummaryPreview() {
+            return `
+                <div class="section-page-layout">
+                    <div class="green-sidebar">
+                        <div class="sidebar-text">SECTION 2</div>
+                    </div>
+                    <div class="section-main-content">
+                        <div class="section-header-badge">
+                            <div class="badge-section-num">Section 02</div>
+                            <div class="badge-section-name">Property Summary</div>
+                        </div>
+                        
+                        <h2 class="section-page-title"><span>Overview</span></h2>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px; margin-bottom: 30px;">
+                            <div>
+                                <h3 class="section-subheading">Address</h3>
+                                <div class="info-grid">
+                                    <div class="info-grid-label">Street:</div>
+                                    <div class="info-grid-value">3752 Valley Drive<br>Helena, Montana 59602</div>
+                                </div>
+                                
+                                <h3 class="section-subheading">Property Legal</h3>
+                                <div class="info-grid">
+                                    <div class="info-grid-label">Conforming Use:</div>
+                                    <div class="info-grid-value">Appears to be conforming</div>
+                                </div>
+                            </div>
+                            <div>
+                                <h3 class="section-subheading">Site Specs</h3>
+                                <div class="info-grid">
+                                    <div class="info-grid-label">Land Size:</div>
+                                    <div class="info-grid-value">369,824 SF</div>
+                                </div>
+                                <div class="info-grid">
+                                    <div class="info-grid-label">Acres:</div>
+                                    <div class="info-grid-value">8.490 AC</div>
+                                </div>
+                                <div class="info-grid">
+                                    <div class="info-grid-label">Zoning:</div>
+                                    <div class="info-grid-value">SR - Suburban Residential Mixed-use</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="page-footer">Powered by Harken CRE | 7</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderValuationsPreview() {
+            return `
+                <div class="section-page-layout">
+                    <div class="green-sidebar">
+                        <div class="sidebar-text">SECTION 3</div>
+                    </div>
+                    <div class="section-main-content">
+                        <div class="section-header-badge">
+                            <div class="badge-section-num">Section 03</div>
+                            <div class="badge-section-name">Valuations</div>
+                        </div>
+                        
+                        <h2 class="section-page-title">Income <span>Approach</span></h2>
+                        
+                        <!-- Main Income Table -->
+                        <table class="income-table">
+                            <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Monthly Income</th>
+                                    <th>Annual Income</th>
+                                    <th>$/SF/YR</th>
+                                    <th>Total SF</th>
+                                    <th>Comments</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Multi-Family - Building 1</td>
+                                    <td>$1,581.25</td>
+                                    <td>$18,975.00</td>
+                                    <td>$63.25</td>
+                                    <td>300 SF</td>
+                                    <td>Per Lease</td>
+                                </tr>
+                                <tr>
+                                    <td>Multi-Family - Building 2</td>
+                                    <td>$3,000.00</td>
+                                    <td>$36,000.00</td>
+                                    <td>$0.00</td>
+                                    <td>0 SF</td>
+                                    <td>Per Lease</td>
+                                </tr>
+                                <tr>
+                                    <td>Multi-Family - Building 3</td>
+                                    <td>$2,500.00</td>
+                                    <td>$30,000.00</td>
+                                    <td>$0.00</td>
+                                    <td>0 SF</td>
+                                    <td>Future Rate</td>
+                                </tr>
+                                <tr class="total-row">
+                                    <td>Total and Average</td>
+                                    <td>$7,081.25</td>
+                                    <td>$84,975.00</td>
+                                    <td>$22.19</td>
+                                    <td>3,830 SF</td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <p style="font-size: 11px; font-style: italic; color: #687F8B; margin: 10px 0 20px 0;">
+                            <strong>Income Notes:</strong> Income is based on a blend of actual and projected rates received at the property, adjusted for property type. 
+                            According to my research, these rates are within the market range and have been applied accordingly.
+                        </p>
+                        
+                        <!-- Vacancy -->
+                        <div style="margin: 20px 0; padding: 12px; background: #f9f9f9; border-left: 3px solid #2e7d32;">
+                            <strong style="font-size: 12px; color: #1c3643;">Vacancy:</strong> 
+                            <span style="font-size: 12px; color: #687F8B;">5.00% of Gross Income</span>
+                            <span style="font-size: 12px; color: #1c3643; margin-left: 20px;">($4,248.75)</span>
+                        </div>
+                        
+                        <!-- Other Income Section (NEW) -->
+                        <h3 class="section-subheading" style="margin-top: 25px;">Other Income</h3>
+                        <table class="income-table">
+                            <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Monthly Income</th>
+                                    <th>Annual Income</th>
+                                    <th>Total SF</th>
+                                    <th>Comments</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Laundry Income</td>
+                                    <td>$200.00</td>
+                                    <td>$2,400.00</td>
+                                    <td>0</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>Fishing pond</td>
+                                    <td>$800.00</td>
+                                    <td>$9,600.00</td>
+                                    <td>0</td>
+                                    <td>test</td>
+                                </tr>
+                                <tr>
+                                    <td>carwash</td>
+                                    <td>$1,400.00</td>
+                                    <td>$16,800.00</td>
+                                    <td>400 SF</td>
+                                    <td>test</td>
+                                </tr>
+                                <tr class="total-row">
+                                    <td>Total and Average</td>
+                                    <td>$2,400.00</td>
+                                    <td>$28,800.00</td>
+                                    <td>400 SF</td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <!-- Effective Income -->
+                        <div style="margin: 25px 0; padding: 15px; background: #e8f5e9; border: 2px solid #2e7d32; border-radius: 4px;">
+                            <strong style="font-size: 14px; color: #2e7d32;">Effective Income:</strong> 
+                            <span style="font-size: 16px; font-weight: 700; color: #1c3643; margin-left: 15px;">$109,526.25</span>
+                        </div>
+                        
+                        <!-- Operating Expenses -->
+                        <h3 class="section-subheading" style="margin-top: 25px;">Operation Expenses</h3>
+                        <table class="income-table">
+                            <thead>
+                                <tr>
+                                    <th>Type</th>
+                                    <th>Amounts</th>
+                                    <th>% of EGI</th>
+                                    <th>$/SF</th>
+                                    <th>Comments</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Property Taxes</td>
+                                    <td>$0.00</td>
+                                    <td>0.00%</td>
+                                    <td>$0.00</td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>Insurance</td>
+                                    <td>$6,166.30</td>
+                                    <td>5.63%</td>
+                                    <td>$1.61</td>
+                                    <td>Assumed</td>
+                                </tr>
+                                <tr>
+                                    <td>Maintenance</td>
+                                    <td>$5,649.84</td>
+                                    <td>5.16%</td>
+                                    <td>$1.48</td>
+                                    <td>Assumed</td>
+                                </tr>
+                                <tr>
+                                    <td>Management</td>
+                                    <td>$5,649.84</td>
+                                    <td>5.16%</td>
+                                    <td>$1.48</td>
+                                    <td>Assumed</td>
+                                </tr>
+                                <tr>
+                                    <td>Utilities</td>
+                                    <td>$0.00</td>
+                                    <td>0.00%</td>
+                                    <td>$0.00</td>
+                                    <td>Tenant Paid</td>
+                                </tr>
+                                <tr class="total-row">
+                                    <td>Total Expenses</td>
+                                    <td>$17,465.98</td>
+                                    <td>15.95%</td>
+                                    <td>$4.57</td>
+                                    <td></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                        
+                        <p style="font-size: 11px; font-style: italic; color: #687F8B; margin-top: 10px;">
+                            <strong>Expense Notes:</strong> Expense are derived from actual costs and estimates incurred on the property and assumptions made by the author 
+                            all values are deemed reliable but not guaranteed.
+                        </p>
+                        
+                        <div class="page-footer">Powered by Harken CRE | 14</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderEngagementPagePreview() {
+            return `
+                <div style="padding: 60px 50px; position: relative; min-height: 11in;">
+                    <h2 style="font-size: 32px; font-weight: 300; color: #1c3643; margin-bottom: 30px;">Letter of Engagement</h2>
+                    <p style="font-size: 13px; line-height: 1.8; color: #1c3643; margin-bottom: 15px;">
+                        Chantelle Thomas<br>
+                        Valley Bank<br>
+                        3030 North Montana Avenue<br>
+                        Helena, mt 59601
+                    </p>
+                    <p style="font-size: 13px; line-height: 1.8; color: #1c3643; margin-bottom: 15px;">
+                        <strong>Attention: Chantelle Thomas</strong>
+                    </p>
+                    <p style="font-size: 13px; line-height: 1.8; color: #1c3643; margin-bottom: 15px;">
+                        Dear Chantelle Thomas,
+                    </p>
+                    <p style="font-size: 13px; line-height: 1.8; color: #1c3643; margin-bottom: 15px;">
+                        The Evaluation of a commercial property utilizes a combination of the information gathered from an exterior examination, 
+                        interior site analysis, external data sources, previous lease data, property assessment data, recent comparable leases, 
+                        current area leasing information, pertinent property profit and loss information, as well as a thorough photo documentation of the subject property.
+                    </p>
+                    <div class="page-footer">Powered by Harken CRE | 3</div>
+                </div>
+            `;
+        }
+
+        function renderGenericSectionPreview(section) {
+            return `
+                <div class="section-page-layout">
+                    <div class="green-sidebar">
+                        <div class="sidebar-text">SECTION</div>
+                    </div>
+                    <div class="section-main-content">
+                        <div class="section-header-badge">
+                            <div class="badge-section-name">${section.label}</div>
+                        </div>
+                        <h2 class="section-page-title">${section.label}</h2>
+                        <p style="font-size: 13px; color: #687F8B;">Section content will appear here...</p>
+                        <div class="page-footer">Powered by Harken CRE</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // =========================================
+        // COMPREHENSIVE SAMPLE DATA
+        // =========================================
+        
+        // EVALUATION Sample Data
+        // DATA SOURCE: GET /api/v1/evaluations/:id
+        // MODEL: packages/backend/src/models/evaluations.sequelize.ts
+        const evaluationSampleData = {
+            // Cover & Basic Info
+            'cover_file_number': 'EVAL-2025-045',
+            'cover_property_name': '3752 Valley Drive',
+            'cover_address': '3752 Valley Drive, Helena, Montana 59602',
+            'cover_image': 'property-photo.jpg',
+            'cover_logo': 'company-logo.png',
+            
+            // Executive Summary
+            'exec_inspection_date': '07/06/2025',
+            'exec_effective_date': '07/06/2025',
+            'exec_inspector': 'John Smith, Commercial Broker',
+            'exec_intended_users': 'Valley Bank',
+            'exec_intended_use': 'Lending Decision',
+            'exec_client': 'Chantelle Thomas (Valley Bank)',
+            'exec_owner': 'Mountain Properties LLC',
+            'exec_property_rights': 'Fee Simple',
+            'exec_property_sf': '3,830 SF',
+            'exec_lot_size': '8.490 AC (369,824 SF)',
+            'exec_year_built': '1971, 1992, 2025',
+            'exec_zoning': 'SR - Suburban Residential Mixed-use',
+            'exec_most_likely_user': 'Multi-family residential investment',
+            'exec_summary_text': 'The subject property is a multi-family residential complex...',
+            'exec_market_value': '$853,535',
+            'exec_value_psf': '$222.86/SF',
+            
+            // Property Details
+            'prop_overview': 'Multi-family residential property with 3 buildings',
+            'prop_address': '3752 Valley Drive',
+            'prop_city_state': 'Helena, Montana 59602',
+            'prop_county': 'Lewis and Clark County',
+            'prop_legal': 'Lot 5, Block 12, Valley Heights Subdivision',
+            'prop_geocode': '45.0123, -112.0456',
+            'prop_parcel_id': 'LC-2025-12345',
+            'prop_assessed_value': '$785,000',
+            'prop_land_size': '369,824 SF',
+            'prop_acres': '8.490 AC',
+            'prop_topography': 'Generally level with slight slope',
+            'prop_lot_shape': 'Irregular',
+            'prop_utilities': 'All public utilities available',
+            'prop_zoning': 'SR - Suburban Residential Mixed-use',
+            'prop_type': 'Multi-Family / 2-4 Units',
+            'prop_year_built': '1971, 1992, 2025',
+            'prop_total_sf': '3,830 SF',
+            'prop_parking': '8 spaces',
+            'prop_class': 'Class B',
+            'prop_condition': 'Average to Good',
+            'prop_height': '2 Stories',
+            
+            // Valuations - Income Approach
+            'val_income_approach': 'Income Approach analysis...',
+            'val_income_notes': 'Income is based on a blend of actual and projected rates received at the property, adjusted for property type. According to my research, these rates are within the market range and have been applied accordingly.',
+            'val_income_vacancy': '5.00% of Gross Income',
+            'val_income_vacancy_amount': '$4,248.75',
+            
+            // Other Income (NEW - matches updated layout from 2025 Income Approach redesign)
+            // DATA SOURCE: GET /api/v1/evaluations/get-income-approach (evaluation_income_approaches table)
+            // Also includes: evaluation_income_approach_other_source table for additional income line items
+            'val_other_income': 'Additional income sources from property amenities and services',
+            'val_other_income_laundry': '$200.00 monthly / $2,400.00 annually',
+            'val_other_income_laundry_monthly': '$200.00',
+            'val_other_income_laundry_annual': '$2,400.00',
+            'val_other_income_fishing_pond': '$800.00 monthly / $9,600.00 annually',
+            'val_other_income_fishing_pond_monthly': '$800.00',
+            'val_other_income_fishing_pond_annual': '$9,600.00',
+            'val_other_income_carwash': '$1,400.00 monthly / $16,800.00 annually (400 SF)',
+            'val_other_income_carwash_monthly': '$1,400.00',
+            'val_other_income_carwash_annual': '$16,800.00',
+            'val_other_income_total_monthly': '$2,400.00',
+            'val_other_income_total_annual': '$28,800.00',
+            
+            // Effective Income
+            'val_effective_income': '$109,526.25',
+            
+            // Operating Expenses
+            'val_income_expenses': 'Operating expenses analysis...',
+            'val_expense_property_taxes': '$0.00',
+            'val_expense_insurance': '$6,166.30 (5.63% of EGI, $1.61/SF)',
+            'val_expense_maintenance': '$5,649.84 (5.16% of EGI, $1.48/SF)',
+            'val_expense_management': '$5,649.84 (5.16% of EGI, $1.48/SF)',
+            'val_expense_utilities': '$0.00 (Tenant Paid)',
+            'val_expense_total': '$17,465.98 (15.95% of EGI, $4.57/SF)',
+            'val_expense_notes': 'Expense are derived from actual costs and estimates incurred on the property and assumptions made by the author all values are deemed reliable but not guaranteed.',
+            
+            // Other Valuation Approaches
+            'val_sales_approach': 'Sales Comparison analysis...',
+            'val_cost_approach': 'Cost Approach analysis...',
+            'weighted_final': '$853,535',
+            
+            // About Us
+            'about_company': 'At ROVE Valuations, we are dedicated professionals providing quality evaluations...',
+            'about_broker_profile': 'John Smith has over 15 years of commercial real estate experience...'
+        };
+
+        // APPRAISAL Sample Data
+        // DATA SOURCE: GET /api/v1/appraisals/:id
+        // MODEL: packages/backend/src/models/appraisals.sequelize.ts
+        // MERGE FIELDS: seeders/20241024112142-appraisal-merge-fields.js
+        const appraisalSampleData = {
+            // Cover & Basic Info
+            'cover_file_number': 'APR-2025-001',
+            'cover_property_name': 'Riverside Office Complex',
+            'cover_address': '2845 Market Street, Denver, Colorado 80205',
+            'cover_image': 'office-building.jpg',
+            'cover_logo': 'appraisal-firm-logo.png',
+            'cover_appraisal_type': 'Complete Appraisal',
+            
+            // Executive Summary
+            'exec_file_number': 'APR-2025-001',
+            'exec_date_of_analysis': '01/15/2025',
+            'exec_effective_date': '01/15/2025',
+            'exec_report_date': '01/20/2025',
+            'exec_inspector': 'Sarah Johnson, MAI',
+            'exec_intended_user': 'First National Bank',
+            'exec_intended_use': 'Mortgage Lending',
+            'exec_client': 'First National Bank - Commercial Lending Division',
+            'exec_owner_of_record': 'Riverside Investment Group LLC',
+            'exec_property_rights': 'Fee Simple Estate',
+            'exec_building_size': '45,000 SF',
+            'exec_land_size': '2.00 AC (87,120 SF)',
+            'exec_year_built': '2018',
+            'exec_zoning': 'C-2 General Commercial',
+            'exec_high_best_use': 'Office use as improved',
+            'exec_value_conclusion': '$8,500,000',
+            'exec_property_image': 'executive-summary-photo.jpg',
+            
+            // Property Description
+            'prop_identification': 'Class A Office Building',
+            'prop_address': '2845 Market Street',
+            'prop_city_state': 'Denver, Colorado 80205',
+            'prop_county': 'Denver County',
+            'prop_legal_description': 'Lot 12, Block 5, Riverside Business Park',
+            'prop_parcel_id': 'DEN-2025-45678',
+            'prop_geocode': '39.7547, -104.9962',
+            'prop_ownership': 'Riverside Investment Group LLC',
+            'prop_history': 'No prior sales within past 3 years',
+            'prop_transfer_dates': 'Original construction completed 2018',
+            'prop_under_contract': 'Not currently under contract',
+            'prop_assessed_value': '$7,850,000',
+            'prop_tax_info': 'Current taxes: $156,800 annually',
+            'prop_description': 'Modern 3-story office building with high-end finishes',
+            
+            // Site Information
+            'site_description': 'Level, rectangular parcel with good visibility',
+            'site_size': '87,120 SF (2.00 AC)',
+            'site_dimensions': '220\' x 396\'',
+            'site_topography': 'Level',
+            'site_lot_shape': 'Rectangular',
+            'site_frontage': '220 feet on Market Street',
+            'site_depth': '396 feet',
+            'site_utilities': 'All public utilities available',
+            'site_zoning': 'C-2 General Commercial',
+            'site_zoning_desc': 'Allows for office, retail, and mixed-use development',
+            'site_conforming_use': 'Yes, office use is conforming',
+            'site_access': 'Excellent access from Market Street',
+            
+            // Improvement Details
+            'imp_description': 'Class A office building with modern amenities',
+            'imp_type': 'Office Building',
+            'imp_year_built': '2018',
+            'imp_year_remodeled': 'N/A',
+            'imp_building_size': '45,000 SF',
+            'imp_stories': '3',
+            'imp_height': '10-12 feet',
+            'imp_class': 'Class A',
+            'imp_condition': 'Excellent',
+            'imp_construction': 'Steel frame with brick and glass exterior',
+            'imp_foundation': 'Reinforced concrete',
+            'imp_exterior': 'Brick veneer and curtain wall glass',
+            'imp_roof': 'Built-up modified bitumen',
+            'imp_mechanical': 'Central HVAC with zone controls',
+            'imp_electrical': '400 amp service',
+            'imp_plumbing': 'Modern plumbing throughout',
+            'imp_hvac': 'High-efficiency HVAC system',
+            'imp_windows': 'Double-pane energy efficient',
+            'imp_parking': '180 spaces (4.0 spaces per 1,000 SF)',
+            'imp_ada': 'Fully ADA compliant',
+            'imp_basement': 'None',
+            
+            // Market Analysis
+            'market_area': 'Central Denver office market',
+            'market_trends': 'Strong demand for Class A office space',
+            'market_supply_demand': 'Limited new construction, low vacancy',
+            'market_economic': 'Growing technology and financial services sectors',
+            'market_vacancy': '5.2% (below market average)',
+            'market_rental_rates': '$28.50 - $32.00/SF annually',
+            'market_sales_data': 'Recent sales range from $175-$200/SF',
+            
+            // Sales Comparison Approach
+            'sales_methodology': 'Analysis of three comparable office sales',
+            'sales_notes': 'Sales adjusted for size, age, location, and condition',
+            'sales_indicated_value': '$8,400,000',
+            
+            // Income Approach
+            'income_methodology': 'Direct capitalization method',
+            'income_notes': 'Based on market rental rates and operating expenses',
+            'income_vacancy': '5.0%',
+            'income_noi': '$765,000',
+            'income_cap_rate': '9.0%',
+            'income_indicated_value': '$8,500,000',
+            
+            // Cost Approach
+            'cost_methodology': 'Replacement cost new less depreciation',
+            'cost_notes': 'Site value plus improvement cost less depreciation',
+            'cost_site_value': '$1,200,000',
+            'cost_reproduction': '$7,650,000',
+            'cost_depreciation': '5% (physical depreciation only)',
+            'cost_indicated_value': '$8,467,500',
+            
+            // Reconciliation
+            'recon_approach_comparison': 'All three approaches support value conclusion',
+            'recon_weighting': 'Sales 40%, Income 40%, Cost 20%',
+            'recon_analysis': 'Income and sales approaches given primary weight',
+            'recon_final_value': '$8,500,000',
+            'recon_value_psf': '$188.89/SF',
+            'recon_exposure_time': '6-9 months',
+            'recon_marketing_time': '6-9 months',
+            
+            // Certification
+            'cert_statement': 'I certify that, to the best of my knowledge and belief...',
+            'cert_signature': 'Sarah Johnson, MAI',
+            'cert_date': '01/20/2025',
+            'cert_license': 'State Certified General Appraiser #CG-12345',
+            'assumptions_general': 'Standard limiting conditions apply...',
+            'assumptions_limiting': 'This appraisal is subject to the following...'
+        };
+
+        function getSampleData(fieldId) {
+            // Use the appropriate sample data based on active template type
+            const sampleData = activeTemplateType === 'appraisal' ? appraisalSampleData : evaluationSampleData;
+            return sampleData[fieldId] || 'Sample data';
+        }
+
+        function downloadPreview() {
+            alert('In production, this would generate and download a PDF preview of the report with selected sections.');
+        }
+
+        function saveTemplate() {
+            showSuccessMessage('Template "' + document.getElementById('templateName').value + '" saved successfully!');
+        }
+
+        function saveTemplateAs() {
+            const newName = prompt('Enter new template name:', document.getElementById('templateName').value + ' (Copy)');
+            if (newName) {
+                document.getElementById('templateName').value = newName;
+                showSuccessMessage('Template "' + newName + '" created successfully!');
+            }
+        }
+
+        function showSuccessMessage(message) {
+            const messageEl = document.getElementById('successMessage');
+            const textEl = document.getElementById('successMessageText');
+            textEl.textContent = message;
+            messageEl.classList.add('active');
+            setTimeout(() => {
+                messageEl.classList.remove('active');
+            }, 4000);
+        }
+
+        // Template Library Functions
+        function showTemplateLibrary() {
+            currentView = 'library';
+            document.getElementById('templateLibraryView').style.display = 'block';
+            document.getElementById('templateBuilderView').style.display = 'none';
+            updateViewToggle();
+        }
+
+        function showTemplateBuilder() {
+            currentView = 'builder';
+            document.getElementById('templateLibraryView').style.display = 'none';
+            document.getElementById('templateBuilderView').style.display = 'block';
+            updateViewToggle();
+            updatePreview();
+        }
+
+        function updateViewToggle() {
+            const toggle = document.getElementById('viewToggle');
+            if (currentView === 'library') {
+                toggle.style.display = 'none';
+            } else {
+                toggle.style.display = 'block';
+            }
+        }
+
+        function createNewTemplate() {
+            document.getElementById('templateName').value = 'New ' + (activeTemplateType === 'appraisal' ? 'Appraisal' : 'Evaluation') + ' Template';
+            showTemplateBuilder();
+        }
+
+        function editTemplate(templateId, templateType) {
+            // Switch to the correct template type if needed
+            if (templateType && templateType !== activeTemplateType) {
+                activeTemplateType = templateType;
+                localStorage.setItem('templateType', templateType);
+                document.querySelector(`input[value="${templateType}"]`).checked = true;
+                initializeTemplateState();
+            }
+            
+            // Load template data based on templateId
+            const templateNames = {
+                // Evaluation templates
+                'standard': 'Standard Full Report',
+                'quick': 'Quick Valuation',
+                'bank': 'Bank Submission',
+                'internal': 'Internal Use Only',
+                // Appraisal templates
+                'comprehensive': 'Comprehensive Appraisal',
+                'restricted': 'Restricted Appraisal',
+                'market-value': 'Market Value Appraisal'
+            };
+            
+            document.getElementById('templateName').value = templateNames[templateId] || 'Template';
+            
+            // For quick template, disable some sections as example
+            if (templateId === 'quick') {
+                templateState['section05'].checked = false;
+                templateState['section06'].checked = false;
+                templateState['section07'].checked = false;
+            } else if (templateId === 'restricted') {
+                // For restricted appraisal, disable some sections
+                templateState['section03'].checked = false;
+                templateState['section11'].checked = false;
+            } else {
+                // Reset to all enabled for other templates
+                initializeTemplateState();
+            }
+            
+            renderSectionTree();
+            showTemplateBuilder();
+        }
+
+        function duplicateTemplate(templateId, templateType) {
+            event.stopPropagation();
+            const templateNames = {
+                // Evaluation templates
+                'standard': 'Standard Full Report',
+                'quick': 'Quick Valuation',
+                'bank': 'Bank Submission',
+                'internal': 'Internal Use Only',
+                // Appraisal templates
+                'comprehensive': 'Comprehensive Appraisal',
+                'restricted': 'Restricted Appraisal',
+                'market-value': 'Market Value Appraisal'
+            };
+            const originalName = templateNames[templateId];
+            const typeLabel = templateType === 'appraisal' ? 'Appraisal' : 'Evaluation';
+            showSuccessMessage(typeLabel + ' template "' + originalName + ' (Copy)" created successfully!');
+        }
+
+        function deleteTemplate(templateId, templateType) {
+            event.stopPropagation();
+            const templateNames = {
+                // Evaluation templates
+                'standard': 'Standard Full Report',
+                'quick': 'Quick Valuation',
+                'bank': 'Bank Submission',
+                'internal': 'Internal Use Only',
+                // Appraisal templates
+                'comprehensive': 'Comprehensive Appraisal',
+                'restricted': 'Restricted Appraisal',
+                'market-value': 'Market Value Appraisal'
+            };
+            const templateName = templateNames[templateId];
+            const typeLabel = templateType === 'appraisal' ? 'Appraisal' : 'Evaluation';
+            
+            if (confirm('Are you sure you want to delete the ' + typeLabel.toLowerCase() + ' template "' + templateName + '"?')) {
+                showSuccessMessage(typeLabel + ' template "' + templateName + '" deleted successfully!');
+            }
+        }
+
+        // Build Notes Toggle Function
+        function toggleBuildNotes(show) {
+            const notesSection = document.getElementById('buildNotesSection');
+            const toggleBtn = document.getElementById('showBuildNotesBtn');
+            
+            if (show) {
+                notesSection.style.display = 'block';
+                toggleBtn.style.display = 'none';
+                notesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                notesSection.style.display = 'none';
+                toggleBtn.style.display = 'block';
+            }
+            
+            sessionStorage.setItem('buildNotesVisible', show);
+        }
+
+        // Restore preference on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            const savedPreference = sessionStorage.getItem('buildNotesVisible');
+            if (savedPreference === 'false') {
+                toggleBuildNotes(false);
+            }
+        });
+    </script>
+</body>
+</html>
+

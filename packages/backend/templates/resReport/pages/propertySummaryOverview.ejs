@@ -1,0 +1,339 @@
+ 	<%
+        let stateName='';
+        const attribute = evaluation.state || '';  
+        const matchState = states.find((obj) => obj?.code === attribute);
+        if (!matchState) 
+        {
+        stateName = attribute;
+        } else {
+        stateName = matchState?.name;
+        }
+ %>
+<%
+  const frontage = evaluation.frontage||"";
+           const match = frontageOptions.find(obj => obj?.code === frontage);
+            const frontageValue = match?.name === '--Select--'
+            ? 'N/A'
+            : !match
+            ? frontage
+            : match.name || 'N/A';
+ %>
+ <%
+    const topography = evaluation?.topography || "";
+    const topographyMatch = topographyOptions.find(obj => obj?.code === topography);
+    const topographyValue = topographyMatch?.name === '--Select--'
+        ? 'N/A'
+        : !topographyMatch
+        ? topography
+        : topographyMatch.name || 'N/A';
+%>
+<div class="new-page property-summary" data-type="property-summary">
+  <div class="page-header">
+    <%- chapter %>
+  </div>
+  <%- section %>
+  <div class="overview-body">
+    <table class="top-table">
+      <tr>
+        <td class="title" colspan="2" valign="top">Overview
+        </td>
+      </tr>
+      <tr>
+        <td class="top-table-container" valign="top">
+          <p class="label-left-side">Address</p>
+          <% if (evaluation.street_address) { %>
+            <p class="content-left-side">
+              <%= evaluation.street_address %><br>
+              <%= evaluation.city %>, <%= stateName %> <%= evaluation.zipcode %>
+            </p>
+          <% } else { %>
+            <p class="content-left-side">
+              N/A
+              <% if (evaluation.city || stateName || evaluation.zipcode) { %>
+                <br><%= evaluation.city %>, <%= stateName %> <%= evaluation.zipcode %>
+              <% } %>
+            </p>
+          <% } %>
+
+          <p class="label-left-side">Property Legal</p>
+          <p class="content-left-side"><%= evaluation.street_address ? evaluation.property_legal : getNotAvailableLabel() %></p>
+
+          <p class="label-left-side">Conforming Use Determination</p>
+          <p class="content-left-side"><%= evaluation.conforming_use_determination || getNotAvailableLabel() %></p>
+
+          <p class="label-left-side">Property GeoCode/Tax ID</p>
+          <% if (evaluation.property_geocode || evaluation.parcel_id_apn) { %>
+            <p class="content-left-side">
+              <%= evaluation.property_geocode %><%= evaluation.parcel_id_apn ? '/ ' + evaluation.parcel_id_apn : '' %>
+            </p>
+          <% } else { %>
+            <p class="content-left-side">N/A</p>
+          <% } %>
+
+          <p class="label-left-side">Previous Sales Notes</p>
+          <% if (evaluation.type === 'non_sale') { %>
+            <div class="bottom-table-container">
+              <div class="bottom-left-first-table-container">
+                <p class="label-bottom">Price</p>
+                <p class="value-bottom"><%= evaluation.price !== 0 ? toCurrency(evaluation.price) : 'Unknown' %></p>
+              </div>
+              <div class="bottom-left-second-table-container">
+                <p class="label-bottom">Last Sale Date</p>
+                <p class="value-bottom">
+                  <%= evaluation.last_transfer_date_known === 'no' ? 'Unknown' : formatDate(evaluation.last_transferred_date, true) %>
+                </p>
+              </div>
+            </div>
+          <% } else { %>
+            <div class="bottom-table-container">
+              <div class="bottom-left-first-table-container">
+                <div class="row rowSaleNote">
+                  <div class="col m-6">
+                    <p class="label-bottom">Under Contract Price</p>
+                    <p class="value-bottom"><%= (evaluation.under_contract_price && evaluation.under_contract_price !== '0.00') ? toCurrency(evaluation.under_contract_price) : 'Unknown' %></p>
+                  </div>
+                  <div class="col m-6 closedate">
+                    <p class="label-bottom">Close Date</p>
+                    <p class="value-bottom"><%= evaluation.close_date ? formatDate(evaluation.close_date, true) : 'Unknown' %></p>
+                  </div>
+                </div>
+                <p class="label-bottom">Last Sale Date</p>
+                <p class="value-bottom"><%= evaluation.last_transfer_date_known === 'no' ? 'Unknown' : formatDate(evaluation.last_transferred_date, true) %></p>
+              </div>
+            </div>
+          <% } %>
+        </td>
+
+        <td class="top-table-container site-spec" valign="top">
+          <p class="label-left-side">Site Specs</p>
+
+          <div class="horizontal_dotted_line">
+            <label class="label-right-side">Land Size :</label>
+            <span class="dot"></span>
+            <label class="content-right-side">
+              <% 
+              let landSizeForView;
+              if (evaluation?.land_dimension === 'ACRE' && evaluation.land_size) {
+                // Convert acres to square feet
+                landSizeForView = numberFormat(evaluation.land_size * 43560, 0, '.', ',') + ' SF';
+              } else {
+                landSizeForView = getLandSize(
+                evaluation.land_size,
+                evaluation.comp_type,
+                evaluation.analysis_type,
+                evaluation.land_dimension,
+                true,
+                maskArea
+                );
+              }
+              if (landSizeForView) { %>
+                <%= landSizeForView %> 
+              <% } else { %>
+                <%= getNotAvailableLabel() %>
+            <% } %>
+            </label>
+          </div>
+
+          <div class="horizontal_dotted_line">
+            <label class="label-right-side">Acres :</label>
+            <span class="dot"></span>
+            <label class="content-right-side">
+              <% 
+              const landSize = getLandSize(
+                evaluation.land_size,
+                evaluation.comp_type,
+                evaluation.analysis_type,
+                evaluation.land_dimension,
+                false,
+                maskArea
+            );
+              if (evaluation.land_size && evaluation.land_dimension === 'SF') { %>
+                <%= numberFormat(evaluation.land_size / 43560, 3, '.', ',') %> AC
+              <% } else if (evaluation.land_size) { %>
+                <%= numberFormat(evaluation.land_size, 3, '.', ',') %> AC
+              <% } else { %>
+                <%= getNotAvailableLabel() %>
+              <% } %>
+            </label>
+          </div>
+
+          <div class="horizontal_dotted_line">
+            <label class="label-right-side">Topography :</label>
+            <span class="dot"></span>
+            <label class="content-right-side"><%= topographyValue ? topographyValue : getNotAvailableLabel() %></label>
+          </div>
+
+          <div class="horizontal_dotted_line">
+            <label class="label-right-side">Lot Shape :</label>
+            <span class="dot"></span>
+            <label class="content-right-side"><%= evaluation.lot_shape ? evaluation.lot_shape : getNotAvailableLabel() %></label>
+          </div>
+
+          <div class="horizontal_dotted_line">
+            <label class="label-right-side">Utilities :</label>
+            <span class="dot"></span>
+            <label class="content-right-side"><%= evaluation.utilities_select || getNotAvailableLabel() %></label>
+          </div>
+
+          <div class="horizontal_dotted_line">
+            <label class="label-right-side">Zoning :</label>
+            <span class="dot"></span>
+            <label class="content-right-side"><%= evaluation.zoning_type || getNotAvailableLabel() %></label>
+          </div>
+
+          <div class="horizontal_dotted_line">
+            <label class="label-right-side">Lot Frontage :</label>
+            <span class="dot"></span>
+            <label class="content-right-side"><%= evaluation.front_feet ? numberFormat(evaluation.front_feet) + "'" : getNotAvailableLabel() %></label>
+          </div>
+
+          <div class="horizontal_dotted_line">
+            <label class="label-right-side">Lot Depth :</label>
+            <span class="dot"></span>
+            <label class="content-right-side"><%= evaluation.lot_depth ? numberFormat(evaluation.lot_depth) + "'" : getNotAvailableLabel() %></label>
+          </div>
+
+          <div class="horizontal_dotted_line">
+            <label class="label-right-side">Frontage :</label>
+            <span class="dot"></span>
+            <label class="content-right-side"><%= frontageValue || getNotAvailableLabel() %></label>
+          </div>
+
+          <p class="label-left-side">Traffic Counts</p>
+          <p class="traffic-label">Traffic Count numbers are based on a blend of the past three years:</p>
+
+          <% if (evaluation.traffic_street_address) { %>
+            <div class="horizontal_dotted_line">
+              <label class="label-right-side">
+                <%= evaluation.traffic_street_address.charAt(0).toUpperCase() + evaluation.traffic_street_address.slice(1) %>:
+              </label>
+              <span class="dot"></span>
+              <%
+                let trafficCountnumber = evaluation.traffic_count === 'inputvalue' 
+                  ? numberFormat(parseFloat(evaluation.traffic_input)) + ' ADT'
+                  : evaluation.traffic_count + ' ADT';
+              %>
+              <label class="content-right-side">
+                <%= (evaluation.traffic_count || evaluation.traffic_input) ? trafficCountnumber : '0 ADT' %>
+              </label>
+            </div>
+          <% } else { %>
+            <label class="label-right-side">N/A</label>
+          <% } %>          
+        </td>
+      </tr>
+    </table>
+    <table class="bottom-table">
+      <tr>
+          <td class="bottom-title" align="left" valign="top" colspan="2">
+              <p class="label-left-side"><%= evaluation.assessed_market_year %> Assessed Market Value</p>
+          </td>
+      </tr>
+      <tr>
+          <td class="bottom-table-container first" align="left" valign="top">
+              <div class="bottom-left-first-table-container">
+                  <p class="label-bottom">Land Assessed Value</p>
+                  <p class="value-bottom">
+                      <% 
+                      const landAssessment = getLandAssessmentPSF(
+                        evaluation.land_assessment,
+                        evaluation.land_size,
+                        evaluation.land_dimension,
+                        evaluation.comp_type,
+                        evaluation.analysis_type,
+                        true,
+                    );
+                      if (!toCurrency(evaluation.land_assessment) && !landAssessment) { %>
+                          <%= getNotAvailableLabel() %>
+                      <% } else { %>
+                          <%= toCurrency(evaluation.land_assessment) || getNotAvailableLabel() %> /
+                          <%= landAssessment || getNotAvailableLabel() %>
+                          <%= (evaluation.land_size && evaluation.comp_type === 'land_only' && evaluation.analysis_type === '$/Acre') ? ' /AC' : ' /SF' %>
+                      <% } %>
+                  </p>
+  
+                  <p class="label-bottom"><%= evaluation.tax_liability_year %> Tax Liability</p>
+                  <p class="value-bottom">
+                      <% if (evaluation.tax_liability) { %>
+                        <%= toCurrency(evaluation.tax_liability) %>
+                      <% } else { %>
+                        <%= getNotAvailableLabel() %>
+                      <% } %>
+                  </p>
+              </div>
+  
+              <div class="bottom-left-second-table-container">
+                  <p class="label-bottom">Improvements Assessed Value</p>
+                  <p class="value-bottom">
+                      <% 
+                      const structureAssessment = getStructureAssessmentPSF(
+                        evaluation.structure_assessment,
+                        evaluation.land_size,
+                        evaluation.land_dimension,
+                        evaluation.analysis_type,
+                        evaluation.comp_type,
+                        evaluation.building_size,
+                        true
+                    );
+                      if (!evaluation.structure_assessment && !structureAssessment) { %>
+                          <%= getNotAvailableLabel() %>
+                      <% } else { %>
+                          <% if (evaluation.structure_assessment) { %>
+                            <%= toCurrency(evaluation.structure_assessment) %>
+                          <% } else { %>
+                            <%= getNotAvailableLabel() %>
+                            <% } %> /
+                          <%= structureAssessment || getNotAvailableLabel() %>
+                          <%= (evaluation.land_size && evaluation.comp_type === 'land_only' && evaluation.analysis_type === '$/Acre') ? ' /AC' : ' /SF' %>
+                      <% } %>
+                  </p>
+  
+                  <p class="label-bottom">SID's</p>
+                  <p class="value-bottom"><%= evaluation.sids || ' - ' %></p>
+              </div>
+          </td>
+  
+          <td class="bottom-table-container" align="left" valign="top">
+              <div class="bottom-right-table-container">
+                  <p class="label-bottom">Total Assessed Value</p>
+                  <p class="value-bottom">
+                      <% 
+                          const landAssessmentForView = getTotalAssessment(
+                                                      evaluation.land_assessment,
+                                                      evaluation.structure_assessment,
+                                                      true,
+                                                  );
+                          const totalAssessmentPSF = getTotalAssessmentPSF(
+                                                        evaluation.land_assessment,
+                                                        evaluation.structure_assessment,
+                                                        evaluation.comp_type,
+                                                        evaluation.land_size,
+                                                        evaluation.land_dimension,
+                                                        evaluation.analysis_type,
+                                                        evaluation.building_size,
+                                                        true
+                                                    );
+                      if (!landAssessmentForView && !totalAssessmentPSF) { %>
+                          <%= getNotAvailableLabel() %>
+                      <% } else { %>
+                          <%= landAssessmentForView || getNotAvailableLabel() %> /
+                          <%= totalAssessmentPSF || getNotAvailableLabel() %>
+                          <%= (evaluation.land_size && evaluation.comp_type === 'land_only' && evaluation.analysis_type === '$/Acre') ? ' /AC' : ' /SF' %>
+                      <% } %>
+                  </p>
+  
+                  <p class="label-bottom">Taxes in Arrears</p>
+                  <p class="value-bottom">
+                    <% if (evaluation.taxes_in_arrears) { %>
+                      <%= toCurrency(evaluation.taxes_in_arrears) %>
+                    <% } else { %>
+                      <%= getNotAvailableLabel() %>
+                    <% } %>
+                  </p>
+              </div>
+          </td>
+      </tr>
+    </table>
+  </div>
+  <%- watermark %>
+</div>

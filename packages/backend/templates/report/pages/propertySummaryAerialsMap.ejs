@@ -1,0 +1,68 @@
+	<%
+       let stateName='';
+        const {state} = evaluation;
+        const matchState = states.find((obj) => obj?.code === state);
+        if (!matchState) 
+        {
+        stateName = state;
+        } else {
+        stateName = matchState?.name;
+        }
+ %>
+
+<%
+  const colors = [
+    { color: 'bb6bd9', char: '1' },
+    { color: 'f2994a', char: '2' },
+    { color: '27ae60', char: '3' },
+    { color: '2f80ed', char: '4' },
+    { color: '47a0c3', char: '5' },
+    { color: 'eae663', char: '6' }
+  ];
+
+  const evaluationLabelParts = [
+    evaluation.street_address?.trim(),
+    evaluation.city?.trim(),
+    stateName?.trim().toUpperCase()
+  ].filter(Boolean);
+
+  const evaluationLabel = evaluationLabelParts.join(',');
+
+  let zoom = 20;
+  if (evaluation.aerial_map_zoom) {
+    zoom = evaluation.aerial_map_zoom - 2;
+  }
+  const imgUrl = `https://maps.googleapis.com/maps/api/staticmap?center=${evaluation.latitude},${evaluation.longitude}&zoom=${zoom}&size=1000x800&maptype=${ evaluation.aerial_map_type ?  evaluation.aerial_map_type : 'roadmap'}&markers=color:red%7C${ evaluation.latitude},${ evaluation.longitude}&key=${googleApiKey}`;
+%>
+
+<div class="new-page property-summary aerial_map">
+  <input type="hidden" name="lat" value="<%= evaluation.latitude %>">
+  <input type="hidden" name="lng" value="<%= evaluation.longitude %>">
+  <input type="hidden" name="aerial_map_pin_zoom" value="<%= evaluation.aerial_map_zoom %>">
+  <input type="hidden" name="aerial_map_type_id" value="<%= evaluation.aerial_map_type %>">
+  <input type="hidden" name="arial-address" id="arial-address" value="<%= evaluationLabel %>">
+
+  <div class="page-header">
+    <%- chapter %>
+  </div>
+
+  <div class="info-body">
+    <table class="top-table">
+      <tbody>
+        <tr>
+          <td class="info-title">
+            Property <span class="section-title">Aerials & Map</span>
+          </td>
+        </tr>
+        <tr>
+          <td class="property-map-aerials" align="center">
+            <!-- <div id="arialmap"></div> -->
+             <img style="width: 100%; height: 650px;" src="<%= imgUrl %>">
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <%- watermark %>
+</div>

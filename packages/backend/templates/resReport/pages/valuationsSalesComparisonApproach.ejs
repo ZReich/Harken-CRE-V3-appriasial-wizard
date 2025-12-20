@@ -1,0 +1,907 @@
+<%
+let paras = [];
+for(let index = 0; index < evaluation.res_evaluation_scenarios.length; index++){
+    const scenario = evaluation.res_evaluation_scenarios[index];
+    if(scenario.has_sales_approach){
+    let label = '';
+    if (evaluation && evaluation.res_evaluation_scenarios && evaluation.res_evaluation_scenarios.length > 1 && label === '') {
+        label = evaluation.res_evaluation_scenarios[index].name;
+    }
+    const evaluation_sale_approach = scenario?.evaluation_sale_approach;
+    if(evaluation_sale_approach){
+        const notes = evaluation_sale_approach.notes ? evaluation_sale_approach.notes : getSaleNotes();
+        let notesLength = notes.length;
+        let count = 1;
+        if (notesLength > 2300) {
+            count = Math.ceil(notesLength / 2300);
+        }
+        let startLen = 0;
+        let endLength = 2300;
+        let limit = 2300;
+        for (let loop = 0; loop <= count; loop++) {
+            const trimmedNotes = notes.replace(/<p><br><\/p>/g, '').trim();
+            if (!loop || trimmedNotes.substr(startLen, limit).length) {
+        %>
+        <%
+        let stateName='';
+        const {state} = evaluation;
+        stateName = state?.toUpperCase();
+        <!-- const matchState = states.find((obj) => obj?.code === state); -->
+        <!-- if (!matchState)  -->
+        <!-- { -->
+        <!-- stateName = state; -->
+        <!-- } else { -->
+        <!-- stateName = matchState?.name; -->
+        <!-- } -->
+        %>
+            <div class="new-page valuations_page_3" data-type="sales-approach">
+                <div class="page-header" style="<%= (loop > 0 && loop <= 5) ? 'padding-bottom:5rem ; margin-left: 50rem;' : '' %>">
+                    <%- chapter %>
+                </div>
+
+                <div class="description">
+                    <% if (loop === 0) { %>
+                        <p class="title">Sales Comparison <span class="subtitle">Approach</span></p>
+                        <p class="label"><%= label %></p>
+                        <p class="regular-description regular-description-res">In applying the direct sales comparison approach the author has conducted a
+                            search of sold properties that fall within the comparable scope of the subject property.</p>
+                        <table class="comps-table">
+                            <thead>
+                                <tr>
+                                    <th></th>
+                                    <th>Subject Property</th>
+                                    <% if (
+                                        evaluation_sale_approach &&
+                                        (Array.isArray(evaluation_sale_approach.comp_data) ||
+                                            typeof evaluation_sale_approach.comp_data === 'object')
+                                    ) { %>
+                                        <% evaluation_sale_approach.comp_data.forEach((comp, i) => { %>
+                                        <th>Comparable #<%= i + 1 %></th>
+                                        <% }) %>
+                                    <% } %>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td></td>
+                                    <% let url = ''; %>
+                                    <% if (evaluation?.coverImage) {
+                                        url = evaluation?.coverImage;
+                                    } else {
+                                        url = '/images/default-placeholder.png';
+                                    } %>
+                                    <td>
+                                        <img width="150" height="80" src="<%= url %>" class="image-added"/>
+                                    </td>
+                                    
+                                    <% let comp_image_url = ''; %>
+                                    <% if (
+                                        evaluation_sale_approach &&
+                                        (Array.isArray(evaluation_sale_approach.comp_data) ||
+                                            typeof evaluation_sale_approach.comp_data === 'object')
+                                    ) { %>
+                                        <% evaluation_sale_approach.comp_data.forEach((comp, i) => { 
+                                            const saleComp = comp?.comp_details;
+                                            if (saleComp?.property_image_url) {
+                                                const url = saleComp?.property_image_url;
+                                                comp_image_url = evaluation.baseUrl+url;           
+                                            }else {
+                                                comp_image_url = '/images/default-placeholder.png';
+                                            }
+                                        %>
+                                        <td>
+                                            <img width="150" height="80" src="<%= comp_image_url %>" />
+                                        </td>
+                                        <% }) %>
+                                    <% } %>
+                                </tr>
+                                <tr>
+                                    <td class="blue bold">Location</td>
+                                    <td>
+                                        <div style="white-space: initial;">
+                                        <%= evaluation.street_address %>, <br/>
+                                        <%= evaluation.city %>, <%= stateName %> <%= evaluation.zipcode %>
+                                        </div>
+                                    </td>
+                                    
+                                    <% if (
+                                        evaluation_sale_approach &&
+                                        (Array.isArray(evaluation_sale_approach.comp_data) ||
+                                            typeof evaluation_sale_approach.comp_data === 'object')
+                                    ) { %>
+                                        <% evaluation_sale_approach.comp_data.forEach((comp, i) => { 
+                                            const saleComp = comp.comp_details;
+                                            const fullStateName = saleComp?.state?.toUpperCase();
+                                            <!-- let fullStateName=''; -->
+                                            <!-- const {state} = saleComp; -->
+                                            <!-- const matchState = states.find((obj) => obj?.code === state); -->
+                                            <!-- if (!matchState)  -->
+                                            <!-- { -->
+                                            <!-- fullStateName = state; -->
+                                            <!-- } else { -->
+                                            <!-- fullStateName = matchState?.name; -->
+                                            <!-- } -->
+                                            if (saleComp && saleComp.street_address) { %>
+                                            <td>
+                                                <div style="white-space: initial;">
+                                                    <%= saleComp.street_address %>, <br/>
+                                                    <%= saleComp.city %>, <%= fullStateName %> <%= saleComp.zipcode %>
+                                                </div>
+                                            </td>
+                                            <% } else { %>
+                                                <td>Address Not Provided</td>
+                                            <% } %>
+                                        <% }) %>
+                                    <% } %>
+                                </tr>
+                                <tr class="odd">
+                                    <td>Date Sold</td>
+                                    <td></td>
+                                    <% if (
+                                        evaluation_sale_approach &&
+                                        (Array.isArray(evaluation_sale_approach.comp_data) ||
+                                            typeof evaluation_sale_approach.comp_data === 'object')
+                                    ) { %>
+                                        <% evaluation_sale_approach.comp_data.forEach((comp, i) => { 
+                                            const compData = comp.comp_details;
+                                            let sale_status = '';
+                                            if (compData?.sale_status === 'Pending' && compData?.type === 'sale') {
+                                                sale_status = (formatDate(compData.date_sold, true) || getNotAvailableLabel()) + '( P )';
+                                            }
+                                        %>
+                                        <td>
+                                            <%= sale_status !== '' ? sale_status : (formatDate(compData.date_sold, true) || getNotAvailableLabel()) %>
+                                        </td>
+                                    <% });
+                                } %>
+                                </tr>
+                                <% 
+                                let rowIndex = 0;
+                                let flag = false;
+                                if (Array.isArray(evaluation_sale_approach?.sales_comparison_attributes)) {
+                                    evaluation_sale_approach?.sales_comparison_attributes.forEach(attr => { 
+                                        if(attr.comparison_key === 'other_amenities') return;
+                                        rowIndex++;
+                                        const key = attr.comparison_key;
+                                        let name = attr.comparison_value;
+                                        if(attr.comparison_key === 'bathrooms' || attr.comparison_key === 'bedrooms'){
+                                            if(!flag){
+                                                name = 'Bed / Bath';
+                                                flag = true;
+                                            }else{
+                                                return;
+                                            }
+                                        }
+                                    %>
+                                    <tr class="<%= rowIndex % 2 === 0 ? 'odd' : '' %>">
+                                        <td><%= name %></td>
+                                        <!-- Subject property cell -->
+                                        <td>
+                                            <% 
+                                            let subjectValue = evaluation[key];
+                                            if(key === 'building_size'){
+                                                subjectValue = numberFormat(evaluation[key]); 
+                                            }
+                                            else if (key === 'services') {
+                                                subjectValue = evaluation.utilities_select;
+                                            }
+                                            else if (key === 'city_county') {
+                                                const city = evaluation?.city || 'N/A';
+                                                const county = evaluation?.county || 'N/A';
+                                                subjectValue = `${city}, ${county}`;
+                                            }
+                                            else if(key === 'city_state'){
+                                                subjectValue = evaluation.city +', '+ stateName;
+                                            }
+                                            else if(key === 'basement_sf'){
+                                                const resZoning = evaluation?.res_zonings;
+                                                const totalBasementSqFt = resZoning.reduce((sum, item) => {
+                                                return sum + (item?.basement_finished_sq_ft || 0) + (item?.basement_unfinished_sq_ft || 0);
+                                            }, 0);
+                                                subjectValue = numberFormat(totalBasementSqFt); 
+                                            }
+                                            else if(key === 'heating_and_cooling'){
+                                                subjectValue = evaluation?.heating_cooling || 'N/A' ;
+                                            }
+                                            else if(key === 'year_built_remodeled'){
+                                                const year_built = evaluation.year_built ? evaluation.year_built : getNotAvailableLabel(); 
+                                                const year_remodeled = evaluation.year_remodeled ? evaluation.year_remodeled : getNotAvailableLabel(); 
+                                                subjectValue =  year_built+' / ' + year_remodeled;
+                                            }
+                                            else if(key === 'condition'){
+                                                const condition = evaluation.condition || '';
+                                                const matchCondition = conditionOptions.find(obj => obj?.code === condition);
+                                                const conditionValue = matchCondition?.name === '--Select--'
+                                                ? 'N/A'
+                                                : !matchCondition
+                                                    ? condition
+                                                    : matchCondition.name || getNotAvailableLabel();
+                                                subjectValue = conditionValue;
+                                            }
+                                        else if(key === 'frontage'){
+                                            const frontage = evaluation?.frontage || '';
+                                            const matchFrontage = frontageOptions.find(obj => obj?.code === frontage);
+                                            const frontageValue = matchFrontage?.name === '--Select--'
+                                            ? 'N/A'
+                                            : !matchFrontage
+                                                ? frontage
+                                                : matchFrontage.name || 'N/A';
+                                            subjectValue = frontageValue; 
+                                        }
+                                        else if (key === 'topography') {
+                                            const topography = evaluation.topography || '';
+                                            const matchTopography = topographyOptions.find(obj => obj?.code === topography);
+                                            const topographyValue = matchTopography?.name === '--Select--'
+                                                ? getNotAvailableLabel()
+                                                : !matchTopography
+                                                    ? topography
+                                                    : matchTopography.name || getNotAvailableLabel();
+                                            subjectValue = topographyValue;
+                                        }
+                                        else if (key === 'gross_living_area') {
+                                            const resZonings = Array.isArray(evaluation?.res_zonings) ? evaluation.res_zonings : [];
+                                            const totalGrossLivingSqFt = resZonings.reduce((sum, item) => {
+                                                const val = parseFloat(item?.gross_living_sq_ft);
+                                                return sum + (Number.isFinite(val) ? val : 0);
+                                            }, 0);
+                                            subjectValue = totalGrossLivingSqFt > 0
+                                                ? (typeof numberFormat === 'function' ? numberFormat(totalGrossLivingSqFt) + ' SF' : totalGrossLivingSqFt + ' SF')
+                                                : 'N/A';
+                                        }
+                                        else if (key === 'land_size_sf') {
+                                            const landSizeSfValue =
+                                                evaluation.land_dimension === 'SF'
+                                                ? evaluation.land_size
+                                                : evaluation.land_dimension === 'ACRE'
+                                                ? evaluation.land_size * 43560 : 0;
+                                            subjectValue = numberFormat(landSizeSfValue); // Optional: round to 2 decimal places
+                                        }
+                                        else if (key === 'other_amenities') {
+                                            const amenities = evaluation?.res_evaluation_amenities;
+                                            const result = Array.isArray(amenities) && amenities.length > 0
+                                            ? amenities
+                                                .map(item => item?.additional_amenities)
+                                                .filter(Boolean)
+                                                .join(', ')
+                                            : 'N/A';
+                                            subjectValue = result + ", " + evaluation?.other_amenities;
+                                        }
+                                        else if (key === 'land_size_acre') {
+                                            const landSizeAcreValue =
+                                                evaluation.land_dimension === 'SF'
+                                                ? evaluation.land_size / 43560
+                                                : evaluation.land_dimension === 'ACRE'
+                                                ? evaluation.land_size : 0;
+                                            subjectValue = landSizeAcreValue ? numberFormat(landSizeAcreValue,3) : getNotAvailableLabel(); // Optional: round to 2 decimal places
+                                        }
+                                        else if(key === 'building_size_land_size'){
+                                            let landSize = getNotAvailableLabel();
+                                            if (
+                                                evaluation.land_size &&
+                                                evaluation.land_dimension == 'SF'
+                                            ) {
+                                                landSize =
+                                                numberFormat(evaluation.land_size) + ' SF';
+                                            } else if (
+                                                evaluation.land_size &&
+                                                evaluation.land_dimension == 'ACRE'
+                                            ) {
+                                                landSize =
+                                                numberFormat(evaluation.land_size, 3) +
+                                                ' AC';
+                                            }
+                                            const buildingSize = evaluation.building_size ? numberFormat(evaluation.building_size) + ' SF' : getNotAvailableLabel(); 
+                                            subjectValue = buildingSize + ' / ' + landSize; 
+                                        }
+                                        else if(attr.comparison_key === 'bathrooms' || attr.comparison_key === 'bedrooms'){
+                                            subjectValue = evaluation.bedrooms + ' / ' + evaluation.bathrooms; 
+                                        }
+                                        if (typeof subjectValue === 'undefined' || subjectValue === null || subjectValue === '') {
+                                            subjectValue = '';
+                                        }
+                                        %>
+                                        <%= subjectValue %>
+                                        </td>
+                                        <!-- Comps cells -->
+                                        <% if (Array.isArray(evaluation_sale_approach.comp_data)) { %>
+                                            <% evaluation_sale_approach.comp_data.forEach((comp, i) => {
+                                            const saleComp = comp.comp_details;
+                                            let fullStateName='';
+                                            const {state} = saleComp;
+                                            fullStateName = state?.toUpperCase();
+                                            <!-- const matchState = states.find((obj) => obj?.code === state); -->
+                                            <!-- if (!matchState)  -->
+                                            <!-- { -->
+                                            <!-- fullStateName = state; -->
+                                            <!-- } else { -->
+                                            <!-- fullStateName = matchState?.name; -->
+                                            <!-- } -->
+                                            let value = saleComp ? saleComp[key] : null;
+                                            if(key === 'building_size'){
+                                                value = numberFormat(saleComp[key]); 
+                                            }
+                                            else if(key === 'date_sold'){
+                                                value = formatDate(saleComp.date_sold, true);
+                                            }
+                                            else if(key === 'city_state'){
+                                                value = saleComp.city +', '+ fullStateName;
+                                            }
+                                            else if(key === 'basement_sf'){
+                                            const resZoning = saleComp?.res_zonings;
+                                            const totalBasementSqFt = resZoning.reduce((sum, item) => {
+                                            return sum + (item?.basement_finished_sq_ft || 0) + (item?.basement_unfinished_sq_ft || 0);
+                                            }, 0);
+                                            value = numberFormat(totalBasementSqFt); 
+                                            }
+                                            else if(key === 'heating_and_cooling'){
+                                                value = saleComp?.heating_cooling || 'N/A';
+                                            }
+                                            else if (key === 'other_amenities') {
+                                                const amenities = saleComp?.res_comp_amenities;
+                                                const result = Array.isArray(amenities) && amenities.length > 0
+                                                ? amenities
+                                                    .map(item => item?.additional_amenities)
+                                                    .filter(Boolean)
+                                                    .join(', ')
+                                                : 'N/A';
+                                                value = result + ", " + saleComp?.other_amenities;
+                                            }
+                                            else if (key === 'gross_living_area') {
+                                            const resZonings = Array.isArray(saleComp?.res_zonings) ? saleComp.res_zonings : [];
+                                            const totalGrossLivingSqFt = resZonings.reduce((sum, item) => {
+                                                const val = parseFloat(item?.gross_living_sq_ft);
+                                                return sum + (Number.isFinite(val) ? val : 0);
+                                            }, 0);
+                                            value = totalGrossLivingSqFt > 0
+                                                ? (typeof numberFormat === 'function' ? numberFormat(totalGrossLivingSqFt) + ' SF' : totalGrossLivingSqFt + ' SF')
+                                                : 'N/A';
+                                            }
+                                            else if(key === 'frontage'){
+                                            const frontage = saleComp?.frontage || '';
+                                            const matchFrontage = frontageOptions.find(obj => obj?.code === frontage);
+                                            const frontageValue = matchFrontage?.name === '--Select--'
+                                            ? 'N/A'
+                                            : !matchFrontage
+                                                ? frontage
+                                                : matchFrontage.name || 'N/A';
+                                            value = frontageValue; 
+                                            }
+                                            else if (key === 'price_per_unit') {
+                                                value = saleComp?.total_units ? toCurrency((saleComp.sale_price / saleComp.total_units) || 0) : '';
+                                            }
+                                            else if (key === 'land_size_sf') {
+                                                const landSizeAcreValue =
+                                                    saleComp.land_dimension === 'SF'
+                                                    ? saleComp.land_size
+                                                    : saleComp.land_dimension === 'ACRE'
+                                                        ? saleComp.land_size * 43560
+                                                        : 0;
+                                                value = numberFormat(landSizeAcreValue); // Optional: round to 2 decimal places
+                                            }
+                                            else if (key === 'land_size_acre') {
+                                                const landSizeAcreValue =
+                                                    saleComp.land_dimension === 'SF'
+                                                    ? saleComp.land_size / 43560
+                                                    : saleComp.land_dimension === 'ACRE'
+                                                        ? saleComp.land_size
+                                                        : 0;
+                                                value = landSizeAcreValue ? numberFormat(landSizeAcreValue, 3) : getNotAvailableLabel();
+                                            }
+                                            else if (key === 'dollar_per_bed') {
+                                                const dollarPerBed =
+                                                saleComp.lease_rate === 0 || saleComp.total_beds === 0
+                                                ? 0
+                                                : saleComp.lease_rate_unit === 'monthly'
+                                                ? (saleComp.lease_rate / saleComp.total_beds) / 12
+                                                : saleComp.lease_rate / saleComp.total_beds;;
+                                                value = toCurrency(dollarPerBed); // Optional: round to 2 decimal places
+                                            }
+                                            else if (key === 'price_sf_per_year') {
+                                                value = toCurrency(saleComp.price_square_foot || 0); 
+                                            }
+                                            else if (key === 'cap_rate') {
+                                                value = toPercentage(saleComp.cap_rate || 0); 
+                                            }
+                                            else if (key === 'city_county') {
+                                            const city = saleComp?.city || 'N/A';
+                                            const county = saleComp?.county || 'N/A';
+                                            value = `${city}, ${county}`;
+                                            }
+                                            else if (key === 'price_per_sf_land') {
+                                                let newValue = 0;
+                                                if (saleComp.land_dimension === 'SF') {
+                                                    if (saleComp.land_size === null || saleComp.land_size === 0) {
+                                                        newValue = 0; // If land_size is null or 0, show $0.00
+                                                    } else {
+                                                        newValue = saleComp.sale_price / saleComp.land_size;
+                                                    }
+                                                } else {
+                                                    if (saleComp.land_size === null || saleComp.land_size === 0) {
+                                                        newValue = 0; // If land_size is null or 0, show $0.00
+                                                    } else {
+                                                        newValue = saleComp.sale_price / (saleComp.land_size * 43560); // Assuming this part was cut off
+                                                    }
+                                                }
+                                                value = toCurrency(newValue);
+                                            }
+                                            else if (key === 'price_per_acre') {
+                                                let landSizeAcre = 0;
+                    
+                                                if (saleComp?.land_dimension === 'SF') {
+                                                    landSizeAcre = saleComp?.land_size ? parseFloat((saleComp?.sale_price / saleComp?.land_size).toFixed(2)) * 43560 : 0;
+                                                } else {
+                                                    landSizeAcre = saleComp?.land_size ? parseFloat((saleComp?.sale_price / saleComp?.land_size).toFixed(2)) : 0;
+                                                }
+                                                value = toCurrency(landSizeAcre);
+                                            }else if (key === 'sale_price') {
+                                                value = toCurrency(saleComp.sale_price);
+                                            }else if (key === 'services') {
+                                                value = saleComp.utilities_select;
+                                            }else if (key === 'net_operating_income') {
+                                                value = toCurrency(saleComp.net_operating_income);
+                                            }else if (key === 'beds') {
+                                                value = saleComp.total_beds ?
+                                                saleComp.total_beds.toLocaleString(2) // Show total beds for 'beds'
+                                                : ''
+                                            }
+                                            else if(key === 'year_built_remodeled'){
+                                                const year_built = saleComp.year_built ? saleComp.year_built : getNotAvailableLabel(); 
+                                                const year_remodeled = saleComp.year_remodeled ? saleComp.year_remodeled : getNotAvailableLabel(); 
+                                                value =  year_built+' / ' + year_remodeled;
+                                            }
+                                            else if(key === 'condition'){
+                                                const condition = saleComp.condition || '';
+                                                const matchCondition = conditionOptions.find(obj => obj?.code === condition);
+                                                const conditionValue = matchCondition?.name === '--Select--'
+                                                ? 'N/A'
+                                                : !matchCondition
+                                                    ? condition
+                                                    : matchCondition.name || 'N/A';
+
+                                                value = conditionValue;
+                                            }
+                                            else if (key === 'topography') {
+                                                const topography = saleComp.topography || '';
+                                                const matchTopography = topographyOptions.find(obj => obj?.code === topography);
+                                                const topographyValue = matchTopography?.name === '--Select--'
+                                                ? getNotAvailableLabel()
+                                                : !matchTopography
+                                                    ? topography
+                                                    : matchTopography.name || getNotAvailableLabel();
+                                                value = topographyValue;
+                                            }
+                                            else if(key === 'price_per_sf'){
+                                                value = toCurrency(saleComp.price_square_foot); 
+                                            }
+                                            else if(key === 'building_size_land_size'){
+                                                let landSize = getNotAvailableLabel();
+                                                if (saleComp.land_size) {
+                                                    if (
+                                                        evaluation.land_dimension == 'SF' &&
+                                                        saleComp.land_dimension == 'ACRE'
+                                                    ) {
+                                                        landSize = numberFormat(saleComp.land_size * 43560) + ' SF';
+                                                    } else if (
+                                                        evaluation.land_dimension == 'ACRE' &&
+                                                        saleComp.land_dimension == 'SF'
+                                                    ) {
+                                                        landSize = numberFormat((saleComp.land_size / 43560), 3) +' AC';
+                                                    } else {
+                                                        if (saleComp.land_dimension == 'SF') {
+                                                            landSize = numberFormat(saleComp.land_size) + ' SF';
+                                                        } else if (saleComp.land_dimension == 'ACRE') {
+                                                            landSize = numberFormat(saleComp.land_size, 3) + ' AC';
+                                                        }
+                                                    }
+                                                }
+                                                const buildingSize = saleComp.building_size ? numberFormat(saleComp.building_size) + ' SF' : getNotAvailableLabel(); 
+                                                value = buildingSize + ' / ' + landSize; 
+                                            }
+                                            else if(attr.comparison_key === 'bathrooms' || attr.comparison_key === 'bedrooms'){
+                                                value = saleComp.bedrooms + ' / ' + saleComp.bathrooms; 
+                                            }
+                                            if (!value || value === '') {
+                                                value = getNotAvailableLabel();
+                                            }
+                                            %>
+                                            <td><%= value %></td>
+                                            <% }) %>
+                                        <% } %>
+                                    </tr>
+                                    <% }) 
+                                } %>
+                                <tr>
+                                    <td class="blue bold">Comparison Criteria</td>
+                                    <td></td>
+                                    <% if (
+                                        evaluation_sale_approach &&
+                                        (Array.isArray(evaluation_sale_approach.comp_data) ||
+                                            typeof evaluation_sale_approach.comp_data === 'object')
+                                    ) { %>
+                                        <% evaluation_sale_approach.comp_data.forEach((comp, i) => { %>
+                                        <td></td>
+                                        <% }) %>
+                                    <% } %>
+                                </tr>
+                                <% 
+                                let criteriaIndex = 0;
+                                if (Array.isArray(evaluation_sale_approach?.subject_property_adj)) {
+                                    evaluation_sale_approach?.subject_property_adj.forEach(adjustment => { 
+                                        if(adjustment.adj_key === 'basement_finished' || adjustment.adj_key === 'basement_unfinished') return;
+                                        const matchObj = Array.isArray(salesCompQuantitativeAdjustmentsOptions) ? salesCompQuantitativeAdjustmentsOptions.find(obj => obj?.code === adjustment?.adj_key) : null;
+                                        const matchName = matchObj ? matchObj.name : adjustment?.adj_key.replace(/_/g,' ');
+                                    %>
+                                    <tr class="<%= criteriaIndex % 2 === 0 ? 'odd' : '' %>">
+                                        <td><%= matchName %></td>
+                                        <td></td>
+                                        <% if (
+                                            evaluation_sale_approach &&
+                                            (Array.isArray(evaluation_sale_approach.comp_data) ||
+                                                typeof evaluation_sale_approach.comp_data === 'object')
+                                        ) { %>
+                                            <% evaluation_sale_approach.comp_data.forEach((comp, i) => { 
+                                                const saleComp = comp;
+                                                let matched = null;
+
+                                                if (saleComp && Array.isArray(saleComp?.comps_adjustments)) {
+                                                    matched = saleComp.comps_adjustments.find(ca => ca?.adj_key === adjustment?.adj_key);
+                                                }
+
+                                                let perclass = '';
+                                                if(matched?.adj_value > 0){
+                                                    perclass = 'plus';
+                                                }else if(matched?.adj_value < 0){
+                                                    perclass = 'minus';
+                                                }
+                                            %>
+                                            <td class='<%= perclass %>'>
+                                                <% if (matched) { %>
+                                                    <%= toCurrency( matched?.adj_value) %>
+                                                <% } else { %>
+                                                    N/A
+                                                <% } %>
+                                            </td>
+                                            <% }) %>
+                                        <% } %>
+                                    </tr>
+                                    <% criteriaIndex++; })
+                                } %>
+                                <tr>
+                                    <td class="blue bold">Overall Adjustment</td>
+                                    <td></td>
+                                    <% if (
+                                        evaluation_sale_approach &&
+                                        (Array.isArray(evaluation_sale_approach.comp_data) ||
+                                            typeof evaluation_sale_approach.comp_data === 'object')
+                                    ) { %>
+                                        <% evaluation_sale_approach.comp_data.forEach((comp, i) => { 
+                                            const saleComp = comp;
+                                            const totalAdjustment = saleComp?.total_adjustment ?? 0;
+                                    %>
+                                        <td>
+                                            <%= toCurrency(totalAdjustment) %>
+                                        </td>
+                                    <% }) %>
+                                <% } %>
+                                </tr>
+                                <tr class="odd">
+                                    <td>
+                                        Adjusted Sales Price
+                                        </td>
+                                    <td></td>
+                                    <% if (
+                                        evaluation_sale_approach &&
+                                        (Array.isArray(evaluation_sale_approach.comp_data) ||
+                                            typeof evaluation_sale_approach.comp_data === 'object')
+                                    ) { %>
+                                        <% evaluation_sale_approach.comp_data.forEach((comp, i) => { 
+                                            const saleComp = comp;
+                                            const adjusted = saleComp?.adjusted_psf ?? 0;
+                                        %>
+                                            <td><%= toCurrency(adjusted) %></td>
+                                        <% }) %>
+                                    <% } %>
+                                </tr>
+                                <tr class="odd">
+                                    <td>Average Adjusted Price</td>
+                                    <% 
+                                        let weights = false;
+                                        evaluation.zonings?.forEach(zoning => {
+                                            if (zoning.weight_sf < 100) {
+                                                weights = true;
+                                            }
+                                        });
+                                    %>
+                                    <td class="bold mont-bold">
+                                        <%= (weights === true ? '*' : '') + toCurrency(evaluation_sale_approach?.sales_approach_value) %>
+                                    </td>
+                                    
+                                    <% if (
+                                        evaluation_sale_approach &&
+                                        (Array.isArray(evaluation_sale_approach.comp_data) ||
+                                            typeof evaluation_sale_approach?.comp_data === 'object')
+                                    ) { 
+                                        evaluation_sale_approach.comp_data.forEach((comp, i) => { 
+                                        %>
+                                            <td></td>
+                                        <% }) 
+                                    } %>
+                                </tr>
+                            </tbody>
+                        </table>
+                    <% } %>
+                    <%
+                        // Split notes into paragraphs
+                        let string = trimmedNotes.substr(startLen, limit);
+                        paras = string.split('<p>');
+                        let chars_per_line = 115;
+                        if (theme === 'nai' || theme === 'nai_portland') chars_per_line = 120;
+                        let lineSpacing = 1.9;
+                        let fontSize = 13;
+                        let pageHeight = 203; // mm
+                        let mmToInch = 0.0393701;
+                        let pointsToInch = 1 / 72;
+                        let fontHeightInInches = fontSize * pointsToInch;
+                        let lineSpacingInInches = fontHeightInInches * lineSpacing;
+                        let pageHeightInInches = pageHeight * mmToInch;
+                        let lines = Math.floor(pageHeightInInches / lineSpacingInInches);
+                        let total_page_lines = 0;
+                        let check_para_count = 0;
+                        lines = 30;
+                        if (loop === 0) {
+                            lines = 3;
+                            if (evaluation.getsaleComps && evaluation_sale_approach.subject_property_adj) {
+                                const labels = Object.keys(JSON.parse(evaluation_sale_approach.subject_property_adj || '{}')).length;
+                                if (labels < 8) {
+                                    lines += 8 - labels;
+                                } else {
+                                    lines -= labels - 8;
+                                }
+                            }
+                        }
+                        if (paras.length > 12) {
+                            lines = 16;
+                            if (loop === 0) lines = 2;
+                            if (loop > 0) lines = 20;
+                        }
+                        let p_counts_total = 0;
+                        let selected_lines = 0;
+                        for (let j = 0; j < paras.length; j++) {
+                            if (paras[j]) {
+                                let p_counts = paras[j].trim().length;
+                                let total_lines = p_counts / chars_per_line;
+                                total_page_lines += Math.ceil(total_lines);
+                                p_counts_total += p_counts;
+                            }
+                            if (total_page_lines <= lines) {
+                                check_para_count = j;
+                            }
+                        }
+                        if (total_page_lines >= lines) {
+                            let overflow_lines = total_page_lines - lines;
+                            let para_length = paras.length - 1;
+                            let last_p_length = paras[para_length].length;
+                            if (check_para_count < para_length) {
+                                let char_limit = 0;
+                                for (let k = 0; k <= check_para_count; k++) {
+                                    let check_p_length = paras[k].length + 3;
+                                    char_limit += check_p_length;
+                                    let total_lines = check_p_length / chars_per_line;
+                                    selected_lines += Math.ceil(total_lines);
+                                }
+                                if (selected_lines < lines) {
+                                    let check_p_len = paras[check_para_count + 1].length + 3;
+                                    let get_lines = lines - selected_lines;
+                                    let chars = get_lines * chars_per_line;
+                                    char_limit += chars;
+                                }
+                                limit = char_limit;
+                                endLength = startLen + limit;
+                            }
+                        }
+                        let check_string = trimmedNotes.substr(startLen, limit);
+                        let last_dot = check_string.lastIndexOf(' ');
+                        let end_part = check_string.substr(last_dot);
+                        let chars = end_part.length;
+                        if (chars < 10) {
+                            limit -= chars;
+                            endLength -= chars;
+                        }
+                        let data = trimmedNotes.substr(startLen, limit);
+                        if (loop !== 0) {
+                            if (data.startsWith('>')) {
+                                data = data.substr(1);
+                            } else if (data.startsWith('p>')) {
+                                data = data.substr(2);
+                            } else if (data.startsWith('<p>')) {
+                                data = data.substr(3);
+                            }
+                            data = '<p>' + data + '</p>';
+                        }
+                    %>
+                    <p class="regular-description regular-description-res"><span class="<%= (loop === 0) ? 'nots' : '' %>"><%= (loop === 0) ? 'Comparison Rating Criteria - ' : '' %></span><%- data.trim().substr(3) %></p>
+                    <%- watermark %>
+                </div>
+            </div>
+        <%
+            }
+            if (!paras) {
+                limit = 0;
+            } else if (paras.length > 12) {
+                limit = 2300;
+            } else {
+                limit = 3800;
+            }
+            startLen = endLength;
+            endLength = startLen + limit;
+            if (notesLength > startLen && count > loop) {
+                count++;
+            }
+        }
+    %>
+    <div class="new-page valuations_page_3">
+        <div class="page-header">
+            <%- chapter %>
+        </div>
+        <div class="description">
+            <p class="title">Sales Comparison <span class="subtitle">Approach</span></p>
+            <p class="label"><%= label %></p>
+            <p class="regular-description">
+                The below sale comparables for the subject property have been adjusted based on the following criteria noted by the author.
+            </p>
+            <p class="comparable-description">
+                <% 
+                const amenities = evaluation?.res_evaluation_amenities;
+                const result = Array.isArray(amenities) && amenities.length > 0
+                ? amenities
+                    .map(item => item?.additional_amenities)
+                    .filter(Boolean)
+                    .join(', ')
+                : '';
+                
+                if (evaluation?.other_amenities || evaluation?.res_evaluation_amenities) { %>
+                    <b>Subject Property Amenities : </b>
+                <%= result %> <%=  evaluation?.other_amenities ? ", " + evaluation?.other_amenities : ''  %>
+                <%  } %>
+            </p>
+            <% if (
+                evaluation_sale_approach &&
+                (Array.isArray(evaluation_sale_approach.comp_data) ||
+                    typeof evaluation_sale_approach.comp_data === 'object')
+            ) { %>
+            <% evaluation_sale_approach.comp_data.forEach((comp, i) => { %>
+                <table class="comparable-table">
+                <tr>
+                    <td class="comparable-number">Comparable #<%= i + 1 %></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td width="20%">
+                    <%  
+                        let url = '';
+                        let imgUrl = '/images/default-placeholder.png';
+                        const saleComp = comp?.comp_details;
+                        if (saleComp?.property_image_url) {
+                            const url = saleComp?.property_image_url;
+                            imgUrl = evaluation?.baseUrl+url;
+                        }
+                    %>
+                    <img width="210" height="120" src="<%= imgUrl %>" class="image-added" />
+                    </td>
+                    <td width="80%" class="comparable-info">
+                    <p class="comparable-title"><%= saleComp?.street_address || '' %></p>
+                    <p class="comparable-description"><%- saleComp?.summary || '' %></p>
+                    <p class="comparable-description"><%- comp.adjustment_note || '' %></p>
+                    </td>
+                </tr>
+                </table>
+            <% }); %>
+            <% } %>
+        </div>
+        <%- watermark %>
+    </div>
+    <div class="new-page valuations_page_3 sale_map" data-type="sale_map">
+        <%
+        const locations = [];
+        // Default map settings
+        locations.push({ lat: evaluation.map_pin_lat, lng: evaluation.map_pin_lng, color: 'red' });
+        let comps = [];
+        let zoom = 20;
+        let area_map_zoom = evaluation_sale_approach?.area_map_zoom ? evaluation_sale_approach.area_map_zoom : 12;
+        const map_type = evaluation_sale_approach?.map_type ?  evaluation_sale_approach.map_type : 'roadmap';
+        const map_center_lat_position = evaluation_sale_approach?.map_center_lat
+            ? evaluation_sale_approach.map_center_lat
+            : evaluation.map_pin_lat;
+        const map_center_lng_position = evaluation_sale_approach?.map_center_lng
+            ? evaluation_sale_approach.map_center_lng
+            : evaluation.map_pin_lng;
+
+        if (area_map_zoom) {
+            zoom = area_map_zoom - 2;
+        }
+
+        const colors = [
+            { color: 'blue' },
+            { color: 'green' }, { color: 'yellow' },
+            { color: 'purple' }, { color: 'orange' }
+        ]; 
+        if (evaluation_sale_approach && Array.isArray(evaluation_sale_approach.comp_data)) {
+            let saleComps = evaluation_sale_approach.comp_data;
+            saleComps.forEach((comp, index) => {
+                let { map_pin_lat, map_pin_lng } = comp.comp_details;
+                const color = colors[index % colors.length];
+                if (!map_pin_lat) {
+                    map_pin_lat = evaluation?.map_pin_lat;
+                }
+                if (!map_pin_lng) {
+                    map_pin_lng = evaluation?.map_pin_lng;
+                }
+                locations.push({ lat: map_pin_lat, lng: map_pin_lng, color });
+            });
+        } %>
+        <% // Construct the URL with markers
+        const markers = locations
+            .map((location) => `markers=size:small|color:${location.color.color}%7C${location.lat},${location.lng}`)
+            .join('&');
+
+        const url = `https://maps.googleapis.com/maps/api/staticmap?center=${map_center_lat_position},${map_center_lng_position}&zoom=${zoom}&scale=2&size=600x400&maptype=${map_type}&${markers}&key=${googleApiKey}`;
+
+        %>
+        
+        <div class="page-header">
+            <%- chapter %>
+        </div>
+        
+        <div class="description">
+            <p class="title">Sales <span class="subtitle">Comparison Map</span></p>
+            <p class="label"><%= label %></p>
+        </div>
+        
+        <div id="sale_map">
+            <img style="width: 100%; height: 130mm;" src="<%= url %>">
+        </div>        
+        <div id="map-landmarks">
+        <span class="label">Key</span>
+            <div class="map-landmark">
+                <div class="el">
+                    <div class="list subject-text">
+                        <span class="img">
+                        <img src="https://maps.google.com/mapfiles/ms/icons/pink-dot.png" />
+                        </span>
+                        <strong>Subject Property: </strong>
+                         <% 
+                            const state = evaluation?.state;
+                           let address = evaluation.street_address?.trim() || '';
+                            if (evaluation.city?.trim()) address += `, ${evaluation.city.trim()}`;
+                             if (state?.trim()) address += `, ${state.trim().toUpperCase()}`;
+                        %>
+                        <span class="ellip"><%= address %></span>
+                    </div>
+        
+                    <% let n = 1; 
+                    if (evaluation_sale_approach && Array.isArray(evaluation_sale_approach.comp_data)) {
+                        let saleComps = evaluation_sale_approach.comp_data;
+                        saleComps.forEach(comp => { 
+                            const compDetails = comp.comp_details;
+                            const {state} = compDetails;
+                            const color = colors[n - 1]?.color || '6b94ff';
+                            let address = compDetails.street_address?.trim() || '';
+                            if (compDetails.city?.trim()) address += `, ${compDetails.city.trim()}`;
+                            if (state?.trim()) address += `, ${state.trim().toUpperCase()}`;
+                        %>
+                        <div class="list">
+                            <span class="img">
+                                <img src="https://maps.google.com/mapfiles/ms/icons/<%= color %>-dot.png" />
+                            </span>
+                            <strong>Comp #<%= n %>:</strong>
+                            <span class="ellip"><%= address %></span>
+                        </div>
+                        <% if (n % 3 === 0) { %></div><div class="el"><% } %>
+                    <% n++; });
+                    } %>
+                </div>
+            </div>
+        </div>
+        <%- watermark %>
+    </div>
+<% } } } %>

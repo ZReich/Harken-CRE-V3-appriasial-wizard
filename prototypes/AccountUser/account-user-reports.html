@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Reports - Harken CRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { font-family: 'Montserrat', sans-serif !important; }
+        body { background-color: #f9f9f9; margin: 0; padding: 0; }
+        .section-title { font-size: 23px; font-weight: 600; color: #1c3643; }
+        .card { background: white; border-radius: 8px; padding: 32px; margin-bottom: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); }
+        .stat-card { background: linear-gradient(135deg, #0da1c7 0%, #0891b2 100%); color: white; border-radius: 8px; padding: 24px; text-align: center; }
+        .stat-value { font-size: 36px; font-weight: 700; margin-bottom: 8px; }
+        .stat-label { font-size: 14px; opacity: 0.9; }
+        table { width: 100%; border-collapse: separate; border-spacing: 0; }
+        thead { background-color: #f9f9f9; }
+        th { padding: 14px 20px; text-align: left; color: #687F8B; font-size: 12px; font-weight: 600; border-bottom: 2px solid #e0e0e0; cursor: pointer; }
+        th:hover { background-color: #f0f0f0; }
+        td { padding: 16px 20px; color: #687F8B; font-size: 13px; font-weight: 500; border-bottom: 1px solid #f0f0f0; }
+        tbody tr:hover { background-color: #f9f9f9; }
+        .link-text { color: #0da1c7; text-decoration: none; font-weight: 600; }
+        .link-text:hover { text-decoration: underline; }
+        .filter-select { padding: 8px 12px; border: 1px solid #e0e0e0; border-radius: 4px; font-size: 14px; background-color: white; color: #687F8B; cursor: pointer; }
+        .filter-select:focus { outline: none; border-color: #0da1c7; }
+        .action-button { padding: 8px 16px; border-radius: 4px; font-size: 12px; font-weight: 600; border: none; cursor: pointer; transition: opacity 0.2s; min-width: 85px; text-align: center; }
+        .action-button:hover { opacity: 0.8; }
+        .action-button-primary { background-color: #0da1c7; color: white; }
+        .action-button-secondary { background-color: #687F8B; color: white; }
+    </style>
+</head>
+<body>
+    <!-- UNIFIED NAVIGATION COMPONENT -->
+    <style>.unified-navbar{background:url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;background-color:#1c3643!important;height:84px;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 32px;box-shadow:0 2px 8px rgba(0,0,0,0.1);position:sticky;top:0;z-index:1000}.nav-logo{height:40px;width:auto;cursor:pointer}.nav-center{display:flex;align-items:center;gap:8px;flex:1;justify-content:center}.nav-core-features{display:flex;align-items:center;gap:4px;background:rgba(13, 161, 199, 0.08);border-radius:25px;padding:4px 8px;margin-right:16px}.nav-link{color:white;text-decoration:none;padding:10px 20px;border-radius:25px;transition:all 0.2s;border:1px solid transparent;font-weight:500;font-size:14px;white-space:nowrap}.nav-link:hover{background-color:rgba(255,255,255,0.08)}.nav-link.core-feature{font-weight:500;font-size:14px;color:white}.nav-link.core-feature:hover{background-color:rgba(13, 161, 199, 0.2);color:white}.nav-link.core-feature.active{background-color:transparent;border:1px solid #0da1c7;color:#0da1c7;box-shadow:0 2px 4px rgba(13, 161, 199, 0.2)}.nav-link.active{background-color:transparent;border:1px solid #0da1c7;color:#0da1c7}.nav-separator{width:1px;height:24px;background:rgba(255, 255, 255, 0.2);margin:0 8px}.nav-user{display:flex;align-items:center;gap:12px}.nav-user-name{font-size:14px;font-weight:500;color:white}.nav-user-avatar{width:36px;height:36px;border-radius:50%;border:2px solid #0da1c7}</style><nav class="unified-navbar"><img src="assets/harken.png" alt="Harken CRE" class="nav-logo" onclick="window.location.href='account-user-dashboard.html'"><div class="nav-center"><div class="nav-core-features"><a href="../comps-premium-with-clustering.html" class="nav-link core-feature" id="nav-comps">COMPS</a><a href="account-user-appraisals.html" class="nav-link core-feature" id="nav-appraisals">APPRAISAL</a><a href="../evaluation-wizard-full.html" class="nav-link core-feature" id="nav-evaluations">EVALUATION</a></div><div class="nav-separator"></div><a href="account-user-dashboard.html" class="nav-link" id="nav-dashboard">Dashboard</a><a href="account-user-clients.html" class="nav-link" id="nav-clients">Clients</a><a href="account-user-reports.html" class="nav-link active" id="nav-reports">Reports</a><a href="account-user-settings.html" class="nav-link" id="nav-settings">Settings</a></div><div class="nav-user"><span class="nav-user-name">Sarah Miller</span><img src="https://i.pravatar.cc/150?img=25" alt="User" class="nav-user-avatar"></div></nav>
+
+    <div style="padding: 35px 50px;">
+        <h2 class="section-title">MY CLIENT WORK REPORT</h2>
+        
+        <!-- Summary Cards -->
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin: 32px 0;">
+            <div class="stat-card">
+                <div class="stat-value">10</div>
+                <div class="stat-label">Total Clients</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">8</div>
+                <div class="stat-label">Active Clients</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">134</div>
+                <div class="stat-label">Total Work Items</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">13.4</div>
+                <div class="stat-label">Avg Work/Client</div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="card">
+            <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+                <select class="filter-select" id="dateRangeFilter" onchange="filterReport()">
+                    <option value="30">Last 30 Days</option>
+                    <option value="90" selected>Last 90 Days</option>
+                    <option value="365">Last Year</option>
+                    <option value="all">All Time</option>
+                </select>
+
+                <select class="filter-select" id="workTypeFilter" onchange="filterReport()">
+                    <option value="all">All Work Types</option>
+                    <option value="evaluations">Evaluations Only</option>
+                    <option value="appraisals">Appraisals Only</option>
+                    <option value="comps">Comps Only</option>
+                </select>
+
+                <select class="filter-select" id="statusFilter" onchange="filterReport()">
+                    <option value="all">All Clients</option>
+                    <option value="active">Active Clients Only</option>
+                    <option value="inactive">Inactive Clients</option>
+                </select>
+
+                <div style="margin-left: auto; display: flex; gap: 12px;">
+                    <button class="action-button action-button-secondary" onclick="exportToCSV()">Export to CSV</button>
+                    <button class="action-button action-button-primary" onclick="exportToPDF()">Export to PDF</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Integration Point -->
+        <!-- API Call: GET /api/v1/reports/client-work?user_id=:current_user_id&date_range=90&work_type=all&status=all -->
+
+        <!-- Client Work Table -->
+        <div class="card" style="overflow-x: auto;">
+            <table id="clientWorkTable">
+                <thead>
+                    <tr>
+                        <th onclick="sortTable(0)">Client Name</th>
+                        <th onclick="sortTable(1)">Company</th>
+                        <th onclick="sortTable(2)">Evaluations</th>
+                        <th onclick="sortTable(3)">Appraisals</th>
+                        <th onclick="sortTable(4)">Comps</th>
+                        <th onclick="sortTable(5)">Total Work</th>
+                        <th onclick="sortTable(6)">Date Range</th>
+                        <th onclick="sortTable(7)">Last Activity</th>
+                    </tr>
+                </thead>
+                <tbody id="clientWorkBody">
+                    <!-- Will be populated by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Mock client work data
+        const mockClientWork = [
+            {client: 'Sarah Martinez', company: 'Coastal Ventures', evals: {total: 22, completed: 15, active: 5, pending: 2}, appraisals: {total: 12, completed: 8, active: 3, pending: 1}, comps: 31, dateRange: 'Jan 2024 - Oct 2025', lastActivity: '2025-10-20'},
+            {client: 'Christopher Brown', company: 'Vista Properties', evals: {total: 18, completed: 12, active: 4, pending: 2}, appraisals: {total: 10, completed: 7, active: 2, pending: 1}, comps: 26, dateRange: 'Mar 2024 - Oct 2025', lastActivity: '2025-10-21'},
+            {client: 'Matthew Martinez', company: 'Cornerstone Investments', evals: {total: 16, completed: 11, active: 3, pending: 2}, appraisals: {total: 9, completed: 6, active: 2, pending: 1}, comps: 24, dateRange: 'Feb 2024 - Oct 2025', lastActivity: '2025-10-19'},
+            {client: 'Ashley Hernandez', company: 'Elite Property Solutions', evals: {total: 13, completed: 9, active: 3, pending: 1}, appraisals: {total: 7, completed: 5, active: 1, pending: 1}, comps: 20, dateRange: 'Apr 2024 - Oct 2025', lastActivity: '2025-10-16'},
+            {client: 'David Rodriguez', company: 'Harbor Investments', evals: {total: 12, completed: 8, active: 2, pending: 2}, appraisals: {total: 7, completed: 5, active: 1, pending: 1}, comps: 19, dateRange: 'May 2024 - Oct 2025', lastActivity: '2025-10-10'},
+            {client: 'Amanda Moore', company: 'Landmark Development', evals: {total: 11, completed: 7, active: 3, pending: 1}, appraisals: {total: 6, completed: 4, active: 1, pending: 1}, comps: 17, dateRange: 'Jun 2024 - Oct 2025', lastActivity: '2025-10-09'},
+            {client: 'Stephanie Lewis', company: 'Meridian Realty', evals: {total: 10, completed: 7, active: 2, pending: 1}, appraisals: {total: 6, completed: 4, active: 1, pending: 1}, comps: 15, dateRange: 'Mar 2024 - Oct 2025', lastActivity: '2025-10-11'},
+            {client: 'Maria Garcia', company: 'Gateway Commercial', evals: {total: 9, completed: 6, active: 2, pending: 1}, appraisals: {total: 5, completed: 3, active: 1, pending: 1}, comps: 14, dateRange: 'Apr 2024 - Oct 2025', lastActivity: '2025-10-17'},
+            {client: 'Michael Chen', company: 'Pacific Development', evals: {total: 8, completed: 5, active: 2, pending: 1}, appraisals: {total: 5, completed: 3, active: 1, pending: 1}, comps: 12, dateRange: 'Jul 2024 - Oct 2025', lastActivity: '2025-10-18'},
+            {client: 'Brian Walker', company: 'Pioneer Properties', evals: {total: 17, completed: 11, active: 4, pending: 2}, appraisals: {total: 9, completed: 6, active: 2, pending: 1}, comps: 25, dateRange: 'Jan 2024 - Oct 2025', lastActivity: '2025-10-14'}
+        ];
+
+        function renderClientWork() {
+            const tbody = document.getElementById('clientWorkBody');
+            tbody.innerHTML = mockClientWork.map(client => {
+                const totalWork = client.evals.total + client.appraisals.total + client.comps;
+                return `
+                    <tr>
+                        <td><a href="account-user-client-detail.html" class="link-text">${client.client}</a></td>
+                        <td>${client.company}</td>
+                        <td>${client.evals.total} <span style="font-size: 11px; color: #999;">(${client.evals.completed}C/${client.evals.active}A/${client.evals.pending}P)</span></td>
+                        <td>${client.appraisals.total} <span style="font-size: 11px; color: #999;">(${client.appraisals.completed}C/${client.appraisals.active}A/${client.appraisals.pending}P)</span></td>
+                        <td>${client.comps}</td>
+                        <td><strong>${totalWork}</strong></td>
+                        <td>${client.dateRange}</td>
+                        <td>${new Date(client.lastActivity).toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'})}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function filterReport() {
+            // In production: This would filter the data based on selected filters
+            console.log('Filtering report...');
+            renderClientWork();
+        }
+
+        function sortTable(columnIndex) {
+            console.log('Sorting column:', columnIndex);
+            // In production: Implement table sorting logic
+        }
+
+        function exportToCSV() {
+            alert('Exporting to CSV...');
+            // In production: Generate CSV file
+        }
+
+        function exportToPDF() {
+            alert('Exporting to PDF...');
+            // In production: Generate PDF file
+        }
+
+        // Initial render
+        renderClientWork();
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+

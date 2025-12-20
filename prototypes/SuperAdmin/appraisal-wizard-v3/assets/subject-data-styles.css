@@ -1,0 +1,57 @@
+/* Additional styles for subject-data page */
+
+.upload-slot {
+    border: 2px dashed #d1d5db;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    text-align: center;
+    transition: all 0.2s;
+    background: #f9fafb;
+}
+
+.upload-slot:hover {
+    border-color: #0da1c7;
+    background: rgba(13, 161, 199, 0.02);
+}
+
+.upload-placeholder {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-upload {
+    margin-top: 0.75rem;
+    padding: 0.5rem 1rem;
+    background: #0da1c7;
+    color: white;
+    border: none;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.btn-upload:hover {
+    background: #38bfd9;
+    transform: translateY(-1px);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

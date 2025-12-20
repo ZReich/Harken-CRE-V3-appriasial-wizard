@@ -1,0 +1,3219 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+    <title>Report Editor - Harken CRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            font-family: 'Montserrat', sans-serif !important;
+            box-sizing: border-box;
+        }
+        html, body {
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow-x: hidden;
+            zoom: 1;
+            -moz-transform: scale(1);
+            -moz-transform-origin: 0 0;
+        }
+
+        /* Main Container */
+        .main-container {
+            padding: 24px;
+            max-width: 1800px;
+            margin: 0 auto;
+        }
+
+        /* Top Header */
+        .page-header {
+            margin-bottom: 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .page-title {
+            font-size: 23px;
+            font-weight: 600;
+            color: #1c3643;
+        }
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+        .action-btn {
+            padding: 10px 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            background: white;
+            color: #687F8B;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .action-btn:hover {
+            background: #f9f9f9;
+            border-color: #0da1c7;
+            color: #0da1c7;
+        }
+        .action-btn.primary {
+            background: #0da1c7;
+            color: white;
+            border-color: #0da1c7;
+        }
+        .action-btn.primary:hover {
+            background: #0890a8;
+        }
+
+        /* Save Dropdown */
+        .save-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+        .save-menu {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            margin-top: 4px;
+            min-width: 280px;
+            z-index: 1000;
+        }
+        .save-menu.active {
+            display: block;
+        }
+        .menu-item {
+            padding: 12px 16px;
+            font-size: 13px;
+            color: #1c3643;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .menu-item:last-child {
+            border-bottom: none;
+        }
+        .menu-item:hover {
+            background: #e8f5f7;
+            color: #0da1c7;
+        }
+        .menu-item-desc {
+            font-size: 11px;
+            color: #687F8B;
+            margin-top: 4px;
+        }
+
+        /* Builder Container - 3 Panel Layout */
+        .builder-container {
+            display: grid;
+            grid-template-columns: 320px 1fr 380px;
+            gap: 24px;
+            height: calc(100vh - 150px);
+            min-height: 600px;
+        }
+
+        /* Left Panel - Section Tree */
+        .section-panel {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+            overflow-y: auto;
+        }
+        .panel-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1c3643;
+            margin-bottom: 16px;
+        }
+        .control-buttons {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+            flex-wrap: wrap;
+        }
+        .control-btn {
+            padding: 6px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            background: white;
+            color: #687F8B;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .control-btn:hover {
+            background: #f9f9f9;
+            border-color: #0da1c7;
+            color: #0da1c7;
+        }
+
+        /* Section Items */
+        .section-item {
+            margin-bottom: 12px;
+            border-left: 3px solid transparent;
+            transition: all 0.2s;
+        }
+        .section-item.active {
+            background: #e8f5f7;
+            border-left-color: #0da1c7;
+            border-radius: 4px;
+        }
+        .section-item.active-in-view .section-header {
+            background: rgba(13, 161, 199, 0.08);
+            border-left: 3px solid #0da1c7;
+            border-radius: 4px;
+            margin-left: -3px;
+        }
+        .section-item.active-in-view .section-label {
+            color: #0da1c7;
+            font-weight: 700;
+        }
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px;
+            border-radius: 4px;
+            transition: background 0.2s;
+            user-select: none;
+            cursor: pointer;
+        }
+        .section-header:hover {
+            background: #f9f9f9;
+        }
+        .section-checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #0da1c7;
+            flex-shrink: 0;
+        }
+        .section-expand-btn {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            color: #687F8B;
+            font-size: 14px;
+            padding: 0;
+            flex-shrink: 0;
+            transition: all 0.2s;
+        }
+        .section-expand-btn:hover {
+            color: #0da1c7;
+            background: #f0f0f0;
+            border-radius: 3px;
+        }
+        .section-expand-btn.expanded {
+            transform: rotate(90deg);
+        }
+        .section-label {
+            flex: 1;
+            font-weight: 600;
+            color: #1c3643;
+            font-size: 14px;
+        }
+        .field-list {
+            margin-left: 30px;
+            margin-top: 8px;
+            display: none;
+        }
+        .field-list.expanded {
+            display: block;
+        }
+        .field-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+        .field-item:hover {
+            background: #f9f9f9;
+        }
+        .field-item.highlighted {
+            background: rgba(13, 161, 199, 0.15);
+            border-left: 3px solid #0da1c7;
+            padding-left: 5px;
+            animation: pulse 0.5s ease-in-out;
+        }
+        @keyframes pulse {
+            0%, 100% { background: rgba(13, 161, 199, 0.15); }
+            50% { background: rgba(13, 161, 199, 0.3); }
+        }
+        .field-checkbox {
+            width: 16px;
+            height: 16px;
+            cursor: pointer;
+            accent-color: #0da1c7;
+        }
+        .field-label {
+            font-size: 13px;
+            color: #687F8B;
+            cursor: pointer;
+        }
+        .field-item.highlighted .field-label {
+            color: #0da1c7;
+            font-weight: 600;
+        }
+
+        /* Center Panel - Preview */
+        .preview-panel {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .preview-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 30px;
+            background: #d0d0d0;
+        }
+
+        /* Report Pages */
+        .report-page {
+            background: white;
+            width: 8.5in;
+            min-height: 11in;
+            margin: 0 auto 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            position: relative;
+        }
+
+        /* Editable Elements */
+        .editable-element {
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .editable-element:hover {
+            outline: 1px dashed #0da1c7;
+            outline-offset: 2px;
+        }
+        .editable-element.selected {
+            outline: 2px solid #0da1c7;
+            outline-offset: 2px;
+            background: rgba(13, 161, 199, 0.03);
+        }
+
+        /* Right Panel - Properties */
+        .properties-panel {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .properties-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e0e0e0;
+            background: #f9f9f9;
+        }
+        .properties-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1c3643;
+        }
+        .properties-subtitle {
+            font-size: 11px;
+            color: #687F8B;
+            margin-top: 4px;
+        }
+        .properties-tabs {
+            display: flex;
+            border-bottom: 2px solid #e0e0e0;
+            padding: 0 20px;
+            background: #fafafa;
+        }
+        .prop-tab {
+            padding: 12px 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #687F8B;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s;
+        }
+        .prop-tab:hover {
+            color: #0da1c7;
+        }
+        .prop-tab.active {
+            color: #0da1c7;
+            border-bottom-color: #0da1c7;
+        }
+        .properties-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        .properties-tab-content {
+            display: none;
+        }
+        .properties-tab-content.active {
+            display: block;
+        }
+
+        /* Property Groups */
+        .prop-group {
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .prop-group:last-child {
+            border-bottom: none;
+        }
+        .prop-group-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #687F8B;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 12px;
+        }
+        .prop-control {
+            margin-bottom: 16px;
+        }
+        .prop-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #687F8B;
+            margin-bottom: 6px;
+        }
+        .prop-input, .prop-select, .prop-textarea {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1px solid #d0d0d0;
+            border-radius: 4px;
+            font-size: 13px;
+            background: white;
+        }
+        .prop-input:focus, .prop-select:focus, .prop-textarea:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .prop-textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+        .prop-slider-container {
+            position: relative;
+            width: 100%;
+        }
+        .prop-slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            cursor: pointer;
+            accent-color: #0da1c7;
+        }
+        .prop-slider-value {
+            text-align: right;
+            font-size: 11px;
+            color: #687F8B;
+            margin-top: 4px;
+        }
+        /* Default value marker on slider track */
+        .slider-default-marker {
+            position: absolute;
+            top: 0;
+            width: 3px;
+            height: 14px;
+            background: #2e7d32;
+            border-radius: 2px;
+            pointer-events: none;
+            z-index: 1;
+            transform: translateX(-50%);
+            box-shadow: 0 0 4px rgba(46, 125, 50, 0.5);
+        }
+        .slider-default-marker::after {
+            content: '';
+            position: absolute;
+            top: -4px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 0;
+            border-left: 4px solid transparent;
+            border-right: 4px solid transparent;
+            border-top: 4px solid #2e7d32;
+        }
+        .reset-to-default-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            background: transparent;
+            color: #2e7d32;
+            border: 1px solid #2e7d32;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 8px;
+        }
+        .reset-to-default-btn:hover {
+            background: #2e7d32;
+            color: white;
+        }
+        .slider-label-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        /* Color Swatches */
+        .color-swatches {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 6px;
+        }
+        .color-swatch {
+            width: 100%;
+            height: 32px;
+            border-radius: 4px;
+            border: 2px solid transparent;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .color-swatch:hover {
+            border-color: #1c3643;
+            transform: scale(1.05);
+        }
+        .color-swatch.selected {
+            border-color: #1c3643;
+            box-shadow: 0 0 0 2px rgba(28, 54, 67, 0.3);
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #687F8B;
+        }
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            opacity: 0.3;
+        }
+
+        /* Report Page Styles - Cover Page */
+        .cover-page {
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 11in;
+            background: white;
+        }
+        .cover-title-section {
+            padding: 80px 60px 30px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .cover-title-section:hover {
+            background: rgba(13, 161, 199, 0.05);
+        }
+        .cover-title-section.selected {
+            background: rgba(13, 161, 199, 0.1);
+            outline: 2px solid #0da1c7;
+        }
+        .cover-title {
+            font-size: 48px;
+            font-weight: 300;
+            color: #2e7d32;
+            margin: 0;
+            line-height: 1.2;
+        }
+        .cover-address-section {
+            padding: 0 60px 40px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        .cover-address-section:hover {
+            background: rgba(13, 161, 199, 0.05);
+        }
+        .cover-address-section.selected {
+            background: rgba(13, 161, 199, 0.1);
+            outline: 2px solid #0da1c7;
+        }
+        .cover-address {
+            font-size: 18px;
+            color: #687F8B;
+            margin: 0;
+        }
+        .cover-image-section {
+            flex: 1;
+            min-height: 500px;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .cover-image-section:hover {
+            outline: 2px dashed #0da1c7;
+            outline-offset: -2px;
+        }
+        .cover-image-section.selected {
+            outline: 3px solid #0da1c7;
+            outline-offset: -3px;
+        }
+        .cover-image-section img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .cover-footer {
+            padding: 0;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .cover-footer:hover {
+            outline: 2px dashed #0da1c7;
+            outline-offset: -2px;
+        }
+        .cover-footer.selected {
+            outline: 3px solid #0da1c7;
+            outline-offset: -3px;
+        }
+        .cover-footer-bar {
+            height: 80px;
+            background: #2e7d32;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 60px;
+        }
+        .footer-logo {
+            text-align: left;
+        }
+        .footer-contact {
+            text-align: right;
+        }
+        .powered-by {
+            text-align: right;
+            font-size: 11px;
+            color: #687F8B;
+            margin-top: 10px;
+        }
+
+        /* Section Page with Green Sidebar */
+        .section-page {
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            min-height: 11in;
+        }
+        .green-sidebar {
+            background: #2e7d32;
+            color: white;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 48px;
+            font-weight: 700;
+            letter-spacing: 8px;
+        }
+        .section-content {
+            padding: 60px 50px;
+            position: relative;
+        }
+        .section-header-box {
+            position: absolute;
+            top: 30px;
+            right: 30px;
+            background: #2e7d32;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 4px;
+            text-align: right;
+        }
+        .section-number {
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .section-name {
+            font-size: 16px;
+            font-weight: 700;
+        }
+        .content-heading {
+            font-size: 32px;
+            font-weight: 300;
+            color: #1c3643;
+            margin: 0 0 30px 0;
+        }
+        .content-subheading {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2e7d32;
+            margin: 30px 0 15px 0;
+        }
+        .content-text {
+            font-size: 13px;
+            line-height: 1.8;
+            color: #1c3643;
+            margin-bottom: 15px;
+        }
+        .info-grid {
+            display: grid;
+            grid-template-columns: 200px 1fr;
+            gap: 15px;
+            margin-bottom: 10px;
+        }
+        .info-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #687F8B;
+        }
+        .info-value {
+            font-size: 12px;
+            color: #1c3643;
+        }
+        .page-footer {
+            position: absolute;
+            bottom: 20px;
+            right: 40px;
+            font-size: 11px;
+            color: #687F8B;
+        }
+
+        /* Button Styles */
+        .btn-apply {
+            width: 100%;
+            padding: 10px;
+            background: #0da1c7;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-apply:hover {
+            background: #0890a8;
+        }
+        .btn-delete {
+            width: 100%;
+            padding: 10px;
+            background: #dc2626;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-delete:hover {
+            background: #b91c1c;
+        }
+
+        /* Custom Confirmation Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-dialog {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            max-width: 480px;
+            width: 90%;
+            overflow: hidden;
+            animation: modalSlideIn 0.3s ease-out;
+        }
+        @keyframes modalSlideIn {
+            from {
+                transform: translateY(-50px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+        .modal-header {
+            padding: 24px 24px 16px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .modal-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1c3643;
+            margin: 0;
+        }
+        .modal-body {
+            padding: 24px;
+        }
+        .modal-message {
+            font-size: 14px;
+            line-height: 1.6;
+            color: #687F8B;
+            margin-bottom: 16px;
+        }
+        .modal-info-box {
+            background: #e0f2fe;
+            border-left: 3px solid #0da1c7;
+            padding: 12px 16px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #0369a1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .modal-footer {
+            padding: 16px 24px;
+            background: #f9f9f9;
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+        .modal-btn {
+            padding: 10px 24px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .modal-btn-cancel {
+            background: white;
+            color: #687F8B;
+            border: 1px solid #e0e0e0;
+        }
+        .modal-btn-cancel:hover {
+            background: #f9f9f9;
+            border-color: #0da1c7;
+            color: #0da1c7;
+        }
+        .modal-btn-confirm {
+            background: #dc2626;
+            color: white;
+        }
+        .modal-btn-confirm:hover {
+            background: #b91c1c;
+        }
+
+        /* Add Text Block Button */
+        .add-text-block-btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: linear-gradient(135deg, #0da1c7 0%, #0890a8 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 8px rgba(13, 161, 199, 0.3);
+        }
+        .add-text-block-btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(13, 161, 199, 0.4);
+        }
+
+        /* Custom Text Block Container */
+        .custom-text-block {
+            position: absolute;
+            padding: 12px 16px;
+            background: transparent;
+            border: 2px solid transparent;
+            border-radius: 4px;
+            cursor: move;
+            transition: all 0.2s;
+            z-index: 100;
+            resize: both;
+            overflow: auto;
+            min-width: 100px;
+            min-height: 50px;
+        }
+        .custom-text-block.has-border {
+            background: white;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        .custom-text-block:hover {
+            border-color: #0da1c7;
+        }
+        .custom-text-block.has-border:hover {
+            box-shadow: 0 4px 12px rgba(13, 161, 199, 0.2);
+        }
+        .custom-text-block.selected {
+            border-color: #0da1c7;
+            box-shadow: 0 0 0 3px rgba(13, 161, 199, 0.15);
+        }
+        .custom-text-block.dragging {
+            opacity: 0.7;
+            cursor: grabbing;
+            z-index: 1000;
+            resize: none;
+        }
+        .custom-text-block.selected::after {
+            content: '';
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            width: 16px;
+            height: 16px;
+            background: linear-gradient(135deg, transparent 50%, #0da1c7 50%);
+            cursor: nwse-resize;
+            border-bottom-right-radius: 4px;
+        }
+
+        /* Text Block Content */
+        .text-block-content {
+            outline: none;
+            min-height: 20px;
+            word-wrap: break-word;
+            font-size: 14px;
+            line-height: 1.5;
+            color: #1c3643;
+        }
+        .text-block-content:empty:before {
+            content: 'Click to edit text...';
+            color: #687F8B;
+            opacity: 0.5;
+        }
+
+        /* Drag Handle */
+        .text-block-handle {
+            position: absolute;
+            top: -12px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 32px;
+            height: 24px;
+            background: #0da1c7;
+            border-radius: 4px 4px 0 0;
+            cursor: grab;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 10px;
+        }
+        .custom-text-block:hover .text-block-handle,
+        .custom-text-block.selected .text-block-handle {
+            display: flex;
+        }
+        .text-block-handle:active {
+            cursor: grabbing;
+        }
+
+        /* Position Indicator */
+        .position-indicator {
+            position: absolute;
+            top: -30px;
+            right: 0;
+            background: rgba(28, 54, 67, 0.9);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .custom-text-block.dragging .position-indicator {
+            opacity: 1;
+        }
+
+        /* Padding Guide Overlay */
+        .padding-guide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 999;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        .padding-guide.active {
+            opacity: 1;
+        }
+        .padding-guide::before {
+            content: '';
+            position: absolute;
+            top: 80px;
+            left: 50px;
+            right: 50px;
+            bottom: 80px;
+            border: 2px dashed rgba(13, 161, 199, 0.4);
+            background: rgba(13, 161, 199, 0.05);
+            border-radius: 4px;
+        }
+        .padding-guide::after {
+            content: 'Content Area';
+            position: absolute;
+            top: 85px;
+            left: 55px;
+            font-size: 11px;
+            color: #0da1c7;
+            font-weight: 600;
+            background: white;
+            padding: 2px 8px;
+            border-radius: 3px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* Floating Toolbar */
+        .text-formatting-toolbar {
+            position: fixed;
+            display: none;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            padding: 8px;
+            gap: 4px;
+            z-index: 10000;
+            animation: toolbarFadeIn 0.2s ease-out;
+        }
+        .text-formatting-toolbar.active {
+            display: flex;
+        }
+        @keyframes toolbarFadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Toolbar Buttons */
+        .toolbar-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: transparent;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+            color: #687F8B;
+        }
+        .toolbar-btn:hover {
+            background: #f0f0f0;
+            color: #1c3643;
+        }
+        .toolbar-btn.active {
+            background: #e0f2fe;
+            color: #0da1c7;
+        }
+
+        /* Toolbar Separator */
+        .toolbar-separator {
+            width: 1px;
+            height: 24px;
+            background: #e0e0e0;
+            margin: 0 4px;
+        }
+
+        /* Color Picker in Toolbar */
+        .toolbar-color-picker {
+            width: 32px;
+            height: 32px;
+            border: 2px solid #e0e0e0;
+            border-radius: 4px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+        .toolbar-color-picker input[type="color"] {
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            border: none;
+            cursor: pointer;
+        }
+
+        /* Delete Button in Toolbar */
+        .toolbar-btn.delete {
+            color: #dc2626;
+        }
+        .toolbar-btn.delete:hover {
+            background: #fee2e2;
+            color: #b91c1c;
+        }
+
+        /* Preview Header */
+        .preview-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f9f9f9;
+        }
+        .preview-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1c3643;
+        }
+    </style>
+</head>
+<body>
+    <!-- Custom Confirmation Modal -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal-dialog">
+            <div class="modal-header">
+                <h3 class="modal-title">Delete Element</h3>
+            </div>
+            <div class="modal-body">
+                <p class="modal-message">
+                    Are you sure you want to delete this element? This action will remove it from the report.
+                </p>
+                <div class="modal-info-box">
+                    <span style="font-size: 16px;">💡</span>
+                    <span>You can restore deleted elements from the <strong>Advanced</strong> tab's Undo History.</span>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="modal-btn modal-btn-cancel" onclick="closeDeleteModal()">Cancel</button>
+                <button class="modal-btn modal-btn-confirm" onclick="confirmDelete()">Delete Element</button>
+            </div>
+        </div>
+    </div>
+    <div class="main-container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="page-title">Report Editor</div>
+            <div class="header-actions">
+                <button class="action-btn" onclick="backToReview()">← Back to Review</button>
+                <div class="save-dropdown">
+                    <button class="action-btn primary" onclick="toggleSaveMenu()">
+                        Save ▾
+                    </button>
+                    <div class="save-menu" id="saveMenu">
+                        <div class="menu-item" onclick="saveAndUpdateEvaluation()">
+                            <div>Save & Update Evaluation Report</div>
+                            <div class="menu-item-desc">Updates the original evaluation report with your changes</div>
+                        </div>
+                        <div class="menu-item" onclick="saveAsPreviewCopy()">
+                            <div>Save As Preview Copy</div>
+                            <div class="menu-item-desc">Creates a new version, keeps original unchanged</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="action-btn" onclick="downloadPDF()">⬇ Download PDF</button>
+            </div>
+        </div>
+
+        <!-- Builder Container -->
+        <div class="builder-container">
+            <!-- Left Panel: Section Tree -->
+            <div class="section-panel">
+                <h3 class="panel-title">Report Pages</h3>
+                
+                <!-- Control Buttons -->
+                <div class="control-buttons">
+                    <button class="control-btn" id="toggleSelectBtn" onclick="toggleSelectAll()">Select All</button>
+                </div>
+
+                <!-- Section Tree -->
+                <div id="sectionTree"></div>
+            </div>
+
+            <!-- Center Panel: Preview -->
+            <div class="preview-panel">
+                <div class="preview-header">
+                    <div class="preview-title">Report Preview</div>
+                    <button class="add-text-block-btn" onclick="addNewTextBlock()" title="Add Text Block">
+                        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M8 3V13M3 8H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+                        </svg>
+                        Add Text Block
+                    </button>
+                </div>
+                <div class="preview-content" id="previewContent">
+                    <div id="reportPages"></div>
+                </div>
+            </div>
+
+            <!-- Right Panel: Properties -->
+            <div class="properties-panel">
+                <div class="properties-header">
+                    <div class="properties-title" id="propertiesTitle">Element Properties</div>
+                    <div class="properties-subtitle" id="propertiesSubtitle">Click on any element to edit</div>
+                </div>
+                <div class="properties-tabs">
+                    <div class="prop-tab active" onclick="switchTab('design')">Design</div>
+                    <div class="prop-tab" onclick="switchTab('content')">Content</div>
+                    <div class="prop-tab" onclick="switchTab('advanced')">Advanced</div>
+                </div>
+                <div class="properties-content" id="propertiesContent">
+                    <div class="empty-state">
+                        <div class="empty-state-icon">👆</div>
+                        <div>Click on any text, image, or section in the preview to edit its properties</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global variables
+        let evaluationId = null;
+        let selectedElement = null;
+        let currentTab = 'design';
+        let deletedElements = []; // Track deleted elements for undo
+
+        // Report pages configuration with fields
+        const reportPages = [
+            { 
+                id: 'cover', 
+                label: 'Cover Page', 
+                type: 'cover', 
+                enabled: true,
+                expanded: false,
+                fields: [
+                    { id: 'cover_title', label: 'Property Title', enabled: true },
+                    { id: 'cover_address', label: 'Property Address', enabled: true },
+                    { id: 'cover_image', label: 'Cover Photo', enabled: true },
+                    { id: 'cover_footer', label: 'Footer Bar', enabled: true }
+                ]
+            },
+            { 
+                id: 'loe', 
+                label: 'Letter of Engagement', 
+                type: 'section', 
+                enabled: true,
+                expanded: false,
+                fields: [
+                    { id: 'loe_letter', label: 'Full Engagement Letter', enabled: true }
+                ]
+            },
+            { 
+                id: 'toc', 
+                label: 'Table of Contents', 
+                type: 'toc', 
+                enabled: true,
+                expanded: false,
+                fields: [
+                    { id: 'toc_auto', label: 'Auto-generated TOC', enabled: true }
+                ]
+            },
+            { 
+                id: 'exec_summary', 
+                label: 'Section 01: Executive Summary', 
+                type: 'section', 
+                sectionNumber: '01', 
+                enabled: true,
+                expanded: false,
+                fields: [
+                    { id: 'exec_inspection_date', label: 'Date of Inspection/Effective Date', enabled: true },
+                    { id: 'exec_inspector', label: 'Inspector Name', enabled: true },
+                    { id: 'exec_intended_users', label: 'Intended User(s)', enabled: true },
+                    { id: 'exec_intended_use', label: 'Intended Use', enabled: true },
+                    { id: 'exec_client', label: 'Client Information', enabled: true },
+                    { id: 'exec_owner', label: 'Owner of Record', enabled: true },
+                    { id: 'exec_property_rights', label: 'Property Rights', enabled: true },
+                    { id: 'exec_summary_text', label: 'Summary Analysis Text', enabled: true },
+                    { id: 'exec_market_value', label: 'Final Market Value', enabled: true }
+                ]
+            },
+            { 
+                id: 'property_summary', 
+                label: 'Section 02: Property Summary', 
+                type: 'section', 
+                sectionNumber: '02', 
+                enabled: true,
+                expanded: false,
+                fields: [
+                    { id: 'prop_overview', label: 'Overview', enabled: true },
+                    { id: 'prop_address', label: 'Address Details', enabled: true },
+                    { id: 'prop_site_specs', label: 'Site Specifications', enabled: true },
+                    { id: 'prop_property_specs', label: 'Property Specifics', enabled: true },
+                    { id: 'prop_construction', label: 'Construction Components', enabled: true },
+                    { id: 'prop_area_info', label: 'Area Information', enabled: true }
+                ]
+            },
+            { 
+                id: 'valuations', 
+                label: 'Section 03: Valuations', 
+                type: 'section', 
+                sectionNumber: '03', 
+                enabled: true,
+                expanded: false,
+                fields: [
+                    { id: 'val_determinants', label: 'Market Value Determinants', enabled: true },
+                    { id: 'val_explanation', label: 'Valuation Explanation', enabled: true },
+                    { id: 'val_income', label: 'Income Approach', enabled: true },
+                    { id: 'val_sales', label: 'Sales Comparison Approach', enabled: true },
+                    { id: 'val_cost', label: 'Cost Approach', enabled: true }
+                ]
+            },
+            { 
+                id: 'weighted_value', 
+                label: 'Section 04: Weighted Value', 
+                type: 'section', 
+                sectionNumber: '04', 
+                enabled: true,
+                expanded: false,
+                fields: [
+                    { id: 'weighted_table', label: 'Weighted Value Table', enabled: true },
+                    { id: 'weighted_conclusion', label: 'Final Conclusion', enabled: true }
+                ]
+            },
+            { 
+                id: 'about_us', 
+                label: 'Section 05: About Us', 
+                type: 'section', 
+                sectionNumber: '05', 
+                enabled: true,
+                expanded: false,
+                fields: [
+                    { id: 'about_company', label: 'About Company', enabled: true },
+                    { id: 'broker_profile', label: 'Broker Profile', enabled: true },
+                    { id: 'transactions', label: 'Significant Transactions', enabled: true }
+                ]
+            },
+            { 
+                id: 'assumptions', 
+                label: 'Section 06: Assumptions', 
+                type: 'section', 
+                sectionNumber: '06', 
+                enabled: true,
+                expanded: false,
+                fields: [
+                    { id: 'assumptions_list', label: 'Assumptions & Limiting Conditions', enabled: true }
+                ]
+            },
+            { 
+                id: 'exhibits', 
+                label: 'Section 07: Exhibits', 
+                type: 'section', 
+                sectionNumber: '07', 
+                enabled: true,
+                expanded: false,
+                fields: [
+                    { id: 'exhibits_list', label: 'Exhibits & Supporting Documents', enabled: true }
+                ]
+            }
+        ];
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            evaluationId = urlParams.get('id');
+            
+            renderSectionTree();
+            renderPreview();
+            
+            // Set up scroll listener for active page highlighting
+            const previewContent = document.getElementById('previewContent');
+            if (previewContent) {
+                previewContent.addEventListener('scroll', updateActivePageHighlight);
+            }
+        });
+        
+        // Update which section is highlighted based on scroll position
+        function updateActivePageHighlight() {
+            const previewContent = document.getElementById('previewContent');
+            if (!previewContent) return;
+            
+            const pageElements = document.querySelectorAll('.report-page');
+            if (pageElements.length === 0) return;
+            
+            const previewRect = previewContent.getBoundingClientRect();
+            const viewportCenter = previewRect.top + (previewRect.height / 2);
+            
+            let mostVisiblePage = null;
+            let maxVisibility = 0;
+            let mostVisiblePageId = null;
+            
+            // Find the page that's most visible in the viewport
+            pageElements.forEach((page, index) => {
+                const rect = page.getBoundingClientRect();
+                
+                // Calculate how much of the page is visible
+                const visibleTop = Math.max(rect.top, previewRect.top);
+                const visibleBottom = Math.min(rect.bottom, previewRect.bottom);
+                const visibleHeight = Math.max(0, visibleBottom - visibleTop);
+                
+                // Also check if viewport center is within this page
+                const containsCenter = rect.top <= viewportCenter && rect.bottom >= viewportCenter;
+                
+                if (containsCenter || visibleHeight > maxVisibility) {
+                    maxVisibility = visibleHeight;
+                    mostVisiblePage = { element: page, index: index };
+                    mostVisiblePageId = page.id;
+                }
+            });
+            
+            // Remove all active-in-view classes
+            document.querySelectorAll('.section-item').forEach(item => {
+                item.classList.remove('active-in-view');
+            });
+            
+            // Add active-in-view class to the corresponding section
+            if (mostVisiblePage && mostVisiblePageId) {
+                // Extract page ID (e.g., "page_cover" -> "cover")
+                const sectionId = mostVisiblePageId.replace('page_', '');
+                
+                // Highlight the matching section in the left panel
+                const sectionItems = document.querySelectorAll('.section-item');
+                
+                sectionItems.forEach(item => {
+                    // Look for the section-label span that has onclick with scrollToPage
+                    const sectionLabel = item.querySelector('.section-label');
+                    if (sectionLabel) {
+                        const onclick = sectionLabel.getAttribute('onclick');
+                        
+                        // Check if this section item corresponds to the visible page
+                        if (onclick && onclick.includes(`scrollToPage('${sectionId}')`)) {
+                            item.classList.add('active-in-view');
+                        }
+                    }
+                });
+            }
+        }
+
+        // Render section tree with expandable fields
+        function renderSectionTree() {
+            const container = document.getElementById('sectionTree');
+            container.innerHTML = '';
+
+            reportPages.forEach(page => {
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'section-item';
+                
+                // Section header
+                const headerDiv = document.createElement('div');
+                headerDiv.className = 'section-header';
+                headerDiv.innerHTML = `
+                    <input type="checkbox" class="section-checkbox" ${page.enabled ? 'checked' : ''} 
+                           onchange="togglePageEnabled('${page.id}', this.checked); event.stopPropagation();" />
+                    <button class="section-expand-btn ${page.expanded ? 'expanded' : ''}" 
+                            onclick="toggleSectionExpand('${page.id}'); event.stopPropagation();">
+                        ▶
+                    </button>
+                    <span class="section-label" onclick="scrollToPage('${page.id}'); event.stopPropagation();">
+                        ${page.label}
+                    </span>
+                `;
+                
+                itemDiv.appendChild(headerDiv);
+                
+                // Field list (if section has fields)
+                if (page.fields && page.fields.length > 0) {
+                    const fieldListDiv = document.createElement('div');
+                    fieldListDiv.className = `field-list ${page.expanded ? 'expanded' : ''}`;
+                    
+                    page.fields.forEach(field => {
+                        const fieldDiv = document.createElement('div');
+                        fieldDiv.className = 'field-item';
+                        fieldDiv.innerHTML = `
+                            <input type="checkbox" class="field-checkbox" ${field.enabled ? 'checked' : ''}
+                                   onchange="toggleFieldEnabled('${page.id}', '${field.id}', this.checked)" />
+                            <label class="field-label">${field.label}</label>
+                        `;
+                        fieldListDiv.appendChild(fieldDiv);
+                    });
+                    
+                    itemDiv.appendChild(fieldListDiv);
+                }
+                
+                container.appendChild(itemDiv);
+            });
+            
+            updateSelectAllButton();
+        }
+        
+        // Toggle section expand/collapse
+        function toggleSectionExpand(pageId) {
+            const page = reportPages.find(p => p.id === pageId);
+            page.expanded = !page.expanded;
+            renderSectionTree();
+        }
+        
+        // Toggle field enabled/disabled
+        function toggleFieldEnabled(pageId, fieldId, enabled) {
+            const page = reportPages.find(p => p.id === pageId);
+            const field = page.fields.find(f => f.id === fieldId);
+            field.enabled = enabled;
+            
+            // Update the preview to show/hide the element
+            renderPreview();
+        }
+        
+        // Expand all sections
+        function expandAll() {
+            reportPages.forEach(p => p.expanded = true);
+            renderSectionTree();
+        }
+        
+        // Collapse all sections
+        function collapseAll() {
+            reportPages.forEach(p => p.expanded = false);
+            renderSectionTree();
+        }
+
+        // Toggle page enabled/disabled
+        function togglePageEnabled(pageId, enabled) {
+            const page = reportPages.find(p => p.id === pageId);
+            page.enabled = enabled;
+            renderPreview();
+        }
+
+        // Toggle Select All / Deselect All
+        function toggleSelectAll() {
+            const allSelected = reportPages.every(p => p.enabled);
+            
+            if (allSelected) {
+                // Deselect all
+                reportPages.forEach(p => {
+                    p.enabled = false;
+                    if (p.fields) {
+                        p.fields.forEach(f => f.enabled = false);
+                    }
+                });
+            } else {
+                // Select all
+                reportPages.forEach(p => {
+                    p.enabled = true;
+                    if (p.fields) {
+                        p.fields.forEach(f => f.enabled = true);
+                    }
+                });
+            }
+            
+            renderSectionTree();
+            renderPreview();
+        }
+        
+        // Update Select All button text
+        function updateSelectAllButton() {
+            const btn = document.getElementById('toggleSelectBtn');
+            const allSelected = reportPages.every(p => p.enabled);
+            btn.textContent = allSelected ? 'Deselect All' : 'Select All';
+        }
+
+        // Render preview
+        function renderPreview() {
+            const container = document.getElementById('reportPages');
+            container.innerHTML = '';
+
+            reportPages.forEach(page => {
+                if (!page.enabled) return;
+
+                const pageDiv = document.createElement('div');
+                pageDiv.className = 'report-page';
+                pageDiv.id = `page_${page.id}`;
+
+                if (page.type === 'cover') {
+                    pageDiv.innerHTML = renderCoverPage(page);
+                } else if (page.type === 'section') {
+                    pageDiv.innerHTML = renderSectionPage(page);
+                } else if (page.type === 'toc') {
+                    pageDiv.innerHTML = renderTOCPage(page);
+                }
+
+                container.appendChild(pageDiv);
+            });
+
+            // Make elements editable after rendering
+            makeElementsEditable();
+        }
+
+        // Render cover page
+        function renderCoverPage(page) {
+            const titleField = page.fields.find(f => f.id === 'cover_title');
+            const addressField = page.fields.find(f => f.id === 'cover_address');
+            const imageField = page.fields.find(f => f.id === 'cover_image');
+            const footerField = page.fields.find(f => f.id === 'cover_footer');
+            
+            return `
+                <div class="cover-page">
+                    ${titleField.enabled ? `
+                    <div class="cover-title-section" data-field-id="cover_title" data-page-id="cover">
+                        <h1 class="cover-title editable-text" data-field-id="cover_title">22 Palomino Trail - As Completed</h1>
+                    </div>
+                    ` : ''}
+                    
+                    ${addressField.enabled ? `
+                    <div class="cover-address-section" data-field-id="cover_address" data-page-id="cover">
+                        <p class="cover-address editable-text" data-field-id="cover_address">22 Palomino Trail | Reed Point, Montana 59069</p>
+                    </div>
+                    ` : ''}
+                    
+                    ${imageField.enabled ? `
+                    <div class="cover-image-section" data-field-id="cover_image" data-page-id="cover">
+                        <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=1200" alt="Property" class="editable-image" data-field-id="cover_image" />
+                    </div>
+                    ` : ''}
+                    
+                    ${footerField.enabled ? `
+                    <div class="cover-footer" data-field-id="cover_footer" data-page-id="cover">
+                        <div class="cover-footer-bar">
+                            <div class="footer-logo">
+                                <div style="font-size: 24px; font-weight: 700; color: white;">ROVE</div>
+                                <div style="font-size: 12px; color: white; margin-top: -4px;">VALUATIONS</div>
+                            </div>
+                            <div class="footer-contact">
+                                <div style="font-size: 11px; color: white;"><strong>Ben Rose</strong> | Agent/Director ROVE Valuations</div>
+                                <div style="font-size: 11px; color: white; margin-top: 2px;">brose@rovevaluations.com</div>
+                            </div>
+                        </div>
+                    </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        // Render TOC page
+        function renderTOCPage(page) {
+            return `
+                <div style="padding: 80px 60px;">
+                    <div style="position: absolute; top: 30px; right: 30px; background: #2e7d32; color: white; padding: 12px 24px; border-radius: 4px;">
+                        <div style="font-size: 16px; font-weight: 700;">Table of Contents</div>
+                    </div>
+                    <h2 class="content-heading editable-text">Table of Contents</h2>
+                    <div style="font-size: 14px; line-height: 2.5; color: #1c3643;">
+                        <div style="display: flex; justify-content: space-between; border-bottom: 1px dotted #e0e0e0; padding: 8px 0;">
+                            <span>03</span><span style="flex: 1; margin: 0 20px; font-weight: 600;">Engagement Letter</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; border-bottom: 1px dotted #e0e0e0; padding: 8px 0;">
+                            <span>04</span><span style="flex: 1; margin: 0 20px; font-weight: 600;">Section 01: Executive Summary</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; border-bottom: 1px dotted #e0e0e0; padding: 8px 0;">
+                            <span>07</span><span style="flex: 1; margin: 0 20px; font-weight: 600;">Section 02: Property Summary</span>
+                        </div>
+                    </div>
+                    <div class="page-footer">Powered by Harken CRE | 2</div>
+                </div>
+            `;
+        }
+
+        // Render section page
+        function renderSectionPage(page) {
+            return `
+                <div class="section-page">
+                    <div class="green-sidebar">SECTION ${page.sectionNumber || ''}</div>
+                    <div class="section-content">
+                        <div class="section-header-box">
+                            <div class="section-number">Section ${page.sectionNumber}</div>
+                            <div class="section-name">${page.label.replace(/Section \d+: /, '')}</div>
+                        </div>
+                        <h2 class="content-heading editable-text">${page.label.replace(/Section \d+: /, '')}</h2>
+                        <div class="info-grid">
+                            <div class="info-label">Property Type:</div>
+                            <div class="info-value editable-text">Multi-Family / 2-4 Units</div>
+                        </div>
+                        <div class="info-grid">
+                            <div class="info-label">Total SF:</div>
+                            <div class="info-value editable-text">3,830 SF</div>
+                        </div>
+                        <p class="content-text editable-text">
+                            This section contains detailed information about the evaluation analysis.
+                            Click on any text to edit it and adjust its styling.
+                        </p>
+                        <div class="page-footer">Powered by Harken CRE | ${parseInt(page.sectionNumber) + 3}</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Make elements editable
+        function makeElementsEditable() {
+            // Handle regular editable elements
+            const editableElements = document.querySelectorAll('.editable-text, .editable-image');
+            
+            editableElements.forEach(element => {
+                if (!element.classList.contains('editable-element')) {
+                    element.classList.add('editable-element');
+                    element.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        selectElement(this);
+                    });
+                }
+            });
+            
+            // Handle cover page sections with field linking
+            const coverSections = document.querySelectorAll('[data-field-id][data-page-id]');
+            coverSections.forEach(section => {
+                section.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    const fieldId = this.getAttribute('data-field-id');
+                    const pageId = this.getAttribute('data-page-id');
+                    
+                    // Remove previous selection from all sections
+                    document.querySelectorAll('[data-field-id]').forEach(el => {
+                        el.classList.remove('selected');
+                    });
+                    
+                    // Add selection to clicked section
+                    this.classList.add('selected');
+                    
+                    // Highlight corresponding checkbox in left panel
+                    highlightFieldInPanel(pageId, fieldId);
+                    
+                    // Expand the section in left panel if not already expanded
+                    const page = reportPages.find(p => p.id === pageId);
+                    if (page && !page.expanded) {
+                        page.expanded = true;
+                        renderSectionTree();
+                    }
+                    
+                    // Show properties for the clicked element
+                    const childElement = this.querySelector('.editable-text, .editable-image');
+                    if (childElement) {
+                        selectElement(childElement);
+                    }
+                });
+            });
+        }
+        
+        // Highlight field in left panel
+        function highlightFieldInPanel(pageId, fieldId) {
+            // Remove previous highlights
+            document.querySelectorAll('.field-item').forEach(item => {
+                item.classList.remove('highlighted');
+            });
+            
+            // Find and highlight the matching field
+            const fieldItems = document.querySelectorAll('.field-item');
+            fieldItems.forEach(item => {
+                const checkbox = item.querySelector('.field-checkbox');
+                if (checkbox && checkbox.getAttribute('onchange').includes(`'${pageId}'`) && 
+                    checkbox.getAttribute('onchange').includes(`'${fieldId}'`)) {
+                    item.classList.add('highlighted');
+                    // Scroll into view
+                    item.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                }
+            });
+        }
+
+        // Scroll to page
+        function scrollToPage(pageId) {
+            const pageElement = document.getElementById(`page_${pageId}`);
+            if (pageElement) {
+                pageElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        }
+
+        // Element detection
+        function detectElementType(element) {
+            if (element.tagName === 'IMG' || element.classList.contains('editable-image')) {
+                return 'image';
+            }
+            if (element.classList.contains('editable-text') || 
+                ['P', 'H1', 'H2', 'H3', 'H4', 'H5', 'H6', 'SPAN', 'DIV'].includes(element.tagName)) {
+                return 'text';
+            }
+            if (element.classList.contains('section-page') || element.classList.contains('cover-page')) {
+                return 'section';
+            }
+            if (['TABLE', 'TR', 'TD', 'TH'].includes(element.tagName)) {
+                return 'table';
+            }
+            return 'unknown';
+        }
+
+        // Select element
+        function selectElement(element) {
+            // Remove previous selection
+            document.querySelectorAll('.editable-element.selected').forEach(el => {
+                el.classList.remove('selected');
+            });
+
+            // Add selection to clicked element
+            element.classList.add('selected');
+            selectedElement = element;
+
+            // Detect element type and show properties
+            const elementType = detectElementType(element);
+            showPropertiesForElement(elementType, element);
+        }
+
+        // Show properties for element
+        function showPropertiesForElement(type, element) {
+            document.getElementById('propertiesTitle').textContent = type.charAt(0).toUpperCase() + type.slice(1) + ' Properties';
+            document.getElementById('propertiesSubtitle').textContent = type === 'text' ? 'Text Element' : type === 'image' ? 'Image Element' : 'Section Element';
+
+            const container = document.getElementById('propertiesContent');
+            
+            // Clear existing content
+            container.innerHTML = '';
+
+            // Create tabs content
+            const designTab = document.createElement('div');
+            designTab.id = 'designTab';
+            designTab.className = 'properties-tab-content active';
+            
+            const contentTab = document.createElement('div');
+            contentTab.id = 'contentTab';
+            contentTab.className = 'properties-tab-content';
+            
+            const advancedTab = document.createElement('div');
+            advancedTab.id = 'advancedTab';
+            advancedTab.className = 'properties-tab-content';
+
+            if (type === 'text') {
+                designTab.innerHTML = renderTextDesignProperties(element);
+                contentTab.innerHTML = renderTextContentProperties(element);
+                advancedTab.innerHTML = renderTextAdvancedProperties(element);
+            } else if (type === 'image') {
+                designTab.innerHTML = renderImageDesignProperties(element);
+                contentTab.innerHTML = renderImageContentProperties(element);
+                advancedTab.innerHTML = renderImageAdvancedProperties(element);
+            } else if (type === 'section') {
+                designTab.innerHTML = renderSectionDesignProperties(element);
+                contentTab.innerHTML = renderSectionContentProperties(element);
+                advancedTab.innerHTML = renderSectionAdvancedProperties(element);
+            }
+
+            container.appendChild(designTab);
+            container.appendChild(contentTab);
+            container.appendChild(advancedTab);
+        }
+
+        // Render text design properties
+        function renderTextDesignProperties(element) {
+            const styles = window.getComputedStyle(element);
+            const fontSize = parseInt(styles.fontSize);
+            const fontWeight = styles.fontWeight;
+            const color = rgbToHex(styles.color);
+
+            return `
+                <div class="prop-group">
+                    <div class="prop-group-title">TYPOGRAPHY</div>
+                    <div class="prop-control">
+                        <div class="prop-label">Font Family</div>
+                        <select class="prop-select" onchange="applyStyle('fontFamily', this.value)">
+                            <option value="Montserrat" selected>Montserrat</option>
+                            <option value="Helvetica">Helvetica</option>
+                            <option value="Times New Roman">Times New Roman</option>
+                            <option value="Georgia">Georgia</option>
+                        </select>
+                    </div>
+                    <div class="prop-control">
+                        <div class="slider-label-row">
+                            <div class="prop-label">Font Size</div>
+                            <button class="reset-to-default-btn" onclick="resetSliderToDefault('fontSize', 15)" title="Reset to default (15px)">
+                                ↺ Default
+                            </button>
+                        </div>
+                        <div class="prop-slider-container">
+                            <div class="slider-default-marker" style="left: ${((15 - 10) / (72 - 10) * 100)}%;"></div>
+                            <input type="range" class="prop-slider" id="fontSizeSlider" min="10" max="72" value="${fontSize}" 
+                                oninput="applyStyle('fontSize', this.value + 'px'); this.nextElementSibling.textContent = this.value + 'px'" />
+                        </div>
+                        <div class="prop-slider-value">${fontSize}px</div>
+                    </div>
+                    <div class="prop-control">
+                        <div class="slider-label-row">
+                            <div class="prop-label">Font Weight</div>
+                            <button class="reset-to-default-btn" onclick="resetSliderToDefault('fontWeight', 400)" title="Reset to default (400)">
+                                ↺ Default
+                            </button>
+                        </div>
+                        <div class="prop-slider-container">
+                            <div class="slider-default-marker" style="left: ${((400 - 300) / (700 - 300) * 100)}%;"></div>
+                            <input type="range" class="prop-slider" id="fontWeightSlider" min="300" max="700" step="100" value="${fontWeight}" 
+                                oninput="applyStyle('fontWeight', this.value); this.nextElementSibling.textContent = this.value" />
+                        </div>
+                        <div class="prop-slider-value">${fontWeight}</div>
+                    </div>
+                    <div class="prop-control">
+                        <div class="slider-label-row">
+                            <div class="prop-label">Line Height</div>
+                            <button class="reset-to-default-btn" onclick="resetSliderToDefault('lineHeight', 1.6)" title="Reset to default (1.6)">
+                                ↺ Default
+                            </button>
+                        </div>
+                        <div class="prop-slider-container">
+                            <div class="slider-default-marker" style="left: ${((1.6 - 1.0) / (2.5 - 1.0) * 100)}%;"></div>
+                            <input type="range" class="prop-slider" id="lineHeightSlider" min="1.0" max="2.5" step="0.1" value="${parseFloat(styles.lineHeight) / fontSize || 1.6}" 
+                                oninput="applyStyle('lineHeight', this.value); this.nextElementSibling.textContent = this.value" />
+                        </div>
+                        <div class="prop-slider-value">${(parseFloat(styles.lineHeight) / fontSize || 1.6).toFixed(1)}</div>
+                    </div>
+                </div>
+
+                <div class="prop-group">
+                    <div class="prop-group-title">COLORS</div>
+                    <div class="prop-control">
+                        <div class="prop-label">Text Color</div>
+                        <div class="color-swatches">
+                            <div class="color-swatch ${color === '#1c3643' ? 'selected' : ''}" style="background: #1c3643;" onclick="applyColor(this, '#1c3643')"></div>
+                            <div class="color-swatch ${color === '#0da1c7' ? 'selected' : ''}" style="background: #0da1c7;" onclick="applyColor(this, '#0da1c7')"></div>
+                            <div class="color-swatch ${color === '#2e7d32' ? 'selected' : ''}" style="background: #2e7d32;" onclick="applyColor(this, '#2e7d32')"></div>
+                            <div class="color-swatch ${color === '#687f8b' ? 'selected' : ''}" style="background: #687F8B;" onclick="applyColor(this, '#687F8B')"></div>
+                            <div class="color-swatch ${color === '#dc2626' ? 'selected' : ''}" style="background: #dc2626;" onclick="applyColor(this, '#dc2626')"></div>
+                            <div class="color-swatch ${color === '#000000' ? 'selected' : ''}" style="background: #000000;" onclick="applyColor(this, '#000000')"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="prop-group">
+                    <div class="prop-group-title">ALIGNMENT</div>
+                    <div class="prop-control">
+                        <select class="prop-select" onchange="applyStyle('textAlign', this.value)">
+                            <option value="left" ${styles.textAlign === 'left' ? 'selected' : ''}>Left</option>
+                            <option value="center" ${styles.textAlign === 'center' ? 'selected' : ''}>Center</option>
+                            <option value="right" ${styles.textAlign === 'right' ? 'selected' : ''}>Right</option>
+                            <option value="justify" ${styles.textAlign === 'justify' ? 'selected' : ''}>Justify</option>
+                        </select>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Render text content properties
+        function renderTextContentProperties(element) {
+            return `
+                <div class="prop-group">
+                    <div class="prop-group-title">TEXT CONTENT</div>
+                    <div class="prop-control">
+                        <div class="prop-label">Content</div>
+                        <textarea class="prop-textarea" id="textContent" rows="6">${element.textContent}</textarea>
+                    </div>
+                    <button class="btn-apply" onclick="applyTextContent()">Apply Changes</button>
+                </div>
+            `;
+        }
+
+        // Render text advanced properties
+        function renderTextAdvancedProperties(element) {
+            return `
+                <div class="prop-group">
+                    <div class="prop-group-title">UNDO HISTORY</div>
+                    ${renderUndoHistory()}
+                </div>
+                
+                <div class="prop-group">
+                    <div class="prop-group-title">ACTIONS</div>
+                    <button class="btn-delete" onclick="deleteElement()">Delete Element</button>
+                </div>
+            `;
+        }
+        
+        // Render undo history (shared across all element types)
+        function renderUndoHistory() {
+            if (deletedElements.length === 0) {
+                return `
+                    <div style="padding: 16px; text-align: center; background: #f9f9f9; border-radius: 4px; border: 1px dashed #e0e0e0;">
+                        <div style="font-size: 12px; color: #687F8B;">
+                            No deleted elements
+                        </div>
+                        <div style="font-size: 11px; color: #999; margin-top: 4px;">
+                            Deleted elements will appear here and can be restored
+                        </div>
+                    </div>
+                `;
+            }
+            
+            return `
+                <div style="font-size: 12px; color: #687F8B; margin-bottom: 12px;">
+                    <strong>${deletedElements.length}</strong> deleted element${deletedElements.length > 1 ? 's' : ''} - Click to restore:
+                </div>
+                <div style="max-height: 300px; overflow-y: auto;">
+                    ${deletedElements.map((del, index) => `
+                        <div style="padding: 10px; background: #fff3e0; border-left: 3px solid #f59e0b; border-radius: 4px; margin-bottom: 8px; cursor: pointer; transition: all 0.2s;" 
+                             onclick="restoreElement(${index})"
+                             onmouseover="this.style.background='#fef3c7'; this.style.borderLeftColor='#d97706';"
+                             onmouseout="this.style.background='#fff3e0'; this.style.borderLeftColor='#f59e0b';">
+                            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 4px;">
+                                <span style="font-size: 16px;">↶</span>
+                                <div style="flex: 1;">
+                                    <div style="font-weight: 600; color: #1c3643; font-size: 12px;">${del.type.toUpperCase()} Element</div>
+                                    <div style="color: #687F8B; font-size: 11px;">${del.label}</div>
+                                </div>
+                            </div>
+                            <div style="color: #92400e; font-size: 11px; background: white; padding: 4px 8px; border-radius: 3px; margin-top: 4px;">
+                                "${del.content.substring(0, 60)}${del.content.length > 60 ? '...' : ''}"
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+                <div style="margin-top: 12px; padding: 8px; background: #e0f2fe; border-radius: 4px; font-size: 11px; color: #0369a1;">
+                    💡 Tip: Click any item above to restore it to the report
+                </div>
+            `;
+        }
+
+        // Render image design properties
+        function renderImageDesignProperties(element) {
+            return `
+                <div class="prop-group">
+                    <div class="prop-group-title">IMAGE SIZE</div>
+                    <div class="prop-control">
+                        <div class="prop-label">Width (%)</div>
+                        <input type="range" class="prop-slider" min="10" max="100" value="100" 
+                            oninput="applyStyle('width', this.value + '%'); this.nextElementSibling.textContent = this.value + '%'" />
+                        <div class="prop-slider-value">100%</div>
+                    </div>
+                    <div class="prop-control">
+                        <div class="prop-label">Border Radius</div>
+                        <input type="range" class="prop-slider" min="0" max="20" value="0" 
+                            oninput="applyStyle('borderRadius', this.value + 'px'); this.nextElementSibling.textContent = this.value + 'px'" />
+                        <div class="prop-slider-value">0px</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Render image content properties
+        function renderImageContentProperties(element) {
+            return `
+                <div class="prop-group">
+                    <div class="prop-group-title">IMAGE SOURCE</div>
+                    <div class="prop-control">
+                        <div class="prop-label">Image URL</div>
+                        <input type="text" class="prop-input" value="${element.src}" 
+                            onchange="applyImageSrc(this.value)" />
+                    </div>
+                    <div class="prop-control">
+                        <div class="prop-label">Alt Text</div>
+                        <input type="text" class="prop-input" value="${element.alt}" 
+                            onchange="selectedElement.alt = this.value" />
+                    </div>
+                </div>
+            `;
+        }
+
+        // Render image advanced properties
+        function renderImageAdvancedProperties(element) {
+            return `
+                <div class="prop-group">
+                    <div class="prop-group-title">UNDO HISTORY</div>
+                    ${renderUndoHistory()}
+                </div>
+                
+                <div class="prop-group">
+                    <div class="prop-group-title">ACTIONS</div>
+                    <button class="btn-delete" onclick="deleteElement()">Delete Element</button>
+                </div>
+            `;
+        }
+
+        // Render section design properties
+        function renderSectionDesignProperties(element) {
+            return `
+                <div class="prop-group">
+                    <div class="prop-group-title">SECTION STYLING</div>
+                    <div class="prop-control">
+                        <div class="prop-label">Background Color</div>
+                        <div class="color-swatches">
+                            <div class="color-swatch" style="background: white;" onclick="applyStyle('backgroundColor', 'white')"></div>
+                            <div class="color-swatch" style="background: #f9f9f9;" onclick="applyStyle('backgroundColor', '#f9f9f9')"></div>
+                            <div class="color-swatch" style="background: #e8f5f7;" onclick="applyStyle('backgroundColor', '#e8f5f7')"></div>
+                            <div class="color-swatch" style="background: #fef3e2;" onclick="applyStyle('backgroundColor', '#fef3e2')"></div>
+                            <div class="color-swatch" style="background: #fee;" onclick="applyStyle('backgroundColor', '#fee')"></div>
+                            <div class="color-swatch" style="background: #f0f9ff;" onclick="applyStyle('backgroundColor', '#f0f9ff')"></div>
+                        </div>
+                    </div>
+                    <div class="prop-control">
+                        <div class="prop-label">Padding</div>
+                        <input type="range" class="prop-slider" min="0" max="100" value="50" 
+                            oninput="applyStyle('padding', this.value + 'px'); this.nextElementSibling.textContent = this.value + 'px'" />
+                        <div class="prop-slider-value">50px</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Render section content properties
+        function renderSectionContentProperties(element) {
+            return `
+                <div class="prop-group">
+                    <div class="prop-group-title">SECTION VISIBILITY</div>
+                    <p style="font-size: 12px; color: #687F8B; line-height: 1.6;">
+                        Use the checkboxes in the left panel to show/hide entire sections from the report.
+                    </p>
+                </div>
+            `;
+        }
+
+        // Render section advanced properties
+        function renderSectionAdvancedProperties(element) {
+            return `
+                <div class="prop-group">
+                    <div class="prop-group-title">UNDO HISTORY</div>
+                    ${renderUndoHistory()}
+                </div>
+                
+                <div class="prop-group">
+                    <div class="prop-group-title">LAYOUT</div>
+                    <p style="font-size: 12px; color: #687F8B; line-height: 1.6;">
+                        Layout structure is fixed and cannot be changed. The PDF format is hard-coded in the system.
+                    </p>
+                </div>
+            `;
+        }
+
+        // Apply style to selected element
+        function applyStyle(property, value) {
+            if (selectedElement) {
+                selectedElement.style[property] = value;
+            }
+        }
+
+        // Reset slider to default value
+        function resetSliderToDefault(property, defaultValue) {
+            if (!selectedElement) return;
+            
+            let slider, valueDisplay, formattedValue;
+            
+            switch(property) {
+                case 'fontSize':
+                    slider = document.getElementById('fontSizeSlider');
+                    formattedValue = defaultValue + 'px';
+                    if (slider) {
+                        slider.value = defaultValue;
+                        valueDisplay = slider.parentElement.nextElementSibling;
+                        if (valueDisplay) valueDisplay.textContent = formattedValue;
+                    }
+                    applyStyle('fontSize', formattedValue);
+                    break;
+                    
+                case 'fontWeight':
+                    slider = document.getElementById('fontWeightSlider');
+                    formattedValue = defaultValue;
+                    if (slider) {
+                        slider.value = defaultValue;
+                        valueDisplay = slider.parentElement.nextElementSibling;
+                        if (valueDisplay) valueDisplay.textContent = formattedValue;
+                    }
+                    applyStyle('fontWeight', formattedValue);
+                    break;
+                    
+                case 'lineHeight':
+                    slider = document.getElementById('lineHeightSlider');
+                    formattedValue = defaultValue;
+                    if (slider) {
+                        slider.value = defaultValue;
+                        valueDisplay = slider.parentElement.nextElementSibling;
+                        if (valueDisplay) valueDisplay.textContent = defaultValue.toFixed(1);
+                    }
+                    applyStyle('lineHeight', formattedValue);
+                    break;
+            }
+        }
+
+        // Apply color
+        function applyColor(swatchElement, color) {
+            document.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+            swatchElement.classList.add('selected');
+            applyStyle('color', color);
+        }
+
+        // Apply text content
+        function applyTextContent() {
+            if (selectedElement) {
+                const newContent = document.getElementById('textContent').value;
+                selectedElement.textContent = newContent;
+                alert('Content updated! Remember to save your changes.');
+            }
+        }
+
+        // Apply image source
+        function applyImageSrc(src) {
+            if (selectedElement && selectedElement.tagName === 'IMG') {
+                selectedElement.src = src;
+            }
+        }
+
+        // Delete element (with undo tracking)
+        let elementToDelete = null;
+        
+        function deleteElement() {
+            if (selectedElement) {
+                elementToDelete = selectedElement;
+                // Show custom modal
+                document.getElementById('deleteModal').classList.add('active');
+            }
+        }
+        
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('active');
+            elementToDelete = null;
+        }
+        
+        function confirmDelete() {
+            if (elementToDelete) {
+                const elementType = detectElementType(elementToDelete);
+                const elementContent = elementToDelete.textContent || elementToDelete.alt || 'Image element';
+                const elementLabel = elementToDelete.tagName + ' element';
+                
+                // Store deleted element info for undo
+                deletedElements.push({
+                    type: elementType,
+                    label: elementLabel,
+                    content: elementContent,
+                    html: elementToDelete.outerHTML,
+                    parent: elementToDelete.parentNode,
+                    nextSibling: elementToDelete.nextSibling
+                });
+                
+                // Remove element from DOM
+                elementToDelete.remove();
+                
+                // Close modal
+                closeDeleteModal();
+                
+                // Show success message with link to Advanced tab
+                selectedElement = null;
+                document.getElementById('propertiesContent').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">✓</div>
+                        <div>Element deleted successfully!</div>
+                        <div style="font-size: 12px; color: #687F8B; margin-top: 8px;">
+                            <strong>${deletedElements.length}</strong> item${deletedElements.length > 1 ? 's' : ''} in undo history
+                        </div>
+                        <button onclick="showAdvancedTab()" style="margin-top: 12px; padding: 8px 16px; background: #0da1c7; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">
+                            View Undo History
+                        </button>
+                    </div>
+                `;
+            }
+        }
+        
+        // Close modal when clicking outside
+        document.addEventListener('click', function(e) {
+            const modal = document.getElementById('deleteModal');
+            if (e.target === modal) {
+                closeDeleteModal();
+            }
+        });
+        
+        // Helper function to switch to Advanced tab
+        function showAdvancedTab() {
+            // Find any element to select (so we can show the Advanced tab)
+            const anyElement = document.querySelector('.editable-element');
+            if (anyElement) {
+                selectElement(anyElement);
+                // Switch to advanced tab
+                document.querySelectorAll('.prop-tab').forEach(tab => tab.classList.remove('active'));
+                document.querySelectorAll('.prop-tab')[2].classList.add('active'); // Advanced is 3rd tab
+                document.querySelectorAll('.properties-tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+                document.getElementById('advancedTab').classList.add('active');
+            }
+        }
+        
+        // Restore deleted element
+        function restoreElement(index) {
+            const deletedItem = deletedElements[index];
+            
+            if (deletedItem.type === 'text-block') {
+                // Recreate text block from stored data
+                const temp = document.createElement('div');
+                temp.innerHTML = deletedItem.html;
+                const textBlock = temp.firstChild;
+                
+                // Restore position
+                textBlock.style.left = deletedItem.position.x + 'px';
+                textBlock.style.top = deletedItem.position.y + 'px';
+                
+                // Add back to page
+                deletedItem.parent.appendChild(textBlock);
+                
+                // Re-attach events
+                const blockData = {
+                    id: Date.now(),
+                    element: textBlock,
+                    x: deletedItem.position.x,
+                    y: deletedItem.position.y
+                };
+                textBlocks.push(blockData);
+                attachTextBlockEvents(textBlock, blockData);
+            } else {
+                // Create element from stored HTML
+                const temp = document.createElement('div');
+                temp.innerHTML = deletedItem.html;
+                const restoredElement = temp.firstChild;
+                
+                // Reinsert into original position
+                if (deletedItem.nextSibling) {
+                    deletedItem.parent.insertBefore(restoredElement, deletedItem.nextSibling);
+                } else {
+                    deletedItem.parent.appendChild(restoredElement);
+                }
+                
+                // Re-make elements editable
+                makeElementsEditable();
+            }
+            
+            // Remove from deleted list
+            deletedElements.splice(index, 1);
+            
+            // Refresh the current properties panel to update the undo history
+            if (selectedElement) {
+                const elementType = detectElementType(selectedElement);
+                showPropertiesForElement(elementType, selectedElement);
+            } else {
+                // Show success message
+                document.getElementById('propertiesContent').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">✓</div>
+                        <div>Element restored successfully!</div>
+                        <div style="font-size: 12px; color: #687F8B; margin-top: 8px;">
+                            ${deletedElements.length > 0 ? `${deletedElements.length} item${deletedElements.length > 1 ? 's' : ''} remaining in undo history` : 'Undo history is now empty'}
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        // Switch properties tab
+        function switchTab(tabName) {
+            currentTab = tabName;
+            
+            // Update tab styling
+            document.querySelectorAll('.prop-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Update content visibility
+            document.querySelectorAll('.properties-tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            const targetTab = document.getElementById(tabName + 'Tab');
+            if (targetTab) {
+                targetTab.classList.add('active');
+                
+                // Refresh Advanced tab content to show updated undo history
+                if (tabName === 'advanced' && selectedElement) {
+                    const elementType = detectElementType(selectedElement);
+                    if (elementType === 'text') {
+                        targetTab.innerHTML = renderTextAdvancedProperties(selectedElement);
+                    } else if (elementType === 'image') {
+                        targetTab.innerHTML = renderImageAdvancedProperties(selectedElement);
+                    } else if (elementType === 'section') {
+                        targetTab.innerHTML = renderSectionAdvancedProperties(selectedElement);
+                    }
+                }
+            }
+        }
+
+        // Save menu toggle
+        function toggleSaveMenu() {
+            const menu = document.getElementById('saveMenu');
+            menu.classList.toggle('active');
+        }
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(e) {
+            const menu = document.getElementById('saveMenu');
+            const dropdown = document.querySelector('.save-dropdown');
+            if (menu && dropdown && !dropdown.contains(e.target)) {
+                menu.classList.remove('active');
+            }
+        });
+
+        // Save functions
+        async function saveAndUpdateEvaluation() {
+            if (!evaluationId) {
+                alert('Save successful! (Demo mode - no evaluation ID)');
+                return;
+            }
+            
+            const changes = collectAllChanges();
+            try {
+                const response = await fetch(`/evaluations/save-report-changes/${evaluationId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ...changes, updateOriginal: true })
+                });
+                
+                if (response.ok) {
+                    alert('Evaluation report updated successfully!');
+                    window.location.href = `/evaluation-review?id=${evaluationId}`;
+                } else {
+                    alert('Error saving changes. Please try again.');
+                }
+            } catch (error) {
+                console.error('Save error:', error);
+                alert('Error saving changes. Please try again.');
+            }
+            
+            document.getElementById('saveMenu').classList.remove('active');
+        }
+
+        async function saveAsPreviewCopy() {
+            if (!evaluationId) {
+                alert('Preview saved! (Demo mode - no evaluation ID)');
+                return;
+            }
+            
+            const changes = collectAllChanges();
+            try {
+                const response = await fetch(`/evaluations/save-report-changes/${evaluationId}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ ...changes, updateOriginal: false })
+                });
+                
+                if (response.ok) {
+                    alert('Preview saved! Original report unchanged.');
+                } else {
+                    alert('Error saving preview. Please try again.');
+                }
+            } catch (error) {
+                console.error('Save error:', error);
+                alert('Error saving preview. Please try again.');
+            }
+            
+            document.getElementById('saveMenu').classList.remove('active');
+        }
+
+        // Collect all changes
+        function collectAllChanges() {
+            return {
+                evaluationId: evaluationId,
+                pages: reportPages.map(p => ({ id: p.id, enabled: p.enabled })),
+                elements: [], // TODO: Implement element change tracking
+                customTextBlocks: textBlocks.map(block => ({
+                    id: block.id,
+                    x: block.x,
+                    y: block.y,
+                    content: block.element.querySelector('.text-block-content').innerHTML,
+                    styles: {
+                        fontSize: block.element.querySelector('.text-block-content').style.fontSize,
+                        backgroundColor: block.element.style.backgroundColor,
+                        width: block.element.style.width,
+                        height: block.element.style.height
+                    }
+                }))
+            };
+        }
+
+        // Download PDF
+        function downloadPDF() {
+            if (evaluationId) {
+                window.open(`/evaluation/report/${evaluationId}`, '_blank');
+            } else {
+                alert('Download would start here (Demo mode)');
+            }
+        }
+
+        // Back to review
+        function backToReview() {
+            // Link back to the evaluation wizard review step
+            window.location.href = 'evaluation-wizard-full.html#step-review';
+        }
+
+        // Utility: RGB to Hex
+        function rgbToHex(rgb) {
+            if (rgb.startsWith('#')) return rgb.toLowerCase();
+            const result = rgb.match(/\d+/g);
+            if (!result || result.length < 3) return '#000000';
+            return '#' + result.slice(0, 3).map(x => {
+                const hex = parseInt(x).toString(16);
+                return hex.length === 1 ? '0' + hex : hex;
+            }).join('');
+        }
+
+        // ============================================
+        // TEXT BLOCK MANAGEMENT
+        // ============================================
+
+        // Text Block Management
+        let textBlocks = [];
+        let selectedTextBlock = null;
+        let isDragging = false;
+        let dragOffset = { x: 0, y: 0 };
+
+        // Find next free space on page
+        function findNextFreeSpace(page, width, height, leftPadding) {
+            const topPadding = 80; // Start from top with padding (match cover page padding)
+            const spacing = 16; // Space between blocks
+            const pageHeight = page.offsetHeight;
+            const bottomPadding = 80; // Leave space at bottom
+            
+            // Get all existing text blocks on this page
+            const existingBlocks = textBlocks.filter(b => b.page === page);
+            
+            if (existingBlocks.length === 0) {
+                return { x: leftPadding, y: topPadding };
+            }
+            
+            // Sort existing blocks by Y position
+            existingBlocks.sort((a, b) => a.y - b.y);
+            
+            // Check if we can fit at the top (before first block)
+            const firstBlock = existingBlocks[0];
+            if (firstBlock.y - topPadding >= height + spacing) {
+                return { x: leftPadding, y: topPadding };
+            }
+            
+            // Try to find space between existing blocks
+            for (let i = 0; i < existingBlocks.length - 1; i++) {
+                const currentBlock = existingBlocks[i];
+                const nextBlock = existingBlocks[i + 1];
+                
+                const currentBottom = currentBlock.y + currentBlock.element.offsetHeight;
+                const gapSize = nextBlock.y - currentBottom;
+                
+                // Check if there's enough space between these blocks
+                if (gapSize >= height + spacing * 2) {
+                    const newY = currentBottom + spacing;
+                    return { x: leftPadding, y: newY };
+                }
+            }
+            
+            // Place after the last block
+            const lastBlock = existingBlocks[existingBlocks.length - 1];
+            const newY = lastBlock.y + lastBlock.element.offsetHeight + spacing;
+            
+            // Check if it fits within page bounds
+            if (newY + height + bottomPadding > pageHeight) {
+                console.warn('Text block may extend beyond page boundaries');
+            }
+            
+            return { x: leftPadding, y: newY };
+        }
+
+        // Add new text block
+        function addNewTextBlock() {
+            const previewContent = document.querySelector('.preview-content');
+            
+            // Find the currently visible page in the viewport
+            const reportPages = document.querySelectorAll('.report-page');
+            if (reportPages.length === 0) {
+                alert('Please ensure a report page is visible before adding text blocks.');
+                return;
+            }
+            
+            // Get the page that's most visible in the viewport
+            let targetPage = reportPages[0];
+            let maxVisibility = 0;
+            
+            reportPages.forEach(page => {
+                const rect = page.getBoundingClientRect();
+                const previewRect = previewContent.getBoundingClientRect();
+                
+                // Calculate how much of the page is visible
+                const visibleTop = Math.max(rect.top, previewRect.top);
+                const visibleBottom = Math.min(rect.bottom, previewRect.bottom);
+                const visibleHeight = Math.max(0, visibleBottom - visibleTop);
+                
+                if (visibleHeight > maxVisibility) {
+                    maxVisibility = visibleHeight;
+                    targetPage = page;
+                }
+            });
+            
+            if (!targetPage) {
+                alert('Please ensure a report page is visible before adding text blocks.');
+                return;
+            }
+            
+            // Create text block element
+            const textBlock = document.createElement('div');
+            textBlock.className = 'custom-text-block';
+            
+            // Calculate position with proper padding from edges
+            const pageWidth = targetPage.offsetWidth;
+            const leftPadding = 50; // Match report content padding
+            const rightPadding = 50;
+            const usableWidth = pageWidth - leftPadding - rightPadding;
+            
+            // Set default size: reasonable width (80% of usable width) and single line height
+            const defaultWidth = Math.floor(usableWidth * 0.8);
+            const defaultHeight = 40; // Single line height with comfortable padding
+            
+            textBlock.style.width = defaultWidth + 'px';
+            textBlock.style.minHeight = defaultHeight + 'px';
+            
+            // Find next free space on the page
+            const freePosition = findNextFreeSpace(targetPage, defaultWidth, defaultHeight, leftPadding);
+            console.log('Placing text block at:', freePosition, 'Size:', { width: defaultWidth, height: defaultHeight });
+            textBlock.style.left = freePosition.x + 'px';
+            textBlock.style.top = freePosition.y + 'px';
+            
+            // Create drag handle
+            const handle = document.createElement('div');
+            handle.className = 'text-block-handle';
+            handle.innerHTML = '⋮⋮';
+            handle.title = 'Drag to move';
+            
+            // Create position indicator
+            const posIndicator = document.createElement('div');
+            posIndicator.className = 'position-indicator';
+            posIndicator.textContent = `X: ${freePosition.x}, Y: ${freePosition.y}`;
+            
+            // Create editable content
+            const content = document.createElement('div');
+            content.className = 'text-block-content';
+            content.contentEditable = true;
+            content.textContent = 'Enter text here';
+            
+            // Assemble text block
+            textBlock.appendChild(handle);
+            textBlock.appendChild(posIndicator);
+            textBlock.appendChild(content);
+            
+            // Add to the target page (currently visible page)
+            targetPage.style.position = 'relative';
+            targetPage.appendChild(textBlock);
+            
+            // Store reference
+            const blockData = {
+                id: Date.now(),
+                element: textBlock,
+                x: freePosition.x,
+                y: freePosition.y,
+                page: targetPage,
+                hasBorder: false // Default: no border
+            };
+            textBlocks.push(blockData);
+            
+            // Attach event listeners
+            attachTextBlockEvents(textBlock, blockData);
+            
+            // Select the new block after a brief delay to ensure DOM is ready
+            setTimeout(() => {
+                console.log('Selecting newly created text block...');
+                selectTextBlock(textBlock);
+                
+                // Focus the content for immediate editing
+                content.focus();
+                document.execCommand('selectAll', false, null);
+                console.log('Text block selected and focused');
+            }, 50);
+        }
+
+        // Attach event listeners to text block
+        function attachTextBlockEvents(textBlock, blockData) {
+            const handle = textBlock.querySelector('.text-block-handle');
+            const content = textBlock.querySelector('.text-block-content');
+            
+            // Click to select
+            textBlock.addEventListener('click', (e) => {
+                e.stopPropagation();
+                selectTextBlock(textBlock);
+            });
+            
+            // Drag functionality
+            handle.addEventListener('mousedown', (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                startDragging(textBlock, blockData, e);
+            });
+            
+            // Content editing
+            content.addEventListener('focus', () => {
+                selectTextBlock(textBlock);
+                showFormattingToolbar(textBlock);
+            });
+            
+            content.addEventListener('blur', () => {
+                setTimeout(() => {
+                    if (!document.activeElement.closest('.text-formatting-toolbar')) {
+                        hideFormattingToolbar();
+                    }
+                }, 200);
+            });
+            
+            content.addEventListener('input', () => {
+                blockData.content = content.innerHTML;
+            });
+        }
+
+        // Start dragging text block
+        function startDragging(textBlock, blockData, e) {
+            isDragging = true;
+            selectedTextBlock = textBlock;
+            textBlock.classList.add('dragging');
+            
+            const rect = textBlock.getBoundingClientRect();
+            const reportPage = textBlock.parentElement.getBoundingClientRect();
+            
+            dragOffset.x = e.clientX - rect.left;
+            dragOffset.y = e.clientY - rect.top;
+            
+            // Show padding guide on the page
+            showPaddingGuide(textBlock.parentElement);
+            
+            document.addEventListener('mousemove', onDragMove);
+            document.addEventListener('mouseup', onDragEnd);
+        }
+
+        function onDragMove(e) {
+            if (!isDragging || !selectedTextBlock) return;
+            
+            const reportPage = selectedTextBlock.parentElement.getBoundingClientRect();
+            const posIndicator = selectedTextBlock.querySelector('.position-indicator');
+            
+            // Define page padding constraints
+            const leftPadding = 50;
+            const rightPadding = 50;
+            const topPadding = 80;
+            const bottomPadding = 80;
+            
+            let x = e.clientX - reportPage.left - dragOffset.x;
+            let y = e.clientY - reportPage.top - dragOffset.y;
+            
+            // Constrain to page boundaries WITH padding
+            const minX = leftPadding;
+            const maxX = reportPage.width - rightPadding - selectedTextBlock.offsetWidth;
+            const minY = topPadding;
+            const maxY = reportPage.height - bottomPadding - selectedTextBlock.offsetHeight;
+            
+            x = Math.max(minX, Math.min(x, maxX));
+            y = Math.max(minY, Math.min(y, maxY));
+            
+            selectedTextBlock.style.left = x + 'px';
+            selectedTextBlock.style.top = y + 'px';
+            
+            // Update position indicator
+            posIndicator.textContent = `X: ${Math.round(x)}, Y: ${Math.round(y)}`;
+            
+            // Update stored data
+            const blockData = textBlocks.find(b => b.element === selectedTextBlock);
+            if (blockData) {
+                blockData.x = x;
+                blockData.y = y;
+            }
+        }
+
+        function onDragEnd() {
+            if (selectedTextBlock) {
+                selectedTextBlock.classList.remove('dragging');
+                // Hide padding guide
+                hidePaddingGuide(selectedTextBlock.parentElement);
+            }
+            isDragging = false;
+            document.removeEventListener('mousemove', onDragMove);
+            document.removeEventListener('mouseup', onDragEnd);
+        }
+
+        // Show padding guide overlay
+        function showPaddingGuide(page) {
+            if (!page) return;
+            
+            let guide = page.querySelector('.padding-guide');
+            if (!guide) {
+                guide = document.createElement('div');
+                guide.className = 'padding-guide';
+                page.appendChild(guide);
+            }
+            
+            // Use setTimeout to ensure CSS transition works
+            setTimeout(() => {
+                guide.classList.add('active');
+            }, 10);
+        }
+
+        // Hide padding guide overlay
+        function hidePaddingGuide(page) {
+            if (!page) return;
+            
+            const guide = page.querySelector('.padding-guide');
+            if (guide) {
+                guide.classList.remove('active');
+                // Remove after transition
+                setTimeout(() => {
+                    if (!guide.classList.contains('active')) {
+                        guide.remove();
+                    }
+                }, 200);
+            }
+        }
+
+        // Select text block
+        function selectTextBlock(textBlock) {
+            console.log('selectTextBlock called', {
+                textBlock: !!textBlock,
+                hasContent: !!textBlock?.querySelector('.text-block-content')
+            });
+            
+            // Deselect all blocks
+            document.querySelectorAll('.custom-text-block').forEach(block => {
+                block.classList.remove('selected');
+            });
+            
+            // Select this block
+            textBlock.classList.add('selected');
+            selectedTextBlock = textBlock;
+            
+            // Show properties panel for text block
+            showTextBlockProperties(textBlock);
+        }
+
+        // Show formatting toolbar
+        function showFormattingToolbar(textBlock) {
+            let toolbar = document.getElementById('textFormattingToolbar');
+            
+            if (!toolbar) {
+                toolbar = createFormattingToolbar();
+                document.body.appendChild(toolbar);
+            }
+            
+            // Position toolbar above text block
+            const rect = textBlock.getBoundingClientRect();
+            toolbar.style.left = rect.left + 'px';
+            toolbar.style.top = (rect.top - 50) + 'px';
+            toolbar.classList.add('active');
+        }
+
+        function hideFormattingToolbar() {
+            const toolbar = document.getElementById('textFormattingToolbar');
+            if (toolbar) {
+                toolbar.classList.remove('active');
+            }
+        }
+
+        // Create formatting toolbar
+        function createFormattingToolbar() {
+            const toolbar = document.createElement('div');
+            toolbar.id = 'textFormattingToolbar';
+            toolbar.className = 'text-formatting-toolbar';
+            
+            toolbar.innerHTML = `
+                <button class="toolbar-btn" onclick="formatText('bold')" title="Bold (Ctrl+B)">
+                    <strong>B</strong>
+                </button>
+                <button class="toolbar-btn" onclick="formatText('italic')" title="Italic (Ctrl+I)">
+                    <em>I</em>
+                </button>
+                <button class="toolbar-btn" onclick="formatText('underline')" title="Underline (Ctrl+U)">
+                    <u>U</u>
+                </button>
+                
+                <div class="toolbar-separator"></div>
+                
+                <button class="toolbar-btn" onclick="formatText('justifyLeft')" title="Align Left">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <rect x="2" y="3" width="12" height="1.5"/>
+                        <rect x="2" y="7" width="8" height="1.5"/>
+                        <rect x="2" y="11" width="12" height="1.5"/>
+                    </svg>
+                </button>
+                <button class="toolbar-btn" onclick="formatText('justifyCenter')" title="Align Center">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <rect x="2" y="3" width="12" height="1.5"/>
+                        <rect x="4" y="7" width="8" height="1.5"/>
+                        <rect x="2" y="11" width="12" height="1.5"/>
+                    </svg>
+                </button>
+                <button class="toolbar-btn" onclick="formatText('justifyRight')" title="Align Right">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <rect x="2" y="3" width="12" height="1.5"/>
+                        <rect x="6" y="7" width="8" height="1.5"/>
+                        <rect x="2" y="11" width="12" height="1.5"/>
+                    </svg>
+                </button>
+                
+                <div class="toolbar-separator"></div>
+                
+                <div class="toolbar-color-picker" title="Text Color">
+                    <input type="color" value="#1c3643" onchange="formatTextColor(this.value)" />
+                </div>
+                
+                <button class="toolbar-btn" onclick="increaseFontSize()" title="Increase Font Size">
+                    <span style="font-size: 14px; font-weight: 600;">A+</span>
+                </button>
+                <button class="toolbar-btn" onclick="decreaseFontSize()" title="Decrease Font Size">
+                    <span style="font-size: 11px; font-weight: 600;">A-</span>
+                </button>
+                
+                <div class="toolbar-separator"></div>
+                
+                <button class="toolbar-btn delete" onclick="deleteSelectedTextBlock()" title="Delete Text Block">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                        <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                    </svg>
+                </button>
+            `;
+            
+            return toolbar;
+        }
+
+        // Text formatting functions
+        function formatText(command) {
+            document.execCommand(command, false, null);
+            const content = selectedTextBlock?.querySelector('.text-block-content');
+            if (content) content.focus();
+        }
+
+        function formatTextColor(color) {
+            document.execCommand('foreColor', false, color);
+            const content = selectedTextBlock?.querySelector('.text-block-content');
+            if (content) content.focus();
+        }
+
+        function increaseFontSize() {
+            const content = selectedTextBlock?.querySelector('.text-block-content');
+            if (!content) return;
+            
+            const currentSize = parseInt(window.getComputedStyle(content).fontSize);
+            content.style.fontSize = (currentSize + 2) + 'px';
+        }
+
+        function decreaseFontSize() {
+            const content = selectedTextBlock?.querySelector('.text-block-content');
+            if (!content) return;
+            
+            const currentSize = parseInt(window.getComputedStyle(content).fontSize);
+            if (currentSize > 10) {
+                content.style.fontSize = (currentSize - 2) + 'px';
+            }
+        }
+
+        // Delete text block
+        function deleteSelectedTextBlock() {
+            if (!selectedTextBlock) return;
+            
+            const blockData = textBlocks.find(b => b.element === selectedTextBlock);
+            
+            // Store for undo
+            if (blockData) {
+                deletedElements.push({
+                    type: 'text-block',
+                    label: 'Custom Text Block',
+                    content: selectedTextBlock.querySelector('.text-block-content').innerHTML,
+                    html: selectedTextBlock.outerHTML,
+                    parent: selectedTextBlock.parentNode,
+                    nextSibling: selectedTextBlock.nextSibling,
+                    position: { x: blockData.x, y: blockData.y }
+                });
+            }
+            
+            // Remove from DOM and array
+            selectedTextBlock.remove();
+            textBlocks = textBlocks.filter(b => b.element !== selectedTextBlock);
+            selectedTextBlock = null;
+            
+            hideFormattingToolbar();
+            
+            // Show success message
+            document.getElementById('propertiesContent').innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">✓</div>
+                    <div>Text block deleted successfully!</div>
+                    <button onclick="showAdvancedTab()" style="margin-top: 12px; padding: 8px 16px; background: #0da1c7; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">
+                        View Undo History
+                    </button>
+                </div>
+            `;
+        }
+
+        // Show text block properties in right panel
+        function showTextBlockProperties(textBlock) {
+            if (!textBlock) {
+                console.error('showTextBlockProperties: textBlock is null or undefined');
+                return;
+            }
+            
+            const content = textBlock.querySelector('.text-block-content');
+            if (!content) {
+                console.error('showTextBlockProperties: text-block-content not found');
+                return;
+            }
+            
+            const currentStyles = window.getComputedStyle(content);
+            const bgColor = window.getComputedStyle(textBlock).backgroundColor;
+            const blockData = textBlocks.find(b => b.element === textBlock);
+            const hasBorder = blockData ? blockData.hasBorder : false;
+            
+            const propertiesTitle = document.getElementById('propertiesTitle');
+            const propertiesSubtitle = document.getElementById('propertiesSubtitle');
+            const propertiesContent = document.getElementById('propertiesContent');
+            
+            if (!propertiesTitle || !propertiesSubtitle || !propertiesContent) {
+                console.error('Properties panel elements not found', {
+                    propertiesTitle: !!propertiesTitle,
+                    propertiesSubtitle: !!propertiesSubtitle,
+                    propertiesContent: !!propertiesContent
+                });
+                return;
+            }
+            
+            propertiesTitle.textContent = 'Text Block Properties';
+            propertiesSubtitle.textContent = 'Custom Text Element';
+            
+            // Clear existing content and create fresh tab structure
+            propertiesContent.innerHTML = '';
+            
+            // Create tabs content
+            const designTab = document.createElement('div');
+            designTab.id = 'designTab';
+            designTab.className = 'properties-tab-content active';
+            
+            const contentTab = document.createElement('div');
+            contentTab.id = 'contentTab';
+            contentTab.className = 'properties-tab-content';
+            
+            const advancedTab = document.createElement('div');
+            advancedTab.id = 'advancedTab';
+            advancedTab.className = 'properties-tab-content';
+            
+            // Populate design tab with text block properties
+            designTab.innerHTML = `
+                <div class="prop-group">
+                    <div class="prop-group-title">APPEARANCE</div>
+                    <div class="prop-control">
+                        <div class="prop-label">Show Border & Background</div>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="checkbox" id="borderToggle" ${hasBorder ? 'checked' : ''} 
+                                style="width: 18px; height: 18px; cursor: pointer; accent-color: #0da1c7;" />
+                            <span style="font-size: 12px; color: #687F8B;">Display as bordered box</span>
+                        </label>
+                        <div style="font-size: 11px; color: #999; margin-top: 4px; line-height: 1.4;">
+                            When unchecked, text appears directly on the report like standard text
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="prop-group" id="backgroundGroup" style="${!hasBorder ? 'display:none;' : ''}">
+                    <div class="prop-group-title">BACKGROUND</div>
+                    <div class="prop-control">
+                        <div class="prop-label">Background Color</div>
+                        <input type="color" class="prop-input" id="bgColorPicker" value="${rgbToHex(bgColor)}" />
+                    </div>
+                </div>
+                
+                <div class="prop-group">
+                    <div class="prop-group-title">RESIZE</div>
+                    <div style="font-size: 12px; color: #687F8B; line-height: 1.6; padding: 8px 0;">
+                        Drag the edges or corners of the text block to resize it
+                    </div>
+                </div>
+                
+                <div class="prop-group">
+                    <div class="prop-group-title">ACTIONS</div>
+                    <button class="btn-delete" onclick="deleteSelectedTextBlock()">
+                        Delete Text Block
+                    </button>
+                </div>
+            `;
+            
+            // Attach event listeners after DOM is created
+            setTimeout(() => {
+                const borderToggle = document.getElementById('borderToggle');
+                const bgColorPicker = document.getElementById('bgColorPicker');
+                
+                if (borderToggle) {
+                    borderToggle.addEventListener('change', function() {
+                        toggleTextBlockBorder(this.checked);
+                    });
+                }
+                
+                if (bgColorPicker) {
+                    bgColorPicker.addEventListener('change', function() {
+                        updateTextBlockBackground(this.value);
+                    });
+                }
+            }, 10);
+            
+            // Add placeholder content for other tabs
+            contentTab.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">📝</div>
+                    <div>Text content is edited directly in the preview</div>
+                    <div style="font-size: 11px; color: #999; margin-top: 8px;">Click on the text block to edit</div>
+                </div>
+            `;
+            
+            advancedTab.innerHTML = `
+                <div class="empty-state">
+                    <div class="empty-state-icon">⚙️</div>
+                    <div>Advanced options coming soon</div>
+                </div>
+            `;
+            
+            // Append all tabs to properties content
+            propertiesContent.appendChild(designTab);
+            propertiesContent.appendChild(contentTab);
+            propertiesContent.appendChild(advancedTab);
+            
+            // Manually activate the Design tab (don't use switchTab as it looks for existing tabs)
+            document.querySelectorAll('.prop-tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.prop-tab')[0].classList.add('active'); // Design tab
+            
+            // Make sure only design tab is visible
+            designTab.classList.add('active');
+            contentTab.classList.remove('active');
+            advancedTab.classList.remove('active');
+        }
+
+        // Helper functions for text block properties
+        function updateTextBlockPosition(axis, value) {
+            if (!selectedTextBlock) return;
+            
+            const page = selectedTextBlock.parentElement;
+            const pageWidth = page.offsetWidth;
+            const pageHeight = page.offsetHeight;
+            
+            // Define page padding constraints
+            const leftPadding = 50;
+            const rightPadding = 50;
+            const topPadding = 80;
+            const bottomPadding = 80;
+            
+            let constrainedValue = parseInt(value);
+            
+            if (axis === 'x') {
+                // Constrain X position
+                const minX = leftPadding;
+                const maxX = pageWidth - rightPadding - selectedTextBlock.offsetWidth;
+                constrainedValue = Math.max(minX, Math.min(constrainedValue, maxX));
+            } else {
+                // Constrain Y position
+                const minY = topPadding;
+                const maxY = pageHeight - bottomPadding - selectedTextBlock.offsetHeight;
+                constrainedValue = Math.max(minY, Math.min(constrainedValue, maxY));
+            }
+            
+            selectedTextBlock.style[axis === 'x' ? 'left' : 'top'] = constrainedValue + 'px';
+            
+            const blockData = textBlocks.find(b => b.element === selectedTextBlock);
+            if (blockData) {
+                blockData[axis] = constrainedValue;
+            }
+            
+            // Update position indicator
+            const posIndicator = selectedTextBlock.querySelector('.position-indicator');
+            if (posIndicator) {
+                posIndicator.textContent = `X: ${blockData.x}, Y: ${blockData.y}`;
+            }
+            
+            // If value was constrained, refresh properties to show corrected value
+            if (constrainedValue !== parseInt(value)) {
+                console.log(`Position constrained: ${value} → ${constrainedValue} (${axis})`);
+                showTextBlockProperties(selectedTextBlock);
+            }
+        }
+
+        function updateTextBlockSize(dimension, value) {
+            if (!selectedTextBlock) return;
+            selectedTextBlock.style[dimension] = value + 'px';
+        }
+
+        function updateTextBlockBackground(color) {
+            if (!selectedTextBlock) return;
+            selectedTextBlock.style.backgroundColor = color;
+        }
+
+        // Toggle text block border
+        function toggleTextBlockBorder(hasBorder) {
+            if (!selectedTextBlock) return;
+            
+            const blockData = textBlocks.find(b => b.element === selectedTextBlock);
+            if (blockData) {
+                blockData.hasBorder = hasBorder;
+            }
+            
+            if (hasBorder) {
+                selectedTextBlock.classList.add('has-border');
+                // Set default white background when border is enabled
+                if (!selectedTextBlock.style.backgroundColor || selectedTextBlock.style.backgroundColor === 'transparent') {
+                    selectedTextBlock.style.backgroundColor = 'white';
+                }
+            } else {
+                selectedTextBlock.classList.remove('has-border');
+                selectedTextBlock.style.backgroundColor = 'transparent';
+            }
+            
+            // Show/hide background color picker
+            const backgroundGroup = document.getElementById('backgroundGroup');
+            if (backgroundGroup) {
+                backgroundGroup.style.display = hasBorder ? 'block' : 'none';
+            }
+        }
+
+        // Click outside to deselect
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('.custom-text-block') && 
+                !e.target.closest('.text-formatting-toolbar') &&
+                !e.target.closest('.add-text-block-btn')) {
+                document.querySelectorAll('.custom-text-block').forEach(block => {
+                    block.classList.remove('selected');
+                });
+                selectedTextBlock = null;
+                hideFormattingToolbar();
+            }
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            if (!selectedTextBlock) return;
+            
+            const content = selectedTextBlock.querySelector('.text-block-content');
+            if (document.activeElement !== content) return;
+            
+            if (e.ctrlKey || e.metaKey) {
+                switch(e.key.toLowerCase()) {
+                    case 'b':
+                        e.preventDefault();
+                        formatText('bold');
+                        break;
+                    case 'i':
+                        e.preventDefault();
+                        formatText('italic');
+                        break;
+                    case 'u':
+                        e.preventDefault();
+                        formatText('underline');
+                        break;
+                }
+            }
+            
+            // Delete key
+            if (e.key === 'Delete' && document.activeElement !== content) {
+                e.preventDefault();
+                deleteSelectedTextBlock();
+            }
+        });
+    </script>
+</body>
+</html>

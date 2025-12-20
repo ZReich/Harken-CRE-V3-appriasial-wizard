@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluation Wizard - Approach Pages Index</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            font-family: 'Montserrat', sans-serif;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f5f5 0%, #e8f5f7 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1c3643;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            font-size: 16px;
+            color: #687F8B;
+        }
+
+        .approaches-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .approach-card {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .approach-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 16px rgba(13, 161, 199, 0.2);
+            border-color: #0da1c7;
+        }
+
+        .approach-card.completed {
+            border-color: #2e7d32;
+        }
+
+        .approach-card.in-progress {
+            border-color: #0da1c7;
+        }
+
+        .approach-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .approach-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+        }
+
+        .approach-icon.sales {
+            background: linear-gradient(135deg, #0da1c7 0%, #38bfd9 100%);
+        }
+
+        .approach-icon.cost {
+            background: linear-gradient(135deg, #1c3643 0%, #2d4a57 100%);
+        }
+
+        .approach-icon.income {
+            background: linear-gradient(135deg, #2e7d32 0%, #4caf50 100%);
+        }
+
+        .approach-icon.lease {
+            background: linear-gradient(135deg, #ff9800 0%, #ffb74d 100%);
+        }
+
+        .approach-icon.cap {
+            background: linear-gradient(135deg, #9c27b0 0%, #ba68c8 100%);
+        }
+
+        .approach-icon.multifamily {
+            background: linear-gradient(135deg, #e91e63 0%, #f06292 100%);
+        }
+
+        .approach-title {
+            flex: 1;
+        }
+
+        .approach-title h2 {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1c3643;
+            margin-bottom: 4px;
+        }
+
+        .approach-status {
+            font-size: 12px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 4px;
+            display: inline-block;
+        }
+
+        .status-completed {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-in-progress {
+            background: #e8f5f7;
+            color: #0da1c7;
+        }
+
+        .status-not-started {
+            background: #f5f5f5;
+            color: #687F8B;
+        }
+
+        .approach-description {
+            font-size: 14px;
+            color: #687F8B;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .approach-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #0da1c7;
+            color: white;
+            text-decoration: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            transition: background 0.2s;
+            width: 100%;
+            justify-content: center;
+        }
+
+        .approach-link:hover {
+            background: #0b8fb0;
+        }
+
+        .approach-link.disabled {
+            background: #e0e0e0;
+            color: #9CA8B0;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+
+        .features-list {
+            list-style: none;
+            margin-top: 16px;
+        }
+
+        .features-list li {
+            font-size: 12px;
+            color: #687F8B;
+            padding: 4px 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .features-list li::before {
+            content: "✓";
+            color: #2e7d32;
+            font-weight: 700;
+        }
+
+        .info-box {
+            background: #e8f5f7;
+            border-left: 4px solid #0da1c7;
+            padding: 16px;
+            border-radius: 6px;
+            margin-top: 24px;
+        }
+
+        .info-box h3 {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1c3643;
+            margin-bottom: 8px;
+        }
+
+        .info-box p {
+            font-size: 13px;
+            color: #687F8B;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Evaluation Wizard - Approach Pages</h1>
+            <p>Navigate to each evaluation approach prototype page</p>
+        </div>
+
+        <div class="approaches-grid">
+            <!-- Sales Comparison Approach -->
+            <div class="approach-card completed">
+                <div class="approach-header">
+                    <div class="approach-icon sales">
+                        <i class="material-icons">compare_arrows</i>
+                    </div>
+                    <div class="approach-title">
+                        <h2>Sales Comparison Approach</h2>
+                        <span class="approach-status status-completed">✓ Completed</span>
+                    </div>
+                </div>
+                <p class="approach-description">
+                    Compare the subject property with similar properties that have recently sold to determine market value.
+                </p>
+                <ul class="features-list">
+                    <li>Functional filter panel with range inputs</li>
+                    <li>Subject property panel</li>
+                    <li>4 comp slots with adjustment calculations</li>
+                    <li>Weighted totals panel</li>
+                </ul>
+                <a href="index.html" class="approach-link">
+                    <i class="material-icons">open_in_new</i>
+                    View Sales Approach
+                </a>
+            </div>
+
+            <!-- Cost Approach -->
+            <div class="approach-card completed">
+                <div class="approach-header">
+                    <div class="approach-icon cost">
+                        <i class="material-icons">build</i>
+                    </div>
+                    <div class="approach-title">
+                        <h2>Cost Approach</h2>
+                        <span class="approach-status status-completed">✓ Completed</span>
+                    </div>
+                </div>
+                <p class="approach-description">
+                    Estimate value based on the cost to replace or reproduce the property, minus depreciation, plus land value.
+                </p>
+                <ul class="features-list">
+                    <li>Land value + improvements calculation</li>
+                    <li>Depreciation breakdown</li>
+                    <li>Replacement cost analysis</li>
+                    <li>Cost comps with adjustments</li>
+                </ul>
+                <a href="approach-cost.html" class="approach-link">
+                    <i class="material-icons">open_in_new</i>
+                    View Cost Approach
+                </a>
+            </div>
+
+            <!-- Income Approach -->
+            <div class="approach-card completed">
+                <div class="approach-header">
+                    <div class="approach-icon income">
+                        <i class="material-icons">attach_money</i>
+                    </div>
+                    <div class="approach-title">
+                        <h2>Income Approach</h2>
+                        <span class="approach-status status-completed">✓ Completed</span>
+                    </div>
+                </div>
+                <p class="approach-description">
+                    Value the property based on its income-generating potential using cap rates and net operating income.
+                </p>
+                <ul class="features-list">
+                    <li>Income sources management</li>
+                    <li>Operating expenses tracking</li>
+                    <li>Cap rate calculations</li>
+                    <li>NOI and indicated values</li>
+                </ul>
+                <a href="approach-income.html" class="approach-link">
+                    <i class="material-icons">open_in_new</i>
+                    View Income Approach
+                </a>
+            </div>
+
+            <!-- Lease Approach -->
+            <div class="approach-card completed">
+                <div class="approach-header">
+                    <div class="approach-icon lease">
+                        <i class="material-icons">business</i>
+                    </div>
+                    <div class="approach-title">
+                        <h2>Lease Approach</h2>
+                        <span class="approach-status status-completed">✓ Completed</span>
+                    </div>
+                </div>
+                <p class="approach-description">
+                    Analyze comparable lease rates to determine market rental value and lease terms.
+                </p>
+                <ul class="features-list">
+                    <li>Lease comp analysis</li>
+                    <li>Rental rate comparisons</li>
+                    <li>Adjustment factors</li>
+                    <li>Range calculations</li>
+                </ul>
+                <a href="approach-lease.html" class="approach-link">
+                    <i class="material-icons">open_in_new</i>
+                    View Lease Approach
+                </a>
+            </div>
+
+            <!-- Cap Rate Approach -->
+            <div class="approach-card completed">
+                <div class="approach-header">
+                    <div class="approach-icon cap">
+                        <i class="material-icons">trending_up</i>
+                    </div>
+                    <div class="approach-title">
+                        <h2>Cap Rate Approach</h2>
+                        <span class="approach-status status-completed">✓ Completed</span>
+                    </div>
+                </div>
+                <p class="approach-description">
+                    Determine value using capitalization rates from comparable income-producing properties.
+                </p>
+                <ul class="features-list">
+                    <li>Cap rate comps</li>
+                    <li>Weighted average calculations</li>
+                    <li>High/low range analysis</li>
+                    <li>Value determination</li>
+                </ul>
+                <a href="approach-cap.html" class="approach-link">
+                    <i class="material-icons">open_in_new</i>
+                    View Cap Rate Approach
+                </a>
+            </div>
+
+            <!-- Multi-Family Approach -->
+            <div class="approach-card completed">
+                <div class="approach-header">
+                    <div class="approach-icon multifamily">
+                        <i class="material-icons">home</i>
+                    </div>
+                    <div class="approach-title">
+                        <h2>Multi-Family Approach</h2>
+                        <span class="approach-status status-completed">✓ Completed</span>
+                    </div>
+                </div>
+                <p class="approach-description">
+                    Analyze rental rates per unit for multi-family properties with unit-level comparisons.
+                </p>
+                <ul class="features-list">
+                    <li>Unit-level comp analysis</li>
+                    <li>Rental rate per unit</li>
+                    <li>Monthly rent calculations</li>
+                    <li>Adjustment factors</li>
+                </ul>
+                <a href="approach-multi-family.html" class="approach-link">
+                    <i class="material-icons">open_in_new</i>
+                    View Multi-Family Approach
+                </a>
+            </div>
+        </div>
+
+        <div class="info-box">
+            <h3>📋 Development Complete!</h3>
+            <p>
+                All evaluation approach prototypes have been successfully created and are ready for review. 
+                Each approach page includes proper industry terminology, functional layouts, and is fully linked from this index. 
+                All approaches are now available for testing and user feedback before final integration into the evaluation wizard.
+            </p>
+        </div>
+    </div>
+</body>
+</html>
+

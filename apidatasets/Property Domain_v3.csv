@@ -1,0 +1,1072 @@
+,Property Domain_v3_07092025,,,,,
+,"CoreLogic, Inc. d/b/a Cotality",,,,,
+,© 2025 Cotality. All Rights Reserved.,,,,,
+,Confidential information.,,,,,
+,,,,,,
+FIELD #,FIELD NAME,TYPE,TABLE,MAX LENGTH,DECIMAL,FIELD DEFINITION
+CLIP V2,,,,,,
+1,CLIP,AlphaNumeric,,10,,Unique identification number assigned to each property.
+PROPERTY ID V3,,,,,,
+2,CORELOGIC COUNTY CODE,AlphaNumeric,,5,,"A CoreLogic defined, persistent, 5-digit code that uniquely defines every county or county equivalent. In some cases, the CoreLogic County Code is based on FIPS code but may represent a prior version."
+3,APN (PARCEL NUMBER UNFORMATTED),AlphaNumeric,,45,,Assessor's Parcel Number in an unformatted form. This is most often used by the county and others as a unique key.
+4,APN SEQUENCE NUMBER,Numeric,,3,,This internal sequence number is used to ensure uniqueness of the Assessor's Parcel Number.
+5,COMPOSITE PROPERTY LINKAGE KEY,AlphaNumeric,,53,,"Unique property key, which can be used to link to other files associated with property (used in Legacy Product).   This is a fixed-width field, with the APN component padded with blanks out to 45 characters within the composite key."
+6,FIPS COUNTY CODE,AlphaNumeric,,5,,The current 5-digit Federal Information Processing Series codes used nationally that uniquely defines every county or county equivalent.
+7,ORIGINAL APN,AlphaNumeric,,45,,Original Assessors Parcel Number (APN) in raw format provided on the assessor tax roll. Used if a county renumbers or changes their parcel IDs.
+8,TAX ACCOUNT NUMBER,AlphaNumeric,,60,,"The county or source number used primarily for billing. Note: this number is typically not unique to a parcel, but rather to a tax bill (multiple parcels can be combined on 1 bill)."
+9,ONLINE FORMATTED PARCEL ID,AlphaNumeric,,60,,APN that would link to CoreLogic online products.
+10,ALTERNATE PARCEL ID,AlphaNumeric,,60,,An Alternate ID provided by some counties that can be used to identify a property.
+PROPERTY ID LINEAGE,,,,,,
+11,PREVIOUS PARCEL NUMBER,AlphaNumeric,,45,,"The prior parcel number if the county changed the number in the last year.  Otherwise, the field will be empty.  Always used in combination with PREVIOUS PARCEL SEQUENCE NUMBER."
+12,PREVIOUS PARCEL SEQUENCE NUMBER,Numeric,,3,,Sequence number used in combination with PREVIOUS PARCEL NUMBER to make it unique.
+13,PREVIOUS PARCEL NUMBER FORMATTED,AlphaNumeric,,60,,"Most recent previous parcel number, segmented by dashes and periods.  Unlike PREVIOUS PARCEL NUMBER that is only populated in the year after the parcel ID change, this field will contain the Previous Parcel Number no matter how long ago the parcel change occurred."
+LOCATION V3,,,,,,
+14,CENSUS ID,AlphaNumeric,,10,,"Comprised of Census Tract, Census Block Group, Census Block, and Census Block Suffix. These numbers are established by the US Department of Commerce (Bureau Of The Census)."
+15,RANGE,AlphaNumeric,,3,,"The ""range"" portion of geographical coordinates based on local surveys. Ranges typically run east or west of pre-determined ""meridian"" in six mile intervals."
+16,TOWNSHIP,AlphaNumeric,,3,,"The ""township"" portion of geographical coordinates based on local surveys. Townships typically run north or south of pre-determined ""meridian"" in six mile intervals."
+17,SECTION,AlphaNumeric,,3,,"The ""section"" portion of geographical coordinates based on local surveys. Sections are 1 square mile and there are 36 sections within the intersection of a Range / Township."
+18,QUARTER SECTION,AlphaNumeric,,3,,"A section that has been divided into four ""sub"" sections (e.g., NE, NW, SE, SW)."
+19,MUNICIPALITY NAME,AlphaNumeric,,30,,Name of the Municipality where parcel is located.
+20,MUNICIPALITY CODE,AlphaNumeric,,8,,"Code supplied by the county or vendor that indicates the city, town or village in which the parcel is located."
+21,JURISDICTION COUNTY CODE,AlphaNumeric,,20,,Some counties interchange or use this instead of municipality codes.
+22,TOWN CODE,AlphaNumeric,,8,,Some counties interchange or use this instead of municipality codes.
+23,TAX RATE AREA CODE,AlphaNumeric,,8,,County provided tax rate area code associated with the parcel.
+24,TAX DISTRICT COUNTY NAME,AlphaNumeric,,30,,Name of the county provided tax district code associated with a parcel. Tax District County Name is delivered if available
+25,TAX DISTRICT MUNICIPALITY NAME,AlphaNumeric,,30,,Identifies the municipality (city) tax district associated with a parcel. Tax District Municipality Name is delivered if available.
+26,SCHOOL DISTRICT NAME,AlphaNumeric,,30,,Identifies the special school tax district where the property is located. School tax district name is delivered if available.
+27,FIRE DISTRICT COUNTY NAME,AlphaNumeric,,30,,Describes the county-designated area where parcels share a common fire district and fire houses. Fire district name is delivered if available.
+28,WATER DISTRICT NAME,AlphaNumeric,,30,,Identifies the water management authority assigned to the parcel. Water District Name is delivered if available.
+29,ELEMENTARY SCHOOL DISTRICT COUNTY DESCRIPTION,AlphaNumeric,,30,,Elementary school district in which the property is located.
+30,HIGH SCHOOL DISTRICT COUNTY DESCRIPTION,AlphaNumeric,,30,,High School or Secondary School District in which the property is located.
+31,NEIGHBORHOOD DESCRIPTION,AlphaNumeric,,30,,County defined Neighborhood in which the property is located.
+32,SITUS CORE BASED STATISTICAL AREA (CBSA),AlphaNumeric,,5,,Core Based Statistical Area code as designated by U.S. Office of Management and Budget.
+33,CBSA TYPE,AlphaNumeric,,10,,"Type of CBSA identified, either Metropolitan or Micropolitan Area."
+PROPERTY V3,,,,,,
+34,LAND USE CODE,AlphaNumeric,LUSE,3,,A CoreLogic established Land Use code converted from various county Land Use codes to aid in search and extract functions.
+35,COUNTY LAND USE DESCRIPTION,AlphaNumeric,,30,,Current usage of property as defined by county level jurisdiction. Represents text description associated with County Land Use Code.
+36,STATE LAND USE DESCRIPTION,AlphaNumeric,,30,,Current usage of property as defined by state level jurisdiction. Represents text description associated with State Land Use Code.
+37,MANUFACTURED HOME INDICATOR,AlphaNumeric,,1,,"This field is populated with a ""Y"" if a Manufactured Home is present on the parcel."
+38,ZONING CODE,AlphaNumeric,,15,,The data contained in this field is based upon County and/or Local established Zoning Codes and is not converted by CoreLogic.
+39,ZONING CODE DESCRIPTION,AlphaNumeric,,30,,County provided zoning code description that describes the allowable land use for the real property.
+40,PROPERTY INDICATOR CODE,AlphaNumeric,PRIND,3,,"A CoreLogic general code used to easily recognize specific property types (e.g., Single Family Residence, Condominium, Commercial)."
+41,NUMBER OF BUILDINGS,Numeric,,3,,Total number of buildings on the parcel.
+PROPERTY (PREMIUM) V2,,,,,,
+42,VIEW CODE,AlphaNumeric,VIEW,3,,"View from building (e.g., Gulf, Mountains, Pool)."
+43,LOCATION INFLUENCE CODE,AlphaNumeric,LOCIN,3,,"Positive or negative aspects associated with the location of the parcel (e.g., Waterfront, Flood Plain, Airport)."
+44,FORECLOSURE STAGE CODE,AlphaNumeric,,3,,"CoreLogic standardized code that indicates the foreclosure process stage.  
+Values:
+YA = Auction
+YD = Pre-Foreclosure
+RR = REO (Real Estate Owned)
+SS = REO Sale"
+45,LAST FORECLOSURE TRANSACTION DATE,Numeric,,8,,CoreLogic derived date that identifies the parcel's chronology of active foreclosure transactions. Data is a concatenation of first eight characters of a date from the foreclosure filing date or foreclosure recording date fields.
+GEOSPATIAL,,,,,,
+46,BLOCK LEVEL LATITUDE,Numeric,,10,6,"CoreLogic derived geographic coordinate that specifies the north–south position of a point based on United States Postal Service address data for the parcel. The latitude contains numeric data values only conforming to the mask XX.ZZZZZZ, where the XX are the digits to the left of the decimal point, and ZZZZZZ are the digits to the right of the decimal point. Latitude is always a positive value north on the North American continent."
+47,BLOCK LEVEL LONGITUDE,Numeric,,11,6,"CoreLogic derived geographic coordinate that specifies the east–west position of a point based on United States Postal Service address data for the parcel. The longitude contains numeric data values only conforming to the mask -XXX.ZZZZZZ, where the XXX are the numeric digits to the left of the decimal point, and ZZZZZZ are the 6 numeric digits to the right of the decimal point. Longitude is negative on the North American continent."
+GEOSPATIAL (PREMIUM),,,,,,
+48,PARCEL LEVEL LATITUDE,Numeric,,10,6,"CoreLogic proprietary parcel-centroid coordinate that specifies the north–south position of the center point of a parcel. The latitude contains numeric data values only conforming to the mask XX.ZZZZZZ, where the XX are the digits to the left of the decimal point, and ZZZZZZ are the digits to the right of the decimal point. Latitude is always a positive value north on the North American continent."
+49,PARCEL LEVEL LONGITUDE,Numeric,,11,6,"CoreLogic proprietary parcel-centroid coordinate that specifies the east–west position of the center point of a parcel. The longitude contains numeric data values only conforming to the mask -XXX.ZZZZZZ, where the XXX are the numeric digits to the left of the decimal point, and ZZZZZZ are the 6 numeric digits to the right of the decimal point. Longitude is negative on the North American continent."
+PROPERTY ADDRESS V2,,,,,,
+50,SITUS HOUSE NUMBER,AlphaNumeric,,10,,The digits found to the left of a street name.
+51,SITUS HOUSE NUMBER SUFFIX,AlphaNumeric,,10,,"The characters found to the immediate right of a house number (e.g., 202B Jones Rd)."
+52,SITUS HOUSE NUMBER 2,AlphaNumeric,,10,,The second set of numbers in an address range.
+53,SITUS DIRECTION,AlphaNumeric,,2,,"This field represents the direction found to the left of the street name (e.g., 9340 N Dunhill Dr). AKA Directional Abbreviations, Pre-Directional."
+54,SITUS STREET NAME,AlphaNumeric,,30,,The name or number of the street where a parcel is located.
+55,SITUS MODE,AlphaNumeric,,5,,"The Mode or Type of street found to the right of the street name (e.g., 9340 N Dunhill Dr). AKA Street Designators / Street Suffixes."
+56,SITUS QUADRANT,AlphaNumeric,,2,,"The quadrant is found to the right of Situs Mode (e.g., 2040 NW 100 ST SW). AKA Post-Directional."
+57,SITUS UNIT NUMBER,AlphaNumeric,,10,,"The unit or suite number of the property address (e.g., 649 Lake Shore Dr #1400)."
+58,SITUS CITY,AlphaNumeric,,40,,The city associated with the property address.
+59,SITUS STATE,AlphaNumeric,,2,,"The two-letter USPS postal abbreviation associated with the state / protectorates / commonwealth (e.g., CA, VI)."
+60,SITUS ZIP CODE,AlphaNumeric,,9,,"Code assigned by the USPS. This is populated by various source files and other proprietary and non-proprietary processes. Data may be the 5-digit zip or 9-digit Zip+4 (e.g., 00501 or 954630042)."
+61,SITUS COUNTY,AlphaNumeric,,30,,Situs county name.
+62,SITUS CARRIER ROUTE,AlphaNumeric,,4,,This is the four digit code used by the local mail carrier to identify the delivery path.
+63,SITUS STREET ADDRESS,AlphaNumeric,,60,,Full Situs address (not including City/St/Zip) (e.g. 123 N Main St)
+64,SITUS CITY STATE ZIP SOURCE,AlphaNumeric,,1,,"Indicates the source of the City, State, and Zip address from the county file   
+Values:
+M = Mailing
+S = Situs"
+PROPERTY ADDRESS (PREMIUM),,,,,,
+65,SITUS DELIVERY POINT VALIDATION CODE,AlphaNumeric,,2,,"CoreLogic standardized code contains the USPS delivery point validation code used to obtain Coding Accuracy Support System (CASS) Certification.Y = Address was DPV confirmed for both primary and (if present) secondary numbers.D = Address was DPV confirmed for the primary number only, and Secondary number information was missing.S = Address was DPV confirmed for the primary number only, and Secondary number information was present but unconfirmed.N = Both Primary and (if present) Secondary number information failed to DPV Confirm.Blank = Address not presented to hash table."
+66,SITUS DELIVERY POINT VALIDATION VACANT INDICATOR,Numeric,,1,,"CoreLogic standardized code contains the USPS delivery point validation indicator showing if the property is vacant or occupied. 
+Values: 
+0 = Populated 
+1 = Vacant"
+PROPERTY ADDRESS - ENRICHED,,,,,,
+67,PROPERTY HOUSE NUMBER - ENRICHED,AlphaNumeric,,20,,"Full house number of the property (e.g., 2040 or 10-4562)."
+68,PROPERTY STREET NAME PREFIX DIRECTION - ENRICHED,AlphaNumeric,,2,,"This field represents the direction found to the left of the street name (e.g., 9340 N Dunhill Dr). AKA Directional Abbreviations, Pre-Directional."
+69,PROPERTY STREET NAME - ENRICHED,AlphaNumeric,,50,,"The name or number of the street where a parcel is located.  Includes the full street name (e.g., VIA VAL VERDE)."
+70,PROPERTY STREET NAME SUFFIX - ENRICHED,AlphaNumeric,,20,,"The Mode or Type of street found to the right of the street name (e.g., 9340 N Dunhill Dr). AKA Street Designators / Street Suffixes."
+71,PROPERTY STREET NAME SUFFIX DIRECTION - ENRICHED,AlphaNumeric,,2,,"The quadrant is found to the right of Situs Mode (e.g., 2040 NW 100 ST SW). AKA Post-Directional."
+72,PROPERTY UNIT TYPE - ENRICHED,AlphaNumeric,,15,,"The unit type of the property (e.g., Suite; Apt., #)."
+73,PROPERTY UNIT NUMBER - ENRICHED,AlphaNumeric,,20,,"The unit or suite number of the property address (e.g., 649 Lake Shore Dr #1400)."
+74,PROPERTY CITY - ENRICHED,AlphaNumeric,,40,,The city associated with the property address.
+75,PROPERTY STATE - ENRICHED,AlphaNumeric,,2,,"The two-letter USPS postal abbreviation associated with the state / protectorates / commonwealth (e.g., CA, VI)."
+76,PROPERTY ZIPCODE 5 - ENRICHED,AlphaNumeric,,5,,"Code assigned by the USPS. This is populated by various source files and other proprietary and non-proprietary processes. Data will be the 5-digit zip (e.g., 00501)."
+77,PROPERTY ZIPCODE PLUS 4 - ENRICHED,AlphaNumeric,,4,,This is the four-digit code used by the local mail carrier to identify the delivery path.
+78,PROPERTY COUNTY NAME - ENRICHED,AlphaNumeric,,40,,Situs county name.
+79,PROPERTY ADDRESS LINE - ENRICHED,AlphaNumeric,,130,,"Full address line of the property (e.g., 123 N MAIN ST APT. 400)"
+80,PROPERTY CITY LINE - ENRICHED,AlphaNumeric,,60,,"Full city line including city, state and zip code (e.g., EDMOND OK 73012-4174)."
+81,PROPERTY FULL ADDRESS - ENRICHED,AlphaNumeric,,190,,"The full property address (e.g., 123 N MAIN ST EDMOND OK 73012).  May contain the full zip code 73012-4174)."
+PROPERTY LEGAL V2,,,,,,
+82,LEGAL BLOCK NUMBER,AlphaNumeric,,5,,"Identifies the county block number where the parcel is located. Part of a subdivision or tract legal description. Subdivisions are often broken down into blocks, which are then broken down into lots."
+83,LEGAL BLOCK NUMBER SUFFIX,AlphaNumeric,,1,,Identifies the county block number suffix where the parcel is located.
+84,LEGAL LOT NUMBER,AlphaNumeric,,5,,"Subdivision or County Map Lot Number. Part of a subdivision or tract legal description. Subdivisions are often broken down into blocks, which are then broken down into lots."
+85,LEGAL LOT NUMBER SUFFIX,AlphaNumeric,,1,,Subdivision or County Map Lot Number Suffix.
+86,SUBDIVISION TRACT NUMBER,AlphaNumeric,,15,,The unique number assigned to a specific subdivision by the county. Often this is used in lieu of an actual subdivision name.
+87,SUBDIVISION PLAT BOOK,AlphaNumeric,,10,,"The first component of a recording system used by some counties to catalog subdivision / condo plans (e.g., Book 123 Page 55A)."
+88,SUBDIVISION PLAT PAGE,AlphaNumeric,,10,,"The second component of a recording system used by some counties to catalog subdivision / condo plans (e.g., Book 123 Page 55A)."
+89,SUBDIVISION NAME,AlphaNumeric,,60,,"The name of the Subdivision or Condominium where the parcel is located (e.g., Highland Mills Estates, Crystal Towers Condo)."
+90,LEGAL DESCRIPTION,AlphaNumeric,,750,,"County or local jurisdiction legal property descriptions. This description provides additional information regarding the property. It primarily delineates the exact boundaries of the property and may include other values like mineral rights, description of the layout of the property, etc."
+OWNER V2,,,,,,
+91,OWNER 1 FULL NAME,AlphaNumeric,,60,,Full name of property owner - 1st occurrence.
+92,OWNER 1 LAST NAME,AlphaNumeric,,30,,Last name of property owner - 1st occurrence.
+93,OWNER 1 FIRST NAME AND MIDDLE INITIAL,AlphaNumeric,,45,,First name and middle initial of property owner - 1st occurrence.
+94,OWNER 2 FULL NAME,AlphaNumeric,,60,,Additional owner name if more than one entity owns the property.
+95,OWNER 2 LAST NAME,AlphaNumeric,,30,,Additional owner name data if more than one entity owns the property.
+96,OWNER 2 FIRST NAME AND MIDDLE INITIAL,AlphaNumeric,,45,,Additional owner name data if more than one entity owns the property.
+OWNER (PREMIUM) V3,,,,,,
+97,OWNER 1 CORPORATE INDICATOR,AlphaNumeric,,1,,Indicator that the property owner has been recognized as a corporation or business.
+98,OWNER 2 CORPORATE INDICATOR,AlphaNumeric,,1,,Indicator that the property owner has been recognized as a corporation or business.
+99,OWNER 3 FULL NAME,AlphaNumeric,,60,,Additional owner name if more than one entity owns the property.
+100,OWNER 3 LAST NAME,AlphaNumeric,,30,,Additional owner name data if more than one entity owns the property.
+101,OWNER 3 FIRST NAME AND MIDDLE INITIAL,AlphaNumeric,,45,,Additional owner name data if more than one entity owns the property.
+102,OWNER 3 CORPORATE INDICATOR,AlphaNumeric,,1,,Indicator that the property owner has been recognized as a corporation or business.
+103,OWNER 4 FULL NAME,AlphaNumeric,,60,,Additional owner name if more than one entity owns the property.
+104,OWNER 4 LAST NAME,AlphaNumeric,,30,,Additional owner name data if more than one entity owns the property.
+105,OWNER 4 FIRST NAME AND MIDDLE INITIAL,AlphaNumeric,,45,,Additional owner name data if more than one entity owns the property.
+106,OWNER 4 CORPORATE INDICATOR,AlphaNumeric,,1,,Indicator that the property owner has been recognized as a corporation or business.
+107,OWNER ETAL CODE,AlphaNumeric,ETAL,1,,"A code appearing in this field indicates additional ownership, whose name(s) were not provided by our sources. Values are:
+A = ET AL - AND OTHERS
+C = ET CON - AND HUSBAND
+U = ET UX - AND WIFE
+V = ET VIR - AND HUSBAND."
+108,OWNER OWNERSHIP RIGHTS CODE,AlphaNumeric,VEST2,3,,"Form or method of property ownership (e.g., Joint Tenants, Living Trust)."
+109,OWNER RELATIONSHIP TYPE CODE,AlphaNumeric,VEST3,2,,"Relationship between multiple owners or the marital status of a single owner (e.g., Husband/Wife, Unmarried Man)."
+110,OWNER OCCUPANCY CODE,AlphaNumeric,ABSNT,1,,"CoreLogic derived code that indicates if the property owner resides at the situs (property site). Values of M, O, and S indicate owner occupied (A and T reflect absentee owners)."
+OWNER TRUST NAME,,,,,,
+111,OWNER 1 ORIGINAL TRUST NAME,AlphaNumeric,,60,,Owner 1 Original Trust Name found on the document which is the original provided source name.
+OWNER MAILING V2,,,,,,
+112,MAILING HOUSE NUMBER,AlphaNumeric,,10,,"The digits found to the left of a street name, representing the house number for the mailing address."
+113,MAILING HOUSE NUMBER SUFFIX,AlphaNumeric,,10,,"The characters found to the immediate right of a house number (e.g., 202B Jones Rd)."
+114,MAILING HOUSE NUMBER 2,AlphaNumeric,,10,,The second set of numbers in an address range.
+115,MAILING DIRECTION,AlphaNumeric,,2,,"This field represents the direction found to the left of the street name (e.g., 9340 N Dunhill Dr). AKA Directional Abbreviations, Pre-Directional."
+116,MAILING STREET NAME,AlphaNumeric,,30,,The name or number of the street of the mailing address.
+117,MAILING MODE,AlphaNumeric,,5,,"The Mode or Type of street found to the right of the street name (e.g., 9340 N Dunhill Dr). AKA Street Designators / Street Suffixes."
+118,MAILING QUADRANT,AlphaNumeric,,2,,"The quadrant is found to the right of Mailing Mode (e.g., 2040 NW 100 ST SW). AKA Post-Directional."
+119,MAILING UNIT NUMBER,AlphaNumeric,,10,,"The unit or suite number of the mailing address (e.g., 649 Lake Shore Dr #1400)."
+120,MAILING CITY,AlphaNumeric,,40,,The city associated with the mailing address.
+121,MAILING STATE,AlphaNumeric,,2,,"The two-letter USPS postal abbreviation associated with the state / protectorates / commonwealth (e.g., CA, VI)."
+122,MAILING ZIP CODE,AlphaNumeric,,9,,"Code assigned by the USPS. This is populated by various source files and other proprietary and non-proprietary processes. Data may be the 5-digit zip or 9-digit Zip+4 (e.g., 00501 or 954630042)."
+123,MAILING CARRIER ROUTE,AlphaNumeric,,4,,This is the four digit code used by the local mail carrier to identify the delivery path.
+124,MAILING STREET ADDRESS,AlphaNumeric,,60,,Full mail address (not including City/St/Zip) (e.g. 123 N Main St).  This also contains unparsed foreign mailing address.
+125,OWNER CARE OF NAME,AlphaNumeric,,60,,CoreLogic standardized and parsed name for the person receiving mail on behalf of the owner.
+126,MAILING OPT OUT INDICATOR,AlphaNumeric,,1,,"A ""Y"" represents a record where the property owner has contacted the DMA (i.e., Direct Marketing Association) and has asked not to be contacted by mail for solicitation."
+OWNER MAILING (PREMIUM),,,,,,
+127,MAILING DELIVERY POINT VALIDATION CODE,AlphaNumeric,,2,,"CoreLogic standardized code contains the USPS delivery point validation code used to obtain Coding Accuracy Support System (CASS) Certification.  Y = Address was DPV confirmed for both primary and (if present) secondary numbers.D = Address was DPV confirmed for the primary number only, and Secondary number information was missing.S = Address was DPV confirmed for the primary number only, and Secondary number information was present but unconfirmed.N = Both Primary and (if present) Secondary number information failed to DPV Confirm.Blank = Address not presented to hash table."
+128,MAILING DELIVERY POINT VALIDATION VACANT INDICATOR,Numeric,,1,,"CoreLogic internal field containing the United State Postal Service (USPS) delivery point validation that indicates a vacant property.
+Values:
+1 = Yes, exclude from data or products
+0= No exclusion"
+TAX V3,,,,,,
+129,CALCULATED TOTAL VALUE,Numeric,,11,,"The ""TOTAL"" (i.e., Land + Improvement) Value closest to current market value used for assessment by county or local taxing authorities."
+130,CALCULATED LAND VALUE,Numeric,,11,,"The ""LAND"" Value closest to current market value used for assessment by county or local taxing authorities."
+131,CALCULATED IMPROVEMENT VALUE,Numeric,,11,,"The ""IMPROVEMENT"" Value closest to current market value used for assessment by county or local taxing authorities."
+132,CALCULATED TOTAL VALUE SOURCE CODE,AlphaNumeric,,1,,"The code appearing in this indicator field reflects the type of values used to seed the TOTAL VALUE CALCULATED field (i.e., A = Assessed, M = Market, P = Appraised, T = Transitional)."
+133,ASSESSED TOTAL VALUE,Numeric,,11,,The Total Assessed Value of the Parcel's Land & Improvement values as provided by the county or local taxing/assessment authority.
+134,ASSESSED LAND VALUE,Numeric,,11,,The Assessed Land Value as provided by the county or local taxing/assessment authority.
+135,ASSESSED IMPROVEMENT VALUE,Numeric,,11,,The Assessed Improvement Value as provided by the county or local taxing/assessment authority.
+136,MARKET TOTAL VALUE,Numeric,,11,,The Total Market Value of the Parcel's Land & Improvement values as provided by the county or local taxing/assessment authority.
+137,MARKET LAND VALUE,Numeric,,11,,The Market Land Value as provided by the county or local taxing/assessment authority.
+138,MARKET IMPROVEMENT VALUE,Numeric,,11,,The Market Improvement Value as provided by the county or local taxing/assessment authority.
+139,APPRAISED TOTAL VALUE,Numeric,,11,,The Total Appraised Value of the Parcel's Land & Improvement as provided by the county or local taxing/assessment authority.
+140,APPRAISED LAND VALUE,Numeric,,11,,The Appraised Land Value as provided by the county or local taxing/assessment authority.
+141,APPRAISED IMPROVEMENT VALUE,Numeric,,11,,The Appraised Improvement Value as provided by the county or local taxing/assessment authority.
+142,TOTAL TAX AMOUNT,Numeric,,14,2,Total property tax amount for the current tax year.
+143,NET TAX AMOUNT,Numeric,,13,2,Property tax amount less exemptions and/or credits.
+144,TAX YEAR,Numeric,,4,,The tax year for which the taxes were billed.
+145,ASSESSED YEAR,Numeric,,4,,The assessment year for which the taxes were billed.
+146,TAX AREA CODE,AlphaNumeric,,10,,Identifies the tax area code associated with the parcel.
+147,TOTAL PROPERTY TAX RATE PERCENT,Numeric,,7,3,County provided tax rate for the property based on Property Taxes billed through the county.
+148,TAXABLE IMPROVEMENT VALUE,Numeric,,9,,County provided value of the improvement applied to the parcel used in the calculation of the tax bill.
+149,TAXABLE LAND VALUE,Numeric,,9,,County provided land value of a parcel used in the calculation of the tax bill.
+150,TAXABLE OTHER VALUE,Numeric,,9,,"County provided value of fixture, features or miscellaneous values used in the calculation of the tax bill."
+151,NET TAXABLE VALUE,Numeric,,13,2,Assessed Value less exemptions or credits.
+TAX EXEMPTION V3,,,,,,
+152,HOMESTEAD EXEMPT INDICATOR,AlphaNumeric,,1,,"This field will be set with a ""Y"" if the owner has qualified for a Homeowner/Homestead exemption."
+153,SENIOR EXEMPT INDICATOR,AlphaNumeric,,1,,"This field will be set with a ""Y"" if the owner has qualified for a Senior exemption."
+154,DISABLED EXEMPT INDICATOR,AlphaNumeric,,1,,"This field will be set with a ""Y"" if the owner has qualified for a Disabled exemption."
+155,VETERAN EXEMPT INDICATOR,AlphaNumeric,,1,,"This field will be set with a ""Y"" if the owner has qualified for a Veteran exemption."
+156,WIDOW EXEMPT INDICATOR,AlphaNumeric,,1,,"This field will be set with a ""Y"" if the owner has qualified for a Widow exemption."
+157,TOTAL TAX EXEMPTION AMOUNT,Numeric,,11,,Total amount of assessed value exempt from taxation.
+158,CALCULATED TOTAL TAX EXEMPTION AMOUNT,Numeric,,11,,CoreLogic calculated total amount of all the exemptions to property taxes on the property site.
+PURCHASE TRANSACTION V3,,,,,,
+159,TRANSACTION BATCH DATE,Numeric,,8,,CoreLogic internal date number - can be used in the creation of unique keys (format is YYYYMMDD).
+160,TRANSACTION BATCH SEQUENCE NUMBER,Numeric,,5,,CoreLogic internal sequence number - can be used in the creation of unique keys.
+161,MULTI OR SPLIT PARCEL CODE,AlphaNumeric,SLTY2,1,,"Indicates either that the transaction involves multiple parcels, or the split of an existing parcel."
+162,SALE RECORDED DOCUMENT NUMBER,AlphaNumeric,,12,,The document number used by some counties to record sales transactions.
+163,SALE RECORDED DOCUMENT BOOK NUMBER,AlphaNumeric,,6,,The Book number used by some counties to catalog their sales recordings.
+164,SALE RECORDED DOCUMENT PAGE NUMBER,AlphaNumeric,,6,,The Page number used by some counties to catalog their sales recordings.
+165,SALE DOCUMENT TYPE CODE,AlphaNumeric,DOCTY,6,,"The type of deed used to record the sales transaction (e.g., Grant, Quit, Foreclosure)."
+166,SALE RECORDING DATE,Numeric,,8,,The date the sales transaction was recorded at the county. This date is generally considered the transfer of ownership date. Format: YYYYMMDD.
+167,SALE DATE,Numeric,,8,,"Date that the deed was prepared in advance of being notarized and prior to being recorded. If the day and/or month is missing, CoreLogic populates these values with 00. Format: YYYYMMDD."
+168,SALE AMOUNT,Numeric,,14,2,Dollar amount of the most recent sale of the property.
+169,SALE TYPE CODE,AlphaNumeric,SLTYP,1,,This field indicates what the financial consideration is - if a Deed record represents a change of ownership (Sale).
+170,TRANSACTION TYPE CODE,AlphaNumeric,TRNTP,3,,"This field details the type of real estate transaction associated with a single recorded legal document, or a set of concurrently recorded documents, i.e. Market Sale with or without a Mortgage, Standalone Mortgage, Construction Financing Loan, etc.  "
+171,TITLE COMPANY CODE,AlphaNumeric,,5,,This is a CoreLogic internal code used to identify the Title Company that was associated with the sales transaction.
+172,TITLE COMPANY NAME,AlphaNumeric,,60,,This is the Title Company associated with the sales transaction.
+173,RESIDENTIAL INDICATOR,AlphaNumeric,,1,,Indicates whether the property is residential. Y = yes or NULL = no or unknown.
+174,SELLER NAME,AlphaNumeric,,60,,The seller's name as it appears on the recorded sales transaction.
+PROPERTY SIZE V3,,,,,,
+175,FRONT FOOTAGE,Numeric,,12,4,The linear feet across the front of the lot - facing the street.
+176,DEPTH FOOTAGE,Numeric,,12,4,The linear feet between the front and back of the lot.
+177,TOTAL NUMBER OF ACRES,Numeric,,14,4,CoreLogic derived or county provided value that indicates the total acreage of the parcel.
+178,TOTAL LAND SQUARE FOOTAGE,Numeric,,14,,Total land mass in square feet.
+179,EASEMENT TYPE CODE,AlphaNumeric,,30,,"County provided code describing easement(s) that may exist on the property. Note: An easement is a right granted to one party with regard to the land of another party. Most easements provide for access across one property to another. This can also be a green space or waterways between two properties or county or city property such as city gas lines running across a property. Example: 2 = Flood Control Easement. Easement value is delivered if available, otherwise easement code is delivered."
+STRUCTURE - AGE,,,,,,
+180,YEAR BUILT,Numeric,,4,,This is the construction year of the original building on the parcel as provided by the county. Not all counties maintain both Original and Effective Year Built. Null if not available from the source. Format: YYYY
+181,EFFECTIVE YEAR BUILT,Numeric,,4,,"Typically this field reflects the first year the building was assessed with its current components (e.g., a building is originally constructed in 1960 and a bedroom and bath was added to the building in 1974. In this example, Year Built would be 1960 and the Effective Year Built would be 1974). Certain counties only maintain one Year Built data element, and overlay Original Year Built with Effective Year Built if there was a structural change to the building that affected Assessed Value. In these counties, Year Built will be null and Effective Year Built will contain the single data element provided by the source - examples include Fresno and San Diego counties. Format: YYYY"
+STRUCTURE - ROOMS,,,,,,
+182,TOTAL NUMBER OF BEDROOMS - ALL BUILDINGS,Numeric,,5,,CoreLogic calculated total bedrooms for all the buildings on the property.
+183,TOTAL NUMBER OF ROOMS - ALL BUILDINGS,Numeric,,5,,Total number of rooms as supplied by the source.
+184,TOTAL NUMBER OF BATHROOMS - ALL BUILDINGS,Numeric,,3,,"Total number of rooms that are considered bathrooms across all buildings on the property.  For example, a half bathroom is considered one room.  "
+185,TOTAL NUMBER OF BATHROOMS,Numeric,,7,2,"Total number of rooms that are Bathrooms (Primary Building) if this is the method of establishing bathroom property characterized by the source.  Source values are whole numbers, although field allows for up to 2 decimal places in data deliveries."
+186,TOTAL NUMBER OF FULL BATHS - ALL BUILDINGS,Numeric,,5,,Total number of full bath rooms as supplied by source. If source does not break out full versus partial Baths -field will be null in this case.
+187,TOTAL NUMBER OF HALF BATHS - ALL BUILDINGS,Numeric,,5,,Total number of half bath rooms (typically comprised of a sink & toilet) as supplied by source. If source does not break out full versus partial Baths – field will be null in this case.
+188,TOTAL NUMBER OF 1QTR BATHS - ALL BUILDINGS,Numeric,,5,,"Total number of quarter bath rooms (typically comprised only of a sink, as found in many laundry rooms) as supplied by source. If source does not break out full versus partial Baths – field will be null in this case."
+189,TOTAL NUMBER OF 3QTR BATHS - ALL BUILDINGS,Numeric,,5,,"Total number of three-quarter bath rooms (typically comprised of a sink, toilet & shower stall) as supplied by source.  If source does not break out full versus partial Baths – field will be null in this case."
+190,TOTAL NUMBER OF BATH FIXTURES,Numeric,,5,,"The total number of bathroom fixtures - Primary Building (typically a full bath would have 4 fixtures - 1 = sink, 1 = toilet, 1 = bathtub, 1 = shower head)."
+191,TOTAL NUMBER OF BATH FIXTURES - ALL BUILDINGS,Numeric,,5,,"CoreLogic calculated total designated bath fixtures associated with all the bathrooms in all the buildings on the property. Examples: sink, toilet, shower stall, tub and faucets."
+STRUCTURE - INTERIOR,,,,,,
+192,AIR CONDITIONING TYPE CODE,AlphaNumeric,AC,3,,"The type of air conditioning method used to cool the building (e.g., Central, Wall Unit, Evaporative)."
+193,BASEMENT FINISH TYPE CODE,AlphaNumeric,BSMTF,3,,The standardized code that identifies the basement's degree of completion.
+194,BASEMENT TYPE CODE,AlphaNumeric,BSMT,3,,The standardized basement type.
+195,FIREPLACE INDICATOR,AlphaNumeric,,1,,"This field is populated with a ""Y"" if a fireplace is located within the building."
+196,TOTAL NUMBER OF FIREPLACES,Numeric,,3,,This represents the number of fireplace openings located within all buildings on the property.
+197,FIREPLACE TYPE CODE,AlphaNumeric,FIREP,3,,"The type of fireplace. If more than one fireplace, this field reflects the first/main building."
+198,FLOOR TYPE CODE,AlphaNumeric,FLRCO,3,,"The type of floor construction (e.g., Concrete, Plywood)."
+199,HEATING TYPE CODE,AlphaNumeric,HEAT,3,,"Type or method of heating (e.g., Hot Water, Heat Pump, Baseboard, Radiant)."
+200,STORIES TYPE CODE,AlphaNumeric,STORY,3,,"Type / number of stories (e.g., Split Foyer, Tri Level, 2 Story)."
+201,TOTAL NUMBER OF STORIES,Numeric,,6,2,Number of stories associated with the building.
+STRUCTURE - EXTERIOR,,,,,,
+202,BUILDING TYPE CODE,AlphaNumeric,BLDG,3,,"The primary building type (e.g., Bowling Alley, Supermarket)."
+203,BUILDING IMPROVEMENT TYPE CODE,AlphaNumeric,IMPRV,3,,"The primary improvement type (e.g., Grain Silo, Hanger, Marina)."
+204,BUILDING IMPROVEMENT CONDITION CODE,AlphaNumeric,COND,3,,"This represents the physical condition of the main improvement (e.g., Good, Fair, Under Construction)."
+205,CONSTRUCTION TYPE CODE,AlphaNumeric,CNSTR,3,,"The primary method of construction (e.g., Steel / Glass, Concrete Block, Log)."
+206,EXTERIOR WALL TYPE CODE,AlphaNumeric,EXTNW,3,,"The type and/or finish of the exterior walls (e.g., Vinyl Siding, Brick Veneer, Frame / Stone)."
+207,FOUNDATION TYPE CODE,AlphaNumeric,FOUND,3,,"The type of foundation (e.g., Continuous Footing, Pier, Mud Sill)."
+208,FRAME TYPE CODE,AlphaNumeric,FRAME,3,,"The type of wall framing used (e.g., Bar Joist, Reinforced Concrete, Flexicore)."
+209,GARAGE TYPE CODE,AlphaNumeric,GRGCD,3,,"Type of garage or carport present (e.g., Attached Finished, Enclosed Carport, Basement Garage)."
+210,TOTAL NUMBER OF PARKING SPACES,Numeric,,5,,This represents the total number of parking spaces or car capacity associated with the garage or parking type.
+211,PARKING TYPE CODE,AlphaNumeric,PARKG,3,,"Type of parking found on the parcel. This is typically commercial or communal in nature (e.g., Condos)."
+212,POOL INDICATOR,AlphaNumeric,,1,,"This field is populated with a ""Y"" if a Pool is present on the parcel."
+213,POOL TYPE CODE,AlphaNumeric,POOL,3,,"Type of pool, construction or pool amenities (e.g., Kidney, Gunite, Vinyl, Jacuzzi, Heated)."
+214,BUILDING QUALITY CODE,AlphaNumeric,QUAL,3,,"Type of construction quality of building (e.g., excellent, economical)."
+215,ROOF COVER TYPE CODE,AlphaNumeric,RFCO,3,,"Type of roof covering (e.g., Clay Tile, Aluminum, Shake)."
+216,ROOF TYPE CODE,AlphaNumeric,RFCO,3,,"Type of roof (e.g., Gambrel, Gable, Flat, Mansard)."
+217,BUILDING STYLE TYPE CODE,AlphaNumeric,STYLE,3,,"Type of building style (e.g., Colonial, Cape Code, Bungalow)."
+218,TOTAL NUMBER OF UNITS - ALL BUILDINGS,Numeric,,5,,"Number of residential, apartment or business units."
+STRUCTURE SIZE V3,,,,,,
+219,UNIVERSAL BUILDING SQUARE FEET,Numeric,,9,,"The Building Square Footage that reflects the most accurate available for use in assessments or comparables (e.g., Living, Adjusted, Gross)."
+220,UNIVERSAL BUILDING SQUARE FEET SOURCE CODE,AlphaNumeric,,1,,"The codes appearing in this field indicates the source used to populate the UNIVERSAL BUILDING SQUARE FEET field. A=ADJUSTED, B=TOTAL, D or R=GROUND FLOOR, G=GROSS, L=LIVING, M=BASE/MAIN, H = HEATED AREA"
+221,BUILDING AREA SQUARE FEET,Numeric,,9,,The size of the building in square feet. This field is most commonly populated as an aggregate total when a county does not differentiate between living and non-living areas.
+222,TOTAL LIVING AREA SQUARE FEET - ALL BUILDINGS,Numeric,,10,,"This is the area of all buildings that are used for general living. This is typically the area of all buildings that is heated or air conditioned and generally does not include Garage, Porch or Unfinished Basement Square Footage values."
+223,GROUND FLOOR AREA SQUARE FEET,Numeric,,10,,Square footage of the part of the building which is level with the ground (typically the front of the building). This is generally above the basement(s) and below the second floor.
+224,BUILDING GROSS AREA SQUARE FEET,Numeric,,10,,This is the square footage for the entire building. Typically this represents all square feet under the roof.
+225,BUILDING ADJUSTED AREA SQUARE FEET,Numeric,,10,,"This is the square footage used by the county or local taxing / assessment authority to determine Improvement Value. This figure is typically 100% of the living area, plus lower percentage of non-living area."
+226,BASEMENT AREA SQUARE FEET,Numeric,,10,,This is the total square footage associated with the Basement portion of a building. This would include both finished and unfinished areas.
+227,GARAGE OR PARKING SQUARE FEET,Numeric,,13,3,This is the total square footage of the primary garage or parking area.
+228,SECOND FLOOR AREA SQUARE FEET,Numeric,,11,3,Square footage of building level immediately above ground floor.
+229,FINISHED BASEMENT AREA SQUARE FEET,Numeric,,11,3,Square footage of below grade area improved for occupancy.
+230,UNFINISHED BASEMENT AREA SQUARE FEET,Numeric,,11,3,Square footage of below grade area not improved for occupancy.
+UTILITIES V2,,,,,,
+231,FUEL TYPE CODE,AlphaNumeric,FUEL,3,,"Type of fuel used for heating the parcel (e.g., Solar, Gas, Oil)."
+232,ELECTRICITY/WIRING TYPE CODE,AlphaNumeric,ELEC,3,,"Type of electricity and/or type of wiring used for a parcel (e.g., Average Wiring, Underground Wired, Private Source)."
+233,SEWER TYPE CODE,AlphaNumeric,SEWER,3,,"Type of sewer system on the parcel (e.g., Public, Septic, Commercial)."
+234,UTILITIES TYPE CODE,AlphaNumeric,UTIL,3,,"The type of utilities used in a building (e.g., Electric, Oil, Private)."
+235,WATER TYPE CODE,AlphaNumeric,WATER,3,,"Type of water service on the parcel (e.g., Public, Well, Cistern)."
+236,BUILDING FUEL TYPE CODE,AlphaNumeric,FUEL,3,,Primary heating fuel used in the building as provided by the source.
+TAXROLL UPDATE V2,,,,,,
+237,LAST ASSESSOR UPDATE DATE,Numeric,,8,,Date which CoreLogic applied a full tax roll for a county (independent of Assessed Year and Tax Year).
+238,TAXROLL CERTIFICATION DATE,Numeric,,8,,Assessor certified date of the full county refresh date for the county. Typically occurs first of month.
+239,TAXROLL EDITION NUMBER,Numeric,,2,,"CoreLogic internal tracking number assigned to the Current Taxroll Edition of assessor property data for a county or jurisdiction. For this data file, the current edition number is always greater than the previous historical Taxroll Edition Number of assessor property data for a county or jurisdiction. Example: If the previous Taxroll Edition Number for a county is 3, the Current Taxroll Edition Number is 4."
+240,BEGINNING TAX YEAR DATE,Numeric,,4,,"County provided start of the tax period year for the most recent tax bill processed. If the tax period is on a calendar year basis, the beginning and ending year date is the same."
+241,ENDING TAX YEAR DATE,Numeric,,4,,"County provided the end of the tax period year for the most recent tax bill processed. If the tax period is on a calendar year basis, the beginning and ending year date is the same."
+COMMERCIAL V2,,,,,,
+242,TOTAL SQUARE FOOTAGE OPEN AREAS,Numeric,,15,4,CoreLogic calculated total square footage allocated to all open areas for the property.
+243,TOTAL AREA SQUARE FOOTAGE - ALL BUILDINGS,Numeric,,15,4,CoreLogic calculated total square footage allocated to all square footage for all buildings on the property.
+244,TOTAL AREA SQUARE FOOTAGE OFFICE SPACE - ALL BUILDINGS,Numeric,,15,4,CoreLogic calculated total office area square footage in all the buildings on the property.
+245,TOTAL NUMBER OF ELEVATORS - ALL BUILDINGS,Numeric,,3,,CoreLogic calculated total number of elevators for all the buildings on the property. This is mostly in use for commercial buildings.
+246,TOTAL NUMBER OF LOADING DOCKS - ALL BUILDINGS,Numeric,,3,,CoreLogic calculated total of loading docks for all the buildings on the property. This is mostly in use for commercial buildings.
+247,TOTAL NUMBER OF RAIL SPURS - ALL BUILDINGS,Numeric,,3,,CoreLogic calculated total of rail spurs for all the buildings on the property. This is mostly in use for commercial buildings.
+248,TOTAL NUMBER OF TRUCK DOORS - ALL BUILDINGS,Numeric,,3,,CoreLogic calculated total number of truck doors for all the buildings on the property. This is mostly in use for commercial buildings.
+249,TOTAL NUMBER OF 1 BEDROOMS,Numeric,,3,,CoreLogic calculated total number of one (1) bedroom units for all the buildings on the property. This is mostly in use for rental or multi-family buildings.
+250,TOTAL NUMBER OF 2 BEDROOMS,Numeric,,3,,CoreLogic calculated total number of two (2) bedroom units for all the buildings on the property. This is mostly in use for rental or multi-family buildings.
+251,TOTAL NUMBER OF 3 BEDROOMS,Numeric,,3,,CoreLogic calculated total number of three (3) bedroom units for all the buildings on the property. This is mostly in use for rental or multi-family buildings.
+252,TOTAL NUMBER OF EFFICIENCY UNITS,Numeric,,3,,CoreLogic calculated total number of efficiency units for all the buildings on the property. This is mostly in use for rental or multi-family buildings.
+OWNER IDENTIFIERS,,,,,,
+253,OWNER 1 IDENTIFIER,Numeric,,20,,"Unique identification number associated with the first Owner listed from the Assessor data, either an individual or business. For a business, this does NOT include name resolution or roll-up of subsidiaries, i.e. “CoreLogic LLC” and “CoreLogic NA” may receive two separate ID’s."
+254,OWNER 2 IDENTIFIER,Numeric,,20,,"Unique identification number associated with the second Owner listed from the Assessor data, either an individual or business. For a business, this does NOT include name resolution or roll-up of subsidiaries, i.e. “CoreLogic LLC” and “CoreLogic NA” may receive two separate ID’s."
+OWNER PREMIUM IDENTIFIERS,,,,,,
+255,OWNER 3 IDENTIFIER,Numeric,,20,,"Unique identification number associated with the third Owner listed from the Assessor data, either an individual or business. For a business, this does NOT include name resolution or roll-up of subsidiaries, i.e. “CoreLogic LLC” and “CoreLogic NA” may receive two separate ID’s"
+256,OWNER 4 IDENTIFIER,Numeric,,20,,"Unique identification number associated with the fourth Owner listed from the Assessor data, either an individual or business. For a business, this does NOT include name resolution or roll-up of subsidiaries, i.e. “CoreLogic LLC” and “CoreLogic NA” may receive two separate ID’s."
+LAST MARKET SALE,,,,,,
+257,LAST MARKET SALE DERIVED DATE,Numeric,,8,,"CoreLogic proprietary sale date derived from the original public record filing, representing the date that the Deed was prepared in advance of being notarized and prior to being recorded.  Format: YYYYMMDD."
+258,LAST MARKET SALE AMOUNT,Numeric,,14,2,Dollar amount of the most recent sale of the property.
+259,LAST MARKET SALE MULTI OR SPLIT PARCEL CODE,AlphaNumeric,SLTY2,1,,"Indicates either that the transaction involves multiple parcels, or the split of an existing parcel."
+THVX FOR RISK MANAGEMENT,,,,,,
+260,MODEL NAME - RM,AlphaNumeric,,20,,Total Home Value Model Name.
+261,MODEL VERSION - RM,AlphaNumeric,,10,,Total Home Value Model Version Number. Example 1.0.1
+262,VALUE AS OF DATE - RM,Numeric,,8,,The date the model estimated the value. Format: YYYYMMDD
+263,ESTIMATED VALUE - RM,Numeric,,11,,Estimated market value of the subject property. Example: 720000
+264,ESTIMATED VALUE HIGH - RM,Numeric,,11,,The highest likely property value estimate in the Estimated Value Range. Example: 740000
+265,ESTIMATED VALUE LOW - RM,Numeric,,11,,The lowest likely property value estimate in the Estimated Value Range. Example: 710000
+266,CONFIDENCE SCORE - RM,Numeric,,3,,"The confidence score is a measure of the extent to which sales data, property information, and comparable sales support the property valuation analysis process. Higher numbers means higher confidence. Range: 0-100"
+267,FORECAST STANDARD DEVIATION - RM,Numeric,,2,,Represent 68% statistic certainty that the estimated property value is within +- FSD score. Lower numbers means higher confidence. Range: 0-50
+268,RESULT CODE - RM,Numeric,,1,,Numeric representation of the result description. Range: 1-3
+269,RESULT DESCRIPTION - RM,AlphaNumeric,,100,,"The result description that will identify if the evaluation is successful or unsuccessful. If the unsuccessful, it will include reason details."
+THVX FOR MARKETING,,,,,,
+270,MODEL NAME - MKTG,AlphaNumeric,,20,,Total Home Value Model Name.
+271,MODEL VERSION - MKTG,AlphaNumeric,,10,,Total Home Value Model Version Number. Example 1.0.1
+272,VALUE AS OF DATE - MKTG,Numeric,,8,,The date the model estimated the value. Format: YYYYMMDD
+273,ESTIMATED VALUE - MKTG,Numeric,,11,,Estimated market value of the subject property. Example: 720000
+274,ESTIMATED VALUE HIGH - MKTG,Numeric,,11,,The highest likely property value estimate in the Estimated Value Range. Example: 740000
+275,ESTIMATED VALUE LOW - MKTG,Numeric,,11,,The lowest likely property value estimate in the Estimated Value Range. Example: 710000
+276,CONFIDENCE SCORE - MKTG,Numeric,,3,,"The confidence score is a measure of the extent to which sales data, property information, and comparable sales support the property valuation analysis process. Higher numbers means higher confidence. Range: 0-100"
+277,FORECAST STANDARD DEVIATION - MKTG,Numeric,,2,,Represent 68% statistic certainty that the estimated property value is within +- FSD score. Lower numbers means higher confidence. Range: 0-50
+278,RESULT CODE - MKTG,Numeric,,1,,Numeric representation of the result description. Range: 1-3
+279,RESULT DESCRIPTION - MKTG,AlphaNumeric,,100,,"The result description that will identify if the evaluation is successful or unsuccessful. If the unsuccessful, it will include reason details."
+THVX FOR ORIGINATIONS,,,,,,
+280,MODEL NAME - ORIG,AlphaNumeric,,20,,Total Home Value Model Name.
+281,MODEL VERSION - ORIG,AlphaNumeric,,10,,Total Home Value Model Version Number. Example 1.0.1
+282,VALUE AS OF DATE - ORIG,Numeric,,8,,The date the model estimated the value. Format: YYYYMMDD
+283,ESTIMATED VALUE - ORIG,Numeric,,11,,Estimated market value of the subject property. Example: 720000
+284,ESTIMATED VALUE HIGH - ORIG,Numeric,,11,,The highest likely property value estimate in the Estimated Value Range. Example: 740000
+285,ESTIMATED VALUE LOW - ORIG,Numeric,,11,,The lowest likely property value estimate in the Estimated Value Range. Example: 710000
+286,CONFIDENCE SCORE - ORIG,Numeric,,3,,"The confidence score is a measure of the extent to which sales data, property information, and comparable sales support the property valuation analysis process. Higher numbers means higher confidence. Range: 0-100"
+287,FORECAST STANDARD DEVIATION - ORIG,Numeric,,2,,Represent 68% statistic certainty that the estimated property value is within +- FSD score. Lower numbers means higher confidence. Range: 0-50
+288,RESULT CODE - ORIG,Numeric,,1,,Numeric representation of the result description. Range: 1-3
+289,RESULT DESCRIPTION - ORIG,AlphaNumeric,,100,,"The result description that will identify if the evaluation is successful or unsuccessful. If the unsuccessful, it will include reason details."
+THVX FOR CONSUMERS,,,,,,
+290,MODEL NAME - CONS,AlphaNumeric,,20,,Total Home Value Model Name.
+291,MODEL VERSION - CONS,AlphaNumeric,,10,,Total Home Value Model Version Number. Example 1.0.1
+292,VALUE AS OF DATE - CONS,Numeric,,8,,The date the model estimated the value. Format: YYYYMMDD
+293,ESTIMATED VALUE - CONS,Numeric,,11,,Estimated market value of the subject property. Example: 720000
+294,ESTIMATED VALUE HIGH - CONS,Numeric,,11,,The highest likely property value estimate in the Estimated Value Range. Example: 740000
+295,ESTIMATED VALUE LOW - CONS,Numeric,,11,,The lowest likely property value estimate in the Estimated Value Range. Example: 710000
+296,CONFIDENCE SCORE - CONS,Numeric,,3,,"The confidence score is a measure of the extent to which sales data, property information, and comparable sales support the property valuation analysis process. Higher numbers means higher confidence. Range: 0-100"
+297,FORECAST STANDARD DEVIATION - CONS,Numeric,,2,,Represent 68% statistic certainty that the estimated property value is within +- FSD score. Lower numbers means higher confidence. Range: 0-50
+298,RESULT CODE - CONS,Numeric,,1,,Numeric representation of the result description. Range: 1-3
+299,RESULT DESCRIPTION - CONS,AlphaNumeric,,100,,"The result description that will identify if the evaluation is successful or unsuccessful. If the unsuccessful, it will include reason details."
+OPEN LIEN EQUITY AND LTV FOR MARKETING V2,,,,,,
+300,PURCHASE RECORDING DATE,Numeric,,8,,The date the transaction was recorded at the county. Format: YYYYMMDD.
+301,PURCHASE AMOUNT,Numeric,,13,2,Dollar amount of the most recent purchase of the property.
+302,TOTAL NUMBER OF OPEN MORTGAGE LIENS,Numeric,,3,,Total number of open mortgage liens against the property.
+303,TOTAL AMOUNT OF OPEN MORTGAGE LIENS,Numeric,,15,2,Sum total of origination amounts of open mortgage liens against the property.
+304,PURCHASE COMBINED LTV (LOAN TO VALUE),Numeric,,14,2,Ratio of purchase mortgages against purchase amount.
+305,ESTIMATED EQUITY,Numeric,,12,,"Difference between current AVM Value and the sum of all open, original loan amounts, for all open liens."
+306,ESTIMATED COMBINED LTV (LOAN TO VALUE),Numeric,,14,2,Ratio of the sum amount of all open liens at origination divided into the current AVM value.
+OPEN LIEN EQUITY AND LTV FOR RISK MANAGEMENT V2,,,,,,
+307,PURCHASE RECORDING DATE,Numeric,,8,,The date the transaction was recorded at the county. Format: YYYYMMDD.
+308,PURCHASE AMOUNT,Numeric,,13,2,Dollar amount of the most recent purchase of the property.
+309,TOTAL NUMBER OF OPEN MORTGAGE LIENS,Numeric,,3,,Total number of open mortgage liens against the property.
+310,TOTAL AMOUNT OF OPEN MORTGAGE LIENS,Numeric,,15,2,Sum total of origination amounts of open mortgage liens against the property.
+311,PURCHASE COMBINED LTV (LOAN TO VALUE),Numeric,,14,2,Ratio of purchase mortgages against purchase amount.
+312,ESTIMATED EQUITY,Numeric,,12,,"Difference between current AVM Value and the sum of all open, original loan amounts, for all open liens."
+313,ESTIMATED COMBINED LTV (LOAN TO VALUE),Numeric,,14,2,Ratio of the sum amount of all open liens at origination divided into the current AVM value.
+FIRST POSITION OPEN LIEN FOR MARKETING V2,,,,,,
+314,FIRST POSITION COMPOSITE TRANSACTION ID,AlphaNumeric,,21,,"Unique transaction key comprised of FIPS Code, Transaction Batch Date, Transaction Sequence Number, and Mortgage Sequence Number."
+315,FIRST POSITION MORTGAGE LTV (LOAN TO VALUE),Numeric,,14,2,Ratio of origination loan amount divided into current AVM value.
+316,FIRST POSITION MULTI OR SPLIT PARCEL CODE,AlphaNumeric,SLTY2,1,,"Indicates either that the transaction involves multiple parcels, or the split of an existing parcel."
+317,FIRST POSITION MORTGAGE TYPE CODE,AlphaNumeric,,1,,"CoreLogic standardized mortgage classification for principal mortgages ('P'urchase, 'R'efinance) or subordinate mortgages ('J'unior)."
+318,FIRST POSITION MORTGAGE PURPOSE CODE,AlphaNumeric,MPRPS,2,,CoreLogic standardized value indicating the reason for the principal or subordinate mortgage.
+319,FIRST POSITION MORTGAGE DATE,Numeric,,8,,"Borrower's signature date on mortgage/deed of trust. This represents the date the borrower’s obligation to the lender begins, i.e. loan open date. This date is the same or prior to the recording date. If the day and/or month is missing, CoreLogic populates these values with 00. Format: YYYYMMDD."
+320,FIRST POSITION MORTGAGE RECORDING DATE,Numeric,,8,,The date the mortgage transaction was recorded at the county. Format: YYYYMMDD.
+321,FIRST POSITION MORTGAGE RECORDED DOCUMENT YEAR,Numeric,,4,,The year the mortgage transaction was recorded at the county. Format: YYYY.
+322,FIRST POSITION MORTGAGE RECORDED DOCUMENT NUMBER,AlphaNumeric,,12,,The document number used by some counties to record mortgage transactions.
+323,FIRST POSITION MORTGAGE RECORDED DOCUMENT BOOK NUMBER,AlphaNumeric,,6,,"The Book number used by some counties to catalog their mortgage recordings. (e.g., 001234)"
+324,FIRST POSITION MORTGAGE RECORDED DOCUMENT PAGE NUMBER,AlphaNumeric,,6,,"The Page number used by some counties to catalog their mortgage recordings. (e.g., 001234)"
+325,FIRST POSITION MORTGAGE AMOUNT,Numeric,,13,2,The amount of the mortgage at the time of the transaction.
+326,FIRST POSITION MORTGAGE LOAN TYPE CODE,AlphaNumeric,MTGTP,5,,"CoreLogic standardized value indicating the type of loan secured. (e.g., Conventional, FHA, VA)."
+327,FIRST POSITION MORTGAGE SUBORDINATE TYPE CODE,AlphaNumeric,EQUIT,3,,"CoreLogic standardized value indicating the type of subordinate mortgage secured. (e.g., 'C'redit Line, 'E'quity, Ba'L'loon)"
+328,FIRST POSITION MORTGAGE INTEREST RATE,Numeric,,7,4,Interest rate on the mortgage at origination.
+329,FIRST POSITION MORTGAGE INTEREST RATE TYPE CODE,AlphaNumeric,MTGRT,3,,CoreLogic standardized value indicating the type of mortgage interest rate.
+330,FIRST POSITION MORTGAGE TERM,Numeric,,5,,Time period over which the mortgage is amortized.
+331,FIRST POSITION MORTGAGE TERM CODE,AlphaNumeric,MTGTC,1,,"Code used to identify whether the number stored in MORTGAGE TERM is in days, months or years."
+332,FIRST POSITION MORTGAGE MATURITY DATE,Numeric,,8,,The date the mortgage becomes due. Format: YYYYMMDD.
+FIRST POSITION OPEN LIEN FOR RISK MANAGEMENT V2,,,,,,
+333,FIRST POSITION COMPOSITE TRANSACTION ID,AlphaNumeric,,21,,"Unique transaction key comprised of FIPS Code, Transaction Batch Date, Transaction Sequence Number, and Mortgage Sequence Number."
+334,FIRST POSITION MORTGAGE LTV (LOAN TO VALUE),Numeric,,14,2,Ratio of origination loan amount divided into current AVM value.
+335,FIRST POSITION MULTI OR SPLIT PARCEL CODE,AlphaNumeric,SLTY2,1,,"Indicates either that the transaction involves multiple parcels, or the split of an existing parcel."
+336,FIRST POSITION MORTGAGE TYPE CODE,AlphaNumeric,,1,,"CoreLogic standardized mortgage classification for principal mortgages ('P'urchase, 'R'efinance) or subordinate mortgages ('J'unior)."
+337,FIRST POSITION MORTGAGE PURPOSE CODE,AlphaNumeric,MPRPS,2,,CoreLogic standardized value indicating the reason for the principal or subordinate mortgage.
+338,FIRST POSITION MORTGAGE DATE,Numeric,,8,,"Borrower's signature date on mortgage/deed of trust. This represents the date the borrower’s obligation to the lender begins, i.e. loan open date. This date is the same or prior to the recording date. If the day and/or month is missing, CoreLogic populates these values with 00. Format: YYYYMMDD."
+339,FIRST POSITION MORTGAGE RECORDING DATE,Numeric,,8,,The date the mortgage transaction was recorded at the county. Format: YYYYMMDD.
+340,FIRST POSITION MORTGAGE RECORDED DOCUMENT YEAR,Numeric,,4,,The year the mortgage transaction was recorded at the county. Format: YYYY.
+341,FIRST POSITION MORTGAGE RECORDED DOCUMENT NUMBER,AlphaNumeric,,12,,The document number used by some counties to record mortgage transactions.
+342,FIRST POSITION MORTGAGE RECORDED DOCUMENT BOOK NUMBER,AlphaNumeric,,6,,"The Book number used by some counties to catalog their mortgage recordings. (e.g., 001234)"
+343,FIRST POSITION MORTGAGE RECORDED DOCUMENT PAGE NUMBER,AlphaNumeric,,6,,"The Page number used by some counties to catalog their mortgage recordings. (e.g., 001234)"
+344,FIRST POSITION MORTGAGE AMOUNT,Numeric,,13,2,The amount of the mortgage at the time of the transaction.
+345,FIRST POSITION MORTGAGE LOAN TYPE CODE,AlphaNumeric,MTGTP,5,,"CoreLogic standardized value indicating the type of loan secured. (e.g., Conventional, FHA, VA)."
+346,FIRST POSITION MORTGAGE SUBORDINATE TYPE CODE,AlphaNumeric,EQUIT,3,,"CoreLogic standardized value indicating the type of subordinate mortgage secured. (e.g., 'C'redit Line, 'E'quity, Ba'L'loon)"
+347,FIRST POSITION MORTGAGE INTEREST RATE,Numeric,,7,4,Interest rate on the mortgage at origination.
+348,FIRST POSITION MORTGAGE INTEREST RATE TYPE CODE,AlphaNumeric,MTGRT,3,,CoreLogic standardized value indicating the type of mortgage interest rate.
+349,FIRST POSITION MORTGAGE TERM,Numeric,,5,,Time period over which the mortgage is amortized.
+350,FIRST POSITION MORTGAGE TERM CODE,AlphaNumeric,MTGTC,1,,"Code used to identify whether the number stored in MORTGAGE TERM is in days, months or years."
+351,FIRST POSITION MORTGAGE MATURITY DATE,Numeric,,8,,The date the mortgage becomes due. Format: YYYYMMDD.
+FIRST POSITION OPEN LIEN LOAN MODIFICATION,,,,,,
+352,FIRST POSITION MORTGAGE MODIFICATION AMOUNT,Numeric,,13,2,The amount of the mortgage modification.
+353,FIRST POSITION MORTGAGE MODIFICATION MATURITY DATE,Numeric,,8,,The date the mortgage modification becomes due. Format: YYYYMMDD.
+354,FIRST POSITION MORTGAGE MODIFICATION INTEREST RATE,Numeric,,7,4,Interest rate on the mortgage modification.
+355,FIRST POSITION MORTGAGE MODIFICATION INTEREST RATE TYPE CODE,AlphaNumeric,MTGRT,3,,Interest rate type code on the mortgage modification. RESERVED FOR FUTURE USE.
+356,FIRST POSITION MORTGAGE MODIFICATION TERM,Numeric,,2,,"Specific term associated with mortgage modification. Examples: 10, 15, 25 RESERVED FOR FUTURE USE."
+357,FIRST POSITION MORTGAGE MODIFICATION TERM CODE,AlphaNumeric,MTGTC,1,,"Term code used for the mortgage modification to identify whether the TERM is stored in days, months or years. RESERVED FOR FUTURE USE."
+358,FIRST POSITION MORTGAGE MODIFICATION LENDER FULL NAME,AlphaNumeric,,60,,Lender Full Name for the mortgage modification to identify the modification lender. RESERVED FOR FUTURE USE.
+FIRST POSITION OPEN LIEN ARM V2,,,,,,
+359,FIRST POSITION MORTGAGE ARM INITIAL RESET DATE,Numeric,,8,,CoreLogic derived interest rate change date for an adjustable mortgage. First interest rate reset date. Format: YYYYMMDD.
+360,FIRST POSITION MORTGAGE ARM NEXT RESET DATE,Numeric,,8,,Next interest rate change date after first change. Format: YYYYMMDD.
+361,FIRST POSITION MORTGAGE ARM CHANGE INTERVAL,Numeric,,3,,Identifies the number of intervals for interest rate changes for an adjustable mortgage. Numeric value in conjunction with MORTGAGE ARM FREQUENCY.
+362,FIRST POSITION MORTGAGE ARM FREQUENCY,AlphaNumeric,,2,,Indicates the measurement of time in relation to the interest rate reset/change of the adjustable mortgage. Values: W = Weekly; M = Monthly; Q = Quarterly; Y = Yearly.
+363,FIRST POSITION MORTGAGE ARM CALCULATION CHANGE,Numeric,,7,4,Percentage points added to the Index rate to calculate the new interest rate. Value added to current index to determine new interest rate. Only for adjustable rate mortgages.
+364,FIRST POSITION MORTGAGE ARM MAXIMUM INTEREST RATE,Numeric,,7,4,Maximum interest rate allowed per the life of the loan. Lifetime interest rate maximum. Only for adjustable rate mortgages.
+365,FIRST POSITION MORTGAGE ARM INDEX TYPE CODE,AlphaNumeric,,3,,Indicates which index is used to determine the adjustable mortgage interest rate. Value Description SOF SOFR LIB LIBOR CMT Constant Maturity Treasury MTA Monthly Treasury Average LAM LAMA PRM Prime DIS 11th District BIL Treasury Bill FNM FNMA (Fannie Mae) OTH Other
+366,FIRST POSITION MORTGAGE ARM CHANGE PERCENT LIMIT,Numeric,,7,4,Maximum amount the interest rate may increase or decrease for any one adjustment period of the adjustable mortgage. Limit on interest rate change for any single adjustment.
+367,FIRST POSITION MORTGAGE ARM INITIAL CHANGE MAX PERCENT,Numeric,,7,4,Maximum interest rate the adjustable mortgage loan rate can increase from the initial interest rate as per the recorded loan documents. Maximum allowable interest rate indicated on initial reset.
+368,FIRST POSITION MORTGAGE ARM LOOKBACK PERIOD,Numeric,,3,,The number of days back from interest rate change date to acquire index value.
+369,FIRST POSITION MORTGAGE ARM PAYMENT CHANGE DATE,Numeric,,8,,Date of payment change (if different than interest rate change date). Format: YYYYMMDD.
+370,FIRST POSITION MORTGAGE ARM PAY OPTION INDICATOR,Numeric,,1,,"CoreLogic standardized flag that indicates if the mortgage loan has payment options such as interest only, interest and principal or interest and principal with a lump sum. '0 or null = Not Applicable, 1 = Applicable'."
+371,FIRST POSITION MORTGAGE ARM INTEREST ONLY INDICATOR,Numeric,,1,,"CoreLogic standardized flag that indicates the mortgage loan is an interest only payment loan. '0 or null = Not Applicable, 1 = Applicable'."
+372,FIRST POSITION MORTGAGE ARM NEGATIVE AMORTIZATION INDICATOR,Numeric,,1,,"CoreLogic standardized flag that indicates if the mortgage loan has a negative amortization clause. '0 or null = Not Applicable, 1 = Applicable'."
+FIRST POSITION ORIGINATION LENDER,,,,,,
+373,FIRST POSITION LENDER COMPANY CODE,AlphaNumeric,,10,,"CoreLogic standardized lender code that identifies the mortgage lender (e.g., Bank of America = 000003)."
+374,FIRST POSITION LENDER COMPANY NAME,AlphaNumeric,,60,,CoreLogic proprietary and standardized name of lender from CoreLogic proprietary Lender Code table.
+375,FIRST POSITION LENDER FULL NAME,AlphaNumeric,,60,,Full name of Lender as recorded on the original document when no CoreLogic Lender Company Code exists.
+376,FIRST POSITION LENDER LAST NAME,AlphaNumeric,,32,,Name of Lender's Last Name as recorded on the original document when Lender is a Private Party.
+377,FIRST POSITION LENDER FIRST NAME,AlphaNumeric,,60,,Name of Lender's First Name as recorded on the original document when Lender is a Private Party.
+378,FIRST POSITION LENDER ADDRESS,AlphaNumeric,,60,,Address of the Lender as recorded on the original document.
+379,FIRST POSITION LENDER CITY,AlphaNumeric,,40,,Lender City as recorded on the original document.
+380,FIRST POSITION LENDER STATE,AlphaNumeric,,2,,Lender State as recorded on the original document.
+381,FIRST POSITION LENDER ZIP CODE,AlphaNumeric,,9,,Lender ZIP code as recorded on the original document.
+FIRST POSITION CURRENT OPEN LIEN LENDER,,,,,,
+382,FIRST POSITION CURRENTLY ASSIGNED LENDER COMPANY NAME,AlphaNumeric,,60,,Name of current assigned lender for the open lien.
+383,FIRST POSITION CURRENTLY ASSIGNED LENDER COMPANY CODE,AlphaNumeric,,10,,"CoreLogic standardized lender code of current assigned lender for the open lien (e.g., Bank of America = 000003)."
+384,FIRST POSITION CURRENTLY ASSIGNED LENDER LAST NAME,AlphaNumeric,,32,,Name of Lender's Last Name of current assigned lender for the open lien.
+385,FIRST POSITION CURRENTLY ASSIGNED LENDER FIRST NAME,AlphaNumeric,,60,,Name of Lender's First Name of current assigned lender for the open lien.
+386,FIRST POSITION CURRENTLY ASSIGNED LENDER ADDRESS,AlphaNumeric,,60,,Address of the Lender of current assigned lender for the open lien.
+387,FIRST POSITION CURRENTLY ASSIGNED LENDER CITY,AlphaNumeric,,40,,Lender City of current assigned lender for the open lien.
+388,FIRST POSITION CURRENTLY ASSIGNED LENDER STATE,AlphaNumeric,,2,,Lender State of current assigned lender for the open lien.
+389,FIRST POSITION CURRENTLY ASSIGNED LENDER ZIP CODE,AlphaNumeric,,9,,Lender ZIP code of current assigned lender for the open lien.
+SECOND POSITION OPEN LIEN FOR MARKETING V2,,,,,,
+390,SECOND POSITION COMPOSITE TRANSACTION ID,AlphaNumeric,,21,,"Unique transaction key comprised of FIPS Code, Transaction Batch Date, Transaction Sequence Number, and Mortgage Sequence Number."
+391,SECOND POSITION MORTGAGE LTV (LOAN TO VALUE),Numeric,,14,2,Ratio of origination loan amount divided into current AVM value.
+392,SECOND POSITION MULTI OR SPLIT PARCEL CODE,AlphaNumeric,SLTY2,1,,"Indicates either that the transaction involves multiple parcels, or the split of an existing parcel."
+393,SECOND POSITION MORTGAGE TYPE CODE,AlphaNumeric,,1,,"CoreLogic standardized mortgage classification for principal mortgages ('P'urchase, 'R'efinance) or subordinate mortgages ('J'unior)."
+394,SECOND POSITION MORTGAGE PURPOSE CODE,AlphaNumeric,MPRPS,2,,CoreLogic standardized value indicating the reason for the principal or subordinate mortgage.
+395,SECOND POSITION MORTGAGE DATE,Numeric,,8,,"Borrower's signature date on mortgage/deed of trust. This represents the date the borrower’s obligation to the lender begins, i.e. loan open date. This date is the same or prior to the recording date. If the day and/or month is missing, CoreLogic populates these values with 00. Format: YYYYMMDD."
+396,SECOND POSITION MORTGAGE RECORDING DATE,Numeric,,8,,The date the mortgage transaction was recorded at the county. Format: YYYYMMDD.
+397,SECOND POSITION MORTGAGE RECORDED DOCUMENT YEAR,Numeric,,4,,The year the mortgage transaction was recorded at the county. Format: YYYY.
+398,SECOND POSITION MORTGAGE RECORDED DOCUMENT NUMBER,AlphaNumeric,,12,,The document number used by some counties to record mortgage transactions.
+399,SECOND POSITION MORTGAGE RECORDED DOCUMENT BOOK NUMBER,AlphaNumeric,,6,,"The Book number used by some counties to catalog their mortgage recordings. (e.g., 001234)"
+400,SECOND POSITION MORTGAGE RECORDED DOCUMENT PAGE NUMBER,AlphaNumeric,,6,,"The Page number used by some counties to catalog their mortgage recordings. (e.g., 001234)"
+401,SECOND POSITION MORTGAGE AMOUNT,Numeric,,13,2,The amount of the mortgage at the time of the transaction.
+402,SECOND POSITION MORTGAGE LOAN TYPE CODE,AlphaNumeric,MTGTP,5,,"CoreLogic standardized value indicating the type of loan secured. (e.g., Conventional, FHA, VA)."
+403,SECOND POSITION MORTGAGE SUBORDINATE TYPE CODE,AlphaNumeric,EQUIT,3,,"CoreLogic standardized value indicating the type of subordinate mortgage secured. (e.g., 'C'redit Line, 'E'quity, Ba'L'loon)"
+404,SECOND POSITION MORTGAGE INTEREST RATE,Numeric,,7,4,Interest rate on the mortgage at origination.
+405,SECOND POSITION MORTGAGE INTEREST RATE TYPE CODE,AlphaNumeric,MTGRT,3,,CoreLogic standardized value indicating the type of mortgage interest rate.
+406,SECOND POSITION MORTGAGE TERM,Numeric,,5,,Time period over which the mortgage is amortized.
+407,SECOND POSITION MORTGAGE TERM CODE,AlphaNumeric,MTGTC,1,,"Code used to identify whether the number stored in MORTGAGE TERM is in days, months or years."
+408,SECOND POSITION MORTGAGE MATURITY DATE,Numeric,,8,,The date the mortgage becomes due. Format: YYYYMMDD.
+SECOND POSITION OPEN LIEN FOR RISK MANAGEMENT V2,,,,,,
+409,SECOND POSITION COMPOSITE TRANSACTION ID,AlphaNumeric,,21,,"Unique transaction key comprised of FIPS Code, Transaction Batch Date, Transaction Sequence Number, and Mortgage Sequence Number."
+410,SECOND POSITION MORTGAGE LTV (LOAN TO VALUE),Numeric,,14,2,Ratio of origination loan amount divided into current AVM value.
+411,SECOND POSITION MULTI OR SPLIT PARCEL CODE,AlphaNumeric,SLTY2,1,,"Indicates either that the transaction involves multiple parcels, or the split of an existing parcel."
+412,SECOND POSITION MORTGAGE TYPE CODE,AlphaNumeric,,1,,"CoreLogic standardized mortgage classification for principal mortgages ('P'urchase, 'R'efinance) or subordinate mortgages ('J'unior)."
+413,SECOND POSITION MORTGAGE PURPOSE CODE,AlphaNumeric,MPRPS,2,,CoreLogic standardized value indicating the reason for the principal or subordinate mortgage.
+414,SECOND POSITION MORTGAGE DATE,Numeric,,8,,"Borrower's signature date on mortgage/deed of trust. This represents the date the borrower’s obligation to the lender begins, i.e. loan open date. This date is the same or prior to the recording date. If the day and/or month is missing, CoreLogic populates these values with 00. Format: YYYYMMDD."
+415,SECOND POSITION MORTGAGE RECORDING DATE,Numeric,,8,,The date the mortgage transaction was recorded at the county. Format: YYYYMMDD.
+416,SECOND POSITION MORTGAGE RECORDED DOCUMENT YEAR,Numeric,,4,,The year the mortgage transaction was recorded at the county. Format: YYYY.
+417,SECOND POSITION MORTGAGE RECORDED DOCUMENT NUMBER,AlphaNumeric,,12,,The document number used by some counties to record mortgage transactions.
+418,SECOND POSITION MORTGAGE RECORDED DOCUMENT BOOK NUMBER,AlphaNumeric,,6,,"The Book number used by some counties to catalog their mortgage recordings. (e.g., 001234)"
+419,SECOND POSITION MORTGAGE RECORDED DOCUMENT PAGE NUMBER,AlphaNumeric,,6,,"The Page number used by some counties to catalog their mortgage recordings. (e.g., 001234)"
+420,SECOND POSITION MORTGAGE AMOUNT,Numeric,,13,2,The amount of the mortgage at the time of the transaction.
+421,SECOND POSITION MORTGAGE LOAN TYPE CODE,AlphaNumeric,MTGTP,5,,"CoreLogic standardized value indicating the type of loan secured. (e.g., Conventional, FHA, VA)."
+422,SECOND POSITION MORTGAGE SUBORDINATE TYPE CODE,AlphaNumeric,EQUIT,3,,"CoreLogic standardized value indicating the type of subordinate mortgage secured. (e.g., 'C'redit Line, 'E'quity, Ba'L'loon)"
+423,SECOND POSITION MORTGAGE INTEREST RATE,Numeric,,7,4,Interest rate on the mortgage at origination.
+424,SECOND POSITION MORTGAGE INTEREST RATE TYPE CODE,AlphaNumeric,MTGRT,3,,CoreLogic standardized value indicating the type of mortgage interest rate.
+425,SECOND POSITION MORTGAGE TERM,Numeric,,5,,Time period over which the mortgage is amortized.
+426,SECOND POSITION MORTGAGE TERM CODE,AlphaNumeric,MTGTC,1,,"Code used to identify whether the number stored in MORTGAGE TERM is in days, months or years."
+427,SECOND POSITION MORTGAGE MATURITY DATE,Numeric,,8,,The date the mortgage becomes due. Format: YYYYMMDD.
+SECOND POSITION OPEN LIEN LOAN MODIFICATION,,,,,,
+428,SECOND POSITION MORTGAGE MODIFICATION AMOUNT,Numeric,,13,2,The amount of the mortgage modification.
+429,SECOND POSITION MORTGAGE MODIFICATION MATURITY DATE,Numeric,,8,,The date the mortgage modification becomes due. Format: YYYYMMDD.
+430,SECOND POSITION MORTGAGE MODIFICATION INTEREST RATE,Numeric,,7,4,Interest rate on the mortgage modification.
+431,SECOND POSITION MORTGAGE MODIFICATION INTEREST RATE TYPE CODE,AlphaNumeric,MTGRT,3,,Interest rate type code on the mortgage modification. RESERVED FOR FUTURE USE.
+432,SECOND POSITION MORTGAGE MODIFICATION TERM,Numeric,,2,,"Specific term associated with mortgage modification. Examples: 10, 15, 25 RESERVED FOR FUTURE USE."
+433,SECOND POSITION MORTGAGE MODIFICATION TERM CODE,AlphaNumeric,MTGTC,1,,"Term code used for the mortgage modification to identify whether the TERM is stored in days, months or years. RESERVED FOR FUTURE USE."
+434,SECOND POSITION MORTGAGE MODIFICATION LENDER FULL NAME,AlphaNumeric,,60,,Lender Full Name for the mortgage modification to identify the modification lender. RESERVED FOR FUTURE USE.
+SECOND POSITION OPEN LIEN ARM V2,,,,,,
+435,SECOND POSITION MORTGAGE ARM INITIAL RESET DATE,Numeric,,8,,CoreLogic derived interest rate change date for an adjustable mortgage. First interest rate reset date. Format: YYYYMMDD.
+436,SECOND POSITION MORTGAGE ARM NEXT RESET DATE,Numeric,,8,,Next interest rate change date after first change. Format: YYYYMMDD.
+437,SECOND POSITION MORTGAGE ARM CHANGE INTERVAL,Numeric,,3,,Identifies the number of intervals for interest rate changes for an adjustable mortgage. Numeric value in conjunction with MORTGAGE ARM FREQUENCY.
+438,SECOND POSITION MORTGAGE ARM FREQUENCY,AlphaNumeric,,2,,Indicates the measurement of time in relation to the interest rate reset/change of the adjustable mortgage. Values: W = Weekly; M = Monthly; Q = Quarterly; Y = Yearly.
+439,SECOND POSITION MORTGAGE ARM CALCULATION CHANGE,Numeric,,7,4,Percentage points added to the Index rate to calculate the new interest rate. Value added to current index to determine new interest rate. Only for adjustable rate mortgages.
+440,SECOND POSITION MORTGAGE ARM MAXIMUM INTEREST RATE,Numeric,,7,4,Maximum interest rate allowed per the life of the loan. Lifetime interest rate maximum. Only for adjustable rate mortgages.
+441,SECOND POSITION MORTGAGE ARM INDEX TYPE CODE,AlphaNumeric,,3,,Indicates which index is used to determine the adjustable mortgage interest rate. Value Description SOF SOFR LIB LIBOR CMT Constant Maturity Treasury MTA Monthly Treasury Average LAM LAMA PRM Prime DIS 11th District BIL Treasury Bill FNM FNMA (Fannie Mae) OTH Other
+442,SECOND POSITION MORTGAGE ARM CHANGE PERCENT LIMIT,Numeric,,7,4,Maximum amount the interest rate may increase or decrease for any one adjustment period of the adjustable mortgage. Limit on interest rate change for any single adjustment.
+443,SECOND POSITION MORTGAGE ARM INITIAL CHANGE MAX PERCENT,Numeric,,7,4,Maximum interest rate the adjustable mortgage loan rate can increase from the initial interest rate as per the recorded loan documents. Maximum allowable interest rate indicated on initial reset.
+444,SECOND POSITION MORTGAGE ARM LOOKBACK PERIOD,Numeric,,3,,The number of days back from interest rate change date to acquire index value.
+445,SECOND POSITION MORTGAGE ARM PAYMENT CHANGE DATE,Numeric,,8,,Date of payment change (if different than interest rate change date). Format: YYYYMMDD.
+446,SECOND POSITION MORTGAGE ARM PAY OPTION INDICATOR,Numeric,,1,,"CoreLogic standardized flag that indicates if the mortgage loan has payment options such as interest only, interest and principal or interest and principal with a lump sum. '0 or null = Not Applicable, 1 = Applicable'."
+447,SECOND POSITION MORTGAGE ARM INTEREST ONLY INDICATOR,Numeric,,1,,"CoreLogic standardized flag that indicates the mortgage loan is an interest only payment loan. '0 or null = Not Applicable, 1 = Applicable'."
+448,SECOND POSITION MORTGAGE ARM NEGATIVE AMORTIZATION INDICATOR,Numeric,,1,,"CoreLogic standardized flag that indicates if the mortgage loan has a negative amortization clause. '0 or null = Not Applicable, 1 = Applicable'."
+SECOND POSITION ORIGINATION LENDER,,,,,,
+449,SECOND POSITION LENDER COMPANY CODE,AlphaNumeric,,10,,"CoreLogic standardized lender code that identifies the mortgage lender (e.g., Bank of America = 000003)."
+450,SECOND POSITION LENDER COMPANY NAME,AlphaNumeric,,60,,CoreLogic proprietary and standardized name of lender from CoreLogic proprietary Lender Code table.
+451,SECOND POSITION LENDER FULL NAME,AlphaNumeric,,60,,Full name of Lender as recorded on the original document when no CoreLogic Lender Company Code exists.
+452,SECOND POSITION LENDER LAST NAME,AlphaNumeric,,32,,Name of Lender's Last Name as recorded on the original document when Lender is a Private Party.
+453,SECOND POSITION LENDER FIRST NAME,AlphaNumeric,,60,,Name of Lender's First Name as recorded on the original document when Lender is a Private Party.
+454,SECOND POSITION LENDER ADDRESS,AlphaNumeric,,60,,Address of the Lender as recorded on the original document.
+455,SECOND POSITION LENDER CITY,AlphaNumeric,,40,,Lender City as recorded on the original document.
+456,SECOND POSITION LENDER STATE,AlphaNumeric,,2,,Lender State as recorded on the original document.
+457,SECOND POSITION LENDER ZIP CODE,AlphaNumeric,,9,,Lender ZIP code as recorded on the original document.
+SECOND POSITION CURRENT OPEN LIEN LENDER,,,,,,
+458,SECOND POSITION CURRENTLY ASSIGNED LENDER COMPANY NAME,AlphaNumeric,,60,,Name of current assigned lender for the open lien.
+459,SECOND POSITION CURRENTLY ASSIGNED LENDER COMPANY CODE,AlphaNumeric,,10,,"CoreLogic standardized lender code of current assigned lender for the open lien (e.g., Bank of America = 000003)."
+460,SECOND POSITION CURRENTLY ASSIGNED LENDER LAST NAME,AlphaNumeric,,32,,Name of Lender's Last Name of current assigned lender for the open lien.
+461,SECOND POSITION CURRENTLY ASSIGNED LENDER FIRST NAME,AlphaNumeric,,60,,Name of Lender's First Name of current assigned lender for the open lien.
+462,SECOND POSITION CURRENTLY ASSIGNED LENDER ADDRESS,AlphaNumeric,,60,,Address of the Lender of current assigned lender for the open lien.
+463,SECOND POSITION CURRENTLY ASSIGNED LENDER CITY,AlphaNumeric,,40,,Lender City of current assigned lender for the open lien.
+464,SECOND POSITION CURRENTLY ASSIGNED LENDER STATE,AlphaNumeric,,2,,Lender State of current assigned lender for the open lien.
+465,SECOND POSITION CURRENTLY ASSIGNED LENDER ZIP CODE,AlphaNumeric,,9,,Lender ZIP code of current assigned lender for the open lien.
+THIRD POSITION OPEN LIEN FOR MARKETING V2,,,,,,
+466,THIRD POSITION COMPOSITE TRANSACTION ID,AlphaNumeric,,21,,"Unique transaction key comprised of FIPS Code, Transaction Batch Date, Transaction Sequence Number, and Mortgage Sequence Number."
+467,THIRD POSITION MORTGAGE LTV (LOAN TO VALUE),Numeric,,14,2,Ratio of origination loan amount divided into current AVM value.
+468,THIRD POSITION MULTI OR SPLIT PARCEL CODE,AlphaNumeric,SLTY2,1,,"Indicates either that the transaction involves multiple parcels, or the split of an existing parcel."
+469,THIRD POSITION MORTGAGE TYPE CODE,AlphaNumeric,,1,,"CoreLogic standardized mortgage classification for principal mortgages ('P'urchase, 'R'efinance) or subordinate mortgages ('J'unior)."
+470,THIRD POSITION MORTGAGE PURPOSE CODE,AlphaNumeric,MPRPS,2,,CoreLogic standardized value indicating the reason for the principal or subordinate mortgage.
+471,THIRD POSITION MORTGAGE DATE,Numeric,,8,,"Borrower's signature date on mortgage/deed of trust. This represents the date the borrower’s obligation to the lender begins, i.e. loan open date. This date is the same or prior to the recording date. If the day and/or month is missing, CoreLogic populates these values with 00. Format: YYYYMMDD."
+472,THIRD POSITION MORTGAGE RECORDING DATE,Numeric,,8,,The date the mortgage transaction was recorded at the county. Format: YYYYMMDD.
+473,THIRD POSITION MORTGAGE RECORDED DOCUMENT YEAR,Numeric,,4,,The year the mortgage transaction was recorded at the county. Format: YYYY.
+474,THIRD POSITION MORTGAGE RECORDED DOCUMENT NUMBER,AlphaNumeric,,12,,The document number used by some counties to record mortgage transactions.
+475,THIRD POSITION MORTGAGE RECORDED DOCUMENT BOOK NUMBER,AlphaNumeric,,6,,"The Book number used by some counties to catalog their mortgage recordings. (e.g., 001234)"
+476,THIRD POSITION MORTGAGE RECORDED DOCUMENT PAGE NUMBER,AlphaNumeric,,6,,"The Page number used by some counties to catalog their mortgage recordings. (e.g., 001234)"
+477,THIRD POSITION MORTGAGE AMOUNT,Numeric,,13,2,The amount of the mortgage at the time of the transaction.
+478,THIRD POSITION MORTGAGE LOAN TYPE CODE,AlphaNumeric,MTGTP,5,,"CoreLogic standardized value indicating the type of loan secured. (e.g., Conventional, FHA, VA)."
+479,THIRD POSITION MORTGAGE SUBORDINATE TYPE CODE,AlphaNumeric,EQUIT,3,,"CoreLogic standardized value indicating the type of subordinate mortgage secured. (e.g., 'C'redit Line, 'E'quity, Ba'L'loon)"
+480,THIRD POSITION MORTGAGE INTEREST RATE,Numeric,,7,4,Interest rate on the mortgage at origination.
+481,THIRD POSITION MORTGAGE INTEREST RATE TYPE CODE,AlphaNumeric,MTGRT,3,,CoreLogic standardized value indicating the type of mortgage interest rate.
+482,THIRD POSITION MORTGAGE TERM,Numeric,,5,,Time period over which the mortgage is amortized.
+483,THIRD POSITION MORTGAGE TERM CODE,AlphaNumeric,MTGTC,1,,"Code used to identify whether the number stored in MORTGAGE TERM is in days, months or years."
+484,THIRD POSITION MORTGAGE MATURITY DATE,Numeric,,8,,The date the mortgage becomes due. Format: YYYYMMDD.
+THIRD POSITION OPEN LIEN FOR RISK MANAGEMENT V2,,,,,,
+485,THIRD POSITION COMPOSITE TRANSACTION ID,AlphaNumeric,,21,,"Unique transaction key comprised of FIPS Code, Transaction Batch Date, Transaction Sequence Number, and Mortgage Sequence Number."
+486,THIRD POSITION MORTGAGE LTV (LOAN TO VALUE),Numeric,,14,2,Ratio of origination loan amount divided into current AVM value.
+487,THIRD POSITION MULTI OR SPLIT PARCEL CODE,AlphaNumeric,SLTY2,1,,"Indicates either that the transaction involves multiple parcels, or the split of an existing parcel."
+488,THIRD POSITION MORTGAGE TYPE CODE,AlphaNumeric,,1,,"CoreLogic standardized mortgage classification for principal mortgages ('P'urchase, 'R'efinance) or subordinate mortgages ('J'unior)."
+489,THIRD POSITION MORTGAGE PURPOSE CODE,AlphaNumeric,MPRPS,2,,CoreLogic standardized value indicating the reason for the principal or subordinate mortgage.
+490,THIRD POSITION MORTGAGE DATE,Numeric,,8,,"Borrower's signature date on mortgage/deed of trust. This represents the date the borrower’s obligation to the lender begins, i.e. loan open date. This date is the same or prior to the recording date. If the day and/or month is missing, CoreLogic populates these values with 00. Format: YYYYMMDD."
+491,THIRD POSITION MORTGAGE RECORDING DATE,Numeric,,8,,The date the mortgage transaction was recorded at the county. Format: YYYYMMDD.
+492,THIRD POSITION MORTGAGE RECORDED DOCUMENT YEAR,Numeric,,4,,The year the mortgage transaction was recorded at the county. Format: YYYY.
+493,THIRD POSITION MORTGAGE RECORDED DOCUMENT NUMBER,AlphaNumeric,,12,,The document number used by some counties to record mortgage transactions.
+494,THIRD POSITION MORTGAGE RECORDED DOCUMENT BOOK NUMBER,AlphaNumeric,,6,,"The Book number used by some counties to catalog their mortgage recordings. (e.g., 001234)"
+495,THIRD POSITION MORTGAGE RECORDED DOCUMENT PAGE NUMBER,AlphaNumeric,,6,,"The Page number used by some counties to catalog their mortgage recordings. (e.g., 001234)"
+496,THIRD POSITION MORTGAGE AMOUNT,Numeric,,13,2,The amount of the mortgage at the time of the transaction.
+497,THIRD POSITION MORTGAGE LOAN TYPE CODE,AlphaNumeric,MTGTP,5,,"CoreLogic standardized value indicating the type of loan secured. (e.g., Conventional, FHA, VA)."
+498,THIRD POSITION MORTGAGE SUBORDINATE TYPE CODE,AlphaNumeric,EQUIT,3,,"CoreLogic standardized value indicating the type of subordinate mortgage secured. (e.g., 'C'redit Line, 'E'quity, Ba'L'loon)"
+499,THIRD POSITION MORTGAGE INTEREST RATE,Numeric,,7,4,Interest rate on the mortgage at origination.
+500,THIRD POSITION MORTGAGE INTEREST RATE TYPE CODE,AlphaNumeric,MTGRT,3,,CoreLogic standardized value indicating the type of mortgage interest rate.
+501,THIRD POSITION MORTGAGE TERM,Numeric,,5,,Time period over which the mortgage is amortized.
+502,THIRD POSITION MORTGAGE TERM CODE,AlphaNumeric,MTGTC,1,,"Code used to identify whether the number stored in MORTGAGE TERM is in days, months or years."
+503,THIRD POSITION MORTGAGE MATURITY DATE,Numeric,,8,,The date the mortgage becomes due. Format: YYYYMMDD.
+THIRD POSITION OPEN LIEN LOAN MODIFICATION,,,,,,
+504,THIRD POSITION MORTGAGE MODIFICATION AMOUNT,Numeric,,13,2,The amount of the mortgage modification.
+505,THIRD POSITION MORTGAGE MODIFICATION MATURITY DATE,Numeric,,8,,The date the mortgage modification becomes due. Format: YYYYMMDD.
+506,THIRD POSITION MORTGAGE MODIFICATION INTEREST RATE,Numeric,,7,4,Interest rate on the mortgage modification.
+507,THIRD POSITION MORTGAGE MODIFICATION INTEREST RATE TYPE CODE,AlphaNumeric,MTGRT,3,,Interest rate type code on the mortgage modification. RESERVED FOR FUTURE USE.
+508,THIRD POSITION MORTGAGE MODIFICATION TERM,Numeric,,2,,"Specific term associated with mortgage modification. Examples: 10, 15, 25 RESERVED FOR FUTURE USE."
+509,THIRD POSITION MORTGAGE MODIFICATION TERM CODE,AlphaNumeric,MTGTC,1,,"Term code used for the mortgage modification to identify whether the TERM is stored in days, months or years. RESERVED FOR FUTURE USE."
+510,THIRD POSITION MORTGAGE MODIFICATION LENDER FULL NAME,AlphaNumeric,,60,,Lender Full Name for the mortgage modification to identify the modification lender. RESERVED FOR FUTURE USE.
+THIRD POSITION OPEN LIEN ARM V2,,,,,,
+511,THIRD POSITION MORTGAGE ARM INITIAL RESET DATE,Numeric,,8,,CoreLogic derived interest rate change date for an adjustable mortgage. First interest rate reset date. Format: YYYYMMDD.
+512,THIRD POSITION MORTGAGE ARM NEXT RESET DATE,Numeric,,8,,Next interest rate change date after first change. Format: YYYYMMDD.
+513,THIRD POSITION MORTGAGE ARM CHANGE INTERVAL,Numeric,,3,,Identifies the number of intervals for interest rate changes for an adjustable mortgage. Numeric value in conjunction with MORTGAGE ARM FREQUENCY.
+514,THIRD POSITION MORTGAGE ARM FREQUENCY,AlphaNumeric,,2,,Indicates the measurement of time in relation to the interest rate reset/change of the adjustable mortgage. Values: W = Weekly; M = Monthly; Q = Quarterly; Y = Yearly.
+515,THIRD POSITION MORTGAGE ARM CALCULATION CHANGE,Numeric,,7,4,Percentage points added to the Index rate to calculate the new interest rate. Value added to current index to determine new interest rate. Only for adjustable rate mortgages.
+516,THIRD POSITION MORTGAGE ARM MAXIMUM INTEREST RATE,Numeric,,7,4,Maximum interest rate allowed per the life of the loan. Lifetime interest rate maximum. Only for adjustable rate mortgages.
+517,THIRD POSITION MORTGAGE ARM INDEX TYPE CODE,AlphaNumeric,,3,,Indicates which index is used to determine the adjustable mortgage interest rate. Value Description SOF SOFR LIB LIBOR CMT Constant Maturity Treasury MTA Monthly Treasury Average LAM LAMA PRM Prime DIS 11th District BIL Treasury Bill FNM FNMA (Fannie Mae) OTH Other
+518,THIRD POSITION MORTGAGE ARM CHANGE PERCENT LIMIT,Numeric,,7,4,Maximum amount the interest rate may increase or decrease for any one adjustment period of the adjustable mortgage. Limit on interest rate change for any single adjustment.
+519,THIRD POSITION MORTGAGE ARM INITIAL CHANGE MAX PERCENT,Numeric,,7,4,Maximum interest rate the adjustable mortgage loan rate can increase from the initial interest rate as per the recorded loan documents. Maximum allowable interest rate indicated on initial reset.
+520,THIRD POSITION MORTGAGE ARM LOOKBACK PERIOD,Numeric,,3,,The number of days back from interest rate change date to acquire index value.
+521,THIRD POSITION MORTGAGE ARM PAYMENT CHANGE DATE,Numeric,,8,,Date of payment change (if different than interest rate change date). Format: YYYYMMDD.
+522,THIRD POSITION MORTGAGE ARM PAY OPTION INDICATOR,Numeric,,1,,"CoreLogic standardized flag that indicates if the mortgage loan has payment options such as interest only, interest and principal or interest and principal with a lump sum. '0 or null = Not Applicable, 1 = Applicable'."
+523,THIRD POSITION MORTGAGE ARM INTEREST ONLY INDICATOR,Numeric,,1,,"CoreLogic standardized flag that indicates the mortgage loan is an interest only payment loan. '0 or null = Not Applicable, 1 = Applicable'."
+524,THIRD POSITION MORTGAGE ARM NEGATIVE AMORTIZATION INDICATOR,Numeric,,1,,"CoreLogic standardized flag that indicates if the mortgage loan has a negative amortization clause. '0 or null = Not Applicable, 1 = Applicable'."
+THIRD POSITION ORIGINATION LENDER,,,,,,
+525,THIRD POSITION LENDER COMPANY CODE,AlphaNumeric,,10,,"CoreLogic standardized lender code that identifies the mortgage lender (e.g., Bank of America = 000003)."
+526,THIRD POSITION LENDER COMPANY NAME,AlphaNumeric,,60,,CoreLogic proprietary and standardized name of lender from CoreLogic proprietary Lender Code table.
+527,THIRD POSITION LENDER FULL NAME,AlphaNumeric,,60,,Full name of Lender as recorded on the original document when no CoreLogic Lender Company Code exists.
+528,THIRD POSITION LENDER LAST NAME,AlphaNumeric,,32,,Name of Lender's Last Name as recorded on the original document when Lender is a Private Party.
+529,THIRD POSITION LENDER FIRST NAME,AlphaNumeric,,60,,Name of Lender's First Name as recorded on the original document when Lender is a Private Party.
+530,THIRD POSITION LENDER ADDRESS,AlphaNumeric,,60,,Address of the Lender as recorded on the original document.
+531,THIRD POSITION LENDER CITY,AlphaNumeric,,40,,Lender City as recorded on the original document.
+532,THIRD POSITION LENDER STATE,AlphaNumeric,,2,,Lender State as recorded on the original document.
+533,THIRD POSITION LENDER ZIP CODE,AlphaNumeric,,9,,Lender ZIP code as recorded on the original document.
+THIRD POSITION CURRENT OPEN LIEN LENDER,,,,,,
+534,THIRD POSITION CURRENTLY ASSIGNED LENDER COMPANY NAME,AlphaNumeric,,60,,Name of current assigned lender for the open lien.
+535,THIRD POSITION CURRENTLY ASSIGNED LENDER COMPANY CODE,AlphaNumeric,,10,,"CoreLogic standardized lender code of current assigned lender for the open lien (e.g., Bank of America = 000003)."
+536,THIRD POSITION CURRENTLY ASSIGNED LENDER LAST NAME,AlphaNumeric,,32,,Name of Lender's Last Name of current assigned lender for the open lien.
+537,THIRD POSITION CURRENTLY ASSIGNED LENDER FIRST NAME,AlphaNumeric,,60,,Name of Lender's First Name of current assigned lender for the open lien.
+538,THIRD POSITION CURRENTLY ASSIGNED LENDER ADDRESS,AlphaNumeric,,60,,Address of the Lender of current assigned lender for the open lien.
+539,THIRD POSITION CURRENTLY ASSIGNED LENDER CITY,AlphaNumeric,,40,,Lender City of current assigned lender for the open lien.
+540,THIRD POSITION CURRENTLY ASSIGNED LENDER STATE,AlphaNumeric,,2,,Lender State of current assigned lender for the open lien.
+541,THIRD POSITION CURRENTLY ASSIGNED LENDER ZIP CODE,AlphaNumeric,,9,,Lender ZIP code of current assigned lender for the open lien.
+FOURTH POSITION OPEN LIEN FOR MARKETING V2,,,,,,
+542,FOURTH POSITION COMPOSITE TRANSACTION ID,AlphaNumeric,,21,,"Unique transaction key comprised of FIPS Code, Transaction Batch Date, Transaction Sequence Number, and Mortgage Sequence Number."
+543,FOURTH POSITION MORTGAGE LTV (LOAN TO VALUE),Numeric,,14,2,Ratio of origination loan amount divided into current AVM value.
+544,FOURTH POSITION MULTI OR SPLIT PARCEL CODE,AlphaNumeric,SLTY2,1,,"Indicates either that the transaction involves multiple parcels, or the split of an existing parcel."
+545,FOURTH POSITION MORTGAGE TYPE CODE,AlphaNumeric,,1,,"CoreLogic standardized mortgage classification for principal mortgages ('P'urchase, 'R'efinance) or subordinate mortgages ('J'unior)."
+546,FOURTH POSITION MORTGAGE PURPOSE CODE,AlphaNumeric,MPRPS,2,,CoreLogic standardized value indicating the reason for the principal or subordinate mortgage.
+547,FOURTH POSITION MORTGAGE DATE,Numeric,,8,,"Borrower's signature date on mortgage/deed of trust. This represents the date the borrower’s obligation to the lender begins, i.e. loan open date. This date is the same or prior to the recording date. If the day and/or month is missing, CoreLogic populates these values with 00. Format: YYYYMMDD."
+548,FOURTH POSITION MORTGAGE RECORDING DATE,Numeric,,8,,The date the mortgage transaction was recorded at the county. Format: YYYYMMDD.
+549,FOURTH POSITION MORTGAGE RECORDED DOCUMENT YEAR,Numeric,,4,,The year the mortgage transaction was recorded at the county. Format: YYYY.
+550,FOURTH POSITION MORTGAGE RECORDED DOCUMENT NUMBER,AlphaNumeric,,12,,The document number used by some counties to record mortgage transactions.
+551,FOURTH POSITION MORTGAGE RECORDED DOCUMENT BOOK NUMBER,AlphaNumeric,,6,,"The Book number used by some counties to catalog their mortgage recordings. (e.g., 001234)"
+552,FOURTH POSITION MORTGAGE RECORDED DOCUMENT PAGE NUMBER,AlphaNumeric,,6,,"The Page number used by some counties to catalog their mortgage recordings. (e.g., 001234)"
+553,FOURTH POSITION MORTGAGE AMOUNT,Numeric,,13,2,The amount of the mortgage at the time of the transaction.
+554,FOURTH POSITION MORTGAGE LOAN TYPE CODE,AlphaNumeric,MTGTP,5,,"CoreLogic standardized value indicating the type of loan secured. (e.g., Conventional, FHA, VA)."
+555,FOURTH POSITION MORTGAGE SUBORDINATE TYPE CODE,AlphaNumeric,EQUIT,3,,"CoreLogic standardized value indicating the type of subordinate mortgage secured. (e.g., 'C'redit Line, 'E'quity, Ba'L'loon)"
+556,FOURTH POSITION MORTGAGE INTEREST RATE,Numeric,,7,4,Interest rate on the mortgage at origination.
+557,FOURTH POSITION MORTGAGE INTEREST RATE TYPE CODE,AlphaNumeric,MTGRT,3,,CoreLogic standardized value indicating the type of mortgage interest rate.
+558,FOURTH POSITION MORTGAGE TERM,Numeric,,5,,Time period over which the mortgage is amortized.
+559,FOURTH POSITION MORTGAGE TERM CODE,AlphaNumeric,MTGTC,1,,"Code used to identify whether the number stored in MORTGAGE TERM is in days, months or years."
+560,FOURTH POSITION MORTGAGE MATURITY DATE,Numeric,,8,,The date the mortgage becomes due. Format: YYYYMMDD.
+FOURTH POSITION OPEN LIEN FOR RISK MANAGEMENT V2,,,,,,
+561,FOURTH POSITION COMPOSITE TRANSACTION ID,AlphaNumeric,,21,,"Unique transaction key comprised of FIPS Code, Transaction Batch Date, Transaction Sequence Number, and Mortgage Sequence Number."
+562,FOURTH POSITION MORTGAGE LTV (LOAN TO VALUE),Numeric,,14,2,Ratio of origination loan amount divided into current AVM value.
+563,FOURTH POSITION MULTI OR SPLIT PARCEL CODE,AlphaNumeric,SLTY2,1,,"Indicates either that the transaction involves multiple parcels, or the split of an existing parcel."
+564,FOURTH POSITION MORTGAGE TYPE CODE,AlphaNumeric,,1,,"CoreLogic standardized mortgage classification for principal mortgages ('P'urchase, 'R'efinance) or subordinate mortgages ('J'unior)."
+565,FOURTH POSITION MORTGAGE PURPOSE CODE,AlphaNumeric,MPRPS,2,,CoreLogic standardized value indicating the reason for the principal or subordinate mortgage.
+566,FOURTH POSITION MORTGAGE DATE,Numeric,,8,,"Borrower's signature date on mortgage/deed of trust. This represents the date the borrower’s obligation to the lender begins, i.e. loan open date. This date is the same or prior to the recording date. If the day and/or month is missing, CoreLogic populates these values with 00. Format: YYYYMMDD."
+567,FOURTH POSITION MORTGAGE RECORDING DATE,Numeric,,8,,The date the mortgage transaction was recorded at the county. Format: YYYYMMDD.
+568,FOURTH POSITION MORTGAGE RECORDED DOCUMENT YEAR,Numeric,,4,,The year the mortgage transaction was recorded at the county. Format: YYYY.
+569,FOURTH POSITION MORTGAGE RECORDED DOCUMENT NUMBER,AlphaNumeric,,12,,The document number used by some counties to record mortgage transactions.
+570,FOURTH POSITION MORTGAGE RECORDED DOCUMENT BOOK NUMBER,AlphaNumeric,,6,,"The Book number used by some counties to catalog their mortgage recordings. (e.g., 001234)"
+571,FOURTH POSITION MORTGAGE RECORDED DOCUMENT PAGE NUMBER,AlphaNumeric,,6,,"The Page number used by some counties to catalog their mortgage recordings. (e.g., 001234)"
+572,FOURTH POSITION MORTGAGE AMOUNT,Numeric,,13,2,The amount of the mortgage at the time of the transaction.
+573,FOURTH POSITION MORTGAGE LOAN TYPE CODE,AlphaNumeric,MTGTP,5,,"CoreLogic standardized value indicating the type of loan secured. (e.g., Conventional, FHA, VA)."
+574,FOURTH POSITION MORTGAGE SUBORDINATE TYPE CODE,AlphaNumeric,EQUIT,3,,"CoreLogic standardized value indicating the type of subordinate mortgage secured. (e.g., 'C'redit Line, 'E'quity, Ba'L'loon)"
+575,FOURTH POSITION MORTGAGE INTEREST RATE,Numeric,,7,4,Interest rate on the mortgage at origination.
+576,FOURTH POSITION MORTGAGE INTEREST RATE TYPE CODE,AlphaNumeric,MTGRT,3,,CoreLogic standardized value indicating the type of mortgage interest rate.
+577,FOURTH POSITION MORTGAGE TERM,Numeric,,5,,Time period over which the mortgage is amortized.
+578,FOURTH POSITION MORTGAGE TERM CODE,AlphaNumeric,MTGTC,1,,"Code used to identify whether the number stored in MORTGAGE TERM is in days, months or years."
+579,FOURTH POSITION MORTGAGE MATURITY DATE,Numeric,,8,,The date the mortgage becomes due. Format: YYYYMMDD.
+FOURTH POSITION OPEN LIEN LOAN MODIFICATION,,,,,,
+580,FOURTH POSITION MORTGAGE MODIFICATION AMOUNT,Numeric,,13,2,The amount of the mortgage modification.
+581,FOURTH POSITION MORTGAGE MODIFICATION MATURITY DATE,Numeric,,8,,The date the mortgage modification becomes due. Format: YYYYMMDD.
+582,FOURTH POSITION MORTGAGE MODIFICATION INTEREST RATE,Numeric,,7,4,Interest rate on the mortgage modification.
+583,FOURTH POSITION MORTGAGE MODIFICATION INTEREST RATE TYPE CODE,AlphaNumeric,MTGRT,3,,Interest rate type code on the mortgage modification. RESERVED FOR FUTURE USE.
+584,FOURTH POSITION MORTGAGE MODIFICATION TERM,Numeric,,2,,"Specific term associated with mortgage modification. Examples: 10, 15, 25 RESERVED FOR FUTURE USE."
+585,FOURTH POSITION MORTGAGE MODIFICATION TERM CODE,AlphaNumeric,MTGTC,1,,"Term code used for the mortgage modification to identify whether the TERM is stored in days, months or years. RESERVED FOR FUTURE USE."
+586,FOURTH POSITION MORTGAGE MODIFICATION LENDER FULL NAME,AlphaNumeric,,60,,Lender Full Name for the mortgage modification to identify the modification lender. RESERVED FOR FUTURE USE.
+FOURTH POSITION OPEN LIEN ARM V2,,,,,,
+587,FOURTH POSITION MORTGAGE ARM INITIAL RESET DATE,Numeric,,8,,CoreLogic derived interest rate change date for an adjustable mortgage. First interest rate reset date. Format: YYYYMMDD.
+588,FOURTH POSITION MORTGAGE ARM NEXT RESET DATE,Numeric,,8,,Next interest rate change date after first change. Format: YYYYMMDD.
+589,FOURTH POSITION MORTGAGE ARM CHANGE INTERVAL,Numeric,,3,,Identifies the number of intervals for interest rate changes for an adjustable mortgage. Numeric value in conjunction with MORTGAGE ARM FREQUENCY.
+590,FOURTH POSITION MORTGAGE ARM FREQUENCY,AlphaNumeric,,2,,Indicates the measurement of time in relation to the interest rate reset/change of the adjustable mortgage. Values: W = Weekly; M = Monthly; Q = Quarterly; Y = Yearly.
+591,FOURTH POSITION MORTGAGE ARM CALCULATION CHANGE,Numeric,,7,4,Percentage points added to the Index rate to calculate the new interest rate. Value added to current index to determine new interest rate. Only for adjustable rate mortgages.
+592,FOURTH POSITION MORTGAGE ARM MAXIMUM INTEREST RATE,Numeric,,7,4,Maximum interest rate allowed per the life of the loan. Lifetime interest rate maximum. Only for adjustable rate mortgages.
+593,FOURTH POSITION MORTGAGE ARM INDEX TYPE CODE,AlphaNumeric,,3,,Indicates which index is used to determine the adjustable mortgage interest rate. Value Description SOF SOFR LIB LIBOR CMT Constant Maturity Treasury MTA Monthly Treasury Average LAM LAMA PRM Prime DIS 11th District BIL Treasury Bill FNM FNMA (Fannie Mae) OTH Other
+594,FOURTH POSITION MORTGAGE ARM CHANGE PERCENT LIMIT,Numeric,,7,4,Maximum amount the interest rate may increase or decrease for any one adjustment period of the adjustable mortgage. Limit on interest rate change for any single adjustment.
+595,FOURTH POSITION MORTGAGE ARM INITIAL CHANGE MAX PERCENT,Numeric,,7,4,Maximum interest rate the adjustable mortgage loan rate can increase from the initial interest rate as per the recorded loan documents. Maximum allowable interest rate indicated on initial reset.
+596,FOURTH POSITION MORTGAGE ARM LOOKBACK PERIOD,Numeric,,3,,The number of days back from interest rate change date to acquire index value.
+597,FOURTH POSITION MORTGAGE ARM PAYMENT CHANGE DATE,Numeric,,8,,Date of payment change (if different than interest rate change date). Format: YYYYMMDD.
+598,FOURTH POSITION MORTGAGE ARM PAY OPTION INDICATOR,Numeric,,1,,"CoreLogic standardized flag that indicates if the mortgage loan has payment options such as interest only, interest and principal or interest and principal with a lump sum. '0 or null = Not Applicable, 1 = Applicable'."
+599,FOURTH POSITION MORTGAGE ARM INTEREST ONLY INDICATOR,Numeric,,1,,"CoreLogic standardized flag that indicates the mortgage loan is an interest only payment loan. '0 or null = Not Applicable, 1 = Applicable'."
+600,FOURTH POSITION MORTGAGE ARM NEGATIVE AMORTIZATION INDICATOR,Numeric,,1,,"CoreLogic standardized flag that indicates if the mortgage loan has a negative amortization clause. '0 or null = Not Applicable, 1 = Applicable'."
+FOURTH POSITION ORIGINATION LENDER,,,,,,
+601,FOURTH POSITION LENDER COMPANY CODE,AlphaNumeric,,10,,"CoreLogic standardized lender code that identifies the mortgage lender (e.g., Bank of America = 000003)."
+602,FOURTH POSITION LENDER COMPANY NAME,AlphaNumeric,,60,,CoreLogic proprietary and standardized name of lender from CoreLogic proprietary Lender Code table.
+603,FOURTH POSITION LENDER FULL NAME,AlphaNumeric,,60,,Full name of Lender as recorded on the original document when no CoreLogic Lender Company Code exists.
+604,FOURTH POSITION LENDER LAST NAME,AlphaNumeric,,32,,Name of Lender's Last Name as recorded on the original document when Lender is a Private Party.
+605,FOURTH POSITION LENDER FIRST NAME,AlphaNumeric,,60,,Name of Lender's First Name as recorded on the original document when Lender is a Private Party.
+606,FOURTH POSITION LENDER ADDRESS,AlphaNumeric,,60,,Address of the Lender as recorded on the original document.
+607,FOURTH POSITION LENDER CITY,AlphaNumeric,,40,,Lender City as recorded on the original document.
+608,FOURTH POSITION LENDER STATE,AlphaNumeric,,2,,Lender State as recorded on the original document.
+609,FOURTH POSITION LENDER ZIP CODE,AlphaNumeric,,9,,Lender ZIP code as recorded on the original document.
+FOURTH POSITION CURRENT OPEN LIEN LENDER,,,,,,
+610,FOURTH POSITION CURRENTLY ASSIGNED LENDER COMPANY NAME,AlphaNumeric,,60,,Name of current assigned lender for the open lien.
+611,FOURTH POSITION CURRENTLY ASSIGNED LENDER COMPANY CODE,AlphaNumeric,,10,,"CoreLogic standardized lender code of current assigned lender for the open lien (e.g., Bank of America = 000003)."
+612,FOURTH POSITION CURRENTLY ASSIGNED LENDER LAST NAME,AlphaNumeric,,32,,Name of Lender's Last Name of current assigned lender for the open lien.
+613,FOURTH POSITION CURRENTLY ASSIGNED LENDER FIRST NAME,AlphaNumeric,,60,,Name of Lender's First Name of current assigned lender for the open lien.
+614,FOURTH POSITION CURRENTLY ASSIGNED LENDER ADDRESS,AlphaNumeric,,60,,Address of the Lender of current assigned lender for the open lien.
+615,FOURTH POSITION CURRENTLY ASSIGNED LENDER CITY,AlphaNumeric,,40,,Lender City of current assigned lender for the open lien.
+616,FOURTH POSITION CURRENTLY ASSIGNED LENDER STATE,AlphaNumeric,,2,,Lender State of current assigned lender for the open lien.
+617,FOURTH POSITION CURRENTLY ASSIGNED LENDER ZIP CODE,AlphaNumeric,,9,,Lender ZIP code of current assigned lender for the open lien.
+RENT AMOUNT MODEL,,,,,,
+618,ESTIMATED RENTAL VALUE,Numeric,,10,,Estimated rental value of the property.
+619,ESTIMATED RENTAL VALUE HIGH,Numeric,,9,2,Prediction Interval – Upper Limit. Calculation is: Estimated rental value + (Forecast Standard Deviation * Estimated rental value of the property). Example: 2000 + (0.1 * 2000) = 2200
+620,ESTIMATED RENTAL VALUE LOW,Numeric,,9,2,Prediction Interval – Lower Limit. Calculation is: Estimated rental value – (Forecast Standard Deviation * Estimated rental value of the property). Example: 2000 - (0.1 * 2000) = 1800
+621,ESTIMATED RENTAL FORECAST STANDARD DEVIATION SCORE,Numeric,,22,20,Estimated Rental Forecast Standard Deviation - (Actual Rental value will fall within +/- one FSD of the estimated rental value 68 percent of the time.)
+622,ESTIMATED RENT AMOUNT MODEL RUN DATE,Numeric,,8,,Date that the Rent Amount Model was run. This model is run on a periodic cycle. This date does not represent the date of fulfillment. Format: YYYYMMDD
+623,CAP RATE,Numeric,,9,4,Capitalization rate is the ratio between the net operating income (NOI) (e.g. expected annual income produced by the property) divided by its capital cost or value (e.g. the original price paid to buy the asset) or alternatively its current market value. Used by investors to estimate the return on an investment.
+PROPENSITY SCORE - PURCHASE MORTGAGE MODEL,,,,,,
+624,PURCHASE MORTGAGE MODEL PROPENSITY SCORE,Numeric,,3,,CoreLogic Derived Score - Predicts the likelihood of the household applying for a purchase mortgage within the next six months. The higher the number the more likely the prediction will occur.
+625,PURCHASE MORTGAGE MODEL PROPENSITY SCORE RUN DATE,Numeric,,8,,Date that the Model was run. This model is run on a periodic cycle. This date does not represent the date of fulfillment. Format: YYYYMMDD
+PROPENSITY SCORE - LIST FOR SALE MODEL,,,,,,
+626,LIST FOR SALE MODEL PROPENSITY SCORE,Numeric,,3,,CoreLogic Derived Score - Predicts the likelihood of the household listing the property for sale within the next six months. The higher the number the more likely the prediction will occur.
+627,LIST FOR SALE MODEL PROPENSITY SCORE RUN DATE,Numeric,,8,,Date that the Model was run. This model is run on a periodic cycle. This date does not represent the date of fulfillment. Format: YYYYMMDD
+PROPENSITY SCORE - LIST FOR RENT MODEL,,,,,,
+628,LIST TO RENT MODEL PROPENSITY SCORE,Numeric,,3,,CoreLogic Derived Score - Predicts the likelihood of the household listing the property for rent within the next six months. The higher the number the more likely the prediction will occur.
+629,LIST TO RENT MODEL PROPENSITY SCORE RUN DATE,Numeric,,8,,Date that the Model was run. This model is run on a periodic cycle. This date does not represent the date of fulfillment. Format: YYYYMMDD
+PROPENSITY SCORE - HELOC MODEL,,,,,,
+630,HELOC MODEL PROPENSITY SCORE,Numeric,,3,,CoreLogic Derived Score - Predicts the likelihood of all properties obtaining a HELOC (Home Equity Line of Credit) or HELOAN (Home Equity Loan) within the next six months. The higher the number the more likely the prediction will occur.
+631,HELOC MODEL PROPENSITY SCORE RUN DATE,Numeric,,8,,Date that the Model was run. This model is run on a periodic cycle. This date does not represent the date of fulfillment. Format: YYYYMMDD
+PROPENSITY SCORE - REFINANCE MODEL,,,,,,
+632,REFINANCE MODEL PROPENSITY SCORE,Numeric,,3,,CoreLogic Derived Score - Predicts the likelihood of the household obtaining refinance transactions within the next six months. The higher the number the more likely the prediction will occur.
+633,REFINANCE MODEL PROPENSITY SCORE RUN DATE,Numeric,,8,,Date that the Model was run. This model is run on a periodic cycle. This date does not represent the date of fulfillment. Format: YYYYMMDD
+TAX_V2 - PRIOR01,,,,,,
+634,PRIOR01 - TOTAL VALUE CALCULATED,Numeric,,11,,"The ""TOTAL"" (i.e., Land + Improvement) Value closest to current market value used for assessment by county or local taxing authorities."
+635,PRIOR01 - LAND VALUE CALCULATED,Numeric,,11,,"The ""LAND"" Value closest to current market value used for assessment by county or local taxing authorities."
+636,PRIOR01 - IMPROVEMENT VALUE CALCULATED,Numeric,,11,,"The ""IMPROVEMENT"" Value closest to current market value used for assessment by county or local taxing authorities."
+637,PRIOR01 - CALCULATED VALUE SOURCE CODE,AlphaNumeric,,1,,"The code appearing in this indicator field reflects the type of values used to seed the TOTAL VALUE CALCULATED field (i.e., A = Assessed, M = Market, P = Appraised, T = Transitional)."
+638,PRIOR01 - ASSESSED TOTAL VALUE,Numeric,,11,,The Total Assessed Value of the Parcel's Land & Improvement values as provided by the county or local taxing/assessment authority.
+639,PRIOR01 - ASSESSED LAND VALUE,Numeric,,11,,The Assessed Land Value as provided by the county or local taxing/assessment authority.
+640,PRIOR01 - ASSESSED IMPROVEMENT VALUE,Numeric,,11,,The Assessed Improvement Value as provided by the county or local taxing/assessment authority.
+641,PRIOR01 - MARKET TOTAL VALUE,Numeric,,11,,The Total Market Value of the Parcel's Land & Improvement values as provided by the county or local taxing/assessment authority.
+642,PRIOR01 - MARKET LAND VALUE,Numeric,,11,,The Market Land Value as provided by the county or local taxing/assessment authority.
+643,PRIOR01 - MARKET IMPROVEMENT VALUE,Numeric,,11,,The Market Improvement Value as provided by the county or local taxing/assessment authority.
+644,PRIOR01 - APPRAISED TOTAL VALUE,Numeric,,11,,The Total Appraised Value of the Parcel's Land & Improvement as provided by the county or local taxing/assessment authority.
+645,PRIOR01 - APPRAISED LAND VALUE,Numeric,,11,,The Appraised Land Value as provided by the county or local taxing/assessment authority.
+646,PRIOR01 - APPRAISED IMPROVEMENT VALUE,Numeric,,11,,The Appraised Improvement Value as provided by the county or local taxing/assessment authority.
+647,PRIOR01 - TAX AMOUNT,Numeric,,14,2,The Total Tax amount provided by the county or local taxing/assessment authority.
+648,PRIOR01 - TAX YEAR,Numeric,,4,,The tax year for which the taxes were billed.
+649,PRIOR01 - ASSESSED YEAR,Numeric,,4,,The assessment year for which the taxes were billed.
+650,PRIOR01 - TAX AREA CODE,AlphaNumeric,,10,,CoreLogic standardized code that identifies the tax area associated with the parcel.
+651,PRIOR01 - TAX TOTAL RATE PERCENT,Numeric,,7,3,County provided tax rate for the property based on Property Taxes billed through the county.
+652,PRIOR01 - TAXABLE IMPROVEMENT VALUE,Numeric,,9,,County provided value of the improvement applied to the parcel used in the calculation of the tax bill.
+653,PRIOR01 - TAXABLE LAND VALUE,Numeric,,9,,County provided land value of a parcel used in the calculation of the tax bill.
+654,PRIOR01 - TAXABLE OTHER VALUE,Numeric,,9,,"County provided value of fixture, features or miscellaneous values used in the calculation of the tax bill."
+655,PRIOR01 - NET TAXABLE AMOUNT,Numeric,,13,2,"County provided value of the net taxable amount produced on the property. This is more commonly on commercial, agricultural and rental properties."
+TAX_V2 - PRIOR02,,,,,,
+656,PRIOR02 - TOTAL VALUE CALCULATED,Numeric,,11,,"The ""TOTAL"" (i.e., Land + Improvement) Value closest to current market value used for assessment by county or local taxing authorities."
+657,PRIOR02 - LAND VALUE CALCULATED,Numeric,,11,,"The ""LAND"" Value closest to current market value used for assessment by county or local taxing authorities."
+658,PRIOR02 - IMPROVEMENT VALUE CALCULATED,Numeric,,11,,"The ""IMPROVEMENT"" Value closest to current market value used for assessment by county or local taxing authorities."
+659,PRIOR02 - CALCULATED VALUE SOURCE CODE,AlphaNumeric,,1,,"The code appearing in this indicator field reflects the type of values used to seed the TOTAL VALUE CALCULATED field (i.e., A = Assessed, M = Market, P = Appraised, T = Transitional)."
+660,PRIOR02 - ASSESSED TOTAL VALUE,Numeric,,11,,The Total Assessed Value of the Parcel's Land & Improvement values as provided by the county or local taxing/assessment authority.
+661,PRIOR02 - ASSESSED LAND VALUE,Numeric,,11,,The Assessed Land Value as provided by the county or local taxing/assessment authority.
+662,PRIOR02 - ASSESSED IMPROVEMENT VALUE,Numeric,,11,,The Assessed Improvement Value as provided by the county or local taxing/assessment authority.
+663,PRIOR02 - MARKET TOTAL VALUE,Numeric,,11,,The Total Market Value of the Parcel's Land & Improvement values as provided by the county or local taxing/assessment authority.
+664,PRIOR02 - MARKET LAND VALUE,Numeric,,11,,The Market Land Value as provided by the county or local taxing/assessment authority.
+665,PRIOR02 - MARKET IMPROVEMENT VALUE,Numeric,,11,,The Market Improvement Value as provided by the county or local taxing/assessment authority.
+666,PRIOR02 - APPRAISED TOTAL VALUE,Numeric,,11,,The Total Appraised Value of the Parcel's Land & Improvement as provided by the county or local taxing/assessment authority.
+667,PRIOR02 - APPRAISED LAND VALUE,Numeric,,11,,The Appraised Land Value as provided by the county or local taxing/assessment authority.
+668,PRIOR02 - APPRAISED IMPROVEMENT VALUE,Numeric,,11,,The Appraised Improvement Value as provided by the county or local taxing/assessment authority.
+669,PRIOR02 - TAX AMOUNT,Numeric,,14,2,The Total Tax amount provided by the county or local taxing/assessment authority.
+670,PRIOR02 - TAX YEAR,Numeric,,4,,The tax year for which the taxes were billed.
+671,PRIOR02 - ASSESSED YEAR,Numeric,,4,,The assessment year for which the taxes were billed.
+672,PRIOR02 - TAX AREA CODE,AlphaNumeric,,10,,CoreLogic standardized code that identifies the tax area associated with the parcel.
+673,PRIOR02 - TAX TOTAL RATE PERCENT,Numeric,,7,3,County provided tax rate for the property based on Property Taxes billed through the county.
+674,PRIOR02 - TAXABLE IMPROVEMENT VALUE,Numeric,,9,,County provided value of the improvement applied to the parcel used in the calculation of the tax bill.
+675,PRIOR02 - TAXABLE LAND VALUE,Numeric,,9,,County provided land value of a parcel used in the calculation of the tax bill.
+676,PRIOR02 - TAXABLE OTHER VALUE,Numeric,,9,,"County provided value of fixture, features or miscellaneous values used in the calculation of the tax bill."
+677,PRIOR02 - NET TAXABLE AMOUNT,Numeric,,13,2,"County provided value of the net taxable amount produced on the property. This is more commonly on commercial, agricultural and rental properties."
+TAX_V2 - PRIOR03,,,,,,
+678,PRIOR03 - TOTAL VALUE CALCULATED,Numeric,,11,,"The ""TOTAL"" (i.e., Land + Improvement) Value closest to current market value used for assessment by county or local taxing authorities."
+679,PRIOR03 - LAND VALUE CALCULATED,Numeric,,11,,"The ""LAND"" Value closest to current market value used for assessment by county or local taxing authorities."
+680,PRIOR03 - IMPROVEMENT VALUE CALCULATED,Numeric,,11,,"The ""IMPROVEMENT"" Value closest to current market value used for assessment by county or local taxing authorities."
+681,PRIOR03 - CALCULATED VALUE SOURCE CODE,AlphaNumeric,,1,,"The code appearing in this indicator field reflects the type of values used to seed the TOTAL VALUE CALCULATED field (i.e., A = Assessed, M = Market, P = Appraised, T = Transitional)."
+682,PRIOR03 - ASSESSED TOTAL VALUE,Numeric,,11,,The Total Assessed Value of the Parcel's Land & Improvement values as provided by the county or local taxing/assessment authority.
+683,PRIOR03 - ASSESSED LAND VALUE,Numeric,,11,,The Assessed Land Value as provided by the county or local taxing/assessment authority.
+684,PRIOR03 - ASSESSED IMPROVEMENT VALUE,Numeric,,11,,The Assessed Improvement Value as provided by the county or local taxing/assessment authority.
+685,PRIOR03 - MARKET TOTAL VALUE,Numeric,,11,,The Total Market Value of the Parcel's Land & Improvement values as provided by the county or local taxing/assessment authority.
+686,PRIOR03 - MARKET LAND VALUE,Numeric,,11,,The Market Land Value as provided by the county or local taxing/assessment authority.
+687,PRIOR03 - MARKET IMPROVEMENT VALUE,Numeric,,11,,The Market Improvement Value as provided by the county or local taxing/assessment authority.
+688,PRIOR03 - APPRAISED TOTAL VALUE,Numeric,,11,,The Total Appraised Value of the Parcel's Land & Improvement as provided by the county or local taxing/assessment authority.
+689,PRIOR03 - APPRAISED LAND VALUE,Numeric,,11,,The Appraised Land Value as provided by the county or local taxing/assessment authority.
+690,PRIOR03 - APPRAISED IMPROVEMENT VALUE,Numeric,,11,,The Appraised Improvement Value as provided by the county or local taxing/assessment authority.
+691,PRIOR03 - TAX AMOUNT,Numeric,,14,2,The Total Tax amount provided by the county or local taxing/assessment authority.
+692,PRIOR03 - TAX YEAR,Numeric,,4,,The tax year for which the taxes were billed.
+693,PRIOR03 - ASSESSED YEAR,Numeric,,4,,The assessment year for which the taxes were billed.
+694,PRIOR03 - TAX AREA CODE,AlphaNumeric,,10,,CoreLogic standardized code that identifies the tax area associated with the parcel.
+695,PRIOR03 - TAX TOTAL RATE PERCENT,Numeric,,7,3,County provided tax rate for the property based on Property Taxes billed through the county.
+696,PRIOR03 - TAXABLE IMPROVEMENT VALUE,Numeric,,9,,County provided value of the improvement applied to the parcel used in the calculation of the tax bill.
+697,PRIOR03 - TAXABLE LAND VALUE,Numeric,,9,,County provided land value of a parcel used in the calculation of the tax bill.
+698,PRIOR03 - TAXABLE OTHER VALUE,Numeric,,9,,"County provided value of fixture, features or miscellaneous values used in the calculation of the tax bill."
+699,PRIOR03 - NET TAXABLE AMOUNT,Numeric,,13,2,"County provided value of the net taxable amount produced on the property. This is more commonly on commercial, agricultural and rental properties."
+TAX_V2 - PRIOR04,,,,,,
+700,PRIOR04 - TOTAL VALUE CALCULATED,Numeric,,11,,"The ""TOTAL"" (i.e., Land + Improvement) Value closest to current market value used for assessment by county or local taxing authorities."
+701,PRIOR04 - LAND VALUE CALCULATED,Numeric,,11,,"The ""LAND"" Value closest to current market value used for assessment by county or local taxing authorities."
+702,PRIOR04 - IMPROVEMENT VALUE CALCULATED,Numeric,,11,,"The ""IMPROVEMENT"" Value closest to current market value used for assessment by county or local taxing authorities."
+703,PRIOR04 - CALCULATED VALUE SOURCE CODE,AlphaNumeric,,1,,"The code appearing in this indicator field reflects the type of values used to seed the TOTAL VALUE CALCULATED field (i.e., A = Assessed, M = Market, P = Appraised, T = Transitional)."
+704,PRIOR04 - ASSESSED TOTAL VALUE,Numeric,,11,,The Total Assessed Value of the Parcel's Land & Improvement values as provided by the county or local taxing/assessment authority.
+705,PRIOR04 - ASSESSED LAND VALUE,Numeric,,11,,The Assessed Land Value as provided by the county or local taxing/assessment authority.
+706,PRIOR04 - ASSESSED IMPROVEMENT VALUE,Numeric,,11,,The Assessed Improvement Value as provided by the county or local taxing/assessment authority.
+707,PRIOR04 - MARKET TOTAL VALUE,Numeric,,11,,The Total Market Value of the Parcel's Land & Improvement values as provided by the county or local taxing/assessment authority.
+708,PRIOR04 - MARKET LAND VALUE,Numeric,,11,,The Market Land Value as provided by the county or local taxing/assessment authority.
+709,PRIOR04 - MARKET IMPROVEMENT VALUE,Numeric,,11,,The Market Improvement Value as provided by the county or local taxing/assessment authority.
+710,PRIOR04 - APPRAISED TOTAL VALUE,Numeric,,11,,The Total Appraised Value of the Parcel's Land & Improvement as provided by the county or local taxing/assessment authority.
+711,PRIOR04 - APPRAISED LAND VALUE,Numeric,,11,,The Appraised Land Value as provided by the county or local taxing/assessment authority.
+712,PRIOR04 - APPRAISED IMPROVEMENT VALUE,Numeric,,11,,The Appraised Improvement Value as provided by the county or local taxing/assessment authority.
+713,PRIOR04 - TAX AMOUNT,Numeric,,14,2,The Total Tax amount provided by the county or local taxing/assessment authority.
+714,PRIOR04 - TAX YEAR,Numeric,,4,,The tax year for which the taxes were billed.
+715,PRIOR04 - ASSESSED YEAR,Numeric,,4,,The assessment year for which the taxes were billed.
+716,PRIOR04 - TAX AREA CODE,AlphaNumeric,,10,,CoreLogic standardized code that identifies the tax area associated with the parcel.
+717,PRIOR04 - TAX TOTAL RATE PERCENT,Numeric,,7,3,County provided tax rate for the property based on Property Taxes billed through the county.
+718,PRIOR04 - TAXABLE IMPROVEMENT VALUE,Numeric,,9,,County provided value of the improvement applied to the parcel used in the calculation of the tax bill.
+719,PRIOR04 - TAXABLE LAND VALUE,Numeric,,9,,County provided land value of a parcel used in the calculation of the tax bill.
+720,PRIOR04 - TAXABLE OTHER VALUE,Numeric,,9,,"County provided value of fixture, features or miscellaneous values used in the calculation of the tax bill."
+721,PRIOR04 - NET TAXABLE AMOUNT,Numeric,,13,2,"County provided value of the net taxable amount produced on the property. This is more commonly on commercial, agricultural and rental properties."
+TAX_V2 - PRIOR05,,,,,,
+722,PRIOR05 - TOTAL VALUE CALCULATED,Numeric,,11,,"The ""TOTAL"" (i.e., Land + Improvement) Value closest to current market value used for assessment by county or local taxing authorities."
+723,PRIOR05 - LAND VALUE CALCULATED,Numeric,,11,,"The ""LAND"" Value closest to current market value used for assessment by county or local taxing authorities."
+724,PRIOR05 - IMPROVEMENT VALUE CALCULATED,Numeric,,11,,"The ""IMPROVEMENT"" Value closest to current market value used for assessment by county or local taxing authorities."
+725,PRIOR05 - CALCULATED VALUE SOURCE CODE,AlphaNumeric,,1,,"The code appearing in this indicator field reflects the type of values used to seed the TOTAL VALUE CALCULATED field (i.e., A = Assessed, M = Market, P = Appraised, T = Transitional)."
+726,PRIOR05 - ASSESSED TOTAL VALUE,Numeric,,11,,The Total Assessed Value of the Parcel's Land & Improvement values as provided by the county or local taxing/assessment authority.
+727,PRIOR05 - ASSESSED LAND VALUE,Numeric,,11,,The Assessed Land Value as provided by the county or local taxing/assessment authority.
+728,PRIOR05 - ASSESSED IMPROVEMENT VALUE,Numeric,,11,,The Assessed Improvement Value as provided by the county or local taxing/assessment authority.
+729,PRIOR05 - MARKET TOTAL VALUE,Numeric,,11,,The Total Market Value of the Parcel's Land & Improvement values as provided by the county or local taxing/assessment authority.
+730,PRIOR05 - MARKET LAND VALUE,Numeric,,11,,The Market Land Value as provided by the county or local taxing/assessment authority.
+731,PRIOR05 - MARKET IMPROVEMENT VALUE,Numeric,,11,,The Market Improvement Value as provided by the county or local taxing/assessment authority.
+732,PRIOR05 - APPRAISED TOTAL VALUE,Numeric,,11,,The Total Appraised Value of the Parcel's Land & Improvement as provided by the county or local taxing/assessment authority.
+733,PRIOR05 - APPRAISED LAND VALUE,Numeric,,11,,The Appraised Land Value as provided by the county or local taxing/assessment authority.
+734,PRIOR05 - APPRAISED IMPROVEMENT VALUE,Numeric,,11,,The Appraised Improvement Value as provided by the county or local taxing/assessment authority.
+735,PRIOR05 - TAX AMOUNT,Numeric,,14,2,The Total Tax amount provided by the county or local taxing/assessment authority.
+736,PRIOR05 - TAX YEAR,Numeric,,4,,The tax year for which the taxes were billed.
+737,PRIOR05 - ASSESSED YEAR,Numeric,,4,,The assessment year for which the taxes were billed.
+738,PRIOR05 - TAX AREA CODE,AlphaNumeric,,10,,CoreLogic standardized code that identifies the tax area associated with the parcel.
+739,PRIOR05 - TAX TOTAL RATE PERCENT,Numeric,,7,3,County provided tax rate for the property based on Property Taxes billed through the county.
+740,PRIOR05 - TAXABLE IMPROVEMENT VALUE,Numeric,,9,,County provided value of the improvement applied to the parcel used in the calculation of the tax bill.
+741,PRIOR05 - TAXABLE LAND VALUE,Numeric,,9,,County provided land value of a parcel used in the calculation of the tax bill.
+742,PRIOR05 - TAXABLE OTHER VALUE,Numeric,,9,,"County provided value of fixture, features or miscellaneous values used in the calculation of the tax bill."
+743,PRIOR05 - NET TAXABLE AMOUNT,Numeric,,13,2,"County provided value of the net taxable amount produced on the property. This is more commonly on commercial, agricultural and rental properties."
+TAX_V2 - PRIOR06,,,,,,
+744,PRIOR06 - TOTAL VALUE CALCULATED,Numeric,,11,,"The ""TOTAL"" (i.e., Land + Improvement) Value closest to current market value used for assessment by county or local taxing authorities."
+745,PRIOR06 - LAND VALUE CALCULATED,Numeric,,11,,"The ""LAND"" Value closest to current market value used for assessment by county or local taxing authorities."
+746,PRIOR06 - IMPROVEMENT VALUE CALCULATED,Numeric,,11,,"The ""IMPROVEMENT"" Value closest to current market value used for assessment by county or local taxing authorities."
+747,PRIOR06 - CALCULATED VALUE SOURCE CODE,AlphaNumeric,,1,,"The code appearing in this indicator field reflects the type of values used to seed the TOTAL VALUE CALCULATED field (i.e., A = Assessed, M = Market, P = Appraised, T = Transitional)."
+748,PRIOR06 - ASSESSED TOTAL VALUE,Numeric,,11,,The Total Assessed Value of the Parcel's Land & Improvement values as provided by the county or local taxing/assessment authority.
+749,PRIOR06 - ASSESSED LAND VALUE,Numeric,,11,,The Assessed Land Value as provided by the county or local taxing/assessment authority.
+750,PRIOR06 - ASSESSED IMPROVEMENT VALUE,Numeric,,11,,The Assessed Improvement Value as provided by the county or local taxing/assessment authority.
+751,PRIOR06 - MARKET TOTAL VALUE,Numeric,,11,,The Total Market Value of the Parcel's Land & Improvement values as provided by the county or local taxing/assessment authority.
+752,PRIOR06 - MARKET LAND VALUE,Numeric,,11,,The Market Land Value as provided by the county or local taxing/assessment authority.
+753,PRIOR06 - MARKET IMPROVEMENT VALUE,Numeric,,11,,The Market Improvement Value as provided by the county or local taxing/assessment authority.
+754,PRIOR06 - APPRAISED TOTAL VALUE,Numeric,,11,,The Total Appraised Value of the Parcel's Land & Improvement as provided by the county or local taxing/assessment authority.
+755,PRIOR06 - APPRAISED LAND VALUE,Numeric,,11,,The Appraised Land Value as provided by the county or local taxing/assessment authority.
+756,PRIOR06 - APPRAISED IMPROVEMENT VALUE,Numeric,,11,,The Appraised Improvement Value as provided by the county or local taxing/assessment authority.
+757,PRIOR06 - TAX AMOUNT,Numeric,,14,2,The Total Tax amount provided by the county or local taxing/assessment authority.
+758,PRIOR06 - TAX YEAR,Numeric,,4,,The tax year for which the taxes were billed.
+759,PRIOR06 - ASSESSED YEAR,Numeric,,4,,The assessment year for which the taxes were billed.
+760,PRIOR06 - TAX AREA CODE,AlphaNumeric,,10,,CoreLogic standardized code that identifies the tax area associated with the parcel.
+761,PRIOR06 - TAX TOTAL RATE PERCENT,Numeric,,7,3,County provided tax rate for the property based on Property Taxes billed through the county.
+762,PRIOR06 - TAXABLE IMPROVEMENT VALUE,Numeric,,9,,County provided value of the improvement applied to the parcel used in the calculation of the tax bill.
+763,PRIOR06 - TAXABLE LAND VALUE,Numeric,,9,,County provided land value of a parcel used in the calculation of the tax bill.
+764,PRIOR06 - TAXABLE OTHER VALUE,Numeric,,9,,"County provided value of fixture, features or miscellaneous values used in the calculation of the tax bill."
+765,PRIOR06 - NET TAXABLE AMOUNT,Numeric,,13,2,"County provided value of the net taxable amount produced on the property. This is more commonly on commercial, agricultural and rental properties."
+TAX_V2 - PRIOR07,,,,,,
+766,PRIOR07 - TOTAL VALUE CALCULATED,Numeric,,11,,"The ""TOTAL"" (i.e., Land + Improvement) Value closest to current market value used for assessment by county or local taxing authorities."
+767,PRIOR07 - LAND VALUE CALCULATED,Numeric,,11,,"The ""LAND"" Value closest to current market value used for assessment by county or local taxing authorities."
+768,PRIOR07 - IMPROVEMENT VALUE CALCULATED,Numeric,,11,,"The ""IMPROVEMENT"" Value closest to current market value used for assessment by county or local taxing authorities."
+769,PRIOR07 - CALCULATED VALUE SOURCE CODE,AlphaNumeric,,1,,"The code appearing in this indicator field reflects the type of values used to seed the TOTAL VALUE CALCULATED field (i.e., A = Assessed, M = Market, P = Appraised, T = Transitional)."
+770,PRIOR07 - ASSESSED TOTAL VALUE,Numeric,,11,,The Total Assessed Value of the Parcel's Land & Improvement values as provided by the county or local taxing/assessment authority.
+771,PRIOR07 - ASSESSED LAND VALUE,Numeric,,11,,The Assessed Land Value as provided by the county or local taxing/assessment authority.
+772,PRIOR07 - ASSESSED IMPROVEMENT VALUE,Numeric,,11,,The Assessed Improvement Value as provided by the county or local taxing/assessment authority.
+773,PRIOR07 - MARKET TOTAL VALUE,Numeric,,11,,The Total Market Value of the Parcel's Land & Improvement values as provided by the county or local taxing/assessment authority.
+774,PRIOR07 - MARKET LAND VALUE,Numeric,,11,,The Market Land Value as provided by the county or local taxing/assessment authority.
+775,PRIOR07 - MARKET IMPROVEMENT VALUE,Numeric,,11,,The Market Improvement Value as provided by the county or local taxing/assessment authority.
+776,PRIOR07 - APPRAISED TOTAL VALUE,Numeric,,11,,The Total Appraised Value of the Parcel's Land & Improvement as provided by the county or local taxing/assessment authority.
+777,PRIOR07 - APPRAISED LAND VALUE,Numeric,,11,,The Appraised Land Value as provided by the county or local taxing/assessment authority.
+778,PRIOR07 - APPRAISED IMPROVEMENT VALUE,Numeric,,11,,The Appraised Improvement Value as provided by the county or local taxing/assessment authority.
+779,PRIOR07 - TAX AMOUNT,Numeric,,14,2,The Total Tax amount provided by the county or local taxing/assessment authority.
+780,PRIOR07 - TAX YEAR,Numeric,,4,,The tax year for which the taxes were billed.
+781,PRIOR07 - ASSESSED YEAR,Numeric,,4,,The assessment year for which the taxes were billed.
+782,PRIOR07 - TAX AREA CODE,AlphaNumeric,,10,,CoreLogic standardized code that identifies the tax area associated with the parcel.
+783,PRIOR07 - TAX TOTAL RATE PERCENT,Numeric,,7,3,County provided tax rate for the property based on Property Taxes billed through the county.
+784,PRIOR07 - TAXABLE IMPROVEMENT VALUE,Numeric,,9,,County provided value of the improvement applied to the parcel used in the calculation of the tax bill.
+785,PRIOR07 - TAXABLE LAND VALUE,Numeric,,9,,County provided land value of a parcel used in the calculation of the tax bill.
+786,PRIOR07 - TAXABLE OTHER VALUE,Numeric,,9,,"County provided value of fixture, features or miscellaneous values used in the calculation of the tax bill."
+787,PRIOR07 - NET TAXABLE AMOUNT,Numeric,,13,2,"County provided value of the net taxable amount produced on the property. This is more commonly on commercial, agricultural and rental properties."
+TAX_V2 - PRIOR08,,,,,,
+788,PRIOR08 - TOTAL VALUE CALCULATED,Numeric,,11,,"The ""TOTAL"" (i.e., Land + Improvement) Value closest to current market value used for assessment by county or local taxing authorities."
+789,PRIOR08 - LAND VALUE CALCULATED,Numeric,,11,,"The ""LAND"" Value closest to current market value used for assessment by county or local taxing authorities."
+790,PRIOR08 - IMPROVEMENT VALUE CALCULATED,Numeric,,11,,"The ""IMPROVEMENT"" Value closest to current market value used for assessment by county or local taxing authorities."
+791,PRIOR08 - CALCULATED VALUE SOURCE CODE,AlphaNumeric,,1,,"The code appearing in this indicator field reflects the type of values used to seed the TOTAL VALUE CALCULATED field (i.e., A = Assessed, M = Market, P = Appraised, T = Transitional)."
+792,PRIOR08 - ASSESSED TOTAL VALUE,Numeric,,11,,The Total Assessed Value of the Parcel's Land & Improvement values as provided by the county or local taxing/assessment authority.
+793,PRIOR08 - ASSESSED LAND VALUE,Numeric,,11,,The Assessed Land Value as provided by the county or local taxing/assessment authority.
+794,PRIOR08 - ASSESSED IMPROVEMENT VALUE,Numeric,,11,,The Assessed Improvement Value as provided by the county or local taxing/assessment authority.
+795,PRIOR08 - MARKET TOTAL VALUE,Numeric,,11,,The Total Market Value of the Parcel's Land & Improvement values as provided by the county or local taxing/assessment authority.
+796,PRIOR08 - MARKET LAND VALUE,Numeric,,11,,The Market Land Value as provided by the county or local taxing/assessment authority.
+797,PRIOR08 - MARKET IMPROVEMENT VALUE,Numeric,,11,,The Market Improvement Value as provided by the county or local taxing/assessment authority.
+798,PRIOR08 - APPRAISED TOTAL VALUE,Numeric,,11,,The Total Appraised Value of the Parcel's Land & Improvement as provided by the county or local taxing/assessment authority.
+799,PRIOR08 - APPRAISED LAND VALUE,Numeric,,11,,The Appraised Land Value as provided by the county or local taxing/assessment authority.
+800,PRIOR08 - APPRAISED IMPROVEMENT VALUE,Numeric,,11,,The Appraised Improvement Value as provided by the county or local taxing/assessment authority.
+801,PRIOR08 - TAX AMOUNT,Numeric,,14,2,The Total Tax amount provided by the county or local taxing/assessment authority.
+802,PRIOR08 - TAX YEAR,Numeric,,4,,The tax year for which the taxes were billed.
+803,PRIOR08 - ASSESSED YEAR,Numeric,,4,,The assessment year for which the taxes were billed.
+804,PRIOR08 - TAX AREA CODE,AlphaNumeric,,10,,CoreLogic standardized code that identifies the tax area associated with the parcel.
+805,PRIOR08 - TAX TOTAL RATE PERCENT,Numeric,,7,3,County provided tax rate for the property based on Property Taxes billed through the county.
+806,PRIOR08 - TAXABLE IMPROVEMENT VALUE,Numeric,,9,,County provided value of the improvement applied to the parcel used in the calculation of the tax bill.
+807,PRIOR08 - TAXABLE LAND VALUE,Numeric,,9,,County provided land value of a parcel used in the calculation of the tax bill.
+808,PRIOR08 - TAXABLE OTHER VALUE,Numeric,,9,,"County provided value of fixture, features or miscellaneous values used in the calculation of the tax bill."
+809,PRIOR08 - NET TAXABLE AMOUNT,Numeric,,13,2,"County provided value of the net taxable amount produced on the property. This is more commonly on commercial, agricultural and rental properties."
+TAX_V2 - PRIOR09,,,,,,
+810,PRIOR09 - TOTAL VALUE CALCULATED,Numeric,,11,,"The ""TOTAL"" (i.e., Land + Improvement) Value closest to current market value used for assessment by county or local taxing authorities."
+811,PRIOR09 - LAND VALUE CALCULATED,Numeric,,11,,"The ""LAND"" Value closest to current market value used for assessment by county or local taxing authorities."
+812,PRIOR09 - IMPROVEMENT VALUE CALCULATED,Numeric,,11,,"The ""IMPROVEMENT"" Value closest to current market value used for assessment by county or local taxing authorities."
+813,PRIOR09 - CALCULATED VALUE SOURCE CODE,AlphaNumeric,,1,,"The code appearing in this indicator field reflects the type of values used to seed the TOTAL VALUE CALCULATED field (i.e., A = Assessed, M = Market, P = Appraised, T = Transitional)."
+814,PRIOR09 - ASSESSED TOTAL VALUE,Numeric,,11,,The Total Assessed Value of the Parcel's Land & Improvement values as provided by the county or local taxing/assessment authority.
+815,PRIOR09 - ASSESSED LAND VALUE,Numeric,,11,,The Assessed Land Value as provided by the county or local taxing/assessment authority.
+816,PRIOR09 - ASSESSED IMPROVEMENT VALUE,Numeric,,11,,The Assessed Improvement Value as provided by the county or local taxing/assessment authority.
+817,PRIOR09 - MARKET TOTAL VALUE,Numeric,,11,,The Total Market Value of the Parcel's Land & Improvement values as provided by the county or local taxing/assessment authority.
+818,PRIOR09 - MARKET LAND VALUE,Numeric,,11,,The Market Land Value as provided by the county or local taxing/assessment authority.
+819,PRIOR09 - MARKET IMPROVEMENT VALUE,Numeric,,11,,The Market Improvement Value as provided by the county or local taxing/assessment authority.
+820,PRIOR09 - APPRAISED TOTAL VALUE,Numeric,,11,,The Total Appraised Value of the Parcel's Land & Improvement as provided by the county or local taxing/assessment authority.
+821,PRIOR09 - APPRAISED LAND VALUE,Numeric,,11,,The Appraised Land Value as provided by the county or local taxing/assessment authority.
+822,PRIOR09 - APPRAISED IMPROVEMENT VALUE,Numeric,,11,,The Appraised Improvement Value as provided by the county or local taxing/assessment authority.
+823,PRIOR09 - TAX AMOUNT,Numeric,,14,2,The Total Tax amount provided by the county or local taxing/assessment authority.
+824,PRIOR09 - TAX YEAR,Numeric,,4,,The tax year for which the taxes were billed.
+825,PRIOR09 - ASSESSED YEAR,Numeric,,4,,The assessment year for which the taxes were billed.
+826,PRIOR09 - TAX AREA CODE,AlphaNumeric,,10,,CoreLogic standardized code that identifies the tax area associated with the parcel.
+827,PRIOR09 - TAX TOTAL RATE PERCENT,Numeric,,7,3,County provided tax rate for the property based on Property Taxes billed through the county.
+828,PRIOR09 - TAXABLE IMPROVEMENT VALUE,Numeric,,9,,County provided value of the improvement applied to the parcel used in the calculation of the tax bill.
+829,PRIOR09 - TAXABLE LAND VALUE,Numeric,,9,,County provided land value of a parcel used in the calculation of the tax bill.
+830,PRIOR09 - TAXABLE OTHER VALUE,Numeric,,9,,"County provided value of fixture, features or miscellaneous values used in the calculation of the tax bill."
+831,PRIOR09 - NET TAXABLE AMOUNT,Numeric,,13,2,"County provided value of the net taxable amount produced on the property. This is more commonly on commercial, agricultural and rental properties."
+TAX_V2 - PRIOR10,,,,,,
+832,PRIOR10 - TOTAL VALUE CALCULATED,Numeric,,11,,"The ""TOTAL"" (i.e., Land + Improvement) Value closest to current market value used for assessment by county or local taxing authorities."
+833,PRIOR10 - LAND VALUE CALCULATED,Numeric,,11,,"The ""LAND"" Value closest to current market value used for assessment by county or local taxing authorities."
+834,PRIOR10 - IMPROVEMENT VALUE CALCULATED,Numeric,,11,,"The ""IMPROVEMENT"" Value closest to current market value used for assessment by county or local taxing authorities."
+835,PRIOR10 - CALCULATED VALUE SOURCE CODE,AlphaNumeric,,1,,"The code appearing in this indicator field reflects the type of values used to seed the TOTAL VALUE CALCULATED field (i.e., A = Assessed, M = Market, P = Appraised, T = Transitional)."
+836,PRIOR10 - ASSESSED TOTAL VALUE,Numeric,,11,,The Total Assessed Value of the Parcel's Land & Improvement values as provided by the county or local taxing/assessment authority.
+837,PRIOR10 - ASSESSED LAND VALUE,Numeric,,11,,The Assessed Land Value as provided by the county or local taxing/assessment authority.
+838,PRIOR10 - ASSESSED IMPROVEMENT VALUE,Numeric,,11,,The Assessed Improvement Value as provided by the county or local taxing/assessment authority.
+839,PRIOR10 - MARKET TOTAL VALUE,Numeric,,11,,The Total Market Value of the Parcel's Land & Improvement values as provided by the county or local taxing/assessment authority.
+840,PRIOR10 - MARKET LAND VALUE,Numeric,,11,,The Market Land Value as provided by the county or local taxing/assessment authority.
+841,PRIOR10 - MARKET IMPROVEMENT VALUE,Numeric,,11,,The Market Improvement Value as provided by the county or local taxing/assessment authority.
+842,PRIOR10 - APPRAISED TOTAL VALUE,Numeric,,11,,The Total Appraised Value of the Parcel's Land & Improvement as provided by the county or local taxing/assessment authority.
+843,PRIOR10 - APPRAISED LAND VALUE,Numeric,,11,,The Appraised Land Value as provided by the county or local taxing/assessment authority.
+844,PRIOR10 - APPRAISED IMPROVEMENT VALUE,Numeric,,11,,The Appraised Improvement Value as provided by the county or local taxing/assessment authority.
+845,PRIOR10 - TAX AMOUNT,Numeric,,14,2,The Total Tax amount provided by the county or local taxing/assessment authority.
+846,PRIOR10 - TAX YEAR,Numeric,,4,,The tax year for which the taxes were billed.
+847,PRIOR10 - ASSESSED YEAR,Numeric,,4,,The assessment year for which the taxes were billed.
+848,PRIOR10 - TAX AREA CODE,AlphaNumeric,,10,,CoreLogic standardized code that identifies the tax area associated with the parcel.
+849,PRIOR10 - TAX TOTAL RATE PERCENT,Numeric,,7,3,County provided tax rate for the property based on Property Taxes billed through the county.
+850,PRIOR10 - TAXABLE IMPROVEMENT VALUE,Numeric,,9,,County provided value of the improvement applied to the parcel used in the calculation of the tax bill.
+851,PRIOR10 - TAXABLE LAND VALUE,Numeric,,9,,County provided land value of a parcel used in the calculation of the tax bill.
+852,PRIOR10 - TAXABLE OTHER VALUE,Numeric,,9,,"County provided value of fixture, features or miscellaneous values used in the calculation of the tax bill."
+853,PRIOR10 - NET TAXABLE AMOUNT,Numeric,,13,2,"County provided value of the net taxable amount produced on the property. This is more commonly on commercial, agricultural and rental properties."
+TAX_V2 - PRIOR11,,,,,,
+854,PRIOR11 - TOTAL VALUE CALCULATED,Numeric,,11,,"The ""TOTAL"" (i.e., Land + Improvement) Value closest to current market value used for assessment by county or local taxing authorities."
+855,PRIOR11 - LAND VALUE CALCULATED,Numeric,,11,,"The ""LAND"" Value closest to current market value used for assessment by county or local taxing authorities."
+856,PRIOR11 - IMPROVEMENT VALUE CALCULATED,Numeric,,11,,"The ""IMPROVEMENT"" Value closest to current market value used for assessment by county or local taxing authorities."
+857,PRIOR11 - CALCULATED VALUE SOURCE CODE,AlphaNumeric,,1,,"The code appearing in this indicator field reflects the type of values used to seed the TOTAL VALUE CALCULATED field (i.e., A = Assessed, M = Market, P = Appraised, T = Transitional)."
+858,PRIOR11 - ASSESSED TOTAL VALUE,Numeric,,11,,The Total Assessed Value of the Parcel's Land & Improvement values as provided by the county or local taxing/assessment authority.
+859,PRIOR11 - ASSESSED LAND VALUE,Numeric,,11,,The Assessed Land Value as provided by the county or local taxing/assessment authority.
+860,PRIOR11 - ASSESSED IMPROVEMENT VALUE,Numeric,,11,,The Assessed Improvement Value as provided by the county or local taxing/assessment authority.
+861,PRIOR11 - MARKET TOTAL VALUE,Numeric,,11,,The Total Market Value of the Parcel's Land & Improvement values as provided by the county or local taxing/assessment authority.
+862,PRIOR11 - MARKET LAND VALUE,Numeric,,11,,The Market Land Value as provided by the county or local taxing/assessment authority.
+863,PRIOR11 - MARKET IMPROVEMENT VALUE,Numeric,,11,,The Market Improvement Value as provided by the county or local taxing/assessment authority.
+864,PRIOR11 - APPRAISED TOTAL VALUE,Numeric,,11,,The Total Appraised Value of the Parcel's Land & Improvement as provided by the county or local taxing/assessment authority.
+865,PRIOR11 - APPRAISED LAND VALUE,Numeric,,11,,The Appraised Land Value as provided by the county or local taxing/assessment authority.
+866,PRIOR11 - APPRAISED IMPROVEMENT VALUE,Numeric,,11,,The Appraised Improvement Value as provided by the county or local taxing/assessment authority.
+867,PRIOR11 - TAX AMOUNT,Numeric,,14,2,The Total Tax amount provided by the county or local taxing/assessment authority.
+868,PRIOR11 - TAX YEAR,Numeric,,4,,The tax year for which the taxes were billed.
+869,PRIOR11 - ASSESSED YEAR,Numeric,,4,,The assessment year for which the taxes were billed.
+870,PRIOR11 - TAX AREA CODE,AlphaNumeric,,10,,CoreLogic standardized code that identifies the tax area associated with the parcel.
+871,PRIOR11 - TAX TOTAL RATE PERCENT,Numeric,,7,3,County provided tax rate for the property based on Property Taxes billed through the county.
+872,PRIOR11 - TAXABLE IMPROVEMENT VALUE,Numeric,,9,,County provided value of the improvement applied to the parcel used in the calculation of the tax bill.
+873,PRIOR11 - TAXABLE LAND VALUE,Numeric,,9,,County provided land value of a parcel used in the calculation of the tax bill.
+874,PRIOR11 - TAXABLE OTHER VALUE,Numeric,,9,,"County provided value of fixture, features or miscellaneous values used in the calculation of the tax bill."
+875,PRIOR11 - NET TAXABLE AMOUNT,Numeric,,13,2,"County provided value of the net taxable amount produced on the property. This is more commonly on commercial, agricultural and rental properties."
+TAX_V2 - PRIOR12,,,,,,
+876,PRIOR12 - TOTAL VALUE CALCULATED,Numeric,,11,,"The ""TOTAL"" (i.e., Land + Improvement) Value closest to current market value used for assessment by county or local taxing authorities."
+877,PRIOR12 - LAND VALUE CALCULATED,Numeric,,11,,"The ""LAND"" Value closest to current market value used for assessment by county or local taxing authorities."
+878,PRIOR12 - IMPROVEMENT VALUE CALCULATED,Numeric,,11,,"The ""IMPROVEMENT"" Value closest to current market value used for assessment by county or local taxing authorities."
+879,PRIOR12 - CALCULATED VALUE SOURCE CODE,AlphaNumeric,,1,,"The code appearing in this indicator field reflects the type of values used to seed the TOTAL VALUE CALCULATED field (i.e., A = Assessed, M = Market, P = Appraised, T = Transitional)."
+880,PRIOR12 - ASSESSED TOTAL VALUE,Numeric,,11,,The Total Assessed Value of the Parcel's Land & Improvement values as provided by the county or local taxing/assessment authority.
+881,PRIOR12 - ASSESSED LAND VALUE,Numeric,,11,,The Assessed Land Value as provided by the county or local taxing/assessment authority.
+882,PRIOR12 - ASSESSED IMPROVEMENT VALUE,Numeric,,11,,The Assessed Improvement Value as provided by the county or local taxing/assessment authority.
+883,PRIOR12 - MARKET TOTAL VALUE,Numeric,,11,,The Total Market Value of the Parcel's Land & Improvement values as provided by the county or local taxing/assessment authority.
+884,PRIOR12 - MARKET LAND VALUE,Numeric,,11,,The Market Land Value as provided by the county or local taxing/assessment authority.
+885,PRIOR12 - MARKET IMPROVEMENT VALUE,Numeric,,11,,The Market Improvement Value as provided by the county or local taxing/assessment authority.
+886,PRIOR12 - APPRAISED TOTAL VALUE,Numeric,,11,,The Total Appraised Value of the Parcel's Land & Improvement as provided by the county or local taxing/assessment authority.
+887,PRIOR12 - APPRAISED LAND VALUE,Numeric,,11,,The Appraised Land Value as provided by the county or local taxing/assessment authority.
+888,PRIOR12 - APPRAISED IMPROVEMENT VALUE,Numeric,,11,,The Appraised Improvement Value as provided by the county or local taxing/assessment authority.
+889,PRIOR12 - TAX AMOUNT,Numeric,,14,2,The Total Tax amount provided by the county or local taxing/assessment authority.
+890,PRIOR12 - TAX YEAR,Numeric,,4,,The tax year for which the taxes were billed.
+891,PRIOR12 - ASSESSED YEAR,Numeric,,4,,The assessment year for which the taxes were billed.
+892,PRIOR12 - TAX AREA CODE,AlphaNumeric,,10,,CoreLogic standardized code that identifies the tax area associated with the parcel.
+893,PRIOR12 - TAX TOTAL RATE PERCENT,Numeric,,7,3,County provided tax rate for the property based on Property Taxes billed through the county.
+894,PRIOR12 - TAXABLE IMPROVEMENT VALUE,Numeric,,9,,County provided value of the improvement applied to the parcel used in the calculation of the tax bill.
+895,PRIOR12 - TAXABLE LAND VALUE,Numeric,,9,,County provided land value of a parcel used in the calculation of the tax bill.
+896,PRIOR12 - TAXABLE OTHER VALUE,Numeric,,9,,"County provided value of fixture, features or miscellaneous values used in the calculation of the tax bill."
+897,PRIOR12 - NET TAXABLE AMOUNT,Numeric,,13,2,"County provided value of the net taxable amount produced on the property. This is more commonly on commercial, agricultural and rental properties."
+TAX_V2 - PRIOR13,,,,,,
+898,PRIOR13 - TOTAL VALUE CALCULATED,Numeric,,11,,"The ""TOTAL"" (i.e., Land + Improvement) Value closest to current market value used for assessment by county or local taxing authorities."
+899,PRIOR13 - LAND VALUE CALCULATED,Numeric,,11,,"The ""LAND"" Value closest to current market value used for assessment by county or local taxing authorities."
+900,PRIOR13 - IMPROVEMENT VALUE CALCULATED,Numeric,,11,,"The ""IMPROVEMENT"" Value closest to current market value used for assessment by county or local taxing authorities."
+901,PRIOR13 - CALCULATED VALUE SOURCE CODE,AlphaNumeric,,1,,"The code appearing in this indicator field reflects the type of values used to seed the TOTAL VALUE CALCULATED field (i.e., A = Assessed, M = Market, P = Appraised, T = Transitional)."
+902,PRIOR13 - ASSESSED TOTAL VALUE,Numeric,,11,,The Total Assessed Value of the Parcel's Land & Improvement values as provided by the county or local taxing/assessment authority.
+903,PRIOR13 - ASSESSED LAND VALUE,Numeric,,11,,The Assessed Land Value as provided by the county or local taxing/assessment authority.
+904,PRIOR13 - ASSESSED IMPROVEMENT VALUE,Numeric,,11,,The Assessed Improvement Value as provided by the county or local taxing/assessment authority.
+905,PRIOR13 - MARKET TOTAL VALUE,Numeric,,11,,The Total Market Value of the Parcel's Land & Improvement values as provided by the county or local taxing/assessment authority.
+906,PRIOR13 - MARKET LAND VALUE,Numeric,,11,,The Market Land Value as provided by the county or local taxing/assessment authority.
+907,PRIOR13 - MARKET IMPROVEMENT VALUE,Numeric,,11,,The Market Improvement Value as provided by the county or local taxing/assessment authority.
+908,PRIOR13 - APPRAISED TOTAL VALUE,Numeric,,11,,The Total Appraised Value of the Parcel's Land & Improvement as provided by the county or local taxing/assessment authority.
+909,PRIOR13 - APPRAISED LAND VALUE,Numeric,,11,,The Appraised Land Value as provided by the county or local taxing/assessment authority.
+910,PRIOR13 - APPRAISED IMPROVEMENT VALUE,Numeric,,11,,The Appraised Improvement Value as provided by the county or local taxing/assessment authority.
+911,PRIOR13 - TAX AMOUNT,Numeric,,14,2,The Total Tax amount provided by the county or local taxing/assessment authority.
+912,PRIOR13 - TAX YEAR,Numeric,,4,,The tax year for which the taxes were billed.
+913,PRIOR13 - ASSESSED YEAR,Numeric,,4,,The assessment year for which the taxes were billed.
+914,PRIOR13 - TAX AREA CODE,AlphaNumeric,,10,,CoreLogic standardized code that identifies the tax area associated with the parcel.
+915,PRIOR13 - TAX TOTAL RATE PERCENT,Numeric,,7,3,County provided tax rate for the property based on Property Taxes billed through the county.
+916,PRIOR13 - TAXABLE IMPROVEMENT VALUE,Numeric,,9,,County provided value of the improvement applied to the parcel used in the calculation of the tax bill.
+917,PRIOR13 - TAXABLE LAND VALUE,Numeric,,9,,County provided land value of a parcel used in the calculation of the tax bill.
+918,PRIOR13 - TAXABLE OTHER VALUE,Numeric,,9,,"County provided value of fixture, features or miscellaneous values used in the calculation of the tax bill."
+919,PRIOR13 - NET TAXABLE AMOUNT,Numeric,,13,2,"County provided value of the net taxable amount produced on the property. This is more commonly on commercial, agricultural and rental properties."
+TAX_V2 - PRIOR14,,,,,,
+920,PRIOR14 - TOTAL VALUE CALCULATED,Numeric,,11,,"The ""TOTAL"" (i.e., Land + Improvement) Value closest to current market value used for assessment by county or local taxing authorities."
+921,PRIOR14 - LAND VALUE CALCULATED,Numeric,,11,,"The ""LAND"" Value closest to current market value used for assessment by county or local taxing authorities."
+922,PRIOR14 - IMPROVEMENT VALUE CALCULATED,Numeric,,11,,"The ""IMPROVEMENT"" Value closest to current market value used for assessment by county or local taxing authorities."
+923,PRIOR14 - CALCULATED VALUE SOURCE CODE,AlphaNumeric,,1,,"The code appearing in this indicator field reflects the type of values used to seed the TOTAL VALUE CALCULATED field (i.e., A = Assessed, M = Market, P = Appraised, T = Transitional)."
+924,PRIOR14 - ASSESSED TOTAL VALUE,Numeric,,11,,The Total Assessed Value of the Parcel's Land & Improvement values as provided by the county or local taxing/assessment authority.
+925,PRIOR14 - ASSESSED LAND VALUE,Numeric,,11,,The Assessed Land Value as provided by the county or local taxing/assessment authority.
+926,PRIOR14 - ASSESSED IMPROVEMENT VALUE,Numeric,,11,,The Assessed Improvement Value as provided by the county or local taxing/assessment authority.
+927,PRIOR14 - MARKET TOTAL VALUE,Numeric,,11,,The Total Market Value of the Parcel's Land & Improvement values as provided by the county or local taxing/assessment authority.
+928,PRIOR14 - MARKET LAND VALUE,Numeric,,11,,The Market Land Value as provided by the county or local taxing/assessment authority.
+929,PRIOR14 - MARKET IMPROVEMENT VALUE,Numeric,,11,,The Market Improvement Value as provided by the county or local taxing/assessment authority.
+930,PRIOR14 - APPRAISED TOTAL VALUE,Numeric,,11,,The Total Appraised Value of the Parcel's Land & Improvement as provided by the county or local taxing/assessment authority.
+931,PRIOR14 - APPRAISED LAND VALUE,Numeric,,11,,The Appraised Land Value as provided by the county or local taxing/assessment authority.
+932,PRIOR14 - APPRAISED IMPROVEMENT VALUE,Numeric,,11,,The Appraised Improvement Value as provided by the county or local taxing/assessment authority.
+933,PRIOR14 - TAX AMOUNT,Numeric,,14,2,The Total Tax amount provided by the county or local taxing/assessment authority.
+934,PRIOR14 - TAX YEAR,Numeric,,4,,The tax year for which the taxes were billed.
+935,PRIOR14 - ASSESSED YEAR,Numeric,,4,,The assessment year for which the taxes were billed.
+936,PRIOR14 - TAX AREA CODE,AlphaNumeric,,10,,CoreLogic standardized code that identifies the tax area associated with the parcel.
+937,PRIOR14 - TAX TOTAL RATE PERCENT,Numeric,,7,3,County provided tax rate for the property based on Property Taxes billed through the county.
+938,PRIOR14 - TAXABLE IMPROVEMENT VALUE,Numeric,,9,,County provided value of the improvement applied to the parcel used in the calculation of the tax bill.
+939,PRIOR14 - TAXABLE LAND VALUE,Numeric,,9,,County provided land value of a parcel used in the calculation of the tax bill.
+940,PRIOR14 - TAXABLE OTHER VALUE,Numeric,,9,,"County provided value of fixture, features or miscellaneous values used in the calculation of the tax bill."
+941,PRIOR14 - NET TAXABLE AMOUNT,Numeric,,13,2,"County provided value of the net taxable amount produced on the property. This is more commonly on commercial, agricultural and rental properties."
+TAX_V2 - PRIOR15,,,,,,
+942,PRIOR15 - TOTAL VALUE CALCULATED,Numeric,,11,,"The ""TOTAL"" (i.e., Land + Improvement) Value closest to current market value used for assessment by county or local taxing authorities."
+943,PRIOR15 - LAND VALUE CALCULATED,Numeric,,11,,"The ""LAND"" Value closest to current market value used for assessment by county or local taxing authorities."
+944,PRIOR15 - IMPROVEMENT VALUE CALCULATED,Numeric,,11,,"The ""IMPROVEMENT"" Value closest to current market value used for assessment by county or local taxing authorities."
+945,PRIOR15 - CALCULATED VALUE SOURCE CODE,AlphaNumeric,,1,,"The code appearing in this indicator field reflects the type of values used to seed the TOTAL VALUE CALCULATED field (i.e., A = Assessed, M = Market, P = Appraised, T = Transitional)."
+946,PRIOR15 - ASSESSED TOTAL VALUE,Numeric,,11,,The Total Assessed Value of the Parcel's Land & Improvement values as provided by the county or local taxing/assessment authority.
+947,PRIOR15 - ASSESSED LAND VALUE,Numeric,,11,,The Assessed Land Value as provided by the county or local taxing/assessment authority.
+948,PRIOR15 - ASSESSED IMPROVEMENT VALUE,Numeric,,11,,The Assessed Improvement Value as provided by the county or local taxing/assessment authority.
+949,PRIOR15 - MARKET TOTAL VALUE,Numeric,,11,,The Total Market Value of the Parcel's Land & Improvement values as provided by the county or local taxing/assessment authority.
+950,PRIOR15 - MARKET LAND VALUE,Numeric,,11,,The Market Land Value as provided by the county or local taxing/assessment authority.
+951,PRIOR15 - MARKET IMPROVEMENT VALUE,Numeric,,11,,The Market Improvement Value as provided by the county or local taxing/assessment authority.
+952,PRIOR15 - APPRAISED TOTAL VALUE,Numeric,,11,,The Total Appraised Value of the Parcel's Land & Improvement as provided by the county or local taxing/assessment authority.
+953,PRIOR15 - APPRAISED LAND VALUE,Numeric,,11,,The Appraised Land Value as provided by the county or local taxing/assessment authority.
+954,PRIOR15 - APPRAISED IMPROVEMENT VALUE,Numeric,,11,,The Appraised Improvement Value as provided by the county or local taxing/assessment authority.
+955,PRIOR15 - TAX AMOUNT,Numeric,,14,2,The Total Tax amount provided by the county or local taxing/assessment authority.
+956,PRIOR15 - TAX YEAR,Numeric,,4,,The tax year for which the taxes were billed.
+957,PRIOR15 - ASSESSED YEAR,Numeric,,4,,The assessment year for which the taxes were billed.
+958,PRIOR15 - TAX AREA CODE,AlphaNumeric,,10,,CoreLogic standardized code that identifies the tax area associated with the parcel.
+959,PRIOR15 - TAX TOTAL RATE PERCENT,Numeric,,7,3,County provided tax rate for the property based on Property Taxes billed through the county.
+960,PRIOR15 - TAXABLE IMPROVEMENT VALUE,Numeric,,9,,County provided value of the improvement applied to the parcel used in the calculation of the tax bill.
+961,PRIOR15 - TAXABLE LAND VALUE,Numeric,,9,,County provided land value of a parcel used in the calculation of the tax bill.
+962,PRIOR15 - TAXABLE OTHER VALUE,Numeric,,9,,"County provided value of fixture, features or miscellaneous values used in the calculation of the tax bill."
+963,PRIOR15 - NET TAXABLE AMOUNT,Numeric,,13,2,"County provided value of the net taxable amount produced on the property. This is more commonly on commercial, agricultural and rental properties."
+ACTION,,,,,,
+964,RECORD ACTION INDICATOR,AlphaNumeric,,1,,"A CoreLogic system generated indicator used to advise customers how to process records contained in delta files.  Values are: A = ADD, Customer will do an UPSERT, U = UPDATE, Customer will do an UPSERT, D = DELETE, Customer will do a DELETE, BLANK = No Action Required.  BLANK is used for Initial Delivery Files or Refresh Files."

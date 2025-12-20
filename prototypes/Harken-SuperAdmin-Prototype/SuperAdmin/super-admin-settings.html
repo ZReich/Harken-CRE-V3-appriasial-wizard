@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>System Settings - Harken CRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            font-family: 'Montserrat', sans-serif !important;
+        }
+        body {
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background: url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;
+            background-color: #1c3643 !important;
+            max-height: 84px;
+            height: 84px;
+            color: #fff;
+        }
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 10px 24px;
+            border-radius: 25px;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+        .nav-link.active {
+            background-color: transparent;
+            border: 1px solid #0da1c7;
+            color: #0da1c7;
+        }
+        .section-title {
+            font-size: 23px;
+            font-weight: 600;
+            color: #1c3643;
+        }
+        .settings-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 32px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+        .settings-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            border-color: #0da1c7;
+        }
+        .settings-card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            margin-bottom: 20px;
+        }
+        .settings-card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1c3643;
+            margin-bottom: 12px;
+        }
+        .settings-card-description {
+            font-size: 13px;
+            color: #687F8B;
+            line-height: 1.6;
+        }
+        .settings-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 32px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Toggle Button (initially hidden) -->
+    <button id="showBuildNotesBtn" 
+            style="position: fixed; top: 100px; right: 20px; z-index: 9999; 
+                   padding: 12px 20px; background: #ffc107; color: #856404; 
+                   border: 2px solid #856404; border-radius: 25px; 
+                   font-size: 14px; font-weight: 700; cursor: pointer; 
+                   box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+                   display: none; transition: all 0.3s;"
+            onclick="toggleBuildNotes(true)">
+        🔨 Show Build Notes
+    </button>
+
+    <!-- UNIFIED NAVIGATION COMPONENT -->
+    <style>
+        .unified-navbar { background: url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643; background-color: #1c3643 !important; height: 84px; color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+        .nav-logo { height: 40px; width: auto; cursor: pointer; }
+        .nav-center { display: flex; align-items: center; gap: 8px; flex: 1; justify-content: center; }
+        .nav-core-features { display: flex; align-items: center; gap: 4px; background: rgba(13, 161, 199, 0.08); border-radius: 25px; padding: 4px 8px; margin-right: 16px; }
+        .nav-link { color: white; text-decoration: none; padding: 10px 20px; border-radius: 25px; transition: all 0.2s; border: 1px solid transparent; font-weight: 500; font-size: 14px; white-space: nowrap; }
+        .nav-link:hover { background-color: rgba(255,255,255,0.08); }
+        .nav-link.core-feature { font-weight: 500; font-size: 14px; color: white; }
+        .nav-link.core-feature:hover { background-color: rgba(13, 161, 199, 0.2); color: white; }
+        .nav-link.core-feature.active { background-color: transparent; border: 1px solid #0da1c7; color: #0da1c7; box-shadow: 0 2px 4px rgba(13, 161, 199, 0.2); }
+        .nav-link.active { background-color: transparent; border: 1px solid #0da1c7; color: #0da1c7; }
+        .nav-separator { width: 1px; height: 24px; background: rgba(255, 255, 255, 0.2); margin: 0 8px; }
+        .nav-user { display: flex; align-items: center; gap: 12px; }
+        .nav-user-name { font-size: 14px; font-weight: 500; color: white; }
+        .nav-user-avatar { width: 36px; height: 36px; border-radius: 50%; border: 2px solid #0da1c7; }
+        .property-tabs-container { background: white; border-bottom: 2px solid #e0e0e0; display: none; padding: 0 32px; }
+        .property-tabs-container.show { display: flex; }
+        .property-tab { padding: 16px 24px; border: none; background: transparent; color: #687F8B; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; border-bottom: 3px solid transparent; margin-bottom: -2px; font-family: 'Montserrat', sans-serif; }
+        .property-tab:hover { color: #0da1c7; background: #f0fbfd; }
+        .property-tab.active { color: #0da1c7; border-bottom-color: #0da1c7; background: #f0fbfd; }
+    </style>
+    <nav class="unified-navbar">
+        <img src="assets/harken.png" alt="Harken CRE" class="nav-logo" onclick="window.location.href='super-admin-dashboard.html'">
+        <div class="nav-center">
+            <div class="nav-core-features">
+                <a href="super-admin-comps.html" class="nav-link core-feature" id="nav-comps">COMPS</a>
+                <a href="super-admin-appraisals-list.html" class="nav-link core-feature" id="nav-appraisals">APPRAISAL</a>
+                <a href="evaluation-wizard-full.html" class="nav-link core-feature" id="nav-evaluations">EVALUATION</a>
+            </div>
+            <div class="nav-separator"></div>
+            <a href="super-admin-dashboard.html" class="nav-link" id="nav-dashboard">Dashboard</a>
+            <a href="super-admin-users.html" class="nav-link" id="nav-users">Users</a>
+            <a href="super-admin-clients.html" class="nav-link" id="nav-clients">Clients</a>
+            <a href="super-admin-accounts.html" class="nav-link" id="nav-accounts">Accounts</a>
+            <a href="super-admin-reports.html" class="nav-link" id="nav-reports">Reports</a>
+            <a href="super-admin-support-tickets.html" class="nav-link" id="nav-support">Support</a>
+            <a href="super-admin-audit-logs.html" class="nav-link" id="nav-audit">Audit Logs</a>
+            <a href="super-admin-settings.html" class="nav-link" id="nav-settings">Settings</a>
+        </div>
+        <div class="nav-user">
+            <span class="nav-user-name">Harken Admin</span>
+            <img src="https://i.pravatar.cc/150?img=33" alt="User" class="nav-user-avatar">
+        </div>
+    </nav>
+    <div class="property-tabs-container" id="propertyTabsContainer">
+        <button class="property-tab active" data-type="commercial" onclick="switchPropertyType('commercial')"><span style="font-size: 18px;">🏢</span>Commercial</button>
+        <button class="property-tab" data-type="residential" onclick="switchPropertyType('residential')"><span style="font-size: 18px;">🏠</span>Residential</button>
+        <button class="property-tab" data-type="land" onclick="switchPropertyType('land')"><span style="font-size: 18px;">🏞️</span>Land</button>
+    </div>
+    <script>
+        (function() {
+            const currentPage = window.location.pathname.split('/').pop() || 'super-admin-dashboard.html';
+            const showPropertyTabsOn = ['comps-premium-with-clustering.html', 'super-admin-appraisals-list.html', 'evaluation-wizard-full.html'];
+            if (showPropertyTabsOn.some(page => currentPage.includes(page) || currentPage.includes('comps-') || currentPage.includes('appraisal-') || currentPage.includes('evaluation-'))) { document.getElementById('propertyTabsContainer').classList.add('show'); }
+            const navMapping = {'super-admin-dashboard.html': 'nav-dashboard','comps-premium-with-clustering.html': 'nav-comps','super-admin-appraisals-list.html': 'nav-appraisals','evaluation-wizard-full.html': 'nav-evaluations','super-admin-users.html': 'nav-users','super-admin-user-edit.html': 'nav-users','super-admin-clients.html': 'nav-clients','super-admin-accounts.html': 'nav-accounts','super-admin-account-manage.html': 'nav-accounts','super-admin-account-amenities.html': 'nav-accounts','super-admin-account-report-templates.html': 'nav-accounts','super-admin-reports.html': 'nav-reports','super-admin-support-tickets.html': 'nav-support','super-admin-support-create-ticket.html': 'nav-support','super-admin-support-ticket-detail.html': 'nav-support','super-admin-audit-logs.html': 'nav-audit','super-admin-settings.html': 'nav-settings','super-admin-settings-billing.html': 'nav-settings','super-admin-settings-amenities.html': 'nav-settings','super-admin-settings-global-codes.html': 'nav-settings','super-admin-settings-white-label.html': 'nav-settings','super-admin-settings-trials.html': 'nav-settings'};
+            for (const [page, navId] of Object.entries(navMapping)) { if (currentPage.includes(page)) { const navElement = document.getElementById(navId); if (navElement) { navElement.classList.add('active'); } break; } }
+        })();
+        function switchPropertyType(type) { document.querySelectorAll('.property-tab').forEach(tab => { tab.classList.remove('active'); }); document.querySelector(`[data-type="${type}"]`).classList.add('active'); localStorage.setItem('activePropertyType', type); console.log('Switched to property type:', type); }
+        window.addEventListener('load', function() { const savedType = localStorage.getItem('activePropertyType'); if (savedType) { switchPropertyType(savedType); } });
+    </script>
+
+    <!-- Main Content -->
+    <div style="padding: 35px 50px;">
+        <!-- BUILD NOTES SECTION -->
+        <div id="buildNotesSection" style="background-color: #e3f2fd; border-left: 4px solid #1565c0; padding: 20px; margin-bottom: 32px; border-radius: 4px;">
+            <h3 style="color: #0d47a1; font-size: 16px; font-weight: 700; margin: 0 0 16px 0;">⚙️ SUPER ADMIN CONTROL PANEL</h3>
+            
+            <div style="margin-bottom: 16px; padding: 12px; background-color: #bbdefb; border-radius: 4px;">
+                <p style="margin: 0; color: #0d47a1; font-weight: 600;">🔐 IMPORTANT: This is the Super Administrator settings area for system-wide configuration that affects ALL customer accounts across the entire platform. This is NOT where individual accounts customize their own settings - that happens in each account's management page.</p>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 16px;">
+                <div>
+                    <strong style="color: #0d47a1;">Priority Level:</strong> Medium (varies by section)
+                </div>
+                <div>
+                    <strong style="color: #0d47a1;">Recommended Customer Count:</strong> 5+ customers
+                </div>
+                <div>
+                    <strong style="color: #0d47a1;">Development Stage:</strong> Phase 2
+                </div>
+                <div>
+                    <strong style="color: #0d47a1;">Estimated Build Time:</strong> Varies by section
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #0d47a1;">Purpose & Use Case:</strong>
+                <p style="margin: 4px 0 0 0; color: #0d47a1;">Central hub for global system configuration. Changes here affect how the entire platform operates for all customers. Use this to manage master data, system-wide defaults, and platform-level settings. Individual account customizations should happen in super-admin-account-manage.html instead.</p>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #0d47a1;">Sections Explained (See each section's page for details):</strong>
+                <ul style="margin: 4px 0 0 0; color: #0d47a1;">
+                    <li><strong>Amenities Management (✓ Built):</strong> Master list of amenities all accounts can choose from. BUILD IF customers need custom amenities.</li>
+                    <li><strong>Global Codes:</strong> Property types, sale statuses, lease types used across platform. Hard-code initially, build UI later.</li>
+                    <li><strong>Report Templates:</strong> Master report layouts accounts inherit. Phase 4 - most accounts use same templates.</li>
+                    <li><strong>User Permissions:</strong> Define what each role can do. Hard-code 3 roles initially, expand when needed.</li>
+                    <li><strong>System Configuration:</strong> Email settings, API keys, backup schedules. Use environment variables initially.</li>
+                    <li><strong>Billing Settings (✓ Built):</strong> Payment processing config, plan pricing. Use Stripe dashboard until 15+ customers.</li>
+                </ul>
+            </div>
+            
+            <div>
+                <strong style="color: #0d47a1;">Implementation Notes:</strong>
+                <p style="margin: 4px 0 0 0; color: #0d47a1;">Start with just Amenities if customers need it. All other sections can be hard-coded or managed via environment variables initially. Build UI for each section only when managing via code becomes painful. Priority order: Amenities → Global Codes → Permissions → System Config → Report Templates → Billing Settings.</p>
+            </div>
+            
+            <button onclick="toggleBuildNotes(false)" style="margin-top: 12px; padding: 6px 12px; background: #1565c0; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">Hide Build Notes</button>
+        </div>
+
+        <!-- Page Title -->
+        <div style="margin-bottom: 32px;">
+            <h2 class="section-title">SYSTEM SETTINGS</h2>
+            <p style="color: #687F8B; font-size: 14px; margin-top: 8px;">Manage global system configuration and preferences for the Harken CRE platform</p>
+        </div>
+
+        <!-- Architecture Overview Section -->
+        <div style="background-color: white; border-radius: 8px; padding: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); margin-bottom: 32px;">
+            <h3 style="font-size: 20px; font-weight: 600; color: #1c3643; margin-bottom: 20px;">🏗️ PLATFORM ARCHITECTURE OVERVIEW</h3>
+            
+            <p style="color: #687F8B; font-size: 14px; margin-bottom: 24px;">
+                <strong style="color: #1c3643;">Harken CRE is a white-label platform</strong> that provides appraisal management software to appraisal firms. 
+                This three-tier architecture allows your customers to serve their own end clients while you manage the underlying platform.
+            </p>
+
+            <!-- Three-Tier Diagram -->
+            <div style="background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%); border-radius: 8px; padding: 24px; margin-bottom: 24px;">
+                <!-- Tier 1: Harken CRE -->
+                <div style="background: white; border-radius: 8px; padding: 20px; margin-bottom: 16px; border-left: 4px solid #0da1c7;">
+                    <div style="font-size: 16px; font-weight: 700; color: #0da1c7; margin-bottom: 12px;">
+                        TIER 1: HARKEN CRE (Platform Provider - YOU)
+                    </div>
+                    <div style="font-size: 13px; color: #1c3643; line-height: 1.8;">
+                        <strong>Super Admin Panel:</strong><br>
+                        • Manage customer accounts (Rove Management, Metro Realty, etc.)<br>
+                        • Handle SOFTWARE support tickets (bugs, features, technical issues)<br>
+                        • Configure white-label domains & branding<br>
+                        • View billing & subscriptions<br>
+                        • Impersonate customer admins for troubleshooting<br><br>
+                        <strong style="color: #10b981;">Revenue:</strong> $100-150/month per customer account
+                    </div>
+                </div>
+
+                <div style="text-align: center; color: #687F8B; font-weight: 600; margin: 12px 0;">
+                    ↓ Provides Software To ↓
+                </div>
+
+                <!-- Tier 2: Customer Account (Rove) -->
+                <div style="background: white; border-radius: 8px; padding: 20px; margin-bottom: 16px; border-left: 4px solid #10b981;">
+                    <div style="font-size: 16px; font-weight: 700; color: #10b981; margin-bottom: 12px;">
+                        TIER 2: ROVE MANAGEMENT (Your Customer - Appraisal Firm)
+                    </div>
+                    <div style="font-size: 13px; color: #1c3643; line-height: 1.8;">
+                        <strong>Account Details:</strong> 30 employees | White-label portal: <code>portal.rovemanagement.com</code><br><br>
+                        <strong>Rove Admin Panel:</strong><br>
+                        • Sees work requests from THEIR end clients<br>
+                        • Assigns requests to their 30 appraisers<br>
+                        • Views pricing (what they charge their clients)<br>
+                        • Manages their team members<br>
+                        • Configures white-label branding<br><br>
+                        <strong>Rove Appraisers (30 staff):</strong><br>
+                        • See only THEIR assigned work<br>
+                        • Complete appraisals/evaluations<br>
+                        • Upload reports<br>
+                        • <strong style="color: #c62828;">NO pricing visible</strong> (industry standard)
+                    </div>
+                </div>
+
+                <div style="text-align: center; color: #687F8B; font-weight: 600; margin: 12px 0;">
+                    ↓ Serves End Clients ↓
+                </div>
+
+                <!-- Tier 3: End Clients -->
+                <div style="background: white; border-radius: 8px; padding: 20px; border-left: 4px solid #6366f1;">
+                    <div style="font-size: 16px; font-weight: 700; color: #6366f1; margin-bottom: 12px;">
+                        TIER 3: ROVE'S END CLIENTS (Real Estate Investors)
+                    </div>
+                    <div style="font-size: 13px; color: #1c3643; line-height: 1.8;">
+                        <strong>Access:</strong> <code>portal.rovemanagement.com</code> (white-label)<br>
+                        <strong>Branding:</strong> Rove Management (NOT Harken)<br><br>
+                        <strong>Capabilities:</strong><br>
+                        • Submit appraisal/evaluation requests<br>
+                        • Track request status<br>
+                        • Download completed reports<br>
+                        • See pricing (what Rove charges them)<br><br>
+                        <strong style="color: #10b981;">Revenue to Rove:</strong> $400-5,000 per request
+                    </div>
+                </div>
+            </div>
+
+            <!-- Example Flow -->
+            <div style="margin-bottom: 24px;">
+                <h4 style="font-size: 16px; font-weight: 600; color: #1c3643; margin-bottom: 16px;">📋 Example Work Request Flow</h4>
+                <div style="background: #f9fafb; border-radius: 6px; padding: 20px;">
+                    <div style="font-size: 14px; color: #1c3643; line-height: 2;">
+                        <strong>Scenario:</strong> ABC Corporation (Rove's client) needs a $3,200 commercial appraisal
+                    </div>
+                    <div style="margin-top: 16px; padding-left: 20px; border-left: 3px solid #0da1c7;">
+                        <div style="font-size: 13px; color: #374151; line-height: 1.9; margin-bottom: 8px;">
+                            <strong>1. ABC Corp submits request</strong> via <code>portal.rovemanagement.com</code><br>
+                            &nbsp;&nbsp;&nbsp;→ Sees Rove branding (white-label)<br>
+                            &nbsp;&nbsp;&nbsp;→ Request #WR-2025-045 created
+                        </div>
+                        <div style="font-size: 13px; color: #374151; line-height: 1.9; margin-bottom: 8px;">
+                            <strong>2. Rove Admin sees request in unassigned queue</strong><br>
+                            &nbsp;&nbsp;&nbsp;→ Logs into Harken software<br>
+                            &nbsp;&nbsp;&nbsp;→ Assigns to Sarah Chen (one of their 30 appraisers)
+                        </div>
+                        <div style="font-size: 13px; color: #374151; line-height: 1.9; margin-bottom: 8px;">
+                            <strong>3. Sarah (appraiser) sees it in "My Work"</strong><br>
+                            &nbsp;&nbsp;&nbsp;→ Sees ONLY requests assigned to her<br>
+                            &nbsp;&nbsp;&nbsp;→ Does NOT see $3,200 pricing<br>
+                            &nbsp;&nbsp;&nbsp;→ Completes appraisal, uploads report
+                        </div>
+                        <div style="font-size: 13px; color: #374151; line-height: 1.9; margin-bottom: 8px;">
+                            <strong>4. ABC Corp gets notification & downloads report</strong><br>
+                            &nbsp;&nbsp;&nbsp;→ Email: "Your appraisal is ready"<br>
+                            &nbsp;&nbsp;&nbsp;→ Invoice sent: $3,200
+                        </div>
+                        <div style="font-size: 13px; color: #10b981; line-height: 1.9; font-weight: 600;">
+                            <strong>5. Harken's involvement:</strong><br>
+                            &nbsp;&nbsp;&nbsp;→ Rove pays Harken $150/month for software<br>
+                            &nbsp;&nbsp;&nbsp;→ Harken does NOT touch individual work requests<br>
+                            &nbsp;&nbsp;&nbsp;→ Harken only helps if Rove has software issues
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Support Ticket Flow -->
+            <div style="margin-bottom: 24px;">
+                <h4 style="font-size: 16px; font-weight: 600; color: #1c3643; margin-bottom: 16px;">🎫 Support Ticket Flow (Software Issues)</h4>
+                <div style="background: #fef3c7; border-radius: 6px; padding: 20px; border: 1px solid #f59e0b;">
+                    <div style="font-size: 14px; color: #92400e; line-height: 2;">
+                        <strong>Scenario:</strong> Rove has trouble with PDF generation in the software
+                    </div>
+                    <div style="margin-top: 16px; padding-left: 20px; border-left: 3px solid #f59e0b;">
+                        <div style="font-size: 13px; color: #78350f; line-height: 1.9; margin-bottom: 8px;">
+                            <strong>1. Rove admin clicks "Help"</strong> → Creates ticket #TKT-2025-018
+                        </div>
+                        <div style="font-size: 13px; color: #78350f; line-height: 1.9; margin-bottom: 8px;">
+                            <strong>2. Harken support sees ticket</strong> → Fixes bug in software
+                        </div>
+                        <div style="font-size: 13px; color: #78350f; line-height: 1.9; font-weight: 600;">
+                            <strong>3. Rove's end clients never see this</strong> → Software issues stay between Rove & Harken
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- White-Label Subdomain Process -->
+            <div style="margin-bottom: 24px;">
+                <h4 style="font-size: 16px; font-weight: 600; color: #1c3643; margin-bottom: 16px;">🌐 White-Label Subdomain Setup (Industry Standard)</h4>
+                <div style="background: #f0fdf4; border-radius: 6px; padding: 20px; border: 1px solid #10b981;">
+                    <div style="font-size: 13px; color: #166534; line-height: 1.9;">
+                        <strong>Standard Process for White-Label Clients:</strong><br><br>
+                        
+                        <strong>1. Client signs up for Enterprise tier</strong> (+$100-150/month)<br>
+                        &nbsp;&nbsp;&nbsp;→ Unlocks custom domain feature<br><br>
+                        
+                        <strong>2. Client creates subdomain in their DNS:</strong><br>
+                        &nbsp;&nbsp;&nbsp;→ <code>portal.rovemanagement.com → CNAME → rove-management.harken.app</code><br><br>
+                        
+                        <strong>3. Client configures in Harken admin panel:</strong><br>
+                        &nbsp;&nbsp;&nbsp;→ Enters: <code>portal.rovemanagement.com</code><br>
+                        &nbsp;&nbsp;&nbsp;→ Clicks "Verify Domain"<br><br>
+                        
+                        <strong>4. Harken auto-verification:</strong><br>
+                        &nbsp;&nbsp;&nbsp;→ Checks DNS CNAME record<br>
+                        &nbsp;&nbsp;&nbsp;→ Provisions SSL certificate (Let's Encrypt)<br>
+                        &nbsp;&nbsp;&nbsp;→ Domain status: "Active" ✅<br><br>
+                        
+                        <strong>5. Client customizes branding:</strong><br>
+                        &nbsp;&nbsp;&nbsp;→ Uploads logo, sets brand colors<br>
+                        &nbsp;&nbsp;&nbsp;→ Optionally hides "Powered by Harken" footer<br><br>
+                        
+                        <strong>6. End users access portal:</strong><br>
+                        &nbsp;&nbsp;&nbsp;→ Visit <code>portal.rovemanagement.com</code><br>
+                        &nbsp;&nbsp;&nbsp;→ See Rove branding (NOT Harken)<br>
+                        &nbsp;&nbsp;&nbsp;→ Submit work requests
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: #eff6ff; border-radius: 6px; padding: 16px; border: 1px solid #3b82f6;">
+                <strong style="color: #1e40af;">💡 Key Insight:</strong>
+                <p style="color: #1e40af; margin: 8px 0 0 0; font-size: 13px;">
+                    You (Harken) provide the software infrastructure. Your customers (Rove, Metro, etc.) use it to run their appraisal businesses. 
+                    Their end clients never know Harken exists - they only see your customer's branding. This is the "Shopify model" for appraisal firms.
+                </p>
+            </div>
+            
+            <button onclick="toggleBuildNotes(false)" style="margin-top: 16px; padding: 6px 12px; background: #1565c0; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">Hide Architecture Overview</button>
+        </div>
+
+        <!-- Settings Cards Grid -->
+        <div class="settings-grid">
+            <!-- Amenities Management Card (Primary) -->
+            <div class="settings-card" onclick="window.location.href='super-admin-settings-amenities.html'">
+                <div class="settings-card-icon" style="background-color: rgba(13, 161, 199, 0.1); color: #0da1c7;">
+                    🏡
+                </div>
+                <div class="settings-card-title">Amenities Management</div>
+                <div class="settings-card-description">
+                    Manage the master list of residential amenities available across all accounts. Add, edit, or deactivate amenities with default adjustment values.
+                </div>
+            </div>
+
+            <!-- Global Codes Card -->
+            <div class="settings-card" onclick="window.location.href='super-admin-settings-global-codes.html'">
+                <div class="settings-card-icon" style="background-color: rgba(16, 185, 129, 0.1); color: #10b981;">
+                    🏷️
+                </div>
+                <div class="settings-card-title">Global Codes</div>
+                <div class="settings-card-description">
+                    Configure system-wide codes and categories for property types, sale statuses, lease types, and other standardized fields.
+                </div>
+            </div>
+
+            <!-- Report Templates Card -->
+            <div class="settings-card" onclick="alert('Report Templates - Coming soon')">
+                <div class="settings-card-icon" style="background-color: rgba(245, 158, 11, 0.1); color: #f59e0b;">
+                    📄
+                </div>
+                <div class="settings-card-title">Report Templates</div>
+                <div class="settings-card-description">
+                    Manage master report templates, including evaluation and appraisal formats, layouts, and default sections.
+                </div>
+            </div>
+
+            <!-- User Permissions Card -->
+            <div class="settings-card" onclick="alert('User Permissions - Coming soon')">
+                <div class="settings-card-icon" style="background-color: rgba(139, 92, 246, 0.1); color: #8b5cf6;">
+                    👥
+                </div>
+                <div class="settings-card-title">User Permissions</div>
+                <div class="settings-card-description">
+                    Configure role-based access controls, permissions, and feature access for different user levels across the platform.
+                </div>
+            </div>
+
+            <!-- System Configuration Card -->
+            <div class="settings-card" onclick="alert('System Configuration - Coming soon')">
+                <div class="settings-card-icon" style="background-color: rgba(239, 68, 68, 0.1); color: #ef4444;">
+                    ⚙️
+                </div>
+                <div class="settings-card-title">System Configuration</div>
+                <div class="settings-card-description">
+                    Configure system-wide settings including email notifications, data retention policies, API integrations, and backup schedules.
+                </div>
+            </div>
+
+            <!-- Billing Settings Card -->
+            <div class="settings-card" onclick="window.location.href='super-admin-settings-billing.html'">
+                <div class="settings-card-icon" style="background-color: rgba(236, 72, 153, 0.1); color: #ec4899;">
+                    💳
+                </div>
+                <div class="settings-card-title">Billing Settings</div>
+                <div class="settings-card-description">
+                    Configure payment processing, subscription plans, invoicing, and tax settings for the entire platform.
+                </div>
+            </div>
+
+            <!-- Trial Settings Card -->
+            <div class="settings-card" onclick="window.location.href='super-admin-settings-trials.html'">
+                <div class="settings-card-icon" style="background-color: rgba(255, 193, 7, 0.1); color: #ffc107;">
+                    🎁
+                </div>
+                <div class="settings-card-title">Trial Settings</div>
+                <div class="settings-card-description">
+                    Configure global free trial defaults, conversion settings, expiration reminders, and auto-convert behavior for new accounts.
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 80px;">
+            <span style="font-weight: 300; font-size: 14px; color: #687F8B;">© 2024, Harken CRE, LLC</span>
+        </div>
+    </div>
+
+    <script>
+        // Build Notes Toggle Function
+        function toggleBuildNotes(show) {
+            const notesSection = document.getElementById('buildNotesSection');
+            const toggleBtn = document.getElementById('showBuildNotesBtn');
+            
+            if (show) {
+                notesSection.style.display = 'block';
+                toggleBtn.style.display = 'none';
+                notesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                notesSection.style.display = 'none';
+                toggleBtn.style.display = 'block';
+            }
+            
+            sessionStorage.setItem('buildNotesVisible', show);
+        }
+
+        // Restore preference on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            const savedPreference = sessionStorage.getItem('buildNotesVisible');
+            if (savedPreference === 'false') {
+                toggleBuildNotes(false);
+            }
+        });
+    </script>
+</body>
+</html>
+
+

@@ -1,0 +1,645 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Audit Logs - Harken CRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            font-family: 'Montserrat', sans-serif !important;
+        }
+        body {
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background: url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;
+            background-color: #1c3643 !important;
+            max-height: 84px;
+            height: 84px;
+            color: #fff;
+        }
+        .section-title {
+            font-size: 23px;
+            font-weight: 600;
+            color: #1c3643;
+        }
+        table {
+            width: 100%;
+            background-color: white;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        thead {
+            background-color: #f9f9f9;
+        }
+        th {
+            padding: 16px 35px;
+            text-align: left;
+            color: #687F8B;
+            font-size: 13px;
+            font-weight: 600;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        td {
+            padding: 18px 35px;
+            color: #687F8B;
+            font-size: 13px;
+            font-weight: 500;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+        .search-input {
+            width: 300px;
+            padding: 10px 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .filter-select {
+            padding: 10px 14px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: white;
+            color: #687F8B;
+            cursor: pointer;
+        }
+        .filter-select:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .link-text {
+            color: #0da1c7;
+            text-decoration: none;
+        }
+        .link-text:hover {
+            text-decoration: underline;
+        }
+        .action-badge {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .action-create {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        .action-update {
+            background-color: #e3f2fd;
+            color: #1565c0;
+        }
+        .action-delete {
+            background-color: #ffebee;
+            color: #c62828;
+        }
+        .action-login {
+            background-color: #f3e5f5;
+            color: #6a1b9a;
+        }
+        .action-config {
+            background-color: #fff3e0;
+            color: #e65100;
+        }
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            margin-top: 32px;
+            flex-wrap: wrap;
+        }
+        .pagination button {
+            background-color: transparent;
+            color: #0da1c7;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 400;
+            border-radius: 6px;
+            transition: all 0.2s;
+            min-width: auto;
+        }
+        .pagination button:hover:not(:disabled) {
+            background-color: #f0f0f0;
+        }
+        .pagination button:disabled {
+            color: #d0d0d0;
+            cursor: not-allowed;
+            background-color: transparent;
+        }
+        .pagination button.page-number {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #e0e0e0;
+            background-color: white;
+            padding: 0;
+            font-size: 14px;
+            font-weight: 400;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .pagination button.page-number:hover:not(:disabled) {
+            background-color: #f9f9f9;
+            border-color: #d0d0d0;
+        }
+        .pagination button.page-number:disabled {
+            color: #d0d0d0;
+            border-color: #e8e8e8;
+            background-color: #fafafa;
+        }
+        .pagination .page-number {
+            padding: 0;
+            border-radius: 50%;
+            cursor: pointer;
+            color: #666;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            background-color: transparent;
+            font-weight: 400;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .pagination .page-number:hover:not(.active) {
+            background-color: #f5f5f5;
+        }
+        .pagination .page-number.active {
+            background-color: #5a6c7d;
+            color: white;
+            border-radius: 50%;
+        }
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 10px 24px;
+            border-radius: 25px;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+        .nav-link.active {
+            background-color: transparent;
+            border: 1px solid #0da1c7;
+            color: #0da1c7;
+        }
+        .timestamp {
+            font-size: 12px;
+            color: #687F8B;
+        }
+        .action-description {
+            font-size: 13px;
+            color: #1c3643;
+            margin-top: 4px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Toggle Button (initially hidden) -->
+    <button id="showBuildNotesBtn" 
+            style="position: fixed; top: 100px; right: 20px; z-index: 9999; 
+                   padding: 12px 20px; background: #ffc107; color: #856404; 
+                   border: 2px solid #856404; border-radius: 25px; 
+                   font-size: 14px; font-weight: 700; cursor: pointer; 
+                   box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+                   display: none; transition: all 0.3s;"
+            onclick="toggleBuildNotes(true)">
+        🔨 Show Build Notes
+    </button>
+
+    <!-- UNIFIED NAVIGATION COMPONENT -->
+    <style>
+        .unified-navbar { background: url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643; background-color: #1c3643 !important; height: 84px; color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+        .nav-logo { height: 40px; width: auto; cursor: pointer; }
+        .nav-center { display: flex; align-items: center; gap: 8px; flex: 1; justify-content: center; }
+        .nav-core-features { display: flex; align-items: center; gap: 4px; background: rgba(13, 161, 199, 0.08); border-radius: 25px; padding: 4px 8px; margin-right: 16px; }
+        .nav-link { color: white; text-decoration: none; padding: 10px 20px; border-radius: 25px; transition: all 0.2s; border: 1px solid transparent; font-weight: 500; font-size: 14px; white-space: nowrap; }
+        .nav-link:hover { background-color: rgba(255,255,255,0.08); }
+        .nav-link.core-feature { font-weight: 500; font-size: 14px; color: white; }
+        .nav-link.core-feature:hover { background-color: rgba(13, 161, 199, 0.2); color: white; }
+        .nav-link.core-feature.active { background-color: transparent; border: 1px solid #0da1c7; color: #0da1c7; box-shadow: 0 2px 4px rgba(13, 161, 199, 0.2); }
+        .nav-link.active { background-color: transparent; border: 1px solid #0da1c7; color: #0da1c7; }
+        .nav-separator { width: 1px; height: 24px; background: rgba(255, 255, 255, 0.2); margin: 0 8px; }
+        .nav-user { display: flex; align-items: center; gap: 12px; }
+        .nav-user-name { font-size: 14px; font-weight: 500; color: white; }
+        .nav-user-avatar { width: 36px; height: 36px; border-radius: 50%; border: 2px solid #0da1c7; }
+        .property-tabs-container { background: white; border-bottom: 2px solid #e0e0e0; display: none; padding: 0 32px; }
+        .property-tabs-container.show { display: flex; }
+        .property-tab { padding: 16px 24px; border: none; background: transparent; color: #687F8B; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; border-bottom: 3px solid transparent; margin-bottom: -2px; font-family: 'Montserrat', sans-serif; }
+        .property-tab:hover { color: #0da1c7; background: #f0fbfd; }
+        .property-tab.active { color: #0da1c7; border-bottom-color: #0da1c7; background: #f0fbfd; }
+    </style>
+    <nav class="unified-navbar">
+        <img src="assets/harken.png" alt="Harken CRE" class="nav-logo" onclick="window.location.href='super-admin-dashboard.html'">
+        <div class="nav-center">
+            <div class="nav-core-features">
+                <a href="super-admin-comps.html" class="nav-link core-feature" id="nav-comps">COMPS</a>
+                <a href="super-admin-appraisals-list.html" class="nav-link core-feature" id="nav-appraisals">APPRAISAL</a>
+                <a href="evaluation-wizard-full.html" class="nav-link core-feature" id="nav-evaluations">EVALUATION</a>
+            </div>
+            <div class="nav-separator"></div>
+            <a href="super-admin-dashboard.html" class="nav-link" id="nav-dashboard">Dashboard</a>
+            <a href="super-admin-users.html" class="nav-link" id="nav-users">Users</a>
+            <a href="super-admin-clients.html" class="nav-link" id="nav-clients">Clients</a>
+            <a href="super-admin-accounts.html" class="nav-link" id="nav-accounts">Accounts</a>
+            <a href="super-admin-reports.html" class="nav-link" id="nav-reports">Reports</a>
+            <a href="super-admin-support-tickets.html" class="nav-link" id="nav-support">Support</a>
+            <a href="super-admin-audit-logs.html" class="nav-link" id="nav-audit">Audit Logs</a>
+            <a href="super-admin-settings.html" class="nav-link" id="nav-settings">Settings</a>
+        </div>
+        <div class="nav-user">
+            <span class="nav-user-name">Harken Admin</span>
+            <img src="https://i.pravatar.cc/150?img=33" alt="User" class="nav-user-avatar">
+        </div>
+    </nav>
+    <div class="property-tabs-container" id="propertyTabsContainer">
+        <button class="property-tab active" data-type="commercial" onclick="switchPropertyType('commercial')"><span style="font-size: 18px;">🏢</span>Commercial</button>
+        <button class="property-tab" data-type="residential" onclick="switchPropertyType('residential')"><span style="font-size: 18px;">🏠</span>Residential</button>
+        <button class="property-tab" data-type="land" onclick="switchPropertyType('land')"><span style="font-size: 18px;">🏞️</span>Land</button>
+    </div>
+    <script>
+        (function() {
+            const currentPage = window.location.pathname.split('/').pop() || 'super-admin-dashboard.html';
+            const showPropertyTabsOn = ['comps-premium-with-clustering.html', 'super-admin-appraisals-list.html', 'evaluation-wizard-full.html'];
+            if (showPropertyTabsOn.some(page => currentPage.includes(page) || currentPage.includes('comps-') || currentPage.includes('appraisal-') || currentPage.includes('evaluation-'))) { document.getElementById('propertyTabsContainer').classList.add('show'); }
+            const navMapping = {'super-admin-dashboard.html': 'nav-dashboard','comps-premium-with-clustering.html': 'nav-comps','super-admin-appraisals-list.html': 'nav-appraisals','evaluation-wizard-full.html': 'nav-evaluations','super-admin-users.html': 'nav-users','super-admin-user-edit.html': 'nav-users','super-admin-clients.html': 'nav-clients','super-admin-accounts.html': 'nav-accounts','super-admin-account-manage.html': 'nav-accounts','super-admin-account-amenities.html': 'nav-accounts','super-admin-account-report-templates.html': 'nav-accounts','super-admin-reports.html': 'nav-reports','super-admin-support-tickets.html': 'nav-support','super-admin-support-create-ticket.html': 'nav-support','super-admin-support-ticket-detail.html': 'nav-support','super-admin-audit-logs.html': 'nav-audit','super-admin-settings.html': 'nav-settings','super-admin-settings-billing.html': 'nav-settings','super-admin-settings-amenities.html': 'nav-settings','super-admin-settings-white-label.html': 'nav-settings'};
+            for (const [page, navId] of Object.entries(navMapping)) { if (currentPage.includes(page)) { const navElement = document.getElementById(navId); if (navElement) { navElement.classList.add('active'); } break; } }
+        })();
+        function switchPropertyType(type) { document.querySelectorAll('.property-tab').forEach(tab => { tab.classList.remove('active'); }); document.querySelector(`[data-type="${type}"]`).classList.add('active'); localStorage.setItem('activePropertyType', type); console.log('Switched to property type:', type); }
+        window.addEventListener('load', function() { const savedType = localStorage.getItem('activePropertyType'); if (savedType) { switchPropertyType(savedType); } });
+    </script>
+
+    <!-- Main Content -->
+    <div style="padding: 35px 50px;">
+        <!-- BUILD NOTES SECTION -->
+        <div id="buildNotesSection" style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 20px; margin-bottom: 32px; border-radius: 4px;">
+            <h3 style="color: #856404; font-size: 16px; font-weight: 700; margin: 0 0 16px 0;">🔨 BUILD NOTES</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 16px;">
+                <div>
+                    <strong style="color: #856404;">Priority Level:</strong> Medium
+                </div>
+                <div>
+                    <strong style="color: #856404;">Recommended Customer Count:</strong> 10-15 customers
+                </div>
+                <div>
+                    <strong style="color: #856404;">Development Stage:</strong> Phase 2
+                </div>
+                <div>
+                    <strong style="color: #856404;">Estimated Build Time:</strong> 1-2 weeks
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #856404;">Purpose & Use Case:</strong>
+                <p style="margin: 4px 0 0 0; color: #856404;">Complete history of system actions for compliance, security, debugging, and accountability. Essential for: investigating "who changed what", meeting regulatory requirements (SOC 2, GDPR), troubleshooting user issues, detecting suspicious activity. Build when you need formal compliance or have security concerns.</p>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #856404;">Key Features Explained:</strong>
+                <ul style="margin: 4px 0 0 0; color: #856404;">
+                    <li><strong>Action Types:</strong> Create, Update, Delete, Login, Export, Share, etc. Shows what happened.</li>
+                    <li><strong>User & Account Info:</strong> Who did it and which customer account. Critical for multi-tenant security.</li>
+                    <li><strong>Resource Type:</strong> What was affected (Appraisal, User, Account, Setting). Helps filter noise.</li>
+                    <li><strong>IP Address:</strong> Where action originated. Useful for detecting unauthorized access or debugging VPN issues.</li>
+                    <li><strong>Details Column:</strong> Specific information like "Changed status from Draft to Published". Provides context.</li>
+                    <li><strong>Date/Time:</strong> Precise timestamp. Essential for compliance and debugging.</li>
+                    <li><strong>Filters:</strong> By action, user, account, date range. Critical when logs have thousands of entries.</li>
+                    <li><strong>Export:</strong> Download logs for auditors or long-term storage.</li>
+                </ul>
+            </div>
+            
+            <div>
+                <strong style="color: #856404;">Implementation Notes:</strong>
+                <p style="margin: 4px 0 0 0; color: #856404;">CAN SKIP UNTIL NEEDED. Requires: audit_logs table (user_id, account_id, action, resource_type, resource_id, details JSON, ip_address, created_at). Adds overhead to every database operation. Consider logging service (Loggly, Datadog). Start simple: just log critical actions (user creation, account changes, deletions). Expand coverage as compliance needs grow. Retention policy important (90 days? 1 year?).</p>
+            </div>
+            
+            <button onclick="toggleBuildNotes(false)" style="margin-top: 12px; padding: 6px 12px; background: #856404; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">Hide Build Notes</button>
+        </div>
+
+        <!-- Header Section -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+            <h2 class="section-title">AUDIT LOGS</h2>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#0da1c7" viewBox="0 0 24 24">
+                    <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                </svg>
+                <input type="text" class="search-input" placeholder="Search logs" />
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div style="display: flex; gap: 16px; margin-bottom: 24px; align-items: center;">
+            <span style="color: #687F8B; font-size: 14px; font-weight: 600;">FILTERS:</span>
+            <select class="filter-select">
+                <option value="">All Actions</option>
+                <option value="create">Create</option>
+                <option value="update">Update</option>
+                <option value="delete">Delete</option>
+                <option value="login">Login</option>
+                <option value="config">Configuration</option>
+            </select>
+            <select class="filter-select">
+                <option value="">All Resources</option>
+                <option value="user">Users</option>
+                <option value="account">Accounts</option>
+                <option value="subscription">Subscriptions</option>
+                <option value="appraisal">Appraisals</option>
+                <option value="evaluation">Evaluations</option>
+            </select>
+            <select class="filter-select">
+                <option value="">All Actors</option>
+                <option value="admin">Administrators</option>
+                <option value="user">Users</option>
+                <option value="system">System</option>
+            </select>
+            <select class="filter-select">
+                <option value="today">Today</option>
+                <option value="7" selected>Last 7 Days</option>
+                <option value="30">Last 30 Days</option>
+                <option value="custom">Custom Range</option>
+            </select>
+        </div>
+
+        <!-- Audit Logs Table -->
+        <div style="background-color: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); overflow: hidden;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Timestamp</th>
+                        <th>Actor</th>
+                        <th>Action</th>
+                        <th>Resource</th>
+                        <th>Description</th>
+                        <th>IP Address</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>
+                            <div class="timestamp">2024-01-15</div>
+                            <div class="timestamp">14:32:15</div>
+                        </td>
+                        <td><a href="super-admin-user-edit.html" class="link-text">admin@harken.com</a></td>
+                        <td><span class="action-badge action-create">CREATE</span></td>
+                        <td>Account</td>
+                        <td>
+                            <div class="action-description">Created new account: <a href="super-admin-account-manage.html" class="link-text">Acme Properties LLC</a></div>
+                        </td>
+                        <td>192.168.1.10</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="timestamp">2024-01-15</div>
+                            <div class="timestamp">14:15:42</div>
+                        </td>
+                        <td><a href="super-admin-user-edit.html" class="link-text">admin@harken.com</a></td>
+                        <td><span class="action-badge action-update">UPDATE</span></td>
+                        <td>Subscription</td>
+                        <td>
+                            <div class="action-description">Updated subscription for <a href="super-admin-account-manage.html" class="link-text">Metro Realty Group</a> from Professional to Enterprise</div>
+                        </td>
+                        <td>192.168.1.10</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="timestamp">2024-01-15</div>
+                            <div class="timestamp">13:48:23</div>
+                        </td>
+                        <td><a href="super-admin-user-edit.html" class="link-text">jane.smith@example.com</a></td>
+                        <td><span class="action-badge action-update">UPDATE</span></td>
+                        <td>User</td>
+                        <td>
+                            <div class="action-description">Promoted to Administrator role</div>
+                        </td>
+                        <td>192.168.1.45</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="timestamp">2024-01-15</div>
+                            <div class="timestamp">12:22:11</div>
+                        </td>
+                        <td><a href="super-admin-user-edit.html" class="link-text">mike.wilson@example.com</a></td>
+                        <td><span class="action-badge action-create">CREATE</span></td>
+                        <td>User</td>
+                        <td>
+                            <div class="action-description">New user registered with <a href="super-admin-account-manage.html" class="link-text">Skyline Investments</a></div>
+                        </td>
+                        <td>192.168.1.67</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="timestamp">2024-01-15</div>
+                            <div class="timestamp">11:15:09</div>
+                        </td>
+                        <td><a href="super-admin-user-edit.html" class="link-text">admin@harken.com</a></td>
+                        <td><span class="action-badge action-config">CONFIG</span></td>
+                        <td>Account</td>
+                        <td>
+                            <div class="action-description">Enabled residential features for <a href="#" class="link-text">Coastal Appraisals Inc</a></div>
+                        </td>
+                        <td>192.168.1.10</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="timestamp">2024-01-15</div>
+                            <div class="timestamp">10:55:32</div>
+                        </td>
+                        <td><span style="color: #687F8B;">SYSTEM</span></td>
+                        <td><span class="action-badge action-update">UPDATE</span></td>
+                        <td>System</td>
+                        <td>
+                            <div class="action-description">Automated backup completed successfully - 2.4GB archived</div>
+                        </td>
+                        <td>Internal</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="timestamp">2024-01-15</div>
+                            <div class="timestamp">10:12:45</div>
+                        </td>
+                        <td><a href="super-admin-user-edit.html" class="link-text">john.doe@example.com</a></td>
+                        <td><span class="action-badge action-login">LOGIN</span></td>
+                        <td>Auth</td>
+                        <td>
+                            <div class="action-description">Successful login</div>
+                        </td>
+                        <td>192.168.1.23</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="timestamp">2024-01-15</div>
+                            <div class="timestamp">09:44:18</div>
+                        </td>
+                        <td><a href="super-admin-user-edit.html" class="link-text">admin@harken.com</a></td>
+                        <td><span class="action-badge action-delete">DELETE</span></td>
+                        <td>User</td>
+                        <td>
+                            <div class="action-description">Deactivated user <a href="#" class="link-text">inactive.user@example.com</a></div>
+                        </td>
+                        <td>192.168.1.10</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="timestamp">2024-01-15</div>
+                            <div class="timestamp">09:23:56</div>
+                        </td>
+                        <td><a href="#" class="link-text">sarah.j@example.com</a></td>
+                        <td><span class="action-badge action-create">CREATE</span></td>
+                        <td>Appraisal</td>
+                        <td>
+                            <div class="action-description">Created new appraisal #8925</div>
+                        </td>
+                        <td>192.168.1.89</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="timestamp">2024-01-15</div>
+                            <div class="timestamp">08:58:12</div>
+                        </td>
+                        <td><a href="#" class="link-text">robert.chen@example.com</a></td>
+                        <td><span class="action-badge action-update">UPDATE</span></td>
+                        <td>Evaluation</td>
+                        <td>
+                            <div class="action-description">Updated evaluation #5632</div>
+                        </td>
+                        <td>192.168.1.54</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="timestamp">2024-01-15</div>
+                            <div class="timestamp">08:15:33</div>
+                        </td>
+                        <td><a href="super-admin-user-edit.html" class="link-text">admin@harken.com</a></td>
+                        <td><span class="action-badge action-config">CONFIG</span></td>
+                        <td>Account</td>
+                        <td>
+                            <div class="action-description">Updated billing settings for <a href="#" class="link-text">Downtown Commercial Partners</a></div>
+                        </td>
+                        <td>192.168.1.10</td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="timestamp">2024-01-14</div>
+                            <div class="timestamp">23:45:02</div>
+                        </td>
+                        <td><span style="color: #687F8B;">SYSTEM</span></td>
+                        <td><span class="action-badge action-update">UPDATE</span></td>
+                        <td>System</td>
+                        <td>
+                            <div class="action-description">Daily metrics aggregation completed</div>
+                        </td>
+                        <td>Internal</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            <button id="prevBtn" onclick="changePage('prev')" disabled style="font-weight: 400;">Previous</button>
+            <button class="page-number" onclick="changePage('prev')" disabled style="padding: 8px 10px;">‹</button>
+            <span class="page-number active" onclick="goToPage(1)">1</span>
+            <span class="page-number" onclick="goToPage(2)">2</span>
+            <span class="page-number" onclick="goToPage(3)">3</span>
+            <span class="page-number" onclick="goToPage(4)">4</span>
+            <span class="page-number" onclick="goToPage(5)">5</span>
+            <span style="color: #687F8B; padding: 8px 4px;">...</span>
+            <span class="page-number" onclick="goToPage(299)">299</span>
+            <button class="page-number" onclick="changePage('next')" style="padding: 8px 10px;">›</button>
+            <button id="nextBtn" onclick="changePage('next')" style="font-weight: 400;">Next</button>
+        </div>
+
+        <script>
+            let currentPage = 1;
+            const totalPages = 299;
+
+            function goToPage(page) {
+                currentPage = page;
+                updatePagination();
+            }
+
+            function changePage(direction) {
+                if (direction === 'prev' && currentPage > 1) {
+                    currentPage--;
+                } else if (direction === 'next' && currentPage < totalPages) {
+                    currentPage++;
+                }
+                updatePagination();
+            }
+
+            function updatePagination() {
+                const pageNumbers = document.querySelectorAll('.page-number:not(button)');
+                pageNumbers.forEach((el) => {
+                    const pageNum = parseInt(el.textContent);
+                    if (pageNum === currentPage) {
+                        el.classList.add('active');
+                    } else {
+                        el.classList.remove('active');
+                    }
+                });
+
+                const prevButtons = document.querySelectorAll('#prevBtn, button.page-number:first-of-type');
+                prevButtons.forEach(btn => btn.disabled = currentPage === 1);
+                
+                const nextButtons = document.querySelectorAll('#nextBtn, button.page-number:last-of-type');
+                nextButtons.forEach(btn => btn.disabled = currentPage === totalPages);
+
+                console.log('Current page:', currentPage);
+            }
+        </script>
+
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 50px;">
+            <span style="font-weight: 300; font-size: 14px; color: #687F8B;">© 2024, Harken CRE, LLC</span>
+        </div>
+    </div>
+
+    <script>
+        // Build Notes Toggle Function
+        function toggleBuildNotes(show) {
+            const notesSection = document.getElementById('buildNotesSection');
+            const toggleBtn = document.getElementById('showBuildNotesBtn');
+            
+            if (show) {
+                notesSection.style.display = 'block';
+                toggleBtn.style.display = 'none';
+                notesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                notesSection.style.display = 'none';
+                toggleBtn.style.display = 'block';
+            }
+            
+            sessionStorage.setItem('buildNotesVisible', show);
+        }
+
+        // Restore preference on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            const savedPreference = sessionStorage.getItem('buildNotesVisible');
+            if (savedPreference === 'false') {
+                toggleBuildNotes(false);
+            }
+        });
+    </script>
+</body>
+</html>
+
+

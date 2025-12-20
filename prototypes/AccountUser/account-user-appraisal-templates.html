@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Appraisal Templates - Harken CRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { font-family: 'Montserrat', sans-serif !important; box-sizing: border-box; }
+        body { background-color: #f9f9f9; margin: 0; padding: 0; }
+        
+        /* Breadcrumb */
+        .breadcrumb { padding: 16px 32px; background: white; border-bottom: 1px solid #E5E7EB; }
+        .breadcrumb a { color: #0da1c7; text-decoration: none; font-size: 14px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        
+        /* Page Header */
+        .page-header { background: white; padding: 24px 32px 20px; }
+        .page-title { font-size: 28px; font-weight: 700; color: #1c3643; margin: 0 0 8px 0; }
+        .page-subtitle { font-size: 14px; color: #6B7280; margin: 0 0 16px 0; }
+        
+        /* Tabs */
+        .tabs-container { background: white; border-bottom: 2px solid #e0e0e0; padding: 0 32px; }
+        .tab-btn { padding: 14px 24px; border: none; background: transparent; color: #687F8B; font-size: 15px; font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.2s; }
+        .tab-btn:hover { color: #0da1c7; }
+        .tab-btn.active { color: #0da1c7; border-bottom-color: #0da1c7; }
+        
+        /* Template Grid */
+        .templates-container { padding: 24px 32px; }
+        .template-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 20px; }
+        
+        /* Template Card */
+        .template-card { background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; transition: all 0.2s; }
+        .template-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-color: #0da1c7; }
+        .template-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+        .template-title { font-size: 18px; font-weight: 600; color: #1c3643; margin: 0; flex: 1; }
+        .template-badges { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+        .template-description { font-size: 14px; color: #6B7280; margin: 0 0 16px 0; line-height: 1.5; }
+        .template-stats { display: flex; gap: 16px; padding: 12px 0; border-top: 1px solid #F3F4F6; border-bottom: 1px solid #F3F4F6; margin-bottom: 16px; }
+        .template-stat { font-size: 13px; color: #6B7280; display: flex; align-items: center; gap: 4px; }
+        .template-actions { display: flex; gap: 8px; }
+        
+        /* Badges */
+        .badge { padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; display: inline-block; }
+        .badge.system { background: #e3f2fd; color: #1976d2; }
+        .badge.account { background: #f3e5f5; color: #7b1fa2; }
+        .badge.personal { background: #e8f5e9; color: #388e3c; }
+        .badge.property-commercial { background: #fff3e0; color: #e65100; }
+        .badge.property-residential { background: #fce4ec; color: #c2185b; }
+        .badge.property-land { background: #e0f2f1; color: #00695c; }
+        
+        /* Buttons */
+        .btn-primary { background: linear-gradient(135deg, #0da1c7 0%, #0891b2 100%); color: white; padding: 10px 24px; border-radius: 6px; font-size: 14px; font-weight: 600; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-primary:hover { box-shadow: 0 4px 8px rgba(13, 161, 199, 0.3); }
+        .btn-secondary { background: white; color: #0da1c7; border: 1px solid #0da1c7; padding: 9px 20px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-secondary:hover { background: #f0fbfd; }
+        .btn-ghost { background: transparent; color: #687F8B; border: none; padding: 8px 16px; font-weight: 500; cursor: pointer; font-size: 14px; }
+        .btn-ghost:hover { color: #0da1c7; background: #f0fbfd; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <!-- UNIFIED NAVIGATION COMPONENT -->
+    <style>.unified-navbar{background:url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;background-color:#1c3643!important;height:84px;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 32px;box-shadow:0 2px 8px rgba(0,0,0,0.1);position:sticky;top:0;z-index:1000}.nav-logo{height:40px;width:auto;cursor:pointer}.nav-center{display:flex;align-items:center;gap:8px;flex:1;justify-content:center}.nav-core-features{display:flex;align-items:center;gap:4px;background:rgba(13, 161, 199, 0.08);border-radius:25px;padding:4px 8px;margin-right:16px}.nav-link{color:white;text-decoration:none;padding:10px 20px;border-radius:25px;transition:all 0.2s;border:1px solid transparent;font-weight:500;font-size:14px;white-space:nowrap}.nav-link:hover{background-color:rgba(255,255,255,0.08)}.nav-link.core-feature{font-weight:500;font-size:14px;color:white}.nav-link.core-feature:hover{background-color:rgba(13, 161, 199, 0.2);color:white}.nav-link.core-feature.active{background-color:transparent;border:1px solid #0da1c7;color:#0da1c7;box-shadow:0 2px 4px rgba(13, 161, 199, 0.2)}.nav-link.active{background-color:transparent;border:1px solid #0da1c7;color:#0da1c7}.nav-separator{width:1px;height:24px;background:rgba(255, 255, 255, 0.2);margin:0 8px}.nav-user{display:flex;align-items:center;gap:12px}.nav-user-name{font-size:14px;font-weight:500;color:white}.nav-user-avatar{width:36px;height:36px;border-radius:50%;border:2px solid #0da1c7}</style><nav class="unified-navbar"><img src="assets/harken.png" alt="Harken CRE" class="nav-logo" onclick="window.location.href='account-user-dashboard.html'"><div class="nav-center"><div class="nav-core-features"><a href="../comps-premium-with-clustering.html" class="nav-link core-feature" id="nav-comps">COMPS</a><a href="account-user-appraisals-list.html" class="nav-link core-feature active" id="nav-appraisals">APPRAISAL</a><a href="account-user-evaluations-list.html" class="nav-link core-feature" id="nav-evaluations">EVALUATION</a></div><div class="nav-separator"></div><a href="account-user-dashboard.html" class="nav-link" id="nav-dashboard">Dashboard</a><a href="account-user-profile.html" class="nav-link" id="nav-profile">My Profile</a><a href="account-user-settings.html" class="nav-link" id="nav-settings">Settings</a></div><div class="nav-user"><span class="nav-user-name">Sarah Johnson</span><img src="https://i.pravatar.cc/150?img=45" alt="User" class="nav-user-avatar"></div></nav>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <a href="account-user-appraisals-list.html">
+            <i class="material-icons" style="font-size: 18px;">arrow_back</i>
+            Back to Appraisals
+        </a>
+    </div>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+                <h1 class="page-title">Appraisal Templates</h1>
+                <p class="page-subtitle">Templates available for your appraisal reports</p>
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <button class="btn-primary" onclick="location.href='account-user-template-builder.html?type=appraisal'">
+                    <i class="material-icons" style="font-size: 18px;">add</i>
+                    Create Personal Template
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs-container">
+        <button class="tab-btn active" onclick="switchMainTab('available')">Available Templates</button>
+        <button class="tab-btn" onclick="switchMainTab('personal')">My Personal Templates</button>
+        <button class="tab-btn" onclick="switchMainTab('shared')">Shared Templates</button>
+    </div>
+
+    <!-- Available Templates Tab -->
+    <div class="templates-container" id="available-tab">
+        <div style="background: #e3f2fd; padding: 16px; border-radius: 8px; margin-bottom: 24px; border-left: 4px solid #1976d2;">
+            <p style="margin: 0; font-size: 14px; color: #1565c0; font-weight: 500;">
+                <i class="material-icons" style="font-size: 18px; vertical-align: middle; margin-right: 8px;">info</i>
+                These templates are available from Harken and your account admin. Select one when creating a new appraisal.
+            </p>
+        </div>
+
+        <div class="template-grid">
+            <!-- System Template -->
+            <div class="template-card">
+                <div class="template-header">
+                    <h3 class="template-title">Commercial Appraisal - USPAP</h3>
+                </div>
+                <div class="template-badges">
+                    <span class="badge system">Harken Template</span>
+                    <span class="badge property-commercial">Commercial</span>
+                </div>
+                <p class="template-description">
+                    Full USPAP-compliant commercial appraisal with all three approaches
+                </p>
+                <div class="template-stats">
+                    <span class="template-stat">
+                        <i class="material-icons" style="font-size: 16px;">description</i>
+                        24 sections
+                    </span>
+                    <span class="template-stat">
+                        <i class="material-icons" style="font-size: 16px;">analytics</i>
+                        Income, Sales, Cost
+                    </span>
+                </div>
+                <div class="template-actions">
+                    <button class="btn-ghost">Preview</button>
+                    <button class="btn-secondary">Clone to Personal</button>
+                </div>
+            </div>
+
+            <!-- Account Template -->
+            <div class="template-card">
+                <div class="template-header">
+                    <h3 class="template-title">Smith & Associates Commercial</h3>
+                </div>
+                <div class="template-badges">
+                    <span class="badge account">Account Template</span>
+                    <span class="badge property-commercial">Commercial</span>
+                </div>
+                <p class="template-description">
+                    Firm-specific commercial appraisal template with custom formatting
+                </p>
+                <div class="template-stats">
+                    <span class="template-stat">
+                        <i class="material-icons" style="font-size: 16px;">description</i>
+                        22 sections
+                    </span>
+                    <span class="template-stat">
+                        <i class="material-icons" style="font-size: 16px;">analytics</i>
+                        Income, Sales, Cost
+                    </span>
+                </div>
+                <div class="template-actions">
+                    <button class="btn-ghost">Preview</button>
+                    <button class="btn-secondary">Clone to Personal</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- My Personal Templates Tab -->
+    <div class="templates-container" id="personal-tab" style="display: none;">
+        <div style="background: #e8f5e9; padding: 16px; border-radius: 8px; margin-bottom: 24px; border-left: 4px solid #388e3c;">
+            <p style="margin: 0; font-size: 14px; color: #2e7d32; font-weight: 500;">
+                <i class="material-icons" style="font-size: 18px; vertical-align: middle; margin-right: 8px;">info</i>
+                Personal templates are only visible to you and can be customized to your workflow preferences.
+            </p>
+        </div>
+
+        <div class="template-grid">
+            <!-- Personal Template Example -->
+            <div class="template-card">
+                <div class="template-header">
+                    <h3 class="template-title">My Quick Commercial Template</h3>
+                </div>
+                <div class="template-badges">
+                    <span class="badge personal">Personal Template</span>
+                    <span class="badge property-commercial">Commercial</span>
+                </div>
+                <p class="template-description">
+                    Streamlined commercial template for quick evaluations with income and sales approaches
+                </p>
+                <div class="template-stats">
+                    <span class="template-stat">
+                        <i class="material-icons" style="font-size: 16px;">description</i>
+                        15 sections
+                    </span>
+                    <span class="template-stat">
+                        <i class="material-icons" style="font-size: 16px;">analytics</i>
+                        Income, Sales
+                    </span>
+                </div>
+                <div class="template-actions">
+                    <button class="btn-secondary">Edit</button>
+                    <button class="btn-ghost">Duplicate</button>
+                    <button class="btn-ghost" style="color: #dc2626;">Delete</button>
+                </div>
+            </div>
+
+            <!-- Create New Personal Template -->
+            <div class="template-card" style="border: 2px dashed #d0d0d0; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 240px; cursor: pointer;" onclick="location.href='account-user-template-builder.html?type=appraisal'">
+                <i class="material-icons" style="font-size: 48px; color: #9CA3AF; margin-bottom: 12px;">add_circle_outline</i>
+                <p style="font-size: 16px; font-weight: 600; color: #6B7280; margin: 0 0 8px 0;">Create Personal Template</p>
+                <p style="font-size: 13px; color: #9CA3AF; margin: 0;">Build a custom template for your personal use</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Shared Templates Tab -->
+    <div class="templates-container" id="shared-tab" style="display: none;">
+        <div style="background: #fff3e0; padding: 16px; border-radius: 8px; margin-bottom: 24px; border-left: 4px solid #e65100;">
+            <p style="margin: 0; font-size: 14px; color: #e65100; font-weight: 500;">
+                <i class="material-icons" style="font-size: 18px; vertical-align: middle; margin-right: 8px;">info</i>
+                Shared templates are templates created by other users in your account and shared with the team.
+            </p>
+        </div>
+
+        <div style="text-align: center; padding: 60px 20px; background: white; border-radius: 8px; border: 2px dashed #d0d0d0;">
+            <i class="material-icons" style="font-size: 64px; color: #d0d0d0;">people</i>
+            <h3 style="color: #6B7280; margin: 16px 0 8px 0;">No Shared Templates Yet</h3>
+            <p style="color: #9CA3AF; font-size: 14px; margin: 0;">
+                Template sharing is coming soon. Users will be able to share their personal templates with team members.
+            </p>
+        </div>
+    </div>
+
+    <script>
+        function switchMainTab(tab) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Show/hide tab content
+            document.getElementById('available-tab').style.display = tab === 'available' ? 'block' : 'none';
+            document.getElementById('personal-tab').style.display = tab === 'personal' ? 'block' : 'none';
+            document.getElementById('shared-tab').style.display = tab === 'shared' ? 'block' : 'none';
+        }
+    </script>
+</body>
+</html>
+

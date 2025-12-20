@@ -1,0 +1,1261 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Geographic Analysis Report - Harken CRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBOti4mM-6x9WCO8W5J5Z0g1E5H-REPLACED&libraries=visualization"></script>
+    <style>
+        .material-icons { font-family: 'Material Icons' !important; }
+        * {
+            font-family: 'Montserrat', sans-serif !important;
+        }
+        body {
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        /* Custom checkbox styling */
+        input[type="checkbox"] {
+            accent-color: #0da1c7;
+        }
+        /* Badge styles matching user management */
+        .badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .badge-commercial {
+            background-color: #fff3e0;
+            color: #e65100;
+        }
+        .badge-residential {
+            background-color: #f3e5f5;
+            color: #6a1b9a;
+        }
+        .badge-land {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        .state-link {
+            color: #0da1c7;
+            text-decoration: none;
+            font-weight: 600;
+        }
+        .state-link:hover {
+            text-decoration: underline;
+        }
+        .view-toggle {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 16px;
+        }
+        .view-toggle-btn {
+            padding: 8px 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            background: white;
+            color: #687F8B;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .view-toggle-btn:hover {
+            border-color: #0da1c7;
+            color: #0da1c7;
+        }
+        .view-toggle-btn.active {
+            background: #0da1c7;
+            color: white;
+            border-color: #0da1c7;
+        }
+        .section-title {
+            font-size: 23px;
+            font-weight: 600;
+            color: #1c3643;
+        }
+        .subsection-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #687F8B;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+        }
+        .report-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+        }
+        .metric-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1c3643;
+            margin: 8px 0;
+        }
+        .metric-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #687F8B;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .filter-select {
+            padding: 10px 14px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: white;
+            color: #687F8B;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .filter-select:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .action-button {
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .action-button:hover {
+            opacity: 0.8;
+        }
+        .action-button-primary {
+            background-color: #0da1c7;
+            color: white;
+        }
+        .action-button-secondary {
+            background-color: white;
+            color: #687F8B;
+            border: 1px solid #e0e0e0;
+        }
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        th {
+            padding: 16px 20px;
+            text-align: left;
+            color: #687F8B;
+            font-size: 13px;
+            font-weight: 600;
+            border-bottom: 2px solid #e0e0e0;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            user-select: none;
+        }
+        th:hover {
+            background-color: #f9f9f9;
+        }
+        td {
+            padding: 18px 20px;
+            color: #687F8B;
+            font-size: 13px;
+            font-weight: 500;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+        .insight-card {
+            background: linear-gradient(135deg, #0da1c7 0%, #0884a3 100%);
+            color: white;
+            padding: 16px 20px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .breadcrumb {
+            font-size: 13px;
+            color: #687F8B;
+            margin-bottom: 24px;
+        }
+        .breadcrumb a {
+            color: #0da1c7;
+            text-decoration: none;
+        }
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+        .sort-icon {
+            display: inline-block;
+            margin-left: 4px;
+            opacity: 0.5;
+        }
+        
+        /* Navigation styles */
+        .unified-navbar {
+            background: url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;
+            background-color: #1c3643 !important;
+            height: 84px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        .nav-logo { height: 40px; width: auto; cursor: pointer; }
+        .nav-center { display: flex; align-items: center; gap: 8px; flex: 1; justify-content: center; }
+        .nav-core-features { display: flex; align-items: center; gap: 4px; background: rgba(13, 161, 199, 0.08); border-radius: 25px; padding: 4px 8px; margin-right: 16px; }
+        .nav-link { color: white; text-decoration: none; padding: 10px 20px; border-radius: 25px; transition: all 0.2s; border: 1px solid transparent; font-weight: 500; font-size: 14px; white-space: nowrap; }
+        .nav-link:hover { background-color: rgba(255,255,255,0.08); }
+        .nav-link.core-feature { font-weight: 500; font-size: 14px; color: white; }
+        .nav-link.core-feature:hover { background-color: rgba(13, 161, 199, 0.2); color: white; }
+        .nav-link.core-feature.active { background-color: transparent; border: 1px solid #0da1c7; color: #0da1c7; box-shadow: 0 2px 4px rgba(13, 161, 199, 0.2); }
+        .nav-link.active { background-color: transparent; border: 1px solid #0da1c7; color: #0da1c7; }
+        .nav-separator { width: 1px; height: 24px; background: rgba(255, 255, 255, 0.2); margin: 0 8px; }
+        .nav-user { display: flex; align-items: center; gap: 12px; }
+        .nav-user-name { font-size: 14px; font-weight: 500; color: white; }
+        .nav-user-avatar { width: 36px; height: 36px; border-radius: 50%; border: 2px solid #0da1c7; }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="unified-navbar">
+        <img src="assets/harken.png" alt="Harken CRE" class="nav-logo" onclick="window.location.href='super-admin-dashboard.html'">
+        
+        <div class="nav-center">
+            <div class="nav-core-features">
+                <a href="super-admin-comps.html" class="nav-link core-feature">COMPS</a>
+                <a href="super-admin-appraisals-list.html" class="nav-link core-feature">APPRAISAL</a>
+                <a href="super-admin-evaluations-list.html" class="nav-link core-feature">EVALUATION</a>
+            </div>
+            
+            <div class="nav-separator"></div>
+            
+            <a href="super-admin-dashboard.html" class="nav-link">Dashboard</a>
+            <a href="super-admin-users.html" class="nav-link">Users</a>
+            <a href="super-admin-clients.html" class="nav-link">Clients</a>
+            <a href="super-admin-accounts.html" class="nav-link">Accounts</a>
+            <a href="super-admin-reports.html" class="nav-link active">Reports</a>
+            <a href="super-admin-support-tickets.html" class="nav-link">Support</a>
+            <a href="super-admin-audit-logs.html" class="nav-link">Audit Logs</a>
+            <a href="super-admin-settings.html" class="nav-link">Settings</a>
+        </div>
+        
+        <div class="nav-user">
+            <span class="nav-user-name">Harken Admin</span>
+            <img src="https://i.pravatar.cc/150?img=33" alt="User" class="nav-user-avatar">
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div style="padding: 35px 50px;">
+        <!-- Breadcrumb -->
+        <div class="breadcrumb">
+            <a href="super-admin-dashboard.html">Dashboard</a> > 
+            <a href="super-admin-reports.html">Reports</a> > 
+            Geographic Analysis
+        </div>
+
+        <!-- Header Section -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+            <h2 class="section-title">GEOGRAPHIC ANALYSIS REPORT</h2>
+            <div style="display: flex; gap: 12px;">
+                <select id="periodSelect" class="filter-select">
+                    <option value="30" selected>Last 30 Days</option>
+                    <option value="90">Last 90 Days</option>
+                    <option value="365">Last Year</option>
+                    <option value="all">All Time</option>
+                </select>
+                <button class="action-button action-button-secondary" onclick="window.print()">Export PDF</button>
+                <button class="action-button action-button-primary" onclick="exportToCSV()">Export CSV</button>
+            </div>
+        </div>
+
+        <!-- Filter Panel -->
+        <div class="report-card" style="margin-bottom: 24px;">
+            <div style="display: flex; gap: 32px; align-items: center;">
+                <div style="display: flex; gap: 12px; align-items: center;">
+                    <span style="font-size: 12px; font-weight: 600; color: #687F8B; text-transform: uppercase;">Type:</span>
+                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 13px; color: #687F8B;">
+                        <input type="checkbox" id="filterAppraisals" checked onchange="applyFilters()" style="cursor: pointer;">
+                        <span>Appraisals</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 13px; color: #687F8B;">
+                        <input type="checkbox" id="filterEvaluations" checked onchange="applyFilters()" style="cursor: pointer;">
+                        <span>Evaluations</span>
+                    </label>
+                </div>
+                <div style="display: flex; gap: 12px; align-items: center;">
+                    <span style="font-size: 12px; font-weight: 600; color: #687F8B; text-transform: uppercase;">Property Type:</span>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px; color: #687F8B;">
+                        <input type="checkbox" id="filterCommercial" checked onchange="applyFilters()" style="cursor: pointer;">
+                        <i class="material-icons" style="font-size: 18px;">business</i>
+                        <span>Commercial</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px; color: #687F8B;">
+                        <input type="checkbox" id="filterResidential" checked onchange="applyFilters()" style="cursor: pointer;">
+                        <i class="material-icons" style="font-size: 18px;">home</i>
+                        <span>Residential</span>
+                    </label>
+                    <label style="display: flex; align-items: center; gap: 8px; cursor: pointer; font-size: 13px; color: #687F8B;">
+                        <input type="checkbox" id="filterLand" checked onchange="applyFilters()" style="cursor: pointer;">
+                        <i class="material-icons" style="font-size: 18px;">terrain</i>
+                        <span>Land</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- Executive Summary Cards -->
+        <div style="margin-bottom: 40px;">
+            <h3 class="subsection-title">EXECUTIVE SUMMARY</h3>
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px;">
+                <div class="report-card">
+                    <div class="metric-label">Total Properties</div>
+                    <div class="metric-value" id="totalProperties">30</div>
+                    <div style="font-size: 12px; color: #687F8B; margin-top: 4px;">Analyzed in period</div>
+                </div>
+                <div class="report-card">
+                    <div class="metric-label">States Covered</div>
+                    <div class="metric-value" id="statesCovered">24</div>
+                    <div style="font-size: 12px; color: #687F8B; margin-top: 4px;">Geographic reach</div>
+                </div>
+                <div class="report-card">
+                    <div class="metric-label">Top Region</div>
+                    <div class="metric-value" style="font-size: 20px;" id="topRegion">California</div>
+                    <div style="font-size: 12px; color: #687F8B; margin-top: 4px;" id="topRegionCount">7 properties</div>
+                </div>
+                <div class="report-card">
+                    <div class="metric-label">Avg Property Value</div>
+                    <div class="metric-value" id="avgValue">$1.7M</div>
+                    <div style="font-size: 12px; color: #687F8B; margin-top: 4px;">Across all regions</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Interactive Map -->
+        <div style="margin-bottom: 40px;">
+            <h3 class="subsection-title">GEOGRAPHIC DISTRIBUTION MAP</h3>
+            <div class="report-card" style="padding: 0; overflow: hidden;">
+                <div id="geoMap" style="width: 100%; height: 800px;"></div>
+            </div>
+        </div>
+
+        <!-- Unified Geographic Analysis Table -->
+        <div style="margin-bottom: 40px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                <h3 class="subsection-title">GEOGRAPHIC ANALYSIS</h3>
+                <div style="display: flex; gap: 12px; align-items: center;">
+                    <!-- View Selector -->
+                    <select id="viewSelector" class="filter-select" onchange="switchView(this.value)">
+                        <option value="state">By State</option>
+                        <option value="city">By City/Market (All)</option>
+                        <option value="top20">Top 20 Markets</option>
+                    </select>
+                    
+                    <!-- Sort By -->
+                    <select id="sortSelector" class="filter-select" onchange="applySorting(this.value)">
+                        <option value="volume-desc">Volume (High to Low)</option>
+                        <option value="volume-asc">Volume (Low to High)</option>
+                        <option value="value-desc">Total Value (High to Low)</option>
+                        <option value="value-asc">Total Value (Low to High)</option>
+                        <option value="alpha-asc">Alphabetical (A-Z)</option>
+                        <option value="alpha-desc">Alphabetical (Z-A)</option>
+                    </select>
+                    
+                    <!-- Minimum Filter -->
+                    <select id="minFilter" class="filter-select" onchange="applyMinFilter(this.value)">
+                        <option value="0">All Locations</option>
+                        <option value="2">2+ Properties</option>
+                        <option value="5">5+ Properties</option>
+                        <option value="10">10+ Properties</option>
+                    </select>
+                </div>
+            </div>
+            <div class="report-card">
+                <input type="text" id="locationSearch" placeholder="Search locations..." style="width: 100%; padding: 12px; margin-bottom: 16px; border: 1px solid #e0e0e0; border-radius: 4px; font-size: 14px;">
+                <div style="overflow-x: auto;">
+                    <table id="geoTable">
+                        <thead>
+                            <tr id="tableHeader">
+                                <!-- Headers populated by JavaScript based on view -->
+                            </tr>
+                        </thead>
+                        <tbody id="geoTableBody">
+                            <!-- Populated by JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts -->
+        <div style="margin-bottom: 40px;">
+            <h3 class="subsection-title">VISUAL ANALYTICS</h3>
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 24px; margin-bottom: 24px;">
+                <div class="report-card" style="padding: 24px;">
+                    <div style="height: 350px; position: relative;">
+                        <canvas id="topStatesChart"></canvas>
+                    </div>
+                </div>
+                <div class="report-card" style="padding: 24px;">
+                    <div style="height: 350px; position: relative;">
+                        <canvas id="propertyTypeChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="report-card" style="padding: 24px;">
+                <div style="height: 350px; position: relative;">
+                    <canvas id="expansionChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Insights Section -->
+        <div style="margin-bottom: 40px;">
+            <h3 class="subsection-title">KEY INSIGHTS</h3>
+            <div id="insightsContainer">
+                <!-- Populated by JavaScript -->
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 50px;">
+            <span style="font-weight: 300; font-size: 14px; color: #687F8B;">© 2024, Harken CRE, LLC</span>
+        </div>
+    </div>
+
+    <script>
+        // Chart.js Global Configuration
+        Chart.defaults.font.family = 'Montserrat';
+        Chart.defaults.color = '#687F8B';
+
+        // Same mock data as dashboard
+        const reportData = {
+            appraisals: [
+                { id: 'APR-001', lat: 40.7128, lng: -74.0060, type: 'commercial', address: '123 Main St, New York, NY 10001', city: 'New York', state: 'NY', value: 2500000, date: '2024-10-15' },
+                { id: 'APR-002', lat: 34.0522, lng: -118.2437, type: 'residential', address: '456 Oak Ave, Los Angeles, CA 90012', city: 'Los Angeles', state: 'CA', value: 850000, date: '2024-10-12' },
+                { id: 'APR-003', lat: 41.8781, lng: -87.6298, type: 'commercial', address: '789 Michigan Ave, Chicago, IL 60611', city: 'Chicago', state: 'IL', value: 3200000, date: '2024-10-20' },
+                { id: 'APR-004', lat: 29.7604, lng: -95.3698, type: 'land', address: '321 Ranch Rd, Houston, TX 77002', city: 'Houston', state: 'TX', value: 1100000, date: '2024-10-08' },
+                { id: 'APR-005', lat: 33.4484, lng: -112.0740, type: 'commercial', address: '654 Desert Blvd, Phoenix, AZ 85003', city: 'Phoenix', state: 'AZ', value: 1750000, date: '2024-10-18' },
+                { id: 'APR-006', lat: 39.9526, lng: -75.1652, type: 'residential', address: '987 Liberty St, Philadelphia, PA 19019', city: 'Philadelphia', state: 'PA', value: 625000, date: '2024-10-22' },
+                { id: 'APR-007', lat: 29.4241, lng: -98.4936, type: 'commercial', address: '147 River Walk, San Antonio, TX 78205', city: 'San Antonio', state: 'TX', value: 2100000, date: '2024-10-05' },
+                { id: 'APR-008', lat: 32.7767, lng: -96.7970, type: 'residential', address: '258 Elm St, Dallas, TX 75201', city: 'Dallas', state: 'TX', value: 745000, date: '2024-10-11' },
+                { id: 'APR-009', lat: 37.7749, lng: -122.4194, type: 'commercial', address: '369 Market St, San Francisco, CA 94102', city: 'San Francisco', state: 'CA', value: 4500000, date: '2024-10-25' },
+                { id: 'APR-010', lat: 30.2672, lng: -97.7431, type: 'land', address: '741 Hill Country Rd, Austin, TX 78701', city: 'Austin', state: 'TX', value: 950000, date: '2024-10-14' },
+                { id: 'APR-011', lat: 32.7157, lng: -117.1611, type: 'residential', address: '852 Beach Blvd, San Diego, CA 92101', city: 'San Diego', state: 'CA', value: 1125000, date: '2024-10-19' },
+                { id: 'APR-012', lat: 33.7490, lng: -84.3880, type: 'commercial', address: '963 Peachtree St, Atlanta, GA 30303', city: 'Atlanta', state: 'GA', value: 2850000, date: '2024-10-07' },
+                { id: 'APR-013', lat: 25.7617, lng: -80.1918, type: 'residential', address: '159 Ocean Dr, Miami, FL 33139', city: 'Miami', state: 'FL', value: 1950000, date: '2024-10-16' },
+                { id: 'APR-014', lat: 42.3601, lng: -71.0589, type: 'commercial', address: '753 Commonwealth Ave, Boston, MA 02115', city: 'Boston', state: 'MA', value: 3100000, date: '2024-10-09' },
+                { id: 'APR-015', lat: 47.6062, lng: -122.3321, type: 'commercial', address: '357 Pike St, Seattle, WA 98101', city: 'Seattle', state: 'WA', value: 2650000, date: '2024-10-23' }
+            ],
+            evaluations: [
+                { id: 'EVL-001', lat: 39.7392, lng: -104.9903, type: 'land', address: '246 Mountain View Dr, Denver, CO 80202', city: 'Denver', state: 'CO', value: 1200000, date: '2024-10-18' },
+                { id: 'EVL-002', lat: 35.2271, lng: -80.8431, type: 'residential', address: '135 Queen City Blvd, Charlotte, NC 28202', city: 'Charlotte', state: 'NC', value: 575000, date: '2024-10-13' },
+                { id: 'EVL-003', lat: 36.1627, lng: -86.7816, type: 'commercial', address: '864 Music Row, Nashville, TN 37203', city: 'Nashville', state: 'TN', value: 1850000, date: '2024-10-21' },
+                { id: 'EVL-004', lat: 45.5152, lng: -122.6784, type: 'residential', address: '975 Burnside St, Portland, OR 97209', city: 'Portland', state: 'OR', value: 685000, date: '2024-10-10' },
+                { id: 'EVL-005', lat: 36.1699, lng: -115.1398, type: 'commercial', address: '246 Strip Blvd, Las Vegas, NV 89109', city: 'Las Vegas', state: 'NV', value: 3400000, date: '2024-10-17' },
+                { id: 'EVL-006', lat: 38.9072, lng: -77.0369, type: 'commercial', address: '531 Constitution Ave, Washington, DC 20001', city: 'Washington', state: 'DC', value: 4200000, date: '2024-10-06' },
+                { id: 'EVL-007', lat: 39.0997, lng: -94.5786, type: 'residential', address: '642 Main St, Kansas City, MO 64105', city: 'Kansas City', state: 'MO', value: 425000, date: '2024-10-24' },
+                { id: 'EVL-008', lat: 35.4676, lng: -97.5164, type: 'land', address: '753 Prairie Rd, Oklahoma City, OK 73102', city: 'Oklahoma City', state: 'OK', value: 850000, date: '2024-10-12' },
+                { id: 'EVL-009', lat: 43.0389, lng: -87.9065, type: 'commercial', address: '864 Wisconsin Ave, Milwaukee, WI 53202', city: 'Milwaukee', state: 'WI', value: 1450000, date: '2024-10-15' },
+                { id: 'EVL-010', lat: 39.2904, lng: -76.6122, type: 'residential', address: '159 Harbor St, Baltimore, MD 21202', city: 'Baltimore', state: 'MD', value: 495000, date: '2024-10-19' },
+                { id: 'EVL-011', lat: 41.2565, lng: -95.9345, type: 'land', address: '357 Farm Rd, Omaha, NE 68102', city: 'Omaha', state: 'NE', value: 675000, date: '2024-10-08' },
+                { id: 'EVL-012', lat: 35.0844, lng: -106.6504, type: 'residential', address: '951 Desert Vista Dr, Albuquerque, NM 87102', city: 'Albuquerque', state: 'NM', value: 385000, date: '2024-10-22' },
+                { id: 'EVL-013', lat: 40.4406, lng: -79.9959, type: 'commercial', address: '753 Liberty Ave, Pittsburgh, PA 15222', city: 'Pittsburgh', state: 'PA', value: 1750000, date: '2024-10-11' },
+                { id: 'EVL-014', lat: 43.6532, lng: -70.2573, type: 'residential', address: '246 Coastal Rd, Portland, ME 04101', city: 'Portland', state: 'ME', value: 625000, date: '2024-10-20' },
+                { id: 'EVL-015', lat: 44.9778, lng: -93.2650, type: 'commercial', address: '159 Nicollet Mall, Minneapolis, MN 55401', city: 'Minneapolis', state: 'MN', value: 2100000, date: '2024-10-16' }
+            ]
+        };
+
+        let map, markers = [], infoWindow;
+        let filteredData = [];
+        let stateData = [];
+        let cityData = [];
+        let currentView = 'state';
+        let currentSort = 'volume-desc';
+        let minProperties = 0;
+
+        // Initialize everything on page load
+        window.addEventListener('load', function() {
+            applyFilters();
+            initMap();
+            initCharts();
+            
+            // Location search functionality
+            document.getElementById('locationSearch').addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const rows = document.querySelectorAll('#geoTableBody tr');
+                rows.forEach(row => {
+                    // State view: column 0, City views: column 1 (rank is column 0)
+                    const locationIndex = currentView === 'state' ? 0 : 1;
+                    const locationName = row.cells[locationIndex] ? row.cells[locationIndex].textContent.toLowerCase() : '';
+                    row.style.display = locationName.includes(searchTerm) ? '' : 'none';
+                });
+            });
+        });
+
+        // Apply filters
+        function applyFilters() {
+            const showAppraisals = document.getElementById('filterAppraisals').checked;
+            const showEvaluations = document.getElementById('filterEvaluations').checked;
+            const showCommercial = document.getElementById('filterCommercial').checked;
+            const showResidential = document.getElementById('filterResidential').checked;
+            const showLand = document.getElementById('filterLand').checked;
+
+            filteredData = [];
+
+            if (showAppraisals) {
+                filteredData = filteredData.concat(reportData.appraisals.filter(item => {
+                    if (item.type === 'commercial') return showCommercial;
+                    if (item.type === 'residential') return showResidential;
+                    if (item.type === 'land') return showLand;
+                    return false;
+                }).map(item => ({ ...item, category: 'appraisals' })));
+            }
+
+            if (showEvaluations) {
+                filteredData = filteredData.concat(reportData.evaluations.filter(item => {
+                    if (item.type === 'commercial') return showCommercial;
+                    if (item.type === 'residential') return showResidential;
+                    if (item.type === 'land') return showLand;
+                    return false;
+                }).map(item => ({ ...item, category: 'evaluations' })));
+            }
+
+            updateSummaryCards();
+            aggregateByState();
+            aggregateByCity();
+            generateInsights();
+            if (map) updateMapMarkers();
+            updateCharts();
+            renderGeoTable();
+        }
+
+        // Switch view
+        function switchView(view) {
+            currentView = view;
+            
+            // Update search placeholder
+            const placeholders = {
+                'state': 'Search states...',
+                'city': 'Search cities...',
+                'top20': 'Search top 20 markets...'
+            };
+            document.getElementById('locationSearch').placeholder = placeholders[view] || 'Search locations...';
+            
+            renderGeoTable();
+            
+            // Re-apply search if there's a search term
+            const searchInput = document.getElementById('locationSearch');
+            if (searchInput.value) {
+                searchInput.dispatchEvent(new Event('input'));
+            }
+        }
+
+        // Apply sorting
+        function applySorting(sortType) {
+            currentSort = sortType;
+            renderGeoTable();
+        }
+
+        // Apply minimum filter
+        function applyMinFilter(min) {
+            minProperties = parseInt(min);
+            renderGeoTable();
+        }
+
+        // Update summary cards
+        function updateSummaryCards() {
+            document.getElementById('totalProperties').textContent = filteredData.length;
+            
+            const states = new Set(filteredData.map(item => item.state));
+            document.getElementById('statesCovered').textContent = states.size;
+
+            const stateCounts = {};
+            filteredData.forEach(item => {
+                stateCounts[item.state] = (stateCounts[item.state] || 0) + 1;
+            });
+            const topState = Object.keys(stateCounts).reduce((a, b) => stateCounts[a] > stateCounts[b] ? a : b, '-');
+            
+            // Convert state code to full name
+            const stateNames = {
+                'NY': 'New York', 'CA': 'California', 'IL': 'Illinois', 'TX': 'Texas', 'AZ': 'Arizona',
+                'PA': 'Pennsylvania', 'GA': 'Georgia', 'FL': 'Florida', 'MA': 'Massachusetts', 'WA': 'Washington',
+                'CO': 'Colorado', 'NC': 'North Carolina', 'TN': 'Tennessee', 'OR': 'Oregon', 'NV': 'Nevada',
+                'DC': 'Washington DC', 'MO': 'Missouri', 'OK': 'Oklahoma', 'WI': 'Wisconsin', 'MD': 'Maryland',
+                'NE': 'Nebraska', 'NM': 'New Mexico', 'ME': 'Maine', 'MN': 'Minnesota'
+            };
+            
+            document.getElementById('topRegion').textContent = stateNames[topState] || topState;
+            document.getElementById('topRegionCount').textContent = topState !== '-' ? `${stateCounts[topState]} properties` : '0 properties';
+
+            if (filteredData.length > 0) {
+                const total = filteredData.reduce((sum, item) => sum + item.value, 0);
+                const avg = total / filteredData.length;
+                document.getElementById('avgValue').textContent = '$' + (avg / 1000000).toFixed(1) + 'M';
+            } else {
+                document.getElementById('avgValue').textContent = '$0';
+            }
+        }
+
+        // Aggregate data by state
+        function aggregateByState() {
+            const byState = {};
+            
+            filteredData.forEach(item => {
+                if (!byState[item.state]) {
+                    byState[item.state] = {
+                        state: item.state,
+                        appraisals: 0,
+                        evaluations: 0,
+                        commercial: 0,
+                        residential: 0,
+                        land: 0,
+                        totalValue: 0,
+                        count: 0
+                    };
+                }
+                
+                if (item.category === 'appraisals') byState[item.state].appraisals++;
+                if (item.category === 'evaluations') byState[item.state].evaluations++;
+                if (item.type === 'commercial') byState[item.state].commercial++;
+                if (item.type === 'residential') byState[item.state].residential++;
+                if (item.type === 'land') byState[item.state].land++;
+                byState[item.state].totalValue += item.value;
+                byState[item.state].count++;
+            });
+
+            stateData = Object.values(byState).map(s => ({
+                ...s,
+                avgValue: s.totalValue / s.count
+            }));
+        }
+
+        // Render unified geographic table
+        function renderGeoTable() {
+            const thead = document.getElementById('tableHeader');
+            const tbody = document.getElementById('geoTableBody');
+            
+            let dataToRender = [];
+            
+            // Get the right dataset
+            if (currentView === 'state') {
+                dataToRender = [...stateData];
+            } else if (currentView === 'city') {
+                dataToRender = [...cityData];
+            } else if (currentView === 'top20') {
+                dataToRender = [...cityData].slice(0, 20);
+            }
+            
+            // Apply minimum filter
+            if (minProperties > 0) {
+                dataToRender = dataToRender.filter(row => (row.count || (row.appraisals + row.evaluations)) >= minProperties);
+            }
+            
+            // Apply sorting
+            dataToRender = sortData(dataToRender);
+            
+            // Render headers based on view
+            if (currentView === 'state') {
+                thead.innerHTML = `
+                    <th>State</th>
+                    <th>Appraisals</th>
+                    <th>Evaluations</th>
+                    <th>Commercial</th>
+                    <th>Residential</th>
+                    <th>Land</th>
+                    <th>Total Value</th>
+                    <th>Avg Value</th>
+                `;
+                
+                tbody.innerHTML = '';
+                dataToRender.forEach(row => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td><a href="#" class="state-link">${row.state}</a></td>
+                        <td>${row.appraisals}</td>
+                        <td>${row.evaluations}</td>
+                        <td><span class="badge badge-commercial">${row.commercial}</span></td>
+                        <td><span class="badge badge-residential">${row.residential}</span></td>
+                        <td><span class="badge badge-land">${row.land}</span></td>
+                        <td>$${(row.totalValue / 1000000).toFixed(2)}M</td>
+                        <td>$${(row.avgValue / 1000000).toFixed(2)}M</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } else {
+                // City and Top 20 views
+                thead.innerHTML = `
+                    <th>Rank</th>
+                    <th>City, State</th>
+                    <th>Appraisals</th>
+                    <th>Evaluations</th>
+                    <th>Commercial</th>
+                    <th>Residential</th>
+                    <th>Land</th>
+                    <th>Total Value</th>
+                `;
+                
+                tbody.innerHTML = '';
+                dataToRender.forEach((row, index) => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td><a href="#" class="state-link">${row.city}</a></td>
+                        <td>${row.appraisals}</td>
+                        <td>${row.evaluations}</td>
+                        <td><span class="badge badge-commercial">${row.commercial}</span></td>
+                        <td><span class="badge badge-residential">${row.residential}</span></td>
+                        <td><span class="badge badge-land">${row.land}</span></td>
+                        <td>$${(row.totalValue / 1000000).toFixed(2)}M</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
+        }
+
+        // Sort data based on current sort selection
+        function sortData(data) {
+            const sorted = [...data];
+            
+            switch(currentSort) {
+                case 'volume-desc':
+                    sorted.sort((a, b) => (b.count || (b.appraisals + b.evaluations)) - (a.count || (a.appraisals + a.evaluations)));
+                    break;
+                case 'volume-asc':
+                    sorted.sort((a, b) => (a.count || (a.appraisals + a.evaluations)) - (b.count || (b.appraisals + b.evaluations)));
+                    break;
+                case 'value-desc':
+                    sorted.sort((a, b) => b.totalValue - a.totalValue);
+                    break;
+                case 'value-asc':
+                    sorted.sort((a, b) => a.totalValue - b.totalValue);
+                    break;
+                case 'alpha-asc':
+                    sorted.sort((a, b) => (a.state || a.city).localeCompare(b.state || b.city));
+                    break;
+                case 'alpha-desc':
+                    sorted.sort((a, b) => (b.state || b.city).localeCompare(a.state || a.city));
+                    break;
+            }
+            
+            return sorted;
+        }
+
+        // Aggregate by city
+        function aggregateByCity() {
+            const byCity = {};
+            
+            filteredData.forEach(item => {
+                const key = `${item.city}, ${item.state}`;
+                if (!byCity[key]) {
+                    byCity[key] = {
+                        city: key,
+                        appraisals: 0,
+                        evaluations: 0,
+                        commercial: 0,
+                        residential: 0,
+                        land: 0,
+                        totalValue: 0
+                    };
+                }
+                
+                if (item.category === 'appraisals') byCity[key].appraisals++;
+                if (item.category === 'evaluations') byCity[key].evaluations++;
+                if (item.type === 'commercial') byCity[key].commercial++;
+                if (item.type === 'residential') byCity[key].residential++;
+                if (item.type === 'land') byCity[key].land++;
+                byCity[key].totalValue += item.value;
+            });
+
+            cityData = Object.values(byCity).sort((a, b) => 
+                (b.appraisals + b.evaluations) - (a.appraisals + a.evaluations)
+            );
+        }
+
+        // Generate insights
+        function generateInsights() {
+            const insights = [];
+            
+            // Calculate percentages
+            const totalCount = filteredData.length;
+            if (totalCount === 0) {
+                document.getElementById('insightsContainer').innerHTML = '<div class="insight-card">No data available for selected filters</div>';
+                return;
+            }
+
+            // Top state insight
+            const stateCounts = {};
+            filteredData.forEach(item => {
+                stateCounts[item.state] = (stateCounts[item.state] || 0) + 1;
+            });
+            const topState = Object.keys(stateCounts).reduce((a, b) => stateCounts[a] > stateCounts[b] ? a : b);
+            const topStatePercent = Math.round((stateCounts[topState] / totalCount) * 100);
+            insights.push(`${topState} represents ${topStatePercent}% of all properties analyzed`);
+
+            // Property type distribution
+            const typeCounts = { commercial: 0, residential: 0, land: 0 };
+            filteredData.forEach(item => typeCounts[item.type]++);
+            const dominantType = Object.keys(typeCounts).reduce((a, b) => typeCounts[a] > typeCounts[b] ? a : b);
+            const typePercent = Math.round((typeCounts[dominantType] / totalCount) * 100);
+            insights.push(`${dominantType.charAt(0).toUpperCase() + dominantType.slice(1)} properties represent ${typePercent}% of the portfolio`);
+
+            // Category distribution
+            const appraisalCount = filteredData.filter(item => item.category === 'appraisals').length;
+            const evaluationCount = filteredData.filter(item => item.category === 'evaluations').length;
+            if (appraisalCount > evaluationCount) {
+                const ratio = (appraisalCount / totalCount * 100).toFixed(0);
+                insights.push(`Appraisals dominate at ${ratio}% of total activity`);
+            } else {
+                const ratio = (evaluationCount / totalCount * 100).toFixed(0);
+                insights.push(`Evaluations lead at ${ratio}% of total activity`);
+            }
+
+            // High-value concentration
+            const highValue = filteredData.filter(item => item.value > 2000000).length;
+            if (highValue > 0) {
+                const hvPercent = Math.round((highValue / totalCount) * 100);
+                insights.push(`${hvPercent}% of properties are valued over $2M, indicating premium market focus`);
+            }
+
+            const html = insights.map(insight => `<div class="insight-card">💡 ${insight}</div>`).join('');
+            document.getElementById('insightsContainer').innerHTML = html;
+        }
+
+        // Initialize map
+        function initMap() {
+            map = new google.maps.Map(document.getElementById('geoMap'), {
+                zoom: 4,
+                center: { lat: 39.8283, lng: -98.5795 },
+                styles: [
+                    {
+                        featureType: 'poi',
+                        elementType: 'labels',
+                        stylers: [{ visibility: 'off' }]
+                    }
+                ]
+            });
+
+            infoWindow = new google.maps.InfoWindow();
+            updateMapMarkers();
+        }
+
+        // Update map markers
+        function updateMapMarkers() {
+            markers.forEach(marker => marker.setMap(null));
+            markers = [];
+
+            const bounds = new google.maps.LatLngBounds();
+            filteredData.forEach(item => {
+                const position = { lat: item.lat, lng: item.lng };
+                const marker = new google.maps.Marker({
+                    position: position,
+                    map: map,
+                    title: item.address,
+                    icon: getMarkerIcon(item.category, item.type)
+                });
+
+                marker.addListener('click', () => {
+                    const contentString = `
+                        <div style="font-family: 'Montserrat', sans-serif; padding: 8px; max-width: 250px;">
+                            <div style="font-size: 14px; font-weight: 600; color: #1c3643; margin-bottom: 8px;">
+                                ${item.id}
+                            </div>
+                            <div style="font-size: 12px; color: #687F8B; margin-bottom: 4px;">
+                                <strong>Type:</strong> ${item.category === 'appraisals' ? 'Appraisal' : 'Evaluation'}
+                            </div>
+                            <div style="font-size: 12px; color: #687F8B; margin-bottom: 4px;">
+                                <strong>Property:</strong> ${item.type.charAt(0).toUpperCase() + item.type.slice(1)}
+                            </div>
+                            <div style="font-size: 12px; color: #687F8B; margin-bottom: 4px;">
+                                <strong>Address:</strong> ${item.address}
+                            </div>
+                            <div style="font-size: 12px; color: #687F8B; margin-bottom: 4px;">
+                                <strong>Value:</strong> $${(item.value / 1000000).toFixed(2)}M
+                            </div>
+                            <div style="font-size: 12px; color: #687F8B; margin-bottom: 8px;">
+                                <strong>Date:</strong> ${item.date}
+                            </div>
+                        </div>
+                    `;
+                    infoWindow.setContent(contentString);
+                    infoWindow.open(map, marker);
+                });
+
+                markers.push(marker);
+                bounds.extend(position);
+            });
+
+            if (filteredData.length > 0) {
+                map.fitBounds(bounds);
+                google.maps.event.addListenerOnce(map, 'bounds_changed', function() {
+                    if (this.getZoom() > 15) {
+                        this.setZoom(15);
+                    }
+                });
+            }
+        }
+
+        // Get marker icon
+        function getMarkerIcon(category, propertyType) {
+            const colors = {
+                commercial: '#0ea5e9',
+                residential: '#10b981',
+                land: '#f59e0b'
+            };
+            
+            const color = colors[propertyType] || '#687F8B';
+            const opacity = category === 'appraisals' ? '1' : '0.6';
+            
+            return {
+                path: google.maps.SymbolPath.CIRCLE,
+                fillColor: color,
+                fillOpacity: parseFloat(opacity),
+                strokeColor: color,
+                strokeWeight: category === 'evaluations' ? 3 : 1,
+                scale: 8
+            };
+        }
+
+        // Initialize charts
+        let topStatesChart, propertyTypeChart, expansionChart;
+
+        function initCharts() {
+            // Top 10 States Chart - Horizontal Bar Chart
+            const topStatesCtx = document.getElementById('topStatesChart');
+            if (topStatesCtx) {
+                topStatesChart = new Chart(topStatesCtx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['CA', 'TX', 'NY', 'FL', 'IL', 'GA', 'MA', 'WA', 'NC', 'CO'],
+                        datasets: [{
+                            label: 'Properties',
+                            data: [7, 6, 3, 2, 2, 1, 1, 1, 1, 1],
+                            backgroundColor: '#0da1c7',
+                            borderRadius: 4,
+                            borderSkipped: false
+                        }]
+                    },
+                    options: {
+                        indexAxis: 'y',
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        layout: {
+                            padding: {
+                                left: 10,
+                                right: 10,
+                                top: 10,
+                                bottom: 10
+                            }
+                        },
+                        plugins: {
+                            legend: { display: false },
+                            tooltip: {
+                                backgroundColor: 'rgba(28, 54, 67, 0.9)',
+                                padding: 12,
+                                titleFont: { size: 13, weight: '600' },
+                                bodyFont: { size: 13 },
+                                cornerRadius: 4,
+                                displayColors: false
+                            },
+                            title: {
+                                display: true,
+                                text: 'Top 10 States by Volume',
+                                align: 'start',
+                                font: { size: 14, weight: '600' },
+                                color: '#687F8B',
+                                padding: { bottom: 20 }
+                            }
+                        },
+                        scales: {
+                            x: {
+                                beginAtZero: true,
+                                grid: { 
+                                    color: '#f0f0f0',
+                                    drawBorder: false
+                                },
+                                ticks: {
+                                    font: { size: 12 },
+                                    color: '#687F8B'
+                                }
+                            },
+                            y: {
+                                grid: { display: false },
+                                ticks: {
+                                    font: { size: 12 },
+                                    color: '#687F8B',
+                                    fontWeight: '600'
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Property Type Chart - Doughnut Chart with Badge Colors
+            const propertyTypeCtx = document.getElementById('propertyTypeChart');
+            if (propertyTypeCtx) {
+                propertyTypeChart = new Chart(propertyTypeCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Commercial', 'Residential', 'Land'],
+                        datasets: [{
+                            data: [12, 11, 7],
+                            backgroundColor: ['#e65100', '#6a1b9a', '#2e7d32'],
+                            borderWidth: 0,
+                            hoverOffset: 4
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        cutout: '60%',
+                        layout: {
+                            padding: {
+                                left: 10,
+                                right: 10,
+                                top: 10,
+                                bottom: 10
+                            }
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'bottom',
+                                labels: {
+                                    padding: 15,
+                                    font: { size: 12, weight: '500' },
+                                    color: '#687F8B',
+                                    usePointStyle: true,
+                                    pointStyle: 'circle'
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(28, 54, 67, 0.9)',
+                                padding: 12,
+                                titleFont: { size: 13, weight: '600' },
+                                bodyFont: { size: 13 },
+                                cornerRadius: 4,
+                                callbacks: {
+                                    label: function(context) {
+                                        const label = context.label || '';
+                                        const value = context.parsed || 0;
+                                        const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                        const percentage = ((value / total) * 100).toFixed(1);
+                                        return `${label}: ${value} (${percentage}%)`;
+                                    }
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: 'Property Type Distribution',
+                                align: 'start',
+                                font: { size: 14, weight: '600' },
+                                color: '#687F8B',
+                                padding: { bottom: 20 }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Expansion Chart - Line Chart showing Growth Over Time
+            const expansionCtx = document.getElementById('expansionChart');
+            if (expansionCtx) {
+                expansionChart = new Chart(expansionCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct'],
+                        datasets: [
+                            {
+                                label: 'Appraisals',
+                                data: [12, 15, 18, 20, 24, 28, 32, 35, 38, 42],
+                                borderColor: '#0da1c7',
+                                backgroundColor: 'rgba(13, 161, 199, 0.1)',
+                                borderWidth: 3,
+                                fill: true,
+                                tension: 0.4,
+                                pointRadius: 4,
+                                pointHoverRadius: 6,
+                                pointBackgroundColor: '#0da1c7',
+                                pointBorderColor: '#ffffff',
+                                pointBorderWidth: 2
+                            },
+                            {
+                                label: 'Evaluations',
+                                data: [8, 10, 12, 15, 17, 20, 22, 25, 28, 30],
+                                borderColor: '#10b981',
+                                backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                                borderWidth: 3,
+                                fill: true,
+                                tension: 0.4,
+                                pointRadius: 4,
+                                pointHoverRadius: 6,
+                                pointBackgroundColor: '#10b981',
+                                pointBorderColor: '#ffffff',
+                                pointBorderWidth: 2
+                            }
+                        ]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        layout: {
+                            padding: {
+                                left: 10,
+                                right: 10,
+                                top: 10,
+                                bottom: 10
+                            }
+                        },
+                        interaction: {
+                            mode: 'index',
+                            intersect: false
+                        },
+                        plugins: {
+                            legend: {
+                                position: 'top',
+                                align: 'end',
+                                labels: {
+                                    padding: 15,
+                                    font: { size: 12, weight: '500' },
+                                    color: '#687F8B',
+                                    usePointStyle: true,
+                                    pointStyle: 'circle'
+                                }
+                            },
+                            tooltip: {
+                                backgroundColor: 'rgba(28, 54, 67, 0.9)',
+                                padding: 12,
+                                titleFont: { size: 13, weight: '600' },
+                                bodyFont: { size: 13 },
+                                cornerRadius: 4
+                            },
+                            title: {
+                                display: true,
+                                text: 'Geographic Expansion Over Time',
+                                align: 'start',
+                                font: { size: 14, weight: '600' },
+                                color: '#687F8B',
+                                padding: { bottom: 20 }
+                            }
+                        },
+                        scales: {
+                            x: { 
+                                grid: { 
+                                    display: false,
+                                    drawBorder: false
+                                },
+                                ticks: {
+                                    font: { size: 12 },
+                                    color: '#687F8B'
+                                }
+                            },
+                            y: {
+                                beginAtZero: true,
+                                grid: { 
+                                    color: '#f0f0f0',
+                                    drawBorder: false
+                                },
+                                ticks: {
+                                    font: { size: 12 },
+                                    color: '#687F8B',
+                                    stepSize: 5
+                                }
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Update charts with real data after initialization
+            setTimeout(() => {
+                updateCharts();
+            }, 100);
+        }
+
+        // Update charts
+        function updateCharts() {
+            if (!topStatesChart || !propertyTypeChart || !expansionChart) return;
+
+            // Top 10 States - Update with real filtered data
+            const topStates = stateData.sort((a, b) => b.count - a.count).slice(0, 10);
+            if (topStates.length > 0) {
+                topStatesChart.data.labels = topStates.map(s => s.state);
+                topStatesChart.data.datasets[0].data = topStates.map(s => s.count);
+                topStatesChart.update('none');
+            }
+
+            // Property Type - Update with real filtered data and badge colors
+            const typeCounts = { commercial: 0, residential: 0, land: 0 };
+            filteredData.forEach(item => typeCounts[item.type]++);
+            propertyTypeChart.data.datasets[0].data = [typeCounts.commercial, typeCounts.residential, typeCounts.land];
+            propertyTypeChart.data.datasets[0].backgroundColor = ['#e65100', '#6a1b9a', '#2e7d32'];
+            propertyTypeChart.update('none');
+
+            // Expansion Chart - Calculate growth from filtered data
+            // Generate monthly data based on filtered results
+            const monthlyData = calculateMonthlyGrowth();
+            if (monthlyData) {
+                expansionChart.data.datasets[0].data = monthlyData.appraisals;
+                expansionChart.data.datasets[1].data = monthlyData.evaluations;
+                expansionChart.update('none');
+            }
+        }
+
+        // Calculate monthly growth data based on filtered results
+        function calculateMonthlyGrowth() {
+            if (filteredData.length === 0) return null;
+
+            // Mock monthly trend based on total count
+            const total = filteredData.length;
+            const baseAppraisals = Math.round(total * 0.58);
+            const baseEvaluations = Math.round(total * 0.42);
+            
+            const appraisalsData = [];
+            const evaluationsData = [];
+            
+            for (let i = 0; i < 10; i++) {
+                const monthFactor = (i / 9); // 0 to 1
+                appraisalsData.push(Math.round(baseAppraisals * (0.3 + 0.7 * monthFactor)));
+                evaluationsData.push(Math.round(baseEvaluations * (0.3 + 0.7 * monthFactor)));
+            }
+            
+            return { appraisals: appraisalsData, evaluations: evaluationsData };
+        }
+
+        // Export to CSV
+        function exportToCSV() {
+            let csv = 'ID,Category,Property Type,Address,City,State,Value,Date\n';
+            
+            filteredData.forEach(item => {
+                csv += `${item.id},${item.category},${item.type},"${item.address}",${item.city},${item.state},$${item.value},${item.date}\n`;
+            });
+
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `geographic-analysis-${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        }
+    </script>
+</body>
+</html>
+

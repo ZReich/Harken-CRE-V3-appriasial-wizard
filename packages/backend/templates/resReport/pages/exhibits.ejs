@@ -1,0 +1,95 @@
+<% if (exhibits && exhibits.length) { 
+    const chunks = [];
+    const size = exhibits.length;
+    let index = 0;
+    do {
+        const exhibit = exhibits[index];
+        if (exhibit.type.includes('image')) {
+            chunks.push(exhibit);
+        } else {
+            chunks.push(exhibit);
+        }
+        index += 1;
+    } while ((index + 1) <= size);
+
+    chunks.forEach(chunk => {
+        if (Object.keys(chunk).length === 2) { %>
+            <% if (chunk[0].type.includes('image') && chunk[1].type.includes('image')) { %>
+                <!-- 2 Images -->
+                <div class="new-page weighted-value valuations-page-1 pdf-png-row" data-type="exhibits">
+                    <div class="page-header">
+                        <%- include('evaluations/report/pdf/_partials/chapter', { section: 'Section 07', title: 'Exhibits' }) %>
+                    </div>
+                    <div class="description no-margin-top pdf-png-section">
+                        <p class="subtitle"><%= chunk[0].filename !== null ? chunk[0].filename : '' %></p>
+                        <p class="subtitle"><%= chunk[1].filename !== null ? chunk[1].filename : '' %></p>
+                        <!-- 2 Portrait IMG mode -->
+                        <div class="flex">
+                            <img src="<%= evaluation.baseUrl %><%= chunk[0].dir %>" class="exhibits-image"/>
+                            <img src="<%= evaluation.baseUrl %><%= chunk[1].dir %>" class="exhibits-image"/>
+                        </div>
+                    </div>
+                    <%- watermark %>
+                </div>
+            <% } else { %>
+                <!-- 2 PDFs -->
+                <div class="new-page weighted-value valuations-page-1 pdf-png-row" data-type="exhibits" data-exhibits-id="<%= chunk[0].id %>">
+                    <span data-exhibits-url="<%= evaluation.baseUrl %><%= chunk[0].dir %>" class="hide"></span>
+                    <span data-exhibits-url="<%= evaluation.baseUrl %><%= chunk[1].dir %>" class="hide"></span>
+                    <div class="page-header">
+                        <%- chapter %>
+                    </div>
+                    <div class="description no-margin-top pdf-png-section">
+                        <p class="subtitle"><%= chunk[0].filename !== null ? chunk[0].filename : '' %></p>
+                        <div class="flex">
+                            <canvas height="600" class="exhibits-image"></canvas>
+                            <canvas height="600" class="exhibits-image"></canvas>
+                        </div>
+                    </div>
+                    <%- watermark %>
+                </div>
+            <% } %>            
+        <% } else { %>
+            <% if (chunk && chunk.dir) { %>
+                <% if (chunk.type && chunk.type.includes('image')) { %>
+                    <div class="new-page weighted-value valuations-page-1 pdf-png-row" data-type="exhibits">
+                        <div class="page-header">
+                            <%- chapter %>
+                        </div>
+                        <div class="description no-margin-top pdf-png-section">
+                            <p class="subtitle"><%= chunk.filename ? chunk.filename : '' %></p>
+                            <div class="flex">
+                                <img src="<%= evaluation.baseUrl %><%= chunk.dir %>" class="exhibits-image"/>
+                            </div>
+                        </div>
+                        <%- watermark %>
+                    </div>
+                <% } else { %>
+                    <div 
+                        class="new-page weighted-value valuations-page-1 pdf-png-row" 
+                        data-type="exhibits" 
+                        data-exhibits-pdf="1" 
+                        data-exhibits-url="<%= evaluation.baseUrl %><%= chunk.dir %>" 
+                        data-exhibits-id="<%= chunk.id %>">
+                        <div class="page-header">
+                            <%- chapter %>
+                        </div>
+                        <div class="description no-margin-top pdf-png-section">
+                            <p class="subtitle"><%= chunk.filename ? chunk.filename : '' %></p>
+                            <div class="flex">
+                            </div>
+                        </div>
+                        <%- watermark %>
+                    </div>
+                <% } %>
+            <% } %>            
+        <% }
+    });
+} %>
+<!-- <script>
+    function init() {
+        MapController.init();
+    }
+    init();
+</script> -->
+<script type="text/javascript" src="/scripts/html2canvas-0.4.1.min.js"></script>

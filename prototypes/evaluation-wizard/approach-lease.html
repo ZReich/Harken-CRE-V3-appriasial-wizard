@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluation Wizard - Lease Approach</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="css/wizard-styles.css">
+    <style>
+        * { font-family: 'Montserrat', sans-serif; }
+        .material-icons { font-family: 'Material Icons' !important; }
+        body { background-color: #f5f5f5; margin: 0; padding: 0; overflow-x: hidden; width: 100%; max-width: 100vw; box-sizing: border-box; }
+        html { overflow-x: hidden; width: 100%; }
+        .navbar { background: #1c3643; height: 70px; color: #fff; box-shadow: 0 2px 8px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; }
+        .navbar-brand { font-size: 24px; font-weight: 700; color: white; text-decoration: none; }
+        .nav-links { display: flex; align-items: center; gap: 16px; }
+        .nav-link { color: white; text-decoration: none; padding: 8px 20px; border-radius: 25px; transition: all 0.2s; border: 1px solid transparent; font-weight: 500; font-size: 14px; }
+        .nav-link:hover { background-color: rgba(255,255,255,0.05); }
+        .nav-link.active { border: 1px solid #0da1c7; color: #0da1c7; }
+        .lease-approach-container { padding: 16px 20px; background: #f5f5f5; min-height: calc(100vh - 140px); overflow-x: hidden; width: 100%; box-sizing: border-box; }
+        .lease-approach-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .lease-approach-header h2 { font-size: 24px; font-weight: 600; color: #1c3643; margin: 0; }
+        .lease-approach-info { display: flex; align-items: center; gap: 8px; color: #687F8B; font-size: 14px; }
+        .lease-panels-container { display: flex; gap: 6px; overflow-x: auto; overflow-y: visible; padding: 10px; width: 100%; max-width: 100%; box-sizing: border-box; justify-content: flex-start; }
+        .field-selection-panel, .subject-property-panel, .comp-property-panel { background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 0; display: flex; flex-direction: column; }
+        .field-selection-panel { width: 160px; min-width: 160px; max-width: 160px; }
+        .subject-property-panel { width: 165px; min-width: 165px; max-width: 165px; background: #f1f3f4; }
+        .comp-property-panel { width: 165px; min-width: 165px; max-width: 165px; }
+        .property-header { padding: 12px; border-bottom: 1px solid #ddd; font-weight: 600; font-size: 12px; color: #1c3643; text-transform: uppercase; letter-spacing: 0.5px; }
+        .field-selection-header { padding: 12px; border-bottom: 1px solid #eee; font-weight: 600; font-size: 12px; color: #1c3643; text-transform: uppercase; letter-spacing: 0.5px; }
+        .property-content { padding: 10px; display: flex; flex-direction: column; gap: 8px; flex-grow: 1; }
+        .property-image { width: 100%; height: 80px; background: #ddd; border-radius: 4px; object-fit: cover; }
+        .property-field { min-height: 32px; padding: 6px 8px; border: 1px solid #ddd; border-radius: 4px; font-size: 10px; color: #687F8B; background: white; display: flex; align-items: center; }
+        .lease-rate-section { margin-top: 12px; padding-top: 10px; border-top: 1px solid #ddd; display: flex; flex-direction: column; gap: 6px; }
+        .lease-label { font-size: 10px; font-weight: 600; color: #1c3643; text-transform: uppercase; }
+        .lease-value { font-size: 11px; font-weight: 700; color: #ff9800; }
+        .totals-panel { width: 220px; min-width: 220px; max-width: 220px; background: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); padding: 0; position: sticky; right: 0; margin-right: 10px; max-height: calc(100vh - 182px); overflow-y: auto; }
+        .totals-header { padding: 10px 14px; border-bottom: 2px solid #ff9800; font-size: 13px; font-weight: 700; color: #1c3643; text-transform: uppercase; }
+        .totals-content { padding: 12px; display: flex; flex-direction: column; gap: 12px; }
+        .total-section { display: flex; flex-direction: column; gap: 6px; padding: 10px; background: #f9f9f9; border-radius: 4px; border-left: 3px solid #ff9800; }
+        .total-label { font-size: 11px; font-weight: 600; color: #687F8B; text-transform: uppercase; letter-spacing: 0.5px; }
+        .total-value { font-size: 18px; font-weight: 700; color: #1c3643; }
+        .total-value.large { font-size: 24px; color: #ff9800; }
+        .navigation-buttons { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; padding-top: 16px; border-top: 1px solid #eee; }
+        .btn { padding: 10px 14px; border: none; border-radius: 6px; font-size: 11px; font-weight: 600; cursor: pointer; transition: all 0.2s; text-transform: uppercase; letter-spacing: 0.5px; }
+        .btn-secondary { background: #f0f0f0; color: #1c3643; border: 1px solid #ddd; }
+        .btn-secondary:hover { background: #e0e0e0; }
+        .btn-primary { background: #ff9800; color: white; }
+        .btn-primary:hover { background: #e68900; }
+        .notes-section { padding: 20px; background: white; margin-top: 20px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+        .notes-section h3 { margin-top: 0; margin-bottom: 12px; font-size: 14px; font-weight: 600; color: #1c3643; }
+        .notes-textarea { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; font-size: 12px; font-family: 'Montserrat', sans-serif; min-height: 100px; resize: vertical; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <span class="navbar-brand">HARKEN EVALUATIONS</span>
+        <div class="nav-links">
+            <a href="approach-index.html" class="nav-link">← View All Approaches</a>
+            <span class="status-indicator"><span class="status-checkmark">✓</span> Lease Approach</span>
+        </div>
+    </nav>
+
+    <div class="lease-approach-container">
+        <div class="lease-approach-header">
+            <h2>Lease Approach to Value</h2>
+            <div class="lease-approach-info">
+                <span class="material-icons">info</span>
+                <span>Valuation based on market rent analysis using comparable lease data</span>
+            </div>
+        </div>
+
+        <div class="lease-panels-container">
+            <div class="field-selection-panel">
+                <div class="field-selection-header">Field Selection</div>
+                <div class="property-content" style="padding-top: 92px;">
+                    <div class="property-field">Location</div>
+                    <div class="property-field">Lease Date</div>
+                    <div class="property-field">Property Type</div>
+                    <div class="property-field">Rental Rate $/SF</div>
+                    <div class="property-field">Space Size</div>
+                    <div class="property-field">Lease Terms</div>
+                    <div class="property-field">Year Built</div>
+                    <div class="property-field">Zoning</div>
+                </div>
+            </div>
+
+            <div class="subject-property-panel">
+                <div class="property-header">Subject Property</div>
+                <div class="property-content">
+                    <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=200&h=160&fit=crop" alt="Subject" class="property-image" onerror="this.src='https://via.placeholder.com/200x160?text=No+Image'">
+                    <div class="property-field">123 Main St, Denver, CO 80202</div>
+                    <div class="property-field">Current Lease</div>
+                    <div class="property-field">Office Space</div>
+                    <div class="property-field">$22/SF/Year</div>
+                    <div class="property-field">8,000 SF</div>
+                    <div class="property-field">5-Year Lease</div>
+                    <div class="property-field">1995</div>
+                    <div class="property-field">C-2</div>
+                    <div class="lease-rate-section">
+                        <div class="lease-label">Market Rent</div>
+                        <div class="lease-value">$24/SF/Year</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="comp-property-panel">
+                <div class="property-header">Rental Comp 1</div>
+                <div class="property-content">
+                    <img src="https://images.unsplash.com/photo-1486325212027-8081e485255e?w=200&h=160&fit=crop" alt="Comp 1" class="property-image" onerror="this.src='https://via.placeholder.com/200x160?text=No+Image'">
+                    <div class="property-field">456 Market St, Denver, CO 80203</div>
+                    <div class="property-field">12/2024</div>
+                    <div class="property-field">Office Space</div>
+                    <div class="property-field">$23.50/SF/Year</div>
+                    <div class="property-field">7,500 SF</div>
+                    <div class="property-field">3-Year NNN</div>
+                    <div class="property-field">1998</div>
+                    <div class="property-field">C-2</div>
+                    <div class="lease-rate-section">
+                        <div class="lease-label">Adj. Rent</div>
+                        <div class="lease-value">$24/SF/Yr</div>
+                        <div class="lease-label" style="margin-top: 4px;">Weight</div>
+                        <div class="lease-value">30%</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="comp-property-panel">
+                <div class="property-header">Rental Comp 2</div>
+                <div class="property-content">
+                    <img src="https://images.unsplash.com/photo-1449844908441-8829872d2607?w=200&h=160&fit=crop" alt="Comp 2" class="property-image" onerror="this.src='https://via.placeholder.com/200x160?text=No+Image'">
+                    <div class="property-field">789 Broadway, Denver, CO 80204</div>
+                    <div class="property-field">11/2024</div>
+                    <div class="property-field">Office Space</div>
+                    <div class="property-field">$24.50/SF/Year</div>
+                    <div class="property-field">8,200 SF</div>
+                    <div class="property-field">5-Year Full Service</div>
+                    <div class="property-field">2001</div>
+                    <div class="property-field">C-2</div>
+                    <div class="lease-rate-section">
+                        <div class="lease-label">Adj. Rent</div>
+                        <div class="lease-value">$24.25/SF/Yr</div>
+                        <div class="lease-label" style="margin-top: 4px;">Weight</div>
+                        <div class="lease-value">40%</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="comp-property-panel">
+                <div class="property-header">Rental Comp 3</div>
+                <div class="property-content">
+                    <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=200&h=160&fit=crop" alt="Comp 3" class="property-image" onerror="this.src='https://via.placeholder.com/200x160?text=No+Image'">
+                    <div class="property-field">321 Cherry St, Denver, CO 80205</div>
+                    <div class="property-field">10/2024</div>
+                    <div class="property-field">Office Space</div>
+                    <div class="property-field">$23/SF/Year</div>
+                    <div class="property-field">7,800 SF</div>
+                    <div class="property-field">3-Year Triple Net</div>
+                    <div class="property-field">2003</div>
+                    <div class="property-field">C-2</div>
+                    <div class="lease-rate-section">
+                        <div class="lease-label">Adj. Rent</div>
+                        <div class="lease-value">$24.50/SF/Yr</div>
+                        <div class="lease-label" style="margin-top: 4px;">Weight</div>
+                        <div class="lease-value">30%</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="totals-panel">
+                <div class="totals-header">Lease Approach Summary</div>
+                <div class="totals-content">
+                    <div class="total-section">
+                        <div class="total-label">Average Market Rent</div>
+                        <div class="total-value">$24.25/SF</div>
+                        <div class="total-label" style="margin-top: 6px;">Annual</div>
+                    </div>
+
+                    <div class="total-section">
+                        <div class="total-label">Low Adjusted Comp Range</div>
+                        <div class="total-value">$23.50/SF</div>
+                    </div>
+
+                    <div class="total-section">
+                        <div class="total-label">High Adjusted Comp Range</div>
+                        <div class="total-value">$24.50/SF</div>
+                    </div>
+
+                    <div class="total-section">
+                        <div class="total-label">Indicated Market Rent</div>
+                        <div class="total-value large">$24.25/SF</div>
+                        <div class="total-label" style="margin-top: 6px;">Per Annum</div>
+                    </div>
+
+                    <div class="total-section">
+                        <div class="total-label">Weight</div>
+                        <input type="number" value="100" min="0" max="100" placeholder="0-100" style="padding: 6px; font-weight: 600; color: #ff9800; width: 100%; border: 1px solid #ddd; border-radius: 4px;">
+                        <div class="total-label" style="margin-top: 6px;">% of valuation</div>
+                    </div>
+
+                    <div class="navigation-buttons">
+                        <button class="btn btn-secondary">← Back</button>
+                        <button class="btn btn-primary">Continue →</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="notes-section">
+            <h3>Lease Approach Notes</h3>
+            <textarea class="notes-textarea" placeholder="Enter notes about market rent analysis, lease comp selection, market conditions, and lease terms adjustments..."></textarea>
+        </div>
+    </div>
+</body>
+</html>
+
+
+
+
+
+
+
+

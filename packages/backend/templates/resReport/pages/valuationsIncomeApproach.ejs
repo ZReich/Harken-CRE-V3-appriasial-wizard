@@ -1,0 +1,1198 @@
+<%
+if (evaluation && Array.isArray(evaluation.res_evaluation_scenarios)) {
+for(let index = 0; index < evaluation.res_evaluation_scenarios.length; index++){
+    const scenario = evaluation.res_evaluation_scenarios[index];
+    let low_psf, market_psf, high_psf = 0;
+    if(scenario.has_income_approach){
+        let label = '';
+        if (evaluation && evaluation.res_evaluation_scenarios && evaluation.res_evaluation_scenarios.length > 1 && label === '') {
+            label = scenario.name;
+        }
+        if(scenario?.res_evaluation_income_approach ){
+            const evaluation_income_approach = scenario.res_evaluation_income_approach ;
+            const incomes = evaluation_income_approach?.incomeSources;
+            const countIS = incomes ? incomes.length : 0;
+            const lengthIN = evaluation_income_approach?.income_notes?.length || 0;
+            const lengthEN = evaluation_income_approach?.expense_notes?.length || 0;
+            const lengthCN = evaluation_income_approach?.cap_rate_notes?.length || 0;
+            const totalLength = lengthIN + lengthEN + lengthCN;
+            const totalINENLength = lengthIN + lengthEN;
+            const totalENCN = lengthEN + lengthCN;
+
+            const oes = evaluation_income_approach.operatingExpenses;
+            const countOe = oes ? oes.length : 0;
+            const total = countIS + countOe + 2;
+
+            let maxlengthForENCN = 1500;
+            if (countOe < 7) {
+                const countChars = 7 - countOe;
+                maxlengthForENCN += countChars * 120;
+            }
+
+            let maxlengthForINEN = 1500;
+            if (total < 16) {
+                const countChars = 16 - total;
+                maxlengthForINEN += countChars * 120;
+            }
+        %>
+
+        <% if (total <= 12 && totalLength < 400) { %>
+            <div class="new-page valuations_page_3" data-type="income-approach">
+                <div class="page-header">
+                <%- chapter %>
+                </div>
+                <div class="description">
+                <p class="title">Income <span class="subtitle">Approach</span></p>
+                <p class="label"><%= label %></p>
+                <table class="space-table">
+                    <thead>
+                    <tr>
+                        <th class="type-col">Type</th>
+                        <th class="amount-col">Monthly Income</th>
+                        <th class="amount-col">Annual Income</th>
+                        <th class="amount-sf-col">$/SF/YR</th>
+                        <th class="amount-col">Square Footage</th>
+                        <th>Comments</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <% 
+                    let trClass = '';
+                    if (scenario.res_evaluation_income_approach.incomeSources) {
+                        let zone = 0;
+                        for (let i = 0; i < scenario.res_evaluation_income_approach.incomeSources.length; i++) {
+                        const incomeSource = scenario.res_evaluation_income_approach.incomeSources[i];
+                        trClass = i % 2 === 0 ? 'odd' : '';
+                    %>
+                        <tr class="<%= trClass %>">
+                        <td>
+                            <%
+                                let zone_string = '';
+                                let zoneValue = '';
+                                let subZoneValue = getArrayValue('space', incomeSource) || 'Single Family Residence';
+                                if (evaluation && evaluation.res_zonings && evaluation.res_zonings[zone]) {
+                                    zone_string = evaluation.res_zonings[zone].zone;
+                                    const zoneObj = zoneOptions.find((obj) => obj?.code === zone_string);
+                                    zoneValue = zoneObj ? zoneObj.name : zone_string;
+                                    const sub_options = zoneObj?.sub_options || [];
+                                    const subZone = sub_options.find((obj) => obj?.code === subZoneValue);
+                                    subZoneValue = subZone ? subZone.name : subZoneValue;
+                                }
+                            %>
+                            <%= (zone < evaluation.res_zonings.length) ? zoneValue + ' - ' : '' %>
+                            <%= subZoneValue %>
+                        </td>
+                        <td class="<%= (i + 1 === countIS) ? 'total-sum' : '' %>"><span><%= getArrayValue('monthly_income', incomeSource, 0, true) %></span></td>
+                        <td class="<%= (i + 1 === countIS) ? 'total-sum' : '' %>"><span><%= getArrayValue('annual_income', incomeSource, 0, true) %></span></td>
+                        <td class="<%= (i + 1) === countIS ? 'total-sum' : '' %>"><span class=""><%= getArrayValue('rent_sq_ft', incomeSource, 0, true) %></span></td>
+                        <td class="<%= (i + 1) === countIS ? 'total-sum' : '' %>"><%= to_area(getArrayValue('square_feet', incomeSource, 'None')) %></td>
+                        <td><%= getArrayValue('comments', incomeSource, 'None') %></td>
+                        </tr>
+                    <% zone++; } 
+                        } %>
+                    <tr class="bold <%= (trClass === '') ? 'odd' : '' %>">
+                        <td>Total and Average</td>
+                        <td><span><%= toCurrency(evaluation_income_approach.total_monthly_income) %></span></td>
+                        <td><span><%= toCurrency(evaluation_income_approach.total_annual_income) %></span></td>
+                        <td><span><%= toCurrency(evaluation_income_approach.total_rent_sq_ft) %></span></td>
+                        <td><span><%= to_area(evaluation_income_approach.total_sq_ft) %></span></td>
+                        <td></td>
+                    </tr>
+                    </tbody>
+                    <tbody>
+                    <tr>
+                        <td colspan="6">
+                            <p class="regular-description">
+                                <span class="type income_type">
+                                    Income Notes:
+                                </span>
+                                <span class="text income_text">
+                                    <%- evaluation_income_approach?.income_notes ? evaluation_income_approach.income_notes.replace(/^<p[^>]*>/i, '').replace(/<\/p>$/i, '') : "" %>
+                                </span>
+                            </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                        <p class="regular-description">
+                            <span>Vacancy : </span><%= toPercentage(evaluation_income_approach.vacancy) %> of Gross Income
+                        </p>
+                        </td>
+                        <td colspan="4" class="noBorder">
+                        <p class="regular-description">
+                            $(<%= numberFormat(Math.abs(evaluation_income_approach.vacant_amount) || 0, 2) %>)
+                        </p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="6">
+                        <p class="regular-description">
+                            <span>Adjusted Gross : </span><%= toCurrency(evaluation_income_approach.adjusted_gross_amount); %>
+                        </p>
+                        </td>
+                    </tr>
+                    </tbody>
+                    <thead>
+                        <tr>
+                            <th>Operation Expenses</th>
+                            <th class="amount-col">Amounts</th>
+                            <th class="amount-gross-col">% of Adjusted Gross</th>
+                            <th class="amount-sf-col">$/SF</th>
+                            <th>Comments</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% let total_sf_price = 0; %>
+                        <% if (oes && oes.length) { %>
+                            <% oes.forEach((oe, i) => { 
+                                trClass = i % 2 === 0 ? 'odd' : ''; 
+                                const isLast = (i + 1) === countOe;
+                                const annual_amount = oe.annual_amount || 0;
+                                const building_size = evaluation.building_size;
+                                let price_per_sf = 0;
+                                if (annual_amount && building_size > 0) {
+                                    price_per_sf = annual_amount / building_size;
+                                }
+                                total_sf_price += Number(price_per_sf.toFixed(2));
+                            %>
+                            <tr class="<%= trClass %>">
+                                <td><%= getArrayValue('name', oe, '-') %></td>
+                                <td class="<%= isLast ? 'total-sum' : '' %>"><span><%= getArrayValue('annual_amount', oe, 0, true) %></span></td>
+                                <td class="<%= isLast ? 'total-sum' : '' %>"><span><%= toPercentage(getArrayValue('percentage_of_gross', oe)) %></span></td>
+                                <td class="<%= isLast ? 'total-sum' : '' %>"><span><%= getArrayValue('total_per_sq_ft', oe, 0, true) %></span></td>
+                                <td colspan="2"><%= getArrayValue('comments', oe, 'None') %></td>
+                            </tr>
+                            <% }) %>
+                        <% } %>
+                        <tr class="bold <%= !trClass ? 'odd' : '' %>">
+                            <td>Total Expenses</td>
+                            <td><span><%= toCurrency(evaluation_income_approach.total_oe_annual_amount) %></span></td>
+                            <td><%= toPercentage(evaluation_income_approach.total_oe_gross) %></td>
+                            <td><span><%= toCurrency(evaluation_income_approach.total_oe_per_square_feet) %></span></td>
+                            <td colspan="2"></td>
+                        </tr>
+                    </tbody>
+                    <tbody>
+                        <tr>
+                            <td colspan="6">
+                                <p class="regular-description">
+                                    <span class="type income_type">
+                                        Expense Notes:
+                                    </span>
+                                    <span class="text income_text">
+                                        <%- evaluation_income_approach?.expense_notes ? evaluation_income_approach.expense_notes.replace(/^<p[^>]*>/i, '').replace(/<\/p>$/i, '') : "" %>
+                                    </span>
+                                </p>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tbody>
+                        <tr>
+                            <td colspan="6">
+                                <p class="title">CAP <span class="subtitle">Rate Analysis</span></p>
+                                <p class="main-description">
+                                    Recent sales indicate acceptable capitalization rates ranging from
+                                    <%= evaluation_income_approach.monthly_capitalization_rate %>%
+                                    - <%= evaluation_income_approach.sq_ft_capitalization_rate %>%, thus utilizing the
+                                    direct capitalization method of evaluation the author has assumed a capitalization rate
+                                    of <%= evaluation_income_approach.annual_capitalization_rate %>% based on the property's location,
+                                    condition, and tenant mix.
+                                </p>
+                            </td>
+                        </tr>
+                    </tbody>
+                    <tbody class="cap-rate-table">
+                        <tr class="net-operating-row">
+                            <td>Net Operating Income</td>
+                            <td></td>
+                            <td><b><%= toCurrency(evaluation_income_approach.total_net_income) %></b></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr class="odd">
+                            <td>CAP Rate Range</td>
+                            <td class="percentage-cell"><%= toPercentage(evaluation_income_approach.monthly_capitalization_rate) %></td>
+                            <td class="percentage-cell"><span class="contents"><%= toPercentage(evaluation_income_approach.annual_capitalization_rate) %></span></td>
+                            <td class="percentage-cell"><span class="contents"><%= toPercentage(evaluation_income_approach.sq_ft_capitalization_rate) %></span></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>Indicated Value</td>
+                            <td class="percentage-cell"><%= evaluation_income_approach.indicated_range_monthly ? toCurrency(evaluation_income_approach.indicated_range_monthly) : getNotAvailableLabel() %></td>
+                            <td class="percentage-cell"><span class="contents"><%= evaluation_income_approach.indicated_range_annual ? toCurrency(evaluation_income_approach.indicated_range_annual) : getNotAvailableLabel() %></span></td>
+                            <td class="percentage-cell">
+                                <span class="contents">
+                                    <%= evaluation_income_approach?.indicated_range_sq_feet ? toCurrency(evaluation_income_approach.indicated_range_sq_feet) : getNotAvailableLabel() %>
+                                </span>
+                            </td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr class="odd">
+                            <td>Indicated Value PSF</td>
+                            <td><%= toCurrency(evaluation_income_approach.indicated_psf_monthly) %></td>
+                            <td><%= toCurrency(evaluation_income_approach.indicated_psf_annual) %></td>
+                            <td><%= toCurrency(evaluation_income_approach.indicated_psf_sq_feet) %></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <p class="regular-description">
+                    <span class="type income_type">
+                        CAP Rate Notes:
+                    </span>
+                    <span class="text income_text">
+                        <%- evaluation_income_approach?.cap_rate_notes ? evaluation_income_approach.cap_rate_notes.replace(/^<p[^>]*>/i, '').replace(/<\/p>$/i, '') : "" %>
+                    </span>
+                </p>
+                </div>
+                <%- watermark %>
+            </div>
+        <% } else if (total >= 8 && total < 24  && totalINENLength < maxlengthForINEN){ %>
+            <div class="new-page valuations_page_3" data-type="income-approach">
+                <div class="page-header">
+                    <%- chapter %>
+                </div>
+                <div class="description">
+                    <p class="title">Income <span class="subtitle">Approach</span></p>
+                    <p class="label"><%= label %></p>
+                    <table class="space-table">
+                        <thead>
+                            <tr>
+                                <th class="type-col">Type</th>
+                                <th class="amount-col">Monthly Income</th>
+                                <th class="amount-col">Annual Income</th>
+                                <th class="amount-sf-col">$/SF/YR</th>
+                                <th class="amount-col">Square Footage</th>
+                                <th>Comments</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        <% 
+                            let trClass = '';
+                            if (scenario.res_evaluation_income_approach.incomeSources) {
+                                let zone = 0;
+                                for (let i = 0; i < scenario.res_evaluation_income_approach.incomeSources.length; i++) {
+                                const incomeSource = scenario.res_evaluation_income_approach.incomeSources[i];
+                                trClass = i % 2 === 0 ? 'odd' : '';
+                        %>
+                            <tr class="<%= trClass %>">
+                                <td>
+                                    <%
+                                        let zone_string = '';
+                                        let zoneValue = '';
+                                        let subZoneValue = getArrayValue('space', incomeSource) || 'Single Family Residence';
+                                        if (evaluation && evaluation.res_zonings && evaluation.res_zonings[zone]) {
+                                            zone_string = evaluation.res_zonings[zone].zone;
+                                            const zoneObj = zoneOptions.find((obj) => obj?.code === zone_string);
+                                            zoneValue = zoneObj ? zoneObj.name : zone_string;
+                                            const sub_options = zoneObj?.sub_options || [];
+                                            const subZone = sub_options.find((obj) => obj?.code === subZoneValue);
+                                            subZoneValue = subZone ? subZone.name : subZoneValue;
+                                        }
+                                    %>
+                                    <%= (zone < evaluation.res_zonings.length) ? zoneValue + ' - ' : '' %>
+                                    <%= subZoneValue %>
+                                </td>
+                                <td class="<%= (i + 1 === countIS) ? 'total-sum' : '' %>"><span><%= getArrayValue('monthly_income', incomeSource, 0, true) %></span></td>
+                                <td class="<%= (i + 1 === countIS) ? 'total-sum' : '' %>"><span><%= getArrayValue('annual_income', incomeSource, 0, true) %></span></td>
+                                <td class="<%= (i + 1) === countIS ? 'total-sum' : '' %>"><span class=""><%= getArrayValue('rent_sq_ft', incomeSource, 0, true) %></span></td>
+                                <td class="<%= (i + 1) === countIS ? 'total-sum' : '' %>"><%= to_area(getArrayValue('square_feet', incomeSource, 'None')) %></td>
+                                <td><%= getArrayValue('comments', incomeSource, 'None') %></td>
+                            </tr>
+                        <% zone++; } } %>
+                        <tr class="bold <%= (trClass === '') ? 'odd' : '' %>">
+                            <td>Total and Average</td>
+                            <td><span><%= toCurrency(evaluation_income_approach.total_monthly_income) %></span></td>
+                            <td><span><%= toCurrency(evaluation_income_approach.total_annual_income) %></span></td>
+                            <td><span><%= numberFormat(evaluation_income_approach.total_rent_sq_ft) %></span></td>
+                            <td><span><%= to_area(evaluation_income_approach.total_sq_ft) %></span></td>
+                            <td></td>
+                        </tr>
+                        </tbody>
+                        <tbody>
+                            <tr>
+                                <td colspan="6">
+                                    <p class="regular-description">
+                                        <span class="type income_type">
+                                            Income Notes:
+                                        </span>
+                                        <span class="text income_text">
+                                            <%- evaluation_income_approach?.income_notes ? evaluation_income_approach.income_notes.replace(/^<p[^>]*>/i, '').replace(/<\/p>$/i, '') : "" %>
+                                        </span>
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                <p class="regular-description">
+                                    <span>Vacancy : </span><%= toPercentage(evaluation_income_approach.vacancy) %> of Gross Income
+                                </p>
+                                </td>
+                                <td colspan="4" class="noBorder">
+                                <p class="regular-description">
+                                    $(<%= numberFormat(Math.abs(evaluation_income_approach.vacant_amount) || 0, 2) %>)
+                                </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="6">
+                                <p class="regular-description">
+                                    <span>Adjusted Gross : </span><%= toCurrency(evaluation_income_approach.adjusted_gross_amount); %>
+                                </p>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <thead>
+                            <tr>
+                                <th>Operation Expenses</th>
+                                <th class="amount-col">Amounts</th>
+                                <th class="amount-gross-col">% of Adjusted Gross</th>
+                                <th class="amount-sf-col">$/SF</th>
+                                <th>Comments</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% let total_sf_price = 0; %>
+                            <% if (oes && oes.length) { %>
+                                <% oes.forEach((oe, i) => { 
+                                    trClass = i % 2 === 0 ? 'odd' : ''; 
+                                    const isLast = (i + 1) === countOe;
+                                    const annual_amount = oe.annual_amount || 0;
+                                    const building_size = evaluation.building_size;
+                                    let price_per_sf = 0;
+                                    if (annual_amount && building_size > 0) {
+                                        price_per_sf = annual_amount / building_size;
+                                    }
+                                    total_sf_price += Number(price_per_sf.toFixed(2));
+                                %>
+                                <tr class="<%= trClass %>">
+                                    <td><%= getArrayValue('name', oe, '-') %></td>
+                                    <td class="<%= isLast ? 'total-sum' : '' %>"><span><%= getArrayValue('annual_amount', oe, 0, true) %></span></td>
+                                    <td class="<%= isLast ? 'total-sum' : '' %>"><span><%= toPercentage(getArrayValue('percentage_of_gross', oe)) %></span></td>
+                                    <td class="<%= isLast ? 'total-sum' : '' %>"><span><%= getArrayValue('total_per_sq_ft', oe, 0, true) %></span></td>
+                                    <td colspan="2"><%= getArrayValue('comments', oe, 'None') %></td>
+                                </tr>
+                                <% }) %>
+                            <% } %>
+                            <tr class="bold <%= !trClass ? 'odd' : '' %>">
+                                <td>Total Expenses</td>
+                                <td><span><%= toCurrency(evaluation_income_approach.total_oe_annual_amount) %></span></td>
+                                <td><%= toPercentage(evaluation_income_approach.total_oe_gross) %></td>
+                                <td><span><%= toCurrency(evaluation_income_approach.total_oe_per_square_feet) %></span></td>
+                                <td colspan="2"></td>
+                            </tr>
+                        </tbody>
+                        <tbody>
+                            <tr>
+                                <td colspan="6">
+                                    <p class="regular-description">
+                                        <span class="type income_type">
+                                            Expense Notes:
+                                        </span>
+                                        <span class="text income_text">
+                                            <%- evaluation_income_approach?.expense_notes ? evaluation_income_approach.expense_notes.replace(/^<p[^>]*>/i, '').replace(/<\/p>$/i, '') : "" %>
+                                        </span>
+                                    </p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <%- watermark %>
+            </div>
+            <div class="new-page valuations_page_3">
+                <div class="page-header">
+                    <%- chapter %>
+                </div>
+                <div class="description">
+                    <p class="title">Cap <span class="subtitle">Rate Analysis</span></p>
+                    <p class="label"><%= label %></p>
+                    <p class="main-description">
+                        Recent sales indicate acceptable capitalization rates ranging from
+                        <%= evaluation_income_approach.monthly_capitalization_rate %>%
+                        - <%= evaluation_income_approach.sq_ft_capitalization_rate %>%, thus utilizing the
+                        direct capitalization method of evaluation the author has assumed a capitalization rate
+                        of <%= evaluation_income_approach.annual_capitalization_rate %>% based on the property's location,
+                        condition, and tenant mix.
+                    </p>
+            
+                    <table class="cap-rate-table">
+                        <tbody>
+                            <tr class="net-operating-row">
+                                <td>Net Operating Value</td>
+                                <td></td>
+                                <td><b><%= toCurrency(evaluation_income_approach.total_net_income) %></b></td>
+                                <td></td>
+                            </tr>
+                            <tr class="odd">
+                                <td>Cap Rate Range</td>
+                                <td class="percentage-cell"><%= toPercentage(evaluation_income_approach.monthly_capitalization_rate) %></td>
+                                <td class="percentage-cell"><span class="contents"><%= toPercentage(evaluation_income_approach.annual_capitalization_rate) %></span></td>
+                                <td class="percentage-cell"><span class="contents"><%= toPercentage(evaluation_income_approach.sq_ft_capitalization_rate) %></span></td>
+                            </tr>
+                            <tr>
+                                <td>Indicated Value</td>
+                                <td class="percentage-cell"><%= evaluation_income_approach.indicated_range_monthly ? toCurrency(evaluation_income_approach.indicated_range_monthly) : getNotAvailableLabel() %></td>
+                                <td class="percentage-cell"><span class="contents"><%= evaluation_income_approach.indicated_range_annual ? toCurrency(evaluation_income_approach.indicated_range_annual) : getNotAvailableLabel() %></span></td>
+                                <td class="percentage-cell">
+                                    <span class="contents">
+                                        <%= evaluation_income_approach?.indicated_range_sq_feet ? toCurrency(evaluation_income_approach.indicated_range_sq_feet) : getNotAvailableLabel() %>
+                                    </span>
+                                </td>
+                            </tr>
+                            <tr class="odd">
+                                <td>Indicated Value PSF</td>
+                                <td><%= toCurrency(evaluation_income_approach.indicated_psf_monthly) %></td>
+                                <td><%= toCurrency(evaluation_income_approach.indicated_psf_annual) %></td>
+                                <td><%= toCurrency(evaluation_income_approach.indicated_psf_sq_feet) %></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <% 
+                        const notes = evaluation_income_approach?.cap_rate_notes;
+                        const length = notes ? notes.length : 0;
+                        if (length <= 3600 && notes) {
+                    %>
+                    <p class="regular-description">
+                        <span class="type income_type">
+                            CAP Rate Notes:
+                        </span>
+                        <span class="text income_text">
+                            <%- notes.replace(/^<p[^>]*>/i, '').replace(/<\/p>$/i, '') %>
+                        </span>
+                    </p>
+                </div>
+                <%- watermark %>
+            </div>
+            <% } else {
+                let count = Math.ceil(length / 3600);
+                let startLen = 0;
+                let limit = 3600;
+
+                for (let i = 0; i < count; i++) {
+                    let segment = notes.trim().substring(startLen, startLen + limit);
+                    let lastDot = segment.lastIndexOf(' ');
+                    if (lastDot !== -1 && segment.length - lastDot < 10) {
+                        limit -= (segment.length - lastDot);
+                        segment = notes.trim().substring(startLen, startLen + limit);
+                    }
+                    const noteSegment = segment;
+
+                    if (i !== 0) {
+                        %>
+                        <div class="new-page valuations_page_3">
+                            <div class="page-header">
+                                <%- chapter %>
+                            </div>
+                            <div class="description">
+                                <p class="title">Cap <span class="subtitle">Rate Analysis</span></p>
+                                <p class="label"><%= label %></p>
+                                <p class="regular-description">
+                                    <span class="type income_type">
+                                        CAP Rate Notes:
+                                    </span>
+                                    <span class="text income_text">
+                                        <%- noteSegment.replace(/^<p[^>]*>/i, '').replace(/<\/p>$/i, '') %>
+                                    </span>
+                                </p>
+                            </div>
+                            <%- watermark %>
+                        </div>
+                    <% } else { %>
+                        <p class="regular-description">
+                            <span class="type income_type">
+                                CAP Rate Notes:
+                            </span>
+                            <span class="text income_text">
+                                <%- noteSegment.replace(/^<p[^>]*>/i, '').replace(/<\/p>$/i, '') %>
+                            </span>
+                        </p>
+                    </div>
+                    <%- watermark %>
+                </div>
+                <% }
+                    startLen += limit;
+                    limit = 4700;
+                }
+            } %>
+        <% } else if(countOe > 1 && totalENCN < maxlengthForENCN){ %>
+            <div class="new-page valuations_page_3" data-type="income-approach">
+                <div class="page-header">
+                    <%- chapter %>
+                </div>
+                <div class="description">
+                    <p class="title">Income <span class="subtitle">Approach</span></p>
+                    <p class="label"><%= label %></p>
+                    <table class="space-table">
+                        <thead>
+                            <tr>
+                                <th class="type-col">Type</th>
+                                <th class="amount-col">Monthly Income</th>
+                                <th class="amount-col">Annual Income</th>
+                                <th class="amount-sf-col">$/SF/YR</th>
+                                <th class="amount-col">Square Footage</th>
+                                <th>Comments</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% 
+                                let trClass = '';
+                                if (scenario.res_evaluation_income_approach.incomeSources) {
+                                    let zone = 0;
+                                    for (let i = 0; i < scenario.res_evaluation_income_approach.incomeSources.length; i++) {
+                                    const incomeSource = scenario.res_evaluation_income_approach.incomeSources[i];
+                                    trClass = i % 2 === 0 ? 'odd' : '';
+                            %>
+                            <tr class="<%= trClass %>">
+                                <td>
+                                    <%
+                                        let zone_string = '';
+                                        let zoneValue = '';
+                                        let subZoneValue = getArrayValue('space', incomeSource) || 'Single Family Residence';
+                                        if (evaluation && evaluation.res_zonings && evaluation.res_zonings[zone]) {
+                                            zone_string = evaluation.res_zonings[zone].zone;
+                                            const zoneObj = zoneOptions.find((obj) => obj?.code === zone_string);
+                                            zoneValue = zoneObj ? zoneObj.name : zone_string;
+                                            const sub_options = zoneObj?.sub_options || [];
+                                            const subZone = sub_options.find((obj) => obj?.code === subZoneValue);
+                                            subZoneValue = subZone ? subZone.name : subZoneValue;
+                                        }
+                                    %>
+                                    <%= (zone < evaluation.res_zonings.length) ? zoneValue + ' - ' : '' %>
+                                    <%= subZoneValue %>
+                                </td>
+                                <td class="<%= (i + 1 === countIS) ? 'total-sum' : '' %>"><span><%= getArrayValue('monthly_income', incomeSource, 0, true) %></span></td>
+                                <td class="<%= (i + 1 === countIS) ? 'total-sum' : '' %>"><span><%= getArrayValue('annual_income', incomeSource, 0, true) %></span></td>
+                                <td class="<%= (i + 1) === countIS ? 'total-sum' : '' %>"><span class=""><%= getArrayValue('rent_sq_ft', incomeSource, 0, true) %></span></td>
+                                <td class="<%= (i + 1) === countIS ? 'total-sum' : '' %>"><%= to_area(getArrayValue('square_feet', incomeSource, 'None')) %></td>
+                                <td><%= getArrayValue('comments', incomeSource, 'None') %></td>
+                                    </tr>
+                        <% zone++; } } %>
+                            <tr class="bold <%= (trClass === '') ? 'odd' : '' %>">
+                                <td>Total and Average</td>
+                                <td><span><%= toCurrency(evaluation_income_approach.total_monthly_income) %></span></td>
+                                <td><span><%= toCurrency(evaluation_income_approach.total_annual_income) %></span></td>
+                                <td><span><%= numberFormat(evaluation_income_approach.total_rent_sq_ft) %></span></td>
+                                <td><span><%= to_area(evaluation_income_approach.total_sq_ft) %></span></td>
+                                <td></td>
+                            </tr>
+                
+                        <% if (evaluation_income_approach?.income_notes.length <= 3200) { %>
+                            <tr>
+                            <td colspan="6">
+                                <p class="regular-description">
+                                    <span class="type income_type">
+                                        Income Notes:
+                                    </span>
+                                    <span class="text income_text">
+                                        <%- evaluation_income_approach?.income_notes ? evaluation_income_approach.income_notes.replace(/^<p[^>]*>/i, '').replace(/<\/p>$/i, '') : "" %>
+                                    </span>
+                                </p>
+                            </td>
+                            </tr>
+                        <% } %>
+                        </tbody>
+                    </table>
+                    <table>
+                        <tbody>
+                        <tr>
+                            <td style="width:40%">
+                            <p class="regular-description">
+                                <span>Vacancy : </span><%= toPercentage(evaluation_income_approach.vacancy) %> of Gross Income
+                            </p>
+                            </td>
+                            <td class="noBorder" style="text-align:left;">
+                            <p class="regular-description">
+                                $(<%= numberFormat(Math.abs(evaluation_income_approach.vacant_amount) || 0, 2) %>)
+                            </p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                            <p class="regular-description">
+                                <span>Adjusted Gross : </span><%= toCurrency(evaluation_income_approach.adjusted_gross_amount); %>
+                            </p>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <%- watermark %>
+            </div>
+            <div class="new-page valuations_page_3">
+                <div class="page-header">
+                    <%- chapter %>
+                </div>
+                <div class="description">
+                <p class="title">Income <span class="subtitle">Approach</span></p>
+                <p class="label"><%= label %></p>
+            
+                <table class="space-table">
+                    <thead>
+                    <tr>
+                        <th>Operation Expenses</th>
+                        <th class="amount-col">Amounts</th>
+                        <th class="amount-gross-col">% of Adjusted Gross</th>
+                        <th class="amount-sf-col">$/SF</th>
+                        <th>Comments</th>
+                        <th></th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                        <% let total_sf_price = 0; %>
+                        <% if (oes && oes.length) { %>
+                            <% oes.forEach((oe, i) => { 
+                                trClass = i % 2 === 0 ? 'odd' : ''; 
+                                const isLast = (i + 1) === countOe;
+                                const annual_amount = oe.annual_amount || 0;
+                                const building_size = evaluation.building_size;
+                                let price_per_sf = 0;
+                                if (annual_amount && building_size > 0) {
+                                    price_per_sf = annual_amount / building_size;
+                                }
+                                total_sf_price += Number(price_per_sf.toFixed(2));
+                            %>
+                            <tr class="<%= trClass %>">
+                                <td><%= getArrayValue('name', oe, '-') %></td>
+                                <td class="<%= isLast ? 'total-sum' : '' %>"><span><%= getArrayValue('annual_amount', oe, 0, true) %></span></td>
+                                <td class="<%= isLast ? 'total-sum' : '' %>"><span><%= toPercentage(getArrayValue('percentage_of_gross', oe)) %></span></td>
+                                <td class="<%= isLast ? 'total-sum' : '' %>"><span><%= getArrayValue('total_per_sq_ft', oe, 0, true) %></span></td>
+                                <td colspan="2"><%= getArrayValue('comments', oe, 'None') %></td>
+                            </tr>
+                            <% }) %>
+                        <% } %>
+                        <tr class="bold <%= !trClass ? 'odd' : '' %>">
+                            <td>Total Expenses</td>
+                            <td><span><%= toCurrency(evaluation_income_approach.total_oe_annual_amount) %></span></td>
+                            <td><%= toPercentage(evaluation_income_approach.total_oe_gross) %></td>
+                            <td><span><%= toCurrency(evaluation_income_approach.total_oe_per_square_feet) %></span></td>
+                            <td colspan="2"></td>
+                        </tr>
+                    </tbody>
+            
+                    <tbody>
+                    <tr>
+                        <td colspan="6">
+                            <p class="regular-description">
+                                <span class="type income_type">
+                                    Expense Notes:
+                                </span>
+                                <span class="text income_text">
+                                    <%- evaluation_income_approach?.expense_notes ? evaluation_income_approach.expense_notes.replace(/^<p[^>]*>/i, '').replace(/<\/p>$/i, '') : "" %>
+                                </span>
+                            </p>
+                        </td>
+                    </tr>
+                    </tbody>
+                    <tbody>
+                    <tr>
+                        <td colspan="6">
+                        <p class="title">CAP <span class="subtitle">Rate Analysis</span></p>
+                        <p class="main-description">
+                            Recent sales indicate acceptable capitalization rates ranging from
+                            <%= evaluation_income_approach.monthly_capitalization_rate %>%
+                            - <%= evaluation_income_approach.sq_ft_capitalization_rate %>%, thus utilizing the
+                            direct capitalization method of evaluation the author has assumed a capitalization rate
+                            of <%= evaluation_income_approach.annual_capitalization_rate %>% based on the property's location,
+                            condition, and tenant mix.
+                        </p>
+                        </td>
+                    </tr>
+                    </tbody>
+                    <tbody class="cap-rate-table">
+                    <tr class="net-operating-row">
+                        <td>Net Operating Income</td>
+                        <td></td>
+                        <td><b><%= toCurrency(evaluation_income_approach.total_net_income) %></b></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr class="odd">
+                        <td>Cap Rate Range</td>
+                        <td class="percentage-cell"><%= toPercentage(evaluation_income_approach.monthly_capitalization_rate) %></td>
+                        <td class="percentage-cell"><span class="contents"><%= toPercentage(evaluation_income_approach.annual_capitalization_rate) %></span></td>
+                        <td class="percentage-cell"><span class="contents"><%= toPercentage(evaluation_income_approach.sq_ft_capitalization_rate) %></span></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td>Indicated Value</td>
+                        <td class="percentage-cell"><%= evaluation_income_approach.indicated_range_monthly ? toCurrency(evaluation_income_approach.indicated_range_monthly) : getNotAvailableLabel() %></td>
+                        <td class="percentage-cell"><span class="contents"><%= evaluation_income_approach.indicated_range_annual ? toCurrency(evaluation_income_approach.indicated_range_annual) : getNotAvailableLabel() %></span></td>
+                        <td class="percentage-cell">
+                            <span class="contents">
+                                <%= evaluation_income_approach?.indicated_range_sq_feet ? toCurrency(evaluation_income_approach.indicated_range_sq_feet) : getNotAvailableLabel() %>
+                            </span>
+                        </td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr class="odd">
+                        <td>Indicated Value PSF</td>
+                        <td><%= toCurrency(evaluation_income_approach.indicated_psf_monthly) %></td>
+                        <td><%= toCurrency(evaluation_income_approach.indicated_psf_annual) %></td>
+                        <td><%= toCurrency(evaluation_income_approach.indicated_psf_sq_feet) %></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    </tbody>
+                </table>
+                <p class="regular-description">
+                    <span class="type income_type">
+                        CAP Rate Notes:
+                    </span>
+                    <span class="text income_text">
+                        <%- evaluation_income_approach?.cap_rate_notes ? evaluation_income_approach.cap_rate_notes.replace(/^<p[^>]*>/i, '').replace(/<\/p>$/i, '') : "" %>
+                    </span>
+                </p>
+                </div>
+                <%- watermark %>
+            </div>
+        <% } else{ %>
+            <div class="new-page valuations_page_3" data-type="income-approach">
+                <div class="page-header">
+                    <%- chapter %>
+                </div>
+                <div class="description">
+                    <p class="title">Income <span class="subtitle">Approach</span></p>
+                    <p class="label"><%= label %></p>
+                    <table class="space-table">
+                        <thead>
+                            <tr>
+                                <th class="type-col">Type</th>
+                                <th class="amount-col">Monthly Income</th>
+                                <th class="amount-col">Annual Income</th>
+                                <th class="amount-sf-col">$/SF/YR</th>
+                                <th class="amount-col">Square Footage</th>
+                                <th>Comments</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <% 
+                                let trClass = '';
+                                if (scenario.res_evaluation_income_approach.incomeSources) {
+                                    let zone = 0;
+                                    for (let i = 0; i < scenario.res_evaluation_income_approach.incomeSources.length; i++) {
+                                    const incomeSource = scenario.res_evaluation_income_approach.incomeSources[i];
+                                    trClass = i % 2 === 0 ? 'odd' : '';
+                            %>
+                            <tr class="<%= trClass %>">
+                                <td>
+                                    <%
+                                        let zone_string = '';
+                                        let zoneValue = '';
+                                        let subZoneValue = getArrayValue('space', incomeSource) || 'Single Family Residence';
+                                        if (evaluation && evaluation.res_zonings && evaluation.res_zonings[zone]) {
+                                            zone_string = evaluation.res_zonings[zone].zone;
+                                            const zoneObj = zoneOptions.find((obj) => obj?.code === zone_string);
+                                            zoneValue = zoneObj ? zoneObj.name : zone_string;
+                                            const sub_options = zoneObj?.sub_options || [];
+                                            const subZone = sub_options.find((obj) => obj?.code === subZoneValue);
+                                            subZoneValue = subZone ? subZone.name : subZoneValue;
+                                        }
+                                    %>
+                                    <%= (zone < evaluation.res_zonings.length) ? zoneValue + ' - ' : '' %>
+                                    <%= subZoneValue %>
+                                </td>
+                                <td class="<%= (i + 1 === countIS) ? 'total-sum' : '' %>"><span><%= getArrayValue('monthly_income', incomeSource, 0, true) %></span></td>
+                                <td class="<%= (i + 1 === countIS) ? 'total-sum' : '' %>"><span><%= getArrayValue('annual_income', incomeSource, 0, true) %></span></td>
+                                <td class="<%= (i + 1) === countIS ? 'total-sum' : '' %>"><span class=""><%= getArrayValue('rent_sq_ft', incomeSource, 0, true) %></span></td>
+                                <td class="<%= (i + 1) === countIS ? 'total-sum' : '' %>"><%= to_area(getArrayValue('square_feet', incomeSource, 'None')) %></td>
+                                <td><%= getArrayValue('comments', incomeSource, 'None') %></td>
+                            </tr>
+                            <% zone++; } } %>
+                            <tr class="bold <%= (trClass === '') ? 'odd' : '' %>">
+                                <td>Total and Average</td>
+                                <td><span><%= toCurrency(evaluation_income_approach.total_monthly_income) %></span></td>
+                                <td><span><%= toCurrency(evaluation_income_approach.total_annual_income) %></span></td>
+                                <td><span><%= numberFormat(evaluation_income_approach.total_rent_sq_ft) %></span></td>
+                                <td><span><%= to_area(evaluation_income_approach.total_sq_ft) %></span></td>
+                                <td></td>
+                            </tr>
+                            <%
+                                const notes = evaluation_income_approach.income_notes;
+                                const length = notes.length;
+                                let endLength = 3200;
+                            
+                                if (countIS < 7) {
+                                    const countChars = 7 - countIS;
+                                    const remove = countChars * 120;
+                                    endLength += remove;
+                                }
+                            
+                                if (length <= endLength) {
+                            %>
+                            <tr>
+                                <td colspan="6">
+                                    <p class="regular-description">
+                                        <span class="type income_type">
+                                            Income Notes:
+                                        </span>
+                                        <span class="text income_text">
+                                            <%- notes.replace(/^<p[^>]*>/i, '').replace(/<\/p>$/i, '') %>
+                                        </span>
+                                    </p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <table>
+                        <tbody>
+                            <tr>
+                                <td style="width:40%">
+                                    <p class="regular-description">
+                                        <span>Vacancy : </span><%= toPercentage(evaluation_income_approach.vacancy) %> of Gross Income
+                                    </p>
+                                </td>
+                                <td class="noBorder" style="text-align:left;">
+                                    <p class="regular-description">
+                                        $(<%= numberFormat(Math.abs(evaluation_income_approach.vacant_amount) || 0, 2) %>)
+                                    </p>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td colspan="2">
+                                    <p class="regular-description">
+                                        <span>Adjusted Gross : </span><%= toCurrency(evaluation_income_approach.adjusted_gross_amount); %>
+                                    </p>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <%- watermark %>
+            </div>
+            <% }else{
+                let count = 1;
+                let endLength = 3200;
+                
+                if (countIS < 7) {
+                    const countChars = 7 - countIS;
+                    const remove = countChars * 120;
+                    endLength += remove;
+                }
+                
+                const notes = evaluation_income_approach?.income_notes.trim();
+                const length = notes.length;
+                
+                if (length > endLength) {
+                    count = length / endLength;
+                }
+                
+                let startLen = 0;
+                let limit = endLength;
+                
+                for (let i = 0; i <= Math.ceil(count); i++) {
+                    const segment = notes.substring(startLen, startLen + limit);
+                    if (segment.length > 0) {
+                        let checkString = segment;
+                        const lastDot = checkString.lastIndexOf(' ');
+                        const endPart = checkString.substring(lastDot);
+                        const chars = endPart.length;
+                
+                        if (chars < 10) {
+                            limit -= chars;
+                            endLength -= chars;
+                        }
+                
+                        const data = notes.substring(startLen, startLen + limit);
+                
+                        if (i !== 0) { 
+                %>
+                            <div class="new-page valuations_page_3" data-type="income-approach">
+                                <div class="page-header">
+                                    <%- chapter %>
+                                </div>
+                
+                                <div class="description">
+                                    <p class="title">Income <span class="subtitle">Approach</span></p>
+                                    <p class="label"><%= label %></p>
+                                    <p class="regular-description">
+                                        <span class="type income_type">
+                                            Income Notes:
+                                        </span>
+                                        <span class="text income_text">
+                                            <%- data.replace(/^<p[^>]*>/i, '').replace(/<\/p>$/i, '') %>
+                                        </span>
+                                    </p>
+                
+                                    <% if (data.length < limit) { %>
+                                    <table>
+                                        <tbody>
+                                            <tr>
+                                                <td style="width:40%">
+                                                    <p class="regular-description">
+                                                        <span>Vacancy : </span><%= toPercentage(evaluation_income_approach.vacancy) %> of Gross Income
+                                                    </p>
+                                                </td>
+                                                <td class="noBorder" style="text-align:left;">
+                                                    <p class="regular-description">
+                                                        $(<%= numberFormat(Math.abs(evaluation_income_approach.vacant_amount) || 0, 2) %>)
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                            <tr>
+                                                <td colspan="2">
+                                                    <p class="regular-description">
+                                                        <span>Adjusted Gross : </span><%= toCurrency(evaluation_income_approach.adjusted_gross_amount); %>
+                                                    </p>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <% } %>
+                                </div>
+                                <%- watermark %>
+                            </div>
+                <%
+                        } else {
+                %>
+                            <tr>
+                                <td colspan="6">
+                                    <p class="regular-description">
+                                        <span class="type income_type">
+                                            Income Notes:
+                                        </span>
+                                        <span class="text income_text">
+                                            <%- data.replace(/^<p[^>]*>/i, '').replace(/<\/p>$/i, '') %>
+                                        </span>
+                                    </p>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        </div>
+                        <%- watermark %>
+                    </div>
+                <%
+                        }
+                
+                        startLen = endLength;
+                        limit = 4800;
+                        endLength = startLen + limit;
+                    }
+                }
+            } %>
+            
+            <div class="new-page valuations_page_3">
+                <div class="page-header">
+                    <%- chapter %>
+                </div>
+                <div class="description">
+                    <p class="title">Income <span class="subtitle">Approach</span></p>
+                    <p class="label"><%= label %></p>
+                    <table class="space-table">
+                        <thead>
+                        <tr>
+                            <th>Operation Expenses</th>
+                            <th class="amount-col">Amounts</th>
+                            <th class="amount-gross-col">% of Adjusted Gross</th>
+                            <th class="amount-sf-col">$/SF</th>
+                            <th>Comments</th>
+                            <th></th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <% let total_sf_price = 0; %>
+                        <% oes.forEach((oe, i) => { %>
+                            <% trClass = i % 2 === 0 ? 'odd' : ''; %>
+                            <tr class="<%= trClass %>">
+                            <td><%= getArrayValue('name', oe, '-') %></td>
+                            <td class="<%= (i + 1) === countOe ? 'total-sum' : '' %>"><%= getArrayValue('annual_amount', oe, 0, true) %></td>
+                            <td class="<%= (i + 1) === countOe ? 'total-sum' : '' %>"><span><%= toPercentage(getArrayValue('percentage_of_gross', oe)) %></span></td>
+                            <td class="<%= isLast ? 'total-sum' : '' %>"><span><%= getArrayValue('total_per_sq_ft', oe, 0, true) %></span></td>
+                            <td colspan="2"><%= getArrayValue('comments', oe, 'None') %></td>
+                            </tr>
+                        <% }) %>
+                
+                        <tr class="bold <%= trClass === '' ? 'odd' : '' %>">
+                            <td>Total Expenses</td>
+                            <td><%= toCurrency(evaluation_income_approach.total_oe_annual_amount) %></td>
+                            <td><%= toPercentage(evaluation_income_approach.total_oe_gross) %></td>
+                            <td><span><%= toCurrency(evaluation_income_approach.total_oe_per_square_feet) %></span></td>
+                            <td colspan="2"></td>
+                        </tr>
+                        </tbody>
+                    </table>
+                    <% 
+                        const expenseNotes = evaluation_income_approach?.expense_notes.trim();
+                        let exlength = expenseNotes.length;
+                        let exendLength = 3400;
+                        if (countIS < 7) {
+                        const countChars = 7 - countOe;
+                        const remove = countChars * 120;
+                        exendLength += remove;
+                        }
+                        if (exlength <= exendLength) {
+                    %>
+                    <p class="regular-description">
+                        <span class="type income_type">
+                            Expense Notes:
+                        </span>
+                        <span class="text income_text">
+                            <%- expenseNotes.replace(/^<p[^>]*>/i, '').replace(/<\/p>$/i, '') %>
+                        </span>
+                    </p>
+                </div>
+                <%- watermark %>
+            </div>
+                <% } else {
+                    let count = exlength > exendLength ? exlength / exendLength : 1;
+                    let startLen = 0;
+                    let limit = exendLength;
+                    for (let i = 0; i <= count; i++) {
+                        const segment = expenseNotes.substring(startLen, startLen + limit);
+                        if (segment.length > 0) {
+                            const lastDot = segment.lastIndexOf(' ');
+                            const endPart = segment.substring(lastDot);
+                            const chars = endPart.length;
+                            if (chars < 10) {
+                                limit -= chars;
+                                exendLength -= chars;
+                            }
+                            const data = expenseNotes.substring(startLen, startLen + limit);
+                            if (i !== 0) {
+                            %>
+                                <div class="new-page valuations_page_3">
+                                    <div class="page-header">
+                                        <%- chapter %>
+                                    </div>
+                                    <div class="description">
+                                        <p class="title">Income <span class="subtitle">Approach</span></p>
+                                        <p class="label"><%= label %></p>
+                                        <p class="regular-description">
+                                            <span class="type income_type">
+                                                Expense Notes:
+                                            </span>
+                                            <span class="text income_text">
+                                                <%- data.replace(/^<p[^>]*>/i, '').replace(/<\/p>$/i, '') %>
+                                            </span>
+                                        </p>
+                                    </div>
+                                    <%- watermark %>
+                                </div>
+                                <% } else { %>
+                                    <p class="regular-description">
+                                        <span class="type income_type">
+                                            Expense Notes:
+                                        </span>
+                                        <span class="text income_text">
+                                            <%- data.replace(/^<p[^>]*>/i, '').replace(/<\/p>$/i, '') %>
+                                        </span>
+                                    </p>
+                                    <%- watermark %>
+                                </div>
+                                <% } 
+                                startLen = exendLength; 
+                                limit = 4700; 
+                                exendLength = startLen + limit; 
+                            }
+                        } %>
+            <% } %>
+            <div class="new-page valuations_page_3">
+                <div class="page-header">
+                    <%- chapter %>
+                </div>
+                <div class="description">
+                    <p class="title">Cap <span class="subtitle">Rate Analysis</span></p>
+                    <p class="label"><%= label %></p>
+                    <p class="main-description">
+                        Recent sales indicate acceptable capitalization rates ranging from
+                        <%= evaluation_income_approach.monthly_capitalization_rate %>%
+                        - <%= evaluation_income_approach.sq_ft_capitalization_rate %>%, thus utilizing the
+                        direct capitalization method of evaluation the author has assumed a capitalization rate
+                        of <%= evaluation_income_approach.annual_capitalization_rate %>% based on the property's location,
+                        condition, and tenant mix.
+                    </p>
+                    
+                    <table class="cap-rate-table">
+                        <tbody>
+                        <tr>
+                            <td>Net Operating Value</td>
+                            <td></td>
+                            <td><b><%= toCurrency(evaluation_income_approach.total_net_income) %></b></td>
+                            <td></td>
+                        </tr>
+                        <tr class="odd">
+                            <td>Cap Rate Range</td>
+                            <td class="percentage-cell"><%= toPercentage(evaluation_income_approach.monthly_capitalization_rate) %></td>
+                            <td class="percentage-cell"><span class="contents"><%= toPercentage(evaluation_income_approach.annual_capitalization_rate) %></span></td>
+                            <td class="percentage-cell"><span class="contents"><%= toPercentage(evaluation_income_approach.sq_ft_capitalization_rate) %></span></td>
+                        </tr>
+                        <tr>
+                            <td>Indicated Value</td>
+                            <td class="percentage-cell"><%= evaluation_income_approach.indicated_range_monthly ? toCurrency(evaluation_income_approach.indicated_range_monthly) : getNotAvailableLabel() %></td>
+                            <td class="percentage-cell"><span class="contents"><%= evaluation_income_approach.indicated_range_annual ? toCurrency(evaluation_income_approach.indicated_range_annual) : getNotAvailableLabel() %></span></td>
+                            <td class="percentage-cell">
+                                <span class="contents">
+                                    <%= evaluation_income_approach?.indicated_range_sq_feet ? toCurrency(evaluation_income_approach?.indicated_range_sq_feet) : getNotAvailableLabel() %>
+                                </span>
+                            </td>
+                        </tr>
+                            <tr class="odd">
+                                <td>Indicated Value PSF</td>
+                                <td><%= toCurrency(evaluation_income_approach.indicated_psf_monthly) %></td>
+                                <td><%= toCurrency(evaluation_income_approach.indicated_psf_annual) %></td>
+                                <td><%= toCurrency(evaluation_income_approach.indicated_psf_sq_feet) %></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <% const capNotes = evaluation_income_approach.cap_rate_notes;
+                        const capNotesLength = capNotes.length;
+                        if (capNotesLength <= 3600) { %>
+                            <p class="regular-description">
+                                <span class="type income_type">
+                                    CAP Rate Notes:
+                                </span>
+                                <span class="text income_text">
+                                    <%- capNotes.replace(/^<p[^>]*>/i, '').replace(/<\/p>$/i, '') %>
+                                </span>
+                            </p>
+                </div>
+                    <%- watermark %>
+            </div>
+                <% } else {
+                    let count = Math.ceil(capNotesLength / 3600);
+                    let startLen = 0, endLength = 3600, limit = 3600;
+                    for (let i = 0; i < count; i++) {
+                        const chunk = capNotes.trim().substring(startLen, startLen + limit);
+                        const lastSpace = chunk.lastIndexOf(' ');
+                        const adjustedLimit = (chunk.length - lastSpace < 10) ? limit - (chunk.length - lastSpace) : limit;
+                        const data = capNotes.trim().substring(startLen, startLen + adjustedLimit);
+                    %>
+                    <div class="new-page valuations_page_3">
+                        <div class="page-header">
+                            <%- chapter %>
+                        </div>
+                        <div class="description">
+                            <p class="title">Cap <span class="subtitle">Rate Analysis</span></p>
+                            <p class="label"><%= label %></p>
+                            <p class="regular-description">
+                                <span class="type income_type">
+                                    CAP Rate Notes:
+                                </span>
+                                <span class="text income_text">
+                                    <%- data.replace(/^<p[^>]*>/i, '').replace(/<\/p>$/i, '') %>
+                                </span>
+                            </p>
+                        </div>
+                        <%- watermark %>
+                    </div>
+                    <%   startLen += adjustedLimit;
+                        limit = 4700;
+                        endLength = startLen + limit;
+                    } 
+                }
+            }  
+        }
+    }
+} 
+} %>

@@ -1,0 +1,70 @@
+<div class="new-page property-summary no-block-space">
+	<div class="page-header floating-extra-pd-10"><%- chapter %></div>
+
+	<div class="info-body extra-pd-10">
+		<table class="top-table">
+			<tbody>
+				<tr>
+					<td class="info-title" colspan="2">
+						<%= evaluation.city %> Area <span class="section-title">Info</span>
+					</td>
+				</tr>
+				<tr>
+					<% const cityInfo = getData(evaluation.areaInfo, 'city_info'); %>
+					<td class="area-info mb-bottom-block space fix-line-height" valign="top">
+                        <p><%- (cityInfo || '').toString().replace(/S\.\./g, '').slice(0, 1210) %></p>
+					</td>
+
+					<% const countyInfo = getData(evaluation.areaInfo, 'county_info'); %>
+					<td class="area-info mb-bottom-block fix-line-height" valign="top">
+						<p><%- (countyInfo || '').toString().replace(/S\.\./g, '').slice(0, 1210) %></p>
+					</td>
+				</tr>
+			</tbody>
+		</table>
+        <table class="bottom-table bottom-table-fix">
+            <tbody>
+                <tr>
+                <% const ARROW_KEYS = [
+                        'property_summary_sales_arrow',
+                        'property_summary_vacancy_arrow',
+                        'property_summary_net_absorption_arrow',
+                        'property_summary_construction_arrow',
+                        'property_summary-lease_rates_arrow',
+                    ]; %>
+        
+                <% ARROW_KEYS.forEach((key) => { %>
+                    <td>
+                    <div class="fixed-action-btn">
+                        <% const imagePath = getData(evaluation.areaInfo, key) %>
+                        <% if (imagePath) { %>
+                        <img
+                            class="property-info-arrow-image"
+                            src="<%= getArrowImage(imagePath) %>"
+                            data-image-arrow="<%= key %>"
+                            data-dir="<%= imagePath %>"
+                        />
+                        <% } else { %>
+                        <img
+                            class="property-info-arrow-image"
+                            src="/images/up.svg"
+                            data-image-arrow="<%= key %>"
+                        />
+                        <% } %>
+                    </div>
+                    </td>
+                <% }) %>
+                </tr>
+        
+                <tr>
+                <td>Sales</td>
+                <td>Vacancy</td>
+                <td>Net Absorption</td>
+                <td>Construction</td>
+                <td>Lease Rates</td>
+                </tr>
+            </tbody>
+        </table>
+	</div>
+	<%- watermark %>
+</div>

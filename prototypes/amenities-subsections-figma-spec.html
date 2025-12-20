@@ -1,0 +1,1075 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amenities Subsections - Figma Design Spec</title>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            /* Harken Brand Colors */
+            --harken-teal: #0da1c7;
+            --harken-slate: #1c3643;
+            --harken-gray: #687F8B;
+            --harken-light-gray: #9CA8B0;
+            --harken-bg: #f5f7fa;
+            
+            /* Category Colors */
+            --structure-primary: #4a6fa5;
+            --structure-light: #e8f0f8;
+            --structure-border: #a8c4e0;
+            
+            --systems-primary: #7b6b8e;
+            --systems-light: #f5f2f8;
+            --systems-border: #d4c9de;
+            
+            --features-primary: #2e8b7d;
+            --features-light: #e8f6f4;
+            --features-border: #a8d5ce;
+            
+            --additional-primary: #b8763e;
+            --additional-light: #fef8f1;
+            --additional-border: #e8d4bb;
+            
+            /* Selection Colors */
+            --selected-green: #10b981;
+            --selected-green-light: #ecfdf5;
+            --selected-green-dark: #047857;
+        }
+        
+        body {
+            font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #ffffff;
+            color: var(--harken-slate);
+            padding: 40px;
+            line-height: 1.5;
+        }
+        
+        .spec-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .spec-header {
+            text-align: center;
+            padding-bottom: 40px;
+            border-bottom: 3px solid var(--harken-teal);
+            margin-bottom: 60px;
+        }
+        
+        .spec-header h1 {
+            font-size: 36px;
+            font-weight: 700;
+            color: var(--harken-slate);
+            margin-bottom: 8px;
+        }
+        
+        .spec-header p {
+            font-size: 16px;
+            color: var(--harken-gray);
+        }
+        
+        .spec-section {
+            margin-bottom: 80px;
+        }
+        
+        .spec-section-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--harken-slate);
+            margin-bottom: 8px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #e8eaed;
+        }
+        
+        .spec-section-subtitle {
+            font-size: 14px;
+            color: var(--harken-gray);
+            margin-bottom: 32px;
+        }
+        
+        /* Color Palette */
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 20px;
+        }
+        
+        .color-swatch {
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .color-swatch-preview {
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 12px;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+        }
+        
+        .color-swatch-info {
+            padding: 12px 16px;
+            background: #fafbfc;
+        }
+        
+        .color-swatch-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--harken-slate);
+            margin-bottom: 4px;
+        }
+        
+        .color-swatch-hex {
+            font-size: 12px;
+            color: var(--harken-gray);
+            font-family: 'Courier New', monospace;
+        }
+        
+        /* Typography */
+        .typography-grid {
+            display: grid;
+            gap: 24px;
+        }
+        
+        .typography-item {
+            display: grid;
+            grid-template-columns: 200px 1fr 200px;
+            align-items: center;
+            padding: 20px;
+            background: #fafbfc;
+            border-radius: 8px;
+            border: 1px solid #e8eaed;
+        }
+        
+        .typography-specs {
+            font-size: 12px;
+            color: var(--harken-gray);
+        }
+        
+        .typography-specs span {
+            display: block;
+            margin-bottom: 4px;
+        }
+        
+        /* Component States */
+        .states-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 32px;
+        }
+        
+        .state-card {
+            background: #fafbfc;
+            border-radius: 12px;
+            padding: 24px;
+            border: 1px solid #e8eaed;
+        }
+        
+        .state-card-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--harken-gray);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 20px;
+        }
+        
+        /* Components Preview */
+        .component-row {
+            margin-bottom: 16px;
+        }
+        
+        .component-label {
+            font-size: 11px;
+            color: var(--harken-gray);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        /* Parent Item States */
+        .parent-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            border: 2px solid transparent;
+            background-color: white;
+            margin-bottom: 8px;
+            position: relative;
+        }
+        
+        .parent-item.structure { color: var(--structure-primary); }
+        .parent-item.systems { color: var(--systems-primary); }
+        .parent-item.features { color: var(--features-primary); }
+        .parent-item.additional { color: var(--additional-primary); }
+        
+        .parent-item.structure.hover {
+            background-color: var(--structure-light);
+            border-color: var(--structure-border);
+            transform: translateX(4px);
+        }
+        
+        .parent-item.has-selection {
+            background-color: #f0fdf9;
+            border-color: var(--selected-green);
+        }
+        
+        .parent-item.has-selection::before {
+            content: '';
+            position: absolute;
+            left: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 4px;
+            height: 70%;
+            background-color: var(--selected-green);
+            border-radius: 2px;
+        }
+        
+        .parent-item .expand-icon {
+            margin-left: auto;
+            font-size: 20px;
+            opacity: 0.6;
+        }
+        
+        .parent-item.expanded .expand-icon {
+            transform: rotate(180deg);
+        }
+        
+        .selected-tag {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--selected-green);
+            margin-left: 8px;
+            background-color: rgba(16, 185, 129, 0.1);
+            padding: 3px 8px;
+            border-radius: 4px;
+        }
+        
+        /* Suboption States */
+        .suboption-item {
+            display: flex;
+            align-items: center;
+            padding: 10px 16px 10px 36px;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--harken-gray);
+            position: relative;
+            background: white;
+            margin-bottom: 4px;
+            border-radius: 4px;
+        }
+        
+        .suboption-item::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background-color: #d1d5db;
+        }
+        
+        .suboption-item.hover {
+            background-color: #f9fafb;
+            color: var(--harken-slate);
+        }
+        
+        .suboption-item.hover::before {
+            background-color: var(--harken-teal);
+            transform: translateY(-50%) scale(1.2);
+        }
+        
+        .suboption-item.selected {
+            background-color: var(--selected-green-light);
+            color: var(--selected-green-dark);
+            font-weight: 600;
+        }
+        
+        .suboption-item.selected::before {
+            background-color: var(--selected-green);
+            transform: translateY(-50%) scale(1.3);
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+        }
+        
+        .suboption-item .check-icon {
+            margin-left: auto;
+            font-size: 16px;
+            color: var(--selected-green);
+        }
+        
+        /* Simple Amenity States */
+        .simple-amenity {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            border: 2px solid transparent;
+            background-color: white;
+            margin-bottom: 8px;
+            color: var(--additional-primary);
+        }
+        
+        .simple-amenity.hover {
+            background-color: var(--additional-light);
+            border-color: var(--additional-border);
+            transform: translateX(4px);
+        }
+        
+        .simple-amenity.selected {
+            background-color: #fef3e4;
+            border-color: var(--additional-primary);
+            color: #8a5a2e;
+        }
+        
+        .simple-amenity .checkmark {
+            margin-left: auto;
+            font-size: 18px;
+        }
+        
+        /* Spacing Guide */
+        .spacing-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+        }
+        
+        .spacing-item {
+            background: #fafbfc;
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid #e8eaed;
+        }
+        
+        .spacing-visual {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 16px;
+            height: 60px;
+        }
+        
+        .spacing-box {
+            background-color: var(--harken-teal);
+            opacity: 0.3;
+        }
+        
+        .spacing-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--harken-slate);
+            text-align: center;
+            margin-bottom: 4px;
+        }
+        
+        .spacing-value {
+            font-size: 12px;
+            color: var(--harken-gray);
+            text-align: center;
+            font-family: 'Courier New', monospace;
+        }
+        
+        /* Category Headers */
+        .category-header-demo {
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-radius: 8px 8px 0 0;
+            margin-bottom: 0;
+        }
+        
+        .category-header-demo.structure {
+            background: linear-gradient(135deg, var(--structure-light) 0%, #f4f8fc 100%);
+            color: var(--structure-primary);
+            border-bottom: 2px solid var(--structure-border);
+        }
+        
+        .category-header-demo.systems {
+            background: linear-gradient(135deg, var(--systems-light) 0%, #faf8fc 100%);
+            color: var(--systems-primary);
+            border-bottom: 2px solid var(--systems-border);
+        }
+        
+        .category-header-demo.features {
+            background: linear-gradient(135deg, var(--features-light) 0%, #f4fbf9 100%);
+            color: var(--features-primary);
+            border-bottom: 2px solid var(--features-border);
+        }
+        
+        .category-header-demo.additional {
+            background: linear-gradient(135deg, var(--additional-light) 0%, #fffcf8 100%);
+            color: var(--additional-primary);
+            border-bottom: 2px solid var(--additional-border);
+        }
+        
+        /* Full Component Demo */
+        .full-demo {
+            background: #fafbfc;
+            border-radius: 12px;
+            border: 1px solid #e8eaed;
+            overflow: hidden;
+            max-width: 320px;
+        }
+        
+        .full-demo-content {
+            padding: 16px;
+        }
+        
+        /* Annotations */
+        .annotation {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 24px;
+            height: 24px;
+            background-color: #ef4444;
+            color: white;
+            border-radius: 50%;
+            font-size: 12px;
+            font-weight: 700;
+            margin-right: 8px;
+        }
+        
+        .annotation-list {
+            margin-top: 24px;
+            padding: 20px;
+            background: #fef2f2;
+            border-radius: 8px;
+            border: 1px solid #fecaca;
+        }
+        
+        .annotation-list-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 12px;
+            font-size: 13px;
+        }
+        
+        .annotation-list-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        /* Icons Reference */
+        .icons-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 16px;
+        }
+        
+        .icon-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background: #fafbfc;
+            border-radius: 8px;
+            border: 1px solid #e8eaed;
+        }
+        
+        .icon-item .material-icons {
+            font-size: 28px;
+            color: var(--harken-slate);
+            margin-bottom: 8px;
+        }
+        
+        .icon-item span {
+            font-size: 11px;
+            color: var(--harken-gray);
+            text-align: center;
+        }
+        
+        /* Print Styles */
+        @media print {
+            body {
+                background: white;
+                padding: 20px;
+            }
+            
+            .spec-section {
+                page-break-inside: avoid;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="spec-container">
+        <!-- Header -->
+        <div class="spec-header">
+            <h1>Amenities with Subsections</h1>
+            <p>Figma Design Specification Sheet • Harken CRE</p>
+        </div>
+        
+        <!-- Color Palette -->
+        <div class="spec-section">
+            <h2 class="spec-section-title">Color Palette</h2>
+            <p class="spec-section-subtitle">All colors used in the component with their exact hex values</p>
+            
+            <div class="color-grid">
+                <!-- Category Colors -->
+                <div class="color-swatch">
+                    <div class="color-swatch-preview" style="background-color: #4a6fa5;">Structure</div>
+                    <div class="color-swatch-info">
+                        <div class="color-swatch-name">Structure Primary</div>
+                        <div class="color-swatch-hex">#4a6fa5</div>
+                    </div>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-swatch-preview" style="background-color: #e8f0f8; color: #4a6fa5;">Bg</div>
+                    <div class="color-swatch-info">
+                        <div class="color-swatch-name">Structure Light</div>
+                        <div class="color-swatch-hex">#e8f0f8</div>
+                    </div>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-swatch-preview" style="background-color: #7b6b8e;">Systems</div>
+                    <div class="color-swatch-info">
+                        <div class="color-swatch-name">Systems Primary</div>
+                        <div class="color-swatch-hex">#7b6b8e</div>
+                    </div>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-swatch-preview" style="background-color: #f5f2f8; color: #7b6b8e;">Bg</div>
+                    <div class="color-swatch-info">
+                        <div class="color-swatch-name">Systems Light</div>
+                        <div class="color-swatch-hex">#f5f2f8</div>
+                    </div>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-swatch-preview" style="background-color: #2e8b7d;">Features</div>
+                    <div class="color-swatch-info">
+                        <div class="color-swatch-name">Features Primary</div>
+                        <div class="color-swatch-hex">#2e8b7d</div>
+                    </div>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-swatch-preview" style="background-color: #e8f6f4; color: #2e8b7d;">Bg</div>
+                    <div class="color-swatch-info">
+                        <div class="color-swatch-name">Features Light</div>
+                        <div class="color-swatch-hex">#e8f6f4</div>
+                    </div>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-swatch-preview" style="background-color: #b8763e;">Additional</div>
+                    <div class="color-swatch-info">
+                        <div class="color-swatch-name">Additional Primary</div>
+                        <div class="color-swatch-hex">#b8763e</div>
+                    </div>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-swatch-preview" style="background-color: #fef8f1; color: #b8763e;">Bg</div>
+                    <div class="color-swatch-info">
+                        <div class="color-swatch-name">Additional Light</div>
+                        <div class="color-swatch-hex">#fef8f1</div>
+                    </div>
+                </div>
+                <!-- Selection Colors -->
+                <div class="color-swatch">
+                    <div class="color-swatch-preview" style="background-color: #10b981;">Selected</div>
+                    <div class="color-swatch-info">
+                        <div class="color-swatch-name">Selected Green</div>
+                        <div class="color-swatch-hex">#10b981</div>
+                    </div>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-swatch-preview" style="background-color: #ecfdf5; color: #10b981;">Bg</div>
+                    <div class="color-swatch-info">
+                        <div class="color-swatch-name">Selected Light</div>
+                        <div class="color-swatch-hex">#ecfdf5</div>
+                    </div>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-swatch-preview" style="background-color: #047857;">Dark</div>
+                    <div class="color-swatch-info">
+                        <div class="color-swatch-name">Selected Dark</div>
+                        <div class="color-swatch-hex">#047857</div>
+                    </div>
+                </div>
+                <!-- Base Colors -->
+                <div class="color-swatch">
+                    <div class="color-swatch-preview" style="background-color: #1c3643;">Slate</div>
+                    <div class="color-swatch-info">
+                        <div class="color-swatch-name">Harken Slate</div>
+                        <div class="color-swatch-hex">#1c3643</div>
+                    </div>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-swatch-preview" style="background-color: #687F8B;">Gray</div>
+                    <div class="color-swatch-info">
+                        <div class="color-swatch-name">Harken Gray</div>
+                        <div class="color-swatch-hex">#687F8B</div>
+                    </div>
+                </div>
+                <div class="color-swatch">
+                    <div class="color-swatch-preview" style="background-color: #0da1c7;">Teal</div>
+                    <div class="color-swatch-info">
+                        <div class="color-swatch-name">Harken Teal</div>
+                        <div class="color-swatch-hex">#0da1c7</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Typography -->
+        <div class="spec-section">
+            <h2 class="spec-section-title">Typography</h2>
+            <p class="spec-section-subtitle">Font: DM Sans (Google Fonts)</p>
+            
+            <div class="typography-grid">
+                <div class="typography-item">
+                    <div class="typography-specs">
+                        <span><strong>Category Header</strong></span>
+                        <span>Size: 12px</span>
+                        <span>Weight: 700 (Bold)</span>
+                        <span>Transform: UPPERCASE</span>
+                        <span>Letter-spacing: 0.8px</span>
+                    </div>
+                    <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #4a6fa5;">
+                        STRUCTURE
+                    </div>
+                    <div></div>
+                </div>
+                <div class="typography-item">
+                    <div class="typography-specs">
+                        <span><strong>Parent Item Label</strong></span>
+                        <span>Size: 13px</span>
+                        <span>Weight: 600 (SemiBold)</span>
+                    </div>
+                    <div style="font-size: 13px; font-weight: 600; color: #4a6fa5;">
+                        Exterior
+                    </div>
+                    <div></div>
+                </div>
+                <div class="typography-item">
+                    <div class="typography-specs">
+                        <span><strong>Selected Value Tag</strong></span>
+                        <span>Size: 11px</span>
+                        <span>Weight: 500 (Medium)</span>
+                    </div>
+                    <div>
+                        <span style="font-size: 11px; font-weight: 500; color: #10b981; background-color: rgba(16, 185, 129, 0.1); padding: 3px 8px; border-radius: 4px;">Brick</span>
+                    </div>
+                    <div></div>
+                </div>
+                <div class="typography-item">
+                    <div class="typography-specs">
+                        <span><strong>Suboption Label</strong></span>
+                        <span>Size: 12px</span>
+                        <span>Weight: 500 (Medium)</span>
+                    </div>
+                    <div style="font-size: 12px; font-weight: 500; color: #687F8B;">
+                        Wood Siding
+                    </div>
+                    <div></div>
+                </div>
+                <div class="typography-item">
+                    <div class="typography-specs">
+                        <span><strong>Suboption Selected</strong></span>
+                        <span>Size: 12px</span>
+                        <span>Weight: 600 (SemiBold)</span>
+                    </div>
+                    <div style="font-size: 12px; font-weight: 600; color: #047857;">
+                        Brick ✓
+                    </div>
+                    <div></div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Spacing -->
+        <div class="spec-section">
+            <h2 class="spec-section-title">Spacing & Sizing</h2>
+            <p class="spec-section-subtitle">Consistent spacing values used throughout the component</p>
+            
+            <div class="spacing-grid">
+                <div class="spacing-item">
+                    <div class="spacing-visual">
+                        <div class="spacing-box" style="width: 16px; height: 40px;"></div>
+                    </div>
+                    <div class="spacing-label">Category Padding</div>
+                    <div class="spacing-value">16px horizontal</div>
+                </div>
+                <div class="spacing-item">
+                    <div class="spacing-visual">
+                        <div class="spacing-box" style="width: 40px; height: 12px;"></div>
+                    </div>
+                    <div class="spacing-label">Item Padding V</div>
+                    <div class="spacing-value">12px top/bottom</div>
+                </div>
+                <div class="spacing-item">
+                    <div class="spacing-visual">
+                        <div class="spacing-box" style="width: 8px; height: 40px;"></div>
+                    </div>
+                    <div class="spacing-label">Item Gap</div>
+                    <div class="spacing-value">8px between items</div>
+                </div>
+                <div class="spacing-item">
+                    <div class="spacing-visual">
+                        <div class="spacing-box" style="width: 8px; height: 8px; border-radius: 50%;"></div>
+                    </div>
+                    <div class="spacing-label">Border Radius</div>
+                    <div class="spacing-value">8px (items) / 12px (cards)</div>
+                </div>
+                <div class="spacing-item">
+                    <div class="spacing-visual">
+                        <div style="width: 40px; height: 40px; border: 2px solid var(--harken-teal); border-radius: 8px;"></div>
+                    </div>
+                    <div class="spacing-label">Border Width</div>
+                    <div class="spacing-value">2px (selection border)</div>
+                </div>
+                <div class="spacing-item">
+                    <div class="spacing-visual">
+                        <div class="spacing-box" style="width: 4px; height: 30px; border-radius: 2px;"></div>
+                    </div>
+                    <div class="spacing-label">Selection Indicator</div>
+                    <div class="spacing-value">4px × 70% height</div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Component States: Category Headers -->
+        <div class="spec-section">
+            <h2 class="spec-section-title">Category Headers</h2>
+            <p class="spec-section-subtitle">Four category types with distinct color themes</p>
+            
+            <div class="states-grid">
+                <div class="state-card">
+                    <div class="state-card-title">Structure</div>
+                    <div class="category-header-demo structure">
+                        <i class="material-icons" style="font-size: 18px;">architecture</i>
+                        Structure
+                    </div>
+                </div>
+                <div class="state-card">
+                    <div class="state-card-title">Systems</div>
+                    <div class="category-header-demo systems">
+                        <i class="material-icons" style="font-size: 18px;">settings</i>
+                        Systems
+                    </div>
+                </div>
+                <div class="state-card">
+                    <div class="state-card-title">Features</div>
+                    <div class="category-header-demo features">
+                        <i class="material-icons" style="font-size: 18px;">home</i>
+                        Features
+                    </div>
+                </div>
+                <div class="state-card">
+                    <div class="state-card-title">Additional</div>
+                    <div class="category-header-demo additional">
+                        <i class="material-icons" style="font-size: 18px;">add_circle</i>
+                        Additional
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Component States: Parent Items -->
+        <div class="spec-section">
+            <h2 class="spec-section-title">Parent Item States (Expandable)</h2>
+            <p class="spec-section-subtitle">States for the expandable category items</p>
+            
+            <div class="states-grid">
+                <div class="state-card">
+                    <div class="state-card-title">Default State</div>
+                    <div class="parent-item structure">
+                        <span>Exterior</span>
+                        <i class="material-icons expand-icon">expand_more</i>
+                    </div>
+                    <div style="font-size: 11px; color: var(--harken-gray); margin-top: 8px;">
+                        Background: white • Border: none • Category color text
+                    </div>
+                </div>
+                
+                <div class="state-card">
+                    <div class="state-card-title">Hover State</div>
+                    <div class="parent-item structure hover">
+                        <span>Exterior</span>
+                        <i class="material-icons expand-icon">expand_more</i>
+                    </div>
+                    <div style="font-size: 11px; color: var(--harken-gray); margin-top: 8px;">
+                        Transform: translateX(4px) • Light bg • Border visible
+                    </div>
+                </div>
+                
+                <div class="state-card">
+                    <div class="state-card-title">Expanded State</div>
+                    <div class="parent-item structure expanded">
+                        <span>Exterior</span>
+                        <i class="material-icons expand-icon">expand_more</i>
+                    </div>
+                    <div style="font-size: 11px; color: var(--harken-gray); margin-top: 8px;">
+                        Chevron rotated 180° • Shows suboptions below
+                    </div>
+                </div>
+                
+                <div class="state-card">
+                    <div class="state-card-title">Has Selection</div>
+                    <div class="parent-item structure has-selection">
+                        <span>Exterior</span>
+                        <span class="selected-tag">Brick</span>
+                        <i class="material-icons expand-icon">expand_more</i>
+                    </div>
+                    <div style="font-size: 11px; color: var(--harken-gray); margin-top: 8px;">
+                        Green indicator bar • Green border • Value tag shown
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Component States: Suboptions -->
+        <div class="spec-section">
+            <h2 class="spec-section-title">Suboption States</h2>
+            <p class="spec-section-subtitle">States for the child options within expanded parent</p>
+            
+            <div class="states-grid">
+                <div class="state-card">
+                    <div class="state-card-title">Default State</div>
+                    <div class="suboption-item">
+                        Wood Siding
+                    </div>
+                    <div style="font-size: 11px; color: var(--harken-gray); margin-top: 8px;">
+                        Gray text • Gray dot indicator (6px)
+                    </div>
+                </div>
+                
+                <div class="state-card">
+                    <div class="state-card-title">Hover State</div>
+                    <div class="suboption-item hover">
+                        Wood Siding
+                    </div>
+                    <div style="font-size: 11px; color: var(--harken-gray); margin-top: 8px;">
+                        Light gray bg • Teal dot • Scale dot 1.2×
+                    </div>
+                </div>
+                
+                <div class="state-card">
+                    <div class="state-card-title">Selected State</div>
+                    <div class="suboption-item selected">
+                        Brick
+                        <i class="material-icons check-icon">check</i>
+                    </div>
+                    <div style="font-size: 11px; color: var(--harken-gray); margin-top: 8px;">
+                        Green bg • Green dot with glow • Check icon • Bold text
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Component States: Simple Amenities -->
+        <div class="spec-section">
+            <h2 class="spec-section-title">Simple Amenity States (Multi-Select)</h2>
+            <p class="spec-section-subtitle">For the Additional column - toggleable items</p>
+            
+            <div class="states-grid">
+                <div class="state-card">
+                    <div class="state-card-title">Default State</div>
+                    <div class="simple-amenity">
+                        <span>Pool</span>
+                        <i class="material-icons checkmark" style="opacity: 0;">check_circle</i>
+                    </div>
+                </div>
+                
+                <div class="state-card">
+                    <div class="state-card-title">Hover State</div>
+                    <div class="simple-amenity hover">
+                        <span>Pool</span>
+                        <i class="material-icons checkmark" style="opacity: 0;">check_circle</i>
+                    </div>
+                </div>
+                
+                <div class="state-card">
+                    <div class="state-card-title">Selected State</div>
+                    <div class="simple-amenity selected">
+                        <span>Pool</span>
+                        <i class="material-icons checkmark" style="opacity: 1;">check_circle</i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Full Component Demo -->
+        <div class="spec-section">
+            <h2 class="spec-section-title">Full Component Assembly</h2>
+            <p class="spec-section-subtitle">Complete component showing all elements together</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 32px;">
+                <!-- Collapsed State -->
+                <div>
+                    <div class="state-card-title" style="margin-bottom: 16px;">Collapsed (Default)</div>
+                    <div class="full-demo">
+                        <div class="category-header-demo structure">
+                            <i class="material-icons" style="font-size: 18px;">architecture</i>
+                            Structure
+                        </div>
+                        <div class="full-demo-content">
+                            <div class="parent-item structure has-selection" style="margin-bottom: 8px;">
+                                <span>Exterior</span>
+                                <span class="selected-tag">Brick</span>
+                                <i class="material-icons expand-icon">expand_more</i>
+                            </div>
+                            <div class="parent-item structure" style="margin-bottom: 8px;">
+                                <span>Roof</span>
+                                <i class="material-icons expand-icon">expand_more</i>
+                            </div>
+                            <div class="parent-item structure" style="margin-bottom: 0;">
+                                <span>Basement</span>
+                                <i class="material-icons expand-icon">expand_more</i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Expanded State -->
+                <div>
+                    <div class="state-card-title" style="margin-bottom: 16px;">Expanded with Selection</div>
+                    <div class="full-demo">
+                        <div class="category-header-demo structure">
+                            <i class="material-icons" style="font-size: 18px;">architecture</i>
+                            Structure
+                        </div>
+                        <div class="full-demo-content">
+                            <div class="parent-item structure has-selection expanded" style="margin-bottom: 4px;">
+                                <span>Exterior</span>
+                                <span class="selected-tag">Brick</span>
+                                <i class="material-icons expand-icon">expand_more</i>
+                            </div>
+                            <div style="background: white; border-radius: 0 0 8px 8px; padding: 8px 0; margin-bottom: 8px;">
+                                <div class="suboption-item">Wood Siding</div>
+                                <div class="suboption-item">Steel</div>
+                                <div class="suboption-item selected">
+                                    Brick
+                                    <i class="material-icons check-icon">check</i>
+                                </div>
+                                <div class="suboption-item">Masonry</div>
+                            </div>
+                            <div class="parent-item structure" style="margin-bottom: 0;">
+                                <span>Roof</span>
+                                <i class="material-icons expand-icon">expand_more</i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Icons Reference -->
+        <div class="spec-section">
+            <h2 class="spec-section-title">Icons Reference</h2>
+            <p class="spec-section-subtitle">Material Icons used in the component (Google Material Icons)</p>
+            
+            <div class="icons-grid">
+                <div class="icon-item">
+                    <i class="material-icons">architecture</i>
+                    <span>architecture</span>
+                </div>
+                <div class="icon-item">
+                    <i class="material-icons">settings</i>
+                    <span>settings</span>
+                </div>
+                <div class="icon-item">
+                    <i class="material-icons">home</i>
+                    <span>home</span>
+                </div>
+                <div class="icon-item">
+                    <i class="material-icons">add_circle</i>
+                    <span>add_circle</span>
+                </div>
+                <div class="icon-item">
+                    <i class="material-icons">expand_more</i>
+                    <span>expand_more</span>
+                </div>
+                <div class="icon-item">
+                    <i class="material-icons">check</i>
+                    <span>check</span>
+                </div>
+                <div class="icon-item">
+                    <i class="material-icons">check_circle</i>
+                    <span>check_circle</span>
+                </div>
+                <div class="icon-item">
+                    <i class="material-icons">search</i>
+                    <span>search</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Interaction Notes -->
+        <div class="spec-section">
+            <h2 class="spec-section-title">Interaction Notes</h2>
+            <p class="spec-section-subtitle">Behavior specifications for development</p>
+            
+            <div style="display: grid; gap: 16px; max-width: 800px;">
+                <div style="padding: 20px; background: #f0fdf4; border-radius: 8px; border-left: 4px solid #10b981;">
+                    <strong style="color: #047857;">Expand/Collapse</strong>
+                    <p style="font-size: 13px; color: #065f46; margin-top: 8px;">Click parent item to toggle expand state. Chevron rotates 180° with 0.3s ease transition. max-height animates for smooth reveal.</p>
+                </div>
+                <div style="padding: 20px; background: #f0fdf4; border-radius: 8px; border-left: 4px solid #10b981;">
+                    <strong style="color: #047857;">Single Selection</strong>
+                    <p style="font-size: 13px; color: #065f46; margin-top: 8px;">Only ONE suboption per category. Clicking a new option deselects the previous one (radio-button behavior).</p>
+                </div>
+                <div style="padding: 20px; background: #f0fdf4; border-radius: 8px; border-left: 4px solid #10b981;">
+                    <strong style="color: #047857;">Type My Own</strong>
+                    <p style="font-size: 13px; color: #065f46; margin-top: 8px;">When "Type My Own" is selected, inline text input appears below options. Input auto-focuses. Value updates in real-time.</p>
+                </div>
+                <div style="padding: 20px; background: #f0fdf4; border-radius: 8px; border-left: 4px solid #10b981;">
+                    <strong style="color: #047857;">Additional Column</strong>
+                    <p style="font-size: 13px; color: #065f46; margin-top: 8px;">Multi-select behavior (checkboxes). Multiple items can be selected simultaneously.</p>
+                </div>
+                <div style="padding: 20px; background: #f0fdf4; border-radius: 8px; border-left: 4px solid #10b981;">
+                    <strong style="color: #047857;">Hover Animation</strong>
+                    <p style="font-size: 13px; color: #065f46; margin-top: 8px;">All items translate 4px right on hover with 0.2s transition. Creates subtle interactive feedback.</p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Layout Grid -->
+        <div class="spec-section">
+            <h2 class="spec-section-title">Layout Grid</h2>
+            <p class="spec-section-subtitle">Responsive 4-column grid layout</p>
+            
+            <div style="padding: 20px; background: #fafbfc; border-radius: 12px; border: 1px solid #e8eaed;">
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 20px;">
+                    <div style="height: 120px; background: linear-gradient(135deg, var(--structure-light), white); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--structure-primary);">Structure</div>
+                    <div style="height: 120px; background: linear-gradient(135deg, var(--systems-light), white); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--systems-primary);">Systems</div>
+                    <div style="height: 120px; background: linear-gradient(135deg, var(--features-light), white); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--features-primary);">Features</div>
+                    <div style="height: 120px; background: linear-gradient(135deg, var(--additional-light), white); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; color: var(--additional-primary);">Additional</div>
+                </div>
+                <div style="font-size: 12px; color: var(--harken-gray);">
+                    <strong>Grid:</strong> 4 columns, 24px gap • <strong>Breakpoint 1200px:</strong> 2 columns • <strong>Breakpoint 700px:</strong> 1 column
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+
+
+
+
+
+

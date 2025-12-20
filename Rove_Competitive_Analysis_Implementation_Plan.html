@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="" xml:lang="">
+<head>
+  <meta charset="utf-8" />
+  <meta name="generator" content="pandoc" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Rove Evaluations - Competitive Analysis &amp; Implementation Plan</title>
+  <style>
+    /* Default styles provided by pandoc.
+    ** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+    */
+    html {
+      color: #1a1a1a;
+      background-color: #fdfdfd;
+    }
+    body {
+      margin: 0 auto;
+      max-width: 36em;
+      padding-left: 50px;
+      padding-right: 50px;
+      padding-top: 50px;
+      padding-bottom: 50px;
+      hyphens: auto;
+      overflow-wrap: break-word;
+      text-rendering: optimizeLegibility;
+      font-kerning: normal;
+    }
+    @media (max-width: 600px) {
+      body {
+        font-size: 0.9em;
+        padding: 12px;
+      }
+      h1 {
+        font-size: 1.8em;
+      }
+    }
+    @media print {
+      html {
+        background-color: white;
+      }
+      body {
+        background-color: transparent;
+        color: black;
+        font-size: 12pt;
+      }
+      p, h2, h3 {
+        orphans: 3;
+        widows: 3;
+      }
+      h2, h3, h4 {
+        page-break-after: avoid;
+      }
+    }
+    p {
+      margin: 1em 0;
+    }
+    a {
+      color: #1a1a1a;
+    }
+    a:visited {
+      color: #1a1a1a;
+    }
+    img {
+      max-width: 100%;
+    }
+    svg {
+      height: auto;
+      max-width: 100%;
+    }
+    h1, h2, h3, h4, h5, h6 {
+      margin-top: 1.4em;
+    }
+    h5, h6 {
+      font-size: 1em;
+      font-style: italic;
+    }
+    h6 {
+      font-weight: normal;
+    }
+    ol, ul {
+      padding-left: 1.7em;
+      margin-top: 1em;
+    }
+    li > ol, li > ul {
+      margin-top: 0;
+    }
+    blockquote {
+      margin: 1em 0 1em 1.7em;
+      padding-left: 1em;
+      border-left: 2px solid #e6e6e6;
+      color: #606060;
+    }
+    code {
+      font-family: Menlo, Monaco, Consolas, 'Lucida Console', monospace;
+      font-size: 85%;
+      margin: 0;
+      hyphens: manual;
+    }
+    pre {
+      margin: 1em 0;
+      overflow: auto;
+    }
+    pre code {
+      padding: 0;
+      overflow: visible;
+      overflow-wrap: normal;
+    }
+    .sourceCode {
+     background-color: transparent;
+     overflow: visible;
+    }
+    hr {
+      border: none;
+      border-top: 1px solid #1a1a1a;
+      height: 1px;
+      margin: 1em 0;
+    }
+    table {
+      margin: 1em 0;
+      border-collapse: collapse;
+      width: 100%;
+      overflow-x: auto;
+      display: block;
+      font-variant-numeric: lining-nums tabular-nums;
+    }
+    table caption {
+      margin-bottom: 0.75em;
+    }
+    tbody {
+      margin-top: 0.5em;
+      border-top: 1px solid #1a1a1a;
+      border-bottom: 1px solid #1a1a1a;
+    }
+    th {
+      border-top: 1px solid #1a1a1a;
+      padding: 0.25em 0.5em 0.25em 0.5em;
+    }
+    td {
+      padding: 0.125em 0.5em 0.25em 0.5em;
+    }
+    header {
+      margin-bottom: 4em;
+      text-align: center;
+    }
+    #TOC li {
+      list-style: none;
+    }
+    #TOC ul {
+      padding-left: 1.3em;
+    }
+    #TOC > ul {
+      padding-left: 0;
+    }
+    #TOC a:not(:hover) {
+      text-decoration: none;
+    }
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    div.columns{display: flex; gap: min(4vw, 1.5em);}
+    div.column{flex: auto; overflow-x: auto;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    /* The extra [class] is a hack that increases specificity enough to
+       override a similar rule in reveal.js */
+    ul.task-list[class]{list-style: none;}
+    ul.task-list li input[type="checkbox"] {
+      font-size: inherit;
+      width: 0.8em;
+      margin: 0 0.8em 0.2em -1.6em;
+      vertical-align: middle;
+    }
+    .display.math{display: block; text-align: center; margin: 0.5rem auto;}
+    /* CSS for syntax highlighting */
+    html { -webkit-text-size-adjust: 100%; }
+    pre > code.sourceCode { white-space: pre; position: relative; }
+    pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+    pre > code.sourceCode > span:empty { height: 1.2em; }
+    .sourceCode { overflow: visible; }
+    code.sourceCode > span { color: inherit; text-decoration: inherit; }
+    div.sourceCode { margin: 1em 0; }
+    pre.sourceCode { margin: 0; }
+    @media screen {
+    div.sourceCode { overflow: auto; }
+    }
+    @media print {
+    pre > code.sourceCode { white-space: pre-wrap; }
+    pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+    }
+    pre.numberSource code
+      { counter-reset: source-line 0; }
+    pre.numberSource code > span
+      { position: relative; left: -4em; counter-increment: source-line; }
+    pre.numberSource code > span > a:first-child::before
+      { content: counter(source-line);
+        position: relative; left: -1em; text-align: right; vertical-align: baseline;
+        border: none; display: inline-block;
+        -webkit-touch-callout: none; -webkit-user-select: none;
+        -khtml-user-select: none; -moz-user-select: none;
+        -ms-user-select: none; user-select: none;
+        padding: 0 4px; width: 4em;
+        color: #aaaaaa;
+      }
+    pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+    div.sourceCode
+      {   }
+    @media screen {
+    pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+    }
+    code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+    code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+    code span.at { color: #7d9029; } /* Attribute */
+    code span.bn { color: #40a070; } /* BaseN */
+    code span.bu { color: #008000; } /* BuiltIn */
+    code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+    code span.ch { color: #4070a0; } /* Char */
+    code span.cn { color: #880000; } /* Constant */
+    code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+    code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+    code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+    code span.dt { color: #902000; } /* DataType */
+    code span.dv { color: #40a070; } /* DecVal */
+    code span.er { color: #ff0000; font-weight: bold; } /* Error */
+    code span.ex { } /* Extension */
+    code span.fl { color: #40a070; } /* Float */
+    code span.fu { color: #06287e; } /* Function */
+    code span.im { color: #008000; font-weight: bold; } /* Import */
+    code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+    code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+    code span.op { color: #666666; } /* Operator */
+    code span.ot { color: #007020; } /* Other */
+    code span.pp { color: #bc7a00; } /* Preprocessor */
+    code span.sc { color: #4070a0; } /* SpecialChar */
+    code span.ss { color: #bb6688; } /* SpecialString */
+    code span.st { color: #4070a0; } /* String */
+    code span.va { color: #19177c; } /* Variable */
+    code span.vs { color: #4070a0; } /* VerbatimString */
+    code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+</head>
+<body>
+<header id="title-block-header">
+<h1 class="title">Rove Evaluations - Competitive Analysis &amp;
+Implementation Plan</h1>
+</header>
+<nav id="TOC" role="doc-toc">
+<ul>
+<li><a
+href="#competitive-appraisal-analysis-and-wizard-enhancement-plan"
+id="toc-competitive-appraisal-analysis-and-wizard-enhancement-plan">Competitive
+Appraisal Analysis and Wizard Enhancement Plan</a>
+<ul>
+<li><a href="#executive-summary" id="toc-executive-summary">Executive
+Summary</a></li>
+<li><a href="#part-1-competitive-analysis---what-cbre-does-better"
+id="toc-part-1-competitive-analysis---what-cbre-does-better">Part 1:
+Competitive Analysis - What CBRE Does Better</a>
+<ul>
+<li><a href="#third-party-data-integration-critical-gap"
+id="toc-third-party-data-integration-critical-gap">1.1 Third-Party Data
+Integration (Critical Gap)</a></li>
+<li><a href="#economic-context-and-market-outlook-missing-in-rove"
+id="toc-economic-context-and-market-outlook-missing-in-rove">1.2
+Economic Context and Market Outlook (Missing in Rove)</a></li>
+<li><a href="#report-depth-and-structure"
+id="toc-report-depth-and-structure">1.3 Report Depth and
+Structure</a></li>
+<li><a href="#valuation-sophistication"
+id="toc-valuation-sophistication">1.4 Valuation Sophistication</a></li>
+<li><a href="#quality-assurance-irr-does-this-well"
+id="toc-quality-assurance-irr-does-this-well">1.5 Quality Assurance (IRR
+does this well)</a></li>
+<li><a href="#swot-analysis-irr-does-this"
+id="toc-swot-analysis-irr-does-this">1.6 SWOT Analysis (IRR does
+this)</a></li>
+</ul></li>
+<li><a href="#part-2-data-sources-and-integrations-needed"
+id="toc-part-2-data-sources-and-integrations-needed">Part 2: Data
+Sources and Integrations Needed</a>
+<ul>
+<li><a href="#essential-data-integrations-priority-order"
+id="toc-essential-data-integrations-priority-order">2.1 Essential Data
+Integrations (Priority Order)</a></li>
+<li><a href="#data-flow-architecture"
+id="toc-data-flow-architecture">2.2 Data Flow Architecture</a></li>
+</ul></li>
+<li><a href="#part-3-wizard-enhancement-implementation"
+id="toc-part-3-wizard-enhancement-implementation">Part 3: Wizard
+Enhancement Implementation</a>
+<ul>
+<li><a href="#new-analysis-page-components"
+id="toc-new-analysis-page-components">3.1 New Analysis Page
+Components</a></li>
+<li><a href="#cost-approach-you-mentioned-this-needs-building"
+id="toc-cost-approach-you-mentioned-this-needs-building">3.2 Cost
+Approach (You mentioned this needs building)</a></li>
+<li><a href="#sales-comparison-approach-enhance-existing"
+id="toc-sales-comparison-approach-enhance-existing">3.3 Sales Comparison
+Approach (Enhance Existing)</a></li>
+<li><a href="#report-template-enhancements"
+id="toc-report-template-enhancements">3.4 Report Template
+Enhancements</a></li>
+</ul></li>
+<li><a href="#part-4-implementation-roadmap"
+id="toc-part-4-implementation-roadmap">Part 4: Implementation
+Roadmap</a>
+<ul>
+<li><a href="#phase-1-foundation-data-integrations-weeks-1-4"
+id="toc-phase-1-foundation-data-integrations-weeks-1-4">Phase 1:
+Foundation Data Integrations (Weeks 1-4)</a></li>
+<li><a href="#phase-2-cost-approach-completion-weeks-5-8"
+id="toc-phase-2-cost-approach-completion-weeks-5-8">Phase 2: Cost
+Approach Completion (Weeks 5-8)</a></li>
+<li><a href="#phase-3-sales-approach-enhancement-weeks-9-12"
+id="toc-phase-3-sales-approach-enhancement-weeks-9-12">Phase 3: Sales
+Approach Enhancement (Weeks 9-12)</a></li>
+<li><a href="#phase-4-report-template-enhancement-weeks-13-16"
+id="toc-phase-4-report-template-enhancement-weeks-13-16">Phase 4: Report
+Template Enhancement (Weeks 13-16)</a></li>
+<li><a href="#phase-5-quality-assurance-features-weeks-17-20"
+id="toc-phase-5-quality-assurance-features-weeks-17-20">Phase 5: Quality
+Assurance Features (Weeks 17-20)</a></li>
+</ul></li>
+<li><a href="#part-5-specific-file-modifications"
+id="toc-part-5-specific-file-modifications">Part 5: Specific File
+Modifications</a>
+<ul>
+<li><a href="#backend-changes" id="toc-backend-changes">Backend
+Changes</a></li>
+<li><a href="#frontend-changes" id="toc-frontend-changes">Frontend
+Changes</a></li>
+<li><a href="#report-templates" id="toc-report-templates">Report
+Templates</a></li>
+</ul></li>
+<li><a href="#part-6-budget-estimate-for-data-sources"
+id="toc-part-6-budget-estimate-for-data-sources">Part 6: Budget Estimate
+for Data Sources</a></li>
+<li><a href="#conclusion" id="toc-conclusion">Conclusion</a></li>
+</ul></li>
+</ul>
+</nav>
+<h1
+id="competitive-appraisal-analysis-and-wizard-enhancement-plan">Competitive
+Appraisal Analysis and Wizard Enhancement Plan</h1>
+<h2 id="executive-summary">Executive Summary</h2>
+<p>After analyzing 8 appraisals from the dataset, I’ve identified the
+following:</p>
+<div class="line-block">Appraiser | Count | Appraisals |</div>
+<p>|———–|——-|————|</p>
+<div class="line-block"><strong>ROVE Valuations</strong> | 2 | 6907
+Entryway Drive, Stevensville Development |</div>
+<div class="line-block"><strong>CBRE</strong> | 2 | National Western
+Life (Austin), Zimmerman Trail Apartments |</div>
+<div class="line-block"><strong>Integra Realty Resources (IRR)</strong>
+| 1 | 750 Southgate (Starbucks) |</div>
+<div class="line-block"><strong>Bridger Appraisals</strong> | 1 | 34 N
+Bozeman Fire Station |</div>
+<div class="line-block"><strong>Glacier Appraisal</strong> | 1 | 214 S
+Main Kalispell |</div>
+<hr />
+<h2 id="part-1-competitive-analysis---what-cbre-does-better">Part 1:
+Competitive Analysis - What CBRE Does Better</h2>
+<h3 id="third-party-data-integration-critical-gap">1.1 Third-Party Data
+Integration (Critical Gap)</h3>
+<p><strong>CBRE Uses:</strong></p>
+<ul>
+<li><strong>ESRI Demographics</strong> - Population, households, income
+at 1/3/5-mile radius</li>
+<li><strong>Employment by Industry</strong> - 15+ industry categories
+with percentage breakdown</li>
+<li><strong>CoStar</strong> - Property data, comparables, market
+research</li>
+<li><strong>PwC Real Estate Investor Survey</strong> - Cap rate ranges,
+marketing times</li>
+<li><strong>CBRE National Investor Survey</strong> - Market sentiment,
+investor preferences</li>
+<li><strong>Marshall &amp; Swift / RS Means</strong> - Cost approach
+data</li>
+</ul>
+<p><strong>Rove Lacks:</strong></p>
+<ul>
+<li>No automated demographic data pulls</li>
+<li>No national/regional market indices</li>
+<li>Manual data collection for comparables</li>
+<li>No third-party investor surveys</li>
+</ul>
+<p><strong>Example from CBRE (Zimmerman Trail):</strong></p>
+<pre><code>SELECTED NEIGHBORHOOD DEMOGRAPHICS
+                          1 Mile    3 Miles   5 Miles   Metro
+2027 Total Population     9,996     56,567    95,306    194,696
+2022 Total Population     9,759     54,938    92,717    188,573
+Annual Growth 2022-2027   0.48%     0.59%     0.55%     0.64%
+2022 Median HH Income     $67,678   $64,759   $60,252   $62,916
+College Graduates %       49.4%     43.0%     40.1%     35.1%</code></pre>
+<p><strong>Rove (6907 Entryway):</strong></p>
+<ul>
+<li>Simple population statement: “Billings has a 2022 population of
+119,706 persons”</li>
+<li>No radius-based analysis</li>
+<li>No income or demographic projections</li>
+</ul>
+<h3 id="economic-context-and-market-outlook-missing-in-rove">1.2
+Economic Context and Market Outlook (Missing in Rove)</h3>
+<p><strong>CBRE Includes:</strong></p>
+<ul>
+<li>Federal Reserve policy analysis</li>
+<li>Interest rate projections (Federal Funds Rate, 10-Year
+Treasury)</li>
+<li>CBRE Research House View with forward-looking forecasts</li>
+<li>Market volatility disclaimers with specific guidance</li>
+<li>Construction pipeline data</li>
+</ul>
+<p><strong>Example from CBRE:</strong></p>
+<pre><code>CBRE Research House View (July 2022):
+                          2022          2023          2024-28
+Federal Funds Rate        3.25%-3.5%    3.50%-3.75%   1.75%-2.00%
+10-Year Treasury (Q4)     3.41%         2.56%         2.94%</code></pre>
+<p><strong>Rove:</strong> No economic forecasting section present.</p>
+<h3 id="report-depth-and-structure">1.3 Report Depth and Structure</h3>
+<div class="line-block">Metric | CBRE | Rove |</div>
+<p>|——–|——|——|</p>
+<div class="line-block">Report Length | 100-150 pages | 46-69 pages
+|</div>
+<div class="line-block">Character Count | 160K-299K | 105K-133K |</div>
+<div class="line-block">Demographic Tables | 5-8 detailed tables | 1-2
+basic mentions |</div>
+<div class="line-block">Maps Included | 8-12 (aerial, flood, plat, site,
+neighborhood) | 3-5 |</div>
+<div class="line-block">Addenda Sections | 7 (Land Sales, Improved
+Sales, Rent Comps, Operating Data, Legal, Contract, Qualifications) |
+4-5 |</div>
+<h3 id="valuation-sophistication">1.4 Valuation Sophistication</h3>
+<p><strong>CBRE Provides:</strong></p>
+<ul>
+<li>Multiple valuation scenarios (As Is, As Complete, As
+Stabilized)</li>
+<li>Detailed pro forma with Per-Unit metrics</li>
+<li>Band of Investment analysis</li>
+<li>Discounted Cash Flow (DCF) models</li>
+<li>Sensitivity analysis</li>
+<li>Expense ratio calculations</li>
+</ul>
+<p><strong>Example Pro Forma (CBRE Zimmerman Trail):</strong></p>
+<pre><code>Pro Forma PHASES 1 &amp; 2    Total         Per Unit
+Effective Gross Income    $7,155,015    $23,850
+Operating Expenses        $2,035,356    $6,785
+Expense Ratio            28.45%
+Net Operating Income      $5,119,659    $17,066</code></pre>
+<h3 id="quality-assurance-irr-does-this-well">1.5 Quality Assurance (IRR
+does this well)</h3>
+<p><strong>IRR Includes:</strong></p>
+<ul>
+<li>Internal Quality Assurance Program documentation</li>
+<li>IRR Certified Reviewer sign-off</li>
+<li>Explicit competency statements</li>
+</ul>
+<p><strong>CBRE Includes:</strong></p>
+<ul>
+<li>Valuation &amp; Advisory Services operates independently</li>
+<li>Confidentiality statements</li>
+<li>Prior services disclosure</li>
+</ul>
+<p><strong>Rove:</strong> No formal QA documentation.</p>
+<h3 id="swot-analysis-irr-does-this">1.6 SWOT Analysis (IRR does
+this)</h3>
+<p>IRR includes explicit Strengths/Weaknesses/Opportunities/Threats
+analysis:</p>
+<pre><code>Strengths:
+• Signed long-term lease with national corporation
+• Strong, growing metro area
+
+Weaknesses: None
+
+Threats:
+• Large amount of vacant land for future competition</code></pre>
+<hr />
+<h2 id="part-2-data-sources-and-integrations-needed">Part 2: Data
+Sources and Integrations Needed</h2>
+<h3 id="essential-data-integrations-priority-order">2.1 Essential Data
+Integrations (Priority Order)</h3>
+<div class="line-block">Priority | Data Source | Purpose | Estimated
+Cost | Integration Complexity |</div>
+<p>|———-|————-|———|—————-|———————-|</p>
+<div class="line-block">1 | <strong>ESRI/ArcGIS</strong> | Demographics,
+radius analysis | $5K-15K/year | Medium |</div>
+<div class="line-block">2 | <strong>Cotality (CoreLogic)</strong> |
+Property data, sales history | $60K/year (MT+ND bulk) | Already planned
+|</div>
+<div class="line-block">3 | <strong>CoStar</strong> | Commercial real
+estate data | $15K-50K/year | High (API) |</div>
+<div class="line-block">4 | <strong>PwC Real Estate Survey</strong> |
+Cap rates, investor sentiment | $2K-5K/year | Low (manual entry) |</div>
+<div class="line-block">5 | <strong>Marshall &amp; Swift</strong> | Cost
+approach data | $3K-8K/year | Medium |</div>
+<div class="line-block">6 | <strong>Census/BLS Data</strong> | Free
+demographics, employment | Free | Medium |</div>
+<h3 id="data-flow-architecture">2.2 Data Flow Architecture</h3>
+<pre class="mermaid"><code>flowchart TD
+    subgraph External[External Data Sources]
+        ESRI[ESRI Demographics API]
+        Cotality[Cotality Property Data]
+        CoStar[CoStar Market Data]
+        Census[Census/BLS Free Data]
+        Marshall[Marshall Swift Cost Data]
+    end
+    
+    subgraph Harken[Harken Platform]
+        Ingestion[Data Ingestion Service]
+        DataStore[Unified Data Store]
+        Wizard[Appraisal Wizard]
+        ReportGen[Report Generator]
+    end
+    
+    subgraph Output[Report Output]
+        Demographics[Demographics Section]
+        MarketAnalysis[Market Analysis]
+        Comparables[Comparable Analysis]
+        Approaches[Valuation Approaches]
+    end
+    
+    ESRI --&gt; Ingestion
+    Cotality --&gt; Ingestion
+    CoStar --&gt; Ingestion
+    Census --&gt; Ingestion
+    Marshall --&gt; Ingestion
+    
+    Ingestion --&gt; DataStore
+    DataStore --&gt; Wizard
+    Wizard --&gt; ReportGen
+    
+    ReportGen --&gt; Demographics
+    ReportGen --&gt; MarketAnalysis
+    ReportGen --&gt; Comparables
+    ReportGen --&gt; Approaches</code></pre>
+<hr />
+<h2 id="part-3-wizard-enhancement-implementation">Part 3: Wizard
+Enhancement Implementation</h2>
+<h3 id="new-analysis-page-components">3.1 New Analysis Page
+Components</h3>
+<p>Based on your existing wizard structure and what’s missing compared
+to CBRE:</p>
+<h4 id="a.-demographics-module-new">A. Demographics Module (New)</h4>
+<p><strong>Location:</strong> Add to Overview section or as separate
+step</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">interface</span> DemographicsAnalysis {</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Radius-based analysis (1, 3, 5 mile)</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>  radiusAnalysis<span class="op">:</span> {</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    radius<span class="op">:</span> <span class="dt">number</span><span class="op">;</span> <span class="co">// miles</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    population<span class="op">:</span> {</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>      current<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>      projected<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>      annualGrowth<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>    }<span class="op">;</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>    households<span class="op">:</span> {</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>      current<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>      projected<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>      annualGrowth<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>    }<span class="op">;</span></span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>    income<span class="op">:</span> {</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>      medianHouseholdIncome<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>      averageHouseholdIncome<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>      perCapitaIncome<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>    }<span class="op">;</span></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>    education<span class="op">:</span> {</span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a>      percentCollegeGraduates<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a>    }<span class="op">;</span></span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a>    employmentByIndustry<span class="op">:</span> <span class="bu">Array</span><span class="op">&lt;</span>{</span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a>      industry<span class="op">:</span> <span class="dt">string</span><span class="op">;</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>      percentage<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>    }<span class="op">&gt;;</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>  }[]<span class="op">;</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a>  dataSource<span class="op">:</span> <span class="st">&#39;ESRI&#39;</span> <span class="op">|</span> <span class="st">&#39;Census&#39;</span> <span class="op">|</span> <span class="st">&#39;Manual&#39;</span><span class="op">;</span></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a>  dataPullDate<span class="op">:</span> <span class="bu">Date</span><span class="op">;</span></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h4 id="b.-market-outlook-module-new">B. Market Outlook Module
+(New)</h4>
+<p><strong>Location:</strong> Add to Analysis section</p>
+<div class="sourceCode" id="cb7"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="kw">interface</span> MarketOutlook {</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Economic indicators</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  economicIndicators<span class="op">:</span> {</span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    federalFundsRate<span class="op">:</span> {</span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>      current<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>      projectedYear1<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>      projectedYear2<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>    }<span class="op">;</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>    tenYearTreasury<span class="op">:</span> {</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>      current<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>      projected<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>    }<span class="op">;</span></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a>    cpInflation<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>    gdpGrowth<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Local market conditions</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>  localMarketConditions<span class="op">:</span> {</span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>    propertyType<span class="op">:</span> <span class="dt">string</span><span class="op">;</span></span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a>    vacancyRate<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a>    absorptionRate<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>    constructionPipeline<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>    rentGrowth<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb7-24"><a href="#cb7-24" aria-hidden="true" tabindex="-1"></a>    capRateTrend<span class="op">:</span> <span class="st">&#39;Compressing&#39;</span> <span class="op">|</span> <span class="st">&#39;Stable&#39;</span> <span class="op">|</span> <span class="st">&#39;Expanding&#39;</span><span class="op">;</span></span>
+<span id="cb7-25"><a href="#cb7-25" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
+<span id="cb7-26"><a href="#cb7-26" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-27"><a href="#cb7-27" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Growth patterns narrative</span></span>
+<span id="cb7-28"><a href="#cb7-28" aria-hidden="true" tabindex="-1"></a>  growthPatterns<span class="op">:</span> <span class="dt">string</span><span class="op">;</span></span>
+<span id="cb7-29"><a href="#cb7-29" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb7-30"><a href="#cb7-30" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Major developments</span></span>
+<span id="cb7-31"><a href="#cb7-31" aria-hidden="true" tabindex="-1"></a>  majorDevelopments<span class="op">:</span> <span class="bu">Array</span><span class="op">&lt;</span>{</span>
+<span id="cb7-32"><a href="#cb7-32" aria-hidden="true" tabindex="-1"></a>    name<span class="op">:</span> <span class="dt">string</span><span class="op">;</span></span>
+<span id="cb7-33"><a href="#cb7-33" aria-hidden="true" tabindex="-1"></a>    type<span class="op">:</span> <span class="dt">string</span><span class="op">;</span></span>
+<span id="cb7-34"><a href="#cb7-34" aria-hidden="true" tabindex="-1"></a>    size<span class="op">:</span> <span class="dt">string</span><span class="op">;</span></span>
+<span id="cb7-35"><a href="#cb7-35" aria-hidden="true" tabindex="-1"></a>    status<span class="op">:</span> <span class="dt">string</span><span class="op">;</span></span>
+<span id="cb7-36"><a href="#cb7-36" aria-hidden="true" tabindex="-1"></a>    impact<span class="op">:</span> <span class="dt">string</span><span class="op">;</span></span>
+<span id="cb7-37"><a href="#cb7-37" aria-hidden="true" tabindex="-1"></a>  }<span class="op">&gt;;</span></span>
+<span id="cb7-38"><a href="#cb7-38" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h4 id="c.-swot-analysis-module-new">C. SWOT Analysis Module (New)</h4>
+<p><strong>Location:</strong> Add to Analysis section</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">interface</span> SWOTAnalysis {</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  strengths<span class="op">:</span> <span class="dt">string</span>[]<span class="op">;</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>  weaknesses<span class="op">:</span> <span class="dt">string</span>[]<span class="op">;</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>  opportunities<span class="op">:</span> <span class="dt">string</span>[]<span class="op">;</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>  threats<span class="op">:</span> <span class="dt">string</span>[]<span class="op">;</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>  valuationInfluencesSummary<span class="op">:</span> <span class="dt">string</span><span class="op">;</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h4 id="d.-enhanced-pro-forma-financial-indicators-enhance-existing">D.
+Enhanced Pro Forma / Financial Indicators (Enhance Existing)</h4>
+<p><strong>Location:</strong> Enhance Income Approach</p>
+<div class="sourceCode" id="cb9"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="kw">interface</span> EnhancedProForma {</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Existing fields plus:</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  perUnitMetrics<span class="op">:</span> {</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    effectiveGrossIncomePerUnit<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>    operatingExpensesPerUnit<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>    noiPerUnit<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>    valuePerUnit<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
+<span id="cb9-9"><a href="#cb9-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb9-10"><a href="#cb9-10" aria-hidden="true" tabindex="-1"></a>  perSFMetrics<span class="op">:</span> {</span>
+<span id="cb9-11"><a href="#cb9-11" aria-hidden="true" tabindex="-1"></a>    rentPerSF<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb9-12"><a href="#cb9-12" aria-hidden="true" tabindex="-1"></a>    expensesPerSF<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb9-13"><a href="#cb9-13" aria-hidden="true" tabindex="-1"></a>    noiPerSF<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb9-14"><a href="#cb9-14" aria-hidden="true" tabindex="-1"></a>    valuePerSF<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb9-15"><a href="#cb9-15" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
+<span id="cb9-16"><a href="#cb9-16" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb9-17"><a href="#cb9-17" aria-hidden="true" tabindex="-1"></a>  expenseRatio<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb9-18"><a href="#cb9-18" aria-hidden="true" tabindex="-1"></a>  operatingExpensePercentage<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb9-19"><a href="#cb9-19" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb9-20"><a href="#cb9-20" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Investor metrics</span></span>
+<span id="cb9-21"><a href="#cb9-21" aria-hidden="true" tabindex="-1"></a>  cashOnCashReturn<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb9-22"><a href="#cb9-22" aria-hidden="true" tabindex="-1"></a>  debtServiceCoverageRatio<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb9-23"><a href="#cb9-23" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h3 id="cost-approach-you-mentioned-this-needs-building">3.2 Cost
+Approach (You mentioned this needs building)</h3>
+<p>Based on CBRE methodology and your existing
+<code>APPRAISAL_APPROACHES_ADJUSTMENT_FIELDS_ANALYSIS.md</code>:</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="kw">interface</span> CostApproach {</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">// STEP 1: Land Value</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>  landValue<span class="op">:</span> {</span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    landSalesComps<span class="op">:</span> LandSaleComp[]<span class="op">;</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>    indicatedValuePerSF<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>    indicatedValuePerAcre<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>    totalLandValue<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="co">// STEP 2: Replacement Cost New</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>  replacementCostNew<span class="op">:</span> {</span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>    improvements<span class="op">:</span> <span class="bu">Array</span><span class="op">&lt;</span>{</span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>      improvementType<span class="op">:</span> <span class="dt">string</span><span class="op">;</span> <span class="co">// Building, Site Improvements, etc.</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>      description<span class="op">:</span> <span class="dt">string</span><span class="op">;</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>      sizeSF<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>      costPerSF<span class="op">:</span> <span class="dt">number</span><span class="op">;</span> <span class="co">// From Marshall &amp; Swift or local data</span></span>
+<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>      totalCost<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>    }<span class="op">&gt;;</span></span>
+<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>    totalImprovementCost<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>    entrepreneurialProfit<span class="op">:</span> <span class="dt">number</span><span class="op">;</span> <span class="co">// Typically 10-20%</span></span>
+<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>    totalReplacementCostNew<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
+<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>  <span class="co">// STEP 3: Depreciation (NOT adjustments!)</span></span>
+<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>  depreciation<span class="op">:</span> {</span>
+<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>    physicalDeterioration<span class="op">:</span> {</span>
+<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>      curable<span class="op">:</span> <span class="dt">number</span><span class="op">;</span> <span class="co">// Deferred maintenance</span></span>
+<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>      incurableShortLived<span class="op">:</span> <span class="dt">number</span><span class="op">;</span> <span class="co">// Roof, HVAC, etc.</span></span>
+<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>      incurableLongLived<span class="op">:</span> <span class="dt">number</span><span class="op">;</span> <span class="co">// Structural</span></span>
+<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>      total<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>    }<span class="op">;</span></span>
+<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>    functionalObsolescence<span class="op">:</span> {</span>
+<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>      curable<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>      incurable<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>      total<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>    }<span class="op">;</span></span>
+<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>    externalObsolescence<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>    totalDepreciation<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>    depreciationPercentage<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
+<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a>  <span class="co">// STEP 4: Value Indication</span></span>
+<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a>  depreciatedCost<span class="op">:</span> <span class="dt">number</span><span class="op">;</span> <span class="co">// Replacement Cost - Depreciation</span></span>
+<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a>  indicatedValue<span class="op">:</span> <span class="dt">number</span><span class="op">;</span> <span class="co">// Land + Depreciated Cost</span></span>
+<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h3 id="sales-comparison-approach-enhance-existing">3.3 Sales Comparison
+Approach (Enhance Existing)</h3>
+<p>Add missing adjustment categories per your documentation:</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode typescript"><code class="sourceCode typescript"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="kw">interface</span> SalesComparisonAdjustments {</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Transactional Adjustments (MISSING - Add these)</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  transactional<span class="op">:</span> {</span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>    propertyRights<span class="op">:</span> <span class="dt">number</span><span class="op">;</span>     <span class="co">// Fee simple, leasehold, etc.</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>    financingTerms<span class="op">:</span> <span class="dt">number</span><span class="op">;</span>     <span class="co">// Cash equivalent adjustment</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>    conditionsOfSale<span class="op">:</span> <span class="dt">number</span><span class="op">;</span>   <span class="co">// Arm&#39;s length verification</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>    marketConditions<span class="op">:</span> <span class="dt">number</span><span class="op">;</span>   <span class="co">// Time adjustment</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Property Adjustments (Enhance existing)</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>  property<span class="op">:</span> {</span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    location<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>    size<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a>    quality<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb11-15"><a href="#cb11-15" aria-hidden="true" tabindex="-1"></a>    condition<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb11-16"><a href="#cb11-16" aria-hidden="true" tabindex="-1"></a>    age<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb11-17"><a href="#cb11-17" aria-hidden="true" tabindex="-1"></a>    functionalUtility<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb11-18"><a href="#cb11-18" aria-hidden="true" tabindex="-1"></a>    parking<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb11-19"><a href="#cb11-19" aria-hidden="true" tabindex="-1"></a>    <span class="co">// Property-type specific (conditional)</span></span>
+<span id="cb11-20"><a href="#cb11-20" aria-hidden="true" tabindex="-1"></a>    ceilingHeight<span class="op">?:</span> <span class="dt">number</span><span class="op">;</span>      <span class="co">// Industrial</span></span>
+<span id="cb11-21"><a href="#cb11-21" aria-hidden="true" tabindex="-1"></a>    loadingDocks<span class="op">?:</span> <span class="dt">number</span><span class="op">;</span>       <span class="co">// Industrial</span></span>
+<span id="cb11-22"><a href="#cb11-22" aria-hidden="true" tabindex="-1"></a>    officePercentage<span class="op">?:</span> <span class="dt">number</span><span class="op">;</span>   <span class="co">// Flex</span></span>
+<span id="cb11-23"><a href="#cb11-23" aria-hidden="true" tabindex="-1"></a>  }<span class="op">;</span></span>
+<span id="cb11-24"><a href="#cb11-24" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-25"><a href="#cb11-25" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Calculation helpers</span></span>
+<span id="cb11-26"><a href="#cb11-26" aria-hidden="true" tabindex="-1"></a>  totalTransactionalAdjustment<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb11-27"><a href="#cb11-27" aria-hidden="true" tabindex="-1"></a>  totalPropertyAdjustment<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb11-28"><a href="#cb11-28" aria-hidden="true" tabindex="-1"></a>  grossAdjustmentPercentage<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb11-29"><a href="#cb11-29" aria-hidden="true" tabindex="-1"></a>  netAdjustmentPercentage<span class="op">:</span> <span class="dt">number</span><span class="op">;</span></span>
+<span id="cb11-30"><a href="#cb11-30" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb11-31"><a href="#cb11-31" aria-hidden="true" tabindex="-1"></a>  <span class="co">// Validation flags</span></span>
+<span id="cb11-32"><a href="#cb11-32" aria-hidden="true" tabindex="-1"></a>  isGrossAdjustmentExcessive<span class="op">:</span> <span class="dt">boolean</span><span class="op">;</span> <span class="co">// &gt; 40%</span></span>
+<span id="cb11-33"><a href="#cb11-33" aria-hidden="true" tabindex="-1"></a>  isNetAdjustmentExcessive<span class="op">:</span> <span class="dt">boolean</span><span class="op">;</span>   <span class="co">// &gt; 25%</span></span>
+<span id="cb11-34"><a href="#cb11-34" aria-hidden="true" tabindex="-1"></a>}</span></code></pre></div>
+<h3 id="report-template-enhancements">3.4 Report Template
+Enhancements</h3>
+<p>Based on CBRE structure, add these sections to your EJS
+templates:</p>
+<div class="line-block">Section | Current Status | Action Needed |</div>
+<p>|———|—————-|—————|</p>
+<div class="line-block">Cover Page | Exists | Enhance with property
+image |</div>
+<div class="line-block">Letter of Transmittal | Exists | Add market
+value summary table |</div>
+<div class="line-block">Certification | Exists | Good |</div>
+<div class="line-block">Executive Summary | Exists | Add financial
+indicators table, per-unit metrics |</div>
+<div class="line-block">Table of Contents | Exists | Auto-generate from
+sections |</div>
+<div class="line-block">Area Analysis | Basic | <strong>Major
+Enhancement</strong> - Add ESRI data tables |</div>
+<div class="line-block">Neighborhood Analysis | Basic | Add land use
+map, growth patterns |</div>
+<div class="line-block">Demographics Tables | <strong>Missing</strong> |
+<strong>Add</strong> - 1/3/5 mile radius tables |</div>
+<div class="line-block">Employment by Industry |
+<strong>Missing</strong> | <strong>Add</strong> - ESRI integration
+|</div>
+<div class="line-block">Market Outlook | <strong>Missing</strong> |
+<strong>Add</strong> - Economic indicators section |</div>
+<div class="line-block">SWOT Analysis | <strong>Missing</strong> |
+<strong>Add</strong> - New section |</div>
+<div class="line-block">Site Analysis | Exists | Add site summary table
+format |</div>
+<div class="line-block">Improvements Analysis | Exists | Add summary
+table format |</div>
+<div class="line-block">Flood Map | Exists | Good |</div>
+<div class="line-block">Zoning | Exists | Good |</div>
+<div class="line-block">Tax Assessment | Exists | Good |</div>
+<div class="line-block">Highest and Best Use | Exists | Good |</div>
+<div class="line-block">Cost Approach | <strong>Incomplete</strong> |
+<strong>Build out</strong> - Depreciation framework |</div>
+<div class="line-block">Sales Comparison | Exists | Enhance adjustment
+grid |</div>
+<div class="line-block">Income Approach | Exists | Add pro forma table
+format |</div>
+<div class="line-block">Reconciliation | Exists | Add weighted average
+table |</div>
+<div class="line-block">Assumptions/Limiting Conditions | Exists | Good
+|</div>
+<div class="line-block">Addenda | Partial | Add data sheets for all
+comps |</div>
+<hr />
+<h2 id="part-4-implementation-roadmap">Part 4: Implementation
+Roadmap</h2>
+<h3 id="phase-1-foundation-data-integrations-weeks-1-4">Phase 1:
+Foundation Data Integrations (Weeks 1-4)</h3>
+<p><strong>Priority: Critical</strong></p>
+<ol type="1">
+<li><p><strong>Census/BLS Free Data Integration</strong></p>
+<ul>
+<li>Implement basic demographic data fetching</li>
+<li>Population, income, employment by address/radius</li>
+<li>Files: Create
+<code>packages/backend/src/services/demographics/</code></li>
+</ul></li>
+<li><p><strong>ESRI API Integration</strong> (if budget allows)</p>
+<ul>
+<li>Or use free alternatives: Census API, Data.gov</li>
+<li>Radius-based demographic analysis</li>
+</ul></li>
+<li><p><strong>Database Schema Updates</strong></p>
+<ul>
+<li>Add demographic_cache table</li>
+<li>Add market_outlook table</li>
+<li>Add swot_analysis fields to evaluations</li>
+</ul></li>
+</ol>
+<h3 id="phase-2-cost-approach-completion-weeks-5-8">Phase 2: Cost
+Approach Completion (Weeks 5-8)</h3>
+<p><strong>Priority: High</strong> (You mentioned this needs
+building)</p>
+<ol type="1">
+<li><p><strong>Remove Adjustment Framework from Cost
+Approach</strong></p>
+<ul>
+<li>Per your documentation, this is incorrectly implemented</li>
+</ul></li>
+<li><p><strong>Build Depreciation Interface</strong></p>
+<ul>
+<li>Physical, Functional, External breakdown</li>
+<li>Age-life calculation helpers</li>
+</ul></li>
+<li><p><strong>Marshall &amp; Swift Integration</strong> (or manual cost
+tables)</p>
+<ul>
+<li>Building cost per SF by type/quality</li>
+<li>Regional cost multipliers</li>
+</ul></li>
+</ol>
+<h3 id="phase-3-sales-approach-enhancement-weeks-9-12">Phase 3: Sales
+Approach Enhancement (Weeks 9-12)</h3>
+<p><strong>Priority: Medium-High</strong></p>
+<ol type="1">
+<li><p><strong>Add Transactional Adjustments</strong></p>
+<ul>
+<li>Property Rights, Financing, Conditions of Sale, Time</li>
+</ul></li>
+<li><p><strong>Enhanced Adjustment Grid UI</strong></p>
+<ul>
+<li>Match CBRE’s detailed format</li>
+<li>Add validation warnings (gross &gt; 40%, net &gt; 25%)</li>
+</ul></li>
+<li><p><strong>Paired Sales Analysis Tool</strong></p>
+<ul>
+<li>Help appraisers derive adjustment rates</li>
+</ul></li>
+</ol>
+<h3 id="phase-4-report-template-enhancement-weeks-13-16">Phase 4: Report
+Template Enhancement (Weeks 13-16)</h3>
+<p><strong>Priority: Medium</strong></p>
+<ol type="1">
+<li><p><strong>Demographics Section Templates</strong></p>
+<ul>
+<li>Radius tables (1/3/5 mile)</li>
+<li>Employment by industry chart</li>
+</ul></li>
+<li><p><strong>Market Outlook Template</strong></p>
+<ul>
+<li>Economic indicators</li>
+<li>Local market conditions</li>
+</ul></li>
+<li><p><strong>Enhanced Executive Summary</strong></p>
+<ul>
+<li>Financial indicators table</li>
+<li>Per-unit/per-SF metrics</li>
+</ul></li>
+</ol>
+<h3 id="phase-5-quality-assurance-features-weeks-17-20">Phase 5: Quality
+Assurance Features (Weeks 17-20)</h3>
+<p><strong>Priority: Lower (but differentiating)</strong></p>
+<ol type="1">
+<li><p><strong>Review Workflow</strong></p>
+<ul>
+<li>Internal QA checklist</li>
+<li>Reviewer sign-off tracking</li>
+</ul></li>
+<li><p><strong>SWOT Analysis Module</strong></p>
+<ul>
+<li>Guided input for each category</li>
+<li>Auto-include in reports</li>
+</ul></li>
+</ol>
+<hr />
+<h2 id="part-5-specific-file-modifications">Part 5: Specific File
+Modifications</h2>
+<h3 id="backend-changes">Backend Changes</h3>
+<div class="line-block">File Path | Change Type | Description |</div>
+<p>|———–|————-|————-|</p>
+<div
+class="line-block"><code>packages/backend/src/services/demographics/</code>
+| New | Demographics data service |</div>
+<div
+class="line-block"><code>packages/backend/src/services/marketOutlook/</code>
+| New | Economic indicators service |</div>
+<div
+class="line-block"><code>packages/backend/src/services/appraisalCostApproach/</code>
+| Major Refactor | Remove adjustments, add depreciation |</div>
+<div
+class="line-block"><code>packages/backend/src/models/evaluation.sequelize.ts</code>
+| Enhance | Add SWOT, demographics fields |</div>
+<div class="line-block"><code>packages/backend/src/migrations/</code> |
+New | Schema updates for new data |</div>
+<h3 id="frontend-changes">Frontend Changes</h3>
+<div class="line-block">File Path | Change Type | Description |</div>
+<p>|———–|————-|————-|</p>
+<div
+class="line-block"><code>packages/frontend/src/pages/evaluation/overview/</code>
+| Enhance | Add demographics section |</div>
+<div
+class="line-block"><code>packages/frontend/src/pages/evaluation/evaluation-cost-approach/</code>
+| Major Refactor | Depreciation UI |</div>
+<div
+class="line-block"><code>packages/frontend/src/pages/evaluation/sales-approach/</code>
+| Enhance | Transactional adjustments |</div>
+<div
+class="line-block"><code>packages/frontend/src/components/demographics/</code>
+| New | Radius analysis components |</div>
+<div
+class="line-block"><code>packages/frontend/src/components/swot-analysis/</code>
+| New | SWOT input module |</div>
+<h3 id="report-templates">Report Templates</h3>
+<div class="line-block">File Path | Change Type | Description |</div>
+<p>|———–|————-|————-|</p>
+<div
+class="line-block"><code>packages/backend/templates/report/pages/</code>
+| Enhance | Add new sections |</div>
+<div class="line-block">Add: <code>demographics-analysis.ejs</code> |
+New | Radius demographic tables |</div>
+<div class="line-block">Add: <code>market-outlook.ejs</code> | New |
+Economic indicators section |</div>
+<div class="line-block">Add: <code>swot-analysis.ejs</code> | New | SWOT
+section |</div>
+<div class="line-block">Enhance: <code>executive-summary.ejs</code> |
+Modify | Financial indicators table |</div>
+<hr />
+<h2 id="part-6-budget-estimate-for-data-sources">Part 6: Budget Estimate
+for Data Sources</h2>
+<div class="line-block">Data Source | Annual Cost | One-Time Setup |
+Notes |</div>
+<p>|————-|————-|—————-|——-|</p>
+<div class="line-block">Cotality (MT+ND) | $60,000 | $25,500 | Already
+planned |</div>
+<div class="line-block">ESRI Demographics | $5,000-15,000 | $5,000 | Can
+start with free Census API |</div>
+<div class="line-block">CoStar API | $15,000-50,000 | $10,000 | Optional
+- high value but expensive |</div>
+<div class="line-block">PwC Survey Subscription | $2,000-5,000 | $0 |
+Manual data entry possible |</div>
+<div class="line-block">Marshall &amp; Swift | $3,000-8,000 | $2,000 |
+For cost approach |</div>
+<div class="line-block">Google APIs | $2,000-3,000 | Already have |
+Street View, Geocoding |</div>
+<div class="line-block"><strong>Total Minimum</strong> |
+<strong>~$72,000</strong> | <strong>~$42,500</strong> | With Cotality +
+basics |</div>
+<div class="line-block"><strong>Total Comprehensive</strong> |
+<strong>~$140,000</strong> | <strong>~$52,500</strong> | All
+integrations |</div>
+<hr />
+<h2 id="conclusion">Conclusion</h2>
+<p>The primary gaps between ROVE and CBRE are:</p>
+<ol type="1">
+<li><strong>Data depth</strong> - CBRE uses 5+ third-party data sources;
+ROVE uses manual research</li>
+<li><strong>Economic context</strong> - CBRE includes macro economic
+outlook; ROVE omits this</li>
+<li><strong>Demographic analysis</strong> - CBRE has detailed
+radius-based tables; ROVE has narrative only</li>
+<li><strong>Report length/detail</strong> - CBRE 100-150 pages; ROVE
+46-69 pages</li>
+<li><strong>Financial metrics</strong> - CBRE includes per-unit, per-SF,
+expense ratios; ROVE is basic</li>
+</ol>
+<p>By implementing the phased approach above, Harken can close these
+gaps and position ROVE Evaluations competitively against national firms
+like CBRE, while maintaining the efficiency that comes from automated
+data integration.</p>
+</body>
+</html>

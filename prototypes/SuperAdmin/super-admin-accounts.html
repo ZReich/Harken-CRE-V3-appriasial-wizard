@@ -1,0 +1,1388 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Accounts & Billing - Harken CRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            font-family: 'Montserrat', sans-serif !important;
+        }
+        body {
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background: url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;
+            background-color: #1c3643 !important;
+            max-height: 84px;
+            height: 84px;
+            color: #fff;
+        }
+        .section-title {
+            font-size: 23px;
+            font-weight: 600;
+            color: #1c3643;
+        }
+        table {
+            width: 100%;
+            background-color: white;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        thead {
+            background-color: #f9f9f9;
+        }
+        th {
+            padding: 16px 35px;
+            text-align: left;
+            color: #687F8B;
+            font-size: 13px;
+            font-weight: 600;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        td {
+            padding: 20px 35px;
+            color: #687F8B;
+            font-size: 13px;
+            font-weight: 500;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+        .search-input {
+            width: 390px;
+            padding: 10px 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .add-icon {
+            color: #0da1c7;
+            font-size: 32px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .add-icon:hover {
+            transform: scale(1.1);
+        }
+        .link-text {
+            color: #0da1c7;
+            text-decoration: none;
+        }
+        .link-text:hover {
+            text-decoration: underline;
+        }
+        .badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .badge-active {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .badge-trial {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .badge-inactive {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .plan-badge {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .plan-enterprise {
+            background-color: #e3f2fd;
+            color: #1565c0;
+        }
+        .plan-professional {
+            background-color: #f3e5f5;
+            color: #6a1b9a;
+        }
+        .plan-basic {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            margin-top: 32px;
+            flex-wrap: wrap;
+        }
+        .pagination button {
+            background-color: transparent;
+            color: #0da1c7;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 400;
+            border-radius: 6px;
+            transition: all 0.2s;
+            min-width: auto;
+        }
+        .pagination button:hover:not(:disabled) {
+            background-color: #f0f0f0;
+        }
+        .pagination button:disabled {
+            color: #d0d0d0;
+            cursor: not-allowed;
+            background-color: transparent;
+        }
+        .pagination button.page-number {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #e0e0e0;
+            background-color: white;
+            padding: 0;
+            font-size: 14px;
+            font-weight: 400;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .pagination button.page-number:hover:not(:disabled) {
+            background-color: #f9f9f9;
+            border-color: #d0d0d0;
+        }
+        .pagination button.page-number:disabled {
+            color: #d0d0d0;
+            border-color: #e8e8e8;
+            background-color: #fafafa;
+        }
+        .pagination .page-number {
+            padding: 0;
+            border-radius: 50%;
+            cursor: pointer;
+            color: #666;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            background-color: transparent;
+            font-weight: 400;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .pagination .page-number:hover:not(.active) {
+            background-color: #f5f5f5;
+        }
+        .pagination .page-number.active {
+            background-color: #5a6c7d;
+            color: white;
+            border-radius: 50%;
+        }
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 10px 24px;
+            border-radius: 25px;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+        .nav-link.active {
+            background-color: transparent;
+            border: 1px solid #0da1c7;
+            color: #0da1c7;
+        }
+        .action-button {
+            padding: 8px 16px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .action-button:hover {
+            opacity: 0.8;
+        }
+        .action-button-primary {
+            background-color: #0da1c7;
+            color: white;
+        }
+        .feature-icon {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 20px;
+            font-size: 12px;
+            font-weight: 700;
+        }
+        .feature-enabled {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .feature-disabled {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-content {
+            background-color: white;
+            border-radius: 8px;
+            padding: 32px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        .modal-title {
+            color: #1c3643;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+        .form-label {
+            color: #687F8B;
+            font-size: 13px;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            background-color: white;
+            color: #1c3643;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            background-color: white;
+            color: #1c3643;
+            font-size: 14px;
+            margin-bottom: 16px;
+            cursor: pointer;
+        }
+        .form-select:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .form-checkbox {
+            margin-right: 8px;
+        }
+        .form-checkbox-label {
+            color: #687F8B;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+        .modal-button {
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .modal-button:hover {
+            opacity: 0.8;
+        }
+        .modal-button-primary {
+            background-color: #0da1c7;
+            color: white;
+        }
+        .modal-button-secondary {
+            background-color: #687F8B;
+            color: white;
+        }
+        .color-picker-group {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        .color-input-wrapper {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+        .color-preview {
+            width: 40px;
+            height: 40px;
+            border-radius: 4px;
+            border: 2px solid #4a4a4a;
+        }
+        .trial-section {
+            border-top: 2px solid #e0e0e0;
+            margin-top: 24px;
+            padding-top: 24px;
+        }
+        .trial-toggle-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .trial-toggle-label {
+            font-size: 15px;
+            font-weight: 600;
+            color: #1c3643;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .trial-toggle-switch {
+            width: 48px;
+            height: 24px;
+            background-color: #e0e0e0;
+            border-radius: 12px;
+            position: relative;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        .trial-toggle-switch.active {
+            background-color: #0da1c7;
+        }
+        .trial-toggle-switch::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: white;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.2s;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .trial-toggle-switch.active::after {
+            transform: translateX(24px);
+        }
+        .trial-config {
+            display: none;
+            margin-top: 16px;
+        }
+        .trial-config.active {
+            display: block;
+        }
+        .radio-group {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .radio-option {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .radio-option:hover {
+            background-color: #f9f9f9;
+            border-color: #0da1c7;
+        }
+        .radio-option input[type="radio"] {
+            margin-top: 2px;
+            cursor: pointer;
+        }
+        .radio-option-content {
+            flex: 1;
+        }
+        .radio-option-label {
+            font-weight: 600;
+            color: #1c3643;
+            font-size: 14px;
+            margin-bottom: 4px;
+        }
+        .radio-option-desc {
+            font-size: 12px;
+            color: #687F8B;
+        }
+        .duration-presets {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 12px;
+        }
+        .duration-preset-btn {
+            padding: 8px 16px;
+            border: 1px solid #e0e0e0;
+            background-color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            color: #687F8B;
+            transition: all 0.2s;
+        }
+        .duration-preset-btn:hover {
+            border-color: #0da1c7;
+            color: #0da1c7;
+        }
+        .duration-preset-btn.active {
+            background-color: #0da1c7;
+            color: white;
+            border-color: #0da1c7;
+        }
+        .custom-duration-input {
+            display: none;
+            margin-top: 8px;
+        }
+        .custom-duration-input.active {
+            display: block;
+        }
+        .help-text {
+            font-size: 12px;
+            color: #687F8B;
+            margin-top: 4px;
+            font-style: italic;
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Toggle Button (initially hidden) -->
+    <button id="showBuildNotesBtn" 
+            style="position: fixed; top: 100px; right: 20px; z-index: 9999; 
+                   padding: 12px 20px; background: #ffc107; color: #856404; 
+                   border: 2px solid #856404; border-radius: 25px; 
+                   font-size: 14px; font-weight: 700; cursor: pointer; 
+                   box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+                   display: none; transition: all 0.3s;"
+            onclick="toggleBuildNotes(true)">
+        🔨 Show Build Notes
+    </button>
+
+    <!-- Create Account Modal -->
+    <div id="createAccountModal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 class="modal-title">Create New Account</h2>
+            <form>
+                <label class="form-label">Account Name *</label>
+                <input type="text" class="form-input" placeholder="Enter account name" required />
+
+                <label class="form-label">Street Address</label>
+                <input type="text" class="form-input" placeholder="Enter street address" />
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+                    <div>
+                        <label class="form-label">City</label>
+                        <input type="text" class="form-input" placeholder="City" />
+                    </div>
+                    <div>
+                        <label class="form-label">State</label>
+                        <input type="text" class="form-input" placeholder="State" />
+                    </div>
+                    <div>
+                        <label class="form-label">Zipcode</label>
+                        <input type="text" class="form-input" placeholder="Zipcode" />
+                    </div>
+                </div>
+
+                <label class="form-label">Phone Number</label>
+                <input type="tel" class="form-input" placeholder="(555) 123-4567" />
+
+                <label class="form-label">Manager Email</label>
+                <input type="email" class="form-input" placeholder="manager@example.com" />
+
+                <label class="form-label">Subscription Plan *</label>
+                <select class="form-select" required>
+                    <option value="">Select Plan</option>
+                    <option value="basic">Basic - $60/user/month</option>
+                    <option value="professional">Professional - $90/user/month</option>
+                    <option value="enterprise">Enterprise - $120/user/month</option>
+                </select>
+
+                <label class="form-label">Per User Price ($/month)</label>
+                <input type="number" class="form-input" placeholder="90.00" step="0.01" />
+
+                <label class="form-label">Features</label>
+                <label class="form-checkbox-label">
+                    <input type="checkbox" class="form-checkbox" checked />
+                    Enable Evaluations Access
+                </label>
+                <label class="form-checkbox-label">
+                    <input type="checkbox" class="form-checkbox" checked />
+                    Enable Residential Features
+                </label>
+
+                <!-- Trial Configuration Section -->
+                <div class="trial-section">
+                    <div class="trial-toggle-header">
+                        <label class="trial-toggle-label">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="#0da1c7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M2 17L12 22L22 17" stroke="#0da1c7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <path d="M2 12L12 17L22 12" stroke="#0da1c7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                            Enable Free Trial
+                        </label>
+                        <div class="trial-toggle-switch" id="trialToggleSwitch" onclick="toggleTrialConfig()"></div>
+                        <input type="checkbox" id="trialEnabled" style="display: none;" />
+                    </div>
+                    <p class="help-text">Give this account access to a free trial period before billing begins.</p>
+
+                    <div class="trial-config" id="trialConfig">
+                        <!-- Trial Type -->
+                        <label class="form-label" style="margin-top: 16px; margin-bottom: 8px;">Trial Type</label>
+                        <div class="radio-group">
+                            <label class="radio-option" onclick="selectTrialType('no-cc')">
+                                <input type="radio" name="trialType" value="no-cc" checked />
+                                <div class="radio-option-content">
+                                    <div class="radio-option-label">No Credit Card Required</div>
+                                    <div class="radio-option-desc">Trial expires without automatic conversion. Customer must manually upgrade.</div>
+                                </div>
+                            </label>
+                            <label class="radio-option" onclick="selectTrialType('cc-required')">
+                                <input type="radio" name="trialType" value="cc-required" />
+                                <div class="radio-option-content">
+                                    <div class="radio-option-label">Credit Card Required (Auto-convert)</div>
+                                    <div class="radio-option-desc">Customer enters payment info upfront. Subscription automatically starts when trial ends.</div>
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- Trial Duration -->
+                        <label class="form-label">Trial Duration</label>
+                        <div class="duration-presets">
+                            <button type="button" class="duration-preset-btn" onclick="selectDuration(7, this)">7 Days</button>
+                            <button type="button" class="duration-preset-btn" onclick="selectDuration(14, this)">14 Days</button>
+                            <button type="button" class="duration-preset-btn active" onclick="selectDuration(30, this)">30 Days</button>
+                            <button type="button" class="duration-preset-btn" onclick="selectDuration(60, this)">60 Days</button>
+                            <button type="button" class="duration-preset-btn" onclick="selectDuration(90, this)">90 Days</button>
+                            <button type="button" class="duration-preset-btn" onclick="showCustomDuration()">Custom</button>
+                        </div>
+                        <div class="custom-duration-input" id="customDurationInput">
+                            <input type="number" class="form-input" id="customDays" placeholder="Enter number of days" min="1" max="365" onchange="setCustomDuration(this.value)" />
+                            <p class="help-text">Enter a custom trial duration (1-365 days)</p>
+                        </div>
+                        <input type="hidden" id="trialDuration" value="30" />
+
+                        <!-- Trial Start Date -->
+                        <label class="form-label" style="margin-top: 16px;">Trial Start Date</label>
+                        <input type="date" class="form-input" id="trialStartDate" onchange="setTrialStartDate(this.value)" />
+                        <p class="help-text">Defaults to today. Trial will begin on this date.</p>
+
+                        <!-- Feature Access Level -->
+                        <label class="form-label" style="margin-top: 16px;">Feature Access During Trial</label>
+                        <div class="radio-group">
+                            <label class="radio-option" onclick="selectFeatureAccess('full')">
+                                <input type="radio" name="featureAccess" value="full" checked />
+                                <div class="radio-option-content">
+                                    <div class="radio-option-label">Full Access</div>
+                                    <div class="radio-option-desc">All features available. Same experience as paid subscription.</div>
+                                </div>
+                            </label>
+                            <label class="radio-option" onclick="selectFeatureAccess('limited')">
+                                <input type="radio" name="featureAccess" value="limited" />
+                                <div class="radio-option-content">
+                                    <div class="radio-option-label">Limited Access</div>
+                                    <div class="radio-option-desc">Restrict access to specific features. Configure below.</div>
+                                </div>
+                            </label>
+                        </div>
+
+                        <!-- Limited Access Options -->
+                        <div id="limitedAccessOptions" style="display: none; margin-top: 12px; padding: 16px; background-color: #f9f9f9; border-radius: 4px;">
+                            <label class="form-checkbox-label">
+                                <input type="checkbox" class="form-checkbox" id="trialFeatureEvaluations" />
+                                Enable Evaluations Access
+                            </label>
+                            <label class="form-checkbox-label">
+                                <input type="checkbox" class="form-checkbox" id="trialFeatureResidential" />
+                                Enable Residential Features
+                            </label>
+                            <label class="form-checkbox-label">
+                                <input type="checkbox" class="form-checkbox" id="trialFeatureShareClients" />
+                                Share Clients Across Accounts
+                            </label>
+                        </div>
+
+                        <!-- Auto-convert Option (only shown for CC Required) -->
+                        <div id="autoConvertOption" style="display: none; margin-top: 16px;">
+                            <label class="form-checkbox-label">
+                                <input type="checkbox" class="form-checkbox" id="autoConvertOnEnd" />
+                                Automatically convert to paid subscription when trial ends
+                            </label>
+                            <p class="help-text">If unchecked, subscription will be paused until customer manually activates.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-buttons">
+                    <button type="button" class="modal-button modal-button-secondary" onclick="closeCreateAccountModal()">Cancel</button>
+                    <button type="submit" class="modal-button modal-button-primary">Create Account</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openCreateAccountModal() {
+            document.getElementById('createAccountModal').classList.add('active');
+        }
+        function closeCreateAccountModal() {
+            document.getElementById('createAccountModal').classList.remove('active');
+        }
+        // Close modal when clicking outside
+        document.getElementById('createAccountModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeCreateAccountModal();
+            }
+        });
+
+        // Trial Configuration Functions
+        function toggleTrialConfig() {
+            const switchEl = document.getElementById('trialToggleSwitch');
+            const configEl = document.getElementById('trialConfig');
+            const enabledCheckbox = document.getElementById('trialEnabled');
+            
+            if (switchEl.classList.contains('active')) {
+                switchEl.classList.remove('active');
+                configEl.classList.remove('active');
+                enabledCheckbox.checked = false;
+            } else {
+                switchEl.classList.add('active');
+                configEl.classList.add('active');
+                enabledCheckbox.checked = true;
+                // Set default start date to today
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('trialStartDate').value = today;
+            }
+        }
+
+        function selectTrialType(type) {
+            const autoConvertDiv = document.getElementById('autoConvertOption');
+            const radioInputs = document.querySelectorAll('input[name="trialType"]');
+            
+            // Update radio buttons
+            radioInputs.forEach(input => {
+                if (input.value === type) {
+                    input.checked = true;
+                }
+            });
+            
+            // Show/hide auto-convert option
+            if (type === 'cc-required') {
+                autoConvertDiv.style.display = 'block';
+            } else {
+                autoConvertDiv.style.display = 'none';
+                document.getElementById('autoConvertOnEnd').checked = false;
+            }
+        }
+
+        function selectDuration(days, button) {
+            // Remove active class from all buttons
+            document.querySelectorAll('.duration-preset-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Add active class to clicked button
+            button.classList.add('active');
+            
+            // Hide custom input if preset was selected
+            document.getElementById('customDurationInput').classList.remove('active');
+            document.getElementById('customDays').value = '';
+            
+            // Set duration value
+            document.getElementById('trialDuration').value = days;
+        }
+
+        function showCustomDuration() {
+            // Remove active class from all preset buttons
+            document.querySelectorAll('.duration-preset-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Show custom input
+            document.getElementById('customDurationInput').classList.add('active');
+            document.getElementById('customDays').focus();
+        }
+
+        function setCustomDuration(days) {
+            if (days >= 1 && days <= 365) {
+                document.getElementById('trialDuration').value = days;
+            } else {
+                alert('Trial duration must be between 1 and 365 days.');
+                document.getElementById('customDays').value = '';
+            }
+        }
+
+        function setTrialStartDate(date) {
+            // Validation could go here
+            console.log('Trial start date set to:', date);
+        }
+
+        function selectFeatureAccess(level) {
+            const radioInputs = document.querySelectorAll('input[name="featureAccess"]');
+            const limitedOptions = document.getElementById('limitedAccessOptions');
+            
+            // Update radio buttons
+            radioInputs.forEach(input => {
+                if (input.value === level) {
+                    input.checked = true;
+                }
+            });
+            
+            // Show/hide limited access options
+            if (level === 'limited') {
+                limitedOptions.style.display = 'block';
+            } else {
+                limitedOptions.style.display = 'none';
+                // Uncheck all limited feature checkboxes
+                document.querySelectorAll('#limitedAccessOptions input[type="checkbox"]').forEach(cb => {
+                    cb.checked = false;
+                });
+            }
+        }
+    </script>
+    <!-- UNIFIED NAVIGATION COMPONENT -->
+    <style>
+        .unified-navbar {
+            background: url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;
+            background-color: #1c3643 !important;
+            height: 84px;
+            color: #fff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .nav-logo {
+            height: 40px;
+            width: auto;
+            cursor: pointer;
+        }
+        
+        .nav-center {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            justify-content: center;
+        }
+        
+        /* Core Features Group */
+        .nav-core-features {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(13, 161, 199, 0.08);
+            border-radius: 25px;
+            padding: 4px 8px;
+            margin-right: 16px;
+        }
+        
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+            font-weight: 500;
+            font-size: 14px;
+            white-space: nowrap;
+        }
+        
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.08);
+        }
+        
+        /* Core features styling */
+        .nav-link.core-feature {
+            font-weight: 500;
+            font-size: 14px;
+            color: white;
+        }
+        
+        .nav-link.core-feature:hover {
+            background-color: rgba(13, 161, 199, 0.2);
+            color: white;
+        }
+        
+        .nav-link.core-feature.active {
+            background-color: transparent;
+            border: 1px solid #0da1c7;
+            color: #0da1c7;
+            box-shadow: 0 2px 4px rgba(13, 161, 199, 0.2);
+        }
+        
+        /* Standard nav items */
+        .nav-link.active {
+            background-color: transparent;
+            border: 1px solid #0da1c7;
+            color: #0da1c7;
+        }
+        
+        .nav-separator {
+            width: 1px;
+            height: 24px;
+            background: rgba(255, 255, 255, 0.2);
+            margin: 0 8px;
+        }
+        
+        .nav-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        
+        .nav-user-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: white;
+        }
+        
+        .nav-user-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: 2px solid #0da1c7;
+        }
+        
+        /* Property Type Tabs - Second Tier */
+        .property-tabs-container {
+            background: white;
+            border-bottom: 2px solid #e0e0e0;
+            display: none; /* Hidden by default */
+            padding: 0 32px;
+        }
+        
+        .property-tabs-container.show {
+            display: flex;
+        }
+        
+        .property-tab {
+            padding: 16px 24px;
+            border: none;
+            background: transparent;
+            color: #687F8B;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            font-family: 'Montserrat', sans-serif;
+        }
+        
+        .property-tab:hover {
+            color: #0da1c7;
+            background: #f0fbfd;
+        }
+        
+        .property-tab.active {
+            color: #0da1c7;
+            border-bottom-color: #0da1c7;
+            background: #f0fbfd;
+        }
+    </style>
+
+    <!-- Navigation Bar -->
+    <nav class="unified-navbar">
+        <img src="assets/harken.png" alt="Harken CRE" class="nav-logo" onclick="window.location.href='super-admin-dashboard.html'">
+        
+        <div class="nav-center">
+            <!-- Core Features Group - Purple -->
+            <div class="nav-core-features">
+                <a href="super-admin-comps.html" class="nav-link core-feature" id="nav-comps">COMPS</a>
+                <a href="super-admin-appraisals-list.html" class="nav-link core-feature" id="nav-appraisals">APPRAISAL</a>
+                <a href="evaluation-wizard-full.html" class="nav-link core-feature" id="nav-evaluations">EVALUATION</a>
+            </div>
+            
+            <div class="nav-separator"></div>
+            
+            <!-- Management Items - Standard -->
+            <a href="super-admin-dashboard.html" class="nav-link" id="nav-dashboard">Dashboard</a>
+            <a href="super-admin-users.html" class="nav-link" id="nav-users">Users</a>
+            <a href="super-admin-clients.html" class="nav-link" id="nav-clients">Clients</a>
+            <a href="super-admin-accounts.html" class="nav-link" id="nav-accounts">Accounts</a>
+            <a href="super-admin-reports.html" class="nav-link" id="nav-reports">Reports</a>
+            <a href="super-admin-support-tickets.html" class="nav-link" id="nav-support">Support</a>
+            <a href="super-admin-audit-logs.html" class="nav-link" id="nav-audit">Audit Logs</a>
+            <a href="super-admin-settings.html" class="nav-link" id="nav-settings">Settings</a>
+        </div>
+        
+        <div class="nav-user">
+            <span class="nav-user-name">Harken Admin</span>
+            <img src="https://i.pravatar.cc/150?img=33" alt="User" class="nav-user-avatar">
+        </div>
+    </nav>
+
+    <!-- Property Type Tabs (conditionally shown) -->
+    <div class="property-tabs-container" id="propertyTabsContainer">
+        <button class="property-tab active" data-type="commercial" onclick="switchPropertyType('commercial')">
+            <span style="font-size: 18px;">🏢</span>
+            Commercial
+        </button>
+        <button class="property-tab" data-type="residential" onclick="switchPropertyType('residential')">
+            <span style="font-size: 18px;">🏠</span>
+            Residential
+        </button>
+        <button class="property-tab" data-type="land" onclick="switchPropertyType('land')">
+            <span style="font-size: 18px;">🏞️</span>
+            Land
+        </button>
+    </div>
+
+    <script>
+        // Navigation state management
+        (function() {
+            // Determine which page we're on
+            const currentPage = window.location.pathname.split('/').pop() || 'super-admin-dashboard.html';
+            
+            // Show property tabs only on COMPS, APPRAISAL, EVALUATION pages
+            const showPropertyTabsOn = ['comps-premium-with-clustering.html', 'super-admin-appraisals-list.html', 'evaluation-wizard-full.html'];
+            if (showPropertyTabsOn.some(page => currentPage.includes(page) || currentPage.includes('comps-') || currentPage.includes('appraisal-') || currentPage.includes('evaluation-'))) {
+                document.getElementById('propertyTabsContainer').classList.add('show');
+            }
+            
+            // Highlight active nav item
+            const navMapping = {
+                'super-admin-dashboard.html': 'nav-dashboard',
+                'comps-premium-with-clustering.html': 'nav-comps',
+                'super-admin-appraisals-list.html': 'nav-appraisals',
+                'evaluation-wizard-full.html': 'nav-evaluations',
+                'super-admin-users.html': 'nav-users',
+                'super-admin-user-edit.html': 'nav-users',
+                'super-admin-clients.html': 'nav-clients',
+                'super-admin-accounts.html': 'nav-accounts',
+                'super-admin-account-manage.html': 'nav-accounts',
+                'super-admin-account-amenities.html': 'nav-accounts',
+                'super-admin-account-report-templates.html': 'nav-accounts',
+                'super-admin-reports.html': 'nav-reports',
+                'super-admin-support-tickets.html': 'nav-support',
+                'super-admin-support-create-ticket.html': 'nav-support',
+                'super-admin-support-ticket-detail.html': 'nav-support',
+                'super-admin-audit-logs.html': 'nav-audit',
+                'super-admin-settings.html': 'nav-settings',
+                'super-admin-settings-billing.html': 'nav-settings',
+                'super-admin-settings-amenities.html': 'nav-settings',
+                'super-admin-settings-white-label.html': 'nav-settings'
+            };
+            
+            // Find matching nav item
+            for (const [page, navId] of Object.entries(navMapping)) {
+                if (currentPage.includes(page)) {
+                    const navElement = document.getElementById(navId);
+                    if (navElement) {
+                        navElement.classList.add('active');
+                    }
+                    break;
+                }
+            }
+        })();
+        
+        // Property type switching
+        function switchPropertyType(type) {
+            // Update active tab
+            document.querySelectorAll('.property-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            document.querySelector(`[data-type="${type}"]`).classList.add('active');
+            
+            // Store in localStorage
+            localStorage.setItem('activePropertyType', type);
+            
+            // In a real app, this would filter/reload data based on property type
+            console.log('Switched to property type:', type);
+        }
+        
+        // Load saved property type on page load
+        window.addEventListener('load', function() {
+            const savedType = localStorage.getItem('activePropertyType');
+            if (savedType) {
+                switchPropertyType(savedType);
+            }
+        });
+    </script>
+
+    <!-- Main Content -->
+    <div style="padding: 35px 50px;">
+        <!-- BUILD NOTES SECTION -->
+        <div id="buildNotesSection" style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 20px; margin-bottom: 32px; border-radius: 4px;">
+            <h3 style="color: #856404; font-size: 16px; font-weight: 700; margin: 0 0 16px 0;">🔨 BUILD NOTES</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 16px;">
+                <div>
+                    <strong style="color: #856404;">Priority Level:</strong> CRITICAL
+                </div>
+                <div>
+                    <strong style="color: #856404;">Recommended Customer Count:</strong> 1+ customers (immediate)
+                </div>
+                <div>
+                    <strong style="color: #856404;">Development Stage:</strong> Phase 1
+                </div>
+                <div>
+                    <strong style="color: #856404;">Estimated Build Time:</strong> 2-3 weeks
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #856404;">Purpose & Use Case:</strong>
+                <p style="margin: 4px 0 0 0; color: #856404;">This is your customer onboarding hub. Essential from day one. Every new customer needs an account created here before they can use the platform. This page manages all customer organizations, their subscription details, and which features they have access to.</p>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #856404;">Key Features Explained:</strong>
+                <ul style="margin: 4px 0 0 0; color: #856404;">
+                    <li><strong>Create Account:</strong> Provisions a new customer organization. Sets up their initial configuration and billing.</li>
+                    <li><strong>Subscription Plans:</strong> Basic ($60/user), Professional ($90/user), Enterprise ($120/user). Determines feature access.</li>
+                    <li><strong>Features Toggles:</strong> "E" = Evaluations access, "R" = Residential features. Let you enable/disable per account regardless of plan.</li>
+                    <li><strong>MRR (Monthly Recurring Revenue):</strong> Auto-calculated: (# users) × (price per user). Shows account value at a glance.</li>
+                    <li><strong>Status Badges:</strong> Active (paying), Trial (evaluation period), Inactive (suspended/cancelled).</li>
+                    <li><strong>Search & Filters:</strong> Critical when you have 10+ accounts to quickly find specific customers.</li>
+                </ul>
+            </div>
+            
+            <div>
+                <strong style="color: #856404;">Implementation Notes:</strong>
+                <p style="margin: 4px 0 0 0; color: #856404;">MUST BUILD FIRST. Core database tables: accounts, subscription_plans. Link to Stripe for payment processing. Keep it simple initially - you can manually set pricing if needed. Pagination can wait until you have 50+ accounts. The "Manage" button should link to super-admin-account-manage.html for detailed configuration.</p>
+            </div>
+            
+            <button onclick="toggleBuildNotes(false)" style="margin-top: 12px; padding: 6px 12px; background: #856404; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">Hide Build Notes</button>
+        </div>
+
+        <!-- Header Section -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+            <h2 class="section-title">ACCOUNTS & BILLING</h2>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#0da1c7" viewBox="0 0 24 24">
+                    <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                </svg>
+                <input type="text" class="search-input" placeholder="Search Accounts" />
+                <button onclick="openCreateAccountModal()" style="background-color: #0da1c7; color: white; padding: 10px 20px; border-radius: 4px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; transition: opacity 0.2s; white-space: nowrap;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+                    + Create Account
+                </button>
+            </div>
+        </div>
+
+        <!-- Accounts Table -->
+        <div style="background-color: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); overflow: hidden;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Account Name</th>
+                        <th># Users</th>
+                        <th># Comps</th>
+                        <th>Subscription</th>
+                        <th>MRR</th>
+                        <th>Features</th>
+                        <th>Status</th>
+                        <th style="text-align: right; padding-right: 50px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="super-admin-account-manage.html" class="link-text">Acme Properties LLC</a></td>
+                        <td>24</td>
+                        <td>1,847</td>
+                        <td><span class="plan-badge plan-enterprise">Enterprise</span></td>
+                        <td>$2,880</td>
+                        <td>
+                            <div style="display: flex; gap: 4px;">
+                                <span class="feature-icon feature-enabled" title="Evaluations Enabled">E</span>
+                                <span class="feature-icon feature-enabled" title="Residential Enabled">R</span>
+                            </div>
+                        </td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td style="text-align: right; padding-right: 50px;">
+                            <a href="super-admin-account-manage.html" class="action-button action-button-primary" style="text-decoration: none; display: inline-block;">Manage</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="super-admin-account-manage.html" class="link-text">Metro Realty Group</a></td>
+                        <td>18</td>
+                        <td>956</td>
+                        <td><span class="plan-badge plan-professional">Professional</span></td>
+                        <td>$1,620</td>
+                        <td>
+                            <div style="display: flex; gap: 4px;">
+                                <span class="feature-icon feature-enabled" title="Evaluations Enabled">E</span>
+                                <span class="feature-icon feature-disabled" title="Residential Disabled">R</span>
+                            </div>
+                        </td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td style="text-align: right; padding-right: 50px;">
+                            <a href="super-admin-account-manage.html" class="action-button action-button-primary" style="text-decoration: none; display: inline-block;">Manage</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="super-admin-account-manage.html" class="link-text">Skyline Investments</a></td>
+                        <td>12</td>
+                        <td>523</td>
+                        <td><span class="plan-badge plan-professional">Professional</span></td>
+                        <td>$1,080</td>
+                        <td>
+                            <div style="display: flex; gap: 4px;">
+                                <span class="feature-icon feature-enabled" title="Evaluations Enabled">E</span>
+                                <span class="feature-icon feature-disabled" title="Residential Disabled">R</span>
+                            </div>
+                        </td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td style="text-align: right; padding-right: 50px;">
+                            <a href="super-admin-account-manage.html" class="action-button action-button-primary" style="text-decoration: none; display: inline-block;">Manage</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="super-admin-account-manage.html" class="link-text">Coastal Appraisals Inc</a></td>
+                        <td>8</td>
+                        <td>312</td>
+                        <td><span class="plan-badge plan-basic">Basic</span></td>
+                        <td>$480</td>
+                        <td>
+                            <div style="display: flex; gap: 4px;">
+                                <span class="feature-icon feature-disabled" title="Evaluations Disabled">E</span>
+                                <span class="feature-icon feature-enabled" title="Residential Enabled">R</span>
+                            </div>
+                        </td>
+                        <td><span class="badge badge-trial">Trial</span></td>
+                        <td style="text-align: right; padding-right: 50px;">
+                            <a href="super-admin-account-manage.html" class="action-button action-button-primary" style="text-decoration: none; display: inline-block;">Manage</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="super-admin-account-manage.html" class="link-text">Downtown Commercial Partners</a></td>
+                        <td>32</td>
+                        <td>2,143</td>
+                        <td><span class="plan-badge plan-enterprise">Enterprise</span></td>
+                        <td>$3,840</td>
+                        <td>
+                            <div style="display: flex; gap: 4px;">
+                                <span class="feature-icon feature-enabled" title="Evaluations Enabled">E</span>
+                                <span class="feature-icon feature-enabled" title="Residential Enabled">R</span>
+                            </div>
+                        </td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td style="text-align: right; padding-right: 50px;">
+                            <a href="super-admin-account-manage.html" class="action-button action-button-primary" style="text-decoration: none; display: inline-block;">Manage</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="super-admin-account-manage.html" class="link-text">Apex Realty Solutions</a></td>
+                        <td>5</td>
+                        <td>87</td>
+                        <td><span class="plan-badge plan-basic">Basic</span></td>
+                        <td>$300</td>
+                        <td>
+                            <div style="display: flex; gap: 4px;">
+                                <span class="feature-icon feature-disabled" title="Evaluations Disabled">E</span>
+                                <span class="feature-icon feature-disabled" title="Residential Disabled">R</span>
+                            </div>
+                        </td>
+                        <td><span class="badge badge-inactive">Inactive</span></td>
+                        <td style="text-align: right; padding-right: 50px;">
+                            <a href="super-admin-account-manage.html" class="action-button action-button-primary" style="text-decoration: none; display: inline-block;">Manage</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="super-admin-account-manage.html" class="link-text">Landmark Property Advisors</a></td>
+                        <td>15</td>
+                        <td>678</td>
+                        <td><span class="plan-badge plan-professional">Professional</span></td>
+                        <td>$1,350</td>
+                        <td>
+                            <div style="display: flex; gap: 4px;">
+                                <span class="feature-icon feature-enabled" title="Evaluations Enabled">E</span>
+                                <span class="feature-icon feature-enabled" title="Residential Enabled">R</span>
+                            </div>
+                        </td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td style="text-align: right; padding-right: 50px;">
+                            <a href="super-admin-account-manage.html" class="action-button action-button-primary" style="text-decoration: none; display: inline-block;">Manage</a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="super-admin-account-manage.html" class="link-text">Prime Valuation Services</a></td>
+                        <td>10</td>
+                        <td>445</td>
+                        <td><span class="plan-badge plan-professional">Professional</span></td>
+                        <td>$900</td>
+                        <td>
+                            <div style="display: flex; gap: 4px;">
+                                <span class="feature-icon feature-enabled" title="Evaluations Enabled">E</span>
+                                <span class="feature-icon feature-disabled" title="Residential Disabled">R</span>
+                            </div>
+                        </td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td style="text-align: right; padding-right: 50px;">
+                            <a href="super-admin-account-manage.html" class="action-button action-button-primary" style="text-decoration: none; display: inline-block;">Manage</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            <button id="prevBtn" onclick="changePage('prev')" disabled style="font-weight: 400;">Previous</button>
+            <button class="page-number" onclick="changePage('prev')" disabled style="padding: 8px 10px;">‹</button>
+            <span class="page-number active" onclick="goToPage(1)">1</span>
+            <span class="page-number" onclick="goToPage(2)">2</span>
+            <span class="page-number" onclick="goToPage(3)">3</span>
+            <span class="page-number" onclick="goToPage(4)">4</span>
+            <span class="page-number" onclick="goToPage(5)">5</span>
+            <span style="color: #687F8B; padding: 8px 4px;">...</span>
+            <span class="page-number" onclick="goToPage(299)">299</span>
+            <button class="page-number" onclick="changePage('next')" style="padding: 8px 10px;">›</button>
+            <button id="nextBtn" onclick="changePage('next')" style="font-weight: 400;">Next</button>
+        </div>
+
+        <script>
+            let currentPage = 1;
+            const totalPages = 299;
+
+            function goToPage(page) {
+                currentPage = page;
+                updatePagination();
+            }
+
+            function changePage(direction) {
+                if (direction === 'prev' && currentPage > 1) {
+                    currentPage--;
+                } else if (direction === 'next' && currentPage < totalPages) {
+                    currentPage++;
+                }
+                updatePagination();
+            }
+
+            function updatePagination() {
+                const pageNumbers = document.querySelectorAll('.page-number:not(button)');
+                pageNumbers.forEach((el) => {
+                    const pageNum = parseInt(el.textContent);
+                    if (pageNum === currentPage) {
+                        el.classList.add('active');
+                    } else {
+                        el.classList.remove('active');
+                    }
+                });
+
+                const prevButtons = document.querySelectorAll('#prevBtn, button.page-number:first-of-type');
+                prevButtons.forEach(btn => btn.disabled = currentPage === 1);
+                
+                const nextButtons = document.querySelectorAll('#nextBtn, button.page-number:last-of-type');
+                nextButtons.forEach(btn => btn.disabled = currentPage === totalPages);
+
+                console.log('Current page:', currentPage);
+            }
+        </script>
+
+        <!-- Summary Cards -->
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-top: 48px;">
+            <div style="background-color: white; border-radius: 8px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.12);">
+                <div style="font-size: 28px; font-weight: 700; color: #1c3643;">342</div>
+                <div style="font-size: 14px; color: #687F8B; font-weight: 600; text-transform: uppercase; margin-top: 8px;">Total Accounts</div>
+            </div>
+            <div style="background-color: white; border-radius: 8px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.12);">
+                <div style="font-size: 28px; font-weight: 700; color: #0da1c7;">$124.5K</div>
+                <div style="font-size: 14px; color: #687F8B; font-weight: 600; text-transform: uppercase; margin-top: 8px;">Monthly Revenue</div>
+            </div>
+            <div style="background-color: white; border-radius: 8px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.12);">
+                <div style="font-size: 28px; font-weight: 700; color: #1c3643;">$92</div>
+                <div style="font-size: 14px; color: #687F8B; font-weight: 600; text-transform: uppercase; margin-top: 8px;">Avg. Per User</div>
+            </div>
+            <div style="background-color: white; border-radius: 8px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.12);">
+                <div style="font-size: 28px; font-weight: 700; color: #856404;">23</div>
+                <div style="font-size: 14px; color: #687F8B; font-weight: 600; text-transform: uppercase; margin-top: 8px;">Trials Ending (7d)</div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 50px;">
+            <span style="font-weight: 300; font-size: 14px; color: #687F8B;">© 2024, Harken CRE, LLC</span>
+        </div>
+    </div>
+
+    <script>
+        // Build Notes Toggle Function
+        function toggleBuildNotes(show) {
+            const notesSection = document.getElementById('buildNotesSection');
+            const toggleBtn = document.getElementById('showBuildNotesBtn');
+            
+            if (show) {
+                notesSection.style.display = 'block';
+                toggleBtn.style.display = 'none';
+                notesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                notesSection.style.display = 'none';
+                toggleBtn.style.display = 'block';
+            }
+            
+            sessionStorage.setItem('buildNotesVisible', show);
+        }
+
+        // Restore preference on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            const savedPreference = sessionStorage.getItem('buildNotesVisible');
+            if (savedPreference === 'false') {
+                toggleBuildNotes(false);
+            }
+        });
+    </script>
+</body>
+</html>
+
+

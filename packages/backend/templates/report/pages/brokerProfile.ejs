@@ -1,0 +1,134 @@
+<% const totalBackground = evaluation.user?.background?.length || 0; %>
+
+<% if (totalBackground < 1205) { %>
+  <div class="new-page business-properties">
+    <div class="page-header">
+      <%- chapter %>
+    </div>
+
+    <div class="section-area">
+      <img class="section-image" src="/images/profile_background.jpg" />
+    </div>
+
+    <% if (evaluation.user?.profile_image_url) { %>
+      <div class="profile-image">
+        <img width="200" height="auto" style="z-index: 1;" src="<%= evaluation.baseUrl %><%= evaluation.user.profile_image_url %>" />
+      </div>
+    <% } %>
+
+    <div class="description">
+      <p class="title"><%= evaluation.user.first_name %> <%= evaluation.user.last_name %></p>
+      <p class="subtitle"><%= evaluation.user?.position %></p>
+
+      <% if (evaluation.user?.background) { %>
+        <p class="main-description">BACKGROUND & EXPERIENCE</p>
+        <%- evaluation.user.background %>
+      <% } %>
+
+      <% if (evaluation.user?.affiliations) { %>
+        <p class="main-description">PROFESSIONAL AFFILIATIONS</p>
+        <%- evaluation.user.affiliations %>
+      <% } %>
+
+      <% if (evaluation.user?.education) { %>
+        <p class="main-description">EDUCATION DESCRIPTION</p>
+        <%- evaluation.user.education %>
+      <% } %>
+    </div>
+
+    <% if (evaluation.user?.responsibility && evaluation.user.responsibility.replace(/<[^>]*>/g, '').trim()) { %>
+      <div class="description-right">
+        <table>
+          <tbody>
+            <tr>
+              <td class="property-zoning-section" valign="top">
+                <p class="property-zoning-title">Scope of Responsibilities</p>
+                <%- evaluation.user.responsibility %>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+
+    <%- watermark %>
+  </div>
+<% } else { %>
+  <div class="new-page business-properties">
+    <div class="page-header">
+      <p class="section-name">Section 05</p>
+      <p class="section-title">About Us</p>
+    </div>
+
+    <div class="section-area">
+        <img class="section-image" src="/images/profile_background.jpg" />
+    </div>
+
+    <% if (evaluation.user?.profile_image_url) { %>
+      <div class="profile-image" style="z-index: 1;">
+        <img width="200" height="300" style="z-index: 1;" src="<%= evaluation.baseUrl %><%= evaluation.user.profile_image_url %>" />
+      </div>
+    <% } %>
+
+    <div class="description">
+        <p class="title"><%= evaluation.user.first_name %> <%= evaluation.user.last_name %></p>
+      <p class="subtitle"><%= evaluation.user?.position %></p>
+
+      <p class="main-description">BACKGROUND & EXPERIENCE</p>
+      <%- evaluation.user.background %>
+    </div>
+
+    <% if (evaluation.user?.responsibility && evaluation.user.responsibility.replace(/<[^>]*>/g, '').trim()) { %>
+      <div class="description-right">
+        <table>
+          <tbody>
+            <tr>
+              <td class="property-zoning-section" valign="top">
+                <p class="property-zoning-title">Scope of Responsibilities</p>
+                <%= evaluation.user.responsibility.slice(0, 650) %>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    <% } %>
+
+    <%- watermark %>
+  </div>
+
+  <% const totalAffiliations = evaluation.user?.affiliations?.length || 0; %>
+  <% const totalDescription = evaluation.user?.education?.length || 0; %>
+
+  <% if (totalAffiliations > 0 || totalDescription > 0) { %>
+    <div class="new-page business-properties">
+      <div class="page-header">
+        <p class="section-name">Section 05</p>
+        <p class="section-title">About Us</p>
+      </div>
+
+      <div class="section-area">
+        <img class="section-image" src="/images/profile_background.jpg" />
+      </div>
+
+      <% if (evaluation.user?.profile_image_url) { %>
+        <div class="profile-image">
+          <img width="200" height="300" style="z-index: 1;" src="<%= evaluation.baseUrl %><%= evaluation.user.profile_image_url %>" />
+      </div>
+      <% } %>
+
+      <div class="description">
+        <p class="title"><%= evaluation.user.first_name %> <%= evaluation.user.last_name %></p>
+        <p class="subtitle"><%= evaluation.user?.position %></p>
+        <br />
+
+        <p class="main-description">PROFESSIONAL AFFILIATIONS</p>
+        <%- evaluation.user.affiliations %>
+
+        <p class="main-description">EDUCATION DESCRIPTION</p>
+        <%- evaluation.user.education %>
+      </div>
+
+      <%- watermark %>
+    </div>
+  <% } %>
+<% } %>

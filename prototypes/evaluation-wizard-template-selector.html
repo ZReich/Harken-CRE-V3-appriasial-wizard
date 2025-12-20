@@ -1,0 +1,622 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>New Evaluation - Template Selection - Harken CRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            font-family: 'Montserrat', sans-serif !important;
+        }
+        body {
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background: url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;
+            background-color: #1c3643 !important;
+            max-height: 84px;
+            height: 84px;
+            color: #fff;
+        }
+        .section-title {
+            font-size: 23px;
+            font-weight: 600;
+            color: #1c3643;
+        }
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 10px 24px;
+            border-radius: 25px;
+            transition: all 0.2s;
+        }
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+
+        /* Wizard Styles */
+        .wizard-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .wizard-steps {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+            gap: 20px;
+        }
+        .wizard-step {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .step-circle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            color: #687F8B;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 16px;
+        }
+        .step-circle.active {
+            background: #0da1c7;
+            color: white;
+        }
+        .step-circle.completed {
+            background: #2e7d32;
+            color: white;
+        }
+        .step-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #687F8B;
+        }
+        .step-label.active {
+            color: #1c3643;
+        }
+        .step-arrow {
+            color: #e0e0e0;
+            font-size: 20px;
+        }
+
+        /* Card Styles */
+        .wizard-card {
+            background: white;
+            border-radius: 8px;
+            padding: 40px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 24px;
+        }
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1c3643;
+            margin-bottom: 12px;
+        }
+        .card-subtitle {
+            font-size: 14px;
+            color: #687F8B;
+            margin-bottom: 32px;
+        }
+
+        /* Template Selection */
+        .template-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            margin-bottom: 32px;
+        }
+        .template-option {
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .template-option:hover {
+            border-color: #0da1c7;
+            box-shadow: 0 4px 12px rgba(13, 161, 199, 0.15);
+        }
+        .template-option.selected {
+            border-color: #0da1c7;
+            background: linear-gradient(to bottom, #e8f5f7 0%, white 100%);
+        }
+        .template-option-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        .template-option-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1c3643;
+        }
+        .template-badge {
+            background: #0da1c7;
+            color: white;
+            font-size: 10px;
+            font-weight: 600;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+        .template-badge.default {
+            background: #2e7d32;
+        }
+        .template-option-desc {
+            font-size: 13px;
+            color: #687F8B;
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+        .template-option-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #687F8B;
+            margin-bottom: 12px;
+        }
+        .radio-circle {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #e0e0e0;
+            border-radius: 50%;
+            display: inline-block;
+            position: relative;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        .template-option.selected .radio-circle {
+            border-color: #0da1c7;
+        }
+        .template-option.selected .radio-circle::after {
+            content: '';
+            position: absolute;
+            top: 4px;
+            left: 4px;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #0da1c7;
+        }
+
+        /* Preview Section */
+        .preview-section {
+            margin-top: 32px;
+            padding: 24px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+        .preview-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1c3643;
+            margin-bottom: 16px;
+        }
+        .preview-list {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+        .preview-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #687F8B;
+        }
+        .preview-item.enabled {
+            color: #1c3643;
+        }
+        .preview-item .check {
+            color: #2e7d32;
+            font-weight: 700;
+        }
+        .preview-item .cross {
+            color: #687F8B;
+            font-weight: 700;
+        }
+
+        /* Customize Option */
+        .customize-option {
+            margin-top: 24px;
+            padding: 20px;
+            background: #fff3e0;
+            border: 2px dashed #ff9800;
+            border-radius: 8px;
+        }
+        .customize-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .customize-checkbox input {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: #ff9800;
+        }
+        .customize-checkbox label {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1c3643;
+            cursor: pointer;
+        }
+        .customize-hint {
+            font-size: 12px;
+            color: #e65100;
+            margin-top: 8px;
+            margin-left: 32px;
+        }
+
+        /* Action Buttons */
+        .wizard-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 32px;
+        }
+        .action-button {
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .action-button:hover {
+            opacity: 0.85;
+        }
+        .action-button-primary {
+            background-color: #0da1c7;
+            color: white;
+        }
+        .action-button-secondary {
+            background-color: #e0e0e0;
+            color: #687F8B;
+        }
+
+        /* Info Box */
+        .info-box {
+            background: #e3f2fd;
+            border-left: 4px solid #2196F3;
+            padding: 16px;
+            border-radius: 4px;
+            margin-bottom: 24px;
+        }
+        .info-box-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1565c0;
+            margin-bottom: 8px;
+        }
+        .info-box-text {
+            font-size: 13px;
+            color: #1976d2;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar flex items-center justify-between px-8">
+        <div class="flex items-center">
+            <img src="harken.png" alt="Harken" style="height: 40px; width: auto;" />
+        </div>
+        <div class="flex items-center gap-6">
+            <a href="#" class="nav-link">Dashboard</a>
+            <a href="#" class="nav-link">Evaluations</a>
+            <a href="#" class="nav-link">Appraisals</a>
+            <a href="#" class="nav-link">Clients</a>
+        </div>
+        <div class="flex items-center gap-4">
+            <span class="text-sm">John Doe | Acme Properties LLC</span>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div style="padding: 35px 50px;">
+        <div class="wizard-container">
+            <!-- Page Title -->
+            <div style="text-align: center; margin-bottom: 40px;">
+                <h2 class="section-title">CREATE NEW EVALUATION</h2>
+                <div style="margin-top: 8px; color: #687F8B; font-size: 14px;">
+                    Follow the steps below to create your evaluation report
+                </div>
+            </div>
+
+            <!-- Wizard Steps -->
+            <div class="wizard-steps">
+                <div class="wizard-step">
+                    <div class="step-circle completed">✓</div>
+                    <div class="step-label">Property Info</div>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="wizard-step">
+                    <div class="step-circle active">2</div>
+                    <div class="step-label active">Report Template</div>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="wizard-step">
+                    <div class="step-circle">3</div>
+                    <div class="step-label">Property Details</div>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="wizard-step">
+                    <div class="step-circle">4</div>
+                    <div class="step-label">Valuations</div>
+                </div>
+                <div class="step-arrow">→</div>
+                <div class="wizard-step">
+                    <div class="step-circle">5</div>
+                    <div class="step-label">Review</div>
+                </div>
+            </div>
+
+            <!-- Main Card -->
+            <div class="wizard-card">
+                <div class="card-title">Select Report Template</div>
+                <div class="card-subtitle">
+                    Choose a template that determines which sections and fields will appear in your final report. You can customize this later if needed.
+                </div>
+
+                <!-- Info Box -->
+                <div class="info-box">
+                    <div class="info-box-title">💡 What are report templates?</div>
+                    <div class="info-box-text">
+                        Report templates allow you to control what appears in your final PDF. Your administrator has created pre-configured templates for different scenarios (bank submissions, quick valuations, etc.). Select the one that best fits your needs.
+                    </div>
+                </div>
+
+                <!-- Template Options -->
+                <div class="template-selector">
+                    <div class="template-option selected" onclick="selectTemplate('standard')">
+                        <div class="template-option-header">
+                            <div class="template-option-title">
+                                <span class="radio-circle"></span>
+                                Standard Full Report
+                            </div>
+                            <div class="template-badge default">DEFAULT</div>
+                        </div>
+                        <div class="template-option-desc">
+                            Complete evaluation report with all sections including executive summary, property details, all valuation approaches, and exhibits. Recommended for most uses.
+                        </div>
+                        <div class="template-option-meta">
+                            <span>7 sections enabled</span>
+                            <span>~25-35 pages</span>
+                        </div>
+                    </div>
+
+                    <div class="template-option" onclick="selectTemplate('quick')">
+                        <div class="template-option-header">
+                            <div class="template-option-title">
+                                <span class="radio-circle"></span>
+                                Quick Valuation
+                            </div>
+                        </div>
+                        <div class="template-option-desc">
+                            Streamlined report focusing on executive summary, property overview, and primary valuation approach. Ideal for internal reviews and quick turnarounds.
+                        </div>
+                        <div class="template-option-meta">
+                            <span>3 sections enabled</span>
+                            <span>~10-15 pages</span>
+                        </div>
+                    </div>
+
+                    <div class="template-option" onclick="selectTemplate('bank')">
+                        <div class="template-option-header">
+                            <div class="template-option-title">
+                                <span class="radio-circle"></span>
+                                Bank Submission
+                            </div>
+                        </div>
+                        <div class="template-option-desc">
+                            Comprehensive report optimized for bank underwriting requirements. Includes detailed assumptions, all valuation approaches, and complete exhibits.
+                        </div>
+                        <div class="template-option-meta">
+                            <span>6 sections enabled</span>
+                            <span>~30-40 pages</span>
+                        </div>
+                    </div>
+
+                    <div class="template-option" onclick="selectTemplate('internal')">
+                        <div class="template-option-header">
+                            <div class="template-option-title">
+                                <span class="radio-circle"></span>
+                                Internal Use Only
+                            </div>
+                        </div>
+                        <div class="template-option-desc">
+                            Minimal report for internal team review. Includes essential valuation data without client-facing sections like About Us or detailed assumptions.
+                        </div>
+                        <div class="template-option-meta">
+                            <span>4 sections enabled</span>
+                            <span>~12-18 pages</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Preview Section -->
+                <div class="preview-section" id="templatePreview">
+                    <div class="preview-title">Template Preview: Standard Full Report</div>
+                    <div class="preview-list">
+                        <div class="preview-item enabled"><span class="check">✓</span> Cover Page</div>
+                        <div class="preview-item enabled"><span class="check">✓</span> Letter of Engagement</div>
+                        <div class="preview-item enabled"><span class="check">✓</span> Table of Contents</div>
+                        <div class="preview-item enabled"><span class="check">✓</span> Executive Summary</div>
+                        <div class="preview-item enabled"><span class="check">✓</span> Property Summary</div>
+                        <div class="preview-item enabled"><span class="check">✓</span> Valuations (All Approaches)</div>
+                        <div class="preview-item enabled"><span class="check">✓</span> Weighted Value</div>
+                        <div class="preview-item enabled"><span class="check">✓</span> About Us</div>
+                        <div class="preview-item enabled"><span class="check">✓</span> Assumptions</div>
+                        <div class="preview-item enabled"><span class="check">✓</span> Exhibits</div>
+                    </div>
+                </div>
+
+                <!-- Customize Option -->
+                <div class="customize-option">
+                    <div class="customize-checkbox">
+                        <input type="checkbox" id="customizeCheck" onchange="toggleCustomize()" />
+                        <label for="customizeCheck">Customize this template for this report only</label>
+                    </div>
+                    <div class="customize-hint">
+                        💡 This creates a copy you can modify without affecting the original template. You'll be able to enable/disable specific sections after completing this wizard.
+                    </div>
+                </div>
+
+                <!-- Navigation Actions -->
+                <div class="wizard-actions">
+                    <button class="action-button action-button-secondary" onclick="goBack()">
+                        ← Back
+                    </button>
+                    <button class="action-button action-button-primary" onclick="continueWizard()">
+                        Continue to Property Details →
+                    </button>
+                </div>
+            </div>
+
+            <!-- Help Text -->
+            <div style="text-align: center; margin-top: 24px; color: #687F8B; font-size: 13px;">
+                Need help? Contact your administrator to create new templates or modify existing ones.<br>
+                <a href="admin-account-report-templates.html" style="color: #0da1c7; text-decoration: none; font-weight: 600;">View Template Manager →</a>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 50px;">
+            <span style="font-weight: 300; font-size: 14px; color: #687F8B;">© 2024, Harken CRE, LLC</span>
+        </div>
+    </div>
+
+    <script>
+        let selectedTemplate = 'standard';
+        let willCustomize = false;
+
+        const templateData = {
+            'standard': {
+                name: 'Standard Full Report',
+                sections: [
+                    { name: 'Cover Page', enabled: true },
+                    { name: 'Letter of Engagement', enabled: true },
+                    { name: 'Table of Contents', enabled: true },
+                    { name: 'Executive Summary', enabled: true },
+                    { name: 'Property Summary', enabled: true },
+                    { name: 'Valuations (All Approaches)', enabled: true },
+                    { name: 'Weighted Value', enabled: true },
+                    { name: 'About Us', enabled: true },
+                    { name: 'Assumptions', enabled: true },
+                    { name: 'Exhibits', enabled: true }
+                ]
+            },
+            'quick': {
+                name: 'Quick Valuation',
+                sections: [
+                    { name: 'Cover Page', enabled: true },
+                    { name: 'Letter of Engagement', enabled: false },
+                    { name: 'Table of Contents', enabled: true },
+                    { name: 'Executive Summary', enabled: true },
+                    { name: 'Property Summary', enabled: true },
+                    { name: 'Valuations (Sales Only)', enabled: true },
+                    { name: 'Weighted Value', enabled: true },
+                    { name: 'About Us', enabled: false },
+                    { name: 'Assumptions', enabled: false },
+                    { name: 'Exhibits', enabled: false }
+                ]
+            },
+            'bank': {
+                name: 'Bank Submission',
+                sections: [
+                    { name: 'Cover Page', enabled: true },
+                    { name: 'Letter of Engagement', enabled: true },
+                    { name: 'Table of Contents', enabled: true },
+                    { name: 'Executive Summary', enabled: true },
+                    { name: 'Property Summary', enabled: true },
+                    { name: 'Valuations (All Approaches)', enabled: true },
+                    { name: 'Weighted Value', enabled: true },
+                    { name: 'About Us', enabled: true },
+                    { name: 'Assumptions', enabled: true },
+                    { name: 'Exhibits', enabled: true }
+                ]
+            },
+            'internal': {
+                name: 'Internal Use Only',
+                sections: [
+                    { name: 'Cover Page', enabled: true },
+                    { name: 'Letter of Engagement', enabled: false },
+                    { name: 'Table of Contents', enabled: false },
+                    { name: 'Executive Summary', enabled: true },
+                    { name: 'Property Summary', enabled: true },
+                    { name: 'Valuations (Primary Only)', enabled: true },
+                    { name: 'Weighted Value', enabled: true },
+                    { name: 'About Us', enabled: false },
+                    { name: 'Assumptions', enabled: false },
+                    { name: 'Exhibits', enabled: false }
+                ]
+            }
+        };
+
+        function selectTemplate(templateId) {
+            selectedTemplate = templateId;
+            
+            // Update visual selection
+            document.querySelectorAll('.template-option').forEach(el => {
+                el.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            
+            // Update preview
+            updatePreview();
+        }
+
+        function updatePreview() {
+            const template = templateData[selectedTemplate];
+            const previewEl = document.getElementById('templatePreview');
+            
+            let html = `<div class="preview-title">Template Preview: ${template.name}</div>`;
+            html += '<div class="preview-list">';
+            
+            template.sections.forEach(section => {
+                const icon = section.enabled ? '✓' : '✗';
+                const className = section.enabled ? 'enabled' : '';
+                const iconClass = section.enabled ? 'check' : 'cross';
+                html += `<div class="preview-item ${className}"><span class="${iconClass}">${icon}</span> ${section.name}</div>`;
+            });
+            
+            html += '</div>';
+            previewEl.innerHTML = html;
+        }
+
+        function toggleCustomize() {
+            willCustomize = document.getElementById('customizeCheck').checked;
+        }
+
+        function continueWizard() {
+            // In production, this would save the template selection and continue
+            const message = willCustomize 
+                ? `Template "${templateData[selectedTemplate].name}" selected. You'll be able to customize sections after completing the wizard.`
+                : `Template "${templateData[selectedTemplate].name}" selected. Continuing to property details...`;
+            
+            alert(message);
+            // window.location.href = 'evaluation-wizard-property-details.html';
+        }
+
+        function goBack() {
+            // window.location.href = 'evaluation-wizard-property-info.html';
+            alert('Going back to property information...');
+        }
+
+        // Initialize
+        updatePreview();
+    </script>
+</body>
+</html>
+

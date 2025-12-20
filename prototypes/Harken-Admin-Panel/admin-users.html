@@ -1,0 +1,771 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Users Management - Harken CRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            font-family: 'Montserrat', sans-serif !important;
+        }
+        body {
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background: url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;
+            background-color: #1c3643 !important;
+            max-height: 84px;
+            height: 84px;
+            color: #fff;
+        }
+        .section-title {
+            font-size: 23px;
+            font-weight: 600;
+            color: #1c3643;
+        }
+        table {
+            width: 100%;
+            background-color: white;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        thead {
+            background-color: #f9f9f9;
+        }
+        th {
+            padding: 16px 35px;
+            text-align: left;
+            color: #687F8B;
+            font-size: 13px;
+            font-weight: 600;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        td {
+            padding: 20px 35px;
+            color: #687F8B;
+            font-size: 13px;
+            font-weight: 500;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+        .search-input {
+            width: 390px;
+            padding: 10px 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .add-icon {
+            color: #0da1c7;
+            font-size: 32px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .add-icon:hover {
+            transform: scale(1.1);
+        }
+        .edit-icon {
+            color: #0da1c7;
+            cursor: pointer;
+            font-size: 20px;
+        }
+        .link-text {
+            color: #0da1c7;
+            text-decoration: none;
+        }
+        .link-text:hover {
+            text-decoration: underline;
+        }
+        .badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .badge-active {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .badge-inactive {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .role-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .role-super-admin {
+            background-color: #e3f2fd;
+            color: #1565c0;
+        }
+        .role-admin {
+            background-color: #fff3e0;
+            color: #e65100;
+        }
+        .role-user {
+            background-color: #f3e5f5;
+            color: #6a1b9a;
+        }
+        .role-data-entry {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        .filter-select {
+            padding: 8px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: white;
+            color: #687F8B;
+            cursor: pointer;
+        }
+        .filter-select:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            margin-top: 32px;
+            flex-wrap: wrap;
+        }
+        .pagination button {
+            background-color: transparent;
+            color: #0da1c7;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 400;
+            border-radius: 6px;
+            transition: all 0.2s;
+            min-width: auto;
+        }
+        .pagination button:hover:not(:disabled) {
+            background-color: #f0f0f0;
+        }
+        .pagination button:disabled {
+            color: #d0d0d0;
+            cursor: not-allowed;
+            background-color: transparent;
+        }
+        .pagination button.page-number {
+            width: 40px;
+            height: 40px;
+            border: 1px solid #e0e0e0;
+            background-color: white;
+            padding: 0;
+            font-size: 14px;
+            font-weight: 400;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .pagination button.page-number:hover:not(:disabled) {
+            background-color: #f9f9f9;
+            border-color: #d0d0d0;
+        }
+        .pagination button.page-number:disabled {
+            color: #d0d0d0;
+            border-color: #e8e8e8;
+            background-color: #fafafa;
+        }
+        .pagination .page-number {
+            padding: 0;
+            border-radius: 50%;
+            cursor: pointer;
+            color: #666;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: none;
+            background-color: transparent;
+            font-weight: 400;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .pagination .page-number:hover:not(.active) {
+            background-color: #f5f5f5;
+        }
+        .pagination .page-number.active {
+            background-color: #5a6c7d;
+            color: white;
+            border-radius: 50%;
+        }
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 10px 24px;
+            border-radius: 25px;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+        .nav-link.active {
+            background-color: transparent;
+            border: 1px solid #0da1c7;
+            color: #0da1c7;
+        }
+        .action-button {
+            padding: 8px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+            min-width: 85px;
+            text-align: center;
+            white-space: nowrap;
+        }
+        .action-button:hover {
+            opacity: 0.8;
+        }
+        .action-button-primary {
+            background-color: #0da1c7;
+            color: white;
+        }
+        .action-button-secondary {
+            background-color: #687F8B;
+            color: white;
+        }
+        .action-button-danger {
+            background-color: #a94442;
+            color: white;
+        }
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-content {
+            background-color: white;
+            border-radius: 8px;
+            padding: 32px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        .modal-title {
+            color: #1c3643;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+        .form-label-modal {
+            color: #687F8B;
+            font-size: 13px;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .form-input-modal {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            background-color: white;
+            color: #1c3643;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+        .form-input-modal:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .form-select-modal {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            background-color: white;
+            color: #1c3643;
+            font-size: 14px;
+            margin-bottom: 16px;
+            cursor: pointer;
+        }
+        .form-select-modal:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .form-grid-modal {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+        .modal-button {
+            padding: 12px 24px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .modal-button:hover {
+            opacity: 0.8;
+        }
+        .modal-button-primary {
+            background-color: #0da1c7;
+            color: white;
+        }
+        .modal-button-secondary {
+            background-color: #687F8B;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Toggle Button (initially hidden) -->
+    <button id="showBuildNotesBtn" 
+            style="position: fixed; top: 100px; right: 20px; z-index: 9999; 
+                   padding: 12px 20px; background: #ffc107; color: #856404; 
+                   border: 2px solid #856404; border-radius: 25px; 
+                   font-size: 14px; font-weight: 700; cursor: pointer; 
+                   box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+                   display: none; transition: all 0.3s;"
+            onclick="toggleBuildNotes(true)">
+        🔨 Show Build Notes
+    </button>
+
+    <!-- Create User Modal -->
+    <div id="createUserModal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 class="modal-title">Create New User</h2>
+            <form>
+                <div class="form-grid-modal">
+                    <div>
+                        <label class="form-label-modal">First Name *</label>
+                        <input type="text" class="form-input-modal" placeholder="First name" required />
+                    </div>
+                    <div>
+                        <label class="form-label-modal">Last Name *</label>
+                        <input type="text" class="form-input-modal" placeholder="Last name" required />
+                    </div>
+                </div>
+
+                <label class="form-label-modal">Email Address *</label>
+                <input type="email" class="form-input-modal" placeholder="email@example.com" required />
+
+                <label class="form-label-modal">Phone Number</label>
+                <input type="tel" class="form-input-modal" placeholder="(555) 123-4567" />
+
+                <label class="form-label-modal">Position</label>
+                <input type="text" class="form-input-modal" placeholder="ex. Broker" />
+
+                <label class="form-label-modal">Qualifications</label>
+                <input type="text" class="form-input-modal" placeholder="ex. SIOR, CCIM" />
+
+                <label class="form-label-modal">Account *</label>
+                <select class="form-select-modal" required>
+                    <option value="">Select Account</option>
+                    <option value="1">Acme Properties LLC</option>
+                    <option value="2">Metro Realty Group</option>
+                    <option value="3">Skyline Investments</option>
+                    <option value="4">Coastal Appraisals Inc</option>
+                </select>
+
+                <label class="form-label-modal">Role</label>
+                <select class="form-select-modal">
+                    <option value="2" selected>User</option>
+                    <option value="3">Administrator</option>
+                    <option value="5">Data Entry</option>
+                    <option value="1">Super Administrator</option>
+                </select>
+                <p style="color: #687F8B; font-size: 11px; margin-top: -12px; margin-bottom: 16px;">Default: User</p>
+
+                <label class="form-label-modal">Status</label>
+                <select class="form-select-modal">
+                    <option value="active" selected>Active</option>
+                    <option value="inactive">Inactive</option>
+                </select>
+
+                <p style="color: #687F8B; font-size: 12px; margin-top: 16px;">A welcome email with password setup link will be sent to the user.</p>
+
+                <div class="modal-buttons">
+                    <button type="button" class="modal-button modal-button-secondary" onclick="closeCreateUserModal()">Cancel</button>
+                    <button type="submit" class="modal-button modal-button-primary">Create User</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        function openCreateUserModal() {
+            document.getElementById('createUserModal').classList.add('active');
+        }
+        function closeCreateUserModal() {
+            document.getElementById('createUserModal').classList.remove('active');
+        }
+        // Close modal when clicking outside
+        document.getElementById('createUserModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeCreateUserModal();
+            }
+        });
+    </script>
+    <!-- Navigation Bar -->
+    <nav class="navbar flex items-center justify-between px-8">
+        <div class="flex items-center">
+            <img src="harken.png" alt="Harken" style="height: 40px; width: auto;" />
+        </div>
+        <div class="flex items-center gap-6">
+            <a href="admin-dashboard.html" class="nav-link">Dashboard</a>
+            <a href="admin-users.html" class="nav-link active">Users</a>
+            <a href="admin-accounts.html" class="nav-link">Accounts & Billing</a>
+            <a href="admin-reports.html" class="nav-link">Reports</a>
+            <a href="admin-support-tickets.html" class="nav-link" style="position: relative;">
+                Support
+                <span style="position: absolute; top: 4px; right: 14px; background-color: #c62828; color: white; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 10px; min-width: 18px; text-align: center;">7</span>
+            </a>
+            <a href="admin-audit-logs.html" class="nav-link">Audit Logs</a>
+            <a href="admin-settings.html" class="nav-link">Settings</a>
+        </div>
+        <div class="flex items-center gap-4">
+            <span class="text-sm">Super Administrator</span>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div style="padding: 35px 50px;">
+        <!-- BUILD NOTES SECTION -->
+        <div id="buildNotesSection" style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 20px; margin-bottom: 32px; border-radius: 4px;">
+            <h3 style="color: #856404; font-size: 16px; font-weight: 700; margin: 0 0 16px 0;">🔨 BUILD NOTES</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 16px;">
+                <div>
+                    <strong style="color: #856404;">Priority Level:</strong> CRITICAL
+                </div>
+                <div>
+                    <strong style="color: #856404;">Recommended Customer Count:</strong> 1+ customers (immediate)
+                </div>
+                <div>
+                    <strong style="color: #856404;">Development Stage:</strong> Phase 1
+                </div>
+                <div>
+                    <strong style="color: #856404;">Estimated Build Time:</strong> 2 weeks
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #856404;">Purpose & Use Case:</strong>
+                <p style="margin: 4px 0 0 0; color: #856404;">User provisioning and management across all customer accounts. Essential for onboarding new users, managing access, and troubleshooting login issues. This is where you create accounts for your customers' employees.</p>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #856404;">Key Features Explained:</strong>
+                <ul style="margin: 4px 0 0 0; color: #856404;">
+                    <li><strong>Create User:</strong> Adds a new user to an account. Sends welcome email with password setup link.</li>
+                    <li><strong>Role Badges:</strong> Super Admin (you), Administrator (account admin), User (standard), Data Entry (limited access). Controls permissions.</li>
+                    <li><strong>Account Assignment:</strong> Each user belongs to one account. Determines what data they can access.</li>
+                    <li><strong>Status (Active/Inactive):</strong> Inactive users can't login but data is preserved. Use for former employees.</li>
+                    <li><strong>Reset Password:</strong> Sends password reset email. Common support request.</li>
+                    <li><strong>Last Login:</strong> Helps identify inactive users who may not need accounts anymore.</li>
+                    <li><strong>Filters:</strong> By account, role, status. Critical when managing 50+ users across multiple accounts.</li>
+                </ul>
+            </div>
+            
+            <div>
+                <strong style="color: #856404;">Implementation Notes:</strong>
+                <p style="margin: 4px 0 0 0; color: #856404;">MUST BUILD FIRST. Users table with foreign key to accounts. Hash passwords (bcrypt). Email via SendGrid/similar. Roles: Start with just 3 roles (Super Admin, Admin, User) - expand later. Delete button for inactive users should be soft delete. Search can be client-side initially. Edit links to admin-user-edit.html.</p>
+            </div>
+            
+            <button onclick="toggleBuildNotes(false)" style="margin-top: 12px; padding: 6px 12px; background: #856404; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">Hide Build Notes</button>
+        </div>
+
+        <!-- Header Section -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+            <h2 class="section-title">USER MANAGEMENT</h2>
+            <div style="display: flex; align-items: center; gap: 12px;">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#0da1c7" viewBox="0 0 24 24">
+                    <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+                </svg>
+                <input type="text" class="search-input" placeholder="Search Users by name or email" />
+                <button onclick="openCreateUserModal()" style="background-color: #0da1c7; color: white; padding: 10px 20px; border-radius: 4px; font-size: 13px; font-weight: 600; border: none; cursor: pointer; transition: opacity 0.2s; white-space: nowrap;" onmouseover="this.style.opacity='0.8'" onmouseout="this.style.opacity='1'">
+                    + Create User
+                </button>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div style="display: flex; gap: 16px; margin-bottom: 24px; align-items: center;">
+            <span style="color: #687F8B; font-size: 14px; font-weight: 600;">FILTERS:</span>
+            <select class="filter-select">
+                <option value="">All Accounts</option>
+                <option value="1">Acme Properties LLC</option>
+                <option value="2">Metro Realty Group</option>
+                <option value="3">Skyline Investments</option>
+            </select>
+            <select class="filter-select">
+                <option value="">All Roles</option>
+                <option value="1">Super Administrator</option>
+                <option value="3">Administrator</option>
+                <option value="2">User</option>
+                <option value="5">Data Entry</option>
+            </select>
+            <select class="filter-select">
+                <option value="">All Status</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+            </select>
+        </div>
+
+        <!-- Users Table -->
+        <div style="background-color: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); overflow: hidden;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Account</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Last Login</th>
+                        <th style="text-align: right; padding-right: 32px;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><a href="admin-user-edit.html" class="link-text">John Doe</a></td>
+                        <td>john.doe@example.com</td>
+                        <td><a href="admin-account-manage.html" class="link-text">Acme Properties LLC</a></td>
+                        <td><span class="role-badge role-admin">Administrator</span></td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td>2 hours ago</td>
+                        <td style="text-align: right; padding-right: 32px;">
+                            <div style="display: flex; gap: 8px; justify-content: flex-end; align-items: center;">
+                                <a href="admin-user-edit.html" class="action-button action-button-primary" style="text-decoration: none;">Edit</a>
+                                <button class="action-button action-button-secondary">Reset PW</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="admin-user-edit.html" class="link-text">Jane Smith</a></td>
+                        <td>jane.smith@example.com</td>
+                        <td><a href="admin-account-manage.html" class="link-text">Metro Realty Group</a></td>
+                        <td><span class="role-badge role-user">User</span></td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td>5 hours ago</td>
+                        <td style="text-align: right; padding-right: 32px;">
+                            <div style="display: flex; gap: 8px; justify-content: flex-end; align-items: center;">
+                                <a href="admin-user-edit.html" class="action-button action-button-primary" style="text-decoration: none;">Edit</a>
+                                <button class="action-button action-button-secondary">Reset PW</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="admin-user-edit.html" class="link-text">Mike Wilson</a></td>
+                        <td>mike.wilson@example.com</td>
+                        <td><a href="admin-account-manage.html" class="link-text">Skyline Investments</a></td>
+                        <td><span class="role-badge role-user">User</span></td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td>1 day ago</td>
+                        <td style="text-align: right; padding-right: 32px;">
+                            <div style="display: flex; gap: 8px; justify-content: flex-end; align-items: center;">
+                                <a href="admin-user-edit.html" class="action-button action-button-primary" style="text-decoration: none;">Edit</a>
+                                <button class="action-button action-button-secondary">Reset PW</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="admin-user-edit.html" class="link-text">Sarah Johnson</a></td>
+                        <td>sarah.j@example.com</td>
+                        <td><a href="admin-account-manage.html" class="link-text">Coastal Appraisals Inc</a></td>
+                        <td><span class="role-badge role-data-entry">Data Entry</span></td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td>3 days ago</td>
+                        <td style="text-align: right; padding-right: 32px;">
+                            <div style="display: flex; gap: 8px; justify-content: flex-end; align-items: center;">
+                                <a href="admin-user-edit.html" class="action-button action-button-primary" style="text-decoration: none;">Edit</a>
+                                <button class="action-button action-button-secondary">Reset PW</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="admin-user-edit.html" class="link-text">Robert Chen</a></td>
+                        <td>robert.chen@example.com</td>
+                        <td><a href="admin-account-manage.html" class="link-text">Acme Properties LLC</a></td>
+                        <td><span class="role-badge role-user">User</span></td>
+                        <td><span class="badge badge-inactive">Inactive</span></td>
+                        <td>2 weeks ago</td>
+                        <td style="text-align: right; padding-right: 32px;">
+                            <div style="display: flex; gap: 8px; justify-content: flex-end; align-items: center;">
+                                <a href="admin-user-edit.html" class="action-button action-button-primary" style="text-decoration: none;">Edit</a>
+                                <button class="action-button action-button-danger">Delete</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="admin-user-edit.html" class="link-text">Emily Davis</a></td>
+                        <td>emily.davis@example.com</td>
+                        <td><a href="admin-account-manage.html" class="link-text">Metro Realty Group</a></td>
+                        <td><span class="role-badge role-admin">Administrator</span></td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td>1 hour ago</td>
+                        <td style="text-align: right; padding-right: 32px;">
+                            <div style="display: flex; gap: 8px; justify-content: flex-end; align-items: center;">
+                                <a href="admin-user-edit.html" class="action-button action-button-primary" style="text-decoration: none;">Edit</a>
+                                <button class="action-button action-button-secondary">Reset PW</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="admin-user-edit.html" class="link-text">David Martinez</a></td>
+                        <td>david.m@example.com</td>
+                        <td><a href="admin-account-manage.html" class="link-text">Skyline Investments</a></td>
+                        <td><span class="role-badge role-user">User</span></td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td>6 hours ago</td>
+                        <td style="text-align: right; padding-right: 32px;">
+                            <div style="display: flex; gap: 8px; justify-content: flex-end; align-items: center;">
+                                <a href="admin-user-edit.html" class="action-button action-button-primary" style="text-decoration: none;">Edit</a>
+                                <button class="action-button action-button-secondary">Reset PW</button>
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><a href="#" class="link-text">Lisa Anderson</a></td>
+                        <td>lisa.anderson@example.com</td>
+                        <td><a href="#" class="link-text">Harken Admin</a></td>
+                        <td><span class="role-badge role-super-admin">Super Admin</span></td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td>30 minutes ago</td>
+                        <td style="text-align: right; padding-right: 32px;">
+                            <div style="display: flex; gap: 8px; justify-content: flex-end; align-items: center;">
+                                <a href="admin-user-edit.html" class="action-button action-button-primary" style="text-decoration: none;">Edit</a>
+                                <button class="action-button action-button-secondary">Reset PW</button>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            <button id="prevBtn" onclick="changePage('prev')" disabled style="font-weight: 400;">Previous</button>
+            <button class="page-number" onclick="changePage('prev')" disabled style="padding: 8px 10px;">‹</button>
+            <span class="page-number active" onclick="goToPage(1)">1</span>
+            <span class="page-number" onclick="goToPage(2)">2</span>
+            <span class="page-number" onclick="goToPage(3)">3</span>
+            <span class="page-number" onclick="goToPage(4)">4</span>
+            <span class="page-number" onclick="goToPage(5)">5</span>
+            <span style="color: #687F8B; padding: 8px 4px;">...</span>
+            <span class="page-number" onclick="goToPage(299)">299</span>
+            <button class="page-number" onclick="changePage('next')" style="padding: 8px 10px;">›</button>
+            <button id="nextBtn" onclick="changePage('next')" style="font-weight: 400;">Next</button>
+        </div>
+
+        <script>
+            let currentPage = 1;
+            const totalPages = 299;
+
+            function goToPage(page) {
+                currentPage = page;
+                updatePagination();
+            }
+
+            function changePage(direction) {
+                if (direction === 'prev' && currentPage > 1) {
+                    currentPage--;
+                } else if (direction === 'next' && currentPage < totalPages) {
+                    currentPage++;
+                }
+                updatePagination();
+            }
+
+            function updatePagination() {
+                const pageNumbers = document.querySelectorAll('.page-number:not(button)');
+                pageNumbers.forEach((el) => {
+                    const pageNum = parseInt(el.textContent);
+                    if (pageNum === currentPage) {
+                        el.classList.add('active');
+                    } else {
+                        el.classList.remove('active');
+                    }
+                });
+
+                const prevButtons = document.querySelectorAll('#prevBtn, button.page-number:first-of-type');
+                prevButtons.forEach(btn => btn.disabled = currentPage === 1);
+                
+                const nextButtons = document.querySelectorAll('#nextBtn, button.page-number:last-of-type');
+                nextButtons.forEach(btn => btn.disabled = currentPage === totalPages);
+
+                console.log('Current page:', currentPage);
+            }
+        </script>
+
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 50px;">
+            <span style="font-weight: 300; font-size: 14px; color: #687F8B;">© 2024, Harken CRE, LLC</span>
+        </div>
+    </div>
+
+    <script>
+        // Build Notes Toggle Function
+        function toggleBuildNotes(show) {
+            const notesSection = document.getElementById('buildNotesSection');
+            const toggleBtn = document.getElementById('showBuildNotesBtn');
+            
+            if (show) {
+                notesSection.style.display = 'block';
+                toggleBtn.style.display = 'none';
+                notesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                notesSection.style.display = 'none';
+                toggleBtn.style.display = 'block';
+            }
+            
+            sessionStorage.setItem('buildNotesVisible', show);
+        }
+
+        // Restore preference on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            const savedPreference = sessionStorage.getItem('buildNotesVisible');
+            if (savedPreference === 'false') {
+                toggleBuildNotes(false);
+            }
+        });
+    </script>
+</body>
+</html>
+

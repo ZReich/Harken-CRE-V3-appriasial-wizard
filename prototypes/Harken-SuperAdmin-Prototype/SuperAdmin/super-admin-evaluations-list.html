@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Evaluations - Harken CRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { font-family: 'Montserrat', sans-serif !important; box-sizing: border-box; }
+        .material-icons { font-family: 'Material Icons' !important; }
+        body { background-color: #f9f9f9; margin: 0; padding: 0; }
+        
+        /* Property Type Tabs */
+        .comp-tabs { background: white; border-bottom: 2px solid #e0e0e0; display: flex; padding: 0 24px; gap: 4px; }
+        .comp-tab { padding: 16px 24px; border: none; background: transparent; color: #687F8B; font-size: 14px; font-weight: 600; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 8px; border-bottom: 3px solid transparent; margin-bottom: -2px; }
+        .comp-tab:hover { color: #0da1c7; background: #f0fbfd; }
+        .comp-tab.active { color: #0da1c7; border-bottom-color: #0da1c7; background: #f0fbfd; }
+        
+        /* Control Bar */
+        .control-bar { background: white; padding: 20px 32px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+        .search-container { position: relative; }
+        .search-container .material-icons { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: #9CA3AF; font-size: 20px; }
+        .search-input { padding: 10px 12px 10px 40px; border: 1px solid #E5E7EB; border-radius: 6px; font-size: 14px; width: 320px; }
+        .search-input:focus { outline: none; border-color: #0da1c7; }
+        
+        .filter-select { padding: 10px 16px; border: 1px solid #E5E7EB; border-radius: 6px; font-size: 14px; color: #374151; background: white; cursor: pointer; }
+        .filter-select:focus { outline: none; border-color: #0da1c7; }
+        
+        .btn-filters { background: white; border: 1px solid #E5E7EB; color: #374151; padding: 10px 20px; border-radius: 6px; font-size: 14px; font-weight: 500; cursor: pointer; display: flex; align-items: center; gap: 6px; transition: all 0.2s; }
+        .btn-filters:hover { background: #F9FAFB; border-color: #0da1c7; color: #0da1c7; }
+        
+        .btn-primary { background: linear-gradient(135deg, #0da1c7 0%, #0891b2 100%); color: white; padding: 10px 24px; border-radius: 6px; font-size: 14px; font-weight: 600; border: none; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s; box-shadow: 0 2px 4px rgba(13, 161, 199, 0.2); }
+        .btn-primary:hover { box-shadow: 0 4px 8px rgba(13, 161, 199, 0.3); transform: translateY(-1px); }
+        .btn-secondary:hover { background: #f0fbfd !important; transform: translateY(-1px); box-shadow: 0 2px 4px rgba(13, 161, 199, 0.15); }
+        
+        /* Table View */
+        .table-container { background: white; margin: 24px 32px; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); overflow: hidden; }
+        .data-table { width: 100%; border-collapse: collapse; }
+        .data-table thead { background: #F9FAFB; border-bottom: 1px solid #E5E7EB; }
+        .data-table th { text-align: left; padding: 14px 20px; font-size: 12px; font-weight: 600; color: #6B7280; text-transform: uppercase; letter-spacing: 0.5px; }
+        .data-table td { padding: 16px 20px; border-bottom: 1px solid #F3F4F6; font-size: 14px; color: #374151; }
+        .data-table tbody tr { transition: background 0.15s; cursor: pointer; }
+        .data-table tbody tr:hover { background: #F9FAFB; }
+        
+        .status-badge { padding: 4px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; display: inline-block; }
+        .status-badge.pending { background: #FEF3C7; color: #92400E; }
+        .status-badge.active { background: #DBEAFE; color: #1E40AF; }
+        .status-badge.completed { background: #D1FAE5; color: #065F46; }
+        .status-badge.canceled { background: #FEE2E2; color: #991B1B; }
+        
+        .property-type-badge { padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 600; background: #F3F4F6; color: #4B5563; }
+        
+        .action-btn { background: none; border: none; color: #6B7280; cursor: pointer; padding: 4px; border-radius: 4px; transition: all 0.2s; }
+        .action-btn:hover { background: #F3F4F6; color: #0da1c7; }
+    </style>
+</head>
+<body>
+    <!-- UNIFIED NAVIGATION COMPONENT -->
+    <style>.unified-navbar{background:url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;background-color:#1c3643!important;height:84px;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 32px;box-shadow:0 2px 8px rgba(0,0,0,0.1);position:sticky;top:0;z-index:1000}.nav-logo{height:40px;width:auto;cursor:pointer}.nav-center{display:flex;align-items:center;gap:8px;flex:1;justify-content:center}.nav-core-features{display:flex;align-items:center;gap:4px;background:rgba(13, 161, 199, 0.08);border-radius:25px;padding:4px 8px;margin-right:16px}.nav-link{color:white;text-decoration:none;padding:10px 20px;border-radius:25px;transition:all 0.2s;border:1px solid transparent;font-weight:500;font-size:14px;white-space:nowrap}.nav-link:hover{background-color:rgba(255,255,255,0.08)}.nav-link.core-feature{font-weight:500;font-size:14px;color:white}.nav-link.core-feature:hover{background-color:rgba(13, 161, 199, 0.2);color:white}.nav-link.core-feature.active{background-color:transparent;border:1px solid #0da1c7;color:#0da1c7;box-shadow:0 2px 4px rgba(13, 161, 199, 0.2)}.nav-link.active{background-color:transparent;border:1px solid #0da1c7;color:#0da1c7}.nav-separator{width:1px;height:24px;background:rgba(255, 255, 255, 0.2);margin:0 8px}.nav-user{display:flex;align-items:center;gap:12px}.nav-user-name{font-size:14px;font-weight:500;color:white}.nav-user-avatar{width:36px;height:36px;border-radius:50%;border:2px solid #0da1c7}</style><nav class="unified-navbar"><img src="assets/harken.png" alt="Harken CRE" class="nav-logo" onclick="window.location.href='super-admin-dashboard.html'"><div class="nav-center"><div class="nav-core-features"><a href="super-admin-comps.html" class="nav-link core-feature" id="nav-comps">COMPS</a><a href="super-admin-appraisals-list.html" class="nav-link core-feature" id="nav-appraisals">APPRAISAL</a><a href="super-admin-evaluations-list.html" class="nav-link core-feature active" id="nav-evaluations">EVALUATION</a></div><div class="nav-separator"></div><a href="super-admin-dashboard.html" class="nav-link" id="nav-dashboard">Dashboard</a><a href="super-admin-users.html" class="nav-link" id="nav-users">Users</a><a href="super-admin-clients.html" class="nav-link" id="nav-clients">Clients</a><a href="super-admin-accounts.html" class="nav-link" id="nav-accounts">Accounts</a><a href="super-admin-reports.html" class="nav-link" id="nav-reports">Reports</a><a href="super-admin-support-tickets.html" class="nav-link" id="nav-support">Support</a><a href="super-admin-audit-logs.html" class="nav-link" id="nav-audit">Audit Logs</a><a href="super-admin-settings.html" class="nav-link" id="nav-settings">Settings</a></div><div class="nav-user"><span class="nav-user-name">Harken Admin</span><img src="https://i.pravatar.cc/150?img=33" alt="User" class="nav-user-avatar"></div></nav>
+
+    <!-- Property Type Tabs -->
+    <div class="comp-tabs">
+        <button class="comp-tab active" data-type="commercial" onclick="switchPropertyType('commercial')">
+            <i class="material-icons" style="font-size: 18px;">business</i>
+            Commercial
+        </button>
+        <button class="comp-tab" data-type="residential" onclick="switchPropertyType('residential')">
+            <i class="material-icons" style="font-size: 18px;">home</i>
+            Residential
+        </button>
+        <button class="comp-tab" data-type="land" onclick="switchPropertyType('land')">
+            <i class="material-icons" style="font-size: 18px;">terrain</i>
+            Land
+        </button>
+    </div>
+
+    <!-- Page Header -->
+    <div style="background: white; padding: 24px 32px; border-bottom: 1px solid #E5E7EB;">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+                <h1 style="font-size: 28px; font-weight: 700; color: #1c3643; margin: 0 0 8px 0;">Evaluations</h1>
+                <p style="font-size: 14px; color: #6B7280; margin: 0;">Property evaluations and opinions of value</p>
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <button class="btn-secondary" onclick="location.href='super-admin-evaluation-templates.html'" style="background: white; color: #0da1c7; border: 1.5px solid #0da1c7; padding: 10px 20px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px; transition: all 0.2s;">
+                    <i class="material-icons" style="font-size: 18px;">description</i>
+                    View Templates
+                </button>
+                <button class="btn-primary" onclick="location.href='../evaluation-wizard-full.html'">
+                    <i class="material-icons" style="font-size: 18px;">add</i>
+                    New Evaluation
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Control Bar -->
+    <div class="control-bar">
+        <div style="display: flex; align-items: center; gap: 12px;">
+            <div class="search-container">
+                <i class="material-icons">search</i>
+                <input type="text" class="search-input" placeholder="Search evaluations by property, address, or client...">
+            </div>
+            
+            <select class="filter-select">
+                <option value="">All Statuses</option>
+                <option value="pending">Pending</option>
+                <option value="active">Active</option>
+                <option value="completed">Completed</option>
+                <option value="canceled">Canceled</option>
+            </select>
+
+            <select class="filter-select">
+                <option value="">Sort By</option>
+                <option value="date-desc">Date (Newest)</option>
+                <option value="date-asc">Date (Oldest)</option>
+                <option value="name-asc">Name (A-Z)</option>
+                <option value="name-desc">Name (Z-A)</option>
+            </select>
+
+            <button class="btn-filters">
+                <i class="material-icons" style="font-size: 16px;">filter_list</i>
+                More Filters
+            </button>
+        </div>
+
+    </div>
+
+    <!-- Evaluations Table -->
+    <div class="table-container">
+        <table class="data-table">
+            <thead>
+                <tr>
+                    <th>Property</th>
+                    <th>Address</th>
+                    <th>Client</th>
+                    <th>Analyst</th>
+                    <th>Type</th>
+                    <th>Status</th>
+                    <th>Created</th>
+                    <th>Last Updated</th>
+                    <th style="text-align: center;">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <!-- COMMERCIAL EVALUATIONS -->
+                <tr data-property-type="commercial" onclick="window.location.href='../evaluation-wizard-full.html'">
+                    <td><strong>Tech Innovation Center</strong></td>
+                    <td>1200 Technology Dr, San Jose, CA</td>
+                    <td>Silicon Valley Properties</td>
+                    <td>Alex Rivera</td>
+                    <td><span class="property-type-badge">Commercial</span></td>
+                    <td><span class="status-badge active">Active</span></td>
+                    <td>Jan 18, 2025</td>
+                    <td>Jan 24, 2025</td>
+                    <td style="text-align: center;">
+                        <button class="action-btn" title="Edit" onclick="event.stopPropagation(); window.location.href='../evaluation-wizard-full.html'"><i class="material-icons" style="font-size: 18px;">edit</i></button>
+                        <button class="action-btn" title="View Report" onclick="event.stopPropagation()"><i class="material-icons" style="font-size: 18px;">description</i></button>
+                        <button class="action-btn" title="More" onclick="event.stopPropagation()"><i class="material-icons" style="font-size: 18px;">more_vert</i></button>
+                    </td>
+                </tr>
+                <tr data-property-type="commercial" onclick="window.location.href='../evaluation-wizard-full.html'">
+                    <td><strong>Lakefront Mixed-Use Development</strong></td>
+                    <td>4500 Lake Shore Dr, Chicago, IL</td>
+                    <td>Urban Development Partners</td>
+                    <td>Jessica Wong</td>
+                    <td><span class="property-type-badge">Commercial</span></td>
+                    <td><span class="status-badge pending">Pending</span></td>
+                    <td>Jan 22, 2025</td>
+                    <td>Jan 23, 2025</td>
+                    <td style="text-align: center;">
+                        <button class="action-btn" title="Edit" onclick="event.stopPropagation(); window.location.href='../evaluation-wizard-full.html'"><i class="material-icons" style="font-size: 18px;">edit</i></button>
+                        <button class="action-btn" title="View Report" onclick="event.stopPropagation()"><i class="material-icons" style="font-size: 18px;">description</i></button>
+                        <button class="action-btn" title="More" onclick="event.stopPropagation()"><i class="material-icons" style="font-size: 18px;">more_vert</i></button>
+                    </td>
+                </tr>
+                <tr data-property-type="commercial" onclick="window.location.href='../evaluation-wizard-full.html'">
+                    <td><strong>Warehouse Distribution Hub</strong></td>
+                    <td>9800 Logistics Way, Dallas, TX</td>
+                    <td>Amazon Fulfillment Services</td>
+                    <td>Marcus Johnson</td>
+                    <td><span class="property-type-badge">Commercial</span></td>
+                    <td><span class="status-badge completed">Completed</span></td>
+                    <td>Jan 10, 2025</td>
+                    <td>Jan 20, 2025</td>
+                    <td style="text-align: center;">
+                        <button class="action-btn" title="Edit" onclick="event.stopPropagation(); window.location.href='../evaluation-wizard-full.html'"><i class="material-icons" style="font-size: 18px;">edit</i></button>
+                        <button class="action-btn" title="View Report" onclick="event.stopPropagation()"><i class="material-icons" style="font-size: 18px;">description</i></button>
+                        <button class="action-btn" title="More" onclick="event.stopPropagation()"><i class="material-icons" style="font-size: 18px;">more_vert</i></button>
+                    </td>
+                </tr>
+                <tr data-property-type="commercial" onclick="window.location.href='../evaluation-wizard-full.html'">
+                    <td><strong>Downtown Hospitality Complex</strong></td>
+                    <td>777 Convention Center Blvd, Las Vegas, NV</td>
+                    <td>MGM Resorts International</td>
+                    <td>Nicole Santos</td>
+                    <td><span class="property-type-badge">Commercial</span></td>
+                    <td><span class="status-badge active">Active</span></td>
+                    <td>Jan 15, 2025</td>
+                    <td>Jan 24, 2025</td>
+                    <td style="text-align: center;">
+                        <button class="action-btn" title="Edit" onclick="event.stopPropagation(); window.location.href='../evaluation-wizard-full.html'"><i class="material-icons" style="font-size: 18px;">edit</i></button>
+                        <button class="action-btn" title="View Report" onclick="event.stopPropagation()"><i class="material-icons" style="font-size: 18px;">description</i></button>
+                        <button class="action-btn" title="More" onclick="event.stopPropagation()"><i class="material-icons" style="font-size: 18px;">more_vert</i></button>
+                    </td>
+                </tr>
+                <tr data-property-type="commercial" onclick="window.location.href='../evaluation-wizard-full.html'">
+                    <td><strong>Suburban Office Park</strong></td>
+                    <td>12000 Corporate Way, Atlanta, GA</td>
+                    <td>CBRE Real Estate</td>
+                    <td>Thomas Lee</td>
+                    <td><span class="property-type-badge">Commercial</span></td>
+                    <td><span class="status-badge pending">Pending</span></td>
+                    <td>Jan 23, 2025</td>
+                    <td>Jan 24, 2025</td>
+                    <td style="text-align: center;">
+                        <button class="action-btn" title="Edit" onclick="event.stopPropagation(); window.location.href='../evaluation-wizard-full.html'"><i class="material-icons" style="font-size: 18px;">edit</i></button>
+                        <button class="action-btn" title="View Report" onclick="event.stopPropagation()"><i class="material-icons" style="font-size: 18px;">description</i></button>
+                        <button class="action-btn" title="More" onclick="event.stopPropagation()"><i class="material-icons" style="font-size: 18px;">more_vert</i></button>
+                    </td>
+                </tr>
+
+                <!-- RESIDENTIAL EVALUATIONS -->
+                <tr data-property-type="residential" onclick="window.location.href='../evaluation-wizard-full.html'" style="display: none;">
+                    <td><strong>Executive Residence</strong></td>
+                    <td>2500 Mountain View Dr, Highlands Ranch, CO</td>
+                    <td>Premier Realty Group</td>
+                    <td>Sarah Martinez</td>
+                    <td><span class="property-type-badge">Residential</span></td>
+                    <td><span class="status-badge active">Active</span></td>
+                    <td>Jan 21, 2025</td>
+                    <td>Jan 25, 2025</td>
+                    <td style="text-align: center;">
+                        <button class="action-btn" title="Edit" onclick="event.stopPropagation(); window.location.href='../evaluation-wizard-full.html'"><i class="material-icons" style="font-size: 18px;">edit</i></button>
+                        <button class="action-btn" title="View Report" onclick="event.stopPropagation()"><i class="material-icons" style="font-size: 18px;">description</i></button>
+                        <button class="action-btn" title="More" onclick="event.stopPropagation()"><i class="material-icons" style="font-size: 18px;">more_vert</i></button>
+                    </td>
+                </tr>
+                <tr data-property-type="residential" onclick="window.location.href='../evaluation-wizard-full.html'" style="display: none;">
+                    <td><strong>Luxury Townhome</strong></td>
+                    <td>1850 Cherry Creek Ln, Denver, CO</td>
+                    <td>Urban Living Investments</td>
+                    <td>David Kim</td>
+                    <td><span class="property-type-badge">Residential</span></td>
+                    <td><span class="status-badge pending">Pending</span></td>
+                    <td>Jan 19, 2025</td>
+                    <td>Jan 22, 2025</td>
+                    <td style="text-align: center;">
+                        <button class="action-btn" title="Edit" onclick="event.stopPropagation(); window.location.href='../evaluation-wizard-full.html'"><i class="material-icons" style="font-size: 18px;">edit</i></button>
+                        <button class="action-btn" title="View Report" onclick="event.stopPropagation()"><i class="material-icons" style="font-size: 18px;">description</i></button>
+                        <button class="action-btn" title="More" onclick="event.stopPropagation()"><i class="material-icons" style="font-size: 18px;">more_vert</i></button>
+                    </td>
+                </tr>
+                <tr data-property-type="residential" onclick="window.location.href='../evaluation-wizard-full.html'" style="display: none;">
+                    <td><strong>Historic Victorian Home</strong></td>
+                    <td>620 Elm Street, Boulder, CO</td>
+                    <td>Heritage Properties LLC</td>
+                    <td>Emily Chen</td>
+                    <td><span class="property-type-badge">Residential</span></td>
+                    <td><span class="status-badge completed">Completed</span></td>
+                    <td>Jan 8, 2025</td>
+                    <td>Jan 17, 2025</td>
+                    <td style="text-align: center;">
+                        <button class="action-btn" title="Edit" onclick="event.stopPropagation(); window.location.href='../evaluation-wizard-full.html'"><i class="material-icons" style="font-size: 18px;">edit</i></button>
+                        <button class="action-btn" title="View Report" onclick="event.stopPropagation()"><i class="material-icons" style="font-size: 18px;">description</i></button>
+                        <button class="action-btn" title="More" onclick="event.stopPropagation()"><i class="material-icons" style="font-size: 18px;">more_vert</i></button>
+                    </td>
+                </tr>
+                <tr data-property-type="residential" onclick="window.location.href='../evaluation-wizard-full.html'" style="display: none;">
+                    <td><strong>Modern Condo Unit</strong></td>
+                    <td>3200 Larimer St #405, Denver, CO</td>
+                    <td>Downtown Living Corp</td>
+                    <td>Michael Patel</td>
+                    <td><span class="property-type-badge">Residential</span></td>
+                    <td><span class="status-badge active">Active</span></td>
+                    <td>Jan 24, 2025</td>
+                    <td>Jan 25, 2025</td>
+                    <td style="text-align: center;">
+                        <button class="action-btn" title="Edit" onclick="event.stopPropagation(); window.location.href='../evaluation-wizard-full.html'"><i class="material-icons" style="font-size: 18px;">edit</i></button>
+                        <button class="action-btn" title="View Report" onclick="event.stopPropagation()"><i class="material-icons" style="font-size: 18px;">description</i></button>
+                        <button class="action-btn" title="More" onclick="event.stopPropagation()"><i class="material-icons" style="font-size: 18px;">more_vert</i></button>
+                    </td>
+                </tr>
+
+                <!-- LAND EVALUATIONS -->
+                <tr data-property-type="land" onclick="window.location.href='../evaluation-wizard-full.html'" style="display: none;">
+                    <td><strong>Ranch Land Parcel</strong></td>
+                    <td>15800 County Road 47, Castle Rock, CO</td>
+                    <td>Rocky Mountain Land Trust</td>
+                    <td>Jennifer Anderson</td>
+                    <td><span class="property-type-badge">Land</span></td>
+                    <td><span class="status-badge active">Active</span></td>
+                    <td>Jan 16, 2025</td>
+                    <td>Jan 23, 2025</td>
+                    <td style="text-align: center;">
+                        <button class="action-btn" title="Edit" onclick="event.stopPropagation(); window.location.href='../evaluation-wizard-full.html'"><i class="material-icons" style="font-size: 18px;">edit</i></button>
+                        <button class="action-btn" title="View Report" onclick="event.stopPropagation()"><i class="material-icons" style="font-size: 18px;">description</i></button>
+                        <button class="action-btn" title="More" onclick="event.stopPropagation()"><i class="material-icons" style="font-size: 18px;">more_vert</i></button>
+                    </td>
+                </tr>
+                <tr data-property-type="land" onclick="window.location.href='../evaluation-wizard-full.html'" style="display: none;">
+                    <td><strong>Commercial Development Site</strong></td>
+                    <td>Highway 85 & Main Street, Littleton, CO</td>
+                    <td>Denver Metro Developers</td>
+                    <td>Robert Williams</td>
+                    <td><span class="property-type-badge">Land</span></td>
+                    <td><span class="status-badge pending">Pending</span></td>
+                    <td>Jan 20, 2025</td>
+                    <td>Jan 21, 2025</td>
+                    <td style="text-align: center;">
+                        <button class="action-btn" title="Edit" onclick="event.stopPropagation(); window.location.href='../evaluation-wizard-full.html'"><i class="material-icons" style="font-size: 18px;">edit</i></button>
+                        <button class="action-btn" title="View Report" onclick="event.stopPropagation()"><i class="material-icons" style="font-size: 18px;">description</i></button>
+                        <button class="action-btn" title="More" onclick="event.stopPropagation()"><i class="material-icons" style="font-size: 18px;">more_vert</i></button>
+                    </td>
+                </tr>
+                <tr data-property-type="land" onclick="window.location.href='../evaluation-wizard-full.html'" style="display: none;">
+                    <td><strong>Residential Subdivision Lot</strong></td>
+                    <td>Lot 23, Mountain Ridge Estates, Parker, CO</td>
+                    <td>Sunrise Homes</td>
+                    <td>Lisa Thompson</td>
+                    <td><span class="property-type-badge">Land</span></td>
+                    <td><span class="status-badge completed">Completed</span></td>
+                    <td>Jan 12, 2025</td>
+                    <td>Jan 19, 2025</td>
+                    <td style="text-align: center;">
+                        <button class="action-btn" title="Edit" onclick="event.stopPropagation(); window.location.href='../evaluation-wizard-full.html'"><i class="material-icons" style="font-size: 18px;">edit</i></button>
+                        <button class="action-btn" title="View Report" onclick="event.stopPropagation()"><i class="material-icons" style="font-size: 18px;">description</i></button>
+                        <button class="action-btn" title="More" onclick="event.stopPropagation()"><i class="material-icons" style="font-size: 18px;">more_vert</i></button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        function filterEvaluationsByPropertyType(type) {
+            // Get all table rows with data-property-type attribute
+            const rows = document.querySelectorAll('tbody tr[data-property-type]');
+            
+            rows.forEach(row => {
+                const rowType = row.getAttribute('data-property-type');
+                if (rowType === type) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        function switchPropertyType(type) {
+            // Remove active class from all tabs
+            document.querySelectorAll('.comp-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            // Add active class to selected tab
+            document.querySelector(`[data-type="${type}"]`).classList.add('active');
+            
+            // Store preference
+            localStorage.setItem('activePropertyType', type);
+            
+            // Filter evaluations
+            filterEvaluationsByPropertyType(type);
+            
+            console.log('Switched to property type:', type);
+        }
+
+        // Restore saved property type and filter on page load
+        window.addEventListener('load', function() {
+            const savedType = localStorage.getItem('activePropertyType') || 'commercial';
+            
+            // Update active tab
+            document.querySelectorAll('.comp-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            const activeTab = document.querySelector(`[data-type="${savedType}"]`);
+            if (activeTab) {
+                activeTab.classList.add('active');
+            }
+            
+            // Filter evaluations
+            filterEvaluationsByPropertyType(savedType);
+        });
+    </script>
+</body>
+</html>

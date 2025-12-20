@@ -1,0 +1,77 @@
+<div id="exhibits" class="modal">
+    <input type="hidden" name="image-name">
+    <div class="modal-content">
+        <div class="gallery">
+            <div class="carousel carousel-slider" data-exhibits>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+        <a href="#!" class="modal-insert waves-effect waves-green btn-flat">Insert</a>
+    </div>
+</div>
+
+<div id="arrows" class="modal">
+    <input type="hidden" name="arrow-name">
+    <div class="modal-content">
+        <div class="arrow-gallery">
+            <div id="arrow-carousel" class="carousel carousel-slider" data-arrows>
+                <a class="carousel-item" href="#one!" data-name="up">
+                    <img src="/images/up.svg">
+                </a>
+                <a class="carousel-item" href="#two!" data-name="down">
+                    <img src="/images/down.svg">
+                </a>
+                <a class="carousel-item" href="#three!" data-name="left">
+                    <img src="/images/left.svg">
+                </a>
+                <a class="carousel-item" href="#four!" data-name="right">
+                    <img src="/images/right.svg">
+                </a>
+                <a class="carousel-item" href="#five!" data-name="up_down">
+                    <img src="/images/up_down.svg">
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+        <a href="#!" class="modal-arrow-insert waves-effect waves-green btn-flat">Insert</a>
+    </div>
+</div>
+
+<div id="text-inputs" class="modal">
+    <input type="hidden" name="text-name">
+    <input type="hidden" name="comparable-id">
+    <div class="modal-content" style="height: 300px;">
+        <div class="wysiwyg" style="height: 100px;">
+            <label class="text-input-label">Text Input</label>
+            <div id="text-input" class="textarea" style="height: 200px;"></div>
+            <div class="input-field col s12 required">
+                <textarea
+                    name="text-input-value"
+                    class="hide"
+                    data-length="1000"
+                    value=""
+                    data-text-key="">
+                </textarea>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <a href="#!" class="modal-close waves-effect waves-green btn-flat">Close</a>
+        <a href="#!" class="modal-save waves-effect waves-green btn-flat">Insert</a>
+    </div>
+</div>
+
+<div class="tap-target" data-target="menu"></div>
+
+<div id="print-bov">
+    <button type="button" class="btn" title="Download BOV by clicking here.">
+        <i class="fa fa-print" aria-hidden="true"></i>
+    </button>
+</div>
+</div>
+</body>
+</html>

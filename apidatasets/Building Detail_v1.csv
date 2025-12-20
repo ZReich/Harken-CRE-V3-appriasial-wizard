@@ -1,0 +1,106 @@
+﻿,Building Detail_v1_03242020,,,,,
+,"CoreLogic, Inc.",,,,,
+,"© 2020 CoreLogic, Inc. [NYSE:CLGX]  All Rights Reserved.  Proprietary.",,,,,
+,Confidential information.,,,,,
+,,,,,,
+FIELD #,FIELD NAME,TYPE,TABLE,MAX LENGTH,DECIMAL,FIELD DEFINITION
+CLIP,,,,,,
+1,CLIP,AlphaNumeric,,10,,Unique identification number assigned to each property.
+2,PREVIOUS CLIP,AlphaNumeric,,10,,Previous CLIP (identification number for properties) which has had a change in CLIP.
+BUILDING ID,,,,,,
+3,FIPS CODE,AlphaNumeric,,5,,Federal Information Processing Standards codes used nationally to numerically identify a specific county or political jurisdiction.
+4,APN (PARCEL NUMBER UNFORMATTED),AlphaNumeric,,45,,Assessor's Parcel Number in an unformatted form. This is most often used by the county and others as a unique key.
+5,APN SEQUENCE NUMBER,Numeric,,3,,This internal sequence number is used to ensure uniqueness of the Assessor's Parcel Number.
+6,COMPOSITE PROPERTY LINKAGE KEY,AlphaNumeric,,53,,"Unique property key, which can be used to link to other files associated with property (used in Legacy Product).   This is a fixed-width field, with the APN component padded with blanks out to 45 characters within the composite key."
+7,BUILDING SEQUENCE NUMBER,AlphaNumeric,,5,,This internal sequence number is used to ensure uniqueness of the Building Key.
+8,COMPOSITE BUILDING LINKAGE KEY,AlphaNumeric,,58,,"Unique building key.  This is a fixed-width field, with the APN component padded with blanks out to 45 characters within the composite key."
+9,BUILDING NAME,AlphaNumeric,,60,,County provided name for the building. Prevalent in commercial or multi-family buildings.
+10,BUILDING NUMBER,AlphaNumeric,,10,,County provided number of the building that uniquely identifies the building from others on the same parcel.
+BUILDING STRUCTURE - GENERAL,,,,,,
+11,BUILDING SECTION NUMBER,AlphaNumeric,,10,,County provided building record section indicator that represents one section of the building only. This is only found in large commercial and multi-family buildings that are divided into multiple sections. Example: West Wing and East Wing.
+12,BUILDING CODE,AlphaNumeric,BLDG,3,,"The primary building type (e.g., Bowling Alley, Supermarket)."
+13,BUILDING CLASS CODE,AlphaNumeric,,10,,"Standard Fire Insurance Building Classification codes: (A - Fireproof Steel, B - Reinforced Concrete, C- Concrete, D- Wood or Steel Frame, S - Incombustible). These are specific codes that we directly capture and not derived from other data."
+14,BUILDING IMPROVEMENT CODE,AlphaNumeric,IMPRV,3,,"The primary improvement type (e.g., Grain Silo, Hanger, Marina)."
+15,BUILDING IMPROVEMENT CONDITION CODE,AlphaNumeric,COND,3,,"This represents the physical condition of the main improvement (e.g., Good, Fair, Under Construction)."
+16,BUILDING IMPROVEMENT VALUE,Numeric,,9,,"Value of building improvement. Value is based on county-assessed, market or appraised improvement value as provided by the county."
+17,GRADE CODE,AlphaNumeric,GRADE,3,,"County provided code for the grading of the property. Generally the grade description is an overall category of quality and the broad classification used is fair, average or very good."
+18,BUILDING QUALITY CODE,AlphaNumeric,QUAL,3,,"Type of construction quality of building (e.g., excellent, economical)."
+19,BUILDING STYLE CODE,AlphaNumeric,STYLE,3,,"Type of building style (e.g., Colonial, Cape Code, Bungalow)."
+20,REMODEL CODE,AlphaNumeric,RMODL,5,,"County provided code describing the nature of the remodeling that was applied to the building. During remodeling the outside walls are not changed and only internal walls, floors, ceilings and finishing's are redone."
+21,FIRE INSURANCE CODE,AlphaNumeric,,3,,County provided code that identifies the type of building classification for fire insurance purposes. Mostly used for commercial or multi-family buildings. Values: A = Fireproof Steel; B = Reinforced Concrete; C = Concrete; D = Wood or Steel Frame; S = Incombustible
+22,FIRE SPRINKLER CODE,AlphaNumeric,SPRKL,3,,CoreLogic standardized code that identifies the type of sprinkler system associated with the building. This is most commonly used in commercial buildings.
+23,NUMBER OF RESIDENTIAL UNITS,Numeric,,5,,Total separate apartments or units in a multi-family residential building.
+24,NUMBER OF COMMERCIAL UNITS,Numeric,,4,,County provided total separate business units located within a commercial building.
+25,NUMBER OF VACANT UNITS,Numeric,,2,,County provided number of vacant units in the building.
+26,YEAR BUILT,Numeric,,4,,This is the construction year of the original building.
+27,EFFECTIVE YEAR BUILT,Numeric,,4,,"This is the first year the building was assessed with its current components (e.g., a building is originally constructed in 1960 and a bedroom and bath was added to the building in 1974. The Year Built would be 1960 and the Effective Year Built would be 1974)."
+28,BUILDING COMMENTS,AlphaNumeric,,240,,Additional building description information.
+BUILDING STRUCTURE - AREA,,,,,,
+29,UNIVERSAL BUILDING SQUARE FEET,Numeric,,9,,"The Building Square Footage that reflects the most accurate available for use in assessments or comparables (e.g., Living, Adjusted, Gross)."
+30,UNIVERSAL BUILDING SQUARE FEET SOURCE CODE,AlphaNumeric,,1,,"The codes appearing in this field indicates the source used to populate the UNIVERSAL BUILDING SQUARE FEET field. A=ADJUSTED, B=TOTAL, D=GROUND FLOOR, G=GROSS, L=LIVING, M=BASE/MAIN"
+31,BUILDING SQUARE FEET,Numeric,,9,,The size of the building in square feet. This field is most commonly populated as an aggregate total when a county does not differentiate between living and non-living areas.
+32,ADJUSTED GROSS SQUARE FEET,Numeric,,10,,"This is the square footage used by the county or local taxing / assessment authority to determine Improvement Value. This figure is typically 100% of the living area, plus lower percentage of non-living area."
+33,BUILDING GROSS SQUARE FEET,Numeric,,10,,This is the square footage for the entire building. Typically this represents all square feet under the roof.
+34,LIVING SQUARE FEET,Numeric,,9,2,"This is the area of a building that is used for general living. This is typically the area of a building that is heated or air conditioned and generally does not include Garage, Porch or Unfinished Basement Square Footage values."
+35,ABOVE GRADE SQUARE FEET,Numeric,,12,3,Square footage (sq. ft.) of above ground line or grade of the earth for listed property.
+36,GROUND FLOOR SQUARE FEET,Numeric,,10,,Square footage of the part of the building which is level with the ground (typically the front of the building). This is generally above the basement(s) and below the second floor.
+37,BASEMENT SQUARE FEET,Numeric,,10,,This is the total square footage associated with the Basement portion of a building. This would include both finished and unfinished areas.
+38,FINISHED BASEMENT SQUARE FEET,Numeric,,11,3,Square footage of below grade area improved for occupancy.
+39,UNFINISHED BASEMENT SQUARE FEET,Numeric,,11,3,Square footage of below grade area not improved for occupancy.
+40,GARAGE OR PARKING SQUARE FEET,Numeric,,13,3,This is the total square footage of the primary garage or parking area.
+BUILDING STRUCTURE - EXTERIOR,,,,,,
+41,CONSTRUCTION TYPE CODE,AlphaNumeric,CNSTR,3,,"The primary method of construction (e.g., Steel / Glass, Concrete Block, Log)."
+42,FOUNDATION TYPE CODE,AlphaNumeric,FOUND,3,,"The type of foundation (e.g., Continuous Footing, Pier, Mud Sill)."
+43,FRAME CODE,AlphaNumeric,FRAME,3,,"The type of wall framing used (e.g., Bar Joist, Reinforced Concrete, Flexicore)."
+44,EXTERIOR WALL CODE,AlphaNumeric,EXTNW,3,,"The type and/or finish of the exterior walls (e.g., Vinyl Siding, Brick Veneer, Frame / Stone)."
+45,PORCH CODE,AlphaNumeric,PORCH,3,,CoreLogic standardized code that indicates the type of porch present in the building. Usually an extension of the building. Can be constructed of wood and built with a roof to cover the porch area. Porches usually have attached stairs (steps) leading to a walkway or path. Example: B00 = slab.
+46,NUMBER OF PORCHES,Numeric,,2,,County provided number indicating how many porches the building includes.
+47,PATIO TYPE CODE,AlphaNumeric,PATIO,3,,"CoreLogic standardized code that indicates the type of patio present in the building. Usually adjoining the building and can be constructed of concrete, cement, stone, brick pavers or a combination. Typically does not have a roof covering. Example: 10B = brick patio."
+48,NUMBER OF PATIOS,Numeric,,2,,County provided number indicating how many patio areas the building includes.
+49,GARAGE CODE,AlphaNumeric,GRGCD,3,,"Type of garage or carport present (e.g., Attached Finished, Enclosed Carport, Basement Garage)."
+50,NUMBER OF PARKING SPACES,Numeric,,5,,This represents the total number of parking spaces or car capacity associated with the garage or parking type.
+51,PARKING TYPE CODE,AlphaNumeric,PARKG,3,,"Type of parking found on the parcel. This is typically commercial or communal in nature (e.g., Condos)."
+52,POOL CODE,AlphaNumeric,POOL,3,,"Type of pool, construction or pool amenities (e.g., Kidney, Gunite, Vinyl, Jacuzzi, Heated)."
+53,ROOF COVER CODE,AlphaNumeric,RFCO,3,,"Type of roof covering (e.g., Clay Tile, Aluminum, Shake)."
+54,ROOF TYPE CODE,AlphaNumeric,RFCO,3,,"Type of roof (e.g., Gambrel, Gable, Flat, Mansard)."
+BUILDING STRUCTURE - ROOMS,,,,,,
+55,NUMBER OF ROOMS,Numeric,,4,,Total number of rooms as supplied by the source.
+56,NUMBER OF BEDROOMS,Numeric,,4,,CoreLogic calculated total bedrooms for the buildings.
+57,NUMBER OF BATHROOMS,Numeric,,7,2,"Total number of rooms that are Bathrooms if this is the method of establishing bathroom property characterized by the source.  Source values are whole numbers, although field allows for up to 2 decimal places in data deliveries."
+58,NUMBER OF FULL BATHS,Numeric,,4,,Total number of full bath rooms as supplied by source. If source does not break out full versus partial Baths -field will be null in this case.
+59,NUMBER OF HALF BATHS,Numeric,,2,,Total number of half bath rooms (typically comprised of a sink & toilet) as supplied by source. If source does not break out full versus partial Baths – field will be null in this case.
+60,NUMBER OF QUARTER BATHS,Numeric,,2,,"Total number of quarter bath rooms (typically comprised only of a sink, as found in many laundry rooms) as supplied by source. If source does not break out full versus partial Baths – field will be null in this case."
+61,NUMBER OF THREE QUARTER BATHS,Numeric,,2,,"Total number of three-quarter bath rooms (typically comprised of a sink, toilet & shower stall) as supplied by source.  If source does not break out full versus partial Baths – field will be null in this case."
+62,NUMBER OF KITCHENS,AlphaNumeric,,4,,Total number of kitchens contained in the primary building.
+63,NUMBER OF FAMILY ROOMS,AlphaNumeric,,9,,Total number of family rooms contained in the primary building.
+64,NUMBER OF LIVING ROOMS,AlphaNumeric,,9,,Total number of living rooms contained in the primary building.
+65,NUMBER OF BASEMENT ROOMS,Numeric,,3,,"County provided total rooms located in the basement. Most jurisdictions count any room with a door, with the exception of bathrooms."
+BUILDING STRUCTURE - LEVELS,,,,,,
+66,STORIES NUMBER,Numeric,,6,2,Number of stories associated with the building.
+67,STORIES CODE,AlphaNumeric,STORY,3,,"Type / number of stories (e.g., Split Foyer, Tri Level, 2 Story)."
+68,FLOOR NUMBER,AlphaNumeric,,3,,County-specified data that identifies the number of a specific floor or level of a building. Generally used for Condominium units. Example: 59
+BUILDING STRUCTURE - INTERIOR,,,,,,
+69,FLOOR TYPE CODE,AlphaNumeric,FLRCO,3,,"The type of floor construction (e.g., Concrete, Plywood)."
+70,FLOOR COVER CODE,AlphaNumeric,FLRCO,3,,CoreLogic standardized description for the type of floor covering within the building.
+71,NUMBER OF DORMER WINDOWS,Numeric,,2,,County provided number of dormer windows that rise above the roof line of a sloping roof for the building. Populated mostly in Maryland and Virginia.
+72,NUMBER OF BATH FIXTURES,Numeric,,5,,"The total number of bathroom fixtures (typically a full bath would have 4 fixtures - 1 = sink, 1 = toilet, 1 = bathtub, 1 = shower head)."
+73,INTERIOR WALL CODE,AlphaNumeric,INTWL,3,,CoreLogic standardized code that identifies the type of interior wall construction of a building. Example DRY = Drywall used for interior wall.
+74,FIREPLACE INDICATOR,AlphaNumeric,,1,,"This field is populated with a ""Y"" if a fireplace is located within the building."
+75,FIREPLACE NUMBER,Numeric,,3,,This represents the number of fireplace openings located within the building.
+76,FIREPLACE TYPE CODE,AlphaNumeric,FIREP,3,,"The type of fireplace. If more than one fireplace, this field reflects the first/main building."
+77,BASEMENT TYPE CODE,AlphaNumeric,BSMT,3,,The standardized basement type.
+78,BASEMENT FINISH CODE,AlphaNumeric,BSMTF,3,,The standardized code that identifies the basement's degree of completion.
+79,BASEMENT FINISH PERCENT,Numeric,,5,,County percentage of basement finished.
+80,PLUMBING CODE,AlphaNumeric,PLUMB,5,,CoreLogic standardized code that indicates the type of plumbing present in the building. Example: PST = standard.
+81,AIR CONDITIONING CODE,AlphaNumeric,AC,3,,"The type of air conditioning method used to cool the building (e.g., Central, Wall Unit, Evaporative)."
+82,HEATING TYPE CODE,AlphaNumeric,HEAT,3,,"Type or method of heating (e.g., Hot Water, Heat Pump, Baseboard, Radiant)."
+83,CEILING CODE,AlphaNumeric,CEILG,3,,CoreLogic standardized code that identifies the type of ceiling in the building. Example: BBD = bead board.
+84,CEILING HEIGHT,Numeric,,3,,County provided height in feet of the ceiling in the building.
+85,ATTIC CODE,AlphaNumeric,ATTIC,3,,CoreLogic standardized code that identifies the attic type associated with the building. Example: LFT = loft.
+86,ELEVATOR INDICATOR,AlphaNumeric,,1,,"County provided indicator showing that the building has an elevator. Mostly used in commercial and multi-family buildings. 
+Values:
+Y = Elevator in building
+null or N = No elevator"
+87,NUMBER OF PASSENGER ELEVATORS,Numeric,,3,,"County provided total elevators in the building designated to transport passengers. Mostly used in commercial, multi-purpose, and multi-family buildings."
+ACTION,,,,,,
+88,RECORD ACTION INDICATOR,AlphaNumeric,,1,,"A CoreLogic system generated indicator used to advise customers how to process records contained in delta files.  Values are: A = ADD, Customer will do an UPSERT, U = UPDATE, Customer will do an UPSERT, D = DELETE, Customer will do a DELETE, BLANK = No Action Required.  BLANK is used for Initial Delivery Files or Refresh Files."

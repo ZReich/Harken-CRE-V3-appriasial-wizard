@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>White-Label Settings - Harken CRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            font-family: 'Montserrat', sans-serif !important;
+        }
+        body {
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background: url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;
+            background-color: #1c3643 !important;
+            max-height: 84px;
+            height: 84px;
+            color: #fff;
+        }
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 10px 24px;
+            border-radius: 25px;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+        .nav-link.active {
+            background-color: transparent;
+            border: 1px solid #0da1c7;
+            color: #0da1c7;
+        }
+        .section-title {
+            font-size: 23px;
+            font-weight: 600;
+            color: #1c3643;
+        }
+        .action-button {
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .action-button:hover {
+            opacity: 0.8;
+        }
+        .action-button-primary {
+            background-color: #0da1c7;
+            color: white;
+        }
+        .action-button-secondary {
+            background-color: #687F8B;
+            color: white;
+        }
+        .action-button-small {
+            padding: 6px 12px;
+            font-size: 11px;
+        }
+        table {
+            width: 100%;
+            background-color: white;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        th {
+            padding: 16px 20px;
+            text-align: left;
+            color: #687F8B;
+            font-size: 13px;
+            font-weight: 600;
+            border-bottom: 2px solid #e0e0e0;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        td {
+            padding: 18px 20px;
+            color: #687F8B;
+            font-size: 13px;
+            font-weight: 500;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-block;
+            color: white;
+        }
+        .status-active {
+            background-color: #2e7d32;
+        }
+        .status-pending {
+            background-color: #f57c00;
+        }
+        .status-failed {
+            background-color: #c62828;
+        }
+        .link-text {
+            color: #0da1c7;
+            text-decoration: none;
+        }
+        .link-text:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <!-- UNIFIED NAVIGATION COMPONENT -->
+    <style>.unified-navbar{background:url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;background-color:#1c3643!important;height:84px;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 32px;box-shadow:0 2px 8px rgba(0,0,0,0.1);position:sticky;top:0;z-index:1000}.nav-logo{height:40px;width:auto;cursor:pointer}.nav-center{display:flex;align-items:center;gap:8px;flex:1;justify-content:center}.nav-core-features{display:flex;align-items:center;gap:4px;background:rgba(13, 161, 199, 0.08);border-radius:25px;padding:4px 8px;margin-right:16px}.nav-link{color:white;text-decoration:none;padding:10px 20px;border-radius:25px;transition:all 0.2s;border:1px solid transparent;font-weight:500;font-size:14px;white-space:nowrap}.nav-link:hover{background-color:rgba(255,255,255,0.08)}.nav-link.core-feature{font-weight:500;font-size:14px;color:white}.nav-link.core-feature:hover{background-color:rgba(13, 161, 199, 0.2);color:white}.nav-link.core-feature.active{background-color:transparent;border:1px solid #0da1c7;color:#0da1c7;box-shadow:0 2px 4px rgba(13, 161, 199, 0.2)}.nav-link.active{background-color:transparent;border:1px solid #0da1c7;color:#0da1c7}.nav-separator{width:1px;height:24px;background:rgba(255, 255, 255, 0.2);margin:0 8px}.nav-user{display:flex;align-items:center;gap:12px}.nav-user-name{font-size:14px;font-weight:500;color:white}.nav-user-avatar{width:36px;height:36px;border-radius:50%;border:2px solid #0da1c7}.property-tabs-container{background:white;border-bottom:2px solid #e0e0e0;display:none;padding:0 32px}.property-tabs-container.show{display:flex}.property-tab{padding:16px 24px;border:none;background:transparent;color:#687F8B;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:8px;border-bottom:3px solid transparent;margin-bottom:-2px;font-family:'Montserrat', sans-serif}.property-tab:hover{color:#0da1c7;background:#f0fbfd}.property-tab.active{color:#0da1c7;border-bottom-color:#0da1c7;background:#f0fbfd}</style><nav class="unified-navbar"><img src="assets/harken.png" alt="Harken CRE" class="nav-logo" onclick="window.location.href='super-admin-dashboard.html'"><div class="nav-center"><div class="nav-core-features"><a href="super-admin-comps.html" class="nav-link core-feature" id="nav-comps">COMPS</a><a href="super-admin-appraisals-list.html" class="nav-link core-feature" id="nav-appraisals">APPRAISAL</a><a href="evaluation-wizard-full.html" class="nav-link core-feature" id="nav-evaluations">EVALUATION</a></div><div class="nav-separator"></div><a href="super-admin-dashboard.html" class="nav-link" id="nav-dashboard">Dashboard</a><a href="super-admin-users.html" class="nav-link" id="nav-users">Users</a><a href="super-admin-clients.html" class="nav-link" id="nav-clients">Clients</a><a href="super-admin-accounts.html" class="nav-link" id="nav-accounts">Accounts</a><a href="super-admin-reports.html" class="nav-link" id="nav-reports">Reports</a><a href="super-admin-support-tickets.html" class="nav-link" id="nav-support">Support</a><a href="super-admin-audit-logs.html" class="nav-link" id="nav-audit">Audit Logs</a><a href="super-admin-settings.html" class="nav-link" id="nav-settings">Settings</a></div><div class="nav-user"><span class="nav-user-name">Harken Admin</span><img src="https://i.pravatar.cc/150?img=33" alt="User" class="nav-user-avatar"></div></nav><div class="property-tabs-container" id="propertyTabsContainer"><button class="property-tab active" data-type="commercial" onclick="switchPropertyType('commercial')"><span style="font-size: 18px;">🏢</span>Commercial</button><button class="property-tab" data-type="residential" onclick="switchPropertyType('residential')"><span style="font-size: 18px;">🏠</span>Residential</button><button class="property-tab" data-type="land" onclick="switchPropertyType('land')"><span style="font-size: 18px;">🏞️</span>Land</button></div><script>(function(){const currentPage=window.location.pathname.split('/').pop()||'super-admin-dashboard.html';const showPropertyTabsOn=['comps-premium-with-clustering.html','super-admin-appraisals-list.html','evaluation-wizard-full.html'];if(showPropertyTabsOn.some(page=>currentPage.includes(page)||currentPage.includes('comps-')||currentPage.includes('appraisal-')||currentPage.includes('evaluation-'))){document.getElementById('propertyTabsContainer').classList.add('show');}const navMapping={'super-admin-dashboard.html':'nav-dashboard','comps-premium-with-clustering.html':'nav-comps','super-admin-appraisals-list.html':'nav-appraisals','evaluation-wizard-full.html':'nav-evaluations','super-admin-users.html':'nav-users','super-admin-user-edit.html':'nav-users','super-admin-clients.html':'nav-clients','super-admin-accounts.html':'nav-accounts','super-admin-account-manage.html':'nav-accounts','super-admin-account-amenities.html':'nav-accounts','super-admin-account-report-templates.html':'nav-accounts','super-admin-reports.html':'nav-reports','super-admin-support-tickets.html':'nav-support','super-admin-support-create-ticket.html':'nav-support','super-admin-support-ticket-detail.html':'nav-support','super-admin-audit-logs.html':'nav-audit','super-admin-settings.html':'nav-settings','super-admin-settings-billing.html':'nav-settings','super-admin-settings-amenities.html':'nav-settings','super-admin-settings-white-label.html':'nav-settings'};for(const[page,navId]of Object.entries(navMapping)){if(currentPage.includes(page)){const navElement=document.getElementById(navId);if(navElement){navElement.classList.add('active');}break;}}})();function switchPropertyType(type){document.querySelectorAll('.property-tab').forEach(tab=>{tab.classList.remove('active');});document.querySelector(`[data-type="${type}"]`).classList.add('active');localStorage.setItem('activePropertyType',type);console.log('Switched to property type:',type);}window.addEventListener('load',function(){const savedType=localStorage.getItem('activePropertyType');if(savedType){switchPropertyType(savedType);}});</script>
+
+    <!-- Main Content -->
+    <div style="padding: 35px 50px;">
+        <!-- Header Section -->
+        <div style="margin-bottom: 32px;">
+            <div style="margin-bottom: 8px;">
+                <a href="super-admin-settings.html" style="color: #0da1c7; text-decoration: none; font-size: 14px;">← Back to Settings</a>
+            </div>
+            <h2 class="section-title">WHITE-LABEL DOMAIN MANAGEMENT</h2>
+            <p style="color: #687F8B; font-size: 14px; margin-top: 8px;">Manage custom domains and SSL certificates for all customer accounts</p>
+        </div>
+
+        <!-- Info Banner -->
+        <div style="background: #e0f2fe; border-left: 4px solid #0da1c7; padding: 20px; margin-bottom: 32px; border-radius: 4px;">
+            <h3 style="color: #0c4a6e; font-size: 14px; font-weight: 600; margin: 0 0 12px 0;">🌐 How Custom Domains Work</h3>
+            <p style="color: #0c4a6e; font-size: 13px; line-height: 1.7; margin: 0;">
+                Customers on the Enterprise plan can use their own domain (e.g., <code>portal.rovemanagement.com</code>) instead of the default subdomain. 
+                They create a CNAME record pointing to <code>account-slug.harken.app</code>, then verify it here. 
+                Harken automatically provisions SSL certificates and enables routing. This allows complete white-labeling where end users never see "Harken" branding.
+            </p>
+        </div>
+
+        <!-- Custom Domains Table -->
+        <div style="background-color: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); overflow: hidden;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Account</th>
+                        <th>Custom Domain</th>
+                        <th>Points To</th>
+                        <th>DNS Status</th>
+                        <th>SSL Status</th>
+                        <th>Last Verified</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Active Domain 1 -->
+                    <tr>
+                        <td>
+                            <a href="super-admin-account-manage.html" class="link-text">Rove Management</a>
+                        </td>
+                        <td>
+                            <code style="background: #f0f0f0; padding: 4px 8px; border-radius: 4px; font-size: 12px;">portal.rovemanagement.com</code>
+                        </td>
+                        <td>
+                            <code style="background: #f0f0f0; padding: 4px 8px; border-radius: 4px; font-size: 11px;">rove-management.harken.app</code>
+                        </td>
+                        <td><span class="status-badge status-active">Verified</span></td>
+                        <td>
+                            <span class="status-badge status-active">Active</span>
+                            <div style="font-size: 10px; color: #687F8B; margin-top: 4px;">Expires: Mar 15, 2025</div>
+                        </td>
+                        <td>Jan 26, 2025</td>
+                        <td>
+                            <button class="action-button action-button-secondary action-button-small">Re-verify</button>
+                            <button class="action-button action-button-secondary action-button-small" style="background-color: #c62828;">Revoke</button>
+                        </td>
+                    </tr>
+
+                    <!-- Active Domain 2 -->
+                    <tr>
+                        <td>
+                            <a href="super-admin-account-manage.html" class="link-text">Metro Realty Group</a>
+                        </td>
+                        <td>
+                            <code style="background: #f0f0f0; padding: 4px 8px; border-radius: 4px; font-size: 12px;">client.metrorealty.com</code>
+                        </td>
+                        <td>
+                            <code style="background: #f0f0f0; padding: 4px 8px; border-radius: 4px; font-size: 11px;">metro-realty.harken.app</code>
+                        </td>
+                        <td><span class="status-badge status-active">Verified</span></td>
+                        <td>
+                            <span class="status-badge status-active">Active</span>
+                            <div style="font-size: 10px; color: #687F8B; margin-top: 4px;">Expires: Feb 20, 2025</div>
+                        </td>
+                        <td>Jan 22, 2025</td>
+                        <td>
+                            <button class="action-button action-button-secondary action-button-small">Re-verify</button>
+                            <button class="action-button action-button-secondary action-button-small" style="background-color: #c62828;">Revoke</button>
+                        </td>
+                    </tr>
+
+                    <!-- Pending Domain -->
+                    <tr>
+                        <td>
+                            <a href="super-admin-account-manage.html" class="link-text">Skyline Investments</a>
+                        </td>
+                        <td>
+                            <code style="background: #f0f0f0; padding: 4px 8px; border-radius: 4px; font-size: 12px;">portal.skylineinv.com</code>
+                        </td>
+                        <td>
+                            <code style="background: #f0f0f0; padding: 4px 8px; border-radius: 4px; font-size: 11px;">skyline-investments.harken.app</code>
+                        </td>
+                        <td><span class="status-badge status-pending">Pending</span></td>
+                        <td>
+                            <span class="status-badge status-pending">Pending DNS</span>
+                        </td>
+                        <td>—</td>
+                        <td>
+                            <button class="action-button action-button-primary action-button-small">Verify Now</button>
+                            <button class="action-button action-button-secondary action-button-small" style="background-color: #c62828;">Cancel</button>
+                        </td>
+                    </tr>
+
+                    <!-- Failed Domain -->
+                    <tr>
+                        <td>
+                            <a href="super-admin-account-manage.html" class="link-text">Downtown Commercial Partners</a>
+                        </td>
+                        <td>
+                            <code style="background: #f0f0f0; padding: 4px 8px; border-radius: 4px; font-size: 12px;">portal.downtowncommercial.com</code>
+                        </td>
+                        <td>
+                            <code style="background: #f0f0f0; padding: 4px 8px; border-radius: 4px; font-size: 11px;">downtown-commercial.harken.app</code>
+                        </td>
+                        <td><span class="status-badge status-failed">DNS Error</span></td>
+                        <td>
+                            <span class="status-badge status-failed">Failed</span>
+                            <div style="font-size: 10px; color: #c62828; margin-top: 4px;">CNAME not found</div>
+                        </td>
+                        <td>Failed: Jan 25, 2025</td>
+                        <td>
+                            <button class="action-button action-button-primary action-button-small">Retry Verify</button>
+                            <button class="action-button action-button-secondary action-button-small">View DNS Instructions</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- DNS Setup Instructions -->
+        <div style="background-color: white; border-radius: 8px; padding: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); margin-top: 32px;">
+            <h3 style="font-size: 18px; font-weight: 600; color: #1c3643; margin-bottom: 20px;">DNS Configuration Instructions</h3>
+            
+            <div style="background: #f9fafb; border-radius: 6px; padding: 20px; margin-bottom: 24px;">
+                <h4 style="font-size: 14px; font-weight: 600; color: #1c3643; margin-bottom: 12px;">Standard Setup Process:</h4>
+                
+                <ol style="color: #1c3643; font-size: 13px; line-height: 2; margin-left: 20px;">
+                    <li><strong>Customer creates subdomain</strong> in their DNS provider (GoDaddy, Namecheap, Cloudflare, etc.)</li>
+                    <li><strong>Add CNAME record:</strong>
+                        <div style="background: white; padding: 12px; border-radius: 4px; margin: 8px 0; font-family: monospace; font-size: 12px;">
+                            <strong>Type:</strong> CNAME<br>
+                            <strong>Name:</strong> portal (or subdomain name)<br>
+                            <strong>Value:</strong> account-slug.harken.app<br>
+                            <strong>TTL:</strong> 3600 (or default)
+                        </div>
+                    </li>
+                    <li><strong>Customer enters domain</strong> in their account settings</li>
+                    <li><strong>Click "Verify Domain"</strong> button</li>
+                    <li><strong>Harken auto-verifies:</strong>
+                        <ul style="margin-left: 20px; margin-top: 8px;">
+                            <li>Checks DNS CNAME record via dig/nslookup</li>
+                            <li>Provisions SSL certificate (Let's Encrypt)</li>
+                            <li>Enables routing in Cloudflare</li>
+                            <li>Status updates to "Active"</li>
+                        </ul>
+                    </li>
+                    <li><strong>Domain goes live</strong> - End clients can access via custom domain</li>
+                </ol>
+            </div>
+
+            <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 16px; border-radius: 4px;">
+                <strong style="color: #92400e;">⚠️ Common Issues:</strong>
+                <ul style="color: #92400e; font-size: 12px; line-height: 1.8; margin: 8px 0 0 20px;">
+                    <li><strong>DNS propagation delay:</strong> CNAME records can take 5-60 minutes to propagate. Retry verification if it fails immediately.</li>
+                    <li><strong>Wrong CNAME target:</strong> Ensure it points to <code>account-slug.harken.app</code>, not just <code>harken.app</code></li>
+                    <li><strong>SSL errors:</strong> Let's Encrypt requires DNS to be verified first. If SSL fails, DNS verification likely incomplete.</li>
+                    <li><strong>Proxied vs DNS-only:</strong> On Cloudflare, ensure DNS record is "DNS only" (gray cloud), not proxied</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- SSL Certificate Management -->
+        <div style="background-color: white; border-radius: 8px; padding: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); margin-top: 32px;">
+            <h3 style="font-size: 18px; font-weight: 600; color: #1c3643; margin-bottom: 20px;">SSL Certificate Management</h3>
+            
+            <div style="color: #1c3643; font-size: 13px; line-height: 1.8;">
+                <p style="margin-bottom: 16px;"><strong>Automatic SSL Provisioning:</strong> Harken uses Let's Encrypt to automatically provision and renew SSL certificates for all custom domains.</p>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 24px;">
+                    <div style="background: #f0fdf4; padding: 16px; border-radius: 6px; border: 1px solid #10b981;">
+                        <div style="font-size: 12px; font-weight: 600; color: #065f46; text-transform: uppercase; margin-bottom: 8px;">Active Certificates</div>
+                        <div style="font-size: 32px; font-weight: 700; color: #10b981;">2</div>
+                        <div style="font-size: 11px; color: #065f46; margin-top: 4px;">All certificates valid</div>
+                    </div>
+                    
+                    <div style="background: #fef3c7; padding: 16px; border-radius: 6px; border: 1px solid #f59e0b;">
+                        <div style="font-size: 12px; font-weight: 600; color: #92400e; text-transform: uppercase; margin-bottom: 8px;">Expiring Soon</div>
+                        <div style="font-size: 32px; font-weight: 700; color: #f59e0b;">0</div>
+                        <div style="font-size: 11px; color: #92400e; margin-top: 4px;">Auto-renewal enabled</div>
+                    </div>
+                </div>
+
+                <p style="margin-top: 24px; background: #eff6ff; padding: 12px; border-radius: 4px; font-size: 12px; color: #1e40af;">
+                    <strong>ℹ️ Note:</strong> SSL certificates are automatically renewed 30 days before expiration. No manual intervention required.
+                </p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 50px;">
+            <span style="font-weight: 300; font-size: 14px; color: #687F8B;">© 2024, Harken CRE, LLC</span>
+        </div>
+    </div>
+</body>
+</html>
+
+

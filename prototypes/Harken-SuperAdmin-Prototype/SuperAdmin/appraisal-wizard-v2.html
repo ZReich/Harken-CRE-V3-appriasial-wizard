@@ -1,0 +1,910 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Appraisal Wizard - Harken [UPDATED v5.40]</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        'harken-dark': '#1c3643',
+                        'harken-accent': '#0da1c7',
+                        'harken-accent-light': '#38bfd9',
+                        'harken-success': '#2e7d32',
+                        'harken-text': '#687F8B',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        .animate-fade-in {
+            animation: fadeIn 0.5s ease-out forwards;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .step-item {
+            transition: all 0.3s ease;
+        }
+        .step-item.active {
+            background-color: #0da1c7; /* harken-accent */
+            color: white;
+        }
+        .step-item.completed {
+            background-color: #2e7d32; /* harken-success */
+            color: white;
+        }
+        .section-expanded .section-content {
+            max-height: 1000px;
+        }
+        .section-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        .icon {
+            width: 1.25rem;
+            height: 1.25rem;
+            margin-right: 0.5rem;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        
+        /* Main Progress Steps - Clickable with Hover */
+        .step-indicator {
+            transition: all 0.3s ease;
+        }
+        .step-indicator:hover .step-circle {
+            transform: scale(1.05);
+        }
+        .step-indicator:hover span {
+            color: #0da1c7;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+<div class="h-screen flex flex-col bg-gray-100" id="main-container">
+    <!-- Pre-Wizard Container -->
+    <div id="pre-wizard-container" class="w-full h-screen flex flex-col" style="background-color: #f9f9f9; display: flex;">
+        <!-- Navigation -->
+        <style>.unified-navbar{background:url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;background-color:#1c3643!important;height:84px;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 32px;box-shadow:0 2px 8px rgba(0,0,0,0.1);position:sticky;top:0;z-index:1000}.nav-logo{height:40px;width:auto;cursor:pointer}.nav-center{display:flex;align-items:center;gap:8px;flex:1;justify-content:center}.nav-core-features{display:flex;align-items:center;gap:4px;background:rgba(13, 161, 199, 0.08);border-radius:25px;padding:4px 8px;margin-right:16px}.nav-link{color:white;text-decoration:none;padding:10px 20px;border-radius:25px;transition:all 0.2s;border:1px solid transparent;font-weight:500;font-size:14px;white-space:nowrap}.nav-link:hover{background-color:rgba(255,255,255,0.08)}.nav-link.core-feature{font-weight:500;font-size:14px;color:white}.nav-link.core-feature:hover{background-color:rgba(13, 161, 199, 0.2);color:white}.nav-link.core-feature.active{background-color:transparent;border:1px solid #0da1c7;color:#0da1c7;box-shadow:0 2px 4px rgba(13, 161, 199, 0.2)}.nav-link.active{background-color:transparent;border:1px solid #0da1c7;color:#0da1c7}.nav-separator{width:1px;height:24px;background:rgba(255, 255, 255, 0.2);margin:0 8px}.nav-user{display:flex;align-items:center;gap:12px}.nav-user-name{font-size:14px;font-weight:500;color:white}.nav-user-avatar{width:36px;height:36px;border-radius:50%;border:2px solid #0da1c7}</style><nav class="unified-navbar"><img src="assets/harken.png" alt="Harken CRE" class="nav-logo" onclick="window.location.href='super-admin-dashboard.html'"><div class="nav-center"><div class="nav-core-features"><a href="super-admin-comps.html" class="nav-link core-feature" id="nav-comps">COMPS</a><a href="super-admin-appraisals-list.html" class="nav-link core-feature active" id="nav-appraisals">APPRAISAL</a><a href="super-admin-evaluations-list.html" class="nav-link core-feature" id="nav-evaluations">EVALUATION</a></div><div class="nav-separator"></div><a href="super-admin-dashboard.html" class="nav-link" id="nav-dashboard">Dashboard</a><a href="super-admin-users.html" class="nav-link" id="nav-users">Users</a><a href="super-admin-clients.html" class="nav-link" id="nav-clients">Clients</a><a href="super-admin-accounts.html" class="nav-link" id="nav-accounts">Accounts</a><a href="super-admin-reports.html" class="nav-link" id="nav-reports">Reports</a><a href="super-admin-support-tickets.html" class="nav-link" id="nav-support">Support</a><a href="super-admin-audit-logs.html" class="nav-link" id="nav-audit">Audit Logs</a><a href="super-admin-settings.html" class="nav-link" id="nav-settings">Settings</a></div><div class="nav-user"><span class="nav-user-name">Harken Admin</span><img src="https://i.pravatar.cc/150?img=33" alt="User" class="nav-user-avatar"></div></nav>
+
+        <!-- Content Area -->
+        <div id="pre-wizard-scroll-container" class="flex-1 overflow-y-auto" style="padding: 35px 50px;">
+            <div style="max-width: 1200px; margin: 0 auto;">
+                <!-- Page Title -->
+                <div style="text-align: center; margin-bottom: 40px;">
+                    <h2 style="font-size: 23px; font-weight: 600; color: #1c3643;">CREATE NEW APPRAISAL</h2>
+                    <div style="margin-top: 8px; color: #687F8B; font-size: 14px;">
+                        Follow the steps below to create your appraisal report
+                    </div>
+                </div>
+                
+                <!-- Wizard Steps -->
+                <div style="display: flex; justify-content: center; margin-bottom: 40px; gap: 20px;">
+                    <div style="display: flex; align-items: center; gap: 12px;" class="cursor-pointer hover:opacity-80 transition-opacity" onclick="loadPreWizardStep(1)">
+                        <div id="pre-progress-step-1" style="width: 40px; height: 40px; border-radius: 50%; background: #0da1c7; color: white; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px;">1</div>
+                        <div id="pre-progress-label-1" style="font-size: 14px; font-weight: 600; color: #1c3643;">Template</div>
+                    </div>
+                    <div style="color: #e0e0e0; font-size: 20px;">→</div>
+                    <div style="display: flex; align-items: center; gap: 12px;" class="cursor-pointer hover:opacity-80 transition-opacity" onclick="loadPreWizardStep(2)">
+                        <div id="pre-progress-step-2" style="width: 40px; height: 40px; border-radius: 50%; background: #e0e0e0; color: #687F8B; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 16px;">2</div>
+                        <div id="pre-progress-label-2" style="font-size: 14px; font-weight: 600; color: #687F8B;">Setup</div>
+                    </div>
+                </div>
+                
+                <!-- Dynamic Content -->
+                <div id="pre-wizard-content"></div>
+                
+                <!-- Bottom Navigation -->
+                <div style="display: flex; justify-content: space-between; margin-top: 32px;">
+                    <button id="pre-back-btn" style="padding: 12px 24px; border-radius: 4px; font-size: 14px; font-weight: 600; border: none; cursor: pointer; background-color: #e0e0e0; color: #687F8B; display: none;" onclick="handlePreWizardBack()">
+                        ← Back
+                    </button>
+                    <button id="pre-continue-btn" style="padding: 12px 24px; border-radius: 4px; font-size: 14px; font-weight: 600; border: none; cursor: pointer; background-color: #0da1c7; color: white; margin-left: auto;" onclick="handlePreWizardContinue()" disabled>
+                        Continue →
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Wizard Layout -->
+    <div id="wizard-layout" class="flex flex-col h-full w-full" style="display: none;">
+        <!-- Top Bar with Progress -->
+        <div class="bg-white border-b border-gray-200 relative z-20 shadow-sm">
+            <!-- Main Steps Indicator (5 Phases) -->
+            <div class="px-8 py-4 border-b border-gray-200">
+                <div class="flex items-center justify-center space-x-8">
+                    <div class="flex items-center step-indicator cursor-pointer hover:opacity-80 transition-opacity" onclick="loadStep('template-selection')" data-step="template">
+                        <div class="step-circle w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-all bg-harken-accent border-harken-accent text-white shadow-md">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 5a1 1 0 011-1h14a1 1 0 011 1v2a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM4 13a1 1 0 011-1h6a1 1 0 011 1v6a1 1 0 01-1 1H5a1 1 0 01-1-1v-6zM16 13a1 1 0 011-1h2a1 1 0 011 1v6a1 1 0 01-1 1h-2a1 1 0 01-1-1v-6z"></path></svg>
+                        </div>
+                        <span class="ml-2 text-sm font-bold text-harken-dark">Template</span>
+                    </div>
+                    <div class="w-16 h-0.5 bg-gray-200 rounded-full overflow-hidden relative"><div class="h-full bg-harken-accent w-full origin-left scale-x-100 transition-transform duration-500"></div></div>
+                    <div class="flex items-center step-indicator cursor-pointer hover:opacity-80 transition-opacity" onclick="loadStep('appraisal-setup')" data-step="setup">
+                        <div class="step-circle w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-all bg-harken-accent border-harken-accent text-white shadow-md">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        </div>
+                        <span class="ml-2 text-sm font-bold text-harken-dark">Setup</span>
+                    </div>
+                    <div class="w-16 h-0.5 bg-gray-200 rounded-full overflow-hidden relative"><div class="h-full bg-harken-accent w-0 origin-left scale-x-0 transition-transform duration-500" id="connector-2-3"></div></div>
+                    <div class="flex items-center step-indicator cursor-pointer hover:opacity-80 transition-opacity" onclick="loadStep('overview')" data-step="subject">
+                        <div class="step-circle w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-all bg-white border-gray-300 text-gray-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"></path></svg>
+                        </div>
+                        <span class="ml-2 text-sm font-medium text-gray-400">Subject Data</span>
+                    </div>
+                    <div class="w-16 h-0.5 bg-gray-200 rounded-full overflow-hidden relative"><div class="h-full bg-harken-accent w-0 origin-left scale-x-0 transition-transform duration-500" id="connector-3-4"></div></div>
+                    <div class="flex items-center step-indicator cursor-pointer hover:opacity-80 transition-opacity" onclick="loadStep('sales-approach')" data-step="analysis">
+                        <div class="step-circle w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-all bg-white border-gray-300 text-gray-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z"></path></svg>
+                        </div>
+                        <span class="ml-2 text-sm font-medium text-gray-400">Analysis</span>
+                    </div>
+                    <div class="w-16 h-0.5 bg-gray-200 rounded-full overflow-hidden relative"><div class="h-full bg-harken-accent w-0 origin-left scale-x-0 transition-transform duration-500" id="connector-4-5"></div></div>
+                    <div class="flex items-center step-indicator cursor-pointer hover:opacity-80 transition-opacity" onclick="loadStep('review')" data-step="review">
+                        <div class="step-circle w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-all bg-white border-gray-300 text-gray-400">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <span class="ml-2 text-sm font-medium text-gray-400">Review</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Title and Actions -->
+            <div class="px-8 py-4 bg-gray-50/50 backdrop-blur-sm">
+                <div class="flex items-center justify-between">
+                    <div>
+                        <h2 class="text-xl font-bold text-harken-dark flex items-center gap-2">
+                            <span id="current-section-title">Getting Started</span>
+                            <span class="text-xs px-2 py-0.5 rounded-full bg-blue-100 text-blue-700 border border-blue-200" id="section-badge">In Progress</span>
+                        </h2>
+                        <p class="text-sm text-harken-text mt-1" id="current-section-subtitle">Select a template to begin</p>
+                    </div>
+                    <div class="flex space-x-3">
+                        <button class="px-4 py-2 bg-gray-100 text-gray-700 rounded-lg hover:bg-gray-200 flex items-center">
+                            <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4"></path>
+                            </svg>
+                            Save Draft
+                        </button>
+                        <button id="continue-btn" class="px-4 py-2 bg-harken-accent text-white rounded-lg hover:bg-harken-accent-light flex items-center disabled:opacity-50 disabled:cursor-not-allowed" onclick="handleContinue()" disabled>
+                            Continue
+                            <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Content Area -->
+        <div id="wizard-main" class="flex-1 overflow-y-auto" style="display: none;">
+            <div class="max-w-4xl mx-auto p-8" id="content-area">
+                <!-- Dynamic content -->
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Wizard State
+    let currentStep = 'template-selection';
+    let selectedTemplate = null;
+    let preWizardStep = 1;
+    
+    // Assignment Context
+    let assignmentContext = {
+        propertyType: null,
+        subType: null,
+        scenarios: [
+            { id: 1, name: 'As Is', nameSelect: 'As Is', customName: '', approaches: [] }
+        ],
+        approaches: {
+            cost: { enabled: true, required: false },
+            sales: { enabled: true, required: false },
+            income: { enabled: true, required: true }
+        }
+    };
+    
+    // Initialize on load
+    document.addEventListener('DOMContentLoaded', function() {
+        showPreWizard();
+        loadPreWizardStep(1);
+    });
+    
+    // Show/Hide Containers
+    function showPreWizard() {
+        const preWizard = document.getElementById('pre-wizard-container');
+        if (preWizard) preWizard.style.display = 'flex';
+        const wizardLayout = document.getElementById('wizard-layout');
+        if (wizardLayout) wizardLayout.style.display = 'none';
+    }
+    
+    function hidePreWizard() {
+        const preWizard = document.getElementById('pre-wizard-container');
+        if (preWizard) preWizard.style.display = 'none';
+        const wizardLayout = document.getElementById('wizard-layout');
+        if (wizardLayout) wizardLayout.style.display = 'flex';
+        const wizardMain = document.getElementById('wizard-main');
+        if (wizardMain) wizardMain.style.display = 'flex';
+    }
+    
+    // Load Pre-Wizard Step
+    function loadPreWizardStep(step) {
+        preWizardStep = step;
+        const contentArea = document.getElementById('pre-wizard-content');
+        const backBtn = document.getElementById('pre-back-btn');
+        const continueBtn = document.getElementById('pre-continue-btn');
+        
+        // Update progress
+        for (let i = 1; i <= 2; i++) {
+            const stepEl = document.getElementById(`pre-progress-step-${i}`);
+            const labelEl = document.getElementById(`pre-progress-label-${i}`);
+            if (i < step) {
+                stepEl.style.background = '#2e7d32';
+                stepEl.textContent = '✓';
+            } else if (i === step) {
+                stepEl.style.background = '#0da1c7';
+                stepEl.textContent = i;
+            } else {
+                stepEl.style.background = '#e0e0e0';
+                stepEl.textContent = i;
+            }
+        }
+        
+        backBtn.style.display = step === 1 ? 'none' : 'flex';
+        
+        if (step === 1) {
+            contentArea.innerHTML = renderTemplateSelection();
+            continueBtn.disabled = !selectedTemplate;
+        } else if (step === 2) {
+            contentArea.innerHTML = renderAppraisalSetup();
+            continueBtn.disabled = !(assignmentContext.propertyType && assignmentContext.subType);
+        }
+    }
+    
+    function handlePreWizardContinue() {
+        if (preWizardStep === 1 && selectedTemplate) {
+            loadStep('appraisal-setup');
+        }
+    }
+    
+    function handlePreWizardBack() {
+        if (preWizardStep > 1) {
+            loadPreWizardStep(preWizardStep - 1);
+        }
+    }
+    
+    // Main loadStep function
+    function loadStep(stepKey) {
+        currentStep = stepKey;
+        
+        // Hide pre-wizard, show main wizard
+        hidePreWizard();
+        
+        const contentArea = document.getElementById('content-area');
+        if (!contentArea) return;
+        
+        // Update progress indicators
+        updateProgressIndicators(stepKey);
+        
+        // Render content based on step
+        if (stepKey === 'template-selection') {
+            showPreWizard();
+            loadPreWizardStep(1);
+        } else if (stepKey === 'appraisal-setup') {
+            contentArea.innerHTML = renderAppraisalSetup();
+        } else if (stepKey === 'overview') {
+            contentArea.innerHTML = renderSubjectData();
+        } else if (stepKey === 'sales-approach') {
+            contentArea.innerHTML = renderAnalysis();
+        } else if (stepKey === 'review') {
+            contentArea.innerHTML = renderReview();
+        }
+    }
+    
+    // Update Progress Indicators
+    function updateProgressIndicators(stepKey) {
+        const steps = ['template-selection', 'appraisal-setup', 'overview', 'sales-approach', 'review'];
+        const stepIndex = steps.indexOf(stepKey);
+        
+        steps.forEach((step, index) => {
+            const indicator = document.querySelector(`[data-step="${['template', 'setup', 'subject', 'analysis', 'review'][index]}"]`);
+            if (!indicator) return;
+            
+            const circle = indicator.querySelector('.step-circle');
+            const label = indicator.querySelector('span');
+            const connector = document.getElementById(`connector-${index + 1}-${index + 2}`);
+            
+            if (index <= stepIndex) {
+                // Active or completed
+                circle.className = 'step-circle w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-all bg-harken-accent border-harken-accent text-white shadow-md';
+                label.className = 'ml-2 text-sm font-bold text-harken-dark';
+                if (connector) {
+                    connector.classList.remove('scale-x-0');
+                    connector.classList.add('scale-x-100');
+                }
+            } else {
+                // Inactive
+                circle.className = 'step-circle w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold border-2 transition-all bg-white border-gray-300 text-gray-400';
+                label.className = 'ml-2 text-sm font-medium text-gray-400';
+                if (connector) {
+                    connector.classList.remove('scale-x-100');
+                    connector.classList.add('scale-x-0');
+                }
+            }
+        });
+    }
+    
+    function handleContinue() {
+        const steps = ['template-selection', 'appraisal-setup', 'overview', 'sales-approach', 'review'];
+        const currentIndex = steps.indexOf(currentStep);
+        if (currentIndex < steps.length - 1) {
+            loadStep(steps[currentIndex + 1]);
+        }
+    }
+    
+    // Render Functions (Simplified for demo)
+    function renderTemplateSelection() {
+        return `
+            <div class="max-w-6xl mx-auto">
+                <h1 class="text-3xl font-bold text-gray-900 mb-6">Select Report Template</h1>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    <div class="template-card border-2 rounded-lg p-6 cursor-pointer hover:border-harken-accent transition-all" onclick="selectTemplate('standard')">
+                        <h3 class="text-lg font-bold">Standard Commercial</h3>
+                        <p class="text-sm text-gray-600 mt-2">Full narrative report</p>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    function selectTemplate(templateId) {
+        selectedTemplate = templateId;
+        document.getElementById('pre-continue-btn').disabled = false;
+    }
+    
+    function renderAppraisalSetup() {
+        return `
+            <div class="space-y-6">
+                <h1 class="text-2xl font-bold text-harken-dark">Appraisal Setup</h1>
+                <div class="bg-white p-6 rounded-lg border">
+                    <h3 class="font-semibold mb-4">Property Type</h3>
+                    <div class="grid grid-cols-3 gap-4">
+                        <button onclick="selectPropertyTypeSetup('Commercial')" class="p-4 border-2 rounded-lg hover:border-harken-accent">Commercial</button>
+                        <button onclick="selectPropertyTypeSetup('Residential')" class="p-4 border-2 rounded-lg hover:border-harken-accent">Residential</button>
+                        <button onclick="selectPropertyTypeSetup('Land')" class="p-4 border-2 rounded-lg hover:border-harken-accent">Land</button>
+                    </div>
+                </div>
+            </div>
+        `;
+    }
+    
+    function selectPropertyTypeSetup(type) {
+        assignmentContext.propertyType = type;
+        assignmentContext.subType = 'default';
+        document.getElementById('continue-btn').disabled = false;
+    }
+    
+    function renderSubjectData() {
+        return `
+            <div class="space-y-6">
+                <h1 class="text-2xl font-bold text-harken-dark">Subject Property Data</h1>
+                <div class="bg-white p-6 rounded-lg border">
+                    <p>Enter property details here...</p>
+                </div>
+            </div>
+        `;
+    }
+    
+    function renderAnalysis() {
+        return `
+            <div class="space-y-6">
+                <h1 class="text-2xl font-bold text-harken-dark">Valuation Analysis</h1>
+                ${renderSalesGrid()}
+            </div>
+        `;
+    }
+    
+    function renderReview() {
+        return `
+            <div class="space-y-6">
+                <h1 class="text-2xl font-bold text-harken-dark">Review & Finalize</h1>
+                <div class="bg-white p-6 rounded-lg border">
+                    <p>Review your appraisal...</p>
+                </div>
+            </div>
+        `;
+    }
+    
+    // ========================================
+    // SALES COMPARISON GRID (Modern Grid Implementation)
+    // ========================================
+    
+    // Sales Grid Data Structure
+    const salesGridData = {
+        properties: [
+            {
+                id: 'subject',
+                type: 'subject',
+                name: "Subject Property",
+                address: "123 Main Street, Billings, MT",
+                image: "https://picsum.photos/id/122/400/300"
+            },
+            {
+                id: 'comp1',
+                type: 'comp',
+                name: "Comparable 1",
+                address: "456 Oak Avenue, Billings, MT",
+                image: "https://picsum.photos/id/437/400/300",
+                distance: "2.4 mi",
+                status: "Sold 08-2024"
+            },
+            {
+                id: 'comp2',
+                type: 'comp',
+                name: "Comparable 2",
+                address: "789 Elm Street, Billings, MT",
+                image: "https://picsum.photos/id/225/400/300",
+                distance: "3.1 mi",
+                status: "Sold 01-2024"
+            },
+            {
+                id: 'comp3',
+                type: 'comp',
+                name: "Comparable 3",
+                address: "321 Pine Road, Billings, MT",
+                image: "https://picsum.photos/id/158/400/300",
+                distance: "5.0 mi",
+                status: "Sold 06-2023"
+            }
+        ],
+        rows: [
+            // Transaction Data
+            { id: 't1', category: 'transaction', label: 'Date of Sale', key: 'date' },
+            { id: 't2', category: 'transaction', label: 'Identification', key: 'identification' },
+            { id: 't3', category: 'transaction', label: 'Address', key: 'address_row' },
+            { id: 't4', category: 'transaction', label: 'H & B Use', key: 'hb_use' },
+            { id: 't5', category: 'transaction', label: 'Year Built', key: 'year_built' },
+            { id: 't6', category: 'transaction', label: 'Site Area SF', key: 'site_area', format: 'number' },
+            { id: 't7', category: 'transaction', label: 'Bldg. Size', key: 'bldg_size', format: 'number' },
+            { id: 't8', category: 'transaction', label: 'Qual./Cond.', key: 'condition' },
+            { id: 't9', category: 'transaction', label: 'Sales Price', key: 'price', format: 'currency' },
+            { id: 't10', category: 'transaction', label: 'Price/SF', key: 'price_sf', format: 'currency' },
+            
+            // Transactional Adjustments
+            { id: 'a1', category: 'adjustments', label: 'Prop. Rights', key: 'rights' },
+            { id: 'a2', category: 'adjustments', label: 'Financing', key: 'financing' },
+            { id: 'a3', category: 'adjustments', label: 'Cond. Sale', key: 'cond_sale' },
+            { id: 'a4', category: 'adjustments', label: 'Expenditures', key: 'expenditures' },
+            { id: 'a5', category: 'adjustments', label: 'Market Cond.', key: 'market_cond' },
+            { id: 'a6', category: 'adjustments', label: 'Adj. Price/SF', key: 'adj_price_sf', format: 'currency' },
+            
+            // Physical Characteristics
+            { id: 'p1', category: 'physical', label: 'Location', key: 'location' },
+            { id: 'p2', category: 'physical', label: 'Site Size', key: 'site_size' },
+            { id: 'p3', category: 'physical', label: 'Building Size', key: 'building_size' },
+            { id: 'p4', category: 'physical', label: 'Age/Condition', key: 'age_condition' },
+            { id: 'p5', category: 'physical', label: 'Quality', key: 'quality' },
+            
+            // Valuation
+            { id: 'v1', category: 'valuation', label: 'Notes', key: 'notes' },
+            { id: 'v2', category: 'valuation', label: 'Overall Comparability', key: 'overall_comp' },
+            { id: 'v3', category: 'valuation', label: 'Weighting', key: 'weighting', format: 'percent' },
+            { id: 'v4', category: 'valuation', label: 'TOTAL SALES VALUE', key: 'total_value', format: 'currency' }
+        ],
+        values: {
+            subject: {
+                date: { value: 'Current' },
+                identification: { value: 'Subject Property' },
+                address_row: { value: '123 Main Street' },
+                hb_use: { value: 'Commercial' },
+                year_built: { value: '2010' },
+                site_area: { value: 50000 },
+                bldg_size: { value: 8000 },
+                condition: { value: 'Good' },
+                price: { value: null },
+                price_sf: { value: null },
+                rights: { value: 'Fee Simple' },
+                financing: { value: 'Cash to Seller' },
+                cond_sale: { value: 'Typical' },
+                expenditures: { value: 'None' },
+                market_cond: { value: 'Current' },
+                adj_price_sf: { value: null },
+                location: { value: 'Good' },
+                site_size: { value: '50,000 SF' },
+                building_size: { value: '8,000 SF' },
+                age_condition: { value: '2010 / Good' },
+                quality: { value: 'Average' },
+                notes: { value: '-' },
+                overall_comp: { value: '-' },
+                weighting: { value: '-' },
+                total_value: { value: '-' }
+            },
+            comp1: {
+                date: { value: '08-2024' },
+                identification: { value: 'Comparable 1' },
+                address_row: { value: '456 Oak Avenue' },
+                hb_use: { value: 'Commercial' },
+                year_built: { value: '2008' },
+                site_area: { value: 45000 },
+                bldg_size: { value: 7500 },
+                condition: { value: 'Good' },
+                price: { value: 1200000 },
+                price_sf: { value: 160 },
+                rights: { value: 'Fee Simple' },
+                financing: { value: '-' },
+                cond_sale: { value: '-' },
+                expenditures: { value: '-' },
+                market_cond: { value: '-' },
+                adj_price_sf: { value: 160 },
+                location: { value: 'Superior', flag: 'superior' },
+                site_size: { value: 'Similar', flag: 'similar' },
+                building_size: { value: 'Similar', flag: 'similar' },
+                age_condition: { value: 'Similar', flag: 'similar' },
+                quality: { value: 'Superior', flag: 'superior' },
+                notes: { value: 'Click to add notes' },
+                overall_comp: { value: 'Superior', flag: 'superior' },
+                weighting: { value: 25 },
+                total_value: { value: null }
+            },
+            comp2: {
+                date: { value: '01-2024' },
+                identification: { value: 'Comparable 2' },
+                address_row: { value: '789 Elm Street' },
+                hb_use: { value: 'Commercial' },
+                year_built: { value: '2012' },
+                site_area: { value: 52000 },
+                bldg_size: { value: 8200 },
+                condition: { value: 'Excellent' },
+                price: { value: 1350000 },
+                price_sf: { value: 165 },
+                rights: { value: 'Fee Simple' },
+                financing: { value: '-' },
+                cond_sale: { value: '-' },
+                expenditures: { value: '-' },
+                market_cond: { value: '-' },
+                adj_price_sf: { value: 165 },
+                location: { value: 'Similar', flag: 'similar' },
+                site_size: { value: 'Similar', flag: 'similar' },
+                building_size: { value: 'Similar', flag: 'similar' },
+                age_condition: { value: 'Superior', flag: 'superior' },
+                quality: { value: 'Superior', flag: 'superior' },
+                notes: { value: 'Click to add notes' },
+                overall_comp: { value: 'Superior', flag: 'superior' },
+                weighting: { value: 25 },
+                total_value: { value: null }
+            },
+            comp3: {
+                date: { value: '06-2023' },
+                identification: { value: 'Comparable 3' },
+                address_row: { value: '321 Pine Road' },
+                hb_use: { value: 'Commercial' },
+                year_built: { value: '2009' },
+                site_area: { value: 48000 },
+                bldg_size: { value: 7800 },
+                condition: { value: 'Good' },
+                price: { value: 1280000 },
+                price_sf: { value: 164 },
+                rights: { value: 'Fee Simple' },
+                financing: { value: '-' },
+                cond_sale: { value: '-' },
+                expenditures: { value: '-' },
+                market_cond: { value: 'Inferior' },
+                adj_price_sf: { value: 172 },
+                location: { value: 'Similar', flag: 'similar' },
+                site_size: { value: 'Similar', flag: 'similar' },
+                building_size: { value: 'Similar', flag: 'similar' },
+                age_condition: { value: 'Similar', flag: 'similar' },
+                quality: { value: 'Similar', flag: 'similar' },
+                notes: { value: 'Click to add notes' },
+                overall_comp: { value: 'Similar', flag: 'similar' },
+                weighting: { value: 50 },
+                total_value: { value: null }
+            }
+        },
+        sections: [
+            { id: 'transaction', title: 'Transaction Data', color: 'bg-blue-50' },
+            { id: 'adjustments', title: 'Transactional Adjustments', color: 'bg-yellow-50' },
+            { id: 'physical', title: 'Physical Characteristics', color: 'bg-green-50' },
+            { id: 'valuation', title: 'Valuation Analysis', color: 'bg-white' }
+        ],
+        availableElements: [
+            { label: 'City/State', key: 'city_state' },
+            { label: 'Zoning', key: 'zoning' },
+            { label: 'Utilities', key: 'utilities' },
+            { label: 'Topography', key: 'topography' },
+            { label: 'Dock Doors', key: 'dock_doors' },
+            { label: '# of Units', key: 'num_units' },
+            { label: 'Unit Mix', key: 'unit_mix' },
+            { label: 'Parking', key: 'parking' },
+            { label: 'Clear Height', key: 'clear_height' },
+            { label: 'Power', key: 'power' },
+            { label: 'Grantor', key: 'grantor' },
+            { label: 'Grantee', key: 'grantee' }
+        ]
+    };
+
+    // Grid State Management
+    let gridState = {
+        hoveredRow: null,
+        activeSection: null,
+        rows: JSON.parse(JSON.stringify(salesGridData.rows)),
+        values: JSON.parse(JSON.stringify(salesGridData.values))
+    };
+
+    // Grid Helper Functions
+    function toggleFlag(propId, rowKey) {
+        const valObj = gridState.values[propId]?.[rowKey];
+        if (!valObj || propId === 'subject') return;
+        
+        const currentFlag = valObj.flag || 'similar';
+        const nextFlag = currentFlag === 'superior' ? 'inferior' : currentFlag === 'inferior' ? 'similar' : 'superior';
+        
+        gridState.values[propId][rowKey].flag = nextFlag;
+        gridState.values[propId][rowKey].value = nextFlag.charAt(0).toUpperCase() + nextFlag.slice(1);
+        
+        // Re-render grid
+        const container = document.getElementById('sales-grid-container');
+        if (container) {
+            container.innerHTML = renderSalesGridContent();
+        }
+    }
+
+    function renderFlag(propId, rowKey, valObj) {
+        if (propId === 'subject') return '';
+        
+        const flag = valObj.flag || 'similar';
+        let flagClass, flagIcon, flagText;
+        
+        if (flag === 'superior') {
+            flagClass = 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100';
+            flagIcon = `<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"></path></svg>`;
+            flagText = 'Sup';
+        } else if (flag === 'inferior') {
+            flagClass = 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100';
+            flagIcon = `<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"></path></svg>`;
+            flagText = 'Inf';
+        } else {
+            flagClass = 'bg-gray-50 text-gray-500 border-gray-200 hover:bg-gray-100';
+            flagIcon = `<svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>`;
+            flagText = 'Sim';
+        }
+        
+        return `<span onclick="toggleFlag('${propId}', '${rowKey}')" class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide cursor-pointer select-none transition-all border shadow-sm ${flagClass}">${flagIcon} ${flagText}</span>`;
+    }
+
+    function formatGridValue(val, format) {
+        if (val === null || val === undefined || val === '-') return '-';
+        if (format === 'currency' && typeof val === 'number') {
+            return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(val);
+        }
+        if (format === 'number' && typeof val === 'number') {
+            return val.toLocaleString();
+        }
+        if (format === 'percent' && typeof val === 'number') {
+            return val + '%';
+        }
+        return val;
+    }
+
+    function addRowToGrid(sectionId, element) {
+        const newRow = {
+            id: `new_${Date.now()}`,
+            category: sectionId,
+            label: element.label,
+            key: element.key
+        };
+        gridState.rows.push(newRow);
+        gridState.activeSection = null;
+        
+        // Initialize values for all properties
+        salesGridData.properties.forEach(prop => {
+            if (!gridState.values[prop.id]) gridState.values[prop.id] = {};
+            gridState.values[prop.id][element.key] = { value: null };
+        });
+        
+        // Re-render
+        const container = document.getElementById('sales-grid-container');
+        if (container) {
+            container.innerHTML = renderSalesGridContent();
+        }
+    }
+
+    function deleteRowFromGrid(rowId) {
+        if (confirm('Are you sure you want to remove this element?')) {
+            gridState.rows = gridState.rows.filter(r => r.id !== rowId);
+            // Re-render
+            const container = document.getElementById('sales-grid-container');
+            if (container) {
+                container.innerHTML = renderSalesGridContent();
+            }
+        }
+    }
+
+    function renderPropertyCard(property, isSubject) {
+        return `
+            <div class="flex flex-col h-full ${isSubject ? 'bg-blue-50' : 'bg-white'}">
+                <div class="relative h-32 w-full overflow-hidden group">
+                    <img src="${property.image}" alt="${property.name}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" />
+                    ${isSubject ? `<div class="absolute top-2 left-2 bg-harken-accent text-white text-xs font-bold px-2 py-1 rounded shadow-sm">SUBJECT</div>` : ''}
+                    ${!isSubject && property.status ? `<div class="absolute top-2 right-2 bg-harken-dark/70 backdrop-blur-sm text-white text-xs font-medium px-2 py-1 rounded shadow-sm">${property.status}</div>` : ''}
+                </div>
+                <div class="p-3 flex-1 flex flex-col gap-2 border-b border-r border-gray-200">
+                    <h3 class="font-bold text-harken-dark text-sm leading-tight line-clamp-2" title="${property.name}">${property.name}</h3>
+                    <div class="flex items-start gap-1.5 text-xs text-gray-500 mt-1">
+                        <svg class="w-3.5 h-3.5 flex-shrink-0 mt-0.5 text-harken-accent" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path></svg>
+                        <span class="line-clamp-2 leading-tight">${property.address}</span>
+                    </div>
+                    ${!isSubject && property.distance ? `<div class="flex items-center gap-1.5 text-xs text-gray-400 mt-auto pt-2">
+                        <svg class="w-3.5 h-3.5 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path></svg>
+                        <span>${property.distance} away</span>
+                    </div>` : ''}
+                </div>
+            </div>
+        `;
+    }
+
+    function renderSalesGridContent() {
+        const LABEL_COL_WIDTH = 200;
+        const SUBJECT_COL_WIDTH = 260;
+        const COMP_COL_WIDTH = 240;
+        
+        let html = `
+            <style>
+                .sales-grid-scroll::-webkit-scrollbar { height: 10px; width: 10px; }
+                .sales-grid-scroll::-webkit-scrollbar-track { background: #f1f5f9; }
+                .sales-grid-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 5px; }
+                .sales-grid-scroll::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+                .grid-row:hover .delete-btn { opacity: 1; }
+                .delete-btn { opacity: 0; transition: opacity 200ms; }
+            </style>
+        `;
+        
+        html += `<div class="flex flex-col h-full bg-gray-50">
+            <div class="overflow-auto sales-grid-scroll flex-1 relative bg-white">
+                <div class="grid relative" style="grid-template-columns: ${LABEL_COL_WIDTH}px ${SUBJECT_COL_WIDTH}px repeat(${salesGridData.properties.length - 1}, minmax(${COMP_COL_WIDTH}px, 1fr))">
+                    
+                    <!-- Header: Empty Label Column -->
+                    <div class="sticky top-0 z-50 bg-white border-b border-gray-200 shadow-sm flex items-end p-3 pl-4" style="left: 0; width: ${LABEL_COL_WIDTH}px">
+                        <div class="font-bold text-gray-400 text-xs uppercase tracking-wider">Elements</div>
+                    </div>
+                    
+                    <!-- Header: Subject Property -->
+                    ${salesGridData.properties.filter(p => p.type === 'subject').map(prop => `
+                        <div class="sticky top-0 z-50 border-b border-r border-blue-200 bg-blue-50 shadow-md" style="left: ${LABEL_COL_WIDTH}px; width: ${SUBJECT_COL_WIDTH}px">
+                            ${renderPropertyCard(prop, true)}
+                        </div>
+                    `).join('')}
+                    
+                    <!-- Header: Comps -->
+                    ${salesGridData.properties.filter(p => p.type !== 'subject').map(prop => `
+                        <div class="sticky top-0 z-40 border-b border-r border-gray-200 bg-white">
+                            ${renderPropertyCard(prop, false)}
+                        </div>
+                    `).join('')}
+                    
+                    <!-- Data Rows Grouped by Section -->
+                    ${salesGridData.sections.map(section => {
+                        const sectionRows = gridState.rows.filter(r => r.category === section.id);
+                        const showFlags = section.id === 'physical';
+                        const isValuation = section.id === 'valuation';
+                        const isActive = gridState.activeSection === section.id;
+                        
+                        let sectionHtml = `
+                            <!-- Section Header -->
+                            <div class="col-span-full sticky left-0 z-30 mt-6 mb-0">
+                                <div class="relative px-4 py-2.5 flex items-center gap-2 border-y border-gray-200 ${isValuation ? 'bg-white' : 'bg-gray-50'} backdrop-blur-sm">
+                                    <span class="font-bold ${isValuation ? 'text-sm text-harken-dark' : 'text-xs text-gray-700 uppercase tracking-widest'}">${isValuation ? 'Analysis' : section.title}</span>
+                                </div>
+                            </div>
+                        `;
+                        
+                        // Render rows
+                        sectionRows.forEach(row => {
+                            sectionHtml += `
+                                <!-- Label Column -->
+                                <div class="sticky left-0 z-30 bg-white border-r border-b border-gray-100 flex items-center justify-between group grid-row ${row.key === 'total_value' ? 'border-t-2 border-t-harken-dark' : ''}" 
+                                     style="width: ${LABEL_COL_WIDTH}px">
+                                    <div class="flex items-center h-full w-full pl-2 py-3">
+                                        ${!isValuation ? `<button onclick="deleteRowFromGrid('${row.id}')" class="delete-btn p-1.5 rounded-md text-gray-300 hover:text-red-600 hover:bg-red-50 transition-all mr-1" title="Remove Element">
+                                            <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"></path></svg>
+                                        </button>` : ''}
+                                        <span class="text-sm text-gray-600 truncate pr-2 ${row.key === 'total_value' ? 'font-black text-harken-dark uppercase' : 'font-medium'} ${row.key.includes('overall') ? 'italic font-bold text-harken-dark' : ''}">${row.label}</span>
+                                    </div>
+                                </div>
+                                
+                                <!-- Subject Column -->
+                                ${salesGridData.properties.filter(p => p.type === 'subject').map(prop => {
+                                    const valObj = gridState.values[prop.id]?.[row.key] || { value: null };
+                                    const displayVal = formatGridValue(valObj.value, row.format);
+                                    return `
+                                        <div class="sticky z-30 border-r border-b border-blue-100 p-3 flex flex-col justify-center text-sm text-harken-dark ${gridState.hoveredRow === row.id ? 'bg-blue-100' : 'bg-blue-50'} transition-colors shadow-md" 
+                                             style="left: ${LABEL_COL_WIDTH}px; width: ${SUBJECT_COL_WIDTH}px">
+                                            <span class="truncate font-medium">${displayVal}</span>
+                                        </div>
+                                    `;
+                                }).join('')}
+                                
+                                <!-- Comp Columns -->
+                                ${salesGridData.properties.filter(p => p.type !== 'subject').map(prop => {
+                                    const valObj = gridState.values[prop.id]?.[row.key] || { value: null };
+                                    const displayVal = formatGridValue(valObj.value, row.format);
+                                    
+                                    return `
+                                        <div class="relative border-r border-b border-gray-100 p-3 flex flex-col justify-center text-sm text-gray-700 ${gridState.hoveredRow === row.id ? 'bg-gray-50' : 'bg-white'} transition-colors">
+                                            ${isValuation ? (
+                                                row.key === 'notes' ? `<a href="#" class="text-harken-accent hover:text-harken-accent-light hover:underline text-xs font-medium truncate">${valObj.value || 'Add notes'}</a>` :
+                                                row.key === 'overall_comp' ? `<div class="flex w-full items-center">${renderFlag(prop.id, row.key, valObj)}</div>` :
+                                                row.key === 'weighting' ? `<input type="text" value="${displayVal}" class="w-full bg-transparent border-b border-gray-300 text-sm focus:border-harken-accent focus:outline-none" />` :
+                                                row.key === 'total_value' ? `<span class="text-lg font-bold text-emerald-600">${displayVal}</span>` :
+                                                `<span class="truncate font-medium text-gray-600">${displayVal}</span>`
+                                            ) : `
+                                                <div class="flex justify-between items-start gap-2 h-full items-center">
+                                                    <span class="truncate font-medium flex-1">${displayVal}</span>
+                                                    ${showFlags ? renderFlag(prop.id, row.key, valObj) : ''}
+                                                </div>
+                                            `}
+                                        </div>
+                                    `;
+                                }).join('')}
+                            `;
+                        });
+                        
+                        // Add Row Button (not for valuation section)
+                        if (!isValuation) {
+                            sectionHtml += `
+                                <div class="col-span-full border-b border-gray-200 bg-white p-2 sticky left-0 z-20">
+                                    <div class="relative max-w-md mx-auto">
+                                        <button onclick="event.stopPropagation(); gridState.activeSection = gridState.activeSection === '${section.id}' ? null : '${section.id}'; document.getElementById('sales-grid-container').innerHTML = renderSalesGridContent();" 
+                                                class="flex items-center justify-center gap-2 text-xs font-bold px-4 py-3 rounded-xl border border-dashed w-full transition-all mt-2 mb-4 ${isActive ? 'text-harken-accent bg-harken-accent/10 border-harken-accent' : 'text-gray-400 border-gray-300 hover:text-harken-accent hover:bg-harken-accent/5 hover:border-harken-accent'}">
+                                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                                            Add ${section.title} Characteristic
+                                        </button>
+                                        ${isActive ? `
+                                            <div class="absolute left-0 right-0 top-full mt-[-12px] bg-white rounded-xl shadow-2xl border border-gray-200 z-50 max-h-60 overflow-y-auto sales-grid-scroll">
+                                                <div class="p-1 grid grid-cols-2 gap-1">
+                                                    ${salesGridData.availableElements.map(el => `
+                                                        <button onclick="addRowToGrid('${section.id}', ${JSON.stringify(el).replace(/"/g, '&quot;')})" 
+                                                                class="text-left px-3 py-2.5 text-xs font-medium text-gray-600 hover:bg-harken-accent/10 hover:text-harken-accent rounded-lg truncate transition-colors">
+                                                            ${el.label}
+                                                        </button>
+                                                    `).join('')}
+                                                </div>
+                                            </div>
+                                        ` : ''}
+                                    </div>
+                                </div>
+                            `;
+                        }
+                        
+                        return sectionHtml;
+                    }).join('')}
+                    
+                </div>
+            </div>
+        </div>`;
+        
+        return html;
+    }
+
+    function renderSalesGrid() {
+        let html = `<div class="animate-fade-in">`;
+        html += `<div id="sales-grid-container" class="bg-white border border-gray-200 rounded-lg shadow-sm overflow-hidden" style="height: calc(100vh - 300px);">`;
+        html += renderSalesGridContent();
+        html += `</div>`;
+        html += `</div>`;
+        return html;
+    }
+</script>
+</body>
+</html>

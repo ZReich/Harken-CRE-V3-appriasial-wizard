@@ -1,0 +1,793 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Account Amenities Configuration - Harken CRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            font-family: 'Montserrat', sans-serif !important;
+        }
+        body {
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background: url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;
+            background-color: #1c3643 !important;
+            max-height: 84px;
+            height: 84px;
+            color: #fff;
+        }
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 10px 24px;
+            border-radius: 25px;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+        .nav-link.active {
+            background-color: transparent;
+            border: 1px solid #0da1c7;
+            color: #0da1c7;
+        }
+        .section-title {
+            font-size: 23px;
+            font-weight: 600;
+            color: #1c3643;
+        }
+        .subsection-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1c3643;
+            margin-bottom: 16px;
+        }
+        .report-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+        }
+        .amenity-item {
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .amenity-item:last-child {
+            border-bottom: none;
+        }
+        .amenity-item:hover {
+            background-color: #f9f9f9;
+        }
+        .amenity-item.disabled {
+            opacity: 0.5;
+        }
+        .amenity-name {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1c3643;
+        }
+        .amenity-details {
+            font-size: 12px;
+            color: #687F8B;
+            margin-top: 4px;
+        }
+        .category-badge {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-block;
+            margin-right: 8px;
+        }
+        .category-outdoor {
+            background-color: #e3f2fd;
+            color: #1565c0;
+        }
+        .category-indoor {
+            background-color: #f3e5f5;
+            color: #6a1b9a;
+        }
+        .category-utilities {
+            background-color: #fff3e0;
+            color: #e65100;
+        }
+        .category-custom {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .toggle-slider {
+            background-color: #10b981;
+        }
+        input:checked + .toggle-slider:before {
+            transform: translateX(20px);
+        }
+        .action-button {
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .action-button:hover {
+            opacity: 0.8;
+        }
+        .action-button-primary {
+            background-color: #0da1c7;
+            color: white;
+        }
+        .action-button-secondary {
+            background-color: #687F8B;
+            color: white;
+        }
+        .back-link {
+            color: #0da1c7;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: 16px;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .link-text {
+            color: #0da1c7;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 12px;
+        }
+        .link-text:hover {
+            text-decoration: underline;
+        }
+        .search-input {
+            padding: 10px 14px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 13px;
+            background-color: white;
+            color: #687F8B;
+            font-weight: 500;
+            width: 100%;
+            margin-bottom: 16px;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+        .stat-card {
+            background: linear-gradient(135deg, #0da1c7 0%, #0b8ab0 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .stat-label {
+            font-size: 12px;
+            opacity: 0.9;
+        }
+        .value-input {
+            width: 100px;
+            padding: 6px 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #1c3643;
+            font-weight: 500;
+            margin-left: 8px;
+        }
+        .value-input:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-content {
+            background-color: white;
+            border-radius: 8px;
+            padding: 32px;
+            max-width: 600px;
+            width: 90%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        .modal-title {
+            color: #1c3643;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+        .form-label {
+            color: #687F8B;
+            font-size: 13px;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            background-color: white;
+            color: #1c3643;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .modal-footer {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Toggle Button (initially hidden) -->
+    <button id="showBuildNotesBtn" 
+            style="position: fixed; top: 100px; right: 20px; z-index: 9999; 
+                   padding: 12px 20px; background: #ffc107; color: #856404; 
+                   border: 2px solid #856404; border-radius: 25px; 
+                   font-size: 14px; font-weight: 700; cursor: pointer; 
+                   box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+                   display: none; transition: all 0.3s;"
+            onclick="toggleBuildNotes(true)">
+        🔨 Show Build Notes
+    </button>
+
+    <!-- UNIFIED NAVIGATION COMPONENT -->
+    <style>.unified-navbar{background:url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;background-color:#1c3643!important;height:84px;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 32px;box-shadow:0 2px 8px rgba(0,0,0,0.1);position:sticky;top:0;z-index:1000}.nav-logo{height:40px;width:auto;cursor:pointer}.nav-center{display:flex;align-items:center;gap:8px;flex:1;justify-content:center}.nav-core-features{display:flex;align-items:center;gap:4px;background:rgba(13, 161, 199, 0.08);border-radius:25px;padding:4px 8px;margin-right:16px}.nav-link{color:white;text-decoration:none;padding:10px 20px;border-radius:25px;transition:all 0.2s;border:1px solid transparent;font-weight:500;font-size:14px;white-space:nowrap}.nav-link:hover{background-color:rgba(255,255,255,0.08)}.nav-link.core-feature{font-weight:500;font-size:14px;color:white}.nav-link.core-feature:hover{background-color:rgba(13, 161, 199, 0.2);color:white}.nav-link.core-feature.active{background-color:transparent;border:1px solid #0da1c7;color:#0da1c7;box-shadow:0 2px 4px rgba(13, 161, 199, 0.2)}.nav-link.active{background-color:transparent;border:1px solid #0da1c7;color:#0da1c7}.nav-separator{width:1px;height:24px;background:rgba(255, 255, 255, 0.2);margin:0 8px}.nav-user{display:flex;align-items:center;gap:12px}.nav-user-name{font-size:14px;font-weight:500;color:white}.nav-user-avatar{width:36px;height:36px;border-radius:50%;border:2px solid #0da1c7}.property-tabs-container{background:white;border-bottom:2px solid #e0e0e0;display:none;padding:0 32px}.property-tabs-container.show{display:flex}.property-tab{padding:16px 24px;border:none;background:transparent;color:#687F8B;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:8px;border-bottom:3px solid transparent;margin-bottom:-2px;font-family:'Montserrat', sans-serif}.property-tab:hover{color:#0da1c7;background:#f0fbfd}.property-tab.active{color:#0da1c7;border-bottom-color:#0da1c7;background:#f0fbfd}</style><nav class="unified-navbar"><img src="assets/harken.png" alt="Harken CRE" class="nav-logo" onclick="window.location.href='super-admin-dashboard.html'"><div class="nav-center"><div class="nav-core-features"><a href="super-admin-comps.html" class="nav-link core-feature" id="nav-comps">COMPS</a><a href="super-admin-appraisals-list.html" class="nav-link core-feature" id="nav-appraisals">APPRAISAL</a><a href="evaluation-wizard-full.html" class="nav-link core-feature" id="nav-evaluations">EVALUATION</a></div><div class="nav-separator"></div><a href="super-admin-dashboard.html" class="nav-link" id="nav-dashboard">Dashboard</a><a href="super-admin-users.html" class="nav-link" id="nav-users">Users</a><a href="super-admin-clients.html" class="nav-link" id="nav-clients">Clients</a><a href="super-admin-accounts.html" class="nav-link" id="nav-accounts">Accounts</a><a href="super-admin-reports.html" class="nav-link" id="nav-reports">Reports</a><a href="super-admin-support-tickets.html" class="nav-link" id="nav-support">Support</a><a href="super-admin-audit-logs.html" class="nav-link" id="nav-audit">Audit Logs</a><a href="super-admin-settings.html" class="nav-link" id="nav-settings">Settings</a></div><div class="nav-user"><span class="nav-user-name">Harken Admin</span><img src="https://i.pravatar.cc/150?img=33" alt="User" class="nav-user-avatar"></div></nav><div class="property-tabs-container" id="propertyTabsContainer"><button class="property-tab active" data-type="commercial" onclick="switchPropertyType('commercial')"><span style="font-size: 18px;">🏢</span>Commercial</button><button class="property-tab" data-type="residential" onclick="switchPropertyType('residential')"><span style="font-size: 18px;">🏠</span>Residential</button><button class="property-tab" data-type="land" onclick="switchPropertyType('land')"><span style="font-size: 18px;">🏞️</span>Land</button></div><script>(function(){const currentPage=window.location.pathname.split('/').pop()||'super-admin-dashboard.html';const showPropertyTabsOn=['comps-premium-with-clustering.html','super-admin-appraisals-list.html','evaluation-wizard-full.html'];if(showPropertyTabsOn.some(page=>currentPage.includes(page)||currentPage.includes('comps-')||currentPage.includes('appraisal-')||currentPage.includes('evaluation-'))){document.getElementById('propertyTabsContainer').classList.add('show');}const navMapping={'super-admin-dashboard.html':'nav-dashboard','comps-premium-with-clustering.html':'nav-comps','super-admin-appraisals-list.html':'nav-appraisals','evaluation-wizard-full.html':'nav-evaluations','super-admin-users.html':'nav-users','super-admin-user-edit.html':'nav-users','super-admin-clients.html':'nav-clients','super-admin-accounts.html':'nav-accounts','super-admin-account-manage.html':'nav-accounts','super-admin-account-amenities.html':'nav-accounts','super-admin-account-report-templates.html':'nav-accounts','super-admin-reports.html':'nav-reports','super-admin-support-tickets.html':'nav-support','super-admin-support-create-ticket.html':'nav-support','super-admin-support-ticket-detail.html':'nav-support','super-admin-audit-logs.html':'nav-audit','super-admin-settings.html':'nav-settings','super-admin-settings-billing.html':'nav-settings','super-admin-settings-amenities.html':'nav-settings','super-admin-settings-white-label.html':'nav-settings'};for(const[page,navId]of Object.entries(navMapping)){if(currentPage.includes(page)){const navElement=document.getElementById(navId);if(navElement){navElement.classList.add('active');}break;}}})();function switchPropertyType(type){document.querySelectorAll('.property-tab').forEach(tab=>{tab.classList.remove('active');});document.querySelector(`[data-type="${type}"]`).classList.add('active');localStorage.setItem('activePropertyType',type);console.log('Switched to property type:',type);}window.addEventListener('load',function(){const savedType=localStorage.getItem('activePropertyType');if(savedType){switchPropertyType(savedType);}});</script>
+
+    <!-- Main Content -->
+    <div style="padding: 35px 50px;">
+        <!-- BUILD NOTES SECTION -->
+        <div id="buildNotesSection" style="background-color: #e8f5e9; border-left: 4px solid #2e7d32; padding: 20px; margin-bottom: 32px; border-radius: 4px;">
+            <h3 style="color: #1b5e20; font-size: 16px; font-weight: 700; margin: 0 0 16px 0;">🔨 BUILD NOTES - ACCOUNT-LEVEL AMENITIES</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 16px;">
+                <div>
+                    <strong style="color: #1b5e20;">Priority Level:</strong> Medium
+                </div>
+                <div>
+                    <strong style="color: #1b5e20;">Recommended Customer Count:</strong> 3-5 customers
+                </div>
+                <div>
+                    <strong style="color: #1b5e20;">Development Stage:</strong> Phase 2
+                </div>
+                <div>
+                    <strong style="color: #1b5e20;">Estimated Build Time:</strong> 1 week (with global amenities)
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #1b5e20;">Purpose & Use Case:</strong>
+                <p style="margin: 4px 0 0 0; color: #1b5e20;">Let individual accounts customize their amenities list from the global master list (super-admin-settings-amenities.html). Each account can: enable/disable specific amenities, override adjustment values for their local market, add custom account-specific amenities. Example: Miami account might value "Pool" at $15K while Seattle account values it at $8K.</p>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #1b5e20;">Key Features Explained:</strong>
+                <ul style="margin: 4px 0 0 0; color: #1b5e20;">
+                    <li><strong>Enable/Disable Toggle:</strong> Accounts only see amenities they've enabled. Keeps their interface clean.</li>
+                    <li><strong>Custom Adjustment Values:</strong> Override global default for local market. Example: "Fireplace" worth more in cold climates.</li>
+                    <li><strong>Inherited from Master List:</strong> Grayed amenities use global default values. Custom values shown in green/bold.</li>
+                    <li><strong>Search & Filter:</strong> Find specific amenities in long lists. Filter by category or status.</li>
+                    <li><strong>Add Custom Amenity:</strong> Account-specific amenities not in global list. Only this account sees them.</li>
+                    <li><strong>Statistics:</strong> Shows enabled count vs total available. Helps see customization level.</li>
+                </ul>
+            </div>
+            
+            <div>
+                <strong style="color: #1b5e20;">Implementation Notes:</strong>
+                <p style="margin: 4px 0 0 0; color: #1b5e20;">Built WITH super-admin-settings-amenities.html as a pair. Database: account_amenities (account_id, amenity_id, is_enabled, custom_adjustment_value, is_custom). Query shows all global amenities + account's custom ones. Toggle updates is_enabled. Adjustment value updates only affect this account. Custom amenities have NULL amenity_id (or separate table). Most accounts will just use defaults - customization is optional power feature.</p>
+            </div>
+            
+            <button onclick="toggleBuildNotes(false)" style="margin-top: 12px; padding: 6px 12px; background: #2e7d32; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">Hide Build Notes</button>
+        </div>
+
+        <!-- Back Link & Breadcrumb -->
+        <a href="super-admin-account-manage.html" class="back-link">← Back to Account</a>
+        <div style="color: #687F8B; font-size: 13px; margin-bottom: 24px;">
+            Accounts > Downtown Commercial Partners > Amenities
+        </div>
+
+        <!-- Page Title -->
+        <div style="margin-bottom: 32px;">
+            <h2 class="section-title">AMENITIES CONFIGURATION</h2>
+            <p style="color: #687F8B; font-size: 14px; margin-top: 8px;">Downtown Commercial Partners</p>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-value">27</div>
+                <div class="stat-label">Global Amenities Enabled</div>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #10b981 0%, #059669 100%);">
+                <div class="stat-value">3</div>
+                <div class="stat-label">Custom Amenities</div>
+            </div>
+            <div class="stat-card" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);">
+                <div class="stat-value">30</div>
+                <div class="stat-label">Total Active Amenities</div>
+            </div>
+        </div>
+
+        <!-- Two Column Layout -->
+        <div style="display: grid; grid-template-columns: 1.5fr 1fr; gap: 24px;">
+            <!-- Left Column: Global Amenities -->
+            <div class="report-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <h3 class="subsection-title" style="margin-bottom: 0;">Global Amenities</h3>
+                    <button class="action-button action-button-secondary" style="padding: 8px 16px; font-size: 12px;" onclick="syncGlobal()">Sync with Global</button>
+                </div>
+                <p style="color: #687F8B; font-size: 12px; margin-bottom: 16px;">Enable or disable global amenities for this account. Override default values as needed.</p>
+                
+                <input type="text" class="search-input" id="globalSearch" placeholder="Search global amenities..." onkeyup="filterGlobal()" />
+                
+                <div id="globalAmenitiesList" style="max-height: 600px; overflow-y: auto;">
+                    <!-- Enabled Global Amenities -->
+                    <div class="amenity-item">
+                        <div style="flex: 1;">
+                            <div class="amenity-name">
+                                <span class="category-badge category-outdoor">Outdoor</span>
+                                Pool
+                            </div>
+                            <div class="amenity-details">
+                                Default: $25,000 
+                                <input type="text" class="value-input" value="$25,000" placeholder="Override value" />
+                            </div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked onchange="toggleAmenity(this, 'Pool')" />
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="amenity-item">
+                        <div style="flex: 1;">
+                            <div class="amenity-name">
+                                <span class="category-badge category-utilities">Utilities</span>
+                                Solar Panels
+                            </div>
+                            <div class="amenity-details">
+                                Default: $20,000
+                                <input type="text" class="value-input" value="$20,000" />
+                            </div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked onchange="toggleAmenity(this, 'Solar Panels')" />
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="amenity-item">
+                        <div style="flex: 1;">
+                            <div class="amenity-name">
+                                <span class="category-badge category-outdoor">Outdoor</span>
+                                Outdoor Kitchen
+                            </div>
+                            <div class="amenity-details">
+                                Default: $15,000
+                                <input type="text" class="value-input" value="$15,000" />
+                            </div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked onchange="toggleAmenity(this, 'Outdoor Kitchen')" />
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="amenity-item">
+                        <div style="flex: 1;">
+                            <div class="amenity-name">
+                                <span class="category-badge category-outdoor">Outdoor</span>
+                                Basketball Court
+                            </div>
+                            <div class="amenity-details">
+                                Default: $15,000
+                                <input type="text" class="value-input" value="$15,000" />
+                            </div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked onchange="toggleAmenity(this, 'Basketball Court')" />
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="amenity-item">
+                        <div style="flex: 1;">
+                            <div class="amenity-name">
+                                <span class="category-badge category-indoor">Indoor</span>
+                                Home Theater Room
+                            </div>
+                            <div class="amenity-details">
+                                Default: $12,000
+                                <input type="text" class="value-input" value="$12,000" />
+                            </div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked onchange="toggleAmenity(this, 'Home Theater Room')" />
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="amenity-item disabled">
+                        <div style="flex: 1;">
+                            <div class="amenity-name">
+                                <span class="category-badge category-outdoor">Outdoor</span>
+                                Tennis Court
+                            </div>
+                            <div class="amenity-details">
+                                Default: $30,000 (Disabled for this account)
+                            </div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" onchange="toggleAmenity(this, 'Tennis Court')" />
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="amenity-item">
+                        <div style="flex: 1;">
+                            <div class="amenity-name">
+                                <span class="category-badge category-outdoor">Outdoor</span>
+                                Hot Tub
+                            </div>
+                            <div class="amenity-details">
+                                Default: $8,000
+                                <input type="text" class="value-input" value="$8,000" />
+                            </div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked onchange="toggleAmenity(this, 'Hot Tub')" />
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="amenity-item">
+                        <div style="flex: 1;">
+                            <div class="amenity-name">
+                                <span class="category-badge category-utilities">Utilities</span>
+                                Generator (Whole House)
+                            </div>
+                            <div class="amenity-details">
+                                Default: $8,000
+                                <input type="text" class="value-input" value="$8,000" />
+                            </div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked onchange="toggleAmenity(this, 'Generator')" />
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="amenity-item disabled">
+                        <div style="flex: 1;">
+                            <div class="amenity-name">
+                                <span class="category-badge category-utilities">Utilities</span>
+                                Septic System
+                            </div>
+                            <div class="amenity-details">
+                                Default: $8,000 (Disabled for this account)
+                            </div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" onchange="toggleAmenity(this, 'Septic System')" />
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div class="amenity-item">
+                        <div style="flex: 1;">
+                            <div class="amenity-name">
+                                <span class="category-badge category-indoor">Indoor</span>
+                                Wine Cellar
+                            </div>
+                            <div class="amenity-details">
+                                Default: $8,000
+                                <input type="text" class="value-input" value="$8,000" />
+                            </div>
+                        </div>
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked onchange="toggleAmenity(this, 'Wine Cellar')" />
+                            <span class="toggle-slider"></span>
+                        </label>
+                    </div>
+
+                    <div style="text-align: center; padding: 16px; color: #687F8B; font-size: 12px; border-top: 1px solid #f0f0f0;">
+                        Showing 10 of 30 global amenities • <span class="link-text" onclick="alert('Show all amenities')">View All</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Custom Amenities -->
+            <div class="report-card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                    <h3 class="subsection-title" style="margin-bottom: 0;">Custom Amenities</h3>
+                    <button class="action-button action-button-primary" style="padding: 8px 16px; font-size: 12px;" onclick="openCustomModal()">+ Add Custom</button>
+                </div>
+                <p style="color: #687F8B; font-size: 12px; margin-bottom: 16px;">Create account-specific amenities not in the global list.</p>
+                
+                <div id="customAmenitiesList">
+                    <div class="amenity-item">
+                        <div style="flex: 1;">
+                            <div class="amenity-name">
+                                <span class="category-badge category-custom">Custom</span>
+                                Wine Room
+                            </div>
+                            <div class="amenity-details">
+                                Indoor • Value: $15,000
+                            </div>
+                        </div>
+                        <div>
+                            <span class="link-text" onclick="editCustomAmenity('Wine Room', 'Indoor', 15000)">Edit</span> • 
+                            <span class="link-text" style="color: #a94442;" onclick="deleteCustom('Wine Room')">Delete</span>
+                        </div>
+                    </div>
+
+                    <div class="amenity-item">
+                        <div style="flex: 1;">
+                            <div class="amenity-name">
+                                <span class="category-badge category-custom">Custom</span>
+                                Putting Green
+                            </div>
+                            <div class="amenity-details">
+                                Outdoor • Value: $8,000
+                            </div>
+                        </div>
+                        <div>
+                            <span class="link-text" onclick="editCustomAmenity('Putting Green', 'Outdoor', 8000)">Edit</span> • 
+                            <span class="link-text" style="color: #a94442;" onclick="deleteCustom('Putting Green')">Delete</span>
+                        </div>
+                    </div>
+
+                    <div class="amenity-item">
+                        <div style="flex: 1;">
+                            <div class="amenity-name">
+                                <span class="category-badge category-custom">Custom</span>
+                                Home Office
+                            </div>
+                            <div class="amenity-details">
+                                Indoor • Value: $3,000
+                            </div>
+                        </div>
+                        <div>
+                            <span class="link-text" onclick="editCustomAmenity('Home Office', 'Indoor', 3000)">Edit</span> • 
+                            <span class="link-text" style="color: #a94442;" onclick="deleteCustom('Home Office')">Delete</span>
+                        </div>
+                    </div>
+
+                    <div style="text-align: center; padding: 40px 20px; color: #687F8B; font-size: 13px; border-top: 1px solid #f0f0f0;">
+                        <div style="margin-bottom: 12px;">💡 Custom amenities are unique to this account</div>
+                        <div style="font-size: 12px;">They won't appear in other accounts' amenity lists</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 32px;">
+            <a href="super-admin-account-manage.html" class="action-button action-button-secondary" style="text-decoration: none; display: inline-block;">Cancel</a>
+            <button class="action-button action-button-primary" onclick="saveChanges()">Save Changes</button>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 50px;">
+            <span style="font-weight: 300; font-size: 14px; color: #687F8B;">© 2024, Harken CRE, LLC</span>
+        </div>
+    </div>
+
+    <!-- Add/Edit Custom Amenity Modal -->
+    <div id="customAmenityModal" class="modal-overlay" onclick="closeCustomModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h2 class="modal-title" id="customModalTitle">Add Custom Amenity</h2>
+            <form onsubmit="saveCustomAmenity(event)">
+                <label class="form-label">Amenity Name *</label>
+                <input type="text" id="customName" class="form-input" placeholder="e.g., Rooftop Terrace" required />
+
+                <label class="form-label">Category *</label>
+                <select id="customCategory" class="form-select" required>
+                    <option value="">Select Category</option>
+                    <option value="Outdoor">Outdoor</option>
+                    <option value="Indoor">Indoor</option>
+                    <option value="Utilities">Utilities</option>
+                </select>
+
+                <label class="form-label">Adjustment Value (USD) *</label>
+                <input type="number" id="customValue" class="form-input" placeholder="0" step="100" min="0" required />
+
+                <div class="modal-footer">
+                    <button type="button" class="action-button action-button-secondary" onclick="closeCustomModal()">Cancel</button>
+                    <button type="submit" class="action-button action-button-primary">Save Custom Amenity</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Toggle Global Amenity
+        function toggleAmenity(checkbox, name) {
+            const item = checkbox.closest('.amenity-item');
+            if (checkbox.checked) {
+                item.classList.remove('disabled');
+                alert(`"${name}" enabled for this account.`);
+            } else {
+                item.classList.add('disabled');
+                alert(`"${name}" disabled for this account.`);
+            }
+        }
+
+        // Filter Global Amenities
+        function filterGlobal() {
+            const search = document.getElementById('globalSearch').value.toLowerCase();
+            const items = document.querySelectorAll('#globalAmenitiesList .amenity-item');
+            
+            items.forEach(item => {
+                const text = item.textContent.toLowerCase();
+                item.style.display = text.includes(search) ? '' : 'none';
+            });
+        }
+
+        // Sync with Global
+        function syncGlobal() {
+            if (confirm('Sync with global amenities list?\n\nThis will:\n• Add any new global amenities\n• Update default values\n• Keep your custom values and enabled/disabled states')) {
+                alert('Successfully synced with global amenities list.\n\n2 new amenities added, 3 values updated.');
+            }
+        }
+
+        // Open Custom Amenity Modal
+        function openCustomModal() {
+            document.getElementById('customModalTitle').textContent = 'Add Custom Amenity';
+            document.getElementById('customName').value = '';
+            document.getElementById('customCategory').value = '';
+            document.getElementById('customValue').value = '';
+            document.getElementById('customAmenityModal').classList.add('active');
+        }
+
+        // Edit Custom Amenity
+        function editCustomAmenity(name, category, value) {
+            document.getElementById('customModalTitle').textContent = 'Edit Custom Amenity';
+            document.getElementById('customName').value = name;
+            document.getElementById('customCategory').value = category;
+            document.getElementById('customValue').value = value;
+            document.getElementById('customAmenityModal').classList.add('active');
+        }
+
+        // Close Custom Modal
+        function closeCustomModal() {
+            document.getElementById('customAmenityModal').classList.remove('active');
+        }
+
+        // Save Custom Amenity
+        function saveCustomAmenity(event) {
+            event.preventDefault();
+            const name = document.getElementById('customName').value;
+            const category = document.getElementById('customCategory').value;
+            const value = document.getElementById('customValue').value;
+            
+            alert(`Custom amenity "${name}" saved successfully!\nCategory: ${category}\nValue: $${value}`);
+            closeCustomModal();
+        }
+
+        // Delete Custom Amenity
+        function deleteCustom(name) {
+            if (confirm(`Delete custom amenity "${name}"?\n\nThis amenity will be removed from this account only.`)) {
+                alert(`Custom amenity "${name}" deleted successfully.`);
+            }
+        }
+
+        // Save All Changes
+        function saveChanges() {
+            alert('All amenity configurations saved successfully!\n\n• 27 global amenities enabled\n• 3 custom amenities\n• 5 value overrides');
+        }
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeCustomModal();
+            }
+        });
+
+        // Build Notes Toggle Function
+        function toggleBuildNotes(show) {
+            const notesSection = document.getElementById('buildNotesSection');
+            const toggleBtn = document.getElementById('showBuildNotesBtn');
+            
+            if (show) {
+                notesSection.style.display = 'block';
+                toggleBtn.style.display = 'none';
+                notesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                notesSection.style.display = 'none';
+                toggleBtn.style.display = 'block';
+            }
+            
+            sessionStorage.setItem('buildNotesVisible', show);
+        }
+
+        // Restore preference on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            const savedPreference = sessionStorage.getItem('buildNotesVisible');
+            if (savedPreference === 'false') {
+                toggleBuildNotes(false);
+            }
+        });
+    </script>
+</body>
+</html>
+
+

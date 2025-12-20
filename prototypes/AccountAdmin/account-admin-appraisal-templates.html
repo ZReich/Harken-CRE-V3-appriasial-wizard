@@ -1,0 +1,311 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Appraisal Templates - Harken CRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { font-family: 'Montserrat', sans-serif !important; box-sizing: border-box; }
+        body { background-color: #f9f9f9; margin: 0; padding: 0; }
+        
+        /* Breadcrumb */
+        .breadcrumb { padding: 16px 32px; background: white; border-bottom: 1px solid #E5E7EB; }
+        .breadcrumb a { color: #0da1c7; text-decoration: none; font-size: 14px; font-weight: 600; display: inline-flex; align-items: center; gap: 4px; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        
+        /* Page Header */
+        .page-header { background: white; padding: 24px 32px 20px; }
+        .page-title { font-size: 28px; font-weight: 700; color: #1c3643; margin: 0 0 8px 0; }
+        .page-subtitle { font-size: 14px; color: #6B7280; margin: 0 0 16px 0; }
+        
+        /* Tabs */
+        .tabs-container { background: white; border-bottom: 2px solid #e0e0e0; padding: 0 32px; }
+        .tab-btn { padding: 14px 24px; border: none; background: transparent; color: #687F8B; font-size: 15px; font-weight: 600; cursor: pointer; border-bottom: 3px solid transparent; margin-bottom: -2px; transition: all 0.2s; }
+        .tab-btn:hover { color: #0da1c7; }
+        .tab-btn.active { color: #0da1c7; border-bottom-color: #0da1c7; }
+        
+        /* Template Grid */
+        .templates-container { padding: 24px 32px; }
+        .template-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(380px, 1fr)); gap: 20px; }
+        
+        /* Template Card */
+        .template-card { background: white; border: 1px solid #e0e0e0; border-radius: 8px; padding: 20px; transition: all 0.2s; }
+        .template-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.1); border-color: #0da1c7; }
+        .template-card.disabled { opacity: 0.6; }
+        .template-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+        .template-title { font-size: 18px; font-weight: 600; color: #1c3643; margin: 0; flex: 1; }
+        .template-badges { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+        .template-description { font-size: 14px; color: #6B7280; margin: 0 0 16px 0; line-height: 1.5; }
+        .template-stats { display: flex; gap: 16px; padding: 12px 0; border-top: 1px solid #F3F4F6; border-bottom: 1px solid #F3F4F6; margin-bottom: 16px; }
+        .template-stat { font-size: 13px; color: #6B7280; display: flex; align-items: center; gap: 4px; }
+        .template-actions { display: flex; gap: 8px; }
+        
+        /* Toggle Switch for Enable/Disable */
+        .toggle-switch { position: relative; display: inline-block; width: 50px; height: 26px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .3s; border-radius: 26px; }
+        .toggle-slider:before { position: absolute; content: ""; height: 20px; width: 20px; left: 3px; bottom: 3px; background-color: white; transition: .3s; border-radius: 50%; }
+        input:checked + .toggle-slider { background-color: #0da1c7; }
+        input:checked + .toggle-slider:before { transform: translateX(24px); }
+        .status-text { font-size: 12px; color: #6B7280; margin-left: 8px; }
+        
+        /* Badges */
+        .badge { padding: 4px 12px; border-radius: 12px; font-size: 11px; font-weight: 600; text-transform: uppercase; display: inline-block; }
+        .badge.system { background: #e3f2fd; color: #1976d2; }
+        .badge.account { background: #f3e5f5; color: #7b1fa2; }
+        .badge.customized { background: #fff3e0; color: #e65100; }
+        .badge.property-commercial { background: #fff3e0; color: #e65100; }
+        .badge.property-residential { background: #fce4ec; color: #c2185b; }
+        .badge.property-land { background: #e0f2f1; color: #00695c; }
+        .badge.type-appraisal { background: #f3e5f5; color: #7b1fa2; }
+        
+        /* Buttons */
+        .btn-primary { background: linear-gradient(135deg, #0da1c7 0%, #0891b2 100%); color: white; padding: 10px 24px; border-radius: 6px; font-size: 14px; font-weight: 600; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-primary:hover { box-shadow: 0 4px 8px rgba(13, 161, 199, 0.3); }
+        .btn-secondary { background: white; color: #0da1c7; border: 1px solid #0da1c7; padding: 9px 20px; border-radius: 6px; font-size: 14px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; }
+        .btn-secondary:hover { background: #f0fbfd; }
+        .btn-ghost { background: transparent; color: #687F8B; border: none; padding: 8px 16px; font-weight: 500; cursor: pointer; font-size: 14px; }
+        .btn-ghost:hover { color: #0da1c7; background: #f0fbfd; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <!-- UNIFIED NAVIGATION COMPONENT -->
+    <style>.unified-navbar{background:url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;background-color:#1c3643!important;height:84px;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 32px;box-shadow:0 2px 8px rgba(0,0,0,0.1);position:sticky;top:0;z-index:1000}.nav-logo{height:40px;width:auto;cursor:pointer}.nav-center{display:flex;align-items:center;gap:8px;flex:1;justify-content:center}.nav-core-features{display:flex;align-items:center;gap:4px;background:rgba(13, 161, 199, 0.08);border-radius:25px;padding:4px 8px;margin-right:16px}.nav-link{color:white;text-decoration:none;padding:10px 20px;border-radius:25px;transition:all 0.2s;border:1px solid transparent;font-weight:500;font-size:14px;white-space:nowrap}.nav-link:hover{background-color:rgba(255,255,255,0.08)}.nav-link.core-feature{font-weight:500;font-size:14px;color:white}.nav-link.core-feature:hover{background-color:rgba(13, 161, 199, 0.2);color:white}.nav-link.core-feature.active{background-color:transparent;border:1px solid #0da1c7;color:#0da1c7;box-shadow:0 2px 4px rgba(13, 161, 199, 0.2)}.nav-link.active{background-color:transparent;border:1px solid #0da1c7;color:#0da1c7}.nav-separator{width:1px;height:24px;background:rgba(255, 255, 255, 0.2);margin:0 8px}.nav-user{display:flex;align-items:center;gap:12px}.nav-user-name{font-size:14px;font-weight:500;color:white}.nav-user-avatar{width:36px;height:36px;border-radius:50%;border:2px solid #0da1c7}</style><nav class="unified-navbar"><img src="assets/harken.png" alt="Harken CRE" class="nav-logo" onclick="window.location.href='account-admin-dashboard.html'"><div class="nav-center"><div class="nav-core-features"><a href="../comps-premium-with-clustering.html" class="nav-link core-feature" id="nav-comps">COMPS</a><a href="account-admin-appraisals-list.html" class="nav-link core-feature active" id="nav-appraisals">APPRAISAL</a><a href="account-admin-evaluations-list.html" class="nav-link core-feature" id="nav-evaluations">EVALUATION</a></div><div class="nav-separator"></div><a href="account-admin-dashboard.html" class="nav-link" id="nav-dashboard">Dashboard</a><a href="account-admin-users.html" class="nav-link" id="nav-users">Users</a><a href="account-admin-clients.html" class="nav-link" id="nav-clients">Clients</a><a href="account-admin-reports.html" class="nav-link" id="nav-reports">Reports</a><a href="account-admin-support.html" class="nav-link" id="nav-support">Support</a><a href="account-admin-settings.html" class="nav-link" id="nav-settings">Settings</a></div><div class="nav-user"><span class="nav-user-name">John Smith (Admin)</span><img src="https://i.pravatar.cc/150?img=12" alt="User" class="nav-user-avatar"></div></nav>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb">
+        <a href="account-admin-appraisals-list.html">
+            <i class="material-icons" style="font-size: 18px;">arrow_back</i>
+            Back to Appraisals
+        </a>
+    </div>
+
+    <!-- Page Header -->
+    <div class="page-header">
+        <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+            <div>
+                <h1 class="page-title">Appraisal Templates</h1>
+                <p class="page-subtitle">Manage templates available to your team</p>
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <button class="btn-primary" onclick="location.href='account-admin-template-builder.html?type=appraisal'">
+                    <i class="material-icons" style="font-size: 18px;">add</i>
+                    Create Custom Template
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs-container">
+        <button class="tab-btn active" onclick="switchMainTab('harken')">Harken Templates</button>
+        <button class="tab-btn" onclick="switchMainTab('custom')">My Custom Templates</button>
+    </div>
+
+    <!-- Harken Templates Tab -->
+    <div class="templates-container" id="harken-tab">
+        <div style="background: #e3f2fd; padding: 16px; border-radius: 8px; margin-bottom: 24px; border-left: 4px solid #1976d2;">
+            <p style="margin: 0; font-size: 14px; color: #1565c0; font-weight: 500;">
+                <i class="material-icons" style="font-size: 18px; vertical-align: middle; margin-right: 8px;">info</i>
+                These are Harken's system templates. Enable the ones you want your team to use, or clone and customize them for your firm.
+            </p>
+        </div>
+
+        <div class="template-grid">
+            <!-- Enabled Harken Template -->
+            <div class="template-card">
+                <div class="template-header">
+                    <h3 class="template-title">Commercial Appraisal - USPAP</h3>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked onchange="toggleTemplate(this)">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="status-text">Enabled</span>
+                    </div>
+                </div>
+                <div class="template-badges">
+                    <span class="badge system">Harken Template</span>
+                    <span class="badge property-commercial">Commercial</span>
+                </div>
+                <p class="template-description">
+                    Full USPAP-compliant commercial appraisal with all three approaches and comprehensive market analysis
+                </p>
+                <div class="template-stats">
+                    <span class="template-stat">
+                        <i class="material-icons" style="font-size: 16px;">description</i>
+                        24 sections
+                    </span>
+                    <span class="template-stat">
+                        <i class="material-icons" style="font-size: 16px;">analytics</i>
+                        Income, Sales, Cost
+                    </span>
+                </div>
+                <div class="template-actions">
+                    <button class="btn-ghost">Preview</button>
+                    <button class="btn-secondary">Clone & Customize</button>
+                </div>
+            </div>
+
+            <!-- Disabled Harken Template -->
+            <div class="template-card disabled">
+                <div class="template-header">
+                    <h3 class="template-title">Multi-Family Appraisal</h3>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <label class="toggle-switch">
+                            <input type="checkbox" onchange="toggleTemplate(this)">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="status-text">Disabled</span>
+                    </div>
+                </div>
+                <div class="template-badges">
+                    <span class="badge system">Harken Template</span>
+                    <span class="badge property-commercial">Commercial</span>
+                </div>
+                <p class="template-description">
+                    Specialized template for multi-family properties with rent roll analysis and income capitalization
+                </p>
+                <div class="template-stats">
+                    <span class="template-stat">
+                        <i class="material-icons" style="font-size: 16px;">description</i>
+                        26 sections
+                    </span>
+                    <span class="template-stat">
+                        <i class="material-icons" style="font-size: 16px;">analytics</i>
+                        Income, Sales, Rent Roll
+                    </span>
+                </div>
+                <div class="template-actions">
+                    <button class="btn-ghost">Preview</button>
+                    <button class="btn-secondary">Clone & Customize</button>
+                </div>
+            </div>
+
+            <!-- Customized Harken Template -->
+            <div class="template-card">
+                <div class="template-header">
+                    <h3 class="template-title">Residential Appraisal - URAR</h3>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked onchange="toggleTemplate(this)">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="status-text">Enabled</span>
+                    </div>
+                </div>
+                <div class="template-badges">
+                    <span class="badge customized">Customized</span>
+                    <span class="badge property-residential">Residential</span>
+                </div>
+                <p class="template-description">
+                    <strong>Your custom version:</strong> "Smith & Associates Residential URAR"<br>
+                    Added firm branding and custom disclosure sections
+                </p>
+                <div class="template-stats">
+                    <span class="template-stat">
+                        <i class="material-icons" style="font-size: 16px;">description</i>
+                        20 sections (added 2 custom)
+                    </span>
+                    <span class="template-stat">
+                        <i class="material-icons" style="font-size: 16px;">analytics</i>
+                        Sales, Cost
+                    </span>
+                </div>
+                <div class="template-actions">
+                    <button class="btn-secondary">Edit Custom Version</button>
+                    <button class="btn-ghost">Revert to Original</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- My Custom Templates Tab -->
+    <div class="templates-container" id="custom-tab" style="display: none;">
+        <div style="background: #f3e5f5; padding: 16px; border-radius: 8px; margin-bottom: 24px; border-left: 4px solid #7b1fa2;">
+            <p style="margin: 0; font-size: 14px; color: #6a1b9a; font-weight: 500;">
+                <i class="material-icons" style="font-size: 18px; vertical-align: middle; margin-right: 8px;">info</i>
+                These are custom templates created by your account. They are only visible to your team.
+            </p>
+        </div>
+
+        <div class="template-grid">
+            <!-- Custom Template Example -->
+            <div class="template-card">
+                <div class="template-header">
+                    <h3 class="template-title">Smith & Associates Commercial Standard</h3>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                        <label class="toggle-switch">
+                            <input type="checkbox" checked onchange="toggleTemplate(this)">
+                            <span class="toggle-slider"></span>
+                        </label>
+                        <span class="status-text">Enabled</span>
+                    </div>
+                </div>
+                <div class="template-badges">
+                    <span class="badge account">Account Template</span>
+                    <span class="badge property-commercial">Commercial</span>
+                </div>
+                <p class="template-description">
+                    Custom commercial appraisal template with firm-specific formatting and additional market analysis sections
+                </p>
+                <div class="template-stats">
+                    <span class="template-stat">
+                        <i class="material-icons" style="font-size: 16px;">description</i>
+                        22 sections
+                    </span>
+                    <span class="template-stat">
+                        <i class="material-icons" style="font-size: 16px;">analytics</i>
+                        Income, Sales, Cost
+                    </span>
+                    <span class="template-stat">
+                        <i class="material-icons" style="font-size: 16px;">person</i>
+                        Created by John Smith
+                    </span>
+                </div>
+                <div class="template-actions">
+                    <button class="btn-secondary">Edit</button>
+                    <button class="btn-ghost">Duplicate</button>
+                    <button class="btn-ghost" style="color: #dc2626;">Delete</button>
+                </div>
+            </div>
+
+            <!-- Empty State for Custom Templates -->
+            <div class="template-card" style="border: 2px dashed #d0d0d0; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 240px; cursor: pointer;" onclick="location.href='account-admin-template-builder.html?type=appraisal'">
+                <i class="material-icons" style="font-size: 48px; color: #9CA3AF; margin-bottom: 12px;">add_circle_outline</i>
+                <p style="font-size: 16px; font-weight: 600; color: #6B7280; margin: 0 0 8px 0;">Create New Template</p>
+                <p style="font-size: 13px; color: #9CA3AF; margin: 0;">Build a custom appraisal template for your firm</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchMainTab(tab) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Show/hide tab content
+            document.getElementById('harken-tab').style.display = tab === 'harken' ? 'block' : 'none';
+            document.getElementById('custom-tab').style.display = tab === 'custom' ? 'block' : 'none';
+        }
+
+        function toggleTemplate(checkbox) {
+            const card = checkbox.closest('.template-card');
+            const statusText = card.querySelector('.status-text');
+            
+            if (checkbox.checked) {
+                card.classList.remove('disabled');
+                statusText.textContent = 'Enabled';
+            } else {
+                card.classList.add('disabled');
+                statusText.textContent = 'Disabled';
+            }
+        }
+    </script>
+</body>
+</html>
+

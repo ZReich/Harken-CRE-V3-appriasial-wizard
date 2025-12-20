@@ -1,0 +1,1103 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Appraisal Report Editor - Harken CRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="assets/wizard-shared.css" />
+    <style>
+        * {
+            font-family: 'Montserrat', sans-serif !important;
+            box-sizing: border-box;
+        }
+        html, body {
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* Main Container */
+        .main-container {
+            padding: 16px 24px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Header */
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            flex-shrink: 0;
+        }
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+        .back-btn {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            background: white;
+            color: #687F8B;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .back-btn:hover {
+            border-color: #0da1c7;
+            color: #0da1c7;
+        }
+        .page-title {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1c3643;
+        }
+        .page-subtitle {
+            font-size: 12px;
+            color: #687F8B;
+            margin-top: 2px;
+        }
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+        .zoom-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 4px 8px;
+        }
+        .zoom-btn {
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: transparent;
+            color: #687F8B;
+            cursor: pointer;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .zoom-btn:hover {
+            background: #f0f0f0;
+            color: #0da1c7;
+        }
+        .zoom-level {
+            font-size: 12px;
+            font-weight: 600;
+            color: #1c3643;
+            min-width: 40px;
+            text-align: center;
+        }
+        .action-btn {
+            padding: 10px 20px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            background: white;
+            color: #687F8B;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .action-btn:hover {
+            background: #f9f9f9;
+            border-color: #0da1c7;
+            color: #0da1c7;
+        }
+        .action-btn.primary {
+            background: #0da1c7;
+            color: white;
+            border-color: #0da1c7;
+        }
+        .action-btn.primary:hover {
+            background: #0890a8;
+        }
+
+        /* Builder Container - 3 Panel Layout */
+        .builder-container {
+            display: grid;
+            grid-template-columns: 280px 1fr 320px;
+            gap: 16px;
+            flex: 1;
+            min-height: 0;
+        }
+
+        /* Panel Styles */
+        .panel {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .panel-header {
+            padding: 16px;
+            border-bottom: 1px solid #e5e7eb;
+            flex-shrink: 0;
+        }
+        .panel-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1c3643;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .panel-title svg {
+            width: 16px;
+            height: 16px;
+            color: #0da1c7;
+        }
+        .panel-body {
+            flex: 1;
+            overflow-y: auto;
+            padding: 12px;
+        }
+
+        /* Section Tree */
+        .section-tree {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .section-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+        }
+        .section-item:hover {
+            background: #f3f4f6;
+        }
+        .section-item.active {
+            background: rgba(13, 161, 199, 0.1);
+            border-left-color: #0da1c7;
+        }
+        .section-item.disabled {
+            opacity: 0.5;
+        }
+        /* Toggle Switch Styles */
+        .toggle-switch {
+            flex-shrink: 0;
+            cursor: pointer;
+        }
+        .toggle-track {
+            width: 28px;
+            height: 16px;
+            background: #d1d5db;
+            border-radius: 9999px;
+            position: relative;
+            transition: background 0.2s ease;
+        }
+        .toggle-switch.active .toggle-track {
+            background: #0da1c7;
+        }
+        .toggle-thumb {
+            width: 12px;
+            height: 12px;
+            background: white;
+            border-radius: 50%;
+            position: absolute;
+            top: 2px;
+            left: 2px;
+            transition: transform 0.2s ease;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+        }
+        .toggle-switch.active .toggle-thumb {
+            transform: translateX(12px);
+        }
+        .section-icon {
+            width: 18px;
+            height: 18px;
+            color: #9ca3af;
+            flex-shrink: 0;
+        }
+        .section-item.active .section-icon {
+            color: #0da1c7;
+        }
+        .section-label {
+            font-size: 12px;
+            font-weight: 500;
+            color: #374151;
+            flex: 1;
+        }
+        .section-item.active .section-label {
+            color: #0da1c7;
+            font-weight: 600;
+        }
+        .page-count {
+            font-size: 10px;
+            color: #9ca3af;
+            background: #f3f4f6;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+
+        /* Category Headers */
+        .category-header {
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #6b7280;
+            padding: 12px 12px 6px;
+            margin-top: 8px;
+        }
+
+        /* Preview Panel */
+        .preview-panel {
+            background: #4a5568;
+            position: relative;
+        }
+        .preview-panel .panel-header {
+            background: #374151;
+            border-bottom-color: #4a5568;
+        }
+        .preview-panel .panel-title {
+            color: white;
+        }
+        .preview-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px;
+            overflow-y: auto;
+            background: #374151;
+        }
+        .preview-page {
+            background: white;
+            width: 100%;
+            max-width: 680px;
+            min-height: 880px;
+            border-radius: 2px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+            margin-bottom: 24px;
+            padding: 48px;
+            position: relative;
+            transition: transform 0.3s;
+        }
+        .preview-page:hover {
+            box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+        }
+        .page-number {
+            position: absolute;
+            bottom: 24px;
+            right: 24px;
+            font-size: 10px;
+            color: #9ca3af;
+        }
+
+        /* Editable Content */
+        .editable-content {
+            outline: none;
+            cursor: text;
+            transition: background 0.2s;
+            border-radius: 4px;
+            padding: 4px;
+            margin: -4px;
+        }
+        .editable-content:hover {
+            background: rgba(13, 161, 199, 0.05);
+        }
+        .editable-content:focus {
+            background: rgba(13, 161, 199, 0.1);
+            outline: 2px solid #0da1c7;
+        }
+        .editable-content.selected {
+            outline: 2px solid #0da1c7;
+            background: rgba(13, 161, 199, 0.1);
+        }
+
+        /* Properties Panel */
+        .property-group {
+            margin-bottom: 20px;
+        }
+        .property-group-title {
+            font-size: 11px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #6b7280;
+            margin-bottom: 10px;
+        }
+        .property-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .property-label {
+            font-size: 12px;
+            color: #374151;
+        }
+        .property-input {
+            width: 100px;
+            padding: 6px 8px;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            font-size: 12px;
+            background: white;
+        }
+        .property-input:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .property-select {
+            width: 120px;
+            padding: 6px 8px;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            font-size: 12px;
+            background: white;
+        }
+        .color-picker-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .color-preview {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            border: 1px solid #e5e7eb;
+            cursor: pointer;
+        }
+        .color-input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+            position: absolute;
+        }
+        .color-hex {
+            font-size: 11px;
+            color: #6b7280;
+            font-family: monospace !important;
+        }
+
+        /* Font Style Buttons */
+        .font-style-buttons {
+            display: flex;
+            gap: 4px;
+        }
+        .style-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            background: white;
+            color: #374151;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .style-btn:hover {
+            border-color: #0da1c7;
+            color: #0da1c7;
+        }
+        .style-btn.active {
+            background: #0da1c7;
+            border-color: #0da1c7;
+            color: white;
+        }
+
+        /* No Selection State */
+        .no-selection {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 200px;
+            color: #9ca3af;
+            text-align: center;
+        }
+        .no-selection svg {
+            width: 48px;
+            height: 48px;
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+        .no-selection p {
+            font-size: 12px;
+            margin: 0;
+        }
+
+        /* Report Content Styles */
+        .report-section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1c3643;
+            margin-bottom: 16px;
+            border-bottom: 2px solid #0da1c7;
+            padding-bottom: 8px;
+        }
+        .report-paragraph {
+            font-size: 11px;
+            line-height: 1.6;
+            color: #374151;
+            margin-bottom: 12px;
+        }
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10px;
+            margin-bottom: 16px;
+        }
+        .report-table th {
+            background: #f3f4f6;
+            padding: 8px;
+            text-align: left;
+            font-weight: 600;
+            border-bottom: 2px solid #e5e7eb;
+        }
+        .report-table td {
+            padding: 8px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        .value-highlight {
+            font-size: 18px;
+            font-weight: 700;
+            color: #0da1c7;
+        }
+
+        /* Save Notification */
+        .save-notification {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #10b981;
+            color: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+        }
+        .save-notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <div class="page-header">
+            <div class="header-left">
+                <button class="back-btn" onclick="goBack()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M19 12H5m0 0l7 7m-7-7l7-7"/>
+                    </svg>
+                    Back to Review
+                </button>
+                <div>
+                    <div class="page-title">Appraisal Report Editor</div>
+                    <div class="page-subtitle">1478 South 30th Street West, Billings MT 59102</div>
+                </div>
+            </div>
+            <div class="header-actions">
+                <div class="zoom-controls">
+                    <button class="zoom-btn" onclick="adjustZoom(-10)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    </button>
+                    <span class="zoom-level" id="zoom-level">100%</span>
+                    <button class="zoom-btn" onclick="adjustZoom(10)">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                    </button>
+                </div>
+                <button class="action-btn" onclick="previewPDF()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                    Preview PDF
+                </button>
+                <button class="action-btn primary" onclick="saveChanges()">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 01-2-2V5a2 2 0 012-2h11l5 5v11a2 2 0 01-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                    Save Changes
+                </button>
+            </div>
+        </div>
+
+        <!-- 3-Panel Builder -->
+        <div class="builder-container">
+            <!-- Left Panel: Section Tree -->
+            <div class="panel section-panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                        Report Sections
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="section-tree" id="section-tree">
+                        <!-- Populated by JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Center Panel: Preview -->
+            <div class="panel preview-panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                        Report Preview
+                    </div>
+                </div>
+                <div class="preview-container" id="preview-container">
+                    <!-- Pages populated by JavaScript -->
+                </div>
+            </div>
+
+            <!-- Right Panel: Properties -->
+            <div class="panel properties-panel">
+                <div class="panel-header">
+                    <div class="panel-title">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-2 2 2 2 0 01-2-2v-.09A1.65 1.65 0 009 19.4a1.65 1.65 0 00-1.82.33l-.06.06a2 2 0 01-2.83 0 2 2 0 010-2.83l.06-.06a1.65 1.65 0 00.33-1.82 1.65 1.65 0 00-1.51-1H3a2 2 0 01-2-2 2 2 0 012-2h.09A1.65 1.65 0 004.6 9a1.65 1.65 0 00-.33-1.82l-.06-.06a2 2 0 010-2.83 2 2 0 012.83 0l.06.06a1.65 1.65 0 001.82.33H9a1.65 1.65 0 001-1.51V3a2 2 0 012-2 2 2 0 012 2v.09a1.65 1.65 0 001 1.51 1.65 1.65 0 001.82-.33l.06-.06a2 2 0 012.83 0 2 2 0 010 2.83l-.06.06a1.65 1.65 0 00-.33 1.82V9a1.65 1.65 0 001.51 1H21a2 2 0 012 2 2 2 0 01-2 2h-.09a1.65 1.65 0 00-1.51 1z"/></svg>
+                        Properties
+                    </div>
+                </div>
+                <div class="panel-body" id="properties-panel">
+                    <div class="no-selection">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"/></svg>
+                        <p>Click on any text in the preview<br>to edit its properties</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Save Notification -->
+    <div class="save-notification" id="save-notification">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        Changes saved successfully
+    </div>
+
+    <script>
+        // =================================================================
+        // STATE (React: useState)
+        // =================================================================
+        
+        /**
+         * @typedef {Object} ReportSection
+         * @property {string} id
+         * @property {string} label
+         * @property {string} category
+         * @property {boolean} enabled
+         * @property {number} pageCount
+         */
+        
+        /** @type {ReportSection[]} */
+        const sections = [
+            // Cover & Summary
+            { id: 'cover', label: 'Cover Page', category: 'Cover & Summary', enabled: true, pageCount: 1 },
+            { id: 'letter', label: 'Letter of Transmittal', category: 'Cover & Summary', enabled: true, pageCount: 1 },
+            { id: 'toc', label: 'Table of Contents', category: 'Cover & Summary', enabled: true, pageCount: 1 },
+            { id: 'summary', label: 'Executive Summary', category: 'Cover & Summary', enabled: true, pageCount: 2 },
+            
+            // Subject Property
+            { id: 'property', label: 'Property Description', category: 'Subject Property', enabled: true, pageCount: 2 },
+            { id: 'site', label: 'Site Description', category: 'Subject Property', enabled: true, pageCount: 1 },
+            { id: 'improvements', label: 'Improvement Description', category: 'Subject Property', enabled: true, pageCount: 2 },
+            { id: 'photos', label: 'Subject Photos', category: 'Subject Property', enabled: true, pageCount: 3 },
+            
+            // Market Analysis
+            { id: 'area', label: 'Area Description', category: 'Market Analysis', enabled: true, pageCount: 2 },
+            { id: 'neighborhood', label: 'Neighborhood Analysis', category: 'Market Analysis', enabled: true, pageCount: 1 },
+            { id: 'market', label: 'Market Analysis', category: 'Market Analysis', enabled: true, pageCount: 2 },
+            { id: 'hbu', label: 'Highest & Best Use', category: 'Market Analysis', enabled: true, pageCount: 2 },
+            
+            // Valuation Approaches
+            { id: 'land', label: 'Land Valuation', category: 'Valuation', enabled: true, pageCount: 2 },
+            { id: 'sales', label: 'Sales Comparison', category: 'Valuation', enabled: true, pageCount: 4 },
+            { id: 'income', label: 'Income Approach', category: 'Valuation', enabled: true, pageCount: 3 },
+            { id: 'cost', label: 'Cost Approach', category: 'Valuation', enabled: false, pageCount: 3 },
+            
+            // Conclusion
+            { id: 'reconciliation', label: 'Reconciliation', category: 'Conclusion', enabled: true, pageCount: 1 },
+            
+            // Addenda
+            { id: 'assumptions', label: 'Assumptions & Conditions', category: 'Addenda', enabled: true, pageCount: 2 },
+            { id: 'certification', label: 'Appraiser Certification', category: 'Addenda', enabled: true, pageCount: 1 },
+            { id: 'qualifications', label: 'Appraiser Qualifications', category: 'Addenda', enabled: true, pageCount: 1 },
+            { id: 'exhibits', label: 'Exhibits', category: 'Addenda', enabled: true, pageCount: 5 },
+        ];
+
+        let currentZoom = 100;
+        let activeSection = 'cover';
+        let selectedElement = null;
+
+        // =================================================================
+        // RENDER FUNCTIONS (React: JSX return)
+        // =================================================================
+
+        function renderSectionTree() {
+            const container = document.getElementById('section-tree');
+            let currentCategory = '';
+            let html = '';
+
+            sections.forEach(section => {
+                if (section.category !== currentCategory) {
+                    currentCategory = section.category;
+                    html += `<div class="category-header">${currentCategory}</div>`;
+                }
+
+                html += `
+                    <div class="section-item ${section.id === activeSection ? 'active' : ''} ${!section.enabled ? 'disabled' : ''}"
+                         onclick="selectSection('${section.id}')"
+                         data-section="${section.id}">
+                        <div class="toggle-switch ${section.enabled ? 'active' : ''}" onclick="toggleSection(event, '${section.id}')">
+                            <div class="toggle-track">
+                                <div class="toggle-thumb"></div>
+                            </div>
+                        </div>
+                        <svg class="section-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                        <span class="section-label">${section.label}</span>
+                        <span class="page-count">${section.pageCount}pg</span>
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        function renderPreview() {
+            const container = document.getElementById('preview-container');
+            const section = sections.find(s => s.id === activeSection);
+            
+            if (!section) return;
+
+            let pageContent = '';
+            
+            // Generate different content based on section
+            switch (activeSection) {
+                case 'cover':
+                    pageContent = renderCoverPage();
+                    break;
+                case 'summary':
+                    pageContent = renderSummaryPage();
+                    break;
+                case 'hbu':
+                    pageContent = renderHBUPage();
+                    break;
+                case 'reconciliation':
+                    pageContent = renderReconciliationPage();
+                    break;
+                default:
+                    pageContent = renderGenericPage(section);
+            }
+
+            container.innerHTML = pageContent;
+            
+            // Apply zoom
+            const pages = container.querySelectorAll('.preview-page');
+            pages.forEach(page => {
+                page.style.transform = `scale(${currentZoom / 100})`;
+                page.style.transformOrigin = 'top center';
+            });
+
+            // Add click handlers to editable elements
+            setupEditableElements();
+        }
+
+        function renderCoverPage() {
+            return `
+                <div class="preview-page">
+                    <div style="text-align: center; padding-top: 150px;">
+                        <div class="editable-content" contenteditable="true" data-field="report-type" style="font-size: 14px; color: #687F8B; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 24px;">
+                            Appraisal Report
+                        </div>
+                        <div class="editable-content" contenteditable="true" data-field="property-address" style="font-size: 24px; font-weight: 700; color: #1c3643; margin-bottom: 8px;">
+                            1478 South 30th Street West
+                        </div>
+                        <div class="editable-content" contenteditable="true" data-field="property-city" style="font-size: 18px; color: #374151; margin-bottom: 48px;">
+                            Billings, Montana 59102
+                        </div>
+                        <div style="width: 100%; height: 200px; background: #f3f4f6; border: 1px dashed #d1d5db; display: flex; align-items: center; justify-content: center; color: #9ca3af; margin-bottom: 48px;">
+                            Property Photo
+                        </div>
+                        <div class="editable-content" contenteditable="true" data-field="effective-date" style="font-size: 14px; color: #374151; margin-bottom: 8px;">
+                            Effective Date: December 15, 2024
+                        </div>
+                        <div class="editable-content" contenteditable="true" data-field="report-date" style="font-size: 14px; color: #374151; margin-bottom: 48px;">
+                            Report Date: December 17, 2024
+                        </div>
+                        <div style="font-size: 12px; color: #687F8B; margin-bottom: 4px;">Prepared By:</div>
+                        <div class="editable-content" contenteditable="true" data-field="appraiser-name" style="font-size: 14px; font-weight: 600; color: #1c3643;">
+                            John Smith, MAI
+                        </div>
+                        <div class="editable-content" contenteditable="true" data-field="appraiser-license" style="font-size: 12px; color: #687F8B;">
+                            Montana Certified General Appraiser #12345
+                        </div>
+                    </div>
+                    <div class="page-number">Page 1</div>
+                </div>
+            `;
+        }
+
+        function renderSummaryPage() {
+            return `
+                <div class="preview-page">
+                    <div class="report-section-title editable-content" contenteditable="true" data-field="section-title">
+                        Executive Summary
+                    </div>
+                    <table class="report-table">
+                        <tr>
+                            <td style="width: 40%; font-weight: 600;">Property Address</td>
+                            <td class="editable-content" contenteditable="true" data-field="summary-address">1478 South 30th Street West, Billings, MT 59102</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 600;">Property Type</td>
+                            <td class="editable-content" contenteditable="true" data-field="summary-type">Industrial - Warehouse</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 600;">Land Area</td>
+                            <td class="editable-content" contenteditable="true" data-field="summary-land">1.43 Acres (62,291 SF)</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 600;">Building Area</td>
+                            <td class="editable-content" contenteditable="true" data-field="summary-building">11,174 SF</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 600;">Year Built</td>
+                            <td class="editable-content" contenteditable="true" data-field="summary-year">2019</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 600;">Effective Date</td>
+                            <td class="editable-content" contenteditable="true" data-field="summary-effective">December 15, 2024</td>
+                        </tr>
+                        <tr>
+                            <td style="font-weight: 600;">Property Interest</td>
+                            <td class="editable-content" contenteditable="true" data-field="summary-interest">Fee Simple</td>
+                        </tr>
+                    </table>
+                    
+                    <div style="margin-top: 32px; padding: 24px; background: #f8fafc; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 12px; color: #687F8B; margin-bottom: 8px;">Market Value - As Is</div>
+                        <div class="value-highlight editable-content" contenteditable="true" data-field="concluded-value">$1,550,000</div>
+                    </div>
+                    
+                    <div class="page-number">Page 4</div>
+                </div>
+            `;
+        }
+
+        function renderHBUPage() {
+            return `
+                <div class="preview-page">
+                    <div class="report-section-title editable-content" contenteditable="true" data-field="section-title">
+                        Highest and Best Use Analysis
+                    </div>
+                    
+                    <div class="report-paragraph editable-content" contenteditable="true" data-field="hbu-intro">
+                        The concept of highest and best use is fundamental to the appraisal process. It provides the underlying foundation for property valuations and is the basis for selecting comparable sales and other market data used in the valuation approaches.
+                    </div>
+                    
+                    <h4 style="font-size: 13px; font-weight: 700; color: #1c3643; margin: 20px 0 12px;">As Vacant</h4>
+                    
+                    <div class="report-paragraph editable-content" contenteditable="true" data-field="hbu-vacant">
+                        The highest and best use of the subject site as though vacant is for development with an industrial/warehouse use consistent with the surrounding development patterns and current zoning designation. This conclusion is supported by: legal permissibility under the I1 - Light Industrial zoning; physical suitability of the level, regularly-shaped site; financial feasibility based on current market demand; and maximum productivity compared to alternative uses.
+                    </div>
+                    
+                    <h4 style="font-size: 13px; font-weight: 700; color: #1c3643; margin: 20px 0 12px;">As Improved</h4>
+                    
+                    <div class="report-paragraph editable-content" contenteditable="true" data-field="hbu-improved">
+                        The highest and best use of the subject property as improved is the continuation of the existing industrial/warehouse use. The improvements are relatively new, in very good condition, and represent a legal, conforming use of the site. Demolition and redevelopment is not economically feasible given the substantial remaining economic life of the improvements.
+                    </div>
+                    
+                    <div class="page-number">Page 12</div>
+                </div>
+            `;
+        }
+
+        function renderReconciliationPage() {
+            return `
+                <div class="preview-page">
+                    <div class="report-section-title editable-content" contenteditable="true" data-field="section-title">
+                        Reconciliation and Final Value Conclusion
+                    </div>
+                    
+                    <table class="report-table" style="margin-bottom: 24px;">
+                        <thead>
+                            <tr>
+                                <th>Approach</th>
+                                <th style="text-align: right;">Value Indication</th>
+                                <th style="text-align: center;">Weight</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Sales Comparison Approach</td>
+                                <td class="editable-content" contenteditable="true" style="text-align: right;" data-field="sales-value">$1,525,000</td>
+                                <td class="editable-content" contenteditable="true" style="text-align: center;" data-field="sales-weight">40%</td>
+                            </tr>
+                            <tr>
+                                <td>Income Approach</td>
+                                <td class="editable-content" contenteditable="true" style="text-align: right;" data-field="income-value">$1,565,000</td>
+                                <td class="editable-content" contenteditable="true" style="text-align: center;" data-field="income-weight">50%</td>
+                            </tr>
+                            <tr>
+                                <td>Cost Approach</td>
+                                <td class="editable-content" contenteditable="true" style="text-align: right;" data-field="cost-value">$1,580,000</td>
+                                <td class="editable-content" contenteditable="true" style="text-align: center;" data-field="cost-weight">10%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <div class="report-paragraph editable-content" contenteditable="true" data-field="reconciliation-narrative">
+                        In reconciling the value indications, greatest weight is given to the Income Approach as it best reflects the decision-making process of investors for income-producing properties of this type. The Sales Comparison Approach is given secondary weight as it provides good market support from comparable transactions. The Cost Approach is given least weight due to difficulty in accurately estimating depreciation.
+                    </div>
+                    
+                    <div style="margin-top: 32px; padding: 24px; background: #f0fdf4; border: 2px solid #86efac; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 12px; color: #166534; margin-bottom: 8px; font-weight: 600;">FINAL VALUE CONCLUSION</div>
+                        <div style="font-size: 11px; color: #166534; margin-bottom: 4px;">As Is - Fee Simple Interest</div>
+                        <div class="value-highlight editable-content" contenteditable="true" data-field="final-value" style="color: #166534; font-size: 28px;">$1,550,000</div>
+                        <div style="font-size: 10px; color: #166534; margin-top: 8px;">(One Million Five Hundred Fifty Thousand Dollars)</div>
+                    </div>
+                    
+                    <div class="page-number">Page 28</div>
+                </div>
+            `;
+        }
+
+        function renderGenericPage(section) {
+            return `
+                <div class="preview-page">
+                    <div class="report-section-title editable-content" contenteditable="true" data-field="section-title">
+                        ${section.label}
+                    </div>
+                    <div class="report-paragraph editable-content" contenteditable="true" data-field="content">
+                        This section contains the ${section.label.toLowerCase()} content for the appraisal report. Click on any text to edit it directly. Use the properties panel on the right to adjust formatting options.
+                    </div>
+                    <div class="report-paragraph editable-content" contenteditable="true" data-field="content-2">
+                        Additional content and analysis would be included here based on the data entered in the appraisal wizard. The report editor allows for fine-tuning of the narrative and presentation.
+                    </div>
+                    <div class="page-number">Page ${sections.indexOf(section) + 1}</div>
+                </div>
+            `;
+        }
+
+        function renderPropertiesPanel(element) {
+            const panel = document.getElementById('properties-panel');
+            
+            if (!element) {
+                panel.innerHTML = `
+                    <div class="no-selection">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"/></svg>
+                        <p>Click on any text in the preview<br>to edit its properties</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const computedStyle = window.getComputedStyle(element);
+            const fontSize = parseInt(computedStyle.fontSize);
+            const fontWeight = computedStyle.fontWeight;
+            const color = computedStyle.color;
+            const textContent = element.textContent.substring(0, 50) + (element.textContent.length > 50 ? '...' : '');
+
+            panel.innerHTML = `
+                <div class="property-group">
+                    <div class="property-group-title">Selected Element</div>
+                    <div style="font-size: 11px; color: #374151; padding: 8px; background: #f3f4f6; border-radius: 4px; word-break: break-word;">
+                        "${textContent}"
+                    </div>
+                </div>
+                
+                <div class="property-group">
+                    <div class="property-group-title">Typography</div>
+                    <div class="property-row">
+                        <span class="property-label">Font Size</span>
+                        <select class="property-select" onchange="updateElementStyle('fontSize', this.value + 'px')">
+                            <option value="10" ${fontSize === 10 ? 'selected' : ''}>10px</option>
+                            <option value="11" ${fontSize === 11 ? 'selected' : ''}>11px</option>
+                            <option value="12" ${fontSize === 12 ? 'selected' : ''}>12px</option>
+                            <option value="13" ${fontSize === 13 ? 'selected' : ''}>13px</option>
+                            <option value="14" ${fontSize === 14 ? 'selected' : ''}>14px</option>
+                            <option value="16" ${fontSize === 16 ? 'selected' : ''}>16px</option>
+                            <option value="18" ${fontSize === 18 ? 'selected' : ''}>18px</option>
+                            <option value="20" ${fontSize === 20 ? 'selected' : ''}>20px</option>
+                            <option value="24" ${fontSize === 24 ? 'selected' : ''}>24px</option>
+                            <option value="28" ${fontSize === 28 ? 'selected' : ''}>28px</option>
+                        </select>
+                    </div>
+                    <div class="property-row">
+                        <span class="property-label">Font Weight</span>
+                        <select class="property-select" onchange="updateElementStyle('fontWeight', this.value)">
+                            <option value="400" ${fontWeight === '400' ? 'selected' : ''}>Normal</option>
+                            <option value="500" ${fontWeight === '500' ? 'selected' : ''}>Medium</option>
+                            <option value="600" ${fontWeight === '600' ? 'selected' : ''}>Semibold</option>
+                            <option value="700" ${fontWeight === '700' ? 'selected' : ''}>Bold</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div class="property-group">
+                    <div class="property-group-title">Color</div>
+                    <div class="property-row">
+                        <span class="property-label">Text Color</span>
+                        <div class="color-picker-wrapper">
+                            <div class="color-preview" style="background: ${color}" onclick="document.getElementById('color-input').click()"></div>
+                            <input type="color" id="color-input" class="color-input" onchange="updateElementStyle('color', this.value)">
+                            <span class="color-hex">${rgbToHex(color)}</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="property-group">
+                    <div class="property-group-title">Actions</div>
+                    <button class="action-btn" style="width: 100%; justify-content: center;" onclick="resetElementStyle()">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 4v6h6M23 20v-6h-6"/><path d="M20.49 9A9 9 0 005.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 013.51 15"/></svg>
+                        Reset to Default
+                    </button>
+                </div>
+            `;
+        }
+
+        // =================================================================
+        // EVENT HANDLERS (React: event handlers)
+        // =================================================================
+
+        function selectSection(sectionId) {
+            activeSection = sectionId;
+            renderSectionTree();
+            renderPreview();
+        }
+
+        function toggleSection(event, sectionId) {
+            event.stopPropagation();
+            const section = sections.find(s => s.id === sectionId);
+            if (section) {
+                section.enabled = !section.enabled;
+                renderSectionTree();
+            }
+        }
+
+        function adjustZoom(delta) {
+            currentZoom = Math.min(150, Math.max(50, currentZoom + delta));
+            document.getElementById('zoom-level').textContent = currentZoom + '%';
+            renderPreview();
+        }
+
+        function setupEditableElements() {
+            const editables = document.querySelectorAll('.editable-content');
+            editables.forEach(el => {
+                el.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    selectElement(el);
+                });
+                el.addEventListener('input', () => {
+                    // Mark as modified
+                });
+            });
+        }
+
+        function selectElement(element) {
+            // Deselect previous
+            if (selectedElement) {
+                selectedElement.classList.remove('selected');
+            }
+            
+            // Select new
+            selectedElement = element;
+            element.classList.add('selected');
+            renderPropertiesPanel(element);
+        }
+
+        function updateElementStyle(property, value) {
+            if (selectedElement) {
+                selectedElement.style[property] = value;
+                renderPropertiesPanel(selectedElement);
+            }
+        }
+
+        function resetElementStyle() {
+            if (selectedElement) {
+                selectedElement.removeAttribute('style');
+                renderPropertiesPanel(selectedElement);
+            }
+        }
+
+        function saveChanges() {
+            // Show save notification
+            const notification = document.getElementById('save-notification');
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        function previewPDF() {
+            alert('PDF preview would open in a new window');
+        }
+
+        function goBack() {
+            // Navigate back to review page
+            window.location.href = 'review.html';
+        }
+
+        function rgbToHex(rgb) {
+            if (rgb.startsWith('#')) return rgb;
+            const matches = rgb.match(/\d+/g);
+            if (!matches || matches.length < 3) return '#000000';
+            return '#' + matches.slice(0, 3).map(x => parseInt(x).toString(16).padStart(2, '0')).join('');
+        }
+
+        // =================================================================
+        // INITIALIZATION (React: useEffect)
+        // =================================================================
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderSectionTree();
+            renderPreview();
+            
+            // Deselect when clicking outside
+            document.addEventListener('click', (e) => {
+                if (!e.target.closest('.editable-content') && !e.target.closest('.properties-panel')) {
+                    if (selectedElement) {
+                        selectedElement.classList.remove('selected');
+                        selectedElement = null;
+                        renderPropertiesPanel(null);
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+

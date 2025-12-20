@@ -1,5 +1,5 @@
 import { createContext, useContext, useReducer, useEffect, ReactNode } from 'react';
-import type { WizardState, WizardAction, ImprovementsInventory, Owner, ExtractedData, UploadedDocument } from '../types';
+import type { WizardState, WizardAction, ImprovementsInventory, Owner, ExtractedData, UploadedDocument, IncomeApproachState } from '../types';
 import { createDefaultInventory } from '../contracts/improvements';
 
 // =================================================================
@@ -31,6 +31,7 @@ const getInitialState = (): WizardState => {
     owners: [
       { id: 'owner_1', name: '', ownershipType: 'individual', percentage: 100 }
     ],
+    incomeApproachData: null,
     currentPage: 'template',
     subjectActiveTab: 'location',
     isFullscreen: false,
@@ -136,6 +137,9 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
       case 'SET_OWNERS':
         return { ...state, owners: action.payload };
 
+      case 'SET_INCOME_APPROACH_DATA':
+        return { ...state, incomeApproachData: action.payload };
+
       case 'SET_CURRENT_PAGE':
         return { ...state, currentPage: action.payload };
 
@@ -181,6 +185,10 @@ interface WizardContextValue {
   addOwner: () => void;
   updateOwner: (id: string, updates: Partial<Owner>) => void;
   removeOwner: (id: string) => void;
+  
+  // Income approach helpers
+  setIncomeApproachData: (data: IncomeApproachState) => void;
+  getIncomeApproachData: () => IncomeApproachState | null;
 }
 
 const WizardContext = createContext<WizardContextValue | null>(null);
@@ -267,6 +275,15 @@ export function WizardProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  // Income approach helpers
+  const setIncomeApproachData = (data: IncomeApproachState) => {
+    dispatch({ type: 'SET_INCOME_APPROACH_DATA', payload: data });
+  };
+
+  const getIncomeApproachData = (): IncomeApproachState | null => {
+    return state.incomeApproachData;
+  };
+
   return (
     <WizardContext.Provider
       value={{
@@ -283,6 +300,8 @@ export function WizardProvider({ children }: { children: ReactNode }) {
         addOwner,
         updateOwner,
         removeOwner,
+        setIncomeApproachData,
+        getIncomeApproachData,
       }}
     >
       {children}

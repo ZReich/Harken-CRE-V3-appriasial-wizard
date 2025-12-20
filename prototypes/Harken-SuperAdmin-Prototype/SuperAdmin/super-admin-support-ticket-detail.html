@@ -1,0 +1,986 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ticket Detail - Harken CRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            font-family: 'Montserrat', sans-serif !important;
+        }
+        body {
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background: url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;
+            background-color: #1c3643 !important;
+            max-height: 84px;
+            height: 84px;
+            color: #fff;
+        }
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 10px 24px;
+            border-radius: 25px;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+            position: relative;
+        }
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+        .nav-link.active {
+            background-color: transparent;
+            border: 1px solid #0da1c7;
+            color: #0da1c7;
+        }
+        .nav-badge {
+            position: absolute;
+            top: 4px;
+            right: 14px;
+            background-color: #c62828;
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+        .back-link {
+            color: #0da1c7;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: 16px;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        .section-title {
+            font-size: 23px;
+            font-weight: 600;
+            color: #1c3643;
+        }
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+        }
+        .priority-badge {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-block;
+            color: white;
+        }
+        .priority-critical { background-color: #c62828; }
+        .priority-high { background-color: #e65100; }
+        .priority-medium { background-color: #f57c00; }
+        .priority-low { background-color: #2e7d32; }
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-block;
+            color: white;
+        }
+        .status-new { background-color: #1565c0; }
+        .status-in-progress { background-color: #f57c00; }
+        .status-waiting { background-color: #6a1b9a; }
+        .status-resolved { background-color: #2e7d32; }
+        .status-closed { background-color: #687F8B; }
+        .category-badge {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .category-technical { background-color: rgba(14, 165, 233, 0.1); color: #0ea5e9; }
+        .category-billing { background-color: rgba(16, 185, 129, 0.1); color: #10b981; }
+        .category-feature { background-color: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+        .category-training { background-color: rgba(106, 27, 154, 0.1); color: #6a1b9a; }
+        .category-account { background-color: rgba(104, 127, 139, 0.1); color: #687F8B; }
+        .action-button {
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .action-button:hover {
+            opacity: 0.8;
+        }
+        .action-button-primary { background-color: #0da1c7; color: white; }
+        .action-button-secondary { background-color: #687F8B; color: white; }
+        .action-button-danger { background-color: #c62828; color: white; }
+        .form-label {
+            color: #687F8B;
+            font-size: 13px;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .form-select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            background-color: white;
+            color: #1c3643;
+            font-size: 14px;
+            cursor: pointer;
+            margin-bottom: 16px;
+        }
+        .form-select:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .form-textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+            resize: vertical;
+            min-height: 120px;
+        }
+        .form-textarea:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: #0da1c7;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .comment-box {
+            border-left: 3px solid #e0e0e0;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+        }
+        .comment-box.customer {
+            border-left-color: #0da1c7;
+            background-color: rgba(13, 161, 199, 0.05);
+        }
+        .comment-box.support {
+            border-left-color: #10b981;
+            background-color: rgba(16, 185, 129, 0.05);
+        }
+        .comment-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+        .comment-meta {
+            margin-left: 12px;
+        }
+        .comment-author {
+            font-weight: 600;
+            color: #1c3643;
+            font-size: 14px;
+        }
+        .comment-time {
+            font-size: 12px;
+            color: #687F8B;
+        }
+        .comment-body {
+            color: #687F8B;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+        .timeline-item {
+            display: flex;
+            padding: 16px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .timeline-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #0da1c7;
+            margin-right: 12px;
+            margin-top: 6px;
+        }
+        .timeline-content {
+            flex: 1;
+        }
+        .timeline-time {
+            font-size: 11px;
+            color: #687F8B;
+        }
+        .timeline-event {
+            font-size: 13px;
+            color: #1c3643;
+            font-weight: 500;
+        }
+        .internal-notes {
+            background-color: #fffbea;
+            border: 1px solid #f59e0b;
+            border-radius: 4px;
+            padding: 16px;
+            margin-top: 16px;
+        }
+        .internal-notes-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 12px;
+            color: #e65100;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        .info-card {
+            background-color: #f9f9f9;
+            border-radius: 6px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 12px;
+            font-size: 13px;
+        }
+        .info-label {
+            color: #687F8B;
+            font-weight: 500;
+        }
+        .info-value {
+            color: #1c3643;
+            font-weight: 600;
+        }
+        .attachment-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px;
+            background-color: #f9f9f9;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+        .attachment-icon {
+            width: 32px;
+            height: 32px;
+            background-color: #0da1c7;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .link-text {
+            color: #0da1c7;
+            text-decoration: none;
+        }
+        .link-text:hover {
+            text-decoration: underline;
+        }
+        .toast {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #10b981;
+            color: white;
+            padding: 20px 32px;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(28, 54, 67, 0.2);
+            z-index: 10000;
+            display: none;
+            font-size: 15px;
+            font-weight: 600;
+            min-width: 320px;
+            text-align: center;
+        }
+        .toast.show {
+            display: block;
+            animation: fadeInScale 0.3s ease-out;
+        }
+        .toast.error {
+            background-color: #c62828;
+        }
+        @keyframes fadeInScale {
+            from {
+                opacity: 0;
+                transform: translate(-50%, -50%) scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: translate(-50%, -50%) scale(1);
+            }
+        }
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-content {
+            background-color: white;
+            border-radius: 8px;
+            padding: 32px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        .modal-title {
+            color: #1c3643;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Toggle Button (initially hidden) -->
+    <button id="showBuildNotesBtn" 
+            style="position: fixed; top: 100px; right: 20px; z-index: 9999; 
+                   padding: 12px 20px; background: #ffc107; color: #856404; 
+                   border: 2px solid #856404; border-radius: 25px; 
+                   font-size: 14px; font-weight: 700; cursor: pointer; 
+                   box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+                   display: none; transition: all 0.3s;"
+            onclick="toggleBuildNotes(true)">
+        🔨 Show Build Notes
+    </button>
+
+    <!-- UNIFIED NAVIGATION COMPONENT -->
+    <style>.unified-navbar{background:url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;background-color:#1c3643!important;height:84px;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 32px;box-shadow:0 2px 8px rgba(0,0,0,0.1);position:sticky;top:0;z-index:1000}.nav-logo{height:40px;width:auto;cursor:pointer}.nav-center{display:flex;align-items:center;gap:8px;flex:1;justify-content:center}.nav-core-features{display:flex;align-items:center;gap:4px;background:rgba(13, 161, 199, 0.08);border-radius:25px;padding:4px 8px;margin-right:16px}.nav-link{color:white;text-decoration:none;padding:10px 20px;border-radius:25px;transition:all 0.2s;border:1px solid transparent;font-weight:500;font-size:14px;white-space:nowrap}.nav-link:hover{background-color:rgba(255,255,255,0.08)}.nav-link.core-feature{font-weight:500;font-size:14px;color:white}.nav-link.core-feature:hover{background-color:rgba(13, 161, 199, 0.2);color:white}.nav-link.core-feature.active{background-color:transparent;border:1px solid #0da1c7;color:#0da1c7;box-shadow:0 2px 4px rgba(13, 161, 199, 0.2)}.nav-link.active{background-color:transparent;border:1px solid #0da1c7;color:#0da1c7}.nav-separator{width:1px;height:24px;background:rgba(255, 255, 255, 0.2);margin:0 8px}.nav-user{display:flex;align-items:center;gap:12px}.nav-user-name{font-size:14px;font-weight:500;color:white}.nav-user-avatar{width:36px;height:36px;border-radius:50%;border:2px solid #0da1c7}.property-tabs-container{background:white;border-bottom:2px solid #e0e0e0;display:none;padding:0 32px}.property-tabs-container.show{display:flex}.property-tab{padding:16px 24px;border:none;background:transparent;color:#687F8B;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:8px;border-bottom:3px solid transparent;margin-bottom:-2px;font-family:'Montserrat', sans-serif}.property-tab:hover{color:#0da1c7;background:#f0fbfd}.property-tab.active{color:#0da1c7;border-bottom-color:#0da1c7;background:#f0fbfd}</style><nav class="unified-navbar"><img src="assets/harken.png" alt="Harken CRE" class="nav-logo" onclick="window.location.href='super-admin-dashboard.html'"><div class="nav-center"><div class="nav-core-features"><a href="super-admin-comps.html" class="nav-link core-feature" id="nav-comps">COMPS</a><a href="super-admin-appraisals-list.html" class="nav-link core-feature" id="nav-appraisals">APPRAISAL</a><a href="evaluation-wizard-full.html" class="nav-link core-feature" id="nav-evaluations">EVALUATION</a></div><div class="nav-separator"></div><a href="super-admin-dashboard.html" class="nav-link" id="nav-dashboard">Dashboard</a><a href="super-admin-users.html" class="nav-link" id="nav-users">Users</a><a href="super-admin-clients.html" class="nav-link" id="nav-clients">Clients</a><a href="super-admin-accounts.html" class="nav-link" id="nav-accounts">Accounts</a><a href="super-admin-reports.html" class="nav-link" id="nav-reports">Reports</a><a href="super-admin-support-tickets.html" class="nav-link" id="nav-support">Support</a><a href="super-admin-audit-logs.html" class="nav-link" id="nav-audit">Audit Logs</a><a href="super-admin-settings.html" class="nav-link" id="nav-settings">Settings</a></div><div class="nav-user"><span class="nav-user-name">Harken Admin</span><img src="https://i.pravatar.cc/150?img=33" alt="User" class="nav-user-avatar"></div></nav><div class="property-tabs-container" id="propertyTabsContainer"><button class="property-tab active" data-type="commercial" onclick="switchPropertyType('commercial')"><span style="font-size: 18px;">🏢</span>Commercial</button><button class="property-tab" data-type="residential" onclick="switchPropertyType('residential')"><span style="font-size: 18px;">🏠</span>Residential</button><button class="property-tab" data-type="land" onclick="switchPropertyType('land')"><span style="font-size: 18px;">🏞️</span>Land</button></div><script>(function(){const currentPage=window.location.pathname.split('/').pop()||'super-admin-dashboard.html';const showPropertyTabsOn=['comps-premium-with-clustering.html','super-admin-appraisals-list.html','evaluation-wizard-full.html'];if(showPropertyTabsOn.some(page=>currentPage.includes(page)||currentPage.includes('comps-')||currentPage.includes('appraisal-')||currentPage.includes('evaluation-'))){document.getElementById('propertyTabsContainer').classList.add('show');}const navMapping={'super-admin-dashboard.html':'nav-dashboard','comps-premium-with-clustering.html':'nav-comps','super-admin-appraisals-list.html':'nav-appraisals','evaluation-wizard-full.html':'nav-evaluations','super-admin-users.html':'nav-users','super-admin-user-edit.html':'nav-users','super-admin-clients.html':'nav-clients','super-admin-accounts.html':'nav-accounts','super-admin-account-manage.html':'nav-accounts','super-admin-account-amenities.html':'nav-accounts','super-admin-account-report-templates.html':'nav-accounts','super-admin-reports.html':'nav-reports','super-admin-support-tickets.html':'nav-support','super-admin-support-create-ticket.html':'nav-support','super-admin-support-ticket-detail.html':'nav-support','super-admin-audit-logs.html':'nav-audit','super-admin-settings.html':'nav-settings','super-admin-settings-billing.html':'nav-settings','super-admin-settings-amenities.html':'nav-settings','super-admin-settings-white-label.html':'nav-settings'};for(const[page,navId]of Object.entries(navMapping)){if(currentPage.includes(page)){const navElement=document.getElementById(navId);if(navElement){navElement.classList.add('active');}break;}}})();function switchPropertyType(type){document.querySelectorAll('.property-tab').forEach(tab=>{tab.classList.remove('active');});document.querySelector(`[data-type="${type}"]`).classList.add('active');localStorage.setItem('activePropertyType',type);console.log('Switched to property type:',type);}window.addEventListener('load',function(){const savedType=localStorage.getItem('activePropertyType');if(savedType){switchPropertyType(savedType);}});</script>
+
+    <!-- Main Content -->
+    <div style="padding: 35px 50px;">
+        <!-- BUILD NOTES SECTION -->
+        <div id="buildNotesSection" style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 20px; margin-bottom: 32px; border-radius: 4px;">
+            <h3 style="color: #856404; font-size: 16px; font-weight: 700; margin: 0 0 16px 0;">🔨 BUILD NOTES</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 16px;">
+                <div>
+                    <strong style="color: #856404;">Priority Level:</strong> Medium
+                </div>
+                <div>
+                    <strong style="color: #856404;">Recommended Customer Count:</strong> 5-10 customers
+                </div>
+                <div>
+                    <strong style="color: #856404;">Development Stage:</strong> Phase 2
+                </div>
+                <div>
+                    <strong style="color: #856404;">Estimated Build Time:</strong> 1 week (with ticket list)
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #856404;">Purpose & Use Case:</strong>
+                <p style="margin: 4px 0 0 0; color: #856404;">Detailed view and conversation thread for a support ticket. Shows full history, allows responses, status changes, and internal notes. Build this alongside super-admin-support-tickets.html.</p>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #856404;">Key Features Explained:</strong>
+                <ul style="margin: 4px 0 0 0; color: #856404;">
+                    <li><strong>Conversation Thread:</strong> Shows all customer messages and your responses in chronological order. Maintains context.</li>
+                    <li><strong>Internal Notes:</strong> Yellow-highlighted notes only admins can see. For team coordination and remembering context.</li>
+                    <li><strong>Status Controls:</strong> Quick buttons to mark In Progress, Resolve, or Close ticket.</li>
+                    <li><strong>Assignment:</strong> Reassign to different admin if needed.</li>
+                    <li><strong>Activity Timeline:</strong> Shows status changes, assignments, priority changes. Audit trail.</li>
+                    <li><strong>Attachments:</strong> Customers can attach screenshots, files. Critical for bug reports.</li>
+                    <li><strong>Priority/Category Changes:</strong> Adjust as you learn more about the issue.</li>
+                </ul>
+            </div>
+            
+            <div>
+                <strong style="color: #856404;">Implementation Notes:</strong>
+                <p style="margin: 4px 0 0 0; color: #856404;">Part of Phase 2 support system. Requires: ticket_messages table (ticket_id, sender_id, message, is_internal, created_at), ticket_history table for timeline, file_attachments table. Email notifications when you respond. Rich text editor for formatting responses. Can be simple text area initially.</p>
+            </div>
+            
+            <button onclick="toggleBuildNotes(false)" style="margin-top: 12px; padding: 6px 12px; background: #856404; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">Hide Build Notes</button>
+        </div>
+
+        <!-- Back Link -->
+        <a href="super-admin-support-tickets.html" class="back-link">← Back to Support Tickets</a>
+
+        <!-- Page Header -->
+        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 32px;">
+            <div>
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                    <h2 class="section-title">#TKT-2025-018</h2>
+                    <span class="status-badge status-new">New</span>
+                    <span class="priority-badge priority-critical">CRITICAL</span>
+                </div>
+                <h3 style="font-size: 20px; font-weight: 600; color: #1c3643; margin-bottom: 8px;">
+                    Cannot generate PDF reports - urgent deal closing
+                </h3>
+                <div style="display: flex; align-items: center; gap: 16px; font-size: 13px; color: #687F8B;">
+                    <span class="category-badge category-technical">Technical</span>
+                    <span>Created 45 minutes ago by <strong>john.doe@acmeproperties.com</strong></span>
+                </div>
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <button class="action-button action-button-secondary" onclick="openAssignModal()">Reassign</button>
+                <button class="action-button action-button-secondary" onclick="openCloseModal()">Close Ticket</button>
+                <button class="action-button action-button-primary" onclick="saveChanges()">Save Changes</button>
+            </div>
+        </div>
+
+        <!-- Main Layout: Two Columns -->
+        <div style="display: grid; grid-template-columns: 1fr 380px; gap: 24px;">
+            <!-- Left Column: Conversation Thread -->
+            <div>
+                <!-- Original Request -->
+                <div class="card" style="margin-bottom: 24px;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px;">
+                        <h4 style="font-size: 14px; font-weight: 600; color: #687F8B; text-transform: uppercase; letter-spacing: 0.5px;">Original Request</h4>
+                        <span style="font-size: 12px; color: #687F8B;">Oct 13, 2025 at 1:27 PM</span>
+                    </div>
+                    <div class="comment-box customer">
+                        <div class="comment-header">
+                            <span class="avatar">JD</span>
+                            <div class="comment-meta">
+                                <div class="comment-author">John Doe</div>
+                                <div class="comment-time">john.doe@acmeproperties.com • Acme Properties LLC</div>
+                            </div>
+                        </div>
+                        <div class="comment-body">
+                            <p style="margin-bottom: 12px;">Hi Support Team,</p>
+                            <p style="margin-bottom: 12px;">We're experiencing a critical issue with PDF report generation. When we try to export any appraisal or evaluation to PDF, the system hangs and eventually times out with an error message.</p>
+                            <p style="margin-bottom: 12px;">This is extremely urgent as we have a deal closing tomorrow morning at 9 AM EST and need to provide the appraisal report to the client and lender today.</p>
+                            <p style="margin-bottom: 12px;"><strong>Steps we've tried:</strong></p>
+                            <ul style="margin-left: 20px; margin-bottom: 12px;">
+                                <li>Cleared browser cache and cookies</li>
+                                <li>Tried different browsers (Chrome, Firefox, Edge)</li>
+                                <li>Attempted to export different reports - same issue with all</li>
+                                <li>Restarted computers</li>
+                            </ul>
+                            <p style="margin-bottom: 12px;"><strong>Error message:</strong> "Report generation timed out. Please try again later."</p>
+                            <p>Please help ASAP! This is blocking a major transaction.</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Attachments -->
+                    <div style="margin-top: 16px;">
+                        <div style="font-size: 12px; font-weight: 600; color: #687F8B; margin-bottom: 8px;">ATTACHMENTS (2)</div>
+                        <div class="attachment-item">
+                            <div class="attachment-icon">PDF</div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 13px; font-weight: 600; color: #1c3643;">error-screenshot.png</div>
+                                <div style="font-size: 11px; color: #687F8B;">248 KB</div>
+                            </div>
+                            <a href="#" class="link-text" style="font-size: 12px;">Download</a>
+                        </div>
+                        <div class="attachment-item">
+                            <div class="attachment-icon" style="background-color: #10b981;">IMG</div>
+                            <div style="flex: 1;">
+                                <div style="font-size: 13px; font-weight: 600; color: #1c3643;">browser-console.png</div>
+                                <div style="font-size: 11px; color: #687F8B;">156 KB</div>
+                            </div>
+                            <a href="#" class="link-text" style="font-size: 12px;">Download</a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Comment Thread -->
+                <div class="card">
+                    <h4 style="font-size: 14px; font-weight: 600; color: #687F8B; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 20px;">Conversation (0 Replies)</h4>
+                    
+                    <div style="text-align: center; padding: 40px 0; color: #687F8B;">
+                        <div style="font-size: 48px; margin-bottom: 16px;">💬</div>
+                        <div style="font-size: 14px; font-weight: 500;">No replies yet</div>
+                        <div style="font-size: 13px; margin-top: 8px;">Be the first to respond to this ticket</div>
+                    </div>
+
+                    <!-- Add Reply Form -->
+                    <div style="border-top: 1px solid #e0e0e0; padding-top: 24px; margin-top: 24px;">
+                        <h5 style="font-size: 13px; font-weight: 600; color: #1c3643; margin-bottom: 12px;">Add Reply</h5>
+                        <textarea class="form-textarea" id="replyContent" placeholder="Type your response here..."></textarea>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px;">
+                            <div style="display: flex; gap: 12px; align-items: center;">
+                                <button class="action-button action-button-secondary" style="padding: 8px 16px; font-size: 12px;">
+                                    📎 Attach Files
+                                </button>
+                                <span style="font-size: 12px; color: #687F8B;" id="charCount">0 / 2000 characters</span>
+                            </div>
+                            <div style="display: flex; gap: 12px;">
+                                <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: #687F8B; cursor: pointer;">
+                                    <input type="checkbox" id="internalNote" onchange="toggleInternalNote()" />
+                                    Internal Note (not visible to customer)
+                                </label>
+                                <button class="action-button action-button-primary" onclick="addReply()">Send Reply</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Ticket Properties & Info -->
+            <div>
+                <!-- Ticket Properties -->
+                <div class="card" style="margin-bottom: 24px;">
+                    <h4 style="font-size: 14px; font-weight: 600; color: #687F8B; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px;">Ticket Properties</h4>
+                    
+                    <label class="form-label">Status</label>
+                    <select class="form-select" id="statusSelect" onchange="handleStatusChange()">
+                        <option value="new" selected>New</option>
+                        <option value="in-progress">In Progress</option>
+                        <option value="waiting">Waiting on Customer</option>
+                        <option value="resolved">Resolved</option>
+                        <option value="closed">Closed</option>
+                    </select>
+
+                    <label class="form-label">Priority</label>
+                    <select class="form-select" id="prioritySelect">
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                        <option value="critical" selected>Critical</option>
+                    </select>
+
+                    <label class="form-label">Category</label>
+                    <select class="form-select" id="categorySelect">
+                        <option value="technical" selected>Technical</option>
+                        <option value="billing">Billing</option>
+                        <option value="feature">Feature Request</option>
+                        <option value="training">Training/How-to</option>
+                        <option value="account">Account Management</option>
+                    </select>
+
+                    <label class="form-label">Assign To</label>
+                    <select class="form-select" id="assignSelect" onchange="handleAssignment()">
+                        <option value="" selected>Unassigned (Queue)</option>
+                        <option value="sarah-chen">Sarah Chen (Support Lead) - 4 active</option>
+                        <option value="michael-rodriguez">Michael Rodriguez (Technical) - 3 active</option>
+                        <option value="jessica-taylor">Jessica Taylor (Billing) - 2 active</option>
+                        <option value="david-kim">David Kim (Customer Success) - 2 active</option>
+                    </select>
+                </div>
+
+                <!-- Account Information -->
+                <div class="card" style="margin-bottom: 24px;">
+                    <h4 style="font-size: 14px; font-weight: 600; color: #687F8B; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px;">Account Information</h4>
+                    <div class="info-card">
+                        <div class="info-row">
+                            <span class="info-label">Account</span>
+                            <a href="super-admin-account-manage.html" class="link-text" style="font-weight: 600;">Acme Properties LLC</a>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Plan</span>
+                            <span class="info-value">Enterprise</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Users</span>
+                            <span class="info-value">24</span>
+                        </div>
+                        <div class="info-row" style="margin-bottom: 0;">
+                            <span class="info-label">Contact</span>
+                            <span class="info-value">manager@acmeproperties.com</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Ticket Metrics -->
+                <div class="card" style="margin-bottom: 24px;">
+                    <h4 style="font-size: 14px; font-weight: 600; color: #687F8B; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px;">Ticket Metrics</h4>
+                    <div class="info-card">
+                        <div class="info-row">
+                            <span class="info-label">Created</span>
+                            <span class="info-value">45 mins ago</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">Last Updated</span>
+                            <span class="info-value">45 mins ago</span>
+                        </div>
+                        <div class="info-row">
+                            <span class="info-label">First Response</span>
+                            <span class="info-value" style="color: #c62828;">Not yet responded</span>
+                        </div>
+                        <div class="info-row" style="margin-bottom: 0;">
+                            <span class="info-label">SLA Status</span>
+                            <span class="info-value" style="color: #f57c00;">⚠ 15 mins remaining</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Internal Notes -->
+                <div class="card">
+                    <h4 style="font-size: 14px; font-weight: 600; color: #687F8B; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px;">Internal Notes</h4>
+                    <div class="internal-notes">
+                        <div class="internal-notes-header">
+                            🔒 Super Admin Only
+                        </div>
+                        <textarea class="form-textarea" id="internalNotesText" placeholder="Add internal notes visible only to super admins..." style="background-color: white; min-height: 100px;"></textarea>
+                    </div>
+                </div>
+
+                <!-- Activity Timeline -->
+                <div class="card" style="margin-top: 24px;">
+                    <h4 style="font-size: 14px; font-weight: 600; color: #687F8B; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 16px;">Activity Timeline</h4>
+                    <div id="timelineContainer">
+                        <div class="timeline-item">
+                            <div class="timeline-dot"></div>
+                            <div class="timeline-content">
+                                <div class="timeline-event">Ticket created by john.doe@acmeproperties.com</div>
+                                <div class="timeline-time">45 minutes ago</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 50px;">
+            <span style="font-weight: 300; font-size: 14px; color: #687F8B;">© 2024, Harken CRE, LLC</span>
+        </div>
+    </div>
+
+    <!-- Assignment Modal -->
+    <div id="assignModal" class="modal-overlay" onclick="closeAssignModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h3 class="modal-title">Assign Ticket</h3>
+            <p style="color: #687F8B; font-size: 14px; margin-bottom: 24px;">Select a team member to assign this ticket to:</p>
+            
+            <div id="teamMembersList">
+                <div style="border: 1px solid #e0e0e0; border-radius: 6px; padding: 16px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='#0da1c7'" onmouseout="this.style.borderColor='#e0e0e0'" onclick="assignTicket('sarah-chen', 'Sarah Chen')">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span class="avatar">SC</span>
+                            <div>
+                                <div style="font-weight: 600; color: #1c3643; font-size: 14px;">Sarah Chen</div>
+                                <div style="font-size: 12px; color: #687F8B;">Support Lead</div>
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 13px; font-weight: 600; color: #1c3643;">4 active tickets</div>
+                            <div style="font-size: 11px; color: #687F8B;">Last active 15 mins ago</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="border: 1px solid #e0e0e0; border-radius: 6px; padding: 16px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='#0da1c7'" onmouseout="this.style.borderColor='#e0e0e0'" onclick="assignTicket('michael-rodriguez', 'Michael Rodriguez')">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span class="avatar">MR</span>
+                            <div>
+                                <div style="font-weight: 600; color: #1c3643; font-size: 14px;">Michael Rodriguez</div>
+                                <div style="font-size: 12px; color: #687F8B;">Technical Support</div>
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 13px; font-weight: 600; color: #1c3643;">3 active tickets</div>
+                            <div style="font-size: 11px; color: #687F8B;">Last active 1 hour ago</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="border: 1px solid #e0e0e0; border-radius: 6px; padding: 16px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='#0da1c7'" onmouseout="this.style.borderColor='#e0e0e0'" onclick="assignTicket('jessica-taylor', 'Jessica Taylor')">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span class="avatar" style="background-color: #10b981;">JT</span>
+                            <div>
+                                <div style="font-weight: 600; color: #1c3643; font-size: 14px;">Jessica Taylor</div>
+                                <div style="font-size: 12px; color: #687F8B;">Billing Specialist</div>
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 13px; font-weight: 600; color: #1c3643;">2 active tickets</div>
+                            <div style="font-size: 11px; color: #687F8B;">Last active 30 mins ago</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="border: 1px solid #e0e0e0; border-radius: 6px; padding: 16px; margin-bottom: 12px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.borderColor='#0da1c7'" onmouseout="this.style.borderColor='#e0e0e0'" onclick="assignTicket('david-kim', 'David Kim')">
+                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <span class="avatar" style="background-color: #6a1b9a;">DK</span>
+                            <div>
+                                <div style="font-weight: 600; color: #1c3643; font-size: 14px;">David Kim</div>
+                                <div style="font-size: 12px; color: #687F8B;">Customer Success</div>
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 13px; font-weight: 600; color: #1c3643;">2 active tickets</div>
+                            <div style="font-size: 11px; color: #687F8B;">Last active 2 hours ago</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-buttons">
+                <button class="action-button action-button-secondary" onclick="closeAssignModal()">Cancel</button>
+                <button class="action-button action-button-secondary" onclick="leaveInQueue()">Leave in Queue</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Close Ticket Modal -->
+    <div id="closeModal" class="modal-overlay" onclick="closeCloseModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h3 class="modal-title">Close Ticket</h3>
+            
+            <label class="form-label">Resolution Type *</label>
+            <select class="form-select" id="resolutionType">
+                <option value="">Select resolution type</option>
+                <option value="resolved">Resolved</option>
+                <option value="wont-fix">Won't Fix</option>
+                <option value="duplicate">Duplicate</option>
+                <option value="spam">Spam</option>
+            </select>
+
+            <label class="form-label">Resolution Notes *</label>
+            <textarea class="form-textarea" id="resolutionNotes" placeholder="Explain how this ticket was resolved..." style="min-height: 120px;"></textarea>
+
+            <label style="display: flex; align-items: center; gap: 8px; font-size: 14px; color: #687F8B; margin-top: 16px; cursor: pointer;">
+                <input type="checkbox" id="sendClosureEmail" checked />
+                Send closure email to customer
+            </label>
+
+            <div class="modal-buttons">
+                <button class="action-button action-button-secondary" onclick="closeCloseModal()">Cancel</button>
+                <button class="action-button action-button-primary" onclick="confirmCloseTicket()">Close Ticket</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="toast"></div>
+
+    <script>
+        // Character Counter
+        document.getElementById('replyContent').addEventListener('input', function() {
+            const count = this.value.length;
+            document.getElementById('charCount').textContent = `${count} / 2000 characters`;
+        });
+
+        // Toggle Internal Note styling
+        function toggleInternalNote() {
+            const isInternal = document.getElementById('internalNote').checked;
+            const textarea = document.getElementById('replyContent');
+            if (isInternal) {
+                textarea.style.backgroundColor = '#fffbea';
+                textarea.style.borderColor = '#f59e0b';
+            } else {
+                textarea.style.backgroundColor = 'white';
+                textarea.style.borderColor = '#e0e0e0';
+            }
+        }
+
+        // Add Reply
+        function addReply() {
+            const content = document.getElementById('replyContent').value;
+            if (!content.trim()) {
+                showToast('Please enter a reply message', true);
+                return;
+            }
+            
+            const isInternal = document.getElementById('internalNote').checked;
+            showToast(isInternal ? 'Internal note added successfully' : 'Reply sent successfully');
+            
+            // Add to timeline
+            addTimelineEvent(isInternal ? 'Added internal note' : 'Replied to customer');
+            
+            // Clear form
+            document.getElementById('replyContent').value = '';
+            document.getElementById('charCount').textContent = '0 / 2000 characters';
+            document.getElementById('internalNote').checked = false;
+            toggleInternalNote();
+        }
+
+        // Handle Status Change
+        function handleStatusChange() {
+            const status = document.getElementById('statusSelect').value;
+            const statusText = document.getElementById('statusSelect').options[document.getElementById('statusSelect').selectedIndex].text;
+            addTimelineEvent(`Status changed to ${statusText}`);
+            showToast(`Status changed to ${statusText}`);
+        }
+
+        // Handle Assignment
+        function handleAssignment() {
+            const assignee = document.getElementById('assignSelect').value;
+            if (assignee) {
+                const assigneeText = document.getElementById('assignSelect').options[document.getElementById('assignSelect').selectedIndex].text;
+                addTimelineEvent(`Ticket assigned to ${assigneeText.split(' - ')[0]}`);
+                showToast(`Ticket assigned to ${assigneeText.split(' - ')[0]}`);
+            } else {
+                addTimelineEvent('Ticket moved back to queue');
+                showToast('Ticket moved back to queue');
+            }
+        }
+
+        // Save Changes
+        function saveChanges() {
+            // Save internal notes if changed
+            const internalNotes = document.getElementById('internalNotesText').value;
+            if (internalNotes.trim()) {
+                addTimelineEvent('Updated internal notes');
+            }
+            showToast('Changes saved successfully');
+        }
+
+        // Assignment Modal
+        function openAssignModal() {
+            document.getElementById('assignModal').classList.add('active');
+        }
+
+        function closeAssignModal() {
+            document.getElementById('assignModal').classList.remove('active');
+        }
+
+        function assignTicket(id, name) {
+            document.getElementById('assignSelect').value = id;
+            addTimelineEvent(`Ticket assigned to ${name}`);
+            showToast(`Ticket assigned to ${name}`);
+            closeAssignModal();
+        }
+
+        function leaveInQueue() {
+            document.getElementById('assignSelect').value = '';
+            addTimelineEvent('Ticket left in queue');
+            showToast('Ticket left in queue');
+            closeAssignModal();
+        }
+
+        // Close Ticket Modal
+        function openCloseModal() {
+            document.getElementById('closeModal').classList.add('active');
+        }
+
+        function closeCloseModal() {
+            document.getElementById('closeModal').classList.remove('active');
+        }
+
+        function confirmCloseTicket() {
+            const resolutionType = document.getElementById('resolutionType').value;
+            const resolutionNotes = document.getElementById('resolutionNotes').value;
+            
+            if (!resolutionType) {
+                showToast('Please select a resolution type', true);
+                return;
+            }
+            
+            if (!resolutionNotes.trim()) {
+                showToast('Please enter resolution notes', true);
+                return;
+            }
+            
+            document.getElementById('statusSelect').value = 'closed';
+            addTimelineEvent(`Ticket closed - ${resolutionType}`);
+            showToast('Ticket closed successfully');
+            closeCloseModal();
+        }
+
+        // Timeline Helper
+        function addTimelineEvent(event) {
+            const timeline = document.getElementById('timelineContainer');
+            const newEvent = document.createElement('div');
+            newEvent.className = 'timeline-item';
+            newEvent.innerHTML = `
+                <div class="timeline-dot"></div>
+                <div class="timeline-content">
+                    <div class="timeline-event">${event}</div>
+                    <div class="timeline-time">Just now</div>
+                </div>
+            `;
+            timeline.insertBefore(newEvent, timeline.firstChild);
+        }
+
+        // Toast Notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+
+        // Close modals on Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeAssignModal();
+                closeCloseModal();
+            }
+        });
+
+        // Unsaved changes warning
+        let hasUnsavedChanges = false;
+        
+        document.getElementById('replyContent').addEventListener('input', () => hasUnsavedChanges = true);
+        document.getElementById('internalNotesText').addEventListener('input', () => hasUnsavedChanges = true);
+        document.getElementById('statusSelect').addEventListener('change', () => hasUnsavedChanges = true);
+        document.getElementById('prioritySelect').addEventListener('change', () => hasUnsavedChanges = true);
+        document.getElementById('categorySelect').addEventListener('change', () => hasUnsavedChanges = true);
+        
+        window.addEventListener('beforeunload', function(e) {
+            if (hasUnsavedChanges) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+
+        // Build Notes Toggle Function
+        function toggleBuildNotes(show) {
+            const notesSection = document.getElementById('buildNotesSection');
+            const toggleBtn = document.getElementById('showBuildNotesBtn');
+            
+            if (show) {
+                notesSection.style.display = 'block';
+                toggleBtn.style.display = 'none';
+                notesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                notesSection.style.display = 'none';
+                toggleBtn.style.display = 'block';
+            }
+            
+            sessionStorage.setItem('buildNotesVisible', show);
+        }
+
+        // Restore preference on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            const savedPreference = sessionStorage.getItem('buildNotesVisible');
+            if (savedPreference === 'false') {
+                toggleBuildNotes(false);
+            }
+        });
+    </script>
+</body>
+</html>
+
+

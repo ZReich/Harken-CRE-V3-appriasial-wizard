@@ -1,0 +1,876 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Comp Detail with Audit History - Harken CRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .material-icons { font-family: 'Material Icons' !important; }
+        * {
+            font-family: 'Montserrat', sans-serif !important;
+        }
+        body {
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .section-title {
+            font-size: 23px;
+            font-weight: 600;
+            color: #1c3643;
+        }
+        .subsection-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #687F8B;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 10px 24px;
+            border-radius: 25px;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+        .nav-link.active {
+            background-color: transparent;
+            border: 1px solid #0da1c7;
+            color: #0da1c7;
+        }
+        .btn-primary {
+            background-color: #0da1c7;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-primary:hover {
+            background-color: #0b8eb0;
+            transform: translateY(-1px);
+        }
+        .btn-secondary {
+            background-color: white;
+            color: #687F8B;
+            border: 1px solid #e0e0e0;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-secondary:hover {
+            background-color: #f9f9f9;
+            border-color: #d0d0d0;
+        }
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+        .card {
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            padding: 24px;
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1c3643;
+        }
+        .link-text {
+            color: #0da1c7;
+            text-decoration: none;
+            cursor: pointer;
+        }
+        .link-text:hover {
+            text-decoration: underline;
+        }
+        .detail-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+        }
+        .detail-item {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+        .detail-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #687F8B;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .detail-value {
+            font-size: 15px;
+            font-weight: 500;
+            color: #1c3643;
+        }
+        .audit-timeline {
+            position: relative;
+        }
+        .audit-entry {
+            position: relative;
+            padding-left: 32px;
+            padding-bottom: 24px;
+            border-left: 2px solid #e0e0e0;
+            margin-left: 8px;
+        }
+        .audit-entry:last-child {
+            border-left: 2px solid transparent;
+            padding-bottom: 0;
+        }
+        .audit-entry::before {
+            content: '';
+            position: absolute;
+            left: -7px;
+            top: 4px;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: #0da1c7;
+            border: 2px solid white;
+            box-shadow: 0 0 0 2px #e0e0e0;
+        }
+        .audit-entry.create::before {
+            background-color: #10b981;
+        }
+        .audit-entry.update::before {
+            background-color: #0da1c7;
+        }
+        .audit-entry.delete::before {
+            background-color: #ef4444;
+        }
+        .audit-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 8px;
+        }
+        .audit-user {
+            font-weight: 600;
+            color: #1c3643;
+            font-size: 14px;
+        }
+        .audit-action {
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        .audit-action.create {
+            background-color: #d1fae5;
+            color: #059669;
+        }
+        .audit-action.update {
+            background-color: #dbeafe;
+            color: #2563eb;
+        }
+        .audit-action.delete {
+            background-color: #fee2e2;
+            color: #dc2626;
+        }
+        .audit-timestamp {
+            font-size: 12px;
+            color: #687F8B;
+            margin-bottom: 8px;
+        }
+        .audit-changes {
+            background-color: #f9f9f9;
+            border-radius: 6px;
+            padding: 12px;
+            margin-top: 8px;
+        }
+        .audit-change-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 0;
+            font-size: 13px;
+        }
+        .audit-change-item:not(:last-child) {
+            border-bottom: 1px solid #e8e8e8;
+        }
+        .change-field {
+            font-weight: 600;
+            color: #1c3643;
+            min-width: 120px;
+        }
+        .change-old {
+            color: #dc2626;
+            text-decoration: line-through;
+            background-color: #fef2f2;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        .change-arrow {
+            color: #687F8B;
+        }
+        .change-new {
+            color: #059669;
+            background-color: #f0fdf4;
+            padding: 2px 6px;
+            border-radius: 3px;
+        }
+        .audit-note {
+            margin-top: 12px;
+            padding: 12px;
+            background-color: #fffbeb;
+            border-left: 3px solid #f59e0b;
+            border-radius: 0 6px 6px 0;
+            font-size: 13px;
+            color: #92400e;
+        }
+        .audit-note-label {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+        .expand-btn {
+            background: none;
+            border: none;
+            color: #0da1c7;
+            font-size: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 0;
+        }
+        .expand-btn:hover {
+            text-decoration: underline;
+        }
+        .audit-changes.collapsed {
+            display: none;
+        }
+        .filter-select {
+            padding: 8px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 13px;
+            background-color: white;
+            color: #687F8B;
+            cursor: pointer;
+        }
+        .filter-select:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .last-modified-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 12px;
+            background-color: #f0f9ff;
+            border: 1px solid #bae6fd;
+            border-radius: 20px;
+            font-size: 12px;
+            color: #0369a1;
+        }
+        .property-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+        }
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .status-active {
+            background-color: #d1fae5;
+            color: #059669;
+        }
+        .tabs {
+            display: flex;
+            gap: 4px;
+            border-bottom: 2px solid #e0e0e0;
+            margin-bottom: 24px;
+        }
+        .tab {
+            padding: 12px 20px;
+            background: none;
+            border: none;
+            font-size: 14px;
+            font-weight: 500;
+            color: #687F8B;
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s;
+        }
+        .tab:hover {
+            color: #0da1c7;
+        }
+        .tab.active {
+            color: #0da1c7;
+            border-bottom-color: #0da1c7;
+            font-weight: 600;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        .save-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+        .save-modal.active {
+            display: flex;
+        }
+        .save-modal-content {
+            background-color: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 500px;
+            padding: 24px;
+        }
+        .note-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 80px;
+            box-sizing: border-box;
+        }
+        .note-input:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+    </style>
+</head>
+<body>
+    <!-- UNIFIED NAVIGATION COMPONENT -->
+    <style>
+        .unified-navbar { background: url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643; background-color: #1c3643 !important; height: 84px; color: #fff; display: flex; align-items: center; justify-content: space-between; padding: 0 32px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+        .nav-logo { height: 40px; width: auto; cursor: pointer; }
+        .nav-center { display: flex; align-items: center; gap: 8px; flex: 1; justify-content: center; }
+        .nav-core-features { display: flex; align-items: center; gap: 4px; background: rgba(13, 161, 199, 0.08); border-radius: 25px; padding: 4px 8px; margin-right: 16px; }
+        .nav-link { color: white; text-decoration: none; padding: 10px 20px; border-radius: 25px; transition: all 0.2s; border: 1px solid transparent; font-weight: 500; font-size: 14px; white-space: nowrap; }
+        .nav-link:hover { background-color: rgba(255,255,255,0.08); }
+        .nav-link.core-feature { font-weight: 500; font-size: 14px; color: white; }
+        .nav-link.core-feature:hover { background-color: rgba(13, 161, 199, 0.2); color: white; }
+        .nav-link.core-feature.active { background-color: transparent; border: 1px solid #0da1c7; color: #0da1c7; box-shadow: 0 2px 4px rgba(13, 161, 199, 0.2); }
+        .nav-link.active { background-color: transparent; border: 1px solid #0da1c7; color: #0da1c7; }
+        .nav-separator { width: 1px; height: 24px; background: rgba(255, 255, 255, 0.2); margin: 0 8px; }
+        .nav-user { display: flex; align-items: center; gap: 12px; }
+        .nav-user-name { font-size: 14px; font-weight: 500; color: white; }
+        .nav-user-avatar { width: 36px; height: 36px; border-radius: 50%; border: 2px solid #0da1c7; }
+    </style>
+    <nav class="unified-navbar">
+        <img src="assets/harken.png" alt="Harken CRE" class="nav-logo" onclick="window.location.href='super-admin-dashboard.html'">
+        <div class="nav-center">
+            <div class="nav-core-features">
+                <a href="super-admin-comps.html" class="nav-link core-feature active">COMPS</a>
+                <a href="super-admin-appraisals-list.html" class="nav-link core-feature">APPRAISAL</a>
+                <a href="evaluation-wizard-full.html" class="nav-link core-feature">EVALUATION</a>
+            </div>
+            <div class="nav-separator"></div>
+            <a href="super-admin-dashboard.html" class="nav-link">Dashboard</a>
+            <a href="super-admin-users.html" class="nav-link">Users</a>
+            <a href="super-admin-clients.html" class="nav-link">Clients</a>
+            <a href="super-admin-accounts.html" class="nav-link">Accounts</a>
+            <a href="super-admin-settings.html" class="nav-link">Settings</a>
+        </div>
+        <div class="nav-user">
+            <span class="nav-user-name">Sarah Johnson</span>
+            <img src="https://i.pravatar.cc/150?img=47" alt="User" class="nav-user-avatar">
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div style="padding: 35px 50px;">
+        <!-- BUILD NOTES SECTION -->
+        <div id="buildNotesSection" style="background-color: #fff3cd; border-left: 4px solid #ffc107; padding: 20px; margin-bottom: 32px; border-radius: 4px;">
+            <h3 style="color: #856404; font-size: 16px; font-weight: 700; margin: 0 0 16px 0;">BUILD NOTES - Comp Audit History</h3>
+            
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 16px;">
+                <div>
+                    <strong style="color: #856404;">Priority Level:</strong> High
+                </div>
+                <div>
+                    <strong style="color: #856404;">Development Stage:</strong> Prototype
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #856404;">Purpose:</strong>
+                <p style="margin: 4px 0 0 0; color: #856404;">Every change to a comp is logged with who made it, when, what changed (before/after), and an optional note explaining why. This provides full accountability and data provenance required for USPAP compliance and SOC 2.</p>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #856404;">Key Features:</strong>
+                <ul style="margin: 4px 0 0 0; color: #856404;">
+                    <li><strong>Timeline View:</strong> Visual chronological display of all changes</li>
+                    <li><strong>Field-Level Tracking:</strong> Shows exactly which fields changed with old/new values</li>
+                    <li><strong>User Attribution:</strong> Every change tied to a specific user</li>
+                    <li><strong>Change Notes:</strong> Optional comments explaining why changes were made</li>
+                    <li><strong>Save with Note:</strong> When editing, users can add a note that gets logged</li>
+                    <li><strong>Last Modified Badge:</strong> Quick visibility of who last touched the record</li>
+                </ul>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #856404;">Industry Alignment:</strong>
+                <p style="margin: 4px 0 0 0; color: #856404;">Follows the "4 W's of Auditing" pattern (Who, What, When, Why) used by financial systems and healthcare records (HIPAA). Matches USPAP requirements for data provenance in appraisal work.</p>
+            </div>
+            
+            <button onclick="toggleBuildNotes(false)" style="margin-top: 12px; padding: 6px 12px; background: #856404; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">Hide Build Notes</button>
+        </div>
+
+        <!-- Header -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+            <div>
+                <a href="super-admin-comps.html" class="link-text" style="font-size: 13px;">Comps</a>
+                <span style="color: #687F8B; margin: 0 8px;">/</span>
+                <a href="../super-admin-comp-view-detail-commercial.html?id=4521" class="link-text" style="font-size: 13px;">Comp #4521</a>
+                <span style="color: #687F8B; margin: 0 8px;">/</span>
+                <span style="color: #1c3643; font-size: 13px; font-weight: 500;">Audit History</span>
+            </div>
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <div class="last-modified-badge">
+                    <span class="material-icons" style="font-size: 14px;">schedule</span>
+                    Last modified by <strong>John Smith</strong> on Mar 15, 2024
+                </div>
+                <a href="super-admin-comp-property-timeline.html" class="btn-secondary btn-small">
+                    <span class="material-icons" style="font-size: 16px;">timeline</span>
+                    View Property History
+                </a>
+                <button class="btn-primary" onclick="showSaveModal()">
+                    <span class="material-icons" style="font-size: 18px;">edit</span>
+                    Edit Comp
+                </button>
+            </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 24px;">
+            <!-- Left Column - Comp Details -->
+            <div>
+                <h1 class="section-title" style="margin-bottom: 24px;">123 MAIN STREET</h1>
+
+                <!-- Property Image -->
+                <div class="card" style="padding: 0; overflow: hidden; margin-bottom: 24px;">
+                    <img src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800" alt="Property" class="property-image" style="height: 280px;">
+                </div>
+
+                <!-- Tabs -->
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('details')">Property Details</button>
+                    <button class="tab" onclick="switchTab('sale')">Sale Information</button>
+                    <button class="tab" onclick="switchTab('location')">Location & Zoning</button>
+                </div>
+
+                <!-- Property Details Tab -->
+                <div id="details-tab" class="tab-content active">
+                    <div class="card">
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <span class="detail-label">Address</span>
+                                <span class="detail-value">123 Main Street</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">City</span>
+                                <span class="detail-value">Denver</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">State / ZIP</span>
+                                <span class="detail-value">CO 80202</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Property Type</span>
+                                <span class="detail-value">Office</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Property Class</span>
+                                <span class="detail-value">Class B</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Year Built</span>
+                                <span class="detail-value">1998</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Building Size</span>
+                                <span class="detail-value">15,200 SF</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Land Size</span>
+                                <span class="detail-value">0.85 Acres</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Stories</span>
+                                <span class="detail-value">3</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Sale Information Tab -->
+                <div id="sale-tab" class="tab-content">
+                    <div class="card">
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <span class="detail-label">Sale Price</span>
+                                <span class="detail-value">$520,000</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Price / SF</span>
+                                <span class="detail-value">$34.21</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Date Sold</span>
+                                <span class="detail-value">March 15, 2024</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Cap Rate</span>
+                                <span class="detail-value">6.5%</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">NOI</span>
+                                <span class="detail-value">$33,800</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Sale Status</span>
+                                <span class="status-badge status-active">Closed</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Location Tab -->
+                <div id="location-tab" class="tab-content">
+                    <div class="card">
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <span class="detail-label">APN</span>
+                                <span class="detail-value">0234-567-89-001</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Zoning</span>
+                                <span class="detail-value">C-2 Commercial</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">County</span>
+                                <span class="detail-value">Denver County</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Latitude</span>
+                                <span class="detail-value">39.7392</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Longitude</span>
+                                <span class="detail-value">-104.9903</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Google Place ID</span>
+                                <span class="detail-value" style="font-size: 11px;">ChIJzxcfI6qAa4cR...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column - Audit History -->
+            <div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Change History</h3>
+                        <select class="filter-select" style="font-size: 12px; padding: 6px 10px;">
+                            <option>All Changes</option>
+                            <option>Price Changes</option>
+                            <option>Date Changes</option>
+                            <option>Last 30 Days</option>
+                        </select>
+                    </div>
+
+                    <div class="audit-timeline">
+                        <!-- Entry 1 - Most Recent -->
+                        <div class="audit-entry update">
+                            <div class="audit-header">
+                                <div>
+                                    <div class="audit-user">John Smith</div>
+                                    <div class="audit-timestamp">March 15, 2024 at 2:34 PM</div>
+                                </div>
+                                <span class="audit-action update">Updated</span>
+                            </div>
+                            <button class="expand-btn" onclick="toggleChanges(this)">
+                                <span class="material-icons" style="font-size: 16px;">expand_more</span>
+                                Show 2 changes
+                            </button>
+                            <div class="audit-changes collapsed">
+                                <div class="audit-change-item">
+                                    <span class="change-field">Sale Price</span>
+                                    <span class="change-old">$485,000</span>
+                                    <span class="change-arrow">--></span>
+                                    <span class="change-new">$520,000</span>
+                                </div>
+                                <div class="audit-change-item">
+                                    <span class="change-field">Date Sold</span>
+                                    <span class="change-old">Jan 10, 2024</span>
+                                    <span class="change-arrow">--></span>
+                                    <span class="change-new">Mar 15, 2024</span>
+                                </div>
+                            </div>
+                            <div class="audit-note">
+                                <div class="audit-note-label">Note:</div>
+                                Updated with corrected sale data from county records. Previous entry was listing price, not final sale.
+                            </div>
+                        </div>
+
+                        <!-- Entry 2 -->
+                        <div class="audit-entry update">
+                            <div class="audit-header">
+                                <div>
+                                    <div class="audit-user">Sarah Johnson</div>
+                                    <div class="audit-timestamp">February 28, 2024 at 10:15 AM</div>
+                                </div>
+                                <span class="audit-action update">Updated</span>
+                            </div>
+                            <button class="expand-btn" onclick="toggleChanges(this)">
+                                <span class="material-icons" style="font-size: 16px;">expand_more</span>
+                                Show 1 change
+                            </button>
+                            <div class="audit-changes collapsed">
+                                <div class="audit-change-item">
+                                    <span class="change-field">Cap Rate</span>
+                                    <span class="change-old">6.8%</span>
+                                    <span class="change-arrow">--></span>
+                                    <span class="change-new">6.5%</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Entry 3 -->
+                        <div class="audit-entry update">
+                            <div class="audit-header">
+                                <div>
+                                    <div class="audit-user">Mike Davis</div>
+                                    <div class="audit-timestamp">January 20, 2024 at 4:45 PM</div>
+                                </div>
+                                <span class="audit-action update">Updated</span>
+                            </div>
+                            <button class="expand-btn" onclick="toggleChanges(this)">
+                                <span class="material-icons" style="font-size: 16px;">expand_more</span>
+                                Show 3 changes
+                            </button>
+                            <div class="audit-changes collapsed">
+                                <div class="audit-change-item">
+                                    <span class="change-field">Building Size</span>
+                                    <span class="change-old">14,800 SF</span>
+                                    <span class="change-arrow">--></span>
+                                    <span class="change-new">15,200 SF</span>
+                                </div>
+                                <div class="audit-change-item">
+                                    <span class="change-field">Year Built</span>
+                                    <span class="change-old">1996</span>
+                                    <span class="change-arrow">--></span>
+                                    <span class="change-new">1998</span>
+                                </div>
+                                <div class="audit-change-item">
+                                    <span class="change-field">Stories</span>
+                                    <span class="change-old">2</span>
+                                    <span class="change-arrow">--></span>
+                                    <span class="change-new">3</span>
+                                </div>
+                            </div>
+                            <div class="audit-note">
+                                <div class="audit-note-label">Note:</div>
+                                Verified building specs against tax assessor records.
+                            </div>
+                        </div>
+
+                        <!-- Entry 4 - Creation -->
+                        <div class="audit-entry create">
+                            <div class="audit-header">
+                                <div>
+                                    <div class="audit-user">Sarah Johnson</div>
+                                    <div class="audit-timestamp">January 15, 2024 at 9:22 AM</div>
+                                </div>
+                                <span class="audit-action create">Created</span>
+                            </div>
+                            <div style="font-size: 13px; color: #687F8B;">
+                                Comp record created via bulk PDF upload
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Load More -->
+                    <div style="text-align: center; margin-top: 16px; padding-top: 16px; border-top: 1px solid #f0f0f0;">
+                        <button class="btn-secondary btn-small">Load Earlier Changes</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 50px;">
+            <span style="font-weight: 300; font-size: 14px; color: #687F8B;">2024, Harken CRE, LLC</span>
+        </div>
+    </div>
+
+    <!-- Save Modal with Note -->
+    <div class="save-modal" id="saveModal">
+        <div class="save-modal-content">
+            <h3 style="font-size: 18px; font-weight: 600; color: #1c3643; margin: 0 0 16px 0;">Save Changes</h3>
+            <p style="font-size: 14px; color: #687F8B; margin-bottom: 16px;">You're about to save changes to this comp. Add an optional note to explain your changes for the audit trail.</p>
+            
+            <div style="margin-bottom: 16px;">
+                <label style="font-size: 12px; font-weight: 600; color: #687F8B; display: block; margin-bottom: 6px; text-transform: uppercase;">Change Note (Optional)</label>
+                <textarea class="note-input" placeholder="e.g., Updated sale price per verified county records..."></textarea>
+            </div>
+
+            <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                <button class="btn-secondary" onclick="hideSaveModal()">Cancel</button>
+                <button class="btn-primary" onclick="saveWithNote()">
+                    <span class="material-icons" style="font-size: 18px;">save</span>
+                    Save Changes
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Show Build Notes Button -->
+    <button id="showBuildNotesBtn" 
+            style="position: fixed; top: 100px; right: 20px; z-index: 9999; 
+                   padding: 12px 20px; background: #ffc107; color: #856404; 
+                   border: 2px solid #856404; border-radius: 25px; 
+                   font-size: 14px; font-weight: 700; cursor: pointer; 
+                   box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+                   display: none; transition: all 0.3s;"
+            onclick="toggleBuildNotes(true)">
+        Show Build Notes
+    </button>
+
+    <script>
+        // Build Notes Toggle
+        function toggleBuildNotes(show) {
+            const notesSection = document.getElementById('buildNotesSection');
+            const toggleBtn = document.getElementById('showBuildNotesBtn');
+            
+            if (show) {
+                notesSection.style.display = 'block';
+                toggleBtn.style.display = 'none';
+                notesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                notesSection.style.display = 'none';
+                toggleBtn.style.display = 'block';
+            }
+            
+            sessionStorage.setItem('buildNotesVisible', show);
+        }
+
+        // Restore preference on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            const savedPreference = sessionStorage.getItem('buildNotesVisible');
+            if (savedPreference === 'false') {
+                toggleBuildNotes(false);
+            }
+        });
+
+        // Tab switching
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            document.getElementById(tabName + '-tab').classList.add('active');
+        }
+
+        // Toggle audit changes
+        function toggleChanges(btn) {
+            const changes = btn.nextElementSibling;
+            const icon = btn.querySelector('.material-icons');
+            
+            if (changes.classList.contains('collapsed')) {
+                changes.classList.remove('collapsed');
+                icon.textContent = 'expand_less';
+                btn.innerHTML = btn.innerHTML.replace('Show', 'Hide');
+            } else {
+                changes.classList.add('collapsed');
+                icon.textContent = 'expand_more';
+                btn.innerHTML = btn.innerHTML.replace('Hide', 'Show');
+            }
+        }
+
+        // Save modal
+        function showSaveModal() {
+            document.getElementById('saveModal').classList.add('active');
+        }
+
+        function hideSaveModal() {
+            document.getElementById('saveModal').classList.remove('active');
+        }
+
+        function saveWithNote() {
+            const note = document.querySelector('.save-modal .note-input').value;
+            hideSaveModal();
+            
+            // Show success message
+            alert('Changes saved successfully!' + (note ? '\n\nNote logged: ' + note : ''));
+        }
+
+        // Close modal on escape key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                hideSaveModal();
+            }
+        });
+
+        // Close modal on backdrop click
+        document.getElementById('saveModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                hideSaveModal();
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+
+
+

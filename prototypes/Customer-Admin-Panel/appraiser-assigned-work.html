@@ -1,0 +1,675 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>My Assigned Work - Rove Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            font-family: 'Montserrat', sans-serif !important;
+        }
+        body {
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background: url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;
+            background-color: #1c3643 !important;
+            max-height: 84px;
+            height: 84px;
+            color: #fff;
+        }
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 10px 24px;
+            border-radius: 25px;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+        .nav-link.active {
+            background-color: transparent;
+            border: 1px solid #0da1c7;
+            color: #0da1c7;
+        }
+        .section-title {
+            font-size: 23px;
+            font-weight: 600;
+            color: #1c3643;
+        }
+        .metric-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+        }
+        .metric-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1c3643;
+            margin: 8px 0;
+        }
+        .metric-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #687F8B;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .action-button {
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .action-button:hover {
+            opacity: 0.8;
+        }
+        .action-button-primary {
+            background-color: #0da1c7;
+            color: white;
+        }
+        .action-button-success {
+            background-color: #10b981;
+            color: white;
+        }
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-block;
+            color: white;
+        }
+        .status-assigned {
+            background-color: #7c3aed;
+        }
+        .status-in-progress {
+            background-color: #f57c00;
+        }
+        .status-review {
+            background-color: #c2185b;
+        }
+        .service-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .service-badge.appraisal {
+            background: #dbeafe;
+            color: #1e40af;
+        }
+        .service-badge.evaluation {
+            background: #e0e7ff;
+            color: #3730a3;
+        }
+        .service-badge.bov {
+            background: #fce7f3;
+            color: #9f1239;
+        }
+        .work-request-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border-left: 4px solid #10b981;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+            transition: all 0.2s;
+        }
+        .work-request-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+        .card-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #1c3643;
+            margin-bottom: 6px;
+        }
+        .card-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            font-size: 12px;
+            color: #687F8B;
+            margin-top: 12px;
+        }
+        .card-meta span {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+        .icon-small {
+            width: 14px;
+            height: 14px;
+            display: inline-block;
+            vertical-align: middle;
+        }
+        .property-address {
+            font-size: 13px;
+            color: #687F8B;
+            font-weight: 500;
+        }
+        .deadline {
+            font-size: 13px;
+            color: #c62828;
+            font-weight: 600;
+        }
+        .priority-badge {
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .priority-urgent {
+            background-color: #c62828;
+            color: white;
+        }
+        .priority-normal {
+            background-color: #2e7d32;
+            color: white;
+        }
+        
+        /* Modal System */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            z-index: 10000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-overlay.show {
+            display: flex;
+            animation: fadeIn 0.2s ease-out;
+        }
+        .modal-content {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow: auto;
+        }
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1c3643;
+            margin: 0;
+        }
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 32px;
+            color: #687F8B;
+            cursor: pointer;
+            line-height: 1;
+            padding: 0;
+            width: 32px;
+            height: 32px;
+        }
+        .modal-close:hover {
+            color: #1c3643;
+        }
+        .modal-body {
+            padding: 24px;
+        }
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+        .toast-notification {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            background: #10b981;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+            display: none;
+            align-items: center;
+            gap: 12px;
+            z-index: 10001;
+        }
+        .toast-notification.show {
+            display: flex;
+            animation: slideInRight 0.3s ease-out;
+        }
+        .toast-notification.error {
+            background: #c62828;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes slideInRight {
+            from { transform: translateX(400px); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar flex items-center justify-between px-8">
+        <div class="flex items-center">
+            <img src="harken.png" alt="Harken" style="height: 40px; width: auto;" />
+            <span style="margin-left: 12px; font-size: 14px; color: #0da1c7; font-weight: 600;">Rove Management</span>
+            <span style="margin-left: 8px; font-size: 11px; color: #687F8B; background: rgba(255,255,255,0.1); padding: 2px 8px; border-radius: 10px;">APPRAISER</span>
+        </div>
+        <div class="flex items-center gap-6">
+            <a href="#" class="nav-link">Dashboard</a>
+            <a href="appraiser-assigned-work.html" class="nav-link active">My Work</a>
+            <a href="#" class="nav-link">Completed Reports</a>
+            <a href="#" class="nav-link">Time Tracking</a>
+            <a href="#" class="nav-link" style="background-color: rgba(255,193,7,0.1); border-color: #ffc107; color: #ffc107;">Help</a>
+        </div>
+        <div class="flex items-center gap-4">
+            <span class="text-sm">Sarah Chen (Appraiser)</span>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div style="padding: 35px 50px;">
+        <!-- Header Section -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+            <div>
+                <h2 class="section-title">MY ASSIGNED WORK</h2>
+                <p style="color: #687F8B; font-size: 14px; margin-top: 4px;">Complete your assigned appraisals, evaluations, and BOV requests</p>
+            </div>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; margin-bottom: 32px;">
+            <div class="metric-card">
+                <div class="metric-label">To Do</div>
+                <div class="metric-value">2</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">In Progress</div>
+                <div class="metric-value">3</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Completed This Week</div>
+                <div class="metric-value">4</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Completion Rate</div>
+                <div class="metric-value">96%</div>
+            </div>
+        </div>
+
+        <!-- To Do Section -->
+        <div style="background-color: white; border-radius: 8px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); margin-bottom: 24px;">
+            <h3 style="font-size: 13px; font-weight: 600; color: #687F8B; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 20px;">TO DO (2)</h3>
+            
+            <!-- Work Request 1 - Newly Assigned -->
+            <div class="work-request-card" style="border-left-color: #7c3aed;">
+                <div class="card-header">
+                    <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                            <span class="service-badge appraisal">Appraisal</span>
+                            <span class="status-badge status-assigned">Newly Assigned</span>
+                            <span class="priority-badge priority-normal">Normal Priority</span>
+                        </div>
+                        <div class="card-title">#WR-2025-045 - Commercial Office Building Appraisal</div>
+                        <div class="property-address">
+                            <svg class="icon-small" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 4px;">
+                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                            </svg>
+                            123 Main St, Los Angeles, CA 90012 • Office Building - 25,000 SF
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div class="deadline" style="margin-bottom: 8px;">Due: Jan 30, 2025</div>
+                        <div style="font-size: 11px; color: #c62828; font-weight: 600;">⏰ 2 days remaining</div>
+                    </div>
+                </div>
+                <div class="card-meta">
+                    <span>
+                        <svg class="icon-small" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                        </svg>
+                        Assigned: 2 hours ago
+                    </span>
+                    <span>
+                        <svg class="icon-small" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                        Client: ABC Corporation
+                    </span>
+                    <button class="action-button action-button-primary" style="margin-left: auto;" onclick="startWork('WR-2025-045')">Start Work</button>
+                    <button class="action-button action-button-primary" onclick="viewDetails('WR-2025-045')">View Details</button>
+                </div>
+            </div>
+
+            <!-- Work Request 2 - Urgent -->
+            <div class="work-request-card" style="border-left-color: #c62828;">
+                <div class="card-header">
+                    <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                            <span class="service-badge evaluation">Evaluation</span>
+                            <span class="status-badge status-assigned">Newly Assigned</span>
+                            <span class="priority-badge priority-urgent">URGENT</span>
+                        </div>
+                        <div class="card-title">#WR-2025-043 - Retail Property Evaluation</div>
+                        <div class="property-address">
+                            <svg class="icon-small" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 4px;">
+                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                            </svg>
+                            456 Shopping Plaza, San Francisco, CA 94102 • Retail - 12,500 SF
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div class="deadline" style="margin-bottom: 8px; font-size: 15px;">Due: TOMORROW</div>
+                        <div style="font-size: 11px; color: #c62828; font-weight: 600;">⏰ Less than 24 hours!</div>
+                    </div>
+                </div>
+                <div class="card-meta">
+                    <span>
+                        <svg class="icon-small" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                        </svg>
+                        Assigned: 1 hour ago
+                    </span>
+                    <span>
+                        <svg class="icon-small" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                        Client: Metro Retail Group
+                    </span>
+                    <button class="action-button action-button-primary" style="margin-left: auto; background-color: #c62828;" onclick="startWork('WR-2025-043')">Start Work NOW</button>
+                    <button class="action-button action-button-primary" onclick="viewDetails('WR-2025-043')">View Details</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- In Progress Section -->
+        <div style="background-color: white; border-radius: 8px; padding: 24px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); margin-bottom: 24px;">
+            <h3 style="font-size: 13px; font-weight: 600; color: #687F8B; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 20px;">IN PROGRESS (3)</h3>
+            
+            <!-- Work Request 3 - In Progress -->
+            <div class="work-request-card" style="border-left-color: #f57c00;">
+                <div class="card-header">
+                    <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                            <span class="service-badge bov">BOV</span>
+                            <span class="status-badge status-in-progress">In Progress</span>
+                        </div>
+                        <div class="card-title">#WR-2025-041 - Industrial Warehouse BOV</div>
+                        <div class="property-address">
+                            <svg class="icon-small" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 4px;">
+                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                            </svg>
+                            789 Industrial Pkwy, Austin, TX 78701 • Warehouse - 45,000 SF
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div class="deadline" style="margin-bottom: 8px;">Due: Feb 2, 2025</div>
+                        <div style="font-size: 11px; color: #10b981; font-weight: 600;">✓ On track - 5 days remaining</div>
+                    </div>
+                </div>
+                <div class="card-meta">
+                    <span>
+                        <svg class="icon-small" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                        </svg>
+                        Started: 3 days ago
+                    </span>
+                    <span>
+                        <svg class="icon-small" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                        Client: Prime Valuation Services
+                    </span>
+                    <span style="background: #fef3c7; padding: 4px 10px; border-radius: 12px; color: #92400e; font-weight: 600;">
+                        📊 Progress: 60%
+                    </span>
+                    <button class="action-button action-button-success" style="margin-left: auto;" onclick="submitForReview('WR-2025-041', 'Industrial Warehouse BOV')">Submit for Review</button>
+                    <button class="action-button action-button-primary" onclick="viewDetails('WR-2025-041')">View Details</button>
+                </div>
+            </div>
+
+            <!-- Work Request 4 - In Progress (Almost Complete) -->
+            <div class="work-request-card" style="border-left-color: #f57c00;">
+                <div class="card-header">
+                    <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                            <span class="service-badge appraisal">Appraisal</span>
+                            <span class="status-badge status-in-progress">In Progress</span>
+                        </div>
+                        <div class="card-title">#WR-2025-039 - Multi-Family Residential Appraisal</div>
+                        <div class="property-address">
+                            <svg class="icon-small" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 4px;">
+                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                            </svg>
+                            2500 Park Ave, Seattle, WA 98101 • Apartments - 120 units
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div class="deadline" style="margin-bottom: 8px;">Due: Jan 27, 2025</div>
+                        <div style="font-size: 11px; color: #10b981; font-weight: 600;">✓ On track - 1 day remaining</div>
+                    </div>
+                </div>
+                <div class="card-meta">
+                    <span>
+                        <svg class="icon-small" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                        </svg>
+                        Started: 5 days ago
+                    </span>
+                    <span>
+                        <svg class="icon-small" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                        Client: Skyline Investments
+                    </span>
+                    <span style="background: #d1fae5; padding: 4px 10px; border-radius: 12px; color: #065f46; font-weight: 600;">
+                        📊 Progress: 90%
+                    </span>
+                    <button class="action-button action-button-success" style="margin-left: auto;" onclick="submitForReview('WR-2025-039', 'Multi-Family Residential Appraisal')">Submit for Review</button>
+                    <button class="action-button action-button-primary" onclick="viewDetails('WR-2025-039')">View Details</button>
+                </div>
+            </div>
+
+            <!-- Work Request 5 - In Progress (Early Stage) -->
+            <div class="work-request-card" style="border-left-color: #f57c00;">
+                <div class="card-header">
+                    <div style="flex: 1;">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+                            <span class="service-badge evaluation">Evaluation</span>
+                            <span class="status-badge status-in-progress">In Progress</span>
+                        </div>
+                        <div class="card-title">#WR-2025-038 - Medical Office Evaluation</div>
+                        <div class="property-address">
+                            <svg class="icon-small" viewBox="0 0 24 24" fill="currentColor" style="margin-right: 4px;">
+                                <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
+                            </svg>
+                            1200 Healthcare Dr, Denver, CO 80202 • Medical - 18,000 SF
+                        </div>
+                    </div>
+                    <div style="text-align: right;">
+                        <div class="deadline" style="margin-bottom: 8px;">Due: Feb 5, 2025</div>
+                        <div style="font-size: 11px; color: #10b981; font-weight: 600;">✓ On track - 8 days remaining</div>
+                    </div>
+                </div>
+                <div class="card-meta">
+                    <span>
+                        <svg class="icon-small" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/>
+                        </svg>
+                        Started: 1 day ago
+                    </span>
+                    <span>
+                        <svg class="icon-small" viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+                        </svg>
+                        Client: Downtown Commercial Partners
+                    </span>
+                    <span style="background: #fef3c7; padding: 4px 10px; border-radius: 12px; color: #92400e; font-weight: 600;">
+                        📊 Progress: 25%
+                    </span>
+                    <button class="action-button action-button-success" style="margin-left: auto;" onclick="submitForReview('WR-2025-038', 'Medical Office Evaluation')">Submit for Review</button>
+                    <button class="action-button action-button-primary" onclick="viewDetails('WR-2025-038')">View Details</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 50px;">
+            <span style="font-weight: 300; font-size: 14px; color: #687F8B;">© 2024, Harken CRE, LLC</span>
+        </div>
+    </div>
+
+    <!-- Start Work Confirmation Modal -->
+    <div id="startWorkModal" class="modal-overlay" onclick="if(event.target === this) closeModal('startWorkModal')">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Start Work</h3>
+                <button class="modal-close" onclick="closeModal('startWorkModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p style="color: #1c3643; font-size: 14px;">Ready to start working on <strong id="startWorkRequestId"></strong>?</p>
+                <p style="color: #687F8B; font-size: 13px; margin-top: 12px;">This will update the status to "In Progress" and notify your manager.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="action-button action-button-secondary" onclick="closeModal('startWorkModal')">Cancel</button>
+                <button class="action-button action-button-primary" onclick="confirmStartWork()">Start Work</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Submit for Review Modal -->
+    <div id="submitReviewModal" class="modal-overlay" onclick="if(event.target === this) closeModal('submitReviewModal')">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Submit for Review</h3>
+                <button class="modal-close" onclick="closeModal('submitReviewModal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div style="background: #f9fafb; padding: 16px; border-radius: 6px; margin-bottom: 20px;">
+                    <strong id="submitRequestId" style="color: #0da1c7;"></strong> - <span id="submitRequestTitle"></span>
+                </div>
+                
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label style="font-weight: 600; color: #1c3643; margin-bottom: 8px; display: block;">Upload Report (PDF): <span style="color: #c62828;">*</span></label>
+                    <input type="file" accept=".pdf" id="reportUpload" style="width: 100%; padding: 10px; border: 1px solid #e0e0e0; border-radius: 4px;" />
+                    <div style="font-size: 11px; color: #687F8B; margin-top: 4px;">Max file size: 50MB</div>
+                </div>
+                
+                <div class="form-group">
+                    <label style="font-weight: 600; color: #1c3643; margin-bottom: 8px; display: block;">Notes for Manager:</label>
+                    <textarea id="reviewNotes" style="width: 100%; min-height: 100px; padding: 10px; border: 1px solid #e0e0e0; border-radius: 4px; font-size: 13px;" placeholder="Add any comments, concerns, or notes for your manager..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="action-button action-button-secondary" onclick="closeModal('submitReviewModal')">Cancel</button>
+                <button class="action-button action-button-success" onclick="confirmSubmitReview()">Submit for Review</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Toast -->
+    <div id="successToast" class="toast-notification">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="white">
+            <path d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+        </svg>
+        <span id="toastMessage">Action completed successfully!</span>
+    </div>
+
+    <script>
+        let currentRequestId = '';
+        
+        // Modal functions
+        function showModal(modalId) {
+            document.getElementById(modalId).classList.add('show');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('show');
+        }
+
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('successToast');
+            document.getElementById('toastMessage').textContent = message;
+            toast.className = 'toast-notification show' + (type === 'error' ? ' error' : '');
+            setTimeout(() => {
+                toast.classList.remove('show', 'error');
+            }, 3000);
+        }
+        
+        // Start work functions
+        function startWork(requestId) {
+            currentRequestId = requestId;
+            document.getElementById('startWorkRequestId').textContent = requestId;
+            showModal('startWorkModal');
+        }
+        
+        function confirmStartWork() {
+            closeModal('startWorkModal');
+            showToast(`Work started on ${currentRequestId}. Status updated to "In Progress".`);
+            // In production: POST /api/work-requests/${currentRequestId}/start
+            setTimeout(() => location.reload(), 2000);
+        }
+
+        // Submit for review functions
+        function submitForReview(requestId, title) {
+            currentRequestId = requestId;
+            document.getElementById('submitRequestId').textContent = requestId;
+            document.getElementById('submitRequestTitle').textContent = title;
+            document.getElementById('reportUpload').value = '';
+            document.getElementById('reviewNotes').value = '';
+            showModal('submitReviewModal');
+        }
+        
+        function confirmSubmitReview() {
+            const fileInput = document.getElementById('reportUpload');
+            if (!fileInput.files.length) {
+                showToast('Please upload a report PDF', 'error');
+                return;
+            }
+            
+            closeModal('submitReviewModal');
+            showToast(`Report submitted for review. Your manager will be notified.`);
+            // In production: POST /api/work-requests/${currentRequestId}/submit-review
+            setTimeout(() => location.reload(), 2000);
+        }
+
+        function viewDetails(requestId) {
+            window.location.href = 'appraiser-work-detail.html?id=' + requestId;
+        }
+    </script>
+</body>
+</html>
+

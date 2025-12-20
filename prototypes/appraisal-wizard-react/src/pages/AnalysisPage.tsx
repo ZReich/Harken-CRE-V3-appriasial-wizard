@@ -9,7 +9,10 @@ import {
   ConstructionIcon,
 } from '../components/icons';
 import { SalesGrid, PROPERTIES, MOCK_VALUES } from '../features/sales-comparison';
-import { Layers, Building } from 'lucide-react';
+import { IncomeApproachGrid } from '../features/income-approach';
+import { CostApproachGrid } from '../features/cost-approach';
+import { useWizard } from '../context/WizardContext';
+import { Layers, Building, Wallet, HardHat } from 'lucide-react';
 
 const analysisTabs = [
   { id: 'hbu', label: 'Highest & Best Use', Icon: ScaleIcon },
@@ -23,6 +26,7 @@ const analysisTabs = [
 export default function AnalysisPage() {
   const [activeTab, setActiveTab] = useState('sales');
   const [analysisMode, setAnalysisMode] = useState<'standard' | 'residual'>('standard');
+  const { state, setIncomeApproachData } = useWizard();
 
   const sidebar = (
     <div>
@@ -87,17 +91,17 @@ export default function AnalysisPage() {
     </div>
   );
 
-  // For Sales Comparison, we want full-width layout without padding
-  const isSalesComparison = activeTab === 'sales';
+  // For Sales Comparison, Income Approach, and Cost Approach, we want full-width layout without padding
+  const isFullWidthView = activeTab === 'sales' || activeTab === 'income' || activeTab === 'cost';
 
   return (
     <WizardLayout
       title="Valuation Analysis"
       subtitle="Phase 5 of 6 • Valuation Approaches"
       phase={5}
-      sidebar={isSalesComparison ? undefined : sidebar}
-      helpSidebar={isSalesComparison ? undefined : helpSidebar}
-      noPadding={isSalesComparison}
+      sidebar={isFullWidthView ? undefined : sidebar}
+      helpSidebar={isFullWidthView ? undefined : helpSidebar}
+      noPadding={isFullWidthView}
     >
       {activeTab === 'sales' ? (
         <div className="absolute inset-0 flex flex-col">
@@ -157,12 +161,68 @@ export default function AnalysisPage() {
             />
           </div>
         </div>
+      ) : activeTab === 'income' ? (
+        <div className="absolute inset-0 flex flex-col">
+          {/* Income Approach Header Bar */}
+          <div className="flex-shrink-0 bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between z-40 shadow-sm">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => setActiveTab('hbu')}
+                className="text-sm text-slate-500 hover:text-slate-700 flex items-center gap-1"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                Back to Analysis
+              </button>
+              <div className="w-px h-6 bg-slate-200" />
+              <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+                <Wallet className="w-5 h-5 text-[#0da1c7]" />
+                Income Approach Analysis
+              </h2>
+            </div>
+          </div>
+
+          {/* Income Approach Grid */}
+          <div className="flex-1 min-h-0 overflow-auto">
+            <IncomeApproachGrid 
+              initialData={state.incomeApproachData}
+              onDataChange={setIncomeApproachData}
+              showGuidancePanel={true}
+            />
+          </div>
+        </div>
+      ) : activeTab === 'cost' ? (
+        <div className="absolute inset-0 flex flex-col">
+          {/* Cost Approach Header Bar */}
+          <div className="flex-shrink-0 bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between z-40 shadow-sm">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={() => setActiveTab('hbu')}
+                className="text-sm text-slate-500 hover:text-slate-700 flex items-center gap-1"
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                </svg>
+                Back to Analysis
+              </button>
+              <div className="w-px h-6 bg-slate-200" />
+              <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+                <HardHat className="w-5 h-5 text-[#0da1c7]" />
+                Cost Approach Analysis
+              </h2>
+            </div>
+          </div>
+
+          {/* Cost Approach Grid */}
+          <div className="flex-1 min-h-0 overflow-auto">
+            <CostApproachGrid />
+          </div>
+        </div>
       ) : (
         <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
           {activeTab === 'hbu' ? (
             <HBUContent />
-          ) : activeTab === 'income' ? (
-            <IncomeApproachContent />
           ) : (
             <PlaceholderContent title={analysisTabs.find((t) => t.id === activeTab)?.label || ''} />
           )}
@@ -241,74 +301,6 @@ function HBUContent() {
         </div>
       </div>
     </>
-  );
-}
-
-function IncomeApproachContent() {
-  return (
-    <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-      <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
-        Income Approach
-      </h3>
-      <div className="grid grid-cols-2 gap-4">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Potential Gross Income</label>
-          <input
-            type="text"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
-            placeholder="$0"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Vacancy & Collection Loss</label>
-          <input
-            type="text"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
-            placeholder="5%"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Effective Gross Income</label>
-          <input
-            type="text"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-gray-50"
-            placeholder="$0"
-            readOnly
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Operating Expenses</label>
-          <input
-            type="text"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
-            placeholder="$0"
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Net Operating Income</label>
-          <input
-            type="text"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-gray-50"
-            placeholder="$0"
-            readOnly
-          />
-        </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Capitalization Rate</label>
-          <input
-            type="text"
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
-            placeholder="6.5%"
-          />
-        </div>
-      </div>
-      <div className="mt-6 p-4 bg-[#0da1c7]/10 rounded-lg">
-        <div className="flex justify-between items-center">
-          <span className="font-semibold text-[#1c3643]">Indicated Value via Income Approach</span>
-          <span className="text-2xl font-bold text-[#0da1c7]">$0</span>
-        </div>
-      </div>
-    </div>
   );
 }
 

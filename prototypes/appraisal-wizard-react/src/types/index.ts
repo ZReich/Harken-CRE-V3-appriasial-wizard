@@ -1,4 +1,20 @@
 // =================================================================
+// INCOME APPROACH TYPES (re-exported from feature)
+// =================================================================
+
+export type {
+  LineItem,
+  IncomeData,
+  ExpenseData,
+  ValuationData,
+  PropertyMeta,
+  FinancialSummary,
+  ValuationScenario,
+  LineItemType,
+  IncomeApproachState,
+} from '../features/income-approach/types';
+
+// =================================================================
 // WIZARD STATE TYPES
 // =================================================================
 
@@ -152,6 +168,9 @@ export interface WizardState {
   // Owners
   owners: Owner[];
   
+  // Income Approach Data
+  incomeApproachData: import('../features/income-approach/types').IncomeApproachState | null;
+  
   // Navigation
   currentPage: string;
   subjectActiveTab: string;
@@ -178,6 +197,7 @@ export type WizardAction =
   | { type: 'UPDATE_OWNER'; payload: { id: string; updates: Partial<Owner> } }
   | { type: 'REMOVE_OWNER'; payload: string }
   | { type: 'SET_OWNERS'; payload: Owner[] }
+  | { type: 'SET_INCOME_APPROACH_DATA'; payload: import('../features/income-approach/types').IncomeApproachState }
   | { type: 'SET_CURRENT_PAGE'; payload: string }
   | { type: 'SET_SUBJECT_TAB'; payload: string }
   | { type: 'TOGGLE_FULLSCREEN' }

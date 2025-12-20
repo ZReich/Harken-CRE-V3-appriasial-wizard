@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Amenities Chip Selector - Design Prototype</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: #f5f7fa;
+            padding: 40px;
+            color: #1c3643;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 8px;
+            padding: 32px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .header {
+            margin-bottom: 32px;
+        }
+        
+        .title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1c3643;
+            margin-bottom: 8px;
+        }
+        
+        .subtitle {
+            font-size: 14px;
+            color: #687F8B;
+        }
+        
+        .design-note {
+            background-color: #e3f2fd;
+            border-left: 4px solid #0da1c7;
+            padding: 16px;
+            margin-bottom: 24px;
+            border-radius: 4px;
+        }
+        
+        .design-note h3 {
+            color: #0da1c7;
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .design-note p {
+            color: #1c3643;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        
+        .form-label {
+            color: #687F8B;
+            font-size: 13px;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 12px;
+        }
+        
+        /* Search Bar */
+        .search-container {
+            position: relative;
+            margin-bottom: 24px;
+        }
+        
+        .search-input {
+            width: 100%;
+            padding: 12px 12px 12px 40px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            color: #1c3643;
+            transition: border-color 0.2s;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        
+        .search-input::placeholder {
+            color: #9CA8B0;
+        }
+        
+        .search-icon {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #687F8B;
+            font-size: 20px;
+        }
+        
+        /* Category Grid */
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 24px;
+        }
+        
+        .category-column {
+            background-color: #fafbfc;
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid #e8eaed;
+        }
+        
+        .category-header {
+            font-size: 13px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid;
+        }
+        
+        .category-header.outdoor {
+            color: #4a90a4;
+            border-bottom-color: #e8f4f8;
+        }
+        
+        .category-header.indoor {
+            color: #7b6b8e;
+            border-bottom-color: #f5f2f8;
+        }
+        
+        .category-header.utilities {
+            color: #b8763e;
+            border-bottom-color: #fef8f1;
+        }
+        
+        /* Amenity Chips */
+        .amenity-chips {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .amenity-chip {
+            display: flex;
+            align-items: center;
+            padding: 10px 14px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+            user-select: none;
+        }
+        
+        .amenity-chip:hover {
+            transform: translateX(4px);
+        }
+        
+        /* Outdoor chips */
+        .amenity-chip.outdoor {
+            background-color: white;
+            color: #4a90a4;
+        }
+        
+        .amenity-chip.outdoor:hover {
+            background-color: #e8f4f8;
+            border-color: #b8d4dd;
+        }
+        
+        .amenity-chip.outdoor.selected {
+            background-color: #d4eaf1;
+            color: #2c5f6f;
+            border-color: #4a90a4;
+        }
+        
+        /* Indoor chips */
+        .amenity-chip.indoor {
+            background-color: white;
+            color: #7b6b8e;
+        }
+        
+        .amenity-chip.indoor:hover {
+            background-color: #f5f2f8;
+            border-color: #d4c9de;
+        }
+        
+        .amenity-chip.indoor.selected {
+            background-color: #e8e0f0;
+            color: #5a4a6d;
+            border-color: #7b6b8e;
+        }
+        
+        /* Utilities chips */
+        .amenity-chip.utilities {
+            background-color: white;
+            color: #b8763e;
+        }
+        
+        .amenity-chip.utilities:hover {
+            background-color: #fef8f1;
+            border-color: #e8d4bb;
+        }
+        
+        .amenity-chip.utilities.selected {
+            background-color: #f9eee0;
+            color: #8a5a2e;
+            border-color: #b8763e;
+        }
+        
+        .amenity-chip.hidden {
+            display: none;
+        }
+        
+        .checkmark {
+            margin-left: auto;
+            font-size: 18px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+        
+        .amenity-chip.selected .checkmark {
+            opacity: 1;
+        }
+        
+        /* Responsive */
+        @media (max-width: 900px) {
+            .categories-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        /* Example Output Section */
+        .output-section {
+            margin-top: 40px;
+            padding-top: 32px;
+            border-top: 2px solid #e8eaed;
+        }
+        
+        .output-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #687F8B;
+            margin-bottom: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        
+        .output-box {
+            background-color: #f9fafb;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 16px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            color: #1c3643;
+            line-height: 1.6;
+            min-height: 60px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1 class="title">Amenities Chip Selector - Design Prototype</h1>
+            <p class="subtitle">Visual design for the evaluation wizard amenities section</p>
+        </div>
+        
+        <div class="design-note">
+            <h3>📋 DESIGN PREVIEW</h3>
+            <p>This is a standalone visual prototype to demonstrate the amenities selection interface. Click any amenity chip below to select it. Selected amenities are highlighted with softer colors. Use the search bar to filter amenities. This design will replace the "List amenities and features" textarea in the evaluation wizard.</p>
+        </div>
+        
+        <!-- Main Amenities Selector -->
+        <div class="amenities-selector">
+            <label class="form-label">Additional Features</label>
+            
+            <!-- Search Bar -->
+            <div class="search-container">
+                <i class="material-icons search-icon">search</i>
+                <input 
+                    type="text" 
+                    class="search-input" 
+                    id="searchInput"
+                    placeholder="Search amenities..." 
+                />
+            </div>
+            
+            <!-- Category Columns -->
+            <div class="categories-grid">
+                <!-- Outdoor Column -->
+                <div class="category-column">
+                    <div class="category-header outdoor">
+                        <i class="material-icons" style="font-size: 16px; vertical-align: middle;">deck</i>
+                        Outdoor
+                    </div>
+                    <div class="amenity-chips" id="outdoorChips">
+                        <div class="amenity-chip outdoor" data-amenity="Swimming Pool" data-category="outdoor">
+                            <span>Swimming Pool</span>
+                            <i class="material-icons checkmark">check_circle</i>
+                        </div>
+                        <div class="amenity-chip outdoor" data-amenity="Hot Tub" data-category="outdoor">
+                            <span>Hot Tub</span>
+                            <i class="material-icons checkmark">check_circle</i>
+                        </div>
+                        <div class="amenity-chip outdoor" data-amenity="Outdoor Kitchen" data-category="outdoor">
+                            <span>Outdoor Kitchen</span>
+                            <i class="material-icons checkmark">check_circle</i>
+                        </div>
+                        <div class="amenity-chip outdoor" data-amenity="Basketball Court" data-category="outdoor">
+                            <span>Basketball Court</span>
+                            <i class="material-icons checkmark">check_circle</i>
+                        </div>
+                        <div class="amenity-chip outdoor" data-amenity="Gazebo/Pergola" data-category="outdoor">
+                            <span>Gazebo/Pergola</span>
+                            <i class="material-icons checkmark">check_circle</i>
+                        </div>
+                        <div class="amenity-chip outdoor" data-amenity="Outdoor Fireplace/Fire Pit" data-category="outdoor">
+                            <span>Outdoor Fireplace/Fire Pit</span>
+                            <i class="material-icons checkmark">check_circle</i>
+                        </div>
+                        <div class="amenity-chip outdoor" data-amenity="Fence (Privacy)" data-category="outdoor">
+                            <span>Fence (Privacy)</span>
+                            <i class="material-icons checkmark">check_circle</i>
+                        </div>
+                        <div class="amenity-chip outdoor" data-amenity="Deck (Covered)" data-category="outdoor">
+                            <span>Deck (Covered)</span>
+                            <i class="material-icons checkmark">check_circle</i>
+                        </div>
+                        <div class="amenity-chip outdoor" data-amenity="Patio (Covered)" data-category="outdoor">
+                            <span>Patio (Covered)</span>
+                            <i class="material-icons checkmark">check_circle</i>
+                        </div>
+                        <div class="amenity-chip outdoor" data-amenity="Landscaping" data-category="outdoor">
+                            <span>Landscaping</span>
+                            <i class="material-icons checkmark">check_circle</i>
+                        </div>
+                        <div class="amenity-chip outdoor" data-amenity="Sprinkler System" data-category="outdoor">
+                            <span>Sprinkler System</span>
+                            <i class="material-icons checkmark">check_circle</i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Indoor Column -->
+                <div class="category-column">
+                    <div class="category-header indoor">
+                        <i class="material-icons" style="font-size: 16px; vertical-align: middle;">home</i>
+                        Indoor
+                    </div>
+                    <div class="amenity-chips" id="indoorChips">
+                        <div class="amenity-chip indoor" data-amenity="Home Theater Room" data-category="indoor">
+                            <span>Home Theater Room</span>
+                            <i class="material-icons checkmark">check_circle</i>
+                        </div>
+                        <div class="amenity-chip indoor" data-amenity="Sauna/Steam Room" data-category="indoor">
+                            <span>Sauna/Steam Room</span>
+                            <i class="material-icons checkmark">check_circle</i>
+                        </div>
+                        <div class="amenity-chip indoor" data-amenity="Wine Cellar" data-category="indoor">
+                            <span>Wine Cellar</span>
+                            <i class="material-icons checkmark">check_circle</i>
+                        </div>
+                        <div class="amenity-chip indoor" data-amenity="Workshop/Hobby Room" data-category="indoor">
+                            <span>Workshop/Hobby Room</span>
+                            <i class="material-icons checkmark">check_circle</i>
+                        </div>
+                        <div class="amenity-chip indoor" data-amenity="Security System" data-category="indoor">
+                            <span>Security System</span>
+                            <i class="material-icons checkmark">check_circle</i>
+                        </div>
+                        <div class="amenity-chip indoor" data-amenity="Central Vacuum" data-category="indoor">
+                            <span>Central Vacuum</span>
+                            <i class="material-icons checkmark">check_circle</i>
+                        </div>
+                        <div class="amenity-chip indoor" data-amenity="Smart Home System" data-category="indoor">
+                            <span>Smart Home System</span>
+                            <i class="material-icons checkmark">check_circle</i>
+                        </div>
+                        <div class="amenity-chip indoor" data-amenity="Built-in Shelving" data-category="indoor">
+                            <span>Built-in Shelving</span>
+                            <i class="material-icons checkmark">check_circle</i>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Utilities Column -->
+                <div class="category-column">
+                    <div class="category-header utilities">
+                        <i class="material-icons" style="font-size: 16px; vertical-align: middle;">electrical_services</i>
+                        Utilities
+                    </div>
+                    <div class="amenity-chips" id="utilitiesChips">
+                        <div class="amenity-chip utilities" data-amenity="Central Air" data-category="utilities">
+                            <span>Central Air</span>
+                            <i class="material-icons checkmark">check_circle</i>
+                        </div>
+                        <div class="amenity-chip utilities" data-amenity="Natural Gas" data-category="utilities">
+                            <span>Natural Gas</span>
+                            <i class="material-icons checkmark">check_circle</i>
+                        </div>
+                        <div class="amenity-chip utilities" data-amenity="Well Water" data-category="utilities">
+                            <span>Well Water</span>
+                            <i class="material-icons checkmark">check_circle</i>
+                        </div>
+                        <div class="amenity-chip utilities" data-amenity="Septic System" data-category="utilities">
+                            <span>Septic System</span>
+                            <i class="material-icons checkmark">check_circle</i>
+                        </div>
+                        <div class="amenity-chip utilities" data-amenity="Generator" data-category="utilities">
+                            <span>Generator</span>
+                            <i class="material-icons checkmark">check_circle</i>
+                        </div>
+                        <div class="amenity-chip utilities" data-amenity="Solar Panels" data-category="utilities">
+                            <span>Solar Panels</span>
+                            <i class="material-icons checkmark">check_circle</i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Example Output -->
+        <div class="output-section">
+            <div class="output-title">Example Output (What Gets Saved)</div>
+            <div class="output-box" id="outputBox">No amenities selected</div>
+        </div>
+    </div>
+    
+    <script>
+        const selectedAmenities = new Set();
+        
+        // Get all amenity chips
+        const amenityChips = document.querySelectorAll('.amenity-chip');
+        const outputBox = document.getElementById('outputBox');
+        const searchInput = document.getElementById('searchInput');
+        
+        // Handle amenity chip clicks
+        amenityChips.forEach(chip => {
+            chip.addEventListener('click', function() {
+                const amenity = this.getAttribute('data-amenity');
+                const category = this.getAttribute('data-category');
+                
+                if (this.classList.contains('selected')) {
+                    // Deselect
+                    this.classList.remove('selected');
+                    selectedAmenities.delete(amenity);
+                } else {
+                    // Select
+                    this.classList.add('selected');
+                    selectedAmenities.add(amenity);
+                }
+                
+                updateSelectedDisplay();
+                updateOutput();
+            });
+        });
+        
+        // Update selected amenities display (removed chip display, only updates output)
+        function updateSelectedDisplay() {
+            // Chips are now visually selected inline, no separate display needed
+        }
+        
+        // Update output box
+        function updateOutput() {
+            if (selectedAmenities.size === 0) {
+                outputBox.textContent = 'No amenities selected';
+            } else {
+                const amenitiesArray = Array.from(selectedAmenities);
+                outputBox.textContent = amenitiesArray.join(', ');
+            }
+        }
+        
+        // Search functionality
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase().trim();
+            
+            amenityChips.forEach(chip => {
+                const amenityName = chip.getAttribute('data-amenity').toLowerCase();
+                
+                if (amenityName.includes(searchTerm)) {
+                    chip.classList.remove('hidden');
+                } else {
+                    chip.classList.add('hidden');
+                }
+            });
+        });
+        
+        // Pre-select a few examples for demonstration
+        setTimeout(() => {
+            const exampleSelections = ['Swimming Pool', 'Central Air', 'Security System'];
+            exampleSelections.forEach(amenity => {
+                const chip = document.querySelector(`.amenity-chip[data-amenity="${amenity}"]`);
+                if (chip) {
+                    chip.click();
+                }
+            });
+        }, 500);
+    </script>
+</body>
+</html>
+

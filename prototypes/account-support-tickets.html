@@ -1,0 +1,551 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Support Tickets - Harken CRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            font-family: 'Montserrat', sans-serif !important;
+        }
+        body {
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background: url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;
+            background-color: #1c3643 !important;
+            max-height: 84px;
+            height: 84px;
+            color: #fff;
+        }
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 10px 24px;
+            border-radius: 25px;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+            position: relative;
+        }
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+        .nav-link.active {
+            background-color: transparent;
+            border: 1px solid #0da1c7;
+            color: #0da1c7;
+        }
+        .nav-badge {
+            position: absolute;
+            top: 4px;
+            right: 14px;
+            background-color: #c62828;
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+        .section-title {
+            font-size: 23px;
+            font-weight: 600;
+            color: #1c3643;
+        }
+        .metric-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+        }
+        .metric-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1c3643;
+            margin: 8px 0;
+        }
+        .metric-label {
+            font-size: 13px;
+            font-weight: 600;
+            color: #687F8B;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .metric-change {
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 4px;
+        }
+        .metric-change.positive {
+            color: #10b981;
+        }
+        .filter-select {
+            padding: 10px 14px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: white;
+            color: #687F8B;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .filter-select:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .search-input {
+            width: 320px;
+            padding: 10px 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .action-button {
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .action-button:hover {
+            opacity: 0.8;
+        }
+        .action-button-primary {
+            background-color: #0da1c7;
+            color: white;
+        }
+        .action-button-small {
+            padding: 6px 12px;
+            font-size: 11px;
+        }
+        .priority-badge {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-block;
+            color: white;
+        }
+        .priority-critical { background-color: #c62828; }
+        .priority-high { background-color: #e65100; }
+        .priority-medium { background-color: #f57c00; }
+        .priority-low { background-color: #2e7d32; }
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-block;
+            color: white;
+        }
+        .status-new { background-color: #1565c0; }
+        .status-in-progress { background-color: #f57c00; }
+        .status-waiting { background-color: #6a1b9a; }
+        .status-resolved { background-color: #2e7d32; }
+        .status-closed { background-color: #687F8B; }
+        .category-badge {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .category-technical { background-color: rgba(14, 165, 233, 0.1); color: #0ea5e9; }
+        .category-billing { background-color: rgba(16, 185, 129, 0.1); color: #10b981; }
+        .category-feature { background-color: rgba(245, 158, 11, 0.1); color: #f59e0b; }
+        .category-training { background-color: rgba(106, 27, 154, 0.1); color: #6a1b9a; }
+        .category-account { background-color: rgba(104, 127, 139, 0.1); color: #687F8B; }
+        table {
+            width: 100%;
+            background-color: white;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        th {
+            padding: 16px 20px;
+            text-align: left;
+            color: #687F8B;
+            font-size: 13px;
+            font-weight: 600;
+            border-bottom: 2px solid #e0e0e0;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        td {
+            padding: 18px 20px;
+            color: #687F8B;
+            font-size: 13px;
+            font-weight: 500;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+        .link-text {
+            color: #0da1c7;
+            text-decoration: none;
+        }
+        .link-text:hover {
+            text-decoration: underline;
+        }
+        .pagination {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            margin-top: 32px;
+        }
+        .pagination button {
+            background-color: transparent;
+            color: #0da1c7;
+            border: none;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 400;
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+        .pagination button:hover:not(:disabled) {
+            background-color: #f0f0f0;
+        }
+        .pagination button:disabled {
+            color: #d0d0d0;
+            cursor: not-allowed;
+        }
+        .pagination .page-number {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .pagination .page-number.active {
+            background-color: #5a6c7d;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar flex items-center justify-between px-8">
+        <div class="flex items-center">
+            <img src="harken.png" alt="Harken" style="height: 40px; width: auto;" />
+        </div>
+        <div class="flex items-center gap-6">
+            <a href="admin-dashboard.html" class="nav-link">Dashboard</a>
+            <a href="admin-users.html" class="nav-link">Users</a>
+            <a href="admin-accounts.html" class="nav-link">Accounts & Billing</a>
+            <a href="admin-reports.html" class="nav-link">Reports</a>
+            <a href="account-support-tickets.html" class="nav-link active">
+                Support
+                <span class="nav-badge">3</span>
+            </a>
+        </div>
+        <div class="flex items-center gap-4">
+            <span class="text-sm">Account Administrator • Acme Properties LLC</span>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div style="padding: 35px 50px;">
+        <!-- Header Section -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+            <div>
+                <h2 class="section-title">SUPPORT REQUESTS</h2>
+                <p style="color: #687F8B; font-size: 14px; margin-top: 4px;">View and manage support tickets for your account</p>
+            </div>
+            <a href="admin-support-create-ticket.html" class="action-button action-button-primary" style="text-decoration: none; display: inline-block;">+ Create Support Request</a>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; margin-bottom: 32px;">
+            <div class="metric-card">
+                <div class="metric-label">Open Tickets</div>
+                <div class="metric-value">3</div>
+                <div class="metric-change positive">↓ 1 from last week</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Avg Response Time</div>
+                <div class="metric-value">1.8 hrs</div>
+                <div class="metric-change positive">↓ 22% from last week</div>
+            </div>
+            <div class="metric-card">
+                <div class="metric-label">Resolved This Month</div>
+                <div class="metric-value">8</div>
+                <div class="metric-change positive">↑ 2 from last month</div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div style="display: flex; gap: 12px; margin-bottom: 24px; align-items: center;">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="#0da1c7" viewBox="0 0 24 24">
+                <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+            </svg>
+            <input type="text" class="search-input" id="searchInput" placeholder="Search tickets..." />
+            <select class="filter-select" id="statusFilter">
+                <option value="">All Statuses</option>
+                <option value="new">New</option>
+                <option value="in-progress">In Progress</option>
+                <option value="waiting">Waiting on Response</option>
+                <option value="resolved">Resolved</option>
+                <option value="closed">Closed</option>
+            </select>
+            <select class="filter-select" id="priorityFilter">
+                <option value="">All Priorities</option>
+                <option value="critical">Critical</option>
+                <option value="high">High</option>
+                <option value="medium">Medium</option>
+                <option value="low">Low</option>
+            </select>
+            <select class="filter-select" id="categoryFilter">
+                <option value="">All Categories</option>
+                <option value="technical">Technical</option>
+                <option value="billing">Billing</option>
+                <option value="feature">Feature Request</option>
+                <option value="training">Training/How-to</option>
+                <option value="account">Account Management</option>
+            </select>
+        </div>
+
+        <!-- Tickets Table -->
+        <div style="background-color: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); overflow: hidden;">
+            <table id="ticketsTable">
+                <thead>
+                    <tr>
+                        <th>Ticket ID</th>
+                        <th>Priority</th>
+                        <th>Subject</th>
+                        <th>Category</th>
+                        <th>Status</th>
+                        <th>Created By</th>
+                        <th>Last Updated</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Open Tickets for Acme Properties LLC -->
+                    <tr data-status="new" data-priority="critical" data-category="technical">
+                        <td><a href="admin-support-ticket-detail.html?id=TKT-2025-018" class="link-text">#TKT-2025-018</a></td>
+                        <td><span class="priority-badge priority-critical">CRITICAL</span></td>
+                        <td title="Cannot generate PDF reports - urgent deal closing" style="max-width: 350px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Cannot generate PDF reports - urgent deal closing</td>
+                        <td><span class="category-badge category-technical">Technical</span></td>
+                        <td><span class="status-badge status-new">New</span></td>
+                        <td>John Doe</td>
+                        <td>45 mins ago</td>
+                        <td>
+                            <button class="action-button action-button-primary action-button-small" onclick="window.location.href='admin-support-ticket-detail.html?id=TKT-2025-018'">Open</button>
+                        </td>
+                    </tr>
+                    
+                    <tr data-status="waiting" data-priority="medium" data-category="billing">
+                        <td><a href="admin-support-ticket-detail.html?id=TKT-2025-009" class="link-text">#TKT-2025-009</a></td>
+                        <td><span class="priority-badge priority-medium">MEDIUM</span></td>
+                        <td title="Question about subscription upgrade pricing">Question about subscription upgrade pricing</td>
+                        <td><span class="category-badge category-billing">Billing</span></td>
+                        <td><span class="status-badge status-waiting">Waiting on Response</span></td>
+                        <td>Jane Smith</td>
+                        <td>2 days ago</td>
+                        <td>
+                            <button class="action-button action-button-primary action-button-small" onclick="window.location.href='admin-support-ticket-detail.html?id=TKT-2025-009'">Open</button>
+                        </td>
+                    </tr>
+                    
+                    <tr data-status="in-progress" data-priority="medium" data-category="training">
+                        <td><a href="admin-support-ticket-detail.html?id=TKT-2025-016" class="link-text">#TKT-2025-016</a></td>
+                        <td><span class="priority-badge priority-medium">MEDIUM</span></td>
+                        <td title="Need help with comp adjustment calculations">Need help with comp adjustment calculations</td>
+                        <td><span class="category-badge category-training">Training/How-to</span></td>
+                        <td><span class="status-badge status-in-progress">In Progress</span></td>
+                        <td>Mike Wilson</td>
+                        <td>1 day ago</td>
+                        <td>
+                            <button class="action-button action-button-primary action-button-small" onclick="window.location.href='admin-support-ticket-detail.html?id=TKT-2025-016'">Open</button>
+                        </td>
+                    </tr>
+                    
+                    <!-- Resolved Tickets -->
+                    <tr data-status="resolved" data-priority="low" data-category="training">
+                        <td><a href="admin-support-ticket-detail.html?id=TKT-2025-006" class="link-text">#TKT-2025-006</a></td>
+                        <td><span class="priority-badge priority-low">LOW</span></td>
+                        <td title="How to customize report templates?">How to customize report templates?</td>
+                        <td><span class="category-badge category-training">Training/How-to</span></td>
+                        <td><span class="status-badge status-resolved">Resolved</span></td>
+                        <td>Sarah Johnson</td>
+                        <td>3 days ago</td>
+                        <td>
+                            <button class="action-button action-button-primary action-button-small" onclick="window.location.href='admin-support-ticket-detail.html?id=TKT-2025-006'">Open</button>
+                        </td>
+                    </tr>
+                    
+                    <tr data-status="resolved" data-priority="medium" data-category="technical">
+                        <td><a href="admin-support-ticket-detail.html?id=TKT-2025-013" class="link-text">#TKT-2025-013</a></td>
+                        <td><span class="priority-badge priority-medium">MEDIUM</span></td>
+                        <td title="Photos not uploading correctly">Photos not uploading correctly</td>
+                        <td><span class="category-badge category-technical">Technical</span></td>
+                        <td><span class="status-badge status-resolved">Resolved</span></td>
+                        <td>David Lee</td>
+                        <td>5 days ago</td>
+                        <td>
+                            <button class="action-button action-button-primary action-button-small" onclick="window.location.href='admin-support-ticket-detail.html?id=TKT-2025-013'">Open</button>
+                        </td>
+                    </tr>
+                    
+                    <tr data-status="resolved" data-priority="high" data-category="account">
+                        <td><a href="admin-support-ticket-detail.html?id=TKT-2025-019" class="link-text">#TKT-2025-019</a></td>
+                        <td><span class="priority-badge priority-high">HIGH</span></td>
+                        <td title="Need to add 3 new users urgently">Need to add 3 new users urgently</td>
+                        <td><span class="category-badge category-account">Account Management</span></td>
+                        <td><span class="status-badge status-resolved">Resolved</span></td>
+                        <td>John Doe</td>
+                        <td>1 week ago</td>
+                        <td>
+                            <button class="action-button action-button-primary action-button-small" onclick="window.location.href='admin-support-ticket-detail.html?id=TKT-2025-019'">Open</button>
+                        </td>
+                    </tr>
+                    
+                    <!-- Closed Tickets -->
+                    <tr data-status="closed" data-priority="low" data-category="feature">
+                        <td><a href="admin-support-ticket-detail.html?id=TKT-2025-020" class="link-text">#TKT-2025-020</a></td>
+                        <td><span class="priority-badge priority-low">LOW</span></td>
+                        <td title="Feature request: Excel export for all reports">Feature request: Excel export for all reports</td>
+                        <td><span class="category-badge category-feature">Feature Request</span></td>
+                        <td><span class="status-badge status-closed">Closed</span></td>
+                        <td>Jane Smith</td>
+                        <td>2 weeks ago</td>
+                        <td>
+                            <button class="action-button action-button-primary action-button-small" onclick="window.location.href='admin-support-ticket-detail.html?id=TKT-2025-020'">Open</button>
+                        </td>
+                    </tr>
+                    
+                    <tr data-status="closed" data-priority="medium" data-category="billing">
+                        <td><a href="admin-support-ticket-detail.html?id=TKT-2025-021" class="link-text">#TKT-2025-021</a></td>
+                        <td><span class="priority-badge priority-medium">MEDIUM</span></td>
+                        <td title="Invoice payment confirmation">Invoice payment confirmation</td>
+                        <td><span class="category-badge category-billing">Billing</span></td>
+                        <td><span class="status-badge status-closed">Closed</span></td>
+                        <td>Mike Wilson</td>
+                        <td>2 weeks ago</td>
+                        <td>
+                            <button class="action-button action-button-primary action-button-small" onclick="window.location.href='admin-support-ticket-detail.html?id=TKT-2025-021'">Open</button>
+                        </td>
+                    </tr>
+                    
+                    <tr data-status="closed" data-priority="high" data-category="technical">
+                        <td><a href="admin-support-ticket-detail.html?id=TKT-2025-022" class="link-text">#TKT-2025-022</a></td>
+                        <td><span class="priority-badge priority-high">HIGH</span></td>
+                        <td title="Search function not returning results">Search function not returning results</td>
+                        <td><span class="category-badge category-technical">Technical</span></td>
+                        <td><span class="status-badge status-closed">Closed</span></td>
+                        <td>Sarah Johnson</td>
+                        <td>3 weeks ago</td>
+                        <td>
+                            <button class="action-button action-button-primary action-button-small" onclick="window.location.href='admin-support-ticket-detail.html?id=TKT-2025-022'">Open</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination">
+            <button id="prevBtn" onclick="changePage('prev')" disabled>Previous</button>
+            <button class="page-number" onclick="changePage('prev')" disabled style="padding: 8px 10px;">‹</button>
+            <span class="page-number active" onclick="goToPage(1)">1</span>
+            <button class="page-number" onclick="changePage('next')" style="padding: 8px 10px;" disabled>›</button>
+            <button id="nextBtn" onclick="changePage('next')" disabled>Next</button>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 50px;">
+            <span style="font-weight: 300; font-size: 14px; color: #687F8B;">© 2024, Harken CRE, LLC</span>
+        </div>
+    </div>
+
+    <script>
+        // Filter Functionality
+        function filterTickets() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const statusFilter = document.getElementById('statusFilter').value;
+            const priorityFilter = document.getElementById('priorityFilter').value;
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            
+            const rows = document.querySelectorAll('#ticketsTable tbody tr');
+            
+            rows.forEach(row => {
+                const ticketId = row.querySelector('a').textContent.toLowerCase();
+                const subject = row.cells[2].textContent.toLowerCase();
+                const createdBy = row.cells[5].textContent.toLowerCase();
+                
+                const status = row.dataset.status;
+                const priority = row.dataset.priority;
+                const category = row.dataset.category;
+                
+                const matchesSearch = ticketId.includes(searchTerm) || subject.includes(searchTerm) || createdBy.includes(searchTerm);
+                const matchesStatus = !statusFilter || status === statusFilter;
+                const matchesPriority = !priorityFilter || priority === priorityFilter;
+                const matchesCategory = !categoryFilter || category === categoryFilter;
+                
+                if (matchesSearch && matchesStatus && matchesPriority && matchesCategory) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        // Attach filter events
+        document.getElementById('searchInput').addEventListener('input', filterTickets);
+        document.getElementById('statusFilter').addEventListener('change', filterTickets);
+        document.getElementById('priorityFilter').addEventListener('change', filterTickets);
+        document.getElementById('categoryFilter').addEventListener('change', filterTickets);
+
+        // Pagination (basic)
+        let currentPage = 1;
+        const totalPages = 1;
+
+        function goToPage(page) {
+            currentPage = page;
+            updatePagination();
+        }
+
+        function changePage(direction) {
+            if (direction === 'prev' && currentPage > 1) {
+                currentPage--;
+            } else if (direction === 'next' && currentPage < totalPages) {
+                currentPage++;
+            }
+            updatePagination();
+        }
+
+        function updatePagination() {
+            const pageNumbers = document.querySelectorAll('.page-number:not(button)');
+            pageNumbers.forEach(el => {
+                const pageNum = parseInt(el.textContent);
+                if (pageNum === currentPage) {
+                    el.classList.add('active');
+                } else {
+                    el.classList.remove('active');
+                }
+            });
+
+            const prevButtons = document.querySelectorAll('#prevBtn, button.page-number:first-of-type');
+            prevButtons.forEach(btn => btn.disabled = currentPage === 1);
+            
+            const nextButtons = document.querySelectorAll('#nextBtn, button.page-number:last-of-type');
+            nextButtons.forEach(btn => btn.disabled = currentPage === totalPages);
+        }
+    </script>
+</body>
+</html>
+

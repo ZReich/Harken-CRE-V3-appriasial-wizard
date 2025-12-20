@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>White-Label Settings - Harken CRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            font-family: 'Montserrat', sans-serif !important;
+        }
+        body {
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background: url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;
+            background-color: #1c3643 !important;
+            max-height: 84px;
+            height: 84px;
+            color: #fff;
+        }
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 10px 24px;
+            border-radius: 25px;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+        .nav-link.active {
+            background-color: transparent;
+            border: 1px solid #0da1c7;
+            color: #0da1c7;
+        }
+        .section-title {
+            font-size: 23px;
+            font-weight: 600;
+            color: #1c3643;
+        }
+        .action-button {
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .action-button:hover {
+            opacity: 0.8;
+        }
+        .action-button-primary {
+            background-color: #0da1c7;
+            color: white;
+        }
+        .action-button-secondary {
+            background-color: #687F8B;
+            color: white;
+        }
+        .action-button-small {
+            padding: 6px 12px;
+            font-size: 11px;
+        }
+        table {
+            width: 100%;
+            background-color: white;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        th {
+            padding: 16px 20px;
+            text-align: left;
+            color: #687F8B;
+            font-size: 13px;
+            font-weight: 600;
+            border-bottom: 2px solid #e0e0e0;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        td {
+            padding: 18px 20px;
+            color: #687F8B;
+            font-size: 13px;
+            font-weight: 500;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            display: inline-block;
+            color: white;
+        }
+        .status-active {
+            background-color: #2e7d32;
+        }
+        .status-pending {
+            background-color: #f57c00;
+        }
+        .status-failed {
+            background-color: #c62828;
+        }
+        .link-text {
+            color: #0da1c7;
+            text-decoration: none;
+        }
+        .link-text:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar flex items-center justify-between px-8">
+        <div class="flex items-center">
+            <img src="harken.png" alt="Harken" style="height: 40px; width: auto;" />
+        </div>
+        <div class="flex items-center gap-6">
+            <a href="admin-dashboard.html" class="nav-link">Dashboard</a>
+            <a href="admin-users.html" class="nav-link">Users</a>
+            <a href="admin-accounts.html" class="nav-link">Accounts & Billing</a>
+            <a href="admin-reports.html" class="nav-link">Reports</a>
+            <a href="admin-support-tickets.html" class="nav-link">Support</a>
+            <a href="admin-audit-logs.html" class="nav-link">Audit Logs</a>
+            <a href="admin-settings.html" class="nav-link active">Settings</a>
+        </div>
+        <div class="flex items-center gap-4">
+            <span class="text-sm">Super Administrator</span>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div style="padding: 35px 50px;">
+        <!-- Header Section -->
+        <div style="margin-bottom: 32px;">
+            <div style="margin-bottom: 8px;">
+                <a href="admin-settings.html" style="color: #0da1c7; text-decoration: none; font-size: 14px;">← Back to Settings</a>
+            </div>
+            <h2 class="section-title">WHITE-LABEL DOMAIN MANAGEMENT</h2>
+            <p style="color: #687F8B; font-size: 14px; margin-top: 8px;">Manage custom domains and SSL certificates for all customer accounts</p>
+        </div>
+
+        <!-- Info Banner -->
+        <div style="background: #e0f2fe; border-left: 4px solid #0da1c7; padding: 20px; margin-bottom: 32px; border-radius: 4px;">
+            <h3 style="color: #0c4a6e; font-size: 14px; font-weight: 600; margin: 0 0 12px 0;">🌐 How Custom Domains Work</h3>
+            <p style="color: #0c4a6e; font-size: 13px; line-height: 1.7; margin: 0;">
+                Customers on the Enterprise plan can use their own domain (e.g., <code>portal.rovemanagement.com</code>) instead of the default subdomain. 
+                They create a CNAME record pointing to <code>account-slug.harken.app</code>, then verify it here. 
+                Harken automatically provisions SSL certificates and enables routing. This allows complete white-labeling where end users never see "Harken" branding.
+            </p>
+        </div>
+
+        <!-- Custom Domains Table -->
+        <div style="background-color: white; border-radius: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); overflow: hidden;">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Account</th>
+                        <th>Custom Domain</th>
+                        <th>Points To</th>
+                        <th>DNS Status</th>
+                        <th>SSL Status</th>
+                        <th>Last Verified</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Active Domain 1 -->
+                    <tr>
+                        <td>
+                            <a href="admin-account-manage.html" class="link-text">Rove Management</a>
+                        </td>
+                        <td>
+                            <code style="background: #f0f0f0; padding: 4px 8px; border-radius: 4px; font-size: 12px;">portal.rovemanagement.com</code>
+                        </td>
+                        <td>
+                            <code style="background: #f0f0f0; padding: 4px 8px; border-radius: 4px; font-size: 11px;">rove-management.harken.app</code>
+                        </td>
+                        <td><span class="status-badge status-active">Verified</span></td>
+                        <td>
+                            <span class="status-badge status-active">Active</span>
+                            <div style="font-size: 10px; color: #687F8B; margin-top: 4px;">Expires: Mar 15, 2025</div>
+                        </td>
+                        <td>Jan 26, 2025</td>
+                        <td>
+                            <button class="action-button action-button-secondary action-button-small">Re-verify</button>
+                            <button class="action-button action-button-secondary action-button-small" style="background-color: #c62828;">Revoke</button>
+                        </td>
+                    </tr>
+
+                    <!-- Active Domain 2 -->
+                    <tr>
+                        <td>
+                            <a href="admin-account-manage.html" class="link-text">Metro Realty Group</a>
+                        </td>
+                        <td>
+                            <code style="background: #f0f0f0; padding: 4px 8px; border-radius: 4px; font-size: 12px;">client.metrorealty.com</code>
+                        </td>
+                        <td>
+                            <code style="background: #f0f0f0; padding: 4px 8px; border-radius: 4px; font-size: 11px;">metro-realty.harken.app</code>
+                        </td>
+                        <td><span class="status-badge status-active">Verified</span></td>
+                        <td>
+                            <span class="status-badge status-active">Active</span>
+                            <div style="font-size: 10px; color: #687F8B; margin-top: 4px;">Expires: Feb 20, 2025</div>
+                        </td>
+                        <td>Jan 22, 2025</td>
+                        <td>
+                            <button class="action-button action-button-secondary action-button-small">Re-verify</button>
+                            <button class="action-button action-button-secondary action-button-small" style="background-color: #c62828;">Revoke</button>
+                        </td>
+                    </tr>
+
+                    <!-- Pending Domain -->
+                    <tr>
+                        <td>
+                            <a href="admin-account-manage.html" class="link-text">Skyline Investments</a>
+                        </td>
+                        <td>
+                            <code style="background: #f0f0f0; padding: 4px 8px; border-radius: 4px; font-size: 12px;">portal.skylineinv.com</code>
+                        </td>
+                        <td>
+                            <code style="background: #f0f0f0; padding: 4px 8px; border-radius: 4px; font-size: 11px;">skyline-investments.harken.app</code>
+                        </td>
+                        <td><span class="status-badge status-pending">Pending</span></td>
+                        <td>
+                            <span class="status-badge status-pending">Pending DNS</span>
+                        </td>
+                        <td>—</td>
+                        <td>
+                            <button class="action-button action-button-primary action-button-small">Verify Now</button>
+                            <button class="action-button action-button-secondary action-button-small" style="background-color: #c62828;">Cancel</button>
+                        </td>
+                    </tr>
+
+                    <!-- Failed Domain -->
+                    <tr>
+                        <td>
+                            <a href="admin-account-manage.html" class="link-text">Downtown Commercial Partners</a>
+                        </td>
+                        <td>
+                            <code style="background: #f0f0f0; padding: 4px 8px; border-radius: 4px; font-size: 12px;">portal.downtowncommercial.com</code>
+                        </td>
+                        <td>
+                            <code style="background: #f0f0f0; padding: 4px 8px; border-radius: 4px; font-size: 11px;">downtown-commercial.harken.app</code>
+                        </td>
+                        <td><span class="status-badge status-failed">DNS Error</span></td>
+                        <td>
+                            <span class="status-badge status-failed">Failed</span>
+                            <div style="font-size: 10px; color: #c62828; margin-top: 4px;">CNAME not found</div>
+                        </td>
+                        <td>Failed: Jan 25, 2025</td>
+                        <td>
+                            <button class="action-button action-button-primary action-button-small">Retry Verify</button>
+                            <button class="action-button action-button-secondary action-button-small">View DNS Instructions</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- DNS Setup Instructions -->
+        <div style="background-color: white; border-radius: 8px; padding: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); margin-top: 32px;">
+            <h3 style="font-size: 18px; font-weight: 600; color: #1c3643; margin-bottom: 20px;">DNS Configuration Instructions</h3>
+            
+            <div style="background: #f9fafb; border-radius: 6px; padding: 20px; margin-bottom: 24px;">
+                <h4 style="font-size: 14px; font-weight: 600; color: #1c3643; margin-bottom: 12px;">Standard Setup Process:</h4>
+                
+                <ol style="color: #1c3643; font-size: 13px; line-height: 2; margin-left: 20px;">
+                    <li><strong>Customer creates subdomain</strong> in their DNS provider (GoDaddy, Namecheap, Cloudflare, etc.)</li>
+                    <li><strong>Add CNAME record:</strong>
+                        <div style="background: white; padding: 12px; border-radius: 4px; margin: 8px 0; font-family: monospace; font-size: 12px;">
+                            <strong>Type:</strong> CNAME<br>
+                            <strong>Name:</strong> portal (or subdomain name)<br>
+                            <strong>Value:</strong> account-slug.harken.app<br>
+                            <strong>TTL:</strong> 3600 (or default)
+                        </div>
+                    </li>
+                    <li><strong>Customer enters domain</strong> in their account settings</li>
+                    <li><strong>Click "Verify Domain"</strong> button</li>
+                    <li><strong>Harken auto-verifies:</strong>
+                        <ul style="margin-left: 20px; margin-top: 8px;">
+                            <li>Checks DNS CNAME record via dig/nslookup</li>
+                            <li>Provisions SSL certificate (Let's Encrypt)</li>
+                            <li>Enables routing in Cloudflare</li>
+                            <li>Status updates to "Active"</li>
+                        </ul>
+                    </li>
+                    <li><strong>Domain goes live</strong> - End clients can access via custom domain</li>
+                </ol>
+            </div>
+
+            <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 16px; border-radius: 4px;">
+                <strong style="color: #92400e;">⚠️ Common Issues:</strong>
+                <ul style="color: #92400e; font-size: 12px; line-height: 1.8; margin: 8px 0 0 20px;">
+                    <li><strong>DNS propagation delay:</strong> CNAME records can take 5-60 minutes to propagate. Retry verification if it fails immediately.</li>
+                    <li><strong>Wrong CNAME target:</strong> Ensure it points to <code>account-slug.harken.app</code>, not just <code>harken.app</code></li>
+                    <li><strong>SSL errors:</strong> Let's Encrypt requires DNS to be verified first. If SSL fails, DNS verification likely incomplete.</li>
+                    <li><strong>Proxied vs DNS-only:</strong> On Cloudflare, ensure DNS record is "DNS only" (gray cloud), not proxied</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- SSL Certificate Management -->
+        <div style="background-color: white; border-radius: 8px; padding: 32px; box-shadow: 0 1px 3px rgba(0,0,0,0.12); margin-top: 32px;">
+            <h3 style="font-size: 18px; font-weight: 600; color: #1c3643; margin-bottom: 20px;">SSL Certificate Management</h3>
+            
+            <div style="color: #1c3643; font-size: 13px; line-height: 1.8;">
+                <p style="margin-bottom: 16px;"><strong>Automatic SSL Provisioning:</strong> Harken uses Let's Encrypt to automatically provision and renew SSL certificates for all custom domains.</p>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-top: 24px;">
+                    <div style="background: #f0fdf4; padding: 16px; border-radius: 6px; border: 1px solid #10b981;">
+                        <div style="font-size: 12px; font-weight: 600; color: #065f46; text-transform: uppercase; margin-bottom: 8px;">Active Certificates</div>
+                        <div style="font-size: 32px; font-weight: 700; color: #10b981;">2</div>
+                        <div style="font-size: 11px; color: #065f46; margin-top: 4px;">All certificates valid</div>
+                    </div>
+                    
+                    <div style="background: #fef3c7; padding: 16px; border-radius: 6px; border: 1px solid #f59e0b;">
+                        <div style="font-size: 12px; font-weight: 600; color: #92400e; text-transform: uppercase; margin-bottom: 8px;">Expiring Soon</div>
+                        <div style="font-size: 32px; font-weight: 700; color: #f59e0b;">0</div>
+                        <div style="font-size: 11px; color: #92400e; margin-top: 4px;">Auto-renewal enabled</div>
+                    </div>
+                </div>
+
+                <p style="margin-top: 24px; background: #eff6ff; padding: 12px; border-radius: 4px; font-size: 12px; color: #1e40af;">
+                    <strong>ℹ️ Note:</strong> SSL certificates are automatically renewed 30 days before expiration. No manual intervention required.
+                </p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 50px;">
+            <span style="font-weight: 300; font-size: 14px; color: #687F8B;">© 2024, Harken CRE, LLC</span>
+        </div>
+    </div>
+</body>
+</html>
+

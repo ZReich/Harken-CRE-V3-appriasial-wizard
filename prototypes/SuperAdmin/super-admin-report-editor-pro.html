@@ -1,0 +1,2889 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Professional Report Editor - Harken CRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Helvetica+Neue:wght@300;400;500;700&family=Times+New+Roman&family=Georgia&display=swap" rel="stylesheet" />
+    <style>
+        * {
+            font-family: 'Montserrat', sans-serif !important;
+            box-sizing: border-box;
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background: #f5f5f5;
+        }
+
+        /* Top Toolbar */
+        .top-toolbar {
+            background: #1c3643;
+            color: white;
+            padding: 0 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        .toolbar-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        .toolbar-logo {
+            height: 28px;
+        }
+        .template-name-input {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 10px 16px;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            min-width: 350px;
+        }
+        .template-name-input:focus {
+            outline: none;
+            background: rgba(255,255,255,0.15);
+            border-color: #0da1c7;
+        }
+        .toolbar-right {
+            display: flex;
+            gap: 12px;
+        }
+        .toolbar-btn {
+            background: rgba(255,255,255,0.1);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            padding: 10px 18px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .toolbar-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        .toolbar-btn.primary {
+            background: #0da1c7;
+            border-color: #0da1c7;
+        }
+        .toolbar-btn.primary:hover {
+            background: #0890a8;
+        }
+
+        /* Main Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 280px 1fr 360px;
+            height: calc(100vh - 60px);
+            overflow: hidden;
+        }
+
+        /* Left Panel - Pages */
+        .pages-panel {
+            background: white;
+            border-right: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .panel-header {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            background: #f9f9f9;
+        }
+        .panel-title {
+            font-size: 12px;
+            font-weight: 700;
+            color: #687F8B;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 12px;
+        }
+        .add-page-btn {
+            width: 100%;
+            background: #0da1c7;
+            border: none;
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+        .add-page-btn:hover {
+            background: #0890a8;
+        }
+
+        .pages-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+        .page-item {
+            background: #f9f9f9;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            padding: 12px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .page-item:hover {
+            border-color: #0da1c7;
+            background: #e8f5f7;
+        }
+        .page-item.active {
+            border-color: #0da1c7;
+            background: #e8f5f7;
+            box-shadow: 0 2px 6px rgba(13, 161, 199, 0.2);
+        }
+        .page-item.disabled {
+            opacity: 0.5;
+        }
+        .page-checkbox {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: #0da1c7;
+        }
+        .page-label {
+            flex: 1;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1c3643;
+        }
+        .page-number {
+            font-size: 11px;
+            color: #687F8B;
+            background: #e0e0e0;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        /* Center Panel - Preview */
+        .preview-panel {
+            background: #d0d0d0;
+            overflow: auto;
+            padding: 40px;
+            position: relative;
+        }
+
+        /* Report Pages */
+        .report-page {
+            background: white;
+            width: 8.5in;
+            min-height: 11in;
+            margin: 0 auto 30px;
+            box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+            position: relative;
+        }
+
+        /* Editable Sections */
+        .editable-section {
+            position: relative;
+            transition: all 0.2s;
+        }
+        .editable-section:hover .section-toolbar {
+            display: flex;
+        }
+        .editable-section.selected {
+            outline: 3px solid #0da1c7;
+            outline-offset: -3px;
+        }
+
+        /* Section Toolbar (Harken Cyan!) */
+        .section-toolbar {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: #0da1c7;
+            color: white;
+            padding: 8px 12px;
+            display: none;
+            align-items: center;
+            justify-content: space-between;
+            z-index: 100;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+        .toolbar-label {
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .toolbar-actions {
+            display: flex;
+            gap: 6px;
+        }
+        .toolbar-icon-btn {
+            background: rgba(255,255,255,0.2);
+            border: none;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .toolbar-icon-btn:hover {
+            background: rgba(255,255,255,0.35);
+            transform: scale(1.05);
+        }
+
+        /* Inline Text Editing */
+        .editable-text {
+            cursor: default;
+            position: relative;
+            user-select: none;
+        }
+        .editable-text.edit-mode-active {
+            cursor: text;
+            user-select: text;
+        }
+        .editable-text.edit-mode-active:hover {
+            background: rgba(13, 161, 199, 0.08);
+            outline: 1px dashed #0da1c7;
+        }
+        .editable-text.editing {
+            outline: 2px solid #0da1c7;
+            background: white;
+            cursor: text;
+            user-select: text;
+        }
+        
+        /* Custom Text Blocks */
+        .custom-text-block {
+            min-height: 50px;
+            transition: all 0.3s ease;
+        }
+        .custom-text-block:focus {
+            outline: 2px solid #0da1c7;
+            border-color: #0da1c7 !important;
+            background: white !important;
+        }
+        .custom-text-block:empty:before {
+            content: 'Type your text here...';
+            color: #999;
+            font-style: italic;
+        }
+        
+        /* Text Block Wrapper for Dragging */
+        .text-block-wrapper {
+            transition: all 0.2s ease;
+        }
+        .text-block-wrapper.dragging {
+            cursor: grabbing;
+        }
+        .text-block-wrapper:hover .text-block-controls {
+            opacity: 1 !important;
+        }
+        
+        /* Drag Drop Indicator */
+        .text-block-wrapper.drag-over-top {
+            border-top: 3px solid #0da1c7;
+        }
+        .text-block-wrapper.drag-over-bottom {
+            border-bottom: 3px solid #0da1c7;
+        }
+        
+        /* Text Block Controls Hover Effects */
+        .text-block-drag-handle:hover {
+            background: #0890a8;
+        }
+        .text-block-delete-btn:hover {
+            background: #b91c1c;
+        }
+
+        /* Mini Toolbar for Text Editing */
+        .text-edit-toolbar {
+            position: absolute;
+            background: #1c3643;
+            color: white;
+            padding: 8px;
+            border-radius: 6px;
+            display: none;
+            gap: 4px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            z-index: 200;
+        }
+        .text-edit-toolbar.active {
+            display: flex;
+        }
+        .text-tool-btn {
+            background: transparent;
+            border: 1px solid transparent;
+            color: white;
+            padding: 6px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .text-tool-btn:hover {
+            background: rgba(255,255,255,0.15);
+            border-color: rgba(255,255,255,0.3);
+        }
+        .text-tool-btn.active {
+            background: #0da1c7;
+        }
+
+        /* Right Panel - Properties */
+        .properties-panel {
+            background: white;
+            border-left: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+        .properties-header {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+            background: #f9f9f9;
+        }
+        .properties-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1c3643;
+            margin-bottom: 12px;
+        }
+        .selected-element-tag {
+            font-size: 11px;
+            color: #687F8B;
+            background: #e8f5f7;
+            padding: 4px 10px;
+            border-radius: 12px;
+            display: inline-block;
+        }
+
+        /* Tabs */
+        .properties-tabs {
+            display: flex;
+            border-bottom: 2px solid #e0e0e0;
+            padding: 0 20px;
+        }
+        .prop-tab {
+            padding: 12px 20px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #687F8B;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.2s;
+        }
+        .prop-tab:hover {
+            color: #0da1c7;
+        }
+        .prop-tab.active {
+            color: #0da1c7;
+            border-bottom-color: #0da1c7;
+        }
+
+        .properties-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        /* Property Groups */
+        .prop-group {
+            margin-bottom: 24px;
+            padding-bottom: 24px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        .prop-group:last-child {
+            border-bottom: none;
+        }
+        .prop-group-title {
+            font-size: 11px;
+            font-weight: 700;
+            color: #687F8B;
+            text-transform: uppercase;
+            letter-spacing: 0.8px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .collapse-btn {
+            cursor: pointer;
+            color: #687F8B;
+            font-size: 14px;
+        }
+
+        /* Property Controls */
+        .prop-control {
+            margin-bottom: 16px;
+        }
+        .prop-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #687F8B;
+            margin-bottom: 6px;
+        }
+        .prop-input {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1px solid #d0d0d0;
+            border-radius: 4px;
+            font-size: 13px;
+            background: white;
+        }
+        .prop-input:focus {
+            outline: none;
+            border-color: #0da1c7;
+            box-shadow: 0 0 0 3px rgba(13, 161, 199, 0.1);
+        }
+        .prop-select {
+            width: 100%;
+            padding: 9px 12px;
+            border: 1px solid #d0d0d0;
+            border-radius: 4px;
+            font-size: 13px;
+            background: white url('data:image/svg+xml;utf8,<svg fill="%23687F8B" height="20" viewBox="0 0 20 20" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"/></svg>') no-repeat right 10px center;
+            appearance: none;
+            cursor: pointer;
+        }
+        .prop-select:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+
+        /* Color Swatches */
+        .color-swatches-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 8px;
+            margin-bottom: 10px;
+        }
+        .color-swatch {
+            width: 100%;
+            height: 40px;
+            border-radius: 6px;
+            border: 2px solid #e0e0e0;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+        .color-swatch:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+        .color-swatch.selected {
+            border-color: #1c3643;
+            box-shadow: 0 0 0 3px rgba(28, 54, 67, 0.2);
+        }
+        .color-swatch.selected::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-weight: 700;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+        }
+        .custom-color-input {
+            width: 100%;
+            height: 40px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            cursor: pointer;
+        }
+
+        /* Sliders */
+        .prop-slider {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #e0e0e0;
+            outline: none;
+            cursor: pointer;
+            accent-color: #0da1c7;
+        }
+        .slider-row {
+            display: grid;
+            grid-template-columns: 1fr 60px;
+            gap: 12px;
+            align-items: center;
+        }
+        .slider-value-input {
+            text-align: center;
+            padding: 6px;
+            border: 1px solid #d0d0d0;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            color: #1c3643;
+        }
+
+        /* Button Groups */
+        .button-group {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 6px;
+        }
+        .btn-group-item {
+            padding: 8px;
+            border: 1px solid #d0d0d0;
+            border-radius: 4px;
+            background: white;
+            cursor: pointer;
+            font-size: 16px;
+            text-align: center;
+            transition: all 0.2s;
+        }
+        .btn-group-item:hover {
+            background: #e8f5f7;
+            border-color: #0da1c7;
+        }
+        .btn-group-item.active {
+            background: #0da1c7;
+            color: white;
+            border-color: #0da1c7;
+        }
+
+        /* Spacing Inputs (4-way) */
+        .spacing-control {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+        .spacing-input {
+            padding: 6px;
+            border: 1px solid #d0d0d0;
+            border-radius: 4px;
+            font-size: 11px;
+            text-align: center;
+        }
+
+        /* Toggle Switch */
+        .toggle-control {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        .toggle-label {
+            font-size: 12px;
+            color: #1c3643;
+            font-weight: 500;
+        }
+        .toggle-switch {
+            position: relative;
+            width: 44px;
+            height: 24px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #d0d0d0;
+            transition: .3s;
+            border-radius: 24px;
+        }
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .3s;
+            border-radius: 50%;
+        }
+        input:checked + .toggle-slider {
+            background-color: #0da1c7;
+        }
+        input:checked + .toggle-slider:before {
+            transform: translateX(20px);
+        }
+
+        /* Report Page Styles */
+        .cover-page-layout {
+            display: flex;
+            flex-direction: column;
+            min-height: 11in;
+        }
+        .cover-title-section {
+            padding: 80px 60px 40px;
+        }
+        .cover-main-title {
+            font-size: 52px;
+            font-weight: 300;
+            color: #2e7d32;
+            margin: 0 0 24px 0;
+        }
+        .cover-subtitle {
+            font-size: 18px;
+            color: #687F8B;
+            margin: 0;
+        }
+        .cover-image-section {
+            flex: 1;
+            min-height: 450px;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .cover-footer-section {
+            padding: 40px 60px;
+        }
+        .cover-gradient-bar {
+            height: 16px;
+            background: linear-gradient(to right, #2e7d32 0%, #66bb6a 35%, #0da1c7 65%, #1c3643 100%);
+            margin-bottom: 16px;
+            border-radius: 2px;
+        }
+
+        /* Section Page with Green Sidebar */
+        .section-page-layout {
+            display: grid;
+            grid-template-columns: 100px 1fr;
+            min-height: 11in;
+        }
+        .section-sidebar {
+            background: #2e7d32;
+            color: white;
+            writing-mode: vertical-rl;
+            text-orientation: mixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px 0;
+        }
+        .sidebar-text {
+            font-size: 56px;
+            font-weight: 700;
+            letter-spacing: 12px;
+        }
+        .section-main {
+            padding: 60px 60px 80px;
+            position: relative;
+        }
+        .section-badge {
+            position: absolute;
+            top: 35px;
+            right: 40px;
+            background: #2e7d32;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 6px;
+            text-align: right;
+        }
+        .badge-num {
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 4px;
+            opacity: 0.9;
+        }
+        .badge-name {
+            font-size: 16px;
+            font-weight: 700;
+        }
+
+        /* Typography */
+        .page-title {
+            font-size: 38px;
+            font-weight: 300;
+            color: #1c3643;
+            margin: 0 0 35px 0;
+        }
+        .page-title .accent {
+            color: #2e7d32;
+            font-weight: 600;
+        }
+        .section-heading {
+            font-size: 20px;
+            font-weight: 700;
+            color: #2e7d32;
+            margin: 35px 0 20px 0;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #e8f5e9;
+        }
+        .info-row {
+            display: flex;
+            align-items: baseline;
+            margin-bottom: 15px;
+            font-size: 14px;
+            line-height: 1.8;
+        }
+        .info-label {
+            font-weight: 600;
+            color: #687F8B;
+            margin-right: 12px;
+            flex-shrink: 0;
+        }
+        .info-value {
+            color: #1c3643;
+            font-weight: 500;
+            flex: 1;
+        }
+
+        /* Tables */
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            font-size: 11px;
+        }
+        .data-table th {
+            background: #f5f5f5;
+            padding: 12px;
+            border: 1px solid #d0d0d0;
+            font-weight: 600;
+            color: #687F8B;
+            text-align: left;
+        }
+        .data-table td {
+            padding: 11px 12px;
+            border: 1px solid #d0d0d0;
+            color: #1c3643;
+        }
+        .data-table tr.total-row {
+            background: #f9f9f9;
+            font-weight: 600;
+        }
+        .data-table tr:hover {
+            background: #fafafa;
+        }
+
+        .page-footer {
+            position: absolute;
+            bottom: 30px;
+            right: 60px;
+            font-size: 11px;
+            color: #687F8B;
+        }
+
+        /* Zoom Controls */
+        .zoom-controls {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 8px 12px;
+            display: flex;
+            gap: 12px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+            z-index: 1000;
+        }
+        .zoom-btn {
+            width: 36px;
+            height: 36px;
+            background: #f9f9f9;
+            border: 1px solid #e0e0e0;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            font-weight: 600;
+            color: #687F8B;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+        .zoom-btn:hover {
+            background: #0da1c7;
+            color: white;
+            border-color: #0da1c7;
+        }
+        .zoom-display {
+            min-width: 60px;
+            text-align: center;
+            font-size: 13px;
+            font-weight: 600;
+            color: #1c3643;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Success Toast */
+        .toast {
+            position: fixed;
+            top: 80px;
+            right: 30px;
+            background: #2e7d32;
+            color: white;
+            padding: 14px 20px;
+            border-radius: 6px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.2);
+            display: none;
+            align-items: center;
+            gap: 10px;
+            z-index: 2000;
+            font-size: 14px;
+            font-weight: 500;
+        }
+        .toast.show {
+            display: flex;
+            animation: slideInRight 0.3s ease-out;
+        }
+        @keyframes slideInRight {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Drag Handle */
+        .drag-handle {
+            position: absolute;
+            left: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 60px;
+            background: #0da1c7;
+            border-radius: 0 4px 4px 0;
+            cursor: move;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+            box-shadow: 2px 0 6px rgba(0,0,0,0.1);
+        }
+        .editable-section:hover .drag-handle {
+            display: flex;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 100px 40px;
+            color: #687F8B;
+        }
+        .empty-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            opacity: 0.3;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Toolbar -->
+    <div class="top-toolbar">
+        <div class="toolbar-left">
+            <img src="harken.png" alt="Harken" class="toolbar-logo" onerror="this.style.display='none'" />
+            <input type="text" class="template-name-input" value="Standard Evaluation Report Template" id="templateNameInput" />
+        </div>
+        <div class="toolbar-right">
+            <button class="toolbar-btn" onclick="undoAction()">
+                <span>↶</span> Undo
+            </button>
+            <button class="toolbar-btn" onclick="redoAction()">
+                <span>↷</span> Redo
+            </button>
+            <button class="toolbar-btn" onclick="window.location.href='super-admin-account-report-templates.html'">
+                ← Back
+            </button>
+            <button class="toolbar-btn primary" onclick="saveTemplate()">
+                💾 Save Template
+            </button>
+            <button class="toolbar-btn primary" onclick="doneEditing()">
+                Done Editing
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+        <!-- Left Panel: Pages -->
+        <div class="pages-panel">
+            <div class="panel-header">
+                <div class="panel-title">Document Pages</div>
+                <button class="add-page-btn" onclick="addNewPage()">+ Add New Page</button>
+            </div>
+            <div class="pages-list" id="pagesList">
+                <!-- Pages rendered by JS -->
+            </div>
+        </div>
+
+        <!-- Center Panel: Preview -->
+        <div class="preview-panel" id="previewPanel">
+            <div id="reportPagesContainer">
+                <!-- Report pages rendered by JS -->
+            </div>
+        </div>
+
+        <!-- Right Panel: Properties -->
+        <div class="properties-panel">
+            <div class="properties-header">
+                <div class="properties-title">Properties</div>
+                <div class="selected-element-tag" id="selectedElementTag">No element selected</div>
+            </div>
+            
+            <!-- Tabs -->
+            <div class="properties-tabs">
+                <div class="prop-tab active" onclick="switchTab('design')">Design</div>
+                <div class="prop-tab" onclick="switchTab('content')">Content</div>
+                <div class="prop-tab" onclick="switchTab('advanced')">Advanced</div>
+            </div>
+
+            <!-- Tab Content -->
+            <div class="properties-content" id="propertiesContent">
+                <div id="designTabContent" style="display: block;">
+                    <!-- Typography Group -->
+                    <div class="prop-group">
+                        <div class="prop-group-title">
+                            Typography
+                            <span class="collapse-btn" onclick="toggleGroup(this)">▼</span>
+                        </div>
+                        <div class="prop-group-content">
+                            <div class="prop-control">
+                                <div class="prop-label">Font Family</div>
+                                <select class="prop-select" onchange="updateProperty('fontFamily', this.value)">
+                                    <option value="Montserrat">Montserrat</option>
+                                    <option value="Helvetica Neue">Helvetica Neue</option>
+                                    <option value="Times New Roman">Times New Roman</option>
+                                    <option value="Georgia">Georgia</option>
+                                    <option value="Arial">Arial</option>
+                                </select>
+                            </div>
+                            <div class="prop-control">
+                                <div class="prop-label">Font Size</div>
+                                <div class="slider-row">
+                                    <input type="range" class="prop-slider" min="10" max="72" value="16" 
+                                           oninput="updateProperty('fontSize', this.value); this.nextElementSibling.value = this.value" />
+                                    <input type="number" class="slider-value-input" value="16" min="10" max="72"
+                                           oninput="updateProperty('fontSize', this.value); this.previousElementSibling.value = this.value" />
+                                </div>
+                            </div>
+                            <div class="prop-control">
+                                <div class="prop-label">Font Weight</div>
+                                <div class="slider-row">
+                                    <input type="range" class="prop-slider" min="100" max="900" step="100" value="400" 
+                                           oninput="updateProperty('fontWeight', this.value); this.nextElementSibling.value = this.value" />
+                                    <input type="number" class="slider-value-input" value="400" min="100" max="900" step="100"
+                                           oninput="updateProperty('fontWeight', this.value); this.previousElementSibling.value = this.value" />
+                                </div>
+                            </div>
+                            <div class="prop-control">
+                                <div class="prop-label">Line Height</div>
+                                <div class="slider-row">
+                                    <input type="range" class="prop-slider" min="1.0" max="3.0" step="0.1" value="1.5" 
+                                           oninput="updateProperty('lineHeight', this.value); this.nextElementSibling.value = this.value" />
+                                    <input type="number" class="slider-value-input" value="1.5" min="1.0" max="3.0" step="0.1"
+                                           oninput="updateProperty('lineHeight', this.value); this.previousElementSibling.value = this.value" />
+                                </div>
+                            </div>
+                            <div class="prop-control">
+                                <div class="prop-label">Letter Spacing</div>
+                                <div class="slider-row">
+                                    <input type="range" class="prop-slider" min="-2" max="10" value="0" 
+                                           oninput="updateProperty('letterSpacing', this.value); this.nextElementSibling.value = this.value" />
+                                    <input type="number" class="slider-value-input" value="0" min="-2" max="10"
+                                           oninput="updateProperty('letterSpacing', this.value); this.previousElementSibling.value = this.value" />
+                                </div>
+                            </div>
+                            <div class="prop-control">
+                                <div class="prop-label">Text Transform</div>
+                                <select class="prop-select" onchange="updateProperty('textTransform', this.value)">
+                                    <option value="none">None</option>
+                                    <option value="uppercase">UPPERCASE</option>
+                                    <option value="lowercase">lowercase</option>
+                                    <option value="capitalize">Capitalize</option>
+                                </select>
+                            </div>
+                            <div class="prop-control">
+                                <div class="prop-label">Text Alignment</div>
+                                <div class="button-group">
+                                    <button class="btn-group-item" onclick="updateProperty('textAlign', 'left'); setActiveButton(this)" title="Left">≡</button>
+                                    <button class="btn-group-item" onclick="updateProperty('textAlign', 'center'); setActiveButton(this)" title="Center">≡</button>
+                                    <button class="btn-group-item" onclick="updateProperty('textAlign', 'right'); setActiveButton(this)" title="Right">≡</button>
+                                    <button class="btn-group-item" onclick="updateProperty('textAlign', 'justify'); setActiveButton(this)" title="Justify">≡</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Colors Group -->
+                    <div class="prop-group">
+                        <div class="prop-group-title">
+                            Colors
+                            <span class="collapse-btn" onclick="toggleGroup(this)">▼</span>
+                        </div>
+                        <div class="prop-group-content">
+                            <div class="prop-control">
+                                <div class="prop-label">Text Color</div>
+                                <div class="color-swatches-grid">
+                                    <div class="color-swatch selected" style="background: #1c3643;" onclick="selectColor(this, 'color', '#1c3643')"></div>
+                                    <div class="color-swatch" style="background: #687F8B;" onclick="selectColor(this, 'color', '#687F8B')"></div>
+                                    <div class="color-swatch" style="background: #0da1c7;" onclick="selectColor(this, 'color', '#0da1c7')"></div>
+                                    <div class="color-swatch" style="background: #2e7d32;" onclick="selectColor(this, 'color', '#2e7d32')"></div>
+                                    <div class="color-swatch" style="background: #dc2626;" onclick="selectColor(this, 'color', '#dc2626')"></div>
+                                </div>
+                                <input type="color" class="custom-color-input" value="#1c3643" onchange="selectColor(null, 'color', this.value)" />
+                            </div>
+                            <div class="prop-control">
+                                <div class="prop-label">Background Color</div>
+                                <div class="color-swatches-grid">
+                                    <div class="color-swatch" style="background: #ffffff; border-color: #ccc;" onclick="selectColor(this, 'background', '#ffffff')"></div>
+                                    <div class="color-swatch" style="background: #f9f9f9;" onclick="selectColor(this, 'background', '#f9f9f9')"></div>
+                                    <div class="color-swatch" style="background: #e8f5f7;" onclick="selectColor(this, 'background', '#e8f5f7')"></div>
+                                    <div class="color-swatch" style="background: #2e7d32;" onclick="selectColor(this, 'background', '#2e7d32')"></div>
+                                    <div class="color-swatch" style="background: #0da1c7;" onclick="selectColor(this, 'background', '#0da1c7')"></div>
+                                </div>
+                                <input type="color" class="custom-color-input" value="#ffffff" onchange="selectColor(null, 'background', this.value)" />
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Spacing Group -->
+                    <div class="prop-group">
+                        <div class="prop-group-title">
+                            Spacing
+                            <span class="collapse-btn" onclick="toggleGroup(this)">▼</span>
+                        </div>
+                        <div class="prop-group-content">
+                            <div class="prop-control">
+                                <div class="prop-label">Margin (Top, Right, Bottom, Left)</div>
+                                <div class="spacing-control">
+                                    <input type="number" class="spacing-input" placeholder="Top" value="0" onchange="updateSpacing('margin', 'top', this.value)" />
+                                    <input type="number" class="spacing-input" placeholder="Right" value="0" onchange="updateSpacing('margin', 'right', this.value)" />
+                                    <input type="number" class="spacing-input" placeholder="Bottom" value="0" onchange="updateSpacing('margin', 'bottom', this.value)" />
+                                    <input type="number" class="spacing-input" placeholder="Left" value="0" onchange="updateSpacing('margin', 'left', this.value)" />
+                                </div>
+                            </div>
+                            <div class="prop-control">
+                                <div class="prop-label">Padding (Top, Right, Bottom, Left)</div>
+                                <div class="spacing-control">
+                                    <input type="number" class="spacing-input" placeholder="Top" value="0" onchange="updateSpacing('padding', 'top', this.value)" />
+                                    <input type="number" class="spacing-input" placeholder="Right" value="0" onchange="updateSpacing('padding', 'right', this.value)" />
+                                    <input type="number" class="spacing-input" placeholder="Bottom" value="0" onchange="updateSpacing('padding', 'bottom', this.value)" />
+                                    <input type="number" class="spacing-input" placeholder="Left" value="0" onchange="updateSpacing('padding', 'left', this.value)" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Layout Group -->
+                    <div class="prop-group">
+                        <div class="prop-group-title">
+                            Layout
+                            <span class="collapse-btn" onclick="toggleGroup(this)">▼</span>
+                        </div>
+                        <div class="prop-group-content">
+                            <div class="prop-control">
+                                <div class="prop-label">Columns</div>
+                                <select class="prop-select" onchange="updateProperty('columns', this.value)">
+                                    <option value="1">1 Column</option>
+                                    <option value="2">2 Columns</option>
+                                    <option value="3">3 Columns</option>
+                                </select>
+                            </div>
+                            <div class="prop-control">
+                                <div class="prop-label">Vertical Alignment</div>
+                                <div class="button-group">
+                                    <button class="btn-group-item" onclick="updateProperty('verticalAlign', 'top'); setActiveButton(this)" title="Top">⬆</button>
+                                    <button class="btn-group-item" onclick="updateProperty('verticalAlign', 'middle'); setActiveButton(this)" title="Middle">⬌</button>
+                                    <button class="btn-group-item" onclick="updateProperty('verticalAlign', 'bottom'); setActiveButton(this)" title="Bottom">⬇</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Effects Group -->
+                    <div class="prop-group">
+                        <div class="prop-group-title">
+                            Effects & Borders
+                            <span class="collapse-btn" onclick="toggleGroup(this)">▼</span>
+                        </div>
+                        <div class="prop-group-content">
+                            <div class="prop-control">
+                                <div class="prop-label">Box Shadow</div>
+                                <select class="prop-select" onchange="updateProperty('boxShadow', this.value)">
+                                    <option value="none">None</option>
+                                    <option value="0 1px 3px rgba(0,0,0,0.1)">Small</option>
+                                    <option value="0 4px 6px rgba(0,0,0,0.1)">Medium</option>
+                                    <option value="0 8px 16px rgba(0,0,0,0.15)">Large</option>
+                                </select>
+                            </div>
+                            <div class="prop-control">
+                                <div class="prop-label">Border Radius</div>
+                                <div class="slider-row">
+                                    <input type="range" class="prop-slider" min="0" max="50" value="0" 
+                                           oninput="updateProperty('borderRadius', this.value); this.nextElementSibling.value = this.value" />
+                                    <input type="number" class="slider-value-input" value="0" min="0" max="50"
+                                           oninput="updateProperty('borderRadius', this.value); this.previousElementSibling.value = this.value" />
+                                </div>
+                            </div>
+                            <div class="prop-control">
+                                <div class="prop-label">Opacity</div>
+                                <div class="slider-row">
+                                    <input type="range" class="prop-slider" min="0" max="100" value="100" 
+                                           oninput="updateProperty('opacity', this.value / 100); this.nextElementSibling.value = this.value" />
+                                    <input type="number" class="slider-value-input" value="100" min="0" max="100"
+                                           oninput="updateProperty('opacity', this.value / 100); this.previousElementSibling.value = this.value" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Display Options -->
+                    <div class="prop-group">
+                        <div class="prop-group-title">
+                            Display Options
+                            <span class="collapse-btn" onclick="toggleGroup(this)">▼</span>
+                        </div>
+                        <div class="prop-group-content">
+                            <div class="toggle-control">
+                                <span class="toggle-label">Show Section</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked onchange="toggleVisibility(this.checked)" />
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div class="toggle-control">
+                                <span class="toggle-label">Show Header Badge</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked onchange="toggleElement('badge', this.checked)" />
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            <div class="toggle-control">
+                                <span class="toggle-label">Show Sidebar</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" checked onchange="toggleElement('sidebar', this.checked)" />
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content Tab -->
+                <div id="contentTabContent" style="display: none;">
+                    <!-- Text Editing Group -->
+                    <div class="prop-group">
+                        <div class="prop-group-title">
+                            Text Content
+                            <span class="collapse-btn" onclick="toggleGroup(this)">▼</span>
+                        </div>
+                        <div class="prop-group-content">
+                            <div class="prop-control">
+                                <div class="prop-label">Add New Text</div>
+                                <button class="prop-btn" onclick="addTextBlockToSelected()" 
+                                        onmouseover="this.style.background='#0890a8'; this.style.transform='scale(1.02)'" 
+                                        onmouseout="this.style.background='#0da1c7'; this.style.transform='scale(1)'"
+                                        style="width: 100%; padding: 12px; background: #0da1c7; color: white; border: none; border-radius: 6px; font-weight: 600; cursor: pointer; transition: all 0.2s; box-shadow: 0 2px 4px rgba(13, 161, 199, 0.3);">
+                                    📝 Add Text Block to Section
+                                </button>
+                                <div style="font-size: 11px; color: #687F8B; margin-top: 8px; font-style: italic;">
+                                    Click to add a new editable text area to the selected section
+                                </div>
+                            </div>
+                            <div class="prop-control" style="margin-top: 20px;">
+                                <div class="prop-label">Edit Text</div>
+                                <textarea class="prop-input" rows="4" placeholder="Click text in preview to edit inline, or type here..." 
+                                          onchange="updateTextContent(this.value)" style="resize: vertical; font-family: monospace; font-size: 12px;"></textarea>
+                            </div>
+                            <div class="prop-control">
+                                <div class="prop-label">Text Style</div>
+                                <div style="display: flex; gap: 8px; margin-bottom: 8px;">
+                                    <button class="btn-group-item" onclick="applyTextStyle('bold'); setActiveButton(this)" style="width: 40px;" title="Bold"><strong>B</strong></button>
+                                    <button class="btn-group-item" onclick="applyTextStyle('italic'); setActiveButton(this)" style="width: 40px;" title="Italic"><em>I</em></button>
+                                    <button class="btn-group-item" onclick="applyTextStyle('underline'); setActiveButton(this)" style="width: 40px;" title="Underline"><u>U</u></button>
+                                    <button class="btn-group-item" onclick="applyTextStyle('strikethrough'); setActiveButton(this)" style="width: 40px;" title="Strikethrough"><s>S</s></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Images Group -->
+                    <div class="prop-group">
+                        <div class="prop-group-title">
+                            Images
+                            <span class="collapse-btn" onclick="toggleGroup(this)">▼</span>
+                        </div>
+                        <div class="prop-group-content">
+                            <div class="prop-control">
+                                <div class="prop-label">Image Source</div>
+                                <input type="text" class="prop-input" placeholder="Enter image URL..." onchange="updateImageSource(this.value)" />
+                            </div>
+                            <div class="prop-control">
+                                <button class="add-page-btn" onclick="uploadImage()" style="width: 100%;">📤 Upload Image</button>
+                            </div>
+                            <div class="prop-control">
+                                <div class="prop-label">Image Fit</div>
+                                <select class="prop-select" onchange="updateProperty('objectFit', this.value)">
+                                    <option value="cover">Cover (Fill Area)</option>
+                                    <option value="contain">Contain (Fit Inside)</option>
+                                    <option value="fill">Fill (Stretch)</option>
+                                    <option value="none">None (Original Size)</option>
+                                </select>
+                            </div>
+                            <div class="prop-control">
+                                <div class="prop-label">Image Filters</div>
+                                <select class="prop-select" onchange="applyImageFilter(this.value)">
+                                    <option value="none">None</option>
+                                    <option value="grayscale(100%)">Grayscale</option>
+                                    <option value="sepia(100%)">Sepia</option>
+                                    <option value="brightness(1.2)">Brighter</option>
+                                    <option value="brightness(0.8)">Darker</option>
+                                    <option value="contrast(1.5)">High Contrast</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Merge Fields Group -->
+                    <div class="prop-group">
+                        <div class="prop-group-title">
+                            Merge Fields
+                            <span class="collapse-btn" onclick="toggleGroup(this)">▼</span>
+                        </div>
+                        <div class="prop-group-content">
+                            <div class="prop-control">
+                                <div class="prop-label">Insert Dynamic Field</div>
+                                <select class="prop-select" onchange="insertMergeField(this.value); this.selectedIndex = 0;">
+                                    <option value="">Select field to insert...</option>
+                                    <option value="{{property_address}}">Property Address</option>
+                                    <option value="{{property_name}}">Property Name</option>
+                                    <option value="{{client_name}}">Client Name</option>
+                                    <option value="{{inspection_date}}">Inspection Date</option>
+                                    <option value="{{market_value}}">Market Value</option>
+                                    <option value="{{property_sf}}">Property SF</option>
+                                    <option value="{{lot_size}}">Lot Size</option>
+                                    <option value="{{year_built}}">Year Built</option>
+                                </select>
+                            </div>
+                            <div style="font-size: 11px; color: #687F8B; padding: 12px; background: #f9f9f9; border-radius: 4px; line-height: 1.6;">
+                                💡 <strong>Tip:</strong> Merge fields automatically populate with evaluation data when generating the final PDF.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- List & Bullets Group -->
+                    <div class="prop-group">
+                        <div class="prop-group-title">
+                            Lists & Bullets
+                            <span class="collapse-btn" onclick="toggleGroup(this)">▼</span>
+                        </div>
+                        <div class="prop-group-content">
+                            <div class="prop-control">
+                                <div class="prop-label">List Style</div>
+                                <select class="prop-select" onchange="updateProperty('listStyleType', this.value)">
+                                    <option value="disc">Bullet (•)</option>
+                                    <option value="circle">Circle (○)</option>
+                                    <option value="square">Square (■)</option>
+                                    <option value="decimal">Numbers (1, 2, 3)</option>
+                                    <option value="lower-alpha">Letters (a, b, c)</option>
+                                    <option value="none">None</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced Tab -->
+                <div id="advancedTabContent" style="display: none;">
+                    <!-- Conditional Display Group -->
+                    <div class="prop-group">
+                        <div class="prop-group-title">
+                            Conditional Display
+                            <span class="collapse-btn" onclick="toggleGroup(this)">▼</span>
+                        </div>
+                        <div class="prop-group-content">
+                            <div class="prop-control">
+                                <div class="prop-label">Show Section If:</div>
+                                <select class="prop-select" onchange="setConditionalRule(this.value)">
+                                    <option value="always">Always Show</option>
+                                    <option value="has_data">Has Data</option>
+                                    <option value="value_above">Value Above Threshold</option>
+                                    <option value="value_below">Value Below Threshold</option>
+                                    <option value="custom">Custom Condition</option>
+                                </select>
+                            </div>
+                            <div style="font-size: 11px; color: #687F8B; padding: 12px; background: #fff3e0; border-left: 3px solid #f59e0b; border-radius: 4px; line-height: 1.6;">
+                                ⚠️ <strong>Advanced Feature:</strong> Control when sections appear based on evaluation data.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Custom CSS Group -->
+                    <div class="prop-group">
+                        <div class="prop-group-title">
+                            Custom CSS
+                            <span class="collapse-btn" onclick="toggleGroup(this)">▼</span>
+                        </div>
+                        <div class="prop-group-content">
+                            <div class="prop-control">
+                                <div class="prop-label">Additional Styles</div>
+                                <textarea class="prop-input" rows="6" placeholder="Enter custom CSS here...&#10;Example:&#10;border: 2px solid #0da1c7;&#10;background: linear-gradient(...);" 
+                                          onchange="applyCustomCSS(this.value)" style="resize: vertical; font-family: 'Courier New', monospace; font-size: 11px;"></textarea>
+                            </div>
+                            <div style="font-size: 11px; color: #687F8B; padding: 12px; background: #f9f9f9; border-radius: 4px; line-height: 1.6;">
+                                💡 <strong>For advanced users:</strong> Add custom CSS for fine-grained control beyond standard properties.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Page Break Group -->
+                    <div class="prop-group">
+                        <div class="prop-group-title">
+                            Page Breaks & Printing
+                            <span class="collapse-btn" onclick="toggleGroup(this)">▼</span>
+                        </div>
+                        <div class="prop-group-content">
+                            <div class="prop-control">
+                                <div class="prop-label">Page Break</div>
+                                <select class="prop-select" onchange="updateProperty('pageBreakBefore', this.value)">
+                                    <option value="auto">Automatic</option>
+                                    <option value="always">Always Break Before</option>
+                                    <option value="avoid">Avoid Break</option>
+                                </select>
+                            </div>
+                            <div class="toggle-control">
+                                <span class="toggle-label">Keep with next section</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" onchange="toggleKeepWithNext(this.checked)" />
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Animation Group -->
+                    <div class="prop-group">
+                        <div class="prop-group-title">
+                            Animations (PDF Preview Only)
+                            <span class="collapse-btn" onclick="toggleGroup(this)">▼</span>
+                        </div>
+                        <div class="prop-group-content">
+                            <div class="prop-control">
+                                <div class="prop-label">Transition Effect</div>
+                                <select class="prop-select" onchange="setTransitionEffect(this.value)">
+                                    <option value="none">None</option>
+                                    <option value="fade">Fade In</option>
+                                    <option value="slide">Slide In</option>
+                                    <option value="zoom">Zoom In</option>
+                                </select>
+                            </div>
+                            <div style="font-size: 11px; color: #687F8B; padding: 12px; background: #e3f2fd; border-radius: 4px; line-height: 1.6;">
+                                ℹ️ <strong>Note:</strong> Animations appear in interactive PDF preview mode only.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Data Binding Group -->
+                    <div class="prop-group">
+                        <div class="prop-group-title">
+                            Data Binding
+                            <span class="collapse-btn" onclick="toggleGroup(this)">▼</span>
+                        </div>
+                        <div class="prop-group-content">
+                            <div class="prop-control">
+                                <div class="prop-label">Bind to Evaluation Field</div>
+                                <select class="prop-select" onchange="bindToField(this.value)">
+                                    <option value="">Manual Entry</option>
+                                    <option value="building_size">Building Size</option>
+                                    <option value="land_size">Land Size</option>
+                                    <option value="year_built">Year Built</option>
+                                    <option value="zoning_type">Zoning Type</option>
+                                    <option value="client_name">Client Name</option>
+                                    <option value="inspector_name">Inspector Name</option>
+                                    <option value="weighted_market_value">Market Value</option>
+                                </select>
+                            </div>
+                            <div class="toggle-control">
+                                <span class="toggle-label">Auto-update from evaluation</span>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" onchange="toggleAutoUpdate(this.checked)" />
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Section Position Group -->
+                    <div class="prop-group">
+                        <div class="prop-group-title">
+                            Section Position
+                            <span class="collapse-btn" onclick="toggleGroup(this)">▼</span>
+                        </div>
+                        <div class="prop-group-content">
+                            <div style="display: flex; gap: 8px;">
+                                <button class="add-page-btn" onclick="moveSectionUp()" style="flex: 1; background: #687F8B;">↑ Move Up</button>
+                                <button class="add-page-btn" onclick="moveSectionDown()" style="flex: 1; background: #687F8B;">↓ Move Down</button>
+                            </div>
+                            <div style="margin-top: 12px;">
+                                <button class="add-page-btn" onclick="moveSectionToTop()" style="width: 100%; background: #687F8B;">⇈ Move to Top</button>
+                            </div>
+                            <div style="margin-top: 8px;">
+                                <button class="add-page-btn" onclick="moveSectionToBottom()" style="width: 100%; background: #687F8B;">⇊ Move to Bottom</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Zoom Controls -->
+    <div class="zoom-controls">
+        <button class="zoom-btn" onclick="zoomOut()">−</button>
+        <div class="zoom-display" id="zoomDisplay">100%</div>
+        <button class="zoom-btn" onclick="zoomIn()">+</button>
+        <button class="zoom-btn" onclick="resetZoom()">⟲</button>
+        <div style="border-left: 1px solid #e0e0e0; height: 36px; margin: 0 4px;"></div>
+        <button class="zoom-btn" onclick="fitToScreen()">⛶</button>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <span style="font-size: 20px;">✓</span>
+        <span id="toastMessage">Changes saved!</span>
+    </div>
+
+    <!-- Text Edit Toolbar -->
+    <div class="text-edit-toolbar" id="textEditToolbar">
+        <button class="text-tool-btn" onclick="formatText('bold')"><strong>B</strong></button>
+        <button class="text-tool-btn" onclick="formatText('italic')"><em>I</em></button>
+        <button class="text-tool-btn" onclick="formatText('underline')"><u>U</u></button>
+        <div style="border-left: 1px solid rgba(255,255,255,0.3); height: 24px;"></div>
+        <select class="text-tool-btn" style="width: 80px;" onchange="formatText('fontSize', this.value)">
+            <option value="12">12px</option>
+            <option value="14">14px</option>
+            <option value="16" selected>16px</option>
+            <option value="20">20px</option>
+            <option value="24">24px</option>
+        </select>
+        <input type="color" class="text-tool-btn" style="width: 40px; padding: 2px;" onchange="formatText('color', this.value)" />
+    </div>
+
+    <script>
+        // State Management
+        let pages = [
+            { id: 'cover', name: 'Cover Page', enabled: true, type: 'cover' },
+            { id: 'toc', name: 'Table of Contents', enabled: true, type: 'toc' },
+            { id: 'exec_summary', name: 'Executive Summary', enabled: true, type: 'section', sectionNum: '01' },
+            { id: 'prop_summary', name: 'Property Summary', enabled: true, type: 'section', sectionNum: '02' },
+            { id: 'valuations', name: 'Valuations', enabled: true, type: 'section', sectionNum: '03' }
+        ];
+
+        let selectedElement = null;
+        let currentZoom = 100;
+        let undoStack = [];
+        let redoStack = [];
+        let autoSaveTimer = null;
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', function() {
+            renderPages();
+            renderPreview();
+            setupKeyboardShortcuts();
+            startAutoSave();
+            setupScrollSpy();
+        });
+
+        // Scroll Spy - Update active page as user scrolls
+        function setupScrollSpy() {
+            const previewPanel = document.getElementById('previewPanel');
+            
+            previewPanel.addEventListener('scroll', function() {
+                const scrollPosition = previewPanel.scrollTop + 100; // Offset for better detection
+                
+                let currentPageId = null;
+                
+                // Find which page is currently in view
+                pages.forEach(page => {
+                    if (!page.enabled) return;
+                    
+                    const pageEl = document.getElementById(`preview_${page.id}`);
+                    if (pageEl) {
+                        const rect = pageEl.getBoundingClientRect();
+                        const panelRect = previewPanel.getBoundingClientRect();
+                        
+                        // Check if page is in viewport
+                        if (rect.top <= panelRect.top + 200 && rect.bottom >= panelRect.top) {
+                            currentPageId = page.id;
+                        }
+                    }
+                });
+                
+                // Update active state in pages list
+                if (currentPageId) {
+                    updateActivePageInList(currentPageId);
+                }
+            });
+        }
+
+        function updateActivePageInList(pageId) {
+            document.querySelectorAll('.page-item').forEach((item, index) => {
+                const page = pages[index];
+                if (page && page.id === pageId) {
+                    item.classList.add('active');
+                } else {
+                    item.classList.remove('active');
+                }
+            });
+        }
+
+        // Render Pages List
+        function renderPages() {
+            const container = document.getElementById('pagesList');
+            container.innerHTML = '';
+
+            pages.forEach((page, index) => {
+                const pageDiv = document.createElement('div');
+                pageDiv.className = 'page-item' + (page.enabled ? '' : ' disabled') + (index === 0 ? ' active' : '');
+                pageDiv.onclick = () => scrollToPage(page.id);
+                
+                pageDiv.innerHTML = `
+                    <input type="checkbox" class="page-checkbox" ${page.enabled ? 'checked' : ''} 
+                           onclick="event.stopPropagation(); togglePage('${page.id}', this.checked)" />
+                    <div class="page-label">${page.name}</div>
+                    <div class="page-number">${index + 1}</div>
+                `;
+                
+                container.appendChild(pageDiv);
+            });
+        }
+
+        // Render Preview
+        function renderPreview() {
+            const container = document.getElementById('reportPagesContainer');
+            container.innerHTML = '';
+
+            pages.forEach(page => {
+                if (!page.enabled) return;
+
+                const pageDiv = document.createElement('div');
+                pageDiv.className = 'report-page';
+                pageDiv.id = `preview_${page.id}`;
+
+                if (page.type === 'cover') {
+                    pageDiv.innerHTML = renderCoverPage(page);
+                } else if (page.type === 'toc') {
+                    pageDiv.innerHTML = renderTOCPage(page);
+                } else if (page.type === 'section') {
+                    pageDiv.innerHTML = renderSectionPage(page);
+                }
+
+                container.appendChild(pageDiv);
+            });
+        }
+
+        function renderCoverPage(page) {
+            return `
+                <div class="editable-section" data-section="${page.id}" onclick="selectSection(this, 'Cover Title')">
+                    <div class="section-toolbar">
+                        <div class="toolbar-label">
+                            <span>⋮⋮</span> Cover Page
+                        </div>
+                        <div class="toolbar-actions">
+                            <button class="toolbar-icon-btn" onclick="event.stopPropagation(); editSection('${page.id}')" title="Edit">✎</button>
+                            <button class="toolbar-icon-btn" onclick="event.stopPropagation(); addTextBlock('${page.id}')" title="Add Text Block">📝</button>
+                            <button class="toolbar-icon-btn" onclick="event.stopPropagation(); duplicateSection('${page.id}')" title="Duplicate">📋</button>
+                        </div>
+                    </div>
+                    <div class="drag-handle">⋮⋮</div>
+                    <div class="cover-page-layout">
+                        <div class="cover-title-section">
+                            <h1 class="cover-main-title editable-text" contenteditable="false">As Stabilized</h1>
+                            <p class="cover-subtitle editable-text" contenteditable="false">171 Baldwin Lane | Columbia Falls, Montana 59912</p>
+                        </div>
+                        <div class="cover-image-section">
+                            <div class="image-placeholder" onclick="event.stopPropagation(); uploadImage()">
+                                Click to upload property photo
+                            </div>
+                        </div>
+                        <div class="cover-footer-section">
+                            <div class="cover-gradient-bar"></div>
+                            <div class="cover-powered-by">Powered by Harken CRE | 1</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderTOCPage(page) {
+            return `
+                <div class="editable-section" data-section="${page.id}" onclick="selectSection(this, 'Table of Contents')">
+                    <div class="section-toolbar">
+                        <div class="toolbar-label">
+                            <span>⋮⋮</span> Table of Contents
+                        </div>
+                        <div class="toolbar-actions">
+                            <button class="toolbar-icon-btn" onclick="event.stopPropagation(); editSection('${page.id}')" title="Edit">✎</button>
+                            <button class="toolbar-icon-btn" onclick="event.stopPropagation(); addTextBlock('${page.id}')" title="Add Text Block">📝</button>
+                            <button class="toolbar-icon-btn" onclick="event.stopPropagation(); toggleVisibility('${page.id}')" title="Hide">👁</button>
+                        </div>
+                    </div>
+                    <div class="drag-handle">⋮⋮</div>
+                    <div style="padding: 80px 60px; position: relative; min-height: 11in;">
+                        <div class="section-badge">
+                            <div class="badge-name">Table of Contents</div>
+                        </div>
+                        <h2 class="page-title editable-text" contenteditable="false">Table of Contents</h2>
+                        <div style="font-size: 15px; line-height: 2.8;">
+                            <div style="display: flex; padding: 10px 0; border-bottom: 1px dotted #d0d0d0;">
+                                <span style="color: #2e7d32; font-weight: 700; width: 40px;">03</span>
+                                <span style="flex: 1; font-weight: 600; color: #1c3643;">Engagement Letter</span>
+                            </div>
+                            <div style="display: flex; padding: 10px 0; border-bottom: 1px dotted #d0d0d0;">
+                                <span style="color: #2e7d32; font-weight: 700; width: 40px;">04</span>
+                                <span style="flex: 1; font-weight: 600; color: #1c3643;">Section 01: Executive Summary</span>
+                            </div>
+                            <div style="display: flex; padding: 10px 0; border-bottom: 1px dotted #d0d0d0;">
+                                <span style="color: #2e7d32; font-weight: 700; width: 40px;">07</span>
+                                <span style="flex: 1; font-weight: 600; color: #1c3643;">Section 02: Property Summary</span>
+                            </div>
+                            <div style="display: flex; padding: 10px 0; border-bottom: 1px dotted #d0d0d0;">
+                                <span style="color: #2e7d32; font-weight: 700; width: 40px;">12</span>
+                                <span style="flex: 1; font-weight: 600; color: #1c3643;">Section 03: Valuations</span>
+                            </div>
+                            <div style="display: flex; padding: 10px 0; border-bottom: 1px dotted #d0d0d0;">
+                                <span style="color: #2e7d32; font-weight: 700; width: 40px;">19</span>
+                                <span style="flex: 1; font-weight: 600; color: #1c3643;">Section 04: Weighted Value</span>
+                            </div>
+                        </div>
+                        <div class="page-footer">Powered by Harken CRE | 2</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderSectionPage(page) {
+            let content = '';
+            
+            if (page.id === 'exec_summary') {
+                content = `
+                    <h2 class="page-title editable-text" contenteditable="false">
+                        Executive <span class="accent">Summary</span>
+                    </h2>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 40px;">
+                        <div>
+                            <div class="info-row">
+                                <div class="info-label">Date of Inspection/Effective Date:</div>
+                                <div class="info-value editable-text" contenteditable="false">07/06/2025 / 07/06/2025</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Inspector:</div>
+                                <div class="info-value editable-text" contenteditable="false">N/A</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Intended User(s):</div>
+                                <div class="info-value editable-text" contenteditable="false">N/A</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Client:</div>
+                                <div class="info-value editable-text" contenteditable="false">Chantelle Thomas (Valley Bank)</div>
+                            </div>
+                            <div class="info-row">
+                                <div class="info-label">Property Rights:</div>
+                                <div class="info-value editable-text" contenteditable="false">Fee Simple</div>
+                            </div>
+                            
+                            <h3 class="section-heading editable-text" contenteditable="false">Key Highlights:</h3>
+                            <ul style="font-size: 13px; line-height: 2; color: #1c3643; padding-left: 20px;">
+                                <li class="editable-text" contenteditable="false">Property SF: 3,830 SF</li>
+                                <li class="editable-text" contenteditable="false">Lot Acres: 8.490 AC</li>
+                                <li class="editable-text" contenteditable="false">Year Built / Remodeled: 1971, 1992, 2025 / N/A</li>
+                                <li class="editable-text" contenteditable="false">Zoning: SR - Suburban Residential Mixed-use</li>
+                            </ul>
+                        </div>
+                        <div style="display: flex; align-items: center; justify-content: center; background: #f5f5f5; padding: 20px; border-radius: 8px;">
+                            <div style="width: 220px; height: 180px; background: white; border: 3px dashed #d0d0d0; display: flex; flex-direction: column; align-items: center; justify-content: center; color: #999; cursor: pointer;" onclick="event.stopPropagation(); uploadImage()">
+                                <svg width="48" height="48" viewBox="0 0 24 24" fill="#ccc" style="margin-bottom: 10px;">
+                                    <path d="M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z"/>
+                                </svg>
+                                <div style="font-size: 12px;">Property Image</div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <p style="margin-top: 35px; font-size: 13px; line-height: 1.8; color: #1c3643;" class="editable-text" contenteditable="false">
+                        The author's analysis and assumptions of: use/condition factors of the property, current market data, 
+                        actual and market income information and general assessment of the property; results in the following:
+                    </p>
+                    <p style="font-size: 15px; font-weight: 700; color: #1c3643; margin-top: 20px;" class="editable-text" contenteditable="false">
+                        Final Market Value of $853,535.00 ($222.86 PSF).
+                    </p>
+                `;
+            } else if (page.id === 'prop_summary') {
+                content = `
+                    <h2 class="page-title editable-text" contenteditable="false" style="margin-bottom: 50px;">
+                        <span class="accent">Overview</span>
+                    </h2>
+                    
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 60px; margin-top: 20px;">
+                        <div>
+                            <h3 class="section-heading" style="margin-bottom: 25px; margin-top: 0;">Address</h3>
+                            <div class="info-row" style="margin-bottom: 18px;">
+                                <div class="info-label" style="min-width: 100px;">Street:</div>
+                                <div class="info-value editable-text" contenteditable="false">3752 Valley Drive</div>
+                            </div>
+                            <div class="info-row" style="margin-bottom: 35px;">
+                                <div class="info-label" style="min-width: 100px;">City, State:</div>
+                                <div class="info-value editable-text" contenteditable="false">Helena, Montana 59602</div>
+                            </div>
+                            
+                            <h3 class="section-heading" style="margin-bottom: 25px; margin-top: 40px;">Site Specs</h3>
+                            <div class="info-row" style="margin-bottom: 18px;">
+                                <div class="info-label" style="min-width: 100px;">Land Size:</div>
+                                <div class="info-value editable-text" contenteditable="false">369,824 SF</div>
+                            </div>
+                            <div class="info-row" style="margin-bottom: 18px;">
+                                <div class="info-label" style="min-width: 100px;">Acres:</div>
+                                <div class="info-value editable-text" contenteditable="false">8.490 AC</div>
+                            </div>
+                            <div class="info-row" style="margin-bottom: 18px;">
+                                <div class="info-label" style="min-width: 100px;">Zoning:</div>
+                                <div class="info-value editable-text" contenteditable="false">SR - Suburban Residential</div>
+                            </div>
+                        </div>
+                        <div>
+                            <h3 class="section-heading" style="margin-bottom: 25px; margin-top: 0;">Property Specifics</h3>
+                            <div class="info-row" style="margin-bottom: 18px;">
+                                <div class="info-label" style="min-width: 150px;">Property Type:</div>
+                                <div class="info-value editable-text" contenteditable="false">Multi-Family / 2-4 Units</div>
+                            </div>
+                            <div class="info-row" style="margin-bottom: 18px;">
+                                <div class="info-label" style="min-width: 150px;">Year Built / Remodeled:</div>
+                                <div class="info-value editable-text" contenteditable="false">1971, 1992, 2025 / N/A</div>
+                            </div>
+                            <div class="info-row" style="margin-bottom: 18px;">
+                                <div class="info-label" style="min-width: 150px;">Total SF:</div>
+                                <div class="info-value editable-text" contenteditable="false">3,830 SF</div>
+                            </div>
+                            <div class="info-row" style="margin-bottom: 18px;">
+                                <div class="info-label" style="min-width: 150px;">Property Class:</div>
+                                <div class="info-value editable-text" contenteditable="false">Class B</div>
+                            </div>
+                            <div class="info-row" style="margin-bottom: 18px;">
+                                <div class="info-label" style="min-width: 150px;">Property Condition:</div>
+                                <div class="info-value editable-text" contenteditable="false">Average/New</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (page.id === 'valuations') {
+                content = `
+                    <h2 class="page-title editable-text" contenteditable="false">
+                        Income <span class="accent">Approach</span>
+                    </h2>
+                    
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Monthly Income</th>
+                                <th>Annual Income</th>
+                                <th>$/SF/YR</th>
+                                <th>Total SF</th>
+                                <th>Comments</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="editable-text" contenteditable="false">Multi-Family - Building 1</td>
+                                <td class="editable-text" contenteditable="false">$1,581.25</td>
+                                <td class="editable-text" contenteditable="false">$18,975.00</td>
+                                <td class="editable-text" contenteditable="false">$63.25</td>
+                                <td class="editable-text" contenteditable="false">300 SF</td>
+                                <td class="editable-text" contenteditable="false">Per Lease</td>
+                            </tr>
+                            <tr>
+                                <td class="editable-text" contenteditable="false">Multi-Family - Building 2</td>
+                                <td class="editable-text" contenteditable="false">$3,000.00</td>
+                                <td class="editable-text" contenteditable="false">$36,000.00</td>
+                                <td class="editable-text" contenteditable="false">$0.00</td>
+                                <td class="editable-text" contenteditable="false">0 SF</td>
+                                <td class="editable-text" contenteditable="false">Per Lease</td>
+                            </tr>
+                            <tr>
+                                <td class="editable-text" contenteditable="false">Multi-Family - Building 3</td>
+                                <td class="editable-text" contenteditable="false">$2,500.00</td>
+                                <td class="editable-text" contenteditable="false">$30,000.00</td>
+                                <td class="editable-text" contenteditable="false">$0.00</td>
+                                <td class="editable-text" contenteditable="false">0 SF</td>
+                                <td class="editable-text" contenteditable="false">Future Rate</td>
+                            </tr>
+                            <tr class="total-row">
+                                <td class="editable-text" contenteditable="false">Total and Average</td>
+                                <td class="editable-text" contenteditable="false">$7,081.25</td>
+                                <td class="editable-text" contenteditable="false">$84,975.00</td>
+                                <td class="editable-text" contenteditable="false">$22.19</td>
+                                <td class="editable-text" contenteditable="false">3,830 SF</td>
+                                <td></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    
+                    <p style="font-size: 12px; font-style: italic; color: #687F8B; margin-top: 20px;" class="editable-text" contenteditable="false">
+                        <strong>Income Notes:</strong> Income is based on a blend of actual and projected rates received at the property, 
+                        adjusted for property type and quoted on a modified gross basis.
+                    </p>
+                `;
+            }
+
+            return `
+                <div class="editable-section" data-section="${page.id}" onclick="selectSection(this, '${page.name}')">
+                    <div class="section-toolbar">
+                        <div class="toolbar-label">
+                            <span>⋮⋮</span> Section ${page.sectionNum}: ${page.name}
+                        </div>
+                        <div class="toolbar-actions">
+                            <button class="toolbar-icon-btn" onclick="event.stopPropagation(); editSection('${page.id}')" title="Edit">✎</button>
+                            <button class="toolbar-icon-btn" onclick="event.stopPropagation(); addTextBlock('${page.id}')" title="Add Text Block">📝</button>
+                            <button class="toolbar-icon-btn" onclick="event.stopPropagation(); duplicateSection('${page.id}')" title="Duplicate">📋</button>
+                            <button class="toolbar-icon-btn" onclick="event.stopPropagation(); toggleVisibility('${page.id}')" title="Hide">👁</button>
+                            <button class="toolbar-icon-btn" onclick="event.stopPropagation(); deleteSection('${page.id}')" title="Delete">🗑</button>
+                        </div>
+                    </div>
+                    <div class="drag-handle">⋮⋮</div>
+                    <div class="section-page-layout">
+                        <div class="section-sidebar">
+                            <div class="sidebar-text">SECTION ${page.sectionNum}</div>
+                        </div>
+                        <div class="section-main">
+                            <div class="section-badge">
+                                <div class="badge-num">Section ${page.sectionNum}</div>
+                                <div class="badge-name">${page.name}</div>
+                            </div>
+                            ${content}
+                            <div class="page-footer">Powered by Harken CRE | ${parseInt(page.sectionNum) + 3}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Interactions
+        function selectSection(element, elementName) {
+            // Remove previous selection
+            document.querySelectorAll('.editable-section').forEach(el => el.classList.remove('selected'));
+            
+            // Select new element
+            element.classList.add('selected');
+            selectedElement = element;
+            
+            // Update properties panel header
+            document.getElementById('selectedElementTag').textContent = elementName;
+            
+            // Get current styles and update property controls
+            updatePropertyControlsFromElement(element);
+            
+            showToast('Selected: ' + elementName);
+        }
+        
+        function updatePropertyControlsFromElement(element) {
+            // Get the main text element to read styles from
+            const textEl = element.querySelector('.page-title') || 
+                          element.querySelector('.cover-main-title') ||
+                          element.querySelector('.editable-text') ||
+                          element;
+            
+            const computedStyle = window.getComputedStyle(textEl);
+            
+            // Update font size controls
+            const fontSize = parseInt(computedStyle.fontSize);
+            const fontSizeSlider = document.querySelector('.prop-slider[min="10"][max="72"]');
+            const fontSizeInput = fontSizeSlider?.nextElementSibling;
+            if (fontSizeSlider && fontSizeInput) {
+                fontSizeSlider.value = fontSize;
+                fontSizeInput.value = fontSize;
+            }
+            
+            // Update font weight controls
+            const fontWeight = computedStyle.fontWeight;
+            const weightSlider = document.querySelector('.prop-slider[min="100"][max="900"]');
+            const weightInput = weightSlider?.nextElementSibling;
+            if (weightSlider && weightInput) {
+                weightSlider.value = fontWeight;
+                weightInput.value = fontWeight;
+            }
+            
+            // Update line height
+            const lineHeight = parseFloat(computedStyle.lineHeight) / fontSize;
+            const lineHeightSlider = document.querySelector('.prop-slider[min="1.0"][max="3.0"]');
+            const lineHeightInput = lineHeightSlider?.nextElementSibling;
+            if (lineHeightSlider && lineHeightInput) {
+                lineHeightSlider.value = lineHeight.toFixed(1);
+                lineHeightInput.value = lineHeight.toFixed(1);
+            }
+        }
+
+        function enableTextEdit(element) {
+            // Check if edit mode is active for this section
+            if (!element.classList.contains('edit-mode-active')) {
+                showToast('⚠ Click the ✎ Edit button in the section toolbar first');
+                return;
+            }
+            
+            element.classList.add('editing');
+            element.focus();
+            
+            // Select all text for easy editing
+            const range = document.createRange();
+            range.selectNodeContents(element);
+            const selection = window.getSelection();
+            selection.removeAllRanges();
+            selection.addRange(range);
+            
+            // Show text toolbar
+            const toolbar = document.getElementById('textEditToolbar');
+            toolbar.classList.add('active');
+            
+            // Position toolbar above element
+            const rect = element.getBoundingClientRect();
+            toolbar.style.position = 'fixed';
+            toolbar.style.top = (rect.top - 50) + 'px';
+            toolbar.style.left = Math.max(320, rect.left) + 'px';
+            
+            // Hide toolbar when clicking away
+            element.addEventListener('blur', function() {
+                setTimeout(() => {
+                    element.classList.remove('editing');
+                    toolbar.classList.remove('active');
+                }, 200);
+            }, { once: true });
+            
+            // Save to undo stack when text changes
+            element.addEventListener('input', function() {
+                saveToUndoStack();
+            }, { once: true });
+        }
+
+        function selectColor(swatchElement, property, color) {
+            if (!selectedElement) {
+                showToast('⚠ Please select a section first');
+                return;
+            }
+            
+            if (swatchElement) {
+                // Remove previous selection in this color group
+                swatchElement.parentElement.querySelectorAll('.color-swatch').forEach(s => s.classList.remove('selected'));
+                swatchElement.classList.add('selected');
+            }
+            
+            updateProperty(property, color);
+        }
+
+        function updateProperty(property, value) {
+            if (!selectedElement) {
+                showToast('Please select a section first');
+                return;
+            }
+            
+            // Find the best target element to apply styles to
+            let targetEl = null;
+            
+            // For text properties, target editable text or main content
+            if (['fontSize', 'fontFamily', 'fontWeight', 'color', 'lineHeight', 'letterSpacing', 'textAlign', 'textTransform'].includes(property)) {
+                targetEl = selectedElement.querySelector('.page-title') || 
+                           selectedElement.querySelector('.section-heading') ||
+                           selectedElement.querySelector('.cover-main-title') ||
+                           selectedElement.querySelector('.editable-text') ||
+                           selectedElement.querySelector('.section-main') ||
+                           selectedElement;
+            }
+            
+            // For background/layout properties, target the main section
+            if (['background', 'opacity', 'borderRadius', 'boxShadow', 'columns', 'verticalAlign'].includes(property)) {
+                targetEl = selectedElement.querySelector('.section-main') || 
+                           selectedElement.querySelector('.cover-page-layout') ||
+                           selectedElement;
+            }
+            
+            if (!targetEl) targetEl = selectedElement;
+            
+            // Apply the style
+            switch(property) {
+                case 'fontSize':
+                    targetEl.style.fontSize = value + 'px';
+                    break;
+                case 'fontFamily':
+                    targetEl.style.fontFamily = `'${value}', sans-serif`;
+                    break;
+                case 'fontWeight':
+                    targetEl.style.fontWeight = value;
+                    break;
+                case 'color':
+                    targetEl.style.color = value;
+                    break;
+                case 'background':
+                    // For sidebar, target the sidebar specifically
+                    const sidebar = selectedElement.querySelector('.section-sidebar');
+                    if (sidebar) {
+                        sidebar.style.backgroundColor = value;
+                    } else {
+                        targetEl.style.backgroundColor = value;
+                    }
+                    break;
+                case 'lineHeight':
+                    targetEl.style.lineHeight = value;
+                    break;
+                case 'letterSpacing':
+                    targetEl.style.letterSpacing = value + 'px';
+                    break;
+                case 'textAlign':
+                    targetEl.style.textAlign = value;
+                    break;
+                case 'textTransform':
+                    targetEl.style.textTransform = value;
+                    break;
+                case 'opacity':
+                    targetEl.style.opacity = value;
+                    break;
+                case 'borderRadius':
+                    targetEl.style.borderRadius = value + 'px';
+                    break;
+                case 'boxShadow':
+                    targetEl.style.boxShadow = value;
+                    break;
+                case 'columns':
+                    const content = selectedElement.querySelector('.section-main') || selectedElement;
+                    const firstDiv = content.querySelector('div[style*="grid"]');
+                    if (firstDiv && value > 1) {
+                        firstDiv.style.gridTemplateColumns = `repeat(${value}, 1fr)`;
+                    }
+                    break;
+            }
+            
+            saveToUndoStack();
+            showToast('✓ ' + property + ' updated');
+        }
+
+        function updateSpacing(type, side, value) {
+            if (selectedElement) {
+                const targetEl = selectedElement;
+                const property = type + '-' + side;
+                targetEl.style[type + side.charAt(0).toUpperCase() + side.slice(1)] = value + 'px';
+                saveToUndoStack();
+                showToast('Updated ' + property);
+            }
+        }
+
+        function setActiveButton(button) {
+            // Remove active from siblings
+            button.parentElement.querySelectorAll('.btn-group-item').forEach(b => b.classList.remove('active'));
+            // Set this button as active
+            button.classList.add('active');
+        }
+
+        function togglePage(pageId, enabled) {
+            const page = pages.find(p => p.id === pageId);
+            page.enabled = enabled;
+            renderPages();
+            renderPreview();
+            showToast(enabled ? 'Page enabled' : 'Page disabled');
+        }
+
+        function scrollToPage(pageId) {
+            // Update active state in pages list
+            document.querySelectorAll('.page-item').forEach(item => item.classList.remove('active'));
+            event.currentTarget.classList.add('active');
+            
+            // Scroll to page in preview
+            const pageEl = document.getElementById(`preview_${pageId}`);
+            if (pageEl) {
+                pageEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                
+                // Auto-select the page
+                setTimeout(() => {
+                    const section = pageEl.querySelector('.editable-section');
+                    if (section) {
+                        selectSection(section, pages.find(p => p.id === pageId)?.name || 'Section');
+                    }
+                }, 300);
+            }
+        }
+
+        function switchTab(tabName) {
+            // Update tab visual state
+            document.querySelectorAll('.prop-tab').forEach(tab => tab.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Hide all tab content
+            document.getElementById('designTabContent').style.display = 'none';
+            document.getElementById('contentTabContent').style.display = 'none';
+            document.getElementById('advancedTabContent').style.display = 'none';
+            
+            // Show selected tab content
+            document.getElementById(tabName + 'TabContent').style.display = 'block';
+            
+            showToast('Switched to ' + tabName.charAt(0).toUpperCase() + tabName.slice(1) + ' tab');
+        }
+
+        function toggleGroup(btn) {
+            const content = btn.parentElement.nextElementSibling;
+            const isCollapsed = content.style.display === 'none';
+            content.style.display = isCollapsed ? 'block' : 'none';
+            btn.textContent = isCollapsed ? '▼' : '▶';
+        }
+
+        // Zoom
+        function zoomIn() {
+            currentZoom = Math.min(150, currentZoom + 10);
+            applyZoom();
+        }
+
+        function zoomOut() {
+            currentZoom = Math.max(50, currentZoom - 10);
+            applyZoom();
+        }
+
+        function resetZoom() {
+            currentZoom = 100;
+            applyZoom();
+        }
+
+        function fitToScreen() {
+            currentZoom = 75;
+            applyZoom();
+        }
+
+        function applyZoom() {
+            const container = document.getElementById('reportPagesContainer');
+            container.style.transform = `scale(${currentZoom / 100})`;
+            container.style.transformOrigin = 'top center';
+            document.getElementById('zoomDisplay').textContent = currentZoom + '%';
+        }
+
+        // Undo/Redo
+        function saveToUndoStack() {
+            const state = {
+                html: document.getElementById('reportPagesContainer').innerHTML,
+                pages: JSON.parse(JSON.stringify(pages))
+            };
+            undoStack.push(state);
+            if (undoStack.length > 50) undoStack.shift();
+            redoStack = [];
+        }
+
+        function undoAction() {
+            if (undoStack.length > 0) {
+                // Save current state to redo stack
+                const current = {
+                    html: document.getElementById('reportPagesContainer').innerHTML,
+                    pages: JSON.parse(JSON.stringify(pages))
+                };
+                redoStack.push(current);
+                
+                // Restore previous state
+                const previous = undoStack.pop();
+                document.getElementById('reportPagesContainer').innerHTML = previous.html;
+                pages = previous.pages;
+                
+                renderPages();
+                showToast('↶ Undo');
+            } else {
+                showToast('⚠ Nothing to undo');
+            }
+        }
+
+        function redoAction() {
+            if (redoStack.length > 0) {
+                // Save current state to undo stack
+                const current = {
+                    html: document.getElementById('reportPagesContainer').innerHTML,
+                    pages: JSON.parse(JSON.stringify(pages))
+                };
+                undoStack.push(current);
+                
+                // Restore next state
+                const next = redoStack.pop();
+                document.getElementById('reportPagesContainer').innerHTML = next.html;
+                pages = next.pages;
+                
+                renderPages();
+                showToast('↷ Redo');
+            } else {
+                showToast('⚠ Nothing to redo');
+            }
+        }
+
+        // Auto-save
+        function startAutoSave() {
+            setInterval(() => {
+                autoSaveTemplate();
+            }, 3000);
+        }
+
+        function autoSaveTemplate() {
+            // Auto-save logic here
+            console.log('Auto-saved at', new Date().toLocaleTimeString());
+        }
+
+        // Actions
+        function saveTemplate() {
+            const templateName = document.getElementById('templateNameInput').value;
+            
+            // Save state
+            const templateData = {
+                name: templateName,
+                pages: pages,
+                timestamp: new Date().toISOString()
+            };
+            
+            // In production, this would save to database
+            localStorage.setItem('harken_template_' + Date.now(), JSON.stringify(templateData));
+            
+            showToast('✓ Template "' + templateName + '" saved successfully!');
+        }
+
+        function doneEditing() {
+            const hasUnsavedChanges = undoStack.length > 0;
+            
+            if (hasUnsavedChanges) {
+                if (confirm('You have unsaved changes. Save before exiting?')) {
+                    saveTemplate();
+                    setTimeout(() => {
+                        window.location.href = 'super-admin-account-report-templates.html';
+                    }, 500);
+                } else {
+                    window.location.href = 'super-admin-account-report-templates.html';
+                }
+            } else {
+                window.location.href = 'super-admin-account-report-templates.html';
+            }
+        }
+
+        function addNewPage() {
+            const pageName = prompt('Enter page name:', 'New Page');
+            if (pageName) {
+                const newPage = {
+                    id: 'page_' + Date.now(),
+                    name: pageName,
+                    enabled: true,
+                    type: 'section',
+                    sectionNum: (pages.length).toString().padStart(2, '0')
+                };
+                
+                pages.push(newPage);
+                renderPages();
+                renderPreview();
+                showToast('Page added: ' + pageName);
+            }
+        }
+
+        function uploadImage() {
+            const imageUrl = prompt('Enter image URL (or click OK to use placeholder):');
+            if (imageUrl !== null) {
+                if (selectedElement) {
+                    const imagePlaceholder = selectedElement.querySelector('.image-placeholder');
+                    if (imagePlaceholder) {
+                        if (imageUrl) {
+                            imagePlaceholder.innerHTML = `<img src="${imageUrl}" style="width: 100%; height: 100%; object-fit: cover;" />`;
+                        }
+                        showToast('Image updated');
+                    }
+                } else {
+                    showToast('Please select a section with an image placeholder first');
+                }
+            }
+        }
+
+        function editSection(sectionId) {
+            const page = pages.find(p => p.id === sectionId);
+            const section = document.getElementById(`preview_${sectionId}`);
+            
+            if (page && section) {
+                // Enable edit mode for all text in this section
+                const editableTexts = section.querySelectorAll('.editable-text');
+                editableTexts.forEach(el => {
+                    el.contentEditable = 'true';
+                    el.classList.add('edit-mode-active');
+                });
+                
+                // Focus on the first editable element
+                const firstEditable = editableTexts[0];
+                if (firstEditable) {
+                    enableTextEdit(firstEditable);
+                }
+                
+                showToast('✎ Edit mode enabled for ' + page.name + ' - Click any text to edit');
+            }
+        }
+
+        function duplicateSection(sectionId) {
+            const page = pages.find(p => p.id === sectionId);
+            if (page) {
+                const newPage = {
+                    ...page,
+                    id: sectionId + '_copy_' + Date.now(),
+                    name: page.name + ' (Copy)'
+                };
+                
+                // Insert after current page
+                const index = pages.findIndex(p => p.id === sectionId);
+                pages.splice(index + 1, 0, newPage);
+                
+                renderPages();
+                renderPreview();
+                showToast('Section duplicated: ' + newPage.name);
+            }
+        }
+
+        function deleteSection(sectionId) {
+            const page = pages.find(p => p.id === sectionId);
+            if (page && confirm(`Delete "${page.name}"? This cannot be undone.`)) {
+                const index = pages.findIndex(p => p.id === sectionId);
+                if (index > -1) {
+                    pages.splice(index, 1);
+                    renderPages();
+                    renderPreview();
+                    showToast('Section deleted: ' + page.name);
+                }
+            }
+        }
+
+        function addTextBlockToSelected() {
+            if (!selectedElement) {
+                showToast('⚠ Please select a section first');
+                return;
+            }
+            
+            // Get the section ID from the selected element
+            const sectionId = selectedElement.getAttribute('data-section');
+            if (sectionId) {
+                addTextBlock(sectionId);
+            } else {
+                showToast('⚠ Could not determine section');
+            }
+        }
+
+        function addTextBlock(sectionId) {
+            const section = document.getElementById(`preview_${sectionId}`);
+            const page = pages.find(p => p.id === sectionId);
+            
+            if (!section || !page) {
+                showToast('⚠ Section not found');
+                return;
+            }
+            
+            // Create wrapper with drag handle
+            const wrapper = document.createElement('div');
+            wrapper.className = 'text-block-wrapper';
+            wrapper.style.cssText = `
+                position: relative;
+                margin: 30px 0;
+                padding: 0;
+            `;
+            wrapper.draggable = true;
+            
+            // Create controls container
+            const controls = document.createElement('div');
+            controls.className = 'text-block-controls';
+            controls.style.cssText = `
+                position: absolute;
+                left: -30px;
+                top: 50%;
+                transform: translateY(-50%);
+                display: flex;
+                flex-direction: column;
+                gap: 2px;
+                opacity: 0;
+                transition: opacity 0.2s;
+                z-index: 10;
+            `;
+            
+            // Create drag handle
+            const dragHandle = document.createElement('div');
+            dragHandle.className = 'text-block-drag-handle';
+            dragHandle.innerHTML = '⋮⋮';
+            dragHandle.title = 'Drag to reposition';
+            dragHandle.style.cssText = `
+                width: 20px;
+                height: 30px;
+                background: #0da1c7;
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 4px 0 0 4px;
+                cursor: grab;
+                font-size: 10px;
+                letter-spacing: -2px;
+            `;
+            
+            // Create delete button
+            const deleteBtn = document.createElement('div');
+            deleteBtn.className = 'text-block-delete-btn';
+            deleteBtn.innerHTML = '🗑';
+            deleteBtn.title = 'Delete text block';
+            deleteBtn.style.cssText = `
+                width: 20px;
+                height: 24px;
+                background: #dc2626;
+                color: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                border-radius: 4px 0 0 4px;
+                cursor: pointer;
+                font-size: 11px;
+            `;
+            
+            deleteBtn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (confirm('Delete this text block?')) {
+                    wrapper.remove();
+                    showToast('Text block deleted');
+                    saveToUndoStack();
+                }
+            });
+            
+            controls.appendChild(dragHandle);
+            controls.appendChild(deleteBtn);
+            
+            // Create new text block element
+            const textBlock = document.createElement('div');
+            textBlock.className = 'custom-text-block editable-text edit-mode-active';
+            textBlock.contentEditable = 'true';
+            textBlock.innerHTML = 'Click to edit text...';
+            textBlock.style.cssText = `
+                padding: 20px;
+                font-size: 14px;
+                line-height: 1.8;
+                color: #1c3643;
+                border: 2px dashed #0da1c7;
+                background: rgba(13, 161, 199, 0.05);
+                border-radius: 4px;
+                cursor: text;
+                transition: all 0.2s;
+            `;
+            
+            // Show controls on hover
+            wrapper.addEventListener('mouseenter', () => {
+                controls.style.opacity = '1';
+            });
+            wrapper.addEventListener('mouseleave', () => {
+                if (!wrapper.classList.contains('dragging')) {
+                    controls.style.opacity = '0';
+                }
+            });
+            
+            // Prevent dragging while editing text
+            textBlock.addEventListener('focus', () => {
+                wrapper.draggable = false;
+                dragHandle.style.cursor = 'not-allowed';
+                dragHandle.title = 'Finish editing to drag';
+            });
+            
+            textBlock.addEventListener('blur', () => {
+                wrapper.draggable = true;
+                dragHandle.style.cursor = 'grab';
+                dragHandle.title = 'Drag to reposition';
+            });
+            
+            // Drag and drop functionality
+            let dragStartY = 0;
+            
+            wrapper.addEventListener('dragstart', (e) => {
+                dragStartY = e.clientY;
+                wrapper.classList.add('dragging');
+                wrapper.style.opacity = '0.5';
+                dragHandle.style.cursor = 'grabbing';
+                e.dataTransfer.effectAllowed = 'move';
+            });
+            
+            wrapper.addEventListener('dragend', (e) => {
+                wrapper.classList.remove('dragging');
+                wrapper.style.opacity = '1';
+                dragHandle.style.cursor = 'grab';
+                controls.style.opacity = '0';
+            });
+            
+            // Allow dropping before/after other text blocks
+            wrapper.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                e.dataTransfer.dropEffect = 'move';
+            });
+            
+            wrapper.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const draggingElement = document.querySelector('.dragging');
+                if (draggingElement && draggingElement !== wrapper) {
+                    const rect = wrapper.getBoundingClientRect();
+                    const midpoint = rect.top + rect.height / 2;
+                    
+                    if (e.clientY < midpoint) {
+                        wrapper.parentNode.insertBefore(draggingElement, wrapper);
+                    } else {
+                        wrapper.parentNode.insertBefore(draggingElement, wrapper.nextSibling);
+                    }
+                    showToast('Text block repositioned');
+                    saveToUndoStack();
+                }
+            });
+            
+            // Assemble the wrapper
+            wrapper.appendChild(controls);
+            wrapper.appendChild(textBlock);
+            
+            // Find the main content area to append to
+            let contentArea = section.querySelector('.section-main') || 
+                             section.querySelector('.cover-page-layout') ||
+                             section.querySelector('[style*="padding"]') ||
+                             section;
+            
+            // If it's a section-main, append inside it (not at the very end)
+            if (contentArea.classList.contains('section-main')) {
+                // Insert before the page footer if exists, otherwise append
+                const footer = contentArea.querySelector('.page-footer');
+                if (footer) {
+                    contentArea.insertBefore(wrapper, footer);
+                } else {
+                    contentArea.appendChild(wrapper);
+                }
+            } else {
+                // For other sections, just append
+                contentArea.appendChild(wrapper);
+            }
+            
+            // Auto-focus and select the text
+            setTimeout(() => {
+                textBlock.focus();
+                const range = document.createRange();
+                range.selectNodeContents(textBlock);
+                const selection = window.getSelection();
+                selection.removeAllRanges();
+                selection.addRange(range);
+                
+                // Show the text edit toolbar
+                const toolbar = document.getElementById('textEditToolbar');
+                if (toolbar) {
+                    toolbar.classList.add('active');
+                    const rect = textBlock.getBoundingClientRect();
+                    const previewPanel = document.getElementById('previewPanel');
+                    const panelRect = previewPanel.getBoundingClientRect();
+                    toolbar.style.position = 'fixed';
+                    toolbar.style.top = (rect.top - 50) + 'px';
+                    toolbar.style.left = Math.max(panelRect.left + 10, rect.left) + 'px';
+                }
+            }, 100);
+            
+            // Add blur listener to finalize text block
+            textBlock.addEventListener('blur', function() {
+                // Hide toolbar
+                const toolbar = document.getElementById('textEditToolbar');
+                if (toolbar) {
+                    toolbar.classList.remove('active');
+                }
+                
+                if (this.innerHTML.trim() === '' || this.innerHTML === 'Click to edit text...') {
+                    // Remove empty text blocks
+                    this.remove();
+                    showToast('Empty text block removed');
+                } else {
+                    // Make it look permanent
+                    this.style.border = '1px solid transparent';
+                    this.style.background = 'transparent';
+                    this.style.padding = '10px 0';
+                    
+                    // Add hover effect for repositioning
+                    this.addEventListener('mouseenter', function() {
+                        if (!this.contentEditable || this.contentEditable === 'false') {
+                            this.style.outline = '1px dashed #cbd5e1';
+                        }
+                    });
+                    
+                    this.addEventListener('mouseleave', function() {
+                        if (!this.contentEditable || this.contentEditable === 'false') {
+                            this.style.outline = 'none';
+                        }
+                    });
+                }
+            });
+            
+            // Save to undo stack
+            saveToUndoStack();
+            
+            showToast('📝 Text block added - Start typing!');
+        }
+
+        function toggleVisibility(sectionId) {
+            const page = pages.find(p => p.id === sectionId);
+            if (page) {
+                page.enabled = !page.enabled;
+                renderPages();
+                renderPreview();
+                showToast(page.enabled ? 'Section shown' : 'Section hidden');
+            }
+        }
+
+        function toggleElement(element, show) {
+            if (!selectedElement) return;
+            
+            // Find and toggle specific elements
+            const badge = selectedElement.querySelector('.section-badge');
+            const sidebar = selectedElement.querySelector('.section-sidebar');
+            
+            if (element === 'badge' && badge) {
+                badge.style.display = show ? 'block' : 'none';
+                showToast(show ? 'Badge shown' : 'Badge hidden');
+            }
+            
+            if (element === 'sidebar' && sidebar) {
+                sidebar.style.display = show ? 'flex' : 'none';
+                showToast(show ? 'Sidebar shown' : 'Sidebar hidden');
+            }
+        }
+
+        function formatText(format, value) {
+            document.execCommand(format, false, value);
+            showToast('Text formatted');
+        }
+
+        // Content Tab Functions
+        function updateTextContent(value) {
+            if (selectedElement) {
+                const textEl = selectedElement.querySelector('.editable-text') || selectedElement;
+                textEl.textContent = value;
+                showToast('✓ Text content updated');
+            }
+        }
+
+        function applyTextStyle(style) {
+            document.execCommand(style, false, null);
+            showToast('✓ Text style applied: ' + style);
+        }
+
+        function updateImageSource(url) {
+            if (selectedElement) {
+                const imgEl = selectedElement.querySelector('img') || selectedElement.querySelector('.image-placeholder');
+                if (imgEl) {
+                    if (url) {
+                        if (imgEl.tagName === 'IMG') {
+                            imgEl.src = url;
+                        } else {
+                            imgEl.innerHTML = `<img src="${url}" style="width: 100%; height: 100%; object-fit: cover;" />`;
+                        }
+                        showToast('✓ Image source updated');
+                    }
+                }
+            }
+        }
+
+        function applyImageFilter(filter) {
+            if (selectedElement) {
+                const imgEl = selectedElement.querySelector('img');
+                if (imgEl) {
+                    imgEl.style.filter = filter;
+                    showToast('✓ Image filter applied');
+                }
+            }
+        }
+
+        function insertMergeField(field) {
+            if (field && selectedElement) {
+                const textEl = selectedElement.querySelector('.editable-text');
+                if (textEl) {
+                    textEl.textContent = (textEl.textContent || '') + ' ' + field;
+                    showToast('✓ Merge field inserted: ' + field);
+                }
+            }
+        }
+
+        // Advanced Tab Functions
+        function setConditionalRule(rule) {
+            showToast('✓ Conditional rule set: ' + rule);
+            // In production, this would store the rule with the section
+        }
+
+        function applyCustomCSS(css) {
+            if (selectedElement && css.trim()) {
+                try {
+                    const style = selectedElement.style;
+                    const rules = css.split(';').filter(r => r.trim());
+                    
+                    rules.forEach(rule => {
+                        const [property, value] = rule.split(':').map(s => s.trim());
+                        if (property && value) {
+                            // Convert CSS property to camelCase
+                            const camelProp = property.replace(/-([a-z])/g, g => g[1].toUpperCase());
+                            style[camelProp] = value;
+                        }
+                    });
+                    
+                    showToast('✓ Custom CSS applied');
+                } catch(e) {
+                    showToast('⚠ Invalid CSS syntax');
+                }
+            }
+        }
+
+        function toggleKeepWithNext(checked) {
+            showToast(checked ? '✓ Section will keep with next' : '✓ Normal page break behavior');
+        }
+
+        function setTransitionEffect(effect) {
+            showToast('✓ Transition effect set: ' + effect);
+        }
+
+        function bindToField(field) {
+            if (field) {
+                showToast('✓ Bound to evaluation field: ' + field);
+            } else {
+                showToast('✓ Manual entry mode');
+            }
+        }
+
+        function toggleAutoUpdate(checked) {
+            showToast(checked ? '✓ Auto-update enabled' : '✓ Auto-update disabled');
+        }
+
+        function moveSectionUp() {
+            if (!selectedElement) {
+                showToast('⚠ Please select a section first');
+                return;
+            }
+            
+            const sectionId = selectedElement.getAttribute('data-section');
+            const index = pages.findIndex(p => p.id === sectionId);
+            
+            if (index > 0) {
+                // Swap with previous
+                [pages[index - 1], pages[index]] = [pages[index], pages[index - 1]];
+                renderPages();
+                renderPreview();
+                showToast('↑ Section moved up');
+            } else {
+                showToast('⚠ Section is already at the top');
+            }
+        }
+
+        function moveSectionDown() {
+            if (!selectedElement) {
+                showToast('⚠ Please select a section first');
+                return;
+            }
+            
+            const sectionId = selectedElement.getAttribute('data-section');
+            const index = pages.findIndex(p => p.id === sectionId);
+            
+            if (index < pages.length - 1) {
+                // Swap with next
+                [pages[index], pages[index + 1]] = [pages[index + 1], pages[index]];
+                renderPages();
+                renderPreview();
+                showToast('↓ Section moved down');
+            } else {
+                showToast('⚠ Section is already at the bottom');
+            }
+        }
+
+        function moveSectionToTop() {
+            if (!selectedElement) {
+                showToast('⚠ Please select a section first');
+                return;
+            }
+            
+            const sectionId = selectedElement.getAttribute('data-section');
+            const index = pages.findIndex(p => p.id === sectionId);
+            
+            if (index > 0) {
+                const section = pages.splice(index, 1)[0];
+                pages.unshift(section);
+                renderPages();
+                renderPreview();
+                showToast('⇈ Section moved to top');
+            }
+        }
+
+        function moveSectionToBottom() {
+            if (!selectedElement) {
+                showToast('⚠ Please select a section first');
+                return;
+            }
+            
+            const sectionId = selectedElement.getAttribute('data-section');
+            const index = pages.findIndex(p => p.id === sectionId);
+            
+            if (index < pages.length - 1) {
+                const section = pages.splice(index, 1)[0];
+                pages.push(section);
+                renderPages();
+                renderPreview();
+                showToast('⇊ Section moved to bottom');
+            }
+        }
+
+        // Keyboard Shortcuts
+        function setupKeyboardShortcuts() {
+            document.addEventListener('keydown', function(e) {
+                if (e.ctrlKey || e.metaKey) {
+                    switch(e.key) {
+                        case 's':
+                            e.preventDefault();
+                            saveTemplate();
+                            break;
+                        case 'z':
+                            e.preventDefault();
+                            undoAction();
+                            break;
+                        case 'y':
+                            e.preventDefault();
+                            redoAction();
+                            break;
+                    }
+                }
+                
+                if (e.key === 'Escape') {
+                    // Deselect
+                    document.querySelectorAll('.editable-section').forEach(el => el.classList.remove('selected'));
+                    document.getElementById('textEditToolbar').classList.remove('active');
+                }
+            });
+        }
+
+        // Toast
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            const messageEl = document.getElementById('toastMessage');
+            messageEl.textContent = message;
+            toast.classList.add('show');
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2500);
+        }
+    </script>
+</body>
+</html>
+
+

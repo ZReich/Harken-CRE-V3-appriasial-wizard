@@ -1,0 +1,347 @@
+        <!-- ============================================ -->
+        <!-- STEP: Sales Comparison Approach             -->
+        <!-- NOTE: Only shown if "Sales" selected in Setup -->
+        <!-- COMPONENT: SalesApproachStep                -->
+        <!-- FUTURE: src/components/wizard/steps/SalesApproachStep.tsx -->
+        <!-- 4-PANEL LAYOUT: Field List | Subject | Comps 1-4 | Totals -->
+        <!-- ============================================ -->
+        <div class="page-section" id="step-sales-approach">
+            <!-- Action Buttons (above all panels) -->
+            <div style="padding: 20px 24px; background: white; display: flex; gap: 12px; border-bottom: 1px solid #e0e0e0;">
+                <button class="btn-sales-action primary" onclick="openLinkCompsModal()">
+                    <i class="material-icons">link</i>
+                    Link Existing Comp
+                </button>
+                <button class="btn-sales-action" onclick="openAddCompModal()">
+                    <i class="material-icons">add</i>
+                    Add New Comp
+                </button>
+                <button class="btn-sales-action" onclick="openUploadCompsModal()">
+                    <i class="material-icons">upload</i>
+                    Upload Comp
+                </button>
+            </div>
+
+            <div class="sales-approach-layout">
+                <!-- PANEL 1: FIELD LIST (Far Left, 200px) -->
+                <div class="field-list-panel">
+                    <h4 style="font-size: 11px; font-weight: 700; color: #687F8B; text-transform: uppercase; margin-bottom: 12px; padding-bottom: 8px; border-bottom: 2px solid #e0e0e0;">Subject Property</h4>
+                    
+                    <!-- Static Header Fields (no controls) -->
+                    <div style="padding: 8px 0; font-size: 11px; font-weight: 600; color: #687F8B;">Location</div>
+                    <div style="padding: 8px 0; font-size: 11px; font-weight: 600; color: #687F8B;">Date Sold</div>
+                    <div style="padding: 8px 0; font-size: 11px; font-weight: 600; color: #687F8B;">Property Type</div>
+
+                    <div style="border-top: 2px solid #e0e0e0; margin: 12px 0;"></div>
+
+                    <!-- Dynamic Comparison Fields (each has FULL dropdown with ALL options) -->
+                    <div class="field-list-row" id="field-list-1">
+                        <select class="field-list-dropdown">
+                            <option value="building_psf">Building $/SF</option>
+                            <option value="building_size">Building Size</option>
+                            <option value="building_land">Building Size / Land Area</option>
+                            <option value="condition">Condition</option>
+                            <option value="conditions_of_sale">Conditions of Sale</option>
+                            <option value="construction">Construction</option>
+                            <option value="economies_of_scale">Economies of Scale</option>
+                            <option value="effective_age">Effective Age</option>
+                            <option value="expenditures">Expenditures</option>
+                            <option value="financing">Financing</option>
+                            <option value="land_size">Land Size</option>
+                            <option value="land_type">Land Type</option>
+                            <option value="location">Location</option>
+                            <option value="lot_shape">Lot Shape</option>
+                            <option value="market_conditions">Market Conditions</option>
+                            <option value="office_area_pct">% Office Area</option>
+                            <option value="price_per_sf">Price per SF</option>
+                            <option value="price_per_unit">Price per Unit</option>
+                            <option value="price_per_acre">Price per Acre</option>
+                            <option value="property_class">Property Class</option>
+                            <option value="property_rights">Property Rights</option>
+                            <option value="quality_condition">Quality / Condition</option>
+                            <option value="sales_price">Sales Price</option>
+                            <option value="sidewall_height">Sidewall Height</option>
+                            <option value="time">Time</option>
+                            <option value="topography">Topography</option>
+                            <option value="type_use">Type/Use</option>
+                            <option value="type_my_own">Type My Own</option>
+                            <option value="unit_mix">Unit Mix</option>
+                            <option value="utilities">Utilities</option>
+                            <option value="year_built">Year Built / Remodeled</option>
+                            <option value="zoning">Zoning</option>
+                        </select>
+                        <div class="field-controls">
+                            <button class="btn-remove-field" onclick="removeFieldListRow('field-list-1')">
+                                <i class="material-icons">close</i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="field-list-row" id="field-list-2">
+                        <select class="field-list-dropdown">
+                            <option value="building_land">Building Size / Land Area</option>
+                            <option value="building_psf">Building $/SF</option>
+                            <option value="building_size">Building Size</option>
+                            <option value="condition">Condition</option>
+                            <option value="conditions_of_sale">Conditions of Sale</option>
+                            <option value="construction">Construction</option>
+                            <option value="economies_of_scale">Economies of Scale</option>
+                            <option value="effective_age">Effective Age</option>
+                            <option value="expenditures">Expenditures</option>
+                            <option value="financing">Financing</option>
+                            <option value="land_size">Land Size</option>
+                            <option value="land_type">Land Type</option>
+                            <option value="location">Location</option>
+                            <option value="lot_shape">Lot Shape</option>
+                            <option value="market_conditions">Market Conditions</option>
+                            <option value="office_area_pct">% Office Area</option>
+                            <option value="price_per_sf">Price per SF</option>
+                            <option value="price_per_unit">Price per Unit</option>
+                            <option value="price_per_acre">Price per Acre</option>
+                            <option value="property_class">Property Class</option>
+                            <option value="property_rights">Property Rights</option>
+                            <option value="quality_condition">Quality / Condition</option>
+                            <option value="sales_price">Sales Price</option>
+                            <option value="sidewall_height">Sidewall Height</option>
+                            <option value="time">Time</option>
+                            <option value="topography">Topography</option>
+                            <option value="type_use">Type/Use</option>
+                            <option value="type_my_own">Type My Own</option>
+                            <option value="unit_mix">Unit Mix</option>
+                            <option value="utilities">Utilities</option>
+                            <option value="year_built">Year Built / Remodeled</option>
+                            <option value="zoning">Zoning</option>
+                        </select>
+                        <div class="field-controls">
+                            <button class="btn-remove-field" onclick="removeFieldListRow('field-list-2')">
+                                <i class="material-icons">close</i>
+                            </button>
+                            <button class="btn-add-instance" onclick="addFieldListInstance()">
+                                <i class="material-icons">add</i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Placeholder for more field rows - will be added dynamically -->
+                    <div id="dynamic-field-list"></div>
+
+                    <div style="border-top: 2px solid #e0e0e0; margin: 12px 0;"></div>
+                    <div style="padding: 8px 0; font-size: 11px; font-weight: 600; color: #687F8B;">Notes</div>
+                </div>
+
+                <!-- PANEL 2: SUBJECT PROPERTY (Gray, 220px) -->
+                <div class="subject-property-card">
+                    <img src="https://via.placeholder.com/220x120?text=Subject+Property" class="property-card-image">
+                    <div class="property-card-content">
+                        <div class="property-field-row">
+                            <div class="property-field-label">Location</div>
+                            <div class="property-field-value">3752 Valley Drive<br>Helena, MT, 59602</div>
+                        </div>
+                        <div class="property-field-row">
+                            <div class="property-field-label">Date Sold</div>
+                            <div class="property-field-value">-</div>
+                        </div>
+                        <div class="property-field-row">
+                            <div class="property-field-label">Property Type</div>
+                            <div class="property-field-value">Multi-Family / 2-4 Units</div>
+                        </div>
+                        <div class="property-field-row">
+                            <div class="property-field-label">Building $/SF</div>
+                            <div class="property-field-value">2,486 SF</div>
+                        </div>
+                        <div class="property-field-row">
+                            <div class="property-field-label">Building Size / Land Area</div>
+                            <div class="property-field-value">2,486 SF / 8,490 AC</div>
+                        </div>
+                        <div class="property-field-row">
+                            <div class="property-field-label">Notes</div>
+                            <div><a href="#" class="notes-link">Click to Enter Property Notes</a></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PANEL 3: COMPS 1-4 (White, 220px each, Horizontally Scrollable) -->
+                <div class="comps-container">
+                    <!-- Comp 1 -->
+                    <div class="comp-property-card">
+                        <img src="https://via.placeholder.com/220x120?text=Comp+1" class="property-card-image">
+                        <div class="property-card-content">
+                            <div class="property-field-row">
+                                <div class="property-field-label">Location</div>
+                                <div class="property-field-value" style="line-height: 1.2;">500 Resource Lane<br><span style="font-size: 10px;">Whitefish, MT, 59937</span></div>
+                            </div>
+                            <div class="property-field-row">
+                                <div class="property-field-label">Date Sold</div>
+                                <div class="property-field-value">02/01/2030</div>
+                            </div>
+                            <div class="property-field-row">
+                                <div class="property-field-label">Property Type</div>
+                                <div class="property-field-value">Industrial / Manufacturing</div>
+                            </div>
+                            <div class="property-field-row">
+                                <div class="property-field-label">Building $/SF</div>
+                                <div class="property-field-value">$108.33</div>
+                            </div>
+                            <div class="property-field-row">
+                                <div class="property-field-label">Building Size / Land Area</div>
+                                <div class="property-field-value">12,000 SF / 3.500 AC</div>
+                            </div>
+                            <div class="property-field-row">
+                                <div class="property-field-label">Notes</div>
+                                <div><a href="#" class="notes-link">Click to add adjustment notes</a></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Comp 2 -->
+                    <div class="comp-property-card">
+                        <img src="https://via.placeholder.com/220x120?text=Comp+2" class="property-card-image">
+                        <div class="property-card-content">
+                            <div class="property-field-row">
+                                <div class="property-field-label">Location</div>
+                                <div class="property-field-value" style="line-height: 1.2;">317 East 4th Street<br><span style="font-size: 10px;">Dell Rapids, SD, 57022</span></div>
+                            </div>
+                            <div class="property-field-row">
+                                <div class="property-field-label">Date Sold</div>
+                                <div class="property-field-value">01/01/2022</div>
+                            </div>
+                            <div class="property-field-row">
+                                <div class="property-field-label">Property Type</div>
+                                <div class="property-field-value">Office / Bank</div>
+                            </div>
+                            <div class="property-field-row">
+                                <div class="property-field-label">Building $/SF</div>
+                                <div class="property-field-value">$75.41</div>
+                            </div>
+                            <div class="property-field-row">
+                                <div class="property-field-label">Building Size / Land Area</div>
+                                <div class="property-field-value">9,283 SF / 0.230 AC</div>
+                            </div>
+                            <div class="property-field-row">
+                                <div class="property-field-label">Notes</div>
+                                <div><a href="#" class="notes-link">Click to add adjustment notes</a></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Comp 3 -->
+                    <div class="comp-property-card">
+                        <img src="https://via.placeholder.com/220x120?text=Comp+3" class="property-card-image">
+                        <div class="property-card-content">
+                            <div class="property-field-row">
+                                <div class="property-field-label">Location</div>
+                                <div class="property-field-value" style="line-height: 1.2;">229 South 6th Street<br><span style="font-size: 10px;">Missouri Valley, IA, 51555</span></div>
+                            </div>
+                            <div class="property-field-row">
+                                <div class="property-field-label">Date Sold</div>
+                                <div class="property-field-value">01/01/2022</div>
+                            </div>
+                            <div class="property-field-row">
+                                <div class="property-field-label">Property Type</div>
+                                <div class="property-field-value">Retail / Restaurant</div>
+                            </div>
+                            <div class="property-field-row">
+                                <div class="property-field-label">Building $/SF</div>
+                                <div class="property-field-value">$14.79</div>
+                            </div>
+                            <div class="property-field-row">
+                                <div class="property-field-label">Building Size / Land Area</div>
+                                <div class="property-field-value">11,158 SF / 0.975 AC</div>
+                            </div>
+                            <div class="property-field-row">
+                                <div class="property-field-label">Notes</div>
+                                <div><a href="#" class="notes-link">Click to add adjustment notes</a></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Comp 4 -->
+                    <div class="comp-property-card">
+                        <img src="https://via.placeholder.com/220x120?text=Comp+4" class="property-card-image">
+                        <div class="property-card-content">
+                            <div class="property-field-row">
+                                <div class="property-field-label">Location</div>
+                                <div class="property-field-value" style="line-height: 1.2;">Gallatin Road<br><span style="font-size: 10px;">Gallatin Gateway, MT, 59730</span></div>
+                            </div>
+                            <div class="property-field-row">
+                                <div class="property-field-label">Date Sold</div>
+                                <div class="property-field-value">07/01/2069</div>
+                            </div>
+                            <div class="property-field-row">
+                                <div class="property-field-label">Property Type</div>
+                                <div class="property-field-value">Hospitality / Full Service</div>
+                            </div>
+                            <div class="property-field-row">
+                                <div class="property-field-label">Building $/SF</div>
+                                <div class="property-field-value">$1,414.57</div>
+                            </div>
+                            <div class="property-field-row">
+                                <div class="property-field-label">Building Size / Land Area</div>
+                                <div class="property-field-value">2,827 SF / 4.557 AC</div>
+                            </div>
+                            <div class="property-field-row">
+                                <div class="property-field-label">Notes</div>
+                                <div><a href="#" class="notes-link">Click to add adjustment notes</a></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PANEL 4: TOTALS SIDEBAR (Far Right, 280px) -->
+                <div class="totals-sidebar">
+                    <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #e0e0e0;">
+                        <div style="font-size: 11px; color: #687F8B; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">INCOME</div>
+                        <div style="display: flex; align-items: baseline; gap: 8px;">
+                            <span style="font-size: 24px; font-weight: 700; color: #0da1c7;">$0</span>
+                            <span style="font-size: 16px; color: #687F8B;">25%</span>
+                            <i class="material-icons" style="font-size: 18px; color: #0da1c7; cursor: pointer;">edit</i>
+                        </div>
+                        <div style="font-size: 12px; color: #687F8B;">$0/SF</div>
+                    </div>
+
+                    <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #e0e0e0;">
+                        <div style="font-size: 11px; color: #687F8B; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">SALES</div>
+                        <div style="display: flex; align-items: baseline; gap: 8px;">
+                            <span style="font-size: 24px; font-weight: 700; color: #0da1c7;">$1,002,529</span>
+                            <span style="font-size: 16px; color: #687F8B;">50%</span>
+                            <i class="material-icons" style="font-size: 18px; color: #0da1c7; cursor: pointer;">edit</i>
+                        </div>
+                        <div style="font-size: 12px; color: #687F8B;">$403/SF</div>
+                    </div>
+
+                    <div style="margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid #e0e0e0;">
+                        <div style="font-size: 11px; color: #687F8B; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">COST</div>
+                        <div style="display: flex; align-items: baseline; gap: 8px;">
+                            <span style="font-size: 24px; font-weight: 700; color: #0da1c7;">$0</span>
+                            <span style="font-size: 16px; color: #687F8B;">25%</span>
+                            <i class="material-icons" style="font-size: 18px; color: #0da1c7; cursor: pointer;">edit</i>
+                        </div>
+                        <div style="font-size: 12px; color: #687F8B;">$0/SF</div>
+                    </div>
+
+                    <div style="background: #e8f5f7; border-radius: 8px; padding: 16px;">
+                        <div style="font-size: 11px; color: #687F8B; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;">WEIGHTED TOTAL</div>
+                        <div style="font-size: 28px; font-weight: 700; color: #2e7d32;">$825,450</div>
+                        <div style="font-size: 13px; color: #687F8B;">$332/SF</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

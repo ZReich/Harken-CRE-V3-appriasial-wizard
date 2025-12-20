@@ -1,0 +1,368 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Clients Management - Harken CRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * { font-family: 'Montserrat', sans-serif !important; }
+        body { background-color: #f9f9f9; margin: 0; padding: 0; }
+        .section-title { font-size: 23px; font-weight: 600; color: #1c3643; }
+        table { width: 100%; background-color: white; border-collapse: separate; border-spacing: 0; }
+        thead { background-color: #f9f9f9; }
+        th { padding: 16px 24px; text-align: left; color: #687F8B; font-size: 13px; font-weight: 600; border-bottom: 2px solid #e0e0e0; }
+        td { padding: 20px 24px; color: #687F8B; font-size: 13px; font-weight: 500; border-bottom: 1px solid #f0f0f0; }
+        tbody tr:hover { background-color: #f9f9f9; cursor: pointer; }
+        .search-input { width: 390px; padding: 10px 16px; border: 1px solid #e0e0e0; border-radius: 4px; font-size: 14px; }
+        .search-input:focus { outline: none; border-color: #0da1c7; }
+        .filter-select { padding: 8px 12px; border: 1px solid #e0e0e0; border-radius: 4px; font-size: 14px; background-color: white; color: #687F8B; cursor: pointer; }
+        .filter-select:focus { outline: none; border-color: #0da1c7; }
+        .add-icon { color: #0da1c7; font-size: 32px; cursor: pointer; transition: transform 0.2s; }
+        .add-icon:hover { transform: scale(1.1); }
+        .link-text { color: #0da1c7; text-decoration: none; font-weight: 600; }
+        .link-text:hover { text-decoration: underline; }
+        .edit-icon { color: #0da1c7; cursor: pointer; font-size: 20px; }
+        .pagination { display: flex; align-items: center; justify-content: center; gap: 4px; margin-top: 32px; }
+        .pagination button { background-color: transparent; color: #0da1c7; border: none; padding: 8px 12px; cursor: pointer; font-size: 14px; font-weight: 400; border-radius: 6px; transition: all 0.2s; }
+        .pagination button:hover:not(:disabled) { background-color: #f0f0f0; }
+        .pagination button:disabled { color: #d0d0d0; cursor: not-allowed; }
+        .pagination .page-number { padding: 0; border-radius: 50%; cursor: pointer; color: #666; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; border: none; background-color: transparent; font-weight: 400; font-size: 14px; transition: all 0.2s; }
+        .pagination .page-number:hover:not(.active) { background-color: #f5f5f5; }
+        .pagination .page-number.active { background-color: #5a6c7d; color: white; }
+        
+        /* Modal Styles */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); }
+        .modal.show { display: flex; align-items: center; justify-content: center; }
+        .modal-content { background-color: white; padding: 32px; border-radius: 8px; width: 90%; max-width: 600px; max-height: 90vh; overflow-y: auto; }
+        .modal-header { font-size: 20px; font-weight: 600; color: #1c3643; margin-bottom: 24px; }
+        .form-label { color: #687F8B; font-size: 13px; font-weight: 600; display: block; margin-bottom: 8px; }
+        .form-label.required::after { content: ' *'; color: #a94442; }
+        .form-input { width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 4px; font-size: 14px; margin-bottom: 16px; }
+        .form-input:focus { outline: none; border-color: #0da1c7; }
+        .form-select { width: 100%; padding: 12px; border: 1px solid #e0e0e0; border-radius: 4px; font-size: 14px; margin-bottom: 16px; }
+        .form-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+        .form-checkbox-label { display: flex; align-items: center; gap: 8px; color: #687F8B; font-size: 14px; margin-bottom: 16px; }
+        .modal-button { padding: 12px 24px; border-radius: 4px; font-size: 14px; font-weight: 600; border: none; cursor: pointer; transition: opacity 0.2s; }
+        .modal-button:hover { opacity: 0.8; }
+        .modal-button-primary { background-color: #0da1c7; color: white; }
+        .modal-button-secondary { background-color: #687F8B; color: white; }
+        .modal-button-danger { background-color: #a94442; color: white; }
+    </style>
+</head>
+<body>
+    <!-- UNIFIED NAVIGATION COMPONENT -->
+    <style>.unified-navbar{background:url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;background-color:#1c3643!important;height:84px;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 32px;box-shadow:0 2px 8px rgba(0,0,0,0.1);position:sticky;top:0;z-index:1000}.nav-logo{height:40px;width:auto;cursor:pointer}.nav-center{display:flex;align-items:center;gap:8px;flex:1;justify-content:center}.nav-core-features{display:flex;align-items:center;gap:4px;background:rgba(13, 161, 199, 0.08);border-radius:25px;padding:4px 8px;margin-right:16px}.nav-link{color:white;text-decoration:none;padding:10px 20px;border-radius:25px;transition:all 0.2s;border:1px solid transparent;font-weight:500;font-size:14px;white-space:nowrap}.nav-link:hover{background-color:rgba(255,255,255,0.08)}.nav-link.core-feature{font-weight:500;font-size:14px;color:white}.nav-link.core-feature:hover{background-color:rgba(13, 161, 199, 0.2);color:white}.nav-link.core-feature.active{background-color:transparent;border:1px solid #0da1c7;color:#0da1c7;box-shadow:0 2px 4px rgba(13, 161, 199, 0.2)}.nav-link.active{background-color:transparent;border:1px solid #0da1c7;color:#0da1c7}.nav-separator{width:1px;height:24px;background:rgba(255, 255, 255, 0.2);margin:0 8px}.nav-user{display:flex;align-items:center;gap:12px}.nav-user-name{font-size:14px;font-weight:500;color:white}.nav-user-avatar{width:36px;height:36px;border-radius:50%;border:2px solid #0da1c7}</style><nav class="unified-navbar"><img src="harken.png" alt="Harken CRE" class="nav-logo" onclick="window.location.href='admin-dashboard.html'"><div class="nav-center"><div class="nav-core-features"><a href="../comps-premium-with-clustering.html" class="nav-link core-feature" id="nav-comps">COMPS</a><a href="admin-appraisals.html" class="nav-link core-feature" id="nav-appraisals">APPRAISAL</a><a href="../evaluation-wizard-full.html" class="nav-link core-feature" id="nav-evaluations">EVALUATION</a></div><div class="nav-separator"></div><a href="admin-dashboard.html" class="nav-link" id="nav-dashboard">Dashboard</a><a href="admin-users.html" class="nav-link" id="nav-users">Users</a><a href="admin-clients.html" class="nav-link active" id="nav-clients">Clients</a><a href="admin-accounts.html" class="nav-link" id="nav-accounts">Account</a><a href="admin-reports.html" class="nav-link" id="nav-reports">Reports</a><a href="admin-support-tickets.html" class="nav-link" id="nav-support">Support</a><a href="admin-settings.html" class="nav-link" id="nav-settings">Settings</a></div><div class="nav-user"><span class="nav-user-name">Admin User</span><img src="https://i.pravatar.cc/150?img=12" alt="User" class="nav-user-avatar"></div></nav>
+
+    <div style="padding: 35px 50px;">
+        <!-- Header -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+            <h2 class="section-title">CLIENTS</h2>
+            <div class="add-icon" onclick="openAddClientModal()" title="Add New Client">+</div>
+        </div>
+
+        <!-- Filters and Search -->
+        <div style="background: white; padding: 24px; border-radius: 8px; margin-bottom: 24px; display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+            <input type="text" class="search-input" placeholder="Search by name, company, or email..." id="searchInput" onkeyup="filterClients()" />
+            
+            <select class="filter-select" id="dateFilter" onchange="filterClients()">
+                <option value="">All Time</option>
+                <option value="30">Last 30 Days</option>
+                <option value="90">Last 90 Days</option>
+                <option value="365">Last Year</option>
+            </select>
+
+            <select class="filter-select" id="perPageSelect" onchange="updatePerPage()">
+                <option value="25">25 per page</option>
+                <option value="50">50 per page</option>
+                <option value="100">100 per page</option>
+            </select>
+        </div>
+
+        <!-- API Integration Point -->
+        <!-- API Call: GET /api/v1/client/list?page=1&limit=25&search=&date_range= -->
+
+        <!-- Clients Table -->
+        <div style="background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.12);">
+            <table id="clientsTable">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Company</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Total Work</th>
+                        <th>Last Activity</th>
+                        <th style="text-align: center;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="clientsTableBody">
+                    <!-- Clients will be populated by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        <div class="pagination" id="paginationContainer">
+            <!-- Pagination will be generated by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Add Client Modal -->
+    <div id="addClientModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">Add New Client</div>
+            <form id="addClientForm" onsubmit="saveClient(event)">
+                <div class="form-grid">
+                    <div>
+                        <label class="form-label required">First Name</label>
+                        <input type="text" class="form-input" name="first_name" required />
+                    </div>
+                    <div>
+                        <label class="form-label required">Last Name</label>
+                        <input type="text" class="form-input" name="last_name" required />
+                    </div>
+                </div>
+
+                <label class="form-label">Title</label>
+                <input type="text" class="form-input" name="title" />
+
+                <label class="form-label">Company</label>
+                <input type="text" class="form-input" name="company" />
+
+                <div class="form-grid">
+                    <div>
+                        <label class="form-label">Email</label>
+                        <input type="email" class="form-input" name="email" />
+                    </div>
+                    <div>
+                        <label class="form-label">Phone</label>
+                        <input type="tel" class="form-input" name="phone" />
+                    </div>
+                </div>
+
+                <label class="form-label">Street Address</label>
+                <input type="text" class="form-input" name="street_address" />
+
+                <div class="form-grid">
+                    <div>
+                        <label class="form-label">City</label>
+                        <input type="text" class="form-input" name="city" />
+                    </div>
+                    <div>
+                        <label class="form-label">State</label>
+                        <input type="text" class="form-input" name="state" maxlength="2" />
+                    </div>
+                </div>
+
+                <div class="form-grid">
+                    <div>
+                        <label class="form-label">Zipcode</label>
+                        <input type="text" class="form-input" name="zipcode" />
+                    </div>
+                    <div></div>
+                </div>
+
+                <label class="form-checkbox-label">
+                    <input type="checkbox" name="shared" />
+                    Shared across account
+                </label>
+
+                <!-- API Integration Point -->
+                <!-- API Call: POST /api/v1/client/create -->
+
+                <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px;">
+                    <button type="button" class="modal-button modal-button-secondary" onclick="closeAddClientModal()">Cancel</button>
+                    <button type="submit" class="modal-button modal-button-primary">Save Client</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteModal" class="modal">
+        <div class="modal-content" style="max-width: 400px;">
+            <div class="modal-header">Delete Client</div>
+            <p style="color: #687F8B; margin-bottom: 24px;">Are you sure you want to delete <strong id="deleteClientName"></strong>? This action cannot be undone.</p>
+            
+            <!-- API Integration Point -->
+            <!-- API Call: DELETE /api/v1/client/delete/:id -->
+            
+            <div style="display: flex; gap: 12px; justify-content: flex-end;">
+                <button type="button" class="modal-button modal-button-secondary" onclick="closeDeleteModal()">Cancel</button>
+                <button type="button" class="modal-button modal-button-danger" onclick="confirmDelete()">Delete Client</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Mock client data (filtered to current account)
+        const mockClients = [
+            {id: 1, first_name: 'John', last_name: 'Williams', company: 'Skyline Properties', email: 'john.williams@skyline.com', phone: '(555) 123-4567', evals: 15, appraisals: 8, comps: 23, last_activity: '2025-10-15'},
+            {id: 2, first_name: 'Emily', last_name: 'Thompson', company: 'Metro Realty Group', email: 'ethompson@metro.com', phone: '(555) 456-7890', evals: 31, appraisals: 18, comps: 45, last_activity: '2025-10-22'},
+            {id: 3, first_name: 'James', last_name: 'Wilson', company: 'Precision Realty', email: 'jwilson@precision.com', phone: '(555) 901-2345', evals: 14, appraisals: 8, comps: 21, last_activity: '2025-10-12'},
+            {id: 4, first_name: 'Jessica', last_name: 'Davis', company: 'Horizon Realty Partners', email: 'jdavis@horizon.com', phone: '(555) 456-0123', evals: 7, appraisals: 4, comps: 11, last_activity: '2025-10-05'},
+            {id: 5, first_name: 'Andrew', last_name: 'Clark', company: 'Urban Development Corp', email: 'aclark@urban.com', phone: '(555) 901-5678', evals: 29, appraisals: 16, comps: 42, last_activity: '2025-10-27'},
+            {id: 6, first_name: 'Rachel', last_name: 'Young', company: 'Crown Commercial', email: 'ryoung@crown.com', phone: '(555) 456-7893', evals: 21, appraisals: 12, comps: 30, last_activity: '2025-10-22'},
+            {id: 7, first_name: 'Daniel', last_name: 'Martinez', company: 'Summit Development', email: 'dmartinez@summit.com', phone: '(555) 234-5680', evals: 18, appraisals: 10, comps: 27, last_activity: '2025-10-20'},
+            {id: 8, first_name: 'Sophia', last_name: 'Anderson', company: 'Pacific Holdings', email: 'sanderson@pacific.com', phone: '(555) 345-6791', evals: 12, appraisals: 7, comps: 19, last_activity: '2025-10-18'},
+            {id: 9, first_name: 'Michael', last_name: 'Brown', company: 'Landmark Realty', email: 'mbrown@landmark.com', phone: '(555) 567-8902', evals: 25, appraisals: 14, comps: 36, last_activity: '2025-10-24'},
+            {id: 10, first_name: 'Olivia', last_name: 'Garcia', company: 'Metro Properties LLC', email: 'ogarcia@metro.com', phone: '(555) 678-9013', evals: 9, appraisals: 5, comps: 14, last_activity: '2025-10-16'},
+            {id: 11, first_name: 'William', last_name: 'Johnson', company: 'Vista Commercial', email: 'wjohnson@vista.com', phone: '(555) 789-0124', evals: 16, appraisals: 9, comps: 24, last_activity: '2025-10-19'},
+            {id: 12, first_name: 'Emma', last_name: 'Miller', company: 'Skyline Investments', email: 'emiller@skyline.com', phone: '(555) 890-1235', evals: 22, appraisals: 12, comps: 32, last_activity: '2025-10-23'},
+            {id: 13, first_name: 'Alexander', last_name: 'Wilson', company: 'Prime Development', email: 'awilson@prime.com', phone: '(555) 901-2346', evals: 11, appraisals: 6, comps: 17, last_activity: '2025-10-14'},
+            {id: 14, first_name: 'Isabella', last_name: 'Moore', company: 'Gateway Properties', email: 'imoore@gateway.com', phone: '(555) 012-3457', evals: 19, appraisals: 11, comps: 28, last_activity: '2025-10-21'},
+            {id: 15, first_name: 'Ethan', last_name: 'Taylor', company: 'Capital Realty', email: 'etaylor@capital.com', phone: '(555) 123-4568', evals: 8, appraisals: 4, comps: 12, last_activity: '2025-10-11'},
+            {id: 16, first_name: 'Ava', last_name: 'Thomas', company: 'Coastal Investments', email: 'athomas@coastal.com', phone: '(555) 234-5679', evals: 27, appraisals: 15, comps: 39, last_activity: '2025-10-25'},
+            {id: 17, first_name: 'Mason', last_name: 'Jackson', company: 'Prestige Commercial', email: 'mjackson@prestige.com', phone: '(555) 345-6780', evals: 13, appraisals: 7, comps: 20, last_activity: '2025-10-13'},
+            {id: 18, first_name: 'Charlotte', last_name: 'White', company: 'Meridian Group', email: 'cwhite@meridian.com', phone: '(555) 456-7891', evals: 24, appraisals: 13, comps: 35, last_activity: '2025-10-26'},
+            {id: 19, first_name: 'Logan', last_name: 'Harris', company: 'Pioneer Realty', email: 'lharris@pioneer.com', phone: '(555) 567-8903', evals: 10, appraisals: 6, comps: 15, last_activity: '2025-10-10'},
+            {id: 20, first_name: 'Amelia', last_name: 'Martin', company: 'Beacon Properties', email: 'amartin@beacon.com', phone: '(555) 678-9014', evals: 20, appraisals: 11, comps: 29, last_activity: '2025-10-17'}
+        ];
+
+        let allClients = [...mockClients];
+        let filteredClients = [...mockClients];
+        let currentPage = 1;
+        let perPage = 25;
+        let deleteClientId = null;
+
+        function renderClients() {
+            const tbody = document.getElementById('clientsTableBody');
+            const start = (currentPage - 1) * perPage;
+            const end = start + perPage;
+            const clientsToShow = filteredClients.slice(start, end);
+
+            tbody.innerHTML = clientsToShow.map(client => `
+                <tr onclick="viewClient(${client.id})">
+                    <td><a href="admin-client-detail.html?id=${client.id}" class="link-text">${client.first_name} ${client.last_name}</a></td>
+                    <td>${client.company}</td>
+                    <td>${client.email}</td>
+                    <td>${client.phone}</td>
+                    <td>${client.evals} Evals | ${client.appraisals} Appraisals | ${client.comps} Comps</td>
+                    <td>${new Date(client.last_activity).toLocaleDateString('en-US', {month: 'short', day: 'numeric', year: 'numeric'})}</td>
+                    <td style="text-align: center;">
+                        <span class="edit-icon" onclick="event.stopPropagation(); editClient(${client.id})" title="Edit">✏️</span>
+                    </td>
+                </tr>
+            `).join('');
+
+            renderPagination();
+        }
+
+        function renderPagination() {
+            const totalPages = Math.ceil(filteredClients.length / perPage);
+            const container = document.getElementById('paginationContainer');
+            
+            let html = `<button onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>Previous</button>`;
+            
+            for (let i = 1; i <= totalPages; i++) {
+                if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+                    html += `<button class="page-number ${i === currentPage ? 'active' : ''}" onclick="goToPage(${i})">${i}</button>`;
+                } else if (i === currentPage - 3 || i === currentPage + 3) {
+                    html += `<span style="padding: 8px;">...</span>`;
+                }
+            }
+            
+            html += `<button onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>Next</button>`;
+            container.innerHTML = html;
+        }
+
+        function goToPage(page) {
+            const totalPages = Math.ceil(filteredClients.length / perPage);
+            if (page < 1 || page > totalPages) return;
+            currentPage = page;
+            renderClients();
+        }
+
+        function updatePerPage() {
+            perPage = parseInt(document.getElementById('perPageSelect').value);
+            currentPage = 1;
+            renderClients();
+        }
+
+        function filterClients() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const dateFilter = parseInt(document.getElementById('dateFilter').value) || 9999;
+
+            const cutoffDate = new Date();
+            cutoffDate.setDate(cutoffDate.getDate() - dateFilter);
+
+            filteredClients = allClients.filter(client => {
+                const matchesSearch = !searchTerm || 
+                    client.first_name.toLowerCase().includes(searchTerm) ||
+                    client.last_name.toLowerCase().includes(searchTerm) ||
+                    client.company.toLowerCase().includes(searchTerm) ||
+                    client.email.toLowerCase().includes(searchTerm);
+                
+                const matchesDate = dateFilter === 9999 || new Date(client.last_activity) >= cutoffDate;
+
+                return matchesSearch && matchesDate;
+            });
+
+            currentPage = 1;
+            renderClients();
+        }
+
+        function openAddClientModal() {
+            document.getElementById('addClientModal').classList.add('show');
+        }
+
+        function closeAddClientModal() {
+            document.getElementById('addClientModal').classList.remove('show');
+            document.getElementById('addClientForm').reset();
+        }
+
+        function saveClient(event) {
+            event.preventDefault();
+            // In production: API call to create client
+            alert('Client saved successfully!');
+            closeAddClientModal();
+        }
+
+        function viewClient(id) {
+            window.location.href = `admin-client-detail.html?id=${id}`;
+        }
+
+        function editClient(id) {
+            window.location.href = `admin-client-edit.html?id=${id}`;
+        }
+
+        function openDeleteModal(id, name) {
+            deleteClientId = id;
+            document.getElementById('deleteClientName').textContent = name;
+            document.getElementById('deleteModal').classList.add('show');
+        }
+
+        function closeDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('show');
+            deleteClientId = null;
+        }
+
+        function confirmDelete() {
+            // In production: API call to delete client
+            allClients = allClients.filter(c => c.id !== deleteClientId);
+            filteredClients = filteredClients.filter(c => c.id !== deleteClientId);
+            closeDeleteModal();
+            renderClients();
+            alert('Client deleted successfully');
+        }
+
+        // Initial render
+        renderClients();
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+

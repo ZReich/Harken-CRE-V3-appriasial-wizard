@@ -1,0 +1,927 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Amenities Management - Harken CRE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            font-family: 'Montserrat', sans-serif !important;
+        }
+        body {
+            background-color: #f9f9f9;
+            margin: 0;
+            padding: 0;
+        }
+        .navbar {
+            background: url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;
+            background-color: #1c3643 !important;
+            max-height: 84px;
+            height: 84px;
+            color: #fff;
+        }
+        .nav-link {
+            color: white;
+            text-decoration: none;
+            padding: 10px 24px;
+            border-radius: 25px;
+            transition: all 0.2s;
+            border: 1px solid transparent;
+        }
+        .nav-link:hover {
+            background-color: rgba(255,255,255,0.05);
+        }
+        .nav-link.active {
+            background-color: transparent;
+            border: 1px solid #0da1c7;
+            color: #0da1c7;
+        }
+        .section-title {
+            font-size: 23px;
+            font-weight: 600;
+            color: #1c3643;
+        }
+        .report-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.12);
+        }
+        .search-input {
+            padding: 10px 14px 10px 40px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: white;
+            color: #687F8B;
+            font-weight: 500;
+            width: 300px;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .filter-select {
+            padding: 10px 14px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 14px;
+            background-color: white;
+            color: #687F8B;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .filter-select:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .action-button {
+            padding: 10px 20px;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+        .action-button:hover {
+            opacity: 0.8;
+        }
+        .action-button-primary {
+            background-color: #0da1c7;
+            color: white;
+        }
+        .action-button-secondary {
+            background-color: #687F8B;
+            color: white;
+        }
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+        th {
+            padding: 16px 20px;
+            text-align: left;
+            color: #687F8B;
+            font-size: 13px;
+            font-weight: 600;
+            border-bottom: 2px solid #e0e0e0;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            cursor: pointer;
+            user-select: none;
+        }
+        th:hover {
+            color: #0da1c7;
+        }
+        td {
+            padding: 18px 20px;
+            color: #687F8B;
+            font-size: 13px;
+            font-weight: 500;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        tbody tr:hover {
+            background-color: #f9f9f9;
+        }
+        .badge {
+            padding: 6px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .badge-active {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .badge-inactive {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .category-badge {
+            padding: 4px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .category-outdoor {
+            background-color: #e3f2fd;
+            color: #1565c0;
+        }
+        .category-indoor {
+            background-color: #f3e5f5;
+            color: #6a1b9a;
+        }
+        .category-utilities {
+            background-color: #fff3e0;
+            color: #e65100;
+        }
+        .link-text {
+            color: #0da1c7;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .link-text:hover {
+            text-decoration: underline;
+        }
+        .back-link {
+            color: #0da1c7;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-bottom: 16px;
+        }
+        .back-link:hover {
+            text-decoration: underline;
+        }
+        /* Toggle Switch Styles */
+        .toggle-switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .toggle-slider {
+            background-color: #10b981;
+        }
+        input:checked + .toggle-slider:before {
+            transform: translateX(20px);
+        }
+        /* Modal Styles */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal-overlay.active {
+            display: flex;
+        }
+        .modal-content {
+            background-color: white;
+            border-radius: 8px;
+            padding: 32px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+        }
+        .modal-title {
+            color: #1c3643;
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 24px;
+        }
+        .form-label {
+            color: #687F8B;
+            font-size: 13px;
+            font-weight: 600;
+            display: block;
+            margin-bottom: 8px;
+        }
+        .form-input, .form-textarea, .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            background-color: white;
+            color: #1c3643;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+        .form-input:focus, .form-textarea:focus, .form-select:focus {
+            outline: none;
+            border-color: #0da1c7;
+        }
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+        .modal-footer {
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            margin-top: 24px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Floating Toggle Button (initially hidden) -->
+    <button id="showBuildNotesBtn" 
+            style="position: fixed; top: 100px; right: 20px; z-index: 9999; 
+                   padding: 12px 20px; background: #ffc107; color: #856404; 
+                   border: 2px solid #856404; border-radius: 25px; 
+                   font-size: 14px; font-weight: 700; cursor: pointer; 
+                   box-shadow: 0 4px 12px rgba(0,0,0,0.15); 
+                   display: none; transition: all 0.3s;"
+            onclick="toggleBuildNotes(true)">
+        🔨 Show Build Notes
+    </button>
+
+    <!-- UNIFIED NAVIGATION COMPONENT -->
+    <style>.unified-navbar{background:url(https://app.harkenbov.com/assets/img/accent-white-bright.png) top left/contain #1c3643;background-color:#1c3643!important;height:84px;color:#fff;display:flex;align-items:center;justify-content:space-between;padding:0 32px;box-shadow:0 2px 8px rgba(0,0,0,0.1);position:sticky;top:0;z-index:1000}.nav-logo{height:40px;width:auto;cursor:pointer}.nav-center{display:flex;align-items:center;gap:8px;flex:1;justify-content:center}.nav-core-features{display:flex;align-items:center;gap:4px;background:rgba(13, 161, 199, 0.08);border-radius:25px;padding:4px 8px;margin-right:16px}.nav-link{color:white;text-decoration:none;padding:10px 20px;border-radius:25px;transition:all 0.2s;border:1px solid transparent;font-weight:500;font-size:14px;white-space:nowrap}.nav-link:hover{background-color:rgba(255,255,255,0.08)}.nav-link.core-feature{font-weight:500;font-size:14px;color:white}.nav-link.core-feature:hover{background-color:rgba(13, 161, 199, 0.2);color:white}.nav-link.core-feature.active{background-color:transparent;border:1px solid #0da1c7;color:#0da1c7;box-shadow:0 2px 4px rgba(13, 161, 199, 0.2)}.nav-link.active{background-color:transparent;border:1px solid #0da1c7;color:#0da1c7}.nav-separator{width:1px;height:24px;background:rgba(255, 255, 255, 0.2);margin:0 8px}.nav-user{display:flex;align-items:center;gap:12px}.nav-user-name{font-size:14px;font-weight:500;color:white}.nav-user-avatar{width:36px;height:36px;border-radius:50%;border:2px solid #0da1c7}.property-tabs-container{background:white;border-bottom:2px solid #e0e0e0;display:none;padding:0 32px}.property-tabs-container.show{display:flex}.property-tab{padding:16px 24px;border:none;background:transparent;color:#687F8B;font-size:15px;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:8px;border-bottom:3px solid transparent;margin-bottom:-2px;font-family:'Montserrat', sans-serif}.property-tab:hover{color:#0da1c7;background:#f0fbfd}.property-tab.active{color:#0da1c7;border-bottom-color:#0da1c7;background:#f0fbfd}</style><nav class="unified-navbar"><img src="assets/harken.png" alt="Harken CRE" class="nav-logo" onclick="window.location.href='super-admin-dashboard.html'"><div class="nav-center"><div class="nav-core-features"><a href="super-admin-comps.html" class="nav-link core-feature" id="nav-comps">COMPS</a><a href="super-admin-appraisals-list.html" class="nav-link core-feature" id="nav-appraisals">APPRAISAL</a><a href="evaluation-wizard-full.html" class="nav-link core-feature" id="nav-evaluations">EVALUATION</a></div><div class="nav-separator"></div><a href="super-admin-dashboard.html" class="nav-link" id="nav-dashboard">Dashboard</a><a href="super-admin-users.html" class="nav-link" id="nav-users">Users</a><a href="super-admin-clients.html" class="nav-link" id="nav-clients">Clients</a><a href="super-admin-accounts.html" class="nav-link" id="nav-accounts">Accounts</a><a href="super-admin-reports.html" class="nav-link" id="nav-reports">Reports</a><a href="super-admin-support-tickets.html" class="nav-link" id="nav-support">Support</a><a href="super-admin-audit-logs.html" class="nav-link" id="nav-audit">Audit Logs</a><a href="super-admin-settings.html" class="nav-link" id="nav-settings">Settings</a></div><div class="nav-user"><span class="nav-user-name">Harken Admin</span><img src="https://i.pravatar.cc/150?img=33" alt="User" class="nav-user-avatar"></div></nav><div class="property-tabs-container" id="propertyTabsContainer"><button class="property-tab active" data-type="commercial" onclick="switchPropertyType('commercial')"><span style="font-size: 18px;">🏢</span>Commercial</button><button class="property-tab" data-type="residential" onclick="switchPropertyType('residential')"><span style="font-size: 18px;">🏠</span>Residential</button><button class="property-tab" data-type="land" onclick="switchPropertyType('land')"><span style="font-size: 18px;">🏞️</span>Land</button></div><script>(function(){const currentPage=window.location.pathname.split('/').pop()||'super-admin-dashboard.html';const showPropertyTabsOn=['comps-premium-with-clustering.html','super-admin-appraisals-list.html','evaluation-wizard-full.html'];if(showPropertyTabsOn.some(page=>currentPage.includes(page)||currentPage.includes('comps-')||currentPage.includes('appraisal-')||currentPage.includes('evaluation-'))){document.getElementById('propertyTabsContainer').classList.add('show');}const navMapping={'super-admin-dashboard.html':'nav-dashboard','comps-premium-with-clustering.html':'nav-comps','super-admin-appraisals-list.html':'nav-appraisals','evaluation-wizard-full.html':'nav-evaluations','super-admin-users.html':'nav-users','super-admin-user-edit.html':'nav-users','super-admin-clients.html':'nav-clients','super-admin-accounts.html':'nav-accounts','super-admin-account-manage.html':'nav-accounts','super-admin-account-amenities.html':'nav-accounts','super-admin-account-report-templates.html':'nav-accounts','super-admin-reports.html':'nav-reports','super-admin-support-tickets.html':'nav-support','super-admin-support-create-ticket.html':'nav-support','super-admin-support-ticket-detail.html':'nav-support','super-admin-audit-logs.html':'nav-audit','super-admin-settings.html':'nav-settings','super-admin-settings-billing.html':'nav-settings','super-admin-settings-amenities.html':'nav-settings','super-admin-settings-white-label.html':'nav-settings'};for(const[page,navId]of Object.entries(navMapping)){if(currentPage.includes(page)){const navElement=document.getElementById(navId);if(navElement){navElement.classList.add('active');}break;}}})();function switchPropertyType(type){document.querySelectorAll('.property-tab').forEach(tab=>{tab.classList.remove('active');});document.querySelector(`[data-type="${type}"]`).classList.add('active');localStorage.setItem('activePropertyType',type);console.log('Switched to property type:',type);}window.addEventListener('load',function(){const savedType=localStorage.getItem('activePropertyType');if(savedType){switchPropertyType(savedType);}});</script>
+
+    <!-- Main Content -->
+    <div style="padding: 35px 50px;">
+        <!-- BUILD NOTES SECTION -->
+        <div id="buildNotesSection" style="background-color: #e8f5e9; border-left: 4px solid #2e7d32; padding: 20px; margin-bottom: 32px; border-radius: 4px;">
+            <h3 style="color: #1b5e20; font-size: 16px; font-weight: 700; margin: 0 0 16px 0;">🔨 BUILD NOTES - PLEASE REVIEW WITH OWNERS</h3>
+            
+            <div style="margin-bottom: 16px; padding: 12px; background-color: #c8e6c9; border-radius: 4px;">
+                <p style="margin: 0; color: #1b5e20; font-weight: 600;">👥 OWNER REVIEW NEEDED: Please walk through this amenities flow with the owners to determine if this level of customization is required for your customers. The answer affects whether you build this now or later.</p>
+            </div>
+            
+            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 16px;">
+                <div>
+                    <strong style="color: #1b5e20;">Priority Level:</strong> Medium-High (depends on customer needs)
+                </div>
+                <div>
+                    <strong style="color: #1b5e20;">Recommended Customer Count:</strong> 3-5 customers
+                </div>
+                <div>
+                    <strong style="color: #1b5e20;">Development Stage:</strong> Phase 1-2 (if needed)
+                </div>
+                <div>
+                    <strong style="color: #1b5e20;">Estimated Build Time:</strong> 1-2 weeks
+                </div>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #1b5e20;">Purpose & Use Case:</strong>
+                <p style="margin: 4px 0 0 0; color: #1b5e20;">Master list of residential property amenities (pools, garages, fireplaces, etc.) that ALL accounts can choose from. This is the global amenities catalog. Each account can then enable/disable specific amenities from this list for their needs (see super-admin-account-amenities.html).</p>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #1b5e20;">Key Questions for Owners:</strong>
+                <ul style="margin: 4px 0 0 0; color: #1b5e20;">
+                    <li><strong>Question 1:</strong> Do different customers need different amenities lists, or can everyone use the same standard list?</li>
+                    <li><strong>Question 2:</strong> How often do customers request custom amenities that aren't in your current system?</li>
+                    <li><strong>Question 3:</strong> Can you hard-code a standard amenities list initially, or do you need admin flexibility to add new ones?</li>
+                    <li><strong>Question 4:</strong> Do amenities have financial adjustment values (e.g., "Pool adds $10K to value")? If yes, do these vary by account?</li>
+                </ul>
+            </div>
+            
+            <div style="margin-bottom: 12px;">
+                <strong style="color: #1b5e20;">Key Features Explained:</strong>
+                <ul style="margin: 4px 0 0 0; color: #1b5e20;">
+                    <li><strong>Add/Edit Amenities:</strong> Super admin can add new amenities to the global catalog. Each has name, category, default adjustment value.</li>
+                    <li><strong>Categories:</strong> Outdoor, Indoor, Utilities, etc. Helps organize long lists. Purely for organization.</li>
+                    <li><strong>Default Adjustment Values:</strong> Suggested financial impact. Accounts can override these values for their specific market.</li>
+                    <li><strong>Active/Inactive Status:</strong> Deactivate outdated amenities without losing historical data. Inactive ones don't show for new properties.</li>
+                    <li><strong>Usage Count:</strong> Shows how many accounts are using each amenity. Helps identify which amenities matter.</li>
+                </ul>
+            </div>
+            
+            <div>
+                <strong style="color: #1b5e20;">Implementation Notes:</strong>
+                <p style="margin: 4px 0 0 0; color: #1b5e20;">BUILD NOW IF: Customers need custom amenities frequently OR amenities vary significantly by market/region. SKIP IF: A standard amenities list works for everyone - just hard-code 20-30 common amenities in database. Database: amenities table (name, category, default_adjustment, is_active), account_amenities join table (account_id, amenity_id, custom_adjustment, is_enabled). Per-account customization in super-admin-account-amenities.html.</p>
+            </div>
+            
+            <button onclick="toggleBuildNotes(false)" style="margin-top: 12px; padding: 6px 12px; background: #2e7d32; color: white; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: 600;">Hide Build Notes</button>
+        </div>
+
+        <!-- Back Link -->
+        <a href="super-admin-settings.html" class="back-link">← Back to Settings</a>
+
+        <!-- Page Title -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 32px;">
+            <div>
+                <h2 class="section-title">GLOBAL AMENITIES MANAGEMENT</h2>
+                <p style="color: #687F8B; font-size: 14px; margin-top: 8px;">Manage master amenities list for all accounts • 30 total amenities (27 active, 3 inactive)</p>
+            </div>
+        </div>
+
+        <!-- Action Bar -->
+        <div style="display: flex; gap: 12px; align-items: center; margin-bottom: 24px; justify-content: space-between;">
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <div style="position: relative;">
+                    <svg style="position: absolute; left: 12px; top: 50%; transform: translateY(-50%); width: 16px; height: 16px; color: #687F8B;" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                    <input type="text" id="searchInput" class="search-input" placeholder="Search amenities..." onkeyup="filterTable()" />
+                </div>
+                <select id="categoryFilter" class="filter-select" onchange="filterTable()">
+                    <option value="">All Categories</option>
+                    <option value="Outdoor">Outdoor</option>
+                    <option value="Indoor">Indoor</option>
+                    <option value="Utilities">Utilities</option>
+                </select>
+            </div>
+            <div style="display: flex; gap: 12px;">
+                <button class="action-button action-button-secondary" onclick="exportCSV()">Export CSV</button>
+                <button class="action-button action-button-primary" onclick="openAddModal()">+ Add New Amenity</button>
+            </div>
+        </div>
+
+        <!-- Amenities Table -->
+        <div class="report-card">
+            <table id="amenitiesTable">
+                <thead>
+                    <tr>
+                        <th onclick="sortTable(0)">Name ↕</th>
+                        <th onclick="sortTable(1)">Category ↕</th>
+                        <th onclick="sortTable(2)">Default Value ↕</th>
+                        <th onclick="sortTable(3)">Status ↕</th>
+                        <th style="text-align: right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Outdoor Amenities -->
+                    <tr>
+                        <td>Pool</td>
+                        <td><span class="category-badge category-outdoor">Outdoor</span></td>
+                        <td>$25,000</td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td style="text-align: right;">
+                            <span class="link-text" onclick="openEditModal('Pool', 'Outdoor', 25000, true, 'High-end swimming pool with equipment')">Edit</span> • 
+                            <span class="link-text" style="color: #a94442;" onclick="deleteAmenity('Pool')">Delete</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Tennis Court</td>
+                        <td><span class="category-badge category-outdoor">Outdoor</span></td>
+                        <td>$30,000</td>
+                        <td><span class="badge badge-inactive">Inactive</span></td>
+                        <td style="text-align: right;">
+                            <span class="link-text" onclick="openEditModal('Tennis Court', 'Outdoor', 30000, false, 'Full-size tennis court')">Edit</span> • 
+                            <span class="link-text" style="color: #a94442;" onclick="deleteAmenity('Tennis Court')">Delete</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Outdoor Kitchen</td>
+                        <td><span class="category-badge category-outdoor">Outdoor</span></td>
+                        <td>$15,000</td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td style="text-align: right;">
+                            <span class="link-text" onclick="openEditModal('Outdoor Kitchen', 'Outdoor', 15000, true)">Edit</span> • 
+                            <span class="link-text" style="color: #a94442;" onclick="deleteAmenity('Outdoor Kitchen')">Delete</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Basketball Court</td>
+                        <td><span class="category-badge category-outdoor">Outdoor</span></td>
+                        <td>$15,000</td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td style="text-align: right;">
+                            <span class="link-text" onclick="openEditModal('Basketball Court', 'Outdoor', 15000, true)">Edit</span> • 
+                            <span class="link-text" style="color: #a94442;" onclick="deleteAmenity('Basketball Court')">Delete</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Hot Tub</td>
+                        <td><span class="category-badge category-outdoor">Outdoor</span></td>
+                        <td>$8,000</td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td style="text-align: right;">
+                            <span class="link-text" onclick="openEditModal('Hot Tub', 'Outdoor', 8000, true)">Edit</span> • 
+                            <span class="link-text" style="color: #a94442;" onclick="deleteAmenity('Hot Tub')">Delete</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Gazebo/Pergola</td>
+                        <td><span class="category-badge category-outdoor">Outdoor</span></td>
+                        <td>$6,000</td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td style="text-align: right;">
+                            <span class="link-text" onclick="openEditModal('Gazebo/Pergola', 'Outdoor', 6000, true)">Edit</span> • 
+                            <span class="link-text" style="color: #a94442;" onclick="deleteAmenity('Gazebo/Pergola')">Delete</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Greenhouse</td>
+                        <td><span class="category-badge category-outdoor">Outdoor</span></td>
+                        <td>$5,000</td>
+                        <td><span class="badge badge-inactive">Inactive</span></td>
+                        <td style="text-align: right;">
+                            <span class="link-text" onclick="openEditModal('Greenhouse', 'Outdoor', 5000, false)">Edit</span> • 
+                            <span class="link-text" style="color: #a94442;" onclick="deleteAmenity('Greenhouse')">Delete</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Outdoor Fireplace/Fire Pit</td>
+                        <td><span class="category-badge category-outdoor">Outdoor</span></td>
+                        <td>$4,500</td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td style="text-align: right;">
+                            <span class="link-text" onclick="openEditModal('Outdoor Fireplace/Fire Pit', 'Outdoor', 4500, true)">Edit</span> • 
+                            <span class="link-text" style="color: #a94442;" onclick="deleteAmenity('Outdoor Fireplace/Fire Pit')">Delete</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Fence (Privacy)</td>
+                        <td><span class="category-badge category-outdoor">Outdoor</span></td>
+                        <td>$4,000</td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td style="text-align: right;">
+                            <span class="link-text" onclick="openEditModal('Fence (Privacy)', 'Outdoor', 4000, true)">Edit</span> • 
+                            <span class="link-text" style="color: #a94442;" onclick="deleteAmenity('Fence (Privacy)')">Delete</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Deck (Covered)</td>
+                        <td><span class="category-badge category-outdoor">Outdoor</span></td>
+                        <td>$3,500</td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td style="text-align: right;">
+                            <span class="link-text" onclick="openEditModal('Deck (Covered)', 'Outdoor', 3500, true)">Edit</span> • 
+                            <span class="link-text" style="color: #a94442;" onclick="deleteAmenity('Deck (Covered)')">Delete</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Patio (Covered)</td>
+                        <td><span class="category-badge category-outdoor">Outdoor</span></td>
+                        <td>$3,000</td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td style="text-align: right;">
+                            <span class="link-text" onclick="openEditModal('Patio (Covered)', 'Outdoor', 3000, true)">Edit</span> • 
+                            <span class="link-text" style="color: #a94442;" onclick="deleteAmenity('Patio (Covered)')">Delete</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Landscaping</td>
+                        <td><span class="category-badge category-outdoor">Outdoor</span></td>
+                        <td>$3,000</td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td style="text-align: right;">
+                            <span class="link-text" onclick="openEditModal('Landscaping', 'Outdoor', 3000, true)">Edit</span> • 
+                            <span class="link-text" style="color: #a94442;" onclick="deleteAmenity('Landscaping')">Delete</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Storage Building</td>
+                        <td><span class="category-badge category-outdoor">Outdoor</span></td>
+                        <td>$3,000</td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td style="text-align: right;">
+                            <span class="link-text" onclick="openEditModal('Storage Building', 'Outdoor', 3000, true)">Edit</span> • 
+                            <span class="link-text" style="color: #a94442;" onclick="deleteAmenity('Storage Building')">Delete</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Underground Sprinklers</td>
+                        <td><span class="category-badge category-outdoor">Outdoor</span></td>
+                        <td>$2,500</td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td style="text-align: right;">
+                            <span class="link-text" onclick="openEditModal('Underground Sprinklers', 'Outdoor', 2500, true)">Edit</span> • 
+                            <span class="link-text" style="color: #a94442;" onclick="deleteAmenity('Underground Sprinklers')">Delete</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Fence (Decorative)</td>
+                        <td><span class="category-badge category-outdoor">Outdoor</span></td>
+                        <td>$2,500</td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td style="text-align: right;">
+                            <span class="link-text" onclick="openEditModal('Fence (Decorative)', 'Outdoor', 2500, true)">Edit</span> • 
+                            <span class="link-text" style="color: #a94442;" onclick="deleteAmenity('Fence (Decorative)')">Delete</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Deck (Uncovered)</td>
+                        <td><span class="category-badge category-outdoor">Outdoor</span></td>
+                        <td>$2,000</td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td style="text-align: right;">
+                            <span class="link-text" onclick="openEditModal('Deck (Uncovered)', 'Outdoor', 2000, true)">Edit</span> • 
+                            <span class="link-text" style="color: #a94442;" onclick="deleteAmenity('Deck (Uncovered)')">Delete</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Shed</td>
+                        <td><span class="category-badge category-outdoor">Outdoor</span></td>
+                        <td>$1,800</td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td style="text-align: right;">
+                            <span class="link-text" onclick="openEditModal('Shed', 'Outdoor', 1800, true)">Edit</span> • 
+                            <span class="link-text" style="color: #a94442;" onclick="deleteAmenity('Shed')">Delete</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Patio (Uncovered)</td>
+                        <td><span class="category-badge category-outdoor">Outdoor</span></td>
+                        <td>$1,500</td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td style="text-align: right;">
+                            <span class="link-text" onclick="openEditModal('Patio (Uncovered)', 'Outdoor', 1500, true)">Edit</span> • 
+                            <span class="link-text" style="color: #a94442;" onclick="deleteAmenity('Patio (Uncovered)')">Delete</span>
+                        </td>
+                    </tr>
+                    <!-- Indoor Amenities -->
+                    <tr>
+                        <td>Home Theater Room</td>
+                        <td><span class="category-badge category-indoor">Indoor</span></td>
+                        <td>$12,000</td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td style="text-align: right;">
+                            <span class="link-text" onclick="openEditModal('Home Theater Room', 'Indoor', 12000, true)">Edit</span> • 
+                            <span class="link-text" style="color: #a94442;" onclick="deleteAmenity('Home Theater Room')">Delete</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Sauna/Steam Room</td>
+                        <td><span class="category-badge category-indoor">Indoor</span></td>
+                        <td>$10,000</td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td style="text-align: right;">
+                            <span class="link-text" onclick="openEditModal('Sauna/Steam Room', 'Indoor', 10000, true)">Edit</span> • 
+                            <span class="link-text" style="color: #a94442;" onclick="deleteAmenity('Sauna/Steam Room')">Delete</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Wine Cellar</td>
+                        <td><span class="category-badge category-indoor">Indoor</span></td>
+                        <td>$8,000</td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td style="text-align: right;">
+                            <span class="link-text" onclick="openEditModal('Wine Cellar', 'Indoor', 8000, true)">Edit</span> • 
+                            <span class="link-text" style="color: #a94442;" onclick="deleteAmenity('Wine Cellar')">Delete</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Workshop/Hobby Room</td>
+                        <td><span class="category-badge category-indoor">Indoor</span></td>
+                        <td>$5,000</td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td style="text-align: right;">
+                            <span class="link-text" onclick="openEditModal('Workshop/Hobby Room', 'Indoor', 5000, true)">Edit</span> • 
+                            <span class="link-text" style="color: #a94442;" onclick="deleteAmenity('Workshop/Hobby Room')">Delete</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Security System</td>
+                        <td><span class="category-badge category-indoor">Indoor</span></td>
+                        <td>$2,000</td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td style="text-align: right;">
+                            <span class="link-text" onclick="openEditModal('Security System', 'Indoor', 2000, true)">Edit</span> • 
+                            <span class="link-text" style="color: #a94442;" onclick="deleteAmenity('Security System')">Delete</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Central Vacuum</td>
+                        <td><span class="category-badge category-indoor">Indoor</span></td>
+                        <td>$1,500</td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td style="text-align: right;">
+                            <span class="link-text" onclick="openEditModal('Central Vacuum', 'Indoor', 1500, true)">Edit</span> • 
+                            <span class="link-text" style="color: #a94442;" onclick="deleteAmenity('Central Vacuum')">Delete</span>
+                        </td>
+                    </tr>
+                    <!-- Utilities Amenities -->
+                    <tr>
+                        <td>Solar Panels</td>
+                        <td><span class="category-badge category-utilities">Utilities</span></td>
+                        <td>$20,000</td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td style="text-align: right;">
+                            <span class="link-text" onclick="openEditModal('Solar Panels', 'Utilities', 20000, true)">Edit</span> • 
+                            <span class="link-text" style="color: #a94442;" onclick="deleteAmenity('Solar Panels')">Delete</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Generator (Whole House)</td>
+                        <td><span class="category-badge category-utilities">Utilities</span></td>
+                        <td>$8,000</td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td style="text-align: right;">
+                            <span class="link-text" onclick="openEditModal('Generator (Whole House)', 'Utilities', 8000, true)">Edit</span> • 
+                            <span class="link-text" style="color: #a94442;" onclick="deleteAmenity('Generator (Whole House)')">Delete</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Septic System</td>
+                        <td><span class="category-badge category-utilities">Utilities</span></td>
+                        <td>$8,000</td>
+                        <td><span class="badge badge-inactive">Inactive</span></td>
+                        <td style="text-align: right;">
+                            <span class="link-text" onclick="openEditModal('Septic System', 'Utilities', 8000, false)">Edit</span> • 
+                            <span class="link-text" style="color: #a94442;" onclick="deleteAmenity('Septic System')">Delete</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Well Water System</td>
+                        <td><span class="category-badge category-utilities">Utilities</span></td>
+                        <td>$5,000</td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td style="text-align: right;">
+                            <span class="link-text" onclick="openEditModal('Well Water System', 'Utilities', 5000, true)">Edit</span> • 
+                            <span class="link-text" style="color: #a94442;" onclick="deleteAmenity('Well Water System')">Delete</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Water Softener System</td>
+                        <td><span class="category-badge category-utilities">Utilities</span></td>
+                        <td>$2,000</td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td style="text-align: right;">
+                            <span class="link-text" onclick="openEditModal('Water Softener System', 'Utilities', 2000, true)">Edit</span> • 
+                            <span class="link-text" style="color: #a94442;" onclick="deleteAmenity('Water Softener System')">Delete</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>EV Charging Station</td>
+                        <td><span class="category-badge category-utilities">Utilities</span></td>
+                        <td>$1,500</td>
+                        <td><span class="badge badge-active">Active</span></td>
+                        <td style="text-align: right;">
+                            <span class="link-text" onclick="openEditModal('EV Charging Station', 'Utilities', 1500, true)">Edit</span> • 
+                            <span class="link-text" style="color: #a94442;" onclick="deleteAmenity('EV Charging Station')">Delete</span>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Footer -->
+        <div style="text-align: center; margin-top: 50px;">
+            <span style="font-weight: 300; font-size: 14px; color: #687F8B;">© 2024, Harken CRE, LLC</span>
+        </div>
+    </div>
+
+    <!-- Add/Edit Amenity Modal -->
+    <div id="amenityModal" class="modal-overlay" onclick="closeModal()">
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <h2 class="modal-title" id="modalTitle">Add New Amenity</h2>
+            <form onsubmit="saveAmenity(event)">
+                <label class="form-label">Amenity Name *</label>
+                <input type="text" id="amenityName" class="form-input" placeholder="e.g., Swimming Pool" required />
+
+                <label class="form-label">Category *</label>
+                <select id="amenityCategory" class="form-select" required>
+                    <option value="">Select Category</option>
+                    <option value="Outdoor">Outdoor</option>
+                    <option value="Indoor">Indoor</option>
+                    <option value="Utilities">Utilities</option>
+                </select>
+
+                <label class="form-label">Description</label>
+                <textarea id="amenityDescription" class="form-textarea" placeholder="Brief description of the amenity..."></textarea>
+
+                <label class="form-label">Default Adjustment Value (USD)</label>
+                <input type="number" id="amenityValue" class="form-input" placeholder="0" step="100" min="0" />
+
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                    <label class="form-label" style="margin-bottom: 0;">Active Status</label>
+                    <label class="toggle-switch">
+                        <input type="checkbox" id="amenityStatus" checked />
+                        <span class="toggle-slider"></span>
+                    </label>
+                    <span style="color: #687F8B; font-size: 13px;" id="statusText">Active</span>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="action-button action-button-secondary" onclick="closeModal()">Cancel</button>
+                    <button type="submit" class="action-button action-button-primary">Save Amenity</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Toggle status text
+        document.getElementById('amenityStatus').addEventListener('change', function() {
+            document.getElementById('statusText').textContent = this.checked ? 'Active' : 'Inactive';
+        });
+
+        // Open Add Modal
+        function openAddModal() {
+            document.getElementById('modalTitle').textContent = 'Add New Amenity';
+            document.getElementById('amenityName').value = '';
+            document.getElementById('amenityCategory').value = '';
+            document.getElementById('amenityDescription').value = '';
+            document.getElementById('amenityValue').value = '';
+            document.getElementById('amenityStatus').checked = true;
+            document.getElementById('statusText').textContent = 'Active';
+            document.getElementById('amenityModal').classList.add('active');
+        }
+
+        // Open Edit Modal
+        function openEditModal(name, category, value, active, description = '') {
+            document.getElementById('modalTitle').textContent = 'Edit Amenity';
+            document.getElementById('amenityName').value = name;
+            document.getElementById('amenityCategory').value = category;
+            document.getElementById('amenityDescription').value = description;
+            document.getElementById('amenityValue').value = value;
+            document.getElementById('amenityStatus').checked = active;
+            document.getElementById('statusText').textContent = active ? 'Active' : 'Inactive';
+            document.getElementById('amenityModal').classList.add('active');
+        }
+
+        // Close Modal
+        function closeModal() {
+            document.getElementById('amenityModal').classList.remove('active');
+        }
+
+        // Save Amenity
+        function saveAmenity(event) {
+            event.preventDefault();
+            const name = document.getElementById('amenityName').value;
+            const category = document.getElementById('amenityCategory').value;
+            const value = document.getElementById('amenityValue').value;
+            const status = document.getElementById('amenityStatus').checked;
+            
+            alert(`Amenity "${name}" saved successfully!\nCategory: ${category}\nValue: $${value}\nStatus: ${status ? 'Active' : 'Inactive'}`);
+            closeModal();
+        }
+
+        // Delete Amenity
+        function deleteAmenity(name) {
+            if (confirm(`Are you sure you want to delete "${name}"?\n\nThis will remove the amenity from the global list. Accounts that have customized this amenity will retain their custom version.`)) {
+                alert(`"${name}" has been deleted successfully.`);
+            }
+        }
+
+        // Filter Table
+        function filterTable() {
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+            const categoryFilter = document.getElementById('categoryFilter').value;
+            const table = document.getElementById('amenitiesTable');
+            const rows = table.getElementsByTagName('tr');
+
+            for (let i = 1; i < rows.length; i++) {
+                const row = rows[i];
+                const name = row.cells[0].textContent.toLowerCase();
+                const category = row.cells[1].textContent;
+                
+                const matchesSearch = name.includes(searchInput);
+                const matchesCategory = !categoryFilter || category.includes(categoryFilter);
+                
+                row.style.display = (matchesSearch && matchesCategory) ? '' : 'none';
+            }
+        }
+
+        // Sort Table
+        let sortDirection = {};
+        function sortTable(columnIndex) {
+            const table = document.getElementById('amenitiesTable');
+            const tbody = table.querySelector('tbody');
+            const rows = Array.from(tbody.querySelectorAll('tr'));
+            
+            // Toggle sort direction
+            sortDirection[columnIndex] = !sortDirection[columnIndex];
+            const ascending = sortDirection[columnIndex];
+            
+            rows.sort((a, b) => {
+                let aValue = a.cells[columnIndex].textContent.trim();
+                let bValue = b.cells[columnIndex].textContent.trim();
+                
+                // Handle currency values
+                if (columnIndex === 2) {
+                    aValue = parseInt(aValue.replace(/[$,]/g, ''));
+                    bValue = parseInt(bValue.replace(/[$,]/g, ''));
+                }
+                
+                if (aValue < bValue) return ascending ? -1 : 1;
+                if (aValue > bValue) return ascending ? 1 : -1;
+                return 0;
+            });
+            
+            // Rebuild table
+            rows.forEach(row => tbody.appendChild(row));
+        }
+
+        // Export CSV
+        function exportCSV() {
+            let csv = 'Name,Category,Default Value,Status\n';
+            const table = document.getElementById('amenitiesTable');
+            const rows = table.querySelectorAll('tbody tr');
+            
+            rows.forEach(row => {
+                if (row.style.display !== 'none') {
+                    const cols = row.querySelectorAll('td');
+                    const name = cols[0].textContent;
+                    const category = cols[1].textContent.replace(/\s+/g, ' ').trim();
+                    const value = cols[2].textContent;
+                    const status = cols[3].textContent.replace(/\s+/g, ' ').trim();
+                    csv += `"${name}","${category}","${value}","${status}"\n`;
+                }
+            });
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'harken-amenities-' + new Date().toISOString().split('T')[0] + '.csv';
+            a.click();
+        }
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        // Build Notes Toggle Function
+        function toggleBuildNotes(show) {
+            const notesSection = document.getElementById('buildNotesSection');
+            const toggleBtn = document.getElementById('showBuildNotesBtn');
+            
+            if (show) {
+                notesSection.style.display = 'block';
+                toggleBtn.style.display = 'none';
+                notesSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            } else {
+                notesSection.style.display = 'none';
+                toggleBtn.style.display = 'block';
+            }
+            
+            sessionStorage.setItem('buildNotesVisible', show);
+        }
+
+        // Restore preference on page load
+        window.addEventListener('DOMContentLoaded', function() {
+            const savedPreference = sessionStorage.getItem('buildNotesVisible');
+            if (savedPreference === 'false') {
+                toggleBuildNotes(false);
+            }
+        });
+    </script>
+</body>
+</html>
+
+
