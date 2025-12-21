@@ -9,8 +9,11 @@ interface PropertyCardProps {
 
 export const PropertyCard: React.FC<PropertyCardProps> = ({ property, isSubject }) => {
   return (
-    <div className={`flex flex-col h-full ${isSubject ? 'bg-blue-50' : 'bg-white'}`}>
-      <div className="relative h-20 w-full overflow-hidden group">
+    <div 
+      className={`flex flex-col h-full ${isSubject ? 'bg-blue-50' : 'bg-white'}`}
+      style={{ backgroundColor: isSubject ? '#eff6ff' : '#ffffff' }}
+    >
+      <div className="relative h-20 w-full overflow-hidden group" style={{ backgroundColor: isSubject ? '#dbeafe' : '#f1f5f9' }}>
         <img 
           src={property.image} 
           alt={property.name} 
@@ -22,13 +25,16 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property, isSubject 
           </div>
         )}
         {!isSubject && property.status && (
-          <div className="absolute top-1.5 right-1.5 bg-slate-900/70 backdrop-blur-sm text-white text-[10px] font-medium px-1.5 py-0.5 rounded shadow-sm">
+          <div className="absolute top-1.5 right-1.5 bg-slate-900 text-white text-[10px] font-medium px-1.5 py-0.5 rounded shadow-sm">
             {property.status}
           </div>
         )}
       </div>
       
-      <div className="p-2 flex-1 flex flex-col gap-1 border-b border-r border-slate-200">
+      <div 
+        className={`p-2 flex-1 flex flex-col gap-1 border-b border-r border-slate-200 ${isSubject ? 'bg-blue-50' : 'bg-white'}`}
+        style={{ backgroundColor: isSubject ? '#eff6ff' : '#ffffff' }}
+      >
         <h3 className="font-bold text-slate-800 text-xs leading-tight line-clamp-1" title={property.name}>
           {property.name}
         </h3>

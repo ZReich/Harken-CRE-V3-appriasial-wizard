@@ -1,6 +1,7 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import WizardLayout from '../components/WizardLayout';
 import EnhancedTextArea from '../components/EnhancedTextArea';
+import WizardGuidancePanel from '../components/WizardGuidancePanel';
 import { useWizard } from '../context/WizardContext';
 import { Trash2, Plus, Lock } from 'lucide-react';
 import {
@@ -16,6 +17,12 @@ import {
   CurrencyIcon,
   ConstructionIcon,
 } from '../components/icons';
+import { SidebarTab } from '../components/SidebarTab';
+import { SectionProgressSummary } from '../components/SectionProgressSummary';
+import { useCompletion } from '../hooks/useCompletion';
+import { useCelebration } from '../hooks/useCelebration';
+import { useSmartContinue } from '../hooks/useSmartContinue';
+import { getSetupGuidance } from '../constants/setupGuidance';
 
 // ==========================================
 // SETUP TAB CONFIGURATION
@@ -279,7 +286,7 @@ const scenarioNameOptions = [
 // MAIN COMPONENT
 // ==========================================
 export default function SetupPage() {
-  const { state: wizardState, addOwner, updateOwner, removeOwner } = useWizard();
+  const { state: wizardState, addOwner, updateOwner, removeOwner, setScenarios: syncScenariosToContext, setPropertyType: syncPropertyType } = useWizard();
   const [activeTab, setActiveTab] = useState('basics');
   
   // Track which fields are locked (pre-filled from extraction)
@@ -306,9 +313,6 @@ export default function SetupPage() {
   const [propertyName, setPropertyName] = useState('');
   const [legalDescription, setLegalDescription] = useState('');
   const [taxId, setTaxId] = useState('');
-  const [lastSaleDate, setLastSaleDate] = useState('');
-  const [lastSalePrice, setLastSalePrice] = useState('');
-  const [salesHistory, setSalesHistory] = useState('');
   
   // Pre-fill from extracted data on mount
   useEffect(() => {
@@ -344,7 +348,7 @@ export default function SetupPage() {
             setTaxId(cad.taxId.value);
             newLocks['taxId'] = true;
           }
-          if (cad.owner?.value && wizardState.owners.length > 0) {
+          if (cad.owner?.value && wizardState.owners?.length > 0) {
             updateOwner(wizardState.owners[0].id, { name: cad.owner.value });
             newLocks['owner'] = true;
           }
@@ -365,18 +369,7 @@ export default function SetupPage() {
           }
         }
         
-        // Pre-fill from sale agreement
-        if (extracted.sale) {
-          const sale = extracted.sale;
-          if (sale.saleDate?.value) {
-            setLastSaleDate(sale.saleDate.value);
-            newLocks['lastSaleDate'] = true;
-          }
-          if (sale.salePrice?.value) {
-            setLastSalePrice(sale.salePrice.value);
-            newLocks['lastSalePrice'] = true;
-          }
-        }
+        // Note: Sale agreement data is now handled in SubjectDataPage Tax & Ownership tab
         
         setLockedFields(newLocks);
       } catch (e) {
@@ -385,9 +378,8 @@ export default function SetupPage() {
     }
   }, []);
   
-  // Inspection state
+  // Inspection state (inspectionDate now uses dates.inspectionDate from Key Dates section)
   const [inspectionType, setInspectionType] = useState('interior_exterior');
-  const [inspectionDate, setInspectionDate] = useState('');
   const [personalInspection, setPersonalInspection] = useState(true);
   const [inspectorName, setInspectorName] = useState('');
   const [inspectorLicense, setInspectorLicense] = useState('');
@@ -415,6 +407,26 @@ export default function SetupPage() {
       });
     }
   }, [context]);
+
+  // Sync local scenarios to WizardContext whenever they change
+  useEffect(() => {
+    // Convert local Scenario format to AppraisalScenario format for context
+    const contextScenarios = scenarios.map(s => ({
+      id: s.id,
+      name: s.name,
+      approaches: s.approaches,
+      effectiveDate: s.effectiveDate || '',
+      isRequired: s.isRequired || false,
+    }));
+    syncScenariosToContext(contextScenarios);
+  }, [scenarios, syncScenariosToContext]);
+
+  // Sync property type to WizardContext when it changes
+  useEffect(() => {
+    if (context.propertyType) {
+      syncPropertyType(context.propertyType, context.subType || undefined);
+    }
+  }, [context.propertyType, context.subType, syncPropertyType]);
   
   // Helper to check if occupancy question should show
   const shouldShowOccupancyQuestion = () => {
@@ -548,6 +560,9 @@ export default function SetupPage() {
               />
             </div>
           </div>
+          <p className="text-xs text-gray-400 mt-3">
+            This is the primary parcel address. For multi-parcel properties, additional addresses can be entered in Subject Data &gt; Improvements.
+          </p>
         </div>
       </div>
 
@@ -1096,7 +1111,7 @@ export default function SetupPage() {
               placeholder="Enter legal description..."
               rows={4}
               sectionContext="legal_description"
-              helperText="Include lot, block, subdivision, section, township and range information"
+              helperText="Include lot, block, subdivision, section, township and range information. For multi-parcel properties, additional legal descriptions can be entered in Subject Data > Improvements."
             />
           </div>
         </div>
@@ -1194,10 +1209,10 @@ export default function SetupPage() {
         </div>
       </div>
 
-      {/* Tax & Sale History Section */}
+      {/* Tax Identification Section */}
       <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
         <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
-          Tax & Sale History
+          Tax Identification
         </h3>
         <div className="grid grid-cols-2 gap-4">
           <div>
@@ -1223,77 +1238,17 @@ export default function SetupPage() {
               }`}
               placeholder="Enter tax ID..."
             />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Property Name (Optional)</label>
-            <input
-              type="text"
-              value={propertyName}
-              onChange={(e) => setPropertyName(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
-              placeholder="e.g., Canyon Creek Industrial Complex"
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Last Sale Date
-              {lockedFields['lastSaleDate'] && (
-                <button
-                  onClick={() => setLockedFields(prev => ({ ...prev, lastSaleDate: false }))}
-                  className="ml-2 text-[#0da1c7]"
-                  title="Unlock to edit"
-                >
-                  <Lock className="w-3 h-3 inline" />
-                </button>
-              )}
-            </label>
-            <input
-              type="date"
-              value={lastSaleDate}
-              onChange={(e) => setLastSaleDate(e.target.value)}
-              disabled={lockedFields['lastSaleDate']}
-              className={`w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent ${
-                lockedFields['lastSaleDate'] ? 'bg-blue-50 border-blue-200' : ''
-              }`}
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Last Sale Price
-              {lockedFields['lastSalePrice'] && (
-                <button
-                  onClick={() => setLockedFields(prev => ({ ...prev, lastSalePrice: false }))}
-                  className="ml-2 text-[#0da1c7]"
-                  title="Unlock to edit"
-                >
-                  <Lock className="w-3 h-3 inline" />
-                </button>
-              )}
-            </label>
-            <input
-              type="text"
-              value={lastSalePrice}
-              onChange={(e) => setLastSalePrice(e.target.value)}
-              disabled={lockedFields['lastSalePrice']}
-              className={`w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent ${
-                lockedFields['lastSalePrice'] ? 'bg-blue-50 border-blue-200' : ''
-              }`}
-              placeholder="$0.00"
-            />
+            <p className="text-xs text-gray-400 mt-1">
+              This is the primary parcel. Additional parcels can be added in Subject Data &gt; Improvements.
+            </p>
           </div>
         </div>
-        <div className="mt-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Transaction History (Last 3 Years) <span className="text-red-500">*</span>
-          </label>
-          <textarea
-            value={salesHistory}
-            onChange={(e) => setSalesHistory(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
-            rows={4}
-            placeholder="Document any sales, transfers, listings, or offers within the past 3 years per USPAP requirements..."
-          />
-        </div>
+        <p className="text-xs text-gray-500 mt-3 flex items-center gap-1">
+          <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          <span>Sale history and transaction details are captured in Subject Data &gt; Tax &amp; Ownership.</span>
+        </p>
       </div>
     </div>
   );
@@ -1318,13 +1273,17 @@ export default function SetupPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Date of Inspection</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Date of Inspection
+              <span className="text-xs text-gray-500 font-normal ml-2">(from Key Dates)</span>
+            </label>
             <input
               type="date"
-              value={inspectionDate}
-              onChange={(e) => setInspectionDate(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+              value={dates.inspectionDate}
+              onChange={(e) => setDates({ ...dates, inspectionDate: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-blue-50 border-blue-200"
             />
+            <p className="text-xs text-blue-600 mt-1">Synced with Assignment Basics &gt; Key Dates</p>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">Did you personally inspect the property?</label>
@@ -1495,6 +1454,39 @@ export default function SetupPage() {
   };
 
   // ==========================================
+  // PROGRESS TRACKING
+  // ==========================================
+  const { tabCompletions, sectionCompletion, trackTabChange, getInitialTab } = useCompletion('setup');
+  const { checkAndTriggerCelebration } = useCelebration();
+
+  // Track tab changes for smart navigation
+  useEffect(() => {
+    trackTabChange(activeTab);
+  }, [activeTab, trackTabChange]);
+
+  // Check if section just completed
+  useEffect(() => {
+    if (sectionCompletion === 100) {
+      checkAndTriggerCelebration('setup');
+    }
+  }, [sectionCompletion, checkAndTriggerCelebration]);
+
+  // Smart continue logic
+  const { handleContinue } = useSmartContinue({
+    sectionId: 'setup',
+    tabs: setupTabs.map(t => t.id),
+    activeTab,
+    setActiveTab,
+    currentPhase: 3,
+  });
+
+  // Get completion percentage for a specific tab
+  const getTabCompletion = (tabId: string): number => {
+    const tabData = tabCompletions.find(t => t.id === tabId);
+    return tabData?.completion || 0;
+  };
+
+  // ==========================================
   // SIDEBAR COMPONENTS
   // ==========================================
   const sidebar = (
@@ -1504,93 +1496,36 @@ export default function SetupPage() {
         {context.propertyType ? `${context.propertyType.charAt(0).toUpperCase() + context.propertyType.slice(1)}${context.subType ? ` • ${context.subType}` : ''}` : 'Configure Assignment'}
       </p>
       <nav className="space-y-1">
-        {setupTabs.map((tab) => {
-          const Icon = tab.Icon;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`w-full text-left px-4 py-3 rounded-lg text-sm flex items-center gap-3 transition-colors ${
-                activeTab === tab.id
-                  ? 'bg-[#0da1c7]/10 text-[#0da1c7] font-medium'
-                  : 'text-gray-600 hover:bg-gray-100'
-              }`}
-            >
-              <Icon className="w-5 h-5" />
-              {tab.label}
-            </button>
-          );
-        })}
+        {setupTabs.map((tab) => (
+          <SidebarTab
+            key={tab.id}
+            id={tab.id}
+            label={tab.label}
+            Icon={tab.Icon}
+            isActive={activeTab === tab.id}
+            completion={getTabCompletion(tab.id)}
+            showProgress={true}
+            onClick={() => setActiveTab(tab.id)}
+          />
+        ))}
       </nav>
+      <SectionProgressSummary completion={sectionCompletion} />
     </div>
   );
 
-  const helpSidebar = (
-    <div>
-      <h3 className="text-lg font-bold text-gray-900 mb-3">
-        {activeTab === 'basics' ? 'Assignment Basics' : 
-         activeTab === 'purpose' ? 'Purpose & Scope' :
-         activeTab === 'property' ? 'Property Identification' :
-         activeTab === 'inspection' ? 'Inspection & Teams' :
-         'Certifications'}
-      </h3>
-      <p className="text-sm text-gray-600 mb-4">
-        {activeTab === 'basics'
-          ? 'Select the property type and sub-type. This determines which valuation approaches are most appropriate and which sections of the report will be emphasized.'
-          : activeTab === 'purpose'
-          ? 'Define the type of value being estimated and the property interest being appraised.'
-          : activeTab === 'property'
-          ? 'Provide complete identification of the property including address, legal description, and ownership information.'
-          : activeTab === 'inspection'
-          ? 'Document who inspected the property and when. USPAP requires disclosure of any assistance received.'
-          : 'Complete required certifications and limiting conditions.'}
-      </p>
-      
-      {activeTab === 'basics' && (
-        <>
-          <div className="bg-blue-50 border-l-4 border-blue-500 p-3 rounded mb-3">
-            <h4 className="font-semibold text-sm text-blue-900 mb-1">Smart Automation</h4>
-            <p className="text-xs text-blue-800">Your property type and status selections automatically configure the required valuation scenarios and approaches per USPAP and Interagency Guidelines.</p>
-          </div>
-          <div className="bg-green-50 border-l-4 border-green-500 p-3 rounded mb-3">
-            <h4 className="font-semibold text-sm text-green-900 mb-1">Effective Date Tip</h4>
-            <p className="text-xs text-green-800">The Effective Date is required by USPAP. For "As Is" values, use your inspection date. For prospective scenarios, use the anticipated completion or stabilization date.</p>
-          </div>
-          <div className="bg-purple-50 border-l-4 border-purple-500 p-3 rounded">
-            <h4 className="font-semibold text-sm text-purple-900 mb-1">Multiple Scenarios?</h4>
-            <p className="text-xs text-purple-800">Construction loans and value-add projects often require multiple values (As Is + As Completed + As Stabilized). Each scenario will have its own effective date.</p>
-          </div>
-        </>
-      )}
-      
-      {activeTab === 'purpose' && (
-        <>
-          <div className="bg-amber-50 border-l-4 border-amber-500 p-3 rounded mb-3">
-            <h4 className="font-semibold text-sm text-amber-900 mb-1">Purpose of Appraisal</h4>
-            <p className="text-xs text-amber-800">Most assignments require Market Value. Other purposes like Insurable or Liquidation Value have specific definitions and methodologies.</p>
-          </div>
-          <div className="bg-blue-50 border-l-4 border-blue-500 p-3 rounded">
-            <h4 className="font-semibold text-sm text-blue-900 mb-1">Property Interest</h4>
-            <p className="text-xs text-blue-800">Fee Simple is most common. Use Leased Fee when property has in-place leases, or Leasehold when valuing a tenant's interest.</p>
-          </div>
-        </>
-      )}
-      
-      {activeTab === 'property' && (
-        <div className="bg-green-50 border-l-4 border-green-500 p-3 rounded">
-          <h4 className="font-semibold text-sm text-green-900 mb-1">Best Practice</h4>
-          <p className="text-xs text-green-800">Verify the legal description matches current deed records and include all parcels if the property consists of multiple tax lots.</p>
-        </div>
-      )}
-      
-      {activeTab === 'inspection' && (
-        <div className="bg-purple-50 border-l-4 border-purple-500 p-3 rounded">
-          <h4 className="font-semibold text-sm text-purple-900 mb-1">USPAP Disclosure</h4>
-          <p className="text-xs text-purple-800">You must disclose any significant professional assistance received in the assignment.</p>
-        </div>
-      )}
-    </div>
-  );
+  // Get guidance content for the active tab
+  const activeGuidance = useMemo(() => {
+    return getSetupGuidance(activeTab);
+  }, [activeTab]);
+
+  // New enhanced guidance panel
+  const helpSidebar = activeGuidance ? (
+    <WizardGuidancePanel
+      sectionId={activeTab}
+      guidance={activeGuidance}
+      themeAccent="#0da1c7"
+    />
+  ) : null;
 
   return (
     <WizardLayout
@@ -1598,7 +1533,8 @@ export default function SetupPage() {
       subtitle="Phase 3 of 6 • Assignment Details"
       phase={3}
       sidebar={sidebar}
-      helpSidebar={helpSidebar}
+      helpSidebarGuidance={helpSidebar}
+      onContinue={handleContinue}
     >
       <div className="max-w-4xl mx-auto animate-fade-in">
         {renderTabContent()}

@@ -90,38 +90,78 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
   };
 
   const applyFormatting = (format: string) => {
-    // Simple formatting - in a real app, you'd use a rich text editor library
-    const textarea = document.getElementById('notes-textarea') as HTMLTextAreaElement;
-    if (!textarea) return;
+    // Use execCommand for rich text formatting
+    const editor = document.getElementById('notes-editor');
+    if (!editor) return;
     
-    const start = textarea.selectionStart;
-    const end = textarea.selectionEnd;
-    const selectedText = notesContent.substring(start, end);
+    editor.focus();
     
-    let formattedText = selectedText;
     switch (format) {
       case 'bold':
-        formattedText = `**${selectedText}**`;
+        document.execCommand('bold', false);
         break;
       case 'italic':
-        formattedText = `*${selectedText}*`;
+        document.execCommand('italic', false);
         break;
       case 'underline':
-        formattedText = `__${selectedText}__`;
+        document.execCommand('underline', false);
+        break;
+      case 'alignLeft':
+        document.execCommand('justifyLeft', false);
+        break;
+      case 'alignCenter':
+        document.execCommand('justifyCenter', false);
         break;
       case 'bullet':
-        formattedText = `\n• ${selectedText}`;
+        document.execCommand('insertUnorderedList', false);
         break;
     }
     
-    const newContent = notesContent.substring(0, start) + formattedText + notesContent.substring(end);
-    setNotesContent(newContent);
+    // Update state with new content
+    setTimeout(() => {
+      if (editor) {
+        setNotesContent(editor.innerHTML);
+      }
+    }, 0);
+  };
+  
+  const handleEditorInput = () => {
+    const editor = document.getElementById('notes-editor');
+    if (editor) {
+      setNotesContent(editor.innerHTML);
+    }
   };
 
   const getPropertyName = (propId: string) => {
     const prop = properties.find(p => p.id === propId);
     return prop?.name || propId;
   };
+
+  // Strip HTML tags for preview display
+  const stripHtml = (html: string) => {
+    const tmp = document.createElement('div');
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || '';
+  };
+
+  // Focus editor when modal opens
+  useEffect(() => {
+    if (notesEditor?.isOpen) {
+      setTimeout(() => {
+        const editor = document.getElementById('notes-editor');
+        if (editor) {
+          editor.focus();
+          // Move cursor to end
+          const range = document.createRange();
+          const selection = window.getSelection();
+          range.selectNodeContents(editor);
+          range.collapse(false);
+          selection?.removeAllRanges();
+          selection?.addRange(range);
+        }
+      }, 100);
+    }
+  }, [notesEditor?.isOpen]);
 
   const LABEL_COL_WIDTH = 160;
   const SUBJECT_COL_WIDTH = 180;
@@ -271,20 +311,262 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
     return <span onClick={onClick} className={`${baseClass} bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100`}><Minus className="w-3 h-3" /> SIM</span>;
   };
 
+  // Click-to-cycle function for qualitative adjustments
+  const cycleQualitativeValue = (currentFlag: string | undefined): { value: string, flag: 'similar' | 'superior' | 'inferior' } => {
+    const cycle: { value: string, flag: 'similar' | 'superior' | 'inferior' }[] = [
+      { value: 'Similar', flag: 'similar' },
+      { value: 'Superior', flag: 'superior' },
+      { value: 'Inferior', flag: 'inferior' }
+    ];
+    const currentIndex = cycle.findIndex(c => c.flag === currentFlag?.toLowerCase());
+    const nextIndex = (currentIndex + 1) % cycle.length;
+    return cycle[nextIndex];
+  };
+
+  // Qualitative Chip Component - click to cycle through values
+  const QualitativeChip = ({ propId, rowKey }: { propId: string, rowKey: string }) => {
+    const currentValue = values[propId]?.[rowKey];
+    const flag = currentValue?.flag || 'similar';
+    
+    const handleClick = () => {
+      const next = cycleQualitativeValue(flag);
+      setValues(prev => ({
+        ...prev,
+        [propId]: {
+          ...prev[propId],
+          [rowKey]: { value: next.value, flag: next.flag }
+        }
+      }));
+    };
+
+    const isSup = flag === 'superior';
+    const isInf = flag === 'inferior';
+    const baseClass = `inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide border shadow-sm transition-all cursor-pointer select-none active:scale-95`;
+    
+    if (isSup) return (
+      <span 
+        onClick={handleClick} 
+        className={`${baseClass} bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 hover:border-emerald-300`}
+        title="Click to change"
+      >
+        <ArrowUpRight className="w-3 h-3" /> SUP
+      </span>
+    );
+    if (isInf) return (
+      <span 
+        onClick={handleClick} 
+        className={`${baseClass} bg-red-50 text-red-700 border-red-200 hover:bg-red-100 hover:border-red-300`}
+        title="Click to change"
+      >
+        <ArrowDownRight className="w-3 h-3" /> INF
+      </span>
+    );
+    return (
+      <span 
+        onClick={handleClick} 
+        className={`${baseClass} bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100 hover:border-slate-300`}
+        title="Click to change"
+      >
+        <Minus className="w-3 h-3" /> SIM
+      </span>
+    );
+  };
+
+  // Preset percent options for quantitative adjustments
+  const percentOptions = [
+    { value: 0.20, label: '+20%' },
+    { value: 0.175, label: '+17.5%' },
+    { value: 0.15, label: '+15%' },
+    { value: 0.125, label: '+12.5%' },
+    { value: 0.10, label: '+10%' },
+    { value: 0.075, label: '+7.5%' },
+    { value: 0.05, label: '+5%' },
+    { value: 0.025, label: '+2.5%' },
+    { value: 0, label: '0%' },
+    { value: -0.025, label: '-2.5%' },
+    { value: -0.05, label: '-5%' },
+    { value: -0.075, label: '-7.5%' },
+    { value: -0.10, label: '-10%' },
+    { value: -0.125, label: '-12.5%' },
+    { value: -0.15, label: '-15%' },
+    { value: -0.175, label: '-17.5%' },
+    { value: -0.20, label: '-20%' },
+  ];
+
+  // State for adjustment mode (Percent or Dollar)
+  const [adjustmentMode, setAdjustmentMode] = useState<'Percent' | 'Dollar'>('Percent');
+  const [customInputValue, setCustomInputValue] = useState<string>('');
+
   const renderQuantitativeCell = (propId: string, row: GridRowData, valObj: ComparisonValue) => {
     const numericValue = typeof valObj.value === 'number' ? valObj.value : 0;
     const isOpen = activePopover?.rowId === row.id && activePopover?.propId === propId;
-    return <div className="flex items-center w-full relative">
-       <AdjustmentBadge flag={numericValue < 0 ? 'superior' : numericValue > 0 ? 'inferior' : 'similar'} value={numericValue} onClick={() => setActivePopover(isOpen ? null : { rowId: row.id, propId, field: 'value' })} />
-       {isOpen && (
-         <div className="adjustment-popover absolute top-full right-0 mt-2 w-32 bg-white rounded-xl shadow-2xl border border-slate-200 z-[200] p-2">
-            <input type="number" autoFocus className="w-full text-xs border rounded px-2 py-1" placeholder="%" onBlur={(e) => {
-                updateValue(propId, row.key, parseFloat(e.target.value) / 100 || 0, 'value');
-                setActivePopover(null);
-            }} />
-         </div>
-       )}
-    </div>;
+
+    const getStatusLabel = (val: number) => val > 0 ? 'INF' : val < 0 ? 'SUP' : 'SIM';
+    
+    return (
+      <div className="flex items-center w-full relative">
+        <AdjustmentBadge 
+          flag={numericValue < 0 ? 'superior' : numericValue > 0 ? 'inferior' : 'similar'} 
+          value={numericValue} 
+          onClick={() => {
+            setActivePopover(isOpen ? null : { rowId: row.id, propId, field: 'value' });
+            setCustomInputValue('');
+          }} 
+        />
+        {isOpen && (
+          <div className="adjustment-popover absolute top-full left-0 mt-2 w-48 bg-white rounded-xl shadow-2xl border border-slate-200 z-[200] overflow-hidden">
+            {/* Mode Toggle Header */}
+            <div className="flex items-center justify-between px-3 py-2 border-b border-slate-100 bg-slate-50">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+                Adjustment Mode
+              </span>
+              <div className="flex gap-1">
+                <button
+                  type="button"
+                  className={`px-2.5 py-1 text-xs font-bold rounded-md transition-all ${
+                    adjustmentMode === 'Percent'
+                      ? 'bg-[#0da1c7] text-white shadow-sm'
+                      : 'bg-white text-slate-500 border border-slate-200 hover:bg-slate-50'
+                  }`}
+                  onClick={() => setAdjustmentMode('Percent')}
+                >
+                  %
+                </button>
+                <button
+                  type="button"
+                  className={`px-2.5 py-1 text-xs font-bold rounded-md transition-all ${
+                    adjustmentMode === 'Dollar'
+                      ? 'bg-[#0da1c7] text-white shadow-sm'
+                      : 'bg-white text-slate-500 border border-slate-200 hover:bg-slate-50'
+                  }`}
+                  onClick={() => setAdjustmentMode('Dollar')}
+                >
+                  $
+                </button>
+              </div>
+            </div>
+
+            {adjustmentMode === 'Percent' ? (
+              <>
+                {/* Scrollable Percent Options */}
+                <div className="max-h-48 overflow-y-auto">
+                  {percentOptions.map((option) => (
+                    <button
+                      type="button"
+                      key={option.value}
+                      className={`w-full px-3 py-2 text-left text-sm hover:bg-slate-50 flex items-center justify-between transition-colors ${
+                        numericValue === option.value ? 'bg-blue-50 text-blue-700' : ''
+                      }`}
+                      onClick={() => {
+                        updateValue(propId, row.key, option.value, 'value');
+                        setActivePopover(null);
+                      }}
+                    >
+                      <span className="font-medium">{option.label}</span>
+                      <span className={`text-[10px] uppercase font-bold px-1.5 py-0.5 rounded ${
+                        option.value > 0 
+                          ? 'text-red-600 bg-red-50' 
+                          : option.value < 0 
+                            ? 'text-emerald-600 bg-emerald-50' 
+                            : 'text-slate-500 bg-slate-100'
+                      }`}>
+                        {getStatusLabel(option.value)}
+                      </span>
+                    </button>
+                  ))}
+                </div>
+                {/* Custom Input */}
+                <div className="border-t border-slate-100 px-3 py-2.5 bg-slate-50">
+                  <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">
+                    Custom %
+                  </label>
+                  <div className="flex gap-2 mt-1.5">
+                    <input
+                      type="text"
+                      className="flex-1 border border-slate-200 rounded-md px-2 py-1.5 text-sm focus:outline-none focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                      value={customInputValue}
+                      placeholder="e.g. 12.5"
+                      onChange={(e) => {
+                        const val = e.target.value.replace(/[^0-9.-]/g, '');
+                        setCustomInputValue(val);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter') {
+                          const parsed = parseFloat(customInputValue) / 100;
+                          if (!isNaN(parsed)) {
+                            updateValue(propId, row.key, parsed, 'value');
+                            setActivePopover(null);
+                          }
+                        }
+                      }}
+                    />
+                    <button
+                      type="button"
+                      className="px-3 py-1.5 bg-[#0da1c7] text-white text-xs font-bold rounded-md hover:bg-[#0b8eaf] transition-colors"
+                      onClick={() => {
+                        const parsed = parseFloat(customInputValue) / 100;
+                        if (!isNaN(parsed)) {
+                          updateValue(propId, row.key, parsed, 'value');
+                          setActivePopover(null);
+                        }
+                      }}
+                    >
+                      Apply
+                    </button>
+                  </div>
+                  <p className="text-[10px] text-slate-400 mt-1">
+                    Positive = inferior, negative = superior
+                  </p>
+                </div>
+              </>
+            ) : (
+              /* Dollar Mode Input */
+              <div className="p-3 space-y-2">
+                <label className="text-[10px] font-bold text-slate-500 uppercase tracking-wide">
+                  Dollar Adjustment
+                </label>
+                <input
+                  type="text"
+                  autoFocus
+                  className="w-full border border-slate-200 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                  placeholder="Enter amount"
+                  value={customInputValue}
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/[^0-9.-]/g, '');
+                    setCustomInputValue(val);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      const parsed = parseFloat(customInputValue) / 1000; // Store as fraction
+                      if (!isNaN(parsed)) {
+                        updateValue(propId, row.key, parsed, 'value');
+                        setActivePopover(null);
+                      }
+                    }
+                  }}
+                />
+                <button
+                  type="button"
+                  className="w-full px-3 py-2 bg-[#0da1c7] text-white text-xs font-bold rounded-md hover:bg-[#0b8eaf] transition-colors"
+                  onClick={() => {
+                    const parsed = parseFloat(customInputValue) / 1000;
+                    if (!isNaN(parsed)) {
+                      updateValue(propId, row.key, parsed, 'value');
+                      setActivePopover(null);
+                    }
+                  }}
+                >
+                  Apply Dollar Adjustment
+                </button>
+                <p className="text-[10px] text-slate-400">
+                  Positive = inferior, negative = superior
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    );
   };
 
   const visibleRows = rows.filter(r => r.mode === 'both' || r.mode === analysisMode);
@@ -293,26 +575,38 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
     <div className="flex flex-col h-full bg-slate-50 relative overflow-hidden">
       
       {/* SCROLLABLE AREA - Contains grid and reconciliation */}
-      <div className="flex-1 overflow-auto custom-scrollbar relative bg-white">
+      <div className="flex-1 overflow-auto custom-scrollbar relative" style={{ backgroundColor: '#ffffff', isolation: 'isolate' }}>
         {/* GRID CONTAINER */}
-        <div className="grid relative bg-white" style={{ gridTemplateColumns: `${LABEL_COL_WIDTH}px ${SUBJECT_COL_WIDTH}px repeat(${properties.length - 1}, ${COMP_COL_WIDTH}px)`, minWidth: `${totalGridWidth}px` }}>
+        <div className="grid relative" style={{ gridTemplateColumns: `${LABEL_COL_WIDTH}px ${SUBJECT_COL_WIDTH}px repeat(${properties.length - 1}, ${COMP_COL_WIDTH}px)`, minWidth: `${totalGridWidth}px`, backgroundColor: '#ffffff' }}>
             
-            {/* Header Row - Sticky to top */}
+            {/* Header Row - Sticky to top with solid backgrounds */}
             <div 
-              className="sticky top-0 left-0 z-[120] bg-white border-b-2 border-slate-300 p-2 pl-3 flex items-end" 
-              style={{ width: LABEL_COL_WIDTH }}
+              className="sticky top-0 left-0 z-[120] border-b-2 border-slate-300 p-2 pl-3 flex items-end" 
+              style={{ 
+                width: LABEL_COL_WIDTH, 
+                backgroundColor: '#ffffff', 
+                boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                transform: 'translateZ(0)',
+                willChange: 'transform'
+              }}
             >
               <div className="font-bold text-slate-400 text-xs uppercase tracking-wider">Elements</div>
             </div>
             {properties.map((prop) => (
                <div 
                  key={prop.id} 
-                 className={`sticky top-0 border-b-2 border-r ${
+                 className={`sticky top-0 border-b-2 border-r overflow-hidden ${
                    prop.type === 'subject' 
-                     ? 'z-[110] border-blue-300 bg-blue-50 shadow-[4px_0_16px_rgba(0,0,0,0.08)]' 
-                     : 'z-[100] border-slate-300 bg-white'
+                     ? 'z-[110] border-blue-300 shadow-[4px_0_16px_rgba(0,0,0,0.08)]' 
+                     : 'z-[100] border-slate-300'
                  }`} 
-                 style={prop.type === 'subject' ? { left: LABEL_COL_WIDTH, width: SUBJECT_COL_WIDTH, position: 'sticky' } : {}}
+                 style={{ 
+                   backgroundColor: prop.type === 'subject' ? '#eff6ff' : '#ffffff',
+                   boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                   transform: 'translateZ(0)',
+                   willChange: 'transform',
+                   ...(prop.type === 'subject' ? { left: LABEL_COL_WIDTH, width: SUBJECT_COL_WIDTH, position: 'sticky' as const } : {})
+                 }}
                >
                   <PropertyCard property={prop} isSubject={prop.type === 'subject'} />
                </div>
@@ -325,19 +619,19 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
               return (
                 <React.Fragment key={section.id}>
                   {/* Section Header - Full Width */}
-                  <div className={`col-span-full relative z-[50] mt-4 border-y ${
-                    hasResidualRows ? 'border-purple-300' : 'border-slate-200'
-                  }`}>
-                    <div className={`absolute left-0 right-0 h-full opacity-30 ${
-                      hasResidualRows ? 'bg-purple-50' : section.color
-                    }`}></div>
+                  <div 
+                    className={`col-span-full relative z-[50] mt-4 border-y ${
+                      hasResidualRows ? 'border-purple-300' : 'border-slate-200'
+                    }`}
+                    style={{ backgroundColor: hasResidualRows ? '#faf5ff' : '#f9fafb' }}
+                  >
                     <div 
-                      className={`sticky left-0 w-fit px-4 py-2 font-bold text-xs uppercase tracking-widest backdrop-blur-sm flex items-center gap-2 ${
+                      className={`sticky left-0 w-fit px-4 py-2 font-bold text-xs uppercase tracking-widest flex items-center gap-2 ${
                         hasResidualRows 
-                          ? 'bg-purple-50/95 text-purple-700' 
-                          : 'bg-gray-50/95 text-slate-700'
+                          ? 'text-purple-700' 
+                          : 'text-slate-700'
                       }`}
-                      style={{ zIndex: 51 }}
+                      style={{ zIndex: 51, backgroundColor: hasResidualRows ? '#faf5ff' : '#f9fafb' }}
                     >
                         {section.title}
                         {canDeleteSection && (
@@ -388,10 +682,9 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                       {properties.map(prop => {
                         const isNotesRow = row.key === 'notes';
                         const noteValue = values[prop.id]?.[row.key]?.value;
-                        const hasNotes = noteValue && 
-                          typeof noteValue === 'string' && 
-                          noteValue.trim() !== '' && 
-                          !noteValue.toLowerCase().includes('click to');
+                        const noteText = typeof noteValue === 'string' ? stripHtml(noteValue) : '';
+                        const hasNotes = noteText.trim() !== '' && 
+                          !noteText.toLowerCase().includes('click to');
                         
                         return (
                           <div 
@@ -418,13 +711,15 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                                <div className="flex items-center gap-1.5 w-full">
                                  <MessageSquare className={`w-3 h-3 flex-shrink-0 ${hasNotes ? 'text-[#0da1c7]' : 'text-slate-300'}`} />
                                  <span className={`truncate ${hasNotes ? 'text-slate-700' : 'text-slate-400 italic'}`}>
-                                   {hasNotes && typeof noteValue === 'string' 
-                                     ? (noteValue.length > 25 ? noteValue.substring(0, 25) + '...' : noteValue) 
+                                   {hasNotes 
+                                     ? (noteText.length > 30 ? noteText.substring(0, 30) + '...' : noteText) 
                                      : 'Click to add notes'}
                                  </span>
                                </div>
                              ) : section.id === 'quantitative' && prop.type !== 'subject' 
                                ? renderQuantitativeCell(prop.id, row, values[prop.id]?.[row.key] || { value: 0 }) 
+                               : section.id === 'qualitative' && prop.type !== 'subject'
+                               ? <QualitativeChip propId={prop.id} rowKey={row.key} />
                                : <span className={
                                    row.key === 'total_value' 
                                      ? 'font-bold text-emerald-700' 
@@ -574,12 +869,14 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
               </button>
               <div className="w-px h-5 bg-slate-200 mx-1"></div>
               <button 
-                className="p-2 rounded bg-slate-100 text-[#0da1c7] transition-colors"
+                onClick={() => applyFormatting('alignLeft')}
+                className="p-2 rounded hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition-colors"
                 title="Align Left"
               >
                 <AlignLeft className="w-4 h-4" />
               </button>
               <button 
+                onClick={() => applyFormatting('alignCenter')}
                 className="p-2 rounded hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition-colors"
                 title="Align Center"
               >
@@ -601,15 +898,15 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
               </button>
             </div>
             
-            {/* Text Area */}
+            {/* Rich Text Editor */}
             <div className="p-5">
-              <textarea
-                id="notes-textarea"
-                value={notesContent}
-                onChange={(e) => setNotesContent(e.target.value)}
-                placeholder="Type your analysis and assumptions here..."
-                className="w-full h-48 px-4 py-3 border border-slate-200 rounded-lg text-sm text-slate-700 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/30 focus:border-[#0da1c7] resize-none transition-all"
-                autoFocus
+              <div
+                id="notes-editor"
+                contentEditable
+                onInput={handleEditorInput}
+                dangerouslySetInnerHTML={{ __html: notesContent }}
+                className="w-full h-48 px-4 py-3 border border-slate-200 rounded-lg text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/30 focus:border-[#0da1c7] overflow-y-auto transition-all empty:before:content-['Type_your_analysis_and_assumptions_here...'] empty:before:text-slate-400"
+                style={{ minHeight: '192px' }}
               />
             </div>
             

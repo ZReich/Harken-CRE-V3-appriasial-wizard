@@ -10,7 +10,18 @@ import { RequestType } from '@/hook';
 import { useGet } from '@/hook/useGet';
 import { useMutate } from '@/hook/useMutate';
 import axios from 'axios';
-import { Button } from '@mui/material';
+import { Button, Box, Typography, List, ListItem, ListItemIcon, ListItemText } from '@mui/material';
+import {
+  ApproachGuidancePanel,
+  ApproachGuidanceToggle,
+  ApproachType,
+} from '@/components/approach-guidance';
+import TrendingUpIcon from '@mui/icons-material/TrendingUp';
+import LandscapeIcon from '@mui/icons-material/Landscape';
+import BarChartIcon from '@mui/icons-material/BarChart';
+import CompareArrowsIcon from '@mui/icons-material/CompareArrows';
+import AccountBalanceIcon from '@mui/icons-material/AccountBalance';
+import BuildIcon from '@mui/icons-material/Build';
 
 const EvaluationMenuOptions = ({
   children,
@@ -38,6 +49,8 @@ const EvaluationMenuOptions = ({
   const totalSqCost = totalCostValuation / totalaveragedadjustedpsfCost;
 
   const [showScrollTop, setShowScrollTop] = useState(false);
+  const [isGuidancePanelVisible, setIsGuidancePanelVisible] = useState(true);
+  const [guidanceMode, setGuidanceMode] = useState<'guidance' | 'values'>('guidance');
   console.log(storedFinalResultCost);
   useEffect(() => {
     const handleScroll = () => {
@@ -108,6 +121,30 @@ const EvaluationMenuOptions = ({
     location.pathname === '/evaluation/sales-approach' ||
     location.pathname === '/evaluation/cost-approach' ||
     location.pathname === '/evaluation/cost-approach-improvement';
+
+  // Determine current approach type for guidance panel
+  const getCurrentApproachType = (): ApproachType | null => {
+    if (location.pathname.includes('sales-approach') || location.pathname.includes('sales-comps')) {
+      return 'sales';
+    }
+    if (location.pathname.includes('income-approch') || location.pathname.includes('rent-roll')) {
+      return 'income';
+    }
+    if (location.pathname.includes('cost-approach') || location.pathname.includes('cost-comps')) {
+      return 'cost';
+    }
+    if (location.pathname.includes('cap-approach') || location.pathname.includes('cap-comps')) {
+      return 'income'; // Cap rate is part of income approach
+    }
+    if (location.pathname.includes('lease-approach') || location.pathname.includes('lease-comps')) {
+      return 'income'; // Lease is part of income approach
+    }
+    return null;
+  };
+
+  const currentApproachType = getCurrentApproachType();
+  const showGuidancePanel = currentApproachType !== null;
+  const [isLeftSidebarCollapsed, setIsLeftSidebarCollapsed] = useState(false);
 
   const id = searchParams.get('id'); // ✅ Keep only this one
   const incomeId = searchParams.get('IncomeId');
@@ -2141,7 +2178,283 @@ const EvaluationMenuOptions = ({
               }}
             ></div>
           </div>
-          {children}
+          
+          {/* Sub-header with Guidance/Values toggle for approach pages */}
+          {showGuidancePanel && (
+            <Box 
+              className="bg-white border-b border-[#eee] border-solid shadow-sm"
+              sx={{
+                position: 'fixed',
+                top: '58px',
+                left: 0,
+                right: 0,
+                zIndex: 35,
+              }}
+            >
+              <Box className="flex items-center justify-between px-6 py-3">
+                {/* Left side - Approach Title */}
+                <Box className="flex items-center gap-3">
+                  <Typography variant="h5" className="font-bold text-[#2e2e2e]">
+                    Valuation Analysis
+                  </Typography>
+                  <Box className="px-3 py-1 rounded-full text-xs font-medium bg-[#0DA1C7] bg-opacity-20 text-[#0DA1C7]">
+                    In Progress
+                  </Box>
+                </Box>
+
+                {/* Right side - Guidance/Values Toggle */}
+                <ApproachGuidanceToggle
+                  mode={guidanceMode}
+                  onModeChange={(mode) => {
+                    setGuidanceMode(mode);
+                    if (!isGuidancePanelVisible) {
+                      setIsGuidancePanelVisible(true);
+                    }
+                  }}
+                  isVisible={isGuidancePanelVisible}
+                  onTogglePanel={() => setIsGuidancePanelVisible(!isGuidancePanelVisible)}
+                  showFullscreen={false}
+                />
+              </Box>
+              <Box className="px-6 pb-2 text-xs text-gray-500">
+                Phase 5 of 6 • Valuation Approaches
+              </Box>
+            </Box>
+          )}
+          
+          {/* Spacer for fixed sub-header */}
+          {showGuidancePanel && <Box sx={{ height: '102px' }} />}
+          
+          {/* Layout with Left Sidebar and Main Content */}
+          {showGuidancePanel ? (
+            <Box className="flex">
+              {/* Left Sidebar - Approach Navigation */}
+              {!isLeftSidebarCollapsed && (
+                <Box
+                  className="fixed left-0 bg-white border-r border-[#eee] border-solid overflow-y-auto z-30"
+                  sx={{ 
+                    width: 240, 
+                    top: '160px',
+                    bottom: 0,
+                  }}
+                >
+                  <Box className="p-4">
+                    <Typography variant="subtitle2" className="font-semibold text-[#2e2e2e] mb-1">
+                      Valuation Analysis
+                    </Typography>
+                    <Typography variant="caption" className="text-gray-500">
+                      {[hasSaleType, hasIncomeType, hasCostType].filter(Boolean).length} Approaches Selected
+                    </Typography>
+                  </Box>
+
+                  <List className="pt-0">
+                    {/* Highest & Best Use - Always show */}
+                    <ListItem
+                      component={Link}
+                      to={`/evaluation/highest-best-use?id=${id}`}
+                      className={`py-3 px-4 transition-colors cursor-pointer no-underline ${
+                        location.pathname.includes('highest-best-use')
+                          ? 'bg-[#0DA1C7] bg-opacity-10 border-l-4 border-[#0DA1C7] border-solid border-t-0 border-r-0 border-b-0'
+                          : 'hover:bg-gray-50 border-l-4 border-transparent border-solid border-t-0 border-r-0 border-b-0'
+                      }`}
+                    >
+                      <ListItemIcon className={`min-w-[36px] ${location.pathname.includes('highest-best-use') ? 'text-[#0DA1C7]' : 'text-gray-500'}`}>
+                        <TrendingUpIcon />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary="Highest & Best Use"
+                        primaryTypographyProps={{
+                          className: `text-sm font-medium ${location.pathname.includes('highest-best-use') ? 'text-[#0DA1C7]' : 'text-gray-700'}`,
+                        }}
+                      />
+                    </ListItem>
+
+                    {/* Land Valuation */}
+                    <ListItem
+                      component={Link}
+                      to={`/evaluation/land-valuation?id=${id}`}
+                      className={`py-3 px-4 transition-colors cursor-pointer no-underline ${
+                        location.pathname.includes('land-valuation')
+                          ? 'bg-[#0DA1C7] bg-opacity-10 border-l-4 border-[#0DA1C7] border-solid border-t-0 border-r-0 border-b-0'
+                          : 'hover:bg-gray-50 border-l-4 border-transparent border-solid border-t-0 border-r-0 border-b-0'
+                      }`}
+                    >
+                      <ListItemIcon className={`min-w-[36px] ${location.pathname.includes('land-valuation') ? 'text-[#0DA1C7]' : 'text-gray-500'}`}>
+                        <LandscapeIcon />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary="Land Valuation"
+                        primaryTypographyProps={{
+                          className: `text-sm font-medium ${location.pathname.includes('land-valuation') ? 'text-[#0DA1C7]' : 'text-gray-700'}`,
+                        }}
+                      />
+                    </ListItem>
+
+                    {/* Market Analysis */}
+                    <ListItem
+                      component={Link}
+                      to={`/evaluation/market-analysis?id=${id}`}
+                      className={`py-3 px-4 transition-colors cursor-pointer no-underline ${
+                        location.pathname.includes('market-analysis')
+                          ? 'bg-[#0DA1C7] bg-opacity-10 border-l-4 border-[#0DA1C7] border-solid border-t-0 border-r-0 border-b-0'
+                          : 'hover:bg-gray-50 border-l-4 border-transparent border-solid border-t-0 border-r-0 border-b-0'
+                      }`}
+                    >
+                      <ListItemIcon className={`min-w-[36px] ${location.pathname.includes('market-analysis') ? 'text-[#0DA1C7]' : 'text-gray-500'}`}>
+                        <BarChartIcon />
+                      </ListItemIcon>
+                      <ListItemText
+                        primary="Market Analysis"
+                        primaryTypographyProps={{
+                          className: `text-sm font-medium ${location.pathname.includes('market-analysis') ? 'text-[#0DA1C7]' : 'text-gray-700'}`,
+                        }}
+                      />
+                    </ListItem>
+
+                    {/* Sales Comparison */}
+                    {hasSaleType && filtereSalesdData?.[0]?.id && (
+                      <ListItem
+                        component={Link}
+                        to={`/evaluation/sales-approach?id=${id}&salesId=${filtereSalesdData[0].id}`}
+                        className={`py-3 px-4 transition-colors cursor-pointer no-underline ${
+                          location.pathname.includes('sales-approach') || location.pathname.includes('sales-comps')
+                            ? 'bg-[#0DA1C7] bg-opacity-10 border-l-4 border-[#0DA1C7] border-solid border-t-0 border-r-0 border-b-0'
+                            : 'hover:bg-gray-50 border-l-4 border-transparent border-solid border-t-0 border-r-0 border-b-0'
+                        }`}
+                      >
+                        <ListItemIcon className={`min-w-[36px] ${location.pathname.includes('sales') ? 'text-[#0DA1C7]' : 'text-gray-500'}`}>
+                          <CompareArrowsIcon />
+                        </ListItemIcon>
+                        <ListItemText
+                          primary="Sales Comparison"
+                          primaryTypographyProps={{
+                            className: `text-sm font-medium ${location.pathname.includes('sales') ? 'text-[#0DA1C7]' : 'text-gray-700'}`,
+                          }}
+                        />
+                      </ListItem>
+                    )}
+
+                    {/* Income Approach */}
+                    {hasIncomeType && filteredData?.[0]?.id && (
+                      <ListItem
+                        component={Link}
+                        to={`/evaluation/income-approch?id=${id}&IncomeId=${filteredData[0].id}`}
+                        className={`py-3 px-4 transition-colors cursor-pointer no-underline ${
+                          location.pathname.includes('income-approch') || location.pathname.includes('rent-roll') || location.pathname.includes('cap-approach')
+                            ? 'bg-[#0DA1C7] bg-opacity-10 border-l-4 border-[#0DA1C7] border-solid border-t-0 border-r-0 border-b-0'
+                            : 'hover:bg-gray-50 border-l-4 border-transparent border-solid border-t-0 border-r-0 border-b-0'
+                        }`}
+                      >
+                        <ListItemIcon className={`min-w-[36px] ${location.pathname.includes('income') || location.pathname.includes('rent-roll') || location.pathname.includes('cap') ? 'text-[#0DA1C7]' : 'text-gray-500'}`}>
+                          <AccountBalanceIcon />
+                        </ListItemIcon>
+                        <ListItemText
+                          primary="Income Approach"
+                          primaryTypographyProps={{
+                            className: `text-sm font-medium ${location.pathname.includes('income') || location.pathname.includes('rent-roll') || location.pathname.includes('cap') ? 'text-[#0DA1C7]' : 'text-gray-700'}`,
+                          }}
+                        />
+                      </ListItem>
+                    )}
+
+                    {/* Cost Approach */}
+                    {hasCostType && filtereCostdData?.[0]?.id && (
+                      <ListItem
+                        component={Link}
+                        to={`/evaluation/cost-approach?id=${id}&costId=${filtereCostdData[0].id}`}
+                        className={`py-3 px-4 transition-colors cursor-pointer no-underline ${
+                          location.pathname.includes('cost-approach') || location.pathname.includes('cost-comps')
+                            ? 'bg-[#0DA1C7] bg-opacity-10 border-l-4 border-[#0DA1C7] border-solid border-t-0 border-r-0 border-b-0'
+                            : 'hover:bg-gray-50 border-l-4 border-transparent border-solid border-t-0 border-r-0 border-b-0'
+                        }`}
+                      >
+                        <ListItemIcon className={`min-w-[36px] ${location.pathname.includes('cost') ? 'text-[#0DA1C7]' : 'text-gray-500'}`}>
+                          <BuildIcon />
+                        </ListItemIcon>
+                        <ListItemText
+                          primary="Cost Approach"
+                          primaryTypographyProps={{
+                            className: `text-sm font-medium ${location.pathname.includes('cost') ? 'text-[#0DA1C7]' : 'text-gray-700'}`,
+                          }}
+                        />
+                      </ListItem>
+                    )}
+                  </List>
+
+                  {/* Collapse button */}
+                  <Box className="absolute bottom-4 left-0 right-0 flex justify-center">
+                    <button
+                      onClick={() => setIsLeftSidebarCollapsed(true)}
+                      className="p-2 text-gray-400 hover:text-gray-600 bg-white border border-gray-200 rounded-full cursor-pointer shadow-sm"
+                    >
+                      <Icons.ChevronLeftIcon fontSize="small" />
+                    </button>
+                  </Box>
+                </Box>
+              )}
+
+              {/* Expand Left Sidebar Button (when collapsed) */}
+              {isLeftSidebarCollapsed && (
+                <button
+                  onClick={() => setIsLeftSidebarCollapsed(false)}
+                  className="fixed left-0 top-1/2 transform -translate-y-1/2 z-40 p-2 bg-[#0DA1C7] text-white border-0 rounded-r-lg cursor-pointer shadow-lg"
+                >
+                  <Icons.ChevronRightIcon fontSize="small" />
+                </button>
+              )}
+
+              {/* Main content with margins for sidebars */}
+              <Box
+                className="flex-1 min-h-[calc(100vh-160px)] transition-all duration-300"
+                sx={{
+                  marginLeft: isLeftSidebarCollapsed ? '0px' : '240px',
+                  marginRight: isGuidancePanelVisible ? '280px' : '0px',
+                }}
+              >
+                {children}
+              </Box>
+
+              {/* Right Guidance Panel */}
+              {currentApproachType && (
+                <ApproachGuidancePanel
+                  approachType={currentApproachType}
+                  isVisible={isGuidancePanelVisible}
+                  mode={guidanceMode}
+                  onModeChange={setGuidanceMode}
+                  onClose={() => setIsGuidancePanelVisible(false)}
+                  valueSummary={
+                    currentApproachType === 'sales' && finalResults
+                      ? {
+                          approachValue: finalResults,
+                          weight: updateEvalWeightSales || salesPercentage,
+                          perUnit: totalaveragedadjustedpsfSales,
+                          unitType: comparisonBasis === 'Unit' ? 'Unit' : comparisonBasis === 'Bed' ? 'Bed' : 'SF',
+                        }
+                      : currentApproachType === 'income' && indicatedCapRate
+                        ? {
+                            approachValue: indicatedCapRate,
+                            weight: updateEvalWeight || incomePercentage,
+                            perUnit: indicatedSfAnnualRate,
+                            unitType: comparisonBasis === 'Unit' ? 'Unit' : comparisonBasis === 'Bed' ? 'Bed' : 'SF',
+                          }
+                        : currentApproachType === 'cost' && finalResultCost
+                          ? {
+                              approachValue: finalResultCost,
+                              weight: updateEvalWeightCost || costPercentage,
+                              perUnit: totalSqCost,
+                              unitType: comparisonBasis === 'Unit' ? 'Unit' : comparisonBasis === 'Bed' ? 'Bed' : 'SF',
+                            }
+                          : undefined
+                  }
+                />
+              )}
+            </Box>
+          ) : (
+            // Non-approach pages - render children normally
+            <div>
+              {children}
+            </div>
+          )}
         </div>
         {shouldShowSidebar && (
           <div className="approach-sidebar bg-[#d3d7d7] lg:min-w-[18%] min-w-[150px] py-4 px-3">

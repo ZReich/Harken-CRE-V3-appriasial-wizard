@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { Plus, Trash2, Edit2, Calculator, X, Check, ExternalLink, BookOpen, Clock, Loader2, Table2 } from 'lucide-react';
+import { Plus, Trash2, Edit2, Calculator, X, Check, ExternalLink, BookOpen, Clock, Loader2, Table2, Info } from 'lucide-react';
 import { Improvement, ImprovementLineItem } from '../types';
 import { 
   MOCK_IMPROVEMENTS, 
@@ -14,9 +14,10 @@ import {
 
 interface ImprovementValuationProps {
   onValueChange: (val: number) => void;
+  scenario?: 'As Is' | 'As Completed' | 'As Stabilized';
 }
 
-export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({ onValueChange }) => {
+export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({ onValueChange, scenario = 'As Is' }) => {
   const [improvements, setImprovements] = useState<Improvement[]>(MOCK_IMPROVEMENTS);
   const [siteImprovementsCost, setSiteImprovementsCost] = useState(70000);
   
@@ -629,6 +630,33 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({ onVa
   return (
     <div className="space-y-8 font-sans">
       
+      {/* Scenario-specific info banner */}
+      {scenario !== 'As Is' && (
+        <div className={`rounded-xl p-4 flex items-start gap-3 animate-in fade-in slide-in-from-top-2 duration-300 ${
+          scenario === 'As Completed' 
+            ? 'bg-emerald-50 border border-emerald-200' 
+            : 'bg-violet-50 border border-violet-200'
+        }`}>
+          <Info className={`shrink-0 mt-0.5 ${
+            scenario === 'As Completed' ? 'text-emerald-600' : 'text-violet-600'
+          }`} size={18} />
+          <div>
+            <p className={`text-sm font-semibold mb-1 ${
+              scenario === 'As Completed' ? 'text-emerald-900' : 'text-violet-900'
+            }`}>
+              {scenario} Scenario Active
+            </p>
+            <p className={`text-xs ${
+              scenario === 'As Completed' ? 'text-emerald-800' : 'text-violet-800'
+            }`}>
+              {scenario === 'As Completed' 
+                ? 'Physical depreciation should be zero for new construction. Only apply functional or external obsolescence if warranted.'
+                : 'Include additional soft costs for lease-up period: marketing, tenant improvements, and carrying costs during absorption.'}
+            </p>
+          </div>
+        </div>
+      )}
+
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
           <Calculator size={20} className="text-[#0da1c7]" />

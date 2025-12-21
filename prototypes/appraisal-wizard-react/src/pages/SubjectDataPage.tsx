@@ -12,6 +12,11 @@ import {
   DocumentIcon,
 } from '../components/icons';
 import { Upload, X, FileText, CheckCircle, Image, MapPin, Building2, FileCheck } from 'lucide-react';
+import { SidebarTab } from '../components/SidebarTab';
+import { SectionProgressSummary } from '../components/SectionProgressSummary';
+import { useCompletion } from '../hooks/useCompletion';
+import { useCelebration } from '../hooks/useCelebration';
+import { useSmartContinue } from '../hooks/useSmartContinue';
 
 const tabs = [
   { id: 'location', label: 'Location & Area', Icon: LocationIcon },
@@ -42,7 +47,7 @@ const exhibitSlots = [
 ];
 
 export default function SubjectDataPage() {
-  const { state: wizardState } = useWizard();
+  const { state: wizardState, setSubjectData } = useWizard();
   const [activeTab, setActiveTab] = useState('location');
 
   // Location tab state
@@ -68,18 +73,23 @@ export default function SubjectDataPage() {
   const [environmental, setEnvironmental] = useState('');
   const [easements, setEasements] = useState('');
 
-  // Tax tab state
+  // Tax tab state (local - tax assessment details)
   const [taxYear, setTaxYear] = useState(new Date().getFullYear().toString());
   const [taxAmount, setTaxAmount] = useState('');
   const [assessedLand, setAssessedLand] = useState('');
   const [assessedImprovements, setAssessedImprovements] = useState('');
   const [totalAssessed, setTotalAssessed] = useState('');
   const [millLevy, setMillLevy] = useState('');
-  const [lastSaleDate, setLastSaleDate] = useState('');
-  const [lastSalePrice, setLastSalePrice] = useState('');
+  // Sale history from WizardContext (centralized)
+  const lastSaleDate = wizardState.subjectData?.lastSaleDate || '';
+  const lastSalePrice = wizardState.subjectData?.lastSalePrice || '';
+  const transactionHistory = wizardState.subjectData?.transactionHistory || '';
+  // Setters for centralized sale history
+  const setLastSaleDate = (v: string) => setSubjectData({ lastSaleDate: v });
+  const setLastSalePrice = (v: string) => setSubjectData({ lastSalePrice: v });
+  const setTransactionHistory = (v: string) => setSubjectData({ transactionHistory: v });
   const [grantor, setGrantor] = useState('');
   const [grantee, setGrantee] = useState('');
-  const [transactionHistory, setTransactionHistory] = useState('');
 
   // Photos state
   const [photos, setPhotos] = useState<Record<string, { file: File; preview: string } | null>>({});
@@ -88,13 +98,6 @@ export default function SubjectDataPage() {
   const [exhibits, setExhibits] = useState<Record<string, { file: File; name: string } | null>>({});
   const [includeInReport, setIncludeInReport] = useState<Record<string, boolean>>({});
 
-  // Auto-calculate SF from acres
-  useEffect(() => {
-    if (acres) {
-      const sf = parseFloat(acres) * 43560;
-      setSquareFeet(sf.toFixed(0));
-    }
-  }, [acres]);
 
   // Load extracted data
   useEffect(() => {
@@ -130,6 +133,37 @@ export default function SubjectDataPage() {
     setExhibits(prev => ({ ...prev, [slotId]: null }));
   };
 
+  // Progress tracking
+  const { tabCompletions, sectionCompletion, trackTabChange } = useCompletion('subjectData');
+  const { checkAndTriggerCelebration } = useCelebration();
+
+  // Track tab changes for smart navigation
+  useEffect(() => {
+    trackTabChange(activeTab);
+  }, [activeTab, trackTabChange]);
+
+  // Check if section just completed
+  useEffect(() => {
+    if (sectionCompletion === 100) {
+      checkAndTriggerCelebration('subjectData');
+    }
+  }, [sectionCompletion, checkAndTriggerCelebration]);
+
+  // Smart continue logic
+  const { handleContinue } = useSmartContinue({
+    sectionId: 'subjectData',
+    tabs: tabs.map(t => t.id),
+    activeTab,
+    setActiveTab,
+    currentPhase: 4,
+  });
+
+  // Get completion percentage for a specific tab
+  const getTabCompletion = (tabId: string): number => {
+    const tabData = tabCompletions.find(t => t.id === tabId);
+    return tabData?.completion || 0;
+  };
+
   const sidebar = (
     <div>
       <h2 className="text-lg font-bold text-gray-900 mb-1">Subject Property</h2>
@@ -137,24 +171,20 @@ export default function SubjectDataPage() {
         {wizardState.propertyType ? `${wizardState.propertyType} • ${wizardState.propertySubtype || 'General'}` : 'Commercial • Industrial'}
       </p>
       <nav className="space-y-1">
-        {tabs.map((tab) => {
-          const Icon = tab.Icon;
-          return (
-            <button
-              key={tab.id}
-              onClick={() => setActiveTab(tab.id)}
-              className={`w-full text-left px-4 py-3 rounded-lg text-sm flex items-center gap-3 transition-colors ${
-                activeTab === tab.id
-                  ? 'bg-[#0da1c7]/10 text-[#0da1c7] font-medium'
-                  : 'text-gray-600 hover:bg-gray-100'
-              }`}
-            >
-              <Icon className="w-5 h-5" />
-              {tab.label}
-            </button>
-          );
-        })}
+        {tabs.map((tab) => (
+          <SidebarTab
+            key={tab.id}
+            id={tab.id}
+            label={tab.label}
+            Icon={tab.Icon}
+            isActive={activeTab === tab.id}
+            completion={getTabCompletion(tab.id)}
+            showProgress={true}
+            onClick={() => setActiveTab(tab.id)}
+          />
+        ))}
       </nav>
+      <SectionProgressSummary completion={sectionCompletion} />
     </div>
   );
 
@@ -210,6 +240,7 @@ export default function SubjectDataPage() {
       phase={4}
       sidebar={sidebar}
       helpSidebar={helpSidebar}
+      onContinue={handleContinue}
     >
       <div className="animate-fade-in">
         {activeTab === 'improvements' ? (
@@ -232,6 +263,7 @@ export default function SubjectDataPage() {
             acres={acres}
             setAcres={setAcres}
             squareFeet={squareFeet}
+            setSquareFeet={setSquareFeet}
             shape={shape}
             setShape={setShape}
             frontage={frontage}
@@ -420,6 +452,7 @@ interface SiteProps {
   acres: string;
   setAcres: (v: string) => void;
   squareFeet: string;
+  setSquareFeet: (v: string) => void;
   shape: string;
   setShape: (v: string) => void;
   frontage: string;
@@ -447,7 +480,7 @@ interface SiteProps {
 }
 
 function SiteContent({
-  acres, setAcres, squareFeet,
+  acres, setAcres, squareFeet, setSquareFeet,
   shape, setShape,
   frontage, setFrontage,
   siteNotes, setSiteNotes,
@@ -461,6 +494,33 @@ function SiteContent({
   environmental, setEnvironmental,
   easements, setEasements,
 }: SiteProps) {
+  // 1 acre = 43,560 square feet
+  const SQFT_PER_ACRE = 43560;
+
+  // Handle acres change - update square feet
+  const handleAcresChange = (value: string) => {
+    setAcres(value);
+    if (value && !isNaN(parseFloat(value))) {
+      const sf = parseFloat(value) * SQFT_PER_ACRE;
+      setSquareFeet(sf.toFixed(0));
+    } else {
+      setSquareFeet('');
+    }
+  };
+
+  // Handle square feet change - update acres
+  const handleSquareFeetChange = (value: string) => {
+    // Remove commas for calculation
+    const numericValue = value.replace(/,/g, '');
+    setSquareFeet(numericValue);
+    if (numericValue && !isNaN(parseFloat(numericValue))) {
+      const ac = parseFloat(numericValue) / SQFT_PER_ACRE;
+      setAcres(ac.toFixed(3));
+    } else {
+      setAcres('');
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* Site Size & Shape */}
@@ -476,7 +536,7 @@ function SiteContent({
             <input
               type="number"
               value={acres}
-              onChange={(e) => setAcres(e.target.value)}
+              onChange={(e) => handleAcresChange(e.target.value)}
               step="0.001"
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
               placeholder="0.000"
@@ -484,13 +544,14 @@ function SiteContent({
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
-              Total Square Feet <span className="text-gray-400 text-xs">(auto-calculated)</span>
+              Total Square Feet <span className="text-gray-400 text-xs">(or enter to calculate acres)</span>
             </label>
             <input
               type="text"
               value={squareFeet ? parseInt(squareFeet).toLocaleString() : ''}
-              readOnly
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-600"
+              onChange={(e) => handleSquareFeetChange(e.target.value)}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+              placeholder="0"
             />
           </div>
         </div>

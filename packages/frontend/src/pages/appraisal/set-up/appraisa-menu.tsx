@@ -4,6 +4,12 @@ import { Link, useLocation, useSearchParams } from 'react-router-dom';
 import { useGet } from '@/hook/useGet';
 import axios from 'axios';
 import { RequestType, useMutate } from '@/hook/useMutate';
+import { ResponseType } from '@/components/interface/response-type';
+import {
+  ApproachGuidancePanel,
+  ApproachGuidanceToggle,
+  ApproachType,
+} from '@/components/approach-guidance';
 
 const AppraisalMenu = ({ children }: any) => {
   const [searchParams] = useSearchParams();
@@ -13,6 +19,11 @@ const AppraisalMenu = ({ children }: any) => {
   const [hasSaleType, setHasSaleType] = React.useState(false);
   const [hasCostType, setHasCostType] = React.useState(false);
   const [hasLeaseType, setHasLeaseType] = React.useState(false);
+  const [isGuidancePanelVisible, setIsGuidancePanelVisible] =
+    useState(true);
+  const [guidanceMode, setGuidanceMode] = useState<'guidance' | 'values'>(
+    'guidance'
+  );
 
   const [activeLink, setActiveLink] = useState('');
   const handleLinkClick = (link: any) => {
@@ -182,6 +193,32 @@ const AppraisalMenu = ({ children }: any) => {
 
   const IncomeApprochRentRollIndex = filteredRentRollData[0]?.id;
   const location = useLocation();
+  const getCurrentApproachType = (): ApproachType | null => {
+    if (
+      location.pathname.includes('sales-approach') ||
+      location.pathname.includes('sales-comps')
+    ) {
+      return 'sales';
+    }
+    if (
+      location.pathname.includes('income-approch') ||
+      location.pathname.includes('rent-roll') ||
+      location.pathname.includes('cap-approach') ||
+      location.pathname.includes('lease-approach')
+    ) {
+      return 'income';
+    }
+    if (
+      location.pathname.includes('cost-approach') ||
+      location.pathname.includes('cost-comps')
+    ) {
+      return 'cost';
+    }
+    return null;
+  };
+
+  const currentApproachType = getCurrentApproachType();
+  const showGuidancePanel = currentApproachType !== null;
 
   useEffect(() => {
     const currentPath = location.pathname + location.search;
@@ -967,7 +1004,65 @@ const AppraisalMenu = ({ children }: any) => {
             }}
           ></div>
         </div>
-        {children}
+        {showGuidancePanel && (
+          <div
+            className="bg-white border-b border-[#eee] border-solid shadow-sm"
+            style={{
+              position: 'fixed',
+              top: 58,
+              left: 0,
+              right: 0,
+              zIndex: 35,
+            }}
+          >
+            <div className="flex items-center justify-between px-6 py-3">
+              <div className="flex items-center gap-3">
+                <span className="font-bold text-[#2e2e2e] text-lg">
+                  Valuation Analysis
+                </span>
+                <span className="px-3 py-1 rounded-full text-xs font-medium bg-[#0DA1C7] bg-opacity-20 text-[#0DA1C7]">
+                  In Progress
+                </span>
+              </div>
+              <ApproachGuidanceToggle
+                mode={guidanceMode}
+                onModeChange={(mode) => {
+                  setGuidanceMode(mode);
+                  if (!isGuidancePanelVisible) {
+                    setIsGuidancePanelVisible(true);
+                  }
+                }}
+                isVisible={isGuidancePanelVisible}
+                onTogglePanel={() =>
+                  setIsGuidancePanelVisible(!isGuidancePanelVisible)
+                }
+                showFullscreen={false}
+              />
+            </div>
+          </div>
+        )}
+
+        {showGuidancePanel && <div style={{ height: '102px' }} />}
+
+        <div
+          style={{
+            marginRight:
+              showGuidancePanel && isGuidancePanelVisible ? '280px' : 0,
+            transition: 'margin-right 0.3s ease-in-out',
+          }}
+        >
+          {children}
+        </div>
+
+        {showGuidancePanel && currentApproachType && (
+          <ApproachGuidancePanel
+            approachType={currentApproachType}
+            isVisible={isGuidancePanelVisible}
+            mode={guidanceMode}
+            onModeChange={setGuidanceMode}
+            onClose={() => setIsGuidancePanelVisible(false)}
+          />
+        )}
       </div>
     </>
   );

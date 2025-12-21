@@ -1,10 +1,12 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Plus, Wallet, PieChart, Info, Activity, Check, LayoutGrid, Home, Warehouse, Store, TrendingUp, DollarSign, CalendarRange, ArrowRightLeft, Layers } from 'lucide-react';
+import { Plus, Wallet, PieChart, Info, Activity, Check, LayoutGrid, Home, Warehouse, Store, TrendingUp, DollarSign, CalendarRange, ArrowRightLeft, Layers, Table2, ChevronDown, ChevronUp } from 'lucide-react';
 import type { IncomeData, ExpenseData, LineItem, FinancialSummary, PropertyMeta, ValuationData, ValuationScenario, IncomeApproachState } from '../types';
-import { RichTextEditor } from './RichTextEditor';
+import { IncomeTextEditor } from './IncomeTextEditor';
+import type { RevenueContextData, ExpensesContextData, ValuationContextData } from './IncomeTextEditor';
 import { InputRow } from './InputRow';
 import { FinancialChart } from './FinancialChart';
 import { RiskAnalysisModal } from './RiskAnalysisModal';
+import { DCFProjectionTable } from './DCFProjectionTable';
 import { INITIAL_INCOME_APPROACH_STATE, VALUATION_SCENARIOS } from '../constants';
 
 const generateId = () => Math.random().toString(36).substr(2, 9);
@@ -41,6 +43,7 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
   );
 
   const [isRiskModalOpen, setIsRiskModalOpen] = useState(false);
+  const [showDetailedDCF, setShowDetailedDCF] = useState(false);
 
   // Notify parent of data changes
   useEffect(() => {
@@ -382,8 +385,21 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
               </div>
             </div>
             <div className="px-8 pb-8">
-              <RichTextEditor 
+              <IncomeTextEditor 
                 label="Revenue Methodology Notes" 
+                sectionType="revenue"
+                contextData={{
+                  propertyType: propertyMeta.type,
+                  sqFt: propertyMeta.sqFt,
+                  unitCount: propertyMeta.unitCount,
+                  rentalIncome: incomeData.rentalIncome,
+                  reimbursements: incomeData.expenseReimbursements,
+                  vacancyRate: incomeData.vacancyRate,
+                  effectiveGrossIncome: summary.effectiveGrossIncome,
+                  potentialGrossIncome: summary.potentialGrossIncome,
+                  lossToLease: summary.lossToLease,
+                  potentialMarketRent: summary.potentialMarketRent,
+                } as RevenueContextData}
                 value={incomeData.notes} 
                 onChange={(val) => setIncomeData({...incomeData, notes: val})} 
               />
@@ -443,8 +459,20 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
               </div>
             </div>
             <div className="px-8 pb-8">
-              <RichTextEditor 
+              <IncomeTextEditor 
                 label="Expense Methodology Notes" 
+                sectionType="expenses"
+                contextData={{
+                  propertyType: propertyMeta.type,
+                  sqFt: propertyMeta.sqFt,
+                  expenses: expenseData.expenses,
+                  reserves: expenseData.reserves,
+                  expenseRatio: summary.expenseRatio,
+                  expensesPerSf: summary.expensesPerSf,
+                  totalExpenses: summary.totalExpenses,
+                  totalReserves: summary.totalReserves,
+                  effectiveGrossIncome: summary.effectiveGrossIncome,
+                } as ExpensesContextData}
                 value={expenseData.notes} 
                 onChange={(val) => setExpenseData({...expenseData, notes: val})} 
               />
@@ -610,12 +638,54 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                       <div className="text-sm font-bold text-slate-700">${dcfAnalysis.pvReversion.toLocaleString(undefined, { maximumFractionDigits: 0 })}</div>
                     </div>
                   </div>
+
+                  {/* Toggle for Detailed DCF Table */}
+                  <button
+                    onClick={() => setShowDetailedDCF(!showDetailedDCF)}
+                    className="w-full py-3 border-2 border-dashed border-slate-300 rounded-xl flex items-center justify-center gap-2 text-slate-500 font-semibold hover:border-[#0da1c7] hover:text-[#0da1c7] hover:bg-[#0da1c7]/5 transition-all duration-300 group text-sm"
+                  >
+                    <Table2 size={16} className="text-slate-400 group-hover:text-[#0da1c7]" />
+                    {showDetailedDCF ? 'Hide' : 'Show'} Year-by-Year Projection
+                    {showDetailedDCF ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
+                  </button>
                 </div>
               </div>
+
+              {/* Detailed DCF Projection Table (Collapsible) */}
+              {showDetailedDCF && (
+                <div className="mt-6 animate-in fade-in slide-in-from-top-2 duration-300">
+                  <DCFProjectionTable 
+                    initialInputs={{
+                      pgi: summary.potentialGrossIncome,
+                      vacancyRate: expenseData.vacancyRate / 100,
+                      operatingExpenses: summary.totalExpenses,
+                      growthRate: valuationData.annualGrowthRate / 100,
+                      holdingPeriod: valuationData.holdingPeriod,
+                      discountRate: valuationData.discountRate / 100,
+                      terminalCapRate: valuationData.terminalCapRate / 100,
+                    }}
+                  />
+                </div>
+              )}
             </div>
             <div className="px-8 pb-8">
-              <RichTextEditor 
+              <IncomeTextEditor 
                 label="Reconciliation & Conclusion" 
+                sectionType="valuation"
+                contextData={{
+                  scenario: scenario,
+                  propertyType: propertyMeta.type,
+                  sqFt: propertyMeta.sqFt,
+                  netOperatingIncome: summary.netOperatingIncome,
+                  noiPerSf: summary.noiPerSf,
+                  directCapValue: directCapValue,
+                  marketCapRate: valuationData.marketCapRate,
+                  dcfValue: dcfAnalysis.totalValue,
+                  discountRate: valuationData.discountRate,
+                  terminalCapRate: valuationData.terminalCapRate,
+                  holdingPeriod: valuationData.holdingPeriod,
+                  annualGrowthRate: valuationData.annualGrowthRate,
+                } as ValuationContextData}
                 value={valuationData.notes} 
                 onChange={(val) => setValuationData({...valuationData, notes: val})} 
               />

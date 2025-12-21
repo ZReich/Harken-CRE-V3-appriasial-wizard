@@ -1,4 +1,8 @@
 import { useNavigate } from 'react-router-dom';
+import { useMemo } from 'react';
+import { useWizard } from '../context/WizardContext';
+import { COMPLETION_SCHEMA, shouldTrackProgress } from '../constants/completionSchema';
+import ProgressCircle from './ProgressCircle';
 
 interface ProgressStepperProps {
   currentPhase: number;
@@ -7,53 +11,66 @@ interface ProgressStepperProps {
 
 export default function ProgressStepper({ currentPhase, pages }: ProgressStepperProps) {
   const navigate = useNavigate();
+  const { getSectionCompletion } = useWizard();
+
+  // Get completion data for each section
+  const sectionData = useMemo(() => {
+    return pages.map((page, idx) => {
+      const schema = COMPLETION_SCHEMA.find(s => s.path === page.path);
+      const sectionId = schema?.id || '';
+      const completion = getSectionCompletion(sectionId);
+      const trackProgress = shouldTrackProgress(sectionId);
+      
+      return {
+        ...page,
+        sectionId,
+        completion,
+        trackProgress,
+        phaseNum: idx + 1,
+      };
+    });
+  }, [pages, getSectionCompletion]);
 
   return (
     <div className="bg-white border-b border-gray-200 py-4 px-8">
       <div className="flex items-center justify-center gap-2">
-        {pages.map((page, idx) => {
-          const phaseNum = idx + 1;
-          const isCompleted = phaseNum < currentPhase;
+        {sectionData.map((section, idx) => {
+          const { phaseNum, trackProgress, completion, path, label } = section;
+          // A section is ONLY completed when it reaches 100% - not just because user navigated past it
+          const isCompleted = completion === 100;
           const isActive = phaseNum === currentPhase;
+          // Sections user has visited but not completed should show as "in progress"
+          const hasVisited = phaseNum < currentPhase;
 
           return (
-            <div key={page.path} className="flex items-center gap-2">
+            <div key={path} className="flex items-center gap-2">
               {/* Phase Circle + Label */}
-              <div
-                className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
-                onClick={() => navigate(page.path)}
-              >
-                <div
-                  className={`w-10 h-10 rounded-full flex items-center justify-center font-semibold text-sm ${
-                    isCompleted
-                      ? 'bg-green-500 text-white'
-                      : isActive
-                      ? 'bg-[#0da1c7] text-white'
-                      : 'bg-gray-200 text-gray-400'
-                  }`}
-                >
-                  {isCompleted ? (
-                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                    </svg>
-                  ) : (
-                    phaseNum
-                  )}
-                </div>
+              <div className="flex items-center gap-2">
+                <ProgressCircle
+                  phaseNum={phaseNum}
+                  completion={completion}
+                  isActive={isActive}
+                  isCompleted={isCompleted}
+                  trackProgress={trackProgress}
+                  onClick={() => navigate(path)}
+                />
                 <span
-                  className={`text-xs font-medium ${
-                    isActive ? 'text-gray-900 font-semibold' : isCompleted ? 'text-gray-600' : 'text-gray-400'
+                  className={`text-xs font-medium cursor-pointer hover:opacity-80 transition-opacity ${
+                    isActive ? 'text-gray-900 font-semibold' : 
+                    isCompleted ? 'text-green-600 font-medium' : 
+                    hasVisited ? 'text-gray-600' : 'text-gray-400'
                   }`}
+                  onClick={() => navigate(path)}
                 >
-                  {page.label}
+                  {label}
                 </span>
               </div>
 
-              {/* Connector */}
+              {/* Connector - only colored when PREVIOUS section is truly complete */}
               {idx < pages.length - 1 && (
                 <div
-                  className={`w-16 h-0.5 ${
-                    phaseNum < currentPhase ? 'bg-[#0da1c7]' : 'bg-gray-200'
+                  className={`w-16 h-0.5 transition-colors duration-300 ${
+                    isCompleted ? 'bg-[#0da1c7]' : 'bg-gray-200'
                   }`}
                 />
               )}
@@ -64,4 +81,3 @@ export default function ProgressStepper({ currentPhase, pages }: ProgressStepper
     </div>
   );
 }
-

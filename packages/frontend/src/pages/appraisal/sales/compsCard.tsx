@@ -14,7 +14,7 @@ import {
   landTypeOptions,
 } from '@/pages/comps/create-comp/SelectOption';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Icons } from '@/components/icons';
 import DeleteApproachConfirmationModal from '@/pages/comps/Listing/delete-approach-confirmation';
 import { APPROACHESENUMS } from '@/pages/comps/enum/ApproachEnums';
@@ -180,6 +180,28 @@ function CompCard({
   const [selectedComparabilityOption, setSelectedComparabilityOption] =
     useState('similar');
   const [tableItem, setTableItem] = useState<any>('');
+  const [adjustmentMode, setAdjustmentMode] = useState<'Percent' | 'Dollar'>(
+    appraisalData?.comp_adjustment_mode || 'Percent'
+  );
+  const modeAwareAppraisalData = useMemo(
+    () => ({
+      ...appraisalData,
+      comp_adjustment_mode: adjustmentMode,
+    }),
+    [appraisalData, adjustmentMode]
+  );
+  const [openAdjustmentIndex, setOpenAdjustmentIndex] = useState<number | null>(
+    null
+  );
+  const [customPercentInputs, setCustomPercentInputs] = useState<
+    Record<number, string>
+  >({});
+  const [openQuantAdjustmentIndex, setOpenQuantAdjustmentIndex] = useState<
+    number | null
+  >(null);
+  const [customQuantInputs, setCustomQuantInputs] = useState<
+    Record<number, string>
+  >({});
   const { setValues } = useFormikContext<any>();
   const stateMap = usa_state[0]; // Extract the first object from the array
   const fullStateName = stateMap[item?.state];
@@ -230,6 +252,129 @@ function CompCard({
       return 'NA';
     }
     return (100 / totalCards).toFixed(2);
+  };
+
+  const sanitizePercentValue = (value: string) => {
+    let sanitizedValue = value.replace(/[^0-9.-]/g, '');
+    if (sanitizedValue.indexOf('-') > 0) {
+      sanitizedValue = sanitizedValue.replace(/-/g, '');
+    }
+    if (sanitizedValue) {
+      const numeric = parseFloat(sanitizedValue);
+      if (!Number.isNaN(numeric)) {
+        if (numeric < -100) sanitizedValue = '-100';
+        if (numeric > 100) sanitizedValue = '100';
+      }
+    }
+    const parts = sanitizedValue.split('.');
+    if (parts.length > 2) {
+      sanitizedValue = `${parts[0]}.${parts[1]}`;
+    }
+    if (parts[1]?.length > 2) {
+      sanitizedValue = `${parts[0]}.${parts[1].slice(0, 2)}`;
+    }
+    if (parts[0].length > 3 && !sanitizedValue.startsWith('-')) {
+      sanitizedValue = parts[0].slice(0, 3);
+    }
+    return sanitizedValue;
+  };
+
+  const sanitizeDollarValue = (value: string) => {
+    let sanitizedValue = value.replace(/[^0-9.-]/g, '');
+    if (sanitizedValue.indexOf('-') > 0) {
+      sanitizedValue = sanitizedValue.replace(/-/g, '');
+    }
+    const parts = sanitizedValue.split('.');
+    if (parts.length > 2) {
+      sanitizedValue = `${parts[0]}.${parts[1]}`;
+    }
+    if (parts[1]?.length > 2) {
+      sanitizedValue = `${parts[0]}.${parts[1].slice(0, 2)}`;
+    }
+    return sanitizedValue;
+  };
+
+  const updateExpenseValue = (
+    expenseIndex: number,
+    value: number,
+    customType = false
+  ) => {
+    setValues((oldValues: { tableData: { [x: string]: any } }) => {
+      const comp = oldValues.tableData[index];
+      const expenses = [...comp.expenses];
+
+      expenses[expenseIndex].customType = customType;
+      expenses[expenseIndex].adj_value = value;
+
+      const weight = comp.weight;
+
+      const { total, expenses: updatedExpenses } = getExpensesTotal(
+        expenses,
+        expenseIndex,
+        value
+      );
+
+      const calculatedCompData = calculateCompData({
+        total,
+        weight,
+        comp,
+        appraisalData: modeAwareAppraisalData,
+      });
+
+      const updatedCompData = {
+        ...comp,
+        ...calculatedCompData,
+      };
+
+      oldValues.tableData[index] = {
+        ...updatedCompData,
+        expenses: updatedExpenses,
+        total,
+      };
+
+      const totalAverageAdjustedPsf = oldValues.tableData.reduce(
+        (acc: any, item: any) => {
+          return acc + item.averaged_adjusted_psf;
+        },
+        0
+      );
+
+      return {
+        ...oldValues,
+        averaged_adjusted_psf: totalAverageAdjustedPsf,
+      };
+    });
+  };
+
+  const updateQuantAdjustmentValue = (
+    quantIndex: number,
+    value: number,
+    customType = false
+  ) => {
+    setValues((oldValues: { tableData: { [x: string]: any } }) => {
+      const comp = oldValues.tableData[index];
+      const quantitativeAdjustments = [...comp.quantitativeAdjustments];
+
+      quantitativeAdjustments[quantIndex].customType = customType;
+      quantitativeAdjustments[quantIndex].adj_value = value;
+
+      oldValues.tableData[index] = {
+        ...comp,
+        quantitativeAdjustments,
+      };
+
+      const totalAverageAdjustedPsf = oldValues.tableData.reduce(
+        (acc: any, item: any) => {
+          return acc + item.averaged_adjusted_psf;
+        },
+        0
+      );
+
+      return {
+        ...oldValues,
+        averaged_adjusted_psf: totalAverageAdjustedPsf,
+      };
+    });
   };
 
   const handleKeyDown = (
@@ -886,6 +1031,203 @@ function CompCard({
                   )
                 )}
           </div>
+          <div className="p-1 border-solid border-b border-l-0 border-r-0 border-t-0 border-[#d5d5d5]">
+            <div className="w-full">
+              {item.expenses?.map((expense: any, expenseIndex: any) => {
+                const isOpen = openAdjustmentIndex === expenseIndex;
+                const percentOptions = options.filter(
+                  (option) => option.value !== 'custom'
+                );
+                const numericValue =
+                  expense.adj_value !== undefined && expense.adj_value !== null
+                    ? Number(expense.adj_value)
+                    : 0;
+                const statusLabel =
+                  numericValue > 0
+                    ? 'Inferior'
+                    : numericValue < 0
+                      ? 'Superior'
+                      : 'Equal';
+                const badgeColor =
+                  numericValue > 0
+                    ? 'text-red-600'
+                    : numericValue < 0
+                      ? 'text-green-600'
+                      : 'text-gray-500';
+                const displayValue =
+                  adjustmentMode === 'Dollar'
+                    ? sanitizeInputDollarSignComps(numericValue || 0)
+                    : numericValue !== 0
+                      ? `${numericValue > 0 ? '+' : ''}${numericValue}%`
+                      : '--';
+                const customValue =
+                  customPercentInputs[expenseIndex] ??
+                  (expense.customType ? `${expense.adj_value ?? ''}` : '');
+
+                return (
+                  <div
+                    key={expense.id}
+                    className="subjectPropertyCard h-[20px] relative"
+                  >
+                    <div className="flex items-center">
+                      <div className="w-1/2">
+                        <button
+                          type="button"
+                          className="w-full border border-slate-200 rounded-md px-2 py-[6px] text-left text-xs bg-white hover:border-[#0da1c7] transition-colors flex items-center justify-between"
+                          onClick={() =>
+                            setOpenAdjustmentIndex(
+                              isOpen ? null : (expenseIndex as number)
+                            )
+                          }
+                        >
+                          <span className="truncate text-gray-700">
+                            {displayValue}
+                          </span>
+                          <Icons.ArrowDropDownIcon className="w-3 h-3 text-slate-400" />
+                        </button>
+
+                        {isOpen && (
+                          <div className="absolute z-50 mt-1 w-52 bg-white rounded-md shadow-xl border border-slate-200">
+                            <div className="flex items-center justify-between px-3 py-2 border-b border-slate-100">
+                              <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+                                Adjustment Mode
+                              </span>
+                              <div className="flex gap-1">
+                                <button
+                                  type="button"
+                                  className={`px-2 py-1 text-xs rounded ${
+                                    adjustmentMode === 'Percent'
+                                      ? 'bg-[#0da1c7] text-white'
+                                      : 'bg-slate-100 text-slate-600'
+                                  }`}
+                                  onClick={() => setAdjustmentMode('Percent')}
+                                >
+                                  %
+                                </button>
+                                <button
+                                  type="button"
+                                  className={`px-2 py-1 text-xs rounded ${
+                                    adjustmentMode === 'Dollar'
+                                      ? 'bg-[#0da1c7] text-white'
+                                      : 'bg-slate-100 text-slate-600'
+                                  }`}
+                                  onClick={() => setAdjustmentMode('Dollar')}
+                                >
+                                  $
+                                </button>
+                              </div>
+                            </div>
+
+                            {adjustmentMode === 'Percent' ? (
+                              <>
+                                <div className="max-h-52 overflow-y-auto">
+                                  {percentOptions.map((option) => (
+                                    <button
+                                      type="button"
+                                      key={option.value}
+                                      className="w-full px-3 py-2 text-left text-sm hover:bg-slate-50 flex items-center justify-between"
+                                      onClick={() => {
+                                        updateExpenseValue(
+                                          expenseIndex,
+                                          parseFloat(option.value as any) || 0,
+                                          false
+                                        );
+                                        setCustomPercentInputs((prev) => ({
+                                          ...prev,
+                                          [expenseIndex]: '',
+                                        }));
+                                        setOpenAdjustmentIndex(null);
+                                      }}
+                                    >
+                                      <span>{option.label}</span>
+                                      <span className="text-[10px] uppercase text-slate-400">
+                                        {parseFloat(option.value as any) > 0
+                                          ? 'Inferior'
+                                          : parseFloat(option.value as any) < 0
+                                            ? 'Superior'
+                                            : 'Similar'}
+                                      </span>
+                                    </button>
+                                  ))}
+                                </div>
+                                <div className="border-t border-slate-100 px-3 py-2">
+                                  <label className="text-[10px] font-semibold text-slate-500 uppercase">
+                                    Custom %
+                                  </label>
+                                  <input
+                                    className="mt-1 w-full border border-slate-200 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#0da1c7]"
+                                    value={customValue}
+                                    placeholder="Type value"
+                                    onChange={(e) => {
+                                      const sanitized = sanitizePercentValue(
+                                        e.target.value
+                                      );
+                                      setCustomPercentInputs((prev) => ({
+                                        ...prev,
+                                        [expenseIndex]: sanitized,
+                                      }));
+                                      const nextNumber =
+                                        sanitized === ''
+                                          ? 0
+                                          : parseFloat(sanitized);
+                                      updateExpenseValue(
+                                        expenseIndex,
+                                        nextNumber,
+                                        true
+                                      );
+                                    }}
+                                  />
+                                  <p className="text-[10px] text-slate-400 mt-1">
+                                    Positive = inferior, negative = superior.
+                                  </p>
+                                </div>
+                              </>
+                            ) : (
+                              <div className="p-3 space-y-2">
+                                <label className="text-[10px] font-semibold text-slate-500 uppercase">
+                                  Dollar adjustment
+                                </label>
+                                <input
+                                  className="w-full border border-slate-200 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#0da1c7]"
+                                  value={
+                                    sanitizeDollarValue(
+                                      `${expense.adj_value ?? ''}`
+                                    ) || ''
+                                  }
+                                  placeholder="0.00"
+                                  onChange={(e) => {
+                                    const sanitized = sanitizeDollarValue(
+                                      e.target.value
+                                    );
+                                    const nextNumber =
+                                      sanitized === ''
+                                        ? 0
+                                        : parseFloat(sanitized);
+                                    updateExpenseValue(
+                                      expenseIndex,
+                                      nextNumber,
+                                      false
+                                    );
+                                  }}
+                                />
+                                <p className="text-[10px] text-slate-400">
+                                  Positive = inferior, negative = superior.
+                                </p>
+                              </div>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                      <span className={`text-xs ${badgeColor} ml-2`}>
+                        {statusLabel}
+                      </span>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+          {false && (
           <div className="p-1 border-solid border-b border-l-0 border-r-0 border-t-0 border-[#d5d5d5]">
             <div className="w-full">
               {item.expenses?.map((expense: any, expenseIndex: any) => (
@@ -1832,84 +2174,207 @@ function CompCard({
               ))} */}
             </div>
           </div>
+          )}
           <div className="px-1 pb-[2px]">
             <div className="w-full">
               {item.quantitativeAdjustments?.map(
-                (expense: any, expenseIndex: any) => (
-                  <div key={expense.id} className="subjectPropertyCard h-[20px]">
-                    <div className="flex items-center">
-                      <div className="w-1/2 qualitative-dropdown">
-                        <SelectTextField
-                          className="custom-dropdown"
-                          options={quantitativeOptions.map((option: any) => ({
-                            value: option.code,
-                            label: (
-                              <span style={{ fontSize: '13px' }}>
-                                {option.name}
-                              </span>
-                            ),
-                          }))}
-                          value={
-                            expense.adj_value !== undefined &&
-                            expense.adj_value !== null
-                              ? expense.adj_value
-                              : 0
-                          }
-                          onChange={(e) => {
-                            const { value } = e.target;
-                            // const number = parseFloat(value);
-                            const isCustomValue = value === 'custom';
+                (expense: any, expenseIndex: any) => {
+                  const isOpen = openQuantAdjustmentIndex === expenseIndex;
+                  const percentOptions = options.filter(
+                    (option) => option.value !== 'custom'
+                  );
+                  const numericValue =
+                    expense.adj_value !== undefined &&
+                    expense.adj_value !== null
+                      ? Number(expense.adj_value)
+                      : 0;
+                  const statusLabel =
+                    numericValue > 0
+                      ? 'Inferior'
+                      : numericValue < 0
+                        ? 'Superior'
+                        : 'Equal';
+                  const badgeColor =
+                    numericValue > 0
+                      ? 'text-red-600'
+                      : numericValue < 0
+                        ? 'text-green-600'
+                        : 'text-gray-500';
+                  const displayValue =
+                    adjustmentMode === 'Dollar'
+                      ? sanitizeInputDollarSignComps(numericValue || 0)
+                      : numericValue !== 0
+                        ? `${numericValue > 0 ? '+' : ''}${numericValue}%`
+                        : '--';
+                  const customValue =
+                    customQuantInputs[expenseIndex] ??
+                    (expense.customType ? `${expense.adj_value ?? ''}` : '');
 
-                            setValues(
-                              (oldValues: {
-                                tableData: { [x: string]: any };
-                              }) => {
-                                const comp = oldValues.tableData[index];
-                                const quantitativeAdjustments = [
-                                  ...comp.quantitativeAdjustments,
-                                ];
+                  return (
+                    <div
+                      key={expense.id}
+                      className="subjectPropertyCard h-[20px] relative"
+                    >
+                      <div className="flex items-center">
+                        <div className="w-1/2">
+                          <button
+                            type="button"
+                            className="w-full border border-slate-200 rounded-md px-2 py-[6px] text-left text-xs bg-white hover:border-[#0da1c7] transition-colors flex items-center justify-between"
+                            onClick={() =>
+                              setOpenQuantAdjustmentIndex(
+                                isOpen ? null : (expenseIndex as number)
+                              )
+                            }
+                          >
+                            <span className="truncate text-gray-700">
+                              {displayValue}
+                            </span>
+                            <Icons.ArrowDropDownIcon className="w-3 h-3 text-slate-400" />
+                          </button>
 
-                                // Update quantitativeAdjustments specific properties
-                                quantitativeAdjustments[
-                                  expenseIndex
-                                ].customType = isCustomValue;
-                                quantitativeAdjustments[
-                                  expenseIndex
-                                ].adj_value = value;
+                          {isOpen && (
+                            <div className="absolute z-50 mt-1 w-52 bg-white rounded-md shadow-xl border border-slate-200">
+                              <div className="flex items-center justify-between px-3 py-2 border-b border-slate-100">
+                                <span className="text-[10px] font-semibold uppercase tracking-wide text-slate-500">
+                                  Adjustment Mode
+                                </span>
+                                <div className="flex gap-1">
+                                  <button
+                                    type="button"
+                                    className={`px-2 py-1 text-xs rounded ${
+                                      adjustmentMode === 'Percent'
+                                        ? 'bg-[#0da1c7] text-white'
+                                        : 'bg-slate-100 text-slate-600'
+                                    }`}
+                                    onClick={() =>
+                                      setAdjustmentMode('Percent')
+                                    }
+                                  >
+                                    %
+                                  </button>
+                                  <button
+                                    type="button"
+                                    className={`px-2 py-1 text-xs rounded ${
+                                      adjustmentMode === 'Dollar'
+                                        ? 'bg-[#0da1c7] text-white'
+                                        : 'bg-slate-100 text-slate-600'
+                                    }`}
+                                    onClick={() => setAdjustmentMode('Dollar')}
+                                  >
+                                    $
+                                  </button>
+                                </div>
+                              </div>
 
-                                // Calculate the updated total and related data based on quantitativeAdjustments
-
-                                const updatedCompData = {
-                                  ...comp,
-                                };
-
-                                // Update the table data with modified quantitativeAdjustments
-                                oldValues.tableData[index] = {
-                                  ...updatedCompData,
-                                };
-
-                                const totalAverageAdjustedPsf =
-                                  oldValues.tableData.reduce(
-                                    (acc: any, item: any) => {
-                                      return acc + item.averaged_adjusted_psf;
-                                    },
-                                    0
-                                  );
-
-                                return {
-                                  ...oldValues,
-                                  averaged_adjusted_psf:
-                                    totalAverageAdjustedPsf,
-                                };
-                              }
-                            );
-                          }}
-                          name={`${item.id}.quantitativeAdjustments.${expenseIndex}.adj_value`}
-                        />
+                              {adjustmentMode === 'Percent' ? (
+                                <>
+                                  <div className="max-h-52 overflow-y-auto">
+                                    {percentOptions.map((option) => (
+                                      <button
+                                        type="button"
+                                        key={option.value}
+                                        className="w-full px-3 py-2 text-left text-sm hover:bg-slate-50 flex items-center justify-between"
+                                        onClick={() => {
+                                          updateQuantAdjustmentValue(
+                                            expenseIndex,
+                                            parseFloat(option.value as any) ||
+                                              0,
+                                            false
+                                          );
+                                          setCustomQuantInputs((prev) => ({
+                                            ...prev,
+                                            [expenseIndex]: '',
+                                          }));
+                                          setOpenQuantAdjustmentIndex(null);
+                                        }}
+                                      >
+                                        <span>{option.label}</span>
+                                        <span className="text-[10px] uppercase text-slate-400">
+                                          {parseFloat(option.value as any) > 0
+                                            ? 'Inferior'
+                                            : parseFloat(option.value as any) <
+                                                0
+                                              ? 'Superior'
+                                              : 'Similar'}
+                                        </span>
+                                      </button>
+                                    ))}
+                                  </div>
+                                  <div className="border-t border-slate-100 px-3 py-2">
+                                    <label className="text-[10px] font-semibold text-slate-500 uppercase">
+                                      Custom %
+                                    </label>
+                                    <input
+                                      className="mt-1 w-full border border-slate-200 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#0da1c7]"
+                                      value={customValue}
+                                      placeholder="Type value"
+                                      onChange={(e) => {
+                                        const sanitized = sanitizePercentValue(
+                                          e.target.value
+                                        );
+                                        setCustomQuantInputs((prev) => ({
+                                          ...prev,
+                                          [expenseIndex]: sanitized,
+                                        }));
+                                        const nextNumber =
+                                          sanitized === ''
+                                            ? 0
+                                            : parseFloat(sanitized);
+                                        updateQuantAdjustmentValue(
+                                          expenseIndex,
+                                          nextNumber,
+                                          true
+                                        );
+                                      }}
+                                    />
+                                    <p className="text-[10px] text-slate-400 mt-1">
+                                      Positive = inferior, negative = superior.
+                                    </p>
+                                  </div>
+                                </>
+                              ) : (
+                                <div className="p-3 space-y-2">
+                                  <label className="text-[10px] font-semibold text-slate-500 uppercase">
+                                    Dollar adjustment
+                                  </label>
+                                  <input
+                                    className="w-full border border-slate-200 rounded px-2 py-1 text-sm focus:outline-none focus:border-[#0da1c7]"
+                                    value={
+                                      sanitizeDollarValue(
+                                        `${expense.adj_value ?? ''}`
+                                      ) || ''
+                                    }
+                                    placeholder="0.00"
+                                    onChange={(e) => {
+                                      const sanitized = sanitizeDollarValue(
+                                        e.target.value
+                                      );
+                                      const nextNumber =
+                                        sanitized === ''
+                                          ? 0
+                                          : parseFloat(sanitized);
+                                      updateQuantAdjustmentValue(
+                                        expenseIndex,
+                                        nextNumber,
+                                        false
+                                      );
+                                    }}
+                                  />
+                                  <p className="text-[10px] text-slate-400">
+                                    Positive = inferior, negative = superior.
+                                  </p>
+                                </div>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                        <span className={`text-xs ${badgeColor} ml-2`}>
+                          {statusLabel}
+                        </span>
                       </div>
                     </div>
-                  </div>
-                )
+                  );
+                }
               )}
             </div>
           </div>

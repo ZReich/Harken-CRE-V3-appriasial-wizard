@@ -145,6 +145,77 @@ export interface Owner {
 }
 
 // =================================================================
+// RECONCILIATION TYPES
+// =================================================================
+
+export interface ScenarioReconciliation {
+  scenarioId: number;
+  weights: Record<string, number>; // approach name -> weight percentage
+  comments: string;
+}
+
+export interface ReconciliationData {
+  scenarioReconciliations: ScenarioReconciliation[];
+  exposurePeriod: number | null;
+  marketingTime: number | null;
+  exposureRationale: string;
+  certifications: string[]; // IDs of selected certifications
+}
+
+// =================================================================
+// PROGRESS TRACKING TYPES
+// =================================================================
+
+export interface PageTabState {
+  lastActiveTab: string;
+  hasInteracted: boolean;
+}
+
+export interface ScenarioCompletionState {
+  scenarioId: number;
+  completedApproaches: string[];
+  isComplete: boolean;
+  completedAt: string | null;
+}
+
+export interface CelebrationState {
+  isVisible: boolean;
+  sectionId: string | null;
+  scenarioId: number | null;  // For scenario-specific celebrations
+  level: 'none' | 'small' | 'medium' | 'large' | 'grand' | 'finale';
+}
+
+// =================================================================
+// SUBJECT DATA TYPES (Centralized property identification)
+// =================================================================
+
+export interface SubjectAddress {
+  street: string;
+  city: string;
+  state: string;
+  zip: string;
+  county: string;
+}
+
+export interface SubjectData {
+  // Property identification
+  propertyName: string;
+  address: SubjectAddress;
+  taxId: string;
+  legalDescription: string;
+  
+  // Key dates
+  reportDate: string;
+  inspectionDate: string;
+  effectiveDate: string;
+  
+  // Sale history (USPAP requirement)
+  lastSaleDate: string;
+  lastSalePrice: string;
+  transactionHistory: string;
+}
+
+// =================================================================
 // WIZARD STATE
 // =================================================================
 
@@ -157,6 +228,9 @@ export interface WizardState {
   // Scenarios
   scenarios: AppraisalScenario[];
   activeScenarioId: number;
+  
+  // Subject Property Data (centralized)
+  subjectData: SubjectData;
   
   // Improvements
   improvementsInventory: ImprovementsInventory;
@@ -171,10 +245,20 @@ export interface WizardState {
   // Income Approach Data
   incomeApproachData: import('../features/income-approach/types').IncomeApproachState | null;
   
+  // Reconciliation Data
+  reconciliationData: ReconciliationData | null;
+  
   // Navigation
   currentPage: string;
   subjectActiveTab: string;
   isFullscreen: boolean;
+  
+  // Progress Tracking
+  pageTabs: Record<string, PageTabState>;
+  sectionCompletedAt: Record<string, string | null>;
+  scenarioCompletions: ScenarioCompletionState[];
+  allScenariosCompletedAt: string | null;
+  celebration: CelebrationState;
   
   // Metadata
   lastModified: string;
@@ -187,6 +271,7 @@ export type WizardAction =
   | { type: 'REMOVE_SCENARIO'; payload: number }
   | { type: 'UPDATE_SCENARIO'; payload: Partial<AppraisalScenario> & { id: number } }
   | { type: 'SET_ACTIVE_SCENARIO'; payload: number }
+  | { type: 'SET_SCENARIOS'; payload: AppraisalScenario[] }
   | { type: 'SET_IMPROVEMENTS_INVENTORY'; payload: ImprovementsInventory }
   | { type: 'SET_EXTRACTED_DATA'; payload: { slotId: string; data: ExtractedData } }
   | { type: 'SET_ALL_EXTRACTED_DATA'; payload: Record<string, ExtractedData> }
@@ -197,10 +282,20 @@ export type WizardAction =
   | { type: 'UPDATE_OWNER'; payload: { id: string; updates: Partial<Owner> } }
   | { type: 'REMOVE_OWNER'; payload: string }
   | { type: 'SET_OWNERS'; payload: Owner[] }
+  | { type: 'SET_SUBJECT_DATA'; payload: Partial<SubjectData> }
   | { type: 'SET_INCOME_APPROACH_DATA'; payload: import('../features/income-approach/types').IncomeApproachState }
+  | { type: 'SET_RECONCILIATION_DATA'; payload: ReconciliationData }
   | { type: 'SET_CURRENT_PAGE'; payload: string }
   | { type: 'SET_SUBJECT_TAB'; payload: string }
   | { type: 'TOGGLE_FULLSCREEN' }
+  // Progress Tracking Actions
+  | { type: 'SET_PAGE_TAB'; payload: { page: string; tab: string } }
+  | { type: 'MARK_SECTION_COMPLETE'; payload: { sectionId: string } }
+  | { type: 'MARK_SCENARIO_COMPLETE'; payload: { scenarioId: number } }
+  | { type: 'UPDATE_SCENARIO_APPROACH'; payload: { scenarioId: number; approach: string; isComplete: boolean } }
+  | { type: 'MARK_ALL_SCENARIOS_COMPLETE' }
+  | { type: 'SHOW_CELEBRATION'; payload: { sectionId: string; scenarioId?: number; level: CelebrationState['level'] } }
+  | { type: 'HIDE_CELEBRATION' }
   | { type: 'RESET' };
 
 // =================================================================

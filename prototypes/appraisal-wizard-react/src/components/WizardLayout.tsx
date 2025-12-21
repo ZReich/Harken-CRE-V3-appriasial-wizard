@@ -3,30 +3,48 @@ import { useNavigate } from 'react-router-dom';
 import { useWizard } from '../context/WizardContext';
 import ProgressStepper from './ProgressStepper';
 import WizardHeader from './WizardHeader';
+import CelebrationOverlay from './CelebrationOverlay';
 
 interface WizardLayoutProps {
   children: ReactNode;
   sidebar?: ReactNode;
-  helpSidebar?: ReactNode;
+  helpSidebarGuidance?: ReactNode;
+  helpSidebarValues?: ReactNode;
   title: string;
   subtitle: string;
   phase: number;
   noPadding?: boolean;
+  // New: Scenario switcher component (rendered in header)
+  scenarioSwitcher?: ReactNode;
+  // New: Theme accent color for dynamic theming
+  themeAccent?: string;
+  // New: Sidebar accent color for approach color-coding
+  sidebarAccent?: string;
+  // Smart Continue: Custom handler that cycles through tabs before advancing
+  onContinue?: () => void;
 }
 
 export default function WizardLayout({
   children,
   sidebar,
-  helpSidebar,
+  helpSidebarGuidance,
+  helpSidebarValues,
   title,
   subtitle,
   phase,
   noPadding = false,
+  scenarioSwitcher,
+  themeAccent,
+  sidebarAccent,
+  onContinue: customOnContinue,
 }: WizardLayoutProps) {
   const { state, toggleFullscreen } = useWizard();
   const navigate = useNavigate();
   const [leftCollapsed, setLeftCollapsed] = useState(state.isFullscreen);
   const [rightCollapsed, setRightCollapsed] = useState(state.isFullscreen);
+  const [guidanceMode, setGuidanceMode] = useState<'guidance' | 'values'>(
+    'guidance'
+  );
   
   // Track previous sidebar states before fullscreen
   const prevLeftCollapsed = useRef(false);
@@ -66,6 +84,12 @@ export default function WizardLayout({
   }, [state.isFullscreen]);
 
   const handleNext = () => {
+    // Use custom handler if provided (for smart tab cycling)
+    if (customOnContinue) {
+      customOnContinue();
+      return;
+    }
+    // Default: navigate to next phase
     if (phase < 6) {
       navigate(pages[phase].path);
     }
@@ -75,6 +99,28 @@ export default function WizardLayout({
     if (phase > 1) {
       navigate(pages[phase - 2].path);
     }
+  };
+
+  const hasHelpSidebar = Boolean(helpSidebarGuidance || helpSidebarValues);
+  const helpSidebar =
+    guidanceMode === 'values'
+      ? helpSidebarValues || helpSidebarGuidance
+      : helpSidebarGuidance || helpSidebarValues;
+
+  // Compute background tint based on theme accent
+  const getBackgroundTint = () => {
+    if (!themeAccent) return undefined;
+    // Apply a very subtle wash based on the theme color
+    return `linear-gradient(to bottom, ${themeAccent}05 0%, transparent 100px)`;
+  };
+
+  // Compute sidebar border accent
+  const getSidebarStyle = () => {
+    if (!sidebarAccent) return {};
+    return {
+      borderLeftColor: `${sidebarAccent}30`,
+      borderLeftWidth: '3px',
+    };
   };
 
   return (
@@ -93,28 +139,20 @@ export default function WizardLayout({
         onToggleFullscreen={handleToggleFullscreen}
         onContinue={handleNext}
         onPrevious={handlePrevious}
+        guidanceMode={guidanceMode}
+        onGuidanceModeChange={setGuidanceMode}
+        isGuidanceVisible={!rightCollapsed}
+        onToggleGuidance={() => setRightCollapsed(!rightCollapsed)}
+        hasGuidance={hasHelpSidebar}
+        hasSections={Boolean(sidebar)}
+        isSectionsCollapsed={leftCollapsed}
+        onToggleSections={() => setLeftCollapsed(!leftCollapsed)}
+        scenarioSwitcher={scenarioSwitcher}
+        themeAccent={themeAccent}
       />
 
       {/* Main Layout */}
       <div className="flex flex-1 overflow-hidden">
-        {/* Left Sidebar Toggle */}
-        {sidebar && (
-          <button
-            onClick={() => setLeftCollapsed(!leftCollapsed)}
-            className="fixed top-1/2 -translate-y-1/2 z-50 bg-[#0da1c7] text-white w-6 h-14 rounded-r-md shadow-lg hover:bg-[#0b8fb0] hover:w-7 transition-all flex items-center justify-center"
-            style={{ left: leftCollapsed ? 0 : '17rem' }}
-          >
-            <svg
-              className={`w-4 h-4 transition-transform ${leftCollapsed ? 'rotate-180' : ''}`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-            </svg>
-          </button>
-        )}
-
         {/* Left Sidebar */}
         {sidebar && (
           <aside
@@ -127,39 +165,29 @@ export default function WizardLayout({
         )}
 
         {/* Main Content */}
-        <main className="flex-1 min-w-0 bg-white relative">
+        <main 
+          className="flex-1 min-w-0 bg-white relative"
+          style={themeAccent ? { background: getBackgroundTint() } : undefined}
+        >
           <div className={noPadding ? 'absolute inset-0' : 'p-8 h-full overflow-auto'}>{children}</div>
         </main>
 
-        {/* Right Sidebar */}
-        {helpSidebar && (
+        {/* Right Sidebar (Guidance/Values Panel) */}
+        {hasHelpSidebar && (
           <aside
             className={`bg-white border-l border-gray-200 overflow-y-auto transition-all duration-300 ${
               rightCollapsed ? 'w-0 border-l-0' : 'w-[20rem]'
             }`}
+            style={!rightCollapsed ? getSidebarStyle() : undefined}
           >
             {!rightCollapsed && <div className="p-6">{helpSidebar}</div>}
           </aside>
         )}
 
-        {/* Right Sidebar Toggle */}
-        {helpSidebar && (
-          <button
-            onClick={() => setRightCollapsed(!rightCollapsed)}
-            className="fixed top-1/2 -translate-y-1/2 z-50 bg-[#0da1c7] text-white w-6 h-14 rounded-l-md shadow-lg hover:bg-[#0b8fb0] hover:w-7 transition-all flex items-center justify-center"
-            style={{ right: rightCollapsed ? 0 : '20rem' }}
-          >
-            <svg
-              className={`w-4 h-4 transition-transform ${rightCollapsed ? 'rotate-180' : ''}`}
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-            >
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-            </svg>
-          </button>
-        )}
       </div>
+
+      {/* Celebration Overlay - renders on top of everything */}
+      <CelebrationOverlay />
     </div>
   );
 }

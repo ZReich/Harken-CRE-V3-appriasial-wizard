@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { Trash2, Calendar, MessageSquare, X } from 'lucide-react';
 import type { LineItem } from '../types';
-import { RichTextEditor } from './RichTextEditor';
 
 interface InputRowProps {
   item: LineItem;
@@ -226,15 +225,16 @@ export const InputRow: React.FC<InputRowProps> = ({
                   </button>
                 </div>
                 
-                <div className="px-2 -mt-4">
-                  <RichTextEditor 
-                    label=""
+                <div className="px-3 py-3">
+                  <textarea
                     value={item.comments || ''}
-                    onChange={(val) => onChange({ ...item, comments: val })}
+                    onChange={(e) => onChange({ ...item, comments: e.target.value })}
+                    placeholder="Enter notes, assumptions, or details about this line item..."
+                    className="w-full min-h-[120px] p-3 text-sm text-gray-700 bg-white border border-gray-200 rounded-xl resize-y focus:outline-none focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent leading-relaxed"
                   />
                 </div>
 
-                <div className="p-2 bg-slate-50 border-t border-slate-100 flex justify-end rounded-b-xl mt-4">
+                <div className="p-2 bg-slate-50 border-t border-slate-100 flex justify-end rounded-b-xl">
                   <button onClick={() => setIsNoteOpen(false)} className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-lg transition-colors shadow-sm">
                     Done
                   </button>

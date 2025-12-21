@@ -107,6 +107,8 @@ import EvaluationSalesApproach from '@/pages/evaluation/sales-approach/evaluatio
 import EvaluationSalesCompsApproach from '@/pages/evaluation/sales-approach/evaluation-sales-approach-comps-form';
 import EvaluationGoogleMapAreaInfoSales from '@/pages/evaluation/sales-approach/evaluation-sales-approach-comps-map';
 import EvaluationSalesApproachForm from '@/pages/evaluation/sales-approach/evaluation-sales-approach-form';
+import EvaluationLandValuationApproachForm from '@/pages/evaluation/evaluation-land-valuation-approach/evaluation-land-valuation-approach-form';
+import EvaluationLandValuationCompsMap from '@/pages/evaluation/evaluation-land-valuation-approach/evaluation-land-valuation-comps-map';
 import { EvaluationSetup } from '@/pages/evaluation/set-up/evaluation-setup';
 import { UpdatedEvaluationSetup } from '@/pages/evaluation/set-up/evaluation-update-setup';
 import { ResidentialSetup } from '@/pages/evaluation/set-up/residential-setup';
@@ -534,10 +536,42 @@ const RoutesApp = () => {
               }
             />
             <Route
+              path="/evaluation/land-valuation"
+              element={
+                <PrivateRoute>
+                  <EvaluationLandValuationApproachForm />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/evaluation/land-valuation-comps-map"
+              element={
+                <PrivateRoute>
+                  <EvaluationLandValuationCompsMap />
+                </PrivateRoute>
+              }
+            />
+            <Route
               path="/residential/evaluation/sales-comps-map"
               element={
                 <PrivateRoute>
                   <ResidentialGoogleMapAreaInfoSales />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/residential/evaluation/land-valuation"
+              element={
+                <PrivateRoute>
+                  <EvaluationLandValuationApproachForm />
+                </PrivateRoute>
+              }
+            />
+            <Route
+              path="/residential/evaluation/land-valuation-comps-map"
+              element={
+                <PrivateRoute>
+                  <EvaluationLandValuationCompsMap />
                 </PrivateRoute>
               }
             />

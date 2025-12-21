@@ -1,3 +1,5 @@
+import { ReactNode } from 'react';
+
 interface WizardHeaderProps {
   title: string;
   subtitle: string;
@@ -6,6 +8,18 @@ interface WizardHeaderProps {
   onToggleFullscreen: () => void;
   onContinue: () => void;
   onPrevious: () => void;
+  guidanceMode?: 'guidance' | 'values';
+  onGuidanceModeChange?: (mode: 'guidance' | 'values') => void;
+  isGuidanceVisible?: boolean;
+  onToggleGuidance?: () => void;
+  hasGuidance?: boolean;
+  hasSections?: boolean;
+  isSectionsCollapsed?: boolean;
+  onToggleSections?: () => void;
+  // New: Scenario switcher slot
+  scenarioSwitcher?: ReactNode;
+  // New: Theme accent color
+  themeAccent?: string;
 }
 
 export default function WizardHeader({
@@ -16,17 +30,63 @@ export default function WizardHeader({
   onToggleFullscreen,
   onContinue,
   onPrevious: _onPrevious,
+  guidanceMode = 'guidance',
+  onGuidanceModeChange,
+  isGuidanceVisible = true,
+  onToggleGuidance,
+  hasGuidance = false,
+  hasSections = false,
+  isSectionsCollapsed = false,
+  onToggleSections,
+  scenarioSwitcher,
+  themeAccent,
 }: WizardHeaderProps) {
+  // Compute dynamic styles based on theme accent
+  const accentColor = themeAccent || '#0da1c7';
+  const continueButtonStyle = {
+    backgroundColor: accentColor,
+  };
+  const continueButtonHoverClass = themeAccent ? '' : 'hover:bg-[#0b8fb0]';
+
   return (
     <div
       className={`bg-gray-50 border-b border-gray-200 ${
-        isFullscreen ? 'py-2 px-6' : 'py-4 px-8'
+        isFullscreen ? 'py-2 px-6' : 'py-3 px-8'
       }`}
+      style={themeAccent ? { borderBottomColor: `${themeAccent}20` } : undefined}
     >
+      {/* Scenario Switcher Row (if provided) */}
+      {scenarioSwitcher && !isFullscreen && (
+        <div className="mb-3 pb-3 border-b border-gray-200/50">
+          {scenarioSwitcher}
+        </div>
+      )}
+
       <div className="flex items-center justify-between">
         {/* Title */}
         <div>
           <div className="flex items-center gap-3 mb-1">
+            {hasSections && (
+              <button
+                onClick={onToggleSections}
+                className="p-2 text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg bg-white"
+                title={isSectionsCollapsed ? 'Show sections' : 'Hide sections'}
+              >
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d={isSectionsCollapsed ? 'M9 5l7 7-7 7' : 'M15 19l-7-7 7-7'}
+                  />
+                </svg>
+              </button>
+            )}
             <h1
               className={`font-bold text-gray-900 ${
                 isFullscreen ? 'text-lg' : 'text-2xl'
@@ -34,7 +94,14 @@ export default function WizardHeader({
             >
               {title}
             </h1>
-            <span className="px-3 py-1 rounded-md text-xs font-semibold bg-blue-100 text-blue-800">
+            <span 
+              className="px-3 py-1 rounded-md text-xs font-semibold"
+              style={themeAccent 
+                ? { backgroundColor: `${themeAccent}15`, color: themeAccent }
+                : undefined
+              }
+              {...(!themeAccent && { className: 'px-3 py-1 rounded-md text-xs font-semibold bg-blue-100 text-blue-800' })}
+            >
               In Progress
             </span>
           </div>
@@ -46,14 +113,37 @@ export default function WizardHeader({
         {/* Center Controls */}
         <div className="flex items-center gap-3">
           {/* Guidance/Values Toggle */}
-          <div className="flex items-center bg-gray-100 rounded-lg p-1">
-            <button className="px-3 py-1.5 text-sm font-medium rounded-md bg-white text-gray-900 shadow-sm">
-              Guidance
-            </button>
-            <button className="px-3 py-1.5 text-sm font-medium rounded-md text-gray-600">
-              Values
-            </button>
-          </div>
+          {hasGuidance && (
+            <div className="flex items-center bg-gray-100 rounded-lg p-1 border border-gray-200">
+              <button
+                className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
+                  guidanceMode === 'guidance'
+                    ? 'bg-white text-gray-900 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-800'
+                }`}
+                onClick={() => onGuidanceModeChange?.('guidance')}
+              >
+                Guidance
+              </button>
+              <button
+                className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors border-l border-gray-200 ${
+                  guidanceMode === 'values'
+                    ? 'bg-white text-gray-900 shadow-sm'
+                    : 'text-gray-600 hover:text-gray-800'
+                }`}
+                onClick={() => onGuidanceModeChange?.('values')}
+              >
+                Values
+              </button>
+              <button
+                className="ml-2 px-2 py-1 text-xs font-medium text-gray-600 hover:text-gray-900"
+                onClick={onToggleGuidance}
+                title={isGuidanceVisible ? 'Hide panel' : 'Show panel'}
+              >
+                {isGuidanceVisible ? 'Hide' : 'Show'}
+              </button>
+            </div>
+          )}
 
           {/* Fullscreen Toggle */}
           <button
@@ -89,7 +179,8 @@ export default function WizardHeader({
           </button>
           <button
             onClick={onContinue}
-            className="px-6 py-2 text-sm font-semibold text-white bg-[#0da1c7] rounded-lg hover:bg-[#0b8fb0] flex items-center gap-2"
+            className={`px-6 py-2 text-sm font-semibold text-white rounded-lg flex items-center gap-2 ${continueButtonHoverClass}`}
+            style={continueButtonStyle}
           >
             Continue
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -101,4 +192,3 @@ export default function WizardHeader({
     </div>
   );
 }
-

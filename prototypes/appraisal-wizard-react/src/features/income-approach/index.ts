@@ -1,9 +1,19 @@
 // Income Approach - Feature Module
 export { IncomeApproachGrid } from './components/IncomeApproachGrid';
 export { InputRow } from './components/InputRow';
-export { RichTextEditor } from './components/RichTextEditor';
+export { IncomeTextEditor } from './components/IncomeTextEditor';
 export { FinancialChart } from './components/FinancialChart';
 export { RiskAnalysisModal } from './components/RiskAnalysisModal';
+export { RentComparableGrid } from './components/RentComparableGrid';
+export { ExpenseComparableGrid } from './components/ExpenseComparableGrid';
+export { DCFProjectionTable } from './components/DCFProjectionTable';
+export type { 
+  IncomeSectionType, 
+  RevenueContextData, 
+  ExpensesContextData, 
+  ValuationContextData,
+  IncomeContextData 
+} from './components/IncomeTextEditor';
 
 export {
   DEFAULT_PROPERTY_META,

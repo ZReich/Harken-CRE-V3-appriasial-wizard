@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useWizard } from '../context/WizardContext';
 import {
   createDefaultParcel,
@@ -106,6 +106,42 @@ export default function ImprovementsInventory() {
     },
     [inventory, setImprovementsInventory]
   );
+
+  // Auto-populate first parcel from centralized subjectData
+  useEffect(() => {
+    if (!state.subjectData) return;
+    
+    const firstParcel = inventory.parcels[0];
+    if (!firstParcel) return;
+    
+    const { taxId, legalDescription, address } = state.subjectData;
+    const addressString = address?.street 
+      ? `${address.street}, ${address.city}, ${address.state} ${address.zip}`
+      : '';
+    
+    // Only auto-populate if first parcel fields are empty and subjectData has values
+    const needsUpdate = (
+      (!firstParcel.parcelNumber && taxId) ||
+      (!firstParcel.legalDescription && legalDescription) ||
+      (!firstParcel.address && addressString)
+    );
+    
+    if (needsUpdate) {
+      setImprovementsInventory({
+        ...inventory,
+        parcels: inventory.parcels.map((p, idx) => 
+          idx === 0 
+            ? { 
+                ...p, 
+                parcelNumber: p.parcelNumber || taxId || '',
+                legalDescription: p.legalDescription || legalDescription || '',
+                address: p.address || addressString,
+              }
+            : p
+        ),
+      });
+    }
+  }, [state.subjectData, inventory.parcels[0]?.id]); // Only run when subjectData changes or first parcel is created
 
   const addParcel = () => {
     updateInventory((inv) => ({
@@ -284,6 +320,8 @@ export default function ImprovementsInventory() {
             isExpanded={expandedParcels.has(parcel.id)}
             canRemove={inventory.parcels.length > 1}
             expandedBuildings={expandedBuildings}
+            isFirstParcel={pIdx === 0}
+            subjectData={state.subjectData}
             onToggle={() => toggleParcel(parcel.id)}
             onToggleBuilding={toggleBuilding}
             onUpdate={(updates) => updateParcel(parcel.id, updates)}
@@ -320,6 +358,8 @@ interface ParcelCardProps {
   isExpanded: boolean;
   canRemove: boolean;
   expandedBuildings: Set<string>;
+  isFirstParcel?: boolean;  // For showing "Synced from Setup" badges
+  subjectData?: { taxId: string; legalDescription: string; address: { street: string; city: string; state: string; zip: string; county: string } };
   onToggle: () => void;
   onToggleBuilding: (buildingId: string) => void;
   onUpdate: (updates: Partial<ImprovementParcel>) => void;
@@ -338,6 +378,8 @@ function ParcelCard({
   isExpanded,
   canRemove,
   expandedBuildings,
+  isFirstParcel,
+  subjectData,
   onToggle,
   onToggleBuilding,
   onUpdate,
@@ -350,6 +392,14 @@ function ParcelCard({
   onUpdateArea,
 }: ParcelCardProps) {
   const parcelSF = calculateParcelSF(parcel);
+  
+  // Check if fields are synced from Setup
+  const isTaxIdSynced = isFirstParcel && subjectData?.taxId && parcel.parcelNumber === subjectData.taxId;
+  const isLegalDescSynced = isFirstParcel && subjectData?.legalDescription && parcel.legalDescription === subjectData.legalDescription;
+  const addressString = subjectData?.address?.street 
+    ? `${subjectData.address.street}, ${subjectData.address.city}, ${subjectData.address.state} ${subjectData.address.zip}`
+    : '';
+  const isAddressSynced = isFirstParcel && addressString && parcel.address === addressString;
 
   return (
     <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
@@ -394,35 +444,56 @@ function ParcelCard({
         <div className="px-6 py-5 border-t border-gray-100 space-y-6">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1.5">Tax ID / Parcel Number</label>
+              <label className="block text-xs font-medium text-gray-600 mb-1.5 flex items-center gap-2">
+                Tax ID / Parcel Number
+                {isTaxIdSynced && (
+                  <span className="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-normal">From Setup</span>
+                )}
+              </label>
               <input
                 type="text"
                 value={parcel.parcelNumber}
                 onChange={(e) => onUpdate({ parcelNumber: e.target.value })}
                 placeholder="e.g., 12-345-678"
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent ${
+                  isTaxIdSynced ? 'border-blue-200 bg-blue-50' : 'border-gray-200'
+                }`}
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1.5">Situs Address</label>
+              <label className="block text-xs font-medium text-gray-600 mb-1.5 flex items-center gap-2">
+                Situs Address
+                {isAddressSynced && (
+                  <span className="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-normal">From Setup</span>
+                )}
+              </label>
               <input
                 type="text"
                 value={parcel.address || ''}
                 onChange={(e) => onUpdate({ address: e.target.value })}
                 placeholder="Street address"
-                className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent ${
+                  isAddressSynced ? 'border-blue-200 bg-blue-50' : 'border-gray-200'
+                }`}
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1.5">Legal Description</label>
+            <label className="block text-xs font-medium text-gray-600 mb-1.5 flex items-center gap-2">
+              Legal Description
+              {isLegalDescSynced && (
+                <span className="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-normal">From Setup</span>
+              )}
+            </label>
             <input
               type="text"
               value={parcel.legalDescription || ''}
               onChange={(e) => onUpdate({ legalDescription: e.target.value })}
               placeholder="e.g., Lot 1, Block 2, Canyon Creek Industrial Park"
-              className="w-full px-4 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+              className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent ${
+                isLegalDescSynced ? 'border-blue-200 bg-blue-50' : 'border-gray-200'
+              }`}
             />
           </div>
 

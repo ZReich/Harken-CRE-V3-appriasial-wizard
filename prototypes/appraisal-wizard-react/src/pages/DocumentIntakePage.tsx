@@ -140,7 +140,7 @@ const mockExtractData = (slotId: string): ExtractedFields => {
 // ==========================================
 export default function DocumentIntakePage() {
   const navigate = useNavigate();
-  const { dispatch } = useWizard();
+  const { dispatch, setSubjectData } = useWizard();
   const [documents, setDocuments] = useState<Record<string, UploadedDocument[]>>({});
   const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
   const [editingField, setEditingField] = useState<{ slotId: string; docId: string; field: string } | null>(null);
@@ -308,6 +308,52 @@ export default function DocumentIntakePage() {
       });
     });
     sessionStorage.setItem('harken_extracted_data', JSON.stringify(allExtractedData));
+    
+    // Also update centralized subjectData in WizardContext
+    const subjectDataUpdates: Record<string, string> = {};
+    
+    // Extract from cadastral data
+    if (allExtractedData.cadastral) {
+      const cad = allExtractedData.cadastral;
+      if (cad.taxId?.value) subjectDataUpdates.taxId = cad.taxId.value;
+      if (cad.legalDescription?.value) subjectDataUpdates.legalDescription = cad.legalDescription.value;
+      if (cad.propertyAddress?.value) {
+        // Parse address if it's a full string
+        const addr = cad.propertyAddress.value;
+        // Try to parse "Street, City, State ZIP" format
+        const parts = addr.split(',').map(s => s.trim());
+        if (parts.length >= 2) {
+          const street = parts[0];
+          const cityStateZip = parts.slice(1).join(', ');
+          // Try to parse "City, State ZIP"
+          const stateZipMatch = cityStateZip.match(/^(.+?),?\s*([A-Z]{2})\s*(\d{5})?/i);
+          if (stateZipMatch) {
+            setSubjectData({
+              address: {
+                street,
+                city: stateZipMatch[1].trim(),
+                state: stateZipMatch[2].toUpperCase(),
+                zip: stateZipMatch[3] || '',
+                county: '',
+              }
+            });
+          }
+        }
+      }
+    }
+    
+    // Extract from sale data
+    if (allExtractedData.sale) {
+      const sale = allExtractedData.sale;
+      if (sale.saleDate?.value) subjectDataUpdates.lastSaleDate = sale.saleDate.value;
+      if (sale.salePrice?.value) subjectDataUpdates.lastSalePrice = sale.salePrice.value;
+    }
+    
+    // Apply updates to subjectData
+    if (Object.keys(subjectDataUpdates).length > 0) {
+      setSubjectData(subjectDataUpdates as any);
+    }
+    
     navigate('/setup');
   };
 
