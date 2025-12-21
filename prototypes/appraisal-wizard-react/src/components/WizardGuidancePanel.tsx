@@ -30,10 +30,11 @@ interface WizardGuidancePanelProps {
 }
 
 export default function WizardGuidancePanel({
-  sectionId,
+  sectionId: _sectionId,
   guidance,
   themeAccent = '#0da1c7',
 }: WizardGuidancePanelProps) {
+  void _sectionId; // Reserved for future section-specific behavior
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
     context: true,
     tips: false,

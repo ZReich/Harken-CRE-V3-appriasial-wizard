@@ -1,7 +1,7 @@
 import { useState, useMemo, useRef, useCallback } from 'react';
 import { useWizard } from '../../../context/WizardContext';
 import { BASE_REPORT_SECTIONS, APPROACH_REPORT_SECTIONS, CLOSING_REPORT_SECTIONS } from '../constants';
-import type { ReportSection, ReportField, PropertyTabId, EditableElement, ElementStyles } from '../types';
+import type { ReportSection, PropertyTabId, ElementStyles } from '../types';
 
 // =================================================================
 // SECTION TREE COMPONENT

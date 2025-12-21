@@ -657,7 +657,7 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                   <DCFProjectionTable 
                     initialInputs={{
                       pgi: summary.potentialGrossIncome,
-                      vacancyRate: expenseData.vacancyRate / 100,
+                      vacancyRate: incomeData.vacancyRate / 100,
                       operatingExpenses: summary.totalExpenses,
                       growthRate: valuationData.annualGrowthRate / 100,
                       holdingPeriod: valuationData.holdingPeriod,

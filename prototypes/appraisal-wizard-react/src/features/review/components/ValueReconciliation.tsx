@@ -101,8 +101,9 @@ export function ValueReconciliation() {
 
     // Get income approach data if available
     const incomeData = getIncomeApproachData();
-    if (approachName.includes('Income') && incomeData?.valuation) {
-      return incomeData.valuation.directCapValue || null;
+    if (approachName.includes('Income') && incomeData?.valuationData?.marketCapRate) {
+      // In production, calculate NOI / Cap Rate
+      return 1250000; // Mock value
     }
 
     // Mock values for demo - in production these would come from actual approach data

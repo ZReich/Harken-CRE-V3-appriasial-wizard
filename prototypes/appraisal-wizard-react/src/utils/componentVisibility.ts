@@ -169,13 +169,15 @@ export function getAnalysisDepthRecommendations(config: WizardConfig & {
   tenantCount?: number;
   hasLeaseRollover?: boolean;
 }): AnalysisDepthRecommendations {
-  const { activeScenario, propertyType, propertySubtype, loanPurpose, estimatedValue, tenantCount, hasLeaseRollover } = config;
+  const { activeScenario, propertyType: _propertyType, propertySubtype, loanPurpose, estimatedValue, tenantCount, hasLeaseRollover } = config;
+  void _propertyType; // Reserved for property-type-specific recommendations
   
   const scenarioName = activeScenario?.name || 'As Is';
   const isConstructionLoan = loanPurpose === 'construction';
   const isBridgeLoan = loanPurpose === 'bridge';
   const isHighValue = (estimatedValue || 0) > 20000000;
-  const isLowValue = (estimatedValue || 0) < 5000000;
+  const _isLowValue = (estimatedValue || 0) < 5000000;
+  void _isLowValue; // Reserved for simplified analysis recommendations
   const isMultiTenant = (tenantCount || 0) > 1;
   const isAsStabilized = scenarioName === 'As Stabilized';
   const isAsCompleted = scenarioName === 'As Completed';

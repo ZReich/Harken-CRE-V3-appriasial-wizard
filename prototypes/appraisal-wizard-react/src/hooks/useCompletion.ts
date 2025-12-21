@@ -1,12 +1,12 @@
 import { useMemo, useCallback } from 'react';
 import { useWizard } from '../context/WizardContext';
-import { getSectionSchema, COMPLETION_SCHEMA, type TabSchema } from '../constants/completionSchema';
+import { getSectionSchema, COMPLETION_SCHEMA } from '../constants/completionSchema';
 
 /**
  * Hook for tracking completion status of sections and tabs
  */
 export function useCompletion(sectionId: string) {
-  const { state, getTabCompletion, getSectionCompletion, getSmartInitialTab, setPageTab } = useWizard();
+  const { getTabCompletion, getSectionCompletion, getSmartInitialTab, setPageTab } = useWizard();
 
   // Get section schema
   const section = useMemo(() => getSectionSchema(sectionId), [sectionId]);

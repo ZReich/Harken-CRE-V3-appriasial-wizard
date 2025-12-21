@@ -152,7 +152,8 @@ export default function ReviewPage() {
 
   // Progress tracking
   const { tabCompletions, sectionCompletion, trackTabChange } = useCompletion('review');
-  const { checkAndTriggerCelebration } = useCelebration();
+  const { checkAndTriggerCelebration: _checkAndTriggerCelebration } = useCelebration();
+  void _checkAndTriggerCelebration; // Reserved for future review section completion celebration
 
   // Track tab changes for smart navigation
   useEffect(() => {
@@ -164,7 +165,7 @@ export default function ReviewPage() {
     sectionId: 'review',
     tabs: tabs.map(t => t.id),
     activeTab,
-    setActiveTab,
+    setActiveTab: (tab: string) => setActiveTab(tab as ReviewTabId),
     currentPhase: 6,
   });
 

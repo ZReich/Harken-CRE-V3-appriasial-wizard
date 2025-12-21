@@ -85,7 +85,8 @@ export function useCelebration() {
   }, [markSectionComplete, showCelebration]);
 
   // Trigger celebration for a completed scenario
-  const triggerScenarioCelebration = useCallback((scenarioId: number, scenarioName: string) => {
+  const triggerScenarioCelebration = useCallback((scenarioId: number, _scenarioName: string) => {
+    void _scenarioName; // Reserved for custom celebration messages
     // Don't trigger if already celebrated
     if (completedScenariosRef.current.has(scenarioId)) return;
     

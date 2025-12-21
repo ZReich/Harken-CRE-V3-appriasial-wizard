@@ -1456,7 +1456,7 @@ export default function SetupPage() {
   // ==========================================
   // PROGRESS TRACKING
   // ==========================================
-  const { tabCompletions, sectionCompletion, trackTabChange, getInitialTab } = useCompletion('setup');
+  const { tabCompletions, sectionCompletion, trackTabChange } = useCompletion('setup');
   const { checkAndTriggerCelebration } = useCelebration();
 
   // Track tab changes for smart navigation

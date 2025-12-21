@@ -1,6 +1,5 @@
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { COMPLETION_SCHEMA } from '../constants/completionSchema';
 import { useCompletion } from './useCompletion';
 
 interface SmartContinueOptions {

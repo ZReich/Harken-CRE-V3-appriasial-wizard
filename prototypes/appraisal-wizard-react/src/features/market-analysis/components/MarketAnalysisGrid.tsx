@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
 import { 
   TrendingUp, 
-  TrendingDown, 
   Building2, 
   DollarSign, 
   Percent, 
@@ -40,7 +39,8 @@ export const MarketAnalysisGrid: React.FC<MarketAnalysisGridProps> = ({
   salesCompData,
   initialData = MOCK_MARKET_DATA,
 }) => {
-  const [marketData, setMarketData] = useState<MarketData>({ ...MOCK_MARKET_DATA, ...initialData });
+  const [marketData, _setMarketData] = useState<MarketData>({ ...MOCK_MARKET_DATA, ...initialData });
+  void _setMarketData; // Reserved for future editable fields
   const [marketOutlook, setMarketOutlook] = useState(marketData.marketOutlook);
 
   const formatCurrency = (value: number) => `$${value.toFixed(2)}`;

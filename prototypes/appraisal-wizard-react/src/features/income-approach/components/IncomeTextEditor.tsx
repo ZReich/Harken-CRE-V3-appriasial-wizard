@@ -94,9 +94,11 @@ const formatCurrency = (value: number): string => {
   }).format(value);
 };
 
-const formatPercent = (value: number): string => {
+// Reserved for future formatting
+const _formatPercent = (value: number): string => {
   return `${value.toFixed(2)}%`;
 };
+void _formatPercent;
 
 // ==========================================
 // AI DRAFT GENERATORS

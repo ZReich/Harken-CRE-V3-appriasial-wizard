@@ -24,7 +24,8 @@ export const RentComparableGrid: React.FC = () => {
   const [transactionRows, setTransactionRows] = useState(RENT_TRANSACTION_ROWS);
   const [qualitativeRows, setQualitativeRows] = useState(RENT_QUALITATIVE_ROWS);
   const [openElementDropdown, setOpenElementDropdown] = useState<'transaction' | 'qualitative' | null>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
+  const _dropdownRef = useRef<HTMLDivElement>(null);
+  void _dropdownRef; // Reserved for future click-outside handling
 
   // Calculate total grid width
   const totalGridWidth = LABEL_COL_WIDTH + SUBJECT_COL_WIDTH + (comps.length * COMP_COL_WIDTH);

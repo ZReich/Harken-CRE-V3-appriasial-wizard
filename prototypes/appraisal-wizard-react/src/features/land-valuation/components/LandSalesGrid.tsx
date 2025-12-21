@@ -1,6 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Plus, Trash2, ArrowUpRight, ArrowDownRight, Minus, MapPin, Activity, ChevronDown, PenLine } from 'lucide-react';
-import { LandComp, GridRow } from '../types';
+import { LandComp } from '../types';
 import { 
   MOCK_LAND_COMPS, 
   SUBJECT_PROPERTY, 
@@ -15,17 +15,9 @@ import {
   formatNumber 
 } from '../constants';
 
-interface Section {
-  id: string;
-  title: string;
-  color: string;
-}
-
-const SECTIONS: Section[] = [
-  { id: 'transaction', title: 'TRANSACTION DATA', color: 'bg-slate-100' },
-  { id: 'adjustments', title: 'TRANSACTION ADJUSTMENTS', color: 'bg-blue-50' },
-  { id: 'qualitative', title: 'QUALITATIVE ADJUSTMENTS', color: 'bg-emerald-50' },
-];
+// Section configuration reserved for future collapsible sections
+// interface Section { id: string; title: string; color: string; }
+// const SECTIONS: Section[] = [...];
 
 // Grid column widths
 const LABEL_COL_WIDTH = 160;
@@ -38,9 +30,7 @@ export const LandSalesGrid: React.FC = () => {
   const [adjustmentRows, setAdjustmentRows] = useState(TRANSACTION_ADJ_ROWS);
   const [qualitativeRows, setQualitativeRows] = useState(QUALITATIVE_ROWS);
   const [activePopover, setActivePopover] = useState<{rowId: string, compId: string} | null>(null);
-  const [hiddenSections, setHiddenSections] = useState<Set<string>>(new Set());
   const [openElementDropdown, setOpenElementDropdown] = useState<'transaction' | 'adjustments' | 'qualitative' | null>(null);
-  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Calculate total grid width
   const totalGridWidth = LABEL_COL_WIDTH + SUBJECT_COL_WIDTH + (comps.length * COMP_COL_WIDTH);

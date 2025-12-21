@@ -121,12 +121,14 @@ export const DCFProjectionTable: React.FC<DCFProjectionTableProps> = ({
 
   const formatPercent = (value: number) => `${(value * 100).toFixed(2)}%`;
 
-  const handleInputChange = (field: keyof DCFInputs, value: string) => {
+  // Reserved for future editable inputs
+  const _handleInputChange = (field: keyof DCFInputs, value: string) => {
     const numValue = parseFloat(value.replace(/[^0-9.-]/g, ''));
     if (!isNaN(numValue)) {
       setInputs(prev => ({ ...prev, [field]: numValue }));
     }
   };
+  void _handleInputChange;
 
   // Simplified view
   if (simplified && !isExpanded) {

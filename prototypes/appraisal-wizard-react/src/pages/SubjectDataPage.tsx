@@ -239,7 +239,7 @@ export default function SubjectDataPage() {
       subtitle="Phase 4 of 6 • Detailed Property Information"
       phase={4}
       sidebar={sidebar}
-      helpSidebar={helpSidebar}
+      helpSidebarGuidance={helpSidebar}
       onContinue={handleContinue}
     >
       <div className="animate-fade-in">

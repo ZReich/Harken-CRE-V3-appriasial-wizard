@@ -441,7 +441,7 @@ export default function DocumentIntakePage() {
       subtitle="Phase 2 of 6 • AI-Powered Data Extraction"
       phase={2}
       sidebar={sidebar}
-      helpSidebar={helpSidebar}
+      helpSidebarGuidance={helpSidebar}
     >
       <div className="animate-fade-in">
         {/* Main upload area or selected slot details */}

@@ -1,4 +1,4 @@
-import { ReactNode, useMemo } from 'react';
+import { useMemo } from 'react';
 
 interface SidebarTabProps {
   id: string;
@@ -12,7 +12,7 @@ interface SidebarTabProps {
 }
 
 export function SidebarTab({
-  id,
+  id: _id,
   label,
   Icon,
   isActive,
@@ -21,6 +21,7 @@ export function SidebarTab({
   onClick,
   accentColor = '#0da1c7',
 }: SidebarTabProps) {
+  void _id; // Used for identification in parent components
   const isComplete = completion === 100;
   const hasProgress = completion > 0 && completion < 100;
 
