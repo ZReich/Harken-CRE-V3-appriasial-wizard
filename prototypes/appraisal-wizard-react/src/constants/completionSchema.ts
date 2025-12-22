@@ -88,9 +88,10 @@ export const COMPLETION_SCHEMA: SectionSchema[] = [
         'subjectData.legalDescription'
       ], weight: 2 },
       // Inspection: inspector name and inspection type
+      // Inspection: inspectionType always visible, inspectorName only when personalInspection=false
       { id: 'inspection', label: 'Inspection', requiredFields: [
-        'subjectData.inspectorName',
-        'subjectData.inspectionType'
+        'subjectData.inspectionType',
+        'subjectData.inspectorName'  // Conditional: only required when personalInspection=false
       ], weight: 1 },
       // Certifications: owner name required
       { id: 'certifications', label: 'Certifications', requiredFields: [

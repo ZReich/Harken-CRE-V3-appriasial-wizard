@@ -343,8 +343,12 @@ export default function SetupPage() {
   const [taxId, setTaxId] = useState(() => wizardState.subjectData?.taxId || '');
   
   // Inspection state - declare early so it can be used in sync useEffect
-  const [inspectionType, setInspectionType] = useState(() => wizardState.subjectData?.inspectionType || '');
-  const [personalInspection, setPersonalInspection] = useState(true);
+  // Default inspectionType to 'interior_exterior' since that's the default dropdown value
+  const [inspectionType, setInspectionType] = useState(() => wizardState.subjectData?.inspectionType || 'interior_exterior');
+  const [personalInspection, setPersonalInspection] = useState(() => {
+    // Use persisted value from WizardContext, default to true
+    return wizardState.subjectData?.personalInspection ?? true;
+  });
   const [inspectorName, setInspectorName] = useState(() => wizardState.subjectData?.inspectorName || '');
   const [inspectorLicense, setInspectorLicense] = useState(() => wizardState.subjectData?.inspectorLicense || '');
   const [appraisalAssistance, setAppraisalAssistance] = useState('');
@@ -374,6 +378,7 @@ export default function SetupPage() {
       inspectorName,
       inspectorLicense,
       inspectionType,
+      personalInspection,
       // Certifications
       certificationAcknowledged,
       licenseNumber,
@@ -387,7 +392,7 @@ export default function SetupPage() {
     });
   }, [address, dates, propertyName, legalDescription, taxId, context.appraisalPurpose, 
       context.intendedUsers, context.propertyInterest, inspectorName, inspectorLicense, 
-      inspectionType, certificationAcknowledged, licenseNumber, licenseState, licenseExpiration,
+      inspectionType, personalInspection, certificationAcknowledged, licenseNumber, licenseState, licenseExpiration,
       context.propertyStatus, context.occupancyStatus, context.plannedChanges,
       context.loanPurpose, setSubjectData]);
   

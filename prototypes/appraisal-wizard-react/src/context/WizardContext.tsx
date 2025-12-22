@@ -54,7 +54,8 @@ const getInitialState = (): WizardState => {
       // Inspection
       inspectorName: '',
       inspectorLicense: '',
-      inspectionType: '',
+      inspectionType: 'interior_exterior', // Default to most common type
+      personalInspection: true, // Default to true (appraiser personally inspected)
       // Certifications
       certificationAcknowledged: false,
       licenseNumber: '',
@@ -633,6 +634,7 @@ export function WizardProvider({ children }: { children: ReactNode }) {
     
     // CONDITIONAL FIELD HANDLING: Some fields only appear based on context
     // For Assignment Basics, plannedChanges and occupancyStatus are conditional
+    // For Inspection, inspectorName is conditional on personalInspection
     const isFieldApplicable = (field: string): boolean => {
       // plannedChanges only shows for 'existing' or 'recently_completed' property status
       if (field === 'subjectData.plannedChanges') {
@@ -645,6 +647,10 @@ export function WizardProvider({ children }: { children: ReactNode }) {
         const subType = state.propertySubtype;
         if (subType && (subType.includes('multifamily') || subType.includes('2-4unit'))) return true;
         return false;
+      }
+      // inspectorName only required when personalInspection is false
+      if (field === 'subjectData.inspectorName') {
+        return state.subjectData?.personalInspection === false;
       }
       return true; // All other fields are always applicable
     };

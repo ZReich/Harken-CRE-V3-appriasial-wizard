@@ -258,6 +258,7 @@ export interface SubjectData {
   inspectorName: string;
   inspectorLicense: string;
   inspectionType: string;
+  personalInspection: boolean; // true = appraiser inspected personally, false = contract inspector
   
   // Certifications (Setup page - Certifications tab)
   certificationAcknowledged: boolean;
