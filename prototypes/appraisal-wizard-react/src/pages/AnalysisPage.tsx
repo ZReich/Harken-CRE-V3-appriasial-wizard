@@ -17,7 +17,7 @@ import { MarketAnalysisGrid } from '../features/market-analysis';
 import { MultiFamilyGrid } from '../features/multi-family';
 import { useWizard } from '../context/WizardContext';
 import { getGuidance, type GuidanceContent } from '../constants/guidance';
-import { Layers, Building, Wallet, HardHat, Plus, Info, AlertTriangle, CheckCircle2, Lightbulb, BookOpen } from 'lucide-react';
+import { Layers, Building, Wallet, HardHat, Info, AlertTriangle, CheckCircle2, Lightbulb, BookOpen } from 'lucide-react';
 import { useCelebration } from '../hooks/useCelebration';
 import { ScenarioCelebration } from '../components/ScenarioCelebration';
 import { ReconciliationSummary } from '../components/ReconciliationSummary';

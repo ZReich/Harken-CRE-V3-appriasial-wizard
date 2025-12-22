@@ -40,8 +40,9 @@ export const LandSalesGrid: React.FC = () => {
   const [customAdjustmentElements, setCustomAdjustmentElements] = useState<AvailableElement[]>([]);
   const [customQualitativeElements, setCustomQualitativeElements] = useState<AvailableElement[]>([]);
 
-  // Calculate total grid width (including action column)
-  const totalGridWidth = LABEL_COL_WIDTH + SUBJECT_COL_WIDTH + (comps.length * COMP_COL_WIDTH) + ACTION_COL_WIDTH;
+  // Calculate total grid width (including action column) - prefixed with underscore as reserved for future use
+  const _totalGridWidth = LABEL_COL_WIDTH + SUBJECT_COL_WIDTH + (comps.length * COMP_COL_WIDTH) + ACTION_COL_WIDTH;
+  void _totalGridWidth; // Reserved for future use
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

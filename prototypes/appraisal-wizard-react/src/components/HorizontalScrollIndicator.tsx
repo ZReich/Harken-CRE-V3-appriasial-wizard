@@ -1,7 +1,7 @@
 import React, { useRef, useEffect, useState, useCallback } from 'react';
 
 interface HorizontalScrollIndicatorProps {
-  scrollContainerRef: React.RefObject<HTMLDivElement>;
+  scrollContainerRef: React.RefObject<HTMLDivElement | null>;
   stickyTop?: number; // Default 120px (below property cards)
   rightOffset?: number; // Right margin to avoid overlapping action columns (default 160px)
   className?: string;
