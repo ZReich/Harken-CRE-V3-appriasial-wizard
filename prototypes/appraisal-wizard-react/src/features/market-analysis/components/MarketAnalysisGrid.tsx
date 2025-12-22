@@ -14,7 +14,8 @@ import {
   Activity,
   Home,
   Clock,
-  Target
+  Target,
+  // TrendingDown - reserved for future use
 } from 'lucide-react';
 import type { MarketData } from '../types';
 import { MOCK_MARKET_DATA } from '../constants';
@@ -39,8 +40,7 @@ export const MarketAnalysisGrid: React.FC<MarketAnalysisGridProps> = ({
   salesCompData,
   initialData = MOCK_MARKET_DATA,
 }) => {
-  const [marketData, _setMarketData] = useState<MarketData>({ ...MOCK_MARKET_DATA, ...initialData });
-  void _setMarketData; // Reserved for future editable fields
+  const [marketData] = useState<MarketData>({ ...MOCK_MARKET_DATA, ...initialData });
   const [marketOutlook, setMarketOutlook] = useState(marketData.marketOutlook);
 
   const formatCurrency = (value: number) => `$${value.toFixed(2)}`;

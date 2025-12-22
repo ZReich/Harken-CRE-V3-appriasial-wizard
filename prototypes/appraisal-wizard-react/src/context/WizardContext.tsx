@@ -500,7 +500,13 @@ export function WizardProvider({ children }: { children: ReactNode }) {
   const getTabCompletion = useCallback((sectionId: string, tabId: string): number => {
     const section = getSectionSchema(sectionId);
     const tab = section?.tabs.find(t => t.id === tabId);
-    if (!tab || tab.requiredFields.length === 0) return 100; // No requirements = complete
+    
+    // If no tab found, return 0
+    if (!tab) return 0;
+    
+    // If no required fields defined, this tab is "not tracked" - return 0% (not complete)
+    // This prevents tabs from showing 100% when they have no tracking configured
+    if (tab.requiredFields.length === 0) return 0;
     
     const filledCount = tab.requiredFields.filter(field => {
       const value = getNestedValue(state, field);
@@ -519,7 +525,13 @@ export function WizardProvider({ children }: { children: ReactNode }) {
       return 0;
     }
     
-    const tabCompletions = section.tabs.map(tab => {
+    // Only count tabs that have required fields defined (tracked tabs)
+    const trackedTabs = section.tabs.filter(tab => tab.requiredFields.length > 0);
+    
+    // If no tabs are tracked, return 0 (section has no completion tracking)
+    if (trackedTabs.length === 0) return 0;
+    
+    const tabCompletions = trackedTabs.map(tab => {
       const weight = tab.weight || 1;
       const completion = getTabCompletion(sectionId, tab.id);
       return { completion, weight };

@@ -161,11 +161,15 @@ export default function ReviewPage() {
   }, [activeTab, trackTabChange]);
 
   // Smart continue logic (for cycling through review tabs)
+  const handleTabChange = useCallback((tab: string) => {
+    setActiveTab(tab as ReviewTabId);
+  }, []);
+  
   const { handleContinue: handleSmartContinue } = useSmartContinue({
     sectionId: 'review',
     tabs: tabs.map(t => t.id),
     activeTab,
-    setActiveTab: (tab: string) => setActiveTab(tab as ReviewTabId),
+    setActiveTab: handleTabChange,
     currentPhase: 6,
   });
 

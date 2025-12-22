@@ -1,6 +1,7 @@
 import { useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCompletion } from './useCompletion';
+// COMPLETION_SCHEMA is used via useCompletion hook
 
 interface SmartContinueOptions {
   sectionId: string;

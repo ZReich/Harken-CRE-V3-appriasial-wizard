@@ -15,10 +15,6 @@ import {
   formatNumber 
 } from '../constants';
 
-// Section configuration reserved for future collapsible sections
-// interface Section { id: string; title: string; color: string; }
-// const SECTIONS: Section[] = [...];
-
 // Grid column widths
 const LABEL_COL_WIDTH = 160;
 const SUBJECT_COL_WIDTH = 180;

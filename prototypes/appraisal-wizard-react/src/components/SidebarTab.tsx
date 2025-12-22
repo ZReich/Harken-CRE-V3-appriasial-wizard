@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+// ReactNode is used via React.FC return type
 
 interface SidebarTabProps {
   id: string;

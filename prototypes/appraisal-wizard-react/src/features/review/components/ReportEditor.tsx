@@ -2,6 +2,7 @@ import { useState, useMemo, useRef, useCallback } from 'react';
 import { useWizard } from '../../../context/WizardContext';
 import { BASE_REPORT_SECTIONS, APPROACH_REPORT_SECTIONS, CLOSING_REPORT_SECTIONS } from '../constants';
 import type { ReportSection, PropertyTabId, ElementStyles } from '../types';
+// ReportField and EditableElement types are available via ReportSection type
 
 // =================================================================
 // SECTION TREE COMPONENT

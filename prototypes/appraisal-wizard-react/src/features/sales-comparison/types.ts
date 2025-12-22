@@ -8,9 +8,11 @@ export interface Property {
   status?: string;
 }
 
+export type GridRowCategory = 'transaction' | 'physical' | 'financial' | 'adjustments' | 'valuation' | 'quantitative' | 'qualitative' | 'cap_rate_extraction';
+
 export interface GridRowData {
   id: string;
-  category: 'transaction' | 'physical' | 'financial' | 'adjustments' | 'valuation' | 'quantitative' | 'qualitative' | 'cap_rate_extraction';
+  category: GridRowCategory;
   label: string;
   key: string;
   format?: 'currency' | 'number' | 'text' | 'percent' | 'date' | 'currency_sf' | 'percent_adjustment' | 'text_with_adjustment';

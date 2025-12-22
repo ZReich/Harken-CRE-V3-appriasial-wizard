@@ -1,6 +1,7 @@
 import { useMemo, useCallback } from 'react';
 import { useWizard } from '../context/WizardContext';
 import { getSectionSchema, COMPLETION_SCHEMA } from '../constants/completionSchema';
+// TabSchema type is available via getSectionSchema return type
 
 /**
  * Hook for tracking completion status of sections and tabs
