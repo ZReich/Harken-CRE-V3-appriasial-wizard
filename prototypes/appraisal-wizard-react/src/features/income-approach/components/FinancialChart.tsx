@@ -14,8 +14,8 @@ export const FinancialChart: React.FC<Props> = ({ summary }) => {
   ];
 
   return (
-    <div className="h-64 w-full">
-      <ResponsiveContainer width="100%" height="100%">
+    <div className="h-64 w-full min-w-[200px]">
+      <ResponsiveContainer width="100%" height="100%" minWidth={200}>
         <BarChart data={data} margin={{ top: 20, right: 30, left: 0, bottom: 0 }}>
           <XAxis 
             dataKey="name" 

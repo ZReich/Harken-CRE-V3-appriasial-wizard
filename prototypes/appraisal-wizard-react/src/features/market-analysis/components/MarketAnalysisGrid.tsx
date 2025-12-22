@@ -21,7 +21,8 @@ import type { MarketData } from '../types';
 import { MOCK_MARKET_DATA } from '../constants';
 
 interface MarketAnalysisGridProps {
-  // Data from other grids (auto-aggregated)
+  // NOTE: Auto-aggregated data has moved to the ContextualMarketData sidebar component
+  // These props are deprecated but kept for backwards compatibility
   rentCompData?: {
     avgRent: number;
     rentRange: [number, number];
@@ -133,43 +134,17 @@ export const MarketAnalysisGrid: React.FC<MarketAnalysisGridProps> = ({
         </div>
       </div>
 
-      {/* Data Source Summary (from other grids) */}
-      {(rentCompData || salesCompData) && (
-        <div className="bg-gradient-to-r from-[#0da1c7]/10 to-emerald-500/10 rounded-2xl p-4 border border-[#0da1c7]/20">
-          <div className="flex items-center gap-2 mb-3">
-            <Activity className="w-4 h-4 text-[#0da1c7]" />
-            <span className="text-sm font-bold text-slate-700">Auto-Aggregated from Your Comparables</span>
-          </div>
-          <div className="grid grid-cols-4 gap-4">
-            {rentCompData && (
-              <>
-                <div>
-                  <div className="text-[10px] text-slate-500 uppercase">Avg Rent (Comps)</div>
-                  <div className="text-lg font-bold text-[#0da1c7]">{formatCurrency(rentCompData.avgRent)}/SF</div>
-                </div>
-                <div>
-                  <div className="text-[10px] text-slate-500 uppercase">Rent Range</div>
-                  <div className="text-lg font-bold text-slate-700">
-                    {formatCurrency(rentCompData.rentRange[0])} - {formatCurrency(rentCompData.rentRange[1])}
-                  </div>
-                </div>
-              </>
-            )}
-            {salesCompData && (
-              <>
-                <div>
-                  <div className="text-[10px] text-slate-500 uppercase">Avg $/SF (Sales)</div>
-                  <div className="text-lg font-bold text-emerald-600">${salesCompData.avgPricePsf.toFixed(0)}</div>
-                </div>
-                <div>
-                  <div className="text-[10px] text-slate-500 uppercase">Avg Cap Rate</div>
-                  <div className="text-lg font-bold text-slate-700">{salesCompData.avgCapRate.toFixed(2)}%</div>
-                </div>
-              </>
-            )}
-          </div>
+      {/* Note about contextual data location */}
+      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
+        <FileText className="w-5 h-5 text-blue-600 shrink-0 mt-0.5" />
+        <div>
+          <p className="text-sm font-semibold text-blue-900">External Market Research</p>
+          <p className="text-xs text-blue-800 mt-1">
+            Enter market data from external research sources (CoStar, LoopNet, broker interviews, etc.). 
+            Aggregated data from your comparables is displayed in the "Values" sidebar within each approach for easy reference.
+          </p>
         </div>
-      )}
+      </div>
 
       {/* Supply & Demand Section */}
       <div className="space-y-3">

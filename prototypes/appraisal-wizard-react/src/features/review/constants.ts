@@ -18,12 +18,16 @@ export const APPROACH_NAMES = {
   SALES: 'Sales Comparison',
   INCOME: 'Income Approach',
   COST: 'Cost Approach',
+  MULTI_FAMILY: 'Multi-Family Approach',
+  LAND: 'Land Valuation',
 } as const;
 
 export const ALL_APPROACHES = [
   APPROACH_NAMES.SALES,
   APPROACH_NAMES.INCOME,
   APPROACH_NAMES.COST,
+  APPROACH_NAMES.MULTI_FAMILY,
+  APPROACH_NAMES.LAND,
 ];
 
 // =================================================================
@@ -45,6 +49,16 @@ export const APPROACH_COLORS: Record<string, { bg: string; text: string; border:
     bg: 'bg-purple-50',
     text: 'text-purple-600',
     border: 'border-purple-200',
+  },
+  [APPROACH_NAMES.MULTI_FAMILY]: {
+    bg: 'bg-violet-50',
+    text: 'text-violet-600',
+    border: 'border-violet-200',
+  },
+  [APPROACH_NAMES.LAND]: {
+    bg: 'bg-lime-50',
+    text: 'text-lime-600',
+    border: 'border-lime-200',
   },
 };
 
@@ -164,6 +178,37 @@ export const APPROACH_REPORT_SECTIONS: Record<string, ReportSection> = {
       { id: 'cost_improvements', label: 'Improvement Costs', enabled: true },
       { id: 'cost_depreciation', label: 'Depreciation', enabled: true },
       { id: 'cost_conclusion', label: 'Value Conclusion', enabled: true },
+    ],
+  },
+  [APPROACH_NAMES.MULTI_FAMILY]: {
+    id: 'multi_family_approach',
+    label: 'Section 06: Multi-Family Approach',
+    type: 'section',
+    sectionNumber: '06',
+    enabled: true,
+    expanded: false,
+    requiresApproach: APPROACH_NAMES.MULTI_FAMILY,
+    fields: [
+      { id: 'mf_methodology', label: 'Methodology', enabled: true },
+      { id: 'mf_rental_comps', label: 'Rental Comparables', enabled: true },
+      { id: 'mf_adjustments', label: 'Adjustments Grid', enabled: true },
+      { id: 'mf_market_rent', label: 'Market Rent Conclusion', enabled: true },
+      { id: 'mf_income_projection', label: 'Income Projection', enabled: true },
+    ],
+  },
+  [APPROACH_NAMES.LAND]: {
+    id: 'land_valuation',
+    label: 'Section 07: Land Valuation',
+    type: 'section',
+    sectionNumber: '07',
+    enabled: true,
+    expanded: false,
+    requiresApproach: APPROACH_NAMES.LAND,
+    fields: [
+      { id: 'land_methodology', label: 'Methodology', enabled: true },
+      { id: 'land_comps', label: 'Comparable Land Sales', enabled: true },
+      { id: 'land_adjustments', label: 'Adjustments Grid', enabled: true },
+      { id: 'land_conclusion', label: 'Land Value Conclusion', enabled: true },
     ],
   },
 };

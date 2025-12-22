@@ -178,6 +178,21 @@ export interface ScenarioCompletionState {
   completedAt: string | null;
 }
 
+// =================================================================
+// APPROACH VALUE CONCLUSIONS (for Analysis page tracking)
+// =================================================================
+
+export interface ApproachConclusion {
+  scenarioId: number;
+  approach: string;  // 'Sales Comparison', 'Income Approach', 'Cost Approach'
+  valueConclusion: number | null;
+  lastUpdated: string | null;
+}
+
+export interface AnalysisConclusions {
+  conclusions: ApproachConclusion[];
+}
+
 export interface CelebrationState {
   isVisible: boolean;
   sectionId: string | null;
@@ -213,6 +228,48 @@ export interface SubjectData {
   lastSaleDate: string;
   lastSalePrice: string;
   transactionHistory: string;
+  
+  // Location & Area (Subject Data page - Location tab)
+  areaDescription: string;
+  neighborhoodBoundaries: string;
+  neighborhoodCharacteristics: string;
+  specificLocation: string;
+  
+  // Site Details (Subject Data page - Site tab)
+  siteArea: string;        // Acres or square feet
+  siteAreaUnit: 'acres' | 'sqft';
+  shape: string;
+  frontage: string;
+  topography: string;
+  utilities: string;
+  floodZone: string;
+  environmental: string;
+  easements: string;
+  zoningClass: string;
+  zoningDescription: string;
+  zoningConforming: boolean;
+  
+  // Purpose & Scope (Setup page - Purpose tab)
+  appraisalPurpose: string;
+  intendedUsers: string;
+  propertyInterest: string;
+  
+  // Inspection (Setup page - Inspection tab)
+  inspectorName: string;
+  inspectorLicense: string;
+  inspectionType: string;
+  
+  // Certifications (Setup page - Certifications tab)
+  certificationAcknowledged: boolean;
+  licenseNumber: string;
+  licenseState: string;
+  licenseExpiration: string;
+  
+  // Assignment Context (from Setup - drives scenario/visibility logic)
+  propertyStatus?: 'existing' | 'under_construction' | 'proposed' | 'recently_completed';
+  occupancyStatus?: 'stabilized' | 'lease_up' | 'vacant' | 'not_applicable';
+  plannedChanges?: 'none' | 'minor' | 'major' | 'change_of_use';
+  loanPurpose?: 'purchase' | 'refinance' | 'construction' | 'bridge' | 'internal';
 }
 
 // =================================================================
@@ -244,6 +301,9 @@ export interface WizardState {
   
   // Income Approach Data
   incomeApproachData: import('../features/income-approach/types').IncomeApproachState | null;
+  
+  // Analysis Approach Conclusions (for progress tracking)
+  analysisConclusions: AnalysisConclusions;
   
   // Reconciliation Data
   reconciliationData: ReconciliationData | null;
@@ -284,6 +344,7 @@ export type WizardAction =
   | { type: 'SET_OWNERS'; payload: Owner[] }
   | { type: 'SET_SUBJECT_DATA'; payload: Partial<SubjectData> }
   | { type: 'SET_INCOME_APPROACH_DATA'; payload: import('../features/income-approach/types').IncomeApproachState }
+  | { type: 'SET_APPROACH_CONCLUSION'; payload: ApproachConclusion }
   | { type: 'SET_RECONCILIATION_DATA'; payload: ReconciliationData }
   | { type: 'SET_CURRENT_PAGE'; payload: string }
   | { type: 'SET_SUBJECT_TAB'; payload: string }

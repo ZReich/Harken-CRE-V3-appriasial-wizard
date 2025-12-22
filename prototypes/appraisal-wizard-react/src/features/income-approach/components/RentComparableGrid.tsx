@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { HorizontalScrollIndicator } from '../../../components/HorizontalScrollIndicator';
+import EnhancedTextArea from '../../../components/EnhancedTextArea';
 import { Plus, Trash2, ArrowUpRight, ArrowDownRight, Minus, MapPin, Activity, ChevronDown, PenLine, Calendar } from 'lucide-react';
 import { RentComp, RentGridRow } from '../rentTypes';
 import { 
@@ -24,8 +26,10 @@ export const RentComparableGrid: React.FC = () => {
   const [transactionRows, setTransactionRows] = useState(RENT_TRANSACTION_ROWS);
   const [qualitativeRows, setQualitativeRows] = useState(RENT_QUALITATIVE_ROWS);
   const [openElementDropdown, setOpenElementDropdown] = useState<'transaction' | 'qualitative' | null>(null);
+  const [notesText, setNotesText] = useState('');
   const _dropdownRef = useRef<HTMLDivElement>(null);
   void _dropdownRef; // Reserved for future click-outside handling
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
 
   // Calculate total grid width
   const totalGridWidth = LABEL_COL_WIDTH + SUBJECT_COL_WIDTH + (comps.length * COMP_COL_WIDTH);
@@ -288,7 +292,14 @@ export const RentComparableGrid: React.FC = () => {
     <div className="flex flex-col h-full bg-slate-50 relative overflow-hidden">
       
       {/* SCROLLABLE AREA */}
-      <div className="flex-1 overflow-auto custom-scrollbar relative bg-white">
+      <div 
+        ref={scrollContainerRef}
+        className="flex-1 overflow-auto custom-scrollbar relative" 
+        style={{ backgroundColor: '#ffffff', isolation: 'isolate' }}
+      >
+        {/* Horizontal Scroll Indicator - positioned below headers */}
+        <HorizontalScrollIndicator scrollContainerRef={scrollContainerRef} stickyTop={120} />
+        
         {/* GRID CONTAINER */}
         <div 
           className="grid relative bg-white" 
@@ -390,8 +401,8 @@ export const RentComparableGrid: React.FC = () => {
           {transactionRows.map(row => (
             <React.Fragment key={row.id}>
               <div 
-                className="sticky left-0 z-[60] border-r border-b border-slate-100 flex items-center justify-between px-2 py-1.5 bg-white group"
-                style={{ width: LABEL_COL_WIDTH }}
+                className="sticky left-0 z-[60] border-r border-b border-slate-100 flex items-center justify-between px-2 py-1.5 group"
+                style={{ width: LABEL_COL_WIDTH, backgroundColor: '#ffffff', transform: 'translateZ(0)' }}
               >
                 <span className="text-xs font-medium text-slate-600 truncate">{row.label}</span>
                 {row.removable && (
@@ -453,8 +464,8 @@ export const RentComparableGrid: React.FC = () => {
           {qualitativeRows.map(row => (
             <React.Fragment key={row.id}>
               <div 
-                className="sticky left-0 z-[60] border-r border-b border-slate-100 flex items-center justify-between px-2 py-1.5 bg-white group"
-                style={{ width: LABEL_COL_WIDTH }}
+                className="sticky left-0 z-[60] border-r border-b border-slate-100 flex items-center justify-between px-2 py-1.5 group"
+                style={{ width: LABEL_COL_WIDTH, backgroundColor: '#ffffff', transform: 'translateZ(0)' }}
               >
                 <span className="text-xs font-medium text-slate-600 truncate">{row.label}</span>
                 <button
@@ -504,7 +515,7 @@ export const RentComparableGrid: React.FC = () => {
           
           <div 
             className="sticky left-0 z-[60] bg-[#0da1c7] border-b border-[#0da1c7] p-3 flex items-center"
-            style={{ width: LABEL_COL_WIDTH }}
+            style={{ width: LABEL_COL_WIDTH, transform: 'translateZ(0)' }}
           >
             <span className="text-xs font-bold text-white uppercase tracking-wide">Overall Comparability</span>
           </div>
@@ -527,8 +538,11 @@ export const RentComparableGrid: React.FC = () => {
 
         </div>
 
-        {/* RENT INDICATION FOOTER */}
-        <div className="bg-slate-50 border-t-2 border-slate-300 p-8 pt-10" style={{ width: '100%', minWidth: '100%' }}>
+        {/* RENT INDICATION FOOTER - Stays centered, doesn't scroll horizontally */}
+        <div 
+          className="sticky left-0 bg-slate-50 border-t-2 border-slate-300 p-8 pt-10"
+          style={{ width: '100vw', maxWidth: '100%' }}
+        >
           <div className="max-w-4xl mx-auto flex flex-col gap-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -556,6 +570,23 @@ export const RentComparableGrid: React.FC = () => {
                 </div>
               </div>
             </div>
+
+            {/* Notes Section with AI Draft */}
+            <div className="mt-6">
+              <EnhancedTextArea
+                label="Notes"
+                value={notesText}
+                onChange={setNotesText}
+                placeholder="Type your analysis and assumptions here..."
+                sectionContext="rent_comparable"
+                helperText="AI can draft a market rent analysis based on your rental comparables."
+                minHeight={250}
+                rows={8}
+              />
+            </div>
+            
+            {/* Bottom padding */}
+            <div className="h-8"></div>
           </div>
         </div>
       </div>

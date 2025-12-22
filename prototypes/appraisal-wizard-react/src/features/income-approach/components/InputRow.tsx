@@ -41,8 +41,8 @@ export const InputRow: React.FC<InputRowProps> = ({
   const percentEgi = effectiveGrossIncome > 0 ? (item.amount / effectiveGrossIncome) * 100 : 0;
   const costPerSf = totalPropertySqFt > 0 ? item.amount / totalPropertySqFt : 0;
 
-  // Helper styles for big inputs
-  const inputContainerClass = "relative bg-slate-100 rounded-lg group-focus-within:bg-white group-focus-within:ring-2 group-focus-within:ring-[#0da1c7] transition-all duration-200 overflow-hidden border border-transparent group-focus-within:border-[#0da1c7]/30";
+  // Helper styles for big inputs - matches SetupPage input patterns
+  const inputContainerClass = "relative bg-white rounded-lg border border-gray-300 focus-within:ring-2 focus-within:ring-[#0da1c7] focus-within:border-transparent transition-all duration-200";
   const inputBaseClass = "w-full bg-transparent border-none outline-none text-slate-700 font-semibold px-3 py-2.5 text-sm placeholder:text-slate-400";
   const labelClass = "block text-[10px] font-bold text-slate-400 uppercase tracking-wide px-3 pt-1.5 leading-none";
 
@@ -61,23 +61,23 @@ export const InputRow: React.FC<InputRowProps> = ({
             className={`${inputBaseClass} text-base`}
           />
         </div>
-        
-        {/* Sub-row for Rental Specifics */}
-        {variant === 'rental' && (
-          <div className="flex items-center gap-2 mt-2 ml-1">
-            <div className="bg-white border border-slate-200 rounded px-2 py-1 flex items-center gap-2 shadow-sm">
-              <Calendar size={12} className="text-[#0da1c7]" />
-              <input 
-                type="date"
-                value={item.leaseExpiry || ''}
-                onChange={(e) => onChange({...item, leaseExpiry: e.target.value})}
-                className="text-[11px] bg-transparent text-slate-600 hover:text-[#0da1c7] focus:text-[#0da1c7] outline-none cursor-pointer uppercase font-bold tracking-wide"
-              />
-            </div>
-            {!item.leaseExpiry && <span className="text-[10px] text-rose-400 font-medium italic px-2">Expiry missing</span>}
-          </div>
-        )}
       </div>
+      
+      {/* 1b. LEASE EXPIRY - For Rental Variant (separate column, not nested) */}
+      {variant === 'rental' && (
+        <div className={`w-36 flex-shrink-0 ${inputContainerClass}`}>
+          <label className={labelClass}>Lease Expiry</label>
+          <div className="flex items-center gap-2 px-3 py-2">
+            <Calendar size={14} className="text-[#0da1c7] flex-shrink-0" />
+            <input 
+              type="date"
+              value={item.leaseExpiry || ''}
+              onChange={(e) => onChange({...item, leaseExpiry: e.target.value})}
+              className="text-sm bg-transparent text-slate-700 font-semibold hover:text-[#0da1c7] focus:text-[#0da1c7] outline-none cursor-pointer w-full"
+            />
+          </div>
+        </div>
+      )}
       
       {/* 2. RENTAL VARIANT COLUMNS */}
       {variant === 'rental' && (

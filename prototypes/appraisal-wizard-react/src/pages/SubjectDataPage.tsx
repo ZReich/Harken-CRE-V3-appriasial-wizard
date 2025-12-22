@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import WizardLayout from '../components/WizardLayout';
 import ImprovementsInventory from '../components/ImprovementsInventory';
 import EnhancedTextArea from '../components/EnhancedTextArea';
+import WizardGuidancePanel from '../components/WizardGuidancePanel';
 import { useWizard } from '../context/WizardContext';
 import {
   LocationIcon,
@@ -17,6 +18,7 @@ import { SectionProgressSummary } from '../components/SectionProgressSummary';
 import { useCompletion } from '../hooks/useCompletion';
 import { useCelebration } from '../hooks/useCelebration';
 import { useSmartContinue } from '../hooks/useSmartContinue';
+import { SUBJECT_DATA_GUIDANCE, type SectionGuidance } from '../constants/wizardPhaseGuidance';
 
 const tabs = [
   { id: 'location', label: 'Location & Area', Icon: LocationIcon },
@@ -50,28 +52,28 @@ export default function SubjectDataPage() {
   const { state: wizardState, setSubjectData } = useWizard();
   const [activeTab, setActiveTab] = useState('location');
 
-  // Location tab state
-  const [cityCounty, setCityCounty] = useState('');
-  const [areaDescription, setAreaDescription] = useState('');
-  const [neighborhoodBoundaries, setNeighborhoodBoundaries] = useState('');
-  const [neighborhoodCharacteristics, setNeighborhoodCharacteristics] = useState('');
-  const [specificLocation, setSpecificLocation] = useState('');
+  // Location tab state - initialize from WizardContext
+  const [cityCounty, setCityCounty] = useState(() => wizardState.subjectData?.address?.county || '');
+  const [areaDescription, setAreaDescription] = useState(() => wizardState.subjectData?.areaDescription || '');
+  const [neighborhoodBoundaries, setNeighborhoodBoundaries] = useState(() => wizardState.subjectData?.neighborhoodBoundaries || '');
+  const [neighborhoodCharacteristics, setNeighborhoodCharacteristics] = useState(() => wizardState.subjectData?.neighborhoodCharacteristics || '');
+  const [specificLocation, setSpecificLocation] = useState(() => wizardState.subjectData?.specificLocation || '');
 
-  // Site tab state
-  const [acres, setAcres] = useState('');
-  const [squareFeet, setSquareFeet] = useState('');
-  const [shape, setShape] = useState('');
-  const [frontage, setFrontage] = useState('');
+  // Site tab state - initialize from WizardContext
+  const [acres, setAcres] = useState(() => wizardState.subjectData?.siteAreaUnit === 'acres' ? wizardState.subjectData?.siteArea || '' : '');
+  const [squareFeet, setSquareFeet] = useState(() => wizardState.subjectData?.siteAreaUnit === 'sqft' ? wizardState.subjectData?.siteArea || '' : '');
+  const [shape, setShape] = useState(() => wizardState.subjectData?.shape || '');
+  const [frontage, setFrontage] = useState(() => wizardState.subjectData?.frontage || '');
   const [siteNotes, setSiteNotes] = useState('');
-  const [zoningClass, setZoningClass] = useState('');
-  const [zoningDescription, setZoningDescription] = useState('');
-  const [zoningPermitted, setZoningPermitted] = useState(false);
-  const [utilitiesStatus, setUtilitiesStatus] = useState('');
-  const [topography, setTopography] = useState('');
+  const [zoningClass, setZoningClass] = useState(() => wizardState.subjectData?.zoningClass || '');
+  const [zoningDescription, setZoningDescription] = useState(() => wizardState.subjectData?.zoningDescription || '');
+  const [zoningPermitted, setZoningPermitted] = useState(() => wizardState.subjectData?.zoningConforming || false);
+  const [utilitiesStatus, setUtilitiesStatus] = useState(() => wizardState.subjectData?.utilities || '');
+  const [topography, setTopography] = useState(() => wizardState.subjectData?.topography || '');
   const [drainage, setDrainage] = useState('');
-  const [floodZone, setFloodZone] = useState('');
-  const [environmental, setEnvironmental] = useState('');
-  const [easements, setEasements] = useState('');
+  const [floodZone, setFloodZone] = useState(() => wizardState.subjectData?.floodZone || '');
+  const [environmental, setEnvironmental] = useState(() => wizardState.subjectData?.environmental || '');
+  const [easements, setEasements] = useState(() => wizardState.subjectData?.easements || '');
 
   // Tax tab state (local - tax assessment details)
   const [taxYear, setTaxYear] = useState(new Date().getFullYear().toString());
@@ -90,6 +92,33 @@ export default function SubjectDataPage() {
   const setTransactionHistory = (v: string) => setSubjectData({ transactionHistory: v });
   const [grantor, setGrantor] = useState('');
   const [grantee, setGrantee] = useState('');
+
+  // Sync location & site form fields to WizardContext when they change
+  useEffect(() => {
+    setSubjectData({
+      // Location fields
+      address: { ...wizardState.subjectData?.address, county: cityCounty },
+      areaDescription,
+      neighborhoodBoundaries,
+      neighborhoodCharacteristics,
+      specificLocation,
+      // Site fields
+      siteArea: acres || squareFeet,
+      siteAreaUnit: acres ? 'acres' : 'sqft',
+      shape,
+      frontage,
+      topography,
+      utilities: utilitiesStatus,
+      floodZone,
+      environmental,
+      easements,
+      zoningClass,
+      zoningDescription,
+      zoningConforming: zoningPermitted,
+    });
+  }, [cityCounty, areaDescription, neighborhoodBoundaries, neighborhoodCharacteristics, specificLocation,
+      acres, squareFeet, shape, frontage, topography, utilitiesStatus, floodZone, environmental, easements,
+      zoningClass, zoningDescription, zoningPermitted, setSubjectData]);
 
   // Photos state
   const [photos, setPhotos] = useState<Record<string, { file: File; preview: string } | null>>({});
@@ -188,49 +217,17 @@ export default function SubjectDataPage() {
     </div>
   );
 
+  // Get guidance content for the active tab
+  const currentGuidance = useMemo((): SectionGuidance | null => {
+    return SUBJECT_DATA_GUIDANCE[activeTab] || null;
+  }, [activeTab]);
+
+  // Guidance panel for the right sidebar
   const helpSidebar = (
-    <div>
-      <h3 className="text-lg font-bold text-gray-900 mb-3">
-        {tabs.find((t) => t.id === activeTab)?.label}
-      </h3>
-      <p className="text-sm text-gray-600 mb-4">
-        {activeTab === 'improvements'
-          ? 'Describe all improvements on the property including buildings, structures, and site improvements.'
-          : activeTab === 'location'
-          ? 'Describe the area, neighborhood, and specific location of the subject property.'
-          : activeTab === 'site'
-          ? 'Document the site characteristics including size, shape, zoning, topography, and utilities.'
-          : activeTab === 'tax'
-          ? 'Record tax assessment data, ownership history, and sale information.'
-          : activeTab === 'photos'
-          ? 'Upload property photographs mapped to specific pages in the final report.'
-          : 'Attach supporting documents and exhibits. Toggle which ones appear in the final report.'}
-      </p>
-      {activeTab === 'location' && (
-        <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
-          <h4 className="font-semibold text-sm text-blue-900 mb-1">Note</h4>
-          <p className="text-xs text-blue-800">
-            Property address is entered in Setup. Focus here on describing the area and neighborhood context.
-          </p>
-        </div>
-      )}
-      {activeTab === 'tax' && (
-        <div className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded">
-          <h4 className="font-semibold text-sm text-amber-900 mb-1">USPAP Requirement</h4>
-          <p className="text-xs text-amber-800">
-            Document and analyze any sales within 3 years of the effective date.
-          </p>
-        </div>
-      )}
-      {activeTab === 'photos' && (
-        <div className="bg-green-50 border-l-4 border-green-400 p-4 rounded">
-          <h4 className="font-semibold text-sm text-green-900 mb-1">Photo Tips</h4>
-          <p className="text-xs text-green-800">
-            Each photo slot corresponds to a specific page in the final report. Upload high-quality images.
-          </p>
-        </div>
-      )}
-    </div>
+    <WizardGuidancePanel
+      guidance={currentGuidance}
+      themeColor="#0da1c7"
+    />
   );
 
   return (

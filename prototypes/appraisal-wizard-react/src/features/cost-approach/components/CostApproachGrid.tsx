@@ -1,10 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { ArrowUpRight, Building2, Layers, Calendar, ExternalLink, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { ImprovementValuation } from './ImprovementValuation';
 import { CostConclusion } from './CostConclusion';
 import { RichTextEditor } from './RichTextEditor';
 import { ValueScenario } from '../types';
 import { SCENARIO_OPTIONS } from '../constants';
+import { useWizard } from '../../../context/WizardContext';
 
 interface CostApproachGridProps {
   onValueChange?: (value: number) => void;
@@ -12,6 +13,7 @@ interface CostApproachGridProps {
   // Land value from the standalone Land Valuation section
   landValueFromLandSection?: number;
   onNavigateToLand?: () => void;
+  scenarioId?: number;
 }
 
 export const CostApproachGrid: React.FC<CostApproachGridProps> = ({ 
@@ -19,7 +21,9 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
   onScenarioChange,
   landValueFromLandSection = 820000, // Default mock value for demonstration
   onNavigateToLand,
+  scenarioId,
 }) => {
+  const { setApproachConclusion } = useWizard();
   const [improvementsValue, setImprovementsValue] = useState(0);
   const [finalIndicatedValue, setFinalIndicatedValue] = useState(0);
   
@@ -42,6 +46,13 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
   useMemo(() => {
     onScenarioChange?.(scenario);
   }, [scenario, onScenarioChange]);
+
+  // Sync concluded value to WizardContext when scenarioId is provided
+  useEffect(() => {
+    if (scenarioId !== undefined && finalIndicatedValue > 0) {
+      setApproachConclusion(scenarioId, 'Cost Approach', finalIndicatedValue);
+    }
+  }, [scenarioId, finalIndicatedValue, setApproachConclusion]);
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {

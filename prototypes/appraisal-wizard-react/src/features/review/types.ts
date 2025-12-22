@@ -2,7 +2,7 @@
 // REVIEW PAGE TYPES
 // =================================================================
 
-export type ReviewTabId = 'checklist' | 'reconciliation' | 'preview';
+export type ReviewTabId = 'hbu' | 'checklist' | 'reconciliation' | 'preview';
 
 export interface ReviewTab {
   id: ReviewTabId;

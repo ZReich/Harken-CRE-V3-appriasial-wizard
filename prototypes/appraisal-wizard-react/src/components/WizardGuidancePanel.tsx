@@ -6,224 +6,202 @@ import {
   AlertTriangle, 
   BookOpen,
   Info,
-  CheckCircle2
+  ArrowRight,
 } from 'lucide-react';
-import USPAPDetailModal, { USPAPDetail } from './USPAPDetailModal';
-
-export interface GuidanceSectionContent {
-  id: string;
-  title: string;
-  context: string;
-  tips: string[];
-  commonMistakes: string[];
-  uspap?: {
-    reference: string;
-    brief: string;
-    detail: USPAPDetail;
-  };
-}
+import USPAPDetailModal from './USPAPDetailModal';
+import type { SectionGuidance } from '../constants/wizardPhaseGuidance';
 
 interface WizardGuidancePanelProps {
-  sectionId: string;
-  guidance: GuidanceSectionContent;
-  themeAccent?: string;
+  guidance: SectionGuidance | null;
+  themeColor?: string;
 }
 
-export default function WizardGuidancePanel({
-  sectionId: _sectionId,
-  guidance,
-  themeAccent = '#0da1c7',
-}: WizardGuidancePanelProps) {
-  void _sectionId; // Reserved for future section-specific behavior
-  const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({
-    context: true,
-    tips: false,
-    mistakes: false,
-  });
-  const [uspapModalOpen, setUspapModalOpen] = useState(false);
+interface CollapsibleSectionProps {
+  title: string;
+  icon: React.ReactNode;
+  iconBgColor: string;
+  iconColor: string;
+  children: React.ReactNode;
+  defaultOpen?: boolean;
+}
 
-  const toggleSection = (section: string) => {
-    setExpandedSections(prev => ({
-      ...prev,
-      [section]: !prev[section],
-    }));
-  };
-
-  const SectionHeader = ({
-    id,
-    icon: Icon,
-    title,
-    iconColor,
-    bgColor,
-  }: {
-    id: string;
-    icon: typeof Info;
-    title: string;
-    iconColor: string;
-    bgColor: string;
-  }) => (
-    <button
-      onClick={() => toggleSection(id)}
-      className="w-full flex items-center justify-between py-2 group"
-    >
-      <div className="flex items-center gap-2">
-        <div className={`w-6 h-6 rounded-lg flex items-center justify-center ${bgColor}`}>
-          <Icon className={`w-3.5 h-3.5 ${iconColor}`} />
-        </div>
-        <span className="text-sm font-semibold text-gray-800">{title}</span>
-      </div>
-      {expandedSections[id] ? (
-        <ChevronUp className="w-4 h-4 text-gray-400 group-hover:text-gray-600" />
-      ) : (
-        <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-gray-600" />
-      )}
-    </button>
-  );
+function CollapsibleSection({ 
+  title, 
+  icon, 
+  iconBgColor, 
+  iconColor, 
+  children, 
+  defaultOpen = false 
+}: CollapsibleSectionProps) {
+  const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
-    <div className="space-y-4">
-      {/* Section Title */}
-      <div>
-        <h3 
-          className="text-lg font-bold text-gray-900 flex items-center gap-2"
-        >
-          <span
-            className="w-2 h-2 rounded-full"
-            style={{ backgroundColor: themeAccent }}
-          />
-          {guidance.title}
-        </h3>
-        <p className="text-xs text-gray-500 mt-0.5">Section Guidance</p>
-      </div>
-
-      {/* Context Section */}
-      <div className="border border-gray-200 rounded-xl overflow-hidden">
-        <div className="px-4 bg-gray-50 border-b border-gray-200">
-          <SectionHeader
-            id="context"
-            icon={Info}
-            title="Overview"
-            iconColor="text-blue-600"
-            bgColor="bg-blue-100"
-          />
-        </div>
-        {expandedSections.context && (
-          <div className="px-4 py-3 bg-white animate-in slide-in-from-top-1 duration-200">
-            <p className="text-sm text-gray-700 leading-relaxed">
-              {guidance.context}
-            </p>
-          </div>
-        )}
-      </div>
-
-      {/* Tips Section */}
-      <div className="border border-gray-200 rounded-xl overflow-hidden">
-        <div className="px-4 bg-gray-50 border-b border-gray-200">
-          <SectionHeader
-            id="tips"
-            icon={Lightbulb}
-            title="Best Practices"
-            iconColor="text-amber-600"
-            bgColor="bg-amber-100"
-          />
-        </div>
-        {expandedSections.tips && (
-          <div className="px-4 py-3 bg-white animate-in slide-in-from-top-1 duration-200">
-            <ul className="space-y-2">
-              {guidance.tips.map((tip, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
-                  <CheckCircle2 
-                    className="w-4 h-4 shrink-0 mt-0.5" 
-                    style={{ color: themeAccent }}
-                  />
-                  {tip}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
-
-      {/* Common Mistakes Section */}
-      <div className="border border-gray-200 rounded-xl overflow-hidden">
-        <div className="px-4 bg-gray-50 border-b border-gray-200">
-          <SectionHeader
-            id="mistakes"
-            icon={AlertTriangle}
-            title="Common Mistakes"
-            iconColor="text-red-600"
-            bgColor="bg-red-100"
-          />
-        </div>
-        {expandedSections.mistakes && (
-          <div className="px-4 py-3 bg-white animate-in slide-in-from-top-1 duration-200">
-            <ul className="space-y-2">
-              {guidance.commonMistakes.map((mistake, i) => (
-                <li key={i} className="flex items-start gap-2 text-sm text-gray-700">
-                  <span className="w-4 h-4 rounded-full bg-red-100 flex items-center justify-center shrink-0 mt-0.5">
-                    <span className="w-1.5 h-1.5 rounded-full bg-red-500" />
-                  </span>
-                  {mistake}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
-
-      {/* USPAP Reference Link - Compact Design */}
-      {guidance.uspap && (
-        <button
-          onClick={() => setUspapModalOpen(true)}
-          className="w-full flex items-center justify-between px-4 py-3 rounded-xl border-2 border-dashed transition-all hover:border-solid group"
-          style={{ 
-            borderColor: `${themeAccent}40`,
-            backgroundColor: `${themeAccent}05`,
-          }}
-        >
-          <div className="flex items-center gap-3">
-            <div 
-              className="w-8 h-8 rounded-lg flex items-center justify-center"
-              style={{ backgroundColor: `${themeAccent}15` }}
-            >
-              <BookOpen className="w-4 h-4" style={{ color: themeAccent }} />
-            </div>
-            <div className="text-left">
-              <div className="flex items-center gap-2">
-                <span 
-                  className="text-sm font-semibold"
-                  style={{ color: themeAccent }}
-                >
-                  USPAP: {guidance.uspap.reference}
-                </span>
-              </div>
-              <p className="text-xs text-gray-500 line-clamp-1">
-                {guidance.uspap.brief}
-              </p>
-            </div>
-          </div>
-          <span 
-            className="text-xs font-medium px-2 py-1 rounded-md transition-colors group-hover:bg-opacity-100"
-            style={{ 
-              backgroundColor: `${themeAccent}10`,
-              color: themeAccent,
-            }}
+    <div className="border border-gray-200 rounded-xl overflow-hidden bg-white">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition-colors"
+      >
+        <div className="flex items-center gap-3">
+          <div 
+            className="w-8 h-8 rounded-lg flex items-center justify-center"
+            style={{ backgroundColor: iconBgColor }}
           >
-            View →
-          </span>
-        </button>
-      )}
-
-      {/* USPAP Detail Modal */}
-      {guidance.uspap && (
-        <USPAPDetailModal
-          isOpen={uspapModalOpen}
-          onClose={() => setUspapModalOpen(false)}
-          detail={guidance.uspap.detail}
-          themeAccent={themeAccent}
-        />
+            <span style={{ color: iconColor }}>{icon}</span>
+          </div>
+          <span className="text-sm font-semibold text-gray-800">{title}</span>
+        </div>
+        {isOpen ? (
+          <ChevronUp className="w-4 h-4 text-gray-400" />
+        ) : (
+          <ChevronDown className="w-4 h-4 text-gray-400" />
+        )}
+      </button>
+      {isOpen && (
+        <div className="px-4 pb-4 pt-1 border-t border-gray-100">
+          {children}
+        </div>
       )}
     </div>
   );
 }
 
+export default function WizardGuidancePanel({
+  guidance,
+  themeColor = '#0da1c7',
+}: WizardGuidancePanelProps) {
+  const [uspapModalOpen, setUspapModalOpen] = useState(false);
+
+  if (!guidance) {
+    return (
+      <div className="text-center py-8 text-gray-500">
+        <Info className="w-8 h-8 mx-auto mb-2 opacity-50" />
+        <p className="text-sm">Select a section to view guidance</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-4">
+      {/* Header */}
+      <div className="flex items-start gap-2">
+        <span 
+          className="w-2 h-2 rounded-full mt-2 shrink-0"
+          style={{ backgroundColor: themeColor }}
+        />
+        <div>
+          <h3 className="text-lg font-bold text-gray-900">{guidance.title}</h3>
+          <p className="text-sm text-gray-500">Section Guidance</p>
+        </div>
+      </div>
+
+      {/* Overview Section */}
+      <CollapsibleSection
+        title="Overview"
+        icon={<Info className="w-4 h-4" />}
+        iconBgColor="#dbeafe"
+        iconColor="#2563eb"
+        defaultOpen={true}
+      >
+        <p className="text-sm text-gray-700 leading-relaxed mt-2">
+          {guidance.context}
+        </p>
+      </CollapsibleSection>
+
+      {/* Best Practices Section */}
+      {guidance.tips && guidance.tips.length > 0 && (
+        <CollapsibleSection
+          title="Best Practices"
+          icon={<Lightbulb className="w-4 h-4" />}
+          iconBgColor="#fef3c7"
+          iconColor="#d97706"
+          defaultOpen={false}
+        >
+          <ul className="space-y-2 mt-2">
+            {guidance.tips.map((tip, index) => (
+              <li key={index} className="flex items-start gap-2 text-sm text-gray-700">
+                <span 
+                  className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0"
+                  style={{ backgroundColor: themeColor }}
+                />
+                <span>{tip}</span>
+              </li>
+            ))}
+          </ul>
+        </CollapsibleSection>
+      )}
+
+      {/* Common Mistakes Section */}
+      {guidance.mistakes && guidance.mistakes.length > 0 && (
+        <CollapsibleSection
+          title="Common Mistakes"
+          icon={<AlertTriangle className="w-4 h-4" />}
+          iconBgColor="#fee2e2"
+          iconColor="#dc2626"
+          defaultOpen={false}
+        >
+          <ul className="space-y-2 mt-2">
+            {guidance.mistakes.map((mistake, index) => (
+              <li key={index} className="flex items-start gap-2 text-sm text-gray-700">
+                <span className="w-1.5 h-1.5 rounded-full bg-red-400 mt-1.5 shrink-0" />
+                <span>{mistake}</span>
+              </li>
+            ))}
+          </ul>
+        </CollapsibleSection>
+      )}
+
+      {/* USPAP Reference - Compact Dashed Box */}
+      {guidance.uspap && (
+        <div 
+          className="rounded-xl p-4 border-2 border-dashed"
+          style={{ borderColor: `${themeColor}40` }}
+        >
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3 min-w-0">
+              <div 
+                className="w-10 h-10 rounded-lg flex items-center justify-center shrink-0"
+                style={{ backgroundColor: `${themeColor}15` }}
+              >
+                <BookOpen className="w-5 h-5" style={{ color: themeColor }} />
+              </div>
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5 mb-0.5">
+                  <span 
+                    className="text-sm font-bold"
+                    style={{ color: themeColor }}
+                  >
+                    USPAP: {guidance.uspap.reference}
+                  </span>
+                </div>
+                <p className="text-xs text-gray-500 truncate">
+                  {guidance.uspap.summary}
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => setUspapModalOpen(true)}
+              className="flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium shrink-0 transition-colors hover:bg-opacity-20"
+              style={{ 
+                color: themeColor,
+                backgroundColor: `${themeColor}10`,
+              }}
+            >
+              View
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* USPAP Modal */}
+      {guidance.uspap && (
+        <USPAPDetailModal
+          reference={guidance.uspap.reference}
+          isOpen={uspapModalOpen}
+          onClose={() => setUspapModalOpen(false)}
+          themeColor={themeColor}
+        />
+      )}
+    </div>
+  );
+}

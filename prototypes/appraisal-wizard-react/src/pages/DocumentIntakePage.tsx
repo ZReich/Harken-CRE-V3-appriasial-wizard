@@ -1,7 +1,9 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWizard } from '../context/WizardContext';
 import WizardLayout from '../components/WizardLayout';
+import WizardGuidancePanel from '../components/WizardGuidancePanel';
+import { DOCUMENTS_GUIDANCE, type SectionGuidance } from '../constants/wizardPhaseGuidance';
 import {
   Upload,
   FileText,
@@ -410,29 +412,29 @@ export default function DocumentIntakePage() {
     </div>
   );
 
-  // Help sidebar
-  const helpSidebar = (
-    <div>
-      <h3 className="text-lg font-bold text-gray-900 mb-3">AI Document Extraction</h3>
-      <p className="text-sm text-gray-600 mb-4">
-        Upload your documents and our AI will automatically extract key information to pre-populate your appraisal.
-      </p>
-      <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded mb-4">
-        <h4 className="font-semibold text-sm text-blue-900 mb-1">How it works</h4>
-        <ol className="text-xs text-blue-800 list-decimal list-inside space-y-1">
-          <li>Upload a document to any slot</li>
-          <li>AI extracts relevant fields</li>
-          <li>Review and edit if needed</li>
-          <li>Accept to auto-fill forms</li>
-        </ol>
-      </div>
-      <div className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded">
-        <h4 className="font-semibold text-sm text-amber-900 mb-1">Tip</h4>
-        <p className="text-xs text-amber-800">
-          You can skip this step and enter data manually. Upload documents anytime during the process.
-        </p>
-      </div>
-    </div>
+  // Get current guidance based on selected slot
+  const currentGuidance = useMemo((): SectionGuidance | null => {
+    if (!selectedSlot) {
+      return DOCUMENTS_GUIDANCE.overview;
+    }
+    // Map slot IDs to guidance keys
+    const slotToGuidanceKey: Record<string, string> = {
+      cadastral: 'cadastral',
+      engagement: 'engagement',
+      sale: 'sale',
+      lease: 'lease',
+      rentroll: 'rentroll',
+    };
+    const guidanceKey = slotToGuidanceKey[selectedSlot];
+    return guidanceKey ? DOCUMENTS_GUIDANCE[guidanceKey] : DOCUMENTS_GUIDANCE.overview;
+  }, [selectedSlot]);
+
+  // Help sidebar with dynamic guidance panel
+  const helpSidebarGuidance = (
+    <WizardGuidancePanel 
+      guidance={currentGuidance}
+      themeColor="#0da1c7"
+    />
   );
 
   return (
@@ -441,7 +443,7 @@ export default function DocumentIntakePage() {
       subtitle="Phase 2 of 6 • AI-Powered Data Extraction"
       phase={2}
       sidebar={sidebar}
-      helpSidebarGuidance={helpSidebar}
+      helpSidebarGuidance={helpSidebarGuidance}
     >
       <div className="animate-fade-in">
         {/* Main upload area or selected slot details */}

@@ -62,10 +62,12 @@ export function setNestedValue<T extends object>(obj: T, path: string, value: un
 
 /**
  * Check if a value is "filled" (not null, undefined, or empty string)
+ * For booleans (checkboxes), false means "not filled", true means "filled"
  */
 export function isFilled(value: unknown): boolean {
   if (value === null || value === undefined) return false;
   if (typeof value === 'string' && value.trim() === '') return false;
+  if (typeof value === 'boolean') return value === true; // For checkboxes, only true = filled
   if (Array.isArray(value) && value.length === 0) return false;
   return true;
 }

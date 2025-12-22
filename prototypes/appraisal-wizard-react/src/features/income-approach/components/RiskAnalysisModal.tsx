@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
-import { X, CheckCircle, AlertTriangle, AlertOctagon, ShieldCheck } from 'lucide-react';
-import type { FinancialSummary, ExpenseData, IncomeData, PropertyMeta } from '../types';
+import { X, CheckCircle, AlertTriangle, AlertOctagon, FileCheck } from 'lucide-react';
+import type { FinancialSummary, ExpenseData, IncomeData, PropertyMeta, ValuationData } from '../types';
 
 interface Props {
   isOpen: boolean;
@@ -9,6 +9,9 @@ interface Props {
   expenses: ExpenseData;
   income: IncomeData;
   propertyMeta: PropertyMeta;
+  valuationData?: ValuationData;
+  directCapValue?: number;
+  dcfValue?: number;
 }
 
 interface RiskCheck {
@@ -18,7 +21,10 @@ interface RiskCheck {
   message: string;
 }
 
-export const RiskAnalysisModal: React.FC<Props> = ({ isOpen, onClose, summary, expenses, income, propertyMeta }) => {
+export const RiskAnalysisModal: React.FC<Props> = ({ 
+  isOpen, onClose, summary, expenses, income, propertyMeta, 
+  valuationData, directCapValue = 0, dcfValue = 0 
+}) => {
   if (!isOpen) return null;
 
   // --- ANALYSIS LOGIC ---
@@ -226,22 +232,224 @@ export const RiskAnalysisModal: React.FC<Props> = ({ isOpen, onClose, summary, e
       });
     }
 
+    // --- 8. VALUATION CHECKS (if valuationData provided) ---
+    if (valuationData) {
+      // Cap Rate Reasonableness
+      if (valuationData.marketCapRate < 3) {
+        checks.push({
+          id: 'cap_rate_low',
+          title: 'Unusually Low Cap Rate',
+          status: 'danger',
+          message: `A ${valuationData.marketCapRate}% cap rate is extremely aggressive. Verify market support.`,
+        });
+        score -= 15;
+      } else if (valuationData.marketCapRate > 15) {
+        checks.push({
+          id: 'cap_rate_high',
+          title: 'Unusually High Cap Rate',
+          status: 'warning',
+          message: `A ${valuationData.marketCapRate}% cap rate suggests distressed asset or data entry error.`,
+        });
+        score -= 10;
+      } else {
+        checks.push({
+          id: 'cap_rate_ok',
+          title: 'Cap Rate',
+          status: 'pass',
+          message: `${valuationData.marketCapRate}% cap rate is within typical market range.`,
+        });
+      }
+
+      // Discount Rate vs Cap Rate Spread
+      const spreadToDiscount = valuationData.discountRate - valuationData.marketCapRate;
+      if (spreadToDiscount < 0) {
+        checks.push({
+          id: 'discount_spread_negative',
+          title: 'Discount Rate Below Cap Rate',
+          status: 'danger',
+          message: `Discount rate (${valuationData.discountRate}%) should typically exceed going-in cap rate (${valuationData.marketCapRate}%).`,
+        });
+        score -= 15;
+      } else if (spreadToDiscount > 5) {
+        checks.push({
+          id: 'discount_spread_wide',
+          title: 'Wide Discount-to-Cap Spread',
+          status: 'warning',
+          message: `${spreadToDiscount.toFixed(1)}% spread between discount and cap rate is unusually wide. Verify assumptions.`,
+        });
+        score -= 5;
+      } else {
+        checks.push({
+          id: 'discount_spread_ok',
+          title: 'Rate Spread',
+          status: 'pass',
+          message: `${spreadToDiscount.toFixed(1)}% spread between discount and cap rate is reasonable.`,
+        });
+      }
+
+      // Terminal Cap Rate vs Going-In
+      if (valuationData.terminalCapRate <= valuationData.marketCapRate) {
+        checks.push({
+          id: 'terminal_cap_low',
+          title: 'Terminal Cap Rate Issue',
+          status: 'warning',
+          message: `Terminal cap (${valuationData.terminalCapRate}%) should typically exceed going-in cap (${valuationData.marketCapRate}%) to reflect reversion risk.`,
+        });
+        score -= 5;
+      } else {
+        checks.push({
+          id: 'terminal_cap_ok',
+          title: 'Terminal Cap Rate',
+          status: 'pass',
+          message: `Terminal cap rate (${valuationData.terminalCapRate}%) appropriately exceeds going-in cap.`,
+        });
+      }
+
+      // Holding Period Check
+      if (valuationData.holdingPeriod < 5) {
+        checks.push({
+          id: 'holding_short',
+          title: 'Short Holding Period',
+          status: 'warning',
+          message: `${valuationData.holdingPeriod}-year holding period is short. Standard DCF uses 10-year projections.`,
+        });
+        score -= 3;
+      } else if (valuationData.holdingPeriod > 15) {
+        checks.push({
+          id: 'holding_long',
+          title: 'Extended Holding Period',
+          status: 'warning',
+          message: `${valuationData.holdingPeriod}-year projection may introduce significant forecast uncertainty.`,
+        });
+        score -= 3;
+      } else {
+        checks.push({
+          id: 'holding_ok',
+          title: 'Holding Period',
+          status: 'pass',
+          message: `${valuationData.holdingPeriod}-year projection is within standard parameters.`,
+        });
+      }
+
+      // Growth Rate Reasonableness
+      if (valuationData.annualGrowthRate > 5) {
+        checks.push({
+          id: 'growth_high',
+          title: 'Aggressive Growth Assumption',
+          status: 'warning',
+          message: `${valuationData.annualGrowthRate}% annual growth exceeds typical inflation-linked increases.`,
+        });
+        score -= 5;
+      } else if (valuationData.annualGrowthRate < 0) {
+        checks.push({
+          id: 'growth_negative',
+          title: 'Negative Growth Assumption',
+          status: 'warning',
+          message: `Negative growth (${valuationData.annualGrowthRate}%) indicates declining market. Verify support.`,
+        });
+        score -= 5;
+      } else {
+        checks.push({
+          id: 'growth_ok',
+          title: 'Growth Assumption',
+          status: 'pass',
+          message: `${valuationData.annualGrowthRate}% annual growth is reasonable.`,
+        });
+      }
+    }
+
+    // --- 9. VALUE RECONCILIATION CHECK ---
+    if (directCapValue > 0 && dcfValue > 0) {
+      const valueDiff = Math.abs(directCapValue - dcfValue);
+      const avgValue = (directCapValue + dcfValue) / 2;
+      const percentDiff = (valueDiff / avgValue) * 100;
+
+      if (percentDiff > 20) {
+        checks.push({
+          id: 'value_reconcile_high',
+          title: 'Significant Value Discrepancy',
+          status: 'danger',
+          message: `Direct Cap ($${directCapValue.toLocaleString()}) and DCF ($${dcfValue.toLocaleString()}) differ by ${percentDiff.toFixed(0)}%. Reconciliation required.`,
+        });
+        score -= 15;
+      } else if (percentDiff > 10) {
+        checks.push({
+          id: 'value_reconcile_moderate',
+          title: 'Value Reconciliation Needed',
+          status: 'warning',
+          message: `Direct Cap and DCF values differ by ${percentDiff.toFixed(0)}%. Consider adjusting assumptions.`,
+        });
+        score -= 5;
+      } else {
+        checks.push({
+          id: 'value_reconcile_ok',
+          title: 'Value Reconciliation',
+          status: 'pass',
+          message: `Direct Cap and DCF values are within ${percentDiff.toFixed(0)}% of each other.`,
+        });
+      }
+    }
+
+    // --- 10. PROPERTY DATA COMPLETENESS ---
+    if (propertyMeta.sqFt === 0) {
+      checks.push({
+        id: 'sqft_missing',
+        title: 'Missing Building Size',
+        status: 'danger',
+        message: 'Building square footage is required for per-SF analysis and unit value metrics.',
+      });
+      score -= 20;
+    } else {
+      checks.push({
+        id: 'sqft_ok',
+        title: 'Building Size',
+        status: 'pass',
+        message: `${propertyMeta.sqFt.toLocaleString()} SF recorded for subject property.`,
+      });
+    }
+
+    // --- 11. NOI SANITY CHECK ---
+    if (summary.netOperatingIncome <= 0) {
+      checks.push({
+        id: 'noi_negative',
+        title: 'Negative NOI',
+        status: 'danger',
+        message: 'Net Operating Income is zero or negative. Income approach may not be applicable.',
+      });
+      score -= 25;
+    } else if (summary.noiPerSf < 5 && propertyMeta.sqFt > 0) {
+      checks.push({
+        id: 'noi_low',
+        title: 'Low NOI per SF',
+        status: 'warning',
+        message: `$${summary.noiPerSf.toFixed(2)}/SF is below typical thresholds. Verify income and expenses.`,
+      });
+      score -= 5;
+    } else {
+      checks.push({
+        id: 'noi_ok',
+        title: 'Net Operating Income',
+        status: 'pass',
+        message: `NOI of $${summary.netOperatingIncome.toLocaleString()} ($${summary.noiPerSf.toFixed(2)}/SF) calculated.`,
+      });
+    }
+
     return { checks, score: Math.max(0, score) };
-  }, [summary, expenses, income, propertyMeta]);
+  }, [summary, expenses, income, propertyMeta, valuationData, directCapValue, dcfValue]);
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onClick={onClose}></div>
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative overflow-hidden animate-fade-in flex flex-col max-h-[90vh]">
-        <div className="bg-slate-900 p-6 flex justify-between items-start text-white flex-shrink-0">
+        <div className="bg-gradient-to-r from-[#0da1c7] to-[#0b8eb0] p-6 flex justify-between items-start text-white flex-shrink-0">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <ShieldCheck className={analysis.score > 80 ? "text-emerald-400" : "text-amber-400"} size={24} />
-              <h2 className="text-xl font-bold">Risk Analysis Report</h2>
+              <FileCheck className={analysis.score > 80 ? "text-emerald-300" : "text-amber-300"} size={24} />
+              <h2 className="text-xl font-bold">Pre-Flight Check Report</h2>
             </div>
-            <p className="text-slate-400 text-sm">Automated USPAP & Methodology Review.</p>
+            <p className="text-white/70 text-sm">Comprehensive USPAP, Methodology & Data Validation</p>
           </div>
-          <button onClick={onClose} className="p-1 hover:bg-slate-800 rounded-lg transition-colors"><X size={20} /></button>
+          <button onClick={onClose} className="p-1 hover:bg-white/10 rounded-lg transition-colors"><X size={20} /></button>
         </div>
         <div className="p-6 border-b border-slate-100 bg-slate-50 flex items-center justify-between flex-shrink-0">
           <div>

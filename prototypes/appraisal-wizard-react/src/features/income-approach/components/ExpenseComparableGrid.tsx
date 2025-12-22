@@ -1,4 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
+import { HorizontalScrollIndicator } from '../../../components/HorizontalScrollIndicator';
+import EnhancedTextArea from '../../../components/EnhancedTextArea';
 import { Plus, Trash2, MapPin, CheckCircle2, Circle, ChevronDown, PenLine, Building2 } from 'lucide-react';
 import { ExpenseComp, ExpenseGridRow } from '../expenseTypes';
 import { 
@@ -21,7 +23,9 @@ const SUBJECT_COL_WIDTH = 180;
 const COMP_COL_WIDTH = 170;
 
 export const ExpenseComparableGrid: React.FC = () => {
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [comps, setComps] = useState<ExpenseComp[]>(MOCK_EXPENSE_COMPS);
+  const [notesText, setNotesText] = useState('');
   const [propertyRows, setPropertyRows] = useState(EXPENSE_PROPERTY_ROWS);
   const [expenseRows, setExpenseRows] = useState(EXPENSE_CATEGORY_ROWS);
   const [ratioRows] = useState(EXPENSE_RATIO_ROWS);
@@ -215,7 +219,14 @@ export const ExpenseComparableGrid: React.FC = () => {
     <div className="flex flex-col h-full bg-slate-50 relative overflow-hidden">
       
       {/* SCROLLABLE AREA */}
-      <div className="flex-1 overflow-auto custom-scrollbar relative bg-white">
+      <div 
+        ref={scrollContainerRef}
+        className="flex-1 overflow-auto custom-scrollbar relative" 
+        style={{ backgroundColor: '#ffffff', isolation: 'isolate' }}
+      >
+        {/* Horizontal Scroll Indicator - positioned below headers */}
+        <HorizontalScrollIndicator scrollContainerRef={scrollContainerRef} stickyTop={120} />
+        
         {/* GRID CONTAINER */}
         <div 
           className="grid relative bg-white" 
@@ -326,8 +337,8 @@ export const ExpenseComparableGrid: React.FC = () => {
           {propertyRows.map(row => (
             <React.Fragment key={row.id}>
               <div 
-                className="sticky left-0 z-[60] border-r border-b border-slate-100 flex items-center justify-between px-2 py-1.5 bg-white group"
-                style={{ width: LABEL_COL_WIDTH }}
+                className="sticky left-0 z-[60] border-r border-b border-slate-100 flex items-center justify-between px-2 py-1.5 group"
+                style={{ width: LABEL_COL_WIDTH, backgroundColor: '#ffffff', transform: 'translateZ(0)' }}
               >
                 <span className="text-xs font-medium text-slate-600 truncate">{row.label}</span>
                 {row.removable && (
@@ -388,10 +399,10 @@ export const ExpenseComparableGrid: React.FC = () => {
           {expenseRows.map(row => (
             <React.Fragment key={row.id}>
               <div 
-                className={`sticky left-0 z-[60] border-r border-b border-slate-100 flex items-center justify-between px-2 py-1.5 bg-white group ${
-                  row.id === 'totalExpensesPerSf' ? 'border-t-2 border-t-slate-800 bg-slate-50' : ''
+                className={`sticky left-0 z-[60] border-r border-b border-slate-100 flex items-center justify-between px-2 py-1.5 group ${
+                  row.id === 'totalExpensesPerSf' ? 'border-t-2 border-t-slate-800' : ''
                 }`}
-                style={{ width: LABEL_COL_WIDTH }}
+                style={{ width: LABEL_COL_WIDTH, backgroundColor: row.id === 'totalExpensesPerSf' ? '#f8fafc' : '#ffffff', transform: 'translateZ(0)' }}
               >
                 <span className={`text-xs truncate ${
                   row.id === 'totalExpensesPerSf' ? 'font-black text-slate-900 uppercase' : 'font-medium text-slate-600'
@@ -464,8 +475,8 @@ export const ExpenseComparableGrid: React.FC = () => {
           {ratioRows.map(row => (
             <React.Fragment key={row.id}>
               <div 
-                className="sticky left-0 z-[60] border-r border-b border-slate-100 flex items-center px-2 py-1.5 bg-white"
-                style={{ width: LABEL_COL_WIDTH }}
+                className="sticky left-0 z-[60] border-r border-b border-slate-100 flex items-center px-2 py-1.5"
+                style={{ width: LABEL_COL_WIDTH, backgroundColor: '#ffffff', transform: 'translateZ(0)' }}
               >
                 <span className="text-xs font-medium text-slate-600">{row.label}</span>
               </div>
@@ -497,7 +508,7 @@ export const ExpenseComparableGrid: React.FC = () => {
           
           <div 
             className="sticky left-0 z-[60] bg-[#0da1c7] border-b border-[#0da1c7] p-3 flex items-center"
-            style={{ width: LABEL_COL_WIDTH }}
+            style={{ width: LABEL_COL_WIDTH, transform: 'translateZ(0)' }}
           >
             <span className="text-xs font-bold text-white uppercase tracking-wide">Benchmark</span>
           </div>
@@ -526,8 +537,11 @@ export const ExpenseComparableGrid: React.FC = () => {
 
         </div>
 
-        {/* EXPENSE BENCHMARK FOOTER */}
-        <div className="bg-slate-50 border-t-2 border-slate-300 p-8 pt-10" style={{ width: '100%', minWidth: '100%' }}>
+        {/* EXPENSE BENCHMARK FOOTER - Stays centered, doesn't scroll horizontally */}
+        <div 
+          className="sticky left-0 bg-slate-50 border-t-2 border-slate-300 p-8 pt-10"
+          style={{ width: '100vw', maxWidth: '100%' }}
+        >
           <div className="max-w-4xl mx-auto flex flex-col gap-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
@@ -560,6 +574,23 @@ export const ExpenseComparableGrid: React.FC = () => {
                 </div>
               </div>
             </div>
+
+            {/* Notes Section with AI Draft */}
+            <div className="mt-6">
+              <EnhancedTextArea
+                label="Notes"
+                value={notesText}
+                onChange={setNotesText}
+                placeholder="Type your analysis and assumptions here..."
+                sectionContext="expense_comparable"
+                helperText="AI can draft an expense analysis based on your comparable data."
+                minHeight={250}
+                rows={8}
+              />
+            </div>
+            
+            {/* Bottom padding */}
+            <div className="h-8"></div>
           </div>
         </div>
       </div>

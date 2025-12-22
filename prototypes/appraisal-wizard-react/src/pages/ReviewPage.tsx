@@ -1,10 +1,11 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import WizardLayout from '../components/WizardLayout';
 import {
   ClipboardCheckIcon,
   ChartIcon,
   DocumentIcon,
+  ScaleIcon,
 } from '../components/icons';
 import { CompletionChecklist, ValueReconciliation, ReportEditor } from '../features/review';
 import type { ReviewTabId } from '../features/review';
@@ -13,6 +14,9 @@ import { SectionProgressSummary } from '../components/SectionProgressSummary';
 import { useCompletion } from '../hooks/useCompletion';
 import { useCelebration } from '../hooks/useCelebration';
 import { useSmartContinue } from '../hooks/useSmartContinue';
+import { useWizard } from '../context/WizardContext';
+import EnhancedTextArea from '../components/EnhancedTextArea';
+import { Info } from 'lucide-react';
 
 // =================================================================
 // CONFETTI ANIMATION
@@ -143,8 +147,24 @@ export default function ReviewPage() {
     navigate('/template');
   }, [navigate]);
 
-  // Tab configuration
+  const { state } = useWizard();
+  
+  // Determine if property has improvements (for HBU As Improved visibility)
+  const hasImprovements = useMemo(() => {
+    if (!state.propertyType) return true;
+    return state.propertyType !== 'land';
+  }, [state.propertyType]);
+
+  // HBU text state
+  const [hbuLegallyPermissible, setHbuLegallyPermissible] = useState('');
+  const [hbuPhysicallyPossible, setHbuPhysicallyPossible] = useState('');
+  const [hbuFinanciallyFeasible, setHbuFinanciallyFeasible] = useState('');
+  const [hbuMaximallyProductive, setHbuMaximallyProductive] = useState('');
+  const [hbuAsImproved, setHbuAsImproved] = useState('');
+
+  // Tab configuration - HBU now at the start (before checklist)
   const tabs: { id: ReviewTabId; label: string; icon: typeof ClipboardCheckIcon }[] = [
+    { id: 'hbu', label: 'Highest & Best Use', icon: ScaleIcon },
     { id: 'checklist', label: 'Completion Checklist', icon: ClipboardCheckIcon },
     { id: 'reconciliation', label: 'Value Reconciliation', icon: ChartIcon },
     { id: 'preview', label: 'Report Preview', icon: DocumentIcon },
@@ -206,11 +226,14 @@ export default function ReviewPage() {
   const helpSidebar = (
     <div>
       <h3 className="text-lg font-bold text-gray-900 mb-3">
+        {activeTab === 'hbu' && 'Highest & Best Use'}
         {activeTab === 'checklist' && 'Finalization'}
         {activeTab === 'reconciliation' && 'Value Reconciliation'}
         {activeTab === 'preview' && 'Report Editor'}
       </h3>
       <p className="text-sm text-gray-600 mb-4">
+        {activeTab === 'hbu' &&
+          'Complete the four tests of highest and best use to determine the most profitable legal use of the subject property.'}
         {activeTab === 'checklist' &&
           'Review all sections for completeness and accuracy before generating the final report.'}
         {activeTab === 'reconciliation' &&
@@ -218,6 +241,31 @@ export default function ReviewPage() {
         {activeTab === 'preview' &&
           'Preview and customize your report. Click on elements to edit text, fonts, and styling.'}
       </p>
+
+      {activeTab === 'hbu' && (
+        <>
+          <div className="bg-indigo-50 border-l-4 border-indigo-400 p-4 rounded mb-4">
+            <h4 className="font-semibold text-sm text-indigo-900 mb-1">The Four Tests</h4>
+            <p className="text-xs text-indigo-800">
+              All four tests must be satisfied: Legally Permissible, Physically Possible, Financially Feasible, and Maximally Productive.
+            </p>
+          </div>
+          <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded mb-4">
+            <h4 className="font-semibold text-sm text-blue-900 mb-1">AI Draft Feature</h4>
+            <p className="text-xs text-blue-800">
+              Click the "AI Draft" button on any section to generate professional narrative using your property data from earlier phases.
+            </p>
+          </div>
+          {hasImprovements && (
+            <div className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded">
+              <h4 className="font-semibold text-sm text-amber-900 mb-1">As Improved Analysis</h4>
+              <p className="text-xs text-amber-800">
+                For improved properties, analyze whether the current improvements represent the highest and best use or if demolition/conversion should be considered.
+              </p>
+            </div>
+          )}
+        </>
+      )}
 
       {activeTab === 'checklist' && (
         <>
@@ -290,6 +338,82 @@ export default function ReviewPage() {
   // Render content based on active tab
   const renderContent = () => {
     switch (activeTab) {
+      case 'hbu':
+        return (
+          <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
+            {/* Scenario context banner */}
+            <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-4 flex items-start gap-3">
+              <Info className="text-indigo-600 shrink-0 mt-0.5" size={18} />
+              <div>
+                <p className="text-sm font-semibold text-indigo-900">
+                  Highest & Best Use Analysis
+                </p>
+                <p className="text-xs text-indigo-800 mt-1">
+                  Complete the four tests of highest and best use. Click "AI Draft" on any section to generate professional narrative using your property data.
+                </p>
+              </div>
+            </div>
+
+            {/* HBU As Vacant */}
+            <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+              <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
+                Highest & Best Use - As Vacant
+              </h3>
+              <div className="space-y-6">
+                <EnhancedTextArea
+                  label="Legally Permissible Uses"
+                  value={hbuLegallyPermissible}
+                  onChange={setHbuLegallyPermissible}
+                  placeholder="Describe uses permitted under current zoning and regulations..."
+                  sectionContext="hbu_legally_permissible"
+                  minHeight={120}
+                />
+                <EnhancedTextArea
+                  label="Physically Possible Uses"
+                  value={hbuPhysicallyPossible}
+                  onChange={setHbuPhysicallyPossible}
+                  placeholder="Describe uses that are physically possible given site characteristics..."
+                  sectionContext="hbu_physically_possible"
+                  minHeight={120}
+                />
+                <EnhancedTextArea
+                  label="Financially Feasible Uses"
+                  value={hbuFinanciallyFeasible}
+                  onChange={setHbuFinanciallyFeasible}
+                  placeholder="Describe uses that would generate adequate return..."
+                  sectionContext="hbu_financially_feasible"
+                  minHeight={120}
+                />
+                <EnhancedTextArea
+                  label="Maximally Productive Use (Conclusion)"
+                  value={hbuMaximallyProductive}
+                  onChange={setHbuMaximallyProductive}
+                  placeholder="State the conclusion of highest and best use as vacant..."
+                  sectionContext="hbu_maximally_productive"
+                  minHeight={120}
+                />
+              </div>
+            </div>
+
+            {/* HBU As Improved (only if property has improvements) */}
+            {hasImprovements && (
+              <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+                <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
+                  Highest & Best Use - As Improved
+                </h3>
+                <EnhancedTextArea
+                  label="As Improved Analysis"
+                  value={hbuAsImproved}
+                  onChange={setHbuAsImproved}
+                  placeholder="Analysis of whether to continue current use, renovate/convert, or demolish..."
+                  sectionContext="hbu_as_improved"
+                  minHeight={150}
+                />
+              </div>
+            )}
+          </div>
+        );
+
       case 'checklist':
         return (
           <>

@@ -162,19 +162,19 @@ export const DCFProjectionTable: React.FC<DCFProjectionTableProps> = ({
   return (
     <div className="bg-white border border-slate-200 rounded-xl overflow-hidden shadow-sm">
       {/* Header */}
-      <div className="px-6 py-4 bg-slate-900 text-white flex items-center justify-between">
+      <div className="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <TrendingUp className="w-5 h-5" />
-          <h3 className="font-bold text-lg">Year-by-Year DCF Projection</h3>
+          <TrendingUp className="w-5 h-5 text-[#0da1c7]" />
+          <h3 className="font-bold text-lg text-slate-800">Year-by-Year DCF Projection</h3>
         </div>
         <div className="flex items-center gap-3">
-          <button className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors" title="Export to Excel">
+          <button className="p-2 rounded-lg bg-slate-200 hover:bg-slate-300 transition-colors text-slate-600" title="Export to Excel">
             <Download className="w-4 h-4" />
           </button>
           {simplified && (
             <button 
               onClick={() => setIsExpanded(false)} 
-              className="p-2 rounded-lg bg-white/10 hover:bg-white/20 transition-colors"
+              className="p-2 rounded-lg bg-slate-200 hover:bg-slate-300 transition-colors text-slate-600"
             >
               <ChevronUp className="w-4 h-4" />
             </button>

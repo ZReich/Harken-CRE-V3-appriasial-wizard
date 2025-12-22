@@ -53,11 +53,50 @@ export const COMPLETION_SCHEMA: SectionSchema[] = [
     animationDuration: 2,
     trackProgress: true,
     tabs: [
-      { id: 'basics', label: 'Assignment Basics', requiredFields: ['propertyType', 'subjectData.address.street'], weight: 2 },
-      { id: 'purpose', label: 'Purpose & Scope', requiredFields: ['scenarios[0].effectiveDate'], weight: 2 },
-      { id: 'property', label: 'Property ID', requiredFields: ['subjectData.taxId'], weight: 1 },
-      { id: 'inspection', label: 'Inspection', requiredFields: [], weight: 1 },
-      { id: 'certifications', label: 'Certifications', requiredFields: [], weight: 1 }
+      // Assignment Basics - DYNAMIC: scenario effective dates are counted dynamically in getTabCompletion
+      // Static fields: address (5), report/inspection dates (2), property type/subtype (2), status fields (4) = 13 static + dynamic scenarios
+      { id: 'basics', label: 'Assignment Basics', requiredFields: [
+        // Address fields (5)
+        'subjectData.address.street',
+        'subjectData.address.city',
+        'subjectData.address.state',
+        'subjectData.address.zip',
+        'subjectData.address.county',
+        // Key dates - report and inspection only (2) - scenario effective dates are dynamic
+        'subjectData.reportDate',
+        'subjectData.inspectionDate',
+        // Property type selection (2)
+        'propertyType',
+        'propertySubtype',
+        // Property status section (4) - includes conditional fields that appear based on selections
+        'subjectData.propertyStatus',
+        'subjectData.loanPurpose',
+        'subjectData.plannedChanges',
+        'subjectData.occupancyStatus'
+        // NOTE: Scenario effective dates (scenarios[n].effectiveDate) are handled dynamically
+      ], weight: 3 },
+      // Purpose & Scope: value type, property interest, intended users (3 fields)
+      { id: 'purpose', label: 'Purpose & Scope', requiredFields: [
+        'subjectData.appraisalPurpose',
+        'subjectData.propertyInterest',
+        'subjectData.intendedUsers'
+      ], weight: 2 },
+      // Property ID: property name, tax ID and legal description
+      { id: 'property', label: 'Property ID', requiredFields: [
+        'subjectData.propertyName',
+        'subjectData.taxId',
+        'subjectData.legalDescription'
+      ], weight: 2 },
+      // Inspection: inspector name and inspection type
+      { id: 'inspection', label: 'Inspection', requiredFields: [
+        'subjectData.inspectorName',
+        'subjectData.inspectionType'
+      ], weight: 1 },
+      // Certifications: owner name required
+      { id: 'certifications', label: 'Certifications', requiredFields: [
+        'subjectData.certificationAcknowledged',
+        'subjectData.licenseNumber'
+      ], weight: 1 }
     ]
   },
   {
@@ -69,10 +108,27 @@ export const COMPLETION_SCHEMA: SectionSchema[] = [
     animationDuration: 2.5,
     trackProgress: true,
     tabs: [
-      { id: 'location', label: 'Location & Area', requiredFields: [], weight: 1 },
-      { id: 'site', label: 'Site Details', requiredFields: [], weight: 1 },
-      { id: 'improvements', label: 'Improvements', requiredFields: ['improvementsInventory.parcels[0].parcelNumber'], weight: 2 },
-      { id: 'tax', label: 'Tax & Ownership', requiredFields: ['subjectData.transactionHistory'], weight: 1 },
+      // Location: requires county and area description
+      { id: 'location', label: 'Location & Area', requiredFields: [
+        'subjectData.address.county',
+        'subjectData.areaDescription'
+      ], weight: 1 },
+      // Site: requires site area, zoning, and legal description
+      { id: 'site', label: 'Site Details', requiredFields: [
+        'subjectData.siteArea',
+        'subjectData.zoningClass',
+        'subjectData.legalDescription'
+      ], weight: 2 },
+      // Improvements: at least one building with year built
+      { id: 'improvements', label: 'Improvements', requiredFields: [
+        'improvementsInventory.parcels[0].buildings[0].yearBuilt'
+      ], weight: 2 },
+      // Tax: requires transaction history (USPAP 3-year requirement)
+      { id: 'tax', label: 'Tax & Ownership', requiredFields: [
+        'subjectData.transactionHistory',
+        'owners[0].name'
+      ], weight: 2 },
+      // Photos & Exhibits are optional - no required fields (will show as not tracked)
       { id: 'photos', label: 'Photos & Maps', requiredFields: [], weight: 1 },
       { id: 'exhibits', label: 'Exhibits & Docs', requiredFields: [], weight: 1 }
     ]
@@ -96,8 +152,11 @@ export const COMPLETION_SCHEMA: SectionSchema[] = [
     animationDuration: 5,
     trackProgress: true,
     tabs: [
+      // Checklist: just needs to be visited (no specific fields)
       { id: 'checklist', label: 'Completion Checklist', requiredFields: [], weight: 1 },
-      { id: 'reconciliation', label: 'Value Reconciliation', requiredFields: [], weight: 2 },
+      // Reconciliation: requires exposure period and comments
+      { id: 'reconciliation', label: 'Value Reconciliation', requiredFields: ['reconciliationData.exposurePeriod'], weight: 2 },
+      // Preview: optional - no required fields
       { id: 'preview', label: 'Report Preview', requiredFields: [], weight: 1 }
     ]
   }

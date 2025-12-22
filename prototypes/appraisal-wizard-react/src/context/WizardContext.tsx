@@ -9,17 +9,8 @@ import { getNestedValue, isFilled } from '../utils/stateHelpers';
 // =================================================================
 
 const getInitialState = (): WizardState => {
-  // Try to load from localStorage
-  const stored = localStorage.getItem('harken_wizard_react');
-  if (stored) {
-    try {
-      return JSON.parse(stored);
-    } catch (e) {
-      console.warn('Failed to parse stored wizard state');
-    }
-  }
-
-  return {
+  // Default state structure
+  const defaultState: WizardState = {
     template: null,
     propertyType: null,
     propertySubtype: null,
@@ -38,6 +29,42 @@ const getInitialState = (): WizardState => {
       lastSaleDate: '',
       lastSalePrice: '',
       transactionHistory: '',
+      // Location & Area
+      areaDescription: '',
+      neighborhoodBoundaries: '',
+      neighborhoodCharacteristics: '',
+      specificLocation: '',
+      // Site Details
+      siteArea: '',
+      siteAreaUnit: 'acres' as const,
+      shape: '',
+      frontage: '',
+      topography: '',
+      utilities: '',
+      floodZone: '',
+      environmental: '',
+      easements: '',
+      zoningClass: '',
+      zoningDescription: '',
+      zoningConforming: false,
+      // Purpose & Scope
+      appraisalPurpose: '',
+      intendedUsers: '',
+      propertyInterest: '',
+      // Inspection
+      inspectorName: '',
+      inspectorLicense: '',
+      inspectionType: '',
+      // Certifications
+      certificationAcknowledged: false,
+      licenseNumber: '',
+      licenseState: '',
+      licenseExpiration: '',
+      // Assignment Context (from Setup - drives scenario/visibility logic)
+      propertyStatus: undefined,
+      occupancyStatus: undefined,
+      plannedChanges: undefined,
+      loanPurpose: undefined,
     },
     improvementsInventory: createDefaultInventory(),
     extractedData: {},
@@ -46,6 +73,7 @@ const getInitialState = (): WizardState => {
       { id: 'owner_1', name: '', ownershipType: 'individual', percentage: 100 }
     ],
     incomeApproachData: null,
+    analysisConclusions: { conclusions: [] },
     reconciliationData: null,
     currentPage: 'template',
     subjectActiveTab: 'location',
@@ -63,6 +91,45 @@ const getInitialState = (): WizardState => {
     },
     lastModified: new Date().toISOString(),
   };
+
+  // Check for reset parameter (clears all stored data)
+  if (typeof window !== 'undefined' && window.location.search.includes('reset=1')) {
+    localStorage.removeItem('harken_wizard_react');
+    sessionStorage.removeItem('harken_extracted_data');
+    // Redirect without reset param to avoid infinite loop
+    window.history.replaceState({}, '', window.location.pathname);
+    return defaultState;
+  }
+
+  // Try to load from localStorage and merge with defaults
+  const stored = localStorage.getItem('harken_wizard_react');
+  if (stored) {
+    try {
+      const parsedState = JSON.parse(stored);
+      // Merge stored state with defaults to handle missing fields
+      return {
+        ...defaultState,
+        ...parsedState,
+        // Ensure nested objects are properly merged
+        subjectData: {
+          ...defaultState.subjectData,
+          ...(parsedState.subjectData || {}),
+          address: {
+            ...defaultState.subjectData.address,
+            ...(parsedState.subjectData?.address || {}),
+          },
+        },
+        celebration: {
+          ...defaultState.celebration,
+          ...(parsedState.celebration || {}),
+        },
+      };
+    } catch (e) {
+      console.warn('Failed to parse stored wizard state');
+    }
+  }
+
+  return defaultState;
 };
 
 // =================================================================
@@ -173,21 +240,50 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
       case 'SET_OWNERS':
         return { ...state, owners: action.payload };
 
-      case 'SET_SUBJECT_DATA':
+      case 'SET_SUBJECT_DATA': {
+        // Ensure subjectData exists with defaults
+        const currentSubjectData = state.subjectData || {
+          propertyName: '',
+          address: { street: '', city: '', state: '', zip: '', county: '' },
+          taxId: '',
+          legalDescription: '',
+          reportDate: '',
+          inspectionDate: '',
+          effectiveDate: '',
+          lastSaleDate: '',
+          lastSalePrice: '',
+          transactionHistory: '',
+        };
         return {
           ...state,
           subjectData: {
-            ...state.subjectData,
+            ...currentSubjectData,
             ...action.payload,
             // Handle nested address update
             address: action.payload.address
-              ? { ...state.subjectData.address, ...action.payload.address }
-              : state.subjectData.address,
+              ? { ...(currentSubjectData.address || {}), ...action.payload.address }
+              : currentSubjectData.address,
           },
         };
+      }
 
       case 'SET_INCOME_APPROACH_DATA':
         return { ...state, incomeApproachData: action.payload };
+
+      case 'SET_APPROACH_CONCLUSION': {
+        const existingConclusions = state.analysisConclusions?.conclusions || [];
+        const newConclusion = action.payload;
+        // Replace existing conclusion for same scenario/approach, or add new
+        const filtered = existingConclusions.filter(
+          c => !(c.scenarioId === newConclusion.scenarioId && c.approach === newConclusion.approach)
+        );
+        return {
+          ...state,
+          analysisConclusions: {
+            conclusions: [...filtered, newConclusion],
+          },
+        };
+      }
 
       case 'SET_RECONCILIATION_DATA':
         return { ...state, reconciliationData: action.payload };
@@ -347,6 +443,10 @@ interface WizardContextValue {
   setIncomeApproachData: (data: IncomeApproachState) => void;
   getIncomeApproachData: () => IncomeApproachState | null;
   
+  // Analysis approach conclusion helpers
+  setApproachConclusion: (scenarioId: number, approach: string, valueConclusion: number | null) => void;
+  getApproachConclusion: (scenarioId: number, approach: string) => number | null;
+  
   // Reconciliation helpers
   setReconciliationData: (data: ReconciliationData) => void;
   getReconciliationData: () => ReconciliationData | null;
@@ -366,6 +466,9 @@ interface WizardContextValue {
   updateScenarioApproach: (scenarioId: number, approach: string, isComplete: boolean) => void;
   isScenarioComplete: (scenarioId: number) => boolean;
   areAllScenariosComplete: () => boolean;
+  
+  // Derived state
+  hasImprovements: boolean; // True if property type is not 'land'
 }
 
 const WizardContext = createContext<WizardContextValue | null>(null);
@@ -470,6 +573,26 @@ export function WizardProvider({ children }: { children: ReactNode }) {
     return state.incomeApproachData;
   }, [state.incomeApproachData]);
 
+  // Analysis approach conclusion helpers
+  const setApproachConclusion = useCallback((scenarioId: number, approach: string, valueConclusion: number | null) => {
+    dispatch({
+      type: 'SET_APPROACH_CONCLUSION',
+      payload: {
+        scenarioId,
+        approach,
+        valueConclusion,
+        lastUpdated: new Date().toISOString(),
+      },
+    });
+  }, []);
+
+  const getApproachConclusion = useCallback((scenarioId: number, approach: string): number | null => {
+    const conclusion = state.analysisConclusions?.conclusions?.find(
+      c => c.scenarioId === scenarioId && c.approach === approach
+    );
+    return conclusion?.valueConclusion ?? null;
+  }, [state.incomeApproachData]);
+
   // Reconciliation helpers
   const setReconciliationData = useCallback((data: ReconciliationData) => {
     dispatch({ type: 'SET_RECONCILIATION_DATA', payload: data });
@@ -508,12 +631,49 @@ export function WizardProvider({ children }: { children: ReactNode }) {
     // This prevents tabs from showing 100% when they have no tracking configured
     if (tab.requiredFields.length === 0) return 0;
     
-    const filledCount = tab.requiredFields.filter(field => {
+    // CONDITIONAL FIELD HANDLING: Some fields only appear based on context
+    // For Assignment Basics, plannedChanges and occupancyStatus are conditional
+    const isFieldApplicable = (field: string): boolean => {
+      // plannedChanges only shows for 'existing' or 'recently_completed' property status
+      if (field === 'subjectData.plannedChanges') {
+        const status = state.subjectData?.propertyStatus;
+        return status === 'existing' || status === 'recently_completed';
+      }
+      // occupancyStatus only shows for commercial or multifamily/2-4unit
+      if (field === 'subjectData.occupancyStatus') {
+        if (state.propertyType === 'commercial') return true;
+        const subType = state.propertySubtype;
+        if (subType && (subType.includes('multifamily') || subType.includes('2-4unit'))) return true;
+        return false;
+      }
+      return true; // All other fields are always applicable
+    };
+    
+    // Filter to only applicable fields
+    const applicableFields = tab.requiredFields.filter(isFieldApplicable);
+    
+    // Count filled static fields
+    let filledCount = applicableFields.filter(field => {
       const value = getNestedValue(state, field);
       return isFilled(value);
     }).length;
     
-    return Math.round((filledCount / tab.requiredFields.length) * 100);
+    let totalFields = applicableFields.length;
+    
+    // DYNAMIC SCENARIO HANDLING: For Assignment Basics tab, add scenario effective dates
+    if (sectionId === 'setup' && tabId === 'basics') {
+      const scenarios = state.scenarios || [];
+      // Add each scenario's effectiveDate as a required field
+      scenarios.forEach(scenario => {
+        totalFields += 1; // Each scenario needs an effective date
+        if (isFilled(scenario.effectiveDate)) {
+          filledCount += 1;
+        }
+      });
+    }
+    
+    if (totalFields === 0) return 0;
+    return Math.round((filledCount / totalFields) * 100);
   }, [state]);
 
   const getSectionCompletion = useCallback((sectionId: string): number => {
@@ -594,6 +754,10 @@ export function WizardProvider({ children }: { children: ReactNode }) {
     return state.scenarios.every(s => isScenarioComplete(s.id));
   }, [state.scenarios, state.allScenariosCompletedAt, isScenarioComplete]);
 
+  // Derived state: hasImprovements
+  // True if property type is not 'land' (i.e., has improvements to appraise)
+  const hasImprovements = state.propertyType !== 'land';
+
   return (
     <WizardContext.Provider
       value={{
@@ -614,6 +778,8 @@ export function WizardProvider({ children }: { children: ReactNode }) {
         removeOwner,
         setIncomeApproachData,
         getIncomeApproachData,
+        setApproachConclusion,
+        getApproachConclusion,
         setReconciliationData,
         getReconciliationData,
         getActiveScenario,
@@ -632,6 +798,8 @@ export function WizardProvider({ children }: { children: ReactNode }) {
         updateScenarioApproach,
         isScenarioComplete,
         areAllScenariosComplete,
+        // Derived state
+        hasImprovements,
       }}
     >
       {children}

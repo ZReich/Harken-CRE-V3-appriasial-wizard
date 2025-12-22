@@ -17,6 +17,13 @@ export interface WizardConfig {
   propertyInterest: string;
   hasImprovements: boolean;
   activeScenario: AppraisalScenario | null;
+  
+  // Assignment context for smart visibility
+  propertyStatus?: string;
+  occupancyStatus?: string;
+  plannedChanges?: string;
+  hasActualRentRoll?: boolean;   // Set based on whether rent roll has data
+  hasActualExpenses?: boolean;   // Set based on whether expenses have data
 }
 
 // =================================================================
@@ -31,6 +38,9 @@ export interface ComponentVisibility {
   dcfAnalysis: boolean;
   dcfDetailedTable: boolean;
   directCapitalization: boolean;
+  
+  // Multi-Family Approach components
+  multiFamilyGrid: boolean;
   
   // Sales Comparison components
   improvedSalesGrid: boolean;
@@ -93,16 +103,28 @@ function hasApproach(scenario: AppraisalScenario | null, approachName: string): 
  * Get the visibility flags for all optional components based on wizard config
  */
 export function getVisibleComponents(config: WizardConfig): ComponentVisibility {
-  const { propertyType, propertySubtype, propertyInterest, hasImprovements, activeScenario } = config;
+  const { 
+    propertyType, propertySubtype, propertyInterest, hasImprovements, activeScenario,
+    propertyStatus, occupancyStatus, plannedChanges: _plannedChanges, hasActualRentRoll, hasActualExpenses
+  } = config;
+  
+  // plannedChanges is available for future use in visibility logic
+  void _plannedChanges;
   
   const incomeApproachActive = hasApproach(activeScenario, 'income');
   const salesComparisonActive = hasApproach(activeScenario, 'sales');
   const costApproachActive = hasApproach(activeScenario, 'cost');
   const landValuationActive = hasApproach(activeScenario, 'land');
+  const multiFamilyActive = hasApproach(activeScenario, 'multi-family');
   
   const isIncome = isIncomeProducing(propertyType, propertySubtype);
   const isLeasedFee = propertyInterest === 'leased_fee';
   const isLand = propertyType === 'land';
+  
+  // Check if this is a multi-family property
+  const isMultiFamily = propertySubtype === 'multifamily' || propertySubtype === '2-4unit' ||
+                        propertySubtype?.includes('multifamily') || propertySubtype?.includes('2-4unit') ||
+                        propertySubtype?.includes('apartment');
   
   const scenarioName = activeScenario?.name || 'As Is';
   const isAsIs = scenarioName === 'As Is';
@@ -110,24 +132,60 @@ export function getVisibleComponents(config: WizardConfig): ComponentVisibility 
   const isAsStabilized = scenarioName === 'As Stabilized';
   const isAsProposed = scenarioName === 'As Proposed';
   
+  // === SMART RENT COMPS VISIBILITY ===
+  // Show rent comps when we need to project market rents
+  const needsProjectedRents = 
+    occupancyStatus === 'lease_up' || 
+    occupancyStatus === 'vacant' ||
+    hasActualRentRoll === false;  // No existing rent roll data
+  
+  const isProspectiveScenario = isAsStabilized || isAsCompleted || isAsProposed;
+  
+  const isNewDevelopment = 
+    propertyStatus === 'proposed' || 
+    propertyStatus === 'under_construction';
+  
+  const showRentComps = !!(incomeApproachActive && isIncome && (
+    needsProjectedRents || isProspectiveScenario || isNewDevelopment
+  ));
+  
+  // === SMART EXPENSE COMPS VISIBILITY ===
+  // NNN leases typically have minimal landlord expenses
+  const isNNNLikely = propertySubtype === 'industrial';
+  const isOwnerOccupied = occupancyStatus === 'not_applicable';
+  
+  const hasNoHistoricalExpenses = 
+    isNewDevelopment || 
+    hasActualExpenses === false;
+  
+  const needsExpenseSupport = 
+    !isNNNLikely && 
+    !isOwnerOccupied && 
+    (hasNoHistoricalExpenses || isAsCompleted || isAsStabilized);
+  
+  const showExpenseComps = !!(incomeApproachActive && isIncome && needsExpenseSupport);
+  
   return {
     // Income Approach Components
-    rentComparableGrid: incomeApproachActive && isIncome,
-    rentRollAnalysis: incomeApproachActive && (isLeasedFee || isIncome),
-    expenseComparableGrid: incomeApproachActive && isIncome,
-    dcfAnalysis: incomeApproachActive,
-    dcfDetailedTable: incomeApproachActive && (isAsStabilized || isAsCompleted || isAsProposed),
-    directCapitalization: incomeApproachActive,
+    rentComparableGrid: showRentComps,  // Smart visibility based on assignment context
+    rentRollAnalysis: !!(incomeApproachActive && (isLeasedFee || isIncome)),
+    expenseComparableGrid: showExpenseComps,  // Smart visibility based on assignment context
+    dcfAnalysis: !!incomeApproachActive,
+    dcfDetailedTable: !!(incomeApproachActive && (isAsStabilized || isAsCompleted || isAsProposed)),
+    directCapitalization: !!incomeApproachActive,
+    
+    // Multi-Family Approach Components
+    multiFamilyGrid: !!(multiFamilyActive && isMultiFamily),
     
     // Sales Comparison Components
-    improvedSalesGrid: salesComparisonActive && hasImprovements,
-    capRateExtraction: salesComparisonActive && incomeApproachActive,
+    improvedSalesGrid: !!(salesComparisonActive && hasImprovements),
+    capRateExtraction: !!(salesComparisonActive && incomeApproachActive),
     
     // Land / Cost Approach Components
-    landSalesGrid: landValuationActive || costApproachActive || isLand,
-    costNewCalculation: costApproachActive && hasImprovements,
-    depreciationAnalysis: costApproachActive && isAsIs,
-    entrepreneurialProfit: costApproachActive && (isAsCompleted || isAsStabilized || isAsProposed),
+    landSalesGrid: !!(landValuationActive || costApproachActive || isLand),
+    costNewCalculation: !!(costApproachActive && hasImprovements),
+    depreciationAnalysis: !!(costApproachActive && isAsIs),
+    entrepreneurialProfit: !!(costApproachActive && (isAsCompleted || isAsStabilized || isAsProposed)),
     leaseUpCosts: isAsStabilized,
     
     // HBU Components
@@ -135,8 +193,8 @@ export function getVisibleComponents(config: WizardConfig): ComponentVisibility 
     hbuAsImproved: hasImprovements,
     
     // Market Analysis Components
-    marketRentTrends: incomeApproachActive,
-    marketSaleTrends: salesComparisonActive,
+    marketRentTrends: !!incomeApproachActive,
+    marketSaleTrends: !!salesComparisonActive,
     marketSupplyDemand: true, // Always useful
   };
 }

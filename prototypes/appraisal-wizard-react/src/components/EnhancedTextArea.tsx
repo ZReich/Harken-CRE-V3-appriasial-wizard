@@ -18,12 +18,14 @@ import {
   Info,
   Loader2
 } from 'lucide-react';
+import { useWizard } from '../context/WizardContext';
+import { buildHBUContext, formatContextForAPI } from '../utils/hbuContextBuilder';
 
 // ==========================================
 // TYPES
 // ==========================================
 interface EnhancedTextAreaProps {
-  id: string;
+  id?: string;
   label: string;
   value: string;
   onChange: (value: string) => void;
@@ -32,6 +34,8 @@ interface EnhancedTextAreaProps {
   sectionContext?: string;
   helperText?: string;
   required?: boolean;
+  minHeight?: number;
+  contextData?: Record<string, any>; // Additional context for AI generation
 }
 
 interface AIPreview {
@@ -47,6 +51,32 @@ const SimulatedAIDrafts: Record<string, string> = {
   'improvement_description': 'The subject improvements consist of a single-story industrial warehouse building constructed in 2019. The building features a steel frame with metal panel exterior walls and a standing seam metal roof. The structure provides approximately 11,174 square feet of gross building area, including warehouse space with 24-foot clear heights.',
   'hbu_analysis': 'Based on analysis of the four tests of highest and best use, the subject site as vacant would be developed with industrial/warehouse use. This conclusion is supported by: (1) Legal permissibility under the I1-Light Industrial zoning; (2) Physical possibility given the level topography; (3) Financial feasibility based on current market demand; and (4) Maximum productivity compared to alternative uses.',
   'reconciliation': 'In reconciling the value indications, the Income Approach is given primary emphasis as it best reflects investor decision-making for income-producing properties. The Sales Comparison Approach provides good support. The Cost Approach is given least weight due to challenges in measuring depreciation.',
+  
+  // HBU-specific templates for the four tests
+  'hbu_legally_permissible': 'The subject property is zoned I-1 (Light Industrial) under the applicable zoning ordinance. Under this zoning classification, permitted uses by right include light manufacturing, warehousing and distribution, research and development facilities, and related commercial uses. Conditional uses may include outdoor storage with appropriate screening and certain retail uses accessory to industrial operations.\n\nNo deed restrictions, private covenants, or easements were identified in our title review that would further limit development potential beyond the zoning requirements. The current use is a conforming use under the applicable zoning ordinance. Based on this analysis, the legally permissible uses include industrial, warehouse, and related commercial development.',
+  
+  'hbu_physically_possible': 'The subject site contains approximately 1.43 acres of generally level land with a regular, rectangular configuration. The site topography is level and at grade with the surrounding roadway, presenting no significant physical constraints to development. All public utilities including municipal water, sanitary sewer, electricity, natural gas, and telecommunications are available and connected to the site.\n\nThe property is located in Flood Zone X per FEMA mapping, indicating minimal flood risk with no special flood insurance requirements. The site has adequate frontage and direct access from a public right-of-way. Given these physical characteristics, the site is suitable for virtually any development permitted under the applicable zoning. Physically possible uses include any development compatible with the site size, shape, and utility availability.',
+  
+  'hbu_financially_feasible': 'Current market conditions indicate sustained demand for industrial and warehouse space in the subject market area. The submarket vacancy rate of approximately 5.2% is below the long-term historical average, indicating a healthy balance between supply and demand. Market rental rates for comparable industrial space range from $6.50 to $8.50 per square foot NNN, which would support new development at current construction costs.\n\nDevelopment feasibility analysis indicates that new industrial construction would generate a positive residual land value, confirming financial feasibility. Market-derived capitalization rates for stabilized industrial properties range from 6.50% to 7.50%, reflecting investor confidence in the asset class. Based on our analysis, industrial and warehouse development would be financially feasible, generating adequate return to justify development.',
+  
+  'hbu_maximally_productive': 'Based on our analysis of the four tests of highest and best use, it is our conclusion that the highest and best use of the subject site as if vacant is development with industrial or warehouse improvements. This conclusion synthesizes the legally permissible uses (industrial zoning), physically possible uses (adequate site size and utilities), and financially feasible uses (positive residual land value for industrial development).\n\nAmong the legally permissible, physically possible, and financially feasible uses, industrial development would result in the highest land value. This conclusion is supported by the site\'s location within an established industrial corridor, adequate infrastructure, and strong market fundamentals. Therefore, the highest and best use as vacant is development with industrial or warehouse improvements.',
+  
+  'hbu_as_improved': 'The subject property is currently improved with a 11,174 square foot industrial warehouse building constructed in 2019. The existing improvements are consistent with and represent a reasonable approximation of the ideal improvement for the site given current market conditions and zoning. The improvements are in good condition with substantial remaining economic life and provide adequate functional utility for industrial users.\n\nWe considered alternative uses including renovation, conversion to alternative use, or demolition. Given the improvements\' modern construction, good condition, and functional utility, demolition and redevelopment is not economically justified. The contribution value of the improvements exceeds the cost to demolish and redevelop. Based on this analysis, it is our conclusion that the highest and best use of the subject property as improved is continuation of its current use as an industrial warehouse facility.',
+
+  // ===========================================
+  // GRID-SPECIFIC AI PROMPTS (30-Year Appraiser Style)
+  // ===========================================
+  
+  'sales_comparison': '**Sales Comparison Approach - Reconciliation**\n\nIn developing the Sales Comparison Approach, I have analyzed recent transactions of properties considered most comparable to the subject. After 30 years in this profession, I can attest that this approach provides the most reliable indication of market value when sufficient comparable data exists.\n\n**Comparable Selection Criteria:**\nThe sales selected represent the best available data, considering location, physical characteristics, and market conditions. Each transaction was verified to the extent possible to confirm arms-length status.\n\n**Adjustment Analysis:**\nAdjustments were applied for differences in property rights conveyed, financing terms, conditions of sale, market conditions, location, and physical characteristics. The adjustments reflect market-derived differences based on paired sales analysis and professional judgment developed over decades of practice.\n\n**Reconciliation:**\nGreatest weight was given to the comparables requiring the least overall adjustment, as these properties most closely mirror the subject. The adjusted sale prices demonstrate a reasonable range, and the indicated value falls within market expectations.\n\n**Value Indication via Sales Comparison Approach:** [Value to be inserted based on grid data]',
+
+  'land_valuation': '**Land Valuation - Analysis and Reconciliation**\n\nThe land value estimate was developed using the Sales Comparison Approach, which is the preferred methodology for vacant land when adequate comparable sales data is available.\n\n**Market Analysis:**\nThe local land market has demonstrated [stable/increasing/decreasing] conditions over the past 12-24 months. Demand for [property type] land in this submarket remains [strong/moderate/weak], supported by [economic factors].\n\n**Comparable Land Sales:**\nI have analyzed recent sales of comparable land parcels, with adjustments made for differences in size, location, topography, utilities, zoning, and market conditions. After three decades of appraising land, these adjustments reflect my understanding of how buyers in this market value specific property characteristics.\n\n**Adjustment Rationale:**\n- **Location:** Adjustments reflect differences in access, visibility, and surrounding land uses\n- **Size:** Larger parcels typically sell at lower unit prices due to diminished buyer pool\n- **Utilities:** Availability and cost to connect significantly impact land value\n- **Topography:** Level, usable land commands premium pricing\n\n**Land Value Conclusion:**\nBased on the adjusted comparable sales, the indicated land value is [Value to be inserted]. This conclusion reflects the most probable price the subject land would bring in a competitive market.',
+
+  'rent_comparable': '**Rent Comparable Analysis - Market Rent Conclusion**\n\nIn estimating market rent for the subject property, I have analyzed comparable rental properties in the subject\'s competitive market area.\n\n**Rental Market Conditions:**\nThe current rental market for [property type] space reflects [market conditions]. Vacancy rates in the immediate area are approximately [X]%, indicating [balanced/landlord-favorable/tenant-favorable] conditions.\n\n**Comparable Rental Analysis:**\nThe rentals selected represent properties that compete directly with the subject for tenants. Adjustments were made for differences in location, size, condition, amenities, and lease terms.\n\n**Key Observations:**\n- Effective rental rates range from $[X] to $[Y] per square foot\n- Most leases are structured on a [NNN/Modified Gross/Full Service] basis\n- Tenant improvement allowances average $[X] per square foot\n- Concessions are [typical/minimal/significant] in the current market\n\n**Market Rent Conclusion:**\nBased on my analysis of comparable rentals and 30 years of experience in this market, the indicated market rent for the subject is $[X] per square foot on a [lease basis] basis. This rent level reflects the most probable rent the subject would command from a knowledgeable tenant in the current market.',
+
+  'expense_comparable': '**Operating Expense Analysis**\n\nIn developing the expense estimate for the subject property, I have analyzed comparable expense data from similar properties in the market.\n\n**Expense Data Sources:**\nExpense comparables were selected from properties similar to the subject in terms of property type, size, age, and quality. Data was obtained from [sources] and verified to the extent possible.\n\n**Expense Categories Analyzed:**\n- **Real Estate Taxes:** Based on current assessment and mill levy\n- **Insurance:** Reflects current market rates for similar properties\n- **Utilities:** Where applicable, based on comparable consumption data\n- **Repairs & Maintenance:** Reflects typical expenditures for properties of this age and condition\n- **Management:** Market-standard percentage of effective gross income\n- **Reserves for Replacement:** Appropriate reserve for long-lived components\n\n**Expense Comparison:**\nThe expense ratio for comparable properties ranges from [X]% to [Y]% of effective gross income, with total expenses per square foot ranging from $[X] to $[Y].\n\n**Expense Conclusion:**\nBased on the comparable data and my professional judgment developed over 30 years, the stabilized expenses for the subject property are estimated at $[X] per square foot, representing an expense ratio of approximately [X]%.',
+
+  'multi_family': '**Multi-Family Rental Approach - Analysis and Reconciliation**\n\nIn developing the rental analysis for this multi-family property, I have applied the same rigorous methodology that has guided my 30-year career in real estate appraisal.\n\n**Market Overview:**\nThe multi-family market in this area has demonstrated [market conditions]. Vacancy rates for comparable properties average approximately [X]%, and rental rate trends have been [increasing/stable/declining] over the past 12 months.\n\n**Rental Comparable Analysis:**\nI have analyzed [X] rental comparables representing properties that compete directly with the subject for tenants. These comparables were selected based on similarity in unit mix, age, condition, location, and amenities.\n\n**Adjustment Factors:**\n- **Location:** Adjustments for differences in neighborhood quality and access\n- **Unit Size/Configuration:** Bed/bath count and square footage comparisons\n- **Condition/Quality:** Age, renovation status, and finish levels\n- **Amenities:** Parking, utilities included, in-unit features\n- **Property Type:** Building style and unit count considerations\n\n**Rental Rate Conclusion:**\nBased on my analysis, the indicated market rental rates for the subject units are:\n- [Unit Type 1]: $[X]/month\n- [Unit Type 2]: $[Y]/month\n\nThese conclusions reflect the most probable rents the subject units would achieve from typical tenants in the current market. The overall adjustment range supports confidence in these conclusions.',
+  
   'default': 'This section contains professionally written appraisal content that follows USPAP guidelines and industry best practices. The content should be reviewed and modified as appropriate for the specific assignment.'
 };
 
@@ -63,12 +93,24 @@ export default function EnhancedTextArea({
   sectionContext = 'default',
   helperText,
   required = false,
+  minHeight: propMinHeight,
+  contextData,
 }: EnhancedTextAreaProps) {
   const editorRef = useRef<HTMLDivElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [isGeneratingAI, setIsGeneratingAI] = useState(false);
   const [aiPreview, setAIPreview] = useState<AIPreview>({ content: '', isVisible: false });
   const [isFocused, setIsFocused] = useState(false);
+  
+  // Get wizard context for AI generation (safely - may not be in provider)
+  let wizardState: any = null;
+  try {
+    // eslint-disable-next-line react-hooks/rules-of-hooks
+    const wizardContext = useWizard();
+    wizardState = wizardContext?.state;
+  } catch {
+    // Not in WizardProvider - that's ok, we'll use fallbacks
+  }
 
   // Sync editor content with value prop
   useEffect(() => {
@@ -99,17 +141,51 @@ export default function EnhancedTextArea({
     }
   }, [onChange]);
 
-  // Generate AI content
+  // Generate AI content - calls backend API when available, falls back to simulated
   const generateAI = useCallback(async () => {
     setIsGeneratingAI(true);
     
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    try {
+      // Build context from wizard state if available
+      let apiContext: Record<string, any> = contextData || {};
+      
+      if (wizardState) {
+        const hbuContext = buildHBUContext(wizardState);
+        apiContext = { ...formatContextForAPI(hbuContext), ...contextData };
+      }
+      
+      // Try to call the backend API
+      const response = await fetch('/api/appraisals/ai-draft', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          section: sectionContext,
+          context: apiContext,
+        }),
+      });
+      
+      if (response.ok) {
+        const data = await response.json();
+        if (data?.data?.content) {
+          setAIPreview({ content: data.data.content, isVisible: true });
+          setIsGeneratingAI(false);
+          return;
+        }
+      }
+      
+      // Fall back to simulated responses if API fails
+      console.warn('AI API not available, using simulated response');
+      const draft = SimulatedAIDrafts[sectionContext] || SimulatedAIDrafts.default;
+      setAIPreview({ content: draft, isVisible: true });
+    } catch (error) {
+      console.warn('AI generation failed, using simulated response:', error);
+      // Fall back to simulated responses
+      const draft = SimulatedAIDrafts[sectionContext] || SimulatedAIDrafts.default;
+      setAIPreview({ content: draft, isVisible: true });
+    }
     
-    const draft = SimulatedAIDrafts[sectionContext] || SimulatedAIDrafts.default;
-    setAIPreview({ content: draft, isVisible: true });
     setIsGeneratingAI(false);
-  }, [sectionContext]);
+  }, [sectionContext, contextData, wizardState]);
 
   // Accept AI draft
   const acceptAI = useCallback(() => {
@@ -141,7 +217,7 @@ export default function EnhancedTextArea({
     return () => window.removeEventListener('keydown', handleEscape);
   }, [isFullscreen]);
 
-  const minHeight = rows * 28;
+  const minHeight = propMinHeight || rows * 28;
 
   return (
     <>

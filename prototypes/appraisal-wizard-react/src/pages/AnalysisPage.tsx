@@ -2,34 +2,31 @@ import { useState, useMemo, useEffect, useCallback } from 'react';
 import WizardLayout from '../components/WizardLayout';
 import ScenarioSwitcher, { getScenarioAccentColor, getScenarioColors } from '../components/ScenarioSwitcher';
 import {
-  ScaleIcon,
   LandIcon,
   TrendingUpIcon,
   ChartIcon,
   CurrencyIcon,
   ConstructionIcon,
+  ResidentialIcon,
 } from '../components/icons';
 import { SalesGrid, PROPERTIES, MOCK_VALUES } from '../features/sales-comparison';
 import { IncomeApproachGrid } from '../features/income-approach';
 import { CostApproachGrid } from '../features/cost-approach';
 import { LandSalesGrid } from '../features/land-valuation';
 import { MarketAnalysisGrid } from '../features/market-analysis';
+import { MultiFamilyGrid } from '../features/multi-family';
 import { useWizard } from '../context/WizardContext';
 import { getGuidance, type GuidanceContent } from '../constants/guidance';
 import { Layers, Building, Wallet, HardHat, Plus, Info, AlertTriangle, CheckCircle2, Lightbulb, BookOpen } from 'lucide-react';
 import { useCelebration } from '../hooks/useCelebration';
 import { ScenarioCelebration } from '../components/ScenarioCelebration';
+import { ReconciliationSummary } from '../components/ReconciliationSummary';
+import { ContextualMarketData } from '../components/ContextualMarketData';
+import { getVisibleComponents } from '../utils/componentVisibility';
 
 // Approach definitions with color coding for navigation
+// NOTE: HBU has been moved to the Review page per plan
 const APPROACH_CONFIG = {
-  hbu: { 
-    id: 'hbu', 
-    label: 'Highest & Best Use', 
-    Icon: ScaleIcon,
-    color: '#6366f1', // indigo
-    bgClass: 'bg-indigo-50',
-    borderClass: 'border-l-indigo-400',
-  },
   land: { 
     id: 'land', 
     label: 'Land Valuation', 
@@ -70,30 +67,62 @@ const APPROACH_CONFIG = {
     bgClass: 'bg-orange-50',
     borderClass: 'border-l-orange-400',
   },
+  multifamily: {
+    id: 'multifamily',
+    label: 'Multi-Family',
+    Icon: ResidentialIcon,
+    color: '#8b5cf6', // violet
+    bgClass: 'bg-violet-50',
+    borderClass: 'border-l-violet-400',
+  },
 };
 
 // Map scenario approach names to tab IDs
 const APPROACH_NAME_TO_ID: Record<string, string> = {
-  'Highest & Best Use': 'hbu',
   'Land Valuation': 'land',
   'Market Analysis': 'market',
   'Sales Comparison': 'sales',
   'Income Approach': 'income',
   'Cost Approach': 'cost',
+  'Multi-Family Approach': 'multifamily',
 };
 
-// All possible tabs in display order
-const ALL_TABS = ['hbu', 'land', 'market', 'sales', 'income', 'cost'];
+// All possible tabs in display order (HBU moved to Review page)
+const ALL_TABS = ['land', 'market', 'sales', 'multifamily', 'income', 'cost'];
 
 export default function AnalysisPage() {
   const [activeTab, setActiveTab] = useState('sales');
   const [analysisMode, setAnalysisMode] = useState<'standard' | 'residual'>('standard');
-  const { state, setIncomeApproachData } = useWizard();
+  const { state, setIncomeApproachData, hasImprovements } = useWizard();
 
   // Get the active scenario
   const activeScenario = useMemo(() => {
     return state.scenarios.find(s => s.id === state.activeScenarioId) || state.scenarios[0];
   }, [state.scenarios, state.activeScenarioId]);
+
+  // Calculate component visibility based on wizard configuration
+  const visibility = useMemo(() => {
+    return getVisibleComponents({
+      propertyType: state.propertyType,
+      propertySubtype: state.propertySubtype,
+      propertyInterest: state.subjectData?.propertyInterest || 'fee_simple',
+      hasImprovements,
+      activeScenario: activeScenario || null,
+      // Assignment context for smart visibility
+      propertyStatus: state.subjectData?.propertyStatus,
+      occupancyStatus: state.subjectData?.occupancyStatus,
+      plannedChanges: state.subjectData?.plannedChanges,
+      // Check if actual data exists
+      hasActualRentRoll: (state.incomeApproachData?.incomeData?.rentalIncome?.length ?? 0) > 0,
+      hasActualExpenses: (state.incomeApproachData?.expenseData?.expenses?.length ?? 0) > 0,
+    });
+  }, [
+    state.propertyType, state.propertySubtype, 
+    state.subjectData?.propertyInterest, state.subjectData?.propertyStatus,
+    state.subjectData?.occupancyStatus, state.subjectData?.plannedChanges,
+    state.incomeApproachData,
+    hasImprovements, activeScenario
+  ]);
 
   // Get scenario theme colors
   const scenarioColors = useMemo(() => {
@@ -300,87 +329,44 @@ export default function AnalysisPage() {
     </div>
   );
 
+  // Get approach name for contextual market data
+  const getApproachName = (tabId: string) => {
+    switch (tabId) {
+      case 'sales': return 'Sales Comparison';
+      case 'income': return 'Income Approach';
+      case 'cost': return 'Cost Approach';
+      case 'land': return 'Land Valuation';
+      default: return 'Sales Comparison';
+    }
+  };
+
   // Right Sidebar - Values Panel (scenario-specific)
+  // Uses ReconciliationSummary and ContextualMarketData components
   const helpSidebarValues = (
     <div className="space-y-4">
+      {/* Scenario Header */}
       <div>
-        <h3 className="text-lg font-bold text-gray-900">Approach Values</h3>
+        <h3 className="text-lg font-bold text-gray-900">Values Overview</h3>
         <p className="text-xs text-slate-500 mt-1">
           {activeScenario?.name} Scenario
         </p>
       </div>
 
-      {/* Current Approach Value */}
-      <div 
-        className="p-4 rounded-xl border-2"
-        style={{ 
-          backgroundColor: `${currentApproach?.color}10`,
-          borderColor: `${currentApproach?.color}40`
-        }}
-      >
-        <div className="text-xs uppercase text-slate-500 mb-1">Current Approach</div>
-        <div className="text-base font-semibold text-slate-900 mb-2">
-          {currentApproach?.label}
-        </div>
-        <div className="text-2xl font-bold" style={{ color: currentApproach?.color }}>
-          {activeTab === 'sales'
-            ? '$1,250,000'
-            : activeTab === 'income'
-            ? '$1,180,000'
-            : activeTab === 'cost'
-            ? '$1,320,000'
-            : activeTab === 'land'
-            ? '$820,000'
-            : '—'}
-        </div>
-        {activeTab !== 'hbu' && activeTab !== 'market' && (
-          <div className="text-xs text-slate-500 mt-1">
-            {activeTab === 'sales'
-              ? '$215 / SF (adjusted)'
-              : activeTab === 'income'
-              ? '$18.50 / SF (annual)'
-              : activeTab === 'cost'
-              ? '$245 / SF (improvements)'
-              : activeTab === 'land'
-              ? '$12,961 / acre'
-              : ''}
-          </div>
-        )}
-      </div>
+      {/* Reconciliation Summary - Editable weights with hover-reveal slider */}
+      <ReconciliationSummary
+        scenarioId={activeScenario?.id || 1}
+        propertyType={state.propertyType || 'commercial'}
+        unitBasis="sf"
+        totalUnits={5812} // TODO: Get from subject data
+      />
 
-      {/* All Approach Values Summary */}
-      <div className="space-y-2">
-        <div className="text-xs font-semibold text-slate-600 uppercase tracking-wide">
-          All Approaches ({activeScenario?.name})
-        </div>
-        {availableTabs
-          .filter(tab => ['land', 'sales', 'income', 'cost'].includes(tab))
-          .map(tabId => {
-            const config = APPROACH_CONFIG[tabId as keyof typeof APPROACH_CONFIG];
-            const value = tabId === 'sales' ? '$1,250,000'
-              : tabId === 'income' ? '$1,180,000'
-              : tabId === 'cost' ? '$1,320,000'
-              : tabId === 'land' ? '$820,000' : '—';
-            
-            return (
-              <div 
-                key={tabId}
-                className={`p-3 rounded-lg border flex items-center justify-between ${
-                  tabId === activeTab ? 'border-slate-300 bg-slate-50' : 'border-slate-200'
-                }`}
-              >
-                <div className="flex items-center gap-2">
-                  <span 
-                    className="w-2 h-2 rounded-full" 
-                    style={{ backgroundColor: config?.color }}
-                  />
-                  <span className="text-sm text-slate-700">{config?.label}</span>
-                </div>
-                <span className="text-sm font-semibold text-slate-900">{value}</span>
-              </div>
-            );
-          })}
-      </div>
+      {/* Contextual Market Data - Changes based on active approach */}
+      {activeTab !== 'market' && (
+        <ContextualMarketData
+          activeApproach={getApproachName(activeTab)}
+          scenarioId={activeScenario?.id || 1}
+        />
+      )}
 
       {/* Scenario Comparison (if multiple scenarios) */}
       {state.scenarios.length > 1 && (
@@ -413,13 +399,13 @@ export default function AnalysisPage() {
       )}
 
       <div className="bg-slate-100 border border-slate-200 rounded-lg p-3 text-xs text-slate-600">
-        Values update automatically as you make changes. Switch to Guidance for USPAP requirements.
+        Hover over approach values to adjust weights. Values update automatically as you make changes.
       </div>
     </div>
   );
 
   // Keep full-width content for grid-heavy views
-  const isFullWidthView = activeTab === 'sales' || activeTab === 'income' || activeTab === 'cost' || activeTab === 'land' || activeTab === 'market';
+  const isFullWidthView = activeTab === 'sales' || activeTab === 'income' || activeTab === 'cost' || activeTab === 'land' || activeTab === 'market' || activeTab === 'multifamily';
 
   return (
     <WizardLayout
@@ -482,6 +468,7 @@ export default function AnalysisPage() {
               properties={PROPERTIES} 
               values={MOCK_VALUES} 
               analysisMode={analysisMode}
+              scenarioId={activeScenario?.id}
             />
           </div>
         </div>
@@ -506,6 +493,11 @@ export default function AnalysisPage() {
               initialData={state.incomeApproachData}
               onDataChange={setIncomeApproachData}
               showGuidancePanel={true}
+              scenarioId={activeScenario?.id}
+              visibility={{
+                rentComparableGrid: visibility.rentComparableGrid,
+                expenseComparableGrid: visibility.expenseComparableGrid,
+              }}
             />
           </div>
         </div>
@@ -526,7 +518,7 @@ export default function AnalysisPage() {
 
           {/* Cost Approach Grid */}
           <div className="flex-1 min-h-0 overflow-auto">
-            <CostApproachGrid />
+            <CostApproachGrid scenarioId={activeScenario?.id} />
           </div>
         </div>
       ) : activeTab === 'land' ? (
@@ -542,17 +534,31 @@ export default function AnalysisPage() {
                 {activeScenario?.name}
               </span>
             </div>
-            <div className="flex items-center gap-3">
-              <button className="px-4 py-2 bg-[#0da1c7] text-white text-sm font-medium rounded-lg hover:bg-[#0b8fb2] transition-colors flex items-center gap-2">
-                <Plus className="w-4 h-4" />
-                Add Land Sale
-              </button>
-            </div>
           </div>
 
           {/* Land Sales Grid */}
           <div className="flex-1 min-h-0">
             <LandSalesGrid />
+          </div>
+        </div>
+      ) : activeTab === 'multifamily' ? (
+        <div className="absolute inset-0 flex flex-col">
+          {/* Multi-Family Header Bar */}
+          <div className="flex-shrink-0 bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between z-40 shadow-sm">
+            <div className="flex items-center gap-4">
+              <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+                <span style={{ color: APPROACH_CONFIG.multifamily.color }}><ResidentialIcon className="w-5 h-5" /></span>
+                Multi-Family Rental Analysis
+              </h2>
+              <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
+                {activeScenario?.name}
+              </span>
+            </div>
+          </div>
+
+          {/* Multi-Family Grid */}
+          <div className="flex-1 min-h-0">
+            <MultiFamilyGrid scenarioId={activeScenario?.id} />
           </div>
         </div>
       ) : activeTab === 'market' ? (
@@ -586,14 +592,10 @@ export default function AnalysisPage() {
         </div>
       ) : (
         <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
-          {activeTab === 'hbu' ? (
-            <HBUContent scenarioName={activeScenario?.name} />
-          ) : (
-            <PlaceholderContent 
-              title={APPROACH_CONFIG[activeTab as keyof typeof APPROACH_CONFIG]?.label || ''} 
-              scenarioName={activeScenario?.name}
-            />
-          )}
+          <PlaceholderContent 
+            title={APPROACH_CONFIG[activeTab as keyof typeof APPROACH_CONFIG]?.label || ''} 
+            scenarioName={activeScenario?.name}
+          />
         </div>
       )}
 
@@ -605,97 +607,6 @@ export default function AnalysisPage() {
         duration={2}
       />
     </WizardLayout>
-  );
-}
-
-function HBUContent({ scenarioName }: { scenarioName?: string }) {
-  return (
-    <>
-      {/* Scenario context banner */}
-      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
-        <Info className="text-blue-600 shrink-0 mt-0.5" size={18} />
-        <div>
-          <p className="text-sm font-semibold text-blue-900">
-            Analyzing for: {scenarioName || 'As Is'}
-          </p>
-          <p className="text-xs text-blue-800 mt-1">
-            {scenarioName === 'As Is' 
-              ? 'Consider the property in its current condition with existing improvements.'
-              : scenarioName === 'As Completed'
-              ? 'Analyze as if proposed improvements are 100% complete.'
-              : scenarioName === 'As Stabilized'
-              ? 'Analyze as if property has achieved stabilized occupancy.'
-              : 'Complete the highest and best use analysis for this scenario.'}
-          </p>
-        </div>
-      </div>
-
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
-          Highest & Best Use - As Vacant
-        </h3>
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Legally Permissible Uses
-            </label>
-            <textarea
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
-              rows={3}
-              placeholder="Describe uses permitted under current zoning and regulations..."
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Physically Possible Uses
-            </label>
-            <textarea
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
-              rows={3}
-              placeholder="Describe uses that are physically possible given site characteristics..."
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Financially Feasible Uses
-            </label>
-            <textarea
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
-              rows={3}
-              placeholder="Describe uses that would generate adequate return..."
-            />
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Maximally Productive Use
-            </label>
-            <textarea
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
-              rows={3}
-              placeholder="Conclusion of highest and best use as vacant..."
-            />
-          </div>
-        </div>
-      </div>
-
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
-          Highest & Best Use - As Improved
-        </h3>
-        <div className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              Conclusion
-            </label>
-            <textarea
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
-              rows={4}
-              placeholder="Analysis of whether to continue current use, renovate, or demolish..."
-            />
-          </div>
-        </div>
-      </div>
-    </>
   );
 }
 

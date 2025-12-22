@@ -1,13 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { 
   ArrowUpRight, 
   ArrowDownRight, 
   Minus,
   Maximize2,
-  Sparkles,
-  Loader2,
   X,
-  FileText,
   Trash2,
   AlertTriangle,
   Bold,
@@ -20,27 +17,90 @@ import {
 } from 'lucide-react';
 import { Property, GridRowData, PropertyValues, ComparisonValue, Section } from '../types';
 import { PropertyCard } from './PropertyCard';
-import { RichTextEditor } from './RichTextEditor';
 import { INITIAL_ROWS, SECTIONS } from '../constants';
+import EnhancedTextArea from '../../../components/EnhancedTextArea';
+import { useWizard } from '../../../context/WizardContext';
+import { HorizontalScrollIndicator } from '../../../components/HorizontalScrollIndicator';
 
 interface SalesGridProps {
   properties: Property[];
   values: PropertyValues;
   analysisMode?: 'standard' | 'residual';
+  scenarioId?: number;
+  onDeleteProperty?: (propertyId: string) => void;
 }
 
-export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initialValues, analysisMode = 'standard' }) => {
+export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initialValues, analysisMode = 'standard', scenarioId, onDeleteProperty }) => {
+  const { setApproachConclusion } = useWizard();
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [rows, setRows] = useState<GridRowData[]>(INITIAL_ROWS);
   const [sections] = useState<Section[]>(SECTIONS);
   const [values, setValues] = useState<PropertyValues>(initialValues);
   const [reconciliationText, setReconciliationText] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isGenerating, setIsGenerating] = useState(false);
   const [activePopover, setActivePopover] = useState<{rowId: string, propId: string, field: 'value' | 'adjustment'} | null>(null);
   const [hiddenSections, setHiddenSections] = useState<Set<string>>(new Set());
   const [confirmDelete, setConfirmDelete] = useState<{ isOpen: boolean; sectionId: string; sectionTitle: string } | null>(null);
   const [notesEditor, setNotesEditor] = useState<{ isOpen: boolean; propId: string; propName: string; rowKey: string } | null>(null);
   const [notesContent, setNotesContent] = useState<string>('');
+
+  // Calculate the concluded value from comparable properties
+  const concludedValue = useMemo(() => {
+    const subjectBldgSize = values['subject']?.['bldg_size_fact']?.value;
+    if (typeof subjectBldgSize !== 'number' || subjectBldgSize <= 0) return null;
+    
+    // Get adjusted price/SF from all comps (non-subject properties)
+    const compValues: number[] = [];
+    properties.forEach(prop => {
+      if (prop.type === 'subject') return;
+      const propValues = values[prop.id];
+      if (!propValues) return;
+      
+      // Calculate overall adjustment
+      let netAdj = 0;
+      Object.keys(propValues).forEach(key => {
+        const entry = propValues[key];
+        if (entry?.adjustment !== undefined && typeof entry.adjustment === 'number' && key !== 'price' && key !== 'price_sf') {
+          netAdj += entry.adjustment;
+        }
+      });
+      
+      // Calculate adjusted price/SF
+      let basePriceSf = 0;
+      if (analysisMode === 'residual') {
+        const price = propValues['price']?.value;
+        const land = propValues['land_value']?.value;
+        const bldgSf = propValues['bldg_size_fact']?.value;
+        if (typeof price === 'number' && typeof land === 'number' && typeof bldgSf === 'number' && bldgSf > 0) {
+          basePriceSf = (price - land) / bldgSf;
+        }
+      } else {
+        basePriceSf = typeof propValues['price_sf']?.value === 'number' ? propValues['price_sf'].value : 0;
+      }
+      
+      if (basePriceSf > 0) {
+        const adjustedPriceSf = basePriceSf * (1 + netAdj);
+        let totalVal = subjectBldgSize * adjustedPriceSf;
+        if (analysisMode === 'residual') {
+          const subjectLand = values['subject']?.['subject_land_add_back']?.value;
+          if (typeof subjectLand === 'number') totalVal += subjectLand;
+        }
+        compValues.push(totalVal);
+      }
+    });
+    
+    if (compValues.length === 0) return null;
+    
+    // Return average of all comp values as the indication
+    const avg = compValues.reduce((a, b) => a + b, 0) / compValues.length;
+    return Math.round(avg);
+  }, [values, properties, analysisMode]);
+
+  // Sync concluded value to WizardContext when scenarioId is provided
+  useEffect(() => {
+    if (scenarioId !== undefined && concludedValue !== null) {
+      setApproachConclusion(scenarioId, 'Sales Comparison', concludedValue);
+    }
+  }, [scenarioId, concludedValue, setApproachConclusion]);
 
   const removeRow = (rowId: string) => {
     setRows(prev => prev.filter(r => r.id !== rowId));
@@ -263,28 +323,6 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
       return null;
     }
     return null;
-  };
-
-  const generateNarrative = async () => {
-    setIsGenerating(true);
-    try {
-      // Simulated AI response for demo
-      await new Promise(resolve => setTimeout(resolve, 1500));
-      const narrative = `<h3>Sales Comparison Analysis Reconciliation</h3>
-<p>Based on our analysis of ${properties.length - 1} comparable sales, we have derived a value indication for the subject property.</p>
-<p>The comparables selected represent the most relevant transactions in the market area, with adjustments made for differences in time, location, condition, and other property characteristics.</p>
-<ul>
-<li>Sales ranged from recently closed to transactions within the past 5 years</li>
-<li>Net adjustments ranged from -10% to +25%</li>
-<li>The strongest emphasis was placed on the most similar sales with the lowest net adjustments</li>
-</ul>
-<p><strong>Conclusion:</strong> Based on the Sales Comparison Approach, the indicated value of the subject property is <strong>$2,062,000</strong> (rounded).</p>`;
-      setReconciliationText(narrative);
-    } catch (error) {
-      setReconciliationText("<p style='color: red;'>Error generating narrative. Please try again.</p>");
-    } finally {
-      setIsGenerating(false);
-    }
   };
 
   const updateValue = (propId: string, rowKey: string, val: number, field: 'value' | 'adjustment' = 'value') => {
@@ -575,7 +613,10 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
     <div className="flex flex-col h-full bg-slate-50 relative overflow-hidden">
       
       {/* SCROLLABLE AREA - Contains grid and reconciliation */}
-      <div className="flex-1 overflow-auto custom-scrollbar relative" style={{ backgroundColor: '#ffffff', isolation: 'isolate' }}>
+      <div ref={scrollContainerRef} className="flex-1 overflow-auto custom-scrollbar relative" style={{ backgroundColor: '#ffffff', isolation: 'isolate' }}>
+        {/* Horizontal Scroll Indicator - positioned below headers */}
+        <HorizontalScrollIndicator scrollContainerRef={scrollContainerRef} stickyTop={120} />
+        
         {/* GRID CONTAINER */}
         <div className="grid relative" style={{ gridTemplateColumns: `${LABEL_COL_WIDTH}px ${SUBJECT_COL_WIDTH}px repeat(${properties.length - 1}, ${COMP_COL_WIDTH}px)`, minWidth: `${totalGridWidth}px`, backgroundColor: '#ffffff' }}>
             
@@ -608,7 +649,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                    ...(prop.type === 'subject' ? { left: LABEL_COL_WIDTH, width: SUBJECT_COL_WIDTH, position: 'sticky' as const } : {})
                  }}
                >
-                  <PropertyCard property={prop} isSubject={prop.type === 'subject'} />
+                  <PropertyCard property={prop} isSubject={prop.type === 'subject'} onDelete={onDeleteProperty} />
                </div>
             ))}
 
@@ -651,16 +692,20 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                   const isResidualRow = row.mode === 'residual';
                   return (
                     <React.Fragment key={row.id}>
-                      {/* Label Column - Sticky Left */}
+                      {/* Label Column - Sticky Left, never scrolls horizontally */}
                       <div 
                         className={`sticky left-0 z-[60] border-r border-b border-slate-100 flex items-center justify-between px-2 py-1.5 group ${
                           row.key === 'total_value' 
-                            ? 'border-t-2 border-t-slate-800 bg-slate-50' 
+                            ? 'border-t-2 border-t-slate-800' 
                             : isResidualRow 
-                            ? 'bg-purple-50 border-purple-200' 
-                            : 'bg-white'
+                            ? 'border-purple-200' 
+                            : ''
                         }`} 
-                        style={{ width: LABEL_COL_WIDTH }}
+                        style={{ 
+                          width: LABEL_COL_WIDTH,
+                          backgroundColor: row.key === 'total_value' ? '#f8fafc' : isResidualRow ? '#faf5ff' : '#ffffff',
+                          transform: 'translateZ(0)'
+                        }}
                       >
                         <span className={`text-xs truncate ${
                           row.key === 'total_value' 
@@ -686,25 +731,38 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                         const hasNotes = noteText.trim() !== '' && 
                           !noteText.toLowerCase().includes('click to');
                         
+                        // Determine background color based on row type and property type
+                        const getBgColor = () => {
+                          if (row.key === 'total_value') return '#f8fafc';
+                          if (prop.type === 'subject') return isResidualRow ? '#faf5ff' : '#eff6ff';
+                          if (isResidualRow) return '#faf5ff';
+                          return '#ffffff';
+                        };
+                        
                         return (
                           <div 
                             key={`${row.id}-${prop.id}`} 
                             className={`border-r border-b border-slate-100 p-2 flex items-center text-xs ${
                               prop.type === 'subject' 
-                                ? `z-[55] shadow-[4px_0_16px_rgba(0,0,0,0.05)] ${
-                                  isResidualRow ? 'bg-purple-50' : 'bg-blue-50'
-                                }` 
-                                : isResidualRow 
-                                ? 'bg-purple-50' 
-                                : 'bg-white'
+                                ? 'z-[55] shadow-[4px_0_16px_rgba(0,0,0,0.05)]' 
+                                : ''
                             } ${
                               row.key === 'total_value' 
-                                ? 'border-t-2 border-t-slate-800 bg-slate-50 font-bold' 
+                                ? 'border-t-2 border-t-slate-800 font-bold' 
                                 : isResidualRow 
                                 ? 'border-purple-200' 
                                 : ''
                             } ${isNotesRow ? 'cursor-pointer hover:bg-slate-50 transition-colors' : ''}`} 
-                            style={prop.type === 'subject' ? { left: LABEL_COL_WIDTH, width: SUBJECT_COL_WIDTH, position: 'sticky' } : {}}
+                            style={prop.type === 'subject' 
+                              ? { 
+                                  left: LABEL_COL_WIDTH, 
+                                  width: SUBJECT_COL_WIDTH, 
+                                  position: 'sticky' as const,
+                                  backgroundColor: getBgColor(),
+                                  transform: 'translateZ(0)'
+                                } 
+                              : { backgroundColor: getBgColor() }
+                            }
                             onClick={isNotesRow ? () => openNotesEditor(prop.id, getPropertyName(prop.id), row.key) : undefined}
                           >
                              {isNotesRow ? (
@@ -739,38 +797,26 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
             })}
         </div>
 
-        {/* RECONCILIATION SECTION - Only appears when scrolled to bottom, centered, no horizontal scroll */}
-        <div className="bg-slate-50 border-t-2 border-slate-300 p-8 pt-10" style={{ width: '100%', minWidth: '100%' }}>
+        {/* RECONCILIATION SECTION - Stays centered, doesn't scroll horizontally */}
+        <div 
+          className="sticky left-0 bg-slate-50 border-t-2 border-slate-300 p-8 pt-10"
+          style={{ width: '100vw', maxWidth: '100%' }}
+        >
           <div className="max-w-4xl mx-auto flex flex-col gap-6">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <div className="w-2 h-8 bg-emerald-500 rounded-full"></div>
-                <h2 className="text-xl font-bold text-slate-800 uppercase tracking-wider">Value Reconciliation & Narrative</h2>
-              </div>
-              <div className="flex items-center gap-3">
-                <button 
-                  onClick={generateNarrative}
-                  disabled={isGenerating}
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-purple-50 border border-purple-200 text-sm font-bold text-purple-600 shadow-sm hover:bg-purple-100 disabled:opacity-50 transition-all"
-                >
-                  {isGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                  {isGenerating ? 'Drafting...' : 'Draft with AI'}
-                </button>
-                <button 
-                  onClick={() => setIsModalOpen(true)} 
-                  className="flex items-center gap-2 px-4 py-2 rounded-lg bg-white border border-slate-200 text-sm font-bold text-slate-600 shadow-sm hover:bg-slate-50 transition-all"
-                >
-                  <Maximize2 size={16} /> Full Screen
-                </button>
-              </div>
+            <div className="flex items-center gap-3">
+              <div className="w-2 h-8 bg-emerald-500 rounded-full"></div>
+              <h2 className="text-xl font-bold text-slate-800 uppercase tracking-wider">Value Reconciliation & Narrative</h2>
             </div>
 
-            <RichTextEditor 
-              value={reconciliationText} 
-              onChange={setReconciliationText} 
-              placeholder="Start typing your reconciliation narrative here, or use the 'Draft with AI' button to generate content..."
-              className="min-h-[300px] border-slate-200 shadow-lg bg-white"
-              minHeight="300px"
+            <EnhancedTextArea
+              label="Notes"
+              value={reconciliationText}
+              onChange={setReconciliationText}
+              placeholder="Type your analysis and assumptions here..."
+              sectionContext="sales_comparison"
+              helperText="AI can draft a reconciliation narrative based on your sales comparison analysis."
+              minHeight={300}
+              rows={10}
             />
             
             {/* Bottom padding */}
@@ -778,48 +824,6 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
           </div>
         </div>
       </div>
-
-      {/* FULL SCREEN MODAL POP-UP */}
-      {isModalOpen && (
-        <div className="fixed inset-0 z-[1000] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-8">
-            <div className="bg-white w-full max-w-6xl h-full max-h-[92vh] rounded-2xl shadow-2xl flex flex-col overflow-hidden">
-                <div className="flex items-center justify-between px-8 py-4 border-b border-slate-200 bg-slate-50">
-                    <div className="flex items-center gap-3">
-                        <FileText className="text-emerald-600" />
-                        <h2 className="font-bold text-lg text-slate-800">Focused Reconciliation Mode</h2>
-                    </div>
-                    <div className="flex items-center gap-3">
-                        <button 
-                          onClick={generateNarrative} 
-                          disabled={isGenerating} 
-                          className="flex items-center gap-2 px-6 py-2 rounded-lg bg-purple-600 text-white text-sm font-bold shadow-md hover:bg-purple-700 disabled:opacity-50 transition-all"
-                        >
-                             {isGenerating ? <Loader2 className="w-4 h-4 animate-spin" /> : <Sparkles className="w-4 h-4" />}
-                             Auto-Draft with AI
-                        </button>
-                        <button onClick={() => setIsModalOpen(false)} className="p-2 rounded-full hover:bg-slate-200 transition-colors">
-                            <X size={24} className="text-slate-500" />
-                        </button>
-                    </div>
-                </div>
-                <div className="flex-1 p-10 bg-slate-100/10 overflow-auto flex justify-center">
-                    <div className="w-full max-w-4xl h-full">
-                        <RichTextEditor 
-                            value={reconciliationText} 
-                            onChange={setReconciliationText} 
-                            className="h-full border-none shadow-none"
-                            minHeight="100%"
-                            autoFocus
-                        />
-                    </div>
-                </div>
-                <div className="px-8 py-3 bg-slate-50 border-t border-slate-200 text-xs text-slate-400 flex justify-between">
-                  <span>Press ESC to close</span>
-                  <span>Changes are saved automatically</span>
-                </div>
-            </div>
-        </div>
-      )}
 
       {/* NOTES EDITOR MODAL */}
       {notesEditor?.isOpen && (

@@ -150,6 +150,8 @@ const approachOptions = [
   { key: 'Sales Comparison', label: 'Sales Comparison', Icon: ChartIcon },
   { key: 'Cost Approach', label: 'Cost Approach', Icon: ConstructionIcon },
   { key: 'Income Approach', label: 'Income Approach', Icon: CurrencyIcon },
+  { key: 'Land Valuation', label: 'Land Valuation', Icon: LandIcon },
+  { key: 'Multi-Family Approach', label: 'Multi-Family', Icon: ResidentialIcon },
 ];
 
 // ==========================================
@@ -187,29 +189,49 @@ interface AssignmentContext {
 function getDefaultApproachesForScenario(scenarioName: string, propertyType: string | null, subType: string | null): string[] {
   const approaches: string[] = [];
   
-  if (propertyType === 'commercial') {
+  // Check if this is a multi-family property type
+  const isMultiFamily = subType === 'multifamily' || subType === '2-4unit' || 
+                        subType?.includes('multifamily') || subType?.includes('2-4unit') ||
+                        subType?.includes('apartment');
+  
+  // Multi-Family properties get Multi-Family Approach automatically
+  if (isMultiFamily) {
+    approaches.push('Multi-Family Approach');
+    approaches.push('Income Approach'); // Also include standard income
+    approaches.push('Sales Comparison');
+    if (scenarioName === 'As Completed' || scenarioName === 'As Proposed') {
+      approaches.push('Cost Approach', 'Land Valuation');
+    }
+  } else if (propertyType === 'commercial') {
     approaches.push('Sales Comparison', 'Income Approach');
     if (scenarioName === 'As Completed' || scenarioName === 'As Proposed') {
-      approaches.push('Cost Approach');
+      approaches.push('Cost Approach', 'Land Valuation'); // Cost Approach requires Land Valuation
     }
   } else if (propertyType === 'residential') {
     approaches.push('Sales Comparison');
     if (scenarioName === 'As Completed' || scenarioName === 'As Proposed') {
-      approaches.push('Cost Approach');
+      approaches.push('Cost Approach', 'Land Valuation'); // Cost Approach requires Land Valuation
     }
   } else if (propertyType === 'land') {
-    approaches.push('Sales Comparison');
-    if (scenarioName === 'As Completed' || scenarioName === 'As Proposed') {
-      approaches.push('Cost Approach');
-    }
+    // Land properties use Land Valuation (not Sales Comparison for improved properties)
+    approaches.push('Land Valuation');
   } else {
     approaches.push('Sales Comparison');
   }
   
   if (scenarioName === 'As Stabilized') {
-    if (!approaches.includes('Income Approach') && (propertyType === 'commercial' || subType?.includes('multifamily') || subType?.includes('2-4unit'))) {
+    if (!approaches.includes('Income Approach') && (propertyType === 'commercial' || isMultiFamily)) {
       approaches.unshift('Income Approach');
     }
+    // For multi-family, ensure Multi-Family Approach is included
+    if (isMultiFamily && !approaches.includes('Multi-Family Approach')) {
+      approaches.unshift('Multi-Family Approach');
+    }
+  }
+  
+  // Ensure Cost Approach always has Land Valuation (for land value extraction)
+  if (approaches.includes('Cost Approach') && !approaches.includes('Land Valuation')) {
+    approaches.push('Land Valuation');
   }
   
   return approaches;
@@ -286,33 +308,88 @@ const scenarioNameOptions = [
 // MAIN COMPONENT
 // ==========================================
 export default function SetupPage() {
-  const { state: wizardState, addOwner, updateOwner, removeOwner, setScenarios: syncScenariosToContext, setPropertyType: syncPropertyType } = useWizard();
+  const { state: wizardState, addOwner, updateOwner, removeOwner, setScenarios: syncScenariosToContext, setPropertyType: syncPropertyType, setSubjectData } = useWizard();
   const [activeTab, setActiveTab] = useState('basics');
   
   // Track which fields are locked (pre-filled from extraction)
   const [lockedFields, setLockedFields] = useState<Record<string, boolean>>({});
   
-  // Assignment context state
-  const [context, setContext] = useState<AssignmentContext>({
-    propertyType: null,
-    subType: null,
-    propertyStatus: null,
-    plannedChanges: null,
-    occupancyStatus: null,
-    loanPurpose: null,
-    appraisalPurpose: null,
-    propertyInterest: null,
-    intendedUsers: '',
-  });
+  // Assignment context state - initialize from WizardContext if available
+  const [context, setContext] = useState<AssignmentContext>(() => ({
+    propertyType: wizardState.propertyType || null,
+    subType: wizardState.propertySubtype || null,
+    // Initialize these from wizardState.subjectData to preserve values across tab changes
+    propertyStatus: wizardState.subjectData?.propertyStatus || null,
+    plannedChanges: wizardState.subjectData?.plannedChanges || null,
+    occupancyStatus: wizardState.subjectData?.occupancyStatus || null,
+    loanPurpose: wizardState.subjectData?.loanPurpose || null,
+    appraisalPurpose: wizardState.subjectData?.appraisalPurpose || null,
+    propertyInterest: wizardState.subjectData?.propertyInterest || null,
+    intendedUsers: wizardState.subjectData?.intendedUsers || '',
+  }));
   
   // Form field state - will be pre-filled from extraction
-  const [address, setAddress] = useState({ street: '', city: '', state: '', zip: '', county: '' });
-  const [dates, setDates] = useState({ reportDate: '', inspectionDate: '', effectiveDate: '' });
+  // Initialize from WizardContext if available
+  const [address, setAddress] = useState(() => wizardState.subjectData?.address || { street: '', city: '', state: '', zip: '', county: '' });
+  const [dates, setDates] = useState(() => ({
+    reportDate: wizardState.subjectData?.reportDate || '',
+    inspectionDate: wizardState.subjectData?.inspectionDate || '',
+    effectiveDate: wizardState.subjectData?.effectiveDate || ''
+  }));
   
   // Property ID state - will be pre-filled from extraction
-  const [propertyName, setPropertyName] = useState('');
-  const [legalDescription, setLegalDescription] = useState('');
-  const [taxId, setTaxId] = useState('');
+  const [propertyName, setPropertyName] = useState(() => wizardState.subjectData?.propertyName || '');
+  const [legalDescription, setLegalDescription] = useState(() => wizardState.subjectData?.legalDescription || '');
+  const [taxId, setTaxId] = useState(() => wizardState.subjectData?.taxId || '');
+  
+  // Inspection state - declare early so it can be used in sync useEffect
+  const [inspectionType, setInspectionType] = useState(() => wizardState.subjectData?.inspectionType || '');
+  const [personalInspection, setPersonalInspection] = useState(true);
+  const [inspectorName, setInspectorName] = useState(() => wizardState.subjectData?.inspectorName || '');
+  const [inspectorLicense, setInspectorLicense] = useState(() => wizardState.subjectData?.inspectorLicense || '');
+  const [appraisalAssistance, setAppraisalAssistance] = useState('');
+  
+  // Certifications state - declare early so it can be used in sync useEffect
+  const [certificationAcknowledged, setCertificationAcknowledged] = useState(() => wizardState.subjectData?.certificationAcknowledged || false);
+  const [additionalCertifications, setAdditionalCertifications] = useState('');
+  const [licenseNumber, setLicenseNumber] = useState(() => wizardState.subjectData?.licenseNumber || '');
+  const [licenseState, setLicenseState] = useState(() => wizardState.subjectData?.licenseState || '');
+  const [licenseExpiration, setLicenseExpiration] = useState(() => wizardState.subjectData?.licenseExpiration || '');
+  
+  // Sync form fields to WizardContext when they change
+  useEffect(() => {
+    setSubjectData({
+      address,
+      reportDate: dates.reportDate,
+      inspectionDate: dates.inspectionDate,
+      effectiveDate: dates.effectiveDate,
+      propertyName,
+      legalDescription,
+      taxId,
+      // Purpose & Scope fields
+      appraisalPurpose: context.appraisalPurpose || '',
+      intendedUsers: context.intendedUsers || '',
+      propertyInterest: context.propertyInterest || '',
+      // Inspection fields
+      inspectorName,
+      inspectorLicense,
+      inspectionType,
+      // Certifications
+      certificationAcknowledged,
+      licenseNumber,
+      licenseState,
+      licenseExpiration,
+      // Assignment Context (drives visibility logic)
+      propertyStatus: context.propertyStatus as 'existing' | 'under_construction' | 'proposed' | 'recently_completed' | undefined,
+      occupancyStatus: context.occupancyStatus as 'stabilized' | 'lease_up' | 'vacant' | 'not_applicable' | undefined,
+      plannedChanges: context.plannedChanges as 'none' | 'minor' | 'major' | 'change_of_use' | undefined,
+      loanPurpose: context.loanPurpose as 'purchase' | 'refinance' | 'construction' | 'bridge' | 'internal' | undefined,
+    });
+  }, [address, dates, propertyName, legalDescription, taxId, context.appraisalPurpose, 
+      context.intendedUsers, context.propertyInterest, inspectorName, inspectorLicense, 
+      inspectionType, certificationAcknowledged, licenseNumber, licenseState, licenseExpiration,
+      context.propertyStatus, context.occupancyStatus, context.plannedChanges,
+      context.loanPurpose, setSubjectData]);
   
   // Pre-fill from extracted data on mount
   useEffect(() => {
@@ -378,35 +455,50 @@ export default function SetupPage() {
     }
   }, []);
   
-  // Inspection state (inspectionDate now uses dates.inspectionDate from Key Dates section)
-  const [inspectionType, setInspectionType] = useState('interior_exterior');
-  const [personalInspection, setPersonalInspection] = useState(true);
-  const [inspectorName, setInspectorName] = useState('');
-  const [inspectorLicense, setInspectorLicense] = useState('');
-  const [appraisalAssistance, setAppraisalAssistance] = useState('');
-  
-  // Certifications state
-  const [certificationAcknowledged, setCertificationAcknowledged] = useState(false);
-  const [additionalCertifications, setAdditionalCertifications] = useState('');
-  const [licenseNumber, setLicenseNumber] = useState('');
-  const [licenseState, setLicenseState] = useState('');
-  const [licenseExpiration, setLicenseExpiration] = useState('');
-  
   // Scenarios state
-  const [scenarios, setScenarios] = useState<Scenario[]>([
-    { id: 1, name: 'As Is', nameSelect: 'As Is', customName: '', approaches: [] }
-  ]);
+  // Initialize scenarios from WizardContext to preserve effective dates and approaches
+  const [scenarios, setScenarios] = useState<Scenario[]>(() => {
+    // If we have scenarios in WizardContext, use them
+    if (wizardState.scenarios && wizardState.scenarios.length > 0) {
+      return wizardState.scenarios.map(s => ({
+        id: s.id,
+        name: s.name,
+        nameSelect: s.name as 'As Is' | 'As Completed' | 'As Stabilized' | 'As Proposed' | 'Custom',
+        customName: '',
+        approaches: s.approaches || [],
+        effectiveDate: s.effectiveDate || '',
+        isRequired: s.isRequired || false,
+      }));
+    }
+    // Default if no scenarios exist yet
+    return [{ id: 1, name: 'As Is', nameSelect: 'As Is', customName: '', approaches: [] }];
+  });
   
-  // Update scenarios when context changes
+  // Update scenarios when RELEVANT context properties change (not appraisalPurpose, intendedUsers, etc.)
+  // Only propertyStatus, plannedChanges, occupancyStatus should trigger scenario recalculation
   useEffect(() => {
     if (context.propertyStatus) {
       const newScenarios = determineRequiredScenarios(context);
       setScenarios(prevScenarios => {
+        // Preserve effectiveDate from existing scenarios when recreating
+        const preservedDates: Record<string, string> = {};
+        prevScenarios.forEach(s => {
+          if (s.effectiveDate) {
+            preservedDates[s.name] = s.effectiveDate;
+          }
+        });
+        
+        // Apply preserved dates to new scenarios
+        const scenariosWithDates = newScenarios.map(s => ({
+          ...s,
+          effectiveDate: preservedDates[s.name] || s.effectiveDate || '',
+        }));
+        
         const customScenarios = prevScenarios.filter(s => !['As Is', 'As Completed', 'As Stabilized', 'As Proposed'].includes(s.name));
-        return [...newScenarios, ...customScenarios];
+        return [...scenariosWithDates, ...customScenarios];
       });
     }
-  }, [context]);
+  }, [context.propertyStatus, context.plannedChanges, context.occupancyStatus, context.propertyType, context.subType]);
 
   // Sync local scenarios to WizardContext whenever they change
   useEffect(() => {
@@ -427,6 +519,28 @@ export default function SetupPage() {
       syncPropertyType(context.propertyType, context.subType || undefined);
     }
   }, [context.propertyType, context.subType, syncPropertyType]);
+  
+  // Auto-adjust approaches when property type changes to land
+  useEffect(() => {
+    if (context.propertyType === 'land') {
+      setScenarios(prevScenarios => prevScenarios.map(s => {
+        let newApproaches = [...s.approaches];
+        
+        // Add Land Valuation if not present
+        if (!newApproaches.includes('Land Valuation')) {
+          newApproaches.push('Land Valuation');
+        }
+        
+        // For land properties, Sales Comparison is typically not used (land uses Land Valuation)
+        // Remove Sales Comparison if Land Valuation is now the primary approach
+        if (newApproaches.includes('Land Valuation') && newApproaches.includes('Sales Comparison')) {
+          newApproaches = newApproaches.filter(a => a !== 'Sales Comparison');
+        }
+        
+        return { ...s, approaches: newApproaches };
+      }));
+    }
+  }, [context.propertyType]);
   
   // Helper to check if occupancy question should show
   const shouldShowOccupancyQuestion = () => {
@@ -472,12 +586,24 @@ export default function SetupPage() {
     setScenarios(scenarios.map(s => {
       if (s.id !== id) return s;
       const hasApproach = s.approaches.includes(approach);
-      return {
-        ...s,
-        approaches: hasApproach
-          ? s.approaches.filter(a => a !== approach)
-          : [...s.approaches, approach]
-      };
+      
+      if (hasApproach) {
+        // Removing an approach
+        let newApproaches = s.approaches.filter(a => a !== approach);
+        // If removing Cost Approach and no other approach needs Land Valuation, consider keeping it
+        // (user can manually remove Land Valuation if desired)
+        return { ...s, approaches: newApproaches };
+      } else {
+        // Adding an approach
+        let newApproaches = [...s.approaches, approach];
+        
+        // Auto-add Land Valuation when Cost Approach is selected (required for land value)
+        if (approach === 'Cost Approach' && !newApproaches.includes('Land Valuation')) {
+          newApproaches.push('Land Valuation');
+        }
+        
+        return { ...s, approaches: newApproaches };
+      }
     }));
   };
   
@@ -1519,13 +1645,12 @@ export default function SetupPage() {
   }, [activeTab]);
 
   // New enhanced guidance panel
-  const helpSidebar = activeGuidance ? (
+  const helpSidebar = (
     <WizardGuidancePanel
-      sectionId={activeTab}
       guidance={activeGuidance}
-      themeAccent="#0da1c7"
+      themeColor="#0da1c7"
     />
-  ) : null;
+  );
 
   return (
     <WizardLayout

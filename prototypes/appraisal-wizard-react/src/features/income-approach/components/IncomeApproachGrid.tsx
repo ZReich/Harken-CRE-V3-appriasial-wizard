@@ -1,34 +1,135 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Plus, Wallet, PieChart, Info, Activity, Check, LayoutGrid, Home, Warehouse, Store, TrendingUp, DollarSign, CalendarRange, ArrowRightLeft, Layers, Table2, ChevronDown, ChevronUp } from 'lucide-react';
-import type { IncomeData, ExpenseData, LineItem, FinancialSummary, PropertyMeta, ValuationData, ValuationScenario, IncomeApproachState } from '../types';
+import { Plus, Wallet, PieChart, Activity, Check, LayoutGrid, Home, Warehouse, Store, TrendingUp, DollarSign, CalendarRange, ArrowRightLeft, Table2, ChevronDown, ChevronUp, FileText, Receipt, Calculator, CheckCircle2 } from 'lucide-react';
+import type { IncomeData, ExpenseData, LineItem, FinancialSummary, PropertyMeta, ValuationData, IncomeApproachState } from '../types';
 import { IncomeTextEditor } from './IncomeTextEditor';
 import type { RevenueContextData, ExpensesContextData, ValuationContextData } from './IncomeTextEditor';
 import { InputRow } from './InputRow';
 import { FinancialChart } from './FinancialChart';
 import { RiskAnalysisModal } from './RiskAnalysisModal';
 import { DCFProjectionTable } from './DCFProjectionTable';
-import { INITIAL_INCOME_APPROACH_STATE, VALUATION_SCENARIOS } from '../constants';
+import { RentComparableGrid } from './RentComparableGrid';
+import { ExpenseComparableGrid } from './ExpenseComparableGrid';
+import { INITIAL_INCOME_APPROACH_STATE } from '../constants';
+import { useWizard } from '../../../context/WizardContext';
+
+// Income Approach sub-tab types
+type IncomeSubTab = 'rent-comps' | 'expense-comps' | 'pro-forma' | 'valuation';
+
+// Sub-tab configuration for the workflow stepper
+const INCOME_SUBTABS: Array<{
+  id: IncomeSubTab;
+  label: string;
+  shortLabel: string;
+  Icon: React.ElementType;
+  description: string;
+}> = [
+  { id: 'rent-comps', label: 'Rent Comparables', shortLabel: 'Rent Comps', Icon: FileText, description: 'Analyze market rents from comparable properties' },
+  { id: 'expense-comps', label: 'Expense Comparables', shortLabel: 'Expense Comps', Icon: Receipt, description: 'Review operating expenses from similar properties' },
+  { id: 'pro-forma', label: 'Pro Forma', shortLabel: 'Pro Forma', Icon: Table2, description: 'Build income/expense projections for subject property' },
+  { id: 'valuation', label: 'Valuation', shortLabel: 'Valuation', Icon: Calculator, description: 'Apply cap rate and DCF analysis to derive value' },
+];
 
 const generateId = () => Math.random().toString(36).substr(2, 9);
+
+interface IncomeSubTabVisibility {
+  rentComparableGrid?: boolean;
+  expenseComparableGrid?: boolean;
+}
 
 interface IncomeApproachGridProps {
   initialData?: IncomeApproachState | null;
   onDataChange?: (data: IncomeApproachState) => void;
   showGuidancePanel?: boolean;
+  scenarioId?: number;
+  visibility?: IncomeSubTabVisibility;
 }
 
 export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({ 
   initialData,
   onDataChange,
-  showGuidancePanel = true
+  showGuidancePanel: _showGuidancePanel = true,
+  scenarioId,
+  visibility = { rentComparableGrid: true, expenseComparableGrid: true }
 }) => {
+  // showGuidancePanel is reserved for future use
+  void _showGuidancePanel;
+  const { state, setApproachConclusion, getActiveScenario } = useWizard();
+  
+  // Get scenario from WizardContext (not local state - removes redundant scenario switcher)
+  const activeScenario = getActiveScenario();
+  const scenarioName = activeScenario?.name || 'As Is';
+  
+  // Property type from WizardContext, not local state
+  const propertyType = (state.propertySubtype || state.propertyType || 'office') as PropertyMeta['type'];
+  
   // --- State ---
-  const [showGuidance] = useState(true);
-  const [scenario, setScenario] = useState<ValuationScenario>(initialData?.scenario || 'as-stabilized');
+  const [showChart, setShowChart] = useState(true);
+  
+  // Sub-tab state for workflow navigation
+  const [activeSubTab, setActiveSubTab] = useState<IncomeSubTab>('pro-forma');
+  
+  // Track completion status for each sub-tab (for workflow indicator)
+  const [completedSubTabs, setCompletedSubTabs] = useState<Set<IncomeSubTab>>(new Set());
+  
+  // Determine which sub-tabs are available based on visibility
+  const availableSubTabs = useMemo(() => {
+    return INCOME_SUBTABS.filter(tab => {
+      if (tab.id === 'rent-comps') return visibility.rentComparableGrid !== false;
+      if (tab.id === 'expense-comps') return visibility.expenseComparableGrid !== false;
+      return true; // pro-forma and valuation always available
+    });
+  }, [visibility.rentComparableGrid, visibility.expenseComparableGrid]);
 
-  const [propertyMeta, setPropertyMeta] = useState<PropertyMeta>(
-    initialData?.propertyMeta || INITIAL_INCOME_APPROACH_STATE.propertyMeta
-  );
+  // Keep sqFt and unitCount editable locally, but initialize from Subject Data if available
+  const [localPropertyMeta, setLocalPropertyMeta] = useState({
+    sqFt: initialData?.propertyMeta?.sqFt || 0,
+    unitCount: initialData?.propertyMeta?.unitCount || 0,
+  });
+
+  // Combine for display and calculations - memoized to avoid infinite loops in useEffect
+  const propertyMeta: PropertyMeta = useMemo(() => ({
+    type: propertyType,
+    sqFt: localPropertyMeta.sqFt,
+    unitCount: localPropertyMeta.unitCount,
+  }), [propertyType, localPropertyMeta.sqFt, localPropertyMeta.unitCount]);
+  
+  // Initialize sqFt from Subject Data (improvements inventory) if available - runs once on mount
+  useEffect(() => {
+    const parcels = state.improvementsInventory?.parcels;
+    // Only initialize if sqFt is 0 (unset)
+    if (parcels && parcels.length > 0) {
+      setLocalPropertyMeta(prev => {
+        // Don't update if already set
+        if (prev.sqFt > 0) return prev;
+        
+        // Sum all building areas across all parcels
+        let totalSqFt = 0;
+        let totalUnits = 0;
+        
+        parcels.forEach(parcel => {
+          parcel.buildings?.forEach(bldg => {
+            bldg.areas?.forEach(area => {
+              totalSqFt += area.squareFootage || 0;
+              // Count apartment/unit-type areas as units
+              if (area.type === 'apartment' || area.type === 'other') {
+                totalUnits += 1;
+              }
+            });
+          });
+        });
+        
+        if (totalSqFt > 0) {
+          return { 
+            ...prev, 
+            sqFt: totalSqFt,
+            ...(totalUnits > 0 ? { unitCount: totalUnits } : {})
+          };
+        }
+        return prev;
+      });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [state.improvementsInventory]);
 
   const [incomeData, setIncomeData] = useState<IncomeData>(
     initialData?.incomeData || INITIAL_INCOME_APPROACH_STATE.incomeData
@@ -53,11 +154,11 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
         incomeData,
         expenseData,
         valuationData,
-        scenario,
-        showGuidance,
+        scenario: 'as-stabilized', // Default scenario - actual scenario is managed by WizardContext
+        showGuidance: true,
       });
     }
-  }, [propertyMeta, incomeData, expenseData, valuationData, scenario, showGuidance, onDataChange]);
+  }, [propertyMeta, incomeData, expenseData, valuationData, onDataChange]);
 
   // --- Calculations ---
   const summary = useMemo<FinancialSummary>(() => {
@@ -130,6 +231,13 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
     };
   }, [summary.netOperatingIncome, valuationData]);
 
+  // Sync concluded value to WizardContext when scenarioId is provided
+  useEffect(() => {
+    if (scenarioId !== undefined && directCapValue > 0) {
+      setApproachConclusion(scenarioId, 'Income Approach', Math.round(directCapValue));
+    }
+  }, [scenarioId, directCapValue, setApproachConclusion]);
+
   const safeSqFt = propertyMeta.sqFt || 1;
 
   // Sensitivity Matrix
@@ -201,17 +309,135 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
     </button>
   );
 
-  return (
-    <div className="min-h-full bg-gray-50 text-slate-900 pb-20 font-sans">
-      <div className="flex items-start gap-8">
-        
-        {/* --- MAIN CONTENT --- */}
-        <div className="flex-grow space-y-6 min-w-0 p-6">
+  // Handle marking a sub-tab as complete
+  const markSubTabComplete = (tabId: IncomeSubTab) => {
+    setCompletedSubTabs(prev => new Set([...prev, tabId]));
+  };
 
-          {/* PROPERTY CONTEXT BAR */}
-          <div className="bg-white rounded-2xl p-4 border border-slate-200 shadow-sm flex flex-col lg:flex-row items-center justify-between gap-6">
+  // Navigate to next sub-tab
+  const goToNextSubTab = () => {
+    const currentIndex = availableSubTabs.findIndex(t => t.id === activeSubTab);
+    if (currentIndex < availableSubTabs.length - 1) {
+      markSubTabComplete(activeSubTab);
+      setActiveSubTab(availableSubTabs[currentIndex + 1].id);
+    }
+  };
+
+  return (
+    <div className="h-full flex flex-col bg-gray-50 text-slate-900 font-sans overflow-hidden">
+      
+      {/* STICKY WORKFLOW STEPPER - Always visible */}
+      <div className="flex-shrink-0 sticky top-0 z-40 bg-gray-50 px-6 pt-4 pb-2">
+        <div className="bg-white rounded-xl p-4 border border-slate-200 shadow-sm">
+            <div className="flex items-center justify-between">
+              {availableSubTabs.map((tab, index) => {
+                const Icon = tab.Icon;
+                const isActive = activeSubTab === tab.id;
+                const isCompleted = completedSubTabs.has(tab.id);
+                const isPast = availableSubTabs.findIndex(t => t.id === activeSubTab) > index;
+                
+                return (
+                  <React.Fragment key={tab.id}>
+                    {/* Step indicator */}
+                    <button
+                      onClick={() => setActiveSubTab(tab.id)}
+                      className={`flex items-center gap-3 px-4 py-2 rounded-xl transition-all ${
+                        isActive 
+                          ? 'bg-[#0da1c7]/10 text-[#0da1c7]' 
+                          : isCompleted || isPast
+                          ? 'text-emerald-600 hover:bg-emerald-50'
+                          : 'text-slate-400 hover:text-slate-600 hover:bg-slate-50'
+                      }`}
+                    >
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${
+                        isActive 
+                          ? 'bg-[#0da1c7] text-white' 
+                          : isCompleted || isPast
+                          ? 'bg-emerald-500 text-white'
+                          : 'bg-slate-200 text-slate-500'
+                      }`}>
+                        {isCompleted || isPast ? (
+                          <CheckCircle2 size={16} />
+                        ) : (
+                          <Icon size={16} />
+                        )}
+                      </div>
+                      <div className="text-left hidden md:block">
+                        <div className={`text-xs font-bold uppercase tracking-wide ${
+                          isActive ? 'text-[#0da1c7]' : isCompleted || isPast ? 'text-emerald-600' : 'text-slate-400'
+                        }`}>
+                          Step {index + 1}
+                        </div>
+                        <div className={`text-sm font-bold ${
+                          isActive ? 'text-slate-800' : 'text-slate-600'
+                        }`}>
+                          {tab.shortLabel}
+                        </div>
+                      </div>
+                    </button>
+                    
+                    {/* Connector line */}
+                    {index < availableSubTabs.length - 1 && (
+                      <div className={`flex-1 h-0.5 mx-2 transition-colors ${
+                        isPast || isCompleted ? 'bg-emerald-400' : 'bg-slate-200'
+                      }`} />
+                    )}
+                  </React.Fragment>
+                );
+              })}
+            </div>
             
-            {/* Left: Property Type Badge */}
+            {/* Sub-tab description - compact on smaller screens */}
+            <div className="mt-2 pt-2 border-t border-slate-100 hidden sm:block">
+              <p className="text-xs text-slate-500">
+                {availableSubTabs.find(t => t.id === activeSubTab)?.description}
+              </p>
+            </div>
+          </div>
+        </div>
+      
+      {/* SCROLLABLE CONTENT AREA */}
+      <div className="flex-1 overflow-y-auto px-6 pb-20">
+        <div className="flex items-start gap-8">
+          <div className="flex-grow space-y-6 min-w-0">
+
+          {/* RENT COMPARABLES SUB-TAB */}
+          {activeSubTab === 'rent-comps' && visibility.rentComparableGrid !== false && (
+            <div className="animate-fade-in">
+              <RentComparableGrid />
+              <div className="flex justify-end mt-4">
+                <button
+                  onClick={goToNextSubTab}
+                  className="px-6 py-3 bg-[#0da1c7] text-white font-bold rounded-xl hover:bg-[#0b8eb0] transition-colors shadow-md"
+                >
+                  Continue to Expense Comps
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* EXPENSE COMPARABLES SUB-TAB */}
+          {activeSubTab === 'expense-comps' && visibility.expenseComparableGrid !== false && (
+            <div className="animate-fade-in">
+              <ExpenseComparableGrid />
+              <div className="flex justify-end mt-4">
+                <button
+                  onClick={goToNextSubTab}
+                  className="px-6 py-3 bg-[#0da1c7] text-white font-bold rounded-xl hover:bg-[#0b8eb0] transition-colors shadow-md"
+                >
+                  Continue to Pro Forma
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* PRO FORMA & VALUATION SUB-TABS (existing content) */}
+          {(activeSubTab === 'pro-forma' || activeSubTab === 'valuation') && (
+            <>
+          {/* PROPERTY CONTEXT BAR */}
+          <div className="bg-white rounded-xl p-4 border border-slate-200 shadow-sm flex flex-col lg:flex-row items-center justify-between gap-6">
+            
+            {/* Left: Property Type Badge - Read-only from WizardContext */}
             <div className="flex items-center gap-4 w-full lg:w-auto">
               <div className="p-3 bg-[#0da1c7]/10 rounded-xl text-[#0da1c7]">
                 {propertyMeta.type === 'office' && <LayoutGrid size={24} />}
@@ -221,43 +447,30 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
               </div>
               <div>
                 <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Property Type</div>
-                <div className="font-black text-slate-800 capitalize text-lg leading-tight">{propertyMeta.type}</div>
+                <div className="font-black text-slate-800 capitalize text-lg leading-tight">
+                  {propertyMeta.type}
+                  <span className="text-xs text-slate-400 font-normal ml-2">(from Setup)</span>
+                </div>
               </div>
             </div>
 
             <div className="hidden lg:block h-10 w-px bg-slate-100"></div>
 
-            {/* Scenario Switcher */}
-            <div className="flex flex-col gap-1 w-full lg:w-auto">
-              <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest flex items-center gap-1">
-                <Layers size={10} />
-                Valuation Scenario
-              </label>
-              <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200">
-                {VALUATION_SCENARIOS.map((s) => (
-                  <button
-                    key={s.value}
-                    onClick={() => setScenario(s.value)}
-                    className={`px-4 py-2 rounded-lg text-[10px] font-black uppercase tracking-tight transition-all whitespace-nowrap ${scenario === s.value ? 'bg-white text-[#0da1c7] shadow-sm' : 'text-slate-400 hover:text-slate-600'}`}
-                  >
-                    {s.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            <div className="hidden lg:block h-10 w-px bg-slate-100"></div>
-
-            {/* Inputs */}
+            {/* Inputs - Connected to Subject Data */}
             <div className="flex items-center gap-8 flex-grow w-full lg:w-auto justify-start">
               <div>
-                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">Building SqFt</label>
+                <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">
+                  Building SqFt
+                  {state.improvementsInventory?.parcels?.some(p => p.buildings?.length > 0) && (
+                    <span className="text-[#0da1c7] ml-1">(from Subject Data)</span>
+                  )}
+                </label>
                 <div className="flex items-center gap-2 group">
                   <input 
                     type="number" 
-                    value={propertyMeta.sqFt}
-                    onChange={(e) => setPropertyMeta({...propertyMeta, sqFt: parseFloat(e.target.value) || 0})}
-                    className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 font-bold text-slate-700 w-32 focus:ring-2 focus:ring-[#0da1c7] outline-none transition-all focus:bg-white"
+                    value={localPropertyMeta.sqFt}
+                    onChange={(e) => setLocalPropertyMeta(prev => ({...prev, sqFt: parseFloat(e.target.value) || 0}))}
+                    className="bg-white border border-gray-300 rounded-lg px-3 py-1.5 font-bold text-slate-700 w-32 focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent outline-none transition-all"
                   />
                   <span className="text-xs font-bold text-slate-400 group-hover:text-[#0da1c7] transition-colors">SF</span>
                 </div>
@@ -267,23 +480,14 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                 <div className="flex items-center gap-2 group">
                   <input 
                     type="number" 
-                    value={propertyMeta.unitCount}
-                    onChange={(e) => setPropertyMeta({...propertyMeta, unitCount: parseFloat(e.target.value) || 0})}
-                    className="bg-slate-50 border border-slate-200 rounded-lg px-3 py-1.5 font-bold text-slate-700 w-24 focus:ring-2 focus:ring-[#0da1c7] outline-none transition-all focus:bg-white"
+                    value={localPropertyMeta.unitCount}
+                    onChange={(e) => setLocalPropertyMeta(prev => ({...prev, unitCount: parseFloat(e.target.value) || 0}))}
+                    className="bg-white border border-gray-300 rounded-lg px-3 py-1.5 font-bold text-slate-700 w-24 focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent outline-none transition-all"
                   />
                   <span className="text-xs font-bold text-slate-400 group-hover:text-[#0da1c7] transition-colors">Units</span>
                 </div>
               </div>
             </div>
-
-            {/* Right: Risk Button */}
-            <button 
-              onClick={() => setIsRiskModalOpen(true)}
-              className="w-full lg:w-auto flex items-center justify-center gap-2 bg-slate-900 text-white px-6 py-3 rounded-xl font-bold hover:bg-slate-800 transition-all shadow-md hover:shadow-lg active:scale-95 group"
-            >
-              <Activity size={18} className="text-[#0da1c7] group-hover:scale-110 transition-transform" />
-              <span>Run Risk Scan</span>
-            </button>
           </div>
           
           {/* TOP METRICS */}
@@ -309,8 +513,29 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
             </div>
           </div>
 
+          {/* Financial Summary Chart - Collapsible inline */}
+          {(activeSubTab === 'pro-forma' || activeSubTab === 'valuation') && (
+            <div className="bg-white rounded-xl p-4 border border-slate-200 shadow-sm">
+              <button 
+                onClick={() => setShowChart(!showChart)}
+                className="w-full flex items-center justify-between text-left"
+              >
+                <h3 className="font-bold text-slate-800 flex items-center gap-2">
+                  <PieChart className="text-[#0da1c7]" size={18} />
+                  Income Waterfall
+                </h3>
+                {showChart ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
+              </button>
+              {showChart && (
+                <div className="mt-4">
+                  <FinancialChart summary={summary} />
+                </div>
+              )}
+            </div>
+          )}
+
           {/* INCOME SECTION */}
-          <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+          <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
             <div className="p-8 pb-4">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-4">
@@ -407,7 +632,7 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
           </div>
 
           {/* EXPENSE SECTION */}
-          <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+          <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
             <div className="p-8 pb-4">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-4">
@@ -480,21 +705,21 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
           </div>
 
           {/* VALUATION SECTION */}
-          <div className="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
-            <div className="p-8 bg-slate-900 text-white">
+          <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+            <div className="p-8 bg-gradient-to-r from-emerald-50 to-white border-b-2 border-emerald-200">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
-                  <div className="p-3 bg-emerald-500/20 rounded-2xl text-emerald-400 border border-emerald-500/50">
+                  <div className="p-3 bg-emerald-100 rounded-2xl text-emerald-600 border border-emerald-200">
                     <TrendingUp size={24} />
                   </div>
                   <div>
-                    <h2 className="text-2xl font-black tracking-tight">Valuation Summary</h2>
-                    <p className="text-slate-400 text-sm font-medium">Reconciliation: {scenario.toUpperCase().replace('-', ' ')} scenario</p>
+                    <h2 className="text-2xl font-black tracking-tight text-slate-900">Valuation Summary</h2>
+                    <p className="text-emerald-600 text-sm font-medium">Reconciliation: {scenarioName} scenario</p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <div className="text-xs font-bold text-emerald-400 uppercase tracking-widest mb-1">Direct Cap Value</div>
-                  <div className="text-3xl font-black tracking-tight">${directCapValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</div>
+                  <div className="text-xs font-bold text-emerald-600 uppercase tracking-widest mb-1">Direct Cap Value</div>
+                  <div className="text-3xl font-black tracking-tight text-emerald-600">${directCapValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</div>
                 </div>
               </div>
             </div>
@@ -668,12 +893,12 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                 </div>
               )}
             </div>
-            <div className="px-8 pb-8">
+            <div className="px-8 pb-8 space-y-6">
               <IncomeTextEditor 
                 label="Reconciliation & Conclusion" 
                 sectionType="valuation"
                 contextData={{
-                  scenario: scenario,
+                  scenario: scenarioName.toLowerCase().replace(' ', '-'),
                   propertyType: propertyMeta.type,
                   sqFt: propertyMeta.sqFt,
                   netOperatingIncome: summary.netOperatingIncome,
@@ -689,38 +914,34 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                 value={valuationData.notes} 
                 onChange={(val) => setValuationData({...valuationData, notes: val})} 
               />
-            </div>
-          </div>
-        </div>
-        
-        {/* --- RIGHT GUIDANCE PANEL --- */}
-        {showGuidancePanel && showGuidance && (
-          <div className="w-80 flex-shrink-0 hidden 2xl:block animate-fade-in p-6">
-            <div className="sticky top-28 space-y-6">
               
-              <div className="bg-white rounded-3xl p-6 shadow-sm border border-slate-100">
-                <h3 className="font-bold text-slate-800 mb-2 flex items-center gap-2">
-                  <PieChart className="text-[#0da1c7]" size={18} />
-                  Waterfall
-                </h3>
-                <FinancialChart summary={summary} />
-              </div>
-
-              <div className="bg-[#0da1c7]/10 border border-[#0da1c7]/20 rounded-3xl p-6">
-                <div className="flex items-start gap-3">
-                  <Info className="text-[#0da1c7] mt-1 flex-shrink-0" size={20} />
-                  <div>
-                    <h4 className="font-bold text-[#1c3643] text-sm mb-1">Methodology Tip</h4>
-                    <p className="text-xs text-[#1c3643]/80 leading-relaxed">
-                      When projecting for <strong>{scenario.replace('-', ' ')}</strong>, ensure you have market data to support the specific risk adjustments for that timeline.
-                    </p>
+              {/* FINAL STEP: Risk Scan - Double-check before AI Draft */}
+              <div className="bg-gradient-to-r from-slate-50 to-slate-100 rounded-xl p-6 border-2 border-dashed border-slate-300">
+                <div className="flex flex-col lg:flex-row items-center justify-between gap-4">
+                  <div className="flex items-center gap-4">
+                    <div className="p-3 bg-amber-100 rounded-xl text-amber-600 border border-amber-200">
+                      <Activity size={24} />
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-slate-800">Pre-Flight Check</h3>
+                      <p className="text-sm text-slate-500">Run a comprehensive audit before generating your report draft.</p>
+                    </div>
                   </div>
+                  <button 
+                    onClick={() => setIsRiskModalOpen(true)}
+                    className="w-full lg:w-auto flex items-center justify-center gap-2 bg-[#0da1c7] text-white px-8 py-4 rounded-xl font-bold hover:bg-[#0b8eb0] transition-all shadow-lg hover:shadow-xl active:scale-95 group"
+                  >
+                    <Activity size={20} className="text-white group-hover:scale-110 transition-transform" />
+                    <span>Run Risk Scan</span>
+                  </button>
                 </div>
               </div>
             </div>
           </div>
-        )}
-
+            </>
+          )}
+          </div>
+        </div>
       </div>
 
       <RiskAnalysisModal 
@@ -729,7 +950,10 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
         summary={summary} 
         expenses={expenseData} 
         income={incomeData} 
-        propertyMeta={propertyMeta} 
+        propertyMeta={propertyMeta}
+        valuationData={valuationData}
+        directCapValue={directCapValue}
+        dcfValue={dcfAnalysis.totalValue}
       />
     </div>
   );

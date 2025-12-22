@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useWizard } from '../../../context/WizardContext';
 import { APPROACH_COLORS, ALL_APPROACHES } from '../constants';
 import { DEFAULT_CERTIFICATIONS } from '../types';
@@ -32,9 +32,24 @@ function getApproachIcon(approachName: string) {
       </svg>
     );
   }
+  if (approachName.includes('Multi-Family')) {
+    return (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+      </svg>
+    );
+  }
+  if (approachName.includes('Land')) {
+    return (
+      <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7" />
+      </svg>
+    );
+  }
+  // Cost Approach (default)
   return (
     <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
     </svg>
   );
 }
@@ -44,13 +59,13 @@ function getApproachIcon(approachName: string) {
 // =================================================================
 
 export function ValueReconciliation() {
-  const { state, getIncomeApproachData } = useWizard();
-  const { scenarios, improvementsInventory, extractedData } = state;
+  const { state, getIncomeApproachData, setReconciliationData } = useWizard();
+  const { scenarios, improvementsInventory, extractedData, reconciliationData } = state;
 
-  // Local state for reconciliation data
+  // Local state for reconciliation data - initialize from WizardContext if available
   const [activeScenarioIndex, setActiveScenarioIndex] = useState(0);
   const [reconciliations, setReconciliations] = useState<ScenarioReconciliation[]>(() =>
-    scenarios.map((s) => ({
+    reconciliationData?.scenarioReconciliations || scenarios.map((s) => ({
       scenarioId: s.id,
       weights: s.approaches.reduce((acc, approach) => {
         acc[approach] = Math.floor(100 / s.approaches.length);
@@ -59,10 +74,29 @@ export function ValueReconciliation() {
       comments: '',
     }))
   );
-  const [exposurePeriod, setExposurePeriod] = useState<string>('');
-  const [marketingTime, setMarketingTime] = useState<string>('');
-  const [exposureRationale, setExposureRationale] = useState('');
-  const [selectedCertifications, setSelectedCertifications] = useState<string[]>([]);
+  const [exposurePeriod, setExposurePeriod] = useState<string>(
+    () => reconciliationData?.exposurePeriod?.toString() || ''
+  );
+  const [marketingTime, setMarketingTime] = useState<string>(
+    () => reconciliationData?.marketingTime?.toString() || ''
+  );
+  const [exposureRationale, setExposureRationale] = useState(
+    () => reconciliationData?.exposureRationale || ''
+  );
+  const [selectedCertifications, setSelectedCertifications] = useState<string[]>(
+    () => reconciliationData?.certifications || []
+  );
+
+  // Sync local state to WizardContext when it changes
+  useEffect(() => {
+    setReconciliationData({
+      scenarioReconciliations: reconciliations,
+      exposurePeriod: exposurePeriod ? parseInt(exposurePeriod) : null,
+      marketingTime: marketingTime ? parseInt(marketingTime) : null,
+      exposureRationale,
+      certifications: selectedCertifications,
+    });
+  }, [reconciliations, exposurePeriod, marketingTime, exposureRationale, selectedCertifications, setReconciliationData]);
 
   // Get property info from state
   const propertyName = useMemo(() => {

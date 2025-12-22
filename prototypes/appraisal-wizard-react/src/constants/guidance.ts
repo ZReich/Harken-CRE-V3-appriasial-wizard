@@ -534,6 +534,80 @@ export const COMPONENT_GUIDANCE: Record<string, ComponentGuidance> = {
     alternativeApproaches: 'Extraction from improved sales or allocation based on typical land-to-value ratios can supplement direct land sales analysis.',
     bankTip: 'Land value support strengthens Cost Approach credibility. Include at least 3-4 land sales with clear adjustments.',
   },
+  
+  hbuAsVacant: {
+    title: 'Highest & Best Use - As Vacant',
+    whyUseThis: 'The HBU As Vacant analysis determines the most profitable legal use of the land as if vacant. This is foundational to all valuation approaches and is required by USPAP for real property appraisals.',
+    whenRequired: [
+      'All complete appraisals of real property',
+      'Cost Approach to determine appropriate improvements',
+      'Land valuation analysis',
+      'When existing use may not be the highest and best use',
+    ],
+    whenOptional: [],
+    alternativeApproaches: 'For restricted appraisals, a brief statement of HBU conclusion may be acceptable, but full appraisals require complete four-test analysis.',
+    bankTip: 'Lenders expect a definitive HBU conclusion. Avoid hedging language. Each of the four tests should be clearly addressed with a logical progression to the final conclusion.',
+  },
+  
+  hbuAsImproved: {
+    title: 'Highest & Best Use - As Improved',
+    whyUseThis: 'The HBU As Improved analysis determines whether the current improvements contribute value to the property or should be demolished, converted, or renovated. This is essential for improved properties to confirm current use represents the optimal use.',
+    whenRequired: [
+      'All improved property appraisals',
+      'When improvements may have substantial external or functional obsolescence',
+      'When the current use may not maximize property value',
+      'Properties with potential for conversion or redevelopment',
+    ],
+    whenOptional: [
+      'Vacant land appraisals (not applicable)',
+    ],
+    alternativeApproaches: 'The "Ideal Improvement" test compares existing improvements to what would be built today. Consider contribution value versus cost to demolish and rebuild.',
+    bankTip: 'Address whether the improvements should be continued, renovated, converted, or demolished. If demolition is indicated, this significantly affects the Cost Approach and may suggest the Income Approach is inappropriate.',
+  },
+  
+  hbuLegallyPermissible: {
+    title: 'Legally Permissible Uses',
+    whyUseThis: 'The first test of highest and best use examines what uses are permitted by law. This includes zoning, deed restrictions, environmental regulations, and building codes. Uses that are not legally permissible cannot be the highest and best use.',
+    whenRequired: [
+      'All HBU analyses - this is the first of the four required tests',
+    ],
+    whenOptional: [],
+    alternativeApproaches: 'Consider both uses permitted by right and uses available through conditional use permits or variances. Non-conforming uses should be identified and their status explained.',
+    bankTip: 'Verify current zoning and identify any deed restrictions. Document whether the current use is conforming or legally non-conforming. Note any pending zoning changes that could affect value.',
+  },
+  
+  hbuPhysicallyPossible: {
+    title: 'Physically Possible Uses',
+    whyUseThis: 'The second test examines whether uses that are legally permissible are also physically possible given the site characteristics. This includes size, shape, topography, utilities, access, and environmental conditions.',
+    whenRequired: [
+      'All HBU analyses - this is the second of the four required tests',
+    ],
+    whenOptional: [],
+    alternativeApproaches: 'Consider all physical characteristics that could limit development: lot size, shape, frontage, access, topography, flood zones, utilities, and soil conditions.',
+    bankTip: 'Address each major physical characteristic. A rectangular site with adequate utilities and level topography eliminates few uses; an irregular, steeply sloped site may limit development options significantly.',
+  },
+  
+  hbuFinanciallyFeasible: {
+    title: 'Financially Feasible Uses',
+    whyUseThis: 'The third test examines whether uses that are legally permissible and physically possible would also be financially feasible - meaning they would generate adequate returns to justify development. This typically requires market analysis.',
+    whenRequired: [
+      'All HBU analyses - this is the third of the four required tests',
+    ],
+    whenOptional: [],
+    alternativeApproaches: 'Consider market supply and demand, achievable rents or sale prices, construction costs, and required returns. Uses that would not generate positive residual land value are not financially feasible.',
+    bankTip: 'Reference market conditions from your Market Analysis section. Vacant land with positive value indicates at least one financially feasible use exists. Discuss development pro forma concepts for new construction.',
+  },
+  
+  hbuMaximallyProductive: {
+    title: 'Maximally Productive Use',
+    whyUseThis: 'The fourth test identifies which of the legally permissible, physically possible, and financially feasible uses would produce the highest land value or return. This is the culmination of the HBU analysis.',
+    whenRequired: [
+      'All HBU analyses - this is the fourth and final test',
+    ],
+    whenOptional: [],
+    alternativeApproaches: 'Among all financially feasible uses, select the one that produces the highest residual land value. This may require comparison of alternative development scenarios.',
+    bankTip: 'Be definitive in your conclusion. State clearly what the highest and best use is and briefly support why it is maximally productive over the alternatives considered.',
+  },
 };
 
 /**
