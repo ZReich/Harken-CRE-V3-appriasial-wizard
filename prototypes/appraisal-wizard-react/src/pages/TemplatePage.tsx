@@ -1,7 +1,7 @@
-import { useState, useCallback } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWizard } from '../context/WizardContext';
-import { Upload, FileText, Info, X, CheckCircle, HelpCircle } from 'lucide-react';
+import { FileText, Info, CheckCircle } from 'lucide-react';
 
 // ==========================================
 // SAVED REPORT TEMPLATES (Admin-created)
@@ -75,26 +75,12 @@ const savedTemplates: ReportTemplate[] = [
 ];
 
 // ==========================================
-// DOCUMENT UPLOAD TYPES
-// ==========================================
-interface UploadedDoc {
-  id: string;
-  name: string;
-  size: number;
-  type: string;
-  file: File;
-}
-
-// ==========================================
 // MAIN COMPONENT
 // ==========================================
 export default function TemplatePage() {
   const navigate = useNavigate();
   const { setTemplate } = useWizard();
   const [selected, setSelected] = useState<string | null>(null);
-  const [cadastralDocs, setCadastralDocs] = useState<UploadedDoc[]>([]);
-  const [engagementDocs, setEngagementDocs] = useState<UploadedDoc[]>([]);
-  const [showHelp, setShowHelp] = useState(false);
 
   const handleSelect = (templateId: string) => {
     setSelected(templateId);
@@ -103,57 +89,8 @@ export default function TemplatePage() {
 
   const handleContinue = () => {
     if (selected) {
-      // Store uploaded docs in sessionStorage for the next page
-      const uploadData = {
-        cadastral: cadastralDocs.map(d => ({ name: d.name, size: d.size, type: d.type })),
-        engagement: engagementDocs.map(d => ({ name: d.name, size: d.size, type: d.type })),
-      };
-      sessionStorage.setItem('harken_upload_preview', JSON.stringify(uploadData));
       navigate('/document-intake');
     }
-  };
-
-  const handleFileDrop = useCallback((
-    e: React.DragEvent<HTMLDivElement>,
-    setDocs: React.Dispatch<React.SetStateAction<UploadedDoc[]>>
-  ) => {
-    e.preventDefault();
-    const files = Array.from(e.dataTransfer.files);
-    const newDocs = files.map(file => ({
-      id: `doc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      file,
-    }));
-    setDocs(prev => [...prev, ...newDocs]);
-  }, []);
-
-  const handleFileSelect = useCallback((
-    e: React.ChangeEvent<HTMLInputElement>,
-    setDocs: React.Dispatch<React.SetStateAction<UploadedDoc[]>>
-  ) => {
-    if (e.target.files) {
-      const files = Array.from(e.target.files);
-      const newDocs = files.map(file => ({
-        id: `doc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-        name: file.name,
-        size: file.size,
-        type: file.type,
-        file,
-      }));
-      setDocs(prev => [...prev, ...newDocs]);
-    }
-  }, []);
-
-  const removeDoc = (docId: string, setDocs: React.Dispatch<React.SetStateAction<UploadedDoc[]>>) => {
-    setDocs(prev => prev.filter(d => d.id !== docId));
-  };
-
-  const formatFileSize = (bytes: number) => {
-    if (bytes < 1024) return `${bytes} B`;
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
   const progressSteps = ['Template', 'Documents', 'Setup', 'Subject Data', 'Analysis', 'Review'];
@@ -296,123 +233,6 @@ export default function TemplatePage() {
               )}
             </div>
           ))}
-        </div>
-
-        {/* Document Upload Section */}
-        <div className="bg-white rounded-xl border border-gray-200 p-6 mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h3 className="text-lg font-bold text-[#1c3643]">Quick Start Documents</h3>
-              <p className="text-sm text-gray-500">
-                Upload documents now to auto-populate fields with AI extraction (optional)
-              </p>
-            </div>
-            <button
-              onClick={() => setShowHelp(!showHelp)}
-              className="text-gray-400 hover:text-[#0da1c7] transition-colors"
-            >
-              <HelpCircle className="w-5 h-5" />
-            </button>
-          </div>
-
-          {showHelp && (
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4 text-sm text-amber-800">
-              <strong>What documents should I upload?</strong>
-              <ul className="mt-2 space-y-1 list-disc list-inside">
-                <li><strong>Cadastral/County Records:</strong> Extracts property address, legal description, tax ID, owner, land area</li>
-                <li><strong>Engagement Letter:</strong> Extracts client name, fee, appraisal purpose, effective date</li>
-              </ul>
-              <p className="mt-2 text-amber-700">You can also upload these on the next page if you prefer.</p>
-            </div>
-          )}
-
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Cadastral Upload */}
-            <div
-              onDragOver={(e) => e.preventDefault()}
-              onDrop={(e) => handleFileDrop(e, setCadastralDocs)}
-              className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-[#0da1c7] hover:bg-[#0da1c7]/5 transition-all cursor-pointer"
-            >
-              <input
-                type="file"
-                id="cadastral-upload"
-                multiple
-                accept=".pdf,.jpg,.jpeg,.png"
-                className="hidden"
-                onChange={(e) => handleFileSelect(e, setCadastralDocs)}
-              />
-              <label htmlFor="cadastral-upload" className="cursor-pointer">
-                <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                <p className="font-medium text-gray-700 text-sm">Cadastral / County Records</p>
-                <p className="text-xs text-gray-500 mt-1">Drag & drop or click to upload</p>
-              </label>
-              
-              {cadastralDocs.length > 0 && (
-                <div className="mt-4 space-y-2">
-                  {cadastralDocs.map(doc => (
-                    <div key={doc.id} className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-3 py-2">
-                      <div className="flex items-center gap-2 text-left">
-                        <FileText className="w-4 h-4 text-green-600" />
-                        <div>
-                          <p className="text-xs font-medium text-gray-700 truncate max-w-[150px]">{doc.name}</p>
-                          <p className="text-[10px] text-gray-500">{formatFileSize(doc.size)}</p>
-                        </div>
-                      </div>
-                      <button
-                        onClick={(e) => { e.preventDefault(); removeDoc(doc.id, setCadastralDocs); }}
-                        className="text-gray-400 hover:text-red-500"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Engagement Letter Upload */}
-            <div
-              onDragOver={(e) => e.preventDefault()}
-              onDrop={(e) => handleFileDrop(e, setEngagementDocs)}
-              className="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-[#0da1c7] hover:bg-[#0da1c7]/5 transition-all cursor-pointer"
-            >
-              <input
-                type="file"
-                id="engagement-upload"
-                multiple
-                accept=".pdf,.doc,.docx"
-                className="hidden"
-                onChange={(e) => handleFileSelect(e, setEngagementDocs)}
-              />
-              <label htmlFor="engagement-upload" className="cursor-pointer">
-                <Upload className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                <p className="font-medium text-gray-700 text-sm">Engagement Letter</p>
-                <p className="text-xs text-gray-500 mt-1">Drag & drop or click to upload</p>
-              </label>
-              
-              {engagementDocs.length > 0 && (
-                <div className="mt-4 space-y-2">
-                  {engagementDocs.map(doc => (
-                    <div key={doc.id} className="flex items-center justify-between bg-green-50 border border-green-200 rounded-lg px-3 py-2">
-                      <div className="flex items-center gap-2 text-left">
-                        <FileText className="w-4 h-4 text-green-600" />
-                        <div>
-                          <p className="text-xs font-medium text-gray-700 truncate max-w-[150px]">{doc.name}</p>
-                          <p className="text-[10px] text-gray-500">{formatFileSize(doc.size)}</p>
-                        </div>
-                      </div>
-                      <button
-                        onClick={(e) => { e.preventDefault(); removeDoc(doc.id, setEngagementDocs); }}
-                        className="text-gray-400 hover:text-red-500"
-                      >
-                        <X className="w-4 h-4" />
-                      </button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
         </div>
 
         {/* Continue Button */}

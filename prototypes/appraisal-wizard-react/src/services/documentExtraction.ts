@@ -1,17 +1,126 @@
 /**
  * Document Extraction Service
  * 
- * This service handles document upload and AI-powered data extraction.
+ * This service handles document upload, AI-powered classification, and data extraction.
  * Currently uses mock data, but is structured to connect to a real backend API.
  * 
  * Backend API Requirements:
- * - POST /api/documents/extract
- * - Accepts: multipart/form-data with file and documentType
- * - Returns: JSON with extracted fields and confidence scores
+ * - POST /api/documents/classify - AI document classification
+ * - POST /api/documents/extract - AI data extraction
+ * - Accepts: multipart/form-data with file
+ * - Returns: JSON with document type, extracted fields, and confidence scores
  */
 
 // ==========================================
-// TYPES
+// DOCUMENT TYPES
+// ==========================================
+export type DocumentType = 
+  | 'cadastral' 
+  | 'engagement' 
+  | 'sale' 
+  | 'lease' 
+  | 'rentroll' 
+  | 'survey'
+  | 'tax_return'
+  | 'financial_statement'
+  | 'unknown';
+
+export interface DocumentTypeInfo {
+  id: DocumentType;
+  label: string;
+  description: string;
+  icon: string;
+  color: string;
+  extractFields: string[];
+}
+
+export const DOCUMENT_TYPES: Record<DocumentType, DocumentTypeInfo> = {
+  cadastral: {
+    id: 'cadastral',
+    label: 'Cadastral / County Records',
+    description: 'Property address, legal description, tax ID, owner, land area',
+    icon: '🏛️',
+    color: 'blue',
+    extractFields: ['propertyAddress', 'legalDescription', 'taxId', 'owner', 'landArea'],
+  },
+  engagement: {
+    id: 'engagement',
+    label: 'Engagement Letter',
+    description: 'Client name, fee, appraisal purpose, effective date',
+    icon: '📋',
+    color: 'purple',
+    extractFields: ['clientName', 'fee', 'appraisalPurpose', 'effectiveDate'],
+  },
+  sale: {
+    id: 'sale',
+    label: 'Buy/Sale Agreement',
+    description: 'Sale price, sale date, buyer/seller, terms',
+    icon: '🤝',
+    color: 'green',
+    extractFields: ['salePrice', 'saleDate', 'buyer', 'seller', 'terms'],
+  },
+  lease: {
+    id: 'lease',
+    label: 'Lease Agreement',
+    description: 'Tenant info, rent amounts, lease terms',
+    icon: '📄',
+    color: 'orange',
+    extractFields: ['tenantName', 'rentAmount', 'leaseStart', 'leaseEnd', 'terms'],
+  },
+  rentroll: {
+    id: 'rentroll',
+    label: 'Rent Roll',
+    description: 'Unit mix, occupancy, rental income',
+    icon: '📊',
+    color: 'teal',
+    extractFields: ['units', 'occupancyRate', 'grossIncome', 'netIncome'],
+  },
+  survey: {
+    id: 'survey',
+    label: 'Survey / Plat Map',
+    description: 'Property boundaries, easements, dimensions',
+    icon: '🗺️',
+    color: 'indigo',
+    extractFields: ['landArea', 'boundaries', 'easements'],
+  },
+  tax_return: {
+    id: 'tax_return',
+    label: 'Tax Return',
+    description: 'Income, expenses, depreciation schedules',
+    icon: '📑',
+    color: 'red',
+    extractFields: ['grossIncome', 'expenses', 'netIncome'],
+  },
+  financial_statement: {
+    id: 'financial_statement',
+    label: 'Financial Statement',
+    description: 'Operating income, expenses, NOI',
+    icon: '💰',
+    color: 'emerald',
+    extractFields: ['grossIncome', 'expenses', 'netIncome', 'noi'],
+  },
+  unknown: {
+    id: 'unknown',
+    label: 'Unknown Document',
+    description: 'Document type could not be determined',
+    icon: '❓',
+    color: 'gray',
+    extractFields: [],
+  },
+};
+
+// ==========================================
+// CLASSIFICATION TYPES
+// ==========================================
+export interface ClassificationResult {
+  documentType: DocumentType;
+  confidence: number;
+  alternativeTypes?: { type: DocumentType; confidence: number }[];
+  processingTimeMs: number;
+}
+
+// ==========================================
+// EXTRACTION TYPES
 // ==========================================
 export interface ExtractedField {
   value: string;
@@ -322,4 +431,168 @@ export function getConfidenceColorClasses(confidence: number): string {
       return 'text-red-600 bg-red-50 border-red-200';
   }
 }
+
+// ==========================================
+// AI DOCUMENT CLASSIFICATION
+// ==========================================
+
+/**
+ * Keywords that suggest document types based on filename
+ */
+const classificationKeywords: Record<DocumentType, string[]> = {
+  cadastral: ['cadastral', 'county', 'record', 'parcel', 'assessor', 'property card', 'tax card'],
+  engagement: ['engagement', 'letter', 'proposal', 'agreement', 'contract', 'loi'],
+  sale: ['sale', 'purchase', 'buy', 'sell', 'psa', 'agreement', 'contract of sale'],
+  lease: ['lease', 'rental agreement', 'tenant', 'sublease', 'amendment'],
+  rentroll: ['rent roll', 'rentroll', 'rent_roll', 'unit mix', 'occupancy', 'tenant list'],
+  survey: ['survey', 'plat', 'boundary', 'alta', 'topographic'],
+  tax_return: ['tax return', 'schedule e', '1040', '1065', '1120', 'k-1'],
+  financial_statement: ['financial', 'income statement', 'p&l', 'profit', 'operating statement', 'proforma'],
+  unknown: [],
+};
+
+/**
+ * Classify a document using AI (simulated with filename analysis)
+ * In production, this would call an AI/ML backend
+ */
+export async function classifyDocument(file: File): Promise<ClassificationResult> {
+  const startTime = Date.now();
+  
+  // Simulate API processing time
+  await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 700));
+  
+  const filename = file.name.toLowerCase();
+  const scores: { type: DocumentType; score: number }[] = [];
+  
+  // Score based on filename keywords
+  for (const [docType, keywords] of Object.entries(classificationKeywords)) {
+    if (docType === 'unknown') continue;
+    
+    let score = 0;
+    for (const keyword of keywords) {
+      if (filename.includes(keyword.toLowerCase().replace(/ /g, ''))) {
+        score += 0.4;
+      }
+      if (filename.includes(keyword.toLowerCase().replace(/ /g, '_'))) {
+        score += 0.4;
+      }
+      if (filename.includes(keyword.toLowerCase().replace(/ /g, '-'))) {
+        score += 0.4;
+      }
+    }
+    
+    // Boost based on file extension
+    if (docType === 'rentroll' && (filename.endsWith('.xlsx') || filename.endsWith('.csv'))) {
+      score += 0.3;
+    }
+    if ((docType === 'cadastral' || docType === 'survey') && 
+        (filename.endsWith('.jpg') || filename.endsWith('.png') || filename.endsWith('.pdf'))) {
+      score += 0.1;
+    }
+    
+    if (score > 0) {
+      scores.push({ type: docType as DocumentType, score: Math.min(score, 0.98) });
+    }
+  }
+  
+  // Sort by score descending
+  scores.sort((a, b) => b.score - a.score);
+  
+  // If no matches, use random assignment for demo (simulating AI classification)
+  if (scores.length === 0) {
+    const types: DocumentType[] = ['cadastral', 'engagement', 'sale', 'lease', 'rentroll'];
+    const randomType = types[Math.floor(Math.random() * types.length)];
+    const randomConfidence = 0.75 + Math.random() * 0.20; // 75-95%
+    
+    return {
+      documentType: randomType,
+      confidence: randomConfidence,
+      alternativeTypes: types
+        .filter(t => t !== randomType)
+        .slice(0, 2)
+        .map(t => ({ type: t, confidence: 0.3 + Math.random() * 0.3 })),
+      processingTimeMs: Date.now() - startTime,
+    };
+  }
+  
+  const topMatch = scores[0];
+  
+  return {
+    documentType: topMatch.type,
+    confidence: topMatch.score,
+    alternativeTypes: scores.slice(1, 3).map(s => ({ type: s.type, confidence: s.score })),
+    processingTimeMs: Date.now() - startTime,
+  };
+}
+
+/**
+ * Classify and extract data from a document in one operation
+ * This is the main function for the unified document intake flow
+ */
+export async function classifyAndExtract(
+  file: File,
+  onClassified?: (result: ClassificationResult) => void
+): Promise<{
+  classification: ClassificationResult;
+  extraction: ExtractionResult;
+}> {
+  // First, classify the document
+  const classification = await classifyDocument(file);
+  
+  // Notify caller of classification result
+  if (onClassified) {
+    onClassified(classification);
+  }
+  
+  // Then extract data based on classified type
+  const extraction = await extractDocumentData(file, classification.documentType);
+  
+  return { classification, extraction };
+}
+
+/**
+ * Process multiple documents with progressive updates
+ * Calls onProgress for each document as it's processed
+ */
+export async function processDocumentBatch(
+  files: File[],
+  onProgress: (fileIndex: number, stage: 'classifying' | 'extracting' | 'complete', result?: {
+    classification?: ClassificationResult;
+    extraction?: ExtractionResult;
+  }) => void
+): Promise<Array<{
+  file: File;
+  classification: ClassificationResult;
+  extraction: ExtractionResult;
+}>> {
+  const results: Array<{
+    file: File;
+    classification: ClassificationResult;
+    extraction: ExtractionResult;
+  }> = [];
+  
+  // Process files in parallel but stagger the starts for visual effect
+  const promises = files.map(async (file, index) => {
+    // Stagger start by 300ms per file
+    await new Promise(resolve => setTimeout(resolve, index * 300));
+    
+    // Notify: classifying
+    onProgress(index, 'classifying');
+    
+    const classification = await classifyDocument(file);
+    onProgress(index, 'extracting', { classification });
+    
+    const extraction = await extractDocumentData(file, classification.documentType);
+    onProgress(index, 'complete', { classification, extraction });
+    
+    return { file, classification, extraction };
+  });
+  
+  const allResults = await Promise.all(promises);
+  results.push(...allResults);
+  
+  return results;
+}
+
+
 

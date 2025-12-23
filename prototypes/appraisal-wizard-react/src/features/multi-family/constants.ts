@@ -165,3 +165,5 @@ export const SUBJECT_COL_WIDTH = 180;
 export const COMP_COL_WIDTH = 170;
 export const ACTION_COL_WIDTH = 160;
 
+
+

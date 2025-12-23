@@ -225,3 +225,5 @@ export const formatPercent = (val: number) =>
 export const formatPercentSimple = (val: number) => 
   `${(val * 100).toFixed(1)}%`;
 
+
+

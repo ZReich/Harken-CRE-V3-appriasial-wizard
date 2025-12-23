@@ -1,9 +1,9 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useState, useCallback, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWizard } from '../context/WizardContext';
 import WizardLayout from '../components/WizardLayout';
 import WizardGuidancePanel from '../components/WizardGuidancePanel';
-import { DOCUMENTS_GUIDANCE, type SectionGuidance } from '../constants/wizardPhaseGuidance';
+import { DOCUMENTS_GUIDANCE } from '../constants/wizardPhaseGuidance';
 import {
   Upload,
   FileText,
@@ -16,318 +16,491 @@ import {
   Edit2,
   Check,
   RefreshCw,
+  Eye,
+  ChevronDown,
+  Zap,
 } from 'lucide-react';
+import {
+  classifyAndExtract,
+  processDocumentBatch,
+  DOCUMENT_TYPES,
+  type DocumentType,
+  type ClassificationResult,
+  type ExtractionResult,
+  type ExtractedData,
+  getFieldLabel,
+  getConfidenceColorClasses,
+} from '../services/documentExtraction';
 
 // ==========================================
 // TYPES
 // ==========================================
-interface UploadedDocument {
+interface ProcessedDocument {
   id: string;
-  name: string;
-  size: number;
-  type: string;
   file: File;
-  status: 'pending' | 'processing' | 'extracted' | 'error';
-  extractedData?: ExtractedFields;
+  status: 'uploading' | 'classifying' | 'extracting' | 'complete' | 'error';
+  classification?: ClassificationResult;
+  extraction?: ExtractionResult;
   error?: string;
 }
 
-interface ExtractedFields {
-  [key: string]: {
-    value: string;
-    confidence: number;
-    edited?: boolean;
-  };
-}
-
-interface DocumentSlot {
-  id: string;
-  label: string;
-  description: string;
-  extractFields: string[];
-  accepts: string;
-  icon: 'cadastral' | 'engagement' | 'sale' | 'lease' | 'rentroll';
-}
-
 // ==========================================
-// DOCUMENT SLOTS CONFIGURATION
+// DOCUMENT CARD COMPONENT
 // ==========================================
-const documentSlots: DocumentSlot[] = [
-  {
-    id: 'cadastral',
-    label: 'Cadastral / County Records',
-    description: 'Property address, legal description, tax ID, owner, land area',
-    extractFields: ['propertyAddress', 'legalDescription', 'taxId', 'owner', 'landArea'],
-    accepts: '.pdf,.jpg,.jpeg,.png',
-    icon: 'cadastral',
-  },
-  {
-    id: 'engagement',
-    label: 'Engagement Letter',
-    description: 'Client name, fee, property address, appraisal purpose',
-    extractFields: ['clientName', 'fee', 'appraisalPurpose', 'effectiveDate'],
-    accepts: '.pdf,.doc,.docx',
-    icon: 'engagement',
-  },
-  {
-    id: 'sale',
-    label: 'Buy/Sale Agreement',
-    description: 'Sale price, sale date, buyer/seller, terms',
-    extractFields: ['salePrice', 'saleDate', 'buyer', 'seller', 'terms'],
-    accepts: '.pdf,.doc,.docx',
-    icon: 'sale',
-  },
-  {
-    id: 'lease',
-    label: 'Lease Agreements',
-    description: 'Tenant info, rent amounts, lease terms',
-    extractFields: ['tenantName', 'rentAmount', 'leaseStart', 'leaseEnd', 'terms'],
-    accepts: '.pdf,.doc,.docx',
-    icon: 'lease',
-  },
-  {
-    id: 'rentroll',
-    label: 'Rent Roll',
-    description: 'Unit mix, occupancy, rental income',
-    extractFields: ['units', 'occupancyRate', 'grossIncome', 'netIncome'],
-    accepts: '.pdf,.xlsx,.csv',
-    icon: 'rentroll',
-  },
-];
-
-// ==========================================
-// MOCK AI EXTRACTION (simulates backend)
-// ==========================================
-const mockExtractData = (slotId: string): ExtractedFields => {
-  const mockData: Record<string, ExtractedFields> = {
-    cadastral: {
-      propertyAddress: { value: '1234 Industrial Blvd, Billings, MT 59101', confidence: 0.95 },
-      legalDescription: { value: 'Lot 12, Block 4, CANYON CREEK INDUSTRIAL PARK, according to the plat thereof on file in the office of the Clerk and Recorder of Yellowstone County, Montana', confidence: 0.88 },
-      taxId: { value: '123-45-678-00', confidence: 0.97 },
-      owner: { value: 'ABC Industrial Holdings LLC', confidence: 0.92 },
-      landArea: { value: '2.45 acres (106,722 SF)', confidence: 0.94 },
-    },
-    engagement: {
-      clientName: { value: 'First National Bank of Montana', confidence: 0.96 },
-      fee: { value: '$4,500', confidence: 0.89 },
-      appraisalPurpose: { value: 'Market Value for Loan Collateral', confidence: 0.91 },
-      effectiveDate: { value: '2024-12-15', confidence: 0.94 },
-    },
-    sale: {
-      salePrice: { value: '$2,150,000', confidence: 0.97 },
-      saleDate: { value: '2024-06-15', confidence: 0.95 },
-      buyer: { value: 'ABC Industrial Holdings LLC', confidence: 0.93 },
-      seller: { value: 'Montana Properties Inc', confidence: 0.91 },
-      terms: { value: 'Cash to Seller, conventional financing', confidence: 0.85 },
-    },
-    lease: {
-      tenantName: { value: 'Acme Manufacturing Co.', confidence: 0.94 },
-      rentAmount: { value: '$8,500/month NNN', confidence: 0.92 },
-      leaseStart: { value: '2023-01-01', confidence: 0.96 },
-      leaseEnd: { value: '2028-12-31', confidence: 0.96 },
-      terms: { value: '5-year term, 3% annual escalations', confidence: 0.88 },
-    },
-    rentroll: {
-      units: { value: '12 units (10 office, 2 warehouse)', confidence: 0.91 },
-      occupancyRate: { value: '92%', confidence: 0.94 },
-      grossIncome: { value: '$245,000/year', confidence: 0.89 },
-      netIncome: { value: '$198,500/year', confidence: 0.87 },
-    },
-  };
-  return mockData[slotId] || {};
-};
-
-// ==========================================
-// MAIN COMPONENT
-// ==========================================
-export default function DocumentIntakePage() {
-  const navigate = useNavigate();
-  const { dispatch, setSubjectData } = useWizard();
-  const [documents, setDocuments] = useState<Record<string, UploadedDocument[]>>({});
-  const [selectedSlot, setSelectedSlot] = useState<string | null>(null);
-  const [editingField, setEditingField] = useState<{ slotId: string; docId: string; field: string } | null>(null);
-  const [editValue, setEditValue] = useState('');
-
-  const handleFileDrop = useCallback((e: React.DragEvent<HTMLDivElement>, slotId: string) => {
-    e.preventDefault();
-    const files = Array.from(e.dataTransfer.files);
-    addFiles(files, slotId);
-  }, []);
-
-  const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>, slotId: string) => {
-    if (e.target.files) {
-      const files = Array.from(e.target.files);
-      addFiles(files, slotId);
-    }
-  }, []);
-
-  const addFiles = async (files: File[], slotId: string) => {
-    const newDocs: UploadedDocument[] = files.map(file => ({
-      id: `doc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-      name: file.name,
-      size: file.size,
-      type: file.type,
-      file,
-      status: 'pending',
-    }));
-
-    setDocuments(prev => ({
-      ...prev,
-      [slotId]: [...(prev[slotId] || []), ...newDocs],
-    }));
-
-    // Process each file
-    for (const doc of newDocs) {
-      await processDocument(slotId, doc.id);
-    }
-  };
-
-  const processDocument = async (slotId: string, docId: string) => {
-    // Set to processing
-    setDocuments(prev => ({
-      ...prev,
-      [slotId]: prev[slotId].map(d =>
-        d.id === docId ? { ...d, status: 'processing' } : d
-      ),
-    }));
-
-    // Simulate API call delay
-    await new Promise(resolve => setTimeout(resolve, 1500 + Math.random() * 1000));
-
-    // Get mock extracted data
-    const extractedData = mockExtractData(slotId);
-
-    // Update with extracted data
-    setDocuments(prev => ({
-      ...prev,
-      [slotId]: prev[slotId].map(d =>
-        d.id === docId ? { ...d, status: 'extracted', extractedData } : d
-      ),
-    }));
-  };
-
-  const removeDocument = (slotId: string, docId: string) => {
-    setDocuments(prev => ({
-      ...prev,
-      [slotId]: prev[slotId].filter(d => d.id !== docId),
-    }));
-  };
-
-  const reprocessDocument = async (slotId: string, docId: string) => {
-    await processDocument(slotId, docId);
-  };
-
-  const startEdit = (slotId: string, docId: string, field: string, currentValue: string) => {
-    setEditingField({ slotId, docId, field });
-    setEditValue(currentValue);
-  };
-
-  const saveEdit = () => {
-    if (!editingField) return;
-    const { slotId, docId, field } = editingField;
-
-    setDocuments(prev => ({
-      ...prev,
-      [slotId]: prev[slotId].map(d => {
-        if (d.id !== docId || !d.extractedData) return d;
-        return {
-          ...d,
-          extractedData: {
-            ...d.extractedData,
-            [field]: { ...d.extractedData[field], value: editValue, edited: true },
-          },
-        };
-      }),
-    }));
-
-    setEditingField(null);
-    setEditValue('');
-  };
-
-  const acceptAllFromDocument = (slotId: string, docId: string) => {
-    // Mark document as accepted - in real implementation, this would save to context
-    const doc = documents[slotId]?.find(d => d.id === docId);
-    if (doc?.extractedData) {
-      // Store extracted data in wizard context
-      dispatch({
-        type: 'SET_EXTRACTED_DATA',
-        payload: { slotId, data: doc.extractedData },
-      });
-    }
-  };
-
+function DocumentCard({
+  doc,
+  onRemove,
+  onReprocess,
+  onReclassify,
+  onViewData,
+  isExpanded,
+  onToggleExpand,
+}: {
+  doc: ProcessedDocument;
+  onRemove: () => void;
+  onReprocess: () => void;
+  onReclassify: (newType: DocumentType) => void;
+  onViewData: () => void;
+  isExpanded: boolean;
+  onToggleExpand: () => void;
+}) {
+  const [showTypeSelector, setShowTypeSelector] = useState(false);
+  
+  const typeInfo = doc.classification 
+    ? DOCUMENT_TYPES[doc.classification.documentType] 
+    : DOCUMENT_TYPES.unknown;
+  
   const formatFileSize = (bytes: number) => {
     if (bytes < 1024) return `${bytes} B`;
     if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
     return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
-  const getConfidenceColor = (confidence: number) => {
-    if (confidence >= 0.9) return 'text-green-600 bg-green-50';
-    if (confidence >= 0.7) return 'text-amber-600 bg-amber-50';
-    return 'text-red-600 bg-red-50';
+  const getStatusContent = () => {
+    switch (doc.status) {
+      case 'uploading':
+        return (
+          <div className="flex items-center gap-2 text-gray-500">
+            <Loader2 className="w-4 h-4 animate-spin" />
+            <span className="text-sm">Uploading...</span>
+          </div>
+        );
+      case 'classifying':
+        return (
+          <div className="flex items-center gap-2 text-[#0da1c7]">
+            <Sparkles className="w-4 h-4 animate-pulse" />
+            <span className="text-sm">AI is analyzing document...</span>
+          </div>
+        );
+      case 'extracting':
+        return (
+          <div className="flex items-center gap-2 text-[#0da1c7]">
+            <Loader2 className="w-4 h-4 animate-spin" />
+            <span className="text-sm">Extracting data...</span>
+          </div>
+        );
+      case 'complete':
+        return (
+          <div className="flex items-center gap-2 text-green-600">
+            <CheckCircle className="w-4 h-4" />
+            <span className="text-sm">
+              {doc.extraction?.data 
+                ? `${Object.keys(doc.extraction.data).length} fields extracted`
+                : 'Complete'}
+            </span>
+          </div>
+        );
+      case 'error':
+        return (
+          <div className="flex items-center gap-2 text-red-600">
+            <AlertCircle className="w-4 h-4" />
+            <span className="text-sm">{doc.error || 'Error processing'}</span>
+          </div>
+        );
+    }
   };
 
-  const getFieldLabel = (field: string) => {
-    const labels: Record<string, string> = {
-      propertyAddress: 'Property Address',
-      legalDescription: 'Legal Description',
-      taxId: 'Tax ID / Parcel #',
-      owner: 'Property Owner',
-      landArea: 'Land Area',
-      clientName: 'Client Name',
-      fee: 'Appraisal Fee',
-      appraisalPurpose: 'Appraisal Purpose',
-      effectiveDate: 'Effective Date',
-      salePrice: 'Sale Price',
-      saleDate: 'Sale Date',
-      buyer: 'Buyer',
-      seller: 'Seller',
-      terms: 'Terms',
-      tenantName: 'Tenant Name',
-      rentAmount: 'Rent Amount',
-      leaseStart: 'Lease Start',
-      leaseEnd: 'Lease End',
-      units: 'Unit Mix',
-      occupancyRate: 'Occupancy Rate',
-      grossIncome: 'Gross Income',
-      netIncome: 'Net Income',
-    };
-    return labels[field] || field;
+  const colorMap: Record<string, string> = {
+    blue: 'bg-blue-100 text-blue-700 border-blue-200',
+    purple: 'bg-purple-100 text-purple-700 border-purple-200',
+    green: 'bg-green-100 text-green-700 border-green-200',
+    orange: 'bg-orange-100 text-orange-700 border-orange-200',
+    teal: 'bg-teal-100 text-teal-700 border-teal-200',
+    indigo: 'bg-indigo-100 text-indigo-700 border-indigo-200',
+    red: 'bg-red-100 text-red-700 border-red-200',
+    emerald: 'bg-emerald-100 text-emerald-700 border-emerald-200',
+    gray: 'bg-gray-100 text-gray-700 border-gray-200',
   };
 
-  const totalDocsUploaded = Object.values(documents).flat().length;
-  const totalExtracted = Object.values(documents).flat().filter(d => d.status === 'extracted').length;
+  return (
+    <div 
+      className={`bg-white border rounded-xl overflow-hidden transition-all duration-300 ${
+        doc.status === 'complete' ? 'border-green-200 shadow-sm' : 
+        doc.status === 'error' ? 'border-red-200' : 
+        'border-gray-200'
+      }`}
+    >
+      {/* Card Header */}
+      <div className="p-4">
+        <div className="flex items-start justify-between gap-3">
+          {/* File Info */}
+          <div className="flex items-start gap-3 min-w-0 flex-1">
+            {/* Icon/Emoji */}
+            <div className={`w-12 h-12 rounded-lg flex items-center justify-center text-2xl ${
+              doc.status === 'complete' ? 'bg-green-50' : 'bg-gray-50'
+            }`}>
+              {doc.status === 'classifying' || doc.status === 'extracting' ? (
+                <Sparkles className="w-6 h-6 text-[#0da1c7] animate-pulse" />
+              ) : doc.status === 'uploading' ? (
+                <Loader2 className="w-6 h-6 text-gray-400 animate-spin" />
+              ) : (
+                <span>{typeInfo.icon}</span>
+              )}
+            </div>
+            
+            {/* File Details */}
+            <div className="min-w-0 flex-1">
+              <p className="font-medium text-gray-900 truncate">{doc.file.name}</p>
+              <p className="text-xs text-gray-500">{formatFileSize(doc.file.size)}</p>
+              
+              {/* Document Type Badge */}
+              {doc.classification && doc.status !== 'classifying' && (
+                <div className="mt-2 flex items-center gap-2">
+                  <span className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border ${
+                    colorMap[typeInfo.color] || colorMap.gray
+                  }`}>
+                    {typeInfo.label}
+                    {doc.classification.confidence < 0.8 && (
+                      <span className="text-[10px] opacity-70">
+                        ({Math.round(doc.classification.confidence * 100)}%)
+                      </span>
+                    )}
+                  </span>
+                  <button
+                    onClick={() => setShowTypeSelector(!showTypeSelector)}
+                    className="text-xs text-gray-400 hover:text-[#0da1c7] underline"
+                  >
+                    Change
+                  </button>
+                </div>
+              )}
+            </div>
+          </div>
 
-  const handleContinue = () => {
-    // Save all extracted data to context/storage
-    const allExtractedData: Record<string, ExtractedFields> = {};
-    Object.entries(documents).forEach(([slotId, docs]) => {
-      docs.forEach(doc => {
-        if (doc.extractedData) {
-          allExtractedData[slotId] = { ...allExtractedData[slotId], ...doc.extractedData };
+          {/* Status & Actions */}
+          <div className="flex items-center gap-2">
+            {getStatusContent()}
+            
+            {doc.status === 'complete' && (
+              <>
+                <button
+                  onClick={onToggleExpand}
+                  className="p-1.5 text-gray-400 hover:text-[#0da1c7] hover:bg-gray-50 rounded-lg transition-colors"
+                  title={isExpanded ? "Collapse" : "View extracted data"}
+                >
+                  {isExpanded ? (
+                    <ChevronDown className="w-4 h-4 rotate-180" />
+                  ) : (
+                    <Eye className="w-4 h-4" />
+                  )}
+                </button>
+                <button
+                  onClick={onReprocess}
+                  className="p-1.5 text-gray-400 hover:text-[#0da1c7] hover:bg-gray-50 rounded-lg transition-colors"
+                  title="Reprocess"
+                >
+                  <RefreshCw className="w-4 h-4" />
+                </button>
+              </>
+            )}
+            
+            <button
+              onClick={onRemove}
+              className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+              title="Remove"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+
+        {/* Type Selector Dropdown */}
+        {showTypeSelector && (
+          <div className="mt-3 p-3 bg-gray-50 rounded-lg border border-gray-200">
+            <p className="text-xs font-medium text-gray-600 mb-2">Select correct document type:</p>
+            <div className="grid grid-cols-2 gap-2">
+              {Object.values(DOCUMENT_TYPES)
+                .filter(t => t.id !== 'unknown')
+                .map(type => (
+                  <button
+                    key={type.id}
+                    onClick={() => {
+                      onReclassify(type.id);
+                      setShowTypeSelector(false);
+                    }}
+                    className={`text-left px-3 py-2 rounded-lg text-sm transition-colors ${
+                      doc.classification?.documentType === type.id
+                        ? 'bg-[#0da1c7] text-white'
+                        : 'bg-white border border-gray-200 hover:border-[#0da1c7] hover:text-[#0da1c7]'
+                    }`}
+                  >
+                    <span className="mr-2">{type.icon}</span>
+                    {type.label}
+                  </button>
+                ))}
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Extracted Data Panel */}
+      {isExpanded && doc.status === 'complete' && doc.extraction?.data && (
+        <div className="border-t border-gray-100 bg-gray-50 p-4">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-semibold text-gray-500 uppercase">Extracted Data</span>
+            <span className="text-xs text-green-600 font-medium flex items-center gap-1">
+              <Zap className="w-3 h-3" />
+              Ready to use
+            </span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+            {Object.entries(doc.extraction.data).map(([field, data]) => (
+              <div
+                key={field}
+                className="bg-white rounded-lg p-3 border border-gray-200"
+              >
+                <div className="flex items-center justify-between mb-1">
+                  <span className="text-xs font-medium text-gray-600">{getFieldLabel(field)}</span>
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded ${getConfidenceColorClasses(data.confidence)}`}>
+                    {Math.round(data.confidence * 100)}%
+                  </span>
+                </div>
+                <p className="text-sm text-gray-900 truncate" title={data.value}>{data.value}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ==========================================
+// MAIN COMPONENT
+// ==========================================
+export default function DocumentIntakePage() {
+  const navigate = useNavigate();
+  const { setSubjectData } = useWizard();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  const [documents, setDocuments] = useState<ProcessedDocument[]>([]);
+  const [isDragging, setIsDragging] = useState(false);
+  const [expandedDocId, setExpandedDocId] = useState<string | null>(null);
+
+  // Handle file drop
+  const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setIsDragging(false);
+    const files = Array.from(e.dataTransfer.files);
+    processFiles(files);
+  }, []);
+
+  // Handle file select
+  const handleFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      const files = Array.from(e.target.files);
+      processFiles(files);
+    }
+  }, []);
+
+  // Process uploaded files
+  const processFiles = async (files: File[]) => {
+    // Create initial document entries
+    const newDocs: ProcessedDocument[] = files.map(file => ({
+      id: `doc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      file,
+      status: 'uploading',
+    }));
+
+    setDocuments(prev => [...prev, ...newDocs]);
+
+    // Process each file with staggered animation
+    for (let i = 0; i < newDocs.length; i++) {
+      const doc = newDocs[i];
+      
+      // Small delay between starting each file
+      if (i > 0) {
+        await new Promise(resolve => setTimeout(resolve, 200));
+      }
+
+      // Update to classifying
+      setDocuments(prev => prev.map(d => 
+        d.id === doc.id ? { ...d, status: 'classifying' } : d
+      ));
+
+      try {
+        const result = await classifyAndExtract(
+          doc.file,
+          (classification) => {
+            // Update with classification, move to extracting
+            setDocuments(prev => prev.map(d => 
+              d.id === doc.id ? { ...d, status: 'extracting', classification } : d
+            ));
+          }
+        );
+
+        // Update with final result
+        setDocuments(prev => prev.map(d => 
+          d.id === doc.id ? { 
+            ...d, 
+            status: 'complete',
+            classification: result.classification,
+            extraction: result.extraction,
+          } : d
+        ));
+      } catch (error) {
+        setDocuments(prev => prev.map(d => 
+          d.id === doc.id ? { 
+            ...d, 
+            status: 'error',
+            error: error instanceof Error ? error.message : 'Processing failed',
+          } : d
+        ));
+      }
+    }
+  };
+
+  // Remove a document
+  const removeDocument = (docId: string) => {
+    setDocuments(prev => prev.filter(d => d.id !== docId));
+    if (expandedDocId === docId) {
+      setExpandedDocId(null);
+    }
+  };
+
+  // Reprocess a document
+  const reprocessDocument = async (docId: string) => {
+    const doc = documents.find(d => d.id === docId);
+    if (!doc) return;
+
+    setDocuments(prev => prev.map(d => 
+      d.id === docId ? { ...d, status: 'classifying', extraction: undefined } : d
+    ));
+
+    try {
+      const result = await classifyAndExtract(
+        doc.file,
+        (classification) => {
+          setDocuments(prev => prev.map(d => 
+            d.id === docId ? { ...d, status: 'extracting', classification } : d
+          ));
         }
+      );
+
+      setDocuments(prev => prev.map(d => 
+        d.id === docId ? { 
+          ...d, 
+          status: 'complete',
+          classification: result.classification,
+          extraction: result.extraction,
+        } : d
+      ));
+    } catch (error) {
+      setDocuments(prev => prev.map(d => 
+        d.id === docId ? { 
+          ...d, 
+          status: 'error',
+          error: error instanceof Error ? error.message : 'Processing failed',
+        } : d
+      ));
+    }
+  };
+
+  // Reclassify with a different type
+  const reclassifyDocument = async (docId: string, newType: DocumentType) => {
+    const doc = documents.find(d => d.id === docId);
+    if (!doc) return;
+
+    // Update classification and re-extract
+    setDocuments(prev => prev.map(d => 
+      d.id === docId ? { 
+        ...d, 
+        status: 'extracting',
+        classification: {
+          documentType: newType,
+          confidence: 1.0, // User-specified = 100% confidence
+          processingTimeMs: 0,
+        },
+      } : d
+    ));
+
+    // Re-run extraction with new type
+    const { extractDocumentData } = await import('../services/documentExtraction');
+    const extraction = await extractDocumentData(doc.file, newType);
+
+    setDocuments(prev => prev.map(d => 
+      d.id === docId ? { ...d, status: 'complete', extraction } : d
+    ));
+  };
+
+  // Calculate stats
+  const stats = useMemo(() => {
+    const total = documents.length;
+    const complete = documents.filter(d => d.status === 'complete').length;
+    const processing = documents.filter(d => 
+      d.status === 'classifying' || d.status === 'extracting' || d.status === 'uploading'
+    ).length;
+    const errors = documents.filter(d => d.status === 'error').length;
+    const totalFields = documents
+      .filter(d => d.extraction?.data)
+      .reduce((sum, d) => sum + Object.keys(d.extraction!.data!).length, 0);
+
+    return { total, complete, processing, errors, totalFields };
+  }, [documents]);
+
+  // Group documents by type for summary
+  const documentsByType = useMemo(() => {
+    const groups: Record<DocumentType, ProcessedDocument[]> = {} as any;
+    documents
+      .filter(d => d.classification && d.status === 'complete')
+      .forEach(d => {
+        const type = d.classification!.documentType;
+        if (!groups[type]) groups[type] = [];
+        groups[type].push(d);
       });
+    return groups;
+  }, [documents]);
+
+  // Handle continue - save all extracted data
+  const handleContinue = () => {
+    // Merge all extracted data
+    const allExtractedData: Record<string, ExtractedData> = {};
+    documents.forEach(doc => {
+      if (doc.classification && doc.extraction?.data) {
+        const type = doc.classification.documentType;
+        allExtractedData[type] = { 
+          ...allExtractedData[type], 
+          ...doc.extraction.data 
+        };
+      }
     });
+
+    // Save to session storage
     sessionStorage.setItem('harken_extracted_data', JSON.stringify(allExtractedData));
-    
-    // Also update centralized subjectData in WizardContext
+
+    // Update wizard context with extracted data
     const subjectDataUpdates: Record<string, string> = {};
     
-    // Extract from cadastral data
     if (allExtractedData.cadastral) {
       const cad = allExtractedData.cadastral;
       if (cad.taxId?.value) subjectDataUpdates.taxId = cad.taxId.value;
       if (cad.legalDescription?.value) subjectDataUpdates.legalDescription = cad.legalDescription.value;
       if (cad.propertyAddress?.value) {
-        // Parse address if it's a full string
         const addr = cad.propertyAddress.value;
-        // Try to parse "Street, City, State ZIP" format
         const parts = addr.split(',').map(s => s.trim());
         if (parts.length >= 2) {
           const street = parts[0];
           const cityStateZip = parts.slice(1).join(', ');
-          // Try to parse "City, State ZIP"
           const stateZipMatch = cityStateZip.match(/^(.+?),?\s*([A-Z]{2})\s*(\d{5})?/i);
           if (stateZipMatch) {
             setSubjectData({
@@ -343,96 +516,87 @@ export default function DocumentIntakePage() {
         }
       }
     }
-    
-    // Extract from sale data
+
     if (allExtractedData.sale) {
       const sale = allExtractedData.sale;
       if (sale.saleDate?.value) subjectDataUpdates.lastSaleDate = sale.saleDate.value;
       if (sale.salePrice?.value) subjectDataUpdates.lastSalePrice = sale.salePrice.value;
     }
-    
-    // Apply updates to subjectData
+
     if (Object.keys(subjectDataUpdates).length > 0) {
       setSubjectData(subjectDataUpdates as any);
     }
-    
+
     navigate('/setup');
   };
 
-  // Sidebar content
+  // Sidebar
   const sidebar = (
     <div>
       <h2 className="text-lg font-bold text-gray-900 mb-1">Document Intake</h2>
-      <p className="text-sm text-gray-500 mb-6">Upload documents for AI extraction</p>
-      <nav className="space-y-1">
-        {documentSlots.map((slot) => {
-          const slotDocs = documents[slot.id] || [];
-          const hasExtracted = slotDocs.some(d => d.status === 'extracted');
-          const isProcessing = slotDocs.some(d => d.status === 'processing');
+      <p className="text-sm text-gray-500 mb-6">AI-powered document processing</p>
 
-          return (
-            <button
-              key={slot.id}
-              onClick={() => setSelectedSlot(slot.id)}
-              className={`w-full text-left px-4 py-3 rounded-lg text-sm flex items-center justify-between transition-colors ${
-                selectedSlot === slot.id
-                  ? 'bg-[#0da1c7]/10 text-[#0da1c7] font-medium'
-                  : 'text-gray-600 hover:bg-gray-100'
-              }`}
-            >
-              <span className="flex items-center gap-2">
-                <FileText className="w-4 h-4" />
-                {slot.label}
-              </span>
-              {isProcessing && <Loader2 className="w-4 h-4 animate-spin text-[#0da1c7]" />}
-              {hasExtracted && !isProcessing && <CheckCircle className="w-4 h-4 text-green-500" />}
-              {slotDocs.length > 0 && !hasExtracted && !isProcessing && (
-                <span className="text-xs bg-gray-200 px-1.5 py-0.5 rounded">{slotDocs.length}</span>
-              )}
-            </button>
-          );
-        })}
-      </nav>
-
-      {/* Summary */}
-      {totalDocsUploaded > 0 && (
-        <div className="mt-6 pt-6 border-t border-gray-200">
-          <div className="text-sm text-gray-600">
-            <div className="flex justify-between mb-1">
-              <span>Documents uploaded:</span>
-              <span className="font-medium">{totalDocsUploaded}</span>
+      {/* Stats */}
+      {documents.length > 0 && (
+        <div className="space-y-3 mb-6">
+          <div className="bg-gradient-to-r from-[#0da1c7]/10 to-[#0da1c7]/5 rounded-xl p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-gray-700">Documents</span>
+              <span className="text-lg font-bold text-[#0da1c7]">{stats.complete}/{stats.total}</span>
             </div>
-            <div className="flex justify-between">
-              <span>Fields extracted:</span>
-              <span className="font-medium text-green-600">{totalExtracted}</span>
+            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+              <div 
+                className="h-full bg-[#0da1c7] rounded-full transition-all duration-500"
+                style={{ width: `${stats.total ? (stats.complete / stats.total) * 100 : 0}%` }}
+              />
             </div>
           </div>
+
+          {stats.totalFields > 0 && (
+            <div className="flex items-center justify-between px-1 text-sm">
+              <span className="text-gray-600">Fields extracted</span>
+              <span className="font-semibold text-green-600">{stats.totalFields}</span>
+            </div>
+          )}
+
+          {stats.processing > 0 && (
+            <div className="flex items-center gap-2 text-[#0da1c7] text-sm">
+              <Loader2 className="w-4 h-4 animate-spin" />
+              <span>Processing {stats.processing} document{stats.processing > 1 ? 's' : ''}...</span>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* Document Type Summary */}
+      {Object.keys(documentsByType).length > 0 && (
+        <div className="space-y-2">
+          <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Identified Documents</h3>
+          {Object.entries(documentsByType).map(([type, docs]) => {
+            const typeInfo = DOCUMENT_TYPES[type as DocumentType];
+            return (
+              <div 
+                key={type}
+                className="flex items-center gap-3 p-2 rounded-lg bg-gray-50"
+              >
+                <span className="text-lg">{typeInfo.icon}</span>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-gray-700 truncate">{typeInfo.label}</p>
+                  <p className="text-xs text-gray-500">{docs.length} file{docs.length > 1 ? 's' : ''}</p>
+                </div>
+                <CheckCircle className="w-4 h-4 text-green-500" />
+              </div>
+            );
+          })}
         </div>
       )}
     </div>
   );
 
-  // Get current guidance based on selected slot
-  const currentGuidance = useMemo((): SectionGuidance | null => {
-    if (!selectedSlot) {
-      return DOCUMENTS_GUIDANCE.overview;
-    }
-    // Map slot IDs to guidance keys
-    const slotToGuidanceKey: Record<string, string> = {
-      cadastral: 'cadastral',
-      engagement: 'engagement',
-      sale: 'sale',
-      lease: 'lease',
-      rentroll: 'rentroll',
-    };
-    const guidanceKey = slotToGuidanceKey[selectedSlot];
-    return guidanceKey ? DOCUMENTS_GUIDANCE[guidanceKey] : DOCUMENTS_GUIDANCE.overview;
-  }, [selectedSlot]);
-
-  // Help sidebar with dynamic guidance panel
+  // Guidance panel
   const helpSidebarGuidance = (
     <WizardGuidancePanel 
-      guidance={currentGuidance}
+      guidance={DOCUMENTS_GUIDANCE.overview}
       themeColor="#0da1c7"
     />
   );
@@ -446,260 +610,129 @@ export default function DocumentIntakePage() {
       helpSidebarGuidance={helpSidebarGuidance}
     >
       <div className="animate-fade-in">
-        {/* Main upload area or selected slot details */}
-        {!selectedSlot ? (
-          <div className="space-y-4">
-            <div className="bg-gradient-to-r from-[#0da1c7]/10 to-[#4db8d1]/10 border border-[#0da1c7]/20 rounded-xl p-6 mb-6">
-              <div className="flex items-start gap-4">
-                <div className="w-12 h-12 rounded-xl bg-[#0da1c7] flex items-center justify-center">
-                  <Sparkles className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h3 className="font-bold text-[#1c3643] mb-1">AI-Powered Document Intake</h3>
-                  <p className="text-sm text-gray-600">
-                    Upload your source documents and let AI extract property details, client information, 
-                    and financial data. This will pre-populate fields throughout the wizard.
-                  </p>
-                </div>
-              </div>
+        {/* Hero Section */}
+        <div className="bg-gradient-to-br from-[#0da1c7]/10 via-[#4db8d1]/5 to-transparent border border-[#0da1c7]/20 rounded-2xl p-6 mb-6">
+          <div className="flex items-start gap-4">
+            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#0da1c7] to-[#0b8fb0] flex items-center justify-center shadow-lg shadow-[#0da1c7]/20">
+              <Sparkles className="w-7 h-7 text-white" />
             </div>
-
-            {/* All document slots */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {documentSlots.map((slot) => {
-                const slotDocs = documents[slot.id] || [];
-                const hasExtracted = slotDocs.some(d => d.status === 'extracted');
-
-                return (
-                  <div
-                    key={slot.id}
-                    onDragOver={(e) => e.preventDefault()}
-                    onDrop={(e) => handleFileDrop(e, slot.id)}
-                    onClick={() => setSelectedSlot(slot.id)}
-                    className={`border-2 border-dashed rounded-xl p-5 cursor-pointer transition-all ${
-                      hasExtracted
-                        ? 'border-green-300 bg-green-50'
-                        : 'border-gray-300 hover:border-[#0da1c7] hover:bg-[#0da1c7]/5'
-                    }`}
-                  >
-                    <div className="flex items-start justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        {hasExtracted ? (
-                          <CheckCircle className="w-5 h-5 text-green-500" />
-                        ) : (
-                          <Upload className="w-5 h-5 text-gray-400" />
-                        )}
-                        <span className="font-medium text-gray-700">{slot.label}</span>
-                      </div>
-                      <ChevronRight className="w-4 h-4 text-gray-400" />
-                    </div>
-                    <p className="text-xs text-gray-500 mb-2">{slot.description}</p>
-                    {slotDocs.length > 0 && (
-                      <div className="text-xs text-[#0da1c7] font-medium">
-                        {slotDocs.length} file(s) uploaded
-                      </div>
-                    )}
-                  </div>
-                );
-              })}
+            <div>
+              <h3 className="text-xl font-bold text-[#1c3643] mb-1">AI-Powered Document Intake</h3>
+              <p className="text-gray-600">
+                Drop all your documents below. Our AI will automatically identify each document type, 
+                extract relevant data, and pre-fill fields throughout the wizard.
+              </p>
             </div>
           </div>
-        ) : (
-          /* Selected slot detail view */
-          <div>
-            <button
-              onClick={() => setSelectedSlot(null)}
-              className="text-sm text-[#0da1c7] hover:text-[#0b8fb0] mb-4 flex items-center gap-1"
-            >
-              ← Back to all documents
-            </button>
+        </div>
 
-            {(() => {
-              const slot = documentSlots.find(s => s.id === selectedSlot)!;
-              const slotDocs = documents[selectedSlot] || [];
+        {/* Unified Drop Zone */}
+        <div
+          onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+          onDragLeave={() => setIsDragging(false)}
+          onDrop={handleDrop}
+          onClick={() => fileInputRef.current?.click()}
+          className={`relative border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-all duration-300 mb-6 ${
+            isDragging 
+              ? 'border-[#0da1c7] bg-[#0da1c7]/10 scale-[1.02]' 
+              : 'border-gray-300 hover:border-[#0da1c7] hover:bg-[#0da1c7]/5'
+          }`}
+        >
+          <input
+            ref={fileInputRef}
+            type="file"
+            multiple
+            accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xlsx,.csv"
+            className="hidden"
+            onChange={handleFileSelect}
+          />
+          
+          <div className={`transition-transform duration-300 ${isDragging ? 'scale-110' : ''}`}>
+            <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-gray-100 to-gray-50 flex items-center justify-center">
+              <Upload className={`w-8 h-8 transition-colors ${isDragging ? 'text-[#0da1c7]' : 'text-gray-400'}`} />
+            </div>
+            <p className="text-lg font-semibold text-gray-700 mb-1">
+              {isDragging ? 'Drop files here' : 'Drop all your documents here'}
+            </p>
+            <p className="text-sm text-gray-500 mb-3">
+              or click to browse
+            </p>
+            <p className="text-xs text-gray-400">
+              Supports PDF, images, Word docs, Excel, and CSV files
+            </p>
+          </div>
 
-              return (
-                <div>
-                  <div className="flex items-center justify-between mb-4">
-                    <div>
-                      <h3 className="text-lg font-bold text-[#1c3643]">{slot.label}</h3>
-                      <p className="text-sm text-gray-500">{slot.description}</p>
-                    </div>
-                  </div>
+          {/* Animated border when dragging */}
+          {isDragging && (
+            <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
+              <div className="absolute inset-0 border-2 border-[#0da1c7] rounded-2xl animate-pulse" />
+            </div>
+          )}
+        </div>
 
-                  {/* Upload zone */}
-                  <div
-                    onDragOver={(e) => e.preventDefault()}
-                    onDrop={(e) => handleFileDrop(e, selectedSlot)}
-                    className="border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-[#0da1c7] hover:bg-[#0da1c7]/5 transition-all mb-6"
-                  >
-                    <input
-                      type="file"
-                      id={`upload-${selectedSlot}`}
-                      multiple
-                      accept={slot.accepts}
-                      className="hidden"
-                      onChange={(e) => handleFileSelect(e, selectedSlot)}
-                    />
-                    <label htmlFor={`upload-${selectedSlot}`} className="cursor-pointer">
-                      <Upload className="w-10 h-10 text-gray-400 mx-auto mb-3" />
-                      <p className="font-medium text-gray-700">Drop files here or click to upload</p>
-                      <p className="text-xs text-gray-500 mt-1">Accepts: {slot.accepts}</p>
-                    </label>
-                  </div>
-
-                  {/* Uploaded documents with extracted data */}
-                  {slotDocs.map((doc) => (
-                    <div key={doc.id} className="bg-white border border-gray-200 rounded-xl p-4 mb-4">
-                      <div className="flex items-center justify-between mb-3">
-                        <div className="flex items-center gap-3">
-                          <FileText className="w-8 h-8 text-gray-400" />
-                          <div>
-                            <p className="font-medium text-gray-800">{doc.name}</p>
-                            <p className="text-xs text-gray-500">{formatFileSize(doc.size)}</p>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          {doc.status === 'processing' && (
-                            <span className="flex items-center gap-1 text-sm text-[#0da1c7]">
-                              <Loader2 className="w-4 h-4 animate-spin" />
-                              Extracting...
-                            </span>
-                          )}
-                          {doc.status === 'extracted' && (
-                            <span className="flex items-center gap-1 text-sm text-green-600">
-                              <CheckCircle className="w-4 h-4" />
-                              Extracted
-                            </span>
-                          )}
-                          {doc.status === 'error' && (
-                            <span className="flex items-center gap-1 text-sm text-red-600">
-                              <AlertCircle className="w-4 h-4" />
-                              Error
-                            </span>
-                          )}
-                          <button
-                            onClick={() => reprocessDocument(selectedSlot, doc.id)}
-                            className="p-1 text-gray-400 hover:text-[#0da1c7]"
-                            title="Reprocess"
-                          >
-                            <RefreshCw className="w-4 h-4" />
-                          </button>
-                          <button
-                            onClick={() => removeDocument(selectedSlot, doc.id)}
-                            className="p-1 text-gray-400 hover:text-red-500"
-                            title="Remove"
-                          >
-                            <X className="w-4 h-4" />
-                          </button>
-                        </div>
-                      </div>
-
-                      {/* Extracted fields */}
-                      {doc.status === 'extracted' && doc.extractedData && (
-                        <div className="border-t border-gray-100 pt-3">
-                          <div className="flex items-center justify-between mb-2">
-                            <span className="text-xs font-semibold text-gray-500 uppercase">Extracted Fields</span>
-                            <button
-                              onClick={() => acceptAllFromDocument(selectedSlot, doc.id)}
-                              className="text-xs text-[#0da1c7] hover:text-[#0b8fb0] font-medium flex items-center gap-1"
-                            >
-                              <Check className="w-3 h-3" />
-                              Accept All
-                            </button>
-                          </div>
-                          <div className="space-y-2">
-                            {Object.entries(doc.extractedData).map(([field, data]) => (
-                              <div
-                                key={field}
-                                className="flex items-start justify-between p-2 rounded-lg bg-gray-50 hover:bg-gray-100 transition-colors"
-                              >
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex items-center gap-2 mb-0.5">
-                                    <span className="text-xs font-medium text-gray-600">{getFieldLabel(field)}</span>
-                                    <span className={`text-[10px] px-1.5 py-0.5 rounded ${getConfidenceColor(data.confidence)}`}>
-                                      {Math.round(data.confidence * 100)}%
-                                    </span>
-                                    {data.edited && (
-                                      <span className="text-[10px] px-1.5 py-0.5 rounded bg-blue-50 text-blue-600">
-                                        Edited
-                                      </span>
-                                    )}
-                                  </div>
-                                  {editingField?.slotId === selectedSlot &&
-                                   editingField?.docId === doc.id &&
-                                   editingField?.field === field ? (
-                                    <div className="flex items-center gap-2">
-                                      <input
-                                        type="text"
-                                        value={editValue}
-                                        onChange={(e) => setEditValue(e.target.value)}
-                                        className="flex-1 text-sm border border-gray-300 rounded px-2 py-1 focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
-                                        autoFocus
-                                      />
-                                      <button
-                                        onClick={saveEdit}
-                                        className="p-1 text-green-600 hover:text-green-700"
-                                      >
-                                        <Check className="w-4 h-4" />
-                                      </button>
-                                      <button
-                                        onClick={() => setEditingField(null)}
-                                        className="p-1 text-gray-400 hover:text-gray-600"
-                                      >
-                                        <X className="w-4 h-4" />
-                                      </button>
-                                    </div>
-                                  ) : (
-                                    <p className="text-sm text-gray-800 truncate">{data.value}</p>
-                                  )}
-                                </div>
-                                {!editingField && (
-                                  <button
-                                    onClick={() => startEdit(selectedSlot, doc.id, field, data.value)}
-                                    className="p-1 text-gray-400 hover:text-[#0da1c7] ml-2"
-                                  >
-                                    <Edit2 className="w-3.5 h-3.5" />
-                                  </button>
-                                )}
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  ))}
-
-                  {slotDocs.length === 0 && (
-                    <div className="text-center py-8 text-gray-500">
-                      <FileText className="w-12 h-12 mx-auto mb-2 opacity-30" />
-                      <p className="text-sm">No documents uploaded yet</p>
-                    </div>
-                  )}
-                </div>
-              );
-            })()}
+        {/* Document Cards */}
+        {documents.length > 0 && (
+          <div className="space-y-3 mb-6">
+            <div className="flex items-center justify-between">
+              <h3 className="text-sm font-semibold text-gray-700">
+                Uploaded Documents ({documents.length})
+              </h3>
+              {stats.complete === stats.total && stats.total > 0 && (
+                <span className="text-xs text-green-600 font-medium flex items-center gap-1">
+                  <CheckCircle className="w-3 h-3" />
+                  All documents processed
+                </span>
+              )}
+            </div>
+            
+            <div className="space-y-3">
+              {documents.map(doc => (
+                <DocumentCard
+                  key={doc.id}
+                  doc={doc}
+                  onRemove={() => removeDocument(doc.id)}
+                  onReprocess={() => reprocessDocument(doc.id)}
+                  onReclassify={(newType) => reclassifyDocument(doc.id, newType)}
+                  onViewData={() => setExpandedDocId(expandedDocId === doc.id ? null : doc.id)}
+                  isExpanded={expandedDocId === doc.id}
+                  onToggleExpand={() => setExpandedDocId(expandedDocId === doc.id ? null : doc.id)}
+                />
+              ))}
+            </div>
           </div>
         )}
 
-        {/* Continue button */}
+        {/* Continue Button */}
         <div className="mt-8 pt-6 border-t border-gray-200 flex justify-between items-center">
           <button
-            onClick={() => navigate('/')}
-            className="px-4 py-2 text-gray-600 hover:text-gray-800"
+            onClick={() => navigate('/template')}
+            className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
           >
             ← Back to Templates
           </button>
           <button
             onClick={handleContinue}
-            className="px-6 py-2.5 bg-[#0da1c7] text-white rounded-lg font-medium hover:bg-[#0b8fb0] flex items-center gap-2"
+            disabled={stats.processing > 0}
+            className={`px-6 py-2.5 rounded-lg font-medium flex items-center gap-2 transition-all ${
+              stats.processing > 0
+                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                : 'bg-[#0da1c7] text-white hover:bg-[#0b8fb0] shadow-lg shadow-[#0da1c7]/20 hover:shadow-xl hover:shadow-[#0da1c7]/30'
+            }`}
           >
-            Continue to Setup
-            <ChevronRight className="w-4 h-4" />
+            {stats.processing > 0 ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Processing...
+              </>
+            ) : (
+              <>
+                Continue to Setup
+                <ChevronRight className="w-4 h-4" />
+              </>
+            )}
           </button>
         </div>
       </div>
     </WizardLayout>
   );
 }
-

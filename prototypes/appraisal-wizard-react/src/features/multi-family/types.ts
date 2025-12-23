@@ -64,3 +64,5 @@ export interface AvailableMultiFamilyElement {
   section: 'transaction' | 'quantitative' | 'qualitative';
 }
 
+
+

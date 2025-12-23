@@ -32,3 +32,5 @@ export const MOCK_MARKET_DATA: MarketData = {
   dataAsOf: 'Q4 2024',
 };
 
+
+
