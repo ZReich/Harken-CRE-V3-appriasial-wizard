@@ -1,5 +1,6 @@
 import { useGet } from '@/hook/useGet';
 import { useSearchParams } from 'react-router-dom';
+import { sanitizeHtml } from '@/utils/sanitizeHtml';
 
 export default function RentRoleTable({ approachId }: any) {
   const [searchParams] = useSearchParams();
@@ -16,7 +17,7 @@ export default function RentRoleTable({ approachId }: any) {
     <div>
       <div
         className="pb-2 previewWrapper"
-        dangerouslySetInnerHTML={{ __html: data?.data?.data }}
+        dangerouslySetInnerHTML={{ __html: sanitizeHtml(data?.data?.data) }}
       />
     </div>
   );

@@ -33,6 +33,7 @@ import CompDeleteModalCrossImage from '@/components/modal/comp-cross-Image-delet
 import FakeTable from './fakeTable';
 import FakeGoogleMapLocation from './fakeMap';
 import PhotoImageTemplate from './photo-image-template';
+import { sanitizeHtml } from '@/utils/sanitizeHtml';
 
 const Section = ({
   parentIndex,
@@ -892,7 +893,7 @@ const Section = ({
               {showTextBox && (
                 <div
                   dangerouslySetInnerHTML={{
-                    __html: item?.contents || item?.content,
+                    __html: sanitizeHtml(item?.contents ?? item?.content),
                   }}
                 />
               )}

@@ -1,5 +1,6 @@
 import { useGet } from '@/hook/useGet';
 import { useSearchParams } from 'react-router-dom';
+import { sanitizeHtml } from '@/utils/sanitizeHtml';
 
 export default function SaleTable({ approachId }: any) {
   const [searchParams] = useSearchParams();
@@ -15,7 +16,7 @@ export default function SaleTable({ approachId }: any) {
       <div className="">
         <div
           className="pb-2 previewWrapper"
-          dangerouslySetInnerHTML={{ __html: data?.data?.data }}
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(data?.data?.data) }}
         />
       </div>
     </>

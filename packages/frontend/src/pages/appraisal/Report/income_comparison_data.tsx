@@ -1,5 +1,6 @@
 import { useGet } from '@/hook/useGet';
 import { useSearchParams } from 'react-router-dom';
+import { sanitizeHtml } from '@/utils/sanitizeHtml';
 
 export default function IncomeComparisonTable() {
   const [searchParams] = useSearchParams();
@@ -15,7 +16,7 @@ export default function IncomeComparisonTable() {
       <div className="">
         <div
           className="pb-2 previewWrapper"
-          dangerouslySetInnerHTML={{ __html: data?.data?.data }}
+          dangerouslySetInnerHTML={{ __html: sanitizeHtml(data?.data?.data) }}
         />
       </div>
     </>

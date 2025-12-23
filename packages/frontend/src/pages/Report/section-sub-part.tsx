@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 import addImage from '../../images/Group3.png';
 import FakeTable from './fakeTable';
 import FakeGoogleMapLocation from './fakeMap';
+import { sanitizeHtml } from '@/utils/sanitizeHtml';
 
 const SubSectionsItems = ({
   item,
@@ -621,7 +622,7 @@ const SubSectionsItems = ({
                                     <div
                                       className="dangerouslySetInnerHTML"
                                       dangerouslySetInnerHTML={{
-                                        __html: elem?.contents || elem?.content,
+                                        __html: sanitizeHtml(elem?.contents ?? elem?.content),
                                       }}
                                     />
                                   </>
