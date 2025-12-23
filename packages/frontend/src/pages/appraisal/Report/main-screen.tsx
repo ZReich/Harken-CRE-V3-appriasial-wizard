@@ -1,5 +1,6 @@
 import React, {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useRef,
@@ -69,6 +70,9 @@ const MainScreenAppraisal: React.FC = () => {
   const [showScrollTop, setShowScrollTop] = useState(false);
 
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const sectionElsRef = useRef<Map<string, HTMLElement>>(new Map());
+  const rafIdRef = useRef<number | null>(null);
+  const [activeSectionId, setActiveSectionId] = useState<string | null>(null);
 
   useEffect(() => {
     const wrapper = wrapperRef.current;
@@ -199,6 +203,73 @@ const MainScreenAppraisal: React.FC = () => {
     setId(event);
   };
 
+  const updateActiveSectionHighlight = useCallback(() => {
+    const container = wrapperRef.current;
+    if (!container) return;
+
+    const containerRect = container.getBoundingClientRect();
+    const viewportCenter = containerRect.top + containerRect.height / 2;
+
+    let bestId: string | null = null;
+    let bestVisible = -1;
+
+    sectionElsRef.current.forEach((el, id) => {
+      const rect = el.getBoundingClientRect();
+
+      const visibleTop = Math.max(rect.top, containerRect.top);
+      const visibleBottom = Math.min(rect.bottom, containerRect.bottom);
+      const visibleHeight = Math.max(0, visibleBottom - visibleTop);
+
+      const containsCenter = rect.top <= viewportCenter && rect.bottom >= viewportCenter;
+
+      if (containsCenter) {
+        bestId = id;
+        bestVisible = Number.POSITIVE_INFINITY;
+        return;
+      }
+
+      if (bestVisible !== Number.POSITIVE_INFINITY && visibleHeight > bestVisible) {
+        bestVisible = visibleHeight;
+        bestId = id;
+      }
+    });
+
+    setActiveSectionId((prev) => (prev === bestId ? prev : bestId));
+  }, []);
+
+  useEffect(() => {
+    const container = wrapperRef.current;
+    if (!container) return;
+
+    const onScroll = () => {
+      if (rafIdRef.current !== null) return;
+      rafIdRef.current = window.requestAnimationFrame(() => {
+        rafIdRef.current = null;
+        updateActiveSectionHighlight();
+      });
+    };
+
+    container.addEventListener('scroll', onScroll, { passive: true });
+
+    const timeoutId = window.setTimeout(() => {
+      updateActiveSectionHighlight();
+    }, 100);
+
+    return () => {
+      container.removeEventListener('scroll', onScroll as any);
+      window.clearTimeout(timeoutId);
+      if (rafIdRef.current !== null) {
+        window.cancelAnimationFrame(rafIdRef.current);
+        rafIdRef.current = null;
+      }
+    };
+  }, [updateActiveSectionHighlight, templateData?.sections?.length]);
+
+  const scrollToSection = useCallback((sectionId: string | number) => {
+    const el = sectionElsRef.current.get(String(sectionId));
+    el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, []);
+
   if (loading) {
     return (
       <>
@@ -300,6 +371,8 @@ const MainScreenAppraisal: React.FC = () => {
                 <Sidebar
                   onAddSection={onAddSection}
                   sections={templateData?.sections}
+                  activeSectionId={activeSectionId}
+                  onNavigateToSection={scrollToSection}
                 />
               </Grid>
               <Grid xs={9} xl={10} className="p-5">
@@ -310,7 +383,15 @@ const MainScreenAppraisal: React.FC = () => {
                 <div className="max-w-[1138px]">
                   {templateData?.sections?.map((section: any, i: number) => {
                     return (
-                      <div key={section.id}>
+                      <div
+                        key={section.id}
+                        ref={(el) => {
+                          const id = section?.id;
+                          if (id === undefined || id === null) return;
+                          if (el) sectionElsRef.current.set(String(id), el);
+                          else sectionElsRef.current.delete(String(id));
+                        }}
+                      >
                         {section.items.map((item: any, index: number) => {
                           console.log(item, 'itemmmm');
                           return (

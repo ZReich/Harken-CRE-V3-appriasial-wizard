@@ -1,4 +1,11 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
 
 import { styled } from '@mui/system';
 import { useParams } from 'react-router-dom';
@@ -67,6 +74,11 @@ const MainScreen: React.FC = () => {
   const [selectedMap, setSelectedMap] = useState('');
 
   const [updateSec, setUpdateSec] = useState(false);
+  const [activeSectionId, setActiveSectionId] = useState<string | null>(null);
+
+  const reportScrollRef = useRef<HTMLDivElement | null>(null);
+  const sectionElsRef = useRef<Map<string, HTMLElement>>(new Map());
+  const rafIdRef = useRef<number | null>(null);
 
   const { templateData, setTemplateData }: any =
     useContext<any[]>(TemplateContext);
@@ -128,6 +140,75 @@ const MainScreen: React.FC = () => {
       });
     }
   }, [update?.data?.data]);
+
+  const updateActiveSectionHighlight = useCallback(() => {
+    const container = reportScrollRef.current;
+    if (!container) return;
+
+    const containerRect = container.getBoundingClientRect();
+    const viewportCenter = containerRect.top + containerRect.height / 2;
+
+    let bestId: string | null = null;
+    let bestVisible = -1;
+
+    sectionElsRef.current.forEach((el, id) => {
+      const rect = el.getBoundingClientRect();
+
+      // Visible height of section within the scroll container viewport.
+      const visibleTop = Math.max(rect.top, containerRect.top);
+      const visibleBottom = Math.min(rect.bottom, containerRect.bottom);
+      const visibleHeight = Math.max(0, visibleBottom - visibleTop);
+
+      const containsCenter = rect.top <= viewportCenter && rect.bottom >= viewportCenter;
+
+      if (containsCenter) {
+        bestId = id;
+        bestVisible = Number.POSITIVE_INFINITY; // lock in
+        return;
+      }
+
+      if (bestVisible !== Number.POSITIVE_INFINITY && visibleHeight > bestVisible) {
+        bestVisible = visibleHeight;
+        bestId = id;
+      }
+    });
+
+    setActiveSectionId((prev) => (prev === bestId ? prev : bestId));
+  }, []);
+
+  useEffect(() => {
+    const container = reportScrollRef.current;
+    if (!container) return;
+
+    const onScroll = () => {
+      if (rafIdRef.current !== null) return;
+      rafIdRef.current = window.requestAnimationFrame(() => {
+        rafIdRef.current = null;
+        updateActiveSectionHighlight();
+      });
+    };
+
+    container.addEventListener('scroll', onScroll, { passive: true });
+
+    // Initial highlight after content renders.
+    const timeoutId = window.setTimeout(() => {
+      updateActiveSectionHighlight();
+    }, 100);
+
+    return () => {
+      container.removeEventListener('scroll', onScroll as any);
+      window.clearTimeout(timeoutId);
+      if (rafIdRef.current !== null) {
+        window.cancelAnimationFrame(rafIdRef.current);
+        rafIdRef.current = null;
+      }
+    };
+  }, [updateActiveSectionHighlight, templateData?.sections?.length]);
+
+  const scrollToSection = useCallback((sectionId: string | number) => {
+    const el = sectionElsRef.current.get(String(sectionId));
+    el?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, []);
 
   const editSection = (event: any) => {
     setId(event);
@@ -197,12 +278,17 @@ const MainScreen: React.FC = () => {
   };
   return (
     <SidebarContainer>
-      <div className="flex-coloumn w-full report-template-wrapper">
+      <div
+        ref={reportScrollRef}
+        className="flex-coloumn w-full report-template-wrapper"
+      >
         <Grid container spacing={2}>
           <Grid xs={3} xl={2}>
             <Sidebar
               onAddSection={onAddSection}
               sections={templateData?.sections}
+              activeSectionId={activeSectionId}
+              onNavigateToSection={scrollToSection}
             />
           </Grid>
           <Grid xs={9} xl={10} className="p-5">
@@ -212,7 +298,15 @@ const MainScreen: React.FC = () => {
             <div className="max-w-[1038px] rounded p-4">
               {templateData.sections.map((section: any, i: number) => {
                 return (
-                  <div key={i}>
+                  <div
+                    key={section?.id ?? i}
+                    ref={(el) => {
+                      const id = section?.id;
+                      if (id === undefined || id === null) return;
+                      if (el) sectionElsRef.current.set(String(id), el);
+                      else sectionElsRef.current.delete(String(id));
+                    }}
+                  >
                     {section.items.map((item: any, index: number) => {
                       return (
                         <div key={index} className="py-3">

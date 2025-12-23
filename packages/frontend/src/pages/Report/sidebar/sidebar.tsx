@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 import { List as MuiList } from '@mui/material';
 import { styled } from '@mui/system';
 import AddIcon from '../../../images/AddIcons.png';
@@ -8,22 +8,48 @@ const SidebarWrapper = styled('div')({
   height: 'calc(100vh - 230px)',
   padding: '15px 35px',
   maxWidth: '292px',
+  overflowY: 'auto',
 });
 
 interface SidebarProps {
   onAddSection: () => void;
-  sections: { title: string }[];
+  sections: any[];
+  activeSectionId?: string | number | null;
+  onNavigateToSection?: (sectionId: string | number) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ onAddSection, sections }) => {
+const Sidebar: React.FC<SidebarProps> = ({
+  onAddSection,
+  sections,
+  activeSectionId,
+  onNavigateToSection,
+}) => {
+  const listRef = useRef<HTMLUListElement | null>(null);
+
+  useEffect(() => {
+    if (activeSectionId === null || activeSectionId === undefined) return;
+    const listEl = listRef.current;
+    if (!listEl) return;
+
+    const activeEl = listEl.querySelector(
+      `[data-section-id="${String(activeSectionId)}"]`
+    ) as HTMLElement | null;
+
+    // Keep highlighted item visible in the sidebar.
+    activeEl?.scrollIntoView({ block: 'nearest' });
+  }, [activeSectionId]);
+
   return (
     <>
       <SidebarWrapper>
-        <MuiList>
+        <MuiList ref={listRef}>
           {sections?.map((section, i) => (
-            <>
-              <SectionItem key={i} item={section} />
-            </>
+            <SectionItem
+              key={section?.id ?? i}
+              item={section}
+              activeSectionId={activeSectionId}
+              onNavigateToSection={onNavigateToSection}
+            />
           ))}
           <div
             onClick={onAddSection}
