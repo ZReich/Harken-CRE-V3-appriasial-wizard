@@ -1,0 +1,278 @@
+import React, { useState } from 'react';
+import { X, FileCheck, Download, Share2, CheckCircle, Loader2, AlertCircle } from 'lucide-react';
+
+type FinalizeStep = 'confirm' | 'processing' | 'complete' | 'error';
+
+interface FinalizeDialogProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onFinalize: () => Promise<void>;
+  reportTitle: string;
+  hasUnsavedChanges: boolean;
+  onSaveFirst: () => void;
+}
+
+export const FinalizeDialog: React.FC<FinalizeDialogProps> = ({
+  isOpen,
+  onClose,
+  onFinalize,
+  reportTitle,
+  hasUnsavedChanges,
+  onSaveFirst,
+}) => {
+  const [step, setStep] = useState<FinalizeStep>('confirm');
+  const [progress, setProgress] = useState(0);
+  const [error, setError] = useState<string | null>(null);
+  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+
+  if (!isOpen) return null;
+
+  const handleFinalize = async () => {
+    setStep('processing');
+    setProgress(0);
+    setError(null);
+
+    try {
+      // Simulate progress steps
+      const progressSteps = [
+        { percent: 10, message: 'Validating report data...' },
+        { percent: 30, message: 'Generating pages...' },
+        { percent: 50, message: 'Processing images...' },
+        { percent: 70, message: 'Creating PDF...' },
+        { percent: 90, message: 'Finalizing...' },
+        { percent: 100, message: 'Complete!' },
+      ];
+
+      for (const step of progressSteps) {
+        await new Promise(resolve => setTimeout(resolve, 500));
+        setProgress(step.percent);
+      }
+
+      await onFinalize();
+      
+      // Simulate PDF URL
+      setPdfUrl('/generated/report.pdf');
+      setStep('complete');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to generate report');
+      setStep('error');
+    }
+  };
+
+  const handleClose = () => {
+    setStep('confirm');
+    setProgress(0);
+    setError(null);
+    setPdfUrl(null);
+    onClose();
+  };
+
+  const renderConfirmStep = () => (
+    <>
+      <div className="p-6">
+        {hasUnsavedChanges && (
+          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6 flex items-start gap-3">
+            <AlertCircle className="text-amber-500 flex-shrink-0 mt-0.5" size={20} />
+            <div>
+              <h4 className="font-medium text-amber-800">Unsaved Changes</h4>
+              <p className="text-sm text-amber-700 mt-1">
+                You have unsaved changes. Would you like to save them before creating the final report?
+              </p>
+              <button
+                onClick={onSaveFirst}
+                className="mt-2 px-3 py-1.5 bg-amber-500 text-white rounded text-sm font-medium hover:bg-amber-600"
+              >
+                Save Changes First
+              </button>
+            </div>
+          </div>
+        )}
+
+        <div className="text-center mb-6">
+          <div className="w-16 h-16 bg-sky-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <FileCheck className="text-sky-600" size={32} />
+          </div>
+          <h3 className="text-xl font-semibold text-slate-800 mb-2">Ready to Finalize</h3>
+          <p className="text-slate-600">
+            Create the final PDF report for <strong>{reportTitle}</strong>
+          </p>
+        </div>
+
+        <div className="bg-slate-50 rounded-lg p-4 mb-6">
+          <h4 className="font-medium text-slate-700 mb-3">This will:</h4>
+          <ul className="space-y-2 text-sm text-slate-600">
+            <li className="flex items-center gap-2">
+              <CheckCircle size={16} className="text-green-500" />
+              Generate a professional PDF report
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckCircle size={16} className="text-green-500" />
+              Lock in all current data and formatting
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckCircle size={16} className="text-green-500" />
+              Create a downloadable file for delivery
+            </li>
+            <li className="flex items-center gap-2">
+              <CheckCircle size={16} className="text-green-500" />
+              Save this version to your report history
+            </li>
+          </ul>
+        </div>
+
+        <p className="text-xs text-slate-500 text-center">
+          You can always generate a new version later if needed.
+        </p>
+      </div>
+
+      <div className="flex justify-end gap-3 px-6 py-4 border-t border-slate-200 bg-slate-50">
+        <button
+          onClick={handleClose}
+          className="px-4 py-2 text-slate-600 hover:bg-slate-200 rounded-lg transition-colors"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={handleFinalize}
+          className="px-6 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors font-medium flex items-center gap-2"
+        >
+          <FileCheck size={18} />
+          Create Final Report
+        </button>
+      </div>
+    </>
+  );
+
+  const renderProcessingStep = () => (
+    <div className="p-8 text-center">
+      <div className="w-20 h-20 bg-sky-100 rounded-full flex items-center justify-center mx-auto mb-6">
+        <Loader2 className="text-sky-600 animate-spin" size={40} />
+      </div>
+      
+      <h3 className="text-xl font-semibold text-slate-800 mb-2">Generating Report</h3>
+      <p className="text-slate-600 mb-6">Please wait while we create your PDF...</p>
+      
+      <div className="max-w-md mx-auto">
+        <div className="h-2 bg-slate-200 rounded-full overflow-hidden mb-2">
+          <div
+            className="h-full bg-sky-500 rounded-full transition-all duration-300"
+            style={{ width: `${progress}%` }}
+          />
+        </div>
+        <p className="text-sm text-slate-500">{progress}% complete</p>
+      </div>
+    </div>
+  );
+
+  const renderCompleteStep = () => (
+    <>
+      <div className="p-8 text-center">
+        <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
+          <CheckCircle className="text-green-600" size={40} />
+        </div>
+        
+        <h3 className="text-xl font-semibold text-slate-800 mb-2">Report Generated!</h3>
+        <p className="text-slate-600 mb-6">
+          Your appraisal report has been successfully created and is ready for download.
+        </p>
+        
+        <div className="flex flex-col gap-3 max-w-xs mx-auto">
+          <button
+            onClick={() => pdfUrl && window.open(pdfUrl, '_blank')}
+            className="px-6 py-3 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors font-medium flex items-center justify-center gap-2"
+          >
+            <Download size={18} />
+            Download PDF
+          </button>
+          
+          <button
+            onClick={() => {
+              // Copy share link logic
+              navigator.clipboard.writeText(window.location.origin + pdfUrl);
+            }}
+            className="px-6 py-3 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors font-medium flex items-center justify-center gap-2"
+          >
+            <Share2 size={18} />
+            Copy Link
+          </button>
+        </div>
+      </div>
+
+      <div className="flex justify-center px-6 py-4 border-t border-slate-200 bg-slate-50">
+        <button
+          onClick={handleClose}
+          className="px-4 py-2 text-slate-600 hover:bg-slate-200 rounded-lg transition-colors"
+        >
+          Close
+        </button>
+      </div>
+    </>
+  );
+
+  const renderErrorStep = () => (
+    <>
+      <div className="p-8 text-center">
+        <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
+          <AlertCircle className="text-red-600" size={40} />
+        </div>
+        
+        <h3 className="text-xl font-semibold text-slate-800 mb-2">Generation Failed</h3>
+        <p className="text-slate-600 mb-4">
+          We encountered an error while creating your report.
+        </p>
+        
+        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 text-left">
+          <p className="text-sm text-red-700">{error}</p>
+        </div>
+      </div>
+
+      <div className="flex justify-end gap-3 px-6 py-4 border-t border-slate-200 bg-slate-50">
+        <button
+          onClick={handleClose}
+          className="px-4 py-2 text-slate-600 hover:bg-slate-200 rounded-lg transition-colors"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={() => setStep('confirm')}
+          className="px-6 py-2 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors font-medium"
+        >
+          Try Again
+        </button>
+      </div>
+    </>
+  );
+
+  return (
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+      <div className="bg-white rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
+        {/* Header */}
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
+          <h2 className="text-lg font-semibold text-slate-800">
+            {step === 'confirm' && 'Finalize Report'}
+            {step === 'processing' && 'Generating...'}
+            {step === 'complete' && 'Success!'}
+            {step === 'error' && 'Error'}
+          </h2>
+          {step !== 'processing' && (
+            <button
+              onClick={handleClose}
+              className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+            >
+              <X size={20} className="text-slate-400" />
+            </button>
+          )}
+        </div>
+
+        {/* Content */}
+        {step === 'confirm' && renderConfirmStep()}
+        {step === 'processing' && renderProcessingStep()}
+        {step === 'complete' && renderCompleteStep()}
+        {step === 'error' && renderErrorStep()}
+      </div>
+    </div>
+  );
+};
+
+export default FinalizeDialog;
+

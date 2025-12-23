@@ -13,13 +13,20 @@ import {
   AlignLeft,
   AlignCenter,
   List,
-  MessageSquare
+  MessageSquare,
+  Plus,
+  ChevronDown,
+  PenLine,
+  Link2,
+  Download
 } from 'lucide-react';
-import { Property, GridRowData, PropertyValues, ComparisonValue, Section } from '../types';
+import { Property, GridRowData, PropertyValues, ComparisonValue, Section, GridRowCategory } from '../types';
 import { PropertyCard } from './PropertyCard';
 import { INITIAL_ROWS, SECTIONS } from '../constants';
 import EnhancedTextArea from '../../../components/EnhancedTextArea';
 import { useWizard } from '../../../context/WizardContext';
+import { getAvailableElements as filterElements, normalizeSection } from '../../../utils/elementFilter';
+import type { SectionType } from '../../../constants/elementRegistry';
 import { HorizontalScrollIndicator } from '../../../components/HorizontalScrollIndicator';
 
 interface SalesGridProps {
@@ -31,7 +38,11 @@ interface SalesGridProps {
 }
 
 export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initialValues, analysisMode = 'standard', scenarioId, onDeleteProperty }) => {
-  const { setApproachConclusion } = useWizard();
+  const { setApproachConclusion, state: wizardState } = useWizard();
+  const { propertyType, propertySubtype, scenarios, activeScenarioId } = wizardState;
+  
+  // Get current scenario name for element filtering
+  const currentScenario = scenarios.find(s => s.id === activeScenarioId)?.name;
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [rows, setRows] = useState<GridRowData[]>(INITIAL_ROWS);
   const [sections] = useState<Section[]>(SECTIONS);
@@ -42,6 +53,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
   const [confirmDelete, setConfirmDelete] = useState<{ isOpen: boolean; sectionId: string; sectionTitle: string } | null>(null);
   const [notesEditor, setNotesEditor] = useState<{ isOpen: boolean; propId: string; propName: string; rowKey: string } | null>(null);
   const [notesContent, setNotesContent] = useState<string>('');
+  const [openElementDropdown, setOpenElementDropdown] = useState<string | null>(null);
 
   // Calculate the concluded value from comparable properties
   const concludedValue = useMemo(() => {
@@ -101,6 +113,79 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
       setApproachConclusion(scenarioId, 'Sales Comparison', concludedValue);
     }
   }, [scenarioId, concludedValue, setApproachConclusion]);
+
+  // Handle clicking outside to close dropdowns
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (openElementDropdown && !target.closest('.element-dropdown')) {
+        setOpenElementDropdown(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [openElementDropdown]);
+
+  // Get available elements for a section that haven't been added yet
+  // Uses dynamic filtering based on property type, subtype, approach, section, and scenario
+  const getAvailableElements = (sectionId: string) => {
+    const currentRowKeys = rows.filter(r => r.category === sectionId).map(r => r.key);
+    
+    // Normalize section ID to match registry format
+    const normalizedSection = normalizeSection(sectionId) as SectionType;
+    
+    // Filter elements based on current context
+    const filteredElements = filterElements({
+      section: normalizedSection,
+      propertyType: propertyType,
+      subtype: propertySubtype,
+      approach: 'sales_comparison',
+      scenario: currentScenario,
+      excludeKeys: currentRowKeys
+    });
+    
+    // Map to the format expected by the dropdown
+    return filteredElements.map(el => ({
+      key: el.key,
+      label: el.label,
+      description: el.description
+    }));
+  };
+
+  // Add an element from the available elements dropdown
+  const handleAddElement = (sectionId: GridRowCategory, element: { label: string; key: string }) => {
+    const newRow: GridRowData = { 
+      id: `${sectionId}_${element.key}`, 
+      category: sectionId, 
+      label: element.label, 
+      key: element.key, 
+      format: 'text',
+      mode: 'both'
+    };
+    
+    // Check if already exists
+    if (rows.some(r => r.key === element.key)) return;
+    setRows(prev => [...prev, newRow]);
+    setOpenElementDropdown(null);
+  };
+
+  // Add a custom element with user-typed name
+  const handleAddCustomElement = (sectionId: GridRowCategory) => {
+    const name = prompt('Enter element name:');
+    if (!name) return;
+    const key = name.toLowerCase().replace(/\s+/g, '_') + '_custom';
+    const newRow: GridRowData = { 
+      id: `${sectionId}_${key}`, 
+      category: sectionId, 
+      label: name, 
+      key: key, 
+      format: 'text',
+      mode: 'both'
+    };
+    
+    setRows(prev => [...prev, newRow]);
+    setOpenElementDropdown(null);
+  };
 
   const removeRow = (rowId: string) => {
     setRows(prev => prev.filter(r => r.id !== rowId));
@@ -226,6 +311,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
   const LABEL_COL_WIDTH = 160;
   const SUBJECT_COL_WIDTH = 180;
   const COMP_COL_WIDTH = 170;
+  const ACTION_COL_WIDTH = 160;
   
   // Calculate total grid width for reconciliation section
   const totalGridWidth = LABEL_COL_WIDTH + SUBJECT_COL_WIDTH + (properties.length - 1) * COMP_COL_WIDTH;
@@ -407,6 +493,61 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
       >
         <Minus className="w-3 h-3" /> SIM
       </span>
+    );
+  };
+
+  // Add Element Button with Dropdown - positioned in the Elements column
+  const AddElementButton = ({ sectionId }: { sectionId: GridRowCategory }) => {
+    const isOpen = openElementDropdown === sectionId;
+    const availableElements = getAvailableElements(sectionId);
+    
+    return (
+      <div className={`element-dropdown relative ${isOpen ? 'z-[500]' : ''}`}>
+        <button 
+          onClick={() => setOpenElementDropdown(isOpen ? null : sectionId)}
+          className="w-full py-2 px-3 border-2 border-dashed border-slate-300 rounded-lg flex items-center justify-between gap-2 text-slate-500 font-semibold hover:border-[#0da1c7] hover:text-[#0da1c7] hover:bg-[#0da1c7]/5 transition-all duration-300 group text-xs bg-white"
+        >
+          <div className="flex items-center gap-2">
+            <Plus size={12} className="text-slate-400 group-hover:text-[#0da1c7]" />
+            <span>Add Element</span>
+          </div>
+          <ChevronDown size={12} className={`text-slate-400 group-hover:text-[#0da1c7] transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+        </button>
+        
+        {isOpen && (
+          <div className="absolute top-full left-0 mt-1 w-64 bg-white rounded-xl shadow-2xl border border-slate-200 z-[500] overflow-hidden">
+            <div className="px-3 py-2 bg-slate-50 border-b border-slate-200">
+              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Available Elements</span>
+            </div>
+            <div className="max-h-48 overflow-y-auto">
+              {availableElements.length > 0 ? (
+                availableElements.map(element => (
+                  <button
+                    key={element.key}
+                    onClick={() => handleAddElement(sectionId, element)}
+                    className="w-full text-left px-3 py-2 text-xs hover:bg-[#0da1c7]/5 transition-colors border-b border-slate-100 last:border-b-0 group"
+                  >
+                    <div className="font-medium text-slate-700 group-hover:text-[#0da1c7]">{element.label}</div>
+                  </button>
+                ))
+              ) : (
+                <div className="px-3 py-3 text-xs text-slate-400 italic text-center">
+                  All elements have been added
+                </div>
+              )}
+            </div>
+            <div className="border-t border-slate-200">
+              <button
+                onClick={() => handleAddCustomElement(sectionId)}
+                className="w-full text-left px-3 py-2.5 text-xs hover:bg-[#0da1c7]/5 transition-colors flex items-center gap-2 text-[#0da1c7] font-medium"
+              >
+                <PenLine size={12} />
+                Add Custom
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
     );
   };
 
@@ -614,36 +755,50 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
       
       {/* SCROLLABLE AREA - Contains grid and reconciliation */}
       <div ref={scrollContainerRef} className="flex-1 overflow-auto custom-scrollbar relative" style={{ backgroundColor: '#ffffff', isolation: 'isolate' }}>
-        {/* Horizontal Scroll Indicator - positioned below headers */}
-        <HorizontalScrollIndicator scrollContainerRef={scrollContainerRef} stickyTop={120} />
+        {/* Horizontal Scroll Indicator - offset to avoid action column */}
+        <HorizontalScrollIndicator scrollContainerRef={scrollContainerRef} stickyTop={120} rightOffset={ACTION_COL_WIDTH} />
         
-        {/* GRID CONTAINER */}
-        <div className="grid relative" style={{ gridTemplateColumns: `${LABEL_COL_WIDTH}px ${SUBJECT_COL_WIDTH}px repeat(${properties.length - 1}, ${COMP_COL_WIDTH}px)`, minWidth: `${totalGridWidth}px`, backgroundColor: '#ffffff' }}>
+        {/* Flex container for grid + action column */}
+        <div 
+          className="flex"
+          style={{ minWidth: `${totalGridWidth + ACTION_COL_WIDTH}px` }}
+        >
+          {/* GRID CONTAINER */}
+          <div 
+            className="grid relative bg-white flex-shrink-0" 
+            style={{ 
+              gridTemplateColumns: `${LABEL_COL_WIDTH}px ${SUBJECT_COL_WIDTH}px repeat(${properties.length - 1}, ${COMP_COL_WIDTH}px)`, 
+              minWidth: `${totalGridWidth}px`,
+              backgroundColor: '#ffffff'
+            }}
+          >
             
             {/* Header Row - Sticky to top with solid backgrounds */}
             <div 
-              className="sticky top-0 left-0 z-[120] border-b-2 border-slate-300 p-2 pl-3 flex items-end" 
+              className="sticky top-0 left-0 z-[120] border-b border-slate-200 flex items-end" 
               style={{ 
                 width: LABEL_COL_WIDTH, 
+                height: 120,
                 backgroundColor: '#ffffff', 
-                boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
                 transform: 'translateZ(0)',
                 willChange: 'transform'
               }}
             >
-              <div className="font-bold text-slate-400 text-xs uppercase tracking-wider">Elements</div>
+              <div className="p-2 pl-3">
+                <div className="font-bold text-slate-400 text-xs uppercase tracking-wider">Elements</div>
+              </div>
             </div>
             {properties.map((prop) => (
                <div 
                  key={prop.id} 
-                 className={`sticky top-0 border-b-2 border-r overflow-hidden ${
+                 className={`sticky top-0 overflow-hidden flex flex-col ${
                    prop.type === 'subject' 
-                     ? 'z-[110] border-blue-300 shadow-[4px_0_16px_rgba(0,0,0,0.08)]' 
-                     : 'z-[100] border-slate-300'
+                     ? 'z-[110] border-b-2 border-[#0da1c7] shadow-[4px_0_16px_rgba(0,0,0,0.08)]' 
+                     : 'z-[100] border-b border-slate-200'
                  }`} 
                  style={{ 
-                   backgroundColor: prop.type === 'subject' ? '#eff6ff' : '#ffffff',
-                   boxShadow: '0 2px 4px rgba(0,0,0,0.05)',
+                   height: 120,
+                   backgroundColor: '#ffffff',
                    transform: 'translateZ(0)',
                    willChange: 'transform',
                    ...(prop.type === 'subject' ? { left: LABEL_COL_WIDTH, width: SUBJECT_COL_WIDTH, position: 'sticky' as const } : {})
@@ -792,9 +947,62 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                     </React.Fragment>
                   );
                 })}
+
+                {/* Add Element Button Row for this section */}
+                <div 
+                  className={`sticky left-0 p-2 ${openElementDropdown === section.id ? 'z-[500]' : 'z-[60]'}`}
+                  style={{ width: LABEL_COL_WIDTH, backgroundColor: '#ffffff' }}
+                >
+                  <AddElementButton sectionId={section.id as GridRowCategory} />
+                </div>
+                <div 
+                  className="sticky left-[160px] z-[55] shadow-[4px_0_16px_rgba(0,0,0,0.05)]"
+                  style={{ width: SUBJECT_COL_WIDTH, backgroundColor: '#ffffff' }}
+                ></div>
+                {properties.filter(p => p.type !== 'subject').map(prop => (
+                  <div key={`add-element-${section.id}-${prop.id}`} className="bg-white"></div>
+                ))}
                 </React.Fragment>
               );
             })}
+          </div>
+
+          {/* ACTION COLUMN - Three buttons, equally spaced */}
+          <div 
+            className="flex-shrink-0 bg-slate-50 flex flex-col items-center justify-start py-8 sticky top-0 self-start"
+            style={{ width: ACTION_COL_WIDTH, height: 'auto', minHeight: 400 }}
+          >
+            <div className="flex flex-col items-center justify-between h-80 py-4">
+              {/* Link Existing Comps */}
+              <button 
+                className="flex flex-col items-center gap-2 p-4 rounded-xl hover:bg-white transition-colors group"
+                title="Link existing comps from your database"
+              >
+                <Link2 className="w-8 h-8 text-[#0da1c7]" />
+                <span className="text-xs font-semibold text-[#0da1c7] text-center leading-tight">Link Existing<br/>Comps</span>
+              </button>
+
+              {/* Add Comps */}
+              <button 
+                className="flex flex-col items-center gap-2 p-4 rounded-xl hover:bg-white transition-colors group"
+                title="Add a new comp manually"
+              >
+                <div className="w-12 h-12 rounded-full bg-[#0da1c7]/20 flex items-center justify-center group-hover:bg-[#0da1c7]/30 transition-colors">
+                  <Plus className="w-6 h-6 text-[#0da1c7]" />
+                </div>
+                <span className="text-xs font-semibold text-[#0da1c7]">Add Comps</span>
+              </button>
+
+              {/* Import Comp */}
+              <button 
+                className="flex flex-col items-center gap-2 p-4 rounded-xl hover:bg-white transition-colors group"
+                title="Import comp from external source"
+              >
+                <Download className="w-8 h-8 text-[#0da1c7]" />
+                <span className="text-xs font-semibold text-[#0da1c7]">Import Comp</span>
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* RECONCILIATION SECTION - Stays centered, doesn't scroll horizontally */}

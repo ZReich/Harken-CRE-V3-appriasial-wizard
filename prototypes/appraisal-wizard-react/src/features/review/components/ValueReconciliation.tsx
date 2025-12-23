@@ -1,15 +1,27 @@
-import { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
+import { Sparkles, ChevronDown, ChevronUp, Info, AlertTriangle, CheckCircle2 } from 'lucide-react';
 import { useWizard } from '../../../context/WizardContext';
-import { APPROACH_COLORS, ALL_APPROACHES } from '../constants';
+import { APPROACH_COLORS } from '../constants';
 import { DEFAULT_CERTIFICATIONS } from '../types';
 import type { ScenarioReconciliation } from '../types';
+import EnhancedTextArea from '../../../components/EnhancedTextArea';
+import { 
+  calculateAIWeights, 
+  getIncomeSubMethodValues,
+  getTypicalExposureRanges,
+  type WeightCalculationResult 
+} from '../utils/weightCalculator';
+import {
+  type ReconciliationContextData,
+  type ExposureContextData,
+} from '../prompts/reconciliationPrompts';
 
 // =================================================================
 // HELPER FUNCTIONS
 // =================================================================
 
 function formatCurrency(value: number | null | undefined): string {
-  if (value == null) return 'N/A';
+  if (value == null || value === 0) return 'N/A';
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'USD',
@@ -62,49 +74,44 @@ export function ValueReconciliation() {
   const { state, getIncomeApproachData, setReconciliationData } = useWizard();
   const { scenarios, improvementsInventory, extractedData, reconciliationData } = state;
 
-  // Local state for reconciliation data - initialize from WizardContext if available
+  // Local state for reconciliation data
   const [activeScenarioIndex, setActiveScenarioIndex] = useState(0);
   const [reconciliations, setReconciliations] = useState<ScenarioReconciliation[]>(() =>
     reconciliationData?.scenarioReconciliations || scenarios.map((s) => ({
       scenarioId: s.id,
-      weights: s.approaches.reduce((acc, approach) => {
-        acc[approach] = Math.floor(100 / s.approaches.length);
-        return acc;
-      }, {} as Record<string, number>),
+      weights: {}, // Start with empty weights - user must enter or use AI
       comments: '',
     }))
   );
-  const [exposurePeriod, setExposurePeriod] = useState<string>(
+  
+  // Exposure time as ranges
+  const [exposureMin, setExposureMin] = useState<string>(
     () => reconciliationData?.exposurePeriod?.toString() || ''
   );
-  const [marketingTime, setMarketingTime] = useState<string>(
+  const [exposureMax, setExposureMax] = useState<string>('');
+  const [marketingMin, setMarketingMin] = useState<string>(
     () => reconciliationData?.marketingTime?.toString() || ''
   );
+  const [marketingMax, setMarketingMax] = useState<string>('');
   const [exposureRationale, setExposureRationale] = useState(
     () => reconciliationData?.exposureRationale || ''
   );
   const [selectedCertifications, setSelectedCertifications] = useState<string[]>(
     () => reconciliationData?.certifications || []
   );
-
-  // Sync local state to WizardContext when it changes
-  useEffect(() => {
-    setReconciliationData({
-      scenarioReconciliations: reconciliations,
-      exposurePeriod: exposurePeriod ? parseInt(exposurePeriod) : null,
-      marketingTime: marketingTime ? parseInt(marketingTime) : null,
-      exposureRationale,
-      certifications: selectedCertifications,
-    });
-  }, [reconciliations, exposurePeriod, marketingTime, exposureRationale, selectedCertifications, setReconciliationData]);
+  
+  // Income sub-method visibility
+  const [incomeExpanded, setIncomeExpanded] = useState(false);
+  
+  // AI weight suggestion state
+  const [aiWeightResult, setAiWeightResult] = useState<WeightCalculationResult | null>(null);
+  const [showAiExplanation, setShowAiExplanation] = useState(false);
 
   // Get property info from state
   const propertyName = useMemo(() => {
-    // Try to get from improvements inventory first
     if (improvementsInventory?.parcels?.[0]?.buildings?.[0]?.name) {
       return improvementsInventory.parcels[0].buildings[0].name;
     }
-    // Try extracted data
     if (extractedData?.cadastral?.propertyName?.value) {
       return extractedData.cadastral.propertyName.value;
     }
@@ -121,55 +128,136 @@ export function ValueReconciliation() {
     return 'Location Not Specified';
   }, [extractedData, improvementsInventory]);
 
-  // Get all unique approaches used across scenarios
-  const allUsedApproaches = useMemo(() => {
-    const approaches = new Set<string>();
-    scenarios.forEach((s) => s.approaches.forEach((a) => approaches.add(a)));
-    return ALL_APPROACHES.filter((a) => approaches.has(a));
-  }, [scenarios]);
+  // Get typical exposure ranges for guidance
+  const typicalRanges = useMemo(() => 
+    getTypicalExposureRanges(state.propertyType || 'commercial'),
+    [state.propertyType]
+  );
 
-  // Get approach value for a scenario (mock values for now - would come from actual approach data)
-  const getApproachValue = (scenarioId: number, approachName: string): number | null => {
+  // Get income sub-method values - use actual data or mock values for demo
+  const incomeSubMethods = useMemo(() => {
+    const incomeData = getIncomeApproachData();
+    const calculated = getIncomeSubMethodValues(incomeData);
+    
+    // If no actual data, use mock values for demo purposes
+    if (calculated.directCapValue === 0 && calculated.dcfValue === 0) {
+      return {
+        directCapValue: 1240000,
+        dcfValue: 1260000,
+        reconciledValue: 1250000,
+      };
+    }
+    return calculated;
+  }, [getIncomeApproachData]);
+
+  // Get approach value for a scenario
+  const getApproachValue = useCallback((scenarioId: number, approachName: string): number | null => {
     const scenario = scenarios.find((s) => s.id === scenarioId);
     if (!scenario?.approaches.includes(approachName)) return null;
 
     // Get income approach data if available
     const incomeData = getIncomeApproachData();
     if (approachName.includes('Income') && incomeData?.valuationData?.marketCapRate) {
-      // In production, calculate NOI / Cap Rate
-      return 1250000; // Mock value
+      return incomeSubMethods.reconciledValue || 1250000;
     }
 
     // Mock values for demo - in production these would come from actual approach data
     const mockValues: Record<string, Record<string, number>> = {
-      'As Is': { 'Sales Comparison': 1130000, 'Income Approach': 1140000, 'Cost Approach': 1052000 },
-      'As Completed': { 'Sales Comparison': 1550000, 'Income Approach': 1583000, 'Cost Approach': 1310000 },
-      'As Stabilized': { 'Sales Comparison': 0, 'Income Approach': 2036000, 'Cost Approach': 0 },
+      'As Is': { 'Sales Comparison': 1130000, 'Income Approach': 1250000, 'Cost Approach': 1052000, 'Land Valuation': 450000 },
+      'As Completed': { 'Sales Comparison': 1550000, 'Income Approach': 1250000, 'Cost Approach': 1310000, 'Land Valuation': 450000 },
+      'As Stabilized': { 'Sales Comparison': 0, 'Income Approach': 1250000, 'Cost Approach': 0, 'Land Valuation': 0 },
     };
 
     return mockValues[scenario.name]?.[approachName] || null;
-  };
+  }, [scenarios, getIncomeApproachData, incomeSubMethods.reconciledValue]);
 
-  // Calculate concluded value for a scenario
-  const getConcludedValue = (scenarioId: number): number => {
+  // Calculate weight total for active scenario
+  const getWeightTotal = useCallback((scenarioId: number): number => {
     const recon = reconciliations.find((r) => r.scenarioId === scenarioId);
     const scenario = scenarios.find((s) => s.id === scenarioId);
     if (!recon || !scenario) return 0;
 
-    let totalWeight = 0;
+    return scenario.approaches.reduce((sum, approach) => {
+      return sum + (recon.weights[approach] || 0);
+    }, 0);
+  }, [reconciliations, scenarios]);
+
+  // Calculate concluded value for a scenario
+  const getConcludedValue = useCallback((scenarioId: number): number => {
+    const recon = reconciliations.find((r) => r.scenarioId === scenarioId);
+    const scenario = scenarios.find((s) => s.id === scenarioId);
+    if (!recon || !scenario) return 0;
+
     let weightedSum = 0;
+    let totalWeight = 0;
 
     scenario.approaches.forEach((approach) => {
       const weight = recon.weights[approach] || 0;
       const value = getApproachValue(scenarioId, approach);
-      if (value) {
+      if (value && weight > 0) {
         totalWeight += weight;
         weightedSum += (value * weight) / 100;
       }
     });
 
     return Math.round(weightedSum);
-  };
+  }, [reconciliations, scenarios, getApproachValue]);
+
+  // Get value breakdown string
+  const getValueBreakdown = useCallback((scenarioId: number): string => {
+    const recon = reconciliations.find((r) => r.scenarioId === scenarioId);
+    const scenario = scenarios.find((s) => s.id === scenarioId);
+    if (!recon || !scenario) return '';
+
+    const parts: string[] = [];
+    scenario.approaches.forEach((approach) => {
+      const weight = recon.weights[approach] || 0;
+      const value = getApproachValue(scenarioId, approach);
+      if (value && weight > 0) {
+        const shortName = approach.replace(' Approach', '').replace(' Comparison', '');
+        parts.push(`${shortName} ${weight}% × ${formatCurrency(value)}`);
+      }
+    });
+
+    return parts.join(' + ');
+  }, [reconciliations, scenarios, getApproachValue]);
+
+  // Handle AI weight suggestion
+  const handleSuggestWeights = useCallback(() => {
+    const activeScenario = scenarios[activeScenarioIndex];
+    if (!activeScenario) return;
+
+    const incomeData = getIncomeApproachData();
+    
+    const result = calculateAIWeights(
+      state.propertyType || 'commercial',
+      activeScenario.name,
+      activeScenario.approaches,
+      undefined, // salesData - would come from actual sales comparison data
+      incomeData,
+      undefined, // costData
+      improvementsInventory
+    );
+
+    setAiWeightResult(result);
+    setShowAiExplanation(true);
+  }, [scenarios, activeScenarioIndex, state.propertyType, getIncomeApproachData, improvementsInventory]);
+
+  // Apply AI suggested weights
+  const applyAiWeights = useCallback(() => {
+    if (!aiWeightResult) return;
+    const activeScenario = scenarios[activeScenarioIndex];
+    if (!activeScenario) return;
+
+    setReconciliations((prev) =>
+      prev.map((r) =>
+        r.scenarioId === activeScenario.id
+          ? { ...r, weights: { ...aiWeightResult.weights } }
+          : r
+      )
+    );
+    setShowAiExplanation(false);
+  }, [aiWeightResult, scenarios, activeScenarioIndex]);
 
   // Handle weight change
   const handleWeightChange = (scenarioId: number, approach: string, value: string) => {
@@ -197,12 +285,54 @@ export function ValueReconciliation() {
     );
   };
 
+  // Sync local state to WizardContext
+  useEffect(() => {
+    setReconciliationData({
+      scenarioReconciliations: reconciliations,
+      exposurePeriod: exposureMin ? parseInt(exposureMin) : null,
+      marketingTime: marketingMin ? parseInt(marketingMin) : null,
+      exposureRationale,
+      certifications: selectedCertifications,
+    });
+  }, [reconciliations, exposureMin, marketingMin, exposureRationale, selectedCertifications, setReconciliationData]);
+
   const activeScenario = scenarios[activeScenarioIndex];
   const activeReconciliation = reconciliations.find((r) => r.scenarioId === activeScenario?.id);
+  const weightTotal = activeScenario ? getWeightTotal(activeScenario.id) : 0;
+  const concludedValue = activeScenario ? getConcludedValue(activeScenario.id) : 0;
+
+  // Build context data for AI drafting
+  const reconciliationContextData: ReconciliationContextData | null = activeScenario ? {
+    propertyType: state.propertyType || 'commercial',
+    propertySubtype: state.propertySubtype || undefined,
+    location: propertyLocation,
+    scenarioName: activeScenario.name,
+    effectiveDate: activeScenario.effectiveDate || 'TBD',
+    approaches: activeScenario.approaches.map(a => ({
+      name: a,
+      value: getApproachValue(activeScenario.id, a) || 0,
+      weight: activeReconciliation?.weights[a] || 0,
+      qualityScore: aiWeightResult?.qualityScores[a] || 50,
+    })),
+    concludedValue,
+    minValue: Math.min(...activeScenario.approaches.map(a => getApproachValue(activeScenario.id, a) || Infinity)),
+    maxValue: Math.max(...activeScenario.approaches.map(a => getApproachValue(activeScenario.id, a) || 0)),
+    variancePercent: 0, // Would calculate actual variance
+  } : null;
+
+  const exposureContextData: ExposureContextData = {
+    propertyType: state.propertyType || 'commercial',
+    location: propertyLocation,
+    value: concludedValue,
+    exposureMin: parseInt(exposureMin) || typicalRanges.exposureMin,
+    exposureMax: parseInt(exposureMax) || typicalRanges.exposureMax,
+    marketingMin: parseInt(marketingMin) || typicalRanges.marketingMin,
+    marketingMax: parseInt(marketingMax) || typicalRanges.marketingMax,
+  };
 
   return (
     <div className="max-w-6xl mx-auto space-y-6 animate-fade-in">
-      {/* Summary Card */}
+      {/* Summary Header Card - Simplified */}
       <div className="bg-gradient-to-r from-[#4db8d1] to-[#7fcce0] rounded-xl p-8 text-white shadow-lg">
         <div className="flex items-center justify-between mb-6">
           <div>
@@ -210,31 +340,20 @@ export function ValueReconciliation() {
             <p className="text-blue-100">{propertyLocation}</p>
           </div>
           <div className="text-right">
-            <div className="text-sm opacity-90 mb-2">Valuation Scenarios</div>
-            <div className="flex gap-2">
-              {scenarios.map((s) => (
-                <span
-                  key={s.id}
-                  className="bg-white/20 px-3 py-1 rounded-full text-sm font-medium"
-                >
-                  {s.name}
-                </span>
-              ))}
-            </div>
+            <div className="text-sm opacity-90 mb-1">Primary Value Conclusion</div>
+            <div className="text-4xl font-bold">{formatCurrency(getConcludedValue(scenarios[0]?.id || 1))}</div>
+            <div className="text-sm opacity-75 mt-1">{scenarios[0]?.effectiveDate || 'Effective Date TBD'}</div>
           </div>
         </div>
-        <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${Math.min(scenarios.length + 1, 4)}, 1fr)` }}>
+        <div className="grid grid-cols-2 gap-4">
           <div className="bg-white/10 rounded-lg p-3 backdrop-blur-sm">
             <div className="text-xs opacity-75 mb-1">Property Type</div>
             <div className="font-semibold">{state.propertyType || 'Commercial'}</div>
           </div>
-          {scenarios.map((s) => (
-            <div key={s.id} className="bg-white/10 rounded-lg p-3 backdrop-blur-sm text-center">
-              <div className="text-xs opacity-75 mb-1">{s.name}</div>
-              <div className="font-bold text-lg">{formatCurrency(getConcludedValue(s.id))}</div>
-              <div className="text-xs opacity-75">{s.effectiveDate || 'TBD'}</div>
-            </div>
-          ))}
+          <div className="bg-white/10 rounded-lg p-3 backdrop-blur-sm">
+            <div className="text-xs opacity-75 mb-1">Valuation Scenarios</div>
+            <div className="font-semibold">{scenarios.length} scenario{scenarios.length !== 1 ? 's' : ''}</div>
+          </div>
         </div>
       </div>
 
@@ -271,31 +390,90 @@ export function ValueReconciliation() {
                 ))}
               </tr>
 
-              {/* Approach Rows */}
-              {allUsedApproaches.map((approach) => {
+              {/* Approach Rows - Only show approaches that are used */}
+              {Array.from(new Set(scenarios.flatMap(s => s.approaches))).map((approach) => {
                 const colors = APPROACH_COLORS[approach] || { text: 'text-gray-600' };
+                const isIncomeApproach = approach === 'Income Approach';
+                
                 return (
-                  <tr key={approach} className="border-b border-gray-100 hover:bg-gray-50">
-                    <td className="px-4 py-3 font-medium text-gray-700">
-                      <div className="flex items-center gap-2">
-                        <span className={colors.text}>{getApproachIcon(approach)}</span>
-                        {approach}
-                      </div>
-                    </td>
-                    {scenarios.map((s) => {
-                      const value = getApproachValue(s.id, approach);
-                      const isApplicable = s.approaches.includes(approach);
-                      return (
-                        <td key={s.id} className="px-4 py-3 text-center">
-                          {isApplicable ? (
-                            <span className="font-semibold text-gray-900">{formatCurrency(value)}</span>
-                          ) : (
-                            <span className="text-gray-400 italic">N/A</span>
+                  <React.Fragment key={approach}>
+                    <tr className="border-b border-gray-100 hover:bg-gray-50">
+                      <td className="px-4 py-3 font-medium text-gray-700">
+                        <div className="flex items-center gap-2">
+                          <span className={colors.text}>{getApproachIcon(approach)}</span>
+                          <span>{approach}</span>
+                          {isIncomeApproach && (
+                            <button
+                              onClick={() => setIncomeExpanded(!incomeExpanded)}
+                              className="ml-2 p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors"
+                              title={incomeExpanded ? 'Hide sub-methods' : 'Show Direct Cap & DCF breakdown'}
+                            >
+                              {incomeExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+                            </button>
                           )}
-                        </td>
-                      );
-                    })}
-                  </tr>
+                        </div>
+                      </td>
+                      {scenarios.map((s) => {
+                        const value = getApproachValue(s.id, approach);
+                        const isApplicable = s.approaches.includes(approach);
+                        const recon = reconciliations.find(r => r.scenarioId === s.id);
+                        const weight = recon?.weights[approach] || 0;
+                        
+                        return (
+                          <td key={s.id} className="px-4 py-3 text-center">
+                            {isApplicable ? (
+                              <div>
+                                <span className="font-semibold text-gray-900">{formatCurrency(value)}</span>
+                                {weight > 0 && (
+                                  <span className="ml-2 text-xs text-gray-500">({weight}%)</span>
+                                )}
+                              </div>
+                            ) : (
+                              <span className="text-gray-400 italic">N/A</span>
+                            )}
+                          </td>
+                        );
+                      })}
+                    </tr>
+                    
+                    {/* Income Sub-Methods - Render immediately after Income Approach row */}
+                    {isIncomeApproach && incomeExpanded && (
+                      <>
+                        <tr className="border-b border-gray-100 bg-green-50/50">
+                          <td className="px-4 py-2 pl-10 text-sm text-gray-600">
+                            <span className="flex items-center gap-2">
+                              <span className="w-2 h-2 bg-green-400 rounded-full"></span>
+                              Direct Capitalization
+                            </span>
+                          </td>
+                          {scenarios.map((s) => (
+                            <td key={s.id} className="px-4 py-2 text-center text-sm text-gray-600">
+                              {s.approaches.includes('Income Approach') 
+                                ? formatCurrency(incomeSubMethods.directCapValue)
+                                : <span className="text-gray-400">—</span>
+                              }
+                            </td>
+                          ))}
+                        </tr>
+                        <tr className="border-b border-gray-100 bg-green-50/50">
+                          <td className="px-4 py-2 pl-10 text-sm text-gray-600">
+                            <span className="flex items-center gap-2">
+                              <span className="w-2 h-2 bg-green-400 rounded-full"></span>
+                              DCF / Yield Capitalization
+                            </span>
+                          </td>
+                          {scenarios.map((s) => (
+                            <td key={s.id} className="px-4 py-2 text-center text-sm text-gray-600">
+                              {s.approaches.includes('Income Approach')
+                                ? formatCurrency(incomeSubMethods.dcfValue)
+                                : <span className="text-gray-400">—</span>
+                              }
+                            </td>
+                          ))}
+                        </tr>
+                      </>
+                    )}
+                  </React.Fragment>
                 );
               })}
 
@@ -321,9 +499,65 @@ export function ValueReconciliation() {
 
       {/* Reconciliation by Scenario */}
       <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 pb-3 border-b border-gray-200">
-          Reconciliation by Scenario
-        </h3>
+        <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-200">
+          <h3 className="text-lg font-semibold text-gray-900">
+            Reconciliation by Scenario
+          </h3>
+          <button
+            onClick={handleSuggestWeights}
+            className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-[#4db8d1] to-[#7fcce0] rounded-lg hover:from-[#3da8c1] hover:to-[#6fc0d4] flex items-center gap-2 transition-all shadow-sm"
+          >
+            <Sparkles className="w-4 h-4" />
+            AI Suggest Weights
+          </button>
+        </div>
+
+        {/* AI Weight Explanation Panel */}
+        {showAiExplanation && aiWeightResult && (
+          <div className="mb-6 p-4 bg-gradient-to-r from-blue-50 to-cyan-50 border border-blue-200 rounded-xl animate-fade-in">
+            <div className="flex items-start justify-between mb-3">
+              <div className="flex items-center gap-2">
+                <Sparkles className="w-5 h-5 text-blue-600" />
+                <span className="font-semibold text-blue-900">AI Weight Recommendation</span>
+              </div>
+              <div className="flex gap-2">
+                <button
+                  onClick={applyAiWeights}
+                  className="px-3 py-1.5 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 flex items-center gap-1"
+                >
+                  <CheckCircle2 className="w-4 h-4" />
+                  Apply
+                </button>
+                <button
+                  onClick={() => setShowAiExplanation(false)}
+                  className="px-3 py-1.5 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                >
+                  Dismiss
+                </button>
+              </div>
+            </div>
+            <div className="grid gap-3">
+              {Object.entries(aiWeightResult.weights).map(([approach, weight]) => {
+                const explanation = aiWeightResult.explanations[approach];
+                return (
+                  <div key={approach} className="bg-white p-3 rounded-lg border border-blue-100">
+                    <div className="flex items-center justify-between mb-2">
+                      <span className="font-medium text-gray-900">{approach}</span>
+                      <span className="text-lg font-bold text-blue-600">{weight}%</span>
+                    </div>
+                    <div className="text-xs text-gray-600 space-y-1">
+                      <div>Base Weight: {explanation?.baseWeight}% • Quality Score: {explanation?.qualityScore}/100</div>
+                      <div>Scenario: {explanation?.scenarioReason}</div>
+                      <div className="inline-block px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full capitalize">
+                        {explanation?.recommendation} emphasis
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* Scenario Tabs */}
         <div className="flex gap-2 mb-6 border-b border-gray-200">
@@ -342,106 +576,189 @@ export function ValueReconciliation() {
           ))}
         </div>
 
-        {/* Active Scenario Panel */}
+        {/* Active Scenario Panel - ONLY show approaches for THIS scenario */}
         {activeScenario && activeReconciliation && (
           <div className="space-y-6">
-            {/* Approach Value Boxes */}
-            <div className="grid gap-4" style={{ gridTemplateColumns: `repeat(${allUsedApproaches.length}, 1fr)` }}>
-              {allUsedApproaches.map((approach) => {
-                const isApplicable = activeScenario.approaches.includes(approach);
+            {/* Approach Value Boxes - Only for current scenario's approaches */}
+            <div 
+              className="grid gap-4" 
+              style={{ gridTemplateColumns: `repeat(${activeScenario.approaches.length}, 1fr)` }}
+            >
+              {activeScenario.approaches.map((approach) => {
                 const value = getApproachValue(activeScenario.id, approach);
                 const colors = APPROACH_COLORS[approach] || { bg: 'bg-gray-50', text: 'text-gray-600', border: 'border-gray-200' };
 
                 return (
                   <div
                     key={approach}
-                    className={`rounded-xl p-5 text-center border-2 ${
-                      isApplicable ? `${colors.bg} ${colors.border}` : 'bg-gray-50 border-gray-200 opacity-60'
-                    }`}
+                    className={`rounded-xl p-5 text-center border-2 ${colors.bg} ${colors.border}`}
                   >
                     <div className="text-xs text-gray-500 uppercase mb-2 font-medium">{approach}</div>
-                    <div className={`text-xl font-bold mb-3 ${isApplicable ? colors.text : 'text-gray-400'}`}>
-                      {isApplicable ? formatCurrency(value) : 'N/A'}
+                    <div className={`text-xl font-bold mb-3 ${colors.text}`}>
+                      {formatCurrency(value)}
                     </div>
-                    {isApplicable ? (
-                      <div>
-                        <label className="block text-xs font-medium text-gray-700 mb-1">Weight (%)</label>
-                        <input
-                          type="number"
-                          min="0"
-                          max="100"
-                          value={activeReconciliation.weights[approach] || 0}
-                          onChange={(e) => handleWeightChange(activeScenario.id, approach, e.target.value)}
-                          className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-center text-sm text-gray-900 focus:ring-2 focus:ring-[#0da1c7] focus:border-[#0da1c7]"
-                        />
-                      </div>
-                    ) : (
-                      <p className="text-xs text-gray-400">Not applicable for this scenario</p>
-                    )}
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">Weight (%)</label>
+                      <input
+                        type="number"
+                        min="0"
+                        max="100"
+                        value={activeReconciliation.weights[approach] || ''}
+                        onChange={(e) => handleWeightChange(activeScenario.id, approach, e.target.value)}
+                        placeholder="0"
+                        className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-center text-sm text-gray-900 focus:ring-2 focus:ring-[#0da1c7] focus:border-[#0da1c7]"
+                      />
+                    </div>
                   </div>
                 );
               })}
             </div>
 
-            {/* Comments */}
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Reconciliation Comments - {activeScenario.name}{' '}
-                <span className="text-red-500">*</span>
-              </label>
-              <textarea
-                rows={4}
-                placeholder={`Explain your reasoning for the ${activeScenario.name} value conclusion...`}
-                value={activeReconciliation.comments}
-                onChange={(e) => handleCommentsChange(activeScenario.id, e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#0da1c7] focus:border-[#0da1c7]"
-              />
+            {/* Weight Total Validation */}
+            <div className={`flex items-center justify-between p-4 rounded-lg ${
+              weightTotal === 100 
+                ? 'bg-green-50 border border-green-200' 
+                : weightTotal > 0 
+                  ? 'bg-amber-50 border border-amber-200'
+                  : 'bg-gray-50 border border-gray-200'
+            }`}>
+              <div className="flex items-center gap-2">
+                {weightTotal === 100 ? (
+                  <CheckCircle2 className="w-5 h-5 text-green-600" />
+                ) : weightTotal > 0 ? (
+                  <AlertTriangle className="w-5 h-5 text-amber-600" />
+                ) : (
+                  <Info className="w-5 h-5 text-gray-400" />
+                )}
+                <span className={`font-medium ${
+                  weightTotal === 100 ? 'text-green-800' : weightTotal > 0 ? 'text-amber-800' : 'text-gray-600'
+                }`}>
+                  Weight Total: {weightTotal}%
+                  {weightTotal !== 100 && weightTotal > 0 && ' — Weights should sum to 100%'}
+                  {weightTotal === 0 && ' — Enter weights or use AI Suggest'}
+                </span>
+              </div>
+              {weightTotal > 0 && (
+                <div className="text-right">
+                  <div className="text-sm font-semibold text-gray-900">
+                    Concluded Value: {formatCurrency(concludedValue)}
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    {getValueBreakdown(activeScenario.id)}
+                  </div>
+                </div>
+              )}
             </div>
+
+            {/* Reconciliation Comments - Using EnhancedTextArea */}
+            <EnhancedTextArea
+              label={`Reconciliation Comments - ${activeScenario.name}`}
+              value={activeReconciliation.comments}
+              onChange={(value) => handleCommentsChange(activeScenario.id, value)}
+              placeholder={`Explain your reasoning for the ${activeScenario.name} value conclusion...`}
+              required
+              rows={6}
+              sectionContext="reconciliation"
+              helperText="Explain why each approach received its specific weight based on data reliability and applicability"
+              contextData={reconciliationContextData || undefined}
+            />
           </div>
         )}
       </div>
 
-      {/* Exposure & Marketing Time */}
+      {/* Exposure & Marketing Time - Enhanced with ranges and tooltips */}
       <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
         <h3 className="text-lg font-semibold text-gray-900 mb-4 pb-3 border-b border-gray-200">
           Exposure & Marketing Time
         </h3>
-        <div className="grid grid-cols-2 gap-4 mb-4">
+        
+        {/* Guidance Panel */}
+        <div className="mb-4 p-3 bg-blue-50 border border-blue-200 rounded-lg flex items-start gap-3">
+          <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+          <div className="text-sm text-blue-800">
+            <strong>{typicalRanges.description}</strong>
+            <p className="mt-1 text-blue-700">
+              Exposure time is <em>retrospective</em> (how long the property would have been on the market prior to the effective date). 
+              Marketing time is <em>prospective</em> (estimated time to sell from the effective date forward).
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-6 mb-4">
+          {/* Exposure Period Range */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
               Estimated Exposure Period (Months) <span className="text-red-500">*</span>
+              <div className="group relative">
+                <Info className="w-4 h-4 text-gray-400 cursor-help" />
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                  Retrospective: Time on market prior to effective date
+                </div>
+              </div>
             </label>
-            <input
-              type="number"
-              placeholder="12"
-              value={exposurePeriod}
-              onChange={(e) => setExposurePeriod(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#0da1c7] focus:border-[#0da1c7]"
-            />
+            <div className="flex items-center gap-2">
+              <input
+                type="number"
+                placeholder={typicalRanges.exposureMin.toString()}
+                value={exposureMin}
+                onChange={(e) => setExposureMin(e.target.value)}
+                className="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#0da1c7] focus:border-[#0da1c7]"
+              />
+              <span className="text-gray-500">to</span>
+              <input
+                type="number"
+                placeholder={typicalRanges.exposureMax.toString()}
+                value={exposureMax}
+                onChange={(e) => setExposureMax(e.target.value)}
+                className="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#0da1c7] focus:border-[#0da1c7]"
+              />
+              <span className="text-gray-500 text-sm">months</span>
+            </div>
           </div>
+
+          {/* Marketing Time Range */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-2">
               Estimated Marketing Time (Months)
+              <div className="group relative">
+                <Info className="w-4 h-4 text-gray-400 cursor-help" />
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                  Prospective: Time to sell from effective date forward
+                </div>
+              </div>
             </label>
-            <input
-              type="number"
-              placeholder="12"
-              value={marketingTime}
-              onChange={(e) => setMarketingTime(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#0da1c7] focus:border-[#0da1c7]"
-            />
+            <div className="flex items-center gap-2">
+              <input
+                type="number"
+                placeholder={typicalRanges.marketingMin.toString()}
+                value={marketingMin}
+                onChange={(e) => setMarketingMin(e.target.value)}
+                className="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#0da1c7] focus:border-[#0da1c7]"
+              />
+              <span className="text-gray-500">to</span>
+              <input
+                type="number"
+                placeholder={typicalRanges.marketingMax.toString()}
+                value={marketingMax}
+                onChange={(e) => setMarketingMax(e.target.value)}
+                className="flex-1 border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#0da1c7] focus:border-[#0da1c7]"
+              />
+              <span className="text-gray-500 text-sm">months</span>
+            </div>
           </div>
         </div>
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Exposure Time Rationale</label>
-          <textarea
-            rows={3}
-            placeholder="Explain the basis for your exposure time estimate..."
-            value={exposureRationale}
-            onChange={(e) => setExposureRationale(e.target.value)}
-            className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#0da1c7] focus:border-[#0da1c7]"
-          />
-        </div>
+
+        {/* Exposure Rationale - Using EnhancedTextArea */}
+        <EnhancedTextArea
+          label="Exposure Time Rationale"
+          value={exposureRationale}
+          onChange={setExposureRationale}
+          placeholder="Explain the basis for your exposure and marketing time estimates..."
+          rows={4}
+          sectionContext="exposure"
+          helperText="Reference market conditions, property characteristics, and comparable marketing times"
+          contextData={exposureContextData}
+        />
       </div>
 
       {/* Final Certifications */}
@@ -487,4 +804,3 @@ export function ValueReconciliation() {
     </div>
   );
 }
-

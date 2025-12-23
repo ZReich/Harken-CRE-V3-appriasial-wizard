@@ -531,3 +531,420 @@ export const ELEVATOR_OPTIONS = [
   'Dock Leveler',
   'None',
 ];
+
+// =================================================================
+// REPORT PREVIEW & GENERATION TYPES
+// =================================================================
+
+/** Photo categories for organizing property images in the report */
+export type PhotoCategory = 'exterior' | 'interior' | 'site' | 'aerial' | 'street' | 'neighborhood' | 'comparable';
+
+/** Position options for photos within a page */
+export type PhotoPosition = 'full' | 'half-top' | 'half-bottom' | 'quarter' | 'sixth';
+
+/** Report Photo - represents a single photo in the report */
+export interface ReportPhoto {
+  id: string;
+  url: string;
+  caption: string;
+  category: PhotoCategory;
+  takenBy?: string;
+  takenDate?: string;
+  sortOrder: number;
+  pagePosition?: PhotoPosition;
+}
+
+/** Report Section Configuration - controls visibility and behavior of report sections */
+export interface ReportSectionConfig {
+  id: string;
+  enabled: boolean;
+  pageBreakBefore: boolean;
+  customContent?: string; // For AI-drafted or manual narratives
+}
+
+/** Addenda item types for the appendix section */
+export type AddendaType =
+  | 'aerial_photo'
+  | 'property_photos'
+  | 'plat_map'
+  | 'tax_detail'
+  | 'buy_sell_agreement'
+  | 'land_sales_map'
+  | 'improved_sales_map'
+  | 'rental_comps_map'
+  | 'engagement_letter'
+  | 'license_copy'
+  | 'comp_detail'
+  | 'flood_map'
+  | 'zoning_map'
+  | 'custom';
+
+/** Addenda Item - represents an item in the addenda/exhibits section */
+export interface AddendaItem {
+  id: string;
+  type: AddendaType;
+  title: string;
+  enabled: boolean;
+  sortOrder: number;
+  content?: string | ReportPhoto[];
+}
+
+/** Report styling options */
+export interface ReportStyling {
+  primaryColor: string;
+  accentColor: string;
+  fontFamily: string;
+  headerStyle: 'traditional' | 'modern' | 'minimal';
+  showPageNumbers: boolean;
+  showFooterDate: boolean;
+  logoUrl?: string;
+}
+
+/** Full report configuration */
+export interface ReportConfig {
+  sections: ReportSectionConfig[];
+  photos: ReportPhoto[];
+  addenda: AddendaItem[];
+  styling: ReportStyling;
+}
+
+/** Page layout types for different report pages */
+export type PageLayout =
+  | 'cover'           // Full bleed image with title overlay
+  | 'letter'          // Letterhead format with signature line
+  | 'toc'             // Table of contents with page numbers
+  | 'summary-table'   // Two-column key-value layout
+  | 'narrative'       // Text-heavy with optional image
+  | 'analysis-grid'   // Comparison grid (for comps)
+  | 'photo-grid-6'    // 6 photos per page (2x3)
+  | 'photo-grid-4'    // 4 photos per page (2x2)
+  | 'photo-single'    // Single full-page photo
+  | 'map-page'        // Map with legend
+  | 'document'        // Scanned document display
+  | 'addenda-header'; // Section divider page
+
+// =================================================================
+// PAGE LAYOUT & SPACING TYPES
+// =================================================================
+
+/** Page layout dimensions in points (72 points = 1 inch) */
+export interface PageDimensions {
+  width: number;   // 612 = 8.5 inches
+  height: number;  // 792 = 11 inches
+  margins: {
+    top: number;
+    bottom: number;
+    left: number;
+    right: number;
+  };
+  contentArea: {
+    width: number;
+    height: number;
+  };
+}
+
+/** Spacing rules between elements */
+export interface SpacingRules {
+  minSpacing: {
+    betweenParagraphs: number;
+    afterHeading: number;
+    beforeHeading: number;
+    betweenTableRows: number;
+    betweenPhotos: number;
+    photoCaptionGap: number;
+    sectionDivider: number;
+  };
+  maxLengths: {
+    paragraphBeforeBreak: number;
+    tableRowsPerPage: number;
+    photosPerPage: number;
+  };
+}
+
+/** Section boundary configuration */
+export interface SectionBoundary {
+  beforeSection: {
+    pageBreakRequired: boolean;
+    minSpaceRequired: number;
+    insertSectionHeader: boolean;
+  };
+  afterSection: {
+    preventOrphanContent: boolean;
+    minContentOnPage: number;
+  };
+}
+
+// =================================================================
+// CONTENT BLOCK TYPES
+// =================================================================
+
+/** Types of content blocks in the report */
+export type ContentBlockType = 'heading' | 'paragraph' | 'table' | 'image' | 'photo-grid' | 'list' | 'chart';
+
+/** Content block for report sections */
+export interface ContentBlock {
+  id: string;
+  type: ContentBlockType;
+  content: unknown;
+  canSplit: boolean;
+  keepWithNext: boolean;
+  keepWithPrevious: boolean;
+  minLinesIfSplit: number;
+}
+
+/** Report section containing blocks */
+export interface ReportSection {
+  id: string;
+  title: string;
+  type: 'required' | 'optional' | 'conditional';
+  startsOnNewPage: boolean;
+  blocks: ContentBlock[];
+  minPageBreakBefore: number;
+}
+
+/** A single page in the report */
+export interface ReportPage {
+  id: string;
+  pageNumber: number;
+  layout: PageLayout;
+  sectionId?: string;
+  title?: string;
+  content: ContentBlock[];
+  photos?: ReportPhoto[];
+  showAttribution?: boolean;
+}
+
+// =================================================================
+// PHOTO MANAGEMENT TYPES
+// =================================================================
+
+/** Photo upload slot configuration */
+export interface PhotoUploadSlot {
+  id: string;
+  category: PhotoCategory;
+  label: string;
+  required: boolean;
+  minCount: number;
+  maxCount: number;
+}
+
+/** Photo grid layout type */
+export type PhotoGridLayoutType = 'grid-6' | 'grid-4' | 'grid-2' | 'single';
+
+/** Photo grid layout configuration */
+export interface PhotoGridLayout {
+  type: PhotoGridLayoutType;
+  photos: ReportPhoto[];
+  pageTitle?: string;
+  showAttribution?: boolean;
+}
+
+// =================================================================
+// EDITOR STATE TYPES
+// =================================================================
+
+/** Editor modes */
+export type EditorMode = 'view' | 'select' | 'text-edit' | 'layout' | 'add-block';
+
+/** Selected element in the editor */
+export interface SelectedElement {
+  id: string;
+  type: 'text' | 'image' | 'table' | 'section' | 'page';
+  bounds: { x: number; y: number; width: number; height: number };
+  isLocked: boolean;
+  parentId?: string;
+}
+
+/** Inline editor state */
+export interface InlineEditorState {
+  isActive: boolean;
+  elementId: string;
+  content: string;
+  cursorPosition: number;
+  selection: { start: number; end: number } | null;
+}
+
+/** Editor history for undo/redo */
+export interface EditorHistory {
+  past: EditorState[];
+  present: EditorState;
+  future: EditorState[];
+  maxHistoryLength: number;
+}
+
+/** Preview edit tracking */
+export interface PreviewEdit {
+  id: string;
+  timestamp: string;
+  type: 'content' | 'styling' | 'structure';
+  targetId: string;
+  field: string;
+  oldValue: unknown;
+  newValue: unknown;
+  source: 'preview-editor' | 'wizard';
+}
+
+/** Report version for history */
+export interface ReportVersion {
+  version: number;
+  savedAt: string;
+  savedBy: string;
+  note?: string;
+  snapshotId: string;
+}
+
+/** Full editor state */
+export interface EditorState {
+  mode: EditorMode;
+  selectedElement: SelectedElement | null;
+  inlineEditor: InlineEditorState | null;
+  zoom: number;
+  currentPage: number;
+  showGrid: boolean;
+  showSpacingGuides: boolean;
+}
+
+/** Report state with edit tracking */
+export interface ReportState {
+  wizardData: WizardState;
+  previewEdits: PreviewEdit[];
+  isDirty: boolean;
+  lastSavedAt: string | null;
+  lastAutoSaveAt: string | null;
+  version: number;
+  previousVersions: ReportVersion[];
+}
+
+// =================================================================
+// LAYOUT VALIDATION TYPES
+// =================================================================
+
+/** Layout issue severity */
+export type LayoutIssueSeverity = 'error' | 'warning' | 'info';
+
+/** Layout issue types */
+export type LayoutIssueType =
+  | 'overflow'
+  | 'orphan'
+  | 'widow'
+  | 'collision'
+  | 'margin-violation'
+  | 'unbalanced'
+  | 'empty-page';
+
+/** Layout validation issue */
+export interface LayoutIssue {
+  severity: LayoutIssueSeverity;
+  pageNumber: number;
+  elementId: string;
+  type: LayoutIssueType;
+  message: string;
+  autoFixAvailable: boolean;
+  autoFix?: () => void;
+}
+
+/** Overflow handling result */
+export interface OverflowResult {
+  action: 'split' | 'move-to-next' | 'shrink-font' | 'warn';
+  splitPoint?: number;
+  newFontSize?: number;
+  warningMessage?: string;
+}
+
+// =================================================================
+// TEMPLATE SYSTEM TYPES
+// =================================================================
+
+/** Scenario template for templates */
+export interface ScenarioTemplate {
+  name: string;
+  approaches: string[];
+  isRequired: boolean;
+}
+
+/** Custom field definition in templates */
+export interface CustomFieldDefinition {
+  id: string;
+  sectionId: string;
+  fieldType: 'text' | 'number' | 'select' | 'checkbox' | 'date';
+  label: string;
+  placeholder?: string;
+  options?: string[];
+  defaultValue?: unknown;
+  required: boolean;
+  sortOrder: number;
+}
+
+/** Photo requirement for templates */
+export interface PhotoRequirement {
+  category: string;
+  minCount: number;
+  maxCount: number;
+  required: boolean;
+  suggestedCaptions: string[];
+}
+
+/** Full appraisal template */
+export interface AppraisalTemplate {
+  // Metadata
+  id: string;
+  name: string;
+  description: string;
+  useCase: string;
+  propertyTypes: string[];
+  createdBy: string;
+  createdAt: string;
+  updatedAt: string;
+  isPublic: boolean;
+  tags: string[];
+  
+  // Template Configuration
+  config: {
+    defaultPropertyType: string | null;
+    defaultPropertySubtype: string | null;
+    defaultScenarios: ScenarioTemplate[];
+    sectionOverrides: Record<string, boolean>;
+    customFields: CustomFieldDefinition[];
+    styling: ReportStyling;
+    contentTemplates: Record<string, string>;
+    photoRequirements: PhotoRequirement[];
+    addendaConfig: AddendaItem[];
+  };
+  
+  // Usage stats
+  timesUsed: number;
+  lastUsed: string | null;
+}
+
+// =================================================================
+// AUTO-SAVE TYPES
+// =================================================================
+
+/** Auto-save configuration */
+export interface AutoSaveConfig {
+  enabled: boolean;
+  intervalMs: number;
+  saveOnBlur: boolean;
+  saveBeforeNavigate: boolean;
+  maxAutoSaveVersions: number;
+}
+
+// =================================================================
+// TABLE OF CONTENTS TYPES
+// =================================================================
+
+/** TOC entry */
+export interface TOCEntry {
+  id: string;
+  title: string;
+  pageNumber: number;
+  level: number;
+  children?: TOCEntry[];
+}
+
+/** TOC configuration */
+export interface TOCConfig {
+  entries: TOCEntry[];
+  showPageNumbers: boolean;
+  maxDepth: number;
+}

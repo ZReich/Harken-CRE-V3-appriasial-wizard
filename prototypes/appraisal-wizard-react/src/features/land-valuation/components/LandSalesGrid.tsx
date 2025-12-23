@@ -7,15 +7,15 @@ import {
   TRANSACTION_DATA_ROWS,
   TRANSACTION_ADJ_ROWS,
   QUALITATIVE_ROWS,
-  AVAILABLE_TRANSACTION_ELEMENTS,
-  AVAILABLE_ADJUSTMENT_ELEMENTS,
-  AVAILABLE_QUALITATIVE_ELEMENTS,
   AvailableElement,
   formatCurrency, 
   formatNumber 
 } from '../constants';
 import { HorizontalScrollIndicator } from '../../../components/HorizontalScrollIndicator';
 import EnhancedTextArea from '../../../components/EnhancedTextArea';
+import { useWizard } from '../../../context/WizardContext';
+import { getAvailableElements as filterElements, normalizeSection } from '../../../utils/elementFilter';
+import type { SectionType } from '../../../constants/elementRegistry';
 
 // Grid column widths
 const LABEL_COL_WIDTH = 160;
@@ -25,6 +25,10 @@ const ACTION_COL_WIDTH = 160;
 
 export const LandSalesGrid: React.FC = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const { state: wizardState } = useWizard();
+  const { propertyType, propertySubtype, scenarios, activeScenarioId } = wizardState;
+  const currentScenario = scenarios.find(s => s.id === activeScenarioId)?.name;
+  
   const [comps, setComps] = useState<LandComp[]>(MOCK_LAND_COMPS);
   const [transactionRows, setTransactionRows] = useState(TRANSACTION_DATA_ROWS);
   const [adjustmentRows, setAdjustmentRows] = useState(TRANSACTION_ADJ_ROWS);
@@ -133,6 +137,7 @@ export const LandSalesGrid: React.FC = () => {
   };
 
   // Get available elements for a section (excluding already added, including custom)
+  // Uses dynamic filtering based on property type, subtype, approach, section, and scenario
   const getAvailableElements = (section: 'transaction' | 'adjustments' | 'qualitative') => {
     const existingIds = section === 'transaction' 
       ? transactionRows.map(r => r.id)
@@ -140,13 +145,31 @@ export const LandSalesGrid: React.FC = () => {
         ? adjustmentRows.map(r => r.id)
         : qualitativeRows.map(r => r.id);
     
-    // Get base elements + custom elements for this section
-    const baseElements = section === 'transaction'
-      ? AVAILABLE_TRANSACTION_ELEMENTS
-      : section === 'adjustments'
-        ? AVAILABLE_ADJUSTMENT_ELEMENTS
-        : AVAILABLE_QUALITATIVE_ELEMENTS;
+    // Map section names to registry format
+    const sectionMap: Record<string, SectionType> = {
+      'transaction': 'transaction',
+      'adjustments': 'quantitative',  // Land uses quantitative adjustments
+      'qualitative': 'qualitative'
+    };
+    const normalizedSection = sectionMap[section] || normalizeSection(section) as SectionType;
     
+    // Filter elements based on current context
+    const filteredElements = filterElements({
+      section: normalizedSection,
+      propertyType: propertyType || 'land',  // Default to land for this grid
+      subtype: propertySubtype,
+      approach: 'land_valuation',
+      scenario: currentScenario,
+      excludeKeys: existingIds
+    });
+    
+    // Map to the format expected by this grid (id instead of key)
+    const baseElements: AvailableElement[] = filteredElements.map(el => ({
+      id: el.key,
+      label: el.label
+    }));
+    
+    // Add custom elements for this section
     const customElements = section === 'transaction'
       ? customTransactionElements
       : section === 'adjustments'

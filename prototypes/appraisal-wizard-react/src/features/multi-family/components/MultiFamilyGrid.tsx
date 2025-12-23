@@ -7,9 +7,6 @@ import {
   TRANSACTION_ROWS,
   QUANTITATIVE_ROWS,
   QUALITATIVE_ROWS,
-  AVAILABLE_TRANSACTION_ELEMENTS,
-  AVAILABLE_QUANTITATIVE_ELEMENTS,
-  AVAILABLE_QUALITATIVE_ELEMENTS,
   formatCurrency, 
   formatPercent,
   LABEL_COL_WIDTH,
@@ -20,13 +17,18 @@ import {
 import { HorizontalScrollIndicator } from '../../../components/HorizontalScrollIndicator';
 import EnhancedTextArea from '../../../components/EnhancedTextArea';
 import { useWizard } from '../../../context/WizardContext';
+import { getAvailableElements as filterElements, normalizeSection } from '../../../utils/elementFilter';
+import type { SectionType } from '../../../constants/elementRegistry';
 
 interface MultiFamilyGridProps {
   scenarioId?: number;
 }
 
 export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) => {
-  const { setApproachConclusion } = useWizard();
+  const { setApproachConclusion, state: wizardState } = useWizard();
+  const { propertyType, propertySubtype, scenarios, activeScenarioId } = wizardState;
+  const currentScenario = scenarios.find(s => s.id === activeScenarioId)?.name;
+  
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   
   const [comps, setComps] = useState<MultiFamilyComp[]>(MOCK_MF_COMPS);
@@ -123,6 +125,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
     setOpenElementDropdown(null);
   };
 
+  // Get available elements for a section using dynamic filtering
   const getAvailableElements = (section: 'transaction' | 'quantitative' | 'qualitative') => {
     const existingIds = section === 'transaction' 
       ? transactionRows.map(r => r.id)
@@ -130,13 +133,28 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
         ? quantitativeRows.map(r => r.id)
         : qualitativeRows.map(r => r.id);
     
-    const allElements = section === 'transaction'
-      ? AVAILABLE_TRANSACTION_ELEMENTS
-      : section === 'quantitative'
-        ? AVAILABLE_QUANTITATIVE_ELEMENTS
-        : AVAILABLE_QUALITATIVE_ELEMENTS;
+    // Normalize section for registry lookup
+    const normalizedSection = normalizeSection(section) as SectionType;
     
-    return allElements.filter(el => !existingIds.includes(el.id));
+    // Filter elements based on current context - default to multifamily for this grid
+    const filteredElements = filterElements({
+      section: normalizedSection,
+      propertyType: propertyType || 'commercial',
+      subtype: propertySubtype || 'multifamily',
+      approach: 'multi_family',
+      scenario: currentScenario,
+      excludeKeys: existingIds
+    });
+    
+    // Map to the format expected by this grid
+    const mappedElements: AvailableMultiFamilyElement[] = filteredElements.map(el => ({
+      id: el.key,
+      label: el.label,
+      description: el.description,
+      section: section  // Add the section from the function parameter
+    }));
+    
+    return mappedElements;
   };
 
   const handleDeleteRow = (rowId: string, section: 'transaction' | 'quantitative' | 'qualitative') => {

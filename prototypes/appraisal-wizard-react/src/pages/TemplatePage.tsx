@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWizard } from '../context/WizardContext';
-import { FileText, Info, CheckCircle } from 'lucide-react';
+import { FileText, Info, CheckCircle, Star, Edit2, Copy, Trash2, MoreVertical, User, Clock } from 'lucide-react';
 
 // ==========================================
 // SAVED REPORT TEMPLATES (Admin-created)
@@ -75,12 +75,61 @@ const savedTemplates: ReportTemplate[] = [
 ];
 
 // ==========================================
+// CUSTOM TEMPLATES (User-created)
+// ==========================================
+interface CustomTemplate {
+  id: string;
+  name: string;
+  description: string;
+  useCase: string;
+  propertyTypes: string[];
+  tags: string[];
+  createdBy: string;
+  createdAt: string;
+  lastUsed: string | null;
+  timesUsed: number;
+  isPublic: boolean;
+}
+
+// Mock data for custom templates - in production, this would come from an API
+const customTemplates: CustomTemplate[] = [
+  {
+    id: 'custom-industrial-shop',
+    name: 'Industrial Shop/Office Combo',
+    description: 'Template for light industrial properties with integrated shop and office components. Configured for bank loan submissions.',
+    useCase: 'Standard bank loan appraisal',
+    propertyTypes: ['Industrial'],
+    tags: ['industrial', 'shop', 'bank loan'],
+    createdBy: 'John Appraiser',
+    createdAt: '2024-11-15T10:30:00Z',
+    lastUsed: '2024-12-18T14:22:00Z',
+    timesUsed: 12,
+    isPublic: true,
+  },
+  {
+    id: 'custom-retail-strip',
+    name: 'Retail Strip Center',
+    description: 'Optimized for small retail strip centers with multiple tenants. Includes detailed rent roll analysis.',
+    useCase: 'Internal valuation',
+    propertyTypes: ['Retail'],
+    tags: ['retail', 'multi-tenant', 'rent roll'],
+    createdBy: 'Jane Smith',
+    createdAt: '2024-10-22T08:15:00Z',
+    lastUsed: '2024-12-10T09:45:00Z',
+    timesUsed: 8,
+    isPublic: false,
+  },
+];
+
+// ==========================================
 // MAIN COMPONENT
 // ==========================================
 export default function TemplatePage() {
   const navigate = useNavigate();
   const { setTemplate } = useWizard();
   const [selected, setSelected] = useState<string | null>(null);
+  const [activeTab, setActiveTab] = useState<'system' | 'custom'>('system');
+  const [menuOpen, setMenuOpen] = useState<string | null>(null);
 
   const handleSelect = (templateId: string) => {
     setSelected(templateId);
@@ -91,6 +140,32 @@ export default function TemplatePage() {
     if (selected) {
       navigate('/document-intake');
     }
+  };
+
+  const handleEditTemplate = (templateId: string) => {
+    console.log('Edit template:', templateId);
+    setMenuOpen(null);
+    // Would open a template editor modal
+  };
+
+  const handleDuplicateTemplate = (templateId: string) => {
+    console.log('Duplicate template:', templateId);
+    setMenuOpen(null);
+    // Would create a copy of the template
+  };
+
+  const handleDeleteTemplate = (templateId: string) => {
+    console.log('Delete template:', templateId);
+    setMenuOpen(null);
+    // Would show a confirmation dialog
+  };
+
+  const formatDate = (dateStr: string) => {
+    return new Date(dateStr).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      year: 'numeric',
+    });
   };
 
   const progressSteps = ['Template', 'Documents', 'Setup', 'Subject Data', 'Analysis', 'Review'];
@@ -169,71 +244,253 @@ export default function TemplatePage() {
           </div>
         </div>
 
-        {/* Template Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10">
-          {savedTemplates.map((template) => (
-            <div
-              key={template.id}
-              onClick={() => handleSelect(template.id)}
-              className={`bg-white rounded-xl p-5 cursor-pointer transition-all duration-200 border-2 ${
-                selected === template.id
-                  ? 'border-[#0da1c7] shadow-lg shadow-[#0da1c7]/20'
-                  : 'border-gray-200 hover:border-[#0da1c7]/50 hover:shadow-md'
-              }`}
-            >
-              <div className="flex items-start justify-between mb-3">
-                <h3 className="text-lg font-bold text-[#1c3643]">{template.name}</h3>
-                {template.isSystem && (
-                  <span className="text-[10px] font-semibold px-2 py-0.5 bg-gray-100 text-gray-500 rounded border border-gray-200">
-                    SYSTEM
+        {/* Tab Navigation */}
+        <div className="flex items-center gap-1 mb-6 bg-gray-200 rounded-lg p-1 w-fit">
+          <button
+            onClick={() => setActiveTab('system')}
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
+              activeTab === 'system'
+                ? 'bg-white text-[#1c3643] shadow-sm'
+                : 'text-gray-600 hover:text-gray-800'
+            }`}
+          >
+            System Templates
+          </button>
+          <button
+            onClick={() => setActiveTab('custom')}
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${
+              activeTab === 'custom'
+                ? 'bg-white text-[#1c3643] shadow-sm'
+                : 'text-gray-600 hover:text-gray-800'
+            }`}
+          >
+            <Star className="w-4 h-4" />
+            My Templates
+            {customTemplates.length > 0 && (
+              <span className="px-1.5 py-0.5 bg-amber-100 text-amber-700 text-xs rounded-full">
+                {customTemplates.length}
+              </span>
+            )}
+          </button>
+        </div>
+
+        {/* System Template Cards */}
+        {activeTab === 'system' && (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10">
+            {savedTemplates.map((template) => (
+              <div
+                key={template.id}
+                onClick={() => handleSelect(template.id)}
+                className={`bg-white rounded-xl p-5 cursor-pointer transition-all duration-200 border-2 ${
+                  selected === template.id
+                    ? 'border-[#0da1c7] shadow-lg shadow-[#0da1c7]/20'
+                    : 'border-gray-200 hover:border-[#0da1c7]/50 hover:shadow-md'
+                }`}
+              >
+                <div className="flex items-start justify-between mb-3">
+                  <h3 className="text-lg font-bold text-[#1c3643]">{template.name}</h3>
+                  {template.isSystem && (
+                    <span className="text-[10px] font-semibold px-2 py-0.5 bg-gray-100 text-gray-500 rounded border border-gray-200">
+                      SYSTEM
+                    </span>
+                  )}
+                </div>
+                
+                {/* Tags */}
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {template.tags.map((tag, idx) => (
+                    <span
+                      key={idx}
+                      className={`text-[10px] font-semibold px-2 py-0.5 rounded border ${tag.color}`}
+                    >
+                      {tag.label}
+                    </span>
+                  ))}
+                </div>
+
+                <p className="text-sm text-gray-600 mb-4">{template.description}</p>
+
+                {/* Metadata */}
+                <div className="flex items-center gap-4 text-xs text-gray-500">
+                  <span className="flex items-center gap-1">
+                    <FileText className="w-3.5 h-3.5" />
+                    {template.sections} sections
                   </span>
+                  <span className="flex items-center gap-1">
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
+                    {template.approaches.join(', ')}
+                  </span>
+                  <span className="flex items-center gap-1">
+                    <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
+                    </svg>
+                    {template.accounts} accounts
+                  </span>
+                </div>
+
+                {/* Selection indicator */}
+                {selected === template.id && (
+                  <div className="mt-4 pt-3 border-t border-gray-100 flex items-center gap-2 text-[#0da1c7]">
+                    <CheckCircle className="w-4 h-4" />
+                    <span className="text-sm font-medium">Selected</span>
+                  </div>
                 )}
               </div>
-              
-              {/* Tags */}
-              <div className="flex flex-wrap gap-2 mb-3">
-                {template.tags.map((tag, idx) => (
-                  <span
-                    key={idx}
-                    className={`text-[10px] font-semibold px-2 py-0.5 rounded border ${tag.color}`}
+            ))}
+          </div>
+        )}
+
+        {/* Custom Template Cards */}
+        {activeTab === 'custom' && (
+          <div className="mb-10">
+            {customTemplates.length === 0 ? (
+              <div className="bg-white rounded-xl p-12 text-center border-2 border-dashed border-gray-300">
+                <Star className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                <h3 className="text-lg font-semibold text-gray-600 mb-2">No Custom Templates Yet</h3>
+                <p className="text-gray-500 mb-4">
+                  When you save a report as a template, it will appear here for future use.
+                </p>
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                {customTemplates.map((template) => (
+                  <div
+                    key={template.id}
+                    onClick={() => handleSelect(template.id)}
+                    className={`bg-white rounded-xl p-5 cursor-pointer transition-all duration-200 border-2 relative ${
+                      selected === template.id
+                        ? 'border-[#0da1c7] shadow-lg shadow-[#0da1c7]/20'
+                        : 'border-gray-200 hover:border-[#0da1c7]/50 hover:shadow-md'
+                    }`}
                   >
-                    {tag.label}
-                  </span>
+                    {/* Action Menu Button */}
+                    <div className="absolute top-4 right-4">
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setMenuOpen(menuOpen === template.id ? null : template.id);
+                        }}
+                        className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+                      >
+                        <MoreVertical className="w-4 h-4 text-gray-400" />
+                      </button>
+                      
+                      {/* Dropdown Menu */}
+                      {menuOpen === template.id && (
+                        <div className="absolute right-0 top-8 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-10 min-w-[140px]">
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEditTemplate(template.id);
+                            }}
+                            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                          >
+                            <Edit2 className="w-3.5 h-3.5" />
+                            Edit
+                          </button>
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDuplicateTemplate(template.id);
+                            }}
+                            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                          >
+                            <Copy className="w-3.5 h-3.5" />
+                            Duplicate
+                          </button>
+                          <hr className="my-1 border-gray-100" />
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteTemplate(template.id);
+                            }}
+                            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            Delete
+                          </button>
+                        </div>
+                      )}
+                    </div>
+
+                    <div className="flex items-start gap-3 mb-3">
+                      <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                        <Star className="w-5 h-5 text-amber-600" />
+                      </div>
+                      <div className="flex-1 pr-8">
+                        <h3 className="text-lg font-bold text-[#1c3643]">{template.name}</h3>
+                        <p className="text-xs text-gray-500">{template.useCase}</p>
+                      </div>
+                    </div>
+                    
+                    {/* Property Type Tags */}
+                    <div className="flex flex-wrap gap-2 mb-3">
+                      {template.propertyTypes.map((type, idx) => (
+                        <span
+                          key={idx}
+                          className="text-[10px] font-semibold px-2 py-0.5 rounded border bg-amber-50 text-amber-700 border-amber-200"
+                        >
+                          {type.toUpperCase()}
+                        </span>
+                      ))}
+                      {template.isPublic ? (
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded border bg-green-50 text-green-700 border-green-200">
+                          TEAM
+                        </span>
+                      ) : (
+                        <span className="text-[10px] font-semibold px-2 py-0.5 rounded border bg-gray-50 text-gray-500 border-gray-200">
+                          PRIVATE
+                        </span>
+                      )}
+                    </div>
+
+                    <p className="text-sm text-gray-600 mb-4">{template.description}</p>
+
+                    {/* User tags */}
+                    {template.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1 mb-4">
+                        {template.tags.map((tag, idx) => (
+                          <span
+                            key={idx}
+                            className="text-[10px] px-2 py-0.5 rounded bg-gray-100 text-gray-600"
+                          >
+                            #{tag}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Metadata */}
+                    <div className="flex items-center gap-4 text-xs text-gray-500 border-t border-gray-100 pt-3">
+                      <span className="flex items-center gap-1">
+                        <User className="w-3.5 h-3.5" />
+                        {template.createdBy}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-3.5 h-3.5" />
+                        {template.lastUsed ? `Used ${formatDate(template.lastUsed)}` : 'Never used'}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <FileText className="w-3.5 h-3.5" />
+                        Used {template.timesUsed}x
+                      </span>
+                    </div>
+
+                    {/* Selection indicator */}
+                    {selected === template.id && (
+                      <div className="mt-4 pt-3 border-t border-gray-100 flex items-center gap-2 text-[#0da1c7]">
+                        <CheckCircle className="w-4 h-4" />
+                        <span className="text-sm font-medium">Selected</span>
+                      </div>
+                    )}
+                  </div>
                 ))}
               </div>
-
-              <p className="text-sm text-gray-600 mb-4">{template.description}</p>
-
-              {/* Metadata */}
-              <div className="flex items-center gap-4 text-xs text-gray-500">
-                <span className="flex items-center gap-1">
-                  <FileText className="w-3.5 h-3.5" />
-                  {template.sections} sections
-                </span>
-                <span className="flex items-center gap-1">
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
-                  </svg>
-                  {template.approaches.join(', ')}
-                </span>
-                <span className="flex items-center gap-1">
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-                  </svg>
-                  {template.accounts} accounts
-                </span>
-              </div>
-
-              {/* Selection indicator */}
-              {selected === template.id && (
-                <div className="mt-4 pt-3 border-t border-gray-100 flex items-center gap-2 text-[#0da1c7]">
-                  <CheckCircle className="w-4 h-4" />
-                  <span className="text-sm font-medium">Selected</span>
-                </div>
-              )}
-            </div>
-          ))}
-        </div>
+            )}
+          </div>
+        )}
 
         {/* Continue Button */}
         <div className="text-center">

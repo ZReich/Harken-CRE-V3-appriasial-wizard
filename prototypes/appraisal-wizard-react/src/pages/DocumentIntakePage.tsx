@@ -6,15 +6,12 @@ import WizardGuidancePanel from '../components/WizardGuidancePanel';
 import { DOCUMENTS_GUIDANCE } from '../constants/wizardPhaseGuidance';
 import {
   Upload,
-  FileText,
   CheckCircle,
   AlertCircle,
   X,
   Loader2,
   Sparkles,
   ChevronRight,
-  Edit2,
-  Check,
   RefreshCw,
   Eye,
   ChevronDown,
@@ -22,7 +19,6 @@ import {
 } from 'lucide-react';
 import {
   classifyAndExtract,
-  processDocumentBatch,
   DOCUMENT_TYPES,
   type DocumentType,
   type ClassificationResult,
@@ -52,7 +48,6 @@ function DocumentCard({
   onRemove,
   onReprocess,
   onReclassify,
-  onViewData,
   isExpanded,
   onToggleExpand,
 }: {
@@ -60,7 +55,6 @@ function DocumentCard({
   onRemove: () => void;
   onReprocess: () => void;
   onReclassify: (newType: DocumentType) => void;
-  onViewData: () => void;
   isExpanded: boolean;
   onToggleExpand: () => void;
 }) {
@@ -497,7 +491,7 @@ export default function DocumentIntakePage() {
       if (cad.legalDescription?.value) subjectDataUpdates.legalDescription = cad.legalDescription.value;
       if (cad.propertyAddress?.value) {
         const addr = cad.propertyAddress.value;
-        const parts = addr.split(',').map(s => s.trim());
+        const parts = addr.split(',').map((s: string) => s.trim());
         if (parts.length >= 2) {
           const street = parts[0];
           const cityStateZip = parts.slice(1).join(', ');
@@ -693,7 +687,6 @@ export default function DocumentIntakePage() {
                   onRemove={() => removeDocument(doc.id)}
                   onReprocess={() => reprocessDocument(doc.id)}
                   onReclassify={(newType) => reclassifyDocument(doc.id, newType)}
-                  onViewData={() => setExpandedDocId(expandedDocId === doc.id ? null : doc.id)}
                   isExpanded={expandedDocId === doc.id}
                   onToggleExpand={() => setExpandedDocId(expandedDocId === doc.id ? null : doc.id)}
                 />

@@ -67,6 +67,18 @@ body {
   scrollbar-color: #cbd5e1 #f1f5f9;
 }
 
+/* Hide number input spinners - clean professional aesthetic */
+input[type="number"]::-webkit-outer-spin-button,
+input[type="number"]::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield; /* Firefox */
+  appearance: textfield;
+}
+
 /* Date input calendar icon styling */
 input[type="date"]::-webkit-calendar-picker-indicator {
   cursor: pointer;

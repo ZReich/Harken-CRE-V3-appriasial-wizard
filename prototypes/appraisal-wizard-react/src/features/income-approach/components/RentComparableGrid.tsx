@@ -8,13 +8,14 @@ import {
   SUBJECT_RENT_PROPERTY, 
   RENT_TRANSACTION_ROWS,
   RENT_QUALITATIVE_ROWS,
-  AVAILABLE_TRANSACTION_ELEMENTS,
-  AVAILABLE_QUALITATIVE_ELEMENTS,
   AvailableRentElement,
   formatCurrency, 
   formatNumber,
   formatRentPerSf
 } from '../rentConstants';
+import { useWizard } from '../../../context/WizardContext';
+import { getAvailableElements as filterElements, normalizeSection } from '../../../utils/elementFilter';
+import type { SectionType } from '../../../constants/elementRegistry';
 
 // Grid column widths (matching LandSalesGrid)
 const LABEL_COL_WIDTH = 160;
@@ -22,6 +23,10 @@ const SUBJECT_COL_WIDTH = 180;
 const COMP_COL_WIDTH = 170;
 
 export const RentComparableGrid: React.FC = () => {
+  const { state: wizardState } = useWizard();
+  const { propertyType, propertySubtype, scenarios, activeScenarioId } = wizardState;
+  const currentScenario = scenarios.find(s => s.id === activeScenarioId)?.name;
+  
   const [comps, setComps] = useState<RentComp[]>(MOCK_RENT_COMPS);
   const [transactionRows, setTransactionRows] = useState(RENT_TRANSACTION_ROWS);
   const [qualitativeRows, setQualitativeRows] = useState(RENT_QUALITATIVE_ROWS);
@@ -97,16 +102,32 @@ export const RentComparableGrid: React.FC = () => {
   };
 
   // Get available elements for a section (excluding already added)
+  // Get available elements for a section using dynamic filtering
   const getAvailableElements = (section: 'transaction' | 'qualitative') => {
     const existingIds = section === 'transaction' 
       ? transactionRows.map(r => r.id)
       : qualitativeRows.map(r => r.id);
     
-    const allElements = section === 'transaction'
-      ? AVAILABLE_TRANSACTION_ELEMENTS
-      : AVAILABLE_QUALITATIVE_ELEMENTS;
+    // Normalize section for registry lookup
+    const normalizedSection = normalizeSection(section) as SectionType;
     
-    return allElements.filter(el => !existingIds.includes(el.id));
+    // Filter elements based on current context
+    const filteredElements = filterElements({
+      section: normalizedSection,
+      propertyType: propertyType,
+      subtype: propertySubtype,
+      approach: 'income',
+      scenario: currentScenario,
+      excludeKeys: existingIds
+    });
+    
+    // Map to the format expected by this grid
+    const mappedElements: AvailableRentElement[] = filteredElements.map(el => ({
+      id: el.key,
+      label: el.label
+    }));
+    
+    return mappedElements;
   };
 
   const handleDeleteRow = (rowId: string, section: 'transaction' | 'qualitative') => {

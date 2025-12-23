@@ -31,7 +31,7 @@ export interface ComparisonValue {
 export type PropertyValues = Record<string, Record<string, ComparisonValue>>;
 
 export interface Section {
-  id: string;
+  id: GridRowCategory;
   title: string;
   color: string;
 }

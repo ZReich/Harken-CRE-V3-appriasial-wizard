@@ -1,0 +1,404 @@
+/**
+ * Print Styles for Appraisal Report
+ * 
+ * These styles are applied when printing the report or generating PDF
+ * Uses @page rules for proper page sizing and margins
+ */
+
+/* =================================================================
+   PAGE SETUP
+   ================================================================= */
+
+@page {
+  size: letter portrait;
+  margin: 0.75in 1in 0.75in 1in;
+}
+
+@page :first {
+  margin: 0;
+}
+
+@page cover {
+  margin: 0;
+}
+
+@page landscape {
+  size: letter landscape;
+  margin: 0.75in 0.75in;
+}
+
+/* =================================================================
+   PRINT MEDIA STYLES
+   ================================================================= */
+
+@media print {
+  /* Reset body */
+  body {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+    color-adjust: exact !important;
+  }
+
+  /* Hide non-print elements */
+  .no-print,
+  .toolbar,
+  .sidebar,
+  .thumbnail-sidebar,
+  .editor-controls,
+  .zoom-controls,
+  .navigation-controls {
+    display: none !important;
+  }
+
+  /* Page container */
+  .report-page {
+    width: 8.5in;
+    height: 11in;
+    page-break-after: always;
+    page-break-inside: avoid;
+    margin: 0;
+    padding: 0;
+    box-shadow: none !important;
+    border: none !important;
+    background: white !important;
+  }
+
+  .report-page:last-child {
+    page-break-after: auto;
+  }
+
+  /* Cover page - full bleed */
+  .report-page.cover-page {
+    page: cover;
+    padding: 0;
+  }
+
+  /* Landscape pages */
+  .report-page.landscape-page {
+    page: landscape;
+    width: 11in;
+    height: 8.5in;
+  }
+
+  /* =================================================================
+     PAGE BREAKS
+     ================================================================= */
+
+  /* Force page break before major sections */
+  .section-break-before {
+    page-break-before: always;
+  }
+
+  /* Prevent page break after headings */
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+
+  /* Keep content together */
+  .keep-together {
+    page-break-inside: avoid;
+  }
+
+  /* Orphan and widow control */
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+
+  /* Table handling */
+  table {
+    page-break-inside: auto;
+  }
+
+  tr {
+    page-break-inside: avoid;
+    page-break-after: auto;
+  }
+
+  thead {
+    display: table-header-group;
+  }
+
+  tfoot {
+    display: table-footer-group;
+  }
+
+  /* =================================================================
+     TYPOGRAPHY
+     ================================================================= */
+
+  /* Base font size for print */
+  .report-content {
+    font-size: 11pt;
+    line-height: 1.4;
+  }
+
+  /* Headings */
+  .report-content h1 {
+    font-size: 18pt;
+    margin-bottom: 12pt;
+  }
+
+  .report-content h2 {
+    font-size: 14pt;
+    margin-top: 18pt;
+    margin-bottom: 9pt;
+  }
+
+  .report-content h3 {
+    font-size: 12pt;
+    margin-top: 12pt;
+    margin-bottom: 6pt;
+  }
+
+  /* Paragraphs */
+  .report-content p {
+    margin-bottom: 9pt;
+    text-align: justify;
+    hyphens: auto;
+  }
+
+  /* Tables */
+  .report-content table {
+    font-size: 9pt;
+    border-collapse: collapse;
+  }
+
+  .report-content th,
+  .report-content td {
+    padding: 4pt 6pt;
+    border: 0.5pt solid #ccc;
+  }
+
+  /* =================================================================
+     HEADERS AND FOOTERS
+     ================================================================= */
+
+  .page-header {
+    position: running(header);
+    font-size: 9pt;
+    color: #666;
+    border-bottom: 0.5pt solid #ccc;
+    padding-bottom: 6pt;
+    margin-bottom: 12pt;
+  }
+
+  .page-footer {
+    position: running(footer);
+    font-size: 9pt;
+    color: #666;
+    text-align: center;
+    padding-top: 6pt;
+    border-top: 0.5pt solid #ccc;
+  }
+
+  @page {
+    @top-center {
+      content: element(header);
+    }
+    @bottom-center {
+      content: element(footer);
+    }
+  }
+
+  /* Page numbers */
+  .page-number::after {
+    content: counter(page);
+  }
+
+  .total-pages::after {
+    content: counter(pages);
+  }
+
+  /* =================================================================
+     COLORS AND BACKGROUNDS
+     ================================================================= */
+
+  /* Preserve background colors */
+  .bg-preserve {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Cover page backgrounds */
+  .cover-page .cover-background {
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Table header backgrounds */
+  .report-content thead {
+    background-color: #1e293b !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* Alternating row colors */
+  .report-content tbody tr:nth-child(even) {
+    background-color: #f8fafc !important;
+    -webkit-print-color-adjust: exact !important;
+    print-color-adjust: exact !important;
+  }
+
+  /* =================================================================
+     IMAGES AND PHOTOS
+     ================================================================= */
+
+  img {
+    max-width: 100%;
+    page-break-inside: avoid;
+  }
+
+  .photo-grid {
+    page-break-inside: avoid;
+  }
+
+  .photo-grid img {
+    object-fit: cover;
+  }
+
+  figure {
+    page-break-inside: avoid;
+    margin: 0;
+  }
+
+  figcaption {
+    font-size: 9pt;
+    color: #666;
+    text-align: center;
+    margin-top: 4pt;
+  }
+
+  /* =================================================================
+     LINKS
+     ================================================================= */
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  /* Optionally show URLs after links */
+  a[href^="http"]:after {
+    content: none; /* Set to " (" attr(href) ")" to show URLs */
+  }
+
+  /* =================================================================
+     SPECIAL SECTIONS
+     ================================================================= */
+
+  /* TOC */
+  .toc-entry {
+    display: flex;
+    align-items: baseline;
+    margin: 3pt 0;
+  }
+
+  .toc-title {
+    flex-shrink: 0;
+  }
+
+  .toc-dots {
+    flex: 1;
+    border-bottom: 1pt dotted #ccc;
+    margin: 0 6pt;
+    height: 0.5em;
+  }
+
+  .toc-page {
+    flex-shrink: 0;
+  }
+
+  /* Certification signature line */
+  .signature-line {
+    border-bottom: 1pt solid #000;
+    width: 3in;
+    margin-top: 36pt;
+  }
+
+  /* Addenda divider */
+  .addenda-header {
+    text-align: center;
+    padding-top: 4in;
+  }
+
+  .addenda-header h1 {
+    font-size: 36pt;
+    letter-spacing: 0.2em;
+  }
+
+  /* =================================================================
+     UTILITY CLASSES
+     ================================================================= */
+
+  .print-only {
+    display: block !important;
+  }
+
+  .screen-only {
+    display: none !important;
+  }
+
+  .break-before {
+    page-break-before: always !important;
+  }
+
+  .break-after {
+    page-break-after: always !important;
+  }
+
+  .no-break {
+    page-break-inside: avoid !important;
+  }
+
+  .avoid-break {
+    break-inside: avoid !important;
+  }
+}
+
+/* =================================================================
+   SCREEN-ONLY STYLES (for preview)
+   ================================================================= */
+
+@media screen {
+  .print-only {
+    display: none !important;
+  }
+
+  /* Page simulation for preview */
+  .report-page-preview {
+    width: 612px;
+    height: 792px;
+    background: white;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 16px auto;
+  }
+
+  /* Zoom levels */
+  .report-preview-container[data-zoom="50"] .report-page-preview {
+    transform: scale(0.5);
+    transform-origin: top center;
+  }
+
+  .report-preview-container[data-zoom="75"] .report-page-preview {
+    transform: scale(0.75);
+    transform-origin: top center;
+  }
+
+  .report-preview-container[data-zoom="100"] .report-page-preview {
+    transform: scale(1);
+  }
+
+  .report-preview-container[data-zoom="125"] .report-page-preview {
+    transform: scale(1.25);
+    transform-origin: top center;
+  }
+
+  .report-preview-container[data-zoom="150"] .report-page-preview {
+    transform: scale(1.5);
+    transform-origin: top center;
+  }
+}
+

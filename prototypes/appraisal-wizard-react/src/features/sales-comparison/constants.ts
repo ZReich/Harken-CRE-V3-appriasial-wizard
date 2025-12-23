@@ -560,53 +560,138 @@ export const MOCK_VALUES: PropertyValues = {
   }
 };
 
-export const AVAILABLE_ELEMENTS = [
-  // General / Office / Retail
-  { label: 'City/State', key: 'city_state' },
-  { label: 'Data Source', key: 'data_source' },
-  { label: 'Year Built/Ren', key: 'year_built_ren' },
-  { label: '% Office', key: 'pct_office' },
-  { label: 'Sidewall Height', key: 'sidewall_height' },
-  { label: 'Clear Height', key: 'clear_height' },
-  { label: 'Zoning', key: 'zoning' },
-  { label: 'Utilities', key: 'utilities' },
-  { label: 'Topography', key: 'topography' },
-  { label: 'Land Value', key: 'land_value' },
-  { label: 'Bldg Value', key: 'bldg_value' },
-  { label: 'Grantor', key: 'grantor' },
-  { label: 'Grantee', key: 'grantee' },
-  { label: 'Site Utility', key: 'site_utility' },
+// =====================================================================
+// SECTION-SPECIFIC AVAILABLE ELEMENTS
+// Each section has its own pool of elements that can be added
+// =====================================================================
+
+export interface AvailableElement {
+  label: string;
+  key: string;
+  description?: string;
+}
+
+// TRANSACTION DATA - Physical and transactional facts about the sale
+export const AVAILABLE_TRANSACTION_ELEMENTS: AvailableElement[] = [
+  // General / All Property Types
+  { label: 'City/State', key: 'city_state', description: 'City and state location' },
+  { label: 'Data Source', key: 'data_source', description: 'Source of sale data (MLS, CoStar, etc.)' },
+  { label: 'Grantor', key: 'grantor', description: 'Seller name' },
+  { label: 'Grantee', key: 'grantee', description: 'Buyer name' },
+  { label: 'Zoning', key: 'zoning', description: 'Zoning classification' },
+  { label: 'Utilities', key: 'utilities', description: 'Available utilities' },
+  { label: 'Topography', key: 'topography', description: 'Site topography' },
+  { label: 'Land Value', key: 'land_value_fact', description: 'Allocated land value' },
+  { label: 'Bldg Value', key: 'bldg_value', description: 'Allocated building value' },
+  { label: 'Land-to-Bldg Ratio', key: 'land_bldg_ratio', description: 'Site to building ratio' },
+  { label: 'Floor Area Ratio', key: 'far', description: 'FAR (building SF / land SF)' },
+  { label: 'Parking Spaces', key: 'parking_spaces', description: 'Number of parking spaces' },
+  { label: 'Parking Ratio', key: 'parking_ratio', description: 'Parking per 1,000 SF' },
   
   // Industrial
-  { label: 'Dock Doors', key: 'dock_doors' },
-  { label: 'Power', key: 'power' },
-  { label: 'Tenant', key: 'tenant' },
-  { label: 'Tenant Rating (S&P)', key: 'tenant_rating' },
+  { label: '% Office', key: 'pct_office', description: 'Percentage of office space' },
+  { label: 'Sidewall Height', key: 'sidewall_height', description: 'Sidewall clear height' },
+  { label: 'Clear Height', key: 'clear_height', description: 'Usable clear height' },
+  { label: 'Dock Doors', key: 'dock_doors', description: 'Number of dock-high doors' },
+  { label: 'Drive-In Doors', key: 'drive_in_doors', description: 'Number of drive-in doors' },
+  { label: 'Power (Amps)', key: 'power', description: 'Electrical service capacity' },
+  { label: 'Crane Capacity', key: 'crane', description: 'Overhead crane capacity' },
+  { label: 'Sprinklers', key: 'sprinklers', description: 'Fire sprinkler system' },
   
   // Multi-Family
-  { label: '# of Units', key: 'num_units' },
-  { label: 'Unit Mix', key: 'unit_mix' },
-  { label: 'Price/Unit', key: 'price_unit' },
-  { label: 'Net Rentable Area', key: 'nra' },
-  { label: 'Gross Bldg Area', key: 'gba' },
-  { label: 'Unit Size/SF', key: 'unit_size_sf' },
-  { label: 'Beds/Baths', key: 'beds_baths' },
-  { label: 'Garages', key: 'garages' },
-  { label: 'Heat Source', key: 'heat_source' },
+  { label: '# of Units', key: 'num_units', description: 'Total unit count' },
+  { label: 'Unit Mix', key: 'unit_mix', description: 'Unit type breakdown' },
+  { label: 'Price/Unit', key: 'price_unit', description: 'Sale price per unit' },
+  { label: 'Net Rentable Area', key: 'nra', description: 'Net rentable SF' },
+  { label: 'Gross Bldg Area', key: 'gba', description: 'Gross building SF' },
+  { label: 'Avg Unit Size', key: 'unit_size_sf', description: 'Average unit SF' },
+  { label: 'Beds/Baths', key: 'beds_baths', description: 'Bedroom/bathroom configuration' },
+  { label: 'Garages', key: 'garages', description: 'Garage/carport count' },
   
   // Hotel
-  { label: 'Chain', key: 'chain' },
-  { label: 'Scale', key: 'scale' },
-  { label: 'Brand/Scale', key: 'brand_scale' },
-  { label: 'Room Count', key: 'room_count' },
-  { label: 'Price/Room', key: 'price_room' },
-  { label: 'RevPAR', key: 'revpar' },
-  { label: 'ADR', key: 'adr' },
+  { label: 'Chain', key: 'chain', description: 'Hotel chain/brand' },
+  { label: 'Brand/Scale', key: 'brand_scale', description: 'Brand tier (luxury, midscale, etc.)' },
+  { label: 'Room Count', key: 'room_count', description: 'Number of guest rooms' },
+  { label: 'Price/Room', key: 'price_room', description: 'Sale price per room' },
+  { label: 'RevPAR', key: 'revpar', description: 'Revenue per available room' },
+  { label: 'ADR', key: 'adr', description: 'Average daily rate' },
+  { label: 'Occupancy %', key: 'hotel_occupancy', description: 'Average occupancy rate' },
   
-  // Storage
-  { label: 'Climate Controlled %', key: 'climate_control' },
-  { label: 'Heated', key: 'heated' },
-  { label: 'Demised Units', key: 'demised_units' },
+  // Self-Storage
+  { label: 'Climate Controlled %', key: 'climate_control', description: 'Climate-controlled percentage' },
+  { label: 'Demised Units', key: 'demised_units', description: 'Number of storage units' },
+  { label: 'Price/Unit (Storage)', key: 'price_storage_unit', description: 'Price per storage unit' },
+];
+
+// CAP RATE EXTRACTION - Income metrics for cap rate analysis
+export const AVAILABLE_CAP_RATE_ELEMENTS: AvailableElement[] = [
+  { label: 'GPI', key: 'gpi', description: 'Gross Potential Income' },
+  { label: 'Vacancy & Credit Loss', key: 'vacancy_loss', description: 'Vacancy and collection loss' },
+  { label: 'EGI', key: 'egi', description: 'Effective Gross Income' },
+  { label: 'Operating Expenses', key: 'opex', description: 'Total operating expenses' },
+  { label: 'Expense Ratio', key: 'expense_ratio', description: 'OER (expenses/EGI)' },
+  { label: 'Reserves', key: 'reserves', description: 'Replacement reserves' },
+  { label: 'Debt Service', key: 'debt_service', description: 'Annual debt service' },
+  { label: 'DSCR', key: 'dscr', description: 'Debt service coverage ratio' },
+  { label: 'LTV', key: 'ltv', description: 'Loan-to-value ratio' },
+  { label: 'Equity Yield', key: 'equity_yield', description: 'Equity yield rate' },
+  { label: 'Cash-on-Cash', key: 'cash_on_cash', description: 'Cash-on-cash return' },
+  { label: 'Cap Rate Verification', key: 'cap_verification', description: 'How cap rate was verified' },
+];
+
+// TRANSACTIONAL ADJUSTMENTS - Standard USPAP adjustments
+export const AVAILABLE_ADJUSTMENT_ELEMENTS: AvailableElement[] = [
+  { label: 'Expenditures After Sale', key: 'expenditures_after', description: 'Post-sale capital improvements' },
+  { label: 'Personal Property', key: 'personal_property', description: 'FF&E or personal property included' },
+  { label: 'Seller Concessions', key: 'seller_concessions', description: 'Seller-paid closing costs/concessions' },
+  { label: 'Lease Encumbrances', key: 'lease_encumbrances', description: 'Below/above market leases' },
+  { label: 'Legal/Title Issues', key: 'legal_title', description: 'Title defects or legal issues' },
+  { label: 'Arms-Length Status', key: 'arms_length', description: 'Arms-length transaction verification' },
+  { label: 'Motivation', key: 'motivation', description: 'Buyer/seller motivation' },
+  { label: 'Assemblage/Plottage', key: 'assemblage', description: 'Assemblage premium' },
+];
+
+// QUANTITATIVE ADJUSTMENTS - Paired sales percentage adjustments
+export const AVAILABLE_QUANTITATIVE_ELEMENTS: AvailableElement[] = [
+  { label: 'Age/Eff. Age', key: 'age_adj', description: 'Age or effective age adjustment' },
+  { label: 'Quality', key: 'quality_adj', description: 'Construction quality adjustment' },
+  { label: 'Functional Utility', key: 'functional_adj', description: 'Functional utility adjustment' },
+  { label: 'Site Size', key: 'site_size_adj', description: 'Site size adjustment' },
+  { label: 'Building Size', key: 'bldg_size_adj', description: 'Building size adjustment' },
+  { label: 'Zoning', key: 'zoning_adj', description: 'Zoning/entitlements adjustment' },
+  { label: 'Floor Area Ratio', key: 'far_adj', description: 'FAR/density adjustment' },
+  { label: 'Parking', key: 'parking_adj', description: 'Parking ratio adjustment' },
+  { label: 'Tenancy', key: 'tenancy_adj', description: 'Lease/occupancy adjustment' },
+  { label: 'Ceiling Height', key: 'ceiling_adj', description: 'Clear height adjustment' },
+  { label: 'Access/Visibility', key: 'access_adj', description: 'Access/visibility adjustment' },
+  { label: 'Amenities', key: 'amenities_adj', description: 'Amenities adjustment' },
+];
+
+// QUALITATIVE CHARACTERISTICS - Superior/Inferior comparisons
+export const AVAILABLE_QUALITATIVE_ELEMENTS: AvailableElement[] = [
+  { label: 'View', key: 'view_comp', description: 'View quality comparison' },
+  { label: 'Access/Visibility', key: 'access_comp', description: 'Access and visibility' },
+  { label: 'Amenities', key: 'amenities_comp', description: 'Building/site amenities' },
+  { label: 'Tenant Quality', key: 'tenant_quality_comp', description: 'Tenant credit quality' },
+  { label: 'Management', key: 'management_comp', description: 'Property management quality' },
+  { label: 'Curb Appeal', key: 'curb_appeal_comp', description: 'Overall curb appeal' },
+  { label: 'Environmental', key: 'environmental_comp', description: 'Environmental considerations' },
+  { label: 'Corner Influence', key: 'corner_comp', description: 'Corner lot influence' },
+  { label: 'Frontage', key: 'frontage_comp', description: 'Street frontage quality' },
+  { label: 'Floor Plan', key: 'floor_plan_comp', description: 'Floor plan efficiency' },
+  { label: 'Deferred Maint.', key: 'deferred_maint_comp', description: 'Deferred maintenance' },
+  { label: 'Site Improvements', key: 'site_impr_comp', description: 'Site improvements quality' },
+];
+
+// VALUATION ANALYSIS - Reconciliation and analysis elements
+export const AVAILABLE_VALUATION_ELEMENTS: AvailableElement[] = [
+  { label: 'Reliability Score', key: 'reliability', description: 'Data reliability rating (1-5)' },
+  { label: 'Data Quality', key: 'data_quality', description: 'Verification level (confirmed/unconfirmed)' },
+  { label: 'Verification Source', key: 'verification_source', description: 'Source of data verification' },
+  { label: 'Appraiser Comments', key: 'appraiser_comments', description: 'Additional appraiser comments' },
+  { label: 'Adjustment Rationale', key: 'adj_rationale', description: 'Adjustment support/rationale' },
+  { label: 'Market Relevance', key: 'market_relevance', description: 'Relevance to subject market' },
+  { label: 'Time Since Sale', key: 'time_since_sale', description: 'Months since sale date' },
 ];
 
 export const SECTIONS: Section[] = [

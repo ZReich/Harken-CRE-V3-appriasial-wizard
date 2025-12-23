@@ -1,0 +1,416 @@
+import React, { useState, useRef, useCallback, useEffect } from 'react';
+import {
+  ZoomIn,
+  ZoomOut,
+  ChevronLeft,
+  ChevronRight,
+  Maximize2,
+  Minimize2,
+  FileText,
+  Grid,
+  Eye,
+  Edit3,
+  Download,
+} from 'lucide-react';
+import type { ReportPage, TOCEntry, EditorMode } from '../../../types';
+import { CoverPage, LetterPage, SummaryPage, NarrativePage, PhotoGridPage, TOCPage, AnalysisGridPage, AddendaHeaderPage } from './pages';
+import { ZOOM_LEVELS } from '../constants';
+
+interface ReportPreviewProps {
+  pages: ReportPage[];
+  toc: TOCEntry[];
+  currentPage?: number;
+  onPageChange?: (page: number) => void;
+  mode?: EditorMode;
+  onModeChange?: (mode: EditorMode) => void;
+  onElementSelect?: (elementId: string, pageIndex: number) => void;
+  onExportPDF?: () => void;
+  showSidebar?: boolean;
+}
+
+export const ReportPreview: React.FC<ReportPreviewProps> = ({
+  pages,
+  toc,
+  currentPage: controlledPage,
+  onPageChange,
+  mode = 'view',
+  onModeChange,
+  onElementSelect,
+  onExportPDF,
+  showSidebar = true,
+}) => {
+  const [internalPage, setInternalPage] = useState(1);
+  const [zoom, setZoom] = useState(75);
+  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [showThumbnails, setShowThumbnails] = useState(true);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const pagesContainerRef = useRef<HTMLDivElement>(null);
+
+  const currentPage = controlledPage ?? internalPage;
+  const totalPages = pages.length;
+
+  const handlePageChange = useCallback((page: number) => {
+    const clampedPage = Math.max(1, Math.min(page, totalPages));
+    if (onPageChange) {
+      onPageChange(clampedPage);
+    } else {
+      setInternalPage(clampedPage);
+    }
+  }, [totalPages, onPageChange]);
+
+  const handleZoomIn = useCallback(() => {
+    const currentIndex = ZOOM_LEVELS.indexOf(zoom);
+    if (currentIndex < ZOOM_LEVELS.length - 1) {
+      setZoom(ZOOM_LEVELS[currentIndex + 1]);
+    }
+  }, [zoom]);
+
+  const handleZoomOut = useCallback(() => {
+    const currentIndex = ZOOM_LEVELS.indexOf(zoom);
+    if (currentIndex > 0) {
+      setZoom(ZOOM_LEVELS[currentIndex - 1]);
+    }
+  }, [zoom]);
+
+  const handleZoomChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
+    setZoom(Number(e.target.value));
+  }, []);
+
+  const toggleFullscreen = useCallback(() => {
+    if (!document.fullscreenElement) {
+      containerRef.current?.requestFullscreen();
+      setIsFullscreen(true);
+    } else {
+      document.exitFullscreen();
+      setIsFullscreen(false);
+    }
+  }, []);
+
+  // Keyboard navigation
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+
+      switch (e.key) {
+        case 'ArrowLeft':
+        case 'PageUp':
+          handlePageChange(currentPage - 1);
+          break;
+        case 'ArrowRight':
+        case 'PageDown':
+          handlePageChange(currentPage + 1);
+          break;
+        case 'Home':
+          handlePageChange(1);
+          break;
+        case 'End':
+          handlePageChange(totalPages);
+          break;
+        case '+':
+        case '=':
+          if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            handleZoomIn();
+          }
+          break;
+        case '-':
+          if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            handleZoomOut();
+          }
+          break;
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [currentPage, totalPages, handlePageChange, handleZoomIn, handleZoomOut]);
+
+  // Scroll to page when currentPage changes
+  useEffect(() => {
+    if (pagesContainerRef.current && pages.length > 0) {
+      const pageElement = pagesContainerRef.current.children[currentPage - 1] as HTMLElement;
+      if (pageElement) {
+        pageElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+    }
+  }, [currentPage, pages.length]);
+
+  const handleContentClick = useCallback((blockId: string) => {
+    if (mode === 'select' || mode === 'text-edit') {
+      onElementSelect?.(blockId, currentPage - 1);
+    }
+  }, [mode, currentPage, onElementSelect]);
+
+  const renderPage = (page: ReportPage, _index: number) => {
+    const isEditing = mode === 'select' || mode === 'text-edit';
+    const commonProps = {
+      isEditing,
+      onContentClick: handleContentClick,
+      pageNumber: page.pageNumber,
+    };
+
+    const pageComponent = (() => {
+      switch (page.layout) {
+        case 'cover':
+          return <CoverPage content={page.content} {...commonProps} />;
+        case 'letter':
+          return <LetterPage content={page.content} title={page.title} {...commonProps} />;
+        case 'toc':
+          return <TOCPage entries={toc} title={page.title} {...commonProps} />;
+        case 'summary-table':
+          return <SummaryPage content={page.content} title={page.title} {...commonProps} />;
+        case 'narrative':
+          return <NarrativePage content={page.content} title={page.title} sectionId={page.sectionId} {...commonProps} />;
+        case 'analysis-grid':
+          return <AnalysisGridPage content={page.content} title={page.title} sectionId={page.sectionId} {...commonProps} />;
+        case 'photo-grid-6':
+        case 'photo-grid-4':
+          return (
+            <PhotoGridPage
+              photos={page.photos || []}
+              layout={page.layout === 'photo-grid-6' ? 'grid-6' : 'grid-4'}
+              title={page.title}
+              showAttribution={page.showAttribution}
+              {...commonProps}
+              onPhotoClick={handleContentClick}
+            />
+          );
+        case 'photo-single':
+          return (
+            <PhotoGridPage
+              photos={page.photos || []}
+              layout="single"
+              title={page.title}
+              {...commonProps}
+              onPhotoClick={handleContentClick}
+            />
+          );
+        case 'addenda-header':
+          return <AddendaHeaderPage title={page.title} pageNumber={page.pageNumber} />;
+        case 'map-page':
+          return (
+            <div className="w-full h-full bg-white flex items-center justify-center">
+              <div className="text-slate-400">
+                <FileText size={48} className="mx-auto mb-4" />
+                <p className="text-sm">Map Page</p>
+                <p className="text-xs mt-1">{page.title}</p>
+              </div>
+            </div>
+          );
+        case 'document':
+          return (
+            <div className="w-full h-full bg-white flex items-center justify-center">
+              <div className="text-slate-400">
+                <FileText size={48} className="mx-auto mb-4" />
+                <p className="text-sm">Document Page</p>
+                <p className="text-xs mt-1">{page.title}</p>
+              </div>
+            </div>
+          );
+        default:
+          return <NarrativePage content={page.content} title={page.title} {...commonProps} />;
+      }
+    })();
+
+    return (
+      <div
+        key={page.id}
+        className="flex-shrink-0 bg-white shadow-lg rounded-lg overflow-hidden"
+        style={{
+          width: `${612 * (zoom / 100)}px`,
+          height: `${792 * (zoom / 100)}px`,
+        }}
+      >
+        <div
+          className="w-[612px] h-[792px] origin-top-left"
+          style={{ transform: `scale(${zoom / 100})` }}
+        >
+          {pageComponent}
+        </div>
+      </div>
+    );
+  };
+
+  return (
+    <div
+      ref={containerRef}
+      className={`flex flex-col h-full bg-slate-200 ${isFullscreen ? 'fixed inset-0 z-50' : ''}`}
+    >
+      {/* Toolbar */}
+      <div className="flex items-center justify-between px-4 py-2 bg-white border-b border-slate-200 shadow-sm">
+        {/* Left: Page navigation */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage <= 1}
+            className="p-1.5 rounded hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <ChevronLeft size={18} />
+          </button>
+          
+          <div className="flex items-center gap-1.5">
+            <input
+              type="number"
+              min={1}
+              max={totalPages}
+              value={currentPage}
+              onChange={(e) => handlePageChange(Number(e.target.value))}
+              className="w-12 px-2 py-1 text-sm text-center border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-sky-500"
+            />
+            <span className="text-sm text-slate-500">of {totalPages}</span>
+          </div>
+          
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage >= totalPages}
+            className="p-1.5 rounded hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <ChevronRight size={18} />
+          </button>
+        </div>
+
+        {/* Center: Zoom controls */}
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleZoomOut}
+            disabled={zoom <= ZOOM_LEVELS[0]}
+            className="p-1.5 rounded hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <ZoomOut size={18} />
+          </button>
+          
+          <select
+            value={zoom}
+            onChange={handleZoomChange}
+            className="px-2 py-1 text-sm border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-sky-500"
+          >
+            {ZOOM_LEVELS.map((level) => (
+              <option key={level} value={level}>{level}%</option>
+            ))}
+          </select>
+          
+          <button
+            onClick={handleZoomIn}
+            disabled={zoom >= ZOOM_LEVELS[ZOOM_LEVELS.length - 1]}
+            className="p-1.5 rounded hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <ZoomIn size={18} />
+          </button>
+        </div>
+
+        {/* Right: Mode & actions */}
+        <div className="flex items-center gap-2">
+          {/* Mode toggle */}
+          <div className="flex items-center bg-slate-100 rounded-lg p-0.5">
+            <button
+              onClick={() => onModeChange?.('view')}
+              className={`p-1.5 rounded ${mode === 'view' ? 'bg-white shadow-sm' : 'hover:bg-slate-200'}`}
+              title="View mode"
+            >
+              <Eye size={16} />
+            </button>
+            <button
+              onClick={() => onModeChange?.('select')}
+              className={`p-1.5 rounded ${mode === 'select' ? 'bg-white shadow-sm' : 'hover:bg-slate-200'}`}
+              title="Edit mode"
+            >
+              <Edit3 size={16} />
+            </button>
+          </div>
+
+          <div className="w-px h-6 bg-slate-200" />
+
+          <button
+            onClick={() => setShowThumbnails(!showThumbnails)}
+            className={`p-1.5 rounded ${showThumbnails ? 'bg-slate-100' : 'hover:bg-slate-100'}`}
+            title="Toggle thumbnails"
+          >
+            <Grid size={18} />
+          </button>
+
+          <button
+            onClick={toggleFullscreen}
+            className="p-1.5 rounded hover:bg-slate-100"
+            title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
+          >
+            {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
+          </button>
+
+          {onExportPDF && (
+            <button
+              onClick={onExportPDF}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-sky-500 text-white text-sm rounded hover:bg-sky-600"
+            >
+              <Download size={14} />
+              Export PDF
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Main content area */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Thumbnail sidebar */}
+        {showSidebar && showThumbnails && (
+          <div className="w-48 bg-slate-100 border-r border-slate-200 overflow-y-auto p-3 space-y-3">
+            {pages.map((page, index) => (
+              <button
+                key={page.id}
+                onClick={() => handlePageChange(index + 1)}
+                className={`w-full aspect-[8.5/11] bg-white rounded shadow-sm overflow-hidden border-2 transition-colors ${
+                  currentPage === index + 1
+                    ? 'border-sky-500'
+                    : 'border-transparent hover:border-slate-300'
+                }`}
+              >
+                <div className="w-full h-full flex items-center justify-center text-xs text-slate-400">
+                  {index + 1}
+                </div>
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* Pages container */}
+        <div
+          ref={pagesContainerRef}
+          className="flex-1 overflow-auto p-8"
+        >
+          <div className="flex flex-col items-center gap-8">
+            {pages.length === 0 ? (
+              <div className="flex flex-col items-center justify-center h-96 text-slate-400">
+                <FileText size={48} className="mb-4" />
+                <p className="text-lg font-medium">No pages to display</p>
+                <p className="text-sm mt-1">Complete the wizard to generate the report preview</p>
+              </div>
+            ) : (
+              pages.map((page, index) => renderPage(page, index))
+            )}
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom status bar */}
+      <div className="px-4 py-2 bg-white border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
+        <div className="flex items-center gap-4">
+          <span>{totalPages} pages</span>
+          <span>•</span>
+          <span>8.5" × 11" (Letter)</span>
+        </div>
+        <div className="flex items-center gap-4">
+          {mode !== 'view' && (
+            <span className="text-sky-600 font-medium">
+              Editing Mode - Click elements to select
+            </span>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ReportPreview;
+

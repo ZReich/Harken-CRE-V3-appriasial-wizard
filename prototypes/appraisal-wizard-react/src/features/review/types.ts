@@ -2,12 +2,12 @@
 // REVIEW PAGE TYPES
 // =================================================================
 
-export type ReviewTabId = 'hbu' | 'checklist' | 'reconciliation' | 'preview';
+export type ReviewTabId = 'hbu' | 'reconciliation' | 'checklist' | 'preview';
 
 export interface ReviewTab {
   id: ReviewTabId;
   label: string;
-  icon: 'checklist' | 'chart' | 'document';
+  icon: 'hbu' | 'chart' | 'checklist' | 'document';
 }
 
 // =================================================================
@@ -44,7 +44,7 @@ export interface ApproachValue {
 export interface ReportSection {
   id: string;
   label: string;
-  type: 'cover' | 'section' | 'toc';
+  type: 'cover' | 'section' | 'toc' | 'letter' | 'summary-table' | 'narrative' | 'analysis-grid' | 'photo-grid' | 'map' | 'document' | 'addenda-header';
   sectionNumber?: string;
   enabled: boolean;
   expanded: boolean;

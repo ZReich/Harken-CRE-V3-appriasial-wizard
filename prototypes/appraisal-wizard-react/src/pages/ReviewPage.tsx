@@ -4,7 +4,6 @@ import WizardLayout from '../components/WizardLayout';
 import {
   ClipboardCheckIcon,
   ChartIcon,
-  DocumentIcon,
   ScaleIcon,
 } from '../components/icons';
 import { CompletionChecklist, ValueReconciliation, ReportEditor } from '../features/review';
@@ -16,7 +15,7 @@ import { useCelebration } from '../hooks/useCelebration';
 import { useSmartContinue } from '../hooks/useSmartContinue';
 import { useWizard } from '../context/WizardContext';
 import EnhancedTextArea from '../components/EnhancedTextArea';
-import { Info } from 'lucide-react';
+import { Info, ArrowLeft, Save, FileCheck, CheckCircle, Sparkles, Loader2 } from 'lucide-react';
 
 // =================================================================
 // CONFETTI ANIMATION
@@ -90,31 +89,122 @@ function SuccessScreen({ onCreateAnother, onViewReport }: { onCreateAnother: () 
 }
 
 // =================================================================
-// FINALIZE BUTTON COMPONENT
+// READY TO PREVIEW SCREEN - Celebration & Transition
 // =================================================================
 
-function FinalizeButton({ onFinalize }: { onFinalize: () => void }) {
+function ReadyToPreviewScreen({ 
+  onPreview, 
+  onBack 
+}: { 
+  onPreview: () => void; 
+  onBack: () => void;
+}) {
   return (
-    <div className="bg-green-50 border-2 border-green-200 rounded-xl p-6 mt-6">
-      <div className="flex items-center gap-4">
-        <svg className="w-12 h-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-        <div className="flex-1">
-          <h3 className="text-lg font-bold text-green-900 mb-1">Ready to Finalize</h3>
-          <p className="text-sm text-green-800">
-            Review your work and click "Finalize Report" to generate the final PDF.
+    <div className="flex items-center justify-center h-full min-h-[500px]">
+      <div className="text-center animate-fade-in max-w-lg">
+        {/* Animated Checkmark */}
+        <div className="mb-8 relative">
+          <div className="w-32 h-32 mx-auto bg-gradient-to-br from-green-400 to-emerald-600 rounded-full flex items-center justify-center shadow-xl shadow-green-200">
+            <CheckCircle className="w-16 h-16 text-white" strokeWidth={2.5} />
+          </div>
+          <div className="absolute -top-2 -right-2 w-12 h-12 bg-amber-400 rounded-full flex items-center justify-center shadow-lg animate-bounce">
+            <Sparkles className="w-6 h-6 text-white" />
+          </div>
+        </div>
+
+        {/* Message */}
+        <h2 className="text-3xl font-bold text-gray-900 mb-3">
+          Appraisal Analysis Complete!
+        </h2>
+        <p className="text-lg text-gray-600 mb-8">
+          All sections have been reviewed and validated. Your report data is ready for preview and final generation.
+        </p>
+
+        {/* Action Buttons */}
+        <div className="flex flex-col gap-3 items-center">
+          <button
+            onClick={onPreview}
+            className="px-8 py-4 bg-gradient-to-r from-[#0da1c7] to-[#0890b0] text-white font-bold rounded-xl hover:shadow-xl hover:scale-[1.02] transition-all flex items-center gap-3 text-lg"
+          >
+            Preview & Finalize Report
+            <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+          <button
+            onClick={onBack}
+            className="px-6 py-2 text-gray-500 hover:text-gray-700 font-medium transition-colors"
+          >
+            ← Back to Completion Checklist
+          </button>
+        </div>
+
+        {/* Info Note */}
+        <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4 text-left">
+          <p className="text-sm text-blue-800">
+            <strong>What's next?</strong> In the report preview, you can customize formatting, 
+            edit text, rearrange sections, and generate the final PDF for delivery.
           </p>
         </div>
+      </div>
+    </div>
+  );
+}
+
+// =================================================================
+// FULL-SCREEN REPORT PREVIEW MODE
+// =================================================================
+
+function ReportPreviewMode({ 
+  onBack, 
+  onFinalize,
+  onSaveDraft,
+}: { 
+  onBack: () => void; 
+  onFinalize: () => void;
+  onSaveDraft: () => void;
+}) {
+  return (
+    <div className="fixed inset-0 bg-gray-100 z-50 flex flex-col overflow-hidden">
+      {/* Custom Header */}
+      <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8 flex-shrink-0 shadow-sm z-10">
+        {/* Left: Back Button */}
         <button
-          onClick={onFinalize}
-          className="px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 flex items-center gap-2 shadow-lg hover:shadow-xl transition-all"
+          onClick={onBack}
+          className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors font-medium"
         >
-          Finalize Report
-          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
+          <ArrowLeft size={18} />
+          Back to Review
         </button>
+
+        {/* Center: Title */}
+        <div className="text-center">
+          <h1 className="text-lg font-bold text-gray-800">Report Preview</h1>
+          <p className="text-xs text-gray-500">Edit and customize before generating</p>
+        </div>
+
+        {/* Right: Actions */}
+        <div className="flex items-center gap-3">
+          <button
+            onClick={onSaveDraft}
+            className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors font-medium"
+          >
+            <Save size={16} />
+            Save Draft
+          </button>
+          <button
+            onClick={onFinalize}
+            className="flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg hover:shadow-lg transition-all font-semibold"
+          >
+            <FileCheck size={16} />
+            Generate Final PDF
+          </button>
+        </div>
+      </header>
+
+      {/* Full-screen ReportEditor - flex-1 to fill remaining space */}
+      <div className="flex-1 min-h-0">
+        <ReportEditor />
       </div>
     </div>
   );
@@ -126,14 +216,37 @@ function FinalizeButton({ onFinalize }: { onFinalize: () => void }) {
 
 export default function ReviewPage() {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<ReviewTabId>('checklist');
+  const [activeTab, setActiveTab] = useState<ReviewTabId>('hbu');
   const [isFinalized, setIsFinalized] = useState(false);
+  const [showReadyToPreview, setShowReadyToPreview] = useState(false);
+  const [showPreviewMode, setShowPreviewMode] = useState(false);
+  const [, setHasCelebrated] = useState(false);
 
   // Get celebration trigger for finale
   const { triggerSectionCelebration } = useCelebration();
 
+  // Handler for entering preview mode
+  const handleEnterPreviewMode = useCallback(() => {
+    setShowReadyToPreview(false);
+    setShowPreviewMode(true);
+  }, []);
+
+  // Handler for exiting preview mode back to review
+  const handleExitPreviewMode = useCallback(() => {
+    setShowPreviewMode(false);
+    setActiveTab('checklist');
+  }, []);
+
+  // Handler for saving draft in preview mode
+  const handleSaveDraft = useCallback(() => {
+    // Would save draft to backend
+    alert('Draft saved successfully!');
+  }, []);
+
+  // Handler for finalizing the report
   const handleFinalize = useCallback(() => {
     setIsFinalized(true);
+    setShowPreviewMode(false);
     triggerCelebration(); // Keep existing confetti
     triggerSectionCelebration('review'); // Trigger the finale celebration overlay
   }, [triggerSectionCelebration]);
@@ -146,6 +259,12 @@ export default function ReviewPage() {
     // Would navigate to report view
     navigate('/template');
   }, [navigate]);
+
+  // Handler for going back from ReadyToPreview screen
+  const handleBackToChecklist = useCallback(() => {
+    setShowReadyToPreview(false);
+    setActiveTab('checklist');
+  }, []);
 
   const { state } = useWizard();
   
@@ -161,13 +280,83 @@ export default function ReviewPage() {
   const [hbuFinanciallyFeasible, setHbuFinanciallyFeasible] = useState('');
   const [hbuMaximallyProductive, setHbuMaximallyProductive] = useState('');
   const [hbuAsImproved, setHbuAsImproved] = useState('');
+  
+  // Draft All loading state
+  const [isDraftingAllVacant, setIsDraftingAllVacant] = useState(false);
 
-  // Tab configuration - HBU now at the start (before checklist)
+  // Enhanced AI drafts with more market data, specificity, and neighborhood context
+  // Matching the quality and depth of actual Rove Valuations appraisals
+  const subjectAddress = state.subjectData?.address?.street || '6907 Entryway Drive';
+  const zoningClass = state.subjectData?.zoningClass || 'I-1 (Light Industrial)';
+  const siteArea = state.subjectData?.siteArea || '1.534';
+  const siteAreaUnit = state.subjectData?.siteAreaUnit || 'acres';
+  const frontage = state.subjectData?.frontage || '225.79 feet';
+  const utilities = state.subjectData?.utilities || 'well water, private septic, electricity, natural gas, and telecommunications';
+  const floodZone = state.subjectData?.floodZone || 'Zone X';
+  const propertyType = state.propertyType || 'light industrial';
+  
+  const simulatedDrafts = useMemo(() => ({
+    hbu_legally_permissible: `The subject property at ${subjectAddress} is zoned ${zoningClass} under the City of Billings zoning ordinance. This zoning district is specifically intended to accommodate a variety of business, warehouse, and light industrial uses related to wholesale activities. Permitted uses by right include light manufacturing, warehousing and distribution, research and development facilities, office uses accessory to industrial operations, and related commercial uses.
+
+The subject's location within the established industrial corridor places it within an area that includes notable properties such as Bridger Steel, Western Ranch Supply, FedEx Freight, Tractor and Equipment Company, and various other light industrial operations. This area has historically supported light industrial development and continues to attract similar uses. Conditional uses under the zoning ordinance may include outdoor storage with appropriate screening, certain retail uses accessory to industrial operations, and contractor yards with specific site plan requirements.
+
+No deed restrictions, private covenants, or easements were identified in our title review that would further limit development potential beyond the zoning requirements. The subject's current use as a ${propertyType} shop/office building is a conforming use under the applicable zoning ordinance. Based on this analysis, the legally permissible uses include industrial, warehouse, distribution, and related commercial development consistent with the ${zoningClass} zoning district.`,
+    
+    hbu_physically_possible: `The subject site contains approximately ${siteArea} ${siteAreaUnit} (66,832 square feet) of level land with a regular, rectangular configuration. The site has frontage of approximately ${frontage} along Entryway Drive, providing excellent visibility and access for ${propertyType} users. The site topography is level and at street grade, presenting no significant physical constraints to development or material handling operations.
+
+All public utilities are available and connected to the site, including ${utilities}. The site has a paved approach from the public right-of-way providing good ingress and egress for truck traffic. Per FEMA Flood Insurance Rate Map (FIRM) panel 30111C2175E, dated November 16, 2016, the subject is located in ${floodZone}, an area determined to be outside the 0.2% annual chance floodplain. No special flood insurance is required.
+
+Environmental concerns: No Phase I Environmental Site Assessment was provided for our review; however, visual observation of the site revealed no obvious environmental concerns. The property's current and historical use as ${propertyType} space is consistent with the surrounding area. Given these physical characteristics, the site is suitable for virtually any development permitted under the applicable zoning. Physically possible uses include industrial, warehouse, distribution, and office uses compatible with the site size, shape, access, and utility availability.`,
+    
+    hbu_financially_feasible: `Current market conditions indicate sustained demand for ${propertyType} and warehouse space in the Billings market area. According to our market analysis, the industrial submarket vacancy rate of approximately 4.8% is below the long-term historical average of 6-7%, indicating a healthy balance between supply and demand with continued pressure for new development.
+
+The Billings market has experienced significant industrial activity, including approximately 300,000 square feet of speculative development along South Frontage Road and the expansion of major distribution facilities. Market rental rates for comparable ${propertyType} space range from $10.00 to $14.00 per square foot on a gross or modified gross basis, depending on quality, age, and building specifications. These rental levels would support new development at current construction costs of $130 to $150 per square foot.
+
+Development feasibility analysis indicates that new ${propertyType} construction in this location would generate a positive residual land value, confirming financial feasibility. Market-derived capitalization rates for stabilized ${propertyType} properties in the region range from 6.00% to 7.50%, reflecting investor confidence in the asset class. Additionally, land values in the subject's immediate area have increased approximately 8-12% annually over the past three years. Based on our analysis, ${propertyType} and warehouse development would be financially feasible, generating adequate return to justify development costs.`,
+    
+    hbu_maximally_productive: `Based on our comprehensive analysis of the four tests of highest and best use, it is our conclusion that the highest and best use of the subject site as if vacant is development with ${propertyType} or warehouse improvements with integrated office space. This conclusion synthesizes the legally permissible uses (${zoningClass} zoning allowing industrial, warehouse, and commercial uses), physically possible uses (adequate site size, level topography, and full utility availability), and financially feasible uses (positive residual land value for ${propertyType} development).
+
+Among the legally permissible, physically possible, and financially feasible uses, ${propertyType} development with shop and office components would result in the highest land value. This conclusion is supported by several market factors: (1) the site's strategic location within the Harnish Trade Center Subdivision, an established industrial corridor with excellent highway access; (2) the success of similar recent developments in the immediate area; (3) sustained demand for quality ${propertyType} space with modern amenities; and (4) land values in the area that support new construction returns.
+
+The maximally productive use would be a modern pre-engineered steel building of approximately 10,000 to 15,000 square feet with 15-20% office finish, adequate clear height for modern logistics operations, and multiple overhead doors for flexible tenant configurations. Therefore, the highest and best use as vacant is development with ${propertyType} or warehouse improvements.`,
+    
+    hbu_as_improved: `The subject property is currently improved with a 10,200 square foot ${propertyType} shop/office building constructed in 2023. The improvements consist of a pre-engineered steel building with approximately 1,750 square feet of finished office space and 8,450 square feet of shop/warehouse area. The building features 20-foot clear height, three 17-foot by 14-foot overhead doors, and quality finishes throughout.
+
+The existing improvements are consistent with and represent the ideal improvement for the site given current market conditions and zoning. The improvements are new construction in excellent condition with an estimated remaining economic life of approximately 40 years, providing adequate functional utility for ${propertyType} users. The building's design, construction quality, and functional layout are competitive with or superior to other properties in the market.
+
+We considered alternative uses including renovation, conversion to alternative use, and demolition. Given the improvements' modern construction, excellent condition, and superior functional utility, demolition and redevelopment is not economically justified. The contribution value of the improvements substantially exceeds the cost to demolish and redevelop. The current improvement-to-land ratio of approximately 85% is consistent with competitive properties in the market. Based on this analysis, it is our conclusion that the highest and best use of the subject property as improved is continuation of its current use as a ${propertyType} shop/office facility.`,
+  }), [subjectAddress, zoningClass, siteArea, siteAreaUnit, frontage, utilities, floodZone, propertyType]);
+
+  // Handler for "Draft All" - As Vacant section
+  const handleDraftAllVacant = useCallback(async () => {
+    setIsDraftingAllVacant(true);
+    
+    // Simulate staggered AI generation for better UX
+    await new Promise(resolve => setTimeout(resolve, 400));
+    setHbuLegallyPermissible(simulatedDrafts.hbu_legally_permissible);
+    
+    await new Promise(resolve => setTimeout(resolve, 300));
+    setHbuPhysicallyPossible(simulatedDrafts.hbu_physically_possible);
+    
+    await new Promise(resolve => setTimeout(resolve, 300));
+    setHbuFinanciallyFeasible(simulatedDrafts.hbu_financially_feasible);
+    
+    await new Promise(resolve => setTimeout(resolve, 300));
+    setHbuMaximallyProductive(simulatedDrafts.hbu_maximally_productive);
+    
+    setIsDraftingAllVacant(false);
+  }, [simulatedDrafts]);
+
+
+  // Tab configuration - Only the 3 tracked tabs (Report Preview is now a separate mode)
+  // Order: HBU → Reconciliation → Checklist (per appraisal workflow)
+  // 1. Establish HBU first (foundational analysis)
+  // 2. Reconcile value indications (core conclusion)
+  // 3. Verify completion (quality control gate before finalizing)
   const tabs: { id: ReviewTabId; label: string; icon: typeof ClipboardCheckIcon }[] = [
     { id: 'hbu', label: 'Highest & Best Use', icon: ScaleIcon },
-    { id: 'checklist', label: 'Completion Checklist', icon: ClipboardCheckIcon },
     { id: 'reconciliation', label: 'Value Reconciliation', icon: ChartIcon },
-    { id: 'preview', label: 'Report Preview', icon: DocumentIcon },
+    { id: 'checklist', label: 'Completion Checklist', icon: ClipboardCheckIcon },
   ];
 
   // Progress tracking
@@ -180,18 +369,34 @@ export default function ReviewPage() {
     trackTabChange(activeTab);
   }, [activeTab, trackTabChange]);
 
+  // Check if all tabs are complete
+  const allTabsComplete = sectionCompletion >= 100;
+
   // Smart continue logic (for cycling through review tabs)
   const handleTabChange = useCallback((tab: string) => {
     setActiveTab(tab as ReviewTabId);
   }, []);
   
-  const { handleContinue: handleSmartContinue } = useSmartContinue({
+  const { handleContinue: baseSmartContinue } = useSmartContinue({
     sectionId: 'review',
     tabs: tabs.map(t => t.id),
     activeTab,
     setActiveTab: handleTabChange,
     currentPhase: 6,
   });
+
+  // Custom continue handler: on final tab (checklist), go to preview mode
+  const handleSmartContinue = useCallback(() => {
+    if (activeTab === 'checklist') {
+      // On the final tab - go to preview mode
+      triggerCelebration();
+      setHasCelebrated(true);
+      setShowPreviewMode(true);
+    } else {
+      // Otherwise, use the normal smart continue (goes to next tab)
+      baseSmartContinue();
+    }
+  }, [activeTab, baseSmartContinue]);
 
   // Get completion percentage for a specific tab
   const getTabCompletion = (tabId: string): number => {
@@ -229,7 +434,6 @@ export default function ReviewPage() {
         {activeTab === 'hbu' && 'Highest & Best Use'}
         {activeTab === 'checklist' && 'Finalization'}
         {activeTab === 'reconciliation' && 'Value Reconciliation'}
-        {activeTab === 'preview' && 'Report Editor'}
       </h3>
       <p className="text-sm text-gray-600 mb-4">
         {activeTab === 'hbu' &&
@@ -238,8 +442,6 @@ export default function ReviewPage() {
           'Review all sections for completeness and accuracy before generating the final report.'}
         {activeTab === 'reconciliation' &&
           'Assign weights to each valuation approach and provide reconciliation comments for each scenario.'}
-        {activeTab === 'preview' &&
-          'Preview and customize your report. Click on elements to edit text, fonts, and styling.'}
       </p>
 
       {activeTab === 'hbu' && (
@@ -298,27 +500,29 @@ export default function ReviewPage() {
               Provide clear reasoning for your weight assignments and how you arrived at the final value.
             </p>
           </div>
-        </>
-      )}
-
-      {activeTab === 'preview' && (
-        <>
-          <div className="bg-purple-50 border-l-4 border-purple-400 p-4 rounded mb-4">
-            <h4 className="font-semibold text-sm text-purple-900 mb-1">Edit Elements</h4>
-            <p className="text-xs text-purple-800">
-              Click on any text, image, or section to customize its appearance and content.
-            </p>
-          </div>
-          <div className="bg-indigo-50 border-l-4 border-indigo-400 p-4 rounded">
-            <h4 className="font-semibold text-sm text-indigo-900 mb-1">Add Text Blocks</h4>
-            <p className="text-xs text-indigo-800">
-              Use the "Add Text Block" button to add custom content anywhere on your report pages.
-            </p>
-          </div>
+          {allTabsComplete && (
+            <div className="bg-green-50 border-l-4 border-green-400 p-4 rounded mt-4">
+              <h4 className="font-semibold text-sm text-green-900 mb-1">Ready for Preview!</h4>
+              <p className="text-xs text-green-800">
+                All sections are complete. You can now preview and finalize your report.
+              </p>
+            </div>
+          )}
         </>
       )}
     </div>
   );
+
+  // If in full-screen preview mode, render just the preview
+  if (showPreviewMode) {
+    return (
+      <ReportPreviewMode
+        onBack={handleExitPreviewMode}
+        onFinalize={handleFinalize}
+        onSaveDraft={handleSaveDraft}
+      />
+    );
+  }
 
   // If finalized, show success screen
   if (isFinalized) {
@@ -331,6 +535,24 @@ export default function ReviewPage() {
         helpSidebarGuidance={helpSidebar}
       >
         <SuccessScreen onCreateAnother={handleCreateAnother} onViewReport={handleViewReport} />
+      </WizardLayout>
+    );
+  }
+
+  // If showing ready-to-preview celebration screen
+  if (showReadyToPreview) {
+    return (
+      <WizardLayout
+        title="Review & Finalize"
+        subtitle="Phase 6 of 6 • Analysis Complete!"
+        phase={6}
+        sidebar={sidebar}
+        helpSidebarGuidance={helpSidebar}
+      >
+        <ReadyToPreviewScreen
+          onPreview={handleEnterPreviewMode}
+          onBack={handleBackToChecklist}
+        />
       </WizardLayout>
     );
   }
@@ -356,9 +578,28 @@ export default function ReviewPage() {
 
             {/* HBU As Vacant */}
             <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-              <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
-                Highest & Best Use - As Vacant
-              </h3>
+              <div className="flex items-center justify-between border-b-2 border-gray-200 pb-3 mb-4">
+                <h3 className="text-lg font-bold text-[#1c3643]">
+                  Highest & Best Use - As Vacant
+                </h3>
+                <button
+                  onClick={handleDraftAllVacant}
+                  disabled={isDraftingAllVacant}
+                  className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-[#4db8d1] to-[#7fcce0] rounded-lg hover:from-[#3da8c1] hover:to-[#6fc0d4] flex items-center gap-2 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isDraftingAllVacant ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                      Drafting All...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-4 h-4" />
+                      AI Draft All (4 Sections)
+                    </>
+                  )}
+                </button>
+              </div>
               <div className="space-y-6">
                 <EnhancedTextArea
                   label="Legally Permissible Uses"
@@ -415,27 +656,10 @@ export default function ReviewPage() {
         );
 
       case 'checklist':
-        return (
-          <>
-            <CompletionChecklist />
-            <div className="max-w-4xl mx-auto">
-              <FinalizeButton onFinalize={handleFinalize} />
-            </div>
-          </>
-        );
+        return <CompletionChecklist />;
 
       case 'reconciliation':
-        return (
-          <>
-            <ValueReconciliation />
-            <div className="max-w-6xl mx-auto">
-              <FinalizeButton onFinalize={handleFinalize} />
-            </div>
-          </>
-        );
-
-      case 'preview':
-        return <ReportEditor />;
+        return <ValueReconciliation />;
 
       default:
         return null;
@@ -448,8 +672,7 @@ export default function ReviewPage() {
       subtitle="Phase 6 of 6 • Final Review & Reconciliation"
       phase={6}
       sidebar={sidebar}
-      helpSidebarGuidance={activeTab !== 'preview' ? helpSidebar : undefined}
-      noPadding={activeTab === 'preview'}
+      helpSidebarGuidance={helpSidebar}
       onContinue={handleSmartContinue}
     >
       {renderContent()}
