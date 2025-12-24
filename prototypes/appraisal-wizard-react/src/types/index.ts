@@ -241,13 +241,43 @@ export interface SubjectData {
   shape: string;
   frontage: string;
   topography: string;
-  utilities: string;
-  floodZone: string;
   environmental: string;
   easements: string;
   zoningClass: string;
   zoningDescription: string;
   zoningConforming: boolean;
+  
+  // Utilities (expanded)
+  waterSource: string;
+  sewerType: string;
+  electricProvider: string;
+  naturalGas: string;
+  telecom: string;
+  
+  // Access & Visibility
+  approachType: string;
+  accessQuality: string;
+  visibility: string;
+  truckAccess: string;
+  
+  // Site Improvements
+  pavingType: string;
+  fencingType: string;
+  yardStorage: string;
+  landscaping: string;
+  
+  // Flood Zone (enhanced)
+  femaZone: string;
+  femaMapPanel: string;
+  femaMapDate: string;
+  floodInsuranceRequired: string;
+  
+  // Site Description Narrative
+  siteDescriptionNarrative: string;
+  
+  // Convenience fields (computed from other fields or legacy)
+  utilities?: string;    // Combined utilities description
+  floodZone?: string;    // Alias for femaZone
   
   // Purpose & Scope (Setup page - Purpose tab)
   appraisalPurpose: string;
@@ -271,6 +301,30 @@ export interface SubjectData {
   occupancyStatus?: 'stabilized' | 'lease_up' | 'vacant' | 'not_applicable';
   plannedChanges?: 'none' | 'minor' | 'major' | 'change_of_use';
   loanPurpose?: 'purchase' | 'refinance' | 'construction' | 'bridge' | 'internal';
+}
+
+// =================================================================
+// STAGING PHOTOS (for bulk upload with AI classification)
+// =================================================================
+
+export interface PhotoClassificationSuggestion {
+  slotId: string;
+  slotLabel: string;
+  category: string;
+  categoryLabel: string;
+  confidence: number;
+  reasoning: string;
+}
+
+export interface StagingPhoto {
+  id: string;
+  file: File;
+  preview: string;
+  filename: string;
+  status: 'pending' | 'classifying' | 'classified' | 'error';
+  suggestions?: PhotoClassificationSuggestion[];
+  assignedSlot?: string;
+  error?: string;
 }
 
 // =================================================================
@@ -308,6 +362,12 @@ export interface WizardState {
   
   // Reconciliation Data
   reconciliationData: ReconciliationData | null;
+  
+  // Photo Staging (for bulk upload)
+  stagingPhotos: StagingPhoto[];
+  
+  // Cover Photo (for report title page)
+  coverPhoto?: CoverPhotoData;
   
   // Navigation
   currentPage: string;
@@ -358,7 +418,28 @@ export type WizardAction =
   | { type: 'MARK_ALL_SCENARIOS_COMPLETE' }
   | { type: 'SHOW_CELEBRATION'; payload: { sectionId: string; scenarioId?: number; level: CelebrationState['level'] } }
   | { type: 'HIDE_CELEBRATION' }
+  | { type: 'APPLY_PREVIEW_EDITS'; payload: PreviewEditsPayload }
+  // Staging Photos Actions
+  | { type: 'ADD_STAGING_PHOTOS'; payload: StagingPhoto[] }
+  | { type: 'UPDATE_STAGING_PHOTO'; payload: { id: string; updates: Partial<StagingPhoto> } }
+  | { type: 'REMOVE_STAGING_PHOTO'; payload: string }
+  | { type: 'CLEAR_STAGING_PHOTOS' }
+  | { type: 'ASSIGN_STAGING_PHOTO'; payload: { photoId: string; slotId: string } }
+  // Cover Photo Actions
+  | { type: 'SET_COVER_PHOTO'; payload: CoverPhotoData }
+  | { type: 'REMOVE_COVER_PHOTO' }
   | { type: 'RESET' };
+
+// =================================================================
+// PREVIEW EDITS TYPES
+// =================================================================
+
+export interface PreviewEditsPayload {
+  editedFields: Record<string, { path: string; editedValue: unknown }>;
+  sectionVisibility: Record<string, boolean>;
+  customContent: Record<string, unknown>;
+  styling: Record<string, React.CSSProperties>;
+}
 
 // =================================================================
 // VALIDATION TYPES
@@ -712,11 +793,21 @@ export interface ReportPage {
   content: ContentBlock[];
   photos?: ReportPhoto[];
   showAttribution?: boolean;
+  coverPhoto?: ReportPhoto; // Hero photo for cover page
 }
 
 // =================================================================
 // PHOTO MANAGEMENT TYPES
 // =================================================================
+
+/** Cover photo data for the report title page */
+export interface CoverPhotoData {
+  id: string;
+  file?: File;
+  preview: string; // Base64 or object URL for display
+  sourceSlotId?: string; // If selected from an existing uploaded photo
+  caption?: string;
+}
 
 /** Photo upload slot configuration */
 export interface PhotoUploadSlot {

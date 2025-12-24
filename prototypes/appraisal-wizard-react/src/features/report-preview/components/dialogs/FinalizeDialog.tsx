@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { X, FileCheck, Download, Share2, CheckCircle, Loader2, AlertCircle } from 'lucide-react';
+import { X, FileCheck, CheckCircle, Loader2, AlertCircle, Printer } from 'lucide-react';
 
 type FinalizeStep = 'confirm' | 'processing' | 'complete' | 'error';
+type CompletionMethod = 'downloaded' | 'printed' | null;
 
 interface FinalizeDialogProps {
   isOpen: boolean;
@@ -23,7 +24,8 @@ export const FinalizeDialog: React.FC<FinalizeDialogProps> = ({
   const [step, setStep] = useState<FinalizeStep>('confirm');
   const [progress, setProgress] = useState(0);
   const [error, setError] = useState<string | null>(null);
-  const [pdfUrl, setPdfUrl] = useState<string | null>(null);
+  // Track how PDF was generated (downloaded directly vs print dialog)
+  const [completionMethod, setCompletionMethod] = useState<CompletionMethod>(null);
 
   if (!isOpen) return null;
 
@@ -31,31 +33,40 @@ export const FinalizeDialog: React.FC<FinalizeDialogProps> = ({
     setStep('processing');
     setProgress(0);
     setError(null);
+    setCompletionMethod(null);
 
     try {
-      // Simulate progress steps
+      // Simulate progress steps for visual feedback
       const progressSteps = [
-        { percent: 10, message: 'Validating report data...' },
-        { percent: 30, message: 'Generating pages...' },
-        { percent: 50, message: 'Processing images...' },
-        { percent: 70, message: 'Creating PDF...' },
-        { percent: 90, message: 'Finalizing...' },
-        { percent: 100, message: 'Complete!' },
+        { percent: 10, delay: 200 },
+        { percent: 30, delay: 300 },
+        { percent: 50, delay: 300 },
+        { percent: 70, delay: 400 },
+        { percent: 90, delay: 300 },
       ];
 
       for (const step of progressSteps) {
-        await new Promise(resolve => setTimeout(resolve, 500));
+        await new Promise(resolve => setTimeout(resolve, step.delay));
         setProgress(step.percent);
       }
 
+      // Call the actual finalize function (triggers PDF download)
       await onFinalize();
       
-      // Simulate PDF URL
-      setPdfUrl('/generated/report.pdf');
+      setProgress(100);
+      // PDF was downloaded directly to user's device
+      setCompletionMethod('downloaded');
       setStep('complete');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to generate report');
-      setStep('error');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to generate report';
+      // Check if it was a print dialog fallback
+      if (errorMessage.includes('print') || errorMessage === 'printed') {
+        setCompletionMethod('printed');
+        setStep('complete');
+      } else {
+        setError(errorMessage);
+        setStep('error');
+      }
     }
   };
 
@@ -63,7 +74,7 @@ export const FinalizeDialog: React.FC<FinalizeDialogProps> = ({
     setStep('confirm');
     setProgress(0);
     setError(null);
-    setPdfUrl(null);
+    setCompletionMethod(null);
     onClose();
   };
 
@@ -172,30 +183,43 @@ export const FinalizeDialog: React.FC<FinalizeDialogProps> = ({
         </div>
         
         <h3 className="text-xl font-semibold text-slate-800 mb-2">Report Generated!</h3>
-        <p className="text-slate-600 mb-6">
-          Your appraisal report has been successfully created and is ready for download.
-        </p>
         
-        <div className="flex flex-col gap-3 max-w-xs mx-auto">
-          <button
-            onClick={() => pdfUrl && window.open(pdfUrl, '_blank')}
-            className="px-6 py-3 bg-sky-500 text-white rounded-lg hover:bg-sky-600 transition-colors font-medium flex items-center justify-center gap-2"
-          >
-            <Download size={18} />
-            Download PDF
-          </button>
-          
-          <button
-            onClick={() => {
-              // Copy share link logic
-              navigator.clipboard.writeText(window.location.origin + pdfUrl);
-            }}
-            className="px-6 py-3 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors font-medium flex items-center justify-center gap-2"
-          >
-            <Share2 size={18} />
-            Copy Link
-          </button>
-        </div>
+        {completionMethod === 'downloaded' ? (
+          <>
+            <p className="text-slate-600 mb-6">
+              Your PDF has been downloaded to your device. Check your downloads folder for the file.
+            </p>
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4 text-left">
+              <p className="text-sm text-green-700 flex items-center gap-2">
+                <CheckCircle size={16} />
+                PDF saved to your Downloads folder
+              </p>
+            </div>
+          </>
+        ) : completionMethod === 'printed' ? (
+          <>
+            <p className="text-slate-600 mb-6">
+              The print dialog was opened to save your report. If you cancelled the dialog, you can try again.
+            </p>
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4 text-left">
+              <p className="text-sm text-amber-700 flex items-center gap-2">
+                <Printer size={16} />
+                Use "Save as PDF" in the print dialog to download
+              </p>
+            </div>
+          </>
+        ) : (
+          <p className="text-slate-600 mb-6">
+            Your appraisal report has been successfully created.
+          </p>
+        )}
+        
+        <button
+          onClick={handleFinalize}
+          className="px-6 py-3 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors font-medium flex items-center justify-center gap-2 mx-auto"
+        >
+          Generate Another Copy
+        </button>
       </div>
 
       <div className="flex justify-center px-6 py-4 border-t border-slate-200 bg-slate-50">

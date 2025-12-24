@@ -3,6 +3,11 @@ import { useWizard } from '../../../context/WizardContext';
 import { BASE_REPORT_SECTIONS, APPROACH_REPORT_SECTIONS, CLOSING_REPORT_SECTIONS } from '../constants';
 import { sampleAppraisalData } from '../data/sampleAppraisalData';
 import type { ReportSection, PropertyTabId, ElementStyles } from '../types';
+import { useReportState, type ReportState, type ReportStateActions } from '../../report-preview/hooks/useReportState';
+import { useAutoSave, useAutoSaveRecovery } from '../../report-preview/hooks/useAutoSave';
+import { useUndoRedo } from '../../report-preview/hooks/useUndoRedo';
+import { RecoveryDialog } from '../../report-preview/components/dialogs';
+import { PhotoEditorDialog, type PhotoData, type PhotoEdits } from './PhotoEditorDialog';
 
 // =================================================================
 // TYPES
@@ -14,6 +19,7 @@ interface TextBlock {
   x: number;
   y: number;
   width: number;
+  height: number;
   fontSize: number;
   fontWeight: string;
   color: string;
@@ -148,15 +154,22 @@ function SectionTree({
 // =================================================================
 
 interface PhotoSlotProps {
-  photo?: { url: string; caption: string };
+  photo?: { id?: string; url: string; caption: string };
   placeholder?: string;
   aspectRatio?: 'square' | '16/9' | '4/3' | 'auto';
   className?: string;
   onSelect?: () => void;
+  onDoubleClick?: () => void;
   selected?: boolean;
+  edits?: {
+    rotation?: number;
+    flipH?: boolean;
+    flipV?: boolean;
+    caption?: string;
+  };
 }
 
-function PhotoSlot({ photo, placeholder, aspectRatio = 'auto', className = '', onSelect, selected }: PhotoSlotProps) {
+function PhotoSlot({ photo, placeholder, aspectRatio = 'auto', className = '', onSelect, onDoubleClick, selected, edits }: PhotoSlotProps) {
   const aspectClasses = {
     square: 'aspect-square',
     '16/9': 'aspect-video',
@@ -164,36 +177,51 @@ function PhotoSlot({ photo, placeholder, aspectRatio = 'auto', className = '', o
     auto: '',
   };
 
+  // Apply edits transform
+  const transformStyle: React.CSSProperties = edits ? {
+    transform: `rotate(${edits.rotation || 0}deg) scaleX(${edits.flipH ? -1 : 1}) scaleY(${edits.flipV ? -1 : 1})`,
+  } : {};
+
+  // Use edited caption if available
+  const displayCaption = edits?.caption ?? photo?.caption;
+
   if (photo?.url) {
     return (
       <div 
-        className={`relative overflow-hidden rounded-lg ${aspectClasses[aspectRatio]} ${className} ${selected ? 'ring-2 ring-[#0da1c7]' : ''}`}
+        className={`relative overflow-hidden rounded-lg cursor-pointer group ${aspectClasses[aspectRatio]} ${className} ${selected ? 'ring-2 ring-[#0da1c7]' : ''}`}
         onClick={onSelect}
+        onDoubleClick={onDoubleClick}
       >
         <img 
           src={photo.url} 
-          alt={photo.caption} 
-          className="w-full h-full object-cover"
+          alt={displayCaption || ''} 
+          className="w-full h-full object-cover transition-transform"
+          style={transformStyle}
         />
-        {photo.caption && (
+        {displayCaption && (
           <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-2">
-            <p className="text-white text-xs">{photo.caption}</p>
+            <p className="text-white text-xs">{displayCaption}</p>
           </div>
         )}
+        {/* Double-click hint */}
+        <div className="absolute inset-0 bg-black/0 group-hover:bg-black/10 transition-colors flex items-center justify-center opacity-0 group-hover:opacity-100">
+          <span className="text-white text-xs bg-black/50 px-2 py-1 rounded">Double-click to edit</span>
+        </div>
       </div>
     );
   }
 
   return (
     <div 
-      className={`bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center rounded-lg ${aspectClasses[aspectRatio]} ${className} ${selected ? 'ring-2 ring-[#0da1c7]' : ''}`}
+      className={`bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center rounded-lg cursor-pointer ${aspectClasses[aspectRatio]} ${className} ${selected ? 'ring-2 ring-[#0da1c7]' : ''}`}
       onClick={onSelect}
+      onDoubleClick={onDoubleClick}
     >
       <div className="text-center text-gray-400 p-4">
         <svg className="w-10 h-10 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
         </svg>
-        <p className="text-xs">{placeholder || 'Click to add photo'}</p>
+        <p className="text-xs">{placeholder || 'Double-click to add photo'}</p>
       </div>
     </div>
   );
@@ -246,16 +274,19 @@ function CoverPageReal({
   onSelectElement,
   onContentChange,
   editedContent,
+  getAppliedStyle,
 }: { 
   selectedElement: string | null; 
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
   editedContent?: Record<string, string>;
+  getAppliedStyle?: (elementId: string) => React.CSSProperties;
 }) {
   const data = sampleAppraisalData;
   const coverPhoto = data.photos.find(p => p.category === 'cover');
   const handleContentChange = onContentChange || (() => {});
   const getContent = (id: string, defaultVal: string) => editedContent?.[id] ?? defaultVal;
+  const getStyle = (id: string) => getAppliedStyle?.(id) || {};
 
   return (
     <div className="bg-white shadow-lg rounded-lg overflow-hidden" style={{ minHeight: '11in', width: '8.5in' }}>
@@ -284,6 +315,7 @@ function CoverPageReal({
             onContentChange={handleContentChange}
             as="h1"
             className="text-4xl font-light text-emerald-700 leading-tight mb-2"
+            appliedStyle={getStyle('cover_title')}
           />
           <EditableElement
             elementId="cover_address"
@@ -293,6 +325,7 @@ function CoverPageReal({
             onContentChange={handleContentChange}
             as="p"
             className="text-xl text-gray-600"
+            appliedStyle={getStyle('cover_address')}
           />
         </div>
 
@@ -344,11 +377,17 @@ function CoverPageReal({
 }
 
 // Letter of Transmittal Page
-function LetterPage({ selectedElement, onSelectElement }: { 
+function LetterPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle }: { 
   selectedElement: string | null; 
   onSelectElement: (id: string) => void;
+  onContentChange?: (elementId: string, content: string) => void;
+  editedContent?: Record<string, string>;
+  getAppliedStyle?: (elementId: string) => React.CSSProperties;
 }) {
   const data = sampleAppraisalData;
+  const handleContentChange = onContentChange || (() => {});
+  const getContent = (id: string, defaultVal: string) => editedContent?.[id] ?? defaultVal;
+  const getStyle = (id: string) => getAppliedStyle?.(id) || {};
 
   return (
     <ReportPageWrapper section={{ id: 'letter', label: 'Letter of Transmittal', enabled: true, expanded: false, fields: [], type: 'letter' }} pageNumber={1}>
@@ -356,12 +395,27 @@ function LetterPage({ selectedElement, onSelectElement }: {
         <div className="mb-8">
           <div className="text-sm text-gray-500 mb-6">{data.assignment.reportDate}</div>
           
-          <div 
-            onClick={() => onSelectElement('letter_client')}
-            className={`mb-6 p-3 -m-3 rounded cursor-pointer ${selectedElement === 'letter_client' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
-          >
-            <div className="font-semibold text-gray-800">{data.assignment.client}</div>
-            <div className="text-sm text-gray-600">{data.assignment.clientAddress}</div>
+          <div className="mb-6">
+            <EditableElement
+              elementId="letter_client"
+              content={getContent('letter_client', data.assignment.client)}
+              selectedElement={selectedElement}
+              onSelectElement={onSelectElement}
+              onContentChange={handleContentChange}
+              as="div"
+              className="font-semibold text-gray-800"
+              appliedStyle={getStyle('letter_client')}
+            />
+            <EditableElement
+              elementId="letter_client_address"
+              content={getContent('letter_client_address', data.assignment.clientAddress)}
+              selectedElement={selectedElement}
+              onSelectElement={onSelectElement}
+              onContentChange={handleContentChange}
+              as="div"
+              className="text-sm text-gray-600"
+              appliedStyle={getStyle('letter_client_address')}
+            />
           </div>
 
           <div className="text-sm text-gray-600 mb-6">
@@ -370,26 +424,40 @@ function LetterPage({ selectedElement, onSelectElement }: {
           </div>
         </div>
 
-        <div 
-          onClick={() => onSelectElement('letter_body')}
-          className={`text-sm text-gray-700 leading-relaxed space-y-4 p-3 -m-3 rounded cursor-pointer ${selectedElement === 'letter_body' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
-        >
-          <p>Dear Client:</p>
-          <p>
-            At your request, we have prepared an appraisal report on the above referenced property. 
-            This is an Appraisal Report that is intended to comply with the reporting requirements 
-            set forth under Standards Rule 2-2(a) of the Uniform Standards of Professional Appraisal Practice.
-          </p>
+        <div className="text-sm text-gray-700 leading-relaxed space-y-4">
+          <EditableElement
+            elementId="letter_greeting"
+            content={getContent('letter_greeting', 'Dear Client:')}
+            selectedElement={selectedElement}
+            onSelectElement={onSelectElement}
+            onContentChange={handleContentChange}
+            as="p"
+            appliedStyle={getStyle('letter_greeting')}
+          />
+          <EditableElement
+            elementId="letter_intro"
+            content={getContent('letter_intro', `At your request, we have prepared an appraisal report on the above referenced property. This is an Appraisal Report that is intended to comply with the reporting requirements set forth under Standards Rule 2-2(a) of the Uniform Standards of Professional Appraisal Practice.`)}
+            selectedElement={selectedElement}
+            onSelectElement={onSelectElement}
+            onContentChange={handleContentChange}
+            as="p"
+            appliedStyle={getStyle('letter_intro')}
+          />
           <p>
             <strong>Intended Use:</strong> {data.assignment.intendedUse}
           </p>
           <p>
             <strong>Interest Appraised:</strong> {data.assignment.interestValued}
           </p>
-          <p>
-            Based on my analysis and subject to the assumptions and limiting conditions in this report, 
-            my opinion of the market value of the subject property, as of {data.assignment.effectiveDate}, is:
-          </p>
+          <EditableElement
+            elementId="letter_conclusion_intro"
+            content={getContent('letter_conclusion_intro', `Based on my analysis and subject to the assumptions and limiting conditions in this report, my opinion of the market value of the subject property, as of ${data.assignment.effectiveDate}, is:`)}
+            selectedElement={selectedElement}
+            onSelectElement={onSelectElement}
+            onContentChange={handleContentChange}
+            as="p"
+            appliedStyle={getStyle('letter_conclusion_intro')}
+          />
           <div className="text-center py-6 bg-gray-50 rounded-lg my-6">
             <div className="text-sm text-gray-500 uppercase mb-2">Market Value Conclusion</div>
             <div className="text-4xl font-bold text-emerald-700">${data.valuation.asIsValue.toLocaleString()}</div>
@@ -410,6 +478,9 @@ function LetterPage({ selectedElement, onSelectElement }: {
 function ExecutiveSummaryPage({ selectedElement, onSelectElement }: { 
   selectedElement: string | null; 
   onSelectElement: (id: string) => void;
+  onContentChange?: (elementId: string, content: string) => void;
+  editedContent?: Record<string, string>;
+  getAppliedStyle?: (elementId: string) => React.CSSProperties;
 }) {
   const data = sampleAppraisalData;
 
@@ -491,6 +562,9 @@ function ExecutiveSummaryPage({ selectedElement, onSelectElement }: {
 function PropertyDescriptionPage({ selectedElement, onSelectElement }: { 
   selectedElement: string | null; 
   onSelectElement: (id: string) => void;
+  onContentChange?: (elementId: string, content: string) => void;
+  editedContent?: Record<string, string>;
+  getAppliedStyle?: (elementId: string) => React.CSSProperties;
 }) {
   const data = sampleAppraisalData;
   const exteriorPhotos = data.photos.filter(p => p.category === 'exterior').slice(0, 3);
@@ -572,15 +646,17 @@ function PropertyDescriptionPage({ selectedElement, onSelectElement }: {
 }
 
 // HBU Page
-function HBUPage({ selectedElement, onSelectElement, onContentChange, editedContent }: { 
+function HBUPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle }: { 
   selectedElement: string | null; 
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
   editedContent?: Record<string, string>;
+  getAppliedStyle?: (elementId: string) => React.CSSProperties;
 }) {
   const data = sampleAppraisalData;
   const handleContentChange = onContentChange || (() => {});
   const getContent = (id: string, defaultVal: string) => editedContent?.[id] ?? defaultVal;
+  const getStyle = (id: string) => getAppliedStyle?.(id) || {};
 
   return (
     <ReportPageWrapper section={{ id: 'hbu', label: 'Highest & Best Use', enabled: true, expanded: false, fields: [], type: 'narrative' }} pageNumber={4} sidebarLabel="03">
@@ -604,6 +680,7 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
                 onContentChange={handleContentChange}
                 as="p"
                 className="text-gray-700"
+                appliedStyle={getStyle('hbu_legally_permissible')}
               />
             </div>
             <div>
@@ -616,6 +693,7 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
                 onContentChange={handleContentChange}
                 as="p"
                 className="text-gray-700"
+                appliedStyle={getStyle('hbu_physically_possible')}
               />
             </div>
             <div>
@@ -628,6 +706,7 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
                 onContentChange={handleContentChange}
                 as="p"
                 className="text-gray-700"
+                appliedStyle={getStyle('hbu_financially_feasible')}
               />
             </div>
             <div>
@@ -640,6 +719,7 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
                 onContentChange={handleContentChange}
                 as="p"
                 className="text-gray-700"
+                appliedStyle={getStyle('hbu_maximally_productive')}
               />
             </div>
             <div className="bg-emerald-50 p-4 rounded-lg">
@@ -652,6 +732,7 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
                 onContentChange={handleContentChange}
                 as="p"
                 className="text-emerald-700"
+                appliedStyle={getStyle('hbu_vacant_conclusion')}
               />
             </div>
           </div>
@@ -668,6 +749,7 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
               onContentChange={handleContentChange}
               as="p"
               className="text-gray-700"
+              appliedStyle={getStyle('hbu_improved_analysis')}
             />
             <div className="bg-emerald-50 p-4 rounded-lg">
               <h4 className="font-semibold text-emerald-800">Conclusion (As Improved)</h4>
@@ -679,6 +761,7 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
                 onContentChange={handleContentChange}
                 as="p"
                 className="text-emerald-700"
+                appliedStyle={getStyle('hbu_improved_conclusion')}
               />
             </div>
           </div>
@@ -692,6 +775,9 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
 function SalesComparisonPage({ selectedElement, onSelectElement }: { 
   selectedElement: string | null; 
   onSelectElement: (id: string) => void;
+  onContentChange?: (elementId: string, content: string) => void;
+  editedContent?: Record<string, string>;
+  getAppliedStyle?: (elementId: string) => React.CSSProperties;
 }) {
   const data = sampleAppraisalData;
 
@@ -852,6 +938,9 @@ function SalesComparisonPage({ selectedElement, onSelectElement }: {
 function IncomeApproachPage({ selectedElement, onSelectElement }: { 
   selectedElement: string | null; 
   onSelectElement: (id: string) => void;
+  onContentChange?: (elementId: string, content: string) => void;
+  editedContent?: Record<string, string>;
+  getAppliedStyle?: (elementId: string) => React.CSSProperties;
 }) {
   const data = sampleAppraisalData;
 
@@ -918,11 +1007,26 @@ function IncomeApproachPage({ selectedElement, onSelectElement }: {
 }
 
 // Cost Approach Page
-function CostApproachPage({ selectedElement, onSelectElement }: { 
+function CostApproachPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle }: { 
   selectedElement: string | null; 
   onSelectElement: (id: string) => void;
+  onContentChange?: (elementId: string, content: string) => void;
+  editedContent?: Record<string, string>;
+  getAppliedStyle?: (elementId: string) => React.CSSProperties;
 }) {
+  const handleContentChange = onContentChange || (() => {});
+  const getContent = (id: string, defaultVal: string) => editedContent?.[id] ?? defaultVal;
+  const getStyle = (id: string) => getAppliedStyle?.(id) || {};
   const data = sampleAppraisalData;
+
+  // Default AI draft for cost approach methodology
+  const defaultCostMethodology = `The Cost Approach is based on the principle of substitution, which states that a prudent buyer would pay no more for a property than the cost to acquire a similar site and construct improvements of equivalent utility. This approach is particularly applicable to the subject property given its recent construction date of ${data.improvements.yearBuilt}.
+
+The replacement cost new was estimated using the Marshall Valuation Service, a nationally recognized cost manual. The subject building contains ${data.improvements.grossBuildingArea.toLocaleString()} square feet of gross building area. Based on the quality of construction, building type, and local cost modifiers, the replacement cost new is estimated at $${data.costApproach.costPerSF.toFixed(2)} per square foot.
+
+Physical depreciation was calculated using the age-life method. Given the building's age and condition, physical depreciation is estimated at ${((data.costApproach.physicalDepreciation / data.costApproach.replacementCostNew) * 100).toFixed(1)}% of replacement cost new. No functional or external obsolescence was identified in our analysis.
+
+The land value of $${data.costApproach.landValue.toLocaleString()} was derived from the sales comparison approach to land valuation, utilizing recent sales of comparable vacant industrial sites in the subject market area.`;
 
   return (
     <ReportPageWrapper section={{ id: 'cost', label: 'Cost Approach', enabled: true, expanded: false, fields: [], type: 'analysis-grid' }} pageNumber={7} sidebarLabel="06">
@@ -933,54 +1037,82 @@ function CostApproachPage({ selectedElement, onSelectElement }: {
 
         <h2 className="text-2xl font-light text-gray-800 mb-6 mt-8">Cost Approach</h2>
 
-        <div 
-          onClick={() => onSelectElement('cost_analysis')}
-          className={`p-4 -m-4 rounded cursor-pointer ${selectedElement === 'cost_analysis' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
-        >
-          <table className="w-full text-sm">
-            <tbody>
-              <tr className="border-b border-gray-200 bg-gray-50">
-                <td className="py-2 text-gray-700 font-semibold">Land Value</td>
-                <td className="py-2 text-right font-semibold">${data.costApproach.landValue.toLocaleString()}</td>
-              </tr>
-              <tr className="border-b border-gray-200">
-                <td className="py-2 text-gray-600">Building Area</td>
-                <td className="py-2 text-right font-medium">{data.improvements.grossBuildingArea.toLocaleString()} SF</td>
-              </tr>
-              <tr className="border-b border-gray-200">
-                <td className="py-2 text-gray-600">Replacement Cost New (per SF)</td>
-                <td className="py-2 text-right font-medium">${data.costApproach.costPerSF.toFixed(2)}</td>
-              </tr>
-              <tr className="border-b border-gray-200 bg-gray-50">
-                <td className="py-2 text-gray-700 font-semibold">Replacement Cost New</td>
-                <td className="py-2 text-right font-semibold">${data.costApproach.replacementCostNew.toLocaleString()}</td>
-              </tr>
-              <tr className="border-b border-gray-200">
-                <td className="py-2 text-gray-600">Less: Physical Depreciation</td>
-                <td className="py-2 text-right font-medium text-red-600">-${data.costApproach.physicalDepreciation.toLocaleString()}</td>
-              </tr>
-              <tr className="border-b border-gray-200">
-                <td className="py-2 text-gray-600">Less: Functional Obsolescence</td>
-                <td className="py-2 text-right font-medium text-red-600">-${data.costApproach.functionalObsolescence.toLocaleString()}</td>
-              </tr>
-              <tr className="border-b border-gray-200">
-                <td className="py-2 text-gray-600">Less: External Obsolescence</td>
-                <td className="py-2 text-right font-medium text-red-600">-${data.costApproach.externalObsolescence.toLocaleString()}</td>
-              </tr>
-              <tr className="border-b border-gray-200 bg-gray-50">
-                <td className="py-2 text-gray-700 font-semibold">Depreciated Cost of Improvements</td>
-                <td className="py-2 text-right font-semibold">${data.costApproach.depreciatedCost.toLocaleString()}</td>
-              </tr>
-              <tr className="border-b border-gray-200">
-                <td className="py-2 text-gray-600">Plus: Site Improvements</td>
-                <td className="py-2 text-right font-medium text-green-600">+${data.costApproach.siteImprovements.toLocaleString()}</td>
-              </tr>
-            </tbody>
-          </table>
+        {/* Methodology Narrative */}
+        <div className="mb-6">
+          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Methodology</h3>
+          <EditableElement
+            elementId="cost_methodology"
+            content={getContent('cost_methodology', defaultCostMethodology)}
+            selectedElement={selectedElement}
+            onSelectElement={onSelectElement}
+            onContentChange={handleContentChange}
+            as="div"
+            className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap"
+            appliedStyle={getStyle('cost_methodology')}
+          />
+        </div>
 
-          <div className="mt-6 p-4 bg-gradient-to-r from-emerald-50 to-emerald-100 rounded-lg text-center">
-            <div className="text-sm text-emerald-600 mb-1">Cost Approach Value Indication</div>
-            <div className="text-3xl font-bold text-emerald-700">${data.costApproach.valueConclusion.toLocaleString()}</div>
+        {/* Cost Breakdown Table */}
+        <div className="mb-6">
+          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Cost Summary</h3>
+          <div 
+            onClick={() => onSelectElement('cost_table')}
+            className={`p-4 bg-white rounded-lg border border-gray-200 cursor-pointer ${selectedElement === 'cost_table' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
+          >
+            <table className="w-full text-sm">
+              <tbody>
+                <tr className="border-b border-gray-200 bg-gray-50">
+                  <td className="py-2 px-3 text-gray-700 font-semibold">Land Value</td>
+                  <td className="py-2 px-3 text-right font-semibold">${data.costApproach.landValue.toLocaleString()}</td>
+                </tr>
+                <tr className="border-b border-gray-200">
+                  <td className="py-2 px-3 text-gray-600">Building Area</td>
+                  <td className="py-2 px-3 text-right font-medium">{data.improvements.grossBuildingArea.toLocaleString()} SF</td>
+                </tr>
+                <tr className="border-b border-gray-200">
+                  <td className="py-2 px-3 text-gray-600">Replacement Cost New (per SF)</td>
+                  <td className="py-2 px-3 text-right font-medium">${data.costApproach.costPerSF.toFixed(2)}</td>
+                </tr>
+                <tr className="border-b border-gray-200 bg-gray-50">
+                  <td className="py-2 px-3 text-gray-700 font-semibold">Replacement Cost New</td>
+                  <td className="py-2 px-3 text-right font-semibold">${data.costApproach.replacementCostNew.toLocaleString()}</td>
+                </tr>
+                <tr className="border-b border-gray-200">
+                  <td className="py-2 px-3 text-gray-600">Less: Physical Depreciation</td>
+                  <td className="py-2 px-3 text-right font-medium text-red-600">-${data.costApproach.physicalDepreciation.toLocaleString()}</td>
+                </tr>
+                <tr className="border-b border-gray-200">
+                  <td className="py-2 px-3 text-gray-600">Less: Functional Obsolescence</td>
+                  <td className="py-2 px-3 text-right font-medium text-red-600">-${data.costApproach.functionalObsolescence.toLocaleString()}</td>
+                </tr>
+                <tr className="border-b border-gray-200">
+                  <td className="py-2 px-3 text-gray-600">Less: External Obsolescence</td>
+                  <td className="py-2 px-3 text-right font-medium text-red-600">-${data.costApproach.externalObsolescence.toLocaleString()}</td>
+                </tr>
+                <tr className="border-b border-gray-200 bg-gray-50">
+                  <td className="py-2 px-3 text-gray-700 font-semibold">Depreciated Cost of Improvements</td>
+                  <td className="py-2 px-3 text-right font-semibold">${data.costApproach.depreciatedCost.toLocaleString()}</td>
+                </tr>
+                <tr className="border-b border-gray-200">
+                  <td className="py-2 px-3 text-gray-600">Plus: Site Improvements</td>
+                  <td className="py-2 px-3 text-right font-medium text-green-600">+${data.costApproach.siteImprovements.toLocaleString()}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Value Conclusion */}
+        <div className="p-5 bg-gradient-to-r from-emerald-50 to-emerald-100 rounded-lg border border-emerald-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-sm text-emerald-600 font-medium mb-1">Cost Approach Value Indication</div>
+              <div className="text-3xl font-bold text-emerald-700">${data.costApproach.valueConclusion.toLocaleString()}</div>
+            </div>
+            <div className="text-right">
+              <div className="text-xs text-emerald-600 uppercase">Rounded</div>
+              <div className="text-lg font-semibold text-emerald-700">${(Math.round(data.costApproach.valueConclusion / 5000) * 5000).toLocaleString()}</div>
+            </div>
           </div>
         </div>
       </div>
@@ -989,15 +1121,23 @@ function CostApproachPage({ selectedElement, onSelectElement }: {
 }
 
 // Reconciliation Page
-function ReconciliationPage({ selectedElement, onSelectElement, onContentChange, editedContent }: { 
+function ReconciliationPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle }: { 
   selectedElement: string | null; 
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
   editedContent?: Record<string, string>;
+  getAppliedStyle?: (elementId: string) => React.CSSProperties;
 }) {
   const data = sampleAppraisalData;
   const handleContentChange = onContentChange || (() => {});
   const getContent = (id: string, defaultVal: string) => editedContent?.[id] ?? defaultVal;
+  const getStyle = (id: string) => getAppliedStyle?.(id) || {};
+
+  // Calculate value range and spread
+  const values = [data.valuation.costApproachValue, data.valuation.salesComparisonValue, data.valuation.incomeApproachValue];
+  const minValue = Math.min(...values);
+  const maxValue = Math.max(...values);
+  const spread = ((maxValue - minValue) / minValue * 100).toFixed(1);
 
   return (
     <ReportPageWrapper section={{ id: 'reconciliation', label: 'Reconciliation', enabled: true, expanded: false, fields: [], type: 'narrative' }} pageNumber={8} sidebarLabel="07">
@@ -1008,9 +1148,10 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
 
         <h2 className="text-2xl font-light text-gray-800 mb-6 mt-8">Reconciliation of Value</h2>
 
+        {/* Value Indications Grid */}
         <div 
           onClick={() => onSelectElement('recon_approaches')}
-          className={`mb-8 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'recon_approaches' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
+          className={`mb-6 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'recon_approaches' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
         >
           <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Value Indications</h3>
           <div className="grid grid-cols-3 gap-4">
@@ -1032,19 +1173,126 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
           </div>
         </div>
 
-        <div className="mb-8">
+        {/* Analysis Section - Restructured for readability */}
+        <div className="mb-6">
           <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Analysis</h3>
-          <EditableElement
-            elementId="recon_narrative"
-            content={getContent('recon_narrative', data.reconciliation.narrative)}
-            selectedElement={selectedElement}
-            onSelectElement={onSelectElement}
-            onContentChange={handleContentChange}
-            as="p"
-            className="text-sm text-gray-700 leading-relaxed"
-          />
+          
+          {/* Value Range Summary */}
+          <div 
+            onClick={() => onSelectElement('recon_range')}
+            className={`mb-4 p-4 bg-slate-50 rounded-lg border-l-4 border-slate-400 cursor-pointer ${selectedElement === 'recon_range' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-slate-100'}`}
+          >
+            <h4 className="text-sm font-semibold text-slate-700 mb-2">Value Range & Correlation</h4>
+            <ul className="text-sm text-slate-600 space-y-1">
+              <li className="flex items-start gap-2">
+                <span className="text-slate-400 mt-0.5">•</span>
+                <span>Range: ${minValue.toLocaleString()} to ${maxValue.toLocaleString()} ({spread}% spread)</span>
+              </li>
+              <li className="flex items-start gap-2">
+                <span className="text-slate-400 mt-0.5">•</span>
+                <EditableElement
+                  elementId="recon_correlation"
+                  content={getContent('recon_correlation', 'All three approaches produced credible results and are supportive of each other')}
+                  selectedElement={selectedElement}
+                  onSelectElement={onSelectElement}
+                  onContentChange={handleContentChange}
+                  as="span"
+                  className="text-sm"
+                  appliedStyle={getStyle('recon_correlation')}
+                />
+              </li>
+            </ul>
+          </div>
+
+          {/* Sales Comparison Approach */}
+          <div 
+            onClick={() => onSelectElement('recon_sales')}
+            className={`mb-4 p-4 bg-emerald-50 rounded-lg border-l-4 border-emerald-500 cursor-pointer ${selectedElement === 'recon_sales' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-emerald-100'}`}
+          >
+            <h4 className="text-sm font-semibold text-emerald-800 mb-2">
+              Sales Comparison Approach 
+              <span className="ml-2 px-2 py-0.5 bg-emerald-200 text-emerald-700 rounded text-xs font-medium">
+                {data.reconciliation.salesComparisonWeight}% Weight — Primary
+              </span>
+            </h4>
+            <EditableElement
+              elementId="recon_sales_text"
+              content={getContent('recon_sales_text', 'Greatest weight is placed on the Sales Comparison Approach as buyers and sellers in the local market typically rely on direct comparisons to similar properties when making purchase decisions. The comparable sales utilized in our analysis were verified transactions of similar properties that required only moderate adjustments. Market participants consistently cite sales comparison as their primary valuation methodology for this property type.')}
+              selectedElement={selectedElement}
+              onSelectElement={onSelectElement}
+              onContentChange={handleContentChange}
+              as="p"
+              className="text-sm text-emerald-700 leading-relaxed"
+              appliedStyle={getStyle('recon_sales_text')}
+            />
+          </div>
+
+          {/* Income Approach */}
+          <div 
+            onClick={() => onSelectElement('recon_income')}
+            className={`mb-4 p-4 bg-blue-50 rounded-lg border-l-4 border-blue-400 cursor-pointer ${selectedElement === 'recon_income' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-blue-100'}`}
+          >
+            <h4 className="text-sm font-semibold text-blue-800 mb-2">
+              Income Approach 
+              <span className="ml-2 px-2 py-0.5 bg-blue-200 text-blue-700 rounded text-xs font-medium">
+                {data.reconciliation.incomeApproachWeight}% Weight — Secondary
+              </span>
+            </h4>
+            <EditableElement
+              elementId="recon_income_text"
+              content={getContent('recon_income_text', 'The Income Approach is given secondary consideration. While the subject is owner-occupied rather than leased, investors in this market would consider income potential as part of their purchase analysis. The capitalization rate applied was derived from market transactions and supported by investor surveys. The resulting value indication provides good support for the Sales Comparison conclusion.')}
+              selectedElement={selectedElement}
+              onSelectElement={onSelectElement}
+              onContentChange={handleContentChange}
+              as="p"
+              className="text-sm text-blue-700 leading-relaxed"
+              appliedStyle={getStyle('recon_income_text')}
+            />
+          </div>
+
+          {/* Cost Approach */}
+          <div 
+            onClick={() => onSelectElement('recon_cost')}
+            className={`mb-4 p-4 bg-amber-50 rounded-lg border-l-4 border-amber-400 cursor-pointer ${selectedElement === 'recon_cost' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-amber-100'}`}
+          >
+            <h4 className="text-sm font-semibold text-amber-800 mb-2">
+              Cost Approach 
+              <span className="ml-2 px-2 py-0.5 bg-amber-200 text-amber-700 rounded text-xs font-medium">
+                {data.reconciliation.costApproachWeight}% Weight — Supporting
+              </span>
+            </h4>
+            <EditableElement
+              elementId="recon_cost_text"
+              content={getContent('recon_cost_text', 'The Cost Approach is given least weight, despite the subject being new construction with minimal depreciation. While the Cost Approach accurately reflects the replacement cost of the improvements, it does not directly capture market dynamics including investor preferences and market conditions. Nevertheless, the Cost Approach provides an excellent check on the other approaches and demonstrates that the subject improvements represent a well-designed, efficiently constructed facility.')}
+              selectedElement={selectedElement}
+              onSelectElement={onSelectElement}
+              onContentChange={handleContentChange}
+              as="p"
+              className="text-sm text-amber-700 leading-relaxed"
+              appliedStyle={getStyle('recon_cost_text')}
+            />
+          </div>
+
+          {/* Final Conclusion */}
+          <div 
+            onClick={() => onSelectElement('recon_conclusion')}
+            className={`p-4 bg-gray-100 rounded-lg border-l-4 border-gray-500 cursor-pointer ${selectedElement === 'recon_conclusion' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-gray-200'}`}
+          >
+            <h4 className="text-sm font-semibold text-gray-700 mb-2">Conclusion</h4>
+            <EditableElement
+              elementId="recon_final"
+              content={getContent('recon_final', `Based on the foregoing analysis and reconciliation, it is my opinion that the market value of the subject property, as of the effective date of appraisal, is $${data.valuation.asIsValue.toLocaleString()}.`)}
+              selectedElement={selectedElement}
+              onSelectElement={onSelectElement}
+              onContentChange={handleContentChange}
+              as="p"
+              className="text-sm text-gray-700 leading-relaxed font-medium"
+              appliedStyle={getStyle('recon_final')}
+            />
+          </div>
         </div>
 
+        {/* Final Value Banner */}
         <div className="p-6 bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-lg text-center text-white">
           <div className="text-sm uppercase tracking-wider mb-2 opacity-80">Final Market Value Conclusion</div>
           <div className="text-4xl font-bold mb-2">${data.valuation.asIsValue.toLocaleString()}</div>
@@ -1056,9 +1304,19 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
 }
 
 // Photo Exhibits Page
-function PhotoExhibitsPage({ selectedElement, onSelectElement }: { 
+function PhotoExhibitsPage({ 
+  selectedElement, 
+  onSelectElement, 
+  onOpenPhotoEditor,
+  getPhotoEdits,
+}: { 
   selectedElement: string | null; 
   onSelectElement: (id: string) => void;
+  onContentChange?: (elementId: string, content: string) => void;
+  editedContent?: Record<string, string>;
+  getAppliedStyle?: (elementId: string) => React.CSSProperties;
+  onOpenPhotoEditor?: (photo: PhotoData) => void;
+  getPhotoEdits?: (photoId: string) => PhotoEdits | undefined;
 }) {
   const data = sampleAppraisalData;
   const photos = data.photos.slice(0, 6);
@@ -1080,6 +1338,13 @@ function PhotoExhibitsPage({ selectedElement, onSelectElement }: {
               aspectRatio="4/3"
               selected={selectedElement === `exhibit_${photo.id}`}
               onSelect={() => onSelectElement(`exhibit_${photo.id}`)}
+              onDoubleClick={() => onOpenPhotoEditor?.({
+                id: photo.id,
+                url: photo.url,
+                caption: photo.caption,
+                category: photo.category,
+              })}
+              edits={getPhotoEdits?.(photo.id)}
             />
           ))}
         </div>
@@ -1089,10 +1354,21 @@ function PhotoExhibitsPage({ selectedElement, onSelectElement }: {
 }
 
 // Table of Contents Page
-function TOCPage({ selectedElement, onSelectElement, enabledSections }: { 
+function TOCPage({ 
+  selectedElement, 
+  onSelectElement, 
+  enabledSections, 
+  onOpenPhotoEditor,
+  getPhotoEdits,
+}: { 
   selectedElement: string | null; 
   onSelectElement: (id: string) => void;
   enabledSections: ReportSection[];
+  onContentChange?: (elementId: string, content: string) => void;
+  editedContent?: Record<string, string>;
+  getAppliedStyle?: (elementId: string) => React.CSSProperties;
+  onOpenPhotoEditor?: (photo: PhotoData) => void;
+  getPhotoEdits?: (photoId: string) => PhotoEdits | undefined;
 }) {
   // Build TOC entries from enabled sections
   const tocEntries = enabledSections
@@ -1101,6 +1377,8 @@ function TOCPage({ selectedElement, onSelectElement, enabledSections }: {
       title: section.label,
       page: idx + 2, // Cover is 1, then content starts
     }));
+
+  const aerialPhoto = sampleAppraisalData.photos.find(p => p.category === 'aerial');
 
   return (
     <ReportPageWrapper section={{ id: 'toc', label: 'Table of Contents', enabled: true, expanded: false, fields: [], type: 'toc' }} pageNumber={2} sidebarLabel="">
@@ -1126,11 +1404,18 @@ function TOCPage({ selectedElement, onSelectElement, enabledSections }: {
         {/* Photo of Subject */}
         <div className="mt-12">
           <PhotoSlot
-            photo={sampleAppraisalData.photos.find(p => p.category === 'aerial')}
+            photo={aerialPhoto}
             placeholder="Aerial View"
             aspectRatio="16/9"
             selected={selectedElement === 'toc_photo'}
             onSelect={() => onSelectElement('toc_photo')}
+            onDoubleClick={() => aerialPhoto && onOpenPhotoEditor?.({
+              id: aerialPhoto.id || 'toc-aerial',
+              url: aerialPhoto.url,
+              caption: aerialPhoto.caption,
+              category: aerialPhoto.category,
+            })}
+            edits={getPhotoEdits?.(aerialPhoto?.id || 'toc-aerial')}
           />
         </div>
       </div>
@@ -1142,6 +1427,9 @@ function TOCPage({ selectedElement, onSelectElement, enabledSections }: {
 function AssumptionsPage({ selectedElement, onSelectElement }: { 
   selectedElement: string | null; 
   onSelectElement: (id: string) => void;
+  onContentChange?: (elementId: string, content: string) => void;
+  editedContent?: Record<string, string>;
+  getAppliedStyle?: (elementId: string) => React.CSSProperties;
 }) {
   const data = sampleAppraisalData;
 
@@ -1188,6 +1476,9 @@ function AssumptionsPage({ selectedElement, onSelectElement }: {
 function CertificationPage({ selectedElement, onSelectElement }: { 
   selectedElement: string | null; 
   onSelectElement: (id: string) => void;
+  onContentChange?: (elementId: string, content: string) => void;
+  editedContent?: Record<string, string>;
+  getAppliedStyle?: (elementId: string) => React.CSSProperties;
 }) {
   const data = sampleAppraisalData;
 
@@ -1261,6 +1552,7 @@ interface EditableElementProps {
   className?: string;
   as?: 'p' | 'h1' | 'h2' | 'h3' | 'h4' | 'span' | 'div';
   style?: React.CSSProperties;
+  appliedStyle?: React.CSSProperties; // Style from report state
 }
 
 function EditableElement({
@@ -1272,7 +1564,10 @@ function EditableElement({
   className = '',
   as: Component = 'p',
   style,
+  appliedStyle,
 }: EditableElementProps) {
+  // Merge base style with applied style from report state
+  const mergedStyle = { ...style, ...appliedStyle };
   const [isEditing, setIsEditing] = useState(false);
   const [localContent, setLocalContent] = useState(content);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -1322,7 +1617,7 @@ function EditableElement({
         onKeyDown={handleKeyDown}
         className={`w-full border-2 border-[#0da1c7] rounded px-2 py-1 resize-none focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/50 ${className}`}
         style={{ 
-          ...style,
+          ...mergedStyle,
           minHeight: '2em',
           height: 'auto',
         }}
@@ -1340,7 +1635,7 @@ function EditableElement({
           ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5'
           : 'hover:bg-gray-50'
       } ${className}`}
-      style={style}
+      style={mergedStyle}
       title="Click to select, double-click to edit"
     >
       {localContent}
@@ -1359,9 +1654,11 @@ interface PropertiesPanelProps {
   onStyleChange: (styles: Partial<ElementStyles>) => void;
   onContentChange: (elementId: string, content: string) => void;
   onDeleteElement: () => void;
+  isDirty?: boolean;
+  onSave?: () => void;
 }
 
-function PropertiesPanel({ selectedElement, elementStyles, elementContent, onStyleChange, onContentChange, onDeleteElement }: PropertiesPanelProps) {
+function PropertiesPanel({ selectedElement, elementStyles, elementContent, onStyleChange, onContentChange, onDeleteElement, isDirty, onSave }: PropertiesPanelProps) {
   const [activeTab, setActiveTab] = useState<PropertyTabId>('design');
   const [localContent, setLocalContent] = useState('');
 
@@ -1395,10 +1692,31 @@ function PropertiesPanel({ selectedElement, elementStyles, elementContent, onSty
 
   return (
     <div className="h-full flex flex-col">
-      {/* Header */}
+      {/* Header with Save Status */}
       <div className="p-4 border-b border-gray-200 bg-gray-50">
-        <div className="text-sm font-bold text-gray-800">Element Properties</div>
-        <div className="text-xs text-gray-500 mt-1 font-mono">{selectedElement}</div>
+        <div className="flex items-center justify-between">
+          <div>
+            <div className="text-sm font-bold text-gray-800">Element Properties</div>
+            <div className="text-xs text-gray-500 mt-1 font-mono">{selectedElement}</div>
+          </div>
+          {isDirty && (
+            <div className="flex items-center gap-2">
+              <span className="text-xs text-amber-600 font-medium">Unsaved</span>
+              <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" />
+            </div>
+          )}
+        </div>
+        {isDirty && onSave && (
+          <button
+            onClick={onSave}
+            className="mt-3 w-full py-2 bg-[#0da1c7] text-white rounded-lg text-sm font-medium hover:bg-[#0890a8] transition-colors flex items-center justify-center gap-2"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
+            </svg>
+            Save Draft
+          </button>
+        )}
       </div>
 
       {/* Tabs */}
@@ -1584,17 +1902,46 @@ interface DraggableTextBlockProps {
 function DraggableTextBlock({ block, selected, onSelect, onUpdate, onDelete }: DraggableTextBlockProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+  const [isResizing, setIsResizing] = useState<string | null>(null); // 'se', 'sw', 'ne', 'nw', 'e', 'w', 's', 'n'
+  const [dragStart, setDragStart] = useState({ x: 0, y: 0, width: 0, height: 0, blockX: 0, blockY: 0 });
   const blockRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  
+  // Default placeholder text
+  const DEFAULT_TEXT = 'New text block - double-click to edit';
+  const isDefaultText = block.content === DEFAULT_TEXT;
 
   const handleMouseDown = (e: React.MouseEvent) => {
     if (isEditing) return;
     e.stopPropagation();
     onSelect();
     setIsDragging(true);
-    setDragStart({ x: e.clientX - block.x, y: e.clientY - block.y });
+    setDragStart({ 
+      x: e.clientX - block.x, 
+      y: e.clientY - block.y, 
+      width: block.width, 
+      height: block.height,
+      blockX: block.x,
+      blockY: block.y,
+    });
   };
 
+  const handleResizeStart = (e: React.MouseEvent, direction: string) => {
+    e.stopPropagation();
+    e.preventDefault();
+    onSelect();
+    setIsResizing(direction);
+    setDragStart({ 
+      x: e.clientX, 
+      y: e.clientY, 
+      width: block.width, 
+      height: block.height,
+      blockX: block.x,
+      blockY: block.y,
+    });
+  };
+
+  // Handle dragging
   useEffect(() => {
     if (!isDragging) return;
 
@@ -1618,22 +1965,112 @@ function DraggableTextBlock({ block, selected, onSelect, onUpdate, onDelete }: D
     };
   }, [isDragging, dragStart, onUpdate]);
 
+  // Handle resizing
+  useEffect(() => {
+    if (!isResizing) return;
+
+    const handleMouseMove = (e: MouseEvent) => {
+      const deltaX = e.clientX - dragStart.x;
+      const deltaY = e.clientY - dragStart.y;
+      const minWidth = 80;
+      const minHeight = 40;
+
+      const updates: Partial<TextBlock> = {};
+
+      // Handle horizontal resizing
+      if (isResizing.includes('e')) {
+        updates.width = Math.max(minWidth, dragStart.width + deltaX);
+      } else if (isResizing.includes('w')) {
+        const newWidth = Math.max(minWidth, dragStart.width - deltaX);
+        if (newWidth > minWidth) {
+          updates.width = newWidth;
+          updates.x = dragStart.blockX + deltaX;
+        }
+      }
+
+      // Handle vertical resizing
+      if (isResizing.includes('s')) {
+        updates.height = Math.max(minHeight, dragStart.height + deltaY);
+      } else if (isResizing.includes('n')) {
+        const newHeight = Math.max(minHeight, dragStart.height - deltaY);
+        if (newHeight > minHeight) {
+          updates.height = newHeight;
+          updates.y = dragStart.blockY + deltaY;
+        }
+      }
+
+      onUpdate(updates);
+    };
+
+    const handleMouseUp = () => {
+      setIsResizing(null);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [isResizing, dragStart, onUpdate]);
+
   const handleDoubleClick = () => {
     setIsEditing(true);
+    // Clear default text when entering edit mode
+    if (isDefaultText) {
+      onUpdate({ content: '' });
+    }
   };
+
+  // Focus and select all text when entering edit mode
+  useEffect(() => {
+    if (isEditing && textareaRef.current) {
+      textareaRef.current.focus();
+      textareaRef.current.select();
+    }
+  }, [isEditing]);
 
   const handleBlur = () => {
     setIsEditing(false);
+    // If user cleared all text, restore default placeholder
+    if (!block.content.trim()) {
+      onUpdate({ content: DEFAULT_TEXT });
+    }
+  };
+
+  // Resize handle component
+  const ResizeHandle = ({ position, cursor }: { position: string; cursor: string }) => {
+    const positionStyles: Record<string, React.CSSProperties> = {
+      'nw': { top: -4, left: -4, cursor: 'nw-resize' },
+      'ne': { top: -4, right: -4, cursor: 'ne-resize' },
+      'sw': { bottom: -4, left: -4, cursor: 'sw-resize' },
+      'se': { bottom: -4, right: -4, cursor: 'se-resize' },
+      'n': { top: -4, left: '50%', transform: 'translateX(-50%)', cursor: 'n-resize' },
+      's': { bottom: -4, left: '50%', transform: 'translateX(-50%)', cursor: 's-resize' },
+      'e': { right: -4, top: '50%', transform: 'translateY(-50%)', cursor: 'e-resize' },
+      'w': { left: -4, top: '50%', transform: 'translateY(-50%)', cursor: 'w-resize' },
+    };
+
+    return (
+      <div
+        className="absolute w-3 h-3 bg-[#0da1c7] border-2 border-white rounded-sm shadow-sm hover:bg-[#0890a8] z-10"
+        style={{ ...positionStyles[position], cursor }}
+        onMouseDown={(e) => handleResizeStart(e, position)}
+      />
+    );
   };
 
   return (
     <div
       ref={blockRef}
-      className={`absolute cursor-move ${selected ? 'ring-2 ring-[#0da1c7]' : ''}`}
+      className={`absolute ${isEditing ? '' : 'cursor-move'} ${selected ? 'ring-2 ring-[#0da1c7] ring-offset-1' : ''}`}
       style={{
         left: block.x,
         top: block.y,
         width: block.width,
+        height: isEditing ? block.height : 'auto',
+        minHeight: block.height,
         fontSize: block.fontSize,
         fontWeight: block.fontWeight,
         color: block.color,
@@ -1643,43 +2080,262 @@ function DraggableTextBlock({ block, selected, onSelect, onUpdate, onDelete }: D
     >
       {isEditing ? (
         <textarea
+          ref={textareaRef}
           value={block.content}
           onChange={(e) => onUpdate({ content: e.target.value })}
           onBlur={handleBlur}
-          autoFocus
-          className="w-full p-2 border border-[#0da1c7] rounded resize-none"
-          style={{ fontSize: block.fontSize, fontWeight: block.fontWeight, color: block.color }}
+          placeholder="Enter your text here..."
+          className="w-full h-full p-2 border-2 border-[#0da1c7] rounded bg-white resize-none focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/30"
+          style={{ 
+            fontSize: block.fontSize, 
+            fontWeight: block.fontWeight, 
+            color: block.color,
+            minHeight: block.height,
+          }}
         />
       ) : (
-        <div className="p-2 bg-white/80 rounded border border-dashed border-gray-300">
-          {block.content || 'Double-click to edit'}
+        <div 
+          className={`p-2 bg-white rounded border-2 h-full ${isDefaultText ? 'border-dashed border-gray-300 text-gray-400 italic' : 'border-solid border-gray-200'}`}
+          style={{ minHeight: block.height - 16 }}
+        >
+          {block.content}
         </div>
       )}
+      
+      {/* Delete button */}
       {selected && !isEditing && (
         <button
           onClick={(e) => { e.stopPropagation(); onDelete(); }}
-          className="absolute -top-3 -right-3 w-6 h-6 bg-red-500 text-white rounded-full text-xs flex items-center justify-center hover:bg-red-600"
+          className="absolute -top-3 -right-3 w-6 h-6 bg-red-500 text-white rounded-full text-xs flex items-center justify-center hover:bg-red-600 shadow-md z-20"
         >
           ×
         </button>
+      )}
+
+      {/* Resize handles - only show when selected and not editing */}
+      {selected && !isEditing && (
+        <>
+          <ResizeHandle position="nw" cursor="nw-resize" />
+          <ResizeHandle position="ne" cursor="ne-resize" />
+          <ResizeHandle position="sw" cursor="sw-resize" />
+          <ResizeHandle position="se" cursor="se-resize" />
+          <ResizeHandle position="n" cursor="n-resize" />
+          <ResizeHandle position="s" cursor="s-resize" />
+          <ResizeHandle position="e" cursor="e-resize" />
+          <ResizeHandle position="w" cursor="w-resize" />
+        </>
       )}
     </div>
   );
 }
 
 // =================================================================
+// REPORT EDITOR PROPS
+// =================================================================
+
+export interface ReportEditorProps {
+  onSaveDraft?: () => void;
+  onReportStateChange?: (state: ReportState, actions: ReportStateActions) => void;
+}
+
+// =================================================================
 // MAIN REPORT EDITOR COMPONENT
 // =================================================================
 
-export function ReportEditor() {
+export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorProps = {}) {
   const { state } = useWizard();
   const { scenarios } = state;
 
+  // Use the centralized report state hook for persistence
+  const [reportState, reportActions] = useReportState();
+
+  // Generate a stable report ID based on property info
+  const reportId = useMemo(() => 
+    `report-${state.subjectData?.propertyName || 'draft'}-${state.subjectData?.address?.street || 'unknown'}`.replace(/\s+/g, '-').toLowerCase().slice(0, 50),
+    [state.subjectData?.propertyName, state.subjectData?.address?.street]
+  );
+
+  // Auto-save functionality
+  const getReportData = useCallback(() => ({
+    reportState,
+    textBlocks: [],
+  }), [reportState]);
+
+  const [autoSaveState, autoSaveActions] = useAutoSave(getReportData, reportId, {
+    intervalMs: 30000, // 30 seconds
+    debounceMs: 3000, // 3 seconds after change
+  });
+
+  // Recovery functionality - check for saved data on mount
+  const { hasRecoveryData, versions, recoverVersion, dismissRecovery } = useAutoSaveRecovery(
+    'appraisal-wizard-autosave',
+    reportId
+  );
+  const [showRecoveryDialog, setShowRecoveryDialog] = useState(hasRecoveryData);
+
   const previewRef = useRef<HTMLDivElement>(null);
   const [selectedElement, setSelectedElement] = useState<string | null>(null);
-  const [elementStyles, setElementStyles] = useState<ElementStyles>({});
-  const [elementContent, setElementContent] = useState<ElementContent>({});
   const [textBlocks, setTextBlocks] = useState<TextBlock[]>([]);
+  
+  // Photo editor state
+  const [photoEditorOpen, setPhotoEditorOpen] = useState(false);
+  const [editingPhoto, setEditingPhoto] = useState<PhotoData | null>(null);
+  const [photoEdits, setPhotoEdits] = useState<Record<string, PhotoEdits>>({});
+
+  // Handle recovery - apply recovered data to report state
+  const handleRecoverVersion = useCallback((versionId: string) => {
+    const recoveredData = recoverVersion(versionId);
+    if (recoveredData) {
+      // Apply recovered reportState if present
+      if (recoveredData.reportState) {
+        // Apply custom content
+        Object.entries(recoveredData.reportState.customContent || {}).forEach(([key, value]) => {
+          reportActions.setCustomContent(key, value);
+        });
+        // Apply styling
+        Object.entries(recoveredData.reportState.styling || {}).forEach(([id, styles]) => {
+          reportActions.setElementStyle(id, styles as React.CSSProperties);
+        });
+        // Apply section visibility
+        Object.entries(recoveredData.reportState.sectionVisibility || {}).forEach(([id, visible]) => {
+          reportActions.setSectionVisibility(id, visible as boolean);
+        });
+      }
+      // Apply recovered text blocks if present
+      if (recoveredData.textBlocks && Array.isArray(recoveredData.textBlocks)) {
+        setTextBlocks(recoveredData.textBlocks);
+      }
+    }
+    setShowRecoveryDialog(false);
+  }, [recoverVersion, reportActions]);
+
+  const handleDismissRecovery = useCallback(() => {
+    dismissRecovery();
+    setShowRecoveryDialog(false);
+  }, [dismissRecovery]);
+
+  // Undo/Redo for content editing
+  interface ContentHistory {
+    editedContent: Record<string, unknown>;
+    styling: Record<string, React.CSSProperties>;
+    timestamp: number;
+  }
+  
+  const {
+    state: contentHistoryState,
+    setState: setContentHistory,
+    undo: undoContentInternal,
+    redo: redoContentInternal,
+    canUndo,
+    canRedo,
+  } = useUndoRedo<ContentHistory>({ editedContent: {}, styling: {}, timestamp: Date.now() });
+
+  // Ref to track if we're applying undo/redo (to prevent infinite loops)
+  const isApplyingUndoRedo = useRef(false);
+  // Ref to track the last state we pushed to history (to detect external changes)
+  const lastPushedStateRef = useRef<string>('');
+
+  // Update history when report state changes (but not from undo/redo operations)
+  useEffect(() => {
+    if (isApplyingUndoRedo.current) return;
+    
+    const stateKey = JSON.stringify({
+      customContent: reportState.customContent,
+      styling: reportState.styling,
+    });
+    
+    // Only push to history if state actually changed
+    if (reportState.isDirty && stateKey !== lastPushedStateRef.current) {
+      lastPushedStateRef.current = stateKey;
+      setContentHistory({
+        editedContent: reportState.customContent,
+        styling: reportState.styling,
+        timestamp: Date.now(),
+      }, { merge: true });
+    }
+  }, [reportState.customContent, reportState.styling, reportState.isDirty, setContentHistory]);
+
+  // Wrapped undo handler that applies state after undo
+  const undoContent = useCallback(() => {
+    isApplyingUndoRedo.current = true;
+    undoContentInternal();
+  }, [undoContentInternal]);
+
+  // Wrapped redo handler that applies state after redo
+  const redoContent = useCallback(() => {
+    isApplyingUndoRedo.current = true;
+    redoContentInternal();
+  }, [redoContentInternal]);
+
+  // Effect to apply undo/redo state back to reportState
+  useEffect(() => {
+    if (!isApplyingUndoRedo.current) return;
+    
+    // Apply the content from history state
+    // First revert all, then re-apply from history
+    reportActions.revertAllFields();
+    
+    // Apply custom content
+    Object.entries(contentHistoryState.editedContent).forEach(([key, value]) => {
+      reportActions.setCustomContent(key, value);
+    });
+    
+    // Apply styling
+    Object.entries(contentHistoryState.styling).forEach(([id, styles]) => {
+      reportActions.setElementStyle(id, styles);
+    });
+    
+    // Update our tracking ref
+    lastPushedStateRef.current = JSON.stringify({
+      customContent: contentHistoryState.editedContent,
+      styling: contentHistoryState.styling,
+    });
+    
+    isApplyingUndoRedo.current = false;
+  }, [contentHistoryState, reportActions]);
+
+  // Keyboard shortcuts for undo/redo
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Check if the target is an input/textarea (don't intercept their undo)
+      const target = e.target as HTMLElement;
+      if (target.tagName === 'INPUT' || target.tagName === 'TEXTAREA') {
+        return;
+      }
+
+      // Ctrl+Z / Cmd+Z for undo
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+        e.preventDefault();
+        if (canUndo) {
+          undoContent();
+        }
+      }
+      
+      // Ctrl+Shift+Z / Cmd+Shift+Z or Ctrl+Y / Cmd+Y for redo
+      if ((e.ctrlKey || e.metaKey) && ((e.key === 'z' && e.shiftKey) || e.key === 'y')) {
+        e.preventDefault();
+        if (canRedo) {
+          redoContent();
+        }
+      }
+      
+      // Ctrl+S / Cmd+S for save
+      if ((e.ctrlKey || e.metaKey) && e.key === 's') {
+        e.preventDefault();
+        onSaveDraft?.();
+      }
+    };
+
+    document.addEventListener('keydown', handleKeyDown);
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [canUndo, canRedo, undoContent, redoContent, onSaveDraft]);
+
+  // Expose report state to parent components
+  useEffect(() => {
+    onReportStateChange?.(reportState, reportActions);
+  }, [reportState, reportActions, onReportStateChange]);
 
   // Build dynamic sections based on selected approaches
   const sections = useMemo(() => {
@@ -1702,12 +2358,27 @@ export function ReportEditor() {
   const [reportSections, setReportSections] = useState<ReportSection[]>(sections);
   const [activeSectionId, setActiveSectionId] = useState<string | null>(null);
 
+  // Sync section visibility with report state
+  useEffect(() => {
+    // Apply any stored visibility settings
+    if (Object.keys(reportState.sectionVisibility).length > 0) {
+      setReportSections(prev => prev.map(s => ({
+        ...s,
+        enabled: reportState.sectionVisibility[s.id] ?? s.enabled,
+      })));
+    }
+  }, [reportState.sectionVisibility]);
+
   // Handlers
   const handleToggleSection = useCallback((sectionId: string) => {
-    setReportSections((prev) =>
-      prev.map((s) => (s.id === sectionId ? { ...s, enabled: !s.enabled } : s))
-    );
-  }, []);
+    setReportSections((prev) => {
+      const section = prev.find(s => s.id === sectionId);
+      const newEnabled = !section?.enabled;
+      // Persist to report state
+      reportActions.setSectionVisibility(sectionId, newEnabled);
+      return prev.map((s) => (s.id === sectionId ? { ...s, enabled: newEnabled } : s));
+    });
+  }, [reportActions]);
 
   const handleToggleField = useCallback((sectionId: string, fieldId: string) => {
     setReportSections((prev) =>
@@ -1733,19 +2404,72 @@ export function ReportEditor() {
     setActiveSectionId(sectionId);
   }, []);
 
-  const handleStyleChange = useCallback((styles: Partial<ElementStyles>) => {
-    setElementStyles((prev) => ({ ...prev, ...styles }));
-  }, []);
+  // Track which page is currently visible in the scroll area using Intersection Observer
+  useEffect(() => {
+    const previewContainer = previewRef.current;
+    if (!previewContainer) return;
 
+    const enabledSections = reportSections.filter(s => s.enabled);
+    const observerOptions: IntersectionObserverInit = {
+      root: previewContainer,
+      rootMargin: '-20% 0px -60% 0px', // Trigger when section enters the top third of the viewport
+      threshold: 0,
+    };
+
+    const observerCallback: IntersectionObserverCallback = (entries) => {
+      // Find the entry that is most visible (intersecting and closest to top)
+      for (const entry of entries) {
+        if (entry.isIntersecting) {
+          const sectionId = entry.target.id.replace('page_', '');
+          setActiveSectionId(sectionId);
+          break;
+        }
+      }
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+    // Observe all page sections
+    enabledSections.forEach((section) => {
+      const element = document.getElementById(`page_${section.id}`);
+      if (element) {
+        observer.observe(element);
+      }
+    });
+
+    // Set initial active section to first enabled section if not set
+    if (!activeSectionId && enabledSections.length > 0) {
+      setActiveSectionId(enabledSections[0].id);
+    }
+
+    return () => observer.disconnect();
+  }, [reportSections, activeSectionId]);
+
+  // Handle style changes via report state
+  const handleStyleChange = useCallback((elementId: string, styles: Partial<ElementStyles>) => {
+    if (!elementId) return;
+    // Convert ElementStyles to CSSProperties for the hook
+    const cssStyles: React.CSSProperties = {};
+    if (styles.fontFamily) cssStyles.fontFamily = styles.fontFamily;
+    if (styles.fontSize) cssStyles.fontSize = `${styles.fontSize}px`;
+    if (styles.fontWeight) cssStyles.fontWeight = styles.fontWeight as React.CSSProperties['fontWeight'];
+    if (styles.color) cssStyles.color = styles.color;
+    if (styles.textAlign) cssStyles.textAlign = styles.textAlign;
+    if (styles.marginTop !== undefined) cssStyles.marginTop = `${styles.marginTop}px`;
+    if (styles.marginBottom !== undefined) cssStyles.marginBottom = `${styles.marginBottom}px`;
+    
+    reportActions.setElementStyle(elementId, cssStyles);
+  }, [reportActions]);
+
+  // Handle content changes via report state - using custom content
   const handleContentChange = useCallback((elementId: string, content: string) => {
-    setElementContent((prev) => ({
-      ...prev,
-      [elementId]: {
-        text: content,
-        styles: prev[elementId]?.styles || {},
-      },
-    }));
-  }, []);
+    reportActions.setCustomContent(`content:${elementId}`, content);
+  }, [reportActions]);
+
+  // Get style value from report state
+  const getElementStyle = useCallback((elementId: string): React.CSSProperties => {
+    return reportState.styling[elementId] || {};
+  }, [reportState.styling]);
 
   const handleDeleteElement = useCallback(() => {
     setSelectedElement(null);
@@ -1757,7 +2481,8 @@ export function ReportEditor() {
       content: 'New text block - double-click to edit',
       x: 100,
       y: 100,
-      width: 200,
+      width: 220,
+      height: 80,
       fontSize: 14,
       fontWeight: 'normal',
       color: '#1c3643',
@@ -1765,25 +2490,97 @@ export function ReportEditor() {
     };
     setTextBlocks((prev) => [...prev, newBlock]);
     setSelectedElement(newBlock.id);
-  }, [activeSectionId]);
+    // Also store in custom content for persistence
+    reportActions.setCustomContent(`textBlock:${newBlock.id}`, newBlock);
+  }, [activeSectionId, reportActions]);
 
   const handleUpdateTextBlock = useCallback((blockId: string, updates: Partial<TextBlock>) => {
-    setTextBlocks((prev) =>
-      prev.map((b) => (b.id === blockId ? { ...b, ...updates } : b))
-    );
-  }, []);
+    setTextBlocks((prev) => {
+      const updated = prev.map((b) => (b.id === blockId ? { ...b, ...updates } : b));
+      // Persist to report state
+      const block = updated.find(b => b.id === blockId);
+      if (block) {
+        reportActions.setCustomContent(`textBlock:${blockId}`, block);
+      }
+      return updated;
+    });
+  }, [reportActions]);
 
   const handleDeleteTextBlock = useCallback((blockId: string) => {
     setTextBlocks((prev) => prev.filter((b) => b.id !== blockId));
     setSelectedElement(null);
+    // Remove from custom content
+    reportActions.setCustomContent(`textBlock:${blockId}`, null);
+  }, [reportActions]);
+
+  // Photo editing handlers
+  const handleOpenPhotoEditor = useCallback((photo: PhotoData) => {
+    setEditingPhoto(photo);
+    setPhotoEditorOpen(true);
   }, []);
 
-  // Store for edited content (inline editing)
-  const [editedContent, setEditedContent] = useState<Record<string, string>>({});
+  const handleSavePhotoEdits = useCallback((photoId: string, edits: PhotoEdits, newUrl?: string) => {
+    setPhotoEdits(prev => ({
+      ...prev,
+      [photoId]: edits,
+    }));
+    // Save to report state
+    reportActions.setCustomContent(`photo:${photoId}`, { edits, newUrl });
+  }, [reportActions]);
+
+  const handleDeletePhoto = useCallback((photoId: string) => {
+    // Mark photo as deleted in report state
+    reportActions.setCustomContent(`photo:${photoId}`, { deleted: true });
+  }, [reportActions]);
+
+  // Get photo edits for a specific photo
+  const getPhotoEdits = useCallback((photoId: string) => {
+    return photoEdits[photoId];
+  }, [photoEdits]);
+
+  // Build edited content map from report state for components
+  const editedContent = useMemo(() => {
+    const result: Record<string, string> = {};
+    Object.entries(reportState.customContent).forEach(([key, value]) => {
+      if (key.startsWith('content:')) {
+        const elementId = key.replace('content:', '');
+        result[elementId] = value as string;
+      }
+    });
+    return result;
+  }, [reportState.customContent]);
+
+  // For properties panel - convert report state styling to ElementStyles format
+  const elementStyles = useMemo((): ElementStyles => {
+    if (!selectedElement || !reportState.styling[selectedElement]) return {};
+    const css = reportState.styling[selectedElement];
+    const styles: ElementStyles = {};
+    if (css.fontFamily) styles.fontFamily = css.fontFamily as string;
+    if (css.fontSize) styles.fontSize = parseInt(css.fontSize as string) || 14;
+    if (css.fontWeight) styles.fontWeight = css.fontWeight as string;
+    if (css.color) styles.color = css.color as string;
+    if (css.textAlign) styles.textAlign = css.textAlign as 'left' | 'center' | 'right';
+    if (css.marginTop) styles.marginTop = parseInt(css.marginTop as string) || 0;
+    if (css.marginBottom) styles.marginBottom = parseInt(css.marginBottom as string) || 0;
+    return styles;
+  }, [selectedElement, reportState.styling]);
+
+  // For properties panel - build element content from report state
+  const elementContent = useMemo((): ElementContent => {
+    const result: ElementContent = {};
+    Object.entries(reportState.customContent).forEach(([key, value]) => {
+      if (key.startsWith('content:')) {
+        const elementId = key.replace('content:', '');
+        result[elementId] = {
+          text: value as string,
+          styles: {},
+        };
+      }
+    });
+    return result;
+  }, [reportState.customContent]);
 
   const handleInlineContentChange = useCallback((elementId: string, content: string) => {
-    setEditedContent(prev => ({ ...prev, [elementId]: content }));
-    // Also update the elementContent for the properties panel
     handleContentChange(elementId, content);
   }, [handleContentChange]);
 
@@ -1794,35 +2591,42 @@ export function ReportEditor() {
       onSelectElement: setSelectedElement,
       onContentChange: handleInlineContentChange,
       editedContent,
+      getAppliedStyle: getElementStyle,
+    };
+
+    const photoProps = {
+      ...commonProps,
+      onOpenPhotoEditor: handleOpenPhotoEditor,
+      getPhotoEdits,
     };
 
     switch (section.id) {
       case 'cover':
         return <CoverPageReal {...commonProps} />;
       case 'toc':
-        return <TOCPage selectedElement={selectedElement} onSelectElement={setSelectedElement} enabledSections={reportSections} />;
+        return <TOCPage {...photoProps} enabledSections={reportSections} />;
       case 'letter':
-        return <LetterPage selectedElement={selectedElement} onSelectElement={setSelectedElement} />;
+        return <LetterPage {...commonProps} />;
       case 'executive-summary':
-        return <ExecutiveSummaryPage selectedElement={selectedElement} onSelectElement={setSelectedElement} />;
+        return <ExecutiveSummaryPage {...commonProps} />;
       case 'property-description':
-        return <PropertyDescriptionPage selectedElement={selectedElement} onSelectElement={setSelectedElement} />;
+        return <PropertyDescriptionPage {...commonProps} />;
       case 'hbu':
         return <HBUPage {...commonProps} />;
       case 'sales-comparison':
-        return <SalesComparisonPage selectedElement={selectedElement} onSelectElement={setSelectedElement} />;
+        return <SalesComparisonPage {...commonProps} />;
       case 'income-approach':
-        return <IncomeApproachPage selectedElement={selectedElement} onSelectElement={setSelectedElement} />;
+        return <IncomeApproachPage {...commonProps} />;
       case 'cost-approach':
-        return <CostApproachPage selectedElement={selectedElement} onSelectElement={setSelectedElement} />;
+        return <CostApproachPage {...commonProps} />;
       case 'reconciliation':
         return <ReconciliationPage {...commonProps} />;
       case 'assumptions':
-        return <AssumptionsPage selectedElement={selectedElement} onSelectElement={setSelectedElement} />;
+        return <AssumptionsPage {...commonProps} />;
       case 'certification':
-        return <CertificationPage selectedElement={selectedElement} onSelectElement={setSelectedElement} />;
+        return <CertificationPage {...commonProps} />;
       case 'exhibits':
-        return <PhotoExhibitsPage selectedElement={selectedElement} onSelectElement={setSelectedElement} />;
+        return <PhotoExhibitsPage {...photoProps} />;
       default:
         // Generic page for other sections
         return (
@@ -1865,18 +2669,60 @@ export function ReportEditor() {
             <div className="font-bold text-gray-800">Report Preview</div>
             <div className="text-xs text-gray-500">{sampleAppraisalData.property.name}</div>
           </div>
-          <button
-            onClick={handleAddTextBlock}
-            className="px-4 py-2 bg-gradient-to-r from-[#0da1c7] to-[#0890a8] text-white text-sm font-semibold rounded-lg flex items-center gap-2 hover:shadow-md transition-shadow"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
-            </svg>
-            Add Text Block
-          </button>
+          <div className="flex items-center gap-4">
+            {/* Undo/Redo buttons */}
+            <div className="flex items-center gap-1 border-r border-gray-200 pr-4">
+              <button
+                onClick={undoContent}
+                disabled={!canUndo}
+                className="p-2 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                title="Undo (Ctrl+Z)"
+              >
+                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
+                </svg>
+              </button>
+              <button
+                onClick={redoContent}
+                disabled={!canRedo}
+                className="p-2 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                title="Redo (Ctrl+Shift+Z)"
+              >
+                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 10H11a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6" />
+                </svg>
+              </button>
+            </div>
+            
+            {/* Auto-save indicator */}
+            {autoSaveState.isEnabled && (
+              <div className="flex items-center gap-2 text-xs text-gray-500">
+                {autoSaveState.isSaving ? (
+                  <>
+                    <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
+                    Saving...
+                  </>
+                ) : autoSaveState.lastSaved ? (
+                  <>
+                    <div className="w-2 h-2 bg-green-500 rounded-full" />
+                    Auto-saved {new Date(autoSaveState.lastSaved).toLocaleTimeString()}
+                  </>
+                ) : null}
+              </div>
+            )}
+            <button
+              onClick={handleAddTextBlock}
+              className="px-4 py-2 bg-gradient-to-r from-[#0da1c7] to-[#0890a8] text-white text-sm font-semibold rounded-lg flex items-center gap-2 hover:shadow-md transition-shadow"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
+              </svg>
+              Add Text Block
+            </button>
+          </div>
         </div>
         <div ref={previewRef} className="flex-1 overflow-auto p-8 bg-gray-400/30 relative">
-          <div className="space-y-8 flex flex-col items-center">
+          <div className="report-preview-content space-y-8 flex flex-col items-center">
             {reportSections
               .filter((s) => s.enabled)
               .map((section, idx) => (
@@ -1907,11 +2753,41 @@ export function ReportEditor() {
           selectedElement={selectedElement}
           elementStyles={elementStyles}
           elementContent={elementContent}
-          onStyleChange={handleStyleChange}
+          onStyleChange={(styles) => selectedElement && handleStyleChange(selectedElement, styles)}
           onContentChange={handleContentChange}
           onDeleteElement={handleDeleteElement}
+          isDirty={reportState.isDirty}
+          onSave={onSaveDraft}
         />
       </div>
+
+      {/* Recovery Dialog */}
+      <RecoveryDialog
+        isOpen={showRecoveryDialog}
+        onClose={handleDismissRecovery}
+        versions={versions}
+        onRecover={handleRecoverVersion}
+        onDelete={autoSaveActions.deleteVersion}
+        onDismiss={handleDismissRecovery}
+      />
+
+      {/* Photo Editor Dialog */}
+      <PhotoEditorDialog
+        isOpen={photoEditorOpen}
+        photo={editingPhoto}
+        onClose={() => {
+          setPhotoEditorOpen(false);
+          setEditingPhoto(null);
+        }}
+        onSave={handleSavePhotoEdits}
+        onDelete={handleDeletePhoto}
+        availablePhotos={sampleAppraisalData.photos?.map((p, i) => ({
+          id: p.id || `photo-${i}`,
+          url: p.url,
+          caption: p.caption,
+          category: p.category,
+        })) || []}
+      />
     </div>
   );
 }

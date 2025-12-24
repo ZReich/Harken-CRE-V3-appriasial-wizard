@@ -44,51 +44,311 @@ interface AIPreview {
 }
 
 // Simulated AI responses for demo (templates reserved for future API integration)
+// Bold and underlined section headers for professional appraisal appearance
 const SimulatedAIDrafts: Record<string, string> = {
-  'legal_description': 'Lot 12, Block 4, of CANYON CREEK INDUSTRIAL PARK, according to the plat thereof, filed in Plat Book 45, at Page 123, records of Yellowstone County, Montana, located in the Southeast Quarter of Section 15, Township 1 South, Range 26 East, Principal Meridian, Montana.',
-  'area_description': 'The subject property is located in the Billings Heights area of Billings, Montana, an established commercial and industrial corridor along South 30th Street West. The immediate neighborhood is characterized by a mix of light industrial, warehouse, and commercial uses. The area benefits from excellent access to Interstate 90 and major arterial roads. The local economy is diverse, supported by agriculture, energy, healthcare, and manufacturing sectors.',
-  'site_description': 'The subject site contains approximately 1.43 acres (62,291 square feet) of level, rectangular land. The site has approximately 200 feet of frontage along South 30th Street West with adequate ingress and egress. All public utilities including water, sewer, electricity, and natural gas are available and connected.',
-  'improvement_description': 'The subject improvements consist of a single-story industrial warehouse building constructed in 2019. The building features a steel frame with metal panel exterior walls and a standing seam metal roof. The structure provides approximately 11,174 square feet of gross building area, including warehouse space with 24-foot clear heights.',
-  'hbu_analysis': 'Based on analysis of the four tests of highest and best use, the subject site as vacant would be developed with industrial/warehouse use. This conclusion is supported by: (1) Legal permissibility under the I1-Light Industrial zoning; (2) Physical possibility given the level topography; (3) Financial feasibility based on current market demand; and (4) Maximum productivity compared to alternative uses.',
-  'reconciliation': `In reconciling the value indications from the applicable valuation approaches, I have given primary emphasis to the Income Approach, which indicates a value reflective of investor decision-making for income-producing properties. This approach is considered most reliable because income-producing properties like the subject are typically purchased by investors who base their acquisition decisions on anticipated income and return requirements. The income data utilized reflects actual operating history and market-supported assumptions.
+  'legal_description': '<b><u>LEGAL DESCRIPTION</u></b>\n\nLot 12, Block 4, of CANYON CREEK INDUSTRIAL PARK, according to the plat thereof, filed in Plat Book 45, at Page 123, records of Yellowstone County, Montana, located in the Southeast Quarter of Section 15, Township 1 South, Range 26 East, Principal Meridian, Montana.',
+  
+  'area_description': '<b><u>AREA DESCRIPTION</u></b>\n\nThe subject property is located in the Billings Heights area of Billings, Montana, an established commercial and industrial corridor along South 30th Street West. The immediate neighborhood is characterized by a mix of light industrial, warehouse, and commercial uses. The area benefits from excellent access to Interstate 90 and major arterial roads. The local economy is diverse, supported by agriculture, energy, healthcare, and manufacturing sectors.',
+  
+  'site_description': '<b><u>SITE DESCRIPTION</u></b>\n\nThe subject site contains approximately 1.43 acres (62,291 square feet) of level, rectangular land. The site has approximately 200 feet of frontage along South 30th Street West with adequate ingress and egress. All public utilities including water, sewer, electricity, and natural gas are available and connected.',
+  
+  'improvement_description': '<b><u>IMPROVEMENT DESCRIPTION</u></b>\n\nThe subject improvements consist of a single-story industrial warehouse building constructed in 2019. The building features a steel frame with metal panel exterior walls and a standing seam metal roof. The structure provides approximately 11,174 square feet of gross building area, including warehouse space with 24-foot clear heights.',
+  
+  'hbu_analysis': '<b><u>HIGHEST AND BEST USE CONCLUSION</u></b>\n\nBased on analysis of the four tests of highest and best use, the subject site as vacant would be developed with industrial/warehouse use. This conclusion is supported by: (1) Legal permissibility under the I1-Light Industrial zoning; (2) Physical possibility given the level topography; (3) Financial feasibility based on current market demand; and (4) Maximum productivity compared to alternative uses.',
+  'reconciliation': `<b><u>VALUE RECONCILIATION</u></b>
+
+In reconciling the value indications from the applicable valuation approaches, I have given primary emphasis to the Income Approach, which indicates a value reflective of investor decision-making for income-producing properties. This approach is considered most reliable because income-producing properties like the subject are typically purchased by investors who base their acquisition decisions on anticipated income and return requirements. The income data utilized reflects actual operating history and market-supported assumptions.
+
+<b><u>SALES COMPARISON APPROACH</u></b>
 
 The Sales Comparison Approach provides strong supporting indication of value. Adequate comparable sales data was available, and market participants for this property type rely on direct comparison to recent transactions. The adjustments applied are well-supported by market evidence.
 
+<b><u>COST APPROACH</u></b>
+
 The Cost Approach is given least weight due to the difficulty in accurately measuring depreciation for properties of this age and type. However, the Cost Approach indication provides a useful benchmark and confirms the reasonableness of the other approaches.
+
+<b><u>FINAL VALUE OPINION</u></b>
 
 Based on the foregoing analysis, it is my opinion that the market value of the subject property reflects the most probable price the property would bring in a competitive and open market under all conditions requisite to a fair sale, with buyer and seller each acting prudently and knowledgeably.`,
 
-  'exposure': `Based on analysis of current market conditions for this property type in the subject market area, I estimate the exposure time for the subject property to be 6 to 12 months. This estimate reflects the time period the property would have been exposed to the market prior to the effective date of value, assuming competent marketing at market-appropriate pricing.
+  'exposure': `<b><u>EXPOSURE TIME ESTIMATE</u></b>
+
+Based on analysis of current market conditions for this property type in the subject market area, I estimate the exposure time for the subject property to be 6 to 12 months. This estimate reflects the time period the property would have been exposed to the market prior to the effective date of value, assuming competent marketing at market-appropriate pricing.
+
+<b><u>MARKETING TIME ESTIMATE</u></b>
 
 The estimated marketing time, which represents the prospective time to achieve a sale from the effective date forward, is also estimated at 6 to 12 months. This estimate considers the property's value level, which falls within the typical transaction size for this market. The subject's condition and functional utility are consistent with market expectations.
+
+<b><u>MARKET CONDITIONS</u></b>
 
 Current market conditions for properties of this type are stable, with adequate buyer demand and available financing for qualified investors. Transaction velocity in this submarket has remained consistent over the past 12 months, supporting the exposure and marketing time estimates provided. These estimates are based on interviews with market participants, review of comparable marketing times, and my professional experience in this market.`,
   
   // HBU-specific templates for the four tests
-  'hbu_legally_permissible': 'The subject property is zoned I-1 (Light Industrial) under the applicable zoning ordinance. Under this zoning classification, permitted uses by right include light manufacturing, warehousing and distribution, research and development facilities, and related commercial uses. Conditional uses may include outdoor storage with appropriate screening and certain retail uses accessory to industrial operations.\n\nNo deed restrictions, private covenants, or easements were identified in our title review that would further limit development potential beyond the zoning requirements. The current use is a conforming use under the applicable zoning ordinance. Based on this analysis, the legally permissible uses include industrial, warehouse, and related commercial development.',
+  'hbu_legally_permissible': '<b><u>LEGALLY PERMISSIBLE USES</u></b>\n\nThe subject property is zoned I-1 (Light Industrial) under the applicable zoning ordinance. Under this zoning classification, permitted uses by right include light manufacturing, warehousing and distribution, research and development facilities, and related commercial uses. Conditional uses may include outdoor storage with appropriate screening and certain retail uses accessory to industrial operations.\n\n<b><u>DEED RESTRICTIONS AND COVENANTS</u></b>\n\nNo deed restrictions, private covenants, or easements were identified in our title review that would further limit development potential beyond the zoning requirements. The current use is a conforming use under the applicable zoning ordinance.\n\n<b><u>CONCLUSION</u></b>\n\nBased on this analysis, the legally permissible uses include industrial, warehouse, and related commercial development.',
   
-  'hbu_physically_possible': 'The subject site contains approximately 1.43 acres of generally level land with a regular, rectangular configuration. The site topography is level and at grade with the surrounding roadway, presenting no significant physical constraints to development. All public utilities including municipal water, sanitary sewer, electricity, natural gas, and telecommunications are available and connected to the site.\n\nThe property is located in Flood Zone X per FEMA mapping, indicating minimal flood risk with no special flood insurance requirements. The site has adequate frontage and direct access from a public right-of-way. Given these physical characteristics, the site is suitable for virtually any development permitted under the applicable zoning. Physically possible uses include any development compatible with the site size, shape, and utility availability.',
+  'hbu_physically_possible': '<b><u>SITE CHARACTERISTICS</u></b>\n\nThe subject site contains approximately 1.43 acres of generally level land with a regular, rectangular configuration. The site topography is level and at grade with the surrounding roadway, presenting no significant physical constraints to development. All public utilities including municipal water, sanitary sewer, electricity, natural gas, and telecommunications are available and connected to the site.\n\n<b><u>FLOOD ZONE AND ACCESS</u></b>\n\nThe property is located in Flood Zone X per FEMA mapping, indicating minimal flood risk with no special flood insurance requirements. The site has adequate frontage and direct access from a public right-of-way.\n\n<b><u>CONCLUSION</u></b>\n\nGiven these physical characteristics, the site is suitable for virtually any development permitted under the applicable zoning. Physically possible uses include any development compatible with the site size, shape, and utility availability.',
   
-  'hbu_financially_feasible': 'Current market conditions indicate sustained demand for industrial and warehouse space in the subject market area. The submarket vacancy rate of approximately 5.2% is below the long-term historical average, indicating a healthy balance between supply and demand. Market rental rates for comparable industrial space range from $6.50 to $8.50 per square foot NNN, which would support new development at current construction costs.\n\nDevelopment feasibility analysis indicates that new industrial construction would generate a positive residual land value, confirming financial feasibility. Market-derived capitalization rates for stabilized industrial properties range from 6.50% to 7.50%, reflecting investor confidence in the asset class. Based on our analysis, industrial and warehouse development would be financially feasible, generating adequate return to justify development.',
+  'hbu_financially_feasible': '<b><u>MARKET CONDITIONS</u></b>\n\nCurrent market conditions indicate sustained demand for industrial and warehouse space in the subject market area. The submarket vacancy rate of approximately 5.2% is below the long-term historical average, indicating a healthy balance between supply and demand. Market rental rates for comparable industrial space range from $6.50 to $8.50 per square foot NNN, which would support new development at current construction costs.\n\n<b><u>DEVELOPMENT FEASIBILITY</u></b>\n\nDevelopment feasibility analysis indicates that new industrial construction would generate a positive residual land value, confirming financial feasibility. Market-derived capitalization rates for stabilized industrial properties range from 6.50% to 7.50%, reflecting investor confidence in the asset class.\n\n<b><u>CONCLUSION</u></b>\n\nBased on our analysis, industrial and warehouse development would be financially feasible, generating adequate return to justify development.',
   
-  'hbu_maximally_productive': 'Based on our analysis of the four tests of highest and best use, it is our conclusion that the highest and best use of the subject site as if vacant is development with industrial or warehouse improvements. This conclusion synthesizes the legally permissible uses (industrial zoning), physically possible uses (adequate site size and utilities), and financially feasible uses (positive residual land value for industrial development).\n\nAmong the legally permissible, physically possible, and financially feasible uses, industrial development would result in the highest land value. This conclusion is supported by the site\'s location within an established industrial corridor, adequate infrastructure, and strong market fundamentals. Therefore, the highest and best use as vacant is development with industrial or warehouse improvements.',
+  'hbu_maximally_productive': '<b><u>SYNTHESIS OF HIGHEST AND BEST USE TESTS</u></b>\n\nBased on our analysis of the four tests of highest and best use, it is our conclusion that the highest and best use of the subject site as if vacant is development with industrial or warehouse improvements. This conclusion synthesizes the legally permissible uses (industrial zoning), physically possible uses (adequate site size and utilities), and financially feasible uses (positive residual land value for industrial development).\n\n<b><u>MAXIMALLY PRODUCTIVE USE</u></b>\n\nAmong the legally permissible, physically possible, and financially feasible uses, industrial development would result in the highest land value. This conclusion is supported by the site\'s location within an established industrial corridor, adequate infrastructure, and strong market fundamentals.\n\n<b><u>CONCLUSION</u></b>\n\nTherefore, the highest and best use as vacant is development with industrial or warehouse improvements.',
   
-  'hbu_as_improved': 'The subject property is currently improved with a 11,174 square foot industrial warehouse building constructed in 2019. The existing improvements are consistent with and represent a reasonable approximation of the ideal improvement for the site given current market conditions and zoning. The improvements are in good condition with substantial remaining economic life and provide adequate functional utility for industrial users.\n\nWe considered alternative uses including renovation, conversion to alternative use, or demolition. Given the improvements\' modern construction, good condition, and functional utility, demolition and redevelopment is not economically justified. The contribution value of the improvements exceeds the cost to demolish and redevelop. Based on this analysis, it is our conclusion that the highest and best use of the subject property as improved is continuation of its current use as an industrial warehouse facility.',
+  'hbu_as_improved': '<b><u>EXISTING IMPROVEMENTS</u></b>\n\nThe subject property is currently improved with a 11,174 square foot industrial warehouse building constructed in 2019. The existing improvements are consistent with and represent a reasonable approximation of the ideal improvement for the site given current market conditions and zoning. The improvements are in good condition with substantial remaining economic life and provide adequate functional utility for industrial users.\n\n<b><u>ALTERNATIVE USE ANALYSIS</u></b>\n\nWe considered alternative uses including renovation, conversion to alternative use, or demolition. Given the improvements\' modern construction, good condition, and functional utility, demolition and redevelopment is not economically justified. The contribution value of the improvements exceeds the cost to demolish and redevelop.\n\n<b><u>CONCLUSION</u></b>\n\nBased on this analysis, it is our conclusion that the highest and best use of the subject property as improved is continuation of its current use as an industrial warehouse facility.',
 
   // ===========================================
   // GRID-SPECIFIC AI PROMPTS (30-Year Appraiser Style)
+  // Bold and underlined section headers for professional appearance
   // ===========================================
   
-  'sales_comparison': '**Sales Comparison Approach - Reconciliation**\n\nIn developing the Sales Comparison Approach, I have analyzed recent transactions of properties considered most comparable to the subject. After 30 years in this profession, I can attest that this approach provides the most reliable indication of market value when sufficient comparable data exists.\n\n**Comparable Selection Criteria:**\nThe sales selected represent the best available data, considering location, physical characteristics, and market conditions. Each transaction was verified to the extent possible to confirm arms-length status.\n\n**Adjustment Analysis:**\nAdjustments were applied for differences in property rights conveyed, financing terms, conditions of sale, market conditions, location, and physical characteristics. The adjustments reflect market-derived differences based on paired sales analysis and professional judgment developed over decades of practice.\n\n**Reconciliation:**\nGreatest weight was given to the comparables requiring the least overall adjustment, as these properties most closely mirror the subject. The adjusted sale prices demonstrate a reasonable range, and the indicated value falls within market expectations.\n\n**Value Indication via Sales Comparison Approach:** [Value to be inserted based on grid data]',
+  'sales_comparison': `<b><u>SALES COMPARISON APPROACH - RECONCILIATION</u></b>
 
-  'land_valuation': '**Land Valuation - Analysis and Reconciliation**\n\nThe land value estimate was developed using the Sales Comparison Approach, which is the preferred methodology for vacant land when adequate comparable sales data is available.\n\n**Market Analysis:**\nThe local land market has demonstrated [stable/increasing/decreasing] conditions over the past 12-24 months. Demand for [property type] land in this submarket remains [strong/moderate/weak], supported by [economic factors].\n\n**Comparable Land Sales:**\nI have analyzed recent sales of comparable land parcels, with adjustments made for differences in size, location, topography, utilities, zoning, and market conditions. After three decades of appraising land, these adjustments reflect my understanding of how buyers in this market value specific property characteristics.\n\n**Adjustment Rationale:**\n- **Location:** Adjustments reflect differences in access, visibility, and surrounding land uses\n- **Size:** Larger parcels typically sell at lower unit prices due to diminished buyer pool\n- **Utilities:** Availability and cost to connect significantly impact land value\n- **Topography:** Level, usable land commands premium pricing\n\n**Land Value Conclusion:**\nBased on the adjusted comparable sales, the indicated land value is [Value to be inserted]. This conclusion reflects the most probable price the subject land would bring in a competitive market.',
+In developing the Sales Comparison Approach, I have analyzed recent transactions of properties considered most comparable to the subject. After 30 years in this profession, I can attest that this approach provides the most reliable indication of market value when sufficient comparable data exists.
 
-  'rent_comparable': '**Rent Comparable Analysis - Market Rent Conclusion**\n\nIn estimating market rent for the subject property, I have analyzed comparable rental properties in the subject\'s competitive market area.\n\n**Rental Market Conditions:**\nThe current rental market for [property type] space reflects [market conditions]. Vacancy rates in the immediate area are approximately [X]%, indicating [balanced/landlord-favorable/tenant-favorable] conditions.\n\n**Comparable Rental Analysis:**\nThe rentals selected represent properties that compete directly with the subject for tenants. Adjustments were made for differences in location, size, condition, amenities, and lease terms.\n\n**Key Observations:**\n- Effective rental rates range from $[X] to $[Y] per square foot\n- Most leases are structured on a [NNN/Modified Gross/Full Service] basis\n- Tenant improvement allowances average $[X] per square foot\n- Concessions are [typical/minimal/significant] in the current market\n\n**Market Rent Conclusion:**\nBased on my analysis of comparable rentals and 30 years of experience in this market, the indicated market rent for the subject is $[X] per square foot on a [lease basis] basis. This rent level reflects the most probable rent the subject would command from a knowledgeable tenant in the current market.',
+<b><u>COMPARABLE SELECTION CRITERIA</u></b>
 
-  'expense_comparable': '**Operating Expense Analysis**\n\nIn developing the expense estimate for the subject property, I have analyzed comparable expense data from similar properties in the market.\n\n**Expense Data Sources:**\nExpense comparables were selected from properties similar to the subject in terms of property type, size, age, and quality. Data was obtained from [sources] and verified to the extent possible.\n\n**Expense Categories Analyzed:**\n- **Real Estate Taxes:** Based on current assessment and mill levy\n- **Insurance:** Reflects current market rates for similar properties\n- **Utilities:** Where applicable, based on comparable consumption data\n- **Repairs & Maintenance:** Reflects typical expenditures for properties of this age and condition\n- **Management:** Market-standard percentage of effective gross income\n- **Reserves for Replacement:** Appropriate reserve for long-lived components\n\n**Expense Comparison:**\nThe expense ratio for comparable properties ranges from [X]% to [Y]% of effective gross income, with total expenses per square foot ranging from $[X] to $[Y].\n\n**Expense Conclusion:**\nBased on the comparable data and my professional judgment developed over 30 years, the stabilized expenses for the subject property are estimated at $[X] per square foot, representing an expense ratio of approximately [X]%.',
+The sales selected represent the best available data, considering location, physical characteristics, and market conditions. Each transaction was verified to the extent possible to confirm arms-length status.
 
-  'multi_family': '**Multi-Family Rental Approach - Analysis and Reconciliation**\n\nIn developing the rental analysis for this multi-family property, I have applied the same rigorous methodology that has guided my 30-year career in real estate appraisal.\n\n**Market Overview:**\nThe multi-family market in this area has demonstrated [market conditions]. Vacancy rates for comparable properties average approximately [X]%, and rental rate trends have been [increasing/stable/declining] over the past 12 months.\n\n**Rental Comparable Analysis:**\nI have analyzed [X] rental comparables representing properties that compete directly with the subject for tenants. These comparables were selected based on similarity in unit mix, age, condition, location, and amenities.\n\n**Adjustment Factors:**\n- **Location:** Adjustments for differences in neighborhood quality and access\n- **Unit Size/Configuration:** Bed/bath count and square footage comparisons\n- **Condition/Quality:** Age, renovation status, and finish levels\n- **Amenities:** Parking, utilities included, in-unit features\n- **Property Type:** Building style and unit count considerations\n\n**Rental Rate Conclusion:**\nBased on my analysis, the indicated market rental rates for the subject units are:\n- [Unit Type 1]: $[X]/month\n- [Unit Type 2]: $[Y]/month\n\nThese conclusions reflect the most probable rents the subject units would achieve from typical tenants in the current market. The overall adjustment range supports confidence in these conclusions.',
-  
+<b><u>ADJUSTMENT ANALYSIS</u></b>
+
+Adjustments were applied for differences in property rights conveyed, financing terms, conditions of sale, market conditions, location, and physical characteristics. The adjustments reflect market-derived differences based on paired sales analysis and professional judgment developed over decades of practice.
+
+<b><u>RECONCILIATION</u></b>
+
+Greatest weight was given to the comparables requiring the least overall adjustment, as these properties most closely mirror the subject. The adjusted sale prices demonstrate a reasonable range, and the indicated value falls within market expectations.
+
+<b><u>VALUE INDICATION VIA SALES COMPARISON APPROACH:</u></b> [Value to be inserted based on grid data]`,
+
+  'land_valuation': `<b><u>LAND VALUATION - ANALYSIS AND RECONCILIATION</u></b>
+
+The land value estimate was developed using the Sales Comparison Approach, which is the preferred methodology for vacant land when adequate comparable sales data is available.
+
+<b><u>MARKET ANALYSIS</u></b>
+
+The local land market has demonstrated stable conditions over the past 12-24 months. Demand for commercial and industrial land in this submarket remains moderate to strong, supported by continued regional economic growth and limited new land inventory.
+
+<b><u>COMPARABLE LAND SALES</u></b>
+
+I have analyzed recent sales of comparable land parcels, with adjustments made for differences in size, location, topography, utilities, zoning, and market conditions. After three decades of appraising land, these adjustments reflect my understanding of how buyers in this market value specific property characteristics.
+
+<b><u>ADJUSTMENT RATIONALE</u></b>
+
+Location adjustments reflect differences in access, visibility, and surrounding land uses. Size adjustments account for the fact that larger parcels typically sell at lower unit prices due to diminished buyer pool. Utility availability and cost to connect significantly impact land value. Level, usable land commands premium pricing compared to sloped or irregular parcels.
+
+<b><u>LAND VALUE CONCLUSION</u></b>
+
+Based on the adjusted comparable sales, the indicated land value reflects the most probable price the subject land would bring in a competitive market under current conditions.`,
+
+  'rent_comparable': `<b><u>RENT COMPARABLE ANALYSIS - MARKET RENT CONCLUSION</u></b>
+
+In estimating market rent for the subject property, I have analyzed comparable rental properties in the subject's competitive market area.
+
+<b><u>RENTAL MARKET CONDITIONS</u></b>
+
+The current rental market for commercial and industrial space reflects stable to improving conditions. Vacancy rates in the immediate area indicate balanced to landlord-favorable conditions, with quality space being absorbed at competitive rates.
+
+<b><u>COMPARABLE RENTAL ANALYSIS</u></b>
+
+The rentals selected represent properties that compete directly with the subject for tenants. Adjustments were made for differences in location, size, condition, amenities, and lease terms.
+
+<b><u>KEY OBSERVATIONS</u></b>
+
+Effective rental rates demonstrate a reasonable range consistent with the subject's quality and location. Most leases are structured on a triple net (NNN) or modified gross basis, with tenant improvement allowances reflecting current market standards. Concessions are minimal in the current market environment.
+
+<b><u>MARKET RENT CONCLUSION</u></b>
+
+Based on my analysis of comparable rentals and 30 years of experience in this market, the indicated market rent reflects the most probable rent the subject would command from a knowledgeable tenant in the current market.`,
+
+  'expense_comparable': `<b><u>OPERATING EXPENSE ANALYSIS</u></b>
+
+In developing the expense estimate for the subject property, I have analyzed comparable expense data from similar properties in the market.
+
+<b><u>EXPENSE DATA SOURCES</u></b>
+
+Expense comparables were selected from properties similar to the subject in terms of property type, size, age, and quality. Data was obtained from property managers, owners, and published surveys, and verified to the extent possible.
+
+<b><u>EXPENSE CATEGORIES ANALYZED</u></b>
+
+Real Estate Taxes are based on current assessment and mill levy. Insurance reflects current market rates for similar properties. Utilities, where applicable, are based on comparable consumption data. Repairs and Maintenance reflects typical expenditures for properties of this age and condition. Management is a market-standard percentage of effective gross income. Reserves for Replacement provides an appropriate allowance for long-lived components.
+
+<b><u>EXPENSE COMPARISON</u></b>
+
+The expense ratio for comparable properties demonstrates a reasonable range of effective gross income, with total expenses per square foot consistent with market expectations for this property type.
+
+<b><u>EXPENSE CONCLUSION</u></b>
+
+Based on the comparable data and my professional judgment developed over 30 years, the stabilized expenses for the subject property are estimated at levels consistent with market standards for similar properties.`,
+
+  'multi_family': `<b><u>MULTI-FAMILY RENTAL APPROACH - ANALYSIS AND RECONCILIATION</u></b>
+
+In developing the rental analysis for this multi-family property, I have applied the same rigorous methodology that has guided my 30-year career in real estate appraisal.
+
+<b><u>MARKET OVERVIEW</u></b>
+
+The multi-family market in this area has demonstrated stable to improving conditions. Vacancy rates for comparable properties remain at healthy levels, and rental rate trends have been stable to increasing over the past 12 months.
+
+<b><u>RENTAL COMPARABLE ANALYSIS</u></b>
+
+I have analyzed rental comparables representing properties that compete directly with the subject for tenants. These comparables were selected based on similarity in unit mix, age, condition, location, and amenities.
+
+<b><u>ADJUSTMENT FACTORS</u></b>
+
+Location adjustments account for differences in neighborhood quality and access. Unit size and configuration adjustments reflect bed/bath count and square footage comparisons. Condition and quality adjustments consider age, renovation status, and finish levels. Amenity adjustments account for parking, utilities included, and in-unit features. Property type adjustments consider building style and unit count.
+
+<b><u>RENTAL RATE CONCLUSION</u></b>
+
+Based on my analysis, the indicated market rental rates for the subject units reflect the most probable rents the units would achieve from typical tenants in the current market. The overall adjustment range supports confidence in these conclusions.`,
+
+  // ===========================================
+  // SITE DETAILS AI TEMPLATES
+  // ===========================================
+
+  'water_source': `<b><u>WATER SERVICE</u></b>
+
+City water service is provided by the municipal water department. The water main connection is located along the frontage road and provides adequate capacity for the current and anticipated uses.
+
+<b><u>SERVICE ADEQUACY</u></b>
+
+Based on our inspection and inquiry, the water service appears adequate for the current use with no observable deficiencies. Water pressure and volume are sufficient for the property's requirements including fire suppression needs if applicable.
+
+<b><u>CONCLUSION</u></b>
+
+No water service deficiencies were identified that would adversely affect the subject property's utility or value.`,
+
+  'sewer_type': `<b><u>SANITARY SEWER SERVICE</u></b>
+
+The property is connected to municipal sanitary sewer service provided by the city's public works department. The sewer connection is via a lateral line extending to the main trunk line located in the adjacent right-of-way.
+
+<b><u>SYSTEM ADEQUACY</u></b>
+
+The sewer system appears adequate for the current use with no observable deficiencies. The sanitary sewer infrastructure in this area has sufficient capacity to accommodate the subject property and surrounding development.
+
+<b><u>CONCLUSION</u></b>
+
+No sewer service deficiencies were identified that would adversely affect the subject property's utility or value.`,
+
+  'electric': `<b><u>ELECTRIC SERVICE</u></b>
+
+Electric service is provided by the local utility company with primary service extending from utility poles along the property frontage. The service appears to be adequate three-phase power suitable for industrial/commercial applications.
+
+<b><u>SERVICE CHARACTERISTICS</u></b>
+
+Based on our inspection, the electrical system appears to be in functional condition consistent with the age and type of improvements. The service capacity appears adequate for the current and reasonably anticipated uses.
+
+<b><u>CONCLUSION</u></b>
+
+No electrical service deficiencies were identified that would adversely affect the subject property's utility or value.`,
+
+  'natural_gas': `<b><u>NATURAL GAS SERVICE</u></b>
+
+Natural gas service is available and connected to the property. The gas service is provided by the local utility and appears adequate for heating requirements and any industrial processes requiring natural gas.
+
+<b><u>CONCLUSION</u></b>
+
+Natural gas availability is consistent with surrounding properties in this industrial area and supports the property's utility for its current use.`,
+
+  'telecom': `<b><u>TELECOMMUNICATIONS</u></b>
+
+Telecommunications services including telephone, internet, and cable television are available to the property. Multiple telecommunications providers service this area, providing options for high-speed internet and business-class communications.
+
+<b><u>CONCLUSION</u></b>
+
+Telecommunications infrastructure is adequate for modern business operations and supports the property's utility for commercial and industrial uses.`,
+
+  'access_visibility': `<b><u>ACCESS AND VISIBILITY</u></b>
+
+Access to the subject site is provided via a paved approach from the adjacent roadway. The approach provides adequate ingress and egress for passenger vehicles, delivery trucks, and other commercial traffic. The turning radius appears adequate for larger commercial vehicles.
+
+<b><u>VISIBILITY</u></b>
+
+The property has good visibility from the adjacent roadway. The site's visibility is enhanced by its location and the relative absence of visual obstructions from neighboring properties or landscaping.
+
+<b><u>TRAFFIC AND CIRCULATION</u></b>
+
+Traffic patterns in the immediate area are consistent with the industrial/commercial character of the neighborhood. Peak hour traffic does not appear to significantly impact access to the subject property.
+
+<b><u>CONCLUSION</u></b>
+
+The property's access and visibility characteristics are competitive with comparable properties in the market area and support the property's utility for its current and intended use.`,
+
+  'site_improvements': `<b><u>SITE IMPROVEMENTS</u></b>
+
+Site improvements include paved parking and circulation areas, exterior lighting, and perimeter security features. The improvements appear to be in average to good condition consistent with the age of the overall development.
+
+<b><u>PAVING</u></b>
+
+Paved areas consist of asphalt paving providing parking stalls for employees and visitors, as well as circulation and loading areas. The paving exhibits normal wear consistent with age but appears to be adequately maintained.
+
+<b><u>LIGHTING AND SECURITY</u></b>
+
+Exterior lighting is provided throughout the site for safety and security. Perimeter fencing provides security for the property and controlled access to yard and storage areas.
+
+<b><u>CONCLUSION</u></b>
+
+The site improvements are consistent with market expectations for this property type and contribute positively to the property's utility and marketability.`,
+
+  'paving': `<b><u>PAVING</u></b>
+
+The paved areas consist of asphalt paving in average condition. The pavement provides adequate parking and circulation for the property's current use. Minor surface wear including hairline cracking and minor patching is observed, consistent with normal wear for the age of the improvements.
+
+<b><u>CONCLUSION</u></b>
+
+The paving appears to have adequate remaining useful life and requires only routine maintenance at this time.`,
+
+  'fencing': `<b><u>FENCING</u></b>
+
+The property is secured with fencing around the perimeter. The fencing appears to be in average condition and provides adequate security for the site including protection of any yard storage or outdoor work areas.
+
+<b><u>CONCLUSION</u></b>
+
+The fencing contributes to the property's security and is consistent with similar properties in the market area.`,
+
+  'flood_zone': `<b><u>FLOOD ZONE DETERMINATION</u></b>
+
+According to the Federal Emergency Management Agency (FEMA) Flood Insurance Rate Map (FIRM), the subject site is located in Flood Zone X, which is defined as an area determined to be outside the 0.2% annual chance (500-year) floodplain.
+
+<b><u>FLOOD INSURANCE REQUIREMENTS</u></b>
+
+Properties located in Flood Zone X are not required to carry flood insurance as a condition of federally regulated financing, although flood insurance may still be obtained if desired.
+
+<b><u>CONCLUSION</u></b>
+
+The subject site does not appear to have significant flood risk, and no special flood hazard insurance is required. This flood zone determination is subject to change based on future FEMA map revisions.`,
+
+  'site_description_full': `<b><u>SITE DESCRIPTION</u></b>
+
+The subject site is located on the property identified in the legal description, containing approximately [acres] acres ([square feet] square feet) of land with a generally [shape] configuration.
+
+<b><u>ACCESS AND FRONTAGE</u></b>
+
+The site has [frontage description] of frontage providing [access quality] access. A [approach type] approach provides ingress and egress for vehicles, with adequate turning radius for truck and delivery traffic. Site visibility is [visibility rating] from the adjacent roadway.
+
+<b><u>TOPOGRAPHY AND DRAINAGE</u></b>
+
+The site topography is [topography], presenting no significant constraints to development or site utilization. Drainage appears [drainage] with no evidence of standing water or drainage problems observed during our inspection.
+
+<b><u>UTILITIES</u></b>
+
+Utilities available to the site include [water source] water, [sewer type] sewer, electricity, natural gas, and telecommunications. All utility services appear adequate for the current and anticipated uses. No utility deficiencies were observed.
+
+<b><u>FLOOD ZONE</u></b>
+
+According to FEMA Flood Insurance Rate Map, the subject site is located in [FEMA zone]. [Flood insurance statement based on zone].
+
+<b><u>SITE IMPROVEMENTS</u></b>
+
+Site improvements include [paving type] paving, exterior lighting, and [fencing type] fencing. [Yard/storage and landscaping descriptions]. The improvements appear to be in [condition] condition consistent with the age of development.
+
+<b><u>ENVIRONMENTAL</u></b>
+
+[Environmental status statement]. No obvious signs of environmental contamination were observed during our physical inspection.
+
+<b><u>EASEMENTS AND ENCROACHMENTS</u></b>
+
+[Easements description, or "No adverse easements or encroachments were identified that would adversely affect value."]
+
+<b><u>CONCLUSION</u></b>
+
+Overall, the site is well-suited for its current use and presents no significant adverse characteristics that would negatively impact value or marketability.`,
+
   'default': 'This section contains professionally written appraisal content that follows USPAP guidelines and industry best practices. The content should be reviewed and modified as appropriate for the specific assignment.'
 };
 
@@ -125,9 +385,15 @@ export default function EnhancedTextArea({
   }
 
   // Sync editor content with value prop
+  // Convert newlines to <br> for proper display in contentEditable
   useEffect(() => {
-    if (editorRef.current && editorRef.current.innerHTML !== value) {
-      editorRef.current.innerHTML = value;
+    if (editorRef.current) {
+      // Always convert \n to <br> for display (works with or without HTML)
+      const formattedValue = value.replace(/\n/g, '<br>');
+      
+      if (editorRef.current.innerHTML !== formattedValue) {
+        editorRef.current.innerHTML = formattedValue;
+      }
     }
   }, [value]);
 

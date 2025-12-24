@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import WizardLayout from '../components/WizardLayout';
 import {
@@ -14,8 +14,12 @@ import { useCompletion } from '../hooks/useCompletion';
 import { useCelebration } from '../hooks/useCelebration';
 import { useSmartContinue } from '../hooks/useSmartContinue';
 import { useWizard } from '../context/WizardContext';
+import { useToast } from '../context/ToastContext';
 import EnhancedTextArea from '../components/EnhancedTextArea';
 import { Info, ArrowLeft, Save, FileCheck, CheckCircle, Sparkles, Loader2 } from 'lucide-react';
+import type { ReportState, ReportStateActions } from '../features/report-preview/hooks/useReportState';
+import { useFinalizeFlow } from '../features/report-preview/hooks/useFinalizeFlow';
+import { SaveChangesDialog, PostSaveDialog, TemplateSaveDialog, FinalizeDialog } from '../features/report-preview/components/dialogs';
 
 // =================================================================
 // CONFETTI ANIMATION
@@ -159,10 +163,16 @@ function ReportPreviewMode({
   onBack, 
   onFinalize,
   onSaveDraft,
+  onReportStateChange,
+  isSaving,
+  isDirty,
 }: { 
   onBack: () => void; 
   onFinalize: () => void;
   onSaveDraft: () => void;
+  onReportStateChange?: (state: ReportState, actions: ReportStateActions) => void;
+  isSaving?: boolean;
+  isDirty?: boolean;
 }) {
   return (
     <div className="fixed inset-0 bg-gray-100 z-50 flex flex-col overflow-hidden">
@@ -177,9 +187,17 @@ function ReportPreviewMode({
           Back to Review
         </button>
 
-        {/* Center: Title */}
+        {/* Center: Title with dirty indicator */}
         <div className="text-center">
-          <h1 className="text-lg font-bold text-gray-800">Report Preview</h1>
+          <div className="flex items-center justify-center gap-2">
+            <h1 className="text-lg font-bold text-gray-800">Report Preview</h1>
+            {isDirty && (
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-100 text-amber-700 text-xs rounded-full">
+                <span className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse" />
+                Unsaved changes
+              </span>
+            )}
+          </div>
           <p className="text-xs text-gray-500">Edit and customize before generating</p>
         </div>
 
@@ -187,10 +205,15 @@ function ReportPreviewMode({
         <div className="flex items-center gap-3">
           <button
             onClick={onSaveDraft}
-            className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors font-medium"
+            disabled={isSaving || !isDirty}
+            className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <Save size={16} />
-            Save Draft
+            {isSaving ? (
+              <Loader2 size={16} className="animate-spin" />
+            ) : (
+              <Save size={16} />
+            )}
+            {isSaving ? 'Saving...' : 'Save Draft'}
           </button>
           <button
             onClick={onFinalize}
@@ -204,7 +227,10 @@ function ReportPreviewMode({
 
       {/* Full-screen ReportEditor - flex-1 to fill remaining space */}
       <div className="flex-1 min-h-0">
-        <ReportEditor />
+        <ReportEditor 
+          onSaveDraft={onSaveDraft}
+          onReportStateChange={onReportStateChange}
+        />
       </div>
     </div>
   );
@@ -216,14 +242,60 @@ function ReportPreviewMode({
 
 export default function ReviewPage() {
   const navigate = useNavigate();
+  const toast = useToast();
   const [activeTab, setActiveTab] = useState<ReviewTabId>('hbu');
   const [isFinalized, setIsFinalized] = useState(false);
   const [showReadyToPreview, setShowReadyToPreview] = useState(false);
   const [showPreviewMode, setShowPreviewMode] = useState(false);
   const [, setHasCelebrated] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+
+  // Track report state from ReportEditor
+  const reportStateRef = useRef<ReportState | null>(null);
+  const reportActionsRef = useRef<ReportStateActions | null>(null);
+  
+  // State to track isDirty reactively (refs don't trigger re-renders)
+  const [editorIsDirty, setEditorIsDirty] = useState(false);
 
   // Get celebration trigger for finale
   const { triggerSectionCelebration } = useCelebration();
+  const { applyPreviewEdits, state: wizardState } = useWizard();
+
+  // Handler to receive report state from ReportEditor
+  const handleReportStateChange = useCallback((state: ReportState, actions: ReportStateActions) => {
+    reportStateRef.current = state;
+    reportActionsRef.current = actions;
+    setEditorIsDirty(state.isDirty); // Update state to trigger re-renders
+  }, []);
+
+  // Callback to get current report state for template saving
+  const getReportState = useCallback(() => {
+    if (!reportStateRef.current) return null;
+    return {
+      sectionVisibility: reportStateRef.current.sectionVisibility,
+      sectionOrder: reportStateRef.current.sectionOrder,
+      styling: reportStateRef.current.styling,
+      customContent: reportStateRef.current.customContent,
+      editedFields: reportStateRef.current.editedFields,
+    };
+  }, []);
+
+  // Finalize flow state machine with connected options
+  const [finalizeState, finalizeActions] = useFinalizeFlow({
+    isDirty: editorIsDirty,
+    onSave: async () => {
+      if (!reportStateRef.current) return;
+      applyPreviewEdits({
+        editedFields: reportStateRef.current.editedFields,
+        sectionVisibility: reportStateRef.current.sectionVisibility,
+        customContent: reportStateRef.current.customContent,
+        styling: reportStateRef.current.styling,
+      });
+      reportActionsRef.current?.markAsSaved();
+      setEditorIsDirty(false);
+    },
+    getReportState,
+  });
 
   // Handler for entering preview mode
   const handleEnterPreviewMode = useCallback(() => {
@@ -238,18 +310,79 @@ export default function ReviewPage() {
   }, []);
 
   // Handler for saving draft in preview mode
-  const handleSaveDraft = useCallback(() => {
-    // Would save draft to backend
-    alert('Draft saved successfully!');
-  }, []);
+  const handleSaveDraft = useCallback(async () => {
+    if (!reportStateRef.current) return;
+    
+    setIsSaving(true);
+    
+    try {
+      // Apply edits to wizard state
+      applyPreviewEdits({
+        editedFields: reportStateRef.current.editedFields,
+        sectionVisibility: reportStateRef.current.sectionVisibility,
+        customContent: reportStateRef.current.customContent,
+        styling: reportStateRef.current.styling,
+      });
+      
+      // Mark as saved in report state
+      reportActionsRef.current?.markAsSaved();
+      
+      // Simulate a slight delay for UX feedback
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Show success toast
+      toast.success('Draft Saved', 'Your changes have been saved successfully.');
+      
+    } catch (error) {
+      console.error('Failed to save draft:', error);
+      toast.error('Save Failed', 'There was a problem saving your changes.');
+    } finally {
+      setIsSaving(false);
+    }
+  }, [applyPreviewEdits, toast]);
 
-  // Handler for finalizing the report
+  // Handler for starting the finalize flow
   const handleFinalize = useCallback(() => {
+    // Start the finalize flow - it will check for unsaved changes
+    finalizeActions.startFinalize();
+  }, [finalizeActions]);
+
+  // Handle successful finalization
+  const handleFinalizeComplete = useCallback(() => {
     setIsFinalized(true);
     setShowPreviewMode(false);
     triggerCelebration(); // Keep existing confetti
     triggerSectionCelebration('review'); // Trigger the finale celebration overlay
   }, [triggerSectionCelebration]);
+
+  // Watch for finalize flow state changes and show toasts
+  const prevStageRef = useRef(finalizeState.stage);
+  useEffect(() => {
+    const prevStage = prevStageRef.current;
+    const currentStage = finalizeState.stage;
+    prevStageRef.current = currentStage;
+    
+    // Show toast when saving template completes (moved from saving-template to finalize-dialog)
+    if (prevStage === 'saving-template' && currentStage === 'finalize-dialog' && finalizeState.savedTemplateId) {
+      toast.success('Template Saved', 'Your report template has been saved successfully.');
+    }
+    
+    // Show toast when save changes completes (moved from saving to post-save)
+    if (prevStage === 'saving' && currentStage === 'post-save') {
+      toast.success('Changes Saved', 'Your report changes have been saved.');
+    }
+    
+    // Show toast for errors
+    if (currentStage === 'error' && finalizeState.error) {
+      toast.error('Error', finalizeState.error);
+    }
+    
+    // Handle finalize completion
+    if (currentStage === 'complete') {
+      handleFinalizeComplete();
+      finalizeActions.reset();
+    }
+  }, [finalizeState.stage, finalizeState.savedTemplateId, finalizeState.error, handleFinalizeComplete, finalizeActions, toast]);
 
   const handleCreateAnother = useCallback(() => {
     navigate('/template');
@@ -516,11 +649,48 @@ We considered alternative uses including renovation, conversion to alternative u
   // If in full-screen preview mode, render just the preview
   if (showPreviewMode) {
     return (
-      <ReportPreviewMode
-        onBack={handleExitPreviewMode}
-        onFinalize={handleFinalize}
-        onSaveDraft={handleSaveDraft}
-      />
+      <>
+        <ReportPreviewMode
+          onBack={handleExitPreviewMode}
+          onFinalize={handleFinalize}
+          onSaveDraft={handleSaveDraft}
+          onReportStateChange={handleReportStateChange}
+          isSaving={isSaving}
+          isDirty={editorIsDirty}
+        />
+        
+        {/* Finalize Flow Dialogs */}
+        <SaveChangesDialog
+          isOpen={finalizeState.stage === 'save-dialog'}
+          onClose={finalizeActions.cancelFinalize}
+          onUpdate={finalizeActions.saveChanges}
+          onSaveAsCopy={finalizeActions.saveAsCopy}
+          onDiscard={finalizeActions.discardChanges}
+        />
+        
+        <PostSaveDialog
+          isOpen={finalizeState.stage === 'post-save'}
+          onClose={finalizeActions.continueEditing}
+          onSaveAsTemplate={finalizeActions.openTemplateDialog}
+          onFinalize={finalizeActions.proceedToFinalize}
+          onContinueEditing={finalizeActions.continueEditing}
+        />
+        
+        <TemplateSaveDialog
+          isOpen={finalizeState.stage === 'template-dialog'}
+          onClose={finalizeActions.skipTemplate}
+          onSave={finalizeActions.saveAsTemplate}
+        />
+        
+        <FinalizeDialog
+          isOpen={finalizeState.stage === 'finalize-dialog' || finalizeState.stage === 'generating' || finalizeState.stage === 'complete' || finalizeState.stage === 'error'}
+          onClose={finalizeActions.cancelFinalize}
+          onFinalize={finalizeActions.confirmFinalize}
+          reportTitle={wizardState.subjectData?.propertyName || 'Appraisal Report'}
+          hasUnsavedChanges={editorIsDirty}
+          onSaveFirst={handleSaveDraft}
+        />
+      </>
     );
   }
 

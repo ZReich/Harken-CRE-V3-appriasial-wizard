@@ -8,8 +8,8 @@ interface WizardHeaderProps {
   onToggleFullscreen: () => void;
   onContinue: () => void;
   onPrevious: () => void;
-  guidanceMode?: 'guidance' | 'values';
-  onGuidanceModeChange?: (mode: 'guidance' | 'values') => void;
+  guidanceMode?: 'guidance' | 'values' | 'preview';
+  onGuidanceModeChange?: (mode: 'guidance' | 'values' | 'preview') => void;
   isGuidanceVisible?: boolean;
   onToggleGuidance?: () => void;
   hasGuidance?: boolean;
@@ -20,6 +20,8 @@ interface WizardHeaderProps {
   scenarioSwitcher?: ReactNode;
   // New: Theme accent color
   themeAccent?: string;
+  // Show preview mode toggle
+  showPreviewMode?: boolean;
 }
 
 export default function WizardHeader({
@@ -40,6 +42,7 @@ export default function WizardHeader({
   onToggleSections,
   scenarioSwitcher,
   themeAccent,
+  showPreviewMode = false,
 }: WizardHeaderProps) {
   // Compute dynamic styles based on theme accent
   const accentColor = themeAccent || '#0da1c7';
@@ -112,7 +115,7 @@ export default function WizardHeader({
 
         {/* Center Controls */}
         <div className="flex items-center gap-3">
-          {/* Guidance/Values Toggle */}
+          {/* Guidance/Values/Preview Toggle */}
           {hasGuidance && (
             <div className="flex items-center bg-gray-100 rounded-lg p-1 border border-gray-200">
               <button
@@ -135,6 +138,23 @@ export default function WizardHeader({
               >
                 Values
               </button>
+              {showPreviewMode && (
+                <button
+                  className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors border-l border-gray-200 flex items-center gap-1.5 ${
+                    guidanceMode === 'preview'
+                      ? 'bg-white text-gray-900 shadow-sm'
+                      : 'text-gray-600 hover:text-gray-800'
+                  }`}
+                  onClick={() => onGuidanceModeChange?.('preview')}
+                  title="Live preview of how photos will appear in the report"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                  </svg>
+                  Preview
+                </button>
+              )}
               <button
                 className="ml-2 px-2 py-1 text-xs font-medium text-gray-600 hover:text-gray-900"
                 onClick={onToggleGuidance}

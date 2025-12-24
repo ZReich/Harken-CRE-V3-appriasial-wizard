@@ -1,6 +1,8 @@
 import { useState, useCallback } from 'react';
 import { useWizard } from '../../../context/WizardContext';
 import { TemplateFormData } from '../components/dialogs/TemplateSaveDialog';
+import { downloadPDF, printToPDF, isPDFExportSupported } from '../utils/pdfExporter';
+import { saveTemplate as saveTemplateToStorage } from '../utils/templateStorage';
 
 // =================================================================
 // TYPES
@@ -60,10 +62,29 @@ export interface FinalizeFlowActions {
 }
 
 // =================================================================
+// OPTIONS INTERFACE
+// =================================================================
+
+export interface FinalizeFlowOptions {
+  /** External isDirty state from report editor */
+  isDirty?: boolean;
+  /** Callback to save changes - will be called when saveChanges action is triggered */
+  onSave?: () => Promise<void>;
+  /** Callback to get current report state for template saving */
+  getReportState?: () => {
+    sectionVisibility: Record<string, boolean>;
+    sectionOrder: string[];
+    styling: Record<string, React.CSSProperties>;
+    customContent: Record<string, unknown>;
+    editedFields: Record<string, { path: string; editedValue: unknown }>;
+  } | null;
+}
+
+// =================================================================
 // HOOK
 // =================================================================
 
-export function useFinalizeFlow(): [FinalizeFlowState, FinalizeFlowActions] {
+export function useFinalizeFlow(options?: FinalizeFlowOptions): [FinalizeFlowState, FinalizeFlowActions] {
   useWizard(); // Access context for potential future use
   
   const [state, setState] = useState<FinalizeFlowState>({
@@ -75,11 +96,11 @@ export function useFinalizeFlow(): [FinalizeFlowState, FinalizeFlowActions] {
     savedTemplateId: null,
   });
 
-  // Check for unsaved changes (would integrate with useReportState)
+  // Check for unsaved changes - use external isDirty if provided
   const checkForUnsavedChanges = useCallback((): boolean => {
-    // In real implementation, this would check useReportState's isDirty
-    return state.hasUnsavedChanges;
-  }, [state.hasUnsavedChanges]);
+    // Use external isDirty state if provided, otherwise fall back to internal state
+    return options?.isDirty ?? state.hasUnsavedChanges;
+  }, [options?.isDirty, state.hasUnsavedChanges]);
 
   // Start the finalize process
   const startFinalize = useCallback(() => {
@@ -97,11 +118,13 @@ export function useFinalizeFlow(): [FinalizeFlowState, FinalizeFlowActions] {
     setState(prev => ({ ...prev, stage: 'saving', isProcessing: true }));
     
     try {
-      // Simulate API call to save changes
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      
-      // In real implementation, would dispatch to update wizard state
-      // dispatch({ type: 'APPLY_PREVIEW_EDITS', payload: previewEdits });
+      // Use provided onSave callback if available
+      if (options?.onSave) {
+        await options.onSave();
+      } else {
+        // Fallback simulation for development
+        await new Promise(resolve => setTimeout(resolve, 500));
+      }
       
       setState(prev => ({
         ...prev,
@@ -117,7 +140,7 @@ export function useFinalizeFlow(): [FinalizeFlowState, FinalizeFlowActions] {
         error: error instanceof Error ? error.message : 'Failed to save changes',
       }));
     }
-  }, []);
+  }, [options?.onSave]);
 
   // Save as a copy (new appraisal version)
   const saveAsCopy = useCallback(async () => {
@@ -169,14 +192,22 @@ export function useFinalizeFlow(): [FinalizeFlowState, FinalizeFlowActions] {
   }, []);
 
   // Save as template
-  const saveAsTemplate = useCallback(async (_data: TemplateFormData) => {
+  const saveAsTemplate = useCallback(async (data: TemplateFormData) => {
     setState(prev => ({ ...prev, stage: 'saving-template', isProcessing: true }));
     
     try {
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      // Get current report state for template content using provided callback
+      const reportState = options?.getReportState?.();
+      const templateContent = {
+        sectionVisibility: reportState?.sectionVisibility ?? {},
+        sectionOrder: reportState?.sectionOrder ?? [],
+        styling: reportState?.styling ?? {},
+        customContent: reportState?.customContent ?? {},
+        editedFields: reportState?.editedFields ?? {},
+      };
       
-      // In real implementation, would save template to backend
-      const templateId = `template-${Date.now()}`;
+      // Save to IndexedDB with actual content
+      const templateId = await saveTemplateToStorage(data, templateContent);
       
       setState(prev => ({
         ...prev,
@@ -192,7 +223,7 @@ export function useFinalizeFlow(): [FinalizeFlowState, FinalizeFlowActions] {
         error: error instanceof Error ? error.message : 'Failed to save template',
       }));
     }
-  }, []);
+  }, [options?.getReportState]);
 
   // Skip template save
   const skipTemplate = useCallback(() => {
@@ -204,18 +235,40 @@ export function useFinalizeFlow(): [FinalizeFlowState, FinalizeFlowActions] {
     setState(prev => ({ ...prev, stage: 'generating', isProcessing: true }));
     
     try {
-      // Simulate PDF generation
-      await new Promise(resolve => setTimeout(resolve, 3000));
+      // Check if html2pdf is available
+      const support = isPDFExportSupported();
       
-      // In real implementation, would call backend PDF generation
-      const pdfUrl = '/generated/report.pdf';
+      // Find the report preview element
+      const reportElement = document.querySelector('.report-preview-content') as HTMLElement | null;
       
-      setState(prev => ({
-        ...prev,
-        stage: 'complete',
-        isProcessing: false,
-        generatedPdfUrl: pdfUrl,
-      }));
+      if (support.clientSide && reportElement) {
+        // Generate PDF using html2pdf.js
+        await downloadPDF(reportElement, {
+          filename: `appraisal-report-${Date.now()}.pdf`,
+          pageSize: 'letter',
+          orientation: 'portrait',
+          quality: 'high',
+        });
+        
+        setState(prev => ({
+          ...prev,
+          stage: 'complete',
+          isProcessing: false,
+          generatedPdfUrl: 'downloaded', // PDF was downloaded directly
+        }));
+      } else if (support.print) {
+        // Fallback to print dialog
+        printToPDF(reportElement || undefined);
+        
+        setState(prev => ({
+          ...prev,
+          stage: 'complete',
+          isProcessing: false,
+          generatedPdfUrl: 'printed', // Used print dialog
+        }));
+      } else {
+        throw new Error('PDF generation is not supported in this browser. Please try Chrome or Firefox.');
+      }
     } catch (error) {
       setState(prev => ({
         ...prev,

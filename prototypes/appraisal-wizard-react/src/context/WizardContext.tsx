@@ -1,8 +1,8 @@
 import { createContext, useContext, useReducer, useEffect, useCallback, ReactNode } from 'react';
-import type { WizardState, WizardAction, ImprovementsInventory, Owner, ExtractedData, UploadedDocument, IncomeApproachState, ReconciliationData, CelebrationState, SubjectData } from '../types';
+import type { WizardState, WizardAction, ImprovementsInventory, Owner, ExtractedData, UploadedDocument, IncomeApproachState, ReconciliationData, CelebrationState, SubjectData, PreviewEditsPayload, StagingPhoto, CoverPhotoData } from '../types';
 import { createDefaultInventory } from '../contracts/improvements';
 import { getSectionSchema } from '../constants/completionSchema';
-import { getNestedValue, isFilled } from '../utils/stateHelpers';
+import { getNestedValue, isFilled, setNestedValue } from '../utils/stateHelpers';
 
 // =================================================================
 // INITIAL STATE
@@ -40,13 +40,34 @@ const getInitialState = (): WizardState => {
       shape: '',
       frontage: '',
       topography: '',
-      utilities: '',
-      floodZone: '',
       environmental: '',
       easements: '',
       zoningClass: '',
       zoningDescription: '',
       zoningConforming: false,
+      // Utilities (expanded)
+      waterSource: '',
+      sewerType: '',
+      electricProvider: '',
+      naturalGas: '',
+      telecom: '',
+      // Access & Visibility
+      approachType: '',
+      accessQuality: '',
+      visibility: '',
+      truckAccess: '',
+      // Site Improvements
+      pavingType: '',
+      fencingType: '',
+      yardStorage: '',
+      landscaping: '',
+      // Flood Zone (enhanced)
+      femaZone: '',
+      femaMapPanel: '',
+      femaMapDate: '',
+      floodInsuranceRequired: '',
+      // Site Description Narrative
+      siteDescriptionNarrative: '',
       // Purpose & Scope
       appraisalPurpose: '',
       intendedUsers: '',
@@ -76,6 +97,7 @@ const getInitialState = (): WizardState => {
     incomeApproachData: null,
     analysisConclusions: { conclusions: [] },
     reconciliationData: null,
+    stagingPhotos: [],
     currentPage: 'template',
     subjectActiveTab: 'location',
     isFullscreen: false,
@@ -394,6 +416,72 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
           },
         };
 
+      case 'APPLY_PREVIEW_EDITS': {
+        const { editedFields } = action.payload;
+        let updatedState = { ...state };
+        
+        // Apply each edited field to the wizard state
+        Object.values(editedFields).forEach(edit => {
+          if (edit.path && edit.editedValue !== undefined) {
+            updatedState = setNestedValue(updatedState, edit.path, edit.editedValue);
+          }
+        });
+        
+        return updatedState;
+      }
+
+      // Staging Photos Actions
+      case 'ADD_STAGING_PHOTOS':
+        return {
+          ...state,
+          stagingPhotos: [...state.stagingPhotos, ...action.payload],
+        };
+
+      case 'UPDATE_STAGING_PHOTO':
+        return {
+          ...state,
+          stagingPhotos: state.stagingPhotos.map(photo =>
+            photo.id === action.payload.id
+              ? { ...photo, ...action.payload.updates }
+              : photo
+          ),
+        };
+
+      case 'REMOVE_STAGING_PHOTO':
+        return {
+          ...state,
+          stagingPhotos: state.stagingPhotos.filter(photo => photo.id !== action.payload),
+        };
+
+      case 'CLEAR_STAGING_PHOTOS':
+        return {
+          ...state,
+          stagingPhotos: [],
+        };
+
+      case 'ASSIGN_STAGING_PHOTO':
+        return {
+          ...state,
+          stagingPhotos: state.stagingPhotos.map(photo =>
+            photo.id === action.payload.photoId
+              ? { ...photo, assignedSlot: action.payload.slotId }
+              : photo
+          ),
+        };
+
+      // Cover Photo Actions
+      case 'SET_COVER_PHOTO':
+        return {
+          ...state,
+          coverPhoto: action.payload,
+        };
+
+      case 'REMOVE_COVER_PHOTO':
+        return {
+          ...state,
+          coverPhoto: undefined,
+        };
+
       case 'RESET':
         return getInitialState();
 
@@ -467,6 +555,22 @@ interface WizardContextValue {
   updateScenarioApproach: (scenarioId: number, approach: string, isComplete: boolean) => void;
   isScenarioComplete: (scenarioId: number) => boolean;
   areAllScenariosComplete: () => boolean;
+  
+  // Preview edit helpers
+  applyPreviewEdits: (edits: PreviewEditsPayload) => void;
+  
+  // Staging photo helpers
+  addStagingPhotos: (photos: StagingPhoto[]) => void;
+  updateStagingPhoto: (id: string, updates: Partial<StagingPhoto>) => void;
+  removeStagingPhoto: (id: string) => void;
+  clearStagingPhotos: () => void;
+  assignStagingPhoto: (photoId: string, slotId: string) => void;
+  getStagingPhotos: () => StagingPhoto[];
+  getUnassignedStagingPhotos: () => StagingPhoto[];
+  
+  // Cover photo helpers
+  setCoverPhoto: (photo: CoverPhotoData) => void;
+  removeCoverPhoto: () => void;
   
   // Derived state
   hasImprovements: boolean; // True if property type is not 'land'
@@ -760,6 +864,49 @@ export function WizardProvider({ children }: { children: ReactNode }) {
     return state.scenarios.every(s => isScenarioComplete(s.id));
   }, [state.scenarios, state.allScenariosCompletedAt, isScenarioComplete]);
 
+  // Preview edits helpers
+  const applyPreviewEdits = useCallback((edits: PreviewEditsPayload) => {
+    dispatch({ type: 'APPLY_PREVIEW_EDITS', payload: edits });
+  }, []);
+
+  // Staging photo helpers
+  const addStagingPhotos = useCallback((photos: StagingPhoto[]) => {
+    dispatch({ type: 'ADD_STAGING_PHOTOS', payload: photos });
+  }, []);
+
+  const updateStagingPhoto = useCallback((id: string, updates: Partial<StagingPhoto>) => {
+    dispatch({ type: 'UPDATE_STAGING_PHOTO', payload: { id, updates } });
+  }, []);
+
+  const removeStagingPhoto = useCallback((id: string) => {
+    dispatch({ type: 'REMOVE_STAGING_PHOTO', payload: id });
+  }, []);
+
+  const clearStagingPhotos = useCallback(() => {
+    dispatch({ type: 'CLEAR_STAGING_PHOTOS' });
+  }, []);
+
+  const assignStagingPhoto = useCallback((photoId: string, slotId: string) => {
+    dispatch({ type: 'ASSIGN_STAGING_PHOTO', payload: { photoId, slotId } });
+  }, []);
+
+  const getStagingPhotos = useCallback((): StagingPhoto[] => {
+    return state.stagingPhotos || [];
+  }, [state.stagingPhotos]);
+
+  const getUnassignedStagingPhotos = useCallback((): StagingPhoto[] => {
+    return (state.stagingPhotos || []).filter(photo => !photo.assignedSlot);
+  }, [state.stagingPhotos]);
+
+  // Cover photo helpers
+  const setCoverPhoto = useCallback((photo: CoverPhotoData) => {
+    dispatch({ type: 'SET_COVER_PHOTO', payload: photo });
+  }, []);
+
+  const removeCoverPhoto = useCallback(() => {
+    dispatch({ type: 'REMOVE_COVER_PHOTO' });
+  }, []);
+
   // Derived state: hasImprovements
   // True if property type is not 'land' (i.e., has improvements to appraise)
   const hasImprovements = state.propertyType !== 'land';
@@ -804,6 +951,19 @@ export function WizardProvider({ children }: { children: ReactNode }) {
         updateScenarioApproach,
         isScenarioComplete,
         areAllScenariosComplete,
+        // Preview edits
+        applyPreviewEdits,
+        // Staging photos
+        addStagingPhotos,
+        updateStagingPhoto,
+        removeStagingPhoto,
+        clearStagingPhotos,
+        assignStagingPhoto,
+        getStagingPhotos,
+        getUnassignedStagingPhotos,
+        // Cover photo
+        setCoverPhoto,
+        removeCoverPhoto,
         // Derived state
         hasImprovements,
       }}

@@ -10,6 +10,7 @@ interface WizardLayoutProps {
   sidebar?: ReactNode;
   helpSidebarGuidance?: ReactNode;
   helpSidebarValues?: ReactNode;
+  helpSidebarPreview?: ReactNode;
   title: string;
   subtitle: string;
   phase: number;
@@ -22,6 +23,8 @@ interface WizardLayoutProps {
   sidebarAccent?: string;
   // Smart Continue: Custom handler that cycles through tabs before advancing
   onContinue?: () => void;
+  // Show preview mode toggle in header
+  showPreviewMode?: boolean;
 }
 
 export default function WizardLayout({
@@ -29,6 +32,7 @@ export default function WizardLayout({
   sidebar,
   helpSidebarGuidance,
   helpSidebarValues,
+  helpSidebarPreview,
   title,
   subtitle,
   phase,
@@ -37,12 +41,13 @@ export default function WizardLayout({
   themeAccent,
   sidebarAccent,
   onContinue: customOnContinue,
+  showPreviewMode = false,
 }: WizardLayoutProps) {
   const { state, toggleFullscreen } = useWizard();
   const navigate = useNavigate();
   const [leftCollapsed, setLeftCollapsed] = useState(state.isFullscreen);
   const [rightCollapsed, setRightCollapsed] = useState(state.isFullscreen);
-  const [guidanceMode, setGuidanceMode] = useState<'guidance' | 'values'>(
+  const [guidanceMode, setGuidanceMode] = useState<'guidance' | 'values' | 'preview'>(
     'guidance'
   );
   
@@ -101,11 +106,13 @@ export default function WizardLayout({
     }
   };
 
-  const hasHelpSidebar = Boolean(helpSidebarGuidance || helpSidebarValues);
+  const hasHelpSidebar = Boolean(helpSidebarGuidance || helpSidebarValues || helpSidebarPreview);
   const helpSidebar =
-    guidanceMode === 'values'
-      ? helpSidebarValues || helpSidebarGuidance
-      : helpSidebarGuidance || helpSidebarValues;
+    guidanceMode === 'preview'
+      ? helpSidebarPreview || helpSidebarGuidance
+      : guidanceMode === 'values'
+        ? helpSidebarValues || helpSidebarGuidance
+        : helpSidebarGuidance || helpSidebarValues;
 
   // Compute background tint based on theme accent
   const getBackgroundTint = () => {
@@ -149,6 +156,7 @@ export default function WizardLayout({
         onToggleSections={() => setLeftCollapsed(!leftCollapsed)}
         scenarioSwitcher={scenarioSwitcher}
         themeAccent={themeAccent}
+        showPreviewMode={showPreviewMode && Boolean(helpSidebarPreview)}
       />
 
       {/* Main Layout */}

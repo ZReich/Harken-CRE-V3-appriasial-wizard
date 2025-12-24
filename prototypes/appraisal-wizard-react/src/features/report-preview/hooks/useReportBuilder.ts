@@ -41,12 +41,22 @@ export function useReportBuilder(wizardState: WizardState): UseReportBuilderResu
     // =================================================================
     // 1. COVER PAGE
     // =================================================================
+    // Build cover photo from wizard state if available
+    const coverPhoto = wizardState.coverPhoto ? {
+      id: wizardState.coverPhoto.id,
+      url: wizardState.coverPhoto.preview,
+      caption: wizardState.coverPhoto.caption || 'Subject Property',
+      category: 'exterior' as const,
+      sortOrder: 0,
+    } : undefined;
+
     addPage({
       id: 'cover-page',
       layout: 'cover',
       sectionId: 'cover',
       title: 'Cover Page',
       content: buildCoverContent(wizardState),
+      coverPhoto,
     });
 
     // =================================================================

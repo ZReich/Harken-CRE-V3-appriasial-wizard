@@ -155,7 +155,7 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
     const pageComponent = (() => {
       switch (page.layout) {
         case 'cover':
-          return <CoverPage content={page.content} {...commonProps} />;
+          return <CoverPage content={page.content} coverPhoto={page.coverPhoto} {...commonProps} />;
         case 'letter':
           return <LetterPage content={page.content} title={page.title} {...commonProps} />;
         case 'toc':

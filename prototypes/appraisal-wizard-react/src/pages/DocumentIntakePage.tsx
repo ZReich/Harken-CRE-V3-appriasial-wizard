@@ -16,7 +16,30 @@ import {
   Eye,
   ChevronDown,
   Zap,
+  Landmark,
+  FileSignature,
+  Handshake,
+  File,
+  BarChart3,
+  Map,
+  Receipt,
+  Wallet,
+  HelpCircle,
+  type LucideIcon,
 } from 'lucide-react';
+
+// Map icon names to Lucide components
+const ICON_MAP: Record<string, LucideIcon> = {
+  landmark: Landmark,
+  'file-signature': FileSignature,
+  handshake: Handshake,
+  file: File,
+  'bar-chart-3': BarChart3,
+  map: Map,
+  receipt: Receipt,
+  wallet: Wallet,
+  'help-circle': HelpCircle,
+};
 import {
   classifyAndExtract,
   DOCUMENT_TYPES,
@@ -139,17 +162,18 @@ function DocumentCard({
         <div className="flex items-start justify-between gap-3">
           {/* File Info */}
           <div className="flex items-start gap-3 min-w-0 flex-1">
-            {/* Icon/Emoji */}
-            <div className={`w-12 h-12 rounded-lg flex items-center justify-center text-2xl ${
+            {/* Icon */}
+            <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
               doc.status === 'complete' ? 'bg-green-50' : 'bg-gray-50'
             }`}>
               {doc.status === 'classifying' || doc.status === 'extracting' ? (
                 <Sparkles className="w-6 h-6 text-[#0da1c7] animate-pulse" />
               ) : doc.status === 'uploading' ? (
                 <Loader2 className="w-6 h-6 text-gray-400 animate-spin" />
-              ) : (
-                <span>{typeInfo.icon}</span>
-              )}
+              ) : (() => {
+                const IconComponent = ICON_MAP[typeInfo.icon] || HelpCircle;
+                return <IconComponent className="w-6 h-6 text-gray-600" />;
+              })()}
             </div>
             
             {/* File Details */}
@@ -284,7 +308,7 @@ function DocumentCard({
 // ==========================================
 export default function DocumentIntakePage() {
   const navigate = useNavigate();
-  const { setSubjectData } = useWizard();
+  const { setSubjectData, addUploadedDocument, state: wizardState } = useWizard();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
   const [documents, setDocuments] = useState<ProcessedDocument[]>([]);
@@ -465,7 +489,7 @@ export default function DocumentIntakePage() {
     return groups;
   }, [documents]);
 
-  // Handle continue - save all extracted data
+  // Handle continue - save all extracted data and store documents to WizardContext
   const handleContinue = () => {
     // Merge all extracted data
     const allExtractedData: Record<string, ExtractedData> = {};
@@ -479,8 +503,25 @@ export default function DocumentIntakePage() {
       }
     });
 
-    // Save to session storage
+    // Save to session storage (for backward compatibility)
     sessionStorage.setItem('harken_extracted_data', JSON.stringify(allExtractedData));
+
+    // Store each completed document to WizardContext for use in Exhibits & Docs section
+    const existingDocIds = new Set(wizardState.uploadedDocuments.map(d => d.id));
+    documents.forEach(doc => {
+      if (doc.status === 'complete' && !existingDocIds.has(doc.id)) {
+        addUploadedDocument({
+          id: doc.id,
+          name: doc.file.name,
+          size: doc.file.size,
+          type: doc.file.type,
+          slotId: doc.classification?.documentType || 'unknown',
+          status: 'extracted',
+          extractedData: doc.extraction?.data,
+          includeInReport: true,
+        });
+      }
+    });
 
     // Update wizard context with extracted data
     const subjectDataUpdates: Record<string, string> = {};
@@ -568,12 +609,13 @@ export default function DocumentIntakePage() {
           <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Identified Documents</h3>
           {Object.entries(documentsByType).map(([type, docs]) => {
             const typeInfo = DOCUMENT_TYPES[type as DocumentType];
+            const IconComponent = ICON_MAP[typeInfo.icon] || HelpCircle;
             return (
               <div 
                 key={type}
                 className="flex items-center gap-3 p-2 rounded-lg bg-gray-50"
               >
-                <span className="text-lg">{typeInfo.icon}</span>
+                <IconComponent className="w-5 h-5 text-gray-600" />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-700 truncate">{typeInfo.label}</p>
                   <p className="text-xs text-gray-500">{docs.length} file{docs.length > 1 ? 's' : ''}</p>

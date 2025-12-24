@@ -5,4 +5,4 @@ export * from './pdfExporter';
 export * from './spacingSystem';
 export * from './layoutValidator';
 export * from './pageFlowEngine';
-
+export * from './templateStorage';

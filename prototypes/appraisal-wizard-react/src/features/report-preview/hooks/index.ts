@@ -21,4 +21,8 @@ export type {
   FinalizeFlowState,
   FinalizeFlowActions,
 } from './useFinalizeFlow';
-
+export { useTemplates } from './useTemplates';
+export type {
+  UseTemplatesState,
+  UseTemplatesActions,
+} from './useTemplates';

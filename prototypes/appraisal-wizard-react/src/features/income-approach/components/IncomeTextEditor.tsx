@@ -116,13 +116,19 @@ function generateRevenueDraft(data: RevenueContextData): string {
     return `${t.name} (${sf.toLocaleString()} SF at $${rentPsf}/SF)`;
   }).join('; ');
 
-  return `The revenue analysis for this ${data.propertyType} property is based on actual contract rents as reflected in the current rent roll. The subject contains approximately ${data.sqFt.toLocaleString()} square feet of rentable area with ${tenantCount} tenant${tenantCount !== 1 ? 's' : ''} currently in place.
+  return `<b><u>REVENUE ANALYSIS</u></b>
+
+The revenue analysis for this ${data.propertyType} property is based on actual contract rents as reflected in the current rent roll. The subject contains approximately ${data.sqFt.toLocaleString()} square feet of rentable area with ${tenantCount} tenant${tenantCount !== 1 ? 's' : ''} currently in place.
+
+<b><u>RENT ROLL SUMMARY</u></b>
 
 The rent roll comprises: ${tenantList || 'various tenants'}. Total scheduled base rent equals ${formatCurrency(totalRent)} annually, representing an average rental rate of $${rentPerSf.toFixed(2)} per square foot.
 
-${totalReimb > 0 ? `Expense reimbursements totaling ${formatCurrency(totalReimb)} annually are recovered from tenants under the lease terms, typical for ${data.propertyType} properties in this market.` : 'The lease structure is gross with no additional expense reimbursements from tenants.'}
+${totalReimb > 0 ? `<b><u>EXPENSE REIMBURSEMENTS</u></b>\n\nExpense reimbursements totaling ${formatCurrency(totalReimb)} annually are recovered from tenants under the lease terms, typical for ${data.propertyType} properties in this market.` : 'The lease structure is gross with no additional expense reimbursements from tenants.'}
 
-${data.lossToLease !== 0 ? `A loss-to-lease analysis indicates contract rents are ${data.lossToLease < 0 ? 'above' : 'below'} current market levels by ${formatCurrency(Math.abs(data.lossToLease))} annually, which ${data.lossToLease < 0 ? 'suggests potential downside risk at lease renewal' : 'represents upside potential as leases roll to market'}.` : 'Contract rents appear to be in line with current market levels.'}
+${data.lossToLease !== 0 ? `<b><u>LOSS-TO-LEASE ANALYSIS</u></b>\n\nContract rents are ${data.lossToLease < 0 ? 'above' : 'below'} current market levels by ${formatCurrency(Math.abs(data.lossToLease))} annually, which ${data.lossToLease < 0 ? 'suggests potential downside risk at lease renewal' : 'represents upside potential as leases roll to market'}.` : 'Contract rents appear to be in line with current market levels.'}
+
+<b><u>VACANCY AND CREDIT LOSS</u></b>
 
 A vacancy and credit loss allowance of ${data.vacancyRate.toFixed(1)}% has been applied to Potential Gross Income, consistent with stabilized market conditions for this property type and quality. This results in an Effective Gross Income of ${formatCurrency(data.effectiveGrossIncome)}.`;
 }
@@ -141,11 +147,17 @@ function generateExpensesDraft(data: ExpensesContextData): string {
     return `${r.name}: ${formatCurrency(r.amount)} ($${perSf}/SF)`;
   }).join('; ');
 
-  return `Operating expenses for the subject ${data.propertyType} property have been analyzed based on historical operating statements and market comparables. Total operating expenses are estimated at ${formatCurrency(data.totalExpenses)} annually, representing an expense ratio of ${data.expenseRatio.toFixed(1)}% of Effective Gross Income and $${data.expensesPerSf.toFixed(2)} per square foot.
+  return `<b><u>OPERATING EXPENSE ANALYSIS</u></b>
+
+Operating expenses for the subject ${data.propertyType} property have been analyzed based on historical operating statements and market comparables. Total operating expenses are estimated at ${formatCurrency(data.totalExpenses)} annually, representing an expense ratio of ${data.expenseRatio.toFixed(1)}% of Effective Gross Income and $${data.expensesPerSf.toFixed(2)} per square foot.
+
+<b><u>EXPENSE BREAKDOWN</u></b>
 
 The expense breakdown includes: ${expenseList || 'standard operating categories'}.
 
-${data.reserves.length > 0 ? `Replacement reserves of ${formatCurrency(data.totalReserves)} have been deducted below the line for: ${reserveList}. These reserves are typical for ${data.propertyType} properties of similar age and condition.` : 'No separate replacement reserves have been allocated in this analysis.'}
+${data.reserves.length > 0 ? `<b><u>REPLACEMENT RESERVES</u></b>\n\nReplacement reserves of ${formatCurrency(data.totalReserves)} have been deducted below the line for: ${reserveList}. These reserves are typical for ${data.propertyType} properties of similar age and condition.` : 'No separate replacement reserves have been allocated in this analysis.'}
+
+<b><u>EXPENSE RATIO ANALYSIS</u></b>
 
 The overall expense ratio of ${data.expenseRatio.toFixed(1)}% is ${data.expenseRatio < 30 ? 'relatively low, consistent with a net lease structure or efficiently managed property' : data.expenseRatio > 50 ? 'elevated, suggesting potential operational inefficiencies or full-service lease obligations' : 'within the typical range for comparable properties in this market'}. The expense projections are considered reasonable and supportable based on the property type, location, and current market conditions.`;
 }
@@ -155,15 +167,20 @@ function generateValuationDraft(data: ValuationContextData): string {
   const dcfPricePsf = data.sqFt > 0 ? data.dcfValue / data.sqFt : 0;
   const spreadToTerminal = data.terminalCapRate - data.marketCapRate;
 
-  return `The Income Approach value conclusion for the subject ${data.propertyType} property has been developed using both Direct Capitalization and Discounted Cash Flow (Yield Capitalization) methodologies under the "${data.scenario.replace('-', ' ')}" scenario.
+  return `<b><u>INCOME APPROACH VALUE CONCLUSION</u></b>
 
-**Direct Capitalization Analysis:**
+The Income Approach value conclusion for the subject ${data.propertyType} property has been developed using both Direct Capitalization and Discounted Cash Flow (Yield Capitalization) methodologies under the "${data.scenario.replace('-', ' ')}" scenario.
+
+<b><u>DIRECT CAPITALIZATION ANALYSIS</u></b>
+
 The stabilized Net Operating Income of ${formatCurrency(data.netOperatingIncome)} (${formatCurrency(data.noiPerSf)}/SF) has been capitalized at a market-derived overall rate of ${data.marketCapRate.toFixed(2)}%. This capitalization rate is supported by analysis of recent comparable sales and current investor requirements for ${data.propertyType} properties in this market. The resulting value indication is ${formatCurrency(data.directCapValue)}, or $${pricePsf.toFixed(2)} per square foot.
 
-**Discounted Cash Flow Analysis:**
+<b><u>DISCOUNTED CASH FLOW ANALYSIS</u></b>
+
 A ${data.holdingPeriod}-year DCF analysis was performed using a discount rate (yield) of ${data.discountRate.toFixed(2)}% and a terminal capitalization rate of ${data.terminalCapRate.toFixed(2)}%. The ${spreadToTerminal > 0 ? 'positive' : 'negative'} spread of ${Math.abs(spreadToTerminal).toFixed(2)} basis points between going-in and terminal cap rates reflects ${spreadToTerminal > 0 ? 'anticipated market uncertainty and risk premium at reversion' : 'expectations of market improvement over the holding period'}. Annual income growth of ${data.annualGrowthRate.toFixed(1)}% has been applied. The DCF analysis indicates a value of ${formatCurrency(data.dcfValue)}, or $${dcfPricePsf.toFixed(2)} per square foot.
 
-**Reconciliation:**
+<b><u>RECONCILIATION</u></b>
+
 ${Math.abs(data.directCapValue - data.dcfValue) / data.directCapValue < 0.05 
   ? 'The two methodologies produce closely aligned value indications, which provides strong support for the concluded value.' 
   : 'The variance between the two approaches reflects differing assumptions regarding stabilization and market conditions.'} 

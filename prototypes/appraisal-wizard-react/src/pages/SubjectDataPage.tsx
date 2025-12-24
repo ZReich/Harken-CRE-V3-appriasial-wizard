@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import WizardLayout from '../components/WizardLayout';
 import ImprovementsInventory from '../components/ImprovementsInventory';
 import EnhancedTextArea from '../components/EnhancedTextArea';
@@ -12,7 +12,21 @@ import {
   PhotoIcon,
   DocumentIcon,
 } from '../components/icons';
-import { Upload, X, FileText, CheckCircle, Image, MapPin, Building2, FileCheck } from 'lucide-react';
+import { 
+  Upload, X, FileText, CheckCircle, Image, MapPin, Building2, FileCheck, Camera, Eye, ChevronDown,
+  Home, Sofa, Trees, Route, Landmark, FileSignature, Handshake, File, BarChart3, Map, Receipt, Wallet, Folder,
+  Sparkles, Loader2, Info, Droplets, Zap, Car, Lightbulb, Fence, Warehouse, TreeDeciduous, AlertTriangle, Check
+} from 'lucide-react';
+import ButtonSelector from '../components/ButtonSelector';
+import ExpandableNote from '../components/ExpandableNote';
+import PhotoQuickPeek from '../components/PhotoQuickPeek';
+import PhotoLivePreview from '../components/PhotoLivePreview';
+import BulkPhotoDropZone from '../components/BulkPhotoDropZone';
+import PhotoStagingTray from '../components/PhotoStagingTray';
+import PhotoAssignmentModal from '../components/PhotoAssignmentModal';
+import FloatingDropPanel from '../components/FloatingDropPanel';
+import CoverPhotoSection from '../components/CoverPhotoSection';
+import CoverPhotoPickerModal from '../components/CoverPhotoPickerModal';
 import { SidebarTab } from '../components/SidebarTab';
 import { SectionProgressSummary } from '../components/SectionProgressSummary';
 import { useCompletion } from '../hooks/useCompletion';
@@ -29,35 +43,220 @@ const tabs = [
   { id: 'exhibits', label: 'Exhibits & Docs', Icon: DocumentIcon },
 ];
 
-// Photo slots mapped to report pages
-const photoSlots = [
-  { id: 'eval_p001_cover', page: 1, label: 'Cover Photo (Primary Exterior)' },
-  { id: 'eval_p002_toc', page: 2, label: 'Table of Contents Photo (Exterior)' },
-  { id: 'eval_p007_exec', page: 7, label: 'Executive Summary Photo (Exterior)' },
-  { id: 'eval_p009_ps_1', page: 9, label: 'Property Summary Photo (1)' },
-  { id: 'eval_p009_ps_2', page: 9, label: 'Property Summary Photo (2)' },
+// Photo categories based on Rove appraisal standards
+interface PhotoSlot {
+  id: string;
+  label: string;
+  description?: string;
+  recommended?: boolean;
+}
+
+interface PhotoCategory {
+  id: string;
+  label: string;
+  Icon: React.FC<{ className?: string }>;
+  description: string;
+  slots: PhotoSlot[];
+  reportPages?: string; // Which pages these appear on
+}
+
+const photoCategories: PhotoCategory[] = [
+  {
+    id: 'exterior',
+    label: 'Exterior',
+    Icon: Home,
+    description: 'Building exterior elevations',
+    reportPages: 'Subject Photos',
+    slots: [
+      { id: 'ext_front', label: 'Front Elevation', description: 'Primary street-facing view', recommended: true },
+      { id: 'ext_rear', label: 'Rear Elevation', description: 'Back of building', recommended: true },
+      { id: 'ext_side_1', label: 'Side Elevation (Left)', description: 'Left side of building' },
+      { id: 'ext_side_2', label: 'Side Elevation (Right)', description: 'Right side of building' },
+      { id: 'ext_additional_1', label: 'Additional Exterior', description: 'Extra exterior view' },
+      { id: 'ext_additional_2', label: 'Additional Exterior', description: 'Extra exterior view' },
+    ],
+  },
+  {
+    id: 'interior',
+    label: 'Interior',
+    Icon: Sofa,
+    description: 'Interior spaces and finishes',
+    reportPages: 'Subject Photos',
+    slots: [
+      { id: 'int_lobby', label: 'Lobby/Reception', description: 'Main entrance or reception area' },
+      { id: 'int_office', label: 'Typical Office', description: 'Representative office space', recommended: true },
+      { id: 'int_conference', label: 'Conference Room', description: 'Meeting/conference space' },
+      { id: 'int_shop', label: 'Shop/Warehouse', description: 'Shop or warehouse space if applicable', recommended: true },
+      { id: 'int_bathroom', label: 'Bathroom', description: 'Representative bathroom' },
+      { id: 'int_mechanical', label: 'Mechanical Room', description: 'HVAC or mechanical systems' },
+      { id: 'int_mezzanine', label: 'Mezzanine', description: 'Mezzanine level if present' },
+      { id: 'int_kitchen', label: 'Kitchen/Break Room', description: 'Kitchen or break room area' },
+      { id: 'int_additional_1', label: 'Additional Interior', description: 'Extra interior view' },
+      { id: 'int_additional_2', label: 'Additional Interior', description: 'Extra interior view' },
+      { id: 'int_additional_3', label: 'Additional Interior', description: 'Extra interior view' },
+      { id: 'int_additional_4', label: 'Additional Interior', description: 'Extra interior view' },
+    ],
+  },
+  {
+    id: 'site',
+    label: 'Site',
+    Icon: Trees,
+    description: 'Site improvements, parking, and yard areas',
+    reportPages: 'Subject Photos',
+    slots: [
+      { id: 'site_parking', label: 'Parking Area', description: 'Main parking lot or area', recommended: true },
+      { id: 'site_yard_n', label: 'Yard/Storage (North)', description: 'Yard facing north' },
+      { id: 'site_yard_s', label: 'Yard/Storage (South)', description: 'Yard facing south' },
+      { id: 'site_yard_e', label: 'Yard/Storage (East)', description: 'Yard facing east' },
+      { id: 'site_yard_w', label: 'Yard/Storage (West)', description: 'Yard facing west' },
+    ],
+  },
+  {
+    id: 'street',
+    label: 'Street Scene',
+    Icon: Route,
+    description: 'Views of the street and neighborhood',
+    reportPages: 'Subject Photos',
+    slots: [
+      { id: 'street_east', label: 'Street View Facing East', description: 'View looking east from property', recommended: true },
+      { id: 'street_west', label: 'Street View Facing West', description: 'View looking west from property', recommended: true },
+    ],
+  },
 ];
 
-// Required document types for exhibits
-const exhibitSlots = [
-  { id: 'floor_plans', label: 'Floor Plans', description: 'Architectural floor plans' },
-  { id: 'site_plans', label: 'Site Plans', description: 'Site plan or survey' },
-  { id: 'rent_roll', label: 'Rent Roll', description: 'Current rent roll (if applicable)' },
-  { id: 'operating_statements', label: 'Operating Statements', description: 'Income/expense statements' },
-  { id: 'lease_agreements', label: 'Lease Agreements', description: 'Sample leases' },
-  { id: 'title_report', label: 'Title Report', description: 'Preliminary title report' },
-];
+// Photo metadata structure
+export interface PhotoData {
+  file: File;
+  preview: string;
+  caption: string;
+  takenBy: string;
+  takenDate: string;
+}
 
 export default function SubjectDataPage() {
   const { state: wizardState, setSubjectData } = useWizard();
   const [activeTab, setActiveTab] = useState('location');
 
   // Location tab state - initialize from WizardContext
-  const [cityCounty, setCityCounty] = useState(() => wizardState.subjectData?.address?.county || '');
+  // Auto-populate city/county from address entered in Setup phase
+  const [cityCounty, setCityCounty] = useState(() => {
+    const addr = wizardState.subjectData?.address;
+    if (addr?.city && addr?.county) {
+      return `${addr.city}, ${addr.county}`;
+    } else if (addr?.city) {
+      return addr.city;
+    } else if (addr?.county) {
+      return addr.county;
+    }
+    return '';
+  });
   const [areaDescription, setAreaDescription] = useState(() => wizardState.subjectData?.areaDescription || '');
   const [neighborhoodBoundaries, setNeighborhoodBoundaries] = useState(() => wizardState.subjectData?.neighborhoodBoundaries || '');
   const [neighborhoodCharacteristics, setNeighborhoodCharacteristics] = useState(() => wizardState.subjectData?.neighborhoodCharacteristics || '');
   const [specificLocation, setSpecificLocation] = useState(() => wizardState.subjectData?.specificLocation || '');
+  
+  // AI Draft All state for Location & Area
+  const [isDraftingAllLocation, setIsDraftingAllLocation] = useState(false);
+
+  // Get property context for AI drafting
+  const subjectAddress = wizardState.subjectData?.address?.street || '6907 Entryway Drive';
+  const subjectCity = wizardState.subjectData?.address?.city || 'Billings';
+  const subjectCounty = wizardState.subjectData?.address?.county || 'Yellowstone County';
+  const subjectState = wizardState.subjectData?.address?.state || 'Montana';
+  const propertyType = wizardState.propertyType || 'commercial';
+  const propertySubtype = wizardState.propertySubtype || 'light industrial';
+
+  // Professional AI draft content templates - written like a 30-year appraiser
+  // Bold and underlined section headers for professional appearance
+  const simulatedLocationDrafts = useMemo(() => ({
+    area_description: `<b><u>REGIONAL OVERVIEW</u></b>
+
+${subjectCity} is the largest city in ${subjectState} and serves as the primary regional trade, medical, and retail center for a vast trade area encompassing eastern ${subjectState}, northern Wyoming, and western North and South Dakota. The ${subjectCity} Metropolitan Statistical Area encompasses ${subjectCounty} and has experienced steady population growth over the past two decades, with current population estimated at approximately 185,000 residents.
+
+<b><u>ECONOMIC BASE</u></b>
+
+The regional economy is diversified and includes healthcare, energy, agriculture, retail trade, and professional services. Billings Clinic and St. Vincent Healthcare rank among the largest employers, followed by ${subjectState} State University-${subjectCity}, First Interstate Bank, and various energy companies including oil refining and coal mining operations. The unemployment rate has historically remained below the national average, reflecting the area's economic resilience and diverse employment base.
+
+<b><u>REAL ESTATE MARKET CONDITIONS</u></b>
+
+Market conditions for ${propertySubtype} properties have remained stable to improving over the past 24 months. Demand for quality ${propertyType} space continues to outpace new construction, resulting in declining vacancy rates and modest rental rate increases. Investor interest in the market remains strong, supported by favorable capitalization rates relative to larger metropolitan areas and consistent tenant demand from regional and national users.
+
+<b><u>TRANSPORTATION AND INFRASTRUCTURE</u></b>
+
+Transportation infrastructure serving the market includes Interstate 90 (east-west corridor) and Interstate 94 (extending northeast), as well as ${subjectCity} Logan International Airport providing commercial air service to major hub cities. The combination of highway access and air service supports the area's established role as a regional distribution and service center. Future development outlook remains positive, with continued population growth projected and several commercial and residential developments in various planning stages.`,
+
+    neighborhood_boundaries: `<b><u>NEIGHBORHOOD BOUNDARIES</u></b>
+
+The subject neighborhood is generally bounded as follows:
+
+<b>North:</b> The Yellowstone River and the Heights area residential development define the northern boundary, extending to approximately Grand Avenue and the rimrocks geological formation that marks the northern edge of the valley floor.
+
+<b>South:</b> Central Avenue (U.S. Highway 87) and the established commercial corridor extending south toward the South Hills residential area form the southern boundary, including the King Avenue West commercial district.
+
+<b>East:</b> The eastern boundary extends to approximately South Billings Boulevard, encompassing the established industrial and commercial development along the main transportation corridors, including the MetraPark facility and fairgrounds complex.
+
+<b>West:</b> Shiloh Road and the newer commercial development extending toward the Shiloh Crossing retail area define the western boundary. The Yellowstone River also forms a natural western boundary in portions of the neighborhood.
+
+<b><u>MARKET AREA DEFINITION</u></b>
+
+This delineation encompasses the primary commercial and light industrial districts that directly compete with the subject property for similar users. The boundaries represent the market area from which comparable sales data was drawn and within which competitive properties are located.`,
+
+    neighborhood_characteristics: `<b><u>LAND USE PATTERNS</u></b>
+
+The immediate neighborhood is characterized by a mix of commercial, light industrial, and highway-oriented retail uses that have developed over the past 30 to 40 years. The area has evolved from primarily agricultural use to its current developed state, with most commercial and industrial development occurring from the 1980s through the present.
+
+<b><u>DEVELOPMENT CHARACTER</u></b>
+
+Predominant land uses include light industrial buildings with shop/warehouse and office components, retail strip centers, standalone commercial buildings, and supporting service uses. Building quality ranges from average to good, with newer construction generally exhibiting superior quality and functional utility. Improvement ages range from new construction to structures dating from the early 1980s, with the majority of buildings in average to good condition with adequate remaining economic life.
+
+<b><u>ACCESS AND TRANSPORTATION</u></b>
+
+Access to the neighborhood is excellent, with direct connection to Interstate 90 via multiple interchanges and good arterial road access via South 27th Street, King Avenue, and Central Avenue. Public transportation is available but limited, consistent with the region's reliance on private automobile transportation. Traffic patterns and volumes are consistent with commercial and industrial use, with adequate capacity during normal business hours.
+
+<b><u>AMENITIES AND SERVICES</u></b>
+
+The neighborhood offers proximity to supporting amenities including restaurants, retail services, hotels, and financial institutions. Major retail centers at Shiloh Crossing and the West End provide convenient access to goods and services for employees and business operations. The ${subjectCity} Metropolitan Transit provides limited bus service in the area.
+
+<b><u>VALUE INFLUENCES</u></b>
+
+Factors positively affecting property values include excellent highway access, established infrastructure, diverse tenant base, and proximity to the regional population center. No significant detrimental conditions were identified. The neighborhood is considered stable to improving, with continued demand for quality commercial and light industrial space expected to support property values over the near and intermediate term.`,
+
+    specific_location: `<b><u>PROPERTY LOCATION</u></b>
+
+The subject property is located at ${subjectAddress}, ${subjectCity}, ${subjectState}, in the southwestern portion of the ${subjectCity} urban area. The property is situated within the Harnish Trade Center Subdivision, an established industrial and commercial subdivision that has developed over the past 15 years.
+
+<b><u>PROXIMITY AND ACCESS</u></b>
+
+The subject is positioned approximately 0.3 miles south of King Avenue West, a major east-west arterial, and approximately 0.5 miles west of South Billings Boulevard. Interstate 90, the primary east-west highway serving the region, is located approximately 1.5 miles to the south with access available via the South Billings Boulevard and Shiloh Road interchanges.
+
+<b><u>SITE ACCESS AND VISIBILITY</u></b>
+
+The property has approximately 225 feet of frontage along Entryway Drive, with direct access via a paved approach. Visibility from Entryway Drive is good, though the property is not visible from King Avenue due to intervening development. The surrounding properties include similar light industrial shop/warehouse buildings, providing a cohesive development pattern consistent with the subject's use.
+
+<b><u>LOCATIONAL ANALYSIS</u></b>
+
+Locational advantages include proximity to major transportation corridors, location within an established industrial park with complete infrastructure, and accessibility for customers and employees. The property benefits from its position within ${subjectCity}'s primary light industrial corridor, offering convenient access for regional distribution and service operations. No significant locational disadvantages were identified. The subject's location is considered competitive within the market for properties of this type and is well-suited for its current and intended use.`,
+  }), [subjectAddress, subjectCity, subjectCounty, subjectState, propertyType, propertySubtype]);
+
+  // Handler for AI Draft All - Location & Area section
+  const handleDraftAllLocation = useCallback(async () => {
+    setIsDraftingAllLocation(true);
+    
+    // Simulate staggered AI generation for better UX
+    await new Promise(resolve => setTimeout(resolve, 400));
+    setAreaDescription(simulatedLocationDrafts.area_description);
+    
+    await new Promise(resolve => setTimeout(resolve, 300));
+    setNeighborhoodBoundaries(simulatedLocationDrafts.neighborhood_boundaries);
+    
+    await new Promise(resolve => setTimeout(resolve, 300));
+    setNeighborhoodCharacteristics(simulatedLocationDrafts.neighborhood_characteristics);
+    
+    await new Promise(resolve => setTimeout(resolve, 300));
+    setSpecificLocation(simulatedLocationDrafts.specific_location);
+    
+    setIsDraftingAllLocation(false);
+  }, [simulatedLocationDrafts]);
 
   // Site tab state - initialize from WizardContext
   const [acres, setAcres] = useState(() => wizardState.subjectData?.siteAreaUnit === 'acres' ? wizardState.subjectData?.siteArea || '' : '');
@@ -67,13 +266,52 @@ export default function SubjectDataPage() {
   const [siteNotes, setSiteNotes] = useState('');
   const [zoningClass, setZoningClass] = useState(() => wizardState.subjectData?.zoningClass || '');
   const [zoningDescription, setZoningDescription] = useState(() => wizardState.subjectData?.zoningDescription || '');
-  const [zoningPermitted, setZoningPermitted] = useState(() => wizardState.subjectData?.zoningConforming || false);
-  const [utilitiesStatus, setUtilitiesStatus] = useState(() => wizardState.subjectData?.utilities || '');
+  const [zoningConformance, setZoningConformance] = useState(() => wizardState.subjectData?.zoningConforming ? 'conforming' : '');
   const [topography, setTopography] = useState(() => wizardState.subjectData?.topography || '');
   const [drainage, setDrainage] = useState('');
-  const [floodZone, setFloodZone] = useState(() => wizardState.subjectData?.floodZone || '');
   const [environmental, setEnvironmental] = useState(() => wizardState.subjectData?.environmental || '');
   const [easements, setEasements] = useState(() => wizardState.subjectData?.easements || '');
+
+  // Expanded Utilities state
+  const [waterSource, setWaterSource] = useState('');
+  const [waterNotes, setWaterNotes] = useState('');
+  const [sewerType, setSewerType] = useState('');
+  const [sewerNotes, setSewerNotes] = useState('');
+  const [electricProvider, setElectricProvider] = useState('');
+  const [electricAdequacy, setElectricAdequacy] = useState('');
+  const [electricNotes, setElectricNotes] = useState('');
+  const [naturalGas, setNaturalGas] = useState('');
+  const [naturalGasNotes, setNaturalGasNotes] = useState('');
+  const [telecom, setTelecom] = useState('');
+  const [telecomNotes, setTelecomNotes] = useState('');
+
+  // Access & Visibility state
+  const [approachType, setApproachType] = useState('');
+  const [accessQuality, setAccessQuality] = useState('');
+  const [visibility, setVisibility] = useState('');
+  const [truckAccess, setTruckAccess] = useState('');
+  const [accessNotes, setAccessNotes] = useState('');
+
+  // Site Improvements state
+  const [pavingType, setPavingType] = useState('');
+  const [pavingNotes, setPavingNotes] = useState('');
+  const [exteriorLighting, setExteriorLighting] = useState('');
+  const [fencingType, setFencingType] = useState('');
+  const [fencingNotes, setFencingNotes] = useState('');
+  const [yardStorage, setYardStorage] = useState('');
+  const [landscaping, setLandscaping] = useState('');
+  const [siteImprovementsNotes, setSiteImprovementsNotes] = useState('');
+
+  // Enhanced Flood Zone state
+  const [femaZone, setFemaZone] = useState('');
+  const [femaMapPanel, setFemaMapPanel] = useState('');
+  const [femaMapDate, setFemaMapDate] = useState('');
+  const [floodInsuranceRequired, setFloodInsuranceRequired] = useState('');
+  const [floodZoneNotes, setFloodZoneNotes] = useState('');
+
+  // Site Description Narrative
+  const [siteDescriptionNarrative, setSiteDescriptionNarrative] = useState('');
+  const [isDraftingSiteDescription, setIsDraftingSiteDescription] = useState(false);
 
   // Tax tab state (local - tax assessment details)
   const [taxYear, setTaxYear] = useState(new Date().getFullYear().toString());
@@ -108,20 +346,55 @@ export default function SubjectDataPage() {
       shape,
       frontage,
       topography,
-      utilities: utilitiesStatus,
-      floodZone,
       environmental,
       easements,
       zoningClass,
       zoningDescription,
-      zoningConforming: zoningPermitted,
+      zoningConforming: zoningConformance === 'conforming',
+      // Utilities
+      waterSource,
+      sewerType,
+      electricProvider,
+      naturalGas,
+      telecom,
+      // Access
+      approachType,
+      accessQuality,
+      visibility,
+      truckAccess,
+      // Site Improvements
+      pavingType,
+      fencingType,
+      yardStorage,
+      landscaping,
+      // Flood Zone
+      femaZone,
+      femaMapPanel,
+      femaMapDate,
+      floodInsuranceRequired,
+      // Narratives
+      siteDescriptionNarrative,
     });
   }, [cityCounty, areaDescription, neighborhoodBoundaries, neighborhoodCharacteristics, specificLocation,
-      acres, squareFeet, shape, frontage, topography, utilitiesStatus, floodZone, environmental, easements,
-      zoningClass, zoningDescription, zoningPermitted, setSubjectData]);
+      acres, squareFeet, shape, frontage, topography, environmental, easements,
+      zoningClass, zoningDescription, zoningConformance,
+      waterSource, sewerType, electricProvider, naturalGas, telecom,
+      approachType, accessQuality, visibility, truckAccess,
+      pavingType, fencingType, yardStorage, landscaping,
+      femaZone, femaMapPanel, femaMapDate, floodInsuranceRequired,
+      siteDescriptionNarrative, setSubjectData]);
 
-  // Photos state
-  const [photos, setPhotos] = useState<Record<string, { file: File; preview: string } | null>>({});
+  // Photos state with metadata support
+  const [photos, setPhotos] = useState<Record<string, PhotoData | null>>({});
+
+  // Default metadata values from appraiser info and inspection date
+  const defaultTakenBy = useMemo(() => {
+    const name = wizardState.subjectData?.inspectorName || '';
+    const license = wizardState.subjectData?.inspectorLicense || '';
+    return name ? (license ? `${name}, ${license}` : name) : '';
+  }, [wizardState.subjectData?.inspectorName, wizardState.subjectData?.inspectorLicense]);
+  
+  const defaultTakenDate = wizardState.subjectData?.inspectionDate || '';
 
   // Exhibits state
   const [exhibits, setExhibits] = useState<Record<string, { file: File; name: string } | null>>({});
@@ -143,7 +416,16 @@ export default function SubjectDataPage() {
 
   const handlePhotoUpload = (slotId: string, file: File) => {
     const preview = URL.createObjectURL(file);
-    setPhotos(prev => ({ ...prev, [slotId]: { file, preview } }));
+    setPhotos(prev => ({ 
+      ...prev, 
+      [slotId]: { 
+        file, 
+        preview,
+        caption: '',
+        takenBy: defaultTakenBy,
+        takenDate: defaultTakenDate,
+      } 
+    }));
   };
 
   const removePhoto = (slotId: string) => {
@@ -151,6 +433,21 @@ export default function SubjectDataPage() {
       URL.revokeObjectURL(photos[slotId]!.preview);
     }
     setPhotos(prev => ({ ...prev, [slotId]: null }));
+  };
+
+  const updatePhotoMetadata = (slotId: string, updates: Partial<PhotoData>) => {
+    setPhotos(prev => {
+      const existing = prev[slotId];
+      if (!existing) return prev;
+      return { ...prev, [slotId]: { ...existing, ...updates } };
+    });
+  };
+
+  // Handle preview photo in report context
+  const handlePreviewPhoto = (slotId: string, photo: PhotoData) => {
+    // This will be handled by the PhotoQuickPeek component
+    // For now, we can log which photo is being previewed
+    console.log('Preview photo:', slotId, photo.caption);
   };
 
   const handleExhibitUpload = (slotId: string, file: File) => {
@@ -230,6 +527,15 @@ export default function SubjectDataPage() {
     />
   );
 
+  // Live preview panel for the photos tab
+  const previewSidebar = activeTab === 'photos' ? (
+    <PhotoLivePreview
+      photos={photos}
+      defaultTakenBy={defaultTakenBy}
+      defaultTakenDate={defaultTakenDate}
+    />
+  ) : null;
+
   return (
     <WizardLayout
       title="Subject Property Data"
@@ -237,6 +543,8 @@ export default function SubjectDataPage() {
       phase={4}
       sidebar={sidebar}
       helpSidebarGuidance={helpSidebar}
+      helpSidebarPreview={previewSidebar}
+      showPreviewMode={activeTab === 'photos'}
       onContinue={handleContinue}
     >
       <div className="animate-fade-in">
@@ -254,9 +562,12 @@ export default function SubjectDataPage() {
             setNeighborhoodCharacteristics={setNeighborhoodCharacteristics}
             specificLocation={specificLocation}
             setSpecificLocation={setSpecificLocation}
+            onDraftAll={handleDraftAllLocation}
+            isDraftingAll={isDraftingAllLocation}
           />
         ) : activeTab === 'site' ? (
           <SiteContent
+            // Site Size & Shape
             acres={acres}
             setAcres={setAcres}
             squareFeet={squareFeet}
@@ -267,24 +578,89 @@ export default function SubjectDataPage() {
             setFrontage={setFrontage}
             siteNotes={siteNotes}
             setSiteNotes={setSiteNotes}
+            // Zoning
             zoningClass={zoningClass}
             setZoningClass={setZoningClass}
             zoningDescription={zoningDescription}
             setZoningDescription={setZoningDescription}
-            zoningPermitted={zoningPermitted}
-            setZoningPermitted={setZoningPermitted}
-            utilitiesStatus={utilitiesStatus}
-            setUtilitiesStatus={setUtilitiesStatus}
+            zoningConformance={zoningConformance}
+            setZoningConformance={setZoningConformance}
+            // Utilities
+            waterSource={waterSource}
+            setWaterSource={setWaterSource}
+            waterNotes={waterNotes}
+            setWaterNotes={setWaterNotes}
+            sewerType={sewerType}
+            setSewerType={setSewerType}
+            sewerNotes={sewerNotes}
+            setSewerNotes={setSewerNotes}
+            electricProvider={electricProvider}
+            setElectricProvider={setElectricProvider}
+            electricAdequacy={electricAdequacy}
+            setElectricAdequacy={setElectricAdequacy}
+            electricNotes={electricNotes}
+            setElectricNotes={setElectricNotes}
+            naturalGas={naturalGas}
+            setNaturalGas={setNaturalGas}
+            naturalGasNotes={naturalGasNotes}
+            setNaturalGasNotes={setNaturalGasNotes}
+            telecom={telecom}
+            setTelecom={setTelecom}
+            telecomNotes={telecomNotes}
+            setTelecomNotes={setTelecomNotes}
+            // Access & Visibility
+            approachType={approachType}
+            setApproachType={setApproachType}
+            accessQuality={accessQuality}
+            setAccessQuality={setAccessQuality}
+            visibility={visibility}
+            setVisibility={setVisibility}
+            truckAccess={truckAccess}
+            setTruckAccess={setTruckAccess}
+            accessNotes={accessNotes}
+            setAccessNotes={setAccessNotes}
+            // Site Improvements
+            pavingType={pavingType}
+            setPavingType={setPavingType}
+            pavingNotes={pavingNotes}
+            setPavingNotes={setPavingNotes}
+            exteriorLighting={exteriorLighting}
+            setExteriorLighting={setExteriorLighting}
+            fencingType={fencingType}
+            setFencingType={setFencingType}
+            fencingNotes={fencingNotes}
+            setFencingNotes={setFencingNotes}
+            yardStorage={yardStorage}
+            setYardStorage={setYardStorage}
+            landscaping={landscaping}
+            setLandscaping={setLandscaping}
+            siteImprovementsNotes={siteImprovementsNotes}
+            setSiteImprovementsNotes={setSiteImprovementsNotes}
+            // Additional Characteristics
             topography={topography}
             setTopography={setTopography}
             drainage={drainage}
             setDrainage={setDrainage}
-            floodZone={floodZone}
-            setFloodZone={setFloodZone}
             environmental={environmental}
             setEnvironmental={setEnvironmental}
             easements={easements}
             setEasements={setEasements}
+            // Flood Zone
+            femaZone={femaZone}
+            setFemaZone={setFemaZone}
+            femaMapPanel={femaMapPanel}
+            setFemaMapPanel={setFemaMapPanel}
+            femaMapDate={femaMapDate}
+            setFemaMapDate={setFemaMapDate}
+            floodInsuranceRequired={floodInsuranceRequired}
+            setFloodInsuranceRequired={setFloodInsuranceRequired}
+            floodZoneNotes={floodZoneNotes}
+            setFloodZoneNotes={setFloodZoneNotes}
+            // Site Description Narrative
+            siteDescriptionNarrative={siteDescriptionNarrative}
+            setSiteDescriptionNarrative={setSiteDescriptionNarrative}
+            isDraftingSiteDescription={isDraftingSiteDescription}
+            setIsDraftingSiteDescription={setIsDraftingSiteDescription}
           />
         ) : activeTab === 'tax' ? (
           <TaxContent
@@ -316,6 +692,10 @@ export default function SubjectDataPage() {
             photos={photos}
             onUpload={handlePhotoUpload}
             onRemove={removePhoto}
+            onUpdateMetadata={updatePhotoMetadata}
+            defaultTakenBy={defaultTakenBy}
+            defaultTakenDate={defaultTakenDate}
+            onPreviewPhoto={handlePreviewPhoto}
           />
         ) : (
           <ExhibitsContent
@@ -345,6 +725,8 @@ interface LocationProps {
   setNeighborhoodCharacteristics: (v: string) => void;
   specificLocation: string;
   setSpecificLocation: (v: string) => void;
+  onDraftAll?: () => void;
+  isDraftingAll?: boolean;
 }
 
 function LocationContent({
@@ -353,31 +735,67 @@ function LocationContent({
   neighborhoodBoundaries, setNeighborhoodBoundaries,
   neighborhoodCharacteristics, setNeighborhoodCharacteristics,
   specificLocation, setSpecificLocation,
+  onDraftAll,
+  isDraftingAll = false,
 }: LocationProps) {
   return (
     <div className="space-y-6">
+      {/* Page Header with AI Draft All Button */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-xl font-bold text-[#1c3643]">Location & Area Analysis</h2>
+          <p className="text-sm text-gray-500 mt-1">Describe the regional, neighborhood, and specific location context</p>
+        </div>
+        <button
+          onClick={onDraftAll}
+          disabled={isDraftingAll}
+          className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-[#4db8d1] to-[#7fcce0] rounded-lg hover:from-[#3da8c1] hover:to-[#6fc0d4] flex items-center gap-2 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {isDraftingAll ? (
+            <>
+              <Loader2 className="w-4 h-4 animate-spin" />
+              Drafting All...
+            </>
+          ) : (
+            <>
+              <Sparkles className="w-4 h-4" />
+              AI Draft All (4 Sections)
+            </>
+          )}
+        </button>
+      </div>
+
       {/* General Area Analysis */}
       <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
         <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
           General Area Analysis
         </h3>
         <div className="space-y-4">
+          {/* City/County - Auto-populated from Setup */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
               City/County <span className="text-red-500">*</span>
             </label>
-            <select
-              value={cityCounty}
-              onChange={(e) => setCityCounty(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white"
-            >
-              <option value="">Select City/County...</option>
-              <option value="billings">Billings, Yellowstone County</option>
-              <option value="bozeman">Bozeman, Gallatin County</option>
-              <option value="missoula">Missoula, Missoula County</option>
-              <option value="greatfalls">Great Falls, Cascade County</option>
-              <option value="other">Other</option>
-            </select>
+            {cityCounty ? (
+              <div className="flex items-center gap-2">
+                <div className="flex-1 px-3 py-2 bg-emerald-50 border border-emerald-200 rounded-lg text-sm text-emerald-800 font-medium flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-emerald-600" />
+                  {cityCounty}
+                </div>
+                <div className="flex items-center gap-1 text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">
+                  <Info className="w-3 h-3" />
+                  <span>Auto-filled from Setup</span>
+                </div>
+              </div>
+            ) : (
+              <input
+                type="text"
+                value={cityCounty}
+                onChange={(e) => setCityCounty(e.target.value)}
+                placeholder="Enter city and county (e.g., Billings, Yellowstone County)"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white"
+              />
+            )}
           </div>
           <EnhancedTextArea
             id="area_description"
@@ -443,9 +861,10 @@ function LocationContent({
 }
 
 // ==========================================
-// SITE CONTENT - Complete with Zoning
+// SITE CONTENT - Enhanced with ButtonSelectors
 // ==========================================
 interface SiteProps {
+  // Site Size & Shape
   acres: string;
   setAcres: (v: string) => void;
   squareFeet: string;
@@ -456,25 +875,217 @@ interface SiteProps {
   setFrontage: (v: string) => void;
   siteNotes: string;
   setSiteNotes: (v: string) => void;
+  // Zoning
   zoningClass: string;
   setZoningClass: (v: string) => void;
   zoningDescription: string;
   setZoningDescription: (v: string) => void;
-  zoningPermitted: boolean;
-  setZoningPermitted: (v: boolean) => void;
-  utilitiesStatus: string;
-  setUtilitiesStatus: (v: string) => void;
+  zoningConformance: string;
+  setZoningConformance: (v: string) => void;
+  // Utilities
+  waterSource: string;
+  setWaterSource: (v: string) => void;
+  waterNotes: string;
+  setWaterNotes: (v: string) => void;
+  sewerType: string;
+  setSewerType: (v: string) => void;
+  sewerNotes: string;
+  setSewerNotes: (v: string) => void;
+  electricProvider: string;
+  setElectricProvider: (v: string) => void;
+  electricAdequacy: string;
+  setElectricAdequacy: (v: string) => void;
+  electricNotes: string;
+  setElectricNotes: (v: string) => void;
+  naturalGas: string;
+  setNaturalGas: (v: string) => void;
+  naturalGasNotes: string;
+  setNaturalGasNotes: (v: string) => void;
+  telecom: string;
+  setTelecom: (v: string) => void;
+  telecomNotes: string;
+  setTelecomNotes: (v: string) => void;
+  // Access & Visibility
+  approachType: string;
+  setApproachType: (v: string) => void;
+  accessQuality: string;
+  setAccessQuality: (v: string) => void;
+  visibility: string;
+  setVisibility: (v: string) => void;
+  truckAccess: string;
+  setTruckAccess: (v: string) => void;
+  accessNotes: string;
+  setAccessNotes: (v: string) => void;
+  // Site Improvements
+  pavingType: string;
+  setPavingType: (v: string) => void;
+  pavingNotes: string;
+  setPavingNotes: (v: string) => void;
+  exteriorLighting: string;
+  setExteriorLighting: (v: string) => void;
+  fencingType: string;
+  setFencingType: (v: string) => void;
+  fencingNotes: string;
+  setFencingNotes: (v: string) => void;
+  yardStorage: string;
+  setYardStorage: (v: string) => void;
+  landscaping: string;
+  setLandscaping: (v: string) => void;
+  siteImprovementsNotes: string;
+  setSiteImprovementsNotes: (v: string) => void;
+  // Additional Characteristics
   topography: string;
   setTopography: (v: string) => void;
   drainage: string;
   setDrainage: (v: string) => void;
-  floodZone: string;
-  setFloodZone: (v: string) => void;
   environmental: string;
   setEnvironmental: (v: string) => void;
   easements: string;
   setEasements: (v: string) => void;
+  // Flood Zone
+  femaZone: string;
+  setFemaZone: (v: string) => void;
+  femaMapPanel: string;
+  setFemaMapPanel: (v: string) => void;
+  femaMapDate: string;
+  setFemaMapDate: (v: string) => void;
+  floodInsuranceRequired: string;
+  setFloodInsuranceRequired: (v: string) => void;
+  floodZoneNotes: string;
+  setFloodZoneNotes: (v: string) => void;
+  // Site Description Narrative
+  siteDescriptionNarrative: string;
+  setSiteDescriptionNarrative: (v: string) => void;
+  isDraftingSiteDescription: boolean;
+  setIsDraftingSiteDescription: (v: boolean) => void;
 }
+
+// Button selector option definitions
+const SHAPE_OPTIONS = [
+  { value: 'rectangular', label: 'Rectangular' },
+  { value: 'approx_rectangular', label: 'Approx Rectangular' },
+  { value: 'irregular', label: 'Irregular' },
+  { value: 'triangular', label: 'Triangular' },
+  { value: 'square', label: 'Square' },
+];
+
+const ZONING_CONFORMANCE_OPTIONS = [
+  { value: 'conforming', label: 'Conforming' },
+  { value: 'non_conforming', label: 'Non-Conforming' },
+  { value: 'legal_non_conforming', label: 'Legal Non-Conforming' },
+];
+
+const WATER_SOURCE_OPTIONS = [
+  { value: 'city', label: 'City', icon: <Droplets className="w-4 h-4" /> },
+  { value: 'well', label: 'Well', icon: <Droplets className="w-4 h-4" /> },
+  { value: 'other', label: 'Other', icon: <Droplets className="w-4 h-4" /> },
+];
+
+const SEWER_TYPE_OPTIONS = [
+  { value: 'city', label: 'City' },
+  { value: 'septic', label: 'Septic' },
+  { value: 'other', label: 'Other' },
+];
+
+const ELECTRIC_ADEQUACY_OPTIONS = [
+  { value: 'adequate', label: 'Adequate' },
+  { value: 'limited', label: 'Limited' },
+  { value: 'unknown', label: 'Unknown' },
+];
+
+const AVAILABILITY_OPTIONS = [
+  { value: 'available', label: 'Available' },
+  { value: 'not_available', label: 'Not Available' },
+  { value: 'unknown', label: 'Unknown' },
+];
+
+const APPROACH_TYPE_OPTIONS = [
+  { value: 'paved', label: 'Paved', icon: <Car className="w-4 h-4" /> },
+  { value: 'gravel', label: 'Gravel', icon: <Car className="w-4 h-4" /> },
+  { value: 'dirt', label: 'Dirt', icon: <Car className="w-4 h-4" /> },
+  { value: 'other', label: 'Other', icon: <Car className="w-4 h-4" /> },
+];
+
+const QUALITY_OPTIONS = [
+  { value: 'excellent', label: 'Excellent' },
+  { value: 'good', label: 'Good' },
+  { value: 'average', label: 'Average' },
+  { value: 'poor', label: 'Poor' },
+];
+
+const TRUCK_ACCESS_OPTIONS = [
+  { value: 'adequate', label: 'Adequate' },
+  { value: 'limited', label: 'Limited' },
+  { value: 'not_suitable', label: 'Not Suitable' },
+];
+
+const PAVING_OPTIONS = [
+  { value: 'asphalt', label: 'Asphalt' },
+  { value: 'concrete', label: 'Concrete' },
+  { value: 'gravel', label: 'Gravel' },
+  { value: 'none', label: 'None' },
+];
+
+const LIGHTING_OPTIONS = [
+  { value: 'yes', label: 'Yes', icon: <Lightbulb className="w-4 h-4" /> },
+  { value: 'no', label: 'No' },
+];
+
+const FENCING_OPTIONS = [
+  { value: 'chain_link', label: 'Chain Link', icon: <Fence className="w-4 h-4" /> },
+  { value: 'wood', label: 'Wood', icon: <Fence className="w-4 h-4" /> },
+  { value: 'security', label: 'Security', icon: <Fence className="w-4 h-4" /> },
+  { value: 'none', label: 'None' },
+];
+
+const YARD_STORAGE_OPTIONS = [
+  { value: 'secured', label: 'Secured', icon: <Warehouse className="w-4 h-4" /> },
+  { value: 'open', label: 'Open', icon: <Warehouse className="w-4 h-4" /> },
+  { value: 'none', label: 'None' },
+];
+
+const LANDSCAPING_OPTIONS = [
+  { value: 'extensive', label: 'Extensive', icon: <TreeDeciduous className="w-4 h-4" /> },
+  { value: 'moderate', label: 'Moderate', icon: <TreeDeciduous className="w-4 h-4" /> },
+  { value: 'minimal', label: 'Minimal', icon: <TreeDeciduous className="w-4 h-4" /> },
+  { value: 'none', label: 'None' },
+];
+
+const TOPOGRAPHY_OPTIONS = [
+  { value: 'level', label: 'Level' },
+  { value: 'gently_sloping', label: 'Gently Sloping' },
+  { value: 'moderately_sloping', label: 'Moderately Sloping' },
+  { value: 'steep', label: 'Steep' },
+  { value: 'rolling', label: 'Rolling' },
+];
+
+const DRAINAGE_OPTIONS = [
+  { value: 'adequate', label: 'Adequate' },
+  { value: 'good', label: 'Good' },
+  { value: 'poor', label: 'Poor' },
+  { value: 'unknown', label: 'Unknown' },
+];
+
+const ENVIRONMENTAL_OPTIONS = [
+  { value: 'none_known', label: 'No Known Issues' },
+  { value: 'phase1_clear', label: 'Phase 1 Clear' },
+  { value: 'phase2_required', label: 'Phase 2 Required' },
+  { value: 'contamination', label: 'Contamination', icon: <AlertTriangle className="w-4 h-4" /> },
+];
+
+const FEMA_ZONE_OPTIONS = [
+  { value: 'zone_x', label: 'Zone X' },
+  { value: 'zone_a', label: 'Zone A' },
+  { value: 'zone_ae', label: 'Zone AE' },
+  { value: 'zone_ve', label: 'Zone VE' },
+  { value: 'other', label: 'Other' },
+];
+
+const FLOOD_INSURANCE_OPTIONS = [
+  { value: 'required', label: 'Required' },
+  { value: 'not_required', label: 'Not Required' },
+  { value: 'unknown', label: 'Unknown' },
+];
 
 function SiteContent({
   acres, setAcres, squareFeet, setSquareFeet,
@@ -483,13 +1094,26 @@ function SiteContent({
   siteNotes, setSiteNotes,
   zoningClass, setZoningClass,
   zoningDescription, setZoningDescription,
-  zoningPermitted, setZoningPermitted,
-  utilitiesStatus, setUtilitiesStatus,
-  topography, setTopography,
-  drainage, setDrainage,
-  floodZone, setFloodZone,
-  environmental, setEnvironmental,
-  easements, setEasements,
+  zoningConformance, setZoningConformance,
+  waterSource, setWaterSource, waterNotes, setWaterNotes,
+  sewerType, setSewerType, sewerNotes, setSewerNotes,
+  electricProvider, setElectricProvider, electricAdequacy, setElectricAdequacy, electricNotes, setElectricNotes,
+  naturalGas, setNaturalGas, naturalGasNotes, setNaturalGasNotes,
+  telecom, setTelecom, telecomNotes, setTelecomNotes,
+  approachType, setApproachType, accessQuality, setAccessQuality,
+  visibility, setVisibility, truckAccess, setTruckAccess, accessNotes, setAccessNotes,
+  pavingType, setPavingType, pavingNotes, setPavingNotes,
+  exteriorLighting, setExteriorLighting,
+  fencingType, setFencingType, fencingNotes, setFencingNotes,
+  yardStorage, setYardStorage, landscaping, setLandscaping,
+  siteImprovementsNotes, setSiteImprovementsNotes,
+  topography, setTopography, drainage, setDrainage,
+  environmental, setEnvironmental, easements, setEasements,
+  femaZone, setFemaZone, femaMapPanel, setFemaMapPanel,
+  femaMapDate, setFemaMapDate, floodInsuranceRequired, setFloodInsuranceRequired,
+  floodZoneNotes, setFloodZoneNotes,
+  siteDescriptionNarrative, setSiteDescriptionNarrative,
+  isDraftingSiteDescription, setIsDraftingSiteDescription,
 }: SiteProps) {
   // 1 acre = 43,560 square feet
   const SQFT_PER_ACRE = 43560;
@@ -507,7 +1131,6 @@ function SiteContent({
 
   // Handle square feet change - update acres
   const handleSquareFeetChange = (value: string) => {
-    // Remove commas for calculation
     const numericValue = value.replace(/,/g, '');
     setSquareFeet(numericValue);
     if (numericValue && !isNaN(parseFloat(numericValue))) {
@@ -516,6 +1139,29 @@ function SiteContent({
     } else {
       setAcres('');
     }
+  };
+
+  // AI Draft Site Description
+  const handleDraftSiteDescription = async () => {
+    setIsDraftingSiteDescription(true);
+    await new Promise(resolve => setTimeout(resolve, 1200));
+    
+    const draftContent = `The subject site is located with ${frontage || 'adequate frontage'} providing ${accessQuality || 'good'} access. The site contains approximately ${acres ? `${acres} acres (${parseInt(squareFeet || '0').toLocaleString()} square feet)` : 'the stated land area'} with a ${shape || 'regular'} configuration.
+
+${topography ? `The site topography is ${topography.replace(/_/g, ' ')}, ` : ''}${drainage ? `with ${drainage} drainage characteristics. ` : ''}The site is ${approachType ? `accessed via a ${approachType} approach` : 'accessible from the adjacent roadway'}${truckAccess ? ` with ${truckAccess.replace(/_/g, ' ')} truck turning radius` : ''}.
+
+${waterSource ? `Water service is provided by ${waterSource === 'city' ? 'municipal water' : waterSource === 'well' ? 'private well' : 'alternative source'}. ` : ''}${sewerType ? `Sewer service consists of ${sewerType === 'city' ? 'municipal sanitary sewer' : sewerType === 'septic' ? 'private septic system' : 'alternative system'}. ` : ''}${naturalGas === 'available' ? 'Natural gas is available. ' : ''}${telecom === 'available' ? 'Telecommunications services are available. ' : ''}${electricAdequacy ? `Electric service appears ${electricAdequacy}. ` : ''}
+
+${pavingType && pavingType !== 'none' ? `Site improvements include ${pavingType} paving${exteriorLighting === 'yes' ? ', exterior lighting' : ''}${fencingType && fencingType !== 'none' ? `, and ${fencingType.replace(/_/g, ' ')} fencing` : ''}. ` : ''}${yardStorage && yardStorage !== 'none' ? `A ${yardStorage} yard/storage area is present. ` : ''}${landscaping && landscaping !== 'none' ? `Landscaping is ${landscaping}. ` : ''}
+
+${femaZone ? `According to FEMA mapping, the site is located in Flood ${femaZone.replace(/_/g, ' ').replace('zone', 'Zone')}${femaMapPanel ? ` (Map Panel ${femaMapPanel})` : ''}. ${floodInsuranceRequired === 'required' ? 'Flood insurance is required.' : floodInsuranceRequired === 'not_required' ? 'No special flood insurance is required.' : ''}` : ''}
+
+${environmental ? `Environmental status: ${environmental === 'none_known' ? 'No known environmental issues' : environmental === 'phase1_clear' ? 'Phase 1 ESA completed with no recognized environmental conditions' : environmental === 'phase2_required' ? 'Phase 2 environmental assessment is required' : 'Environmental contamination has been identified'}. ` : ''}
+
+Overall, the site is well-suited for its current use and presents no significant adverse characteristics that would negatively impact value.`;
+
+    setSiteDescriptionNarrative(draftContent);
+    setIsDraftingSiteDescription(false);
   };
 
   return (
@@ -552,40 +1198,34 @@ function SiteContent({
             />
           </div>
         </div>
-        <div className="grid grid-cols-2 gap-4 mt-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Shape</label>
-            <select
-              value={shape}
-              onChange={(e) => setShape(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white"
-            >
-              <option value="">Select shape...</option>
-              <option value="rectangular">Rectangular</option>
-              <option value="approx_rectangular">Approximately Rectangular</option>
-              <option value="irregular">Irregular</option>
-              <option value="triangular">Triangular</option>
-              <option value="square">Square</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Frontage</label>
-            <input
-              type="text"
-              value={frontage}
-              onChange={(e) => setFrontage(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
-              placeholder="e.g., 475' along South 30th Street West"
-            />
-          </div>
+        
+        <div className="mt-4">
+          <ButtonSelector
+            label="Shape"
+            options={SHAPE_OPTIONS}
+            value={shape}
+            onChange={setShape}
+          />
         </div>
+
+        <div className="mt-4">
+          <label className="block text-sm font-medium text-gray-700 mb-1">Frontage</label>
+          <input
+            type="text"
+            value={frontage}
+            onChange={(e) => setFrontage(e.target.value)}
+            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+            placeholder="e.g., 475' along South 30th Street West"
+          />
+        </div>
+
         <div className="mt-4">
           <EnhancedTextArea
             id="site_notes"
             label="Note to Reader"
             value={siteNotes}
             onChange={setSiteNotes}
-            placeholder="Any special notes about site allocation, phasing, subdivision plans, or unique site attributes that would affect value..."
+            placeholder="Any special notes about site allocation, phasing, subdivision plans, or unique site attributes..."
             rows={4}
             sectionContext="site_notes"
             helperText="Include any caveats or special considerations about the site."
@@ -611,48 +1251,261 @@ function SiteContent({
               placeholder="e.g., I1 - Light Industrial"
             />
           </div>
+
           <EnhancedTextArea
             id="zoning_description"
             label="Zoning Description"
             value={zoningDescription}
             onChange={setZoningDescription}
-            placeholder="Describe the zoning district, permitted uses by right and conditional, development standards including setbacks, height limits, FAR, lot coverage, parking requirements, and any overlay districts or special regulations..."
+            placeholder="Describe the zoning district, permitted uses, development standards..."
             rows={6}
             sectionContext="zoning_description"
-            helperText="AI can help draft a comprehensive zoning description based on the classification."
+            helperText="AI can help draft a comprehensive zoning description."
           />
-          <label className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:bg-gray-50 cursor-pointer">
-            <input
-              type="checkbox"
-              checked={zoningPermitted}
-              onChange={(e) => setZoningPermitted(e.target.checked)}
-              className="w-5 h-5 rounded border-gray-300 text-[#0da1c7] focus:ring-[#0da1c7]"
-            />
-            <span className="text-sm text-gray-700">Current use is permitted under zoning</span>
-          </label>
+
+          <ButtonSelector
+            label="Zoning Conformance"
+            options={ZONING_CONFORMANCE_OPTIONS}
+            value={zoningConformance}
+            onChange={setZoningConformance}
+          />
         </div>
       </div>
 
-      {/* Utilities & Services */}
+      {/* Utilities & Services - Expanded */}
       <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
+        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4 flex items-center gap-2">
+          <Zap className="w-5 h-5 text-[#0da1c7]" />
           Utilities & Services
+        </h3>
+        <div className="space-y-6">
+          {/* Water Source */}
+          <div>
+            <ButtonSelector
+              label="Water Source"
+              options={WATER_SOURCE_OPTIONS}
+              value={waterSource}
+              onChange={setWaterSource}
+            />
+            <ExpandableNote
+              id="water_notes"
+              label="Water Notes"
+              value={waterNotes}
+              onChange={setWaterNotes}
+              placeholder="Add notes about water service..."
+              sectionContext="water_source"
+            />
+          </div>
+
+          {/* Sewer Type */}
+          <div>
+            <ButtonSelector
+              label="Sewer Type"
+              options={SEWER_TYPE_OPTIONS}
+              value={sewerType}
+              onChange={setSewerType}
+            />
+            <ExpandableNote
+              id="sewer_notes"
+              label="Sewer Notes"
+              value={sewerNotes}
+              onChange={setSewerNotes}
+              placeholder="Add notes about sewer service..."
+              sectionContext="sewer_type"
+            />
+          </div>
+
+          {/* Electric */}
+          <div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Electric Provider</label>
+                <input
+                  type="text"
+                  value={electricProvider}
+                  onChange={(e) => setElectricProvider(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                  placeholder="e.g., NorthWestern Energy"
+                />
+              </div>
+              <div>
+                <ButtonSelector
+                  label="Adequacy"
+                  options={ELECTRIC_ADEQUACY_OPTIONS}
+                  value={electricAdequacy}
+                  onChange={setElectricAdequacy}
+                  size="sm"
+                />
+              </div>
+            </div>
+            <ExpandableNote
+              id="electric_notes"
+              label="Electric Notes"
+              value={electricNotes}
+              onChange={setElectricNotes}
+              placeholder="Add notes about electric service..."
+              sectionContext="electric"
+            />
+          </div>
+
+          {/* Natural Gas */}
+          <div>
+            <ButtonSelector
+              label="Natural Gas"
+              options={AVAILABILITY_OPTIONS}
+              value={naturalGas}
+              onChange={setNaturalGas}
+            />
+            <ExpandableNote
+              id="natural_gas_notes"
+              label="Natural Gas Notes"
+              value={naturalGasNotes}
+              onChange={setNaturalGasNotes}
+              placeholder="Add notes about natural gas service..."
+              sectionContext="natural_gas"
+            />
+          </div>
+
+          {/* Telecom */}
+          <div>
+            <ButtonSelector
+              label="Telecommunications"
+              options={AVAILABILITY_OPTIONS}
+              value={telecom}
+              onChange={setTelecom}
+            />
+            <ExpandableNote
+              id="telecom_notes"
+              label="Telecom Notes"
+              value={telecomNotes}
+              onChange={setTelecomNotes}
+              placeholder="Add notes about telecommunications..."
+              sectionContext="telecom"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Access & Visibility - New Card */}
+      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4 flex items-center gap-2">
+          <Car className="w-5 h-5 text-[#0da1c7]" />
+          Access & Visibility
+        </h3>
+        <div className="space-y-4">
+          <ButtonSelector
+            label="Approach Type"
+            options={APPROACH_TYPE_OPTIONS}
+            value={approachType}
+            onChange={setApproachType}
+          />
+
+          <div className="grid grid-cols-3 gap-4">
+            <ButtonSelector
+              label="Access Quality"
+              options={QUALITY_OPTIONS}
+              value={accessQuality}
+              onChange={setAccessQuality}
+              size="sm"
+            />
+            <ButtonSelector
+              label="Visibility"
+              options={QUALITY_OPTIONS}
+              value={visibility}
+              onChange={setVisibility}
+              size="sm"
+            />
+            <ButtonSelector
+              label="Truck Access"
+              options={TRUCK_ACCESS_OPTIONS}
+              value={truckAccess}
+              onChange={setTruckAccess}
+              size="sm"
+            />
+          </div>
+
+          <ExpandableNote
+            id="access_notes"
+            label="Access Notes"
+            value={accessNotes}
+            onChange={setAccessNotes}
+            placeholder="Add notes about access and visibility..."
+            sectionContext="access_visibility"
+          />
+        </div>
+      </div>
+
+      {/* Site Improvements - New Card */}
+      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4 flex items-center gap-2">
+          <Warehouse className="w-5 h-5 text-[#0da1c7]" />
+          Site Improvements
         </h3>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Utilities Status</label>
-            <select
-              value={utilitiesStatus}
-              onChange={(e) => setUtilitiesStatus(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white"
-            >
-              <option value="">Select status...</option>
-              <option value="all_city">All city services available</option>
-              <option value="to_extend">All city services to be extended</option>
-              <option value="partial">Partial utilities</option>
-              <option value="well_septic">Well & Septic</option>
-            </select>
+            <ButtonSelector
+              label="Paving"
+              options={PAVING_OPTIONS}
+              value={pavingType}
+              onChange={setPavingType}
+            />
+            <ExpandableNote
+              id="paving_notes"
+              label="Paving Notes"
+              value={pavingNotes}
+              onChange={setPavingNotes}
+              placeholder="Add notes about paving condition..."
+              sectionContext="paving"
+            />
           </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <ButtonSelector
+              label="Exterior Lighting"
+              options={LIGHTING_OPTIONS}
+              value={exteriorLighting}
+              onChange={setExteriorLighting}
+            />
+            <ButtonSelector
+              label="Yard/Storage"
+              options={YARD_STORAGE_OPTIONS}
+              value={yardStorage}
+              onChange={setYardStorage}
+            />
+          </div>
+
+          <div>
+            <ButtonSelector
+              label="Fencing"
+              options={FENCING_OPTIONS}
+              value={fencingType}
+              onChange={setFencingType}
+            />
+            <ExpandableNote
+              id="fencing_notes"
+              label="Fencing Notes"
+              value={fencingNotes}
+              onChange={setFencingNotes}
+              placeholder="Add notes about fencing..."
+              sectionContext="fencing"
+            />
+          </div>
+
+          <ButtonSelector
+            label="Landscaping"
+            options={LANDSCAPING_OPTIONS}
+            value={landscaping}
+            onChange={setLandscaping}
+          />
+
+          <ExpandableNote
+            id="site_improvements_notes"
+            label="Site Improvements Notes"
+            value={siteImprovementsNotes}
+            onChange={setSiteImprovementsNotes}
+            placeholder="Add general notes about site improvements..."
+            sectionContext="site_improvements"
+          />
         </div>
       </div>
 
@@ -661,73 +1514,135 @@ function SiteContent({
         <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
           Additional Site Characteristics
         </h3>
-        <div className="grid grid-cols-2 gap-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Topography</label>
-            <select
+        <div className="space-y-4">
+          <div className="grid grid-cols-2 gap-6">
+            <ButtonSelector
+              label="Topography"
+              options={TOPOGRAPHY_OPTIONS}
               value={topography}
-              onChange={(e) => setTopography(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white"
-            >
-              <option value="">Select...</option>
-              <option value="level">Level</option>
-              <option value="gently_sloping">Gently Sloping</option>
-              <option value="moderately_sloping">Moderately Sloping</option>
-              <option value="steep">Steep</option>
-              <option value="rolling">Rolling</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Drainage</label>
-            <select
+              onChange={setTopography}
+              size="sm"
+            />
+            <ButtonSelector
+              label="Drainage"
+              options={DRAINAGE_OPTIONS}
               value={drainage}
-              onChange={(e) => setDrainage(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white"
-            >
-              <option value="">Select...</option>
-              <option value="adequate">Adequate</option>
-              <option value="good">Good</option>
-              <option value="poor">Poor</option>
-              <option value="unknown">Unknown</option>
-            </select>
-          </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Flood Zone</label>
-            <input
-              type="text"
-              value={floodZone}
-              onChange={(e) => setFloodZone(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
-              placeholder="e.g., Zone X (Minimal Risk)"
+              onChange={setDrainage}
+              size="sm"
             />
           </div>
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Environmental</label>
-            <select
-              value={environmental}
-              onChange={(e) => setEnvironmental(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white"
-            >
-              <option value="">Select...</option>
-              <option value="none_known">No Known Issues</option>
-              <option value="phase1_clear">Phase 1 ESA - Clear</option>
-              <option value="phase2_required">Phase 2 Required</option>
-              <option value="contamination">Contamination Present</option>
-            </select>
-          </div>
-        </div>
-        <div className="mt-4">
+
+          <ButtonSelector
+            label="Environmental"
+            options={ENVIRONMENTAL_OPTIONS}
+            value={environmental}
+            onChange={setEnvironmental}
+          />
+
           <EnhancedTextArea
             id="easements"
             label="Easements"
             value={easements}
             onChange={setEasements}
-            placeholder="Describe any easements affecting the property: utility easements, access easements, drainage easements, etc..."
+            placeholder="Describe any easements affecting the property..."
             rows={4}
             sectionContext="easements"
-            helperText="Document all known easements and their impact on the property."
+            helperText="Document all known easements and their impact."
           />
         </div>
+      </div>
+
+      {/* Flood Zone - Enhanced */}
+      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4 flex items-center gap-2">
+          <AlertTriangle className="w-5 h-5 text-[#0da1c7]" />
+          Flood Zone
+        </h3>
+        <div className="space-y-4">
+          <ButtonSelector
+            label="FEMA Zone"
+            options={FEMA_ZONE_OPTIONS}
+            value={femaZone}
+            onChange={setFemaZone}
+          />
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Map Panel Number</label>
+              <input
+                type="text"
+                value={femaMapPanel}
+                onChange={(e) => setFemaMapPanel(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                placeholder="e.g., 30111C2175E"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Map Effective Date</label>
+              <input
+                type="date"
+                value={femaMapDate}
+                onChange={(e) => setFemaMapDate(e.target.value)}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+              />
+            </div>
+          </div>
+
+          <ButtonSelector
+            label="Flood Insurance Required"
+            options={FLOOD_INSURANCE_OPTIONS}
+            value={floodInsuranceRequired}
+            onChange={setFloodInsuranceRequired}
+          />
+
+          <ExpandableNote
+            id="flood_zone_notes"
+            label="Flood Zone Notes"
+            value={floodZoneNotes}
+            onChange={setFloodZoneNotes}
+            placeholder="Add notes about flood zone..."
+            sectionContext="flood_zone"
+          />
+        </div>
+      </div>
+
+      {/* Site Description Narrative - New Card */}
+      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+        <div className="flex items-center justify-between border-b-2 border-gray-200 pb-3 mb-4">
+          <h3 className="text-lg font-bold text-[#1c3643]">
+            Site Description Narrative
+          </h3>
+          <button
+            onClick={handleDraftSiteDescription}
+            disabled={isDraftingSiteDescription}
+            className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-[#4db8d1] to-[#7fcce0] rounded-lg hover:from-[#3da8c1] hover:to-[#6fc0d4] flex items-center gap-2 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isDraftingSiteDescription ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Drafting...
+              </>
+            ) : (
+              <>
+                <Sparkles className="w-4 h-4" />
+                AI Draft Site Description
+              </>
+            )}
+          </button>
+        </div>
+        <p className="text-sm text-gray-500 mb-4">
+          Generate a professional site description narrative from all the data entered above.
+        </p>
+        <EnhancedTextArea
+          id="site_description_narrative"
+          label="Site Description"
+          value={siteDescriptionNarrative}
+          onChange={setSiteDescriptionNarrative}
+          placeholder="The subject site is located..."
+          rows={12}
+          sectionContext="site_description_full"
+          helperText="This narrative will appear in the final appraisal report."
+        />
       </div>
     </div>
   );
@@ -922,93 +1837,578 @@ function TaxContent({
 }
 
 // ==========================================
-// PHOTOS CONTENT - Report Page-Mapped Slots
+// PHOTOS CONTENT - Rove Standard Categories
 // ==========================================
 interface PhotosProps {
-  photos: Record<string, { file: File; preview: string } | null>;
+  photos: Record<string, PhotoData | null>;
   onUpload: (slotId: string, file: File) => void;
   onRemove: (slotId: string) => void;
+  onUpdateMetadata: (slotId: string, updates: Partial<PhotoData>) => void;
+  defaultTakenBy: string;
+  defaultTakenDate: string;
+  onPreviewPhoto?: (slotId: string, photo: PhotoData) => void;
 }
 
-function PhotosContent({ photos, onUpload, onRemove }: PhotosProps) {
+function PhotosContent({ 
+  photos, 
+  onUpload, 
+  onRemove, 
+  onUpdateMetadata,
+  defaultTakenBy,
+  defaultTakenDate,
+  onPreviewPhoto,
+}: PhotosProps) {
+  const { 
+    state: wizardState,
+    getStagingPhotos, 
+    removeStagingPhoto, 
+    assignStagingPhoto,
+    getUnassignedStagingPhotos,
+    setCoverPhoto,
+    removeCoverPhoto,
+  } = useWizard();
+  
+  const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>(() => 
+    Object.fromEntries(photoCategories.map(c => [c.id, true]))
+  );
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [_hoveredSlot, setHoveredSlot] = useState<string | null>(null);
+  const [showQuickPeek, setShowQuickPeek] = useState<string | null>(null);
+  const [dragOverSlot, setDragOverSlot] = useState<string | null>(null);
+  const [showAssignmentModal, setShowAssignmentModal] = useState(false);
+  const [showCoverPhotoPicker, setShowCoverPhotoPicker] = useState(false);
+  const [focusedSlotIndex, setFocusedSlotIndex] = useState<number>(-1);
+  const [isDraggingPhoto, setIsDraggingPhoto] = useState(false);
+  const [draggedPhotoPreview, setDraggedPhotoPreview] = useState<string | undefined>();
+  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const photoSlotRefs = useRef<Record<string, HTMLDivElement | null>>({});
+  const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
+
+  // Get all slots in a flat array for keyboard navigation
+  const allSlots = useMemo(() => {
+    return photoCategories.flatMap(cat => cat.slots.map(slot => ({ ...slot, category: cat.id })));
+  }, []);
+
+  // Get used slots (slots that already have photos)
+  const usedSlots = useMemo(() => {
+    const used = new Set<string>();
+    Object.entries(photos).forEach(([slotId, photo]) => {
+      if (photo) used.add(slotId);
+    });
+    return used;
+  }, [photos]);
+
+  // Existing slot assignments for the classification service
+  const existingSlotAssignments = useMemo(() => {
+    const assignments: Record<string, string> = {};
+    Object.entries(photos).forEach(([slotId, photo]) => {
+      if (photo) assignments[slotId] = slotId;
+    });
+    return assignments;
+  }, [photos]);
+
   const handleFileChange = (slotId: string, e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
       onUpload(slotId, e.target.files[0]);
     }
   };
 
+  const toggleCategory = (categoryId: string) => {
+    setExpandedCategories(prev => ({ ...prev, [categoryId]: !prev[categoryId] }));
+  };
+
+  // Count uploaded photos per category
+  const getUploadedCount = (category: PhotoCategory) => {
+    return category.slots.filter(slot => photos[slot.id]).length;
+  };
+
+  // Drag and drop handlers for slots
+  const handleSlotDragOver = (e: React.DragEvent, slotId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!photos[slotId]) {
+      setDragOverSlot(slotId);
+    }
+  };
+
+  const handleSlotDragLeave = (e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragOverSlot(null);
+  };
+
+  const handleSlotDrop = (e: React.DragEvent, slotId: string) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setDragOverSlot(null);
+
+    // Check if it's a staging photo
+    const jsonData = e.dataTransfer.getData('application/json');
+    if (jsonData) {
+      try {
+        const data = JSON.parse(jsonData);
+        if (data.type === 'staging-photo' && data.photoId) {
+          const stagingPhotos = getStagingPhotos();
+          const stagingPhoto = stagingPhotos.find(p => p.id === data.photoId);
+          if (stagingPhoto) {
+            // Upload the file to the slot
+            onUpload(slotId, stagingPhoto.file);
+            // Mark as assigned and remove from staging
+            assignStagingPhoto(data.photoId, slotId);
+            removeStagingPhoto(data.photoId);
+            return;
+          }
+        }
+      } catch {
+        // Not JSON, fall through to file handling
+      }
+    }
+
+    // Handle direct file drops
+    const files = e.dataTransfer.files;
+    if (files.length > 0) {
+      const file = files[0];
+      if (file.type.startsWith('image/')) {
+        onUpload(slotId, file);
+      }
+    }
+  };
+
+  // Handle assigning a staging photo to a slot
+  const handleAssignStagingPhoto = (photo: { id: string; file: File }, slotId: string) => {
+    onUpload(slotId, photo.file);
+    assignStagingPhoto(photo.id, slotId);
+    removeStagingPhoto(photo.id);
+  };
+
+  // Handle accepting all AI suggestions
+  const handleAcceptAllSuggestions = useCallback(() => {
+    const unassigned = getUnassignedStagingPhotos();
+    const localUsedSlots = new Set(usedSlots);
+    unassigned.forEach(photo => {
+      const topSuggestion = photo.suggestions?.[0];
+      if (topSuggestion && !localUsedSlots.has(topSuggestion.slotId)) {
+        onUpload(topSuggestion.slotId, photo.file);
+        assignStagingPhoto(photo.id, topSuggestion.slotId);
+        removeStagingPhoto(photo.id);
+        localUsedSlots.add(topSuggestion.slotId); // Mark as used for subsequent photos
+      }
+    });
+  }, [getUnassignedStagingPhotos, usedSlots, onUpload, assignStagingPhoto, removeStagingPhoto]);
+
+  // Keyboard navigation handler
+  const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    // Only handle if no input is focused
+    if (document.activeElement?.tagName === 'INPUT' || document.activeElement?.tagName === 'TEXTAREA') {
+      return;
+    }
+
+    switch (e.key) {
+      case 'ArrowRight':
+      case 'ArrowDown':
+        e.preventDefault();
+        setFocusedSlotIndex(prev => {
+          const next = prev + 1;
+          if (next >= allSlots.length) return 0;
+          return next;
+        });
+        break;
+      case 'ArrowLeft':
+      case 'ArrowUp':
+        e.preventDefault();
+        setFocusedSlotIndex(prev => {
+          const next = prev - 1;
+          if (next < 0) return allSlots.length - 1;
+          return next;
+        });
+        break;
+      case 'Enter':
+      case ' ':
+        if (focusedSlotIndex >= 0 && focusedSlotIndex < allSlots.length) {
+          e.preventDefault();
+          const slot = allSlots[focusedSlotIndex];
+          const fileInput = fileInputRefs.current[slot.id];
+          if (fileInput && !photos[slot.id]) {
+            fileInput.click();
+          }
+        }
+        break;
+      case 'Delete':
+      case 'Backspace':
+        if (focusedSlotIndex >= 0 && focusedSlotIndex < allSlots.length) {
+          e.preventDefault();
+          const slot = allSlots[focusedSlotIndex];
+          if (photos[slot.id]) {
+            onRemove(slot.id);
+          }
+        }
+        break;
+      case 'a':
+        // Accept all suggestions with Ctrl/Cmd + A
+        if ((e.ctrlKey || e.metaKey) && getUnassignedStagingPhotos().length > 0) {
+          e.preventDefault();
+          handleAcceptAllSuggestions();
+        }
+        break;
+    }
+  }, [focusedSlotIndex, allSlots, photos, onRemove, getUnassignedStagingPhotos, handleAcceptAllSuggestions]);
+
+  // Focus the slot element when focusedSlotIndex changes
+  useEffect(() => {
+    if (focusedSlotIndex >= 0 && focusedSlotIndex < allSlots.length) {
+      const slot = allSlots[focusedSlotIndex];
+      const element = photoSlotRefs.current[slot.id];
+      if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        element.focus();
+      }
+    }
+  }, [focusedSlotIndex, allSlots]);
+
+  // Register keyboard event listener
+  useEffect(() => {
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [handleKeyDown]);
+
+  // Handle bulk upload completion
+  const handlePhotosProcessed = () => {
+    // Could show the assignment modal automatically
+    // For now, staging tray handles it inline
+  };
+
+  // Handle assignment modal apply
+  const handleApplyAssignments = (assignments: Record<string, string>) => {
+    const stagingPhotos = getStagingPhotos();
+    Object.entries(assignments).forEach(([photoId, slotId]) => {
+      const photo = stagingPhotos.find(p => p.id === photoId);
+      if (photo) {
+        onUpload(slotId, photo.file);
+        assignStagingPhoto(photoId, slotId);
+        removeStagingPhoto(photoId);
+      }
+    });
+  };
+
+  // Hover preview handling with 300ms delay
+  const handleMouseEnter = (slotId: string) => {
+    setHoveredSlot(slotId);
+    if (photos[slotId]) {
+      hoverTimeoutRef.current = setTimeout(() => {
+        setShowQuickPeek(slotId);
+      }, 300);
+    }
+  };
+
+  const handleMouseLeave = () => {
+    setHoveredSlot(null);
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+    setShowQuickPeek(null);
+  };
+
   return (
     <div className="space-y-6">
-      {/* Report Primary Photos */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
-          Report Primary Photos
-        </h3>
-        <p className="text-sm text-gray-600 mb-4">
-          Each photo slot corresponds to a specific page in the final report. Upload high-quality exterior photos.
-        </p>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {photoSlots.map((slot) => (
-            <div key={slot.id} className="border border-gray-200 rounded-xl p-4">
-              <div className="flex items-start justify-between gap-3 mb-3">
-                <div>
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-[#0da1c7]/10 text-[#1c3643] border border-[#0da1c7]/20 mb-1">
-                    Page {slot.page}
-                  </span>
-                  <p className="text-sm font-medium text-gray-800">{slot.label}</p>
-                </div>
-              </div>
-              
-              {photos[slot.id] ? (
-                <div className="relative group">
-                  <img
-                    src={photos[slot.id]!.preview}
-                    alt={slot.label}
-                    className="w-full h-32 object-cover rounded-lg"
-                  />
-                  <button
-                    onClick={() => onRemove(slot.id)}
-                    className="absolute top-2 right-2 p-1 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              ) : (
-                <label className="block border-2 border-dashed border-gray-300 rounded-lg p-6 text-center cursor-pointer hover:border-[#0da1c7] hover:bg-[#0da1c7]/5 transition-all">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    className="hidden"
-                    onChange={(e) => handleFileChange(slot.id, e)}
-                  />
-                  <Image className="w-8 h-8 text-gray-400 mx-auto mb-2" />
-                  <p className="text-xs text-gray-500">Click to upload</p>
-                </label>
-              )}
+      {/* Cover Photo Section - Hero image for report title page */}
+      <CoverPhotoSection
+        coverPhoto={wizardState.coverPhoto}
+        onSetCoverPhoto={setCoverPhoto}
+        onRemoveCoverPhoto={removeCoverPhoto}
+        uploadedPhotos={photos}
+        subjectData={wizardState.subjectData}
+        onOpenPicker={() => setShowCoverPhotoPicker(true)}
+      />
+
+      {/* Cover Photo Picker Modal */}
+      <CoverPhotoPickerModal
+        isOpen={showCoverPhotoPicker}
+        onClose={() => setShowCoverPhotoPicker(false)}
+        onSelect={setCoverPhoto}
+        uploadedPhotos={photos}
+      />
+
+      {/* Bulk Upload Drop Zone */}
+      <BulkPhotoDropZone
+        onPhotosProcessed={handlePhotosProcessed}
+        existingSlotAssignments={existingSlotAssignments}
+      />
+
+      {/* Staging Tray - Shows unassigned photos */}
+      <PhotoStagingTray
+        onAssignPhoto={handleAssignStagingPhoto}
+        onAcceptAllSuggestions={handleAcceptAllSuggestions}
+        usedSlots={usedSlots}
+        onDragStart={(photo) => {
+          setIsDraggingPhoto(true);
+          setDraggedPhotoPreview(photo.preview);
+        }}
+        onDragEnd={() => {
+          setIsDraggingPhoto(false);
+          setDraggedPhotoPreview(undefined);
+        }}
+      />
+
+      {/* Floating Drop Panel - Appears when dragging a photo */}
+      <FloatingDropPanel
+        isVisible={isDraggingPhoto}
+        draggedPhotoPreview={draggedPhotoPreview}
+        usedSlots={usedSlots}
+        onDropToSlot={(slotId) => {
+          const stagingPhotos = getStagingPhotos();
+          const unassigned = stagingPhotos.filter(p => !p.assignedSlot);
+          // Find the photo that's currently being dragged
+          // For now, we'll use the first unassigned one since we're dragging
+          if (unassigned.length > 0) {
+            const photo = unassigned.find(p => p.preview === draggedPhotoPreview) || unassigned[0];
+            if (photo) {
+              onUpload(slotId, photo.file);
+              assignStagingPhoto(photo.id, slotId);
+              removeStagingPhoto(photo.id);
+            }
+          }
+          setIsDraggingPhoto(false);
+          setDraggedPhotoPreview(undefined);
+        }}
+      />
+
+      {/* Photo Stats Summary */}
+      <div className="bg-gradient-to-r from-[#0da1c7]/10 to-[#4db8d1]/5 border border-[#0da1c7]/20 rounded-xl p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-lg bg-[#0da1c7]/20 flex items-center justify-center">
+              <Camera className="w-5 h-5 text-[#0da1c7]" />
             </div>
-          ))}
+            <div>
+              <p className="font-semibold text-[#1c3643]">Subject Property Photos</p>
+              <p className="text-sm text-gray-600">
+                {Object.values(photos).filter(Boolean).length} of{' '}
+                {photoCategories.reduce((sum, c) => sum + c.slots.length, 0)} photos uploaded
+              </p>
+            </div>
+          </div>
+          <div className="flex gap-2 text-xs">
+            {photoCategories.map(cat => {
+              const CatIcon = cat.Icon;
+              return (
+                <div 
+                  key={cat.id}
+                  className={`px-2 py-1 rounded-full flex items-center gap-1 ${
+                    getUploadedCount(cat) > 0 
+                      ? 'bg-green-100 text-green-700' 
+                      : 'bg-gray-100 text-gray-500'
+                  }`}
+                >
+                  <CatIcon className="w-3 h-3" />
+                  <span>{getUploadedCount(cat)}/{cat.slots.length}</span>
+                </div>
+              );
+            })}
+          </div>
         </div>
       </div>
 
-      {/* Additional Photos */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
-          Additional Property Photos
-        </h3>
-        <div className="border-2 border-dashed border-gray-300 rounded-xl p-12 text-center">
-          <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-          <p className="text-gray-600 mb-2">Drag and drop additional photos here, or click to browse</p>
-          <button className="px-4 py-2 bg-[#0da1c7] text-white rounded-lg text-sm font-medium hover:bg-[#0b8fb0]">
-            Upload Photos
+      {/* Assignment Modal */}
+      <PhotoAssignmentModal
+        isOpen={showAssignmentModal}
+        onClose={() => setShowAssignmentModal(false)}
+        onApply={handleApplyAssignments}
+        existingSlotAssignments={existingSlotAssignments}
+      />
+
+      {/* Photo Categories */}
+      {photoCategories.map((category) => (
+        <div 
+          key={category.id}
+          className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden"
+        >
+          {/* Category Header */}
+          <button
+            onClick={() => toggleCategory(category.id)}
+            className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+          >
+            <div className="flex items-center gap-3">
+              <div className="w-10 h-10 rounded-lg bg-[#0da1c7]/10 flex items-center justify-center">
+                <category.Icon className="w-5 h-5 text-[#0da1c7]" />
+              </div>
+              <div className="text-left">
+                <h3 className="font-bold text-[#1c3643]">{category.label}</h3>
+                <p className="text-sm text-gray-500">{category.description}</p>
+              </div>
+            </div>
+            <div className="flex items-center gap-3">
+              <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
+                getUploadedCount(category) > 0 
+                  ? 'bg-green-100 text-green-700' 
+                  : 'bg-gray-100 text-gray-500'
+              }`}>
+                {getUploadedCount(category)}/{category.slots.length}
+              </span>
+              {category.reportPages && (
+                <span className="text-xs text-gray-400">
+                  {category.reportPages}
+                </span>
+              )}
+              <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${
+                expandedCategories[category.id] ? 'rotate-180' : ''
+              }`} />
+            </div>
           </button>
+
+          {/* Category Content */}
+          {expandedCategories[category.id] && (
+            <div className="border-t border-gray-100 p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {category.slots.map((slot) => {
+                  const photo = photos[slot.id];
+                  const isDragOver = dragOverSlot === slot.id;
+                  const globalIndex = allSlots.findIndex(s => s.id === slot.id);
+                  const isFocused = focusedSlotIndex === globalIndex;
+                  
+                  return (
+                    <div 
+                      key={slot.id}
+                      ref={(el) => { photoSlotRefs.current[slot.id] = el; }}
+                      tabIndex={0}
+                      className={`border-2 rounded-xl p-4 transition-all outline-none ${
+                        isFocused
+                          ? 'ring-2 ring-[#0da1c7] ring-offset-2'
+                          : ''
+                      } ${
+                        isDragOver && !photo
+                          ? 'border-[#0da1c7] bg-[#0da1c7]/10 scale-[1.02]'
+                          : photo 
+                            ? 'border-green-200 bg-green-50/30' 
+                            : slot.recommended 
+                              ? 'border-[#0da1c7]/30 bg-[#0da1c7]/5' 
+                              : 'border-gray-200'
+                      }`}
+                      onMouseEnter={() => handleMouseEnter(slot.id)}
+                      onMouseLeave={handleMouseLeave}
+                      onDragOver={(e) => handleSlotDragOver(e, slot.id)}
+                      onDragLeave={handleSlotDragLeave}
+                      onDrop={(e) => handleSlotDrop(e, slot.id)}
+                      onFocus={() => setFocusedSlotIndex(globalIndex)}
+                    >
+                      {/* Slot Header */}
+                      <div className="flex items-start justify-between gap-2 mb-3">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-1">
+                            <p className="text-sm font-medium text-gray-800">{slot.label}</p>
+                            {slot.recommended && !photo && (
+                              <span className="px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-medium rounded">
+                                Recommended
+                              </span>
+                            )}
+                          </div>
+                          {slot.description && (
+                            <p className="text-xs text-gray-500">{slot.description}</p>
+                          )}
+                        </div>
+                        {photo && (
+                          <button
+                            onClick={() => onRemove(slot.id)}
+                            className="p-1 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors"
+                            title="Remove photo"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        )}
+                      </div>
+
+                      {photo ? (
+                        <div className="space-y-3">
+                          {/* Photo Preview */}
+                          <div className="relative group">
+                            <img
+                              src={photo.preview}
+                              alt={slot.label}
+                              className="w-full h-32 object-cover rounded-lg"
+                            />
+                            {/* Preview button overlay */}
+                            {onPreviewPhoto && (
+                              <button
+                                onClick={() => onPreviewPhoto(slot.id, photo)}
+                                className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg"
+                                title="Preview in report"
+                              >
+                                <div className="flex items-center gap-2 px-3 py-1.5 bg-white/90 rounded-full text-sm font-medium text-gray-800">
+                                  <Eye className="w-4 h-4" />
+                                  Preview
+                                </div>
+                              </button>
+                            )}
+                          </div>
+
+                          {/* Photo Metadata Fields */}
+                          <div className="space-y-2">
+                            {/* Caption */}
+                            <input
+                              type="text"
+                              placeholder="Photo caption (e.g., South Elevation)"
+                              value={photo.caption || ''}
+                              onChange={(e) => onUpdateMetadata(slot.id, { caption: e.target.value })}
+                              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/40"
+                            />
+                            
+                            {/* Taken By & Date (collapsed row) */}
+                            <div className="flex gap-2">
+                              <input
+                                type="text"
+                                placeholder="Taken by"
+                                value={photo.takenBy || defaultTakenBy}
+                                onChange={(e) => onUpdateMetadata(slot.id, { takenBy: e.target.value })}
+                                className="flex-1 px-2 py-1.5 text-xs border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-[#0da1c7]/40"
+                              />
+                              <input
+                                type="date"
+                                value={photo.takenDate || defaultTakenDate}
+                                onChange={(e) => onUpdateMetadata(slot.id, { takenDate: e.target.value })}
+                                className="w-32 px-2 py-1.5 text-xs border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-[#0da1c7]/40"
+                              />
+                            </div>
+                          </div>
+                        </div>
+                      ) : (
+                        <label className={`block border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-all ${
+                          isDragOver 
+                            ? 'border-[#0da1c7] bg-[#0da1c7]/10' 
+                            : isFocused
+                              ? 'border-[#0da1c7] bg-[#0da1c7]/5'
+                              : 'border-gray-300 hover:border-[#0da1c7] hover:bg-[#0da1c7]/5'
+                        }`}>
+                          <input
+                            ref={(el) => { fileInputRefs.current[slot.id] = el; }}
+                            type="file"
+                            accept="image/*"
+                            className="hidden"
+                            onChange={(e) => handleFileChange(slot.id, e)}
+                          />
+                          <Image className={`w-8 h-8 mx-auto mb-2 ${isDragOver || isFocused ? 'text-[#0da1c7]' : 'text-gray-400'}`} />
+                          <p className={`text-xs ${isDragOver || isFocused ? 'text-[#0da1c7] font-medium' : 'text-gray-500'}`}>
+                            {isDragOver ? 'Drop here' : isFocused ? 'Press Enter to upload' : 'Click or drag to upload'}
+                          </p>
+                        </label>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
-      </div>
+      ))}
 
       {/* Auto-Generate Maps */}
       <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
+        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4 flex items-center gap-2">
+          <MapPin className="w-5 h-5 text-[#0da1c7]" />
           Maps
         </h3>
+        <p className="text-sm text-gray-600 mb-4">
+          Generate maps automatically from the property address.
+        </p>
         <div className="flex flex-wrap gap-3">
           <button className="px-4 py-2 border border-[#0da1c7] text-[#0da1c7] rounded-lg text-sm font-medium hover:bg-[#0da1c7]/10 flex items-center gap-2">
             <MapPin className="w-4 h-4" />
@@ -1024,6 +2424,31 @@ function PhotosContent({ photos, onUpload, onRemove }: PhotosProps) {
           </button>
         </div>
       </div>
+
+      {/* Photo Quick Peek Preview */}
+      {showQuickPeek && photos[showQuickPeek] && (() => {
+        // Find the slot and category info
+        let slotLabel = '';
+        let categoryLabel = '';
+        for (const cat of photoCategories) {
+          const slot = cat.slots.find(s => s.id === showQuickPeek);
+          if (slot) {
+            slotLabel = slot.label;
+            categoryLabel = cat.label;
+            break;
+          }
+        }
+        return (
+          <PhotoQuickPeek
+            photo={photos[showQuickPeek]!}
+            slotLabel={slotLabel}
+            categoryLabel={categoryLabel}
+            anchorElement={photoSlotRefs.current[showQuickPeek]}
+            isVisible={true}
+            onClose={handleMouseLeave}
+          />
+        );
+      })()}
     </div>
   );
 }
@@ -1031,6 +2456,20 @@ function PhotosContent({ photos, onUpload, onRemove }: PhotosProps) {
 // ==========================================
 // EXHIBITS CONTENT - With Intake Integration
 // ==========================================
+
+// Document type display info with proper SVG icons
+const DOCUMENT_TYPE_INFO: Record<string, { label: string; Icon: React.FC<{ className?: string }>; color: string }> = {
+  cadastral: { label: 'Cadastral / County Records', Icon: Landmark, color: 'blue' },
+  engagement: { label: 'Engagement Letter', Icon: FileSignature, color: 'purple' },
+  sale: { label: 'Buy/Sale Agreement', Icon: Handshake, color: 'green' },
+  lease: { label: 'Lease Agreement', Icon: File, color: 'orange' },
+  rentroll: { label: 'Rent Roll', Icon: BarChart3, color: 'teal' },
+  survey: { label: 'Survey / Plat Map', Icon: Map, color: 'indigo' },
+  tax_return: { label: 'Tax Return', Icon: Receipt, color: 'red' },
+  financial_statement: { label: 'Financial Statement', Icon: Wallet, color: 'emerald' },
+  unknown: { label: 'Other Document', Icon: Folder, color: 'gray' },
+};
+
 interface ExhibitsProps {
   exhibits: Record<string, { file: File; name: string } | null>;
   includeInReport: Record<string, boolean>;
@@ -1039,118 +2478,342 @@ interface ExhibitsProps {
   onRemove: (slotId: string) => void;
 }
 
-function ExhibitsContent({ exhibits, includeInReport, setIncludeInReport, onUpload, onRemove }: ExhibitsProps) {
-  const handleFileChange = (slotId: string, e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files?.[0]) {
-      onUpload(slotId, e.target.files[0]);
-    }
+interface CustomExhibit {
+  id: string;
+  file: File;
+  name: string;
+  preview?: string;
+  status: 'uploading' | 'processing' | 'ready';
+  includeInReport: boolean;
+}
+
+// Props note: exhibits, includeInReport, setIncludeInReport, onUpload, onRemove are available via ExhibitsProps for future features
+function ExhibitsContent(_props: ExhibitsProps) {
+  const { state: wizardState } = useWizard();
+  const [customExhibits, setCustomExhibits] = useState<CustomExhibit[]>([]);
+  const [isDragOver, setIsDragOver] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editName, setEditName] = useState('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Get documents from WizardContext (uploaded during Document Intake phase)
+  const intakeDocuments = wizardState.uploadedDocuments || [];
+  const hasIntakeDocuments = intakeDocuments.length > 0;
+
+  // Format file size
+  const formatFileSize = (bytes: number) => {
+    if (bytes < 1024) return `${bytes} B`;
+    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
+    return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
   };
 
-  // Check for documents from intake
-  const storedDocs = sessionStorage.getItem('harken_upload_preview');
-  const intakeDocs = storedDocs ? JSON.parse(storedDocs) : { cadastral: [], engagement: [] };
-  const hasIntakeDocs = intakeDocs.cadastral.length > 0 || intakeDocs.engagement.length > 0;
+  // AI-powered name extraction from filename
+  const extractDocumentName = (filename: string): string => {
+    // Remove extension
+    let name = filename.replace(/\.[^/.]+$/, '');
+    // Replace underscores and hyphens with spaces
+    name = name.replace(/[_-]/g, ' ');
+    // Remove common prefixes like dates, numbers
+    name = name.replace(/^\d{4}[-_]?\d{2}[-_]?\d{2}\s*/, '');
+    name = name.replace(/^\d+\s*[-_]\s*/, '');
+    // Capitalize first letter of each word
+    name = name.replace(/\b\w/g, l => l.toUpperCase());
+    // If still empty, use generic name
+    if (!name.trim()) {
+      name = 'Custom Exhibit';
+    }
+    return name.trim();
+  };
+
+  // Handle file drop
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setIsDragOver(false);
+
+    const files = Array.from(e.dataTransfer.files);
+    processFiles(files);
+  }, []);
+
+  // Handle file selection
+  const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = Array.from(e.target.files || []);
+    processFiles(files);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  }, []);
+
+  // Process uploaded files
+  const processFiles = (files: File[]) => {
+    const newExhibits: CustomExhibit[] = files.map(file => {
+      const id = `exhibit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const suggestedName = extractDocumentName(file.name);
+      
+      // Create preview for images/PDFs
+      let preview: string | undefined;
+      if (file.type.startsWith('image/')) {
+        preview = URL.createObjectURL(file);
+      }
+
+      return {
+        id,
+        file,
+        name: suggestedName,
+        preview,
+        status: 'ready' as const,
+        includeInReport: true,
+      };
+    });
+
+    setCustomExhibits(prev => [...prev, ...newExhibits]);
+  };
+
+  // Remove custom exhibit
+  const handleRemoveExhibit = (id: string) => {
+    setCustomExhibits(prev => prev.filter(e => e.id !== id));
+  };
+
+  // Start editing name
+  const handleStartEdit = (exhibit: CustomExhibit) => {
+    setEditingId(exhibit.id);
+    setEditName(exhibit.name);
+  };
+
+  // Save edited name
+  const handleSaveName = (id: string) => {
+    if (editName.trim()) {
+      setCustomExhibits(prev => prev.map(e => 
+        e.id === id ? { ...e, name: editName.trim() } : e
+      ));
+    }
+    setEditingId(null);
+    setEditName('');
+  };
+
+  // Get file type icon
+  const getFileIcon = (file: File) => {
+    if (file.type.startsWith('image/')) return <Image className="w-5 h-5 text-violet-500" />;
+    if (file.type === 'application/pdf') return <FileText className="w-5 h-5 text-[#0da1c7]" />;
+    if (file.type.includes('spreadsheet') || file.type.includes('excel')) return <BarChart3 className="w-5 h-5 text-emerald-500" />;
+    if (file.type.includes('document') || file.type.includes('word')) return <File className="w-5 h-5 text-blue-500" />;
+    return <Folder className="w-5 h-5 text-slate-500" />;
+  };
 
   return (
     <div className="space-y-6">
-      {/* Documents from Intake */}
-      {hasIntakeDocs && (
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
-          <h3 className="text-lg font-bold text-blue-900 mb-3 flex items-center gap-2">
-            <FileText className="w-5 h-5" />
-            Documents from Intake
-          </h3>
-          <p className="text-sm text-blue-700 mb-4">
-            These documents were uploaded during the document intake phase. Toggle which ones to include in the final report.
-          </p>
-          <div className="space-y-2">
-            {intakeDocs.cadastral.map((doc: any, i: number) => (
-              <label key={`cad-${i}`} className="flex items-center gap-3 p-3 bg-white rounded-lg border border-blue-200 cursor-pointer hover:border-blue-400">
-                <input
-                  type="checkbox"
-                  checked={includeInReport[`intake_cadastral_${i}`] ?? true}
-                  onChange={(e) => setIncludeInReport(prev => ({ ...prev, [`intake_cadastral_${i}`]: e.target.checked }))}
-                  className="w-4 h-4 rounded border-gray-300 text-[#0da1c7] focus:ring-[#0da1c7]"
-                />
-                <FileText className="w-4 h-4 text-blue-600" />
-                <span className="text-sm text-gray-800 flex-1">{doc.name}</span>
-                <span className="text-xs text-gray-500">Cadastral</span>
-              </label>
-            ))}
-            {intakeDocs.engagement.map((doc: any, i: number) => (
-              <label key={`eng-${i}`} className="flex items-center gap-3 p-3 bg-white rounded-lg border border-blue-200 cursor-pointer hover:border-blue-400">
-                <input
-                  type="checkbox"
-                  checked={includeInReport[`intake_engagement_${i}`] ?? true}
-                  onChange={(e) => setIncludeInReport(prev => ({ ...prev, [`intake_engagement_${i}`]: e.target.checked }))}
-                  className="w-4 h-4 rounded border-gray-300 text-[#0da1c7] focus:ring-[#0da1c7]"
-                />
-                <FileText className="w-4 h-4 text-blue-600" />
-                <span className="text-sm text-gray-800 flex-1">{doc.name}</span>
-                <span className="text-xs text-gray-500">Engagement</span>
-              </label>
-            ))}
+      {/* Documents from Intake - styled like Document Intake page */}
+      {hasIntakeDocuments && (
+        <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-lg font-bold text-[#1c3643] flex items-center gap-2">
+              <FileText className="w-5 h-5 text-[#0da1c7]" />
+              Documents from Intake ({intakeDocuments.length})
+            </h3>
+            <p className="text-xs text-green-600 flex items-center gap-1">
+              <CheckCircle className="w-3.5 h-3.5" />
+              All documents processed
+            </p>
+          </div>
+          <div className="space-y-3">
+            {intakeDocuments.map((doc) => {
+              const typeInfo = DOCUMENT_TYPE_INFO[doc.slotId] || DOCUMENT_TYPE_INFO.unknown;
+              
+              return (
+                <div 
+                  key={doc.id} 
+                  className="flex items-center gap-4 p-4 bg-white rounded-xl border border-gray-200 hover:border-[#0da1c7]/30 transition-all group"
+                >
+                  {/* Icon */}
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center flex-shrink-0 border border-slate-200">
+                    <typeInfo.Icon className="w-5 h-5 text-slate-600" />
+                  </div>
+
+                  {/* Name and size */}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-semibold text-gray-900 truncate">{doc.name}</p>
+                    <p className="text-xs text-gray-500">{formatFileSize(doc.size)}</p>
+                  </div>
+
+                  {/* Classification badge */}
+                  <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-[#0da1c7]/10 text-[#0da1c7] border border-[#0da1c7]/20">
+                    {typeInfo.label}
+                  </span>
+
+                  {/* Fields extracted indicator */}
+                  {doc.extractedData && Object.keys(doc.extractedData).length > 0 && (
+                    <span className="text-xs text-green-600 flex items-center gap-1">
+                      <CheckCircle className="w-3.5 h-3.5" />
+                      {Object.keys(doc.extractedData).length} fields extracted
+                    </span>
+                  )}
+                </div>
+              );
+            })}
           </div>
         </div>
       )}
 
-      {/* Required Documents */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
-          Required Documents
-        </h3>
-        <div className="space-y-4">
-          {exhibitSlots.map((slot) => (
-            <div
-              key={slot.id}
-              className="flex items-center justify-between p-4 border-2 border-gray-200 rounded-lg hover:border-[#0da1c7] transition-all"
-            >
-              <div className="flex items-center gap-3">
-                {exhibits[slot.id] ? (
-                  <CheckCircle className="w-8 h-8 text-green-500" />
-                ) : (
-                  <FileText className="w-8 h-8 text-gray-400" />
-                )}
-                <div>
-                  <div className="font-semibold text-gray-900">{slot.label}</div>
-                  <div className="text-xs text-gray-500">{slot.description}</div>
-                  {exhibits[slot.id] && (
-                    <div className="text-xs text-green-600 mt-1">{exhibits[slot.id]!.name}</div>
-                  )}
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                {exhibits[slot.id] && (
-                  <button
-                    onClick={() => onRemove(slot.id)}
-                    className="p-1 text-gray-400 hover:text-red-500"
-                  >
-                    <X className="w-5 h-5" />
-                  </button>
-                )}
-                <label className="px-4 py-2 bg-[#0da1c7] text-white rounded-lg text-sm font-medium hover:bg-[#0b8fb0] cursor-pointer">
-                  <input
-                    type="file"
-                    className="hidden"
-                    onChange={(e) => handleFileChange(slot.id, e)}
-                  />
-                  {exhibits[slot.id] ? 'Replace' : 'Upload'}
-                </label>
-              </div>
-            </div>
-          ))}
+      {/* Empty State if no documents */}
+      {!hasIntakeDocuments && (
+        <div className="bg-gray-50 border border-gray-200 rounded-xl p-8 text-center">
+          <FileText className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+          <h3 className="text-lg font-medium text-gray-700 mb-2">No Documents Uploaded</h3>
+          <p className="text-sm text-gray-500 mb-4">
+            Documents uploaded during the Document Intake phase will appear here.
+          </p>
+          <p className="text-xs text-gray-400">
+            You can add additional exhibits below.
+          </p>
         </div>
-      </div>
+      )}
 
       {/* Additional Exhibits */}
       <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
         <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
           Additional Exhibits
         </h3>
-        <button className="w-full px-4 py-3 border-2 border-dashed border-gray-300 rounded-lg text-gray-600 hover:border-[#0da1c7] hover:text-[#0da1c7] transition-all flex items-center justify-center gap-2">
-          <Upload className="w-5 h-5" />
-          Add Custom Exhibit
-        </button>
+        <p className="text-sm text-gray-600 mb-4">
+          Upload additional documents to include in the report addenda.
+        </p>
+
+        {/* Uploaded Custom Exhibits - styled like Document Intake */}
+        {customExhibits.length > 0 && (
+          <div className="space-y-3 mb-4">
+            <div className="flex items-center justify-between">
+              <p className="text-sm font-medium text-gray-700">
+                Uploaded Exhibits ({customExhibits.length})
+              </p>
+              <p className="text-xs text-green-600 flex items-center gap-1">
+                <CheckCircle className="w-3.5 h-3.5" />
+                Ready for report
+              </p>
+            </div>
+            {customExhibits.map((exhibit) => (
+              <div
+                key={exhibit.id}
+                className="flex items-center gap-4 p-4 bg-white rounded-xl border border-gray-200 hover:border-[#0da1c7]/30 transition-all group"
+              >
+                {/* Icon */}
+                <div className="w-10 h-10 rounded-xl overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center flex-shrink-0 border border-slate-200">
+                  {exhibit.preview ? (
+                    <img src={exhibit.preview} alt="" className="w-full h-full object-cover" />
+                  ) : (
+                    getFileIcon(exhibit.file)
+                  )}
+                </div>
+
+                {/* Name and details */}
+                <div className="flex-1 min-w-0">
+                  {editingId === exhibit.id ? (
+                    <div className="flex items-center gap-2">
+                      <input
+                        type="text"
+                        value={editName}
+                        onChange={(e) => setEditName(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter') handleSaveName(exhibit.id);
+                          if (e.key === 'Escape') { setEditingId(null); setEditName(''); }
+                        }}
+                        autoFocus
+                        className="flex-1 px-3 py-1.5 text-sm border border-[#0da1c7] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/30"
+                      />
+                      <button
+                        onClick={() => handleSaveName(exhibit.id)}
+                        className="p-1.5 text-[#0da1c7] hover:bg-[#0da1c7]/10 rounded-lg"
+                      >
+                        <Check className="w-4 h-4" />
+                      </button>
+                      <button
+                        onClick={() => { setEditingId(null); setEditName(''); }}
+                        className="p-1.5 text-gray-400 hover:bg-gray-100 rounded-lg"
+                      >
+                        <X className="w-4 h-4" />
+                      </button>
+                    </div>
+                  ) : (
+                    <>
+                      <p className="text-sm font-semibold text-gray-900 truncate">
+                        {exhibit.name}
+                      </p>
+                      <p className="text-xs text-gray-500">{formatFileSize(exhibit.file.size)}</p>
+                    </>
+                  )}
+                </div>
+
+                {/* Classification badge */}
+                <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-[#0da1c7]/10 text-[#0da1c7] border border-[#0da1c7]/20">
+                  Custom Exhibit
+                </span>
+
+                {/* Change name link */}
+                {editingId !== exhibit.id && (
+                  <button
+                    onClick={() => handleStartEdit(exhibit)}
+                    className="text-xs text-gray-400 hover:text-[#0da1c7] transition-colors"
+                  >
+                    Change
+                  </button>
+                )}
+
+                {/* Remove button */}
+                <button
+                  onClick={() => handleRemoveExhibit(exhibit.id)}
+                  className="p-1.5 text-gray-300 hover:text-gray-500 transition-colors"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* Drag & Drop Upload Zone */}
+        <div
+          onDragOver={(e) => { e.preventDefault(); setIsDragOver(true); }}
+          onDragLeave={(e) => { e.preventDefault(); setIsDragOver(false); }}
+          onDrop={handleDrop}
+          onClick={() => fileInputRef.current?.click()}
+          className={`
+            w-full px-4 py-6 border-2 border-dashed rounded-xl cursor-pointer
+            transition-all duration-200 flex flex-col items-center gap-2
+            ${isDragOver 
+              ? 'border-[#0da1c7] bg-[#0da1c7]/10 scale-[1.01]' 
+              : 'border-gray-300 hover:border-[#0da1c7] hover:bg-[#0da1c7]/5'
+            }
+          `}
+        >
+          <div className={`
+            w-12 h-12 rounded-xl flex items-center justify-center transition-all
+            ${isDragOver ? 'bg-[#0da1c7] text-white scale-110' : 'bg-gray-100 text-gray-400'}
+          `}>
+            <Upload className="w-6 h-6" />
+          </div>
+          <div className="text-center">
+            <p className={`font-medium ${isDragOver ? 'text-[#0da1c7]' : 'text-gray-700'}`}>
+              {isDragOver ? 'Drop files here' : 'Drop files here or click to browse'}
+            </p>
+            <p className="text-xs text-gray-500 mt-1">
+              PDF, Word, Excel, Images, and more
+            </p>
+          </div>
+        </div>
+
+        {/* Hidden file input */}
+        <input
+          ref={fileInputRef}
+          type="file"
+          multiple
+          accept=".pdf,.doc,.docx,.xls,.xlsx,.png,.jpg,.jpeg,.gif,.webp,.heic"
+          className="hidden"
+          onChange={handleFileChange}
+        />
+
+        {/* Helper text */}
+        <p className="text-xs text-gray-500 mt-3 flex items-center gap-1.5">
+          <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+          Document names are auto-detected. Click any name to edit it.
+        </p>
       </div>
     </div>
   );

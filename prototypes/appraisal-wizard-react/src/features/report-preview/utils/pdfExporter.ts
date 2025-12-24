@@ -134,8 +134,8 @@ export function printToPDF(element?: HTMLElement): void {
     // Clone the element and prepare for print
     const printWindow = window.open('', '_blank');
     if (!printWindow) {
-      alert('Please allow popups to print the report.');
-      return;
+      // Throw error so caller can handle with toast notification
+      throw new Error('Please allow popups to print the report. Check your browser settings.');
     }
 
     // Copy styles
