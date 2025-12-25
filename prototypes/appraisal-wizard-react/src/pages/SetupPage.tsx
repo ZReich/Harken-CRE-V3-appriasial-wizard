@@ -1,11 +1,12 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import WizardLayout from '../components/WizardLayout';
 import EnhancedTextArea from '../components/EnhancedTextArea';
 import WizardGuidancePanel from '../components/WizardGuidancePanel';
 import PropertyLookupModal from '../components/PropertyLookupModal';
 import { useWizard } from '../context/WizardContext';
-import { Trash2, Plus, Lock, Search } from 'lucide-react';
+import { Trash2, Plus, Lock, Search, Loader2, CheckCircle, MapPin, AlertCircle } from 'lucide-react';
 import type { CadastralData } from '../types/api';
+import { getPropertyData, getLookupCostInfo, type PropertyLookupResult } from '../services/propertyDataRouter';
 import {
   ClipboardCheckIcon,
   ScaleIcon,
@@ -347,18 +348,126 @@ export default function SetupPage() {
   // Property Lookup Modal state
   const [showPropertyLookup, setShowPropertyLookup] = useState(false);
   
+  // Auto-lookup state
+  const [autoLookupStatus, setAutoLookupStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
+  const [autoLookupMessage, setAutoLookupMessage] = useState('');
+  const [lastLookupAddress, setLastLookupAddress] = useState('');
+  const lookupTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const hasAutoLookedUp = useRef(false);
+  
+  // Debounced auto-lookup when address is complete
+  const performAutoLookup = useCallback(async (street: string, city: string, state: string) => {
+    // Create a signature for this address to avoid duplicate lookups
+    const addressSignature = `${street}|${city}|${state}`.toLowerCase();
+    if (addressSignature === lastLookupAddress) {
+      return; // Already looked up this address
+    }
+    
+    setAutoLookupStatus('loading');
+    setAutoLookupMessage('Looking up property data...');
+    setLastLookupAddress(addressSignature);
+    
+    try {
+      const result: PropertyLookupResult = await getPropertyData({
+        address: street,
+        city: city,
+        state: state,
+      });
+      
+      if (result.success && result.data) {
+        // Auto-fill the data
+        handlePropertyImport(result.data);
+        
+        const source = result.isFreeService 
+          ? 'Montana Cadastral (FREE)' 
+          : result.source === 'mock' 
+            ? 'Simulated Data' 
+            : 'Cotality';
+            
+        setAutoLookupStatus('success');
+        setAutoLookupMessage(`Property data loaded from ${source}`);
+        hasAutoLookedUp.current = true;
+        
+        // Clear success message after 5 seconds
+        setTimeout(() => {
+          setAutoLookupStatus('idle');
+          setAutoLookupMessage('');
+        }, 5000);
+      } else {
+        setAutoLookupStatus('error');
+        setAutoLookupMessage(result.error || 'Property not found');
+        
+        // Clear error message after 5 seconds
+        setTimeout(() => {
+          setAutoLookupStatus('idle');
+          setAutoLookupMessage('');
+        }, 5000);
+      }
+    } catch (error) {
+      console.error('Auto-lookup error:', error);
+      setAutoLookupStatus('error');
+      setAutoLookupMessage('Failed to lookup property');
+      
+      setTimeout(() => {
+        setAutoLookupStatus('idle');
+        setAutoLookupMessage('');
+      }, 5000);
+    }
+  }, [lastLookupAddress]);
+  
+  // Watch address changes and trigger auto-lookup
+  useEffect(() => {
+    // Clear any pending lookup
+    if (lookupTimeoutRef.current) {
+      clearTimeout(lookupTimeoutRef.current);
+    }
+    
+    // Check if address is complete enough for lookup
+    const street = address.street?.trim();
+    const city = address.city?.trim();
+    const state = address.state?.trim();
+    
+    // Need at least street, city, and state for a lookup
+    if (!street || !city || !state) {
+      return;
+    }
+    
+    // Require minimum lengths to avoid premature lookups
+    if (street.length < 5 || city.length < 2 || state.length < 2) {
+      return;
+    }
+    
+    // Create signature to check if we've already looked this up
+    const addressSignature = `${street}|${city}|${state}`.toLowerCase();
+    if (addressSignature === lastLookupAddress) {
+      return; // Already looked up
+    }
+    
+    // Debounce: wait 1.5 seconds after typing stops before lookup
+    lookupTimeoutRef.current = setTimeout(() => {
+      performAutoLookup(street, city, state);
+    }, 1500);
+    
+    return () => {
+      if (lookupTimeoutRef.current) {
+        clearTimeout(lookupTimeoutRef.current);
+      }
+    };
+  }, [address.street, address.city, address.state, lastLookupAddress, performAutoLookup]);
+  
   // Handle property data import from lookup
-  const handlePropertyImport = (data: CadastralData) => {
+  const handlePropertyImport = useCallback((data: CadastralData) => {
     // Update property ID fields
     if (data.parcelId) setTaxId(data.parcelId);
     if (data.legalDescription) setLegalDescription(data.legalDescription);
     
-    // Update address if available
+    // Update address if available (only fill empty fields)
     if (data.situsAddress || data.situsCity || data.situsZip) {
       setAddress(prev => ({
         ...prev,
-        street: data.situsAddress || prev.street,
-        city: data.situsCity || prev.city,
+        // Only fill in fields that are empty
+        street: prev.street || data.situsAddress || '',
+        city: prev.city || data.situsCity || '',
         zip: data.situsZip || prev.zip,
         county: data.county || prev.county,
       }));
@@ -367,10 +476,55 @@ export default function SetupPage() {
     // Lock the imported fields
     setLockedFields(prev => ({
       ...prev,
-      taxId: true,
-      legalDescription: true,
+      taxId: !!data.parcelId,
+      legalDescription: !!data.legalDescription,
     }));
-  };
+    
+    // Update owner if we have owner name from cadastral
+    if (data.ownerName && wizardState.owners && wizardState.owners.length > 0) {
+      updateOwner(wizardState.owners[0].id, { name: data.ownerName });
+    }
+    
+    // Build coordinates object if available
+    const coordinates = (data.latitude !== undefined && data.longitude !== undefined)
+      ? { latitude: data.latitude, longitude: data.longitude }
+      : undefined;
+    
+    // Update the WizardContext with all available data
+    setSubjectData({
+      // Existing address data
+      address: {
+        street: address.street || data.situsAddress || '',
+        city: address.city || data.situsCity || '',
+        state: address.state || '',
+        zip: data.situsZip || address.zip,
+        county: data.county || address.county,
+      },
+      // Property identification
+      taxId: data.parcelId || taxId,
+      legalDescription: data.legalDescription || legalDescription,
+      // Site data from cadastral
+      siteArea: data.acres > 0 ? data.acres.toString() : (data.sqft > 0 ? (data.sqft / 43560).toFixed(2) : ''),
+      siteAreaUnit: data.acres > 0 ? 'acres' : 'sqft',
+      // Coordinates if available (for demographics lookup)
+      coordinates,
+      // Store full cadastral data for reference
+      cadastralData: {
+        parcelId: data.parcelId,
+        legalDescription: data.legalDescription,
+        county: data.county,
+        acres: data.acres,
+        sqft: data.sqft,
+        situsAddress: data.situsAddress,
+        ownerName: data.ownerName,
+        assessedLandValue: data.assessedLandValue,
+        assessedImprovementValue: data.assessedImprovementValue,
+        totalAssessedValue: data.totalAssessedValue,
+        taxYear: data.taxYear,
+        lastUpdated: new Date().toISOString(),
+      },
+    });
+  }, [address, taxId, legalDescription, setSubjectData, wizardState.owners, updateOwner]);
   
   // Inspection state - declare early so it can be used in sync useEffect
   // Default inspectionType to 'interior_exterior' since that's the default dropdown value
@@ -649,13 +803,61 @@ export default function SetupPage() {
   // ==========================================
   // RENDER TAB CONTENT
   // ==========================================
+  // Get cost info for current state
+  const lookupCostInfo = getLookupCostInfo(address.state || 'MT');
+  
   const renderBasicsTab = () => (
     <div className="space-y-6">
       {/* Property Address */}
       <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
-          Property Address
-        </h3>
+        <div className="flex items-center justify-between border-b-2 border-gray-200 pb-3 mb-4">
+          <h3 className="text-lg font-bold text-[#1c3643]">
+            Property Address
+          </h3>
+          {/* Auto-lookup status indicator */}
+          {autoLookupStatus !== 'idle' && (
+            <div className={`flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-medium transition-all ${
+              autoLookupStatus === 'loading' 
+                ? 'bg-blue-100 text-blue-700' 
+                : autoLookupStatus === 'success' 
+                  ? 'bg-emerald-100 text-emerald-700' 
+                  : 'bg-amber-100 text-amber-700'
+            }`}>
+              {autoLookupStatus === 'loading' && <Loader2 className="w-3 h-3 animate-spin" />}
+              {autoLookupStatus === 'success' && <CheckCircle className="w-3 h-3" />}
+              {autoLookupStatus === 'error' && <AlertCircle className="w-3 h-3" />}
+              {autoLookupMessage}
+            </div>
+          )}
+        </div>
+        
+        {/* Auto-lookup info banner */}
+        <div className={`mb-4 p-3 rounded-lg flex items-center gap-3 ${
+          lookupCostInfo.isFree
+            ? 'bg-emerald-50 border border-emerald-200'
+            : 'bg-blue-50 border border-blue-200'
+        }`}>
+          <div className={`p-2 rounded-full ${
+            lookupCostInfo.isFree ? 'bg-emerald-100' : 'bg-blue-100'
+          }`}>
+            <MapPin className={`w-4 h-4 ${
+              lookupCostInfo.isFree ? 'text-emerald-600' : 'text-blue-600'
+            }`} />
+          </div>
+          <div className="flex-1">
+            <p className={`text-sm font-medium ${
+              lookupCostInfo.isFree ? 'text-emerald-700' : 'text-blue-700'
+            }`}>
+              Auto Property Lookup Enabled
+            </p>
+            <p className={`text-xs ${
+              lookupCostInfo.isFree ? 'text-emerald-600' : 'text-blue-600'
+            }`}>
+              {lookupCostInfo.note} — Property data will auto-fill when address is complete
+            </p>
+          </div>
+        </div>
+        
         <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -689,10 +891,14 @@ export default function SetupPage() {
               <input
                 type="text"
                 value={address.state}
-                onChange={(e) => setAddress({ ...address, state: e.target.value })}
+                onChange={(e) => setAddress({ ...address, state: e.target.value.toUpperCase() })}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
-                placeholder="Montana"
+                placeholder="MT"
+                maxLength={2}
               />
+              <p className="text-xs text-gray-400 mt-1">
+                Use 2-letter state code (e.g., MT for Montana)
+              </p>
             </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
@@ -704,7 +910,9 @@ export default function SetupPage() {
                 type="text"
                 value={address.zip}
                 onChange={(e) => setAddress({ ...address, zip: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                className={`w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent ${
+                  lockedFields['address'] ? 'bg-blue-50 border-blue-200' : 'border-gray-300'
+                }`}
                 placeholder="59102"
               />
             </div>
@@ -716,7 +924,9 @@ export default function SetupPage() {
                 type="text"
                 value={address.county}
                 onChange={(e) => setAddress({ ...address, county: e.target.value })}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                className={`w-full px-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent ${
+                  lockedFields['address'] ? 'bg-blue-50 border-blue-200' : 'border-gray-300'
+                }`}
                 placeholder="Yellowstone"
               />
             </div>

@@ -46,11 +46,14 @@ function formatParcelResponse(parcel: MontanaCadastralParcel) {
     township: parcel.township,
     range: parcel.range,
     section: parcel.section,
+    // Geocoded coordinates for demographics/economic lookups
+    latitude: parcel.latitude,
+    longitude: parcel.longitude,
   };
 }
 
 // Generate mock data for non-Montana properties
-function generateMockParcel(address?: string, city?: string, state?: string) {
+function generateMockParcel(address?: string, city?: string, state?: string, latitude?: number, longitude?: number) {
   return {
     parcelId: `MOCK-${Date.now()}`,
     legalDescription: 'Lot 1, Block 1, Mock Subdivision',
@@ -67,6 +70,9 @@ function generateMockParcel(address?: string, city?: string, state?: string) {
     totalAssessedValue: 0, // Will be calculated
     taxYear: new Date().getFullYear(),
     propertyType: 'Commercial',
+    // Include coordinates if provided
+    latitude: latitude,
+    longitude: longitude,
   };
 }
 
@@ -107,7 +113,7 @@ export default async function handler(
     if (!isMT) {
       // For non-Montana properties, return mock data
       // In production, this would call Cotality API
-      const mockData = generateMockParcel(address, city, state);
+      const mockData = generateMockParcel(address, city, state, latitude, longitude);
       mockData.totalAssessedValue = mockData.assessedLandValue + mockData.assessedImprovementValue;
 
       return res.status(200).json({

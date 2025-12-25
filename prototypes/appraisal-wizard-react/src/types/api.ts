@@ -35,6 +35,9 @@ export interface CadastralData {
   township?: string;
   range?: string;
   section?: string;
+  // Centroid coordinates of the parcel
+  latitude?: number;
+  longitude?: number;
 }
 
 export interface CadastralResponse {

@@ -37,6 +37,9 @@ export interface MontanaCadastralParcel {
   assessedImprovementValue: number;
   totalAssessedValue: number;
   taxYear: number;
+  // Centroid coordinates (for demographics lookup, etc.)
+  latitude?: number;
+  longitude?: number;
 }
 
 export interface CadastralQueryResult {
@@ -68,7 +71,7 @@ export async function queryParcelByLocation(
     url.searchParams.set('geometryType', 'esriGeometryPoint');
     url.searchParams.set('spatialRel', 'esriSpatialRelIntersects');
     url.searchParams.set('outFields', '*');
-    url.searchParams.set('returnGeometry', 'false');
+    url.searchParams.set('returnGeometry', 'true'); // Return geometry for centroid
 
     const response = await fetch(url.toString());
     
@@ -76,7 +79,12 @@ export async function queryParcelByLocation(
       throw new Error(`Cadastral API error: ${response.status}`);
     }
 
-    const data = await response.json() as { features?: Array<{ attributes: Record<string, unknown> }> };
+    const data = await response.json() as { 
+      features?: Array<{ 
+        attributes: Record<string, unknown>;
+        geometry?: { rings?: number[][][]; x?: number; y?: number };
+      }> 
+    };
 
     if (!data.features || data.features.length === 0) {
       return {
@@ -88,10 +96,15 @@ export async function queryParcelByLocation(
 
     const feature = data.features[0];
     const attrs = feature.attributes;
+    const parcel = mapAttributesToParcel(attrs);
+    
+    // Include coordinates (use query point since we know it's in the parcel)
+    parcel.latitude = latitude;
+    parcel.longitude = longitude;
 
     return {
       success: true,
-      parcel: mapAttributesToParcel(attrs),
+      parcel,
     };
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error';
@@ -168,7 +181,7 @@ export async function queryParcelByAddress(
       throw new Error(`Geocoding error: ${geocodeResponse.status}`);
     }
 
-    const geocodeData = await geocodeResponse.json() as { candidates?: Array<{ location: { x: number; y: number } }> };
+    const geocodeData = await geocodeResponse.json() as { candidates?: Array<{ location: { x: number; y: number }; score?: number } > };
 
     if (!geocodeData.candidates || geocodeData.candidates.length === 0) {
       return {
@@ -179,9 +192,14 @@ export async function queryParcelByAddress(
     }
 
     const location = geocodeData.candidates[0].location;
+    const geocodedLat = location.y;
+    const geocodedLng = location.x;
     
-    // Now query by the geocoded location
-    return queryParcelByLocation(location.y, location.x);
+    // Now query by the geocoded location (coordinates will be included)
+    const result = await queryParcelByLocation(geocodedLat, geocodedLng);
+    
+    // The coordinates are already set in queryParcelByLocation
+    return result;
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error';
     return {
