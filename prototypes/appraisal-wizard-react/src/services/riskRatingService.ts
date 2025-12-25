@@ -6,7 +6,7 @@
  */
 
 import { apiPost } from './api';
-import type { RiskRatingRequest, RiskRatingResponse, RiskRatingData } from '../types/api';
+import type { RiskRatingRequest, RiskRatingResponse } from '../types/api';
 
 /**
  * Calculate Investment Risk Rating for a property
