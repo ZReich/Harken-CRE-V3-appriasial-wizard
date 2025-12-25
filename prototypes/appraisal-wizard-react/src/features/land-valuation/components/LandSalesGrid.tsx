@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Plus, Trash2, ArrowUpRight, ArrowDownRight, Minus, MapPin, Activity, ChevronDown, PenLine, Link2, Download } from 'lucide-react';
+import { Plus, Trash2, ArrowUpRight, ArrowDownRight, Minus, MapPin, Activity, ChevronDown, PenLine } from 'lucide-react';
 import { LandComp } from '../types';
 import { 
   MOCK_LAND_COMPS, 
@@ -803,21 +803,12 @@ export const LandSalesGrid: React.FC = () => {
 
           </div>
 
-          {/* ACTION COLUMN - Three buttons, equally spaced */}
+          {/* ACTION COLUMN */}
           <div 
             className="flex-shrink-0 bg-slate-50 flex flex-col items-center justify-start py-8 sticky top-0 self-start"
             style={{ width: ACTION_COL_WIDTH, height: 'auto', minHeight: 400 }}
           >
-            <div className="flex flex-col items-center justify-between h-80 py-4">
-              {/* Link Existing Comps */}
-              <button 
-                className="flex flex-col items-center gap-2 p-4 rounded-xl hover:bg-white transition-colors group"
-                title="Link existing comps from your database"
-              >
-                <Link2 className="w-8 h-8 text-[#0da1c7]" />
-                <span className="text-xs font-semibold text-[#0da1c7] text-center leading-tight">Link Existing<br/>Comps</span>
-              </button>
-
+            <div className="flex flex-col items-center justify-center h-80 py-4">
               {/* Add Comps */}
               <button 
                 className="flex flex-col items-center gap-2 p-4 rounded-xl hover:bg-white transition-colors group"
@@ -827,15 +818,6 @@ export const LandSalesGrid: React.FC = () => {
                   <Plus className="w-6 h-6 text-[#0da1c7]" />
                 </div>
                 <span className="text-xs font-semibold text-[#0da1c7]">Add Comps</span>
-              </button>
-
-              {/* Import Comp */}
-              <button 
-                className="flex flex-col items-center gap-2 p-4 rounded-xl hover:bg-white transition-colors group"
-                title="Import comp from external source"
-              >
-                <Download className="w-8 h-8 text-[#0da1c7]" />
-                <span className="text-xs font-semibold text-[#0da1c7]">Import Comp</span>
               </button>
             </div>
           </div>

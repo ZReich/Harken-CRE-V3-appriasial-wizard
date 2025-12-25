@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Plus, Trash2, ArrowUpRight, ArrowDownRight, Minus, MapPin, Activity, ChevronDown, PenLine, Link2, Download } from 'lucide-react';
+import { Plus, Trash2, ArrowUpRight, ArrowDownRight, Minus, MapPin, Activity, ChevronDown, PenLine } from 'lucide-react';
 import { MultiFamilyComp, MultiFamilyGridRow, AvailableMultiFamilyElement } from '../types';
 import { 
   MOCK_MF_COMPS, 
@@ -621,20 +621,12 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
 
           {/* ACTION COLUMN */}
           <div className="flex-shrink-0 bg-slate-50 flex flex-col items-center justify-start py-8 sticky top-0 self-start" style={{ width: ACTION_COL_WIDTH, height: 'auto', minHeight: 400 }}>
-            <div className="flex flex-col items-center justify-between h-80 py-4">
-              <button className="flex flex-col items-center gap-2 p-4 rounded-xl hover:bg-white transition-colors group" title="Link existing comps">
-                <Link2 className="w-8 h-8 text-[#0da1c7]" />
-                <span className="text-xs font-semibold text-[#0da1c7] text-center leading-tight">Link Existing<br/>Comps</span>
-              </button>
+            <div className="flex flex-col items-center justify-center h-80 py-4">
               <button className="flex flex-col items-center gap-2 p-4 rounded-xl hover:bg-white transition-colors group" title="Add a new comp">
                 <div className="w-12 h-12 rounded-full bg-[#0da1c7]/20 flex items-center justify-center group-hover:bg-[#0da1c7]/30 transition-colors">
                   <Plus className="w-6 h-6 text-[#0da1c7]" />
                 </div>
                 <span className="text-xs font-semibold text-[#0da1c7]">Add Comps</span>
-              </button>
-              <button className="flex flex-col items-center gap-2 p-4 rounded-xl hover:bg-white transition-colors group" title="Import comp">
-                <Download className="w-8 h-8 text-[#0da1c7]" />
-                <span className="text-xs font-semibold text-[#0da1c7]">Import Comp</span>
               </button>
             </div>
           </div>

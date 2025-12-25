@@ -16,7 +16,7 @@ import { useSmartContinue } from '../hooks/useSmartContinue';
 import { useWizard } from '../context/WizardContext';
 import { useToast } from '../context/ToastContext';
 import EnhancedTextArea from '../components/EnhancedTextArea';
-import { Info, ArrowLeft, Save, FileCheck, CheckCircle, Sparkles, Loader2 } from 'lucide-react';
+import { Info, ArrowLeft, Save, FileCheck, CheckCircle, Sparkles, Loader2, FileText } from 'lucide-react';
 import type { ReportState, ReportStateActions } from '../features/report-preview/hooks/useReportState';
 import { useFinalizeFlow } from '../features/report-preview/hooks/useFinalizeFlow';
 import { SaveChangesDialog, PostSaveDialog, TemplateSaveDialog, FinalizeDialog } from '../features/report-preview/components/dialogs';
@@ -63,6 +63,9 @@ function triggerCelebration() {
 // =================================================================
 
 function SuccessScreen({ onCreateAnother, onViewReport }: { onCreateAnother: () => void; onViewReport: () => void }) {
+  // #region agent log
+  fetch('http://127.0.0.1:7242/ingest/27f3cde2-a2b4-4da7-bb14-08e6bc7cf5dd',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ReviewPage.tsx:65',message:'SuccessScreen rendering',data:{},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H9'})}).catch(()=>{});
+  // #endregion
   return (
     <div className="flex items-center justify-center h-full">
       <div className="text-center animate-fade-in">
@@ -163,6 +166,7 @@ function ReportPreviewMode({
   onBack, 
   onFinalize,
   onSaveDraft,
+  onSaveAsTemplate,
   onReportStateChange,
   isSaving,
   isDirty,
@@ -170,6 +174,7 @@ function ReportPreviewMode({
   onBack: () => void; 
   onFinalize: () => void;
   onSaveDraft: () => void;
+  onSaveAsTemplate: () => void;
   onReportStateChange?: (state: ReportState, actions: ReportStateActions) => void;
   isSaving?: boolean;
   isDirty?: boolean;
@@ -214,6 +219,13 @@ function ReportPreviewMode({
               <Save size={16} />
             )}
             {isSaving ? 'Saving...' : 'Save Draft'}
+          </button>
+          <button
+            onClick={onSaveAsTemplate}
+            className="flex items-center gap-2 px-4 py-2 border border-[#0da1c7] text-[#0da1c7] hover:bg-[#0da1c7]/5 rounded-lg transition-colors font-medium"
+          >
+            <FileText size={16} />
+            Save as Template
           </button>
           <button
             onClick={onFinalize}
@@ -263,6 +275,9 @@ export default function ReviewPage() {
 
   // Handler to receive report state from ReportEditor
   const handleReportStateChange = useCallback((state: ReportState, actions: ReportStateActions) => {
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/27f3cde2-a2b4-4da7-bb14-08e6bc7cf5dd',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ReviewPage.tsx:274',message:'handleReportStateChange called',data:{isDirty:state.isDirty,editedFieldsCount:Object.keys(state.editedFields).length},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1'})}).catch(()=>{});
+    // #endregion
     reportStateRef.current = state;
     reportActionsRef.current = actions;
     setEditorIsDirty(state.isDirty); // Update state to trigger re-renders
@@ -280,20 +295,23 @@ export default function ReviewPage() {
     };
   }, []);
 
+  // Memoize the onSave callback to prevent unnecessary re-renders
+  const handleFinalizeFlowSave = useCallback(async () => {
+    if (!reportStateRef.current) return;
+    applyPreviewEdits({
+      editedFields: reportStateRef.current.editedFields,
+      sectionVisibility: reportStateRef.current.sectionVisibility,
+      customContent: reportStateRef.current.customContent,
+      styling: reportStateRef.current.styling,
+    });
+    reportActionsRef.current?.markAsSaved();
+    setEditorIsDirty(false);
+  }, [applyPreviewEdits]);
+
   // Finalize flow state machine with connected options
   const [finalizeState, finalizeActions] = useFinalizeFlow({
     isDirty: editorIsDirty,
-    onSave: async () => {
-      if (!reportStateRef.current) return;
-      applyPreviewEdits({
-        editedFields: reportStateRef.current.editedFields,
-        sectionVisibility: reportStateRef.current.sectionVisibility,
-        customContent: reportStateRef.current.customContent,
-        styling: reportStateRef.current.styling,
-      });
-      reportActionsRef.current?.markAsSaved();
-      setEditorIsDirty(false);
-    },
+    onSave: handleFinalizeFlowSave,
     getReportState,
   });
 
@@ -343,17 +361,31 @@ export default function ReviewPage() {
 
   // Handler for starting the finalize flow
   const handleFinalize = useCallback(() => {
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/27f3cde2-a2b4-4da7-bb14-08e6bc7cf5dd',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ReviewPage.tsx:358',message:'handleFinalize called',data:{editorIsDirty,currentStage:finalizeState.stage},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1-H2'})}).catch(()=>{});
+    // #endregion
     // Start the finalize flow - it will check for unsaved changes
     finalizeActions.startFinalize();
-  }, [finalizeActions]);
+  }, [finalizeActions, editorIsDirty, finalizeState.stage]);
 
   // Handle successful finalization
   const handleFinalizeComplete = useCallback(() => {
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/27f3cde2-a2b4-4da7-bb14-08e6bc7cf5dd',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ReviewPage.tsx:363',message:'handleFinalizeComplete called',data:{},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H9'})}).catch(()=>{});
+    // #endregion
     setIsFinalized(true);
     setShowPreviewMode(false);
     triggerCelebration(); // Keep existing confetti
     triggerSectionCelebration('review'); // Trigger the finale celebration overlay
   }, [triggerSectionCelebration]);
+
+  // Store finalizeActions and toast in refs to use in useEffect without causing re-renders
+  // This prevents infinite loops when these objects change reference
+  const finalizeActionsRef = useRef(finalizeActions);
+  finalizeActionsRef.current = finalizeActions;
+  
+  const toastRef = useRef(toast);
+  toastRef.current = toast;
 
   // Watch for finalize flow state changes and show toasts
   const prevStageRef = useRef(finalizeState.stage);
@@ -362,27 +394,32 @@ export default function ReviewPage() {
     const currentStage = finalizeState.stage;
     prevStageRef.current = currentStage;
     
+    // #region agent log
+    fetch('http://127.0.0.1:7242/ingest/27f3cde2-a2b4-4da7-bb14-08e6bc7cf5dd',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ReviewPage.tsx:380',message:'Stage change detected',data:{prevStage,currentStage,error:finalizeState.error},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H7'})}).catch(()=>{});
+    // #endregion
+    
     // Show toast when saving template completes (moved from saving-template to finalize-dialog)
     if (prevStage === 'saving-template' && currentStage === 'finalize-dialog' && finalizeState.savedTemplateId) {
-      toast.success('Template Saved', 'Your report template has been saved successfully.');
+      toastRef.current.success('Template Saved', 'Your report template has been saved successfully.');
     }
     
     // Show toast when save changes completes (moved from saving to post-save)
     if (prevStage === 'saving' && currentStage === 'post-save') {
-      toast.success('Changes Saved', 'Your report changes have been saved.');
+      toastRef.current.success('Changes Saved', 'Your report changes have been saved.');
     }
     
     // Show toast for errors
     if (currentStage === 'error' && finalizeState.error) {
-      toast.error('Error', finalizeState.error);
+      toastRef.current.error('Error', finalizeState.error);
     }
     
     // Handle finalize completion
     if (currentStage === 'complete') {
       handleFinalizeComplete();
-      finalizeActions.reset();
+      // Use ref to avoid including finalizeActions in dependencies (prevents infinite loop)
+      finalizeActionsRef.current.reset();
     }
-  }, [finalizeState.stage, finalizeState.savedTemplateId, finalizeState.error, handleFinalizeComplete, finalizeActions, toast]);
+  }, [finalizeState.stage, finalizeState.savedTemplateId, finalizeState.error, handleFinalizeComplete]);
 
   const handleCreateAnother = useCallback(() => {
     navigate('/template');
@@ -646,6 +683,10 @@ We considered alternative uses including renovation, conversion to alternative u
     </div>
   );
 
+  // #region agent log
+  fetch('http://127.0.0.1:7242/ingest/27f3cde2-a2b4-4da7-bb14-08e6bc7cf5dd',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ReviewPage.tsx:684',message:'ReviewPage render state',data:{showPreviewMode,isFinalized,showReadyToPreview,stage:finalizeState.stage},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H9'})}).catch(()=>{});
+  // #endregion
+  
   // If in full-screen preview mode, render just the preview
   if (showPreviewMode) {
     return (
@@ -654,6 +695,7 @@ We considered alternative uses including renovation, conversion to alternative u
           onBack={handleExitPreviewMode}
           onFinalize={handleFinalize}
           onSaveDraft={handleSaveDraft}
+          onSaveAsTemplate={finalizeActions.openTemplateDialog}
           onReportStateChange={handleReportStateChange}
           isSaving={isSaving}
           isDirty={editorIsDirty}

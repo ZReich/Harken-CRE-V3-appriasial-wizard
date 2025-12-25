@@ -20,6 +20,8 @@ import {
 } from 'lucide-react';
 import { useWizard } from '../context/WizardContext';
 import { buildHBUContext, formatContextForAPI } from '../utils/hbuContextBuilder';
+import { generateDraft as generateAIDraft } from '../services/aiService';
+import type { AIGenerationContext } from '../types/api';
 
 // ==========================================
 // TYPES
@@ -425,34 +427,33 @@ export default function EnhancedTextArea({
     
     try {
       // Build context from wizard state if available
-      let apiContext: Record<string, any> = contextData || {};
+      let apiContext: AIGenerationContext = {};
       
       if (wizardState) {
         const hbuContext = buildHBUContext(wizardState);
         apiContext = { ...formatContextForAPI(hbuContext), ...contextData };
+      } else if (contextData) {
+        apiContext = contextData as AIGenerationContext;
       }
       
-      // Try to call the backend API
-      const response = await fetch('/api/appraisals/ai-draft', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          section: sectionContext,
-          context: apiContext,
-        }),
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        if (data?.data?.content) {
-          setAIPreview({ content: data.data.content, isVisible: true });
+      // Try to call the backend API using the new AI service
+      try {
+        const content = await generateAIDraft(
+          sectionContext,
+          apiContext,
+          value || undefined  // Pass existing text for improvement
+        );
+        
+        if (content) {
+          setAIPreview({ content, isVisible: true });
           setIsGeneratingAI(false);
           return;
         }
+      } catch (apiError) {
+        console.warn('AI API not available, using simulated response:', apiError);
       }
       
       // Fall back to simulated responses if API fails
-      console.warn('AI API not available, using simulated response');
       const draft = SimulatedAIDrafts[sectionContext] || SimulatedAIDrafts.default;
       setAIPreview({ content: draft, isVisible: true });
     } catch (error) {
@@ -463,7 +464,7 @@ export default function EnhancedTextArea({
     }
     
     setIsGeneratingAI(false);
-  }, [sectionContext, contextData, wizardState]);
+  }, [sectionContext, contextData, wizardState, value]);
 
   // Accept AI draft
   const acceptAI = useCallback(() => {

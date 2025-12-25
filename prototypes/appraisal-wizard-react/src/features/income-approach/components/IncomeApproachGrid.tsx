@@ -9,8 +9,12 @@ import { RiskAnalysisModal } from './RiskAnalysisModal';
 import { DCFProjectionTable } from './DCFProjectionTable';
 import { RentComparableGrid } from './RentComparableGrid';
 import { ExpenseComparableGrid } from './ExpenseComparableGrid';
+import { CapRateCalculator } from './CapRateCalculator';
+import type { SalesCompComparable } from './CapRateCalculator';
 import { INITIAL_INCOME_APPROACH_STATE } from '../constants';
 import { useWizard } from '../../../context/WizardContext';
+// Import Sales Comparison mock data for Cap Rate Calculator pre-population
+import { MOCK_VALUES as SALES_COMP_VALUES } from '../../sales-comparison/constants';
 
 // Income Approach sub-tab types
 type IncomeSubTab = 'rent-comps' | 'expense-comps' | 'pro-forma' | 'valuation';
@@ -64,6 +68,7 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
   
   // --- State ---
   const [showChart, setShowChart] = useState(true);
+  const [showCapRateCalculator, setShowCapRateCalculator] = useState(false);
   
   // Sub-tab state for workflow navigation
   const [activeSubTab, setActiveSubTab] = useState<IncomeSubTab>('pro-forma');
@@ -255,6 +260,37 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
       };
     });
   }, [valuationData.marketCapRate, summary.netOperatingIncome, safeSqFt]);
+
+  // Extract income property comparables from Sales Comparison Grid
+  // These have both sale price and NOI for cap rate extraction
+  const salesCompComparables = useMemo((): SalesCompComparable[] => {
+    const comps: SalesCompComparable[] = [];
+    
+    // Iterate through all properties in the sales comparison data
+    Object.entries(SALES_COMP_VALUES).forEach(([propId, propValues]) => {
+      // Skip subject property
+      if (propId === 'subject') return;
+      
+      const price = propValues?.price?.value;
+      const noi = propValues?.noi_at_sale?.value;
+      const name = propValues?.identification?.value;
+      const address = propValues?.address_row?.value;
+      
+      // Only include comps that have both price and NOI
+      if (typeof price === 'number' && price > 0 && 
+          typeof noi === 'number' && noi > 0) {
+        comps.push({
+          id: propId,
+          name: typeof name === 'string' ? name : propId,
+          address: typeof address === 'string' ? address : undefined,
+          salePrice: price,
+          noi: noi,
+        });
+      }
+    });
+    
+    return comps;
+  }, []); // MOCK_VALUES is static, so no dependencies needed
 
   // --- Handlers ---
   const updateLineItem = (
@@ -748,7 +784,16 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
 
                   <div>
                     <div className="flex justify-between items-end mb-4">
-                      <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Going-In Cap Rate</label>
+                      <div className="flex items-center gap-2">
+                        <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Going-In Cap Rate</label>
+                        <button
+                          onClick={() => setShowCapRateCalculator(true)}
+                          className="p-1.5 bg-[#0da1c7]/10 hover:bg-[#0da1c7]/20 rounded-lg transition-colors group"
+                          title="Open Cap Rate Calculator"
+                        >
+                          <Calculator className="w-4 h-4 text-[#0da1c7] group-hover:scale-110 transition-transform" />
+                        </button>
+                      </div>
                       <span className="text-xl font-black text-emerald-600 bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-100">
                         {valuationData.marketCapRate.toFixed(2)}%
                       </span>
@@ -954,6 +999,15 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
         valuationData={valuationData}
         directCapValue={directCapValue}
         dcfValue={dcfAnalysis.totalValue}
+      />
+
+      <CapRateCalculator
+        isOpen={showCapRateCalculator}
+        onClose={() => setShowCapRateCalculator(false)}
+        onApply={(capRate) => setValuationData({ ...valuationData, marketCapRate: capRate })}
+        currentCapRate={valuationData.marketCapRate}
+        currentNOI={summary.netOperatingIncome}
+        initialComparables={salesCompComparables}
       />
     </div>
   );

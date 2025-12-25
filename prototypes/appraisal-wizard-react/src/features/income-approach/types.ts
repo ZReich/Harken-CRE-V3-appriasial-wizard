@@ -78,6 +78,47 @@ export type ValuationScenario = 'as-is' | 'as-completed' | 'as-stabilized' | 'li
 export type LineItemType = 'rental' | 'reimbursement' | 'other_income' | 'expense' | 'reserve';
 
 // =================================================================
+// CAP RATE CALCULATOR TYPES
+// =================================================================
+
+export interface CapRateComp {
+  id: string;
+  salePrice: number;
+  noi: number;
+  address?: string;
+}
+
+export interface BandOfInvestmentInputs {
+  loanToValue: number;       // LTV as decimal (e.g., 0.75 for 75%)
+  interestRate: number;      // Annual rate as decimal
+  loanTerm: number;          // Years
+  equityDividendRate: number; // EDR as decimal
+}
+
+export interface DebtCoverageInputs {
+  debtCoverageRatio: number; // DCR (e.g., 1.25)
+  loanConstant: number;      // Annual loan constant as decimal
+  loanToValue: number;       // LTV as decimal
+}
+
+export interface MarketSurveyInputs {
+  capRate: number;           // Direct input as decimal
+  source: string;            // Source attribution
+  notes?: string;
+}
+
+export type CapRateMethod = 'comparable' | 'band' | 'dcr' | 'market';
+
+export interface CapRateCalculatorState {
+  activeMethod: CapRateMethod;
+  comparables: CapRateComp[];
+  bandInputs: BandOfInvestmentInputs;
+  dcrInputs: DebtCoverageInputs;
+  marketInputs: MarketSurveyInputs;
+  selectedCapRate: number | null;
+}
+
+// =================================================================
 // INCOME APPROACH STATE
 // =================================================================
 
