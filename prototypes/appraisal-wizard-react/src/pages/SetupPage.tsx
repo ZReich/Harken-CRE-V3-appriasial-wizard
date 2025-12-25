@@ -353,109 +353,8 @@ export default function SetupPage() {
   const [autoLookupMessage, setAutoLookupMessage] = useState('');
   const [lastLookupAddress, setLastLookupAddress] = useState('');
   const lookupTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const hasAutoLookedUp = useRef(false);
   
-  // Debounced auto-lookup when address is complete
-  const performAutoLookup = useCallback(async (street: string, city: string, state: string) => {
-    // Create a signature for this address to avoid duplicate lookups
-    const addressSignature = `${street}|${city}|${state}`.toLowerCase();
-    if (addressSignature === lastLookupAddress) {
-      return; // Already looked up this address
-    }
-    
-    setAutoLookupStatus('loading');
-    setAutoLookupMessage('Looking up property data...');
-    setLastLookupAddress(addressSignature);
-    
-    try {
-      const result: PropertyLookupResult = await getPropertyData({
-        address: street,
-        city: city,
-        state: state,
-      });
-      
-      if (result.success && result.data) {
-        // Auto-fill the data
-        handlePropertyImport(result.data);
-        
-        const source = result.isFreeService 
-          ? 'Montana Cadastral (FREE)' 
-          : result.source === 'mock' 
-            ? 'Simulated Data' 
-            : 'Cotality';
-            
-        setAutoLookupStatus('success');
-        setAutoLookupMessage(`Property data loaded from ${source}`);
-        hasAutoLookedUp.current = true;
-        
-        // Clear success message after 5 seconds
-        setTimeout(() => {
-          setAutoLookupStatus('idle');
-          setAutoLookupMessage('');
-        }, 5000);
-      } else {
-        setAutoLookupStatus('error');
-        setAutoLookupMessage(result.error || 'Property not found');
-        
-        // Clear error message after 5 seconds
-        setTimeout(() => {
-          setAutoLookupStatus('idle');
-          setAutoLookupMessage('');
-        }, 5000);
-      }
-    } catch (error) {
-      console.error('Auto-lookup error:', error);
-      setAutoLookupStatus('error');
-      setAutoLookupMessage('Failed to lookup property');
-      
-      setTimeout(() => {
-        setAutoLookupStatus('idle');
-        setAutoLookupMessage('');
-      }, 5000);
-    }
-  }, [lastLookupAddress]);
-  
-  // Watch address changes and trigger auto-lookup
-  useEffect(() => {
-    // Clear any pending lookup
-    if (lookupTimeoutRef.current) {
-      clearTimeout(lookupTimeoutRef.current);
-    }
-    
-    // Check if address is complete enough for lookup
-    const street = address.street?.trim();
-    const city = address.city?.trim();
-    const state = address.state?.trim();
-    
-    // Need at least street, city, and state for a lookup
-    if (!street || !city || !state) {
-      return;
-    }
-    
-    // Require minimum lengths to avoid premature lookups
-    if (street.length < 5 || city.length < 2 || state.length < 2) {
-      return;
-    }
-    
-    // Create signature to check if we've already looked this up
-    const addressSignature = `${street}|${city}|${state}`.toLowerCase();
-    if (addressSignature === lastLookupAddress) {
-      return; // Already looked up
-    }
-    
-    // Debounce: wait 1.5 seconds after typing stops before lookup
-    lookupTimeoutRef.current = setTimeout(() => {
-      performAutoLookup(street, city, state);
-    }, 1500);
-    
-    return () => {
-      if (lookupTimeoutRef.current) {
-        clearTimeout(lookupTimeoutRef.current);
-      }
-    };
-  }, [address.street, address.city, address.state, lastLookupAddress, performAutoLookup]);
-  
-  // Handle property data import from lookup
+  // Handle property data import from lookup - MUST be defined before performAutoLookup
   const handlePropertyImport = useCallback((data: CadastralData) => {
     // Update property ID fields
     if (data.parcelId) setTaxId(data.parcelId);
@@ -525,6 +424,112 @@ export default function SetupPage() {
       },
     });
   }, [address, taxId, legalDescription, setSubjectData, wizardState.owners, updateOwner]);
+  
+  // Debounced auto-lookup when address is complete
+  const performAutoLookup = useCallback(async (street: string, city: string, state: string) => {
+    // Create a signature for this address to avoid duplicate lookups
+    const addressSignature = `${street}|${city}|${state}`.toLowerCase();
+    if (addressSignature === lastLookupAddress) {
+      return; // Already looked up this address
+    }
+    
+    console.log('[AutoLookup] Starting lookup for:', { street, city, state });
+    setAutoLookupStatus('loading');
+    setAutoLookupMessage('Looking up property data...');
+    setLastLookupAddress(addressSignature);
+    
+    try {
+      const result: PropertyLookupResult = await getPropertyData({
+        address: street,
+        city: city,
+        state: state,
+      });
+      
+      console.log('[AutoLookup] Result:', result);
+      
+      if (result.success && result.data) {
+        // Auto-fill the data
+        handlePropertyImport(result.data);
+        
+        const source = result.isFreeService 
+          ? 'Montana Cadastral (FREE)' 
+          : result.source === 'mock' 
+            ? 'Simulated Data' 
+            : 'Cotality';
+            
+        setAutoLookupStatus('success');
+        setAutoLookupMessage(`Property data loaded from ${source}`);
+        
+        // Clear success message after 5 seconds
+        setTimeout(() => {
+          setAutoLookupStatus('idle');
+          setAutoLookupMessage('');
+        }, 5000);
+      } else {
+        console.warn('[AutoLookup] Lookup failed:', result.error);
+        setAutoLookupStatus('error');
+        setAutoLookupMessage(result.error || 'Property not found');
+        
+        // Clear error message after 5 seconds
+        setTimeout(() => {
+          setAutoLookupStatus('idle');
+          setAutoLookupMessage('');
+        }, 5000);
+      }
+    } catch (error) {
+      console.error('[AutoLookup] Error:', error);
+      const errorMessage = error instanceof Error ? error.message : 'Failed to lookup property';
+      setAutoLookupStatus('error');
+      setAutoLookupMessage(errorMessage);
+      
+      setTimeout(() => {
+        setAutoLookupStatus('idle');
+        setAutoLookupMessage('');
+      }, 5000);
+    }
+  }, [lastLookupAddress, handlePropertyImport]);
+  
+  // Watch address changes and trigger auto-lookup
+  useEffect(() => {
+    // Clear any pending lookup
+    if (lookupTimeoutRef.current) {
+      clearTimeout(lookupTimeoutRef.current);
+    }
+    
+    // Check if address is complete enough for lookup
+    const street = address.street?.trim();
+    const city = address.city?.trim();
+    const state = address.state?.trim();
+    
+    // Need at least street, city, and state for a lookup
+    if (!street || !city || !state) {
+      return;
+    }
+    
+    // Require minimum lengths to avoid premature lookups
+    if (street.length < 5 || city.length < 2 || state.length < 2) {
+      return;
+    }
+    
+    // Create signature to check if we've already looked this up
+    const addressSignature = `${street}|${city}|${state}`.toLowerCase();
+    if (addressSignature === lastLookupAddress) {
+      return; // Already looked up
+    }
+    
+    console.log('[AutoLookup] Address complete, scheduling lookup in 1.5s:', { street, city, state });
+    
+    // Debounce: wait 1.5 seconds after typing stops before lookup
+    lookupTimeoutRef.current = setTimeout(() => {
+      performAutoLookup(street, city, state);
+    }, 1500);
+    
+    return () => {
+      if (lookupTimeoutRef.current) {
+        clearTimeout(lookupTimeoutRef.current);
+      }
+    };
+  }, [address.street, address.city, address.state, lastLookupAddress, performAutoLookup]);
   
   // Inspection state - declare early so it can be used in sync useEffect
   // Default inspectionType to 'interior_exterior' since that's the default dropdown value
