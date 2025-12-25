@@ -301,6 +301,87 @@ export interface SubjectData {
   occupancyStatus?: 'stabilized' | 'lease_up' | 'vacant' | 'not_applicable';
   plannedChanges?: 'none' | 'minor' | 'major' | 'change_of_use';
   loanPurpose?: 'purchase' | 'refinance' | 'construction' | 'bridge' | 'internal';
+  
+  // Coordinates (for demographics lookup)
+  coordinates?: {
+    latitude: number;
+    longitude: number;
+  };
+  
+  // CBRE Parity - Enhanced data fields
+  cadastralData?: CadastralData;
+  demographicsData?: DemographicsData;
+  economicIndicators?: EconomicIndicators;
+  swotAnalysis?: SWOTAnalysisData;
+  riskRating?: RiskRatingData;
+}
+
+// =================================================================
+// CBRE PARITY - DATA INTEGRATION TYPES
+// =================================================================
+
+export interface CadastralData {
+  parcelId: string;
+  legalDescription: string;
+  county: string;
+  acres: number;
+  sqft: number;
+  situsAddress: string;
+  ownerName: string;
+  assessedLandValue: number;
+  assessedImprovementValue: number;
+  totalAssessedValue: number;
+  taxYear: number;
+  lastUpdated: string;
+}
+
+export interface DemographicsData {
+  radiusAnalysis: import('./api').RadiusDemographics[];
+  dataSource: 'census' | 'esri' | 'manual';
+  dataPullDate: string;
+}
+
+export interface EconomicIndicators {
+  federalFundsRate: { current: number; projected1Y?: number };
+  treasury10Y: { current: number; projected1Y?: number };
+  inflation: { current: number; trend: 'rising' | 'stable' | 'falling' };
+  gdpGrowth: { current: number; trend: 'accelerating' | 'stable' | 'slowing' };
+  asOfDate: string;
+  source: string;
+}
+
+export interface SWOTAnalysisData {
+  strengths: string[];
+  weaknesses: string[];
+  opportunities: string[];
+  threats: string[];
+  summary: string;
+}
+
+export type RiskGrade = 'AAA' | 'AA' | 'A' | 'BBB' | 'BB' | 'B' | 'CCC' | 'CC' | 'C';
+
+export interface RiskDimensionScore {
+  score: number;           // 0-100
+  weight: number;          // 0-1 (calculated dynamically)
+  dataPoints?: number;     // Number of data points used
+  confidence?: 'high' | 'medium' | 'low';
+}
+
+export interface RiskRatingData {
+  overallGrade: RiskGrade;
+  overallScore: number;    // 0-100
+  
+  dimensions: {
+    marketVolatility: RiskDimensionScore;
+    liquidity: RiskDimensionScore;
+    incomeStability: RiskDimensionScore;
+    assetQuality: RiskDimensionScore;
+  };
+  
+  weightingRationale: string;
+  generatedDate: string;
+  dataAsOfDate?: string;
+  disclaimer?: string;
 }
 
 // =================================================================

@@ -76,7 +76,7 @@ export async function queryParcelByLocation(
       throw new Error(`Cadastral API error: ${response.status}`);
     }
 
-    const data = await response.json();
+    const data = await response.json() as { features?: Array<{ attributes: Record<string, unknown> }> };
 
     if (!data.features || data.features.length === 0) {
       return {
@@ -122,7 +122,7 @@ export async function queryParcelByParcelId(
       throw new Error(`Cadastral API error: ${response.status}`);
     }
 
-    const data = await response.json();
+    const data = await response.json() as { features?: Array<{ attributes: Record<string, unknown> }> };
 
     if (!data.features || data.features.length === 0) {
       return {
@@ -168,7 +168,7 @@ export async function queryParcelByAddress(
       throw new Error(`Geocoding error: ${geocodeResponse.status}`);
     }
 
-    const geocodeData = await geocodeResponse.json();
+    const geocodeData = await geocodeResponse.json() as { candidates?: Array<{ location: { x: number; y: number } }> };
 
     if (!geocodeData.candidates || geocodeData.candidates.length === 0) {
       return {

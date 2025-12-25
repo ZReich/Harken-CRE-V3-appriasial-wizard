@@ -8,4 +8,7 @@ export { AnalysisGridPage } from './AnalysisGridPage';
 export { AddendaHeaderPage } from './AddendaHeaderPage';
 export { ComparisonGridPage } from './ComparisonGridPage';
 export { IncomeGridPage } from './IncomeGridPage';
-
+export { DemographicsPage } from './DemographicsPage';
+export { EconomicContextPage } from './EconomicContextPage';
+export { SWOTPage } from './SWOTPage';
+export { RiskRatingPage } from './RiskRatingPage';

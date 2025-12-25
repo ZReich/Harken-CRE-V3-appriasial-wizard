@@ -2,8 +2,10 @@ import { useState, useEffect, useMemo } from 'react';
 import WizardLayout from '../components/WizardLayout';
 import EnhancedTextArea from '../components/EnhancedTextArea';
 import WizardGuidancePanel from '../components/WizardGuidancePanel';
+import PropertyLookupModal from '../components/PropertyLookupModal';
 import { useWizard } from '../context/WizardContext';
-import { Trash2, Plus, Lock } from 'lucide-react';
+import { Trash2, Plus, Lock, Search } from 'lucide-react';
+import type { CadastralData } from '../types/api';
 import {
   ClipboardCheckIcon,
   ScaleIcon,
@@ -341,6 +343,34 @@ export default function SetupPage() {
   const [propertyName, setPropertyName] = useState(() => wizardState.subjectData?.propertyName || '');
   const [legalDescription, setLegalDescription] = useState(() => wizardState.subjectData?.legalDescription || '');
   const [taxId, setTaxId] = useState(() => wizardState.subjectData?.taxId || '');
+  
+  // Property Lookup Modal state
+  const [showPropertyLookup, setShowPropertyLookup] = useState(false);
+  
+  // Handle property data import from lookup
+  const handlePropertyImport = (data: CadastralData) => {
+    // Update property ID fields
+    if (data.parcelId) setTaxId(data.parcelId);
+    if (data.legalDescription) setLegalDescription(data.legalDescription);
+    
+    // Update address if available
+    if (data.situsAddress || data.situsCity || data.situsZip) {
+      setAddress(prev => ({
+        ...prev,
+        street: data.situsAddress || prev.street,
+        city: data.situsCity || prev.city,
+        zip: data.situsZip || prev.zip,
+        county: data.county || prev.county,
+      }));
+    }
+    
+    // Lock the imported fields
+    setLockedFields(prev => ({
+      ...prev,
+      taxId: true,
+      legalDescription: true,
+    }));
+  };
   
   // Inspection state - declare early so it can be used in sync useEffect
   // Default inspectionType to 'interior_exterior' since that's the default dropdown value
@@ -1218,6 +1248,30 @@ export default function SetupPage() {
 
   const renderPropertyIdTab = () => (
     <div className="space-y-6">
+      {/* Property Lookup Button */}
+      <div className="bg-gradient-to-r from-[#0da1c7]/10 to-transparent border border-[#0da1c7]/20 rounded-xl p-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-[#0da1c7]/10 rounded-lg">
+              <Search className="w-5 h-5 text-[#0da1c7]" />
+            </div>
+            <div>
+              <h4 className="font-medium text-slate-800">Property Data Lookup</h4>
+              <p className="text-sm text-slate-500">
+                Auto-fill property details from {address.state === 'MT' || address.state === 'Montana' ? 'Montana Cadastral (FREE)' : 'public records'}
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={() => setShowPropertyLookup(true)}
+            className="px-4 py-2 bg-[#0da1c7] text-white rounded-lg hover:bg-[#0b8fb3] transition-colors font-medium flex items-center gap-2"
+          >
+            <Search size={16} />
+            Lookup Property
+          </button>
+        </div>
+      </div>
+
       <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
         <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
           Property Identification Details
@@ -1658,17 +1712,27 @@ export default function SetupPage() {
   );
 
   return (
-    <WizardLayout
-      title="Appraisal Setup"
-      subtitle="Phase 3 of 6 • Assignment Details"
-      phase={3}
-      sidebar={sidebar}
-      helpSidebarGuidance={helpSidebar}
-      onContinue={handleContinue}
-    >
-      <div className="max-w-4xl mx-auto animate-fade-in">
-        {renderTabContent()}
-      </div>
-    </WizardLayout>
+    <>
+      <WizardLayout
+        title="Appraisal Setup"
+        subtitle="Phase 3 of 6 • Assignment Details"
+        phase={3}
+        sidebar={sidebar}
+        helpSidebarGuidance={helpSidebar}
+        onContinue={handleContinue}
+      >
+        <div className="max-w-4xl mx-auto animate-fade-in">
+          {renderTabContent()}
+        </div>
+      </WizardLayout>
+      
+      {/* Property Lookup Modal */}
+      <PropertyLookupModal
+        isOpen={showPropertyLookup}
+        onClose={() => setShowPropertyLookup(false)}
+        onImport={handlePropertyImport}
+        initialState={address.state || 'MT'}
+      />
+    </>
   );
 }

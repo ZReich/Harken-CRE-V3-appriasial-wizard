@@ -3,7 +3,9 @@ import WizardLayout from '../components/WizardLayout';
 import ImprovementsInventory from '../components/ImprovementsInventory';
 import EnhancedTextArea from '../components/EnhancedTextArea';
 import WizardGuidancePanel from '../components/WizardGuidancePanel';
+import DemographicsPanel from '../components/DemographicsPanel';
 import { useWizard } from '../context/WizardContext';
+import { UsersIcon } from '../components/icons';
 import {
   LocationIcon,
   SiteIcon,
@@ -38,6 +40,7 @@ const tabs = [
   { id: 'location', label: 'Location & Area', Icon: LocationIcon },
   { id: 'site', label: 'Site Details', Icon: SiteIcon },
   { id: 'improvements', label: 'Improvements', Icon: BuildingIcon },
+  { id: 'demographics', label: 'Demographics', Icon: UsersIcon },
   { id: 'tax', label: 'Tax & Ownership', Icon: TaxIcon },
   { id: 'photos', label: 'Photos & Maps', Icon: PhotoIcon },
   { id: 'exhibits', label: 'Exhibits & Docs', Icon: DocumentIcon },
@@ -662,6 +665,11 @@ Locational advantages include proximity to major transportation corridors, locat
             isDraftingSiteDescription={isDraftingSiteDescription}
             setIsDraftingSiteDescription={setIsDraftingSiteDescription}
           />
+        ) : activeTab === 'demographics' ? (
+          <DemographicsContent 
+            latitude={wizardState.subjectData?.coordinates?.latitude}
+            longitude={wizardState.subjectData?.coordinates?.longitude}
+          />
         ) : activeTab === 'tax' ? (
           <TaxContent
             taxYear={taxYear}
@@ -856,6 +864,38 @@ function LocationContent({
           required
         />
       </div>
+    </div>
+  );
+}
+
+// ==========================================
+// DEMOGRAPHICS CONTENT
+// ==========================================
+interface DemographicsProps {
+  latitude?: number;
+  longitude?: number;
+}
+
+function DemographicsContent({ latitude, longitude }: DemographicsProps) {
+  return (
+    <div className="space-y-6">
+      <div className="bg-gradient-to-r from-[#0da1c7]/5 to-transparent border border-[#0da1c7]/20 rounded-xl p-4 mb-6">
+        <div className="flex items-start gap-3">
+          <Info className="w-5 h-5 text-[#0da1c7] flex-shrink-0 mt-0.5" />
+          <div>
+            <h4 className="font-medium text-slate-800">Neighborhood Demographics</h4>
+            <p className="text-sm text-slate-600">
+              View demographic data for the 1, 3, and 5 mile radius rings around the subject property. 
+              This data is automatically fetched from the US Census Bureau.
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <DemographicsPanel 
+        latitude={latitude}
+        longitude={longitude}
+      />
     </div>
   );
 }

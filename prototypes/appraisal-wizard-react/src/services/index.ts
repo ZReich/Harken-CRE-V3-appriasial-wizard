@@ -53,4 +53,36 @@ export {
   RISK_RATING_DISCLOSURE,
 } from './riskRatingService';
 
+// Property Data Router
+export {
+  getPropertyData,
+  getLookupCostInfo,
+  getServiceAvailability,
+  type PropertyLookupRequest,
+  type PropertyLookupResult,
+} from './propertyDataRouter';
 
+// Cotality Service
+export {
+  getPropertyData as getCotalityPropertyData,
+  mapCotalityToCadastralFormat,
+  type CotalityPropertyData,
+  type CotalityResponse,
+} from './cotalityService';
+
+// School Rating Service
+export {
+  getSchoolRatings,
+  getSchoolQualityScore,
+  type SchoolRating,
+  type SchoolRatingsResponse,
+} from './schoolRatingService';
+
+// Crime Statistics Service
+export {
+  getCrimeStatistics,
+  getCrimeSafetyScore,
+  formatCrimeComparison,
+  type CrimeStatistics,
+  type CrimeResponse,
+} from './crimeService';

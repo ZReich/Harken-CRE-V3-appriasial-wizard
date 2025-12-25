@@ -83,7 +83,14 @@ export async function coordinatesToFIPS(coords: GeoCoordinates): Promise<FIPSCod
     throw new Error(`Census geocoder error: ${response.status}`);
   }
 
-  const data = await response.json();
+  const data = await response.json() as { 
+    result?: { 
+      geographies?: { 
+        'Census Tracts'?: Array<{ STATE?: string; COUNTY?: string; TRACT?: string }>;
+        'Counties'?: Array<{ STATE?: string; COUNTY?: string }>;
+      } 
+    } 
+  };
   
   const geographies = data.result?.geographies;
   if (!geographies) {
@@ -98,9 +105,16 @@ export async function coordinatesToFIPS(coords: GeoCoordinates): Promise<FIPSCod
     throw new Error('Could not determine FIPS codes for location');
   }
 
+  const stateFips = tract?.STATE || county?.STATE;
+  const countyFips = tract?.COUNTY || county?.COUNTY;
+
+  if (!stateFips || !countyFips) {
+    throw new Error('Could not determine FIPS codes for location');
+  }
+
   return {
-    state: tract?.STATE || county?.STATE,
-    county: tract?.COUNTY || county?.COUNTY,
+    state: stateFips,
+    county: countyFips,
     tract: tract?.TRACT,
   };
 }
@@ -126,10 +140,10 @@ export async function getCountyDemographics(fips: FIPSCodes): Promise<CensusDemo
     throw new Error(`Census API error: ${response.status}`);
   }
 
-  const data = await response.json();
+  const data = await response.json() as string[][];
   
   // Data comes as array: [header_row, data_row]
-  if (data.length < 2) {
+  if (!data || data.length < 2) {
     throw new Error('No data returned from Census API');
   }
 

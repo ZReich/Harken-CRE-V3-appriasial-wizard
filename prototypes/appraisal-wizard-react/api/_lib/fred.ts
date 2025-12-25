@@ -78,12 +78,15 @@ export async function getFredData(
     throw new Error(`FRED API error: ${response.status} ${response.statusText}`);
   }
 
-  const data = await response.json();
+  const data = await response.json() as { 
+    observations?: Array<{ date: string; value: string }>;
+    title?: string;
+  };
 
   // Parse observations, filtering out missing values
   const observations: FredObservation[] = (data.observations || [])
-    .filter((obs: { value: string }) => obs.value !== '.')
-    .map((obs: { date: string; value: string }) => ({
+    .filter((obs) => obs.value !== '.')
+    .map((obs) => ({
       date: obs.date,
       value: parseFloat(obs.value),
     }));

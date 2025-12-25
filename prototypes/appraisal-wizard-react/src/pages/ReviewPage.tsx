@@ -5,6 +5,7 @@ import {
   ClipboardCheckIcon,
   ChartIcon,
   ScaleIcon,
+  TargetIcon,
 } from '../components/icons';
 import { CompletionChecklist, ValueReconciliation, ReportEditor } from '../features/review';
 import type { ReviewTabId } from '../features/review';
@@ -16,6 +17,7 @@ import { useSmartContinue } from '../hooks/useSmartContinue';
 import { useWizard } from '../context/WizardContext';
 import { useToast } from '../context/ToastContext';
 import EnhancedTextArea from '../components/EnhancedTextArea';
+import SWOTAnalysis, { type SWOTData } from '../components/SWOTAnalysis';
 import { Info, ArrowLeft, Save, FileCheck, CheckCircle, Sparkles, Loader2, FileText } from 'lucide-react';
 import type { ReportState, ReportStateActions } from '../features/report-preview/hooks/useReportState';
 import { useFinalizeFlow } from '../features/report-preview/hooks/useFinalizeFlow';
@@ -454,6 +456,15 @@ export default function ReviewPage() {
   // Draft All loading state
   const [isDraftingAllVacant, setIsDraftingAllVacant] = useState(false);
 
+  // SWOT Analysis state
+  const [swotData, setSwotData] = useState<SWOTData>({
+    strengths: [],
+    weaknesses: [],
+    opportunities: [],
+    threats: [],
+    summary: '',
+  });
+
   // Enhanced AI drafts with more market data, specificity, and neighborhood context
   // Matching the quality and depth of actual Rove Valuations appraisals
   const subjectAddress = state.subjectData?.address?.street || '6907 Entryway Drive';
@@ -518,13 +529,15 @@ We considered alternative uses including renovation, conversion to alternative u
   }, [simulatedDrafts]);
 
 
-  // Tab configuration - Only the 3 tracked tabs (Report Preview is now a separate mode)
-  // Order: HBU → Reconciliation → Checklist (per appraisal workflow)
+  // Tab configuration - Only the 4 tracked tabs (Report Preview is now a separate mode)
+  // Order: HBU → SWOT → Reconciliation → Checklist (per appraisal workflow)
   // 1. Establish HBU first (foundational analysis)
-  // 2. Reconcile value indications (core conclusion)
-  // 3. Verify completion (quality control gate before finalizing)
+  // 2. SWOT Analysis (strategic property assessment)
+  // 3. Reconcile value indications (core conclusion)
+  // 4. Verify completion (quality control gate before finalizing)
   const tabs: { id: ReviewTabId; label: string; icon: typeof ClipboardCheckIcon }[] = [
     { id: 'hbu', label: 'Highest & Best Use', icon: ScaleIcon },
+    { id: 'swot', label: 'SWOT Analysis', icon: TargetIcon },
     { id: 'reconciliation', label: 'Value Reconciliation', icon: ChartIcon },
     { id: 'checklist', label: 'Completion Checklist', icon: ClipboardCheckIcon },
   ];
@@ -602,12 +615,15 @@ We considered alternative uses including renovation, conversion to alternative u
     <div>
       <h3 className="text-lg font-bold text-gray-900 mb-3">
         {activeTab === 'hbu' && 'Highest & Best Use'}
+        {activeTab === 'swot' && 'SWOT Analysis'}
         {activeTab === 'checklist' && 'Finalization'}
         {activeTab === 'reconciliation' && 'Value Reconciliation'}
       </h3>
       <p className="text-sm text-gray-600 mb-4">
         {activeTab === 'hbu' &&
           'Complete the four tests of highest and best use to determine the most profitable legal use of the subject property.'}
+        {activeTab === 'swot' &&
+          'Identify strengths, weaknesses, opportunities, and threats for the subject property.'}
         {activeTab === 'checklist' &&
           'Review all sections for completeness and accuracy before generating the final report.'}
         {activeTab === 'reconciliation' &&
@@ -651,6 +667,23 @@ We considered alternative uses including renovation, conversion to alternative u
             <h4 className="font-semibold text-sm text-blue-900 mb-1">USPAP Compliance</h4>
             <p className="text-xs text-blue-800">
               Ensure all required certifications are signed and limiting conditions are properly disclosed.
+            </p>
+          </div>
+        </>
+      )}
+
+      {activeTab === 'swot' && (
+        <>
+          <div className="bg-emerald-50 border-l-4 border-emerald-400 p-4 rounded mb-4">
+            <h4 className="font-semibold text-sm text-emerald-900 mb-1">Strategic Analysis</h4>
+            <p className="text-xs text-emerald-800">
+              SWOT analysis provides a framework for evaluating the subject property's competitive position in the market.
+            </p>
+          </div>
+          <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
+            <h4 className="font-semibold text-sm text-blue-900 mb-1">AI Suggestions</h4>
+            <p className="text-xs text-blue-800">
+              Use the AI Suggestions button to generate property-specific SWOT items based on your entered data.
             </p>
           </div>
         </>
@@ -864,6 +897,44 @@ We considered alternative uses including renovation, conversion to alternative u
                 />
               </div>
             )}
+          </div>
+        );
+
+      case 'swot':
+        return (
+          <div className="space-y-6 animate-fade-in">
+            <SWOTAnalysis
+              data={swotData}
+              onChange={setSwotData}
+              onGenerateSuggestions={async () => {
+                // Generate AI suggestions based on property data
+                const propertyType = state.propertyType || 'commercial';
+                const location = state.subjectData?.address?.city || 'the area';
+                
+                // Simulated AI-generated suggestions
+                return {
+                  strengths: [
+                    `Prime location in ${location} with excellent visibility`,
+                    `Modern construction with quality finishes`,
+                    `Strong tenant demand in the local market`,
+                  ],
+                  weaknesses: [
+                    `Limited on-site parking relative to building size`,
+                    `Single-tenant configuration may limit marketability`,
+                  ],
+                  opportunities: [
+                    `Growing ${propertyType} market in the region`,
+                    `Potential for rent increases at lease renewal`,
+                    `Expansion potential on excess land area`,
+                  ],
+                  threats: [
+                    `Rising interest rates may impact cap rates`,
+                    `New competitive supply under construction`,
+                    `Economic uncertainty in the broader market`,
+                  ],
+                };
+              }}
+            />
           </div>
         );
 
