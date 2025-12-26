@@ -1,9 +1,11 @@
 {
-  "installCommand": "cd prototypes/appraisal-wizard-react && npm install",
-  "buildCommand": "cd prototypes/appraisal-wizard-react && npm run build",
+  "buildCommand": "cd prototypes/appraisal-wizard-react && npm install && npm run build",
   "outputDirectory": "prototypes/appraisal-wizard-react/dist",
-  "framework": "vite",
-  "rewrites": [
-    { "source": "/:path*", "destination": "/index.html" }
-  ]
+  "installCommand": "cd prototypes/appraisal-wizard-react && npm install",
+  "functions": {
+    "prototypes/appraisal-wizard-react/api/**/*.ts": {
+      "memory": 1024,
+      "maxDuration": 30
+    }
+  }
 }
