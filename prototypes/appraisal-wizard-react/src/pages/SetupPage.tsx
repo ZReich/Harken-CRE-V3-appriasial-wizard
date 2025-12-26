@@ -356,22 +356,11 @@ export default function SetupPage() {
   
   // Handle property data import from lookup - MUST be defined before performAutoLookup
   const handlePropertyImport = useCallback((data: CadastralData) => {
-    console.log('[PropertyImport] Starting import with data:', {
-      parcelId: data.parcelId,
-      legalDescription: data.legalDescription?.substring(0, 50) + '...',
-      ownerName: data.ownerName,
-      county: data.county,
-    });
+    console.log('[PropertyImport] Importing data:', data.parcelId, data.legalDescription?.substring(0, 30));
     
     // Update property ID fields
-    if (data.parcelId) {
-      console.log('[PropertyImport] Setting taxId to:', data.parcelId);
-      setTaxId(data.parcelId);
-    }
-    if (data.legalDescription) {
-      console.log('[PropertyImport] Setting legalDescription');
-      setLegalDescription(data.legalDescription);
-    }
+    if (data.parcelId) setTaxId(data.parcelId);
+    if (data.legalDescription) setLegalDescription(data.legalDescription);
     
     // Update address if available (only fill empty fields)
     if (data.situsAddress || data.situsCity || data.situsZip) {
@@ -465,6 +454,23 @@ export default function SetupPage() {
       console.log('[AutoLookup] Result:', result);
       
       if (result.success && result.data) {
+        // Check if the parcel data is actually useful (not a placeholder/empty parcel)
+        const hasUsefulData = result.data.legalDescription || 
+                              result.data.ownerName || 
+                              (result.data.parcelId && result.data.parcelId !== '99999999999999999');
+        
+        if (!hasUsefulData) {
+          // Parcel found but has no useful data (likely hit a road or ROW)
+          console.warn('[AutoLookup] Parcel found but has no useful data:', result.data.parcelId);
+          setAutoLookupStatus('error');
+          setAutoLookupMessage('No property data at this location - enter details manually');
+          setTimeout(() => {
+            setAutoLookupStatus('idle');
+            setAutoLookupMessage('');
+          }, 5000);
+          return;
+        }
+        
         // Auto-fill the data
         console.log('[AutoLookup] Calling handlePropertyImport with data:', JSON.stringify(result.data));
         try {
