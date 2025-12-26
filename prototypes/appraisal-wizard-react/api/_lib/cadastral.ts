@@ -169,6 +169,8 @@ export async function queryParcelByAddress(
   state?: string
 ): Promise<CadastralQueryResult> {
   try {
+    console.log('[Cadastral] queryParcelByAddress called:', { address, city, state });
+    
     // First, geocode the address
     const geocodeUrl = new URL(MONTANA_GEOCODER);
     geocodeUrl.searchParams.set('f', 'json');
@@ -176,13 +178,19 @@ export async function queryParcelByAddress(
     geocodeUrl.searchParams.set('outFields', '*');
     geocodeUrl.searchParams.set('maxLocations', '1');
 
+    console.log('[Cadastral] Geocoding URL:', geocodeUrl.toString());
+
     const geocodeResponse = await fetch(geocodeUrl.toString());
+    
+    console.log('[Cadastral] Geocode response status:', geocodeResponse.status);
     
     if (!geocodeResponse.ok) {
       throw new Error(`Geocoding error: ${geocodeResponse.status}`);
     }
 
     const geocodeData = await geocodeResponse.json() as { candidates?: Array<{ location: { x: number; y: number }; score?: number } > };
+
+    console.log('[Cadastral] Geocode data:', JSON.stringify(geocodeData));
 
     if (!geocodeData.candidates || geocodeData.candidates.length === 0) {
       return {
@@ -196,13 +204,18 @@ export async function queryParcelByAddress(
     const geocodedLat = location.y;
     const geocodedLng = location.x;
     
+    console.log('[Cadastral] Geocoded coordinates:', { lat: geocodedLat, lng: geocodedLng });
+    
     // Now query by the geocoded location (coordinates will be included)
     const result = await queryParcelByLocation(geocodedLat, geocodedLng);
+    
+    console.log('[Cadastral] Parcel query result:', result.success);
     
     // The coordinates are already set in queryParcelByLocation
     return result;
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error('[Cadastral] queryParcelByAddress error:', message, error);
     return {
       success: false,
       parcel: null,
