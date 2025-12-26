@@ -18,7 +18,7 @@ export async function queryParcelByLocation(
   state?: string
 ): Promise<CadastralResponse> {
   try {
-    const response = await apiPost<CadastralData>('/api/cadastral/query', {
+    const response = await apiPost<CadastralData>('/cadastral/query', {
       latitude,
       longitude,
       state: state || 'MT',
@@ -49,7 +49,7 @@ export async function queryParcelByParcelId(
   state?: string
 ): Promise<CadastralResponse> {
   try {
-    const response = await apiPost<CadastralData>('/api/cadastral/query', {
+    const response = await apiPost<CadastralData>('/cadastral/query', {
       parcelId,
       state: state || 'MT',
     });
@@ -80,7 +80,7 @@ export async function queryParcelByAddress(
   state: string
 ): Promise<CadastralResponse> {
   try {
-    const response = await apiPost<CadastralData>('/api/cadastral/query', {
+    const response = await apiPost<CadastralData>('/cadastral/query', {
       address,
       city,
       state: state || 'MT',
