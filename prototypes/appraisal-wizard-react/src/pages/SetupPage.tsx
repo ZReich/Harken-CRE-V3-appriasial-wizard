@@ -546,13 +546,12 @@ export default function SetupPage() {
     
     // Store coordinates if available for later use
     if (place.latitude && place.longitude) {
-      setSubjectData(prev => ({
-        ...prev,
+      setSubjectData({
         coordinates: {
-          latitude: place.latitude!,
-          longitude: place.longitude!,
+          latitude: place.latitude,
+          longitude: place.longitude,
         },
-      }));
+      });
     }
   }, [setAddress, setSubjectData]);
   
