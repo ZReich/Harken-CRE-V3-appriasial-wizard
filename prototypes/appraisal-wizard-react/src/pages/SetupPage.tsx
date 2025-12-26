@@ -524,7 +524,20 @@ export default function SetupPage() {
     // Get coordinates from wizard state (set when Google Places autocomplete is used)
     const coords = wizardState.subjectData?.coordinates;
     console.log('[ManualLookup] User triggered lookup:', { street, city, state, coords });
-    performAutoLookup(street, city, state, coords?.latitude, coords?.longitude);
+    
+    // Show warning if no coordinates (address was manually entered)
+    if (!coords?.latitude || !coords?.longitude) {
+      console.warn('[ManualLookup] No coordinates available - address may have been manually entered');
+      setAutoLookupStatus('error');
+      setAutoLookupMessage('Please select address from autocomplete dropdown for property lookup');
+      setTimeout(() => {
+        setAutoLookupStatus('idle');
+        setAutoLookupMessage('');
+      }, 5000);
+      return;
+    }
+    
+    performAutoLookup(street, city, state, coords.latitude, coords.longitude);
   }, [address.street, address.city, address.state, performAutoLookup, wizardState.subjectData?.coordinates]);
   
   // Check if address is complete enough for lookup button to be enabled
