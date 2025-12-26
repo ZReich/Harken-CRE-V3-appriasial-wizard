@@ -329,31 +329,78 @@ async function tryGeocodeAndQuery(
 
 /**
  * Map raw ArcGIS attributes to our parcel interface
+ * Field names from DNRC endpoint: https://gis.dnrc.mt.gov/arcgis/rest/services/DNRALL/Cadastral/MapServer/0
  */
 function mapAttributesToParcel(attrs: Record<string, unknown>): MontanaCadastralParcel {
+  // Parse CityStateZip field (e.g., "BILLINGS, MT 59101")
+  const cityStateZip = String(attrs.CityStateZip || '');
+  let situsCity = '';
+  let situsZip = '';
+  if (cityStateZip) {
+    const match = cityStateZip.match(/^([^,]+),\s*([A-Z]{2})\s*(\d{5}(?:-\d{4})?)?$/);
+    if (match) {
+      situsCity = match[1] || '';
+      situsZip = match[3] || '';
+    }
+  }
+
+  // Build mailing address from owner address fields
+  const ownerAddress = [
+    attrs.OwnerAddress1,
+    attrs.OwnerAddress2,
+    attrs.OwnerAddress3
+  ].filter(Boolean).join(', ');
+
+  const mailingCityStateZip = [
+    attrs.OwnerCity,
+    attrs.OwnerState,
+    attrs.OwnerZipCode
+  ].filter(Boolean).join(' ');
+
   return {
     parcelId: String(attrs.PARCELID || ''),
-    geoContoId: String(attrs.GEOCONTOID || ''),
+    geoContoId: String(attrs.Geocode || ''),
     countyCode: String(attrs.COUNTYCD || ''),
-    countyName: String(attrs.COUNTYNAME || ''),
-    legalDescription: String(attrs.LEGALDESC || ''),
-    township: String(attrs.TOWNSHIP || ''),
-    range: String(attrs.RANGE || ''),
-    section: String(attrs.SECTION || ''),
-    propertyType: String(attrs.PROPTYPE || ''),
-    acres: Number(attrs.ACRES) || 0,
-    sqft: Number(attrs.SQFT) || 0,
-    situsAddress: String(attrs.SITUS_ADDR || ''),
-    situsCity: String(attrs.SITUS_CITY || ''),
-    situsZip: String(attrs.SITUS_ZIP || ''),
-    ownerName: String(attrs.OWNERNME1 || ''),
-    ownerName2: String(attrs.OWNERNME2 || ''),
-    mailingAddress: String(attrs.MAILADDR || ''),
-    assessedLandValue: Number(attrs.LANDVAL) || 0,
-    assessedImprovementValue: Number(attrs.IMPVAL) || 0,
-    totalAssessedValue: Number(attrs.TOTALVAL) || 0,
-    taxYear: Number(attrs.TAXYR) || new Date().getFullYear(),
+    countyName: getCountyName(Number(attrs.COUNTYCD) || 0),
+    legalDescription: String(attrs.LegalDescriptionShort || ''),
+    township: String(attrs.Township || ''),
+    range: String(attrs.Range || ''),
+    section: String(attrs.Section || ''),
+    propertyType: String(attrs.PropType || ''),
+    acres: Number(attrs.GISAcres) || Number(attrs.TotalAcres) || 0,
+    sqft: Math.round((Number(attrs.GISAcres) || 0) * 43560),
+    situsAddress: String(attrs.AddressLine1 || '').trim(),
+    situsCity: situsCity,
+    situsZip: situsZip,
+    ownerName: String(attrs.OwnerName || ''),
+    ownerName2: String(attrs.CareOfTaxpayer || ''),
+    mailingAddress: ownerAddress ? `${ownerAddress}, ${mailingCityStateZip}` : '',
+    assessedLandValue: Number(attrs.TotalLandValue) || 0,
+    assessedImprovementValue: Number(attrs.TotalBuildingValue) || 0,
+    totalAssessedValue: Number(attrs.TotalValue) || 0,
+    taxYear: Number(attrs.TaxYear) || new Date().getFullYear(),
   };
+}
+
+/**
+ * Map Montana county codes to names
+ */
+function getCountyName(countyCode: number): string {
+  const counties: Record<number, string> = {
+    1: 'Beaverhead', 2: 'Big Horn', 3: 'Yellowstone', 4: 'Blaine', 5: 'Broadwater',
+    6: 'Carbon', 7: 'Carter', 8: 'Cascade', 9: 'Chouteau', 10: 'Custer',
+    11: 'Daniels', 12: 'Dawson', 13: 'Deer Lodge', 14: 'Fallon', 15: 'Fergus',
+    16: 'Flathead', 17: 'Gallatin', 18: 'Garfield', 19: 'Glacier', 20: 'Golden Valley',
+    21: 'Granite', 22: 'Hill', 23: 'Jefferson', 24: 'Judith Basin', 25: 'Lake',
+    26: 'Lewis and Clark', 27: 'Liberty', 28: 'Lincoln', 29: 'Madison', 30: 'McCone',
+    31: 'Meagher', 32: 'Mineral', 33: 'Missoula', 34: 'Musselshell', 35: 'Park',
+    36: 'Petroleum', 37: 'Phillips', 38: 'Pondera', 39: 'Powder River', 40: 'Powell',
+    41: 'Prairie', 42: 'Ravalli', 43: 'Richland', 44: 'Roosevelt', 45: 'Rosebud',
+    46: 'Sanders', 47: 'Sheridan', 48: 'Silver Bow', 49: 'Stillwater', 50: 'Sweet Grass',
+    51: 'Teton', 52: 'Toole', 53: 'Treasure', 54: 'Valley', 55: 'Wheatland',
+    56: 'Wibaux',
+  };
+  return counties[countyCode] || '';
 }
 
 /**
