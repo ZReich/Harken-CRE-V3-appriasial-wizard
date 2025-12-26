@@ -12,9 +12,7 @@ import { queryParcelByLocation, queryParcelByAddress, queryParcelByParcelId, isM
 import { getPropertyData as getCotalityData, mapCotalityToCadastralFormat } from './cotalityService';
 import type { CadastralData, CadastralResponse } from '../types/api';
 
-// Check if running in local development (localhost)
-const isLocalDev = typeof window !== 'undefined' && 
-  (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+// Property data now uses direct browser calls to Montana GIS API (no server-side proxy needed)
 
 export interface PropertyLookupRequest {
   // Location-based lookup
@@ -38,31 +36,6 @@ export interface PropertyLookupResult {
   error?: string;
 }
 
-/**
- * Generate mock property data for local development
- */
-function generateLocalMockData(address?: string, city?: string, state?: string): CadastralData {
-  console.log('[PropertyDataRouter] Generating mock data for local dev');
-  return {
-    parcelId: `MOCK-${Date.now().toString(36).toUpperCase()}`,
-    legalDescription: `Lot 1, Block 1, ${city || 'Sample'} Subdivision, ${state || 'MT'}`,
-    county: city ? `${city} County` : 'Yellowstone County',
-    acres: 0.25 + Math.random() * 2,
-    sqft: Math.round(10890 + Math.random() * 50000),
-    situsAddress: address || '123 Main Street',
-    situsCity: city || 'Billings',
-    situsZip: '59102',
-    ownerName: 'Sample Property Owner LLC',
-    mailingAddress: `${address || '123 Main Street'}, ${city || 'Billings'}, ${state || 'MT'}`,
-    assessedLandValue: Math.round(75000 + Math.random() * 150000),
-    assessedImprovementValue: Math.round(150000 + Math.random() * 350000),
-    totalAssessedValue: 0, // Will be calculated
-    taxYear: new Date().getFullYear(),
-    propertyType: 'Commercial',
-    latitude: 45.7833 + (Math.random() - 0.5) * 0.1,
-    longitude: -108.5007 + (Math.random() - 0.5) * 0.1,
-  };
-}
 
 /**
  * Route property lookup to appropriate service based on state
@@ -73,25 +46,7 @@ function generateLocalMockData(address?: string, city?: string, state?: string):
 export async function getPropertyData(request: PropertyLookupRequest): Promise<PropertyLookupResult> {
   const { latitude, longitude, address, city, state, parcelId } = request;
   
-  console.log('[PropertyDataRouter] getPropertyData called:', { address, city, state, isLocalDev });
-  
-  // In local development, use mock data since Vercel API routes aren't available
-  if (isLocalDev) {
-    console.log('[PropertyDataRouter] Local dev mode - returning mock data');
-    // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 500 + Math.random() * 500));
-    
-    const mockData = generateLocalMockData(address, city, state);
-    mockData.totalAssessedValue = mockData.assessedLandValue + mockData.assessedImprovementValue;
-    
-    return {
-      success: true,
-      data: mockData,
-      source: 'mock',
-      isFreeService: state ? isMontanaProperty(state) : true,
-      error: undefined,
-    };
-  }
+  console.log('[PropertyDataRouter] getPropertyData called:', { address, city, state });
   
   // Determine if this is a Montana property
   const isMontana = state ? isMontanaProperty(state) : false;
