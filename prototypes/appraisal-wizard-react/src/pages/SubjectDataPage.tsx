@@ -284,6 +284,29 @@ export default function SubjectDataPage() {
   const [assessedImprovements, setAssessedImprovements] = useState('');
   const [totalAssessed, setTotalAssessed] = useState('');
   const [millLevy, setMillLevy] = useState('');
+  const [taxDataAutoFilled, setTaxDataAutoFilled] = useState(false);
+  
+  // Auto-populate tax fields from cadastralData when available
+  useEffect(() => {
+    const cadastral = wizardState.subjectData?.cadastralData;
+    if (cadastral && !taxDataAutoFilled) {
+      // Only auto-fill if fields are empty
+      if (!assessedLand && cadastral.assessedLandValue) {
+        setAssessedLand(`$${cadastral.assessedLandValue.toLocaleString()}`);
+      }
+      if (!assessedImprovements && cadastral.assessedImprovementValue) {
+        setAssessedImprovements(`$${cadastral.assessedImprovementValue.toLocaleString()}`);
+      }
+      if (!totalAssessed && cadastral.totalAssessedValue) {
+        setTotalAssessed(`$${cadastral.totalAssessedValue.toLocaleString()}`);
+      }
+      if (cadastral.taxYear) {
+        setTaxYear(cadastral.taxYear.toString());
+      }
+      setTaxDataAutoFilled(true);
+    }
+  }, [wizardState.subjectData?.cadastralData, taxDataAutoFilled, assessedLand, assessedImprovements, totalAssessed]);
+  
   // Sale history from WizardContext (centralized)
   const lastSaleDate = wizardState.subjectData?.lastSaleDate || '';
   const lastSalePrice = wizardState.subjectData?.lastSalePrice || '';
@@ -656,6 +679,7 @@ export default function SubjectDataPage() {
             setGrantee={setGrantee}
             transactionHistory={transactionHistory}
             setTransactionHistory={setTransactionHistory}
+            isAutoFilled={taxDataAutoFilled}
           />
         ) : activeTab === 'photos' ? (
           <PhotosContent
@@ -1682,6 +1706,7 @@ interface TaxProps {
   setGrantee: (v: string) => void;
   transactionHistory: string;
   setTransactionHistory: (v: string) => void;
+  isAutoFilled?: boolean;
 }
 
 function TaxContent({
@@ -1696,12 +1721,21 @@ function TaxContent({
   grantor, setGrantor,
   grantee, setGrantee,
   transactionHistory, setTransactionHistory,
+  isAutoFilled = false,
 }: TaxProps) {
   const currentYear = new Date().getFullYear();
   const yearOptions = Array.from({ length: 11 }, (_, i) => String(currentYear - i));
 
   return (
     <div className="space-y-6">
+      {/* Auto-fill indicator */}
+      {isAutoFilled && (
+        <div className="flex items-center gap-2 px-3 py-2 bg-emerald-50 border border-emerald-200 rounded-lg text-sm text-emerald-700">
+          <CheckCircle className="w-4 h-4" />
+          <span>Tax assessment data auto-filled from property records</span>
+        </div>
+      )}
+      
       {/* Property Tax Information */}
       <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
         <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">

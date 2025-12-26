@@ -8,6 +8,8 @@
  * 100% portable - can be copied directly to Harken backend.
  */
 
+import fetch from 'node-fetch';
+
 const CADASTRAL_FEATURE_SERVER = 'https://gis.msl.mt.gov/arcgis/rest/services/Cadastral/Cadastral/FeatureServer/1/query';
 const MONTANA_GEOCODER = 'https://gis.msl.mt.gov/arcgis/rest/services/Locators/MontanaAddressLocator/GeocodeServer/findAddressCandidates';
 

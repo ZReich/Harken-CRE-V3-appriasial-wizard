@@ -145,6 +145,10 @@ const getInitialState = (): WizardState => {
             ...defaultState.subjectData.address,
             ...(parsedState.subjectData?.address || {}),
           },
+          // Preserve coordinates from storage
+          coordinates: parsedState.subjectData?.coordinates || undefined,
+          // Preserve cadastralData from storage
+          cadastralData: parsedState.subjectData?.cadastralData || undefined,
         },
         celebration: {
           ...defaultState.celebration,
@@ -286,10 +290,18 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
           subjectData: {
             ...currentSubjectData,
             ...action.payload,
-            // Handle nested address update
+            // Handle nested address update (merge, don't replace)
             address: action.payload.address
               ? { ...(currentSubjectData.address || {}), ...action.payload.address }
               : currentSubjectData.address,
+            // Preserve coordinates if not explicitly being updated
+            coordinates: action.payload.coordinates !== undefined 
+              ? action.payload.coordinates 
+              : currentSubjectData.coordinates,
+            // Preserve cadastralData if not explicitly being updated
+            cadastralData: action.payload.cadastralData !== undefined
+              ? action.payload.cadastralData
+              : currentSubjectData.cadastralData,
           },
         };
       }
