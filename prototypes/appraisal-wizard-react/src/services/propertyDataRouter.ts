@@ -2,7 +2,7 @@
  * Property Data Router
  * 
  * Routes property data requests to the appropriate service based on state:
- * - Montana (MT): Uses FREE Montana Cadastral GIS API
+ * - Montana (MT): Uses FREE Montana Cadastral GIS API via serverless proxy
  * - Other states: Uses Cotality API (mock data until API is active)
  * 
  * This pattern provides significant cost savings for Montana-based properties.
@@ -11,8 +11,6 @@
 import { queryParcelByLocation, queryParcelByAddress, queryParcelByParcelId, isMontanaProperty } from './cadastralService';
 import { getPropertyData as getCotalityData, mapCotalityToCadastralFormat } from './cotalityService';
 import type { CadastralData, CadastralResponse } from '../types/api';
-
-// Property data now uses direct browser calls to Montana GIS API (no server-side proxy needed)
 
 export interface PropertyLookupRequest {
   // Location-based lookup
