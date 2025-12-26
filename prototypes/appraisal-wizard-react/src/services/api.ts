@@ -56,11 +56,15 @@ export async function apiRequest<T>(
 
     // Handle non-2xx responses
     if (!response.ok) {
+      // Read the response body as text first (can only read once)
+      const errorText = await response.text();
       let errorData: unknown;
       try {
-        errorData = await response.json();
+        // Try to parse as JSON
+        errorData = JSON.parse(errorText);
       } catch {
-        errorData = await response.text();
+        // If not JSON, use the raw text
+        errorData = errorText;
       }
       
       throw new ApiError(
