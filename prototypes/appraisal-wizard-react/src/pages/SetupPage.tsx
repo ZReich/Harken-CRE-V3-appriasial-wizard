@@ -552,15 +552,17 @@ export default function SetupPage() {
   const handlePlaceSelect = useCallback((place: PlaceDetails) => {
     console.log('[GooglePlaces] Place selected, filling address fields:', place);
     
-    setAddress({
+    const newAddress = {
       street: place.street,
       city: place.city,
       state: place.stateCode || place.state, // Use state code (e.g., MT) if available
       zip: place.zip,
       county: place.county,
-    });
+    };
     
-    // Store coordinates if available for later use
+    setAddress(newAddress);
+    
+    // Store coordinates if available
     if (place.latitude && place.longitude) {
       setSubjectData({
         coordinates: {
@@ -568,8 +570,19 @@ export default function SetupPage() {
           longitude: place.longitude,
         },
       });
+      
+      // Automatically trigger property lookup with the coordinates we just received
+      // This avoids stale state issues when user clicks Search immediately
+      console.log('[GooglePlaces] Auto-triggering property lookup with coordinates');
+      performAutoLookup(
+        place.street,
+        place.city,
+        newAddress.state,
+        place.latitude,
+        place.longitude
+      );
     }
-  }, [setAddress, setSubjectData]);
+  }, [setAddress, setSubjectData, performAutoLookup]);
   
   // Inspection state - declare early so it can be used in sync useEffect
   // Default inspectionType to 'interior_exterior' since that's the default dropdown value
