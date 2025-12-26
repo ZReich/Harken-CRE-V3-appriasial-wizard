@@ -439,7 +439,7 @@ export default function ReviewPage() {
     setActiveTab('checklist');
   }, []);
 
-  const { state } = useWizard();
+  const { state, setRiskRating } = useWizard();
   
   // Determine if property has improvements (for HBU As Improved visibility)
   const hasImprovements = useMemo(() => {
@@ -999,6 +999,7 @@ We considered alternative uses including renovation, conversion to alternative u
               yearBuilt={state.improvementsInventory?.parcels?.[0]?.buildings?.[0]?.yearBuilt ?? undefined}
               condition={state.improvementsInventory?.parcels?.[0]?.buildings?.[0]?.condition}
               className="w-full"
+              onDataLoaded={setRiskRating}
             />
           </div>
         );

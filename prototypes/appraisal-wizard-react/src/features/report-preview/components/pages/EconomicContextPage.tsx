@@ -3,23 +3,48 @@
  * 
  * Displays economic indicators from FRED API in a clean tabular format
  * for the appraisal report.
+ * 
+ * Supports both the full API response format (with history) and 
+ * the simplified WizardState format (without history).
  */
 
 import React from 'react';
-import type { EconomicIndicatorsResponse } from '../../../../types/api';
+import type { EconomicIndicators } from '../../../../types';
 
 interface EconomicContextPageProps {
-  data: EconomicIndicatorsResponse['data'];
-  asOfDate?: string;
+  data: EconomicIndicators | null;
   pageNumber?: number;
 }
 
 // Formatting helper
 const formatRate = (value: number) => `${value.toFixed(2)}%`;
 
+// Helper to determine trend from simple trend string or history array
+const getTrendFromData = (
+  indicator: { current: number; trend?: string; history?: { value: number }[] }
+): string => {
+  // If we have a direct trend string, use it
+  if (indicator.trend) {
+    const trend = indicator.trend.toLowerCase();
+    if (trend === 'rising' || trend === 'accelerating') return 'Rising';
+    if (trend === 'falling' || trend === 'slowing') return 'Falling';
+    return 'Stable';
+  }
+  
+  // If we have history, calculate trend
+  if (indicator.history && indicator.history.length >= 3) {
+    const recent = indicator.history.slice(0, 3).reduce((sum, p) => sum + p.value, 0) / 3;
+    const older = indicator.history.slice(-3).reduce((sum, p) => sum + p.value, 0) / 3;
+    const changePct = ((recent - older) / older) * 100;
+    if (changePct > 5) return 'Rising';
+    if (changePct < -5) return 'Falling';
+  }
+  
+  return 'Stable';
+};
+
 export const EconomicContextPage: React.FC<EconomicContextPageProps> = ({
   data,
-  asOfDate,
   pageNumber,
 }) => {
   if (!data) {
@@ -33,42 +58,31 @@ export const EconomicContextPage: React.FC<EconomicContextPageProps> = ({
     );
   }
 
-  const { federalFundsRate, treasury10Y, inflation, gdpGrowth } = data;
-
-  // Get trend info for each indicator
-  const getTrendLabel = (history: { value: number }[]) => {
-    if (history.length < 3) return 'Stable';
-    const recent = history.slice(0, 3).reduce((sum, p) => sum + p.value, 0) / 3;
-    const older = history.slice(-3).reduce((sum, p) => sum + p.value, 0) / 3;
-    const changePct = ((recent - older) / older) * 100;
-    if (changePct > 5) return 'Rising';
-    if (changePct < -5) return 'Falling';
-    return 'Stable';
-  };
+  const { federalFundsRate, treasury10Y, inflation, gdpGrowth, asOfDate } = data;
 
   const indicators = [
     { 
       name: 'Federal Funds Rate', 
       current: federalFundsRate.current, 
-      trend: getTrendLabel(federalFundsRate.history),
+      trend: getTrendFromData(federalFundsRate as { current: number; trend?: string; history?: { value: number }[] }),
       description: 'The target rate set by the Federal Reserve for overnight lending between banks',
     },
     { 
       name: '10-Year Treasury Yield', 
       current: treasury10Y.current, 
-      trend: getTrendLabel(treasury10Y.history),
+      trend: getTrendFromData(treasury10Y as { current: number; trend?: string; history?: { value: number }[] }),
       description: 'The benchmark risk-free rate used for cap rate analysis',
     },
     { 
       name: 'Inflation (CPI)', 
       current: inflation.current, 
-      trend: getTrendLabel(inflation.history),
+      trend: getTrendFromData(inflation as { current: number; trend?: string; history?: { value: number }[] }),
       description: 'Year-over-year change in the Consumer Price Index',
     },
     { 
       name: 'GDP Growth', 
       current: gdpGrowth.current, 
-      trend: getTrendLabel(gdpGrowth.history),
+      trend: getTrendFromData(gdpGrowth as { current: number; trend?: string; history?: { value: number }[] }),
       description: 'Annual growth rate of real Gross Domestic Product',
     },
   ];
@@ -151,7 +165,7 @@ export const EconomicContextPage: React.FC<EconomicContextPageProps> = ({
       {/* Source Attribution */}
       <div className="absolute bottom-[1in] left-[1in] right-[1in]">
         <p className="text-xs text-slate-500">
-          Source: Federal Reserve Economic Data (FRED)
+          Source: {data.source || 'Federal Reserve Economic Data (FRED)'}
           {asOfDate && ` (as of ${new Date(asOfDate).toLocaleDateString()})`}
         </p>
       </div>

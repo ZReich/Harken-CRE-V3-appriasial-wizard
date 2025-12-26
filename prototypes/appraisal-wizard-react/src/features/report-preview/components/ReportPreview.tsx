@@ -13,7 +13,20 @@ import {
   Download,
 } from 'lucide-react';
 import type { ReportPage, TOCEntry, EditorMode } from '../../../types';
-import { CoverPage, LetterPage, SummaryPage, NarrativePage, PhotoGridPage, TOCPage, AnalysisGridPage, AddendaHeaderPage } from './pages';
+import { 
+  CoverPage, 
+  LetterPage, 
+  SummaryPage, 
+  NarrativePage, 
+  PhotoGridPage, 
+  TOCPage, 
+  AnalysisGridPage, 
+  AddendaHeaderPage,
+  DemographicsPage,
+  EconomicContextPage,
+  SWOTPage,
+  RiskRatingPage,
+} from './pages';
 import { ZOOM_LEVELS } from '../constants';
 
 interface ReportPreviewProps {
@@ -190,6 +203,44 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
           );
         case 'addenda-header':
           return <AddendaHeaderPage title={page.title} pageNumber={page.pageNumber} />;
+        case 'risk-rating': {
+          const riskContent = page.content?.[0]?.content as { riskRating?: import('../../../types/api').RiskRatingData };
+          return (
+            <RiskRatingPage 
+              data={riskContent?.riskRating as import('../../../types/api').RiskRatingData} 
+              pageNumber={page.pageNumber} 
+            />
+          );
+        }
+        case 'demographics': {
+          const demoContent = page.content?.[0]?.content as { demographics?: import('../../../types').DemographicsData };
+          return (
+            <DemographicsPage 
+              data={demoContent?.demographics?.radiusAnalysis ?? []}
+              source={demoContent?.demographics?.dataSource}
+              asOfDate={demoContent?.demographics?.dataPullDate}
+              pageNumber={page.pageNumber}
+            />
+          );
+        }
+        case 'economic-context': {
+          const econContent = page.content?.[0]?.content as { economicIndicators?: import('../../../types').EconomicIndicators };
+          return (
+            <EconomicContextPage 
+              data={econContent?.economicIndicators ?? null}
+              pageNumber={page.pageNumber}
+            />
+          );
+        }
+        case 'swot': {
+          const swotContent = page.content?.[0]?.content as { swotAnalysis?: import('../../../types').SWOTAnalysisData };
+          return (
+            <SWOTPage 
+              data={swotContent?.swotAnalysis as import('../../../types').SWOTAnalysisData}
+              pageNumber={page.pageNumber}
+            />
+          );
+        }
         case 'map-page':
           return (
             <div className="w-full h-full bg-white flex items-center justify-center">

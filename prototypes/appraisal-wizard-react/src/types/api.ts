@@ -75,10 +75,16 @@ export interface RadiusDemographics {
     percentCollegeGraduates: number;
     percentGraduateDegree: number;
   };
+  employment: {
+    laborForce: number;
+    unemployed: number;
+    unemploymentRate: number;
+  };
   employmentByIndustry: Array<{
     industry: string;
     percentage: number;
   }>;
+  isApproximate: boolean;
 }
 
 export interface DemographicsResponse {

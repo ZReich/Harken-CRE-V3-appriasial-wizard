@@ -526,6 +526,8 @@ export type WizardAction =
   // Cover Photo Actions
   | { type: 'SET_COVER_PHOTO'; payload: CoverPhotoData }
   | { type: 'REMOVE_COVER_PHOTO' }
+  // Risk Rating Actions
+  | { type: 'SET_RISK_RATING'; payload: RiskRatingData }
   | { type: 'RESET' };
 
 // =================================================================

@@ -3,11 +3,15 @@
  * POST /api/demographics/radius
  * 
  * Returns demographic data for 1, 3, and 5 mile radii around a location.
- * Uses Census Bureau API for data.
+ * 
+ * Data Sources (in priority order):
+ * 1. ESRI GeoEnrichment API (when ESRI_API_KEY is configured) - TRUE radius data
+ * 2. US Census Bureau API (fallback) - Approximated from county-level data
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getRadiusDemographics } from '../_lib/census';
+import { fetchGeoEnrichment, isESRIConfigured, getESRIApiKey } from '../_lib/esri';
 
 interface DemographicsRequestBody {
   latitude: number;
@@ -15,7 +19,7 @@ interface DemographicsRequestBody {
   radii?: number[];
 }
 
-// Industry distribution for employment (typical US breakdown)
+// Industry distribution for employment (typical US breakdown) - used as fallback
 const INDUSTRY_DISTRIBUTION = [
   { industry: 'Healthcare & Social Assistance', percentage: 16.2 },
   { industry: 'Retail Trade', percentage: 10.8 },
@@ -65,13 +69,50 @@ export default async function handler(
       });
     }
 
-    // Get demographics data
+    // Try ESRI first if configured
+    if (isESRIConfigured()) {
+      try {
+        const esriApiKey = getESRIApiKey();
+        if (esriApiKey) {
+          console.log('Using ESRI GeoEnrichment API for demographics');
+          
+          const esriData = await fetchGeoEnrichment(
+            latitude,
+            longitude,
+            radii,
+            esriApiKey
+          );
+
+          // Format ESRI response
+          const formattedData = esriData.map(data => ({
+            ...data,
+            isApproximate: false,
+          }));
+
+          return res.status(200).json({
+            success: true,
+            data: formattedData,
+            source: 'esri',
+            asOfDate: new Date().toISOString(),
+            note: 'Demographics data from ESRI GeoEnrichment API with true ring buffer analysis.',
+            error: null,
+          });
+        }
+      } catch (esriError) {
+        console.error('ESRI API error, falling back to Census:', esriError);
+        // Fall through to Census fallback
+      }
+    }
+
+    // Fallback to Census API
+    console.log('Using Census API for demographics (approximated)');
+    
     const radiusData = await getRadiusDemographics(
       { latitude, longitude },
       radii
     );
 
-    // Format response
+    // Format Census response
     const formattedData = radiusData.map(({ radius, demographics, isApproximate }) => {
       const totalEducated = demographics.bachelorsDegree + 
                            demographics.mastersDegree + 
@@ -116,7 +157,7 @@ export default async function handler(
       data: formattedData,
       source: 'census',
       asOfDate: new Date().toISOString(),
-      note: 'Radius demographics are approximated from county-level Census data. For precise radius data, ESRI GeoEnrichment API integration is recommended.',
+      note: 'Radius demographics are approximated from county-level Census data. For precise radius data, configure ESRI_API_KEY.',
       error: null,
     });
   } catch (error) {
@@ -131,5 +172,3 @@ export default async function handler(
     });
   }
 }
-
-

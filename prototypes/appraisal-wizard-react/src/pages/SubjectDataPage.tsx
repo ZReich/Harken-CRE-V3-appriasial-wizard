@@ -859,6 +859,8 @@ interface DemographicsProps {
 }
 
 function DemographicsContent({ latitude, longitude }: DemographicsProps) {
+  const hasCoordinates = latitude !== undefined && longitude !== undefined;
+  
   return (
     <div className="space-y-6">
       <div className="bg-gradient-to-r from-[#0da1c7]/5 to-transparent border border-[#0da1c7]/20 rounded-xl p-4 mb-6">
@@ -874,10 +876,16 @@ function DemographicsContent({ latitude, longitude }: DemographicsProps) {
         </div>
       </div>
       
-      <DemographicsPanel 
-        latitude={latitude}
-        longitude={longitude}
-      />
+      {hasCoordinates ? (
+        <DemographicsPanel 
+          latitude={latitude}
+          longitude={longitude}
+        />
+      ) : (
+        <div className="text-center py-12 text-slate-500">
+          <p>Enter a property address to view demographic data.</p>
+        </div>
+      )}
     </div>
   );
 }

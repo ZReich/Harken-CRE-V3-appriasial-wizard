@@ -498,6 +498,13 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
           coverPhoto: undefined,
         };
 
+      // Risk Rating Actions
+      case 'SET_RISK_RATING':
+        return {
+          ...state,
+          riskRating: action.payload,
+        };
+
       case 'RESET':
         return getInitialState();
 
@@ -587,6 +594,9 @@ interface WizardContextValue {
   // Cover photo helpers
   setCoverPhoto: (photo: CoverPhotoData) => void;
   removeCoverPhoto: () => void;
+  
+  // Risk rating helpers
+  setRiskRating: (data: import('../types/api').RiskRatingData) => void;
   
   // Derived state
   hasImprovements: boolean; // True if property type is not 'land'
@@ -923,6 +933,11 @@ export function WizardProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'REMOVE_COVER_PHOTO' });
   }, []);
 
+  // Risk Rating helper
+  const setRiskRating = useCallback((riskRating: import('../types/api').RiskRatingData) => {
+    dispatch({ type: 'SET_RISK_RATING', payload: riskRating });
+  }, []);
+
   // Derived state: hasImprovements
   // True if property type is not 'land' (i.e., has improvements to appraise)
   const hasImprovements = state.propertyType !== 'land';
@@ -980,6 +995,8 @@ export function WizardProvider({ children }: { children: ReactNode }) {
         // Cover photo
         setCoverPhoto,
         removeCoverPhoto,
+        // Risk rating
+        setRiskRating,
         // Derived state
         hasImprovements,
       }}

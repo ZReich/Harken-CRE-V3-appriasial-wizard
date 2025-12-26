@@ -1,67 +1,98 @@
 /**
- * Demographics Panel Component
+ * DemographicsPanel Component
  * 
- * Displays demographic data for multiple radius rings (1, 3, 5 miles).
- * Features a clean table layout matching the existing design system.
+ * Displays radius-based demographics data with an interactive map.
+ * Features:
+ * - RadiusRingMap showing 1/3/5 mile rings
+ * - Demographics data table with population, income, education, employment
+ * - Employment by industry breakdown
+ * - Data source indicator (ESRI vs Census)
  */
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { 
   Users, 
   Home, 
   DollarSign, 
-  GraduationCap,
+  GraduationCap, 
   Briefcase,
-  Loader2,
+  TrendingUp,
   AlertCircle,
   RefreshCw,
-  MapPin,
-  TrendingUp
+  Building2
 } from 'lucide-react';
-import { getDemographicsByRadius, formatPopulation, formatCurrency, formatPercentage } from '../services/demographicsService';
+import { RadiusRingMap } from './RadiusRingMap';
+import { getDemographicsByRadius } from '../services/demographicsService';
 import type { RadiusDemographics, DemographicsResponse } from '../types/api';
 
+// =================================================================
+// TYPES
+// =================================================================
+
 interface DemographicsPanelProps {
-  latitude?: number;
-  longitude?: number;
-  className?: string;
+  latitude: number;
+  longitude: number;
+  radii?: number[];
   onDataLoaded?: (data: RadiusDemographics[]) => void;
+  className?: string;
 }
 
-export function DemographicsPanel({ 
-  latitude, 
-  longitude, 
+// =================================================================
+// FORMATTERS
+// =================================================================
+
+function formatNumber(value: number): string {
+  return value.toLocaleString('en-US');
+}
+
+function formatCurrency(value: number): string {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    minimumFractionDigits: 0,
+    maximumFractionDigits: 0,
+  }).format(value);
+}
+
+function formatPercent(value: number): string {
+  return `${value.toFixed(1)}%`;
+}
+
+// =================================================================
+// COMPONENT
+// =================================================================
+
+export function DemographicsPanel({
+  latitude,
+  longitude,
+  radii = [1, 3, 5],
+  onDataLoaded,
   className = '',
-  onDataLoaded 
 }: DemographicsPanelProps) {
-  const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [data, setData] = useState<RadiusDemographics[] | null>(null);
-  const [source, setSource] = useState<string>('');
-  const [asOfDate, setAsOfDate] = useState<string>('');
+  const [source, setSource] = useState<'esri' | 'census' | 'mock'>('census');
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [mapType, setMapType] = useState<'satellite' | 'roadmap'>('satellite');
 
+  // Fetch demographics data
   const fetchData = async () => {
-    if (!latitude || !longitude) {
-      setError('Location coordinates are required to fetch demographics data.');
-      return;
-    }
-
     setIsLoading(true);
     setError(null);
 
     try {
-      const response: DemographicsResponse = await getDemographicsByRadius(latitude, longitude);
+      const response = await getDemographicsByRadius(latitude, longitude, radii) as DemographicsResponse & { note?: string };
       
       if (response.success && response.data) {
         setData(response.data);
         setSource(response.source);
-        setAsOfDate(response.asOfDate);
         onDataLoaded?.(response.data);
       } else {
-        setError(response.error || 'Failed to fetch demographics data');
+        throw new Error(response.error || 'Failed to fetch demographics');
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
+      const message = err instanceof Error ? err.message : 'Unknown error';
+      setError(message);
     } finally {
       setIsLoading(false);
     }
@@ -71,263 +102,270 @@ export function DemographicsPanel({
     if (latitude && longitude) {
       fetchData();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [latitude, longitude]);
+  }, [latitude, longitude, radii.join(',')]);
 
-  // Render loading state
+  // Loading state
   if (isLoading) {
     return (
-      <div className={`bg-white rounded-xl border border-slate-200 p-6 ${className}`}>
-        <div className="flex items-center justify-center gap-3 py-8">
-          <Loader2 className="w-5 h-5 text-[#0da1c7] animate-spin" />
-          <span className="text-slate-600">Loading demographics data...</span>
+      <div className={`bg-white rounded-xl border border-slate-200 p-8 ${className}`}>
+        <div className="flex items-center justify-center gap-3 text-slate-500">
+          <RefreshCw className="w-5 h-5 animate-spin" />
+          <span>Loading demographics data...</span>
         </div>
       </div>
     );
   }
 
-  // Render error state
+  // Error state
   if (error) {
     return (
-      <div className={`bg-white rounded-xl border border-slate-200 p-6 ${className}`}>
-        <div className="flex items-center gap-3 text-red-600 mb-4">
+      <div className={`bg-white rounded-xl border border-slate-200 p-8 ${className}`}>
+        <div className="flex items-center justify-center gap-3 text-red-500">
           <AlertCircle className="w-5 h-5" />
           <span>{error}</span>
-        </div>
-        {latitude && longitude && (
           <button
             onClick={fetchData}
-            className="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors"
+            className="ml-4 px-3 py-1 text-sm bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
           >
-            <RefreshCw className="w-4 h-4" />
             Retry
           </button>
-        )}
-      </div>
-    );
-  }
-
-  // Render no coordinates state
-  if (!latitude || !longitude) {
-    return (
-      <div className={`bg-white rounded-xl border border-slate-200 p-6 ${className}`}>
-        <div className="flex items-center gap-3 text-amber-600 mb-2">
-          <MapPin className="w-5 h-5" />
-          <span className="font-medium">Location Required</span>
         </div>
-        <p className="text-sm text-slate-500">
-          Enter the property address to load demographic data for the surrounding area.
-        </p>
       </div>
     );
   }
 
-  // Render data state
-  if (!data || data.length === 0) {
-    return (
-      <div className={`bg-white rounded-xl border border-slate-200 p-6 ${className}`}>
-        <p className="text-slate-500">No demographics data available.</p>
-      </div>
-    );
-  }
+  if (!data) return null;
 
   return (
     <div className={`space-y-6 ${className}`}>
-      {/* Main Demographics Table */}
-      <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="px-6 py-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="p-2 bg-[#0da1c7]/10 rounded-lg">
-              <Users className="w-5 h-5 text-[#0da1c7]" />
-            </div>
-            <div>
-              <h3 className="font-bold text-slate-800">Neighborhood Demographics</h3>
-              <p className="text-xs text-slate-500">Population, income, and education data by radius</p>
-            </div>
-          </div>
-          <div className="text-right">
-            <span className="text-xs text-slate-400 uppercase tracking-wide">Source</span>
-            <p className="text-sm font-medium text-slate-600 capitalize">{source}</p>
+      {/* Map Section */}
+      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <div className="px-4 py-3 border-b border-slate-200 bg-slate-50">
+          <h3 className="text-sm font-semibold text-slate-800 flex items-center gap-2">
+            <Building2 className="w-4 h-4 text-[#0da1c7]" />
+            Demographics Map
+          </h3>
+        </div>
+        <RadiusRingMap
+          latitude={latitude}
+          longitude={longitude}
+          radii={radii}
+          mapType={mapType}
+          onMapTypeChange={setMapType}
+          height={350}
+        />
+      </div>
+
+      {/* Data Table */}
+      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <div className="px-4 py-3 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+          <h3 className="text-sm font-semibold text-slate-800 flex items-center gap-2">
+            <Users className="w-4 h-4 text-[#0da1c7]" />
+            Radius Demographics
+          </h3>
+          <div className="flex items-center gap-2">
+            <span className={`text-xs px-2 py-0.5 rounded-full ${
+              source === 'esri' 
+                ? 'bg-emerald-100 text-emerald-700' 
+                : 'bg-amber-100 text-amber-700'
+            }`}>
+              {source === 'esri' ? 'ESRI (Precise)' : 'Census (Approx.)'}
+            </span>
           </div>
         </div>
-
+        
         <div className="overflow-x-auto">
-          <table className="w-full">
+          <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-slate-200 bg-slate-50/50">
-                <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 uppercase tracking-wide">
-                  Metric
-                </th>
-                {data.map((d) => (
-                  <th key={d.radius} className="px-4 py-3 text-center text-xs font-semibold text-slate-500 uppercase tracking-wide">
-                    {d.radius} Mile{d.radius > 1 ? 's' : ''}
+              <tr className="bg-slate-50 border-b border-slate-200">
+                <th className="text-left px-4 py-3 font-semibold text-slate-600">Metric</th>
+                {radii.map(radius => (
+                  <th key={radius} className="text-right px-4 py-3 font-semibold text-slate-600">
+                    {radius} Mile{radius !== 1 ? 's' : ''}
                   </th>
                 ))}
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100">
               {/* Population Section */}
-              <tr className="bg-blue-50/30">
-                <td colSpan={data.length + 1} className="px-4 py-2">
-                  <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
-                    <Users className="w-4 h-4 text-blue-600" />
+              <tr className="bg-slate-50/50">
+                <td colSpan={radii.length + 1} className="px-4 py-2">
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide flex items-center gap-1.5">
+                    <Users className="w-3.5 h-3.5" />
                     Population
-                  </div>
+                  </span>
                 </td>
               </tr>
-              <tr className="hover:bg-slate-50">
-                <td className="px-4 py-3 text-sm text-slate-600 pl-8">Current Population</td>
-                {data.map((d) => (
-                  <td key={d.radius} className="px-4 py-3 text-sm text-center font-medium text-slate-800">
-                    {formatPopulation(d.population.current)}
+              <tr>
+                <td className="px-4 py-2.5 text-slate-700">Current Population</td>
+                {data.map(d => (
+                  <td key={d.radius} className="text-right px-4 py-2.5 font-medium text-slate-800">
+                    {formatNumber(d.population.current)}
                   </td>
                 ))}
               </tr>
-              <tr className="hover:bg-slate-50">
-                <td className="px-4 py-3 text-sm text-slate-600 pl-8">5-Year Projection</td>
-                {data.map((d) => (
-                  <td key={d.radius} className="px-4 py-3 text-sm text-center text-slate-600">
-                    {formatPopulation(d.population.projected5Year)}
+              <tr>
+                <td className="px-4 py-2.5 text-slate-700">5-Year Projection</td>
+                {data.map(d => (
+                  <td key={d.radius} className="text-right px-4 py-2.5 text-slate-600">
+                    {formatNumber(d.population.projected5Year)}
                   </td>
                 ))}
               </tr>
-              <tr className="hover:bg-slate-50">
-                <td className="px-4 py-3 text-sm text-slate-600 pl-8">Annual Growth Rate</td>
-                {data.map((d) => (
-                  <td key={d.radius} className="px-4 py-3 text-sm text-center">
-                    <span className={`inline-flex items-center gap-1 ${d.population.annualGrowthRate >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-                      <TrendingUp className={`w-3 h-3 ${d.population.annualGrowthRate < 0 ? 'rotate-180' : ''}`} />
-                      {formatPercentage(d.population.annualGrowthRate)}
+              <tr>
+                <td className="px-4 py-2.5 text-slate-700">Annual Growth Rate</td>
+                {data.map(d => (
+                  <td key={d.radius} className="text-right px-4 py-2.5 text-slate-600">
+                    <span className={d.population.annualGrowthRate >= 0 ? 'text-emerald-600' : 'text-red-600'}>
+                      {d.population.annualGrowthRate >= 0 ? '+' : ''}{formatPercent(d.population.annualGrowthRate)}
                     </span>
                   </td>
                 ))}
               </tr>
 
               {/* Households Section */}
-              <tr className="bg-emerald-50/30">
-                <td colSpan={data.length + 1} className="px-4 py-2">
-                  <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
-                    <Home className="w-4 h-4 text-emerald-600" />
+              <tr className="bg-slate-50/50">
+                <td colSpan={radii.length + 1} className="px-4 py-2">
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide flex items-center gap-1.5">
+                    <Home className="w-3.5 h-3.5" />
                     Households
-                  </div>
+                  </span>
                 </td>
               </tr>
-              <tr className="hover:bg-slate-50">
-                <td className="px-4 py-3 text-sm text-slate-600 pl-8">Total Households</td>
-                {data.map((d) => (
-                  <td key={d.radius} className="px-4 py-3 text-sm text-center font-medium text-slate-800">
-                    {formatPopulation(d.households.current)}
+              <tr>
+                <td className="px-4 py-2.5 text-slate-700">Total Households</td>
+                {data.map(d => (
+                  <td key={d.radius} className="text-right px-4 py-2.5 font-medium text-slate-800">
+                    {formatNumber(d.households.current)}
                   </td>
                 ))}
               </tr>
-              <tr className="hover:bg-slate-50">
-                <td className="px-4 py-3 text-sm text-slate-600 pl-8">Average Household Size</td>
-                {data.map((d) => (
-                  <td key={d.radius} className="px-4 py-3 text-sm text-center text-slate-600">
+              <tr>
+                <td className="px-4 py-2.5 text-slate-700">Average Household Size</td>
+                {data.map(d => (
+                  <td key={d.radius} className="text-right px-4 py-2.5 text-slate-600">
                     {d.households.averageSize.toFixed(2)}
                   </td>
                 ))}
               </tr>
 
               {/* Income Section */}
-              <tr className="bg-amber-50/30">
-                <td colSpan={data.length + 1} className="px-4 py-2">
-                  <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
-                    <DollarSign className="w-4 h-4 text-amber-600" />
+              <tr className="bg-slate-50/50">
+                <td colSpan={radii.length + 1} className="px-4 py-2">
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide flex items-center gap-1.5">
+                    <DollarSign className="w-3.5 h-3.5" />
                     Income
-                  </div>
+                  </span>
                 </td>
               </tr>
-              <tr className="hover:bg-slate-50">
-                <td className="px-4 py-3 text-sm text-slate-600 pl-8">Median Household Income</td>
-                {data.map((d) => (
-                  <td key={d.radius} className="px-4 py-3 text-sm text-center font-medium text-slate-800">
+              <tr>
+                <td className="px-4 py-2.5 text-slate-700">Median Household Income</td>
+                {data.map(d => (
+                  <td key={d.radius} className="text-right px-4 py-2.5 font-medium text-slate-800">
                     {formatCurrency(d.income.medianHousehold)}
                   </td>
                 ))}
               </tr>
-              <tr className="hover:bg-slate-50">
-                <td className="px-4 py-3 text-sm text-slate-600 pl-8">Average Household Income</td>
-                {data.map((d) => (
-                  <td key={d.radius} className="px-4 py-3 text-sm text-center text-slate-600">
+              <tr>
+                <td className="px-4 py-2.5 text-slate-700">Average Household Income</td>
+                {data.map(d => (
+                  <td key={d.radius} className="text-right px-4 py-2.5 text-slate-600">
                     {formatCurrency(d.income.averageHousehold)}
                   </td>
                 ))}
               </tr>
-              <tr className="hover:bg-slate-50">
-                <td className="px-4 py-3 text-sm text-slate-600 pl-8">Per Capita Income</td>
-                {data.map((d) => (
-                  <td key={d.radius} className="px-4 py-3 text-sm text-center text-slate-600">
+              <tr>
+                <td className="px-4 py-2.5 text-slate-700">Per Capita Income</td>
+                {data.map(d => (
+                  <td key={d.radius} className="text-right px-4 py-2.5 text-slate-600">
                     {formatCurrency(d.income.perCapita)}
                   </td>
                 ))}
               </tr>
 
               {/* Education Section */}
-              <tr className="bg-purple-50/30">
-                <td colSpan={data.length + 1} className="px-4 py-2">
-                  <div className="flex items-center gap-2 text-sm font-semibold text-slate-700">
-                    <GraduationCap className="w-4 h-4 text-purple-600" />
+              <tr className="bg-slate-50/50">
+                <td colSpan={radii.length + 1} className="px-4 py-2">
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide flex items-center gap-1.5">
+                    <GraduationCap className="w-3.5 h-3.5" />
                     Education
-                  </div>
+                  </span>
                 </td>
               </tr>
-              <tr className="hover:bg-slate-50">
-                <td className="px-4 py-3 text-sm text-slate-600 pl-8">College Graduates</td>
-                {data.map((d) => (
-                  <td key={d.radius} className="px-4 py-3 text-sm text-center font-medium text-slate-800">
-                    {formatPercentage(d.education.percentCollegeGraduates)}
+              <tr>
+                <td className="px-4 py-2.5 text-slate-700">College Graduates (Bachelor's+)</td>
+                {data.map(d => (
+                  <td key={d.radius} className="text-right px-4 py-2.5 font-medium text-slate-800">
+                    {formatPercent(d.education.percentCollegeGraduates)}
                   </td>
                 ))}
               </tr>
-              <tr className="hover:bg-slate-50">
-                <td className="px-4 py-3 text-sm text-slate-600 pl-8">Graduate Degree</td>
-                {data.map((d) => (
-                  <td key={d.radius} className="px-4 py-3 text-sm text-center text-slate-600">
-                    {formatPercentage(d.education.percentGraduateDegree)}
+              <tr>
+                <td className="px-4 py-2.5 text-slate-700">Graduate Degree</td>
+                {data.map(d => (
+                  <td key={d.radius} className="text-right px-4 py-2.5 text-slate-600">
+                    {formatPercent(d.education.percentGraduateDegree)}
+                  </td>
+                ))}
+              </tr>
+
+              {/* Employment Section */}
+              <tr className="bg-slate-50/50">
+                <td colSpan={radii.length + 1} className="px-4 py-2">
+                  <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide flex items-center gap-1.5">
+                    <Briefcase className="w-3.5 h-3.5" />
+                    Employment
+                  </span>
+                </td>
+              </tr>
+              <tr>
+                <td className="px-4 py-2.5 text-slate-700">Labor Force</td>
+                {data.map(d => (
+                  <td key={d.radius} className="text-right px-4 py-2.5 font-medium text-slate-800">
+                    {formatNumber(d.employment?.laborForce || 0)}
+                  </td>
+                ))}
+              </tr>
+              <tr>
+                <td className="px-4 py-2.5 text-slate-700">Unemployment Rate</td>
+                {data.map(d => (
+                  <td key={d.radius} className="text-right px-4 py-2.5 text-slate-600">
+                    {formatPercent(d.employment?.unemploymentRate || 0)}
                   </td>
                 ))}
               </tr>
             </tbody>
           </table>
         </div>
-
-        <div className="px-6 py-3 bg-slate-50 border-t border-slate-200">
-          <p className="text-xs text-slate-500">
-            Source: {source === 'census' ? 'US Census Bureau ACS' : source === 'esri' ? 'ESRI GeoEnrichment' : 'Simulated Data'} 
-            {asOfDate && ` • As of ${new Date(asOfDate).toLocaleDateString()}`}
-          </p>
-        </div>
       </div>
 
-      {/* Employment by Industry - Only show if data exists */}
+      {/* Employment by Industry */}
       {data[0]?.employmentByIndustry && data[0].employmentByIndustry.length > 0 && (
-        <div className="bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden">
-          <div className="px-6 py-4 border-b border-slate-200 bg-slate-50">
-            <div className="flex items-center gap-3">
-              <div className="p-2 bg-[#0da1c7]/10 rounded-lg">
-                <Briefcase className="w-5 h-5 text-[#0da1c7]" />
-              </div>
-              <div>
-                <h3 className="font-bold text-slate-800">Employment by Industry</h3>
-                <p className="text-xs text-slate-500">Distribution of employed population (5-mile radius)</p>
-              </div>
-            </div>
+        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+          <div className="px-4 py-3 border-b border-slate-200 bg-slate-50">
+            <h3 className="text-sm font-semibold text-slate-800 flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-[#0da1c7]" />
+              Employment by Industry (1-Mile Radius)
+            </h3>
           </div>
-
-          <div className="p-6">
-            <div className="space-y-3">
-              {data[data.length - 1].employmentByIndustry.map((industry, idx) => (
-                <div key={idx} className="flex items-center gap-3">
-                  <div className="w-40 text-sm text-slate-600 truncate">{industry.industry}</div>
-                  <div className="flex-1 bg-slate-100 rounded-full h-4 overflow-hidden">
-                    <div 
-                      className="h-full bg-gradient-to-r from-[#0da1c7] to-[#0da1c7]/70 rounded-full transition-all duration-500"
-                      style={{ width: `${Math.min(industry.percentage, 100)}%` }}
-                    />
-                  </div>
-                  <div className="w-14 text-sm font-medium text-slate-700 text-right">
-                    {formatPercentage(industry.percentage)}
+          <div className="p-4">
+            <div className="grid grid-cols-2 gap-3">
+              {data[0].employmentByIndustry.slice(0, 10).map((item, index) => (
+                <div key={item.industry} className="flex items-center gap-3">
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between mb-1">
+                      <span className="text-xs text-slate-600 truncate pr-2">{item.industry}</span>
+                      <span className="text-xs font-medium text-slate-800">{formatPercent(item.percentage)}</span>
+                    </div>
+                    <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                      <div 
+                        className="h-full bg-[#0da1c7] rounded-full transition-all"
+                        style={{ 
+                          width: `${Math.min(item.percentage * 4, 100)}%`,
+                          opacity: 1 - (index * 0.05)
+                        }}
+                      />
+                    </div>
                   </div>
                 </div>
               ))}
@@ -335,9 +373,19 @@ export function DemographicsPanel({
           </div>
         </div>
       )}
+
+      {/* Data Source Note */}
+      {data[0]?.isApproximate && (
+        <div className="text-xs text-slate-500 flex items-start gap-2 px-1">
+          <AlertCircle className="w-3.5 h-3.5 mt-0.5 flex-shrink-0" />
+          <span>
+            Radius demographics are approximated from county-level Census data. 
+            For precise radius data, configure ESRI GeoEnrichment API.
+          </span>
+        </div>
+      )}
     </div>
   );
 }
 
 export default DemographicsPanel;
-
