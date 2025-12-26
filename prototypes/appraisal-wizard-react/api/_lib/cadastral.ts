@@ -9,7 +9,7 @@
  */
 
 import fetch from 'node-fetch';
-import https from 'https';
+import * as https from 'https';
 
 // SSL agent to bypass certificate validation for Montana's misconfigured SSL certificate
 // Their cert only includes *.mt.gov but NOT *.msl.mt.gov (where gis.msl.mt.gov is hosted)
