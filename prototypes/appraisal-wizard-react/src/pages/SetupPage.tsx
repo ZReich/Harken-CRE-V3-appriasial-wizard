@@ -3,6 +3,7 @@ import WizardLayout from '../components/WizardLayout';
 import EnhancedTextArea from '../components/EnhancedTextArea';
 import WizardGuidancePanel from '../components/WizardGuidancePanel';
 import PropertyLookupModal from '../components/PropertyLookupModal';
+import GooglePlacesAutocomplete, { type PlaceDetails } from '../components/GooglePlacesAutocomplete';
 import { useWizard } from '../context/WizardContext';
 import { Trash2, Plus, Lock, Search, Loader2, CheckCircle, MapPin, AlertCircle } from 'lucide-react';
 import type { CadastralData } from '../types/api';
@@ -531,6 +532,30 @@ export default function SetupPage() {
     };
   }, [address.street, address.city, address.state, lastLookupAddress, performAutoLookup]);
   
+  // Handle Google Places autocomplete selection
+  const handlePlaceSelect = useCallback((place: PlaceDetails) => {
+    console.log('[GooglePlaces] Place selected, filling address fields:', place);
+    
+    setAddress({
+      street: place.street,
+      city: place.city,
+      state: place.stateCode || place.state, // Use state code (e.g., MT) if available
+      zip: place.zip,
+      county: place.county,
+    });
+    
+    // Store coordinates if available for later use
+    if (place.latitude && place.longitude) {
+      setSubjectData(prev => ({
+        ...prev,
+        coordinates: {
+          latitude: place.latitude!,
+          longitude: place.longitude!,
+        },
+      }));
+    }
+  }, [setAddress, setSubjectData]);
+  
   // Inspection state - declare early so it can be used in sync useEffect
   // Default inspectionType to 'interior_exterior' since that's the default dropdown value
   const [inspectionType, setInspectionType] = useState(() => wizardState.subjectData?.inspectionType || 'interior_exterior');
@@ -868,13 +893,16 @@ export default function SetupPage() {
             <label className="block text-sm font-medium text-gray-700 mb-1">
               Street Address <span className="text-red-500">*</span>
             </label>
-            <input
-              type="text"
+            <GooglePlacesAutocomplete
               value={address.street}
-              onChange={(e) => setAddress({ ...address, street: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
-              placeholder="1478 South 30th Street West"
+              onChange={(value) => setAddress({ ...address, street: value })}
+              onPlaceSelect={handlePlaceSelect}
+              placeholder="Start typing an address..."
+              required
             />
+            <p className="text-xs text-gray-400 mt-1">
+              Select from suggestions to auto-fill city, state, and ZIP
+            </p>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div>
