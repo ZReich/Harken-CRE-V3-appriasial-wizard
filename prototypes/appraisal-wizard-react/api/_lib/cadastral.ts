@@ -21,6 +21,12 @@ const httpsAgent = new https.Agent({
 const httpAgent = new http.Agent();
 
 
+// Primary endpoint: DNRC (Department of Natural Resources and Conservation)
+// More reliable, updated monthly
+const DNRC_CADASTRAL_MAPSERVER = 'https://gis.dnrc.mt.gov/arcgis/rest/services/DNRALL/Cadastral/MapServer/0/query';
+const DNRC_GEOCODER = 'https://gis.dnrc.mt.gov/arcgis/rest/services/Locators/MT_Locator/GeocodeServer/findAddressCandidates';
+
+// Fallback endpoint: Montana State Library
 const CADASTRAL_FEATURE_SERVER = 'https://gis.msl.mt.gov/arcgis/rest/services/Cadastral/Cadastral/FeatureServer/1/query';
 const MONTANA_GEOCODER = 'https://gis.msl.mt.gov/arcgis/rest/services/Locators/MontanaAddressLocator/GeocodeServer/findAddressCandidates';
 
@@ -74,7 +80,9 @@ export async function queryParcelByLocation(
   longitude: number
 ): Promise<CadastralQueryResult> {
   try {
-    const url = new URL(CADASTRAL_FEATURE_SERVER);
+    // Try DNRC endpoint first (more reliable)
+    console.log('[Cadastral] Attempting DNRC endpoint...');
+    const url = new URL(DNRC_CADASTRAL_MAPSERVER);
     url.searchParams.set('f', 'json');
     url.searchParams.set('geometry', JSON.stringify({
       x: longitude,
@@ -86,6 +94,8 @@ export async function queryParcelByLocation(
     url.searchParams.set('outFields', '*');
     url.searchParams.set('returnGeometry', 'true'); // Return geometry for centroid
 
+    console.log('[Cadastral] DNRC Query URL:', url.toString());
+
     const response = await fetch(url.toString(), { 
       agent: (_parsedURL) => _parsedURL.protocol == 'http:' ? httpAgent : httpsAgent,
       redirect: 'follow',
@@ -93,6 +103,8 @@ export async function queryParcelByLocation(
         'User-Agent': 'Mozilla/5.0 (compatible; Harken/1.0)',
       }
     });
+    
+    console.log('[Cadastral] DNRC Response status:', response.status);
     
     if (!response.ok) {
       throw new Error(`Cadastral API error: ${response.status}`);
@@ -142,11 +154,14 @@ export async function queryParcelByParcelId(
   parcelId: string
 ): Promise<CadastralQueryResult> {
   try {
-    const url = new URL(CADASTRAL_FEATURE_SERVER);
+    console.log('[Cadastral] Attempting DNRC endpoint for parcel ID...');
+    const url = new URL(DNRC_CADASTRAL_MAPSERVER);
     url.searchParams.set('f', 'json');
     url.searchParams.set('where', `PARCELID = '${parcelId}'`);
     url.searchParams.set('outFields', '*');
     url.searchParams.set('returnGeometry', 'false');
+
+    console.log('[Cadastral] DNRC Query URL (by ID):', url.toString());
 
     const response = await fetch(url.toString(), { 
       agent: (_parsedURL) => _parsedURL.protocol == 'http:' ? httpAgent : httpsAgent,
@@ -155,6 +170,8 @@ export async function queryParcelByParcelId(
         'User-Agent': 'Mozilla/5.0 (compatible; Harken/1.0)',
       }
     });
+    
+    console.log('[Cadastral] DNRC Response status (by ID):', response.status);
     
     if (!response.ok) {
       throw new Error(`Cadastral API error: ${response.status}`);
@@ -195,17 +212,15 @@ export async function queryParcelByAddress(
 ): Promise<CadastralQueryResult> {
   try {
     console.log('[Cadastral] queryParcelByAddress called:', { address, city, state });
-    console.log('[Cadastral] fetch is defined:', typeof fetch !== 'undefined');
-    console.log('[Cadastral] fetch value:', fetch);
     
-    // First, geocode the address
-    const geocodeUrl = new URL(MONTANA_GEOCODER);
+    // First, try geocoding with DNRC (more reliable)
+    const geocodeUrl = new URL(DNRC_GEOCODER);
     geocodeUrl.searchParams.set('f', 'json');
     geocodeUrl.searchParams.set('SingleLine', `${address}, ${city}, ${state || 'MT'}`);
     geocodeUrl.searchParams.set('outFields', '*');
     geocodeUrl.searchParams.set('maxLocations', '1');
 
-    console.log('[Cadastral] Geocoding URL:', geocodeUrl.toString());
+    console.log('[Cadastral] Using DNRC Geocoder URL:', geocodeUrl.toString());
 
     const geocodeResponse = await fetch(geocodeUrl.toString(), { 
       agent: (_parsedURL) => _parsedURL.protocol == 'http:' ? httpAgent : httpsAgent,
