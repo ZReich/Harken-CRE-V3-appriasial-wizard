@@ -204,6 +204,7 @@ export async function queryParcelByParcelId(
 
 /**
  * Query parcel by address (geocode first, then spatial query)
+ * Tries DNRC first, falls back to MSL if needed
  */
 export async function queryParcelByAddress(
   address: string,
@@ -213,14 +214,59 @@ export async function queryParcelByAddress(
   try {
     console.log('[Cadastral] queryParcelByAddress called:', { address, city, state });
     
-    // First, try geocoding with DNRC (more reliable)
-    const geocodeUrl = new URL(DNRC_GEOCODER);
+    // Try DNRC first (more reliable infrastructure)
+    console.log('[Cadastral] Attempting DNRC geocoder...');
+    const dnrcResult = await tryGeocodeAndQuery(address, city, state, 'DNRC');
+    
+    if (dnrcResult.success && dnrcResult.parcel) {
+      console.log('[Cadastral] DNRC lookup successful');
+      return dnrcResult;
+    }
+    
+    console.log('[Cadastral] DNRC lookup failed, trying MSL fallback...');
+    // Fallback to MSL if DNRC doesn't find anything
+    const mslResult = await tryGeocodeAndQuery(address, city, state, 'MSL');
+    
+    if (mslResult.success && mslResult.parcel) {
+      console.log('[Cadastral] MSL lookup successful');
+      return mslResult;
+    }
+    
+    // Neither found anything
+    return {
+      success: true,
+      parcel: null,
+      error: 'Address not found in Montana cadastral databases',
+    };
+  } catch (error) {
+    const message = error instanceof Error ? error.message : 'Unknown error';
+    console.error('[Cadastral] queryParcelByAddress error:', error);
+    return {
+      success: false,
+      parcel: null,
+      error: message,
+    };
+  }
+}
+
+/**
+ * Helper function to try geocoding and querying with a specific endpoint
+ */
+async function tryGeocodeAndQuery(
+  address: string,
+  city: string,
+  state: string | undefined,
+  source: 'DNRC' | 'MSL'
+): Promise<CadastralQueryResult> {
+  try {
+    const geocoder = source === 'DNRC' ? DNRC_GEOCODER : MONTANA_GEOCODER;
+    const geocodeUrl = new URL(geocoder);
     geocodeUrl.searchParams.set('f', 'json');
     geocodeUrl.searchParams.set('SingleLine', `${address}, ${city}, ${state || 'MT'}`);
     geocodeUrl.searchParams.set('outFields', '*');
     geocodeUrl.searchParams.set('maxLocations', '1');
 
-    console.log('[Cadastral] Using DNRC Geocoder URL:', geocodeUrl.toString());
+    console.log(`[Cadastral] ${source} Geocoder URL:`, geocodeUrl.toString());
 
     const geocodeResponse = await fetch(geocodeUrl.toString(), { 
       agent: (_parsedURL) => _parsedURL.protocol == 'http:' ? httpAgent : httpsAgent,
@@ -257,18 +303,18 @@ export async function queryParcelByAddress(
     const geocodedLat = location.y;
     const geocodedLng = location.x;
     
-    console.log('[Cadastral] Geocoded coordinates:', { lat: geocodedLat, lng: geocodedLng });
+    console.log(`[Cadastral] ${source} geocoded coordinates:`, { lat: geocodedLat, lng: geocodedLng });
     
     // Now query by the geocoded location (coordinates will be included)
     const result = await queryParcelByLocation(geocodedLat, geocodedLng);
     
-    console.log('[Cadastral] Parcel query result:', result.success);
+    console.log(`[Cadastral] ${source} parcel query result:`, result.success);
     
     // The coordinates are already set in queryParcelByLocation
     return result;
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error';
-    console.error('[Cadastral] queryParcelByAddress error:', message, error);
+    console.error(`[Cadastral] ${source} tryGeocodeAndQuery error:`, message);
     return {
       success: false,
       parcel: null,
