@@ -165,13 +165,14 @@ export async function queryParcelByParcelId(
  */
 export async function queryParcelByAddress(
   address: string,
-  city: string
+  city: string,
+  state?: string
 ): Promise<CadastralQueryResult> {
   try {
     // First, geocode the address
     const geocodeUrl = new URL(MONTANA_GEOCODER);
     geocodeUrl.searchParams.set('f', 'json');
-    geocodeUrl.searchParams.set('SingleLine', `${address}, ${city}, MT`);
+    geocodeUrl.searchParams.set('SingleLine', `${address}, ${city}, ${state || 'MT'}`);
     geocodeUrl.searchParams.set('outFields', '*');
     geocodeUrl.searchParams.set('maxLocations', '1');
 

@@ -133,7 +133,7 @@ export default async function handler(
     } else if (hasParcelId) {
       result = await queryParcelByParcelId(parcelId!);
     } else if (hasAddress) {
-      result = await queryParcelByAddress(address!, city!);
+      result = await queryParcelByAddress(address!, city!, state);
     }
 
     if (!result) {
@@ -181,3 +181,4 @@ export default async function handler(
   }
 }
 
+export default handler;

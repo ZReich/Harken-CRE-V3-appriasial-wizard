@@ -35,6 +35,8 @@ import { useCompletion } from '../hooks/useCompletion';
 import { useCelebration } from '../hooks/useCelebration';
 import { useSmartContinue } from '../hooks/useSmartContinue';
 import { SUBJECT_DATA_GUIDANCE, type SectionGuidance } from '../constants/wizardPhaseGuidance';
+import { generateDraft, buildContextFromState } from '../services/aiService';
+import type { AIGenerationContext } from '../types/api';
 
 const tabs = [
   { id: 'location', label: 'Location & Area', Icon: LocationIcon },
@@ -161,105 +163,64 @@ export default function SubjectDataPage() {
   // AI Draft All state for Location & Area
   const [isDraftingAllLocation, setIsDraftingAllLocation] = useState(false);
 
-  // Get property context for AI drafting
-  const subjectAddress = wizardState.subjectData?.address?.street || '6907 Entryway Drive';
-  const subjectCity = wizardState.subjectData?.address?.city || 'Billings';
-  const subjectCounty = wizardState.subjectData?.address?.county || 'Yellowstone County';
-  const subjectState = wizardState.subjectData?.address?.state || 'Montana';
-  const propertyType = wizardState.propertyType || 'commercial';
-  const propertySubtype = wizardState.propertySubtype || 'light industrial';
-
-  // Professional AI draft content templates - written like a 30-year appraiser
-  // Bold and underlined section headers for professional appearance
-  const simulatedLocationDrafts = useMemo(() => ({
-    area_description: `<b><u>REGIONAL OVERVIEW</u></b>
-
-${subjectCity} is the largest city in ${subjectState} and serves as the primary regional trade, medical, and retail center for a vast trade area encompassing eastern ${subjectState}, northern Wyoming, and western North and South Dakota. The ${subjectCity} Metropolitan Statistical Area encompasses ${subjectCounty} and has experienced steady population growth over the past two decades, with current population estimated at approximately 185,000 residents.
-
-<b><u>ECONOMIC BASE</u></b>
-
-The regional economy is diversified and includes healthcare, energy, agriculture, retail trade, and professional services. Billings Clinic and St. Vincent Healthcare rank among the largest employers, followed by ${subjectState} State University-${subjectCity}, First Interstate Bank, and various energy companies including oil refining and coal mining operations. The unemployment rate has historically remained below the national average, reflecting the area's economic resilience and diverse employment base.
-
-<b><u>REAL ESTATE MARKET CONDITIONS</u></b>
-
-Market conditions for ${propertySubtype} properties have remained stable to improving over the past 24 months. Demand for quality ${propertyType} space continues to outpace new construction, resulting in declining vacancy rates and modest rental rate increases. Investor interest in the market remains strong, supported by favorable capitalization rates relative to larger metropolitan areas and consistent tenant demand from regional and national users.
-
-<b><u>TRANSPORTATION AND INFRASTRUCTURE</u></b>
-
-Transportation infrastructure serving the market includes Interstate 90 (east-west corridor) and Interstate 94 (extending northeast), as well as ${subjectCity} Logan International Airport providing commercial air service to major hub cities. The combination of highway access and air service supports the area's established role as a regional distribution and service center. Future development outlook remains positive, with continued population growth projected and several commercial and residential developments in various planning stages.`,
-
-    neighborhood_boundaries: `<b><u>NEIGHBORHOOD BOUNDARIES</u></b>
-
-The subject neighborhood is generally bounded as follows:
-
-<b>North:</b> The Yellowstone River and the Heights area residential development define the northern boundary, extending to approximately Grand Avenue and the rimrocks geological formation that marks the northern edge of the valley floor.
-
-<b>South:</b> Central Avenue (U.S. Highway 87) and the established commercial corridor extending south toward the South Hills residential area form the southern boundary, including the King Avenue West commercial district.
-
-<b>East:</b> The eastern boundary extends to approximately South Billings Boulevard, encompassing the established industrial and commercial development along the main transportation corridors, including the MetraPark facility and fairgrounds complex.
-
-<b>West:</b> Shiloh Road and the newer commercial development extending toward the Shiloh Crossing retail area define the western boundary. The Yellowstone River also forms a natural western boundary in portions of the neighborhood.
-
-<b><u>MARKET AREA DEFINITION</u></b>
-
-This delineation encompasses the primary commercial and light industrial districts that directly compete with the subject property for similar users. The boundaries represent the market area from which comparable sales data was drawn and within which competitive properties are located.`,
-
-    neighborhood_characteristics: `<b><u>LAND USE PATTERNS</u></b>
-
-The immediate neighborhood is characterized by a mix of commercial, light industrial, and highway-oriented retail uses that have developed over the past 30 to 40 years. The area has evolved from primarily agricultural use to its current developed state, with most commercial and industrial development occurring from the 1980s through the present.
-
-<b><u>DEVELOPMENT CHARACTER</u></b>
-
-Predominant land uses include light industrial buildings with shop/warehouse and office components, retail strip centers, standalone commercial buildings, and supporting service uses. Building quality ranges from average to good, with newer construction generally exhibiting superior quality and functional utility. Improvement ages range from new construction to structures dating from the early 1980s, with the majority of buildings in average to good condition with adequate remaining economic life.
-
-<b><u>ACCESS AND TRANSPORTATION</u></b>
-
-Access to the neighborhood is excellent, with direct connection to Interstate 90 via multiple interchanges and good arterial road access via South 27th Street, King Avenue, and Central Avenue. Public transportation is available but limited, consistent with the region's reliance on private automobile transportation. Traffic patterns and volumes are consistent with commercial and industrial use, with adequate capacity during normal business hours.
-
-<b><u>AMENITIES AND SERVICES</u></b>
-
-The neighborhood offers proximity to supporting amenities including restaurants, retail services, hotels, and financial institutions. Major retail centers at Shiloh Crossing and the West End provide convenient access to goods and services for employees and business operations. The ${subjectCity} Metropolitan Transit provides limited bus service in the area.
-
-<b><u>VALUE INFLUENCES</u></b>
-
-Factors positively affecting property values include excellent highway access, established infrastructure, diverse tenant base, and proximity to the regional population center. No significant detrimental conditions were identified. The neighborhood is considered stable to improving, with continued demand for quality commercial and light industrial space expected to support property values over the near and intermediate term.`,
-
-    specific_location: `<b><u>PROPERTY LOCATION</u></b>
-
-The subject property is located at ${subjectAddress}, ${subjectCity}, ${subjectState}, in the southwestern portion of the ${subjectCity} urban area. The property is situated within the Harnish Trade Center Subdivision, an established industrial and commercial subdivision that has developed over the past 15 years.
-
-<b><u>PROXIMITY AND ACCESS</u></b>
-
-The subject is positioned approximately 0.3 miles south of King Avenue West, a major east-west arterial, and approximately 0.5 miles west of South Billings Boulevard. Interstate 90, the primary east-west highway serving the region, is located approximately 1.5 miles to the south with access available via the South Billings Boulevard and Shiloh Road interchanges.
-
-<b><u>SITE ACCESS AND VISIBILITY</u></b>
-
-The property has approximately 225 feet of frontage along Entryway Drive, with direct access via a paved approach. Visibility from Entryway Drive is good, though the property is not visible from King Avenue due to intervening development. The surrounding properties include similar light industrial shop/warehouse buildings, providing a cohesive development pattern consistent with the subject's use.
-
-<b><u>LOCATIONAL ANALYSIS</u></b>
-
-Locational advantages include proximity to major transportation corridors, location within an established industrial park with complete infrastructure, and accessibility for customers and employees. The property benefits from its position within ${subjectCity}'s primary light industrial corridor, offering convenient access for regional distribution and service operations. No significant locational disadvantages were identified. The subject's location is considered competitive within the market for properties of this type and is well-suited for its current and intended use.`,
-  }), [subjectAddress, subjectCity, subjectCounty, subjectState, propertyType, propertySubtype]);
+  // Build AI context from wizard state
+  const aiContext = useMemo((): AIGenerationContext => {
+    return {
+      propertyType: wizardState.propertyType || 'commercial',
+      propertySubtype: wizardState.propertySubtype || undefined,
+      siteData: {
+        city: wizardState.subjectData?.address?.city,
+        state: wizardState.subjectData?.address?.state,
+        county: wizardState.subjectData?.address?.county,
+        zoning: wizardState.subjectData?.zoningClass,
+        siteSize: wizardState.subjectData?.siteArea,
+        topography: wizardState.subjectData?.topography,
+        shape: wizardState.subjectData?.shape,
+      },
+    };
+  }, [wizardState]);
 
   // Handler for AI Draft All - Location & Area section
+  // Calls the real OpenAI API to generate professional appraisal text
   const handleDraftAllLocation = useCallback(async () => {
     setIsDraftingAllLocation(true);
     
-    // Simulate staggered AI generation for better UX
-    await new Promise(resolve => setTimeout(resolve, 400));
-    setAreaDescription(simulatedLocationDrafts.area_description);
-    
-    await new Promise(resolve => setTimeout(resolve, 300));
-    setNeighborhoodBoundaries(simulatedLocationDrafts.neighborhood_boundaries);
-    
-    await new Promise(resolve => setTimeout(resolve, 300));
-    setNeighborhoodCharacteristics(simulatedLocationDrafts.neighborhood_characteristics);
-    
-    await new Promise(resolve => setTimeout(resolve, 300));
-    setSpecificLocation(simulatedLocationDrafts.specific_location);
-    
-    setIsDraftingAllLocation(false);
-  }, [simulatedLocationDrafts]);
+    try {
+      // Generate all 4 sections using the AI API
+      // Area Description
+      const areaDescriptionDraft = await generateDraft('area_description', aiContext);
+      setAreaDescription(areaDescriptionDraft);
+      
+      // Neighborhood Boundaries
+      const neighborhoodBoundariesDraft = await generateDraft('neighborhood_description', aiContext);
+      setNeighborhoodBoundaries(neighborhoodBoundariesDraft);
+      
+      // Neighborhood Characteristics (use same neighborhood_description with different instruction)
+      const neighborhoodCharacteristicsDraft = await generateDraft(
+        'neighborhood_description',
+        aiContext,
+        undefined,
+        'Focus on land use patterns, development character, access, amenities, and value influences'
+      );
+      setNeighborhoodCharacteristics(neighborhoodCharacteristicsDraft);
+      
+      // Specific Location
+      const specificLocationDraft = await generateDraft(
+        'site_description',
+        aiContext,
+        undefined,
+        'Focus on the specific property location, proximity to major roads, access, and visibility'
+      );
+      setSpecificLocation(specificLocationDraft);
+      
+    } catch (error) {
+      console.error('Error generating AI drafts:', error);
+      // Show error to user
+      alert('Failed to generate AI drafts. Please check your API configuration and try again.');
+    } finally {
+      setIsDraftingAllLocation(false);
+    }
+  }, [aiContext]);
 
   // Site tab state - initialize from WizardContext
   const [acres, setAcres] = useState(() => wizardState.subjectData?.siteAreaUnit === 'acres' ? wizardState.subjectData?.siteArea || '' : '');
@@ -567,6 +528,7 @@ Locational advantages include proximity to major transportation corridors, locat
             setSpecificLocation={setSpecificLocation}
             onDraftAll={handleDraftAllLocation}
             isDraftingAll={isDraftingAllLocation}
+            contextData={aiContext}
           />
         ) : activeTab === 'site' ? (
           <SiteContent
@@ -735,6 +697,7 @@ interface LocationProps {
   setSpecificLocation: (v: string) => void;
   onDraftAll?: () => void;
   isDraftingAll?: boolean;
+  contextData?: AIGenerationContext;
 }
 
 function LocationContent({
@@ -745,6 +708,7 @@ function LocationContent({
   specificLocation, setSpecificLocation,
   onDraftAll,
   isDraftingAll = false,
+  contextData,
 }: LocationProps) {
   return (
     <div className="space-y-6">
@@ -814,6 +778,7 @@ function LocationContent({
             rows={6}
             sectionContext="area_description"
             helperText="AI can help draft a professional area description based on the selected location."
+            contextData={contextData}
           />
         </div>
       </div>
@@ -833,6 +798,7 @@ function LocationContent({
             rows={5}
             sectionContext="neighborhood_boundaries"
             helperText="Describe boundaries using recognizable landmarks and street names."
+            contextData={contextData}
           />
           <EnhancedTextArea
             id="neighborhood_characteristics"
@@ -843,6 +809,7 @@ function LocationContent({
             rows={6}
             sectionContext="neighborhood_characteristics"
             helperText="Include factors that influence desirability and market appeal."
+            contextData={contextData}
           />
         </div>
       </div>
@@ -862,6 +829,7 @@ function LocationContent({
           sectionContext="specific_location"
           helperText="Be specific enough that a reader could locate the property from this description."
           required
+          contextData={contextData}
         />
       </div>
     </div>
