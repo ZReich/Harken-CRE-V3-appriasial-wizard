@@ -439,7 +439,7 @@ export default function ReviewPage() {
     setActiveTab('checklist');
   }, []);
 
-  const { state, setRiskRating } = useWizard();
+  const { state, setRiskRating, setSwotAnalysis } = useWizard();
   
   // Determine if property has improvements (for HBU As Improved visibility)
   const hasImprovements = useMemo(() => {
@@ -458,13 +458,26 @@ export default function ReviewPage() {
   const [isDraftingAllVacant, setIsDraftingAllVacant] = useState(false);
 
   // SWOT Analysis state
-  const [swotData, setSwotData] = useState<SWOTData>({
+  const [swotData, setSwotDataLocal] = useState<SWOTData>({
     strengths: [],
     weaknesses: [],
     opportunities: [],
     threats: [],
     summary: '',
   });
+  
+  // Handler to update both local state and wizard state for SWOT
+  const handleSwotChange = useCallback((data: SWOTData) => {
+    setSwotDataLocal(data);
+    // Save to wizard state for report generation
+    setSwotAnalysis({
+      strengths: data.strengths,
+      weaknesses: data.weaknesses,
+      opportunities: data.opportunities,
+      threats: data.threats,
+      summary: data.summary,
+    });
+  }, [setSwotAnalysis]);
 
   // Enhanced AI drafts with more market data, specificity, and neighborhood context
   // Matching the quality and depth of actual Rove Valuations appraisals
@@ -937,7 +950,7 @@ We considered alternative uses including renovation, conversion to alternative u
           <div className="space-y-6 animate-fade-in">
             <SWOTAnalysis
               data={swotData}
-              onChange={setSwotData}
+              onChange={handleSwotChange}
               onGenerateSuggestions={async () => {
                 // Generate AI suggestions based on property data
                 const propertyType = state.propertyType || 'commercial';

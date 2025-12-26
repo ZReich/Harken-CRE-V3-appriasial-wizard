@@ -498,7 +498,25 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
           coverPhoto: undefined,
         };
 
-      // Risk Rating Actions
+      // CBRE Parity Data Actions
+      case 'SET_DEMOGRAPHICS_DATA':
+        return {
+          ...state,
+          demographicsData: action.payload,
+        };
+
+      case 'SET_ECONOMIC_INDICATORS':
+        return {
+          ...state,
+          economicIndicators: action.payload,
+        };
+
+      case 'SET_SWOT_ANALYSIS':
+        return {
+          ...state,
+          swotAnalysis: action.payload,
+        };
+
       case 'SET_RISK_RATING':
         return {
           ...state,
@@ -595,7 +613,10 @@ interface WizardContextValue {
   setCoverPhoto: (photo: CoverPhotoData) => void;
   removeCoverPhoto: () => void;
   
-  // Risk rating helpers
+  // CBRE Parity Data helpers
+  setDemographicsData: (data: import('../types').DemographicsData) => void;
+  setEconomicIndicators: (data: import('../types').EconomicIndicators) => void;
+  setSwotAnalysis: (data: import('../types').SWOTAnalysisData) => void;
   setRiskRating: (data: import('../types/api').RiskRatingData) => void;
   
   // Derived state
@@ -933,7 +954,19 @@ export function WizardProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'REMOVE_COVER_PHOTO' });
   }, []);
 
-  // Risk Rating helper
+  // CBRE Parity Data helpers
+  const setDemographicsData = useCallback((data: import('../types').DemographicsData) => {
+    dispatch({ type: 'SET_DEMOGRAPHICS_DATA', payload: data });
+  }, []);
+
+  const setEconomicIndicators = useCallback((data: import('../types').EconomicIndicators) => {
+    dispatch({ type: 'SET_ECONOMIC_INDICATORS', payload: data });
+  }, []);
+
+  const setSwotAnalysis = useCallback((data: import('../types').SWOTAnalysisData) => {
+    dispatch({ type: 'SET_SWOT_ANALYSIS', payload: data });
+  }, []);
+
   const setRiskRating = useCallback((riskRating: import('../types/api').RiskRatingData) => {
     dispatch({ type: 'SET_RISK_RATING', payload: riskRating });
   }, []);
@@ -995,7 +1028,10 @@ export function WizardProvider({ children }: { children: ReactNode }) {
         // Cover photo
         setCoverPhoto,
         removeCoverPhoto,
-        // Risk rating
+        // CBRE Parity Data
+        setDemographicsData,
+        setEconomicIndicators,
+        setSwotAnalysis,
         setRiskRating,
         // Derived state
         hasImprovements,

@@ -859,7 +859,17 @@ interface DemographicsProps {
 }
 
 function DemographicsContent({ latitude, longitude }: DemographicsProps) {
+  const { setDemographicsData } = useWizard();
   const hasCoordinates = latitude !== undefined && longitude !== undefined;
+  
+  const handleDataLoaded = (data: import('../types/api').RadiusDemographics[]) => {
+    // Save demographics data to wizard state for report generation
+    setDemographicsData({
+      radiusAnalysis: data,
+      dataSource: 'census',
+      dataPullDate: new Date().toISOString(),
+    });
+  };
   
   return (
     <div className="space-y-6">
@@ -880,6 +890,7 @@ function DemographicsContent({ latitude, longitude }: DemographicsProps) {
         <DemographicsPanel 
           latitude={latitude}
           longitude={longitude}
+          onDataLoaded={handleDataLoaded}
         />
       ) : (
         <div className="text-center py-12 text-slate-500">
