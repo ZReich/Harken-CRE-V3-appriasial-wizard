@@ -9,6 +9,13 @@
  */
 
 import fetch from 'node-fetch';
+import https from 'https';
+
+// SSL agent to bypass certificate validation for Montana's misconfigured SSL certificate
+// Their cert only includes *.mt.gov but NOT *.msl.mt.gov (where gis.msl.mt.gov is hosted)
+const httpsAgent = new https.Agent({
+  rejectUnauthorized: false
+});
 
 const CADASTRAL_FEATURE_SERVER = 'https://gis.msl.mt.gov/arcgis/rest/services/Cadastral/Cadastral/FeatureServer/1/query';
 const MONTANA_GEOCODER = 'https://gis.msl.mt.gov/arcgis/rest/services/Locators/MontanaAddressLocator/GeocodeServer/findAddressCandidates';
@@ -75,7 +82,7 @@ export async function queryParcelByLocation(
     url.searchParams.set('outFields', '*');
     url.searchParams.set('returnGeometry', 'true'); // Return geometry for centroid
 
-    const response = await fetch(url.toString());
+    const response = await fetch(url.toString(), { agent: httpsAgent });
     
     if (!response.ok) {
       throw new Error(`Cadastral API error: ${response.status}`);
@@ -131,7 +138,7 @@ export async function queryParcelByParcelId(
     url.searchParams.set('outFields', '*');
     url.searchParams.set('returnGeometry', 'false');
 
-    const response = await fetch(url.toString());
+    const response = await fetch(url.toString(), { agent: httpsAgent });
     
     if (!response.ok) {
       throw new Error(`Cadastral API error: ${response.status}`);
@@ -184,7 +191,7 @@ export async function queryParcelByAddress(
 
     console.log('[Cadastral] Geocoding URL:', geocodeUrl.toString());
 
-    const geocodeResponse = await fetch(geocodeUrl.toString());
+    const geocodeResponse = await fetch(geocodeUrl.toString(), { agent: httpsAgent });
     
     console.log('[Cadastral] Geocode response status:', geocodeResponse.status);
     

@@ -186,31 +186,21 @@ export default function SubjectDataPage() {
     setIsDraftingAllLocation(true);
     
     try {
-      // Generate all 4 sections using the AI API
+      // Generate all 4 sections using the AI API with specific prompts
       // Area Description
       const areaDescriptionDraft = await generateDraft('area_description', aiContext);
       setAreaDescription(areaDescriptionDraft);
       
-      // Neighborhood Boundaries
-      const neighborhoodBoundariesDraft = await generateDraft('neighborhood_description', aiContext);
+      // Neighborhood Boundaries (uses dedicated neighborhood_boundaries prompt)
+      const neighborhoodBoundariesDraft = await generateDraft('neighborhood_boundaries', aiContext);
       setNeighborhoodBoundaries(neighborhoodBoundariesDraft);
       
-      // Neighborhood Characteristics (use same neighborhood_description with different instruction)
-      const neighborhoodCharacteristicsDraft = await generateDraft(
-        'neighborhood_description',
-        aiContext,
-        undefined,
-        'Focus on land use patterns, development character, access, amenities, and value influences'
-      );
+      // Neighborhood Characteristics (uses dedicated neighborhood_characteristics prompt)
+      const neighborhoodCharacteristicsDraft = await generateDraft('neighborhood_characteristics', aiContext);
       setNeighborhoodCharacteristics(neighborhoodCharacteristicsDraft);
       
-      // Specific Location
-      const specificLocationDraft = await generateDraft(
-        'site_description',
-        aiContext,
-        undefined,
-        'Focus on the specific property location, proximity to major roads, access, and visibility'
-      );
+      // Specific Location (uses dedicated specific_location prompt)
+      const specificLocationDraft = await generateDraft('specific_location', aiContext);
       setSpecificLocation(specificLocationDraft);
       
     } catch (error) {

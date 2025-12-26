@@ -75,6 +75,55 @@ Include:
 
 Write 2-3 paragraphs, approximately 150-200 words.`,
 
+  neighborhood_boundaries: (ctx) => `Write a professional neighborhood boundaries section for an appraisal report.
+
+Property Location: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
+Property Type: ${ctx.propertyType || 'Commercial'}
+County: ${ctx.siteData?.county || 'Not specified'}
+
+Describe the neighborhood boundaries using the following format:
+- North: [specific street, landmark, or geographic feature]
+- South: [specific street, landmark, or geographic feature]
+- East: [specific street, landmark, or geographic feature]
+- West: [specific street, landmark, or geographic feature]
+
+Then provide a brief summary of why these boundaries define the competitive market area for similar properties.
+
+Write with specific detail as a 30-year MAI appraiser would, using local knowledge and landmarks. Write 2 paragraphs, approximately 150-200 words.`,
+
+  neighborhood_characteristics: (ctx) => `Write a professional neighborhood characteristics analysis for an appraisal report.
+
+Property Location: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
+Property Type: ${ctx.propertyType || 'Commercial'}
+Property Subtype: ${ctx.propertySubtype || 'Not specified'}
+Zoning: ${ctx.siteData?.zoning || 'Not specified'}
+
+Include:
+- Predominant land uses and development patterns
+- Age and condition of existing development
+- Access and transportation (highways, arterials, public transit)
+- Available amenities (retail, restaurants, services)
+- Factors positively and negatively affecting property values
+- Neighborhood life cycle stage (growth, stability, decline)
+
+Write as a 30-year MAI appraiser would, with specific observations about the market area. Write 2-3 paragraphs, approximately 200-250 words.`,
+
+  specific_location: (ctx) => `Write a professional specific location description for an appraisal report.
+
+Property Location: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
+Property Type: ${ctx.propertyType || 'Commercial'}
+Property Subtype: ${ctx.propertySubtype || 'Not specified'}
+
+Include:
+- Precise location description (street name, block, subdivision)
+- Proximity to major arterials and highways (with distances)
+- Nearby landmarks and points of reference
+- Access characteristics (frontage, ingress/egress)
+- Visibility from major roads
+- Surrounding property uses
+
+Write as a 30-year MAI appraiser would, with enough detail that a reader unfamiliar with the area could locate the property. Write 2 paragraphs, approximately 150-175 words.`,
+
   site_description: (ctx) => `Write a professional site description for an appraisal report.
 
 Site Size: ${ctx.siteData?.siteSize || 'Not specified'}
