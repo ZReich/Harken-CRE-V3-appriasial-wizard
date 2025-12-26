@@ -86,7 +86,13 @@ export async function queryParcelByLocation(
     url.searchParams.set('outFields', '*');
     url.searchParams.set('returnGeometry', 'true'); // Return geometry for centroid
 
-    const response = await fetch(url.toString(), { agent: (_parsedURL) => _parsedURL.protocol == 'http:' ? httpAgent : httpsAgent });
+    const response = await fetch(url.toString(), { 
+      agent: (_parsedURL) => _parsedURL.protocol == 'http:' ? httpAgent : httpsAgent,
+      redirect: 'follow',
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; Harken/1.0)',
+      }
+    });
     
     if (!response.ok) {
       throw new Error(`Cadastral API error: ${response.status}`);
@@ -142,7 +148,13 @@ export async function queryParcelByParcelId(
     url.searchParams.set('outFields', '*');
     url.searchParams.set('returnGeometry', 'false');
 
-    const response = await fetch(url.toString(), { agent: (_parsedURL) => _parsedURL.protocol == 'http:' ? httpAgent : httpsAgent });
+    const response = await fetch(url.toString(), { 
+      agent: (_parsedURL) => _parsedURL.protocol == 'http:' ? httpAgent : httpsAgent,
+      redirect: 'follow',
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; Harken/1.0)',
+      }
+    });
     
     if (!response.ok) {
       throw new Error(`Cadastral API error: ${response.status}`);
@@ -195,7 +207,13 @@ export async function queryParcelByAddress(
 
     console.log('[Cadastral] Geocoding URL:', geocodeUrl.toString());
 
-    const geocodeResponse = await fetch(geocodeUrl.toString(), { agent: (_parsedURL) => _parsedURL.protocol == 'http:' ? httpAgent : httpsAgent });
+    const geocodeResponse = await fetch(geocodeUrl.toString(), { 
+      agent: (_parsedURL) => _parsedURL.protocol == 'http:' ? httpAgent : httpsAgent,
+      redirect: 'follow',
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (compatible; Harken/1.0)',
+      }
+    });
     
     console.log('[Cadastral] Geocode response status:', geocodeResponse.status);
     
