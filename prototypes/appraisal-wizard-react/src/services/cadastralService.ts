@@ -94,6 +94,12 @@ export async function queryParcelByAddress(
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Unknown error';
     console.error('[CadastralService] Address query error:', error);
+    
+    // Log the full ApiError response if available
+    if (error && typeof error === 'object' && 'response' in error) {
+      console.error('[CadastralService] Full error response:', JSON.stringify((error as any).response, null, 2));
+    }
+    
     return {
       success: false,
       data: null,
