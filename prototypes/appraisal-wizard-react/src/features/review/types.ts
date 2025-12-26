@@ -44,7 +44,7 @@ export interface ApproachValue {
 export interface ReportSection {
   id: string;
   label: string;
-  type: 'cover' | 'section' | 'toc' | 'letter' | 'summary-table' | 'narrative' | 'analysis-grid' | 'photo-grid' | 'map' | 'document' | 'addenda-header';
+  type: 'cover' | 'section' | 'toc' | 'letter' | 'summary-table' | 'narrative' | 'analysis-grid' | 'photo-grid' | 'map' | 'document' | 'addenda-header' | 'risk-rating' | 'demographics' | 'economic-context' | 'swot';
   sectionNumber?: string;
   enabled: boolean;
   expanded: boolean;

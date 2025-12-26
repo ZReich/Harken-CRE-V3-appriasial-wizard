@@ -122,6 +122,19 @@ export const BASE_REPORT_SECTIONS: ReportSection[] = [
     ],
   },
   {
+    id: 'risk-rating',
+    label: 'Investment Risk Analysis',
+    type: 'risk-rating',
+    sectionNumber: '01A',
+    enabled: true,
+    expanded: false,
+    fields: [
+      { id: 'risk_grade', label: 'Overall Grade', enabled: true },
+      { id: 'risk_dimensions', label: 'Risk Dimensions', enabled: true },
+      { id: 'risk_disclosure', label: 'USPAP Disclosure', enabled: true },
+    ],
+  },
+  {
     id: 'property-description',
     label: 'Property Description',
     type: 'narrative',
@@ -135,6 +148,31 @@ export const BASE_REPORT_SECTIONS: ReportSection[] = [
     ],
   },
   {
+    id: 'demographics',
+    label: 'Neighborhood Demographics',
+    type: 'demographics',
+    sectionNumber: '02A',
+    enabled: true,
+    expanded: false,
+    fields: [
+      { id: 'demo_population', label: 'Population & Households', enabled: true },
+      { id: 'demo_income', label: 'Income Statistics', enabled: true },
+      { id: 'demo_employment', label: 'Employment Data', enabled: true },
+    ],
+  },
+  {
+    id: 'economic-context',
+    label: 'Economic Context',
+    type: 'economic-context',
+    sectionNumber: '02B',
+    enabled: true,
+    expanded: false,
+    fields: [
+      { id: 'econ_rates', label: 'Interest Rates', enabled: true },
+      { id: 'econ_indicators', label: 'Economic Indicators', enabled: true },
+    ],
+  },
+  {
     id: 'hbu',
     label: 'Highest & Best Use',
     type: 'narrative',
@@ -144,6 +182,20 @@ export const BASE_REPORT_SECTIONS: ReportSection[] = [
     fields: [
       { id: 'hbu_vacant', label: 'As Vacant Analysis', enabled: true },
       { id: 'hbu_improved', label: 'As Improved Analysis', enabled: true },
+    ],
+  },
+  {
+    id: 'swot',
+    label: 'SWOT Analysis',
+    type: 'swot',
+    sectionNumber: '03A',
+    enabled: true,
+    expanded: false,
+    fields: [
+      { id: 'swot_strengths', label: 'Strengths', enabled: true },
+      { id: 'swot_weaknesses', label: 'Weaknesses', enabled: true },
+      { id: 'swot_opportunities', label: 'Opportunities', enabled: true },
+      { id: 'swot_threats', label: 'Threats', enabled: true },
     ],
   },
 ];
