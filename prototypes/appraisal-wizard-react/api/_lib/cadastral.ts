@@ -209,15 +209,20 @@ export async function queryParcelByAddress(
 
     const geocodeResponse = await fetch(geocodeUrl.toString(), { 
       agent: (_parsedURL) => _parsedURL.protocol == 'http:' ? httpAgent : httpsAgent,
-      redirect: 'follow',
+      redirect: 'manual', // Don't follow redirects, we want to see what's happening
       headers: {
         'User-Agent': 'Mozilla/5.0 (compatible; Harken/1.0)',
       }
     });
     
     console.log('[Cadastral] Geocode response status:', geocodeResponse.status);
+    console.log('[Cadastral] Geocode response URL:', geocodeResponse.url);
+    console.log('[Cadastral] Geocode response headers:', JSON.stringify([...geocodeResponse.headers]));
     
     if (!geocodeResponse.ok) {
+      // Log the error response body
+      const errorText = await geocodeResponse.text();
+      console.error('[Cadastral] Error response body:', errorText.substring(0, 500));
       throw new Error(`Geocoding error: ${geocodeResponse.status}`);
     }
 
