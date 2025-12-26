@@ -450,6 +450,23 @@ export interface WizardState {
   // Cover Photo (for report title page)
   coverPhoto?: CoverPhotoData;
   
+  // CBRE Parity - Enhanced Data Fields (Plan Part 9)
+  demographicsData?: DemographicsData;
+  economicIndicators?: EconomicIndicators;
+  economicChartStyle?: 'gradient' | 'glass' | 'horizon' | 'pulse' | 'diverging';
+  swotAnalysis?: SWOTAnalysisData;
+  riskRating?: RiskRatingData;
+  marketAnalysis?: {
+    averageDaysOnMarket?: number;
+    absorptionRate?: number;
+    inventoryMonths?: number;
+  };
+  incomeApproach?: {
+    capRate?: number;
+    noi?: number;
+    occupancy?: number;
+  };
+  
   // Navigation
   currentPage: string;
   subjectActiveTab: string;
@@ -783,7 +800,12 @@ export type PageLayout =
   | 'photo-single'    // Single full-page photo
   | 'map-page'        // Map with legend
   | 'document'        // Scanned document display
-  | 'addenda-header'; // Section divider page
+  | 'addenda-header'  // Section divider page
+  // CBRE Parity - New layouts
+  | 'risk-rating'     // Investment Risk Rating page
+  | 'demographics'    // Neighborhood Demographics page
+  | 'economic-context' // Economic Context with charts
+  | 'swot';           // SWOT Analysis page
 
 // =================================================================
 // PAGE LAYOUT & SPACING TYPES
@@ -841,7 +863,7 @@ export interface SectionBoundary {
 // =================================================================
 
 /** Types of content blocks in the report */
-export type ContentBlockType = 'heading' | 'paragraph' | 'table' | 'image' | 'photo-grid' | 'list' | 'chart';
+export type ContentBlockType = 'heading' | 'paragraph' | 'table' | 'image' | 'photo-grid' | 'list' | 'chart' | 'risk-rating' | 'demographics' | 'economic' | 'swot';
 
 /** Content block for report sections */
 export interface ContentBlock {

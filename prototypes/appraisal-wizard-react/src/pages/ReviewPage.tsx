@@ -530,15 +530,17 @@ We considered alternative uses including renovation, conversion to alternative u
   }, [simulatedDrafts]);
 
 
-  // Tab configuration - Only the 4 tracked tabs (Report Preview is now a separate mode)
-  // Order: HBU → SWOT → Reconciliation → Checklist (per appraisal workflow)
+  // Tab configuration - 5 tracked tabs (Report Preview is now a separate mode)
+  // Order: HBU → SWOT → Risk Rating → Reconciliation → Checklist (per appraisal workflow)
   // 1. Establish HBU first (foundational analysis)
   // 2. SWOT Analysis (strategic property assessment)
-  // 3. Reconcile value indications (core conclusion)
-  // 4. Verify completion (quality control gate before finalizing)
+  // 3. Risk Rating (investment quality assessment - Plan Part 10.7)
+  // 4. Reconcile value indications (core conclusion)
+  // 5. Verify completion (quality control gate before finalizing)
   const tabs: { id: ReviewTabId; label: string; icon: typeof ClipboardCheckIcon }[] = [
     { id: 'hbu', label: 'Highest & Best Use', icon: ScaleIcon },
     { id: 'swot', label: 'SWOT Analysis', icon: TargetIcon },
+    { id: 'risk-rating', label: 'Risk Rating', icon: () => <Shield className="w-5 h-5" /> },
     { id: 'reconciliation', label: 'Value Reconciliation', icon: ChartIcon },
     { id: 'checklist', label: 'Completion Checklist', icon: ClipboardCheckIcon },
   ];
@@ -617,6 +619,7 @@ We considered alternative uses including renovation, conversion to alternative u
       <h3 className="text-lg font-bold text-gray-900 mb-3">
         {activeTab === 'hbu' && 'Highest & Best Use'}
         {activeTab === 'swot' && 'SWOT Analysis'}
+        {activeTab === 'risk-rating' && 'Investment Risk Rating'}
         {activeTab === 'checklist' && 'Finalization'}
         {activeTab === 'reconciliation' && 'Value Reconciliation'}
       </h3>
@@ -625,6 +628,8 @@ We considered alternative uses including renovation, conversion to alternative u
           'Complete the four tests of highest and best use to determine the most profitable legal use of the subject property.'}
         {activeTab === 'swot' &&
           'Identify strengths, weaknesses, opportunities, and threats for the subject property.'}
+        {activeTab === 'risk-rating' &&
+          'Review the property\'s investment risk rating based on market volatility, liquidity, income stability, and asset quality.'}
         {activeTab === 'checklist' &&
           'Review all sections for completeness and accuracy before generating the final report.'}
         {activeTab === 'reconciliation' &&
@@ -685,6 +690,32 @@ We considered alternative uses including renovation, conversion to alternative u
             <h4 className="font-semibold text-sm text-blue-900 mb-1">AI Suggestions</h4>
             <p className="text-xs text-blue-800">
               Use the AI Suggestions button to generate property-specific SWOT items based on your entered data.
+            </p>
+          </div>
+        </>
+      )}
+
+      {activeTab === 'risk-rating' && (
+        <>
+          <div className="bg-cyan-50 border-l-4 border-cyan-400 p-4 rounded mb-4">
+            <h4 className="font-semibold text-sm text-cyan-900 mb-1">Bond-Style Rating</h4>
+            <p className="text-xs text-cyan-800">
+              Similar to bond credit ratings (AAA to C), this system evaluates investment quality across four dimensions.
+            </p>
+          </div>
+          <div className="bg-indigo-50 border-l-4 border-indigo-400 p-4 rounded mb-4">
+            <h4 className="font-semibold text-sm text-indigo-900 mb-1">Four Risk Dimensions</h4>
+            <p className="text-xs text-indigo-800">
+              <strong>Market Volatility:</strong> Price variance vs market<br/>
+              <strong>Liquidity:</strong> Days on market, absorption<br/>
+              <strong>Income Stability:</strong> Cap rate vs risk-free rate<br/>
+              <strong>Asset Quality:</strong> Physical + location factors
+            </p>
+          </div>
+          <div className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded">
+            <h4 className="font-semibold text-sm text-amber-900 mb-1">Dynamic Weighting</h4>
+            <p className="text-xs text-amber-800">
+              Weights are calculated based on property type, data completeness, and market conditions - not fixed defaults.
             </p>
           </div>
         </>
@@ -935,6 +966,39 @@ We considered alternative uses including renovation, conversion to alternative u
                   ],
                 };
               }}
+            />
+          </div>
+        );
+
+      case 'risk-rating':
+        return (
+          <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
+            {/* Info Banner */}
+            <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-4 flex items-start gap-3">
+              <Info className="text-indigo-600 shrink-0 mt-0.5" size={18} />
+              <div>
+                <p className="text-sm font-semibold text-indigo-900">
+                  Investment Risk Rating ("Bond Rating for Buildings")
+                </p>
+                <p className="text-xs text-indigo-800 mt-1">
+                  This proprietary rating system evaluates the property across four risk dimensions 
+                  using Wall Street-style methodology. The rating helps banks and investors assess 
+                  investment quality at a glance.
+                </p>
+              </div>
+            </div>
+
+            {/* Risk Rating Panel */}
+            <RiskRatingPanel
+              propertyType={state.propertyType || 'commercial'}
+              latitude={state.subjectData?.coordinates?.latitude}
+              longitude={state.subjectData?.coordinates?.longitude}
+              isIncomeProducing={state.propertyType !== 'residential' && state.propertyType !== 'land'}
+              capRate={state.incomeApproach?.capRate}
+              daysOnMarket={state.marketAnalysis?.averageDaysOnMarket}
+              yearBuilt={state.improvementsInventory?.parcels?.[0]?.buildings?.[0]?.yearBuilt ?? undefined}
+              condition={state.improvementsInventory?.parcels?.[0]?.buildings?.[0]?.condition}
+              className="w-full"
             />
           </div>
         );

@@ -15,6 +15,7 @@ import { CostApproachGrid } from '../features/cost-approach';
 import { LandSalesGrid } from '../features/land-valuation';
 import { MarketAnalysisGrid } from '../features/market-analysis';
 import { MultiFamilyGrid } from '../features/multi-family';
+import EconomicIndicatorsPanel from '../components/EconomicIndicatorsPanel';
 import { useWizard } from '../context/WizardContext';
 import { getGuidance, type GuidanceContent } from '../constants/guidance';
 import { Layers, Building, Wallet, HardHat, Info, AlertTriangle, CheckCircle2, Lightbulb, BookOpen } from 'lucide-react';
@@ -575,7 +576,7 @@ export default function AnalysisPage() {
             </div>
           </div>
           {/* Market Analysis Grid */}
-          <div className="flex-1 min-h-0 overflow-auto">
+          <div className="flex-1 min-h-0 overflow-auto space-y-6">
             <MarketAnalysisGrid 
               rentCompData={{
                 avgRent: 26.75,
@@ -588,6 +589,16 @@ export default function AnalysisPage() {
                 compCount: 8,
               }}
             />
+            
+            {/* Economic Indicators Panel - Plan Part 4.2 */}
+            <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
+              <EconomicIndicatorsPanel 
+                onChartStyleChange={(style) => {
+                  // Save chart style to wizard state for report generation
+                  console.log('Chart style changed to:', style);
+                }}
+              />
+            </div>
           </div>
         </div>
       ) : (

@@ -679,3 +679,75 @@ export function getApproachesWithGuidance(scenarioName: string): string[] {
   return Object.keys(scenarioGuidance);
 }
 
+// =============================================================================
+// CBRE PARITY FEATURE GUIDANCE (Plan Design Guidelines)
+// =============================================================================
+
+export interface FeatureGuidance {
+  title: string;
+  description: string;
+  dataSource: string;
+  tips: string[];
+  uspapNote?: string;
+}
+
+export const CBRE_FEATURE_GUIDANCE: Record<string, FeatureGuidance> = {
+  'risk-rating': {
+    title: 'Investment Risk Rating',
+    description: 'A proprietary "Bond Rating for Buildings" system that evaluates property investment quality across four dimensions: Market Volatility, Liquidity Risk, Income Stability, and Asset Quality. Ratings range from AAA (Prime) to C (Distressed).',
+    dataSource: 'Calculated from FRED economic data, GreatSchools API, Crimeometer API, and property data from Montana Cadastral (MT) or Cotality (other states).',
+    tips: [
+      'The rating uses dynamic weighting that adapts based on property type and data completeness',
+      'Income-producing properties weight Income Stability higher; land weights Asset Quality higher',
+      'The rating should be presented as supplementary analysis, not the primary value conclusion',
+      'Always include the disclaimer noting this is a proprietary analytical tool',
+    ],
+    uspapNote: 'Risk ratings are supplementary analytical tools. Per USPAP Standards Rule 1-1(a), any automated analysis must be reviewed for credibility before relying on the output.',
+  },
+  'economic-indicators': {
+    title: 'Economic Context',
+    description: 'Macro-economic indicators that provide context for valuation: Federal Funds Rate, 10-Year Treasury Yield, CPI Inflation, and GDP Growth. Data is sourced from the Federal Reserve Economic Data (FRED) API.',
+    dataSource: 'FRED API (Federal Reserve Bank of St. Louis) - Free with registration.',
+    tips: [
+      'Choose a chart style that matches the overall report aesthetic',
+      'The Gradient Flow and Pulse Line styles work well for printed reports',
+      'Glass Cards style is best for digital presentations',
+      'Economic indicators support cap rate analysis and market trend discussions',
+    ],
+  },
+  'demographics': {
+    title: 'Neighborhood Demographics',
+    description: 'Radius-based demographic analysis showing population, median household income, and employment characteristics at 1, 3, and 5 mile radii from the subject property.',
+    dataSource: 'Census Bureau ACS data via ESRI Demographics API or direct Census API access.',
+    tips: [
+      'Demographics are most relevant for retail and multi-family properties',
+      'Income levels help support rental rate conclusions and retail tenant mix analysis',
+      'Population growth trends inform absorption rate assumptions',
+      'Compare demographics to successful comparable properties in the area',
+    ],
+  },
+  'swot-analysis': {
+    title: 'SWOT Analysis',
+    description: 'Strategic property assessment framework: Strengths (competitive advantages), Weaknesses (limitations), Opportunities (growth potential), and Threats (external risks).',
+    dataSource: 'Appraiser analysis based on property inspection, market research, and professional judgment.',
+    tips: [
+      'Use the AI suggestions as a starting point, then customize for the specific property',
+      'Strengths and Weaknesses are internal (property-specific) factors',
+      'Opportunities and Threats are external (market/environment) factors',
+      'SWOT analysis supports the HBU conclusion and marketability discussion',
+    ],
+  },
+  'property-lookup': {
+    title: 'Property Data Lookup',
+    description: 'Automated property data retrieval from Montana Cadastral (for MT properties) or Cotality (for out-of-state properties). Retrieves parcel data, ownership, assessed values, and property characteristics.',
+    dataSource: 'Montana Cadastral API (FREE - MT only) or Cotality API (subscription required - all other states).',
+    tips: [
+      'Always verify auto-filled data against official records',
+      'Montana Cadastral data is free and should be used for all MT properties',
+      'Cotality data may have 24-48 hour lag from recording',
+      'Override any incorrect auto-filled values - the appraiser is responsible for accuracy',
+    ],
+    uspapNote: 'Per USPAP, the appraiser is responsible for data accuracy regardless of source. Auto-filled data must be verified.',
+  },
+};
+

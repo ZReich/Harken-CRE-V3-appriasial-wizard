@@ -98,7 +98,32 @@ export function useReportBuilder(wizardState: WizardState): UseReportBuilderResu
     });
 
     // =================================================================
-    // 5. PURPOSE, USE & USERS
+    // 5. INVESTMENT RISK ANALYSIS (Plan Part 10.9 - after Summary)
+    // =================================================================
+    // Only include if risk rating data is available
+    if (wizardState.riskRating) {
+      addTocEntry('risk-rating', 'Investment Risk Analysis');
+      addPage({
+        id: 'risk-rating-page',
+        layout: 'risk-rating',
+        sectionId: 'risk-rating',
+        title: 'Investment Risk Analysis',
+        content: [{
+          id: 'risk-rating-content',
+          type: 'risk-rating',
+          content: {
+            riskRating: wizardState.riskRating,
+          },
+          canSplit: false,
+          keepWithNext: false,
+          keepWithPrevious: false,
+          minLinesIfSplit: 0,
+        }],
+      });
+    }
+
+    // =================================================================
+    // 6. PURPOSE, USE & USERS
     // =================================================================
     addTocEntry('purpose', 'Purpose of Appraisal');
     addPage({
@@ -124,7 +149,7 @@ export function useReportBuilder(wizardState: WizardState): UseReportBuilderResu
     }
 
     // =================================================================
-    // 7. GENERAL AREA ANALYSIS
+    // 8. GENERAL AREA ANALYSIS
     // =================================================================
     addTocEntry('area-analysis', 'General Area Analysis');
     addPage({
@@ -136,7 +161,56 @@ export function useReportBuilder(wizardState: WizardState): UseReportBuilderResu
     });
 
     // =================================================================
-    // 8. NEIGHBORHOOD ANALYSIS
+    // 8.1 NEIGHBORHOOD DEMOGRAPHICS (Plan Part 6.1)
+    // =================================================================
+    if (wizardState.demographicsData && wizardState.demographicsData.radiusAnalysis?.length > 0) {
+      addTocEntry('demographics', 'Neighborhood Demographics', 2);
+      addPage({
+        id: 'demographics-page',
+        layout: 'demographics',
+        sectionId: 'demographics',
+        title: 'Neighborhood Demographics',
+        content: [{
+          id: 'demographics-content',
+          type: 'demographics',
+          content: {
+            demographics: wizardState.demographicsData,
+          },
+          canSplit: false,
+          keepWithNext: false,
+          keepWithPrevious: false,
+          minLinesIfSplit: 0,
+        }],
+      });
+    }
+
+    // =================================================================
+    // 8.2 ECONOMIC CONTEXT (Plan Part 6.1)
+    // =================================================================
+    if (wizardState.economicIndicators) {
+      addTocEntry('economic-context', 'Economic Context', 2);
+      addPage({
+        id: 'economic-context-page',
+        layout: 'economic-context',
+        sectionId: 'economic-context',
+        title: 'Economic Context',
+        content: [{
+          id: 'economic-content',
+          type: 'economic',
+          content: {
+            economicIndicators: wizardState.economicIndicators,
+            chartStyle: wizardState.economicChartStyle || 'gradient',
+          },
+          canSplit: false,
+          keepWithNext: false,
+          keepWithPrevious: false,
+          minLinesIfSplit: 0,
+        }],
+      });
+    }
+
+    // =================================================================
+    // 9. NEIGHBORHOOD ANALYSIS
     // =================================================================
     addTocEntry('neighborhood', 'Neighborhood Analysis');
     addPage({
@@ -222,7 +296,36 @@ export function useReportBuilder(wizardState: WizardState): UseReportBuilderResu
     });
 
     // =================================================================
-    // 14-16. VALUATION APPROACHES (per scenario)
+    // 14. SWOT ANALYSIS (Plan Part 6.1)
+    // =================================================================
+    if (wizardState.swotAnalysis && (
+      wizardState.swotAnalysis.strengths.length > 0 ||
+      wizardState.swotAnalysis.weaknesses.length > 0 ||
+      wizardState.swotAnalysis.opportunities.length > 0 ||
+      wizardState.swotAnalysis.threats.length > 0
+    )) {
+      addTocEntry('swot-analysis', 'SWOT Analysis');
+      addPage({
+        id: 'swot-page',
+        layout: 'swot',
+        sectionId: 'swot-analysis',
+        title: 'SWOT Analysis',
+        content: [{
+          id: 'swot-content',
+          type: 'swot',
+          content: {
+            swotAnalysis: wizardState.swotAnalysis,
+          },
+          canSplit: false,
+          keepWithNext: false,
+          keepWithPrevious: false,
+          minLinesIfSplit: 0,
+        }],
+      });
+    }
+
+    // =================================================================
+    // 15-17. VALUATION APPROACHES (per scenario)
     // =================================================================
     wizardState.scenarios.forEach(scenario => {
       const scenarioPrefix = wizardState.scenarios.length > 1 
