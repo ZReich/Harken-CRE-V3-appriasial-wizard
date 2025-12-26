@@ -35,7 +35,7 @@ import { useCompletion } from '../hooks/useCompletion';
 import { useCelebration } from '../hooks/useCelebration';
 import { useSmartContinue } from '../hooks/useSmartContinue';
 import { SUBJECT_DATA_GUIDANCE, type SectionGuidance } from '../constants/wizardPhaseGuidance';
-import { generateDraft, buildContextFromState } from '../services/aiService';
+import { generateDraft } from '../services/aiService';
 import type { AIGenerationContext } from '../types/api';
 
 const tabs = [
