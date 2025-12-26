@@ -1,4 +1,7 @@
 {
+  "framework": "vite",
+  "buildCommand": "npm run build",
+  "outputDirectory": "dist",
   "functions": {
     "api/**/*.ts": {
       "memory": 1024,
@@ -9,4 +12,5 @@
     { "source": "/((?!api).*)", "destination": "/index.html" }
   ]
 }
+
 
