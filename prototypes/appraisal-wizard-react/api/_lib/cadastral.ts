@@ -170,6 +170,8 @@ export async function queryParcelByAddress(
 ): Promise<CadastralQueryResult> {
   try {
     console.log('[Cadastral] queryParcelByAddress called:', { address, city, state });
+    console.log('[Cadastral] fetch is defined:', typeof fetch !== 'undefined');
+    console.log('[Cadastral] fetch value:', fetch);
     
     // First, geocode the address
     const geocodeUrl = new URL(MONTANA_GEOCODER);

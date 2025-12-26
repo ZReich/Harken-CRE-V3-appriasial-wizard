@@ -87,6 +87,10 @@ const getInitialState = (): WizardState => {
       occupancyStatus: undefined,
       plannedChanges: undefined,
       loanPurpose: undefined,
+      // Coordinates for Demographics lookup (from Google Places or Cadastral)
+      coordinates: undefined,
+      // Cadastral data (for Tax & Ownership auto-fill)
+      cadastralData: undefined,
     },
     improvementsInventory: createDefaultInventory(),
     extractedData: {},
