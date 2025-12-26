@@ -12,8 +12,8 @@ import {
   queryParcelByParcelId,
   queryParcelByAddress,
   isMontana,
-} from '../_lib/cadastral.js';
-import type { MontanaCadastralParcel } from '../_lib/cadastral.js';
+} from '../_lib/cadastral';
+import type { MontanaCadastralParcel } from '../_lib/cadastral';
 
 interface CadastralRequestBody {
   latitude?: number;
