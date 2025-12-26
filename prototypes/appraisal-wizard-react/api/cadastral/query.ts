@@ -170,13 +170,20 @@ export default async function handler(
     });
   } catch (error) {
     console.error('Cadastral query error:', error);
+    console.error('Error stack:', error instanceof Error ? error.stack : 'No stack trace');
+    console.error('Request body was:', JSON.stringify(req.body));
     
     const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+    const errorStack = error instanceof Error ? error.stack : '';
     
     return res.status(500).json({
       success: false,
       error: `Failed to query cadastral data: ${errorMessage}`,
       data: null,
+      debug: {
+        stack: errorStack,
+        body: req.body,
+      }
     });
   }
 }
