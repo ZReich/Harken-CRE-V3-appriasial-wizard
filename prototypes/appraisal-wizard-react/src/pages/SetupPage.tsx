@@ -426,23 +426,27 @@ export default function SetupPage() {
   }, [address, taxId, legalDescription, setSubjectData, wizardState.owners, updateOwner]);
   
   // Debounced auto-lookup when address is complete
-  const performAutoLookup = useCallback(async (street: string, city: string, state: string) => {
+  const performAutoLookup = useCallback(async (street: string, city: string, state: string, lat?: number, lng?: number) => {
     // Create a signature for this address to avoid duplicate lookups
     const addressSignature = `${street}|${city}|${state}`.toLowerCase();
     if (addressSignature === lastLookupAddress) {
       return; // Already looked up this address
     }
     
-    console.log('[AutoLookup] Starting lookup for:', { street, city, state });
+    console.log('[AutoLookup] Starting lookup for:', { street, city, state, lat, lng });
     setAutoLookupStatus('loading');
     setAutoLookupMessage('Looking up property data...');
     setLastLookupAddress(addressSignature);
     
     try {
+      // If we have coordinates from Google Places, use them directly (skips geocoding)
+      // Otherwise fall back to address-based lookup
       const result: PropertyLookupResult = await getPropertyData({
         address: street,
         city: city,
         state: state,
+        latitude: lat,
+        longitude: lng,
       });
       
       console.log('[AutoLookup] Result:', result);
@@ -517,9 +521,11 @@ export default function SetupPage() {
       return;
     }
     
-    console.log('[ManualLookup] User triggered lookup:', { street, city, state });
-    performAutoLookup(street, city, state);
-  }, [address.street, address.city, address.state, performAutoLookup]);
+    // Get coordinates from wizard state (set when Google Places autocomplete is used)
+    const coords = wizardState.subjectData?.coordinates;
+    console.log('[ManualLookup] User triggered lookup:', { street, city, state, coords });
+    performAutoLookup(street, city, state, coords?.latitude, coords?.longitude);
+  }, [address.street, address.city, address.state, performAutoLookup, wizardState.subjectData?.coordinates]);
   
   // Check if address is complete enough for lookup button to be enabled
   const isAddressComplete = useMemo(() => {
