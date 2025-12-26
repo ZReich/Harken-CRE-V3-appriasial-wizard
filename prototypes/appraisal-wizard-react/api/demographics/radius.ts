@@ -7,7 +7,7 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { getRadiusDemographics } from '../_lib/census.js';
+import { getRadiusDemographics } from '../_lib/census';
 
 interface DemographicsRequestBody {
   latitude: number;

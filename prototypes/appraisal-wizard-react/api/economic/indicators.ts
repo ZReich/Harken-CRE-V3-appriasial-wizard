@@ -6,7 +6,7 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { getFredData, FRED_SERIES } from '../_lib/fred.js';
+import { getFredData, FRED_SERIES } from '../_lib/fred';
 
 export default async function handler(
   req: VercelRequest,

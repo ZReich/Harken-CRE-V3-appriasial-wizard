@@ -7,8 +7,8 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { calculateRiskRating, getRiskRatingDisclosure } from '../_lib/risk-engine.js';
-import { getTreasuryRate } from '../_lib/fred.js';
+import { calculateRiskRating, getRiskRatingDisclosure } from '../_lib/risk-engine';
+import { getTreasuryRate } from '../_lib/fred';
 
 interface RiskRatingRequestBody {
   propertyType: string;

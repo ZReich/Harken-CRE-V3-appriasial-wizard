@@ -6,8 +6,8 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
-import { generateDraft, getAvailableSections } from '../_lib/openai.js';
-import type { AIGenerationContext } from '../_lib/types.js';
+import { generateDraft, getAvailableSections } from '../_lib/openai';
+import type { AIGenerationContext } from '../_lib/types';
 
 interface AIRequestBody {
   section: string;

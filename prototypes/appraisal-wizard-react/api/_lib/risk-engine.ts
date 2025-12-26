@@ -8,7 +8,7 @@
  * Can be copied directly to Harken backend.
  */
 
-import type { RiskInputs, RiskOutput, RiskDimensionScore } from './types.js';
+import type { RiskInputs, RiskOutput, RiskDimensionScore } from './types';
 
 // =================================================================
 // RATING SCALE

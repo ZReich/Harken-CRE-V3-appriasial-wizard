@@ -8,7 +8,7 @@
  */
 
 import OpenAI from 'openai';
-import type { AIGenerationContext } from './types.js';
+import type { AIGenerationContext } from './types';
 
 // Initialize OpenAI client
 const openai = new OpenAI({
