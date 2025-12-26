@@ -356,9 +356,22 @@ export default function SetupPage() {
   
   // Handle property data import from lookup - MUST be defined before performAutoLookup
   const handlePropertyImport = useCallback((data: CadastralData) => {
+    console.log('[PropertyImport] Starting import with data:', {
+      parcelId: data.parcelId,
+      legalDescription: data.legalDescription?.substring(0, 50) + '...',
+      ownerName: data.ownerName,
+      county: data.county,
+    });
+    
     // Update property ID fields
-    if (data.parcelId) setTaxId(data.parcelId);
-    if (data.legalDescription) setLegalDescription(data.legalDescription);
+    if (data.parcelId) {
+      console.log('[PropertyImport] Setting taxId to:', data.parcelId);
+      setTaxId(data.parcelId);
+    }
+    if (data.legalDescription) {
+      console.log('[PropertyImport] Setting legalDescription');
+      setLegalDescription(data.legalDescription);
+    }
     
     // Update address if available (only fill empty fields)
     if (data.situsAddress || data.situsCity || data.situsZip) {
@@ -453,7 +466,13 @@ export default function SetupPage() {
       
       if (result.success && result.data) {
         // Auto-fill the data
-        handlePropertyImport(result.data);
+        console.log('[AutoLookup] Calling handlePropertyImport with data:', JSON.stringify(result.data));
+        try {
+          handlePropertyImport(result.data);
+          console.log('[AutoLookup] handlePropertyImport completed successfully');
+        } catch (importError) {
+          console.error('[AutoLookup] Error in handlePropertyImport:', importError);
+        }
         
         const source = result.isFreeService 
           ? 'Montana Cadastral (FREE)' 
