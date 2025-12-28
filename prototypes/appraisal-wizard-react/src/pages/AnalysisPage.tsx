@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect, useCallback, lazy, Suspense } from 'react';
 import WizardLayout from '../components/WizardLayout';
 import ScenarioSwitcher, { getScenarioAccentColor, getScenarioColors } from '../components/ScenarioSwitcher';
 import {
@@ -9,12 +9,16 @@ import {
   ConstructionIcon,
   ResidentialIcon,
 } from '../components/icons';
-import { SalesGrid, PROPERTIES, MOCK_VALUES } from '../features/sales-comparison';
-import { IncomeApproachGrid } from '../features/income-approach';
-import { CostApproachGrid } from '../features/cost-approach';
-import { LandSalesGrid } from '../features/land-valuation';
-import { MarketAnalysisGrid } from '../features/market-analysis';
-import { MultiFamilyGrid } from '../features/multi-family';
+// Static imports for constants only
+import { PROPERTIES, MOCK_VALUES } from '../features/sales-comparison';
+
+// Lazy-loaded feature components for code-splitting
+const SalesGrid = lazy(() => import('../features/sales-comparison').then(m => ({ default: m.SalesGrid })));
+const IncomeApproachGrid = lazy(() => import('../features/income-approach').then(m => ({ default: m.IncomeApproachGrid })));
+const CostApproachGrid = lazy(() => import('../features/cost-approach').then(m => ({ default: m.CostApproachGrid })));
+const LandSalesGrid = lazy(() => import('../features/land-valuation').then(m => ({ default: m.LandSalesGrid })));
+const MarketAnalysisGrid = lazy(() => import('../features/market-analysis').then(m => ({ default: m.MarketAnalysisGrid })));
+const MultiFamilyGrid = lazy(() => import('../features/multi-family').then(m => ({ default: m.MultiFamilyGrid })));
 import EconomicIndicatorsPanel from '../components/EconomicIndicatorsPanel';
 import { useWizard } from '../context/WizardContext';
 import { getGuidance, type GuidanceContent } from '../constants/guidance';
@@ -24,6 +28,19 @@ import { ScenarioCelebration } from '../components/ScenarioCelebration';
 import { ReconciliationSummary } from '../components/ReconciliationSummary';
 import { ContextualMarketData } from '../components/ContextualMarketData';
 import { getVisibleComponents } from '../utils/componentVisibility';
+import { Loader2 } from 'lucide-react';
+
+// Loading fallback for lazy-loaded feature grids
+function GridLoader() {
+  return (
+    <div className="flex-1 flex items-center justify-center bg-slate-50/50">
+      <div className="flex flex-col items-center gap-3">
+        <Loader2 className="w-8 h-8 text-[#0da1c7] animate-spin" />
+        <p className="text-sm text-slate-500">Loading analysis...</p>
+      </div>
+    </div>
+  );
+}
 
 // Approach definitions with color coding for navigation
 // NOTE: HBU has been moved to the Review page per plan
@@ -465,12 +482,14 @@ export default function AnalysisPage() {
 
           {/* Sales Grid */}
           <div className="flex-1 min-h-0">
-            <SalesGrid 
-              properties={PROPERTIES} 
-              values={MOCK_VALUES} 
-              analysisMode={analysisMode}
-              scenarioId={activeScenario?.id}
-            />
+            <Suspense fallback={<GridLoader />}>
+              <SalesGrid 
+                properties={PROPERTIES} 
+                values={MOCK_VALUES} 
+                analysisMode={analysisMode}
+                scenarioId={activeScenario?.id}
+              />
+            </Suspense>
           </div>
         </div>
       ) : activeTab === 'income' ? (
@@ -490,16 +509,18 @@ export default function AnalysisPage() {
 
           {/* Income Approach Grid */}
           <div className="flex-1 min-h-0 overflow-auto">
-            <IncomeApproachGrid 
-              initialData={state.incomeApproachData}
-              onDataChange={setIncomeApproachData}
-              showGuidancePanel={true}
-              scenarioId={activeScenario?.id}
-              visibility={{
-                rentComparableGrid: visibility.rentComparableGrid,
-                expenseComparableGrid: visibility.expenseComparableGrid,
-              }}
-            />
+            <Suspense fallback={<GridLoader />}>
+              <IncomeApproachGrid 
+                initialData={state.incomeApproachData}
+                onDataChange={setIncomeApproachData}
+                showGuidancePanel={true}
+                scenarioId={activeScenario?.id}
+                visibility={{
+                  rentComparableGrid: visibility.rentComparableGrid,
+                  expenseComparableGrid: visibility.expenseComparableGrid,
+                }}
+              />
+            </Suspense>
           </div>
         </div>
       ) : activeTab === 'cost' ? (
@@ -519,7 +540,9 @@ export default function AnalysisPage() {
 
           {/* Cost Approach Grid */}
           <div className="flex-1 min-h-0 overflow-auto">
-            <CostApproachGrid scenarioId={activeScenario?.id} />
+            <Suspense fallback={<GridLoader />}>
+              <CostApproachGrid scenarioId={activeScenario?.id} />
+            </Suspense>
           </div>
         </div>
       ) : activeTab === 'land' ? (
@@ -539,7 +562,9 @@ export default function AnalysisPage() {
 
           {/* Land Sales Grid */}
           <div className="flex-1 min-h-0">
-            <LandSalesGrid />
+            <Suspense fallback={<GridLoader />}>
+              <LandSalesGrid />
+            </Suspense>
           </div>
         </div>
       ) : activeTab === 'multifamily' ? (
@@ -559,7 +584,9 @@ export default function AnalysisPage() {
 
           {/* Multi-Family Grid */}
           <div className="flex-1 min-h-0">
-            <MultiFamilyGrid scenarioId={activeScenario?.id} />
+            <Suspense fallback={<GridLoader />}>
+              <MultiFamilyGrid scenarioId={activeScenario?.id} />
+            </Suspense>
           </div>
         </div>
       ) : activeTab === 'market' ? (
@@ -577,18 +604,20 @@ export default function AnalysisPage() {
           </div>
           {/* Market Analysis Grid */}
           <div className="flex-1 min-h-0 overflow-auto space-y-6">
-            <MarketAnalysisGrid 
-              rentCompData={{
-                avgRent: 26.75,
-                rentRange: [17.50, 37.50],
-                compCount: 4,
-              }}
-              salesCompData={{
-                avgPricePsf: 242,
-                avgCapRate: 6.50,
-                compCount: 8,
-              }}
-            />
+            <Suspense fallback={<GridLoader />}>
+              <MarketAnalysisGrid 
+                rentCompData={{
+                  avgRent: 26.75,
+                  rentRange: [17.50, 37.50],
+                  compCount: 4,
+                }}
+                salesCompData={{
+                  avgPricePsf: 242,
+                  avgCapRate: 6.50,
+                  compCount: 8,
+                }}
+              />
+            </Suspense>
             
             {/* Economic Indicators Panel - Plan Part 4.2 */}
             <div className="bg-white rounded-xl border border-slate-200 shadow-sm">

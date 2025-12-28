@@ -1,6 +1,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Plus, Wallet, PieChart, Activity, Check, LayoutGrid, Home, Warehouse, Store, TrendingUp, DollarSign, CalendarRange, ArrowRightLeft, Table2, ChevronDown, ChevronUp, FileText, Receipt, Calculator, CheckCircle2 } from 'lucide-react';
-import type { IncomeData, ExpenseData, LineItem, FinancialSummary, PropertyMeta, ValuationData, IncomeApproachState } from '../types';
+import type { IncomeData, ExpenseData, LineItem, FinancialSummary, PropertyMeta, ValuationData, IncomeApproachState, IncomeSubTab } from '../types';
+import type { RentComp } from '../rentTypes';
+import type { ExpenseComp } from '../expenseTypes';
 import { IncomeTextEditor } from './IncomeTextEditor';
 import type { RevenueContextData, ExpensesContextData, ValuationContextData } from './IncomeTextEditor';
 import { InputRow } from './InputRow';
@@ -16,10 +18,7 @@ import { useWizard } from '../../../context/WizardContext';
 // Import Sales Comparison mock data for Cap Rate Calculator pre-population
 import { MOCK_VALUES as SALES_COMP_VALUES } from '../../sales-comparison/constants';
 
-// Income Approach sub-tab types
-type IncomeSubTab = 'rent-comps' | 'expense-comps' | 'pro-forma' | 'valuation';
-
-// Sub-tab configuration for the workflow stepper
+// Sub-tab configuration for the workflow stepper (IncomeSubTab imported from types)
 const INCOME_SUBTABS: Array<{
   id: IncomeSubTab;
   label: string;
@@ -73,8 +72,10 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
   // Sub-tab state for workflow navigation
   const [activeSubTab, setActiveSubTab] = useState<IncomeSubTab>('pro-forma');
   
-  // Track completion status for each sub-tab (for workflow indicator)
-  const [completedSubTabs, setCompletedSubTabs] = useState<Set<IncomeSubTab>>(new Set());
+  // Track completion status for each sub-tab (for workflow indicator) - persist from parent
+  const [completedSubTabs, setCompletedSubTabs] = useState<Set<IncomeSubTab>>(
+    new Set(initialData?.completedSubTabs || [])
+  );
   
   // Determine which sub-tabs are available based on visibility
   const availableSubTabs = useMemo(() => {
@@ -148,6 +149,20 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
     initialData?.valuationData || INITIAL_INCOME_APPROACH_STATE.valuationData
   );
 
+  // Rent & Expense Comparables (persisted through parent)
+  const [rentComparables, setRentComparables] = useState<RentComp[]>(
+    initialData?.rentComparables || []
+  );
+  const [rentCompNotes, setRentCompNotes] = useState(
+    initialData?.rentCompNotes || ''
+  );
+  const [expenseComparables, setExpenseComparables] = useState<ExpenseComp[]>(
+    initialData?.expenseComparables || []
+  );
+  const [expenseCompNotes, setExpenseCompNotes] = useState(
+    initialData?.expenseCompNotes || ''
+  );
+
   const [isRiskModalOpen, setIsRiskModalOpen] = useState(false);
   const [showDetailedDCF, setShowDetailedDCF] = useState(false);
 
@@ -161,9 +176,16 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
         valuationData,
         scenario: 'as-stabilized', // Default scenario - actual scenario is managed by WizardContext
         showGuidance: true,
+        // Comparable data (persisted)
+        rentComparables,
+        rentCompNotes,
+        expenseComparables,
+        expenseCompNotes,
+        // Workflow tracking
+        completedSubTabs: Array.from(completedSubTabs),
       });
     }
-  }, [propertyMeta, incomeData, expenseData, valuationData, onDataChange]);
+  }, [propertyMeta, incomeData, expenseData, valuationData, onDataChange, rentComparables, rentCompNotes, expenseComparables, expenseCompNotes, completedSubTabs]);
 
   // --- Calculations ---
   const summary = useMemo<FinancialSummary>(() => {
@@ -440,7 +462,12 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
           {/* RENT COMPARABLES SUB-TAB */}
           {activeSubTab === 'rent-comps' && visibility.rentComparableGrid !== false && (
             <div className="animate-fade-in">
-              <RentComparableGrid />
+              <RentComparableGrid 
+                rentComparables={rentComparables}
+                notes={rentCompNotes}
+                onCompsChange={setRentComparables}
+                onNotesChange={setRentCompNotes}
+              />
               <div className="flex justify-end mt-4">
                 <button
                   onClick={goToNextSubTab}
@@ -455,7 +482,12 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
           {/* EXPENSE COMPARABLES SUB-TAB */}
           {activeSubTab === 'expense-comps' && visibility.expenseComparableGrid !== false && (
             <div className="animate-fade-in">
-              <ExpenseComparableGrid />
+              <ExpenseComparableGrid 
+                expenseComparables={expenseComparables}
+                notes={expenseCompNotes}
+                onCompsChange={setExpenseComparables}
+                onNotesChange={setExpenseCompNotes}
+              />
               <div className="flex justify-end mt-4">
                 <button
                   onClick={goToNextSubTab}

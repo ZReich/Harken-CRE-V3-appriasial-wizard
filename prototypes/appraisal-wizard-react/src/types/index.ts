@@ -228,6 +228,26 @@ export interface AnalysisConclusions {
   conclusions: ApproachConclusion[];
 }
 
+// Cost Approach user overrides for building cost data
+// These are stored separately from the source building inventory
+export interface CostApproachOverrides {
+  baseCostPsf?: number;
+  occupancy?: string;
+  class?: string;
+  quality?: string;
+  effectiveAge?: number;
+  economicLife?: number;
+  entrepreneurialIncentive?: number;
+  multipliers?: {
+    current?: number;
+    local?: number;
+    perimeter?: number;
+  };
+  depreciationPhysical?: number;
+  depreciationFunctional?: number;
+  depreciationExternal?: number;
+}
+
 export interface CelebrationState {
   isVisible: boolean;
   sectionId: string | null;
@@ -421,6 +441,129 @@ export interface RiskRatingData {
 }
 
 // =================================================================
+// SALES COMPARISON DATA (for grid persistence)
+// =================================================================
+
+export interface SalesCompProperty {
+  id: string;
+  type: 'subject' | 'comp';
+  name: string;
+  address: string;
+  image: string;
+  status?: string;
+  saleDate?: string;
+  salePrice?: number;
+}
+
+export interface SalesCompValue {
+  value: string | number;
+  adjustment?: number;
+  flag?: 'superior' | 'inferior' | 'similar';
+  unit?: 'percent' | 'dollar';
+}
+
+export interface SalesComparisonData {
+  properties: SalesCompProperty[];
+  values: Record<string, Record<string, SalesCompValue>>;
+  reconciliationText: string;
+  analysisMode: 'standard' | 'residual';
+  concludedValue: number | null;
+  concludedValuePsf: number | null;
+}
+
+// =================================================================
+// LAND VALUATION DATA (for land sales grid persistence)
+// =================================================================
+
+export interface LandSaleComp {
+  id: string;
+  address: string;
+  saleDate: string;
+  salePrice: number;
+  acreage: number;
+  pricePerAcre: number;
+  zoning: string;
+  adjustments: Record<string, number>;
+  adjustedPricePerAcre: number;
+}
+
+export interface LandValuationData {
+  landComps: LandSaleComp[];
+  subjectAcreage: number;
+  concludedPricePerAcre: number | null;
+  concludedLandValue: number | null;
+  reconciliationText: string;
+}
+
+// =================================================================
+// REPORT PHOTOS (for photos assigned to report sections)
+// =================================================================
+
+export interface ReportPhotoAssignment {
+  id: string;
+  photoId: string;        // Reference to staging photo or uploaded photo
+  slotId: string;         // Which photo slot (e.g., 'exterior-front', 'interior-lobby')
+  caption: string;
+  sortOrder: number;
+  url: string;            // Resolved URL for display
+}
+
+export interface ReportPhotosData {
+  assignments: ReportPhotoAssignment[];
+  coverPhotoId: string | null;
+}
+
+// =================================================================
+// HBU ANALYSIS (Highest & Best Use narrative content)
+// =================================================================
+
+export interface HBUAnalysis {
+  // As Vacant Analysis
+  asVacant: {
+    legallyPermissible: string;
+    physicallyPossible: string;
+    financiallyFeasible: string;
+    maximallyProductive: string;
+    conclusion: string;
+  };
+  // As Improved Analysis
+  asImproved: {
+    legallyPermissible: string;
+    physicallyPossible: string;
+    financiallyFeasible: string;
+    maximallyProductive: string;
+    conclusion: string;
+  };
+  // Overall HBU Conclusion
+  overallConclusion: string;
+}
+
+// =================================================================
+// MARKET ANALYSIS DATA (for market analysis grid persistence)
+// =================================================================
+
+export interface MarketAnalysisData {
+  supplyMetrics: {
+    totalInventory: number;
+    vacancyRate: number;
+    absorptionRate: number;
+    inventoryMonths: number;
+  };
+  demandMetrics: {
+    averageRent: number;
+    rentGrowth: number;
+    averageDaysOnMarket: number;
+    salesVolume: number;
+  };
+  marketTrends: {
+    overallTrend: 'improving' | 'stable' | 'declining';
+    priceOutlook: 'increasing' | 'stable' | 'decreasing';
+    supplyOutlook: 'increasing' | 'stable' | 'decreasing';
+  };
+  narrative: string;
+}
+
+// =================================================================
 // STAGING PHOTOS (for bulk upload with AI classification)
 // =================================================================
 
@@ -473,6 +616,10 @@ export interface WizardState {
   // Cost Approach Building Selections (per scenario)
   costApproachBuildingSelections: Record<number, string[]>;
   
+  // Cost Approach Building Cost Overrides (per scenario, per building)
+  // Stores user modifications to cost data without modifying source building inventory
+  costApproachBuildingCostData: Record<number, Record<string, CostApproachOverrides>>;
+  
   // Extracted Document Data
   extractedData: Record<string, ExtractedData>;
   uploadedDocuments: UploadedDocument[];
@@ -501,16 +648,18 @@ export interface WizardState {
   economicChartStyle?: 'gradient' | 'glass' | 'horizon' | 'pulse' | 'diverging';
   swotAnalysis?: SWOTAnalysisData;
   riskRating?: RiskRatingData;
-  marketAnalysis?: {
-    averageDaysOnMarket?: number;
-    absorptionRate?: number;
-    inventoryMonths?: number;
-  };
+  marketAnalysis?: MarketAnalysisData;
   incomeApproach?: {
     capRate?: number;
     noi?: number;
     occupancy?: number;
   };
+  
+  // Sales Comparison, Land Valuation, Photos, HBU - Data Flow Connections
+  salesComparisonData?: SalesComparisonData;
+  landValuationData?: LandValuationData;
+  reportPhotos?: ReportPhotosData;
+  hbuAnalysis?: HBUAnalysis;
   
   // Navigation
   currentPage: string;
@@ -540,6 +689,7 @@ export type WizardAction =
   | { type: 'SET_IMPROVEMENTS_INVENTORY'; payload: ImprovementsInventory }
   | { type: 'SET_SITE_IMPROVEMENTS'; payload: SiteImprovement[] }
   | { type: 'SET_COST_APPROACH_BUILDING_SELECTIONS'; payload: { scenarioId: number; buildingIds: string[] } }
+  | { type: 'SET_COST_APPROACH_BUILDING_COST_DATA'; payload: { scenarioId: number; buildingId: string; overrides: CostApproachOverrides | null } }
   | { type: 'SET_EXTRACTED_DATA'; payload: { slotId: string; data: ExtractedData } }
   | { type: 'SET_ALL_EXTRACTED_DATA'; payload: Record<string, ExtractedData> }
   | { type: 'ADD_UPLOADED_DOCUMENT'; payload: UploadedDocument }
@@ -579,6 +729,12 @@ export type WizardAction =
   | { type: 'SET_ECONOMIC_INDICATORS'; payload: EconomicIndicators }
   | { type: 'SET_SWOT_ANALYSIS'; payload: SWOTAnalysisData }
   | { type: 'SET_RISK_RATING'; payload: RiskRatingData }
+  // Sales Comparison, Land Valuation, Photos, HBU, Market Analysis Actions
+  | { type: 'SET_SALES_COMPARISON_DATA'; payload: SalesComparisonData }
+  | { type: 'SET_LAND_VALUATION_DATA'; payload: LandValuationData }
+  | { type: 'SET_REPORT_PHOTOS'; payload: ReportPhotosData }
+  | { type: 'SET_HBU_ANALYSIS'; payload: HBUAnalysis }
+  | { type: 'SET_MARKET_ANALYSIS'; payload: MarketAnalysisData }
   | { type: 'RESET' };
 
 // =================================================================

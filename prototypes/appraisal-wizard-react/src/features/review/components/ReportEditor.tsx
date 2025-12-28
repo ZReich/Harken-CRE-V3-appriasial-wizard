@@ -8,6 +8,11 @@ import { useAutoSave, useAutoSaveRecovery } from '../../report-preview/hooks/use
 import { useUndoRedo } from '../../report-preview/hooks/useUndoRedo';
 import { RecoveryDialog } from '../../report-preview/components/dialogs';
 import { PhotoEditorDialog, type PhotoData, type PhotoEdits } from './PhotoEditorDialog';
+// Report page components for connected data display
+import { RiskRatingPage } from '../../report-preview/components/pages/RiskRatingPage';
+import { DemographicsPage } from '../../report-preview/components/pages/DemographicsPage';
+import { EconomicContextPage } from '../../report-preview/components/pages/EconomicContextPage';
+import { SWOTPage } from '../../report-preview/components/pages/SWOTPage';
 
 // =================================================================
 // TYPES
@@ -2627,49 +2632,35 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
       case 'hbu':
         return <HBUPage {...commonProps} />;
       case 'risk-rating':
-        return (
-          <ReportPageWrapper section={section} pageNumber={pageIndex + 1}>
-            <div className="p-10">
-              <h2 className="text-2xl font-light text-gray-800 mb-6 mt-8">Investment Risk Analysis</h2>
-              <div className="text-gray-500 text-sm">
-                Investment Risk Rating ("Bond Rating for Buildings") will display here when data is available.
-              </div>
-            </div>
-          </ReportPageWrapper>
-        );
+        return state.riskRating ? (
+          <RiskRatingPage
+            data={state.riskRating}
+            pageNumber={pageIndex + 1}
+          />
+        ) : null;
       case 'demographics':
         return (
-          <ReportPageWrapper section={section} pageNumber={pageIndex + 1}>
-            <div className="p-10">
-              <h2 className="text-2xl font-light text-gray-800 mb-6 mt-8">Neighborhood Demographics</h2>
-              <div className="text-gray-500 text-sm">
-                Demographics data for 1, 3, and 5 mile radius will display here when data is available.
-              </div>
-            </div>
-          </ReportPageWrapper>
+          <DemographicsPage
+            data={state.demographicsData?.radiusAnalysis ?? []}
+            source={state.demographicsData?.dataSource}
+            asOfDate={state.demographicsData?.dataPullDate}
+            pageNumber={pageIndex + 1}
+          />
         );
       case 'economic-context':
         return (
-          <ReportPageWrapper section={section} pageNumber={pageIndex + 1}>
-            <div className="p-10">
-              <h2 className="text-2xl font-light text-gray-800 mb-6 mt-8">Economic Context</h2>
-              <div className="text-gray-500 text-sm">
-                Economic indicators from FRED API will display here when data is available.
-              </div>
-            </div>
-          </ReportPageWrapper>
+          <EconomicContextPage
+            data={state.economicIndicators ?? null}
+            pageNumber={pageIndex + 1}
+          />
         );
       case 'swot':
-        return (
-          <ReportPageWrapper section={section} pageNumber={pageIndex + 1}>
-            <div className="p-10">
-              <h2 className="text-2xl font-light text-gray-800 mb-6 mt-8">SWOT Analysis</h2>
-              <div className="text-gray-500 text-sm">
-                SWOT Analysis (Strengths, Weaknesses, Opportunities, Threats) will display here when data is available.
-              </div>
-            </div>
-          </ReportPageWrapper>
-        );
+        return state.swotAnalysis ? (
+          <SWOTPage
+            data={state.swotAnalysis}
+            pageNumber={pageIndex + 1}
+          />
+        ) : null;
       case 'sales-comparison':
         return <SalesComparisonPage {...commonProps} />;
       case 'income-approach':

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Plus, Trash2, ArrowUpRight, ArrowDownRight, Minus, MapPin, Activity, ChevronDown, PenLine } from 'lucide-react';
 import { LandComp } from '../types';
 import { 
@@ -16,6 +16,7 @@ import EnhancedTextArea from '../../../components/EnhancedTextArea';
 import { useWizard } from '../../../context/WizardContext';
 import { getAvailableElements as filterElements, normalizeSection } from '../../../utils/elementFilter';
 import type { SectionType } from '../../../constants/elementRegistry';
+import type { LandValuationData } from '../../../types';
 
 // Grid column widths
 const LABEL_COL_WIDTH = 160;
@@ -25,8 +26,8 @@ const ACTION_COL_WIDTH = 160;
 
 export const LandSalesGrid: React.FC = () => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const { state: wizardState } = useWizard();
-  const { propertyType, propertySubtype, scenarios, activeScenarioId } = wizardState;
+  const { state: wizardState, setLandValuationData } = useWizard();
+  const { propertyType, propertySubtype, scenarios, activeScenarioId, landValuationData } = wizardState;
   const currentScenario = scenarios.find(s => s.id === activeScenarioId)?.name;
   
   const [comps, setComps] = useState<LandComp[]>(MOCK_LAND_COMPS);
@@ -36,8 +37,8 @@ export const LandSalesGrid: React.FC = () => {
   const [activePopover, setActivePopover] = useState<{rowId: string, compId: string} | null>(null);
   const [openElementDropdown, setOpenElementDropdown] = useState<'transaction' | 'adjustments' | 'qualitative' | null>(null);
   
-  // Notes section
-  const [notesText, setNotesText] = useState('');
+  // Notes section - load from context if available
+  const [notesText, setNotesText] = useState(landValuationData?.reconciliationText ?? '');
   
   // Custom elements saved by user for future use
   const [customTransactionElements, setCustomTransactionElements] = useState<AvailableElement[]>([]);
@@ -47,6 +48,44 @@ export const LandSalesGrid: React.FC = () => {
   // Calculate total grid width (including action column) - prefixed with underscore as reserved for future use
   const _totalGridWidth = LABEL_COL_WIDTH + SUBJECT_COL_WIDTH + (comps.length * COMP_COL_WIDTH) + ACTION_COL_WIDTH;
   void _totalGridWidth; // Reserved for future use
+
+  // Calculate concluded land values
+  const getAdjustedPricePerAcreCalc = (comp: LandComp) => {
+    const adjustment = comp.adjustment || 0;
+    return comp.pricePerAcre * (1 + adjustment / 100);
+  };
+
+  const concludedPricePerAcre = useMemo(() => {
+    if (comps.length === 0) return null;
+    return comps.reduce((acc, c) => acc + getAdjustedPricePerAcreCalc(c), 0) / comps.length;
+  }, [comps]);
+
+  const concludedLandValue = useMemo(() => {
+    if (concludedPricePerAcre === null) return null;
+    return Math.round(concludedPricePerAcre * SUBJECT_PROPERTY.landAcres);
+  }, [concludedPricePerAcre]);
+
+  // Persist land valuation data to WizardContext
+  useEffect(() => {
+    const dataToSave: LandValuationData = {
+      landComps: comps.map(c => ({
+        id: c.id,
+        address: c.address,
+        saleDate: c.dateSold,
+        salePrice: c.salePrice,
+        acreage: c.landAcres,
+        pricePerAcre: c.pricePerAcre,
+        zoning: c.zoning,
+        adjustments: { overall: c.adjustment || 0 },
+        adjustedPricePerAcre: getAdjustedPricePerAcreCalc(c),
+      })),
+      subjectAcreage: SUBJECT_PROPERTY.landAcres,
+      concludedPricePerAcre,
+      concludedLandValue,
+      reconciliationText: notesText,
+    };
+    setLandValuationData(dataToSave);
+  }, [comps, notesText, concludedPricePerAcre, concludedLandValue, setLandValuationData]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {

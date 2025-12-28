@@ -36,16 +36,21 @@ interface SalesGridProps {
 }
 
 export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initialValues, analysisMode = 'standard', scenarioId, onDeleteProperty }) => {
-  const { setApproachConclusion, state: wizardState } = useWizard();
-  const { propertyType, propertySubtype, scenarios, activeScenarioId } = wizardState;
+  const { setApproachConclusion, setSalesComparisonData, state: wizardState } = useWizard();
+  const { propertyType, propertySubtype, scenarios, activeScenarioId, salesComparisonData } = wizardState;
   
   // Get current scenario name for element filtering
   const currentScenario = scenarios.find(s => s.id === activeScenarioId)?.name;
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [rows, setRows] = useState<GridRowData[]>(INITIAL_ROWS);
   const [sections] = useState<Section[]>(SECTIONS);
-  const [values, setValues] = useState<PropertyValues>(initialValues);
-  const [reconciliationText, setReconciliationText] = useState("");
+  // Load values from context if available, otherwise use initial values from props
+  const [values, setValues] = useState<PropertyValues>(
+    salesComparisonData?.values ? (salesComparisonData.values as unknown as PropertyValues) : initialValues
+  );
+  const [reconciliationText, setReconciliationText] = useState(
+    salesComparisonData?.reconciliationText ?? ""
+  );
   const [activePopover, setActivePopover] = useState<{rowId: string, propId: string, field: 'value' | 'adjustment'} | null>(null);
   const [hiddenSections, setHiddenSections] = useState<Set<string>>(new Set());
   const [confirmDelete, setConfirmDelete] = useState<{ isOpen: boolean; sectionId: string; sectionTitle: string } | null>(null);
@@ -111,6 +116,36 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
       setApproachConclusion(scenarioId, 'Sales Comparison', concludedValue);
     }
   }, [scenarioId, concludedValue, setApproachConclusion]);
+
+  // Calculate concluded value per SF
+  const concludedValuePsf = useMemo(() => {
+    const subjectBldgSize = values['subject']?.['bldg_size_fact']?.value;
+    if (concludedValue && typeof subjectBldgSize === 'number' && subjectBldgSize > 0) {
+      return Math.round(concludedValue / subjectBldgSize);
+    }
+    return null;
+  }, [concludedValue, values]);
+
+  // Persist sales comparison data to WizardContext
+  useEffect(() => {
+    // Convert local property and value format to storage format
+    const dataToSave = {
+      properties: properties.map(p => ({
+        id: p.id,
+        type: p.type,
+        name: p.name,
+        address: p.address,
+        image: p.image,
+        status: p.status,
+      })),
+      values: values as unknown as Record<string, Record<string, import('../../../types').SalesCompValue>>,
+      reconciliationText,
+      analysisMode,
+      concludedValue,
+      concludedValuePsf,
+    };
+    setSalesComparisonData(dataToSave);
+  }, [values, reconciliationText, analysisMode, concludedValue, concludedValuePsf, properties, setSalesComparisonData]);
 
   // Handle clicking outside to close dropdowns
   useEffect(() => {

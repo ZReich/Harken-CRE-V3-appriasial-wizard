@@ -1,8 +1,7 @@
-import React, { useState, useEffect, useMemo } from 'react';
-import { Plus, Trash2, Edit2, Calculator, X, Check, ExternalLink, BookOpen, Clock, Loader2, Table2, Info } from 'lucide-react';
+import React, { useState, useEffect, useMemo, useCallback } from 'react';
+import { Trash2, Edit2, Calculator, X, Check, ExternalLink, BookOpen, Clock, Loader2, Table2, Info, AlertCircle } from 'lucide-react';
 import { Improvement, ImprovementLineItem } from '../types';
 import { 
-  MOCK_IMPROVEMENTS, 
   DEFAULT_IMPROVEMENT, 
   OCCUPANCY_OPTIONS, 
   CLASS_OPTIONS, 
@@ -11,15 +10,61 @@ import {
   formatCurrency,
   formatPercentSimple
 } from '../constants';
+import { useWizard } from '../../../context/WizardContext';
+import { 
+  getSelectedBuildingsAsCostFormat, 
+  calculateImprovementLineItem,
+  type CostOverrides 
+} from '../utils';
+import { getTotalSiteImprovementsValue, formatSiteImprovementsForGrid } from '../utils';
 
 interface ImprovementValuationProps {
   onValueChange: (val: number) => void;
   scenario?: 'As Is' | 'As Completed' | 'As Stabilized';
+  scenarioId?: number;
+  siteImprovementsCostOverride?: number; // Optional override from parent
 }
 
-export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({ onValueChange, scenario = 'As Is' }) => {
-  const [improvements, setImprovements] = useState<Improvement[]>(MOCK_IMPROVEMENTS);
-  const [siteImprovementsCost, setSiteImprovementsCost] = useState(70000);
+export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({ 
+  onValueChange, 
+  scenario = 'As Is',
+  scenarioId,
+  siteImprovementsCostOverride,
+}) => {
+  const { state, setCostApproachBuildingCostData } = useWizard();
+  const currentScenarioId = scenarioId ?? state.activeScenarioId;
+  
+  // Get selected building IDs for the current scenario
+  const selectedBuildingIds = state.costApproachBuildingSelections?.[currentScenarioId] || [];
+  
+  // Get cost overrides from context (persists across navigation)
+  const costOverrides = useMemo(() => {
+    const scenarioData = state.costApproachBuildingCostData?.[currentScenarioId] || {};
+    // Map CostApproachOverrides to CostOverrides (same structure)
+    return scenarioData as Record<string, CostOverrides>;
+  }, [state.costApproachBuildingCostData, currentScenarioId]);
+  
+  // Convert selected buildings from inventory to cost format
+  const improvements = useMemo(() => {
+    return getSelectedBuildingsAsCostFormat(
+      state.improvementsInventory?.parcels || [],
+      selectedBuildingIds,
+      costOverrides
+    );
+  }, [state.improvementsInventory, selectedBuildingIds, costOverrides]);
+  
+  // Calculate site improvements cost from inventory
+  const siteImprovementsCost = useMemo(() => {
+    if (siteImprovementsCostOverride !== undefined) {
+      return siteImprovementsCostOverride;
+    }
+    return getTotalSiteImprovementsValue(state.siteImprovements || []);
+  }, [state.siteImprovements, siteImprovementsCostOverride]);
+  
+  // Get site improvements breakdown for display
+  const siteImprovementsBreakdown = useMemo(() => {
+    return formatSiteImprovementsForGrid(state.siteImprovements || []);
+  }, [state.siteImprovements]);
   
   const [isEditing, setIsEditing] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -27,28 +72,11 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({ onVa
   
   const [showDepreciationTable, setShowDepreciationTable] = useState(false);
   const [showCostEstimator, setShowCostEstimator] = useState(false);
+  const [showSiteBreakdown, setShowSiteBreakdown] = useState(false);
 
-  const calculateLineItem = (imp: Improvement): ImprovementLineItem => {
-    const combinedMultiplier = imp.multipliers.current * imp.multipliers.local * imp.multipliers.perimeter;
-    const adjustedRate = imp.baseCostPsf * combinedMultiplier;
-    const baseCostTotal = imp.areaSf * adjustedRate;
-    const incentiveAmount = baseCostTotal * (imp.entrepreneurialIncentive || 0);
-    const costNew = baseCostTotal + incentiveAmount;
-    const totalDepreciationPct = imp.depreciationPhysical + imp.depreciationFunctional + imp.depreciationExternal;
-    const depreciatedCost = costNew * (1 - totalDepreciationPct);
-    const remainingEconomicLife = Math.max(0, imp.economicLife - imp.effectiveAge);
-
-    return { 
-      adjustedRate, 
-      baseCostTotal,
-      incentiveAmount,
-      costNew, 
-      totalDepreciationPct, 
-      depreciatedCost, 
-      combinedMultiplier,
-      remainingEconomicLife
-    };
-  };
+  const calculateLineItem = useCallback((imp: Improvement): ImprovementLineItem => {
+    return calculateImprovementLineItem(imp);
+  }, []);
 
   const totals = useMemo(() => {
     let mvsCostNew = 0;
@@ -69,7 +97,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({ onVa
       mvsTotalWithSite,
       totalDepreciationAmount
     };
-  }, [improvements, siteImprovementsCost]);
+  }, [improvements, siteImprovementsCost, calculateLineItem]);
 
   useEffect(() => {
     onValueChange(totals.mvsTotalWithSite);
@@ -81,25 +109,29 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({ onVa
     setIsEditing(true);
   };
 
-  const handleAddNew = () => {
-    setFormData({ ...DEFAULT_IMPROVEMENT, id: Math.random().toString() });
-    setEditingId(null);
-    setIsEditing(true);
-  };
-
   const handleSave = () => {
     if (editingId) {
-      setImprovements(prev => prev.map(i => i.id === editingId ? formData : i));
-    } else {
-      setImprovements(prev => [...prev, formData]);
+      // Save as cost overrides for this building (persisted to context)
+      setCostApproachBuildingCostData(currentScenarioId, editingId, {
+        baseCostPsf: formData.baseCostPsf,
+        occupancy: formData.occupancy,
+        class: formData.class,
+        quality: formData.quality,
+        effectiveAge: formData.effectiveAge,
+        economicLife: formData.economicLife,
+        entrepreneurialIncentive: formData.entrepreneurialIncentive,
+        multipliers: formData.multipliers,
+        depreciationPhysical: formData.depreciationPhysical,
+        depreciationFunctional: formData.depreciationFunctional,
+        depreciationExternal: formData.depreciationExternal,
+      });
     }
     setIsEditing(false);
   };
 
-  const handleDelete = (id: string) => {
-    if (confirm('Are you sure you want to delete this component?')) {
-      setImprovements(prev => prev.filter(i => i.id !== id));
-    }
+  const handleResetToDefault = (buildingId: string) => {
+    // Remove overrides for this building (null means delete)
+    setCostApproachBuildingCostData(currentScenarioId, buildingId, null);
   };
 
   const updateForm = (field: keyof Improvement, value: unknown) => {
@@ -119,7 +151,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({ onVa
       return DEPRECIATION_TABLE_DATA.reduce((prev, curr) => 
         Math.abs(curr.age - formData.effectiveAge) < Math.abs(prev.age - formData.effectiveAge) ? curr : prev
       );
-    }, [formData.effectiveAge]);
+    }, []);
 
     if (!showDepreciationTable) return null;
 
@@ -261,7 +293,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({ onVa
                   <span className="text-[10px] text-blue-400 bg-white px-2 py-0.5 rounded-full border border-blue-100">Success (200 OK)</span>
                 </div>
                 <div className="text-sm text-blue-900 mb-3">
-                  {formData.occupancy} • {formData.class.split('-')[0].trim()} • {formData.quality}
+                  {formData.occupancy} - {formData.class.split('-')[0].trim()} - {formData.quality}
                 </div>
                 <div className="flex justify-between items-center pt-3 border-t border-blue-200/50">
                   <span className="text-sm font-medium text-blue-800">Base Rate</span>
@@ -329,9 +361,64 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({ onVa
     );
   };
 
+  // Empty state when no buildings selected
+  if (improvements.length === 0) {
+    return (
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <Calculator size={20} className="text-[#0da1c7]" />
+            MVS Cost Analysis
+          </h2>
+        </div>
+        
+        <div className="bg-amber-50 border-2 border-amber-200 rounded-xl p-8 text-center">
+          <AlertCircle className="w-12 h-12 text-amber-500 mx-auto mb-4" />
+          <h3 className="text-lg font-bold text-slate-900 mb-2">No Buildings Selected</h3>
+          <p className="text-sm text-slate-600 mb-4">
+            Select buildings from the Building Selector above to include them in the Cost Approach analysis.
+          </p>
+          <p className="text-xs text-amber-700">
+            Buildings are defined in Subject Data &gt; Improvements tab.
+          </p>
+        </div>
+        
+        {/* Show site improvements even if no buildings */}
+        {siteImprovementsCost > 0 && (
+          <div className="bg-white border border-slate-200 rounded-lg shadow-sm p-6">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-bold text-slate-900">Site Improvements</h3>
+              <button
+                onClick={() => setShowSiteBreakdown(!showSiteBreakdown)}
+                className="text-xs text-[#0da1c7] hover:underline"
+              >
+                {showSiteBreakdown ? 'Hide Details' : 'Show Details'}
+              </button>
+            </div>
+            {showSiteBreakdown && siteImprovementsBreakdown.length > 0 && (
+              <div className="space-y-2 mb-4">
+                {siteImprovementsBreakdown.map((item, idx) => (
+                  <div key={idx} className="flex justify-between text-sm">
+                    <span className="text-slate-600">{item.label}</span>
+                    <span className="font-medium text-slate-900">{formatCurrency(item.contributoryValue)}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className="flex justify-between items-center pt-3 border-t border-slate-200">
+              <span className="font-medium text-slate-700">Total Site Improvements</span>
+              <span className="text-lg font-bold text-slate-900">{formatCurrency(siteImprovementsCost)}</span>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   // EDIT VIEW
   if (isEditing) {
     const { costNew, depreciatedCost, remainingEconomicLife, incentiveAmount } = calculateLineItem(formData);
+    const hasOverrides = editingId && costOverrides[editingId];
     
     return (
       <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden animate-in fade-in duration-200 relative">
@@ -339,8 +426,19 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({ onVa
         <CostEstimatorModal />
 
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-100">
-          <h3 className="text-lg font-bold text-slate-900">Edit Component</h3>
+          <div>
+            <h3 className="text-lg font-bold text-slate-900">Edit Cost Data</h3>
+            <p className="text-xs text-slate-500 mt-0.5">Building data from Improvements tab - cost overrides stored separately</p>
+          </div>
           <div className="flex items-center gap-3">
+            {hasOverrides && (
+              <button 
+                onClick={() => { if (editingId) handleResetToDefault(editingId); setIsEditing(false); }}
+                className="text-amber-600 hover:text-amber-700 font-medium text-sm px-3 py-2 rounded-md transition-colors"
+              >
+                Reset to Default
+              </button>
+            )}
             <button 
               onClick={() => setIsEditing(false)}
               className="text-slate-500 hover:text-slate-700 font-medium text-sm px-3 py-2 rounded-md transition-colors"
@@ -456,9 +554,11 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({ onVa
                   <input 
                     type="number" 
                     value={formData.areaSf}
-                    onChange={e => updateForm('areaSf', +e.target.value)}
-                    className="w-full bg-white border border-slate-200 rounded-md px-3 py-2 text-sm font-semibold text-slate-900 focus:border-[#0da1c7] focus:ring-1 focus:ring-[#0da1c7] outline-none transition-all"
+                    disabled
+                    className="w-full bg-slate-100 border border-slate-200 rounded-md px-3 py-2 text-sm font-semibold text-slate-600 cursor-not-allowed"
+                    title="Area is read from Improvements inventory"
                   />
+                  <p className="text-[10px] text-slate-400 mt-1">From Improvements tab</p>
                 </div>
                 <div>
                   <label className="block text-xs font-bold text-slate-400 uppercase mb-1.5">Base Cost ($/SF)</label>
@@ -663,6 +763,9 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({ onVa
           MVS Cost Analysis
         </h2>
         <div className="flex items-center gap-3">
+          <span className="text-xs text-slate-500">
+            {improvements.length} building{improvements.length !== 1 ? 's' : ''} selected
+          </span>
           <a href="#" className="flex items-center gap-1 text-xs font-medium text-[#0da1c7] hover:text-[#0b8fb0] transition-colors">
             <ExternalLink size={12} /> Open MVS Online
           </a>
@@ -686,12 +789,20 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({ onVa
           {improvements.map(imp => {
             const { costNew, depreciatedCost, totalDepreciationPct } = calculateLineItem(imp);
             const profitPct = imp.entrepreneurialIncentive || 0;
+            const hasOverride = !!costOverrides[imp.id];
             
             return (
               <div key={imp.id} className="grid grid-cols-12 gap-4 px-6 py-5 items-center hover:bg-slate-50/50 transition-colors group">
                 <div className="col-span-4">
-                  <div className="text-sm font-bold text-slate-900">{imp.name}</div>
-                  <div className="text-xs text-slate-400 mt-0.5">{imp.occupancy} • {imp.quality}</div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-bold text-slate-900">{imp.name}</span>
+                    {hasOverride && (
+                      <span className="text-[10px] bg-amber-100 text-amber-700 px-1.5 py-0.5 rounded font-medium">
+                        Modified
+                      </span>
+                    )}
+                  </div>
+                  <div className="text-xs text-slate-400 mt-0.5">{imp.occupancy} - {imp.quality}</div>
                 </div>
                 
                 <div className="col-span-1 text-right text-sm text-slate-600">
@@ -713,12 +824,14 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({ onVa
                 <div className="col-span-2 flex items-center justify-end gap-4 relative">
                   <span className="text-sm font-bold text-slate-900">{formatCurrency(depreciatedCost)}</span>
                   <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity absolute -right-4 bg-white/80 backdrop-blur-sm px-1 rounded-l-md border border-r-0 border-slate-200 shadow-sm transform translate-x-full group-hover:-translate-x-full duration-200">
-                    <button onClick={() => handleEdit(imp)} className="p-1.5 text-slate-400 hover:text-[#0da1c7] transition-colors">
+                    <button onClick={() => handleEdit(imp)} className="p-1.5 text-slate-400 hover:text-[#0da1c7] transition-colors" title="Edit cost data">
                       <Edit2 size={14} />
                     </button>
-                    <button onClick={() => handleDelete(imp.id)} className="p-1.5 text-slate-400 hover:text-red-600 transition-colors">
-                      <Trash2 size={14} />
-                    </button>
+                    {hasOverride && (
+                      <button onClick={() => handleResetToDefault(imp.id)} className="p-1.5 text-slate-400 hover:text-amber-600 transition-colors" title="Reset to default">
+                        <Trash2 size={14} />
+                      </button>
+                    )}
                   </div>
                 </div>
               </div>
@@ -728,31 +841,49 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({ onVa
           {/* Site Improvements Row */}
           <div className="grid grid-cols-12 gap-4 px-6 py-5 items-center bg-slate-50/30">
             <div className="col-span-4">
-              <div className="text-sm font-bold text-slate-800">Site Improvements</div>
-              <div className="text-xs text-slate-400 mt-0.5">Paving, Landscaping, etc.</div>
+              <div className="flex items-center gap-2">
+                <span className="text-sm font-bold text-slate-800">Site Improvements</span>
+                {siteImprovementsBreakdown.length > 0 && (
+                  <button
+                    onClick={() => setShowSiteBreakdown(!showSiteBreakdown)}
+                    className="text-[10px] text-[#0da1c7] hover:underline"
+                  >
+                    {showSiteBreakdown ? 'Hide' : 'Details'}
+                  </button>
+                )}
+              </div>
+              <div className="text-xs text-slate-400 mt-0.5">
+                {siteImprovementsBreakdown.length > 0 
+                  ? `${siteImprovementsBreakdown.length} items from Site tab`
+                  : 'Paving, Landscaping, etc.'}
+              </div>
             </div>
             <div className="col-span-1 text-right text-sm text-slate-400">-</div>
             <div className="col-span-1 text-right text-sm text-slate-400">-</div>
-            <div className="col-span-2 flex justify-end">
-              <input 
-                type="number" 
-                value={siteImprovementsCost} 
-                onChange={(e) => setSiteImprovementsCost(+e.target.value)}
-                className="w-24 text-right border border-slate-300 rounded px-2 py-1 text-sm text-slate-700 focus:border-[#0da1c7] focus:ring-1 focus:ring-[#0da1c7] outline-none bg-white"
-              />
+            <div className="col-span-2 text-right text-sm font-medium text-slate-600">
+              {formatCurrency(siteImprovementsCost)}
             </div>
-            <div className="col-span-2 text-right text-sm text-slate-400">0.0%</div>
+            <div className="col-span-2 text-right text-sm text-slate-400">-</div>
             <div className="col-span-2 text-right text-sm font-bold text-slate-900">{formatCurrency(siteImprovementsCost)}</div>
           </div>
-        </div>
-
-        <div className="px-6 py-3 border-t border-slate-200 bg-white">
-          <button 
-            onClick={handleAddNew}
-            className="flex items-center gap-2 text-sm font-bold text-[#0da1c7] hover:text-[#0b8fb0] transition-colors"
-          >
-            <Plus size={16} /> Add Improvement Component
-          </button>
+          
+          {/* Site Improvements Breakdown (expandable) */}
+          {showSiteBreakdown && siteImprovementsBreakdown.length > 0 && (
+            <div className="px-6 py-3 bg-slate-50/50">
+              <div className="space-y-1.5 pl-8">
+                {siteImprovementsBreakdown.map((item, idx) => (
+                  <div key={idx} className="grid grid-cols-12 gap-4 text-xs text-slate-500">
+                    <div className="col-span-4">{item.label}</div>
+                    <div className="col-span-1"></div>
+                    <div className="col-span-1"></div>
+                    <div className="col-span-2 text-right">{formatCurrency(item.rcn)}</div>
+                    <div className="col-span-2 text-right text-red-400">-{formatCurrency(item.depreciation)}</div>
+                    <div className="col-span-2 text-right font-medium text-slate-700">{formatCurrency(item.contributoryValue)}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -773,4 +904,3 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({ onVa
     </div>
   );
 };
-

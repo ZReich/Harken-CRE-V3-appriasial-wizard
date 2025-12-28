@@ -42,6 +42,7 @@ const ICON_MAP: Record<string, LucideIcon> = {
 };
 import {
   classifyAndExtract,
+  extractDocumentData,
   DOCUMENT_TYPES,
   type DocumentType,
   type ClassificationResult,
@@ -453,7 +454,6 @@ export default function DocumentIntakePage() {
     ));
 
     // Re-run extraction with new type
-    const { extractDocumentData } = await import('../services/documentExtraction');
     const extraction = await extractDocumentData(doc.file, newType);
 
     setDocuments(prev => prev.map(d => 

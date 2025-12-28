@@ -39,5 +39,13 @@ export type {
   ValuationScenario,
   LineItemType,
   IncomeApproachState,
+  IncomeSubTab,
+  // Re-exported from rentTypes and expenseTypes via types.ts
+  RentComp,
+  RentGridRow,
+  SubjectRentProperty,
+  ExpenseComp,
+  ExpenseGridRow,
+  SubjectExpenseProperty,
 } from './types';
 

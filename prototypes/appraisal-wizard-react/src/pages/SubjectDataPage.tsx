@@ -141,7 +141,7 @@ export interface PhotoData {
 }
 
 export default function SubjectDataPage() {
-  const { state: wizardState, setSubjectData, setSiteImprovements } = useWizard();
+  const { state: wizardState, setSubjectData, setSiteImprovements, setReportPhotos } = useWizard();
   const [activeTab, setActiveTab] = useState('location');
 
   // Location tab state - initialize from WizardContext
@@ -399,6 +399,25 @@ export default function SubjectDataPage() {
     // For now, we can log which photo is being previewed
     console.log('Preview photo:', slotId, photo.caption);
   };
+
+  // Sync photos to WizardContext for report preview
+  useEffect(() => {
+    const assignments = Object.entries(photos)
+      .filter(([, photo]) => photo !== null)
+      .map(([slotId, photo], index) => ({
+        id: `photo-${slotId}`,
+        photoId: slotId,
+        slotId,
+        caption: photo!.caption,
+        sortOrder: index,
+        url: photo!.preview,
+      }));
+    
+    setReportPhotos({
+      assignments,
+      coverPhotoId: wizardState.coverPhoto?.id ?? null,
+    });
+  }, [photos, wizardState.coverPhoto?.id, setReportPhotos]);
 
   const handleExhibitUpload = (slotId: string, file: File) => {
     setExhibits(prev => ({ ...prev, [slotId]: { file, name: file.name } }));

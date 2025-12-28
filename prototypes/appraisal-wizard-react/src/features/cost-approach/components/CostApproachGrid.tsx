@@ -2,10 +2,9 @@ import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { ArrowUpRight, Building2, Layers, Calendar, ExternalLink, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { ImprovementValuation } from './ImprovementValuation';
 import { CostConclusion } from './CostConclusion';
-import { RichTextEditor } from './RichTextEditor';
 import { BuildingSelector } from './BuildingSelector';
+import EnhancedTextArea from '../../../components/EnhancedTextArea';
 import { ValueScenario } from '../types';
-import { SCENARIO_OPTIONS } from '../constants';
 import { useWizard } from '../../../context/WizardContext';
 
 interface CostApproachGridProps {
@@ -27,9 +26,16 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
   const { state, setApproachConclusion, setCostApproachBuildingSelections } = useWizard();
   const [improvementsValue, setImprovementsValue] = useState(0);
   const [finalIndicatedValue, setFinalIndicatedValue] = useState(0);
+  const [narrativeText, setNarrativeText] = useState('');
   
   const [activeSection, setActiveSection] = useState<'all' | 'improvements'>('all');
-  const [scenario, setScenario] = useState<ValueScenario>('As Is');
+  
+  // Derive scenario from the active scenario in context (synced with top-level scenario switcher)
+  const activeScenario = useMemo(() => {
+    return state.scenarios.find(s => s.id === (scenarioId ?? state.activeScenarioId)) || state.scenarios[0];
+  }, [state.scenarios, scenarioId, state.activeScenarioId]);
+  
+  const scenario: ValueScenario = (activeScenario?.name as ValueScenario) || 'As Is';
   
   // Get selected building IDs for the current scenario
   const currentScenarioId = scenarioId ?? state.activeScenarioId;
@@ -52,8 +58,8 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
     onValueChange?.(finalIndicatedValue);
   }, [finalIndicatedValue, onValueChange]);
 
-  // Notify parent of scenario changes
-  useMemo(() => {
+  // Notify parent of scenario changes (scenario is derived from context)
+  useEffect(() => {
     onScenarioChange?.(scenario);
   }, [scenario, onScenarioChange]);
 
@@ -85,19 +91,6 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
             <div className="flex items-center gap-2 text-xs font-medium text-[#0da1c7] bg-[#0da1c7]/10 px-2 py-0.5 rounded border border-[#0da1c7]/20 mt-1">
               <Calendar size={12}/> {scenario} Value
             </div>
-          </div>
-
-          {/* Scenario Selector */}
-          <div className="ml-4 h-10 bg-slate-100 rounded-lg p-1 flex items-center border border-slate-200 shadow-inner">
-            {SCENARIO_OPTIONS.map((s) => (
-              <button
-                key={s}
-                onClick={() => setScenario(s)}
-                className={`px-3 h-full rounded-md text-[10px] font-bold uppercase tracking-wider transition-all ${scenario === s ? 'bg-white text-[#0da1c7] shadow-sm border border-slate-200' : 'text-slate-400 hover:text-slate-600'}`}
-              >
-                {s}
-              </button>
-            ))}
           </div>
         </div>
         
@@ -235,7 +228,11 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
 
             {/* Improvement Valuation Section */}
             <section className="bg-white rounded-xl shadow-sm border border-slate-200 p-8 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75">
-              <ImprovementValuation onValueChange={setImprovementsValue} scenario={scenario} />
+              <ImprovementValuation 
+                onValueChange={setImprovementsValue} 
+                scenario={scenario}
+                scenarioId={currentScenarioId}
+              />
             </section>
 
             {/* Conclusion Section */}
@@ -251,11 +248,16 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
 
             {/* Comments Section */}
             <section className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-150">
-              <div className="flex items-center gap-2 mb-3 px-2">
-                <span className="text-sm font-bold text-slate-900 uppercase tracking-wider">Comments & Narrative</span>
-                <div className="h-px bg-slate-200 flex-1"></div>
-              </div>
-              <RichTextEditor />
+              <EnhancedTextArea
+                id="cost-approach-narrative"
+                label="Cost Approach Narrative"
+                value={narrativeText}
+                onChange={setNarrativeText}
+                placeholder="Describe the cost approach methodology, land value basis, and improvement valuation..."
+                rows={6}
+                sectionContext="cost_approach"
+                helperText="Document the cost approach methodology and reconciliation."
+              />
             </section>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { HorizontalScrollIndicator } from '../../../components/HorizontalScrollIndicator';
 import EnhancedTextArea from '../../../components/EnhancedTextArea';
 import { Plus, Trash2, MapPin, CheckCircle2, Circle, ChevronDown, PenLine, Building2 } from 'lucide-react';
@@ -22,14 +22,49 @@ const LABEL_COL_WIDTH = 160;
 const SUBJECT_COL_WIDTH = 180;
 const COMP_COL_WIDTH = 170;
 
-export const ExpenseComparableGrid: React.FC = () => {
+// Props interface for controlled component
+interface ExpenseComparableGridProps {
+  /** Initial expense comparables - if empty, will show empty state */
+  expenseComparables?: ExpenseComp[];
+  /** Notes text for the expense analysis */
+  notes?: string;
+  /** Callback when comparables change */
+  onCompsChange?: (comps: ExpenseComp[]) => void;
+  /** Callback when notes change */
+  onNotesChange?: (notes: string) => void;
+}
+
+export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
+  expenseComparables,
+  notes: initialNotes = '',
+  onCompsChange,
+  onNotesChange,
+}) => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
-  const [comps, setComps] = useState<ExpenseComp[]>(MOCK_EXPENSE_COMPS);
-  const [notesText, setNotesText] = useState('');
+  // Initialize from props, fallback to mock data if no data provided (for demo purposes)
+  const [comps, setComps] = useState<ExpenseComp[]>(
+    expenseComparables && expenseComparables.length > 0 ? expenseComparables : MOCK_EXPENSE_COMPS
+  );
+  const [notesText, setNotesText] = useState(initialNotes);
   const [propertyRows, setPropertyRows] = useState(EXPENSE_PROPERTY_ROWS);
   const [expenseRows, setExpenseRows] = useState(EXPENSE_CATEGORY_ROWS);
   const [ratioRows] = useState(EXPENSE_RATIO_ROWS);
   const [openElementDropdown, setOpenElementDropdown] = useState<'property' | 'expense' | null>(null);
+  
+  // Sync with parent when comps change
+  const notifyCompsChange = useCallback((newComps: ExpenseComp[]) => {
+    if (onCompsChange) {
+      onCompsChange(newComps);
+    }
+  }, [onCompsChange]);
+  
+  // Sync with parent when notes change
+  const handleNotesChange = useCallback((newNotes: string) => {
+    setNotesText(newNotes);
+    if (onNotesChange) {
+      onNotesChange(newNotes);
+    }
+  }, [onNotesChange]);
 
   // Calculate total grid width
   const totalGridWidth = LABEL_COL_WIDTH + SUBJECT_COL_WIDTH + (comps.length * COMP_COL_WIDTH);
@@ -47,14 +82,22 @@ export const ExpenseComparableGrid: React.FC = () => {
 
   const handleDeleteComp = (compId: string) => {
     if (window.confirm('Are you sure you want to remove this expense comparable?')) {
-      setComps(prev => prev.filter(c => c.id !== compId));
+      setComps(prev => {
+        const newComps = prev.filter(c => c.id !== compId);
+        notifyCompsChange(newComps);
+        return newComps;
+      });
     }
   };
 
   const handleToggleSelected = (compId: string) => {
-    setComps(prev => prev.map(c => 
-      c.id === compId ? { ...c, selected: !c.selected } : c
-    ));
+    setComps(prev => {
+      const newComps = prev.map(c => 
+        c.id === compId ? { ...c, selected: !c.selected } : c
+      );
+      notifyCompsChange(newComps);
+      return newComps;
+    });
   };
 
   // Add an element from the available elements dropdown
@@ -580,7 +623,7 @@ export const ExpenseComparableGrid: React.FC = () => {
               <EnhancedTextArea
                 label="Notes"
                 value={notesText}
-                onChange={setNotesText}
+                onChange={handleNotesChange}
                 placeholder="Type your analysis and assumptions here..."
                 sectionContext="expense_comparable"
                 helperText="AI can draft an expense analysis based on your comparable data."

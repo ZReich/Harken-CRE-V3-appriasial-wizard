@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { 
   TrendingUp, 
   Building2, 
@@ -6,7 +6,6 @@ import {
   Percent, 
   Calendar,
   BarChart3,
-  MapPin,
   ArrowUpRight,
   ArrowDownRight,
   Minus,
@@ -19,6 +18,9 @@ import {
 } from 'lucide-react';
 import type { MarketData } from '../types';
 import { MOCK_MARKET_DATA } from '../constants';
+import EnhancedTextArea from '../../../components/EnhancedTextArea';
+import { useWizard } from '../../../context/WizardContext';
+import type { MarketAnalysisData } from '../../../types';
 
 interface MarketAnalysisGridProps {
   // NOTE: Auto-aggregated data has moved to the ContextualMarketData sidebar component
@@ -41,8 +43,42 @@ export const MarketAnalysisGrid: React.FC<MarketAnalysisGridProps> = ({
   salesCompData,
   initialData = MOCK_MARKET_DATA,
 }) => {
+  const { setMarketAnalysis, state: wizardState } = useWizard();
   const [marketData] = useState<MarketData>({ ...MOCK_MARKET_DATA, ...initialData });
-  const [marketOutlook, setMarketOutlook] = useState(marketData.marketOutlook);
+  // Initialize from context if available
+  const [marketOutlook, setMarketOutlook] = useState(
+    wizardState.marketAnalysis?.narrative ?? marketData.marketOutlook
+  );
+
+  // Persist market analysis data to WizardContext
+  useEffect(() => {
+    const dataToSave: MarketAnalysisData = {
+      supplyMetrics: {
+        totalInventory: marketData.supplyDemand.newConstructionSf + marketData.supplyDemand.pipelineSf,
+        vacancyRate: marketData.supplyDemand.vacancyRate,
+        absorptionRate: marketData.supplyDemand.absorptionSf,
+        inventoryMonths: marketData.supplyDemand.vacancyRate > 0 
+          ? Math.round((marketData.supplyDemand.absorptionSf / 12) / (marketData.supplyDemand.vacancyRate / 100 * marketData.supplyDemand.absorptionSf) * 12)
+          : 0,
+      },
+      demandMetrics: {
+        averageRent: marketData.rentTrends.currentAskingRent,
+        rentGrowth: marketData.rentTrends.rentChange,
+        averageDaysOnMarket: marketData.saleTrends.avgDom,
+        salesVolume: marketData.saleTrends.transactionVolume,
+      },
+      marketTrends: {
+        overallTrend: marketData.supplyDemand.absorptionChange > 0 ? 'improving' : 
+                      marketData.supplyDemand.absorptionChange < 0 ? 'declining' : 'stable',
+        priceOutlook: marketData.saleTrends.priceChange > 0 ? 'increasing' :
+                      marketData.saleTrends.priceChange < 0 ? 'decreasing' : 'stable',
+        supplyOutlook: marketData.supplyDemand.pipelineSf > marketData.supplyDemand.absorptionSf ? 'increasing' :
+                       marketData.supplyDemand.pipelineSf < marketData.supplyDemand.absorptionSf ? 'decreasing' : 'stable',
+      },
+      narrative: marketOutlook,
+    };
+    setMarketAnalysis(dataToSave);
+  }, [marketData, marketOutlook, setMarketAnalysis]);
 
   const formatCurrency = (value: number) => `$${value.toFixed(2)}`;
   const formatPercent = (value: number) => `${value.toFixed(2)}%`;
@@ -272,20 +308,18 @@ export const MarketAnalysisGrid: React.FC<MarketAnalysisGridProps> = ({
       <div className="space-y-3">
         <div className="flex items-center gap-2">
           <FileText className="w-5 h-5 text-slate-700" />
-          <h2 className="text-lg font-bold text-slate-800">Market Outlook</h2>
+          <h2 className="text-lg font-bold text-slate-800">Market Outlook & Analysis</h2>
         </div>
-        <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
-          <textarea
-            value={marketOutlook}
-            onChange={(e) => setMarketOutlook(e.target.value)}
-            placeholder="Enter market outlook narrative..."
-            className="w-full h-32 text-sm text-slate-700 leading-relaxed resize-none outline-none"
-          />
-          <div className="mt-4 flex items-center gap-2 text-[10px] text-slate-400">
-            <MapPin className="w-3 h-3" />
-            <span>Market narrative will be included in the Market Analysis section of your report</span>
-          </div>
-        </div>
+        <EnhancedTextArea
+          label="Market Analysis Narrative"
+          value={marketOutlook}
+          onChange={setMarketOutlook}
+          placeholder="Enter market outlook narrative covering supply/demand, vacancy trends, rental rates, and sales activity..."
+          rows={10}
+          sectionContext="market_analysis"
+          helperText="AI can draft a comprehensive market analysis based on the market data above."
+          minHeight={300}
+        />
       </div>
 
       {/* Cap Rate Comparison Chart */}

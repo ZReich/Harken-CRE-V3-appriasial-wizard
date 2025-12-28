@@ -91,6 +91,15 @@ export const INITIAL_INCOME_APPROACH_STATE: IncomeApproachState = {
   valuationData: DEFAULT_VALUATION_DATA,
   scenario: 'as-stabilized',
   showGuidance: true,
+  
+  // Comparable data (start empty - user adds their own)
+  rentComparables: [],
+  rentCompNotes: '',
+  expenseComparables: [],
+  expenseCompNotes: '',
+  
+  // Workflow tracking
+  completedSubTabs: [],
 };
 
 // =================================================================

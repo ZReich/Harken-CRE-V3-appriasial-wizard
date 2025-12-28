@@ -199,9 +199,57 @@ Location adjustments account for differences in neighborhood quality and access.
 
 Based on my analysis, the indicated market rental rates for the subject units reflect the most probable rents the units would achieve from typical tenants in the current market. The overall adjustment range supports confidence in these conclusions.`,
 
+  'cost_approach': `<b><u>COST APPROACH - METHODOLOGY AND ANALYSIS</u></b>
+
+The Cost Approach to value is based on the principle of substitution, which holds that a prudent investor would pay no more for a property than the cost to acquire a similar site and construct improvements of equal utility. After 30 years of applying this approach, I have developed reliable methods for estimating replacement cost new and appropriate depreciation.
+
+<b><u>LAND VALUE</u></b>
+
+The land value was estimated via the Sales Comparison Approach, analyzing recent sales of comparable vacant land parcels. After adjusting for differences in size, location, topography, utilities, and zoning, the indicated land value represents the most probable price the subject site would bring in a competitive market.
+
+<b><u>IMPROVEMENT COST ESTIMATE</u></b>
+
+The replacement cost new of the improvements was estimated using Marshall & Swift cost data, supplemented by local contractor estimates where applicable. The cost estimate reflects current construction costs for a building of similar quality, size, and utility. This includes direct costs (materials, labor, contractor overhead and profit) and indirect costs (architectural fees, permits, financing costs, and developer profit).
+
+<b><u>DEPRECIATION ANALYSIS</u></b>
+
+Physical depreciation was estimated based on the actual age, effective age, and remaining economic life of the improvements. The observed condition of the improvements was considered in this analysis. Functional obsolescence, if any, was analyzed for curable and incurable items affecting utility. External obsolescence was considered based on market conditions and locational factors that might affect value.
+
+<b><u>VALUE INDICATION</u></b>
+
+The Cost Approach value indication is derived by adding the depreciated improvement value to the land value. This approach is particularly relevant for newer construction, special-purpose properties, and as a check on other valuation approaches.
+
+<b><u>COST APPROACH CONCLUSION</u></b>
+
+Based on my analysis and professional judgment developed over three decades of practice, the Cost Approach provides a reliable indication of value that is well-supported by the underlying data and methodology.`,
+
+  'market_analysis': `<b><u>MARKET ANALYSIS - OVERVIEW AND TRENDS</u></b>
+
+A thorough understanding of market conditions is essential to the valuation process. Drawing on 30 years of experience analyzing real estate markets, I have examined the supply, demand, and pricing trends that affect the subject property type in this market area.
+
+<b><u>MARKET AREA DEFINITION</u></b>
+
+The subject's market area encompasses the competitive area from which demand originates and within which alternative properties exist. This area is defined by geographic boundaries, transportation patterns, and the typical search area of market participants for properties of this type. The delineation considers both physical and economic factors that influence market behavior.
+
+<b><u>SUPPLY AND DEMAND ANALYSIS</u></b>
+
+Current market conditions reflect a balance between supply and demand. The existing inventory consists of properties that compete directly with the subject for tenants or buyers. New construction activity has been measured, with deliveries pacing appropriately with absorption. The pipeline of proposed and under-construction projects indicates continued but disciplined development activity.
+
+<b><u>VACANCY AND ABSORPTION TRENDS</u></b>
+
+The current vacancy rate for comparable properties is at healthy levels relative to historical averages. Absorption trends over the past 12-24 months have been positive, with net absorption exceeding new deliveries. This trend supports stable to improving market conditions and suggests that the subject property should lease or sell within typical market timeframes.
+
+<b><u>RENTAL RATE AND PRICING TRENDS</u></b>
+
+Rental rates for comparable properties have demonstrated stability with modest upward pressure in recent periods. Landlords report consistent tenant demand and limited concessions compared to prior market cycles. Sale prices per square foot have remained stable, and capitalization rates reflect investor confidence in the asset class. These trends are consistent with a balanced to landlord-favorable market environment.
+
+<b><u>MARKET OUTLOOK</u></b>
+
+Based on my analysis of current conditions and leading indicators, the market outlook is stable to positive over the near to intermediate term. Economic fundamentals support continued demand, and the supply pipeline appears appropriately calibrated. These conditions provide a favorable environment for the subject property and support the values indicated by the valuation approaches applied in this analysis.`,
+
   // ===========================================
   // SITE DETAILS AI TEMPLATES
-  // ===========================================
+  // =========================================== 
 
   'water_source': `<b><u>WATER SERVICE</u></b>
 

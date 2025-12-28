@@ -122,6 +122,17 @@ export interface CapRateCalculatorState {
 // INCOME APPROACH STATE
 // =================================================================
 
+// Re-export comparable types for convenience
+export type { RentComp, RentGridRow, SubjectRentProperty } from './rentTypes';
+export type { ExpenseComp, ExpenseGridRow, SubjectExpenseProperty } from './expenseTypes';
+
+// Import for use in IncomeApproachState
+import type { RentComp } from './rentTypes';
+import type { ExpenseComp } from './expenseTypes';
+
+// Income Approach sub-tab types for workflow tracking
+export type IncomeSubTab = 'rent-comps' | 'expense-comps' | 'pro-forma' | 'valuation';
+
 export interface IncomeApproachState {
   propertyMeta: PropertyMeta;
   incomeData: IncomeData;
@@ -129,6 +140,15 @@ export interface IncomeApproachState {
   valuationData: ValuationData;
   scenario: ValuationScenario;
   showGuidance: boolean;
+  
+  // Comparable data (persisted)
+  rentComparables: RentComp[];
+  rentCompNotes: string;
+  expenseComparables: ExpenseComp[];
+  expenseCompNotes: string;
+  
+  // Workflow tracking
+  completedSubTabs: IncomeSubTab[];
 }
 
 

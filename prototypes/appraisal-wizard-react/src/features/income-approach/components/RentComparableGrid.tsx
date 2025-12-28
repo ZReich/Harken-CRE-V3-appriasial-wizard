@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { HorizontalScrollIndicator } from '../../../components/HorizontalScrollIndicator';
 import EnhancedTextArea from '../../../components/EnhancedTextArea';
 import { Plus, Trash2, ArrowUpRight, ArrowDownRight, Minus, MapPin, Activity, ChevronDown, PenLine, Calendar } from 'lucide-react';
@@ -22,19 +22,54 @@ const LABEL_COL_WIDTH = 160;
 const SUBJECT_COL_WIDTH = 180;
 const COMP_COL_WIDTH = 170;
 
-export const RentComparableGrid: React.FC = () => {
+// Props interface for controlled component
+interface RentComparableGridProps {
+  /** Initial rent comparables - if empty, will show empty state */
+  rentComparables?: RentComp[];
+  /** Notes text for the rent analysis */
+  notes?: string;
+  /** Callback when comparables change */
+  onCompsChange?: (comps: RentComp[]) => void;
+  /** Callback when notes change */
+  onNotesChange?: (notes: string) => void;
+}
+
+export const RentComparableGrid: React.FC<RentComparableGridProps> = ({
+  rentComparables,
+  notes: initialNotes = '',
+  onCompsChange,
+  onNotesChange,
+}) => {
   const { state: wizardState } = useWizard();
   const { propertyType, propertySubtype, scenarios, activeScenarioId } = wizardState;
   const currentScenario = scenarios.find(s => s.id === activeScenarioId)?.name;
   
-  const [comps, setComps] = useState<RentComp[]>(MOCK_RENT_COMPS);
+  // Initialize from props, fallback to mock data if no data provided (for demo purposes)
+  const [comps, setComps] = useState<RentComp[]>(
+    rentComparables && rentComparables.length > 0 ? rentComparables : MOCK_RENT_COMPS
+  );
   const [transactionRows, setTransactionRows] = useState(RENT_TRANSACTION_ROWS);
   const [qualitativeRows, setQualitativeRows] = useState(RENT_QUALITATIVE_ROWS);
   const [openElementDropdown, setOpenElementDropdown] = useState<'transaction' | 'qualitative' | null>(null);
-  const [notesText, setNotesText] = useState('');
+  const [notesText, setNotesText] = useState(initialNotes);
   const _dropdownRef = useRef<HTMLDivElement>(null);
   void _dropdownRef; // Reserved for future click-outside handling
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+  
+  // Sync with parent when comps change
+  const notifyCompsChange = useCallback((newComps: RentComp[]) => {
+    if (onCompsChange) {
+      onCompsChange(newComps);
+    }
+  }, [onCompsChange]);
+  
+  // Sync with parent when notes change
+  const handleNotesChange = useCallback((newNotes: string) => {
+    setNotesText(newNotes);
+    if (onNotesChange) {
+      onNotesChange(newNotes);
+    }
+  }, [onNotesChange]);
 
   // Calculate total grid width
   const totalGridWidth = LABEL_COL_WIDTH + SUBJECT_COL_WIDTH + (comps.length * COMP_COL_WIDTH);
@@ -52,14 +87,22 @@ export const RentComparableGrid: React.FC = () => {
 
   const handleDeleteComp = (compId: string) => {
     if (window.confirm('Are you sure you want to remove this rental comparable?')) {
-      setComps(prev => prev.filter(c => c.id !== compId));
+      setComps(prev => {
+        const newComps = prev.filter(c => c.id !== compId);
+        notifyCompsChange(newComps);
+        return newComps;
+      });
     }
   };
 
   const handleUpdateComp = (compId: string, field: keyof RentComp, value: any) => {
-    setComps(prev => prev.map(c => 
-      c.id === compId ? { ...c, [field]: value } : c
-    ));
+    setComps(prev => {
+      const newComps = prev.map(c => 
+        c.id === compId ? { ...c, [field]: value } : c
+      );
+      notifyCompsChange(newComps);
+      return newComps;
+    });
   };
 
   // Add an element from the available elements dropdown
@@ -597,7 +640,7 @@ export const RentComparableGrid: React.FC = () => {
               <EnhancedTextArea
                 label="Notes"
                 value={notesText}
-                onChange={setNotesText}
+                onChange={handleNotesChange}
                 placeholder="Type your analysis and assumptions here..."
                 sectionContext="rent_comparable"
                 helperText="AI can draft a market rent analysis based on your rental comparables."

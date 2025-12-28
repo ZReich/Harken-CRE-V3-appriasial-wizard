@@ -530,6 +530,9 @@ function buildLetterContent(state: WizardState): ContentBlock[] {
 }
 
 function buildSummaryPages(state: WizardState): ContentBlock[][] {
+  // Calculate the final reconciled value
+  const finalValue = calculateFinalValue(state);
+  
   // Build key-value pairs for summary table
   const summaryData = {
     propertyName: state.subjectData.propertyName,
@@ -542,11 +545,27 @@ function buildSummaryPages(state: WizardState): ContentBlock[][] {
     zoningClass: state.subjectData.zoningClass,
     effectiveDate: state.subjectData.effectiveDate,
     inspectionDate: state.subjectData.inspectionDate,
+    // Final value from reconciliation
+    finalValue,
+    finalValueFormatted: finalValue > 0 ? `$${finalValue.toLocaleString()}` : 'To be determined',
     // Add approach values
-    scenarios: state.scenarios.map(s => ({
-      name: s.name,
-      approaches: s.approaches,
-    })),
+    scenarios: state.scenarios.map(s => {
+      // Get concluded values for each approach in this scenario
+      const approachValues: Record<string, number | null> = {};
+      s.approaches.forEach(approach => {
+        const conclusion = state.analysisConclusions.conclusions.find(
+          c => c.scenarioId === s.id && c.approach === approach
+        );
+        approachValues[approach] = conclusion?.valueConclusion ?? null;
+      });
+      return {
+        name: s.name,
+        approaches: s.approaches,
+        approachValues,
+      };
+    }),
+    // Reconciliation weights
+    reconciliationWeights: state.reconciliationData?.scenarioReconciliations?.[0]?.weights || {},
   };
 
   return [[{
@@ -719,13 +738,31 @@ function buildOwnershipContent(state: WizardState): ContentBlock[] {
   }];
 }
 
-function buildHBUContent(_state: WizardState, type: 'as-vacant' | 'as-improved'): ContentBlock[] {
+function buildHBUContent(state: WizardState, type: 'as-vacant' | 'as-improved'): ContentBlock[] {
+  const hbu = state.hbuAnalysis;
+  
+  // Get the appropriate analysis based on type
+  let analysis = '';
+  if (type === 'as-vacant' && hbu?.asVacant) {
+    // Combine all the as-vacant sections
+    const sections = [
+      hbu.asVacant.legallyPermissible && `**Legally Permissible:** ${hbu.asVacant.legallyPermissible}`,
+      hbu.asVacant.physicallyPossible && `**Physically Possible:** ${hbu.asVacant.physicallyPossible}`,
+      hbu.asVacant.financiallyFeasible && `**Financially Feasible:** ${hbu.asVacant.financiallyFeasible}`,
+      hbu.asVacant.maximallyProductive && `**Maximally Productive:** ${hbu.asVacant.maximallyProductive}`,
+      hbu.asVacant.conclusion && `**Conclusion:** ${hbu.asVacant.conclusion}`,
+    ].filter(Boolean);
+    analysis = sections.join('\n\n');
+  } else if (type === 'as-improved' && hbu?.asImproved) {
+    analysis = hbu.asImproved.conclusion || '';
+  }
+
   return [{
     id: `hbu-${type}-content`,
     type: 'paragraph',
     content: {
       type,
-      analysis: '', // HBU analysis text
+      analysis,
     },
     canSplit: true,
     keepWithNext: false,
@@ -749,13 +786,20 @@ function buildCostApproachPages(_state: WizardState, scenarioId: number): Conten
   }]];
 }
 
-function buildSalesComparisonPages(_state: WizardState, scenarioId: number): ContentBlock[][] {
+function buildSalesComparisonPages(state: WizardState, scenarioId: number): ContentBlock[][] {
+  const salesData = state.salesComparisonData;
+  
   return [[{
     id: `sales-comparison-${scenarioId}`,
     type: 'table',
     content: {
       scenarioId,
-      // Sales comparison data
+      properties: salesData?.properties || [],
+      values: salesData?.values || {},
+      reconciliationText: salesData?.reconciliationText || '',
+      analysisMode: salesData?.analysisMode || 'standard',
+      concludedValue: salesData?.concludedValue ?? null,
+      concludedValuePsf: salesData?.concludedValuePsf ?? null,
     },
     canSplit: true,
     keepWithNext: false,
@@ -846,10 +890,68 @@ function buildLimitingConditionsPages(_state: WizardState): ContentBlock[][] {
   }]];
 }
 
-function buildPhotoPages(_state: WizardState): Partial<ReportPage>[] {
-  // This would use the photos from state.reportConfig if available
-  // For now, return empty array
-  return [];
+function buildPhotoPages(state: WizardState): Partial<ReportPage>[] {
+  const reportPhotos = state.reportPhotos;
+  const stagingPhotos = state.stagingPhotos;
+  
+  // Combine assigned photos from reportPhotos and any assigned staging photos
+  const allPhotos: Array<{ id: string; url: string; caption: string; slotId: string }> = [];
+  
+  // Add photos from reportPhotos assignments
+  if (reportPhotos?.assignments) {
+    reportPhotos.assignments.forEach(photo => {
+      allPhotos.push({
+        id: photo.id,
+        url: photo.url,
+        caption: photo.caption,
+        slotId: photo.slotId,
+      });
+    });
+  }
+  
+  // Add assigned staging photos
+  if (stagingPhotos) {
+    stagingPhotos
+      .filter(p => p.assignedSlot && p.preview)
+      .forEach(photo => {
+        // Don't add duplicates
+        if (!allPhotos.some(p => p.slotId === photo.assignedSlot)) {
+          allPhotos.push({
+            id: photo.id,
+            url: photo.preview,
+            caption: photo.filename,
+            slotId: photo.assignedSlot!,
+          });
+        }
+      });
+  }
+  
+  if (allPhotos.length === 0) {
+    return [];
+  }
+  
+  // Create photo grid pages (6 photos per page)
+  const photosPerPage = 6;
+  const pages: Partial<ReportPage>[] = [];
+  
+  for (let i = 0; i < allPhotos.length; i += photosPerPage) {
+    const pagePhotos = allPhotos.slice(i, i + photosPerPage);
+    pages.push({
+      id: `photo-grid-${i / photosPerPage}`,
+      layout: 'photo-grid-6',
+      sectionId: 'photos',
+      title: i === 0 ? 'Subject Property Photos' : undefined,
+      photos: pagePhotos.map((p, idx) => ({
+        id: p.id,
+        url: p.url,
+        caption: p.caption,
+        category: 'exterior' as const,
+        sortOrder: i + idx,
+      })),
+    });
+  }
+  
+  return pages;
 }
 
 // =================================================================

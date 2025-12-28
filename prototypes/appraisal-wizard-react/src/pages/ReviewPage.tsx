@@ -439,7 +439,7 @@ export default function ReviewPage() {
     setActiveTab('checklist');
   }, []);
 
-  const { state, setRiskRating, setSwotAnalysis } = useWizard();
+  const { state, setRiskRating, setSwotAnalysis, setHbuAnalysis } = useWizard();
   
   // Determine if property has improvements (for HBU As Improved visibility)
   const hasImprovements = useMemo(() => {
@@ -447,12 +447,43 @@ export default function ReviewPage() {
     return state.propertyType !== 'land';
   }, [state.propertyType]);
 
-  // HBU text state
-  const [hbuLegallyPermissible, setHbuLegallyPermissible] = useState('');
-  const [hbuPhysicallyPossible, setHbuPhysicallyPossible] = useState('');
-  const [hbuFinanciallyFeasible, setHbuFinanciallyFeasible] = useState('');
-  const [hbuMaximallyProductive, setHbuMaximallyProductive] = useState('');
-  const [hbuAsImproved, setHbuAsImproved] = useState('');
+  // HBU text state - initialize from WizardContext if available
+  const [hbuLegallyPermissible, setHbuLegallyPermissible] = useState(() => 
+    state.hbuAnalysis?.asVacant?.legallyPermissible ?? ''
+  );
+  const [hbuPhysicallyPossible, setHbuPhysicallyPossible] = useState(() => 
+    state.hbuAnalysis?.asVacant?.physicallyPossible ?? ''
+  );
+  const [hbuFinanciallyFeasible, setHbuFinanciallyFeasible] = useState(() => 
+    state.hbuAnalysis?.asVacant?.financiallyFeasible ?? ''
+  );
+  const [hbuMaximallyProductive, setHbuMaximallyProductive] = useState(() => 
+    state.hbuAnalysis?.asVacant?.maximallyProductive ?? ''
+  );
+  const [hbuAsImproved, setHbuAsImproved] = useState(() => 
+    state.hbuAnalysis?.asImproved?.conclusion ?? ''
+  );
+
+  // Sync HBU data to WizardContext
+  useEffect(() => {
+    setHbuAnalysis({
+      asVacant: {
+        legallyPermissible: hbuLegallyPermissible,
+        physicallyPossible: hbuPhysicallyPossible,
+        financiallyFeasible: hbuFinanciallyFeasible,
+        maximallyProductive: hbuMaximallyProductive,
+        conclusion: hbuMaximallyProductive, // As vacant conclusion is the maximally productive
+      },
+      asImproved: {
+        legallyPermissible: '', // Could be expanded with more fields
+        physicallyPossible: '',
+        financiallyFeasible: '',
+        maximallyProductive: '',
+        conclusion: hbuAsImproved,
+      },
+      overallConclusion: hasImprovements ? hbuAsImproved : hbuMaximallyProductive,
+    });
+  }, [hbuLegallyPermissible, hbuPhysicallyPossible, hbuFinanciallyFeasible, hbuMaximallyProductive, hbuAsImproved, hasImprovements, setHbuAnalysis]);
   
   // Draft All loading state
   const [isDraftingAllVacant, setIsDraftingAllVacant] = useState(false);
@@ -1008,7 +1039,7 @@ We considered alternative uses including renovation, conversion to alternative u
               longitude={state.subjectData?.coordinates?.longitude}
               isIncomeProducing={state.propertyType !== 'residential' && state.propertyType !== 'land'}
               capRate={state.incomeApproach?.capRate}
-              daysOnMarket={state.marketAnalysis?.averageDaysOnMarket}
+              daysOnMarket={state.marketAnalysis?.demandMetrics?.averageDaysOnMarket}
               yearBuilt={state.improvementsInventory?.parcels?.[0]?.buildings?.[0]?.yearBuilt ?? undefined}
               condition={state.improvementsInventory?.parcels?.[0]?.buildings?.[0]?.condition}
               className="w-full"

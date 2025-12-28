@@ -3,7 +3,10 @@ export { CostApproachGrid } from './components/CostApproachGrid';
 export { LandValuation } from './components/LandValuation';
 export { ImprovementValuation } from './components/ImprovementValuation';
 export { CostConclusion } from './components/CostConclusion';
-export { RichTextEditor } from './components/RichTextEditor';
+export { BuildingSelector } from './components/BuildingSelector';
+
+// Utilities for building cost mapping and site improvements calculation
+export * from './utils';
 
 export {
   OCCUPANCY_OPTIONS,
@@ -13,7 +16,6 @@ export {
   DEPRECIATION_TABLE_DATA,
   INITIAL_LAND_ROWS,
   MOCK_LAND_COMPS,
-  MOCK_IMPROVEMENTS,
   DEFAULT_IMPROVEMENT,
   formatCurrency,
   formatPercent,

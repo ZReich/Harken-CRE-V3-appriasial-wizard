@@ -33,7 +33,14 @@ export const SummaryPage: React.FC<SummaryPageProps> = ({
     zoningClass?: string;
     effectiveDate?: string;
     inspectionDate?: string;
-    scenarios?: Array<{ name: string; approaches: string[] }>;
+    finalValue?: number;
+    finalValueFormatted?: string;
+    scenarios?: Array<{ 
+      name: string; 
+      approaches: string[];
+      approachValues?: Record<string, number | null>;
+    }>;
+    reconciliationWeights?: Record<string, number>;
   } | undefined;
 
   const formatDate = (dateStr?: string) => {
@@ -126,14 +133,26 @@ export const SummaryPage: React.FC<SummaryPageProps> = ({
                 <div key={index} className="bg-slate-50 rounded-lg p-4">
                   <div className="font-medium text-slate-800 mb-2">{scenario.name}</div>
                   <div className="flex flex-wrap gap-2">
-                    {scenario.approaches.map((approach, i) => (
-                      <span 
-                        key={i}
-                        className="px-3 py-1 bg-sky-100 text-sky-700 text-sm rounded-full"
-                      >
-                        {approach}
-                      </span>
-                    ))}
+                    {scenario.approaches.map((approach, i) => {
+                      const value = scenario.approachValues?.[approach];
+                      const weight = summaryData.reconciliationWeights?.[approach];
+                      return (
+                        <div 
+                          key={i}
+                          className="px-3 py-2 bg-sky-100 text-sky-700 text-sm rounded-lg"
+                        >
+                          <div className="font-medium">{approach}</div>
+                          {value != null && value > 0 && (
+                            <div className="text-xs mt-1">
+                              ${value.toLocaleString()}
+                              {weight != null && weight > 0 && (
+                                <span className="text-sky-500 ml-1">({weight}%)</span>
+                              )}
+                            </div>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
                 </div>
               ))}
@@ -141,14 +160,18 @@ export const SummaryPage: React.FC<SummaryPageProps> = ({
           </div>
         )}
 
-        {/* Value Conclusions placeholder */}
+        {/* Value Conclusions */}
         <div className="mb-6">
           <h4 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">
             Value Conclusions
           </h4>
           <div className="bg-gradient-to-r from-slate-50 to-slate-100 rounded-lg p-6 text-center">
             <p className="text-sm text-slate-500 mb-2">Final Market Value Estimate</p>
-            <p className="text-4xl font-bold text-slate-900">$0</p>
+            <p className="text-4xl font-bold text-slate-900">
+              {summaryData?.finalValueFormatted || (summaryData?.finalValue 
+                ? `$${summaryData.finalValue.toLocaleString()}` 
+                : 'To be determined')}
+            </p>
             <p className="text-sm text-slate-500 mt-2">As of Effective Date</p>
           </div>
         </div>

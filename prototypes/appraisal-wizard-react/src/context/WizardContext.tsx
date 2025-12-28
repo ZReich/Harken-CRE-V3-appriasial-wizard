@@ -1,5 +1,5 @@
 import { createContext, useContext, useReducer, useEffect, useCallback, ReactNode } from 'react';
-import type { WizardState, WizardAction, ImprovementsInventory, Owner, ExtractedData, UploadedDocument, IncomeApproachState, ReconciliationData, CelebrationState, SubjectData, PreviewEditsPayload, StagingPhoto, CoverPhotoData, SiteImprovement } from '../types';
+import type { WizardState, WizardAction, ImprovementsInventory, Owner, ExtractedData, UploadedDocument, IncomeApproachState, ReconciliationData, CelebrationState, SubjectData, PreviewEditsPayload, StagingPhoto, CoverPhotoData, SiteImprovement, CostApproachOverrides } from '../types';
 import { createDefaultInventory } from '../contracts/improvements';
 import { getSectionSchema } from '../constants/completionSchema';
 import { getNestedValue, isFilled, setNestedValue } from '../utils/stateHelpers';
@@ -96,6 +96,7 @@ const getInitialState = (): WizardState => {
     improvementsInventory: createDefaultInventory(),
     siteImprovements: [],
     costApproachBuildingSelections: {},
+    costApproachBuildingCostData: {},
     extractedData: {},
     uploadedDocuments: [],
     owners: [
@@ -230,6 +231,34 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
             [action.payload.scenarioId]: action.payload.buildingIds,
           },
         };
+
+      case 'SET_COST_APPROACH_BUILDING_COST_DATA': {
+        const { scenarioId, buildingId, overrides } = action.payload;
+        const scenarioCostData = state.costApproachBuildingCostData[scenarioId] || {};
+        
+        if (overrides === null) {
+          // Remove overrides for this building
+          const { [buildingId]: _, ...restBuildings } = scenarioCostData;
+          return {
+            ...state,
+            costApproachBuildingCostData: {
+              ...state.costApproachBuildingCostData,
+              [scenarioId]: restBuildings,
+            },
+          };
+        }
+        
+        return {
+          ...state,
+          costApproachBuildingCostData: {
+            ...state.costApproachBuildingCostData,
+            [scenarioId]: {
+              ...scenarioCostData,
+              [buildingId]: overrides,
+            },
+          },
+        };
+      }
 
       case 'SET_EXTRACTED_DATA':
         return {
@@ -541,6 +570,36 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
           riskRating: action.payload,
         };
 
+      case 'SET_SALES_COMPARISON_DATA':
+        return {
+          ...state,
+          salesComparisonData: action.payload,
+        };
+
+      case 'SET_LAND_VALUATION_DATA':
+        return {
+          ...state,
+          landValuationData: action.payload,
+        };
+
+      case 'SET_REPORT_PHOTOS':
+        return {
+          ...state,
+          reportPhotos: action.payload,
+        };
+
+      case 'SET_HBU_ANALYSIS':
+        return {
+          ...state,
+          hbuAnalysis: action.payload,
+        };
+
+      case 'SET_MARKET_ANALYSIS':
+        return {
+          ...state,
+          marketAnalysis: action.payload,
+        };
+
       case 'RESET':
         return getInitialState();
 
@@ -568,6 +627,7 @@ interface WizardContextValue {
   setMsOccupancyCode: (code: string | null) => void;
   setSiteImprovements: (improvements: SiteImprovement[]) => void;
   setCostApproachBuildingSelections: (scenarioId: number, buildingIds: string[]) => void;
+  setCostApproachBuildingCostData: (scenarioId: number, buildingId: string, overrides: CostApproachOverrides | null) => void;
   toggleFullscreen: () => void;
   goToPage: (page: string) => void;
   
@@ -640,6 +700,18 @@ interface WizardContextValue {
   setSwotAnalysis: (data: import('../types').SWOTAnalysisData) => void;
   setRiskRating: (data: import('../types/api').RiskRatingData) => void;
   
+  // Sales Comparison, Land Valuation, Photos, HBU, Market Analysis helpers
+  setSalesComparisonData: (data: import('../types').SalesComparisonData) => void;
+  getSalesComparisonData: () => import('../types').SalesComparisonData | undefined;
+  setLandValuationData: (data: import('../types').LandValuationData) => void;
+  getLandValuationData: () => import('../types').LandValuationData | undefined;
+  setReportPhotos: (data: import('../types').ReportPhotosData) => void;
+  getReportPhotos: () => import('../types').ReportPhotosData | undefined;
+  setHbuAnalysis: (data: import('../types').HBUAnalysis) => void;
+  getHbuAnalysis: () => import('../types').HBUAnalysis | undefined;
+  setMarketAnalysis: (data: import('../types').MarketAnalysisData) => void;
+  getMarketAnalysis: () => import('../types').MarketAnalysisData | undefined;
+  
   // Derived state
   hasImprovements: boolean; // True if property type is not 'land'
 }
@@ -681,6 +753,14 @@ export function WizardProvider({ children }: { children: ReactNode }) {
 
   const setCostApproachBuildingSelections = useCallback((scenarioId: number, buildingIds: string[]) => {
     dispatch({ type: 'SET_COST_APPROACH_BUILDING_SELECTIONS', payload: { scenarioId, buildingIds } });
+  }, []);
+
+  const setCostApproachBuildingCostData = useCallback((
+    scenarioId: number, 
+    buildingId: string, 
+    overrides: import('../types').CostApproachOverrides | null
+  ) => {
+    dispatch({ type: 'SET_COST_APPROACH_BUILDING_COST_DATA', payload: { scenarioId, buildingId, overrides } });
   }, []);
 
   const toggleFullscreen = useCallback(() => {
@@ -1004,6 +1084,51 @@ export function WizardProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'SET_RISK_RATING', payload: riskRating });
   }, []);
 
+  // Sales Comparison helpers
+  const setSalesComparisonData = useCallback((data: import('../types').SalesComparisonData) => {
+    dispatch({ type: 'SET_SALES_COMPARISON_DATA', payload: data });
+  }, []);
+
+  const getSalesComparisonData = useCallback(() => {
+    return state.salesComparisonData;
+  }, [state.salesComparisonData]);
+
+  // Land Valuation helpers
+  const setLandValuationData = useCallback((data: import('../types').LandValuationData) => {
+    dispatch({ type: 'SET_LAND_VALUATION_DATA', payload: data });
+  }, []);
+
+  const getLandValuationData = useCallback(() => {
+    return state.landValuationData;
+  }, [state.landValuationData]);
+
+  // Report Photos helpers
+  const setReportPhotos = useCallback((data: import('../types').ReportPhotosData) => {
+    dispatch({ type: 'SET_REPORT_PHOTOS', payload: data });
+  }, []);
+
+  const getReportPhotos = useCallback(() => {
+    return state.reportPhotos;
+  }, [state.reportPhotos]);
+
+  // HBU Analysis helpers
+  const setHbuAnalysis = useCallback((data: import('../types').HBUAnalysis) => {
+    dispatch({ type: 'SET_HBU_ANALYSIS', payload: data });
+  }, []);
+
+  const getHbuAnalysis = useCallback(() => {
+    return state.hbuAnalysis;
+  }, [state.hbuAnalysis]);
+
+  // Market Analysis helpers
+  const setMarketAnalysis = useCallback((data: import('../types').MarketAnalysisData) => {
+    dispatch({ type: 'SET_MARKET_ANALYSIS', payload: data });
+  }, []);
+
+  const getMarketAnalysis = useCallback(() => {
+    return state.marketAnalysis;
+  }, [state.marketAnalysis]);
+
   // Derived state: hasImprovements
   // True if property type is not 'land' (i.e., has improvements to appraise)
   const hasImprovements = state.propertyType !== 'land';
@@ -1019,6 +1144,7 @@ export function WizardProvider({ children }: { children: ReactNode }) {
         setMsOccupancyCode,
         setSiteImprovements,
         setCostApproachBuildingSelections,
+        setCostApproachBuildingCostData,
         toggleFullscreen,
         goToPage,
         setExtractedData,
@@ -1069,6 +1195,17 @@ export function WizardProvider({ children }: { children: ReactNode }) {
         setEconomicIndicators,
         setSwotAnalysis,
         setRiskRating,
+        // Sales Comparison, Land Valuation, Photos, HBU, Market Analysis
+        setSalesComparisonData,
+        getSalesComparisonData,
+        setLandValuationData,
+        getLandValuationData,
+        setReportPhotos,
+        getReportPhotos,
+        setHbuAnalysis,
+        getHbuAnalysis,
+        setMarketAnalysis,
+        getMarketAnalysis,
         // Derived state
         hasImprovements,
       }}
