@@ -1,8 +1,9 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import { ArrowUpRight, Building2, Layers, Calendar, ExternalLink, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { ImprovementValuation } from './ImprovementValuation';
 import { CostConclusion } from './CostConclusion';
 import { RichTextEditor } from './RichTextEditor';
+import { BuildingSelector } from './BuildingSelector';
 import { ValueScenario } from '../types';
 import { SCENARIO_OPTIONS } from '../constants';
 import { useWizard } from '../../../context/WizardContext';
@@ -23,12 +24,21 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
   onNavigateToLand,
   scenarioId,
 }) => {
-  const { setApproachConclusion } = useWizard();
+  const { state, setApproachConclusion, setCostApproachBuildingSelections } = useWizard();
   const [improvementsValue, setImprovementsValue] = useState(0);
   const [finalIndicatedValue, setFinalIndicatedValue] = useState(0);
   
   const [activeSection, setActiveSection] = useState<'all' | 'improvements'>('all');
   const [scenario, setScenario] = useState<ValueScenario>('As Is');
+  
+  // Get selected building IDs for the current scenario
+  const currentScenarioId = scenarioId ?? state.activeScenarioId;
+  const selectedBuildingIds = state.costApproachBuildingSelections?.[currentScenarioId] || [];
+  
+  // Handler for building selection changes
+  const handleBuildingSelectionChange = useCallback((buildingIds: string[]) => {
+    setCostApproachBuildingSelections(currentScenarioId, buildingIds);
+  }, [currentScenarioId, setCostApproachBuildingSelections]);
 
   // Use land value from the standalone Land Valuation section
   const landValue = landValueFromLandSection;
@@ -213,6 +223,15 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
                 </div>
               </section>
             )}
+
+            {/* Building Selector Section */}
+            <section className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-50">
+              <BuildingSelector
+                scenarioId={currentScenarioId}
+                selectedBuildingIds={selectedBuildingIds}
+                onSelectionChange={handleBuildingSelectionChange}
+              />
+            </section>
 
             {/* Improvement Valuation Section */}
             <section className="bg-white rounded-xl shadow-sm border border-slate-200 p-8 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75">

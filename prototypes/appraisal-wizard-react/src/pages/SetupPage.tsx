@@ -27,6 +27,13 @@ import { useCompletion } from '../hooks/useCompletion';
 import { useCelebration } from '../hooks/useCelebration';
 import { useSmartContinue } from '../hooks/useSmartContinue';
 import { getSetupGuidance } from '../constants/setupGuidance';
+import {
+  PROPERTY_CATEGORIES,
+  getPropertyTypesByCategory,
+  getOccupancyCodesByPropertyType,
+  getPropertyHierarchyLabel,
+  type PropertyCategory,
+} from '../constants/marshallSwift';
 
 // ==========================================
 // SETUP TAB CONFIGURATION
@@ -40,53 +47,15 @@ const setupTabs = [
 ];
 
 // ==========================================
-// PROPERTY TYPE OPTIONS
+// PROPERTY TYPE OPTIONS (Using M&S Classification)
 // ==========================================
-const propertyTypes = [
-  { 
-    id: 'commercial', 
-    label: 'Commercial', 
-    description: 'Office, Retail, Industrial',
-    Icon: CommercialIcon 
-  },
-  { 
-    id: 'residential', 
-    label: 'Residential', 
-    description: '1-4 Family, Condo',
-    Icon: ResidentialIcon 
-  },
-  { 
-    id: 'land', 
-    label: 'Land', 
-    description: 'Vacant, Subdivided',
-    Icon: LandIcon 
-  },
-];
+// Property categories and types are now imported from marshallSwift.ts
 
-// ==========================================
-// PROPERTY SUBTYPES
-// ==========================================
-const propertySubtypes: Record<string, Array<{ id: string; name: string; description: string }>> = {
-  commercial: [
-    { id: 'office', name: 'Office', description: 'CBD, Suburban, Medical' },
-    { id: 'retail', name: 'Retail', description: 'Strip Center, Mall, Standalone' },
-    { id: 'industrial', name: 'Industrial', description: 'Warehouse, Manufacturing, Flex' },
-    { id: 'multifamily', name: 'Multi-Family (5+)', description: 'Apartment Complex, 5+ Units' },
-    { id: 'mixeduse', name: 'Mixed-Use', description: 'Residential + Commercial' },
-    { id: 'hospitality', name: 'Hospitality', description: 'Hotel, Motel, Resort' },
-  ],
-  residential: [
-    { id: 'singlefamily', name: 'Single Family', description: 'Detached Residence' },
-    { id: 'condo', name: 'Condo', description: 'Individual Unit Ownership' },
-    { id: 'townhome', name: 'Townhome', description: 'Attached Residence' },
-    { id: '2-4unit', name: '2-4 Unit', description: 'Small Multi-Family' },
-  ],
-  land: [
-    { id: 'vacant', name: 'Vacant Land', description: 'Undeveloped Parcel' },
-    { id: 'reslot', name: 'Residential Lot', description: 'Buildable Lot, Subdivision' },
-    { id: 'commsite', name: 'Commercial Site', description: 'Development Ready' },
-    { id: 'agricultural', name: 'Agricultural', description: 'Farm, Ranch, Orchard' },
-  ],
+// Icon mapping for property categories
+const categoryIcons: Record<PropertyCategory, React.ComponentType<{ className?: string }>> = {
+  commercial: CommercialIcon,
+  residential: ResidentialIcon,
+  land: LandIcon,
 };
 
 // ==========================================
@@ -176,7 +145,10 @@ interface Scenario {
 // ASSIGNMENT CONTEXT INTERFACE
 // ==========================================
 interface AssignmentContext {
-  propertyType: string | null;
+  propertyCategory: PropertyCategory | null;  // Tier 1: Residential, Commercial, Land
+  propertyType: string | null;                 // Tier 2: M&S Property Type (office, retail, etc.)
+  msOccupancyCode: string | null;             // Tier 3: Specific M&S Occupancy Code
+  // Legacy field for backward compatibility
   subType: string | null;
   propertyStatus: string | null;
   plannedChanges: string | null;
@@ -190,13 +162,12 @@ interface AssignmentContext {
 // ==========================================
 // SCENARIO DETERMINATION LOGIC
 // ==========================================
-function getDefaultApproachesForScenario(scenarioName: string, propertyType: string | null, subType: string | null): string[] {
+function getDefaultApproachesForScenario(scenarioName: string, propertyCategory: string | null, propertyType: string | null): string[] {
   const approaches: string[] = [];
   
   // Check if this is a multi-family property type
-  const isMultiFamily = subType === 'multifamily' || subType === '2-4unit' || 
-                        subType?.includes('multifamily') || subType?.includes('2-4unit') ||
-                        subType?.includes('apartment');
+  const isMultiFamily = propertyType === 'multifamily' || propertyType === 'duplex-fourplex' || 
+                        propertyType?.includes('multifamily') || propertyType?.includes('apartment');
   
   // Multi-Family properties get Multi-Family Approach automatically
   if (isMultiFamily) {
@@ -206,17 +177,17 @@ function getDefaultApproachesForScenario(scenarioName: string, propertyType: str
     if (scenarioName === 'As Completed' || scenarioName === 'As Proposed') {
       approaches.push('Cost Approach', 'Land Valuation');
     }
-  } else if (propertyType === 'commercial') {
+  } else if (propertyCategory === 'commercial') {
     approaches.push('Sales Comparison', 'Income Approach');
     if (scenarioName === 'As Completed' || scenarioName === 'As Proposed') {
       approaches.push('Cost Approach', 'Land Valuation'); // Cost Approach requires Land Valuation
     }
-  } else if (propertyType === 'residential') {
+  } else if (propertyCategory === 'residential') {
     approaches.push('Sales Comparison');
     if (scenarioName === 'As Completed' || scenarioName === 'As Proposed') {
       approaches.push('Cost Approach', 'Land Valuation'); // Cost Approach requires Land Valuation
     }
-  } else if (propertyType === 'land') {
+  } else if (propertyCategory === 'land') {
     // Land properties use Land Valuation (not Sales Comparison for improved properties)
     approaches.push('Land Valuation');
   } else {
@@ -243,7 +214,7 @@ function getDefaultApproachesForScenario(scenarioName: string, propertyType: str
 
 function determineRequiredScenarios(context: AssignmentContext): Scenario[] {
   const result: Scenario[] = [];
-  const { propertyType, subType, propertyStatus, plannedChanges, occupancyStatus, loanPurpose } = context;
+  const { propertyCategory, propertyType, propertyStatus, plannedChanges, occupancyStatus, loanPurpose } = context;
   
   if (!propertyStatus) {
     return [{ id: 1, name: 'As Is', nameSelect: 'As Is', customName: '', approaches: [], isRequired: false, requirementSource: '' }];
@@ -251,49 +222,49 @@ function determineRequiredScenarios(context: AssignmentContext): Scenario[] {
   
   // RULE 1: Property Status Drives Primary Scenarios
   if (propertyStatus === 'proposed') {
-    result.push({ id: 1, name: 'As Proposed', nameSelect: 'As Proposed', customName: '', approaches: getDefaultApproachesForScenario('As Proposed', propertyType, subType), isRequired: true, requirementSource: 'Proposed development - no existing improvements' });
-    result.push({ id: 2, name: 'As Completed', nameSelect: 'As Completed', customName: '', approaches: getDefaultApproachesForScenario('As Completed', propertyType, subType), isRequired: true, requirementSource: 'Interagency Guidelines - construction/development' });
-    result.push({ id: 3, name: 'As Stabilized', nameSelect: 'As Stabilized', customName: '', approaches: getDefaultApproachesForScenario('As Stabilized', propertyType, subType), isRequired: true, requirementSource: 'Interagency Guidelines - income property stabilization' });
+    result.push({ id: 1, name: 'As Proposed', nameSelect: 'As Proposed', customName: '', approaches: getDefaultApproachesForScenario('As Proposed', propertyCategory, propertyType), isRequired: true, requirementSource: 'Proposed development - no existing improvements' });
+    result.push({ id: 2, name: 'As Completed', nameSelect: 'As Completed', customName: '', approaches: getDefaultApproachesForScenario('As Completed', propertyCategory, propertyType), isRequired: true, requirementSource: 'Interagency Guidelines - construction/development' });
+    result.push({ id: 3, name: 'As Stabilized', nameSelect: 'As Stabilized', customName: '', approaches: getDefaultApproachesForScenario('As Stabilized', propertyCategory, propertyType), isRequired: true, requirementSource: 'Interagency Guidelines - income property stabilization' });
   } else if (propertyStatus === 'under_construction') {
-    result.push({ id: 1, name: 'As Is', nameSelect: 'As Is', customName: '', approaches: getDefaultApproachesForScenario('As Is', propertyType, subType), isRequired: true, requirementSource: 'Current value of partially-complete improvements' });
-    result.push({ id: 2, name: 'As Completed', nameSelect: 'As Completed', customName: '', approaches: getDefaultApproachesForScenario('As Completed', propertyType, subType), isRequired: true, requirementSource: 'Interagency Guidelines - construction loan' });
-    result.push({ id: 3, name: 'As Stabilized', nameSelect: 'As Stabilized', customName: '', approaches: getDefaultApproachesForScenario('As Stabilized', propertyType, subType), isRequired: true, requirementSource: 'Interagency Guidelines - post-construction lease-up' });
+    result.push({ id: 1, name: 'As Is', nameSelect: 'As Is', customName: '', approaches: getDefaultApproachesForScenario('As Is', propertyCategory, propertyType), isRequired: true, requirementSource: 'Current value of partially-complete improvements' });
+    result.push({ id: 2, name: 'As Completed', nameSelect: 'As Completed', customName: '', approaches: getDefaultApproachesForScenario('As Completed', propertyCategory, propertyType), isRequired: true, requirementSource: 'Interagency Guidelines - construction loan' });
+    result.push({ id: 3, name: 'As Stabilized', nameSelect: 'As Stabilized', customName: '', approaches: getDefaultApproachesForScenario('As Stabilized', propertyCategory, propertyType), isRequired: true, requirementSource: 'Interagency Guidelines - post-construction lease-up' });
   } else if (propertyStatus === 'recently_completed') {
-    result.push({ id: 1, name: 'As Is', nameSelect: 'As Is', customName: '', approaches: getDefaultApproachesForScenario('As Is', propertyType, subType), isRequired: true, requirementSource: 'Current market value' });
+    result.push({ id: 1, name: 'As Is', nameSelect: 'As Is', customName: '', approaches: getDefaultApproachesForScenario('As Is', propertyCategory, propertyType), isRequired: true, requirementSource: 'Current market value' });
     if (occupancyStatus === 'lease_up' || occupancyStatus === 'vacant') {
-      result.push({ id: 2, name: 'As Stabilized', nameSelect: 'As Stabilized', customName: '', approaches: getDefaultApproachesForScenario('As Stabilized', propertyType, subType), isRequired: true, requirementSource: 'Property not yet at stabilized occupancy' });
+      result.push({ id: 2, name: 'As Stabilized', nameSelect: 'As Stabilized', customName: '', approaches: getDefaultApproachesForScenario('As Stabilized', propertyCategory, propertyType), isRequired: true, requirementSource: 'Property not yet at stabilized occupancy' });
     }
   } else {
-    result.push({ id: 1, name: 'As Is', nameSelect: 'As Is', customName: '', approaches: getDefaultApproachesForScenario('As Is', propertyType, subType), isRequired: true, requirementSource: 'Current market value' });
+    result.push({ id: 1, name: 'As Is', nameSelect: 'As Is', customName: '', approaches: getDefaultApproachesForScenario('As Is', propertyCategory, propertyType), isRequired: true, requirementSource: 'Current market value' });
   }
   
   // RULE 2: Planned Changes Add Scenarios
   if (plannedChanges === 'major' || plannedChanges === 'change_of_use') {
     if (!result.some(s => s.name === 'As Completed')) {
-      result.push({ id: result.length + 1, name: 'As Completed', nameSelect: 'As Completed', customName: '', approaches: getDefaultApproachesForScenario('As Completed', propertyType, subType), isRequired: true, requirementSource: 'Major renovation/change of use planned' });
+      result.push({ id: result.length + 1, name: 'As Completed', nameSelect: 'As Completed', customName: '', approaches: getDefaultApproachesForScenario('As Completed', propertyCategory, propertyType), isRequired: true, requirementSource: 'Major renovation/change of use planned' });
     }
     if (occupancyStatus && occupancyStatus !== 'not_applicable' && !result.some(s => s.name === 'As Stabilized')) {
-      result.push({ id: result.length + 1, name: 'As Stabilized', nameSelect: 'As Stabilized', customName: '', approaches: getDefaultApproachesForScenario('As Stabilized', propertyType, subType), isRequired: false, requirementSource: 'Recommended for income property after renovation' });
+      result.push({ id: result.length + 1, name: 'As Stabilized', nameSelect: 'As Stabilized', customName: '', approaches: getDefaultApproachesForScenario('As Stabilized', propertyCategory, propertyType), isRequired: false, requirementSource: 'Recommended for income property after renovation' });
     }
   }
   
   // RULE 3: Occupancy Adjustments
   if (occupancyStatus === 'lease_up' && !result.some(s => s.name === 'As Stabilized')) {
-    result.push({ id: result.length + 1, name: 'As Stabilized', nameSelect: 'As Stabilized', customName: '', approaches: getDefaultApproachesForScenario('As Stabilized', propertyType, subType), isRequired: true, requirementSource: 'Property currently in lease-up phase' });
+    result.push({ id: result.length + 1, name: 'As Stabilized', nameSelect: 'As Stabilized', customName: '', approaches: getDefaultApproachesForScenario('As Stabilized', propertyCategory, propertyType), isRequired: true, requirementSource: 'Property currently in lease-up phase' });
   }
   
   // RULE 4: Loan Purpose Overrides
   if (loanPurpose === 'construction') {
     if (!result.some(s => s.name === 'As Completed')) {
-      result.push({ id: result.length + 1, name: 'As Completed', nameSelect: 'As Completed', customName: '', approaches: getDefaultApproachesForScenario('As Completed', propertyType, subType), isRequired: true, requirementSource: 'Interagency Guidelines - construction loan requirement' });
+      result.push({ id: result.length + 1, name: 'As Completed', nameSelect: 'As Completed', customName: '', approaches: getDefaultApproachesForScenario('As Completed', propertyCategory, propertyType), isRequired: true, requirementSource: 'Interagency Guidelines - construction loan requirement' });
     }
     if (!result.some(s => s.name === 'As Stabilized')) {
-      result.push({ id: result.length + 1, name: 'As Stabilized', nameSelect: 'As Stabilized', customName: '', approaches: getDefaultApproachesForScenario('As Stabilized', propertyType, subType), isRequired: true, requirementSource: 'Interagency Guidelines - construction loan requirement' });
+      result.push({ id: result.length + 1, name: 'As Stabilized', nameSelect: 'As Stabilized', customName: '', approaches: getDefaultApproachesForScenario('As Stabilized', propertyCategory, propertyType), isRequired: true, requirementSource: 'Interagency Guidelines - construction loan requirement' });
     }
   }
   
   if (loanPurpose === 'bridge' && plannedChanges && plannedChanges !== 'none' && !result.some(s => s.name === 'As Completed')) {
-    result.push({ id: result.length + 1, name: 'As Completed', nameSelect: 'As Completed', customName: '', approaches: getDefaultApproachesForScenario('As Completed', propertyType, subType), isRequired: false, requirementSource: 'Recommended for bridge financing with planned improvements' });
+    result.push({ id: result.length + 1, name: 'As Completed', nameSelect: 'As Completed', customName: '', approaches: getDefaultApproachesForScenario('As Completed', propertyCategory, propertyType), isRequired: false, requirementSource: 'Recommended for bridge financing with planned improvements' });
   }
   
   result.forEach((s, idx) => s.id = idx + 1);
@@ -320,7 +291,11 @@ export default function SetupPage() {
   
   // Assignment context state - initialize from WizardContext if available
   const [context, setContext] = useState<AssignmentContext>(() => ({
-    propertyType: wizardState.propertyType || null,
+    // 3-tier M&S classification
+    propertyCategory: (wizardState.propertyType as PropertyCategory) || null,
+    propertyType: wizardState.propertySubtype || null,  // Maps to M&S property type
+    msOccupancyCode: (wizardState as unknown as { msOccupancyCode?: string }).msOccupancyCode || null,
+    // Legacy field for backward compatibility
     subType: wizardState.propertySubtype || null,
     // Initialize these from wizardState.subjectData to preserve values across tab changes
     propertyStatus: wizardState.subjectData?.propertyStatus || null,
@@ -407,6 +382,8 @@ export default function SetupPage() {
       // Site data from cadastral
       siteArea: data.acres > 0 ? data.acres.toString() : (data.sqft > 0 ? (data.sqft / 43560).toFixed(2) : ''),
       siteAreaUnit: data.acres > 0 ? 'acres' : 'sqft',
+      // Zoning data (from Cotality API)
+      zoningClass: data.zoning || '',
       // Coordinates if available (for demographics lookup)
       coordinates,
       // Store full cadastral data for reference
@@ -422,9 +399,15 @@ export default function SetupPage() {
         assessedImprovementValue: data.assessedImprovementValue,
         totalAssessedValue: data.totalAssessedValue,
         taxYear: data.taxYear,
+        zoning: data.zoning,
         lastUpdated: new Date().toISOString(),
       },
     });
+    
+    // Log zoning import
+    if (data.zoning) {
+      console.log('[PropertyImport] Zoning classification imported:', data.zoning);
+    }
   }, [address, taxId, legalDescription, setSubjectData, wizardState.owners, updateOwner]);
   
   // Debounced auto-lookup when address is complete
@@ -785,16 +768,17 @@ export default function SetupPage() {
     syncScenariosToContext(contextScenarios);
   }, [scenarios, syncScenariosToContext]);
 
-  // Sync property type to WizardContext when it changes
+  // Sync property classification to WizardContext when it changes
   useEffect(() => {
-    if (context.propertyType) {
-      syncPropertyType(context.propertyType, context.subType || undefined);
+    if (context.propertyCategory) {
+      // Sync the category as the main property type, and the M&S property type as subtype
+      syncPropertyType(context.propertyCategory, context.propertyType || undefined);
     }
-  }, [context.propertyType, context.subType, syncPropertyType]);
+  }, [context.propertyCategory, context.propertyType, syncPropertyType]);
   
-  // Auto-adjust approaches when property type changes to land
+  // Auto-adjust approaches when property category changes to land
   useEffect(() => {
-    if (context.propertyType === 'land') {
+    if (context.propertyCategory === 'land') {
       setScenarios(prevScenarios => prevScenarios.map(s => {
         let newApproaches = [...s.approaches];
         
@@ -1067,55 +1051,96 @@ export default function SetupPage() {
         </p>
       </div>
 
-      {/* Property Type */}
+      {/* Property Classification - 3-Tier M&S Hierarchy */}
       <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
         <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
-          Property Type Selection
+          Property Classification
         </h3>
-        <div className="grid grid-cols-3 gap-4">
-          {propertyTypes.map((type) => {
-            const Icon = type.Icon;
-            const isSelected = context.propertyType === type.id;
-            return (
-              <button
-                key={type.id}
-                onClick={() => updateContext('propertyType', type.id)}
-                className={`relative p-6 border-2 rounded-lg text-center transition-all hover:border-[#0da1c7] hover:shadow-md ${
-                  isSelected
-                    ? 'border-[#0da1c7] bg-[#0da1c7]/5'
-                    : 'border-gray-200'
-                }`}
-              >
-                {isSelected && (
-                  <div className="absolute top-2 right-2 w-6 h-6 bg-[#0da1c7] rounded-full flex items-center justify-center">
-                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
-                    </svg>
-                  </div>
+        
+        {/* Selection Breadcrumb */}
+        {(context.propertyCategory || context.propertyType || context.msOccupancyCode) && (
+          <div className="mb-4 p-3 bg-slate-50 rounded-lg border border-slate-200">
+            <div className="flex items-center gap-2 text-sm">
+              <span className="text-gray-500">Selected:</span>
+              <span className="font-medium text-[#1c3643]">
+                {getPropertyHierarchyLabel(
+                  context.propertyCategory || 'commercial',
+                  context.propertyType || '',
+                  context.msOccupancyCode || undefined
                 )}
-                <Icon className={`w-10 h-10 mx-auto mb-3 ${isSelected ? 'text-[#0da1c7]' : 'text-gray-400'}`} />
-                <span className={`block text-base font-semibold ${isSelected ? 'text-[#0da1c7]' : 'text-gray-700'}`}>{type.label}</span>
-                <span className="block text-xs text-gray-500 mt-1">{type.description}</span>
-              </button>
-            );
-          })}
+              </span>
+            </div>
+          </div>
+        )}
+        
+        {/* Tier 1: Property Category */}
+        <div className="mb-6">
+          <label className="block text-sm font-medium text-gray-700 mb-3">
+            Property Category <span className="text-red-500">*</span>
+          </label>
+          <div className="grid grid-cols-3 gap-4">
+            {PROPERTY_CATEGORIES.map((category) => {
+              const Icon = categoryIcons[category.id];
+              const isSelected = context.propertyCategory === category.id;
+              return (
+                <button
+                  key={category.id}
+                  onClick={() => {
+                    setContext(prev => ({
+                      ...prev,
+                      propertyCategory: category.id,
+                      propertyType: null,
+                      msOccupancyCode: null,
+                      subType: null, // Legacy field
+                    }));
+                  }}
+                  className={`relative p-6 border-2 rounded-lg text-center transition-all hover:border-[#0da1c7] hover:shadow-md ${
+                    isSelected
+                      ? 'border-[#0da1c7] bg-[#0da1c7]/5'
+                      : 'border-gray-200'
+                  }`}
+                >
+                  {isSelected && (
+                    <div className="absolute top-2 right-2 w-6 h-6 bg-[#0da1c7] rounded-full flex items-center justify-center">
+                      <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                  )}
+                  <Icon className={`w-10 h-10 mx-auto mb-3 ${isSelected ? 'text-[#0da1c7]' : 'text-gray-400'}`} />
+                  <span className={`block text-base font-semibold ${isSelected ? 'text-[#0da1c7]' : 'text-gray-700'}`}>{category.label}</span>
+                  <span className="block text-xs text-gray-500 mt-1">{category.description}</span>
+                </button>
+              );
+            })}
+          </div>
         </div>
       </div>
 
-      {/* Property Sub-Type (conditional) */}
-      {context.propertyType && propertySubtypes[context.propertyType] && (
+      {/* Tier 2: Property Type (conditional) */}
+      {context.propertyCategory && (
         <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm animate-fade-in">
-          <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
-            Property Sub-Type
+          <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4 flex items-center gap-2">
+            Property Type
+            <span className="text-xs font-normal text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+              M&S Section Reference
+            </span>
           </h3>
-          <div className="grid grid-cols-3 gap-4">
-            {propertySubtypes[context.propertyType].map((subtype) => {
-              const isSelected = context.subType === subtype.id;
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            {getPropertyTypesByCategory(context.propertyCategory).map((propType) => {
+              const isSelected = context.propertyType === propType.id;
               return (
                 <button
-                  key={subtype.id}
-                  onClick={() => updateContext('subType', subtype.id)}
-                  className={`relative p-4 border-2 rounded-lg text-center transition-all hover:border-[#0da1c7] ${
+                  key={propType.id}
+                  onClick={() => {
+                    setContext(prev => ({
+                      ...prev,
+                      propertyType: propType.id,
+                      msOccupancyCode: null,
+                      subType: propType.id, // Legacy field
+                    }));
+                  }}
+                  className={`relative p-4 border-2 rounded-lg text-left transition-all hover:border-[#0da1c7] ${
                     isSelected
                       ? 'border-[#0da1c7] bg-[#0da1c7]/5'
                       : 'border-gray-200'
@@ -1128,8 +1153,71 @@ export default function SetupPage() {
                       </svg>
                     </div>
                   )}
-                  <span className={`block font-semibold text-sm ${isSelected ? 'text-[#0da1c7]' : 'text-gray-700'}`}>{subtype.name}</span>
-                  <span className="block text-xs text-gray-500 mt-1">{subtype.description}</span>
+                  <span className={`block font-semibold text-sm ${isSelected ? 'text-[#0da1c7]' : 'text-gray-700'}`}>
+                    {propType.label}
+                  </span>
+                  <span className="block text-xs text-gray-500 mt-1">{propType.description}</span>
+                  {propType.msSection && (
+                    <span className="inline-block mt-2 text-[10px] font-medium text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">
+                      {propType.msSection}
+                    </span>
+                  )}
+                </button>
+              );
+            })}
+          </div>
+        </div>
+      )}
+
+      {/* Tier 3: M&S Occupancy Code (conditional) */}
+      {context.propertyType && getOccupancyCodesByPropertyType(context.propertyType).length > 0 && (
+        <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm animate-fade-in">
+          <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4 flex items-center gap-2">
+            M&S Occupancy Code
+            <span className="text-xs font-normal text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+              Specific Building Type
+            </span>
+          </h3>
+          <p className="text-sm text-gray-600 mb-4">
+            Select the specific occupancy type for accurate cost calculations. This determines base costs, applicable construction classes, and economic life.
+          </p>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            {getOccupancyCodesByPropertyType(context.propertyType).map((occCode) => {
+              const isSelected = context.msOccupancyCode === occCode.id;
+              return (
+                <button
+                  key={occCode.id}
+                  onClick={() => {
+                    setContext(prev => ({
+                      ...prev,
+                      msOccupancyCode: occCode.id,
+                    }));
+                  }}
+                  className={`relative p-3 border-2 rounded-lg text-left transition-all hover:border-[#0da1c7] ${
+                    isSelected
+                      ? 'border-[#0da1c7] bg-[#0da1c7]/5'
+                      : 'border-gray-200'
+                  }`}
+                >
+                  {isSelected && (
+                    <div className="absolute top-1.5 right-1.5 w-4 h-4 bg-[#0da1c7] rounded-full flex items-center justify-center">
+                      <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    </div>
+                  )}
+                  <span className={`block font-medium text-xs ${isSelected ? 'text-[#0da1c7]' : 'text-gray-700'}`}>
+                    {occCode.label}
+                  </span>
+                  <span className="block text-[10px] text-gray-500 mt-0.5 line-clamp-2">{occCode.description}</span>
+                  <div className="flex items-center gap-2 mt-2">
+                    <span className="text-[9px] font-medium text-gray-400 bg-gray-100 px-1 py-0.5 rounded">
+                      {occCode.msSection} {occCode.msPage || ''}
+                    </span>
+                    <span className="text-[9px] text-gray-400">
+                      {occCode.defaultEconomicLife}yr life
+                    </span>
+                  </div>
                 </button>
               );
             })}

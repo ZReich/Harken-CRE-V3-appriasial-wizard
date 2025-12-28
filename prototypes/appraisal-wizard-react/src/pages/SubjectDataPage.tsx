@@ -1,10 +1,12 @@
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import WizardLayout from '../components/WizardLayout';
 import ImprovementsInventory from '../components/ImprovementsInventory';
+import SiteImprovementsInventory from '../components/SiteImprovementsInventory';
 import EnhancedTextArea from '../components/EnhancedTextArea';
 import WizardGuidancePanel from '../components/WizardGuidancePanel';
 import DemographicsPanel from '../components/DemographicsPanel';
 import { useWizard } from '../context/WizardContext';
+import type { SiteImprovement } from '../types';
 import { UsersIcon } from '../components/icons';
 import {
   LocationIcon,
@@ -17,7 +19,7 @@ import {
 import { 
   Upload, X, FileText, CheckCircle, Image, MapPin, Building2, FileCheck, Camera, Eye, ChevronDown,
   Home, Sofa, Trees, Route, Landmark, FileSignature, Handshake, File, BarChart3, Map, Receipt, Wallet, Folder,
-  Sparkles, Loader2, Info, Droplets, Zap, Car, Lightbulb, Fence, Warehouse, TreeDeciduous, AlertTriangle, Check
+  Sparkles, Loader2, Info, Droplets, Zap, Car, AlertTriangle, Check
 } from 'lucide-react';
 import ButtonSelector from '../components/ButtonSelector';
 import ExpandableNote from '../components/ExpandableNote';
@@ -139,7 +141,7 @@ export interface PhotoData {
 }
 
 export default function SubjectDataPage() {
-  const { state: wizardState, setSubjectData } = useWizard();
+  const { state: wizardState, setSubjectData, setSiteImprovements } = useWizard();
   const [activeTab, setActiveTab] = useState('location');
 
   // Location tab state - initialize from WizardContext
@@ -239,23 +241,6 @@ export default function SubjectDataPage() {
   const [telecom, setTelecom] = useState('');
   const [telecomNotes, setTelecomNotes] = useState('');
 
-  // Access & Visibility state
-  const [approachType, setApproachType] = useState('');
-  const [accessQuality, setAccessQuality] = useState('');
-  const [visibility, setVisibility] = useState('');
-  const [truckAccess, setTruckAccess] = useState('');
-  const [accessNotes, setAccessNotes] = useState('');
-
-  // Site Improvements state
-  const [pavingType, setPavingType] = useState('');
-  const [pavingNotes, setPavingNotes] = useState('');
-  const [exteriorLighting, setExteriorLighting] = useState('');
-  const [fencingType, setFencingType] = useState('');
-  const [fencingNotes, setFencingNotes] = useState('');
-  const [yardStorage, setYardStorage] = useState('');
-  const [landscaping, setLandscaping] = useState('');
-  const [siteImprovementsNotes, setSiteImprovementsNotes] = useState('');
-
   // Enhanced Flood Zone state
   const [femaZone, setFemaZone] = useState('');
   const [femaMapPanel, setFemaMapPanel] = useState('');
@@ -334,16 +319,6 @@ export default function SubjectDataPage() {
       electricProvider,
       naturalGas,
       telecom,
-      // Access
-      approachType,
-      accessQuality,
-      visibility,
-      truckAccess,
-      // Site Improvements
-      pavingType,
-      fencingType,
-      yardStorage,
-      landscaping,
       // Flood Zone
       femaZone,
       femaMapPanel,
@@ -356,8 +331,6 @@ export default function SubjectDataPage() {
       acres, squareFeet, shape, frontage, topography, environmental, easements,
       zoningClass, zoningDescription, zoningConformance,
       waterSource, sewerType, electricProvider, naturalGas, telecom,
-      approachType, accessQuality, visibility, truckAccess,
-      pavingType, fencingType, yardStorage, landscaping,
       femaZone, femaMapPanel, femaMapDate, floodInsuranceRequired,
       siteDescriptionNarrative, setSubjectData]);
 
@@ -586,34 +559,9 @@ export default function SubjectDataPage() {
             setTelecom={setTelecom}
             telecomNotes={telecomNotes}
             setTelecomNotes={setTelecomNotes}
-            // Access & Visibility
-            approachType={approachType}
-            setApproachType={setApproachType}
-            accessQuality={accessQuality}
-            setAccessQuality={setAccessQuality}
-            visibility={visibility}
-            setVisibility={setVisibility}
-            truckAccess={truckAccess}
-            setTruckAccess={setTruckAccess}
-            accessNotes={accessNotes}
-            setAccessNotes={setAccessNotes}
-            // Site Improvements
-            pavingType={pavingType}
-            setPavingType={setPavingType}
-            pavingNotes={pavingNotes}
-            setPavingNotes={setPavingNotes}
-            exteriorLighting={exteriorLighting}
-            setExteriorLighting={setExteriorLighting}
-            fencingType={fencingType}
-            setFencingType={setFencingType}
-            fencingNotes={fencingNotes}
-            setFencingNotes={setFencingNotes}
-            yardStorage={yardStorage}
-            setYardStorage={setYardStorage}
-            landscaping={landscaping}
-            setLandscaping={setLandscaping}
-            siteImprovementsNotes={siteImprovementsNotes}
-            setSiteImprovementsNotes={setSiteImprovementsNotes}
+            // Site Improvements Inventory (M&S Section 66)
+            siteImprovements={wizardState.siteImprovements || []}
+            onSiteImprovementsChange={setSiteImprovements}
             // Additional Characteristics
             topography={topography}
             setTopography={setTopography}
@@ -946,34 +894,9 @@ interface SiteProps {
   setTelecom: (v: string) => void;
   telecomNotes: string;
   setTelecomNotes: (v: string) => void;
-  // Access & Visibility
-  approachType: string;
-  setApproachType: (v: string) => void;
-  accessQuality: string;
-  setAccessQuality: (v: string) => void;
-  visibility: string;
-  setVisibility: (v: string) => void;
-  truckAccess: string;
-  setTruckAccess: (v: string) => void;
-  accessNotes: string;
-  setAccessNotes: (v: string) => void;
-  // Site Improvements
-  pavingType: string;
-  setPavingType: (v: string) => void;
-  pavingNotes: string;
-  setPavingNotes: (v: string) => void;
-  exteriorLighting: string;
-  setExteriorLighting: (v: string) => void;
-  fencingType: string;
-  setFencingType: (v: string) => void;
-  fencingNotes: string;
-  setFencingNotes: (v: string) => void;
-  yardStorage: string;
-  setYardStorage: (v: string) => void;
-  landscaping: string;
-  setLandscaping: (v: string) => void;
-  siteImprovementsNotes: string;
-  setSiteImprovementsNotes: (v: string) => void;
+  // Site Improvements Inventory (M&S Section 66)
+  siteImprovements: SiteImprovement[];
+  onSiteImprovementsChange: (improvements: SiteImprovement[]) => void;
   // Additional Characteristics
   topography: string;
   setTopography: (v: string) => void;
@@ -1040,58 +963,6 @@ const AVAILABILITY_OPTIONS = [
   { value: 'unknown', label: 'Unknown' },
 ];
 
-const APPROACH_TYPE_OPTIONS = [
-  { value: 'paved', label: 'Paved', icon: <Car className="w-4 h-4" /> },
-  { value: 'gravel', label: 'Gravel', icon: <Car className="w-4 h-4" /> },
-  { value: 'dirt', label: 'Dirt', icon: <Car className="w-4 h-4" /> },
-  { value: 'other', label: 'Other', icon: <Car className="w-4 h-4" /> },
-];
-
-const QUALITY_OPTIONS = [
-  { value: 'excellent', label: 'Excellent' },
-  { value: 'good', label: 'Good' },
-  { value: 'average', label: 'Average' },
-  { value: 'poor', label: 'Poor' },
-];
-
-const TRUCK_ACCESS_OPTIONS = [
-  { value: 'adequate', label: 'Adequate' },
-  { value: 'limited', label: 'Limited' },
-  { value: 'not_suitable', label: 'Not Suitable' },
-];
-
-const PAVING_OPTIONS = [
-  { value: 'asphalt', label: 'Asphalt' },
-  { value: 'concrete', label: 'Concrete' },
-  { value: 'gravel', label: 'Gravel' },
-  { value: 'none', label: 'None' },
-];
-
-const LIGHTING_OPTIONS = [
-  { value: 'yes', label: 'Yes', icon: <Lightbulb className="w-4 h-4" /> },
-  { value: 'no', label: 'No' },
-];
-
-const FENCING_OPTIONS = [
-  { value: 'chain_link', label: 'Chain Link', icon: <Fence className="w-4 h-4" /> },
-  { value: 'wood', label: 'Wood', icon: <Fence className="w-4 h-4" /> },
-  { value: 'security', label: 'Security', icon: <Fence className="w-4 h-4" /> },
-  { value: 'none', label: 'None' },
-];
-
-const YARD_STORAGE_OPTIONS = [
-  { value: 'secured', label: 'Secured', icon: <Warehouse className="w-4 h-4" /> },
-  { value: 'open', label: 'Open', icon: <Warehouse className="w-4 h-4" /> },
-  { value: 'none', label: 'None' },
-];
-
-const LANDSCAPING_OPTIONS = [
-  { value: 'extensive', label: 'Extensive', icon: <TreeDeciduous className="w-4 h-4" /> },
-  { value: 'moderate', label: 'Moderate', icon: <TreeDeciduous className="w-4 h-4" /> },
-  { value: 'minimal', label: 'Minimal', icon: <TreeDeciduous className="w-4 h-4" /> },
-  { value: 'none', label: 'None' },
-];
-
 const TOPOGRAPHY_OPTIONS = [
   { value: 'level', label: 'Level' },
   { value: 'gently_sloping', label: 'Gently Sloping' },
@@ -1141,13 +1012,7 @@ function SiteContent({
   electricProvider, setElectricProvider, electricAdequacy, setElectricAdequacy, electricNotes, setElectricNotes,
   naturalGas, setNaturalGas, naturalGasNotes, setNaturalGasNotes,
   telecom, setTelecom, telecomNotes, setTelecomNotes,
-  approachType, setApproachType, accessQuality, setAccessQuality,
-  visibility, setVisibility, truckAccess, setTruckAccess, accessNotes, setAccessNotes,
-  pavingType, setPavingType, pavingNotes, setPavingNotes,
-  exteriorLighting, setExteriorLighting,
-  fencingType, setFencingType, fencingNotes, setFencingNotes,
-  yardStorage, setYardStorage, landscaping, setLandscaping,
-  siteImprovementsNotes, setSiteImprovementsNotes,
+  siteImprovements, onSiteImprovementsChange,
   topography, setTopography, drainage, setDrainage,
   environmental, setEnvironmental, easements, setEasements,
   femaZone, setFemaZone, femaMapPanel, setFemaMapPanel,
@@ -1187,13 +1052,11 @@ function SiteContent({
     setIsDraftingSiteDescription(true);
     await new Promise(resolve => setTimeout(resolve, 1200));
     
-    const draftContent = `The subject site is located with ${frontage || 'adequate frontage'} providing ${accessQuality || 'good'} access. The site contains approximately ${acres ? `${acres} acres (${parseInt(squareFeet || '0').toLocaleString()} square feet)` : 'the stated land area'} with a ${shape || 'regular'} configuration.
+    const draftContent = `The subject site is located with ${frontage || 'adequate frontage'} providing good access. The site contains approximately ${acres ? `${acres} acres (${parseInt(squareFeet || '0').toLocaleString()} square feet)` : 'the stated land area'} with a ${shape || 'regular'} configuration.
 
-${topography ? `The site topography is ${topography.replace(/_/g, ' ')}, ` : ''}${drainage ? `with ${drainage} drainage characteristics. ` : ''}The site is ${approachType ? `accessed via a ${approachType} approach` : 'accessible from the adjacent roadway'}${truckAccess ? ` with ${truckAccess.replace(/_/g, ' ')} truck turning radius` : ''}.
+${topography ? `The site topography is ${topography.replace(/_/g, ' ')}, ` : ''}${drainage ? `with ${drainage} drainage characteristics. ` : ''}The site is accessible from the adjacent roadway.
 
 ${waterSource ? `Water service is provided by ${waterSource === 'city' ? 'municipal water' : waterSource === 'well' ? 'private well' : 'alternative source'}. ` : ''}${sewerType ? `Sewer service consists of ${sewerType === 'city' ? 'municipal sanitary sewer' : sewerType === 'septic' ? 'private septic system' : 'alternative system'}. ` : ''}${naturalGas === 'available' ? 'Natural gas is available. ' : ''}${telecom === 'available' ? 'Telecommunications services are available. ' : ''}${electricAdequacy ? `Electric service appears ${electricAdequacy}. ` : ''}
-
-${pavingType && pavingType !== 'none' ? `Site improvements include ${pavingType} paving${exteriorLighting === 'yes' ? ', exterior lighting' : ''}${fencingType && fencingType !== 'none' ? `, and ${fencingType.replace(/_/g, ' ')} fencing` : ''}. ` : ''}${yardStorage && yardStorage !== 'none' ? `A ${yardStorage} yard/storage area is present. ` : ''}${landscaping && landscaping !== 'none' ? `Landscaping is ${landscaping}. ` : ''}
 
 ${femaZone ? `According to FEMA mapping, the site is located in Flood ${femaZone.replace(/_/g, ' ').replace('zone', 'Zone')}${femaMapPanel ? ` (Map Panel ${femaMapPanel})` : ''}. ${floodInsuranceRequired === 'required' ? 'Flood insurance is required.' : floodInsuranceRequired === 'not_required' ? 'No special flood insurance is required.' : ''}` : ''}
 
@@ -1427,128 +1290,11 @@ Overall, the site is well-suited for its current use and presents no significant
         </div>
       </div>
 
-      {/* Access & Visibility - New Card */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4 flex items-center gap-2">
-          <Car className="w-5 h-5 text-[#0da1c7]" />
-          Access & Visibility
-        </h3>
-        <div className="space-y-4">
-          <ButtonSelector
-            label="Approach Type"
-            options={APPROACH_TYPE_OPTIONS}
-            value={approachType}
-            onChange={setApproachType}
-          />
-
-          <div className="grid grid-cols-3 gap-4">
-            <ButtonSelector
-              label="Access Quality"
-              options={QUALITY_OPTIONS}
-              value={accessQuality}
-              onChange={setAccessQuality}
-              size="sm"
-            />
-            <ButtonSelector
-              label="Visibility"
-              options={QUALITY_OPTIONS}
-              value={visibility}
-              onChange={setVisibility}
-              size="sm"
-            />
-            <ButtonSelector
-              label="Truck Access"
-              options={TRUCK_ACCESS_OPTIONS}
-              value={truckAccess}
-              onChange={setTruckAccess}
-              size="sm"
-            />
-          </div>
-
-          <ExpandableNote
-            id="access_notes"
-            label="Access Notes"
-            value={accessNotes}
-            onChange={setAccessNotes}
-            placeholder="Add notes about access and visibility..."
-            sectionContext="access_visibility"
-          />
-        </div>
-      </div>
-
-      {/* Site Improvements - New Card */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4 flex items-center gap-2">
-          <Warehouse className="w-5 h-5 text-[#0da1c7]" />
-          Site Improvements
-        </h3>
-        <div className="space-y-4">
-          <div>
-            <ButtonSelector
-              label="Paving"
-              options={PAVING_OPTIONS}
-              value={pavingType}
-              onChange={setPavingType}
-            />
-            <ExpandableNote
-              id="paving_notes"
-              label="Paving Notes"
-              value={pavingNotes}
-              onChange={setPavingNotes}
-              placeholder="Add notes about paving condition..."
-              sectionContext="paving"
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <ButtonSelector
-              label="Exterior Lighting"
-              options={LIGHTING_OPTIONS}
-              value={exteriorLighting}
-              onChange={setExteriorLighting}
-            />
-            <ButtonSelector
-              label="Yard/Storage"
-              options={YARD_STORAGE_OPTIONS}
-              value={yardStorage}
-              onChange={setYardStorage}
-            />
-          </div>
-
-          <div>
-            <ButtonSelector
-              label="Fencing"
-              options={FENCING_OPTIONS}
-              value={fencingType}
-              onChange={setFencingType}
-            />
-            <ExpandableNote
-              id="fencing_notes"
-              label="Fencing Notes"
-              value={fencingNotes}
-              onChange={setFencingNotes}
-              placeholder="Add notes about fencing..."
-              sectionContext="fencing"
-            />
-          </div>
-
-          <ButtonSelector
-            label="Landscaping"
-            options={LANDSCAPING_OPTIONS}
-            value={landscaping}
-            onChange={setLandscaping}
-          />
-
-          <ExpandableNote
-            id="site_improvements_notes"
-            label="Site Improvements Notes"
-            value={siteImprovementsNotes}
-            onChange={setSiteImprovementsNotes}
-            placeholder="Add general notes about site improvements..."
-            sectionContext="site_improvements"
-          />
-        </div>
-      </div>
+      {/* Site Improvements Inventory - M&S Section 66 with Age-Life Tracking */}
+      <SiteImprovementsInventory
+        improvements={siteImprovements}
+        onChange={onSiteImprovementsChange}
+      />
 
       {/* Additional Site Characteristics */}
       <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">

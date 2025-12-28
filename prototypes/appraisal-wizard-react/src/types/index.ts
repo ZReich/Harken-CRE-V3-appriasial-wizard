@@ -108,6 +108,41 @@ export interface ImprovementsInventory {
 }
 
 // =================================================================
+// SITE IMPROVEMENT TYPES (M&S Section 66)
+// =================================================================
+
+export type SiteImprovementCondition = 'excellent' | 'good' | 'average' | 'fair' | 'poor';
+
+export interface SiteImprovement {
+  id: string;
+  typeId: string;              // References SiteImprovementType from marshallSwift.ts
+  typeName: string;            // Display label
+  description: string;         // Additional notes
+  
+  // Quantity
+  quantity: number;
+  unit: 'SF' | 'LF' | 'EA' | 'LS';
+  
+  // Age-Life Data
+  yearInstalled: number | null;
+  condition: SiteImprovementCondition;
+  economicLife: number;        // From M&S defaults, user-adjustable
+  effectiveAge: number;        // Calculated or override
+  effectiveAgeOverride: boolean;
+  
+  // Cost (populated in Cost Approach)
+  costPerUnit?: number;
+  replacementCostNew?: number;
+  depreciationPercent?: number;
+  contributoryValue?: number;
+}
+
+export interface SiteImprovementsInventory {
+  schemaVersion: number;
+  improvements: SiteImprovement[];
+}
+
+// =================================================================
 // DOCUMENT EXTRACTION TYPES
 // =================================================================
 
@@ -332,6 +367,7 @@ export interface CadastralData {
   assessedImprovementValue: number;
   totalAssessedValue: number;
   taxYear: number;
+  zoning?: string;
   lastUpdated: string;
 }
 
@@ -418,6 +454,9 @@ export interface WizardState {
   propertyType: string | null;
   propertySubtype: string | null;
   
+  // M&S Classification (3-tier hierarchy)
+  msOccupancyCode: string | null;
+  
   // Scenarios
   scenarios: AppraisalScenario[];
   activeScenarioId: number;
@@ -427,6 +466,12 @@ export interface WizardState {
   
   // Improvements
   improvementsInventory: ImprovementsInventory;
+  
+  // Site Improvements (M&S Section 66)
+  siteImprovements: SiteImprovement[];
+  
+  // Cost Approach Building Selections (per scenario)
+  costApproachBuildingSelections: Record<number, string[]>;
   
   // Extracted Document Data
   extractedData: Record<string, ExtractedData>;
@@ -486,12 +531,15 @@ export interface WizardState {
 export type WizardAction =
   | { type: 'SET_TEMPLATE'; payload: string }
   | { type: 'SET_PROPERTY_TYPE'; payload: { type: string; subtype?: string } }
+  | { type: 'SET_MS_OCCUPANCY_CODE'; payload: string | null }
   | { type: 'ADD_SCENARIO'; payload: AppraisalScenario }
   | { type: 'REMOVE_SCENARIO'; payload: number }
   | { type: 'UPDATE_SCENARIO'; payload: Partial<AppraisalScenario> & { id: number } }
   | { type: 'SET_ACTIVE_SCENARIO'; payload: number }
   | { type: 'SET_SCENARIOS'; payload: AppraisalScenario[] }
   | { type: 'SET_IMPROVEMENTS_INVENTORY'; payload: ImprovementsInventory }
+  | { type: 'SET_SITE_IMPROVEMENTS'; payload: SiteImprovement[] }
+  | { type: 'SET_COST_APPROACH_BUILDING_SELECTIONS'; payload: { scenarioId: number; buildingIds: string[] } }
   | { type: 'SET_EXTRACTED_DATA'; payload: { slotId: string; data: ExtractedData } }
   | { type: 'SET_ALL_EXTRACTED_DATA'; payload: Record<string, ExtractedData> }
   | { type: 'ADD_UPLOADED_DOCUMENT'; payload: UploadedDocument }

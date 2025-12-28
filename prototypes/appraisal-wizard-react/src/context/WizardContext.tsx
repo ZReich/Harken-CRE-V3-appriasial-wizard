@@ -1,5 +1,5 @@
 import { createContext, useContext, useReducer, useEffect, useCallback, ReactNode } from 'react';
-import type { WizardState, WizardAction, ImprovementsInventory, Owner, ExtractedData, UploadedDocument, IncomeApproachState, ReconciliationData, CelebrationState, SubjectData, PreviewEditsPayload, StagingPhoto, CoverPhotoData } from '../types';
+import type { WizardState, WizardAction, ImprovementsInventory, Owner, ExtractedData, UploadedDocument, IncomeApproachState, ReconciliationData, CelebrationState, SubjectData, PreviewEditsPayload, StagingPhoto, CoverPhotoData, SiteImprovement } from '../types';
 import { createDefaultInventory } from '../contracts/improvements';
 import { getSectionSchema } from '../constants/completionSchema';
 import { getNestedValue, isFilled, setNestedValue } from '../utils/stateHelpers';
@@ -14,6 +14,7 @@ const getInitialState = (): WizardState => {
     template: null,
     propertyType: null,
     propertySubtype: null,
+    msOccupancyCode: null,
     scenarios: [
       { id: 1, name: 'As Is', approaches: ['Sales Comparison'], effectiveDate: '', isRequired: true }
     ],
@@ -93,6 +94,8 @@ const getInitialState = (): WizardState => {
       cadastralData: undefined,
     },
     improvementsInventory: createDefaultInventory(),
+    siteImprovements: [],
+    costApproachBuildingSelections: {},
     extractedData: {},
     uploadedDocuments: [],
     owners: [
@@ -212,6 +215,21 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
 
       case 'SET_IMPROVEMENTS_INVENTORY':
         return { ...state, improvementsInventory: action.payload };
+
+      case 'SET_MS_OCCUPANCY_CODE':
+        return { ...state, msOccupancyCode: action.payload };
+
+      case 'SET_SITE_IMPROVEMENTS':
+        return { ...state, siteImprovements: action.payload };
+
+      case 'SET_COST_APPROACH_BUILDING_SELECTIONS':
+        return {
+          ...state,
+          costApproachBuildingSelections: {
+            ...state.costApproachBuildingSelections,
+            [action.payload.scenarioId]: action.payload.buildingIds,
+          },
+        };
 
       case 'SET_EXTRACTED_DATA':
         return {
@@ -547,6 +565,9 @@ interface WizardContextValue {
   setTemplate: (template: string) => void;
   setPropertyType: (type: string, subtype?: string) => void;
   setImprovementsInventory: (inventory: ImprovementsInventory) => void;
+  setMsOccupancyCode: (code: string | null) => void;
+  setSiteImprovements: (improvements: SiteImprovement[]) => void;
+  setCostApproachBuildingSelections: (scenarioId: number, buildingIds: string[]) => void;
   toggleFullscreen: () => void;
   goToPage: (page: string) => void;
   
@@ -648,6 +669,18 @@ export function WizardProvider({ children }: { children: ReactNode }) {
 
   const setImprovementsInventory = useCallback((inventory: ImprovementsInventory) => {
     dispatch({ type: 'SET_IMPROVEMENTS_INVENTORY', payload: inventory });
+  }, []);
+
+  const setMsOccupancyCode = useCallback((code: string | null) => {
+    dispatch({ type: 'SET_MS_OCCUPANCY_CODE', payload: code });
+  }, []);
+
+  const setSiteImprovements = useCallback((improvements: SiteImprovement[]) => {
+    dispatch({ type: 'SET_SITE_IMPROVEMENTS', payload: improvements });
+  }, []);
+
+  const setCostApproachBuildingSelections = useCallback((scenarioId: number, buildingIds: string[]) => {
+    dispatch({ type: 'SET_COST_APPROACH_BUILDING_SELECTIONS', payload: { scenarioId, buildingIds } });
   }, []);
 
   const toggleFullscreen = useCallback(() => {
@@ -983,6 +1016,9 @@ export function WizardProvider({ children }: { children: ReactNode }) {
         setTemplate,
         setPropertyType,
         setImprovementsInventory,
+        setMsOccupancyCode,
+        setSiteImprovements,
+        setCostApproachBuildingSelections,
         toggleFullscreen,
         goToPage,
         setExtractedData,
