@@ -19,7 +19,7 @@ import {
 import { 
   Upload, X, FileText, CheckCircle, Image, MapPin, Building2, FileCheck, Camera, Eye, ChevronDown,
   Home, Sofa, Trees, Route, Landmark, FileSignature, Handshake, File, BarChart3, Map, Receipt, Wallet, Folder,
-  Sparkles, Loader2, Info, Droplets, Zap, Car, AlertTriangle, Check
+  Sparkles, Loader2, Info, Droplets, Zap, AlertTriangle, Check
 } from 'lucide-react';
 import ButtonSelector from '../components/ButtonSelector';
 import ExpandableNote from '../components/ExpandableNote';

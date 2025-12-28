@@ -189,6 +189,7 @@ export function mapCotalityToCadastralFormat(cotality: CotalityPropertyData): {
   totalAssessedValue: number;
   taxYear: number;
   propertyType?: string;
+  zoning?: string;
   yearBuilt?: number;
   buildingSize?: number;
 } {
@@ -207,9 +208,10 @@ export function mapCotalityToCadastralFormat(cotality: CotalityPropertyData): {
     assessedImprovementValue: cotality.assessedImprovementValue,
     totalAssessedValue: cotality.assessedTotalValue,
     taxYear: cotality.taxYear,
-    propertyType: cotality.zoning,
+    zoning: cotality.zoning,
     yearBuilt: cotality.yearBuilt,
     buildingSize: cotality.grossLivingArea,
   };
 }
+
 

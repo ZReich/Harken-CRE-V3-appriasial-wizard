@@ -68,7 +68,6 @@ function getAllBuildings(parcels: ImprovementParcel[]): BuildingInfo[] {
 // =================================================================
 
 export const BuildingSelector: React.FC<BuildingSelectorProps> = ({
-  scenarioId,
   selectedBuildingIds,
   onSelectionChange,
 }) => {
@@ -91,7 +90,6 @@ export const BuildingSelector: React.FC<BuildingSelectorProps> = ({
   
   // Check if all are selected
   const allSelected = allBuildings.length > 0 && selectedBuildingIds.length === allBuildings.length;
-  const someSelected = selectedBuildingIds.length > 0 && selectedBuildingIds.length < allBuildings.length;
   
   // Toggle single building
   const toggleBuilding = (buildingId: string) => {

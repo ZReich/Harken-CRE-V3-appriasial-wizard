@@ -15,8 +15,6 @@
 import {
   type ConstructionClass,
   type QualityGrade,
-  type PropertyCategory,
-  getOccupancyCode,
   getSiteImprovementType,
   QUALITY_GRADES,
 } from '../constants/marshallSwift';

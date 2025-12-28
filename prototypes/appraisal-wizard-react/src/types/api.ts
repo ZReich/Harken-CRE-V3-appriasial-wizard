@@ -35,6 +35,8 @@ export interface CadastralData {
   township?: string;
   range?: string;
   section?: string;
+  // Zoning information (from Cotality or municipal API)
+  zoning?: string;
   // Centroid coordinates of the parcel
   latitude?: number;
   longitude?: number;

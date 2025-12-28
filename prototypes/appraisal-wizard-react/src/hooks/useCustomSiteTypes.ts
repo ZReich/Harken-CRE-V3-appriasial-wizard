@@ -5,7 +5,7 @@
  * Persists to localStorage for reuse across appraisals.
  */
 
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import type { SiteImprovementCategory, SiteImprovementType } from '../constants/marshallSwift';
 
 // =================================================================

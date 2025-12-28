@@ -189,3 +189,4 @@ If you continue to have issues:
 3. Verify the API key is valid on OpenAI's platform
 4. Try the individual "Draft" buttons on each text area to isolate the issue
 
+

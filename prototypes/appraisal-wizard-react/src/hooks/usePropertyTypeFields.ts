@@ -281,19 +281,18 @@ export function usePropertyTypeFields(): FieldVisibility {
     const isAgricultural = propertyType === 'agricultural';
     const isResidential = propertyCategory === 'residential';
     const isCommercial = propertyCategory === 'commercial';
-    const isLand = propertyCategory === 'land';
 
     // Site Details visibility
     const siteDetails: SiteDetailsVisibility = {
       // Section visibility based on property type
-      showParkingSection: isCommercial && !isAgricultural,
-      showLoadingSection: isCommercial && (isIndustrial || propertyType === 'retail'),
-      showRailAccess: isIndustrial,
-      showAgFeatures: isAgricultural,
-      showWaterRights: isAgricultural,
-      showClearHeight: isCommercial && !isAgricultural,
-      showTruckAccess: isCommercial && (isIndustrial || propertyType === 'retail'),
-      showVisibility: isCommercial && (propertyType === 'retail' || propertyType === 'office'),
+      showParkingSection: Boolean(isCommercial && !isAgricultural),
+      showLoadingSection: Boolean(isCommercial && (isIndustrial || propertyType === 'retail')),
+      showRailAccess: Boolean(isIndustrial),
+      showAgFeatures: Boolean(isAgricultural),
+      showWaterRights: Boolean(isAgricultural),
+      showClearHeight: Boolean(isCommercial && !isAgricultural),
+      showTruckAccess: Boolean(isCommercial && (isIndustrial || propertyType === 'retail')),
+      showVisibility: Boolean(isCommercial && (propertyType === 'retail' || propertyType === 'office')),
       
       // Dynamic options
       utilityOptions: isResidential ? RESIDENTIAL_UTILITY_OPTIONS :
@@ -323,15 +322,15 @@ export function usePropertyTypeFields(): FieldVisibility {
                  COMMERCIAL_AREA_TYPES,
       
       // Field visibility
-      showRoomCounts: isResidential,
-      showHeightFields: isCommercial && !isAgricultural,
-      showCraneFields: isIndustrial,
-      showDockFields: isCommercial && (isIndustrial || propertyType === 'retail'),
-      showFloorLoading: isIndustrial,
-      showAgFeatures: isAgricultural,
-      showGarageFields: isResidential,
-      showBathroomFields: isResidential,
-      showElevatorFields: isCommercial && (propertyType === 'office' || propertyType === 'multifamily'),
+      showRoomCounts: Boolean(isResidential),
+      showHeightFields: Boolean(isCommercial && !isAgricultural),
+      showCraneFields: Boolean(isIndustrial),
+      showDockFields: Boolean(isCommercial && (isIndustrial || propertyType === 'retail')),
+      showFloorLoading: Boolean(isIndustrial),
+      showAgFeatures: Boolean(isAgricultural),
+      showGarageFields: Boolean(isResidential),
+      showBathroomFields: Boolean(isResidential),
+      showElevatorFields: Boolean(isCommercial && (propertyType === 'office' || propertyType === 'multifamily')),
       
       // Dynamic options
       constructionOptions: isResidential ? RESIDENTIAL_CONSTRUCTION_OPTIONS : COMMERCIAL_CONSTRUCTION_OPTIONS,

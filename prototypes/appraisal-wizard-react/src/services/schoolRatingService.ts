@@ -145,3 +145,4 @@ export function getSchoolQualityScore(schools: SchoolRating[]): number {
   return avgRating * 10; // Convert 1-10 scale to 0-100
 }
 
+

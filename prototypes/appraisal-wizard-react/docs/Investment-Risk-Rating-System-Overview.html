@@ -1,0 +1,1039 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Investment Risk Rating System - Harken</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+      min-height: 100vh;
+      color: #1e293b;
+      line-height: 1.6;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding: 40px 24px;
+    }
+
+    /* Header */
+    .header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+
+    .badge {
+      display: inline-block;
+      background: #0da1c7;
+      color: white;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .header h1 {
+      font-size: 42px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+
+    .header .subtitle {
+      font-size: 20px;
+      font-weight: 600;
+      color: #0da1c7;
+      margin-bottom: 4px;
+    }
+
+    .header .tagline {
+      font-size: 16px;
+      color: #64748b;
+      font-style: italic;
+    }
+
+    /* Navigation */
+    .nav {
+      display: flex;
+      justify-content: center;
+      gap: 24px;
+      margin-top: 32px;
+      flex-wrap: wrap;
+    }
+
+    .nav a {
+      color: #475569;
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      padding: 8px 16px;
+      border-radius: 8px;
+      transition: all 0.2s;
+    }
+
+    .nav a:hover {
+      background: #0da1c7;
+      color: white;
+    }
+
+    /* Sections */
+    section {
+      background: white;
+      border-radius: 16px;
+      padding: 32px;
+      margin-bottom: 24px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.08), 0 4px 12px rgba(0,0,0,0.04);
+    }
+
+    section h2 {
+      font-size: 24px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 24px;
+      padding-bottom: 12px;
+      border-bottom: 2px solid #e2e8f0;
+    }
+
+    section h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: #334155;
+      margin-bottom: 12px;
+      margin-top: 24px;
+    }
+
+    section h3:first-child {
+      margin-top: 0;
+    }
+
+    p {
+      color: #475569;
+      margin-bottom: 16px;
+    }
+
+    /* Overview Grid */
+    .overview-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      align-items: center;
+    }
+
+    @media (max-width: 768px) {
+      .overview-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Rating Badge */
+    .rating-display {
+      background: linear-gradient(135deg, #f0fdfa 0%, #ccfbf1 100%);
+      border: 2px solid #14b8a6;
+      border-radius: 16px;
+      padding: 32px;
+      text-align: center;
+    }
+
+    .rating-badge {
+      display: inline-block;
+      background: linear-gradient(135deg, #0da1c7 0%, #0891b2 100%);
+      color: white;
+      font-size: 48px;
+      font-weight: 800;
+      padding: 24px 40px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 12px rgba(13, 161, 199, 0.3);
+    }
+
+    .rating-score {
+      font-size: 20px;
+      color: #0f766e;
+      font-weight: 600;
+    }
+
+    .rating-label {
+      font-size: 14px;
+      color: #64748b;
+      margin-top: 8px;
+    }
+
+    /* Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+    }
+
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    th {
+      background: #f8fafc;
+      font-weight: 600;
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #64748b;
+    }
+
+    td {
+      font-size: 14px;
+      color: #475569;
+    }
+
+    tr:hover {
+      background: #f8fafc;
+    }
+
+    /* Rating Scale */
+    .rating-row td:first-child {
+      font-weight: 700;
+      font-size: 18px;
+      text-align: center;
+      width: 80px;
+    }
+
+    .rating-aaa { color: #10b981; }
+    .rating-aa { color: #10b981; }
+    .rating-a { color: #10b981; }
+    .rating-bbb { color: #0da1c7; }
+    .rating-bb { color: #f59e0b; }
+    .rating-b { color: #f59e0b; }
+    .rating-ccc { color: #ef4444; }
+    .rating-cc { color: #ef4444; }
+    .rating-c { color: #ef4444; }
+
+    /* Dimension Cards */
+    .dimension-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+    }
+
+    @media (max-width: 768px) {
+      .dimension-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .dimension-card {
+      background: #f8fafc;
+      border-radius: 12px;
+      padding: 24px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .dimension-card h4 {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 16px;
+      font-weight: 600;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+
+    .dimension-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 28px;
+      height: 28px;
+      background: #0da1c7;
+      color: white;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .dimension-card .question {
+      font-style: italic;
+      color: #64748b;
+      font-size: 14px;
+      margin-bottom: 16px;
+    }
+
+    .dimension-card table {
+      margin: 0;
+    }
+
+    .dimension-card th, .dimension-card td {
+      padding: 8px 12px;
+      font-size: 13px;
+    }
+
+    .cost-tag {
+      display: inline-block;
+      background: #dcfce7;
+      color: #166534;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      margin-top: 12px;
+    }
+
+    .cost-tag.paid {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    /* Report Preview */
+    .report-preview {
+      background: #1e293b;
+      border-radius: 12px;
+      padding: 32px;
+      font-family: 'Courier New', monospace;
+      color: #e2e8f0;
+      overflow-x: auto;
+    }
+
+    .report-preview .title {
+      text-align: center;
+      font-size: 16px;
+      font-weight: bold;
+      color: #0da1c7;
+      margin-bottom: 24px;
+      letter-spacing: 1px;
+    }
+
+    .report-badge {
+      text-align: center;
+      margin: 24px 0;
+    }
+
+    .report-badge .grade {
+      display: inline-block;
+      border: 2px solid #0da1c7;
+      padding: 16px 32px;
+      border-radius: 8px;
+      font-size: 32px;
+      font-weight: bold;
+      color: #0da1c7;
+    }
+
+    .report-badge .label {
+      margin-top: 8px;
+      color: #94a3b8;
+    }
+
+    .progress-row {
+      display: flex;
+      align-items: center;
+      margin: 12px 0;
+      gap: 16px;
+    }
+
+    .progress-label {
+      width: 160px;
+      font-size: 13px;
+    }
+
+    .progress-bar {
+      flex: 1;
+      height: 20px;
+      background: #334155;
+      border-radius: 4px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #0da1c7 0%, #14b8a6 100%);
+    }
+
+    .progress-score {
+      width: 40px;
+      text-align: right;
+      font-weight: 600;
+    }
+
+    .progress-weight {
+      width: 40px;
+      text-align: right;
+      color: #64748b;
+    }
+
+    /* Status Table */
+    .status-done {
+      color: #10b981;
+      font-weight: 600;
+    }
+
+    .status-pending {
+      color: #f59e0b;
+      font-weight: 600;
+    }
+
+    /* Comparison */
+    .comparison-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    @media (max-width: 768px) {
+      .comparison-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .comparison-card {
+      padding: 24px;
+      border-radius: 12px;
+    }
+
+    .comparison-card.them {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+    }
+
+    .comparison-card.us {
+      background: #f0fdfa;
+      border: 1px solid #99f6e4;
+    }
+
+    .comparison-card h4 {
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 16px;
+    }
+
+    .comparison-card.them h4 {
+      color: #b91c1c;
+    }
+
+    .comparison-card.us h4 {
+      color: #0f766e;
+    }
+
+    .comparison-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 12px;
+      font-size: 14px;
+    }
+
+    .comparison-item .icon {
+      font-size: 16px;
+    }
+
+    /* Blockquote */
+    blockquote {
+      background: #f8fafc;
+      border-left: 4px solid #0da1c7;
+      padding: 16px 20px;
+      margin: 20px 0;
+      border-radius: 0 8px 8px 0;
+    }
+
+    blockquote p {
+      margin: 0;
+      font-size: 14px;
+    }
+
+    /* Decision Points */
+    .decision-item {
+      background: #fffbeb;
+      border: 1px solid #fde68a;
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 16px;
+    }
+
+    .decision-item h4 {
+      font-size: 15px;
+      font-weight: 600;
+      color: #92400e;
+      margin-bottom: 8px;
+    }
+
+    .decision-item p {
+      margin: 0;
+      font-size: 14px;
+      color: #78350f;
+    }
+
+    /* Footer */
+    .footer {
+      text-align: center;
+      padding: 32px;
+      color: #64748b;
+      font-size: 14px;
+    }
+
+    .footer em {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    /* Highlight */
+    .highlight {
+      background: linear-gradient(120deg, #0da1c710 0%, #0da1c720 100%);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-weight: 600;
+      color: #0891b2;
+    }
+
+    strong {
+      color: #0f172a;
+    }
+  </style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- Header -->
+  <header class="header">
+    <span class="badge">In Development</span>
+    <h1>Investment Risk Rating System</h1>
+    <div class="subtitle">"Bond Rating for Buildings"</div>
+    <div class="tagline">A Proprietary Risk Analysis Framework for Commercial Real Estate</div>
+    
+    <nav class="nav">
+      <a href="#overview">Overview</a>
+      <a href="#scale">Rating Scale</a>
+      <a href="#data">Data Sources</a>
+      <a href="#weights">How It Works</a>
+      <a href="#report">Report Preview</a>
+      <a href="#competitive">Competitive Edge</a>
+    </nav>
+  </header>
+
+  <!-- Overview -->
+  <section id="overview">
+    <h2>Overview</h2>
+    
+    <div class="overview-grid">
+      <div>
+        <h3>The Concept</h3>
+        <p>
+          The Investment Risk Rating System applies <strong>Wall Street-style credit analysis</strong> 
+          to individual properties, generating a standardized risk rating from 
+          <span class="highlight">AAA</span> (Exceptional) to <span class="highlight">C</span> (High Risk).
+        </p>
+        <p>
+          <strong>Think of it like a credit score for buildings.</strong>
+        </p>
+        <p>
+          Just as a FICO score tells lenders about a borrower's creditworthiness, 
+          our Risk Rating tells lenders about a property's investment quality — 
+          in the language they already use.
+        </p>
+      </div>
+      <div class="rating-display">
+        <div class="rating-badge">BBB</div>
+        <div class="rating-score">74 / 100</div>
+        <div class="rating-label">Investment Grade • Moderate Risk</div>
+      </div>
+    </div>
+
+    <h3 style="margin-top: 32px;">Why This Matters</h3>
+    <table>
+      <tr>
+        <th>Current Problem</th>
+        <th>Our Solution</th>
+      </tr>
+      <tr>
+        <td>Traditional appraisals provide point-in-time values but don't speak the language of risk</td>
+        <td>Standardized ratings (AAA to C) that banks already understand</td>
+      </tr>
+      <tr>
+        <td>Lenders must internally translate appraisal data into their risk models</td>
+        <td>Risk analysis front-loaded in reports for underwriters</td>
+      </tr>
+      <tr>
+        <td>No competitor offers property-level bond-style ratings</td>
+        <td><strong>First-to-market</strong> differentiation</td>
+      </tr>
+    </table>
+  </section>
+
+  <!-- Rating Scale -->
+  <section id="scale">
+    <h2>The Rating Scale</h2>
+    
+    <table>
+      <tr>
+        <th style="text-align: center; width: 80px;">Rating</th>
+        <th style="width: 200px;">Classification</th>
+        <th>Typical Properties</th>
+      </tr>
+      <tr class="rating-row">
+        <td class="rating-aaa">AAA</td>
+        <td>Institutional Grade</td>
+        <td>Class A CBD office, new construction multifamily in prime markets</td>
+      </tr>
+      <tr class="rating-row">
+        <td class="rating-aa">AA</td>
+        <td>High Quality</td>
+        <td>Prime suburban retail, fully stabilized apartments</td>
+      </tr>
+      <tr class="rating-row">
+        <td class="rating-a">A</td>
+        <td>Upper Medium Grade</td>
+        <td>Good location, stable tenancy, minor deferred maintenance</td>
+      </tr>
+      <tr class="rating-row">
+        <td class="rating-bbb">BBB</td>
+        <td>Investment Grade</td>
+        <td>Solid fundamentals, correlates with market cycles</td>
+      </tr>
+      <tr class="rating-row">
+        <td class="rating-bb">BB</td>
+        <td>Speculative</td>
+        <td>Older assets, transitional markets, some risk factors</td>
+      </tr>
+      <tr class="rating-row">
+        <td class="rating-b">B</td>
+        <td>Highly Speculative</td>
+        <td>Significant deferred maintenance, challenging location</td>
+      </tr>
+      <tr class="rating-row">
+        <td class="rating-ccc">CCC</td>
+        <td>Substantial Risk</td>
+        <td>Declining neighborhood, high vacancy</td>
+      </tr>
+      <tr class="rating-row">
+        <td class="rating-cc">CC</td>
+        <td>Extremely Speculative</td>
+        <td>Major physical or location issues</td>
+      </tr>
+      <tr class="rating-row">
+        <td class="rating-c">C</td>
+        <td>Near Default Risk</td>
+        <td>Obsolete, condemned, or severely distressed</td>
+      </tr>
+    </table>
+  </section>
+
+  <!-- Data Sources -->
+  <section id="data">
+    <h2>Data Sources</h2>
+    <p>The rating is calculated from <strong>four key dimensions</strong>, each powered by real data:</p>
+
+    <div class="dimension-grid">
+      <div class="dimension-card">
+        <h4><span class="dimension-number">1</span> Market Volatility</h4>
+        <p class="question">How stable is this property's value compared to the broader market?</p>
+        <table>
+          <tr><th>Data Point</th><th>Source</th></tr>
+          <tr><td>Historical price trends</td><td>Market Analysis</td></tr>
+          <tr><td>S&P 500 / REIT comparison</td><td>FRED API</td></tr>
+          <tr><td>Local market volatility</td><td>Sales Data</td></tr>
+        </table>
+        <span class="cost-tag">FREE - Uses existing data + FRED</span>
+      </div>
+
+      <div class="dimension-card">
+        <h4><span class="dimension-number">2</span> Liquidity Risk</h4>
+        <p class="question">How quickly could this property sell if needed?</p>
+        <table>
+          <tr><th>Data Point</th><th>Source</th></tr>
+          <tr><td>Days on Market (DOM)</td><td>MLS Data</td></tr>
+          <tr><td>Absorption Rate</td><td>Market Analysis</td></tr>
+          <tr><td>Inventory Levels</td><td>Market Analysis</td></tr>
+        </table>
+        <span class="cost-tag">FREE - Uses existing appraisal data</span>
+      </div>
+
+      <div class="dimension-card">
+        <h4><span class="dimension-number">3</span> Income Stability</h4>
+        <p class="question">How reliable is this property's income stream?</p>
+        <table>
+          <tr><th>Data Point</th><th>Source</th></tr>
+          <tr><td>Cap Rate</td><td>Income Approach</td></tr>
+          <tr><td>10-Year Treasury Rate</td><td>FRED API</td></tr>
+          <tr><td>Yield Spread</td><td>Calculated</td></tr>
+          <tr><td>Occupancy Trends</td><td>Income Analysis</td></tr>
+        </table>
+        <span class="cost-tag">FREE - Uses existing data + FRED</span>
+      </div>
+
+      <div class="dimension-card">
+        <h4><span class="dimension-number">4</span> Asset Quality</h4>
+        <p class="question">What is the physical and locational quality?</p>
+        <table>
+          <tr><th>Data Point</th><th>Source</th></tr>
+          <tr><td>Year Built / Condition</td><td>Inspection</td></tr>
+          <tr><td>Recent Permits</td><td>Cotality API</td></tr>
+          <tr><td>School Ratings</td><td>GreatSchools API</td></tr>
+          <tr><td>Crime Statistics</td><td>Crimeometer API</td></tr>
+        </table>
+        <span class="cost-tag paid">Optional paid APIs enhance accuracy</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section id="weights">
+    <h2>How It Works</h2>
+    
+    <blockquote>
+      <p><strong>The weights are NOT fixed</strong> — they are calculated automatically based on the property and available data.</p>
+    </blockquote>
+
+    <h3>Dynamic Weighting Factors</h3>
+    <table>
+      <tr>
+        <th>Factor</th>
+        <th>How It Affects Weights</th>
+      </tr>
+      <tr>
+        <td><strong>Property Type</strong></td>
+        <td>Multifamily emphasizes Income Stability • Land emphasizes Market Volatility</td>
+      </tr>
+      <tr>
+        <td><strong>Income-Producing?</strong></td>
+        <td>Rental properties get higher weight on income metrics</td>
+      </tr>
+      <tr>
+        <td><strong>Data Completeness</strong></td>
+        <td>Strong data = more weight • Sparse data = reduced reliance</td>
+      </tr>
+      <tr>
+        <td><strong>Market Conditions</strong></td>
+        <td>Volatile markets increase weight on Market Volatility dimension</td>
+      </tr>
+    </table>
+
+    <h3>Example Weight Distributions</h3>
+    <table>
+      <tr>
+        <th>Property Type</th>
+        <th style="text-align: center;">Market Vol.</th>
+        <th style="text-align: center;">Liquidity</th>
+        <th style="text-align: center;">Income</th>
+        <th style="text-align: center;">Quality</th>
+      </tr>
+      <tr>
+        <td>Multifamily</td>
+        <td style="text-align: center;">25%</td>
+        <td style="text-align: center;">25%</td>
+        <td style="text-align: center; font-weight: 600; color: #0da1c7;">35%</td>
+        <td style="text-align: center;">15%</td>
+      </tr>
+      <tr>
+        <td>Office</td>
+        <td style="text-align: center;">30%</td>
+        <td style="text-align: center;">25%</td>
+        <td style="text-align: center;">30%</td>
+        <td style="text-align: center;">15%</td>
+      </tr>
+      <tr>
+        <td>Retail</td>
+        <td style="text-align: center;">30%</td>
+        <td style="text-align: center;">30%</td>
+        <td style="text-align: center;">25%</td>
+        <td style="text-align: center;">15%</td>
+      </tr>
+      <tr>
+        <td>Industrial</td>
+        <td style="text-align: center;">25%</td>
+        <td style="text-align: center;">30%</td>
+        <td style="text-align: center;">30%</td>
+        <td style="text-align: center;">15%</td>
+      </tr>
+      <tr>
+        <td>Land</td>
+        <td style="text-align: center; font-weight: 600; color: #0da1c7;">40%</td>
+        <td style="text-align: center;">35%</td>
+        <td style="text-align: center;">5%</td>
+        <td style="text-align: center;">20%</td>
+      </tr>
+      <tr>
+        <td>Residential</td>
+        <td style="text-align: center;">30%</td>
+        <td style="text-align: center;">30%</td>
+        <td style="text-align: center;">10%</td>
+        <td style="text-align: center; font-weight: 600; color: #0da1c7;">30%</td>
+      </tr>
+    </table>
+    <p style="font-size: 13px; color: #64748b; margin-top: 8px;"><em>These are starting points — the algorithm adjusts based on actual data availability.</em></p>
+  </section>
+
+  <!-- Report Preview -->
+  <section id="report">
+    <h2>Report Placement</h2>
+    <p>The Risk Rating appears <strong>immediately after the Summary of Appraisal</strong> — right where bankers and underwriters look first.</p>
+
+    <div class="report-preview">
+      <div class="title">INVESTMENT RISK ANALYSIS</div>
+      
+      <p style="text-align: center; color: #94a3b8; font-size: 13px; margin-bottom: 16px;">
+        This property has been assigned a risk rating of BBB (Investment Grade)<br>
+        based on analysis of market, financial, and physical factors.
+      </p>
+
+      <div class="report-badge">
+        <div class="grade">BBB</div>
+        <div class="label">Investment Grade • 74 / 100</div>
+      </div>
+
+      <div style="margin-top: 32px; padding-top: 16px; border-top: 1px solid #334155;">
+        <div style="color: #94a3b8; font-size: 12px; margin-bottom: 16px; letter-spacing: 1px;">RISK DIMENSION BREAKDOWN</div>
+        
+        <div class="progress-row">
+          <span class="progress-label">Market Volatility</span>
+          <div class="progress-bar"><div class="progress-fill" style="width: 68%;"></div></div>
+          <span class="progress-score">68</span>
+          <span class="progress-weight">28%</span>
+        </div>
+        <div class="progress-row">
+          <span class="progress-label">Liquidity Risk</span>
+          <div class="progress-bar"><div class="progress-fill" style="width: 72%;"></div></div>
+          <span class="progress-score">72</span>
+          <span class="progress-weight">25%</span>
+        </div>
+        <div class="progress-row">
+          <span class="progress-label">Income Stability</span>
+          <div class="progress-bar"><div class="progress-fill" style="width: 81%;"></div></div>
+          <span class="progress-score">81</span>
+          <span class="progress-weight">32%</span>
+        </div>
+        <div class="progress-row">
+          <span class="progress-label">Asset Quality</span>
+          <div class="progress-bar"><div class="progress-fill" style="width: 69%;"></div></div>
+          <span class="progress-score">69</span>
+          <span class="progress-weight">15%</span>
+        </div>
+      </div>
+
+      <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #334155;">
+        <div style="color: #94a3b8; font-size: 12px; margin-bottom: 8px; letter-spacing: 1px;">WEIGHTING RATIONALE</div>
+        <p style="color: #cbd5e1; font-size: 13px;">
+          Weights determined by: Multifamily property type, strong income data availability, current stable market conditions.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Implementation Status -->
+  <section>
+    <h2>Implementation Status</h2>
+    
+    <table>
+      <tr>
+        <th>Component</th>
+        <th style="text-align: center; width: 100px;">Status</th>
+        <th>Notes</th>
+      </tr>
+      <tr>
+        <td>Rating Algorithm</td>
+        <td class="status-done" style="text-align: center;">✓ Complete</td>
+        <td>Dynamic weighting engine built and deployed</td>
+      </tr>
+      <tr>
+        <td>FRED Data (Treasury, Fed Funds)</td>
+        <td class="status-done" style="text-align: center;">✓ Live</td>
+        <td>Free API, working in production</td>
+      </tr>
+      <tr>
+        <td>Property Data (Montana)</td>
+        <td class="status-done" style="text-align: center;">✓ Live</td>
+        <td>Montana Cadastral integration working</td>
+      </tr>
+      <tr>
+        <td>Wizard UI Panel</td>
+        <td class="status-done" style="text-align: center;">✓ Complete</td>
+        <td>Risk Rating panel in Review page</td>
+      </tr>
+      <tr>
+        <td>Report Page Layout</td>
+        <td class="status-done" style="text-align: center;">✓ Complete</td>
+        <td>Investment Risk Analysis page ready</td>
+      </tr>
+      <tr>
+        <td>Property Data (Out-of-State)</td>
+        <td class="status-pending" style="text-align: center;">Pending</td>
+        <td>Cotality API needs activation</td>
+      </tr>
+      <tr>
+        <td>School Ratings</td>
+        <td class="status-pending" style="text-align: center;">Pending</td>
+        <td>GreatSchools API needs setup</td>
+      </tr>
+      <tr>
+        <td>Crime Data</td>
+        <td class="status-pending" style="text-align: center;">Pending</td>
+        <td>Crimeometer subscription needed</td>
+      </tr>
+    </table>
+  </section>
+
+  <!-- Data Costs -->
+  <section>
+    <h2>Data Costs</h2>
+    
+    <table>
+      <tr>
+        <th>Data Source</th>
+        <th>Purpose</th>
+        <th>Cost</th>
+        <th style="text-align: center;">Status</th>
+      </tr>
+      <tr>
+        <td><strong>FRED API</strong></td>
+        <td>Treasury rates, Fed Funds, GDP</td>
+        <td style="color: #10b981; font-weight: 600;">FREE</td>
+        <td class="status-done" style="text-align: center;">✓ Live</td>
+      </tr>
+      <tr>
+        <td><strong>Census API</strong></td>
+        <td>Demographics, income data</td>
+        <td style="color: #10b981; font-weight: 600;">FREE</td>
+        <td class="status-done" style="text-align: center;">✓ Live</td>
+      </tr>
+      <tr>
+        <td><strong>Montana Cadastral</strong></td>
+        <td>MT property data</td>
+        <td style="color: #10b981; font-weight: 600;">FREE</td>
+        <td class="status-done" style="text-align: center;">✓ Live</td>
+      </tr>
+      <tr>
+        <td><strong>Cotality</strong></td>
+        <td>Out-of-state property data</td>
+        <td>Enterprise pricing</td>
+        <td class="status-pending" style="text-align: center;">Pending</td>
+      </tr>
+      <tr>
+        <td><strong>GreatSchools</strong></td>
+        <td>School district ratings</td>
+        <td>Free / Paid</td>
+        <td class="status-pending" style="text-align: center;">Optional</td>
+      </tr>
+      <tr>
+        <td><strong>Crimeometer</strong></td>
+        <td>Crime statistics</td>
+        <td>$50-500/mo</td>
+        <td class="status-pending" style="text-align: center;">Optional</td>
+      </tr>
+    </table>
+
+    <blockquote>
+      <p><strong>Note:</strong> The core rating system works today with FREE data sources. Paid APIs enhance accuracy but are not required.</p>
+    </blockquote>
+  </section>
+
+  <!-- Competitive Edge -->
+  <section id="competitive">
+    <h2>Competitive Edge</h2>
+
+    <div class="comparison-grid">
+      <div class="comparison-card them">
+        <h4>What CBRE Does</h4>
+        <div class="comparison-item">
+          <span class="icon">✕</span>
+          <span>Uses historical data only</span>
+        </div>
+        <div class="comparison-item">
+          <span class="icon">✕</span>
+          <span>No standardized risk rating</span>
+        </div>
+        <div class="comparison-item">
+          <span class="icon">✕</span>
+          <span>Fixed analysis approach</span>
+        </div>
+        <div class="comparison-item">
+          <span class="icon">✕</span>
+          <span>Reports require translation for bank use</span>
+        </div>
+      </div>
+
+      <div class="comparison-card us">
+        <h4>What We Do</h4>
+        <div class="comparison-item">
+          <span class="icon">✓</span>
+          <span><strong>Predictive Risk Modeling</strong> with live economic data</span>
+        </div>
+        <div class="comparison-item">
+          <span class="icon">✓</span>
+          <span><strong>AAA to C Scale</strong> that banks already understand</span>
+        </div>
+        <div class="comparison-item">
+          <span class="icon">✓</span>
+          <span><strong>Dynamic Weighting</strong> adapts to property type & data</span>
+        </div>
+        <div class="comparison-item">
+          <span class="icon">✓</span>
+          <span><strong>Front-Loaded Risk Analysis</strong> for credit officers</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- USPAP Compliance -->
+  <section>
+    <h2>USPAP Compliance</h2>
+    <p>Every report includes a required disclosure per Advisory Opinion 18:</p>
+    
+    <blockquote>
+      <p><strong>RISK RATING DISCLOSURE</strong></p>
+      <p style="margin-top: 12px;">
+        The Investment Risk Rating is a statistical model based on aggregated market data, 
+        used as a supplementary risk analysis tool. This rating does not replace the 
+        appraiser's value conclusion or professional judgment. The appraiser has reviewed 
+        all model inputs and outputs and determined them reasonable for this analysis.
+      </p>
+    </blockquote>
+  </section>
+
+  <!-- Decision Points -->
+  <section>
+    <h2>Decision Points</h2>
+    
+    <div class="decision-item">
+      <h4>GreatSchools & Crimeometer APIs</h4>
+      <p>Add now for enhanced Asset Quality scoring, or defer to reduce costs?</p>
+    </div>
+
+    <div class="decision-item">
+      <h4>Cotality API</h4>
+      <p>When should we activate for out-of-state property data?</p>
+    </div>
+
+    <div class="decision-item">
+      <h4>Rating Preview</h4>
+      <p>Show preliminary rating during data entry, or only in final Review?</p>
+    </div>
+
+    <div class="decision-item">
+      <h4>Weight Customization</h4>
+      <p>Allow appraisers to override algorithm weights, or keep fully automated?</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <em>Document prepared for executive review</em>
+    <span>Technical implementation details available in the development plan</span>
+  </footer>
+
+</div>
+
+</body>
+</html>
+

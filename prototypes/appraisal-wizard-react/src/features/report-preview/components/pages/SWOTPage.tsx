@@ -134,3 +134,4 @@ export const SWOTPage: React.FC<SWOTPageProps> = ({ data, pageNumber }) => {
 
 export default SWOTPage;
 
+

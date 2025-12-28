@@ -298,3 +298,4 @@ export function SWOTAnalysis({
 
 export default SWOTAnalysis;
 
+

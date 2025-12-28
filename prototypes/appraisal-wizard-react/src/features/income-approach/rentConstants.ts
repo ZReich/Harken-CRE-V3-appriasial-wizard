@@ -180,3 +180,4 @@ export const formatRentPerSf = (value: number): string => {
 
 
 
+

@@ -25,9 +25,8 @@ import {
   getSiteImprovementTypesByCategory,
   SITE_IMPROVEMENT_CATEGORIES,
   type SiteImprovementCategory,
-  type SiteImprovementType,
 } from '../constants/marshallSwift';
-import { useCustomSiteTypes, type CustomSiteType } from '../hooks/useCustomSiteTypes';
+import { useCustomSiteTypes } from '../hooks/useCustomSiteTypes';
 import ExpandableNote from './ExpandableNote';
 import type { SiteImprovement, SiteImprovementCondition } from '../types';
 
@@ -56,14 +55,14 @@ const ALL_CATEGORIES = SITE_IMPROVEMENT_CATEGORIES;
 const VISIBLE_ON_SMALL = 7;
 
 // Economic life reference guide by category (for custom improvements)
-const ECONOMIC_LIFE_GUIDE: Record<SiteImprovementCategory, { range: string; examples: string; typical: number }> = {
+const ECONOMIC_LIFE_GUIDE: Record<SiteImprovementCategory | 'other', { range: string; examples: string; typical: number }> = {
   paving: { range: '5-30 yrs', examples: 'Striping 5, Gravel 10, Asphalt 20, Concrete 30', typical: 20 },
   fencing: { range: '15-40 yrs', examples: 'Wood 15, Chain Link 25, Ornamental 30, Masonry 40', typical: 20 },
   lighting: { range: '15-25 yrs', examples: 'Bollard 15, Pole Light 20, High-Mast 25', typical: 20 },
-  landscape: { range: '10-25 yrs', examples: 'Basic 10, Professional 15, Windbreak 25', typical: 15 },
+  landscaping: { range: '10-25 yrs', examples: 'Basic 10, Professional 15, Windbreak 25', typical: 15 },
   structures: { range: '15-40 yrs', examples: 'Shed 15, Deck 20, Carport 25, Garage 40', typical: 25 },
   utilities: { range: '15-35 yrs', examples: 'Irrigation 15, Well 25, Septic 30', typical: 25 },
-  signs: { range: '15-20 yrs', examples: 'Building Sign 15, Monument 15, Pylon 20', typical: 15 },
+  signage: { range: '15-20 yrs', examples: 'Building Sign 15, Monument 15, Pylon 20', typical: 15 },
   recreation: { range: '15-30 yrs', examples: 'Above-ground Pool 15, In-ground Pool 25, Tennis Court 30', typical: 25 },
   agricultural: { range: '15-25 yrs', examples: 'Corrals 15, Feed Bunks 20, Scales 25', typical: 20 },
   other: { range: '10-30 yrs', examples: 'Varies by improvement type', typical: 20 },
@@ -141,7 +140,6 @@ export default function SiteImprovementsInventory({
   const { 
     customTypes, 
     addCustomType, 
-    removeCustomType,
     getCustomTypesByCategory,
     toSiteImprovementType,
   } = useCustomSiteTypes();
@@ -478,7 +476,7 @@ export default function SiteImprovementsInventory({
                   Economic Life (yrs)
                   <span 
                     className="inline-flex items-center cursor-help"
-                    title={`Typical range for ${ALL_CATEGORIES.find(c => c.id === selectedCategory)?.label}: ${ECONOMIC_LIFE_GUIDE[selectedCategory]?.range || '10-30 yrs'}`}
+                    title={`Typical range for ${ALL_CATEGORIES.find(c => c.id === selectedCategory)?.label}: ${ECONOMIC_LIFE_GUIDE[selectedCategory as keyof typeof ECONOMIC_LIFE_GUIDE]?.range || '10-30 yrs'}`}
                   >
                     <HelpCircle size={12} className="text-gray-400" />
                   </span>
@@ -503,18 +501,18 @@ export default function SiteImprovementsInventory({
                     Economic Life Guide for {ALL_CATEGORIES.find(c => c.id === selectedCategory)?.label}
                   </div>
                   <div className="flex flex-wrap gap-x-4 gap-y-1">
-                    <span><strong>Range:</strong> {ECONOMIC_LIFE_GUIDE[selectedCategory]?.range || '10-30 yrs'}</span>
-                    <span><strong>Typical:</strong> {ECONOMIC_LIFE_GUIDE[selectedCategory]?.typical || 20} yrs</span>
+                    <span><strong>Range:</strong> {ECONOMIC_LIFE_GUIDE[selectedCategory as keyof typeof ECONOMIC_LIFE_GUIDE]?.range || '10-30 yrs'}</span>
+                    <span><strong>Typical:</strong> {ECONOMIC_LIFE_GUIDE[selectedCategory as keyof typeof ECONOMIC_LIFE_GUIDE]?.typical || 20} yrs</span>
                   </div>
                   <div className="mt-1 text-gray-500 italic">
-                    {ECONOMIC_LIFE_GUIDE[selectedCategory]?.examples || 'Varies by type'}
+                    {ECONOMIC_LIFE_GUIDE[selectedCategory as keyof typeof ECONOMIC_LIFE_GUIDE]?.examples || 'Varies by type'}
                   </div>
                   <button
                     type="button"
-                    onClick={() => setCustomEconomicLife(String(ECONOMIC_LIFE_GUIDE[selectedCategory]?.typical || 20))}
+                    onClick={() => setCustomEconomicLife(String(ECONOMIC_LIFE_GUIDE[selectedCategory as keyof typeof ECONOMIC_LIFE_GUIDE]?.typical || 20))}
                     className="mt-1.5 text-[#0da1c7] hover:text-[#0da1c7]/80 font-medium underline"
                   >
-                    Use typical ({ECONOMIC_LIFE_GUIDE[selectedCategory]?.typical || 20} yrs)
+                    Use typical ({ECONOMIC_LIFE_GUIDE[selectedCategory as keyof typeof ECONOMIC_LIFE_GUIDE]?.typical || 20} yrs)
                   </button>
                 </div>
               </div>
@@ -671,7 +669,9 @@ export default function SiteImprovementsInventory({
                         {improvement.typeName}
                       </span>
                       {hasNotes && !isExpanded && (
-                        <FileText size={12} className="text-[#0da1c7] flex-shrink-0" title="Has notes" />
+                        <span title="Has notes">
+                          <FileText size={12} className="text-[#0da1c7] flex-shrink-0" />
+                        </span>
                       )}
                     </div>
                   </div>

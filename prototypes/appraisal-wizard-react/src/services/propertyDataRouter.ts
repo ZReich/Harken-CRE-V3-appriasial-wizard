@@ -50,7 +50,7 @@ export async function getPropertyData(request: PropertyLookupRequest): Promise<P
   const isMontana = state ? isMontanaProperty(state) : false;
   
   if (isMontana) {
-    // Use FREE Montana Cadastral API
+    // Use FREE Montana Cadastral API for property data
     let response: CadastralResponse;
     
     if (latitude !== undefined && longitude !== undefined) {
@@ -67,6 +67,21 @@ export async function getPropertyData(request: PropertyLookupRequest): Promise<P
         isFreeService: true,
         error: 'Insufficient lookup parameters. Provide coordinates, parcel ID, or full address.',
       };
+    }
+    
+    // Supplement with Cotality for zoning data (Montana Cadastral doesn't provide zoning)
+    if (response.success && response.data && address && city && state) {
+      try {
+        console.log('[PropertyDataRouter] Fetching zoning data from Cotality for Montana property...');
+        const cotalityResponse = await getCotalityData(address, city, state);
+        if (cotalityResponse.success && cotalityResponse.data?.zoning) {
+          response.data.zoning = cotalityResponse.data.zoning;
+          console.log('[PropertyDataRouter] Zoning data added:', response.data.zoning);
+        }
+      } catch (e) {
+        // Zoning lookup failed - continue without it (non-critical)
+        console.warn('[PropertyDataRouter] Cotality zoning lookup failed:', e);
+      }
     }
     
     return {

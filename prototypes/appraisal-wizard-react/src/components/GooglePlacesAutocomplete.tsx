@@ -128,3 +128,4 @@ export default function GooglePlacesAutocomplete({
 // Also export the PlaceDetails type for convenience
 export type { PlaceDetails };
 
+
