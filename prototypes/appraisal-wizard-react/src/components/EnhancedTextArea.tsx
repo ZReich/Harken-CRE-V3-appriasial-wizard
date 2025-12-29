@@ -555,10 +555,14 @@ export default function EnhancedTextArea({
       
       <div 
         className={`relative ${isFullscreen 
-          ? 'fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-white rounded-2xl shadow-2xl p-8 flex flex-col w-[90vw] max-w-6xl' 
+          ? 'fixed top-1/2 left-1/2 z-50 bg-white rounded-2xl shadow-2xl p-8 flex flex-col w-[90vw] max-w-6xl overflow-hidden' 
           : ''
         }`}
-        style={isFullscreen ? { height: '85vh', maxHeight: '85vh' } : undefined}
+        style={isFullscreen ? { 
+          height: '85vh', 
+          maxHeight: '85vh',
+          transform: 'translate(-50%, -50%)'
+        } : undefined}
       >
         {/* Label Row */}
         <div className="flex items-center justify-between mb-2">
