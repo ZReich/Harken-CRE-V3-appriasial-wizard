@@ -209,7 +209,7 @@ const BuildingTypeSelector: FC<BuildingTypeSelectorProps> = ({
     const showOccupancyCodes = selectedPropertyType || (effectivePropertyType && availableOccupancyCodes.length > 0);
     
     return (
-      <div className="absolute z-50 top-full left-0 mt-1 bg-white rounded-xl shadow-lg border border-gray-200 w-[400px] max-h-[400px] overflow-hidden">
+      <div className="absolute z-50 top-full right-0 mt-1 bg-white rounded-xl shadow-lg border border-gray-200 w-[400px] max-h-[400px] overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-gray-50">
           <h4 className="text-sm font-semibold text-gray-900">
