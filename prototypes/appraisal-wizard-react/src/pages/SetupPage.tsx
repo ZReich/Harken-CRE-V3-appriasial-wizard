@@ -1525,6 +1525,49 @@ export default function SetupPage() {
                   );
                 })}
               </div>
+              
+              {/* Cost Segregation Toggle - Only shows when Cost Approach is selected */}
+              {scenario.approaches.includes('Cost Approach') && (
+                <div className="mt-4 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
+                        <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                        </svg>
+                      </div>
+                      <div>
+                        <h4 className="font-semibold text-emerald-900">Cost Segregation Analysis</h4>
+                        <p className="text-xs text-emerald-700">
+                          Generate IRS-compliant depreciation breakdown (5/15/39-year classes)
+                        </p>
+                      </div>
+                    </div>
+                    <label className="relative inline-flex items-center cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={wizardState.subjectData?.costSegregationEnabled || false}
+                        onChange={(e) => {
+                          setSubjectData({
+                            ...wizardState.subjectData,
+                            costSegregationEnabled: e.target.checked,
+                          });
+                        }}
+                        className="sr-only peer"
+                      />
+                      <div className="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-emerald-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
+                    </label>
+                  </div>
+                  {wizardState.subjectData?.costSegregationEnabled && (
+                    <div className="mt-3 pt-3 border-t border-emerald-200 text-xs text-emerald-700">
+                      <p>
+                        Cost Segregation will be available in the Analysis section after completing the Cost Approach.
+                        This analysis helps accelerate depreciation for tax benefits.
+                      </p>
+                    </div>
+                  )}
+                </div>
+              )}
             </div>
           ))}
           

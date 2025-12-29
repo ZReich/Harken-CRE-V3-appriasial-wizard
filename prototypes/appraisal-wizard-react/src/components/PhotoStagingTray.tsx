@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { 
   ChevronDown, 
   Check, 
@@ -11,8 +11,9 @@ import {
   Zap
 } from 'lucide-react';
 import { useWizard } from '../context/WizardContext';
-import type { StagingPhoto } from '../types';
+import type { StagingPhoto, DetectedBuildingComponent } from '../types';
 import VisualSlotPicker from './VisualSlotPicker';
+import PhotoComponentSuggestions from './PhotoComponentSuggestions';
 
 interface PhotoStagingTrayProps {
   onAssignPhoto: (photo: StagingPhoto, slotId: string) => void;
@@ -21,6 +22,10 @@ interface PhotoStagingTrayProps {
   onDragStart?: (photo: StagingPhoto) => void;
   onDragEnd?: () => void;
   className?: string;
+  /** Callback when user accepts a detected component from photo analysis */
+  onAcceptDetectedComponent?: (component: DetectedBuildingComponent) => void;
+  /** Set of component type IDs already in the inventory */
+  existingComponentTypeIds?: Set<string>;
 }
 
 // Confidence color coding
@@ -213,6 +218,54 @@ function StagingPhotoCard({
   );
 }
 
+// Section to display detected building components from classified photos
+function DetectedComponentsSection({ 
+  classifiedPhotos,
+  onAcceptComponent,
+  existingComponentTypeIds,
+}: { 
+  classifiedPhotos: StagingPhoto[];
+  onAcceptComponent?: (component: DetectedBuildingComponent) => void;
+  existingComponentTypeIds?: Set<string>;
+}) {
+  // Collect all detected components from all classified photos
+  const allDetectedComponents = useMemo(() => {
+    const components: DetectedBuildingComponent[] = [];
+    const seenIds = new Set<string>();
+    
+    for (const photo of classifiedPhotos) {
+      if (photo.detectedComponents) {
+        for (const component of photo.detectedComponents) {
+          // Dedupe by component type ID
+          if (!seenIds.has(component.componentTypeId)) {
+            seenIds.add(component.componentTypeId);
+            components.push(component);
+          }
+        }
+      }
+    }
+    
+    return components;
+  }, [classifiedPhotos]);
+  
+  // Don't render if no components detected
+  if (allDetectedComponents.length === 0) {
+    return null;
+  }
+  
+  return (
+    <div className="mt-4">
+      <PhotoComponentSuggestions
+        detectedComponents={allDetectedComponents}
+        photoFilename={`${classifiedPhotos.length} photos analyzed`}
+        compact={true}
+        onAcceptComponent={onAcceptComponent}
+        existingComponentTypeIds={existingComponentTypeIds}
+      />
+    </div>
+  );
+}
+
 export default function PhotoStagingTray({
   onAssignPhoto,
   onAcceptAllSuggestions,
@@ -220,6 +273,8 @@ export default function PhotoStagingTray({
   onDragStart,
   onDragEnd,
   className = '',
+  onAcceptDetectedComponent,
+  existingComponentTypeIds,
 }: PhotoStagingTrayProps) {
   const { getStagingPhotos, removeStagingPhoto, clearStagingPhotos } = useWizard();
   const [isCollapsed, setIsCollapsed] = useState(false);
@@ -390,6 +445,13 @@ export default function PhotoStagingTray({
               </div>
             ))}
           </div>
+          
+          {/* Detected Building Components Section */}
+          <DetectedComponentsSection 
+            classifiedPhotos={classifiedPhotos}
+            onAcceptComponent={onAcceptDetectedComponent}
+            existingComponentTypeIds={existingComponentTypeIds}
+          />
         </div>
       )}
     </div>

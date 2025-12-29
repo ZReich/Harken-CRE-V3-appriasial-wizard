@@ -39,6 +39,7 @@ import { useSmartContinue } from '../hooks/useSmartContinue';
 import { SUBJECT_DATA_GUIDANCE, type SectionGuidance } from '../constants/wizardPhaseGuidance';
 import { generateDraft } from '../services/aiService';
 import type { AIGenerationContext } from '../types/api';
+import { getPropertyType } from '../constants/marshallSwift';
 
 const tabs = [
   { id: 'location', label: 'Location & Area', Icon: LocationIcon },
@@ -148,12 +149,29 @@ export default function SubjectDataPage() {
   // Auto-populate city/county from address entered in Setup phase
   const [cityCounty, setCityCounty] = useState(() => {
     const addr = wizardState.subjectData?.address;
-    if (addr?.city && addr?.county) {
-      return `${addr.city}, ${addr.county}`;
-    } else if (addr?.city) {
-      return addr.city;
-    } else if (addr?.county) {
-      return addr.county;
+    
+    // Helper to clean up potentially corrupted city values (e.g., "Bozeman, Bozeman, Bozeman")
+    const cleanCityValue = (city: string | undefined): string => {
+      if (!city) return '';
+      // If the city contains commas, it might be corrupted with repeated values
+      if (city.includes(',')) {
+        const parts = city.split(',').map(p => p.trim()).filter(Boolean);
+        // Get unique values and take the first one (the actual city)
+        const uniqueParts = [...new Set(parts)];
+        return uniqueParts[0] || city;
+      }
+      return city;
+    };
+    
+    const cleanCity = cleanCityValue(addr?.city);
+    const county = addr?.county;
+    
+    if (cleanCity && county) {
+      return `${cleanCity}, ${county}`;
+    } else if (cleanCity) {
+      return cleanCity;
+    } else if (county) {
+      return county;
     }
     return '';
   });
@@ -537,6 +555,8 @@ export default function SubjectDataPage() {
           />
         ) : activeTab === 'site' ? (
           <SiteContent
+            // Property type for filtering
+            propertyType={wizardState.propertyType}
             // Site Size & Shape
             acres={acres}
             setAcres={setAcres}
@@ -872,6 +892,8 @@ function DemographicsContent({ latitude, longitude }: DemographicsProps) {
 // SITE CONTENT - Enhanced with ButtonSelectors
 // ==========================================
 interface SiteProps {
+  // Property type for filtering
+  propertyType: string | null;
   // Site Size & Shape
   acres: string;
   setAcres: (v: string) => void;
@@ -1019,6 +1041,7 @@ const FLOOD_INSURANCE_OPTIONS = [
 ];
 
 function SiteContent({
+  propertyType,
   acres, setAcres, squareFeet, setSquareFeet,
   shape, setShape,
   frontage, setFrontage,
@@ -1313,6 +1336,7 @@ Overall, the site is well-suited for its current use and presents no significant
       <SiteImprovementsInventory
         improvements={siteImprovements}
         onChange={onSiteImprovementsChange}
+        propertyCategory={propertyType ? getPropertyType(propertyType)?.category : undefined}
       />
 
       {/* Additional Site Characteristics */}

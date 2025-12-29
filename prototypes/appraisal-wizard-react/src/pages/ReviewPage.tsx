@@ -15,6 +15,7 @@ import { useCompletion } from '../hooks/useCompletion';
 import { useCelebration } from '../hooks/useCelebration';
 import { useSmartContinue } from '../hooks/useSmartContinue';
 import { useWizard } from '../context/WizardContext';
+import { useComponentHealthAnalysis } from '../hooks/useComponentHealthAnalysis';
 import { useToast } from '../context/ToastContext';
 import EnhancedTextArea from '../components/EnhancedTextArea';
 import SWOTAnalysis, { type SWOTData } from '../components/SWOTAnalysis';
@@ -275,6 +276,11 @@ export default function ReviewPage() {
   // Get celebration trigger for finale
   const { triggerSectionCelebration } = useCelebration();
   const { applyPreviewEdits, state: wizardState } = useWizard();
+  
+  // Analyze building component health for SWOT suggestions
+  const componentHealth = useComponentHealthAnalysis({
+    improvementsInventory: wizardState.improvementsInventory,
+  });
 
   // Handler to receive report state from ReportEditor
   const handleReportStateChange = useCallback((state: ReportState, actions: ReportStateActions) => {
@@ -987,7 +993,11 @@ We considered alternative uses including renovation, conversion to alternative u
                 const propertyType = state.propertyType || 'commercial';
                 const location = state.subjectData?.address?.city || 'the area';
                 
-                // Simulated AI-generated suggestions
+                // Component health-based weaknesses and threats
+                const componentWeaknesses = componentHealth.weaknesses.map(issue => issue.suggestion);
+                const componentThreats = componentHealth.threats.map(issue => issue.suggestion);
+                
+                // Simulated AI-generated suggestions + component health issues
                 return {
                   strengths: [
                     `Prime location in ${location} with excellent visibility`,
@@ -995,6 +1005,7 @@ We considered alternative uses including renovation, conversion to alternative u
                     `Strong tenant demand in the local market`,
                   ],
                   weaknesses: [
+                    ...componentWeaknesses,
                     `Limited on-site parking relative to building size`,
                     `Single-tenant configuration may limit marketability`,
                   ],
@@ -1004,6 +1015,7 @@ We considered alternative uses including renovation, conversion to alternative u
                     `Expansion potential on excess land area`,
                   ],
                   threats: [
+                    ...componentThreats,
                     `Rising interest rates may impact cap rates`,
                     `New competitive supply under construction`,
                     `Economic uncertainty in the broader market`,

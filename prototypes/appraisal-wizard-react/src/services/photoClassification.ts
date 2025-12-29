@@ -49,6 +49,39 @@ export interface PhotoClassificationResult {
   metadata?: PhotoMetadata;
   processingTimeMs: number;
   error?: string;
+  /** Detected building components for inventory pre-population */
+  detectedComponents?: DetectedBuildingComponent[];
+}
+
+// ==========================================
+// BUILDING COMPONENT DETECTION TYPES
+// ==========================================
+
+export type ComponentDetectionCategory = 
+  | 'roofing'
+  | 'walls'
+  | 'windows'
+  | 'foundation'
+  | 'hvac'
+  | 'electrical'
+  | 'flooring'
+  | 'ceilings';
+
+export interface DetectedBuildingComponent {
+  /** Component type ID matching BuildingComponentType.id in buildingComponents.ts */
+  componentTypeId: string;
+  /** Human-readable label for UI display */
+  componentLabel: string;
+  /** Category for grouping (exterior, mechanical, interior) */
+  category: ComponentDetectionCategory;
+  /** Confidence score 0-100 */
+  confidence: number;
+  /** AI reasoning for the detection */
+  reasoning: string;
+  /** Suggested condition based on visual analysis */
+  suggestedCondition?: 'excellent' | 'good' | 'average' | 'fair' | 'poor';
+  /** Any additional notes about the component */
+  notes?: string;
 }
 
 export interface StagingPhoto {
@@ -375,22 +408,254 @@ async function classifyWithGPT4o(
 }
 
 // ==========================================
+// BUILDING COMPONENT DETECTION (GPT-4o Vision)
+// ==========================================
+
+const COMPONENT_DETECTION_PROMPT = `You are an expert commercial real estate appraiser analyzing property photos for building component inventory.
+
+Identify any building components visible in this photo that would be relevant for a cost approach appraisal.
+
+DETECTABLE COMPONENTS:
+
+ROOFING (exterior photos):
+- "roof-tpo-epdm": TPO/EPDM Membrane roof
+- "roof-built-up": Built-up/tar and gravel roof  
+- "roof-standing-seam": Metal standing seam roof
+- "roof-r-panel": Metal R-Panel roof
+- "roof-asphalt-shingle": Asphalt shingle roof
+- "roof-wood-shake": Wood shake roof
+- "roof-clay-concrete-tile": Clay or concrete tile roof
+
+EXTERIOR WALLS:
+- "wall-tilt-concrete": Tilt-up concrete walls
+- "wall-metal-corrugated": Metal corrugated siding
+- "wall-cmu-bare": Concrete block (CMU) unfinished
+- "wall-cmu-stucco": CMU with stucco finish
+- "wall-brick": Brick veneer
+- "wall-eifs": EIFS/synthetic stucco
+- "wall-wood-siding": Wood siding
+- "wall-vinyl-siding": Vinyl siding
+
+WINDOWS:
+- "window-single-pane": Single pane windows
+- "window-insulated-glass": Double/insulated glass windows
+- "window-storefront": Storefront/commercial glazing
+- "window-skylights": Skylights
+
+HVAC (visible units):
+- "hvac-rtu": Rooftop HVAC unit
+- "hvac-split-system": Split system AC (condenser)
+- "hvac-chiller": Chiller system
+- "hvac-cooling-tower": Cooling tower
+
+FLOORING (interior photos):
+- "flooring-concrete-bare": Bare concrete
+- "flooring-epoxy": Epoxy coated concrete
+- "flooring-carpet": Commercial carpet
+- "flooring-vct": VCT (vinyl composition tile)
+- "flooring-hardwood": Hardwood flooring
+- "flooring-ceramic-tile": Ceramic/porcelain tile
+
+CEILINGS (interior photos):
+- "ceiling-exposed-open": Exposed structure/open ceiling
+- "ceiling-drop-suspended": Drop/suspended acoustic ceiling
+- "ceiling-drywall": Drywall/painted ceiling
+
+Respond in JSON format:
+{
+  "components": [
+    {
+      "id": "component-type-id",
+      "label": "Human readable label",
+      "category": "roofing|walls|windows|hvac|flooring|ceilings",
+      "confidence": 0-100,
+      "reasoning": "brief explanation",
+      "condition": "excellent|good|average|fair|poor"
+    }
+  ]
+}
+
+If no building components are visible, return {"components": []}`;
+
+async function detectComponentsWithGPT4o(
+  base64Image: string
+): Promise<DetectedBuildingComponent[]> {
+  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${OPENAI_API_KEY}`,
+    },
+    body: JSON.stringify({
+      model: 'gpt-4o',
+      messages: [
+        {
+          role: 'user',
+          content: [
+            { type: 'text', text: COMPONENT_DETECTION_PROMPT },
+            {
+              type: 'image_url',
+              image_url: {
+                url: `data:image/jpeg;base64,${base64Image}`,
+                detail: 'high', // Use high detail for component detection
+              },
+            },
+          ],
+        },
+      ],
+      max_tokens: 500,
+      temperature: 0.3,
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`OpenAI API error: ${response.status}`);
+  }
+
+  const data = await response.json();
+  const content = data.choices[0]?.message?.content;
+  
+  // Parse JSON from response
+  const jsonMatch = content.match(/\{[\s\S]*\}/);
+  if (!jsonMatch) {
+    return [];
+  }
+  
+  const parsed = JSON.parse(jsonMatch[0]);
+  const components: DetectedBuildingComponent[] = [];
+  
+  if (parsed.components && Array.isArray(parsed.components)) {
+    for (const comp of parsed.components) {
+      components.push({
+        componentTypeId: comp.id,
+        componentLabel: comp.label,
+        category: comp.category as ComponentDetectionCategory,
+        confidence: comp.confidence,
+        reasoning: comp.reasoning,
+        suggestedCondition: comp.condition,
+      });
+    }
+  }
+  
+  return components;
+}
+
+/**
+ * Generate mock component detection based on photo slot
+ */
+function generateMockComponentDetection(
+  slotId: string
+): DetectedBuildingComponent[] {
+  const components: DetectedBuildingComponent[] = [];
+  
+  // Generate mock components based on the slot type
+  if (slotId.startsWith('ext_')) {
+    // Exterior photos can detect roofing and walls
+    if (Math.random() > 0.5) {
+      components.push({
+        componentTypeId: 'roof-tpo-epdm',
+        componentLabel: 'TPO/EPDM Membrane',
+        category: 'roofing',
+        confidence: 70 + Math.random() * 25,
+        reasoning: 'White membrane roof visible in exterior photo',
+        suggestedCondition: 'good',
+      });
+    }
+    
+    if (Math.random() > 0.4) {
+      components.push({
+        componentTypeId: 'wall-tilt-concrete',
+        componentLabel: 'Tilt-up Concrete',
+        category: 'walls',
+        confidence: 65 + Math.random() * 30,
+        reasoning: 'Concrete panel construction visible',
+        suggestedCondition: 'average',
+      });
+    }
+  } else if (slotId.startsWith('int_')) {
+    // Interior photos can detect flooring and ceilings
+    if (slotId === 'int_shop' || slotId === 'int_warehouse') {
+      components.push({
+        componentTypeId: 'flooring-concrete-bare',
+        componentLabel: 'Bare Concrete',
+        category: 'flooring',
+        confidence: 80 + Math.random() * 15,
+        reasoning: 'Concrete floor visible in warehouse area',
+        suggestedCondition: 'average',
+      });
+      components.push({
+        componentTypeId: 'ceiling-exposed-open',
+        componentLabel: 'Exposed Structure',
+        category: 'ceilings',
+        confidence: 75 + Math.random() * 20,
+        reasoning: 'Open ceiling with exposed structure',
+        suggestedCondition: 'good',
+      });
+    } else if (slotId === 'int_office' || slotId === 'int_lobby') {
+      components.push({
+        componentTypeId: 'flooring-carpet',
+        componentLabel: 'Commercial Carpet',
+        category: 'flooring',
+        confidence: 70 + Math.random() * 25,
+        reasoning: 'Carpet flooring visible in office area',
+        suggestedCondition: 'good',
+      });
+      components.push({
+        componentTypeId: 'ceiling-drop-suspended',
+        componentLabel: 'Suspended Acoustic Ceiling',
+        category: 'ceilings',
+        confidence: 75 + Math.random() * 20,
+        reasoning: 'Drop ceiling with acoustic tiles',
+        suggestedCondition: 'good',
+      });
+    }
+  }
+  
+  return components;
+}
+
+/**
+ * Detect building components in a photo
+ */
+export async function detectBuildingComponents(
+  file: File,
+  suggestedSlotId?: string
+): Promise<DetectedBuildingComponent[]> {
+  try {
+    if (USE_MOCK_DATA) {
+      // Simulate API delay
+      await new Promise(resolve => setTimeout(resolve, 300 + Math.random() * 500));
+      return generateMockComponentDetection(suggestedSlotId || 'ext_front');
+    } else {
+      const base64 = await fileToBase64(file);
+      return await detectComponentsWithGPT4o(base64);
+    }
+  } catch (error) {
+    console.error('Component detection failed:', error);
+    return [];
+  }
+}
+
+// ==========================================
 // MAIN CLASSIFICATION FUNCTION
 // ==========================================
 
 /**
  * Classify a single photo
+ * @param options.detectComponents - If true, also detect building components in the photo
  */
 export async function classifyPhoto(
   file: File,
   photoId: string,
-  usedSlots: Set<string> = new Set()
+  usedSlots: Set<string> = new Set(),
+  options: { detectComponents?: boolean } = {}
 ): Promise<PhotoClassificationResult> {
   const startTime = Date.now();
   
   try {
     let suggestions: PhotoClassificationSuggestion[];
     let metadata: PhotoMetadata | undefined;
+    let detectedComponents: DetectedBuildingComponent[] | undefined;
     
     if (USE_MOCK_DATA) {
       // Simulate API delay
@@ -398,6 +663,11 @@ export async function classifyPhoto(
       
       suggestions = generateMockClassification(photoId, file.name, usedSlots);
       metadata = await extractMetadata(file);
+      
+      // Optionally detect components
+      if (options.detectComponents && suggestions.length > 0) {
+        detectedComponents = generateMockComponentDetection(suggestions[0].slotId);
+      }
     } else {
       // Real AI classification
       const base64 = await fileToBase64(file);
@@ -406,6 +676,11 @@ export async function classifyPhoto(
       
       // Filter out already used slots
       suggestions = suggestions.filter(s => !usedSlots.has(s.slotId));
+      
+      // Optionally detect components
+      if (options.detectComponents) {
+        detectedComponents = await detectComponentsWithGPT4o(base64);
+      }
     }
     
     return {
@@ -414,6 +689,7 @@ export async function classifyPhoto(
       filename: file.name,
       suggestions,
       metadata,
+      detectedComponents,
       processingTimeMs: Date.now() - startTime,
     };
   } catch (error) {
@@ -448,7 +724,7 @@ export async function classifyPhotos(
       const file = queue.shift()!;
       const photoId = generatePhotoId();
       
-      const result = await classifyPhoto(file, photoId, usedSlots);
+      const result = await classifyPhoto(file, photoId, usedSlots, { detectComponents: true });
       results.push(result);
       
       // Mark the top suggestion as used

@@ -25,6 +25,8 @@ import {
   getSiteImprovementTypesByCategory,
   SITE_IMPROVEMENT_CATEGORIES,
   type SiteImprovementCategory,
+  type PropertyCategory,
+  type SiteImprovementType,
 } from '../constants/marshallSwift';
 import { useCustomSiteTypes } from '../hooks/useCustomSiteTypes';
 import ExpandableNote from './ExpandableNote';
@@ -105,6 +107,8 @@ function calculateDepreciationPercent(effectiveAge: number, economicLife: number
 interface SiteImprovementsInventoryProps {
   improvements: SiteImprovement[];
   onChange: (improvements: SiteImprovement[]) => void;
+  /** Property category for filtering recommended site improvements */
+  propertyCategory?: PropertyCategory;
 }
 
 // =================================================================
@@ -114,11 +118,13 @@ interface SiteImprovementsInventoryProps {
 export default function SiteImprovementsInventory({
   improvements,
   onChange,
+  propertyCategory,
 }: SiteImprovementsInventoryProps) {
   // State for the add form
   const [selectedCategory, setSelectedCategory] = useState<SiteImprovementCategory | 'other' | null>(null);
   const [selectedTypeId, setSelectedTypeId] = useState<string | null>(null);
   const [showMoreCategories, setShowMoreCategories] = useState(false);
+  const [showOtherTypes, setShowOtherTypes] = useState(false);
   const [generalNotes, setGeneralNotes] = useState('');
   
   // Quick add form state
@@ -144,7 +150,55 @@ export default function SiteImprovementsInventory({
     toSiteImprovementType,
   } = useCustomSiteTypes();
 
-  // Get types for selected category (M&S + custom)
+  // Get types for selected category with recommended/other split
+  const { recommendedTypes, otherTypes, allTypes } = useMemo(() => {
+    if (!selectedCategory || selectedCategory === 'other') {
+      return { recommendedTypes: [], otherTypes: [], allTypes: [] };
+    }
+    
+    const categoryTypes = getSiteImprovementTypesByCategory(selectedCategory);
+    const customTypesForCategory = getCustomTypesByCategory(selectedCategory).map(toSiteImprovementType);
+    const allTypesArray = [...categoryTypes, ...customTypesForCategory];
+    
+    // If no property category, all are "recommended"
+    if (!propertyCategory) {
+      return {
+        recommendedTypes: allTypesArray,
+        otherTypes: [],
+        allTypes: allTypesArray,
+      };
+    }
+    
+    // Split into recommended (matching property category) and other
+    const recommended: SiteImprovementType[] = [];
+    const other: SiteImprovementType[] = [];
+    
+    categoryTypes.forEach(type => {
+      if (type.applicablePropertyCategories.includes(propertyCategory)) {
+        recommended.push(type);
+      } else {
+        other.push(type);
+      }
+    });
+    
+    // Custom types go to "other" unless they don't have the property restriction
+    customTypesForCategory.forEach(type => {
+      if (!type.applicablePropertyCategories || type.applicablePropertyCategories.length === 0 ||
+          type.applicablePropertyCategories.includes(propertyCategory)) {
+        recommended.push(type);
+      } else {
+        other.push(type);
+      }
+    });
+    
+    return {
+      recommendedTypes: recommended,
+      otherTypes: other,
+      allTypes: allTypesArray,
+    };
+  }, [selectedCategory, propertyCategory, getCustomTypesByCategory, toSiteImprovementType]);
+
+  // Legacy compatibility - total available types
   const availableTypes = useMemo(() => {
     if (!selectedCategory || selectedCategory === 'other') return [];
     
@@ -404,50 +458,122 @@ export default function SiteImprovementsInventory({
         {/* Type Selector (shown when category is selected) */}
         {selectedCategory && (
           <div className="mb-4">
-            <label className="block text-xs font-medium text-gray-600 mb-2">
-              Type ({ALL_CATEGORIES.find(c => c.id === selectedCategory)?.label})
-            </label>
-            <div className="flex flex-wrap gap-2">
-              {availableTypes.map(type => {
-                const isCustom = type.id.startsWith('custom-');
-                return (
-                  <button
-                    key={type.id}
-                    onClick={() => {
-                      handleTypeSelect(type.id);
-                      setShowCustomForm(false);
-                    }}
-                    className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all flex items-center gap-1 ${
-                      selectedTypeId === type.id && !showCustomForm
-                        ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
-                        : 'bg-white text-gray-700 border-gray-200 hover:border-[#0da1c7] hover:text-[#0da1c7]'
-                    }`}
-                  >
-                    {isCustom && <Star size={12} className="text-amber-400" />}
-                    {type.label}
-                  </button>
-                );
-              })}
+            {/* Recommended Types */}
+            {recommendedTypes.length > 0 && (
+              <>
+                <label className="block text-xs font-medium text-gray-600 mb-2">
+                  {propertyCategory 
+                    ? `Recommended for ${propertyCategory === 'commercial' ? 'Commercial' : propertyCategory === 'residential' ? 'Residential' : 'This'} Properties`
+                    : `Type (${ALL_CATEGORIES.find(c => c.id === selectedCategory)?.label})`}
+                </label>
+                <div className="flex flex-wrap gap-2 mb-3">
+                  {recommendedTypes.map(type => {
+                    const isCustom = type.id.startsWith('custom-');
+                    return (
+                      <button
+                        key={type.id}
+                        onClick={() => {
+                          handleTypeSelect(type.id);
+                          setShowCustomForm(false);
+                        }}
+                        className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all flex items-center gap-1 ${
+                          selectedTypeId === type.id && !showCustomForm
+                            ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
+                            : 'bg-white text-gray-700 border-gray-200 hover:border-[#0da1c7] hover:text-[#0da1c7]'
+                        }`}
+                      >
+                        {isCustom && <Star size={12} className="text-amber-400" />}
+                        {type.label}
+                      </button>
+                    );
+                  })}
+                </div>
+              </>
+            )}
+            
+            {/* Other Options (collapsible) */}
+            {otherTypes.length > 0 && (
+              <div className="mb-3">
+                <button
+                  onClick={() => setShowOtherTypes(!showOtherTypes)}
+                  className="flex items-center gap-1.5 text-xs font-medium text-gray-500 hover:text-gray-700 mb-2"
+                >
+                  {showOtherTypes ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                  Other Options ({otherTypes.length})
+                </button>
+                
+                {showOtherTypes && (
+                  <div className="flex flex-wrap gap-2 pl-2 border-l-2 border-gray-200">
+                    {otherTypes.map(type => {
+                      const isCustom = type.id.startsWith('custom-');
+                      return (
+                        <button
+                          key={type.id}
+                          onClick={() => {
+                            handleTypeSelect(type.id);
+                            setShowCustomForm(false);
+                          }}
+                          className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all flex items-center gap-1 ${
+                            selectedTypeId === type.id && !showCustomForm
+                              ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
+                              : 'bg-white text-gray-700 border-gray-200 hover:border-[#0da1c7] hover:text-[#0da1c7]'
+                          }`}
+                        >
+                          {isCustom && <Star size={12} className="text-amber-400" />}
+                          {type.label}
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            )}
+            
+            {/* Fallback if no recommended types - show all */}
+            {recommendedTypes.length === 0 && otherTypes.length === 0 && (
+              <div className="flex flex-wrap gap-2 mb-3">
+                {availableTypes.map(type => {
+                  const isCustom = type.id.startsWith('custom-');
+                  return (
+                    <button
+                      key={type.id}
+                      onClick={() => {
+                        handleTypeSelect(type.id);
+                        setShowCustomForm(false);
+                      }}
+                      className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all flex items-center gap-1 ${
+                        selectedTypeId === type.id && !showCustomForm
+                          ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
+                          : 'bg-white text-gray-700 border-gray-200 hover:border-[#0da1c7] hover:text-[#0da1c7]'
+                      }`}
+                    >
+                      {isCustom && <Star size={12} className="text-amber-400" />}
+                      {type.label}
+                    </button>
+                  );
+                })}
+              </div>
+            )}
               
-              {/* Custom button within each category */}
-              <button
-                onClick={() => {
-                  setSelectedTypeId(null);
-                  setShowCustomForm(true);
-                  setCustomName('');
-                  setCustomEconomicLife('20');
-                  setSaveForFuture(false);
-                }}
-                className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all flex items-center gap-1 ${
-                  showCustomForm
-                    ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
-                    : 'bg-white text-gray-700 border-gray-200 hover:border-[#0da1c7] hover:text-[#0da1c7]'
-                }`}
-              >
-                <Plus size={12} />
-                Custom
-              </button>
-            </div>
+            {/* Custom button within each category */}
+            <button
+              onClick={() => {
+                setSelectedTypeId(null);
+                setShowCustomForm(true);
+                setShowOtherTypes(false);
+                setCustomName('');
+                setCustomEconomicLife('20');
+                setSaveForFuture(false);
+              }}
+              className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all flex items-center gap-1 ${
+                showCustomForm
+                  ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
+                  : 'bg-white text-gray-700 border-gray-200 hover:border-[#0da1c7] hover:text-[#0da1c7]'
+              }`}
+            >
+              <Plus size={12} />
+              Custom
+            </button>
           </div>
         )}
 

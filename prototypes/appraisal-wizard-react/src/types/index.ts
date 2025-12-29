@@ -1,4 +1,10 @@
 // =================================================================
+// IMPORTS FOR INTERNAL USE
+// =================================================================
+
+import type { DetectedBuildingComponent as DetectedBuildingComponentType } from '../services/photoClassification';
+
+// =================================================================
 // INCOME APPROACH TYPES (re-exported from feature)
 // =================================================================
 
@@ -34,33 +40,146 @@ export interface HeightZone {
   ridgeHeight: number | null;
 }
 
+// =================================================================
+// COMPONENT DETAIL TYPES (for Cost Segregation & Risk Rating)
+// =================================================================
+
+export type ComponentCondition = 'excellent' | 'good' | 'average' | 'fair' | 'poor';
+
+/**
+ * Detailed component information for cost segregation and asset quality scoring.
+ * Each component can track its installation date, condition, and economic life.
+ */
+export interface ComponentDetail {
+  id: string;                    // Unique identifier for this component instance
+  type: string;                  // Component type (e.g., "TPO Membrane", "Central HVAC")
+  yearInstalled?: number;        // Year installed/replaced (defaults to building yearBuilt if not set)
+  condition?: ComponentCondition;
+  economicLife?: number;         // Total economic life in years (M&S default, user-adjustable)
+  effectiveAge?: number;         // Calculated or user override
+  effectiveAgeOverride?: boolean; // True if user manually set effective age
+  quantity?: number;             // For countable items (e.g., 3 RTUs)
+  unit?: string;                 // Unit of measure (e.g., "tons", "units", "SF")
+  notes?: string;                // Additional details
+}
+
+/**
+ * Exterior Features with optional detailed component tracking.
+ * Maintains backwards compatibility with string[] format while adding detailed tracking.
+ */
 export interface ExteriorFeatures {
+  // Legacy format (simple string arrays for quick selection)
   foundation?: string[];
   roof?: string[];
   walls?: string[];
   windows?: string[];
   description?: string;
+  
+  // Detailed format (for cost segregation and asset quality)
+  foundationDetails?: ComponentDetail[];
+  roofDetails?: ComponentDetail[];
+  wallDetails?: ComponentDetail[];
+  windowDetails?: ComponentDetail[];
 }
 
+/**
+ * Interior Features with optional detailed component tracking.
+ * Maintains backwards compatibility with string[] format while adding detailed tracking.
+ */
 export interface InteriorFeatures {
+  // Legacy format (simple string arrays for quick selection)
   ceilings?: string[];
   flooring?: string[];
   walls?: string[];
   description?: string;
+  
+  // Detailed format (for cost segregation and asset quality)
+  ceilingDetails?: ComponentDetail[];
+  flooringDetails?: ComponentDetail[];
+  wallDetails?: ComponentDetail[];
 }
 
+/**
+ * Mechanical Systems with optional detailed component tracking.
+ * Maintains backwards compatibility with string[] format while adding detailed tracking.
+ */
 export interface MechanicalSystems {
+  // Legacy format (simple string arrays for quick selection)
   electrical?: string[];
   heating?: string[];
   cooling?: string[];
   sprinkler?: string[];
   elevators?: string[];
   description?: string;
+  
+  // Detailed format (for cost segregation and asset quality)
+  electricalDetails?: ComponentDetail[];
+  heatingDetails?: ComponentDetail[];
+  coolingDetails?: ComponentDetail[];
+  sprinklerDetails?: ComponentDetail[];
+  elevatorDetails?: ComponentDetail[];
 }
+
+/**
+ * Area type for ImprovementArea.
+ * Comprehensive list matching AreaTypeId from useAreaTypes.ts.
+ * Includes all property-type-specific area types for proper filtering.
+ */
+export type ImprovementAreaType =
+  // Industrial/Warehouse
+  | 'warehouse'
+  | 'dock'
+  | 'office-mezz'
+  | 'break-room'
+  | 'mechanical-room'
+  | 'cold-storage'
+  | 'manufacturing'
+  | 'clean-room'
+  // Office
+  | 'office'
+  | 'conference'
+  | 'lobby'
+  | 'restroom'
+  | 'storage'
+  | 'server-room'
+  | 'kitchen-break'
+  // Retail
+  | 'sales-floor'
+  | 'stockroom'
+  | 'fitting-room'
+  | 'service-area'
+  // Residential
+  | 'living-area'
+  | 'kitchen'
+  | 'bedroom'
+  | 'bathroom'
+  | 'garage'
+  | 'basement'
+  | 'utility'
+  | 'laundry'
+  // Multifamily
+  | 'unit'
+  | 'common-area'
+  | 'leasing-office'
+  | 'fitness'
+  | 'pool-area'
+  | 'parking-garage'
+  // Agricultural
+  | 'barn'
+  | 'shop'
+  | 'tack-room'
+  // Universal
+  | 'flex'
+  | 'mezzanine'
+  // Legacy compatibility
+  | 'retail'
+  | 'apartment'
+  | 'industrial'
+  | 'other';
 
 export interface ImprovementArea {
   id: string;
-  type: 'office' | 'warehouse' | 'retail' | 'apartment' | 'flex' | 'industrial' | 'manufacturing' | 'storage' | 'mezzanine' | 'other';
+  type: ImprovementAreaType;
   customType?: string;
   squareFootage: number | null;
   sfType: 'GBA' | 'NRA' | 'GLA' | 'RSF';
@@ -92,6 +211,22 @@ export interface ImprovementBuilding {
   constructionDescription?: string;
   heightZones?: HeightZone[];
   areas: ImprovementArea[];
+  
+  /**
+   * M&S Property Type Override (Tier 2)
+   * If set, overrides the wizard-level default property type for this building.
+   * Examples: 'industrial', 'office', 'retail', 'residential', 'agricultural'
+   * When null/undefined, inherits from Setup page's msOccupancyCode property type.
+   */
+  propertyTypeOverride?: string;
+  
+  /**
+   * M&S Occupancy Code Override (Tier 3)
+   * If set, overrides the wizard-level default occupancy code for this building.
+   * Examples: 'warehouse-general', 'office-lowrise', 'retail-general'
+   * When null/undefined, inherits from Setup page's msOccupancyCode.
+   */
+  msOccupancyCodeOverride?: string;
 }
 
 export interface ImprovementParcel {
@@ -140,6 +275,172 @@ export interface SiteImprovement {
 export interface SiteImprovementsInventory {
   schemaVersion: number;
   improvements: SiteImprovement[];
+}
+
+// =================================================================
+// COST SEGREGATION TYPES
+// =================================================================
+
+import type { DepreciationClass, BuildingSystem } from '../constants/costSegregation';
+
+/**
+ * A single component in the cost segregation analysis.
+ * Represents an allocated portion of the building or site cost.
+ */
+export interface CostSegComponent {
+  id: string;
+  componentId: string;           // Reference to ComponentClassification in costSegregation.ts
+  label: string;                 // Human-readable label
+  category: 'building-structure' | 'building-component' | 'site-improvement' | 'personal-property' | 'tenant-improvement';
+  
+  // Depreciation Classification
+  depreciationClass: DepreciationClass;
+  depreciationClassOverride?: DepreciationClass;   // User override
+  overrideReason?: string;                         // Justification for override
+  
+  // Cost Data
+  cost: number;                  // Allocated cost for this component
+  percentOfTotal: number;        // Percentage of total project cost
+  
+  // Source Tracking
+  buildingId?: string;           // If building-specific
+  buildingName?: string;         // Building name for display (per-building cost seg)
+  sourceType: 'allocation' | 'inventory' | 'manual';  // How this was determined
+  
+  // Age-Life (for component-level depreciation)
+  yearPlacedInService?: number;  // When component was placed in service
+  economicLife?: number;         // Total economic life in years
+  effectiveAge?: number;         // Effective age for depreciation
+  
+  // Flags
+  isTenantImprovement: boolean;
+  isLandImprovement: boolean;
+}
+
+/**
+ * Summary of a building system per IRS TD 9636.
+ * Used for tangible property regulations compliance.
+ */
+export interface BuildingSystemSummary {
+  system: BuildingSystem;
+  systemLabel: string;
+  depreciableCost: number;          // Current depreciable basis
+  replacementCost: number;          // Current replacement cost new
+  components: string[];             // Component IDs included in this system
+  percentOfBuilding: number;        // Percentage of total building cost
+}
+
+/**
+ * Summary by depreciation class.
+ */
+export interface DepreciationClassSummary {
+  depreciationClass: DepreciationClass;
+  label: string;
+  totalCost: number;
+  percentOfTotal: number;
+  componentCount: number;
+}
+
+/**
+ * Year-by-year depreciation projection.
+ */
+export interface DepreciationYearProjection {
+  year: number;
+  fiveYearDepreciation: number;
+  sevenYearDepreciation: number;
+  fifteenYearDepreciation: number;
+  twentySevenFiveYearDepreciation: number;  // For residential
+  thirtyNineYearDepreciation: number;
+  totalDepreciation: number;
+  cumulativeDepreciation: number;
+  remainingBasis: number;
+}
+
+/**
+ * Full cost segregation analysis for a property.
+ */
+export interface CostSegAnalysis {
+  id: string;
+  propertyId: string;
+  analysisDate: string;
+  
+  // Property Info
+  propertyName: string;
+  propertyAddress: string;
+  occupancyCode: string;
+  isResidential: boolean;        // Determines 27.5 vs 39-year real property
+  
+  // Source Data
+  totalProjectCost: number;      // Total acquisition or construction cost
+  landValue: number;             // Land value (not depreciable)
+  totalImprovementCost: number;  // totalProjectCost - landValue
+  totalBuildingCost: number;     // Building improvements only
+  totalSiteImprovementCost: number;  // Site improvements (15-year)
+  
+  // Components
+  components: CostSegComponent[];
+  
+  // Summaries
+  classSummary: DepreciationClassSummary[];
+  buildingSystems: BuildingSystemSummary[];
+  
+  // Key Results (convenience properties)
+  summary: {
+    fiveYear: { total: number; percent: number };
+    sevenYear: { total: number; percent: number };
+    fifteenYear: { total: number; percent: number };
+    twentySevenFiveYear: { total: number; percent: number };
+    thirtyNineYear: { total: number; percent: number };
+  };
+  
+  // Depreciation Schedule
+  depreciationSchedule: DepreciationYearProjection[];
+  
+  // Tax Benefit Summary
+  firstYearDepreciation: number;
+  acceleratedBenefit: number;    // Additional depreciation vs. straight 39-year
+  
+  // Methodology & Compliance
+  methodology: 'detailed-engineering' | 'cost-estimate';
+  methodologyDescription: string;
+  preparedBy?: string;
+  preparedDate?: string;
+  
+  // Override Tracking
+  hasManualOverrides: boolean;
+  overrideCount: number;
+}
+
+/**
+ * Configuration for cost segregation analysis.
+ */
+export interface CostSegConfig {
+  // Tax Year Settings
+  taxYear: number;
+  bonusDepreciationPercent: number;  // 100%, 80%, 60%, etc. based on tax year
+  
+  // Property Settings
+  isNewConstruction: boolean;        // Affects bonus depreciation eligibility
+  acquisitionDate?: string;
+  placedInServiceDate: string;
+  
+  // Analysis Options
+  includeSiteImprovements: boolean;
+  includeDepreciationSchedule: boolean;
+  projectionYears: number;           // How many years to project (default 10)
+}
+
+/**
+ * State for cost segregation in the wizard.
+ */
+export interface CostSegState {
+  isEnabled: boolean;
+  config: CostSegConfig;
+  analysis: CostSegAnalysis | null;
+  componentOverrides: Record<string, DepreciationClass>;  // componentId -> override class
+  isGenerating: boolean;
+  lastGeneratedAt: string | null;
+  error: string | null;
 }
 
 // =================================================================
@@ -369,6 +670,9 @@ export interface SubjectData {
   economicIndicators?: EconomicIndicators;
   swotAnalysis?: SWOTAnalysisData;
   riskRating?: RiskRatingData;
+  
+  // Cost Segregation
+  costSegregationEnabled?: boolean;
 }
 
 // =================================================================
@@ -583,9 +887,13 @@ export interface StagingPhoto {
   filename: string;
   status: 'pending' | 'classifying' | 'classified' | 'error';
   suggestions?: PhotoClassificationSuggestion[];
+  detectedComponents?: DetectedBuildingComponentType[];
   assignedSlot?: string;
   error?: string;
 }
+
+// Re-export DetectedBuildingComponent type for convenience
+export type { DetectedBuildingComponent } from '../services/photoClassification';
 
 // =================================================================
 // WIZARD STATE

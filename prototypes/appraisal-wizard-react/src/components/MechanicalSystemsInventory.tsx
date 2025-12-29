@@ -1,0 +1,866 @@
+/**
+ * MechanicalSystemsInventory Component
+ * 
+ * Redesigned to match Site Improvements pattern with two-tier button selectors,
+ * per-item date/condition/economic life tracking, capacity fields, and expandable notes.
+ */
+
+import { useState, useCallback, useMemo } from 'react';
+import {
+  Plus,
+  Trash2,
+  Calendar,
+  Star,
+  CheckCircle2,
+  Calculator,
+  ChevronDown,
+  ChevronRight,
+  Wrench,
+  FileText,
+  HelpCircle,
+  Sparkles,
+  MoreHorizontal,
+} from 'lucide-react';
+import {
+  MECHANICAL_CATEGORIES,
+  getMechanicalTypesByCategory,
+  getBuildingComponentType,
+  ECONOMIC_LIFE_GUIDE,
+  type MechanicalCategory,
+  type BuildingComponentType,
+  type ApplicablePropertyType,
+} from '../constants/buildingComponents';
+import type { PropertyCategory } from '../constants/marshallSwift';
+import { useFilteredBuildingComponents } from '../hooks/useFilteredBuildingComponents';
+import { useCustomBuildingTypes } from '../hooks/useCustomBuildingTypes';
+import ExpandableNote from './ExpandableNote';
+import type { MechanicalSystems, ComponentDetail, ComponentCondition } from '../types';
+
+// =================================================================
+// CONSTANTS
+// =================================================================
+
+const CONDITION_OPTIONS: { value: ComponentCondition; label: string; abbrev: string; color: string }[] = [
+  { value: 'excellent', label: 'Excellent', abbrev: 'Excl', color: 'bg-green-100 text-green-700 border-green-300' },
+  { value: 'good', label: 'Good', abbrev: 'Good', color: 'bg-lime-100 text-lime-700 border-lime-300' },
+  { value: 'average', label: 'Average', abbrev: 'Avg', color: 'bg-gray-100 text-gray-700 border-gray-300' },
+  { value: 'fair', label: 'Fair', abbrev: 'Fair', color: 'bg-amber-100 text-amber-700 border-amber-300' },
+  { value: 'poor', label: 'Poor', abbrev: 'Poor', color: 'bg-red-100 text-red-700 border-red-300' },
+];
+
+// =================================================================
+// HELPER FUNCTIONS
+// =================================================================
+
+function generateId(): string {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
+}
+
+function calculateEffectiveAge(yearInstalled: number | undefined, condition: ComponentCondition): number {
+  if (!yearInstalled) return 0;
+  
+  const currentYear = new Date().getFullYear();
+  const actualAge = currentYear - yearInstalled;
+  
+  const conditionMultipliers: Record<ComponentCondition, number> = {
+    excellent: 0.6,
+    good: 0.8,
+    average: 1.0,
+    fair: 1.2,
+    poor: 1.5,
+  };
+  
+  return Math.round(actualAge * conditionMultipliers[condition]);
+}
+
+function calculateDepreciationPercent(effectiveAge: number, economicLife: number): number {
+  if (economicLife <= 0) return 0;
+  return Math.min(100, Math.round((effectiveAge / economicLife) * 100));
+}
+
+// =================================================================
+// COMPONENT PROPS
+// =================================================================
+
+interface MechanicalSystemsInventoryProps {
+  systems: MechanicalSystems | undefined;
+  onChange: (systems: MechanicalSystems) => void;
+  buildingYearBuilt?: number | null;
+  
+  /**
+   * Default occupancy code from wizard (Setup page).
+   * Used for component filtering.
+   */
+  defaultOccupancyCode?: string;
+  
+  /**
+   * Property type override for this specific building.
+   */
+  buildingPropertyTypeOverride?: string;
+  
+  /**
+   * Occupancy code override for this specific building.
+   */
+  buildingOccupancyCodeOverride?: string;
+  
+  /**
+   * Property category (residential | commercial | land).
+   */
+  propertyCategory?: PropertyCategory;
+}
+
+// =================================================================
+// MAIN COMPONENT
+// =================================================================
+
+export default function MechanicalSystemsInventory({
+  systems,
+  onChange,
+  buildingYearBuilt,
+  defaultOccupancyCode,
+  buildingPropertyTypeOverride,
+  buildingOccupancyCodeOverride,
+  propertyCategory,
+}: MechanicalSystemsInventoryProps) {
+  // State for the add form
+  const [selectedCategory, setSelectedCategory] = useState<MechanicalCategory | null>(null);
+  const [selectedTypeId, setSelectedTypeId] = useState<string | null>(null);
+  
+  // Quick add form state
+  const [yearInstalled, setYearInstalled] = useState<string>('');
+  const [condition, setCondition] = useState<ComponentCondition>('average');
+  const [customEconomicLife, setCustomEconomicLife] = useState<string>('');
+  const [quantity, setQuantity] = useState<string>('1');
+  const [unitCapacity, setUnitCapacity] = useState<string>('');
+  
+  // Custom type state
+  const [showCustomForm, setShowCustomForm] = useState(false);
+  const [customName, setCustomName] = useState('');
+  const [customDefaultLife, setCustomDefaultLife] = useState('20');
+  const [saveForFuture, setSaveForFuture] = useState(false);
+  
+  // Show other options toggle
+  const [showOtherOptions, setShowOtherOptions] = useState(false);
+  
+  // Expanded items state (for individual notes)
+  const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
+  
+  // General notes
+  const [generalNotes, setGeneralNotes] = useState(systems?.description || '');
+  
+  // Custom types hook
+  const { 
+    customTypes, 
+    addCustomType, 
+    getCustomTypesByCategory,
+    toBuildingComponentType,
+  } = useCustomBuildingTypes();
+  
+  // Filtered components hook for property type filtering
+  const {
+    getMechanicalComponents,
+    effectivePropertyType,
+    isOverridden,
+  } = useFilteredBuildingComponents({
+    defaultOccupancyCode,
+    buildingPropertyTypeOverride,
+    buildingOccupancyCodeOverride,
+    propertyCategory,
+  });
+
+  // Get all component details from systems
+  const allComponents = useMemo(() => {
+    return [
+      ...(systems?.electricalDetails || []),
+      ...(systems?.heatingDetails || []),
+      ...(systems?.coolingDetails || []),
+      ...(systems?.sprinklerDetails || []),
+      ...(systems?.elevatorDetails || []),
+    ];
+  }, [systems]);
+
+  // Get types for selected category (filtered by property type + custom)
+  const { recommendedTypes, otherTypes, allTypes } = useMemo(() => {
+    if (!selectedCategory) {
+      return { recommendedTypes: [], otherTypes: [], allTypes: [] };
+    }
+    
+    // Get filtered components from hook
+    const filtered = getMechanicalComponents(selectedCategory);
+    
+    // Get custom types for this category
+    const customTypesForCategory = getCustomTypesByCategory(selectedCategory).map(toBuildingComponentType);
+    
+    // Add custom types to recommended list
+    const recommendedWithCustom = [...filtered.recommended, ...customTypesForCategory];
+    
+    return {
+      recommendedTypes: recommendedWithCustom,
+      otherTypes: filtered.other,
+      allTypes: [...filtered.all, ...customTypesForCategory],
+    };
+  }, [selectedCategory, getMechanicalComponents, getCustomTypesByCategory, toBuildingComponentType]);
+  
+  // For backwards compatibility
+  const availableTypes = allTypes;
+
+  // Get the selected type details
+  const selectedType = useMemo(() => {
+    if (!selectedTypeId) return null;
+    
+    const msType = getBuildingComponentType(selectedTypeId);
+    if (msType) return msType;
+    
+    const customType = customTypes.find(t => t.id === selectedTypeId);
+    if (customType) return toBuildingComponentType(customType);
+    
+    return null;
+  }, [selectedTypeId, customTypes, toBuildingComponentType]);
+
+  // Calculate totals
+  const totals = useMemo(() => {
+    return { count: allComponents.length };
+  }, [allComponents]);
+
+  // Reset form
+  const resetForm = useCallback(() => {
+    setSelectedCategory(null);
+    setSelectedTypeId(null);
+    setShowCustomForm(false);
+    setYearInstalled('');
+    setCondition('average');
+    setCustomEconomicLife('');
+    setQuantity('1');
+    setUnitCapacity('');
+    setCustomName('');
+    setCustomDefaultLife('20');
+    setSaveForFuture(false);
+  }, []);
+
+  // Handle type selection
+  const handleTypeSelect = useCallback((typeId: string) => {
+    setSelectedTypeId(typeId);
+    setShowCustomForm(false);
+    const type = getBuildingComponentType(typeId) || customTypes.find(t => t.id === typeId);
+    if (type) {
+      setCustomEconomicLife(String(type.defaultEconomicLife));
+    }
+  }, [customTypes]);
+
+  // Get the appropriate details array key for a category
+  const getDetailsKey = (category: MechanicalCategory): keyof MechanicalSystems => {
+    switch (category) {
+      case 'electrical': return 'electricalDetails';
+      case 'heating': return 'heatingDetails';
+      case 'cooling': return 'coolingDetails';
+      case 'fire-protection': return 'sprinklerDetails';
+      case 'elevators': return 'elevatorDetails';
+    }
+  };
+
+  // Add component to inventory
+  const addToInventory = useCallback(() => {
+    if (!selectedCategory) return;
+    
+    let typeId = selectedTypeId || '';
+    let typeName = '';
+    let economicLife = parseInt(customEconomicLife) || 20;
+
+    if (showCustomForm) {
+      if (!customName.trim()) return;
+      
+      typeName = customName.trim();
+      economicLife = parseInt(customDefaultLife) || 20;
+      
+      if (saveForFuture) {
+        const newCustomType = addCustomType({
+          label: typeName,
+          category: selectedCategory,
+          parentSection: 'mechanical',
+          defaultUnit: 'EA',
+          defaultEconomicLife: economicLife,
+          depreciationClass: '39-year',
+        });
+        typeId = newCustomType.id;
+      } else {
+        typeId = `temp-${generateId()}`;
+      }
+    } else {
+      if (!selectedType) return;
+      typeId = selectedType.id;
+      typeName = selectedType.label;
+      economicLife = parseInt(customEconomicLife) || selectedType.defaultEconomicLife;
+    }
+
+    const year = yearInstalled ? parseInt(yearInstalled) : (buildingYearBuilt || undefined);
+    const effectiveAge = calculateEffectiveAge(year, condition);
+    const qty = parseInt(quantity) || 1;
+    
+    // Build display label with capacity if provided
+    let displayLabel = typeName;
+    if (qty > 1 || unitCapacity) {
+      const capacityStr = unitCapacity ? ` @ ${unitCapacity}` : '';
+      displayLabel = `${typeName} (${qty}x${capacityStr})`;
+    }
+
+    const newComponent: ComponentDetail = {
+      id: generateId(),
+      type: displayLabel,
+      yearInstalled: year,
+      condition,
+      economicLife,
+      effectiveAge,
+      effectiveAgeOverride: false,
+      quantity: qty,
+      unit: selectedType?.defaultUnit || 'EA',
+    };
+
+    const detailsKey = getDetailsKey(selectedCategory);
+    const currentDetails = (systems?.[detailsKey] as ComponentDetail[] | undefined) || [];
+    
+    onChange({
+      ...systems,
+      [detailsKey]: [...currentDetails, newComponent],
+    });
+    
+    resetForm();
+  }, [
+    selectedCategory, selectedTypeId, selectedType, showCustomForm,
+    yearInstalled, condition, customEconomicLife, quantity, unitCapacity,
+    customName, customDefaultLife, saveForFuture, buildingYearBuilt,
+    systems, onChange, resetForm, addCustomType
+  ]);
+
+  // Remove component
+  const removeComponent = useCallback((componentId: string, category: MechanicalCategory) => {
+    const detailsKey = getDetailsKey(category);
+    const currentDetails = (systems?.[detailsKey] as ComponentDetail[] | undefined) || [];
+    
+    onChange({
+      ...systems,
+      [detailsKey]: currentDetails.filter(c => c.id !== componentId),
+    });
+  }, [systems, onChange]);
+
+  // Update component (for notes)
+  const updateComponent = useCallback((componentId: string, category: MechanicalCategory, updates: Partial<ComponentDetail>) => {
+    const detailsKey = getDetailsKey(category);
+    const currentDetails = (systems?.[detailsKey] as ComponentDetail[] | undefined) || [];
+    
+    onChange({
+      ...systems,
+      [detailsKey]: currentDetails.map(c => c.id === componentId ? { ...c, ...updates } : c),
+    });
+  }, [systems, onChange]);
+
+  // Toggle expanded state
+  const toggleExpanded = useCallback((id: string) => {
+    setExpandedItems(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  }, []);
+
+  // Check if a type is custom
+  const isCustomType = useCallback((typeId: string) => {
+    return typeId.startsWith('custom-') || typeId.startsWith('temp-');
+  }, []);
+
+  // Can add to inventory?
+  const canAdd = useMemo(() => {
+    if (showCustomForm) {
+      return customName.trim().length > 0;
+    }
+    return !!selectedTypeId;
+  }, [showCustomForm, selectedTypeId, customName]);
+
+  // Update general notes
+  const handleGeneralNotesChange = useCallback((value: string) => {
+    setGeneralNotes(value);
+    onChange({
+      ...systems,
+      description: value,
+    });
+  }, [systems, onChange]);
+
+  // Show capacity field for certain categories
+  const showCapacityField = selectedCategory === 'heating' || selectedCategory === 'cooling';
+
+  return (
+    <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+      {/* Header */}
+      <div className="p-4 border-b border-gray-100">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Wrench className="w-5 h-5 text-[#0da1c7]" />
+            <div>
+              <h3 className="text-lg font-bold text-[#1c3643]">Mechanical Systems</h3>
+              <p className="text-xs text-gray-500">
+                Track HVAC, electrical, fire protection, and elevators
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Add Form Section */}
+      <div className="p-4 bg-slate-50/50 border-b border-gray-100">
+        {/* Category Selector */}
+        <div className="mb-4">
+          <label className="block text-xs font-medium text-gray-600 mb-2">Category</label>
+          <div className="flex flex-wrap gap-2">
+            {MECHANICAL_CATEGORIES.map(cat => (
+              <button
+                key={cat.id}
+                onClick={() => {
+                  setSelectedCategory(cat.id as MechanicalCategory);
+                  setSelectedTypeId(null);
+                  setShowCustomForm(false);
+                }}
+                className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all ${
+                  selectedCategory === cat.id
+                    ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
+                    : 'bg-white text-gray-700 border-gray-200 hover:border-[#0da1c7] hover:text-[#0da1c7]'
+                }`}
+              >
+                {cat.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Type Selector */}
+        {selectedCategory && (
+          <div className="mb-4">
+            <div className="flex items-center justify-between mb-2">
+              <label className="block text-xs font-medium text-gray-600">
+                Type ({MECHANICAL_CATEGORIES.find(c => c.id === selectedCategory)?.label})
+              </label>
+              {effectivePropertyType && (
+                <span className="flex items-center gap-1 text-xs text-[#0da1c7]">
+                  <Sparkles size={12} />
+                  Filtered for {effectivePropertyType}
+                  {isOverridden && <span className="text-gray-400">(override)</span>}
+                </span>
+              )}
+            </div>
+            
+            {/* Recommended Types */}
+            <div className="flex flex-wrap gap-2">
+              {recommendedTypes.map(type => {
+                const isCustom = type.id.startsWith('custom-');
+                return (
+                  <button
+                    key={type.id}
+                    onClick={() => handleTypeSelect(type.id)}
+                    className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all flex items-center gap-1 ${
+                      selectedTypeId === type.id && !showCustomForm
+                        ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
+                        : 'bg-white text-gray-700 border-gray-200 hover:border-[#0da1c7] hover:text-[#0da1c7]'
+                    }`}
+                  >
+                    {isCustom && <Star size={12} className="text-amber-400" />}
+                    {type.label}
+                  </button>
+                );
+              })}
+              
+              {/* Other Options Toggle */}
+              {otherTypes.length > 0 && (
+                <button
+                  onClick={() => setShowOtherOptions(!showOtherOptions)}
+                  className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all flex items-center gap-1 ${
+                    showOtherOptions
+                      ? 'bg-gray-100 text-gray-700 border-gray-300'
+                      : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  <MoreHorizontal size={12} />
+                  Other ({otherTypes.length})
+                </button>
+              )}
+              
+              {/* Custom button */}
+              <button
+                onClick={() => {
+                  setSelectedTypeId(null);
+                  setShowCustomForm(true);
+                  setCustomName('');
+                  setCustomDefaultLife('20');
+                  setSaveForFuture(false);
+                }}
+                className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all flex items-center gap-1 ${
+                  showCustomForm
+                    ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
+                    : 'bg-white text-gray-700 border-gray-200 hover:border-[#0da1c7] hover:text-[#0da1c7]'
+                }`}
+              >
+                <Plus size={12} />
+                Custom
+              </button>
+            </div>
+            
+            {/* Other Options Expanded */}
+            {showOtherOptions && otherTypes.length > 0 && (
+              <div className="mt-2 pt-2 border-t border-gray-200">
+                <div className="text-xs text-gray-500 mb-2">Other Options</div>
+                <div className="flex flex-wrap gap-2">
+                  {otherTypes.map(type => (
+                    <button
+                      key={type.id}
+                      onClick={() => handleTypeSelect(type.id)}
+                      className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all ${
+                        selectedTypeId === type.id && !showCustomForm
+                          ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
+                          : 'bg-gray-50 text-gray-600 border-gray-200 hover:border-[#0da1c7] hover:text-[#0da1c7]'
+                      }`}
+                    >
+                      {type.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Custom Type Form */}
+        {showCustomForm && selectedCategory && (
+          <div className="mb-4 p-3 bg-white rounded-lg border border-[#0da1c7]/30 border-dashed">
+            <div className="flex items-center gap-2 mb-3 text-sm text-gray-600">
+              <Plus size={14} className="text-[#0da1c7]" />
+              <span>Add custom type to <strong>{MECHANICAL_CATEGORIES.find(c => c.id === selectedCategory)?.label}</strong></span>
+            </div>
+            <div className="grid grid-cols-2 gap-3 mb-3">
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">
+                  Custom System Name
+                </label>
+                <input
+                  type="text"
+                  value={customName}
+                  onChange={(e) => setCustomName(e.target.value)}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                  placeholder="e.g., Geothermal Heat Pump"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1 flex items-center gap-1">
+                  Economic Life (yrs)
+                  <span 
+                    className="inline-flex items-center cursor-help"
+                    title={`Typical range: ${ECONOMIC_LIFE_GUIDE.mechanical[selectedCategory]?.range || '15-40 yrs'}`}
+                  >
+                    <HelpCircle size={12} className="text-gray-400" />
+                  </span>
+                </label>
+                <input
+                  type="number"
+                  value={customDefaultLife}
+                  onChange={(e) => setCustomDefaultLife(e.target.value)}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                  min="1"
+                  max="100"
+                />
+              </div>
+            </div>
+            
+            {/* Economic Life Guide */}
+            <div className="mb-3 p-2 bg-slate-50 rounded-lg border border-slate-200">
+              <div className="flex items-start gap-2">
+                <Calculator size={14} className="text-[#0da1c7] mt-0.5 flex-shrink-0" />
+                <div className="text-xs text-gray-600">
+                  <div className="font-medium text-gray-700 mb-1">
+                    Economic Life Guide for {MECHANICAL_CATEGORIES.find(c => c.id === selectedCategory)?.label}
+                  </div>
+                  <div className="flex flex-wrap gap-x-4 gap-y-1">
+                    <span><strong>Range:</strong> {ECONOMIC_LIFE_GUIDE.mechanical[selectedCategory]?.range || '15-40 yrs'}</span>
+                    <span><strong>Typical:</strong> {ECONOMIC_LIFE_GUIDE.mechanical[selectedCategory]?.typical || 20} yrs</span>
+                  </div>
+                  <div className="mt-1 text-gray-500 italic">
+                    {ECONOMIC_LIFE_GUIDE.mechanical[selectedCategory]?.examples || 'Varies by type'}
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => setCustomDefaultLife(String(ECONOMIC_LIFE_GUIDE.mechanical[selectedCategory]?.typical || 20))}
+                    className="mt-1.5 text-[#0da1c7] hover:text-[#0da1c7]/80 font-medium underline"
+                  >
+                    Use typical ({ECONOMIC_LIFE_GUIDE.mechanical[selectedCategory]?.typical || 20} yrs)
+                  </button>
+                </div>
+              </div>
+            </div>
+            
+            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={saveForFuture}
+                onChange={(e) => setSaveForFuture(e.target.checked)}
+                className="rounded border-gray-300 text-[#0da1c7] focus:ring-[#0da1c7]"
+              />
+              <Star size={14} className="text-amber-400" />
+              Save to My System Types (for future appraisals)
+            </label>
+          </div>
+        )}
+
+        {/* Quick Add Form */}
+        {(selectedTypeId || showCustomForm) && (
+          <div className="p-3 bg-white rounded-lg border border-gray-200">
+            <div className="grid grid-cols-4 gap-3 mb-3">
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1 flex items-center gap-1">
+                  <Calendar size={12} />
+                  Year Installed
+                </label>
+                <input
+                  type="number"
+                  value={yearInstalled}
+                  onChange={(e) => setYearInstalled(e.target.value)}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                  placeholder={buildingYearBuilt?.toString() || new Date().getFullYear().toString()}
+                  min="1900"
+                  max={new Date().getFullYear()}
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">Qty</label>
+                <input
+                  type="number"
+                  value={quantity}
+                  onChange={(e) => setQuantity(e.target.value)}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                  placeholder="1"
+                  min="1"
+                />
+              </div>
+              {showCapacityField && (
+                <div>
+                  <label className="block text-xs font-medium text-gray-600 mb-1">Capacity</label>
+                  <input
+                    type="text"
+                    value={unitCapacity}
+                    onChange={(e) => setUnitCapacity(e.target.value)}
+                    className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                    placeholder="5 ton"
+                  />
+                </div>
+              )}
+              <div className="flex items-end">
+                <button
+                  onClick={addToInventory}
+                  disabled={!canAdd}
+                  className={`w-full flex items-center justify-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
+                    canAdd
+                      ? 'bg-[#0da1c7] text-white hover:bg-[#0da1c7]/90'
+                      : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                  }`}
+                >
+                  <Plus size={14} />
+                  Add
+                </button>
+              </div>
+            </div>
+            
+            <div className="grid grid-cols-2 gap-3">
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1">
+                  Economic Life (yrs)
+                </label>
+                <input
+                  type="number"
+                  value={customEconomicLife}
+                  onChange={(e) => setCustomEconomicLife(e.target.value)}
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                  placeholder={selectedType?.defaultEconomicLife?.toString() || '20'}
+                  min="1"
+                  max="100"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-medium text-gray-600 mb-1.5">Condition</label>
+                <div className="flex gap-1">
+                  {CONDITION_OPTIONS.map(opt => (
+                    <button
+                      key={opt.value}
+                      onClick={() => setCondition(opt.value)}
+                      className={`flex-1 px-1.5 py-1.5 text-xs font-medium rounded-lg border transition-all ${
+                        condition === opt.value
+                          ? opt.color
+                          : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300'
+                      }`}
+                    >
+                      {opt.abbrev}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+      </div>
+
+      {/* Inventory Section */}
+      <div className="p-4">
+        {/* Inventory Header */}
+        {allComponents.length > 0 && (
+          <div className="flex items-center justify-between mb-3 pb-2 border-b border-gray-100">
+            <div className="flex items-center gap-2 text-sm">
+              <Calculator size={14} className="text-gray-400" />
+              <span className="font-medium text-gray-700">Systems ({totals.count} items)</span>
+            </div>
+          </div>
+        )}
+
+        {/* Inventory Items by Category */}
+        {MECHANICAL_CATEGORIES.map(category => {
+          const detailsKey = getDetailsKey(category.id as MechanicalCategory);
+          const categoryComponents = (systems?.[detailsKey] as ComponentDetail[] | undefined) || [];
+          
+          if (categoryComponents.length === 0) return null;
+          
+          return (
+            <div key={category.id} className="mb-4">
+              <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                {category.label}
+              </div>
+              <div className="space-y-2">
+                {categoryComponents.map((component) => {
+                  const depreciationPct = calculateDepreciationPercent(
+                    component.effectiveAge || 0, 
+                    component.economicLife || 20
+                  );
+                  const isCustom = isCustomType(component.type);
+                  const isExpanded = expandedItems.has(component.id);
+                  const hasNotes = component.notes && component.notes.trim().length > 0;
+                  
+                  return (
+                    <div
+                      key={component.id}
+                      className="bg-slate-50 rounded-lg border border-slate-100 hover:border-slate-200 transition-colors overflow-hidden"
+                    >
+                      {/* Main Row */}
+                      <div className="flex items-center gap-3 p-3">
+                        {/* Expand/Collapse Button */}
+                        <button
+                          onClick={() => toggleExpanded(component.id)}
+                          className={`p-1 rounded transition-colors flex-shrink-0 ${
+                            hasNotes ? 'text-[#0da1c7] hover:bg-[#0da1c7]/10' : 'text-gray-400 hover:bg-gray-100'
+                          }`}
+                          title={isExpanded ? 'Collapse notes' : 'Add/view notes'}
+                        >
+                          {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+                        </button>
+
+                        {/* Type Name */}
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2">
+                            {isCustom && <Star size={12} className="text-amber-400 flex-shrink-0" />}
+                            <span className="font-medium text-sm text-gray-900 truncate">
+                              {component.type}
+                            </span>
+                            {hasNotes && !isExpanded && (
+                              <span title="Has notes">
+                                <FileText size={12} className="text-[#0da1c7] flex-shrink-0" />
+                              </span>
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Year */}
+                        <div className="text-sm text-gray-500 whitespace-nowrap w-12 text-center">
+                          {component.yearInstalled || '—'}
+                        </div>
+
+                        {/* Economic Life */}
+                        <div className="text-xs text-gray-500 whitespace-nowrap">
+                          {component.economicLife || 20}yr
+                        </div>
+
+                        {/* Condition Badge */}
+                        <div className={`px-2 py-0.5 text-xs font-medium rounded ${
+                          CONDITION_OPTIONS.find(c => c.value === component.condition)?.color || 'bg-gray-100 text-gray-600'
+                        }`}>
+                          {CONDITION_OPTIONS.find(c => c.value === component.condition)?.abbrev || 'Avg'}
+                        </div>
+
+                        {/* Depreciation */}
+                        <div 
+                          className={`px-2 py-0.5 text-xs font-medium rounded whitespace-nowrap cursor-help ${
+                            depreciationPct >= 75 ? 'bg-red-100 text-red-700' :
+                            depreciationPct >= 50 ? 'bg-amber-100 text-amber-700' :
+                            depreciationPct > 0 ? 'bg-lime-100 text-lime-700' :
+                            'bg-gray-100 text-gray-500'
+                          }`}
+                          title={`Depreciation: ${depreciationPct}% | Economic Life: ${component.economicLife || 20} yrs | Effective Age: ${component.effectiveAge || 0} yrs`}
+                        >
+                          {depreciationPct}%
+                        </div>
+
+                        {/* Status */}
+                        {component.yearInstalled && component.condition ? (
+                          <CheckCircle2 size={16} className="text-lime-500 flex-shrink-0" />
+                        ) : (
+                          <div className="w-4" />
+                        )}
+
+                        {/* Delete Button */}
+                        <button
+                          onClick={() => removeComponent(component.id, category.id as MechanicalCategory)}
+                          className="p-1 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors flex-shrink-0"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
+
+                      {/* Expanded Notes Section */}
+                      {isExpanded && (
+                        <div className="px-3 pb-3 pt-0">
+                          <div className="ml-7 border-l-2 border-[#0da1c7]/20 pl-3">
+                            <ExpandableNote
+                              id={`mechanical_${component.id}_notes`}
+                              label={`Notes for ${component.type}`}
+                              value={component.notes || ''}
+                              onChange={(value) => updateComponent(component.id, category.id as MechanicalCategory, { notes: value })}
+                              placeholder={`Add notes about this system (condition details, maintenance history, capacity notes...)`}
+                              sectionContext="mechanical_component"
+                            />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
+
+        {/* Empty State */}
+        {allComponents.length === 0 && !selectedCategory && (
+          <div className="text-center py-6 text-gray-500">
+            <p className="text-sm">Select a category above to add mechanical systems</p>
+          </div>
+        )}
+      </div>
+
+      {/* General Notes Section */}
+      <div className="p-4 pt-0">
+        <ExpandableNote
+          id="mechanical_systems_notes"
+          label="Mechanical Systems Notes"
+          value={generalNotes}
+          onChange={handleGeneralNotesChange}
+          placeholder="Add general notes about mechanical systems..."
+          sectionContext="mechanical_description"
+        />
+      </div>
+    </div>
+  );
+}
+

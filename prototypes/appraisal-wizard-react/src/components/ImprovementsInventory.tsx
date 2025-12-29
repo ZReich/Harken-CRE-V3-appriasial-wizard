@@ -1,4 +1,4 @@
-import { useState, useCallback, useEffect } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { useWizard } from '../context/WizardContext';
 import {
   createDefaultParcel,
@@ -17,22 +17,12 @@ import type {
   ImprovementBuilding,
   ImprovementArea,
   ImprovementsInventory as ImprovementsInventoryType,
+  InteriorFeatures,
 } from '../types';
 import {
   CONSTRUCTION_TYPES,
   CONSTRUCTION_QUALITY,
   CONDITIONS,
-  FOUNDATION_OPTIONS,
-  ROOF_OPTIONS,
-  EXTERIOR_WALL_OPTIONS,
-  WINDOW_OPTIONS,
-  CEILING_OPTIONS,
-  FLOORING_OPTIONS,
-  INTERIOR_WALL_OPTIONS,
-  ELECTRICAL_OPTIONS,
-  HVAC_OPTIONS,
-  SPRINKLER_OPTIONS,
-  ELEVATOR_OPTIONS,
 } from '../types';
 import {
   ChevronRight,
@@ -55,17 +45,16 @@ import {
 } from 'lucide-react';
 import ExpandableSelector, { YearSelector } from './ExpandableSelector';
 import EnhancedTextArea from './EnhancedTextArea';
+import ExteriorFeaturesInventory from './ExteriorFeaturesInventory';
+import MechanicalSystemsInventory from './MechanicalSystemsInventory';
+import InteriorFinishesInventory from './InteriorFinishesInventory';
+import BuildingTypeSelector from './BuildingTypeSelector';
+import { getPropertyType } from '../constants/marshallSwift';
+import { getAreaTypesForBuildingType, type AreaTypeConfig } from '../constants/useAreaTypes';
+import { type ApplicablePropertyType, occupancyCodeToPropertyType } from '../constants/buildingComponents';
 
-const AREA_TYPES = [
-  { value: 'warehouse', label: 'Warehouse' },
-  { value: 'office', label: 'Office' },
-  { value: 'retail', label: 'Retail' },
-  { value: 'manufacturing', label: 'Manufacturing' },
-  { value: 'flex', label: 'Flex Space' },
-  { value: 'storage', label: 'Storage' },
-  { value: 'mezzanine', label: 'Mezzanine' },
-  { value: 'other', label: 'Other' },
-];
+// Note: Area types are now dynamically loaded via getAreaTypesForBuildingType() 
+// based on the building's property type. See AreaCard for implementation.
 
 const SF_TYPES = [
   { value: 'GBA', label: 'GBA' },
@@ -322,6 +311,8 @@ export default function ImprovementsInventory() {
             expandedBuildings={expandedBuildings}
             isFirstParcel={pIdx === 0}
             subjectData={state.subjectData}
+            defaultOccupancyCode={state.msOccupancyCode || undefined}
+            defaultPropertyType={state.propertyType || undefined}
             onToggle={() => toggleParcel(parcel.id)}
             onToggleBuilding={toggleBuilding}
             onUpdate={(updates) => updateParcel(parcel.id, updates)}
@@ -360,6 +351,8 @@ interface ParcelCardProps {
   expandedBuildings: Set<string>;
   isFirstParcel?: boolean;  // For showing "Synced from Setup" badges
   subjectData?: { taxId: string; legalDescription: string; address: { street: string; city: string; state: string; zip: string; county: string } };
+  defaultOccupancyCode?: string;
+  defaultPropertyType?: string;
   onToggle: () => void;
   onToggleBuilding: (buildingId: string) => void;
   onUpdate: (updates: Partial<ImprovementParcel>) => void;
@@ -380,6 +373,8 @@ function ParcelCard({
   expandedBuildings,
   isFirstParcel,
   subjectData,
+  defaultOccupancyCode,
+  defaultPropertyType,
   onToggle,
   onToggleBuilding,
   onUpdate,
@@ -520,6 +515,8 @@ function ParcelCard({
                   index={bIdx}
                   isExpanded={expandedBuildings.has(building.id)}
                   canRemove={parcel.buildings.length > 1}
+                  defaultOccupancyCode={defaultOccupancyCode}
+                  defaultPropertyType={defaultPropertyType}
                   onToggle={() => onToggleBuilding(building.id)}
                   onUpdate={(updates) => onUpdateBuilding(building.id, updates)}
                   onRemove={() => onRemoveBuilding(building.id)}
@@ -545,6 +542,8 @@ interface BuildingCardProps {
   index: number;
   isExpanded: boolean;
   canRemove: boolean;
+  defaultOccupancyCode?: string;
+  defaultPropertyType?: string;
   onToggle: () => void;
   onUpdate: (updates: Partial<ImprovementBuilding>) => void;
   onRemove: () => void;
@@ -558,6 +557,8 @@ function BuildingCard({
   index,
   isExpanded,
   canRemove,
+  defaultOccupancyCode,
+  defaultPropertyType,
   onToggle,
   onUpdate,
   onRemove,
@@ -568,6 +569,17 @@ function BuildingCard({
   const buildingSF = calculateBuildingSF(building);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['basic']));
   const [activeZoneIndex, setActiveZoneIndex] = useState<number | null>(null);
+  
+  // Get property category for component filtering
+  const effectivePropertyType = building.propertyTypeOverride || defaultPropertyType;
+  const propertyTypeConfig = effectivePropertyType ? getPropertyType(effectivePropertyType) : null;
+  const propertyCategory = propertyTypeConfig?.category;
+  
+  // Derive ApplicablePropertyType from occupancy code or property type
+  const effectiveOccupancyCode = building.msOccupancyCodeOverride || defaultOccupancyCode;
+  const applicablePropertyType = effectivePropertyType 
+    ? occupancyCodeToPropertyType(effectivePropertyType)
+    : undefined;
 
   const toggleSection = (section: string) => {
     setExpandedSections((prev) => {
@@ -617,6 +629,18 @@ function BuildingCard({
           </div>
         </div>
         <div className="flex items-center gap-3">
+          {/* Building Type Selector */}
+          <div onClick={(e) => e.stopPropagation()}>
+            <BuildingTypeSelector
+              propertyTypeOverride={building.propertyTypeOverride}
+              msOccupancyCodeOverride={building.msOccupancyCodeOverride}
+              defaultPropertyType={defaultPropertyType}
+              defaultOccupancyCode={defaultOccupancyCode}
+              onPropertyTypeChange={(type) => onUpdate({ propertyTypeOverride: type })}
+              onOccupancyCodeChange={(code) => onUpdate({ msOccupancyCodeOverride: code })}
+              compact={true}
+            />
+          </div>
           {building.yearBuilt && (
             <span className="px-2 py-0.5 text-xs font-medium bg-white rounded border text-gray-600">Built {building.yearBuilt}</span>
           )}
@@ -780,36 +804,35 @@ function BuildingCard({
 
           {/* Exterior Features */}
           <CollapsibleSection title="Exterior Features" icon={<Home className="w-4 h-4" />} isExpanded={expandedSections.has('exterior')} onToggle={() => toggleSection('exterior')}>
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <ExpandableSelector id={`foundation-${building.id}`} label="Foundation/Floor" options={FOUNDATION_OPTIONS} value={building.exteriorFeatures?.foundation || []} onChange={(v) => onUpdate({ exteriorFeatures: { ...building.exteriorFeatures, foundation: Array.isArray(v) ? v : [v] } })} category="structure" multiple />
-                <ExpandableSelector id={`roof-${building.id}`} label="Roof" options={ROOF_OPTIONS} value={building.exteriorFeatures?.roof || []} onChange={(v) => onUpdate({ exteriorFeatures: { ...building.exteriorFeatures, roof: Array.isArray(v) ? v : [v] } })} category="structure" multiple />
-                <ExpandableSelector id={`ext-walls-${building.id}`} label="Exterior Walls" options={EXTERIOR_WALL_OPTIONS} value={building.exteriorFeatures?.walls || []} onChange={(v) => onUpdate({ exteriorFeatures: { ...building.exteriorFeatures, walls: Array.isArray(v) ? v : [v] } })} category="structure" multiple />
-                <ExpandableSelector id={`windows-${building.id}`} label="Windows" options={WINDOW_OPTIONS} value={building.exteriorFeatures?.windows || []} onChange={(v) => onUpdate({ exteriorFeatures: { ...building.exteriorFeatures, windows: Array.isArray(v) ? v : [v] } })} category="structure" multiple />
-              </div>
-              <EnhancedTextArea id={`exterior-desc-${building.id}`} label="Exterior Features Description" value={building.exteriorFeatures?.description || ''} onChange={(v) => onUpdate({ exteriorFeatures: { ...building.exteriorFeatures, description: v } })} placeholder="Describe the building exterior..." sectionContext="exterior_description" rows={4} />
-            </div>
+            <ExteriorFeaturesInventory
+              features={building.exteriorFeatures}
+              onChange={(updated) => onUpdate({ exteriorFeatures: updated })}
+              buildingYearBuilt={building.yearBuilt}
+              defaultOccupancyCode={defaultOccupancyCode}
+              buildingPropertyTypeOverride={building.propertyTypeOverride}
+              buildingOccupancyCodeOverride={building.msOccupancyCodeOverride}
+              propertyCategory={propertyCategory}
+            />
           </CollapsibleSection>
 
           {/* Mechanical Systems */}
           <CollapsibleSection title="Mechanical Systems" icon={<Wrench className="w-4 h-4" />} isExpanded={expandedSections.has('mechanical')} onToggle={() => toggleSection('mechanical')}>
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-3">
-                <ExpandableSelector id={`electrical-${building.id}`} label="Electrical" options={ELECTRICAL_OPTIONS} value={building.mechanicalSystems?.electrical || []} onChange={(v) => onUpdate({ mechanicalSystems: { ...building.mechanicalSystems, electrical: Array.isArray(v) ? v : [v] } })} category="systems" multiple />
-                <ExpandableSelector id={`heating-${building.id}`} label="Heating" options={HVAC_OPTIONS} value={building.mechanicalSystems?.heating || []} onChange={(v) => onUpdate({ mechanicalSystems: { ...building.mechanicalSystems, heating: Array.isArray(v) ? v : [v] } })} category="systems" multiple />
-                <ExpandableSelector id={`cooling-${building.id}`} label="Cooling" options={HVAC_OPTIONS} value={building.mechanicalSystems?.cooling || []} onChange={(v) => onUpdate({ mechanicalSystems: { ...building.mechanicalSystems, cooling: Array.isArray(v) ? v : [v] } })} category="systems" multiple />
-                <ExpandableSelector id={`sprinkler-${building.id}`} label="Sprinkler System" options={SPRINKLER_OPTIONS} value={building.mechanicalSystems?.sprinkler || []} onChange={(v) => onUpdate({ mechanicalSystems: { ...building.mechanicalSystems, sprinkler: Array.isArray(v) ? v : [v] } })} category="systems" multiple />
-                <ExpandableSelector id={`elevators-${building.id}`} label="Elevators" options={ELEVATOR_OPTIONS} value={building.mechanicalSystems?.elevators || []} onChange={(v) => onUpdate({ mechanicalSystems: { ...building.mechanicalSystems, elevators: Array.isArray(v) ? v : [v] } })} category="systems" multiple />
-              </div>
-              <EnhancedTextArea id={`mechanical-desc-${building.id}`} label="Mechanical Systems Description" value={building.mechanicalSystems?.description || ''} onChange={(v) => onUpdate({ mechanicalSystems: { ...building.mechanicalSystems, description: v } })} placeholder="Describe the mechanical systems..." sectionContext="mechanical_description" rows={4} />
-            </div>
+            <MechanicalSystemsInventory
+              systems={building.mechanicalSystems}
+              onChange={(updated) => onUpdate({ mechanicalSystems: updated })}
+              buildingYearBuilt={building.yearBuilt}
+              defaultOccupancyCode={defaultOccupancyCode}
+              buildingPropertyTypeOverride={building.propertyTypeOverride}
+              buildingOccupancyCodeOverride={building.msOccupancyCodeOverride}
+              propertyCategory={propertyCategory}
+            />
           </CollapsibleSection>
 
           {/* Use Areas */}
           <CollapsibleSection title="Use Areas / Segments" icon={<Layers className="w-4 h-4" />} isExpanded={expandedSections.has('areas')} onToggle={() => toggleSection('areas')} action={<button onClick={(e) => { e.stopPropagation(); onAddArea(); }} className="flex items-center gap-1 text-xs font-medium text-[#0da1c7] hover:underline"><Plus className="w-3 h-3" />Add Area</button>}>
             <div className="space-y-3">
               {building.areas.map((area, aIdx) => (
-                <AreaCard key={area.id} area={area} index={aIdx} canRemove={building.areas.length > 1} onUpdate={(updates) => onUpdateArea(area.id, updates)} onRemove={() => onRemoveArea(area.id)} />
+                <AreaCard key={area.id} area={area} index={aIdx} canRemove={building.areas.length > 1} effectivePropertyType={applicablePropertyType} onUpdate={(updates) => onUpdateArea(area.id, updates)} onRemove={() => onRemoveArea(area.id)} />
               ))}
             </div>
           </CollapsibleSection>
@@ -954,18 +977,29 @@ interface AreaCardProps {
   area: ImprovementArea;
   index: number;
   canRemove: boolean;
+  effectivePropertyType?: ApplicablePropertyType;
   onUpdate: (updates: Partial<ImprovementArea>) => void;
   onRemove: () => void;
 }
 
-function AreaCard({ area, canRemove, onUpdate, onRemove }: AreaCardProps) {
+function AreaCard({ area, canRemove, effectivePropertyType, onUpdate, onRemove }: AreaCardProps) {
   const [showInterior, setShowInterior] = useState(false);
+  
+  // Get filtered area types based on building's property type
+  const filteredAreaTypes = useMemo(() => {
+    return getAreaTypesForBuildingType(effectivePropertyType);
+  }, [effectivePropertyType]);
+  
+  // Get area name for display
+  const currentAreaType = filteredAreaTypes.find((t: AreaTypeConfig) => t.id === area.type);
+  const areaName = area.type === 'other' && area.customType ? area.customType : 
+    currentAreaType?.label || area.type;
 
   return (
     <div className="bg-gray-50 rounded-xl p-4 space-y-4">
       <div className="flex items-center gap-3">
         <select value={area.type} onChange={(e) => onUpdate({ type: e.target.value as ImprovementArea['type'] })} className="flex-1 min-w-[140px] px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent">
-          {AREA_TYPES.map((t) => (<option key={t.value} value={t.value}>{t.label}</option>))}
+          {filteredAreaTypes.map((t: AreaTypeConfig) => (<option key={t.id} value={t.id}>{t.label}{t.isPrimary ? ' ★' : ''}</option>))}
         </select>
         {area.type === 'other' && (<input type="text" value={area.customType || ''} onChange={(e) => onUpdate({ customType: e.target.value })} placeholder="Specify type" className="w-28 px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent" />)}
         <div className="flex items-center gap-1.5">
@@ -987,13 +1021,15 @@ function AreaCard({ area, canRemove, onUpdate, onRemove }: AreaCardProps) {
       </button>
 
       {showInterior && (
-        <div className="pl-4 border-l-2 border-[#0da1c7]/20 space-y-4">
-          <div className="grid grid-cols-3 gap-3">
-            <ExpandableSelector id={`ceilings-${area.id}`} label="Ceilings" options={CEILING_OPTIONS} value={area.interiorFeatures?.ceilings || []} onChange={(v) => onUpdate({ interiorFeatures: { ...area.interiorFeatures, ceilings: Array.isArray(v) ? v : [v] } })} category="interior" compact multiple />
-            <ExpandableSelector id={`flooring-${area.id}`} label="Flooring" options={FLOORING_OPTIONS} value={area.interiorFeatures?.flooring || []} onChange={(v) => onUpdate({ interiorFeatures: { ...area.interiorFeatures, flooring: Array.isArray(v) ? v : [v] } })} category="interior" compact multiple />
-            <ExpandableSelector id={`int-walls-${area.id}`} label="Walls" options={INTERIOR_WALL_OPTIONS} value={area.interiorFeatures?.walls || []} onChange={(v) => onUpdate({ interiorFeatures: { ...area.interiorFeatures, walls: Array.isArray(v) ? v : [v] } })} category="interior" compact multiple />
-          </div>
-          <EnhancedTextArea id={`interior-desc-${area.id}`} label="Interior Finish Description" value={area.interiorFeatures?.description || ''} onChange={(v) => onUpdate({ interiorFeatures: { ...area.interiorFeatures, description: v } })} placeholder="Describe the interior finishes..." sectionContext="interior_description" rows={3} />
+        <div className="pl-4 border-l-2 border-[#0da1c7]/20">
+          <InteriorFinishesInventory
+            features={area.interiorFeatures}
+            onChange={(updated: InteriorFeatures) => onUpdate({ interiorFeatures: updated })}
+            buildingYearBuilt={area.yearBuilt}
+            areaName={areaName}
+            areaTypeId={area.type}
+            compact
+          />
         </div>
       )}
     </div>

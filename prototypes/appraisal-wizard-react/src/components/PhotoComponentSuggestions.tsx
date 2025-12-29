@@ -1,0 +1,317 @@
+/**
+ * PhotoComponentSuggestions Component
+ * 
+ * Displays detected building components from photo AI analysis.
+ * Allows users to accept/reject suggestions and add them to the improvements inventory.
+ * 
+ * Features:
+ * - Shows detected components with confidence scores
+ * - Grouped by category (roofing, walls, flooring, etc.)
+ * - One-click "Add to Inventory" functionality
+ * - Condition suggestions from AI
+ */
+
+import { useState, useMemo } from 'react';
+import {
+  Camera,
+  Plus,
+  CheckCircle2,
+  X,
+  AlertTriangle,
+  Building2,
+  Layers,
+  Zap,
+  ChevronDown,
+  ChevronRight,
+} from 'lucide-react';
+import type { DetectedBuildingComponent, ComponentDetectionCategory } from '../services/photoClassification';
+
+// =================================================================
+// TYPES
+// =================================================================
+
+interface PhotoComponentSuggestionsProps {
+  /** Detected components from photo analysis */
+  detectedComponents: DetectedBuildingComponent[];
+  /** Photo filename for display */
+  photoFilename?: string;
+  /** Callback when user accepts a component suggestion */
+  onAcceptComponent?: (component: DetectedBuildingComponent) => void;
+  /** Callback when user rejects/dismisses a component */
+  onRejectComponent?: (componentTypeId: string) => void;
+  /** Already added component type IDs (to show as already added) */
+  existingComponentTypeIds?: Set<string>;
+  /** Compact mode for inline display */
+  compact?: boolean;
+}
+
+// =================================================================
+// CONSTANTS
+// =================================================================
+
+const CATEGORY_CONFIG: Record<ComponentDetectionCategory, { 
+  label: string; 
+  icon: typeof Building2;
+  section: 'exterior' | 'mechanical' | 'interior';
+}> = {
+  roofing: { label: 'Roofing', icon: Building2, section: 'exterior' },
+  walls: { label: 'Walls', icon: Building2, section: 'exterior' },
+  windows: { label: 'Windows', icon: Building2, section: 'exterior' },
+  foundation: { label: 'Foundation', icon: Building2, section: 'exterior' },
+  hvac: { label: 'HVAC', icon: Zap, section: 'mechanical' },
+  electrical: { label: 'Electrical', icon: Zap, section: 'mechanical' },
+  flooring: { label: 'Flooring', icon: Layers, section: 'interior' },
+  ceilings: { label: 'Ceilings', icon: Layers, section: 'interior' },
+};
+
+const CONDITION_COLORS: Record<string, string> = {
+  excellent: 'bg-green-100 text-green-700 border-green-300',
+  good: 'bg-lime-100 text-lime-700 border-lime-300',
+  average: 'bg-gray-100 text-gray-700 border-gray-300',
+  fair: 'bg-amber-100 text-amber-700 border-amber-300',
+  poor: 'bg-red-100 text-red-700 border-red-300',
+};
+
+// =================================================================
+// HELPER COMPONENTS
+// =================================================================
+
+interface ComponentCardProps {
+  component: DetectedBuildingComponent;
+  isAdded: boolean;
+  onAccept: () => void;
+  onReject: () => void;
+  compact?: boolean;
+}
+
+function ComponentCard({ component, isAdded, onAccept, onReject, compact }: ComponentCardProps) {
+  const confidenceColor = component.confidence >= 80 
+    ? 'text-green-600' 
+    : component.confidence >= 60 
+      ? 'text-amber-600' 
+      : 'text-gray-500';
+
+  return (
+    <div className={`
+      bg-white rounded-lg border transition-all
+      ${isAdded 
+        ? 'border-green-300 bg-green-50' 
+        : 'border-gray-200 hover:border-[#0da1c7] hover:shadow-sm'}
+      ${compact ? 'p-2' : 'p-3'}
+    `}>
+      <div className="flex items-start justify-between gap-2">
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <span className={`font-medium ${compact ? 'text-sm' : 'text-base'} text-gray-900`}>
+              {component.componentLabel}
+            </span>
+            {component.suggestedCondition && (
+              <span className={`
+                px-1.5 py-0.5 text-xs font-medium rounded border
+                ${CONDITION_COLORS[component.suggestedCondition] || 'bg-gray-100 text-gray-600'}
+              `}>
+                {component.suggestedCondition}
+              </span>
+            )}
+          </div>
+          
+          {!compact && component.reasoning && (
+            <p className="text-xs text-gray-500 mt-1 line-clamp-2">
+              {component.reasoning}
+            </p>
+          )}
+          
+          <div className="flex items-center gap-2 mt-1">
+            <span className={`text-xs font-medium ${confidenceColor}`}>
+              {Math.round(component.confidence)}% confidence
+            </span>
+          </div>
+        </div>
+        
+        <div className="flex items-center gap-1.5 flex-shrink-0">
+          {isAdded ? (
+            <span className="flex items-center gap-1 text-xs font-medium text-green-600">
+              <CheckCircle2 size={14} />
+              Added
+            </span>
+          ) : (
+            <>
+              <button
+                onClick={onAccept}
+                className="p-1.5 rounded-lg bg-[#0da1c7] text-white hover:bg-[#0b8fb3] transition-colors"
+                title="Add to inventory"
+              >
+                <Plus size={14} />
+              </button>
+              <button
+                onClick={onReject}
+                className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                title="Dismiss suggestion"
+              >
+                <X size={14} />
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// =================================================================
+// MAIN COMPONENT
+// =================================================================
+
+export default function PhotoComponentSuggestions({
+  detectedComponents,
+  photoFilename,
+  onAcceptComponent,
+  onRejectComponent,
+  existingComponentTypeIds = new Set(),
+  compact = false,
+}: PhotoComponentSuggestionsProps) {
+  const [dismissedComponents, setDismissedComponents] = useState<Set<string>>(new Set());
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['exterior', 'mechanical', 'interior']));
+
+  // Filter out dismissed components
+  const visibleComponents = useMemo(() => {
+    return detectedComponents.filter(c => !dismissedComponents.has(c.componentTypeId));
+  }, [detectedComponents, dismissedComponents]);
+
+  // Group components by section (exterior, mechanical, interior)
+  const groupedComponents = useMemo(() => {
+    const groups: Record<'exterior' | 'mechanical' | 'interior', DetectedBuildingComponent[]> = {
+      exterior: [],
+      mechanical: [],
+      interior: [],
+    };
+
+    visibleComponents.forEach(component => {
+      const config = CATEGORY_CONFIG[component.category];
+      if (config) {
+        groups[config.section].push(component);
+      }
+    });
+
+    return groups;
+  }, [visibleComponents]);
+
+  // Handle accept
+  const handleAccept = (component: DetectedBuildingComponent) => {
+    onAcceptComponent?.(component);
+  };
+
+  // Handle reject
+  const handleReject = (componentTypeId: string) => {
+    setDismissedComponents(prev => new Set([...prev, componentTypeId]));
+    onRejectComponent?.(componentTypeId);
+  };
+
+  // Toggle section expansion
+  const toggleSection = (section: string) => {
+    setExpandedSections(prev => {
+      const next = new Set(prev);
+      if (next.has(section)) {
+        next.delete(section);
+      } else {
+        next.add(section);
+      }
+      return next;
+    });
+  };
+
+  // If no components detected, show empty state
+  if (visibleComponents.length === 0) {
+    return null;
+  }
+
+  const renderSection = (
+    sectionId: 'exterior' | 'mechanical' | 'interior',
+    label: string,
+    icon: React.ReactNode
+  ) => {
+    const components = groupedComponents[sectionId];
+    if (components.length === 0) return null;
+
+    const isExpanded = expandedSections.has(sectionId);
+
+    return (
+      <div key={sectionId} className="mb-3">
+        <button
+          onClick={() => toggleSection(sectionId)}
+          className="flex items-center gap-2 w-full text-left mb-2"
+        >
+          {isExpanded ? <ChevronDown size={14} className="text-gray-400" /> : <ChevronRight size={14} className="text-gray-400" />}
+          {icon}
+          <span className="text-sm font-medium text-gray-700">{label}</span>
+          <span className="text-xs text-gray-400">({components.length})</span>
+        </button>
+        
+        {isExpanded && (
+          <div className="space-y-2 pl-5">
+            {components.map(component => (
+              <ComponentCard
+                key={component.componentTypeId}
+                component={component}
+                isAdded={existingComponentTypeIds.has(component.componentTypeId)}
+                onAccept={() => handleAccept(component)}
+                onReject={() => handleReject(component.componentTypeId)}
+                compact={compact}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    );
+  };
+
+  return (
+    <div className={`
+      bg-amber-50 border border-amber-200 rounded-xl overflow-hidden
+      ${compact ? 'p-3' : 'p-4'}
+    `}>
+      {/* Header */}
+      <div className="flex items-center gap-2 mb-3">
+        <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center">
+          <Camera className="w-4 h-4 text-amber-600" />
+        </div>
+        <div>
+          <h4 className={`font-semibold text-amber-900 ${compact ? 'text-sm' : 'text-base'}`}>
+            Detected Components
+          </h4>
+          {photoFilename && (
+            <p className="text-xs text-amber-700">
+              From: {photoFilename}
+            </p>
+          )}
+        </div>
+        <div className="ml-auto flex items-center gap-1 text-xs text-amber-700">
+          <AlertTriangle size={12} />
+          <span>Review & add to inventory</span>
+        </div>
+      </div>
+
+      {/* Component Sections */}
+      {renderSection('exterior', 'Exterior Features', <Building2 size={14} className="text-gray-500" />)}
+      {renderSection('mechanical', 'Mechanical Systems', <Zap size={14} className="text-gray-500" />)}
+      {renderSection('interior', 'Interior Finishes', <Layers size={14} className="text-gray-500" />)}
+
+      {/* Summary Footer */}
+      <div className="mt-3 pt-3 border-t border-amber-200 flex items-center justify-between">
+        <span className="text-xs text-amber-700">
+          {visibleComponents.length} component{visibleComponents.length !== 1 ? 's' : ''} detected
+        </span>
+        {visibleComponents.length > 0 && (
+          <button
+            onClick={() => visibleComponents.forEach(c => handleAccept(c))}
+            className="text-xs font-medium text-amber-700 hover:text-amber-900 flex items-center gap-1"
+          >
+            <Plus size={12} />
+            Add All to Inventory
+          </button>
+        )}
+      </div>
+    </div>
+  );
+}
+

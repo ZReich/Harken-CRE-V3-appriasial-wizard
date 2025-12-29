@@ -137,6 +137,30 @@ const getInitialState = (): WizardState => {
   if (stored) {
     try {
       const parsedState = JSON.parse(stored);
+      
+      // Helper to clean corrupted address fields (e.g., "Bozeman, Bozeman, Bozeman" -> "Bozeman")
+      const cleanAddressField = (value: string | undefined): string => {
+        if (!value) return '';
+        // If the field contains commas, it might be corrupted with repeated values
+        if (value.includes(',')) {
+          const parts = value.split(',').map(p => p.trim()).filter(Boolean);
+          const uniqueParts = [...new Set(parts)];
+          // If all parts were the same, return just one; otherwise keep original
+          if (uniqueParts.length === 1) {
+            return uniqueParts[0];
+          }
+        }
+        return value;
+      };
+      
+      const storedAddress = parsedState.subjectData?.address || {};
+      const cleanedAddress = {
+        ...defaultState.subjectData.address,
+        ...storedAddress,
+        // Clean potentially corrupted city field
+        city: cleanAddressField(storedAddress.city),
+      };
+      
       // Merge stored state with defaults to handle missing fields
       return {
         ...defaultState,
@@ -145,10 +169,7 @@ const getInitialState = (): WizardState => {
         subjectData: {
           ...defaultState.subjectData,
           ...(parsedState.subjectData || {}),
-          address: {
-            ...defaultState.subjectData.address,
-            ...(parsedState.subjectData?.address || {}),
-          },
+          address: cleanedAddress,
           // Preserve coordinates from storage
           coordinates: parsedState.subjectData?.coordinates || undefined,
           // Preserve cadastralData from storage
@@ -712,6 +733,11 @@ interface WizardContextValue {
   setMarketAnalysis: (data: import('../types').MarketAnalysisData) => void;
   getMarketAnalysis: () => import('../types').MarketAnalysisData | undefined;
   
+  // Building type helpers
+  getEffectiveBuildingPropertyType: (buildingId: string) => string | undefined;
+  getEffectiveBuildingOccupancyCode: (buildingId: string) => string | undefined;
+  getBuildingById: (buildingId: string) => import('../types').ImprovementBuilding | undefined;
+  
   // Derived state
   hasImprovements: boolean; // True if property type is not 'land'
 }
@@ -1129,6 +1155,61 @@ export function WizardProvider({ children }: { children: ReactNode }) {
     return state.marketAnalysis;
   }, [state.marketAnalysis]);
 
+  // ================================================================
+  // BUILDING TYPE HELPERS
+  // ================================================================
+  
+  /**
+   * Find a building by ID across all parcels.
+   */
+  const getBuildingById = useCallback((buildingId: string) => {
+    for (const parcel of state.improvementsInventory.parcels) {
+      const building = parcel.buildings.find(b => b.id === buildingId);
+      if (building) return building;
+    }
+    return undefined;
+  }, [state.improvementsInventory]);
+  
+  /**
+   * Get the effective property type for a building.
+   * Returns the building's override if set, otherwise the wizard default.
+   */
+  const getEffectiveBuildingPropertyType = useCallback((buildingId: string): string | undefined => {
+    const building = getBuildingById(buildingId);
+    
+    // Check building-level override first
+    if (building?.propertyTypeOverride) {
+      return building.propertyTypeOverride;
+    }
+    
+    // Fall back to wizard-level default (derive from msOccupancyCode)
+    // The msOccupancyCode contains the occupancy code ID, we need to get its property type
+    if (state.msOccupancyCode) {
+      // The msOccupancyCode is the occupancy code ID like 'warehouse-general'
+      // We need to look up the property type from the occupancy codes
+      // For simplicity, return the propertyType from state if set
+      return state.propertyType || undefined;
+    }
+    
+    return state.propertyType || undefined;
+  }, [getBuildingById, state.msOccupancyCode, state.propertyType]);
+  
+  /**
+   * Get the effective occupancy code for a building.
+   * Returns the building's override if set, otherwise the wizard default.
+   */
+  const getEffectiveBuildingOccupancyCode = useCallback((buildingId: string): string | undefined => {
+    const building = getBuildingById(buildingId);
+    
+    // Check building-level override first
+    if (building?.msOccupancyCodeOverride) {
+      return building.msOccupancyCodeOverride;
+    }
+    
+    // Fall back to wizard-level default
+    return state.msOccupancyCode || undefined;
+  }, [getBuildingById, state.msOccupancyCode]);
+
   // Derived state: hasImprovements
   // True if property type is not 'land' (i.e., has improvements to appraise)
   const hasImprovements = state.propertyType !== 'land';
@@ -1206,6 +1287,10 @@ export function WizardProvider({ children }: { children: ReactNode }) {
         getHbuAnalysis,
         setMarketAnalysis,
         getMarketAnalysis,
+        // Building type helpers
+        getEffectiveBuildingPropertyType,
+        getEffectiveBuildingOccupancyCode,
+        getBuildingById,
         // Derived state
         hasImprovements,
       }}

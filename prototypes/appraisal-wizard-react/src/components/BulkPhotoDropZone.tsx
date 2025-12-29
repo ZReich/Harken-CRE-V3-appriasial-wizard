@@ -65,7 +65,7 @@ export default function BulkPhotoDropZone({
       updateStagingPhoto(photo.id, { status: 'classifying' });
 
       try {
-        const result = await classifyPhoto(photo.file, photo.id, usedSlots);
+        const result = await classifyPhoto(photo.file, photo.id, usedSlots, { detectComponents: true });
 
         if (result.success && result.suggestions.length > 0) {
           // Mark top suggestion as used for subsequent photos
@@ -74,11 +74,13 @@ export default function BulkPhotoDropZone({
           updateStagingPhoto(photo.id, {
             status: 'classified',
             suggestions: result.suggestions,
+            detectedComponents: result.detectedComponents,
           });
 
           // Update local photo object for callback
           photo.status = 'classified';
           photo.suggestions = result.suggestions;
+          photo.detectedComponents = result.detectedComponents;
         } else {
           updateStagingPhoto(photo.id, {
             status: 'error',

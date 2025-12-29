@@ -86,3 +86,14 @@ export {
   type CrimeStatistics,
   type CrimeResponse,
 } from './crimeService';
+
+// Cost Segregation Service
+export {
+  generateCostSegAnalysis,
+  applyComponentOverride,
+  resetAnalysisOverrides,
+  getBonusDepreciationRate,
+  formatCostSegCurrency,
+  formatCostSegPercent,
+  type GenerateCostSegInput,
+} from './costSegregationService';
