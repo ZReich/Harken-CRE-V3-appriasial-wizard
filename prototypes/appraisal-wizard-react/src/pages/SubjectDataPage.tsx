@@ -150,28 +150,36 @@ export default function SubjectDataPage() {
   const [cityCounty, setCityCounty] = useState(() => {
     const addr = wizardState.subjectData?.address;
     
-    // Helper to clean up potentially corrupted city values (e.g., "Bozeman, Bozeman, Bozeman")
-    const cleanCityValue = (city: string | undefined): string => {
-      if (!city) return '';
-      // If the city contains commas, it might be corrupted with repeated values
-      if (city.includes(',')) {
-        const parts = city.split(',').map(p => p.trim()).filter(Boolean);
-        // Get unique values and take the first one (the actual city)
-        const uniqueParts = [...new Set(parts)];
-        return uniqueParts[0] || city;
-      }
-      return city;
+    // Helper to clean up potentially corrupted city/county values
+    const cleanValue = (value: string | undefined): string => {
+      if (!value) return '';
+      // If the value contains multiple commas, it might be corrupted with repeated values
+      const parts = value.split(',').map(p => p.trim()).filter(Boolean);
+      // Remove duplicates by converting to Set and back to array
+      const uniqueParts = [...new Set(parts)];
+      return uniqueParts.join(', ');
     };
     
-    const cleanCity = cleanCityValue(addr?.city);
-    const county = addr?.county;
+    const rawCity = addr?.city || '';
+    const rawCounty = addr?.county || '';
     
-    if (cleanCity && county) {
-      return `${cleanCity}, ${county}`;
-    } else if (cleanCity) {
-      return cleanCity;
-    } else if (county) {
-      return county;
+    // Clean both values first
+    const cleanedCity = cleanValue(rawCity);
+    const cleanedCounty = cleanValue(rawCounty);
+    
+    // If we already have a comma-separated string in city, it might be "City, County" already
+    // In that case, use it as-is (after cleaning)
+    if (cleanedCity.includes(',')) {
+      return cleanedCity;
+    }
+    
+    // Otherwise, build it from separate city and county
+    if (cleanedCity && cleanedCounty) {
+      return `${cleanedCity}, ${cleanedCounty}`;
+    } else if (cleanedCity) {
+      return cleanedCity;
+    } else if (cleanedCounty) {
+      return cleanedCounty;
     }
     return '';
   });
