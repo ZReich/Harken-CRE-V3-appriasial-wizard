@@ -21,6 +21,8 @@ import {
   CEILING_TYPES,
   FLOORING_TYPES,
   INTERIOR_WALL_TYPES,
+  INTERIOR_PLUMBING_TYPES,
+  INTERIOR_LIGHTING_TYPES,
 } from '../constants/buildingComponents';
 import {
   type AreaTypeId,
@@ -113,11 +115,15 @@ export function useFilteredInteriorComponents(
   getCeilingComponents: () => FilteredInteriorResult;
   getFlooringComponents: () => FilteredInteriorResult;
   getWallComponents: () => FilteredInteriorResult;
+  getPlumbingComponents: () => FilteredInteriorResult;
+  getLightingComponents: () => FilteredInteriorResult;
   areaTypeLabel: string;
   defaultFinishes: {
     ceilingTypeIds: string[];
     flooringTypeIds: string[];
     wallTypeIds: string[];
+    plumbingTypeIds: string[];
+    lightingTypeIds: string[];
   };
 } {
   const { areaType } = params;
@@ -133,6 +139,8 @@ export function useFilteredInteriorComponents(
       ceilingTypeIds: defaults?.ceilingTypeIds || [],
       flooringTypeIds: defaults?.flooringTypeIds || [],
       wallTypeIds: defaults?.wallTypeIds || [],
+      plumbingTypeIds: defaults?.plumbingTypeIds || [],
+      lightingTypeIds: defaults?.lightingTypeIds || [],
     };
   }, [areaType]);
   
@@ -212,10 +220,62 @@ export function useFilteredInteriorComponents(
     };
   }, [defaultFinishes.wallTypeIds]);
   
+  // Function to get filtered plumbing components
+  const getPlumbingComponents = useMemo(() => {
+    return (): FilteredInteriorResult => {
+      const allTypes = INTERIOR_PLUMBING_TYPES;
+      
+      // Recommended = defaults + any with isPrimary that aren't in defaults
+      const defaultIds = new Set(defaultFinishes.plumbingTypeIds);
+      const recommended = sortWithDefaultsFirst(
+        allTypes.filter(c => defaultIds.has(c.id) || c.isPrimary),
+        defaultFinishes.plumbingTypeIds
+      );
+      
+      // Other = everything not in recommended
+      const recommendedIds = new Set(recommended.map(c => c.id));
+      const other = allTypes.filter(c => !recommendedIds.has(c.id));
+      
+      return {
+        recommended,
+        other,
+        all: allTypes,
+        defaultIds: defaultFinishes.plumbingTypeIds,
+      };
+    };
+  }, [defaultFinishes.plumbingTypeIds]);
+  
+  // Function to get filtered lighting components
+  const getLightingComponents = useMemo(() => {
+    return (): FilteredInteriorResult => {
+      const allTypes = INTERIOR_LIGHTING_TYPES;
+      
+      // Recommended = defaults + any with isPrimary that aren't in defaults
+      const defaultIds = new Set(defaultFinishes.lightingTypeIds);
+      const recommended = sortWithDefaultsFirst(
+        allTypes.filter(c => defaultIds.has(c.id) || c.isPrimary),
+        defaultFinishes.lightingTypeIds
+      );
+      
+      // Other = everything not in recommended
+      const recommendedIds = new Set(recommended.map(c => c.id));
+      const other = allTypes.filter(c => !recommendedIds.has(c.id));
+      
+      return {
+        recommended,
+        other,
+        all: allTypes,
+        defaultIds: defaultFinishes.lightingTypeIds,
+      };
+    };
+  }, [defaultFinishes.lightingTypeIds]);
+  
   return {
     getCeilingComponents,
     getFlooringComponents,
     getWallComponents,
+    getPlumbingComponents,
+    getLightingComponents,
     areaTypeLabel,
     defaultFinishes,
   };

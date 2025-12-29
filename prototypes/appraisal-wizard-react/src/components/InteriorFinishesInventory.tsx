@@ -51,6 +51,8 @@ const INTERIOR_CATEGORY_TO_KEY: Record<InteriorCategory, keyof InteriorFeatures>
   'ceilings': 'ceilingDetails',
   'flooring': 'flooringDetails',
   'walls': 'wallDetails',
+  'plumbing': 'plumbingDetails',
+  'lighting': 'lightingDetails',
 };
 
 // =================================================================
@@ -169,6 +171,8 @@ export default function InteriorFinishesInventory({
     getCeilingComponents,
     getFlooringComponents,
     getWallComponents,
+    getPlumbingComponents,
+    getLightingComponents,
     areaTypeLabel,
   } = useFilteredInteriorComponents({ areaType: areaTypeId || 'other' });
 
@@ -178,6 +182,8 @@ export default function InteriorFinishesInventory({
       ...(features?.ceilingDetails || []),
       ...(features?.flooringDetails || []),
       ...(features?.wallDetails || []),
+      ...(features?.plumbingDetails || []),
+      ...(features?.lightingDetails || []),
     ];
   }, [features]);
 
@@ -197,6 +203,12 @@ export default function InteriorFinishesInventory({
       case 'walls':
         filteredResult = getWallComponents();
         break;
+      case 'plumbing':
+        filteredResult = getPlumbingComponents();
+        break;
+      case 'lighting':
+        filteredResult = getLightingComponents();
+        break;
       default:
         filteredResult = { recommended: [], other: [], all: [] };
     }
@@ -209,7 +221,7 @@ export default function InteriorFinishesInventory({
       otherTypes: [...filteredResult.other, ...customTypesForCategory],
       allTypes: [...filteredResult.all, ...customTypesForCategory],
     };
-  }, [selectedCategory, getCeilingComponents, getFlooringComponents, getWallComponents, getCustomTypesByCategory, toBuildingComponentType]);
+  }, [selectedCategory, getCeilingComponents, getFlooringComponents, getWallComponents, getPlumbingComponents, getLightingComponents, getCustomTypesByCategory, toBuildingComponentType]);
   
   // Legacy compatibility - total available types
   const availableTypes = useMemo(() => {

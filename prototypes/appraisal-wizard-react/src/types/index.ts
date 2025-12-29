@@ -91,12 +91,16 @@ export interface InteriorFeatures {
   ceilings?: string[];
   flooring?: string[];
   walls?: string[];
+  plumbing?: string[];
+  lighting?: string[];
   description?: string;
   
   // Detailed format (for cost segregation and asset quality)
   ceilingDetails?: ComponentDetail[];
   flooringDetails?: ComponentDetail[];
   wallDetails?: ComponentDetail[];
+  plumbingDetails?: ComponentDetail[];
+  lightingDetails?: ComponentDetail[];
 }
 
 /**
