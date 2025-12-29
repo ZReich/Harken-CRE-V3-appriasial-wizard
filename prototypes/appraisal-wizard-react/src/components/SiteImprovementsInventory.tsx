@@ -20,6 +20,15 @@ import {
   FileText,
   HelpCircle,
 } from 'lucide-react';
+
+// Helper function to generate year options for dropdown
+const generateYearOptions = (currentYear: number) => {
+  const years = [];
+  for (let i = currentYear; i >= 1900; i--) {
+    years.push({ value: i.toString(), label: i.toString() });
+  }
+  return years;
+};
 import {
   getSiteImprovementType,
   getSiteImprovementTypesByCategory,
@@ -695,15 +704,18 @@ export default function SiteImprovementsInventory({
                   <Calendar size={12} />
                   Year
                 </label>
-                <input
-                  type="number"
+                <select
                   value={yearInstalled}
                   onChange={(e) => setYearInstalled(e.target.value)}
                   className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
-                  placeholder={new Date().getFullYear().toString()}
-                  min="1900"
-                  max={new Date().getFullYear()}
-                />
+                >
+                  <option value="">Select year...</option>
+                  {generateYearOptions(new Date().getFullYear()).map((year) => (
+                    <option key={year.value} value={year.value}>
+                      {year.label}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div className="flex items-end">
                 <button
