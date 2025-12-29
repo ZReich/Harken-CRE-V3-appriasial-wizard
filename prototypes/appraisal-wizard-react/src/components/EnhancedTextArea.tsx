@@ -555,10 +555,10 @@ export default function EnhancedTextArea({
       
       <div 
         className={`relative ${isFullscreen 
-          ? 'fixed inset-8 z-50 bg-white rounded-2xl shadow-2xl p-8 flex flex-col max-w-6xl mx-auto' 
+          ? 'fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-50 bg-white rounded-2xl shadow-2xl p-8 flex flex-col w-[90vw] max-w-6xl' 
           : ''
         }`}
-        style={isFullscreen ? { minHeight: '80vh', maxHeight: '90vh' } : undefined}
+        style={isFullscreen ? { height: '85vh', maxHeight: '85vh' } : undefined}
       >
         {/* Label Row */}
         <div className="flex items-center justify-between mb-2">
