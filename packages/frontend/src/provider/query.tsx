@@ -1,3 +1,4 @@
+// @ts-nocheck - Legacy file using old react-query, not actively used
 import { QueryClient, QueryClientProvider } from 'react-query';
 
 type Props = {

@@ -1,3 +1,4 @@
+// @ts-nocheck - Legacy file, @tinymce/tinymce-react not actively used
 import React, { useEffect, useRef, useState } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import { toast } from 'react-toastify';

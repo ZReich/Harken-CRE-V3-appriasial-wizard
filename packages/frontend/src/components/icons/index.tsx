@@ -38,6 +38,10 @@ import FileUploadIcon from '@mui/icons-material/FileUpload';
 import KeyboardBackspaceIcon from '@mui/icons-material/KeyboardBackspace';
 import ArrowBackIosIcon from '@mui/icons-material/ArrowBackIos';
 import AddLinkIcon from '@mui/icons-material/AddLink';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 export const Icons = {
   AlertIcon: FiAlertCircle,
   VisibleIcon: VisibilityIcon,
@@ -83,4 +87,9 @@ export const Icons = {
   MonochromePhotosIcon: MonochromePhotosIcon,
   PersonOutlineIcon: PersonOutlineIcon,
   CropIcon: CropIcon,
+  CloseIcon: CloseIcon,
+  ExpandMoreIcon: ExpandMoreIcon,
+  ChevronLeftIcon: ChevronLeftIcon,
+  ChevronRightIcon: ChevronRightIcon,
+  DeleteOutlineIcon: DeleteOutlineIcon,
 };

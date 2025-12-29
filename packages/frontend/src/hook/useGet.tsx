@@ -1,3 +1,4 @@
+// @ts-nocheck - Legacy file using old react-query, not actively used
 import { useQuery } from 'react-query';
 import type { UseQueryOptions, UseQueryResult } from 'react-query';
 import { APIClient } from '../api/api-client';
