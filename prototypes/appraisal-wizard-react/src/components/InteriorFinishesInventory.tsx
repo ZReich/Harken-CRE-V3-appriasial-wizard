@@ -83,6 +83,29 @@ function calculateDepreciationPercent(effectiveAge: number, economicLife: number
   return Math.min(100, Math.round((effectiveAge / economicLife) * 100));
 }
 
+/**
+ * Generate array of years from current year back to 1900.
+ * Optionally prioritizes a specific year (e.g., building year built) at the top.
+ */
+function generateYearOptions(priorityYear?: number | null): number[] {
+  const currentYear = new Date().getFullYear();
+  const years: number[] = [];
+  
+  // Add priority year first if provided and valid
+  if (priorityYear && priorityYear >= 1900 && priorityYear <= currentYear) {
+    years.push(priorityYear);
+  }
+  
+  // Add all years from current back to 1900
+  for (let year = currentYear; year >= 1900; year--) {
+    if (year !== priorityYear) {
+      years.push(year);
+    }
+  }
+  
+  return years;
+}
+
 // =================================================================
 // COMPONENT PROPS
 // =================================================================
@@ -609,15 +632,19 @@ export default function InteriorFinishesInventory({
                   <Calendar size={12} />
                   Year Installed
                 </label>
-                <input
-                  type="number"
+                <select
                   value={yearInstalled}
                   onChange={(e) => setYearInstalled(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
-                  placeholder={buildingYearBuilt?.toString() || new Date().getFullYear().toString()}
-                  min="1900"
-                  max={new Date().getFullYear()}
-                />
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white"
+                >
+                  <option value="">Select year...</option>
+                  {generateYearOptions(buildingYearBuilt).map((year) => (
+                    <option key={year} value={year}>
+                      {year}
+                      {year === buildingYearBuilt && ' (Building Year)'}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1">
