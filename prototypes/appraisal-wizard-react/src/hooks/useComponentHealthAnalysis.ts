@@ -288,6 +288,8 @@ export function useComponentHealthAnalysis(
               ...(area.interiorFeatures.ceilingDetails || []).map(c => ({ component: c, category: 'ceilings' })),
               ...(area.interiorFeatures.flooringDetails || []).map(c => ({ component: c, category: 'flooring' })),
               ...(area.interiorFeatures.wallDetails || []).map(c => ({ component: c, category: 'walls' })),
+              ...(area.interiorFeatures.plumbingDetails || []).map(c => ({ component: c, category: 'plumbing' })),
+              ...(area.interiorFeatures.lightingDetails || []).map(c => ({ component: c, category: 'lighting' })),
             );
           }
         }

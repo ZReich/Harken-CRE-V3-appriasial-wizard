@@ -523,6 +523,15 @@ function refineComponentsFromInventory(
     // Interior Walls
     updateComponentFromDetails(components, 'interior-walls', firstArea.interiorFeatures.wallDetails, defaultYear);
     updateComponentFromDetails(components, 'wall-finish', firstArea.interiorFeatures.wallDetails, defaultYear);
+    
+    // Plumbing Fixtures
+    updateComponentFromDetails(components, 'plumbing-general', firstArea.interiorFeatures.plumbingDetails, defaultYear);
+    updateComponentFromDetails(components, 'restroom-fixtures', firstArea.interiorFeatures.plumbingDetails, defaultYear);
+    updateComponentFromDetails(components, 'specialty-plumbing', firstArea.interiorFeatures.plumbingDetails, defaultYear);
+    
+    // Interior Lighting Fixtures
+    updateComponentFromDetails(components, 'lighting-general', firstArea.interiorFeatures.lightingDetails, defaultYear);
+    updateComponentFromDetails(components, 'accent-lighting', firstArea.interiorFeatures.lightingDetails, defaultYear);
   }
 }
 
