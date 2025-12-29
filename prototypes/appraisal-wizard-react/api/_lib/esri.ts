@@ -2,7 +2,7 @@
  * ESRI GeoEnrichment API Wrapper
  * 
  * Provides access to ESRI's GeoEnrichment API for accurate radius-based demographics.
- * This is the primary data source when ESRI_API_KEY is configured.
+ * Supports both API Key and OAuth 2.0 client credentials authentication.
  * Falls back to Census API when ESRI is unavailable.
  * 
  * API Documentation: https://developers.arcgis.com/rest/geoenrichment/
@@ -55,6 +55,18 @@ export interface ESRIEnrichResponse {
       }>;
     };
   }>;
+  error?: {
+    code: number;
+    message: string;
+    details?: string[];
+  };
+}
+
+interface OAuthTokenResponse {
+  access_token: string;
+  expires_in: number;
+  error?: string;
+  error_description?: string;
 }
 
 // =================================================================
@@ -62,6 +74,10 @@ export interface ESRIEnrichResponse {
 // =================================================================
 
 const ESRI_ENRICH_URL = 'https://geoenrich.arcgis.com/arcgis/rest/services/World/geoenrichmentserver/GeoEnrichment/enrich';
+const ESRI_TOKEN_URL = 'https://www.arcgis.com/sharing/rest/oauth2/token';
+
+// Token cache for OAuth 2.0
+let cachedToken: { token: string; expiresAt: number } | null = null;
 
 /**
  * Analysis variables for demographics
@@ -145,6 +161,135 @@ export const INDUSTRY_LABELS: Record<string, string> = {
 };
 
 // =================================================================
+// OAUTH 2.0 FUNCTIONS
+// =================================================================
+
+/**
+ * Get OAuth 2.0 access token using client credentials flow
+ * Tokens are cached until they expire (with 5 minute buffer)
+ * 
+ * @returns Promise resolving to access token string
+ */
+export async function getOAuthToken(): Promise<string> {
+  const clientId = process.env.ESRI_CLIENT_ID;
+  const clientSecret = process.env.ESRI_CLIENT_SECRET;
+
+  if (!clientId || !clientSecret) {
+    throw new Error('ESRI_CLIENT_ID and ESRI_CLIENT_SECRET must be configured');
+  }
+
+  // Check if we have a valid cached token (with 5 minute buffer)
+  const now = Date.now();
+  if (cachedToken && cachedToken.expiresAt > now + 300000) {
+    console.log('Using cached ESRI OAuth token');
+    return cachedToken.token;
+  }
+
+  console.log('Requesting new ESRI OAuth token...');
+
+  // Request new token
+  const formData = new URLSearchParams();
+  formData.append('client_id', clientId);
+  formData.append('client_secret', clientSecret);
+  formData.append('grant_type', 'client_credentials');
+
+  const response = await fetch(ESRI_TOKEN_URL, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    body: formData.toString(),
+  });
+
+  if (!response.ok) {
+    throw new Error(`ESRI OAuth error: ${response.status} ${response.statusText}`);
+  }
+
+  const data = await response.json() as OAuthTokenResponse;
+
+  if (data.error) {
+    throw new Error(`ESRI OAuth error: ${data.error} - ${data.error_description}`);
+  }
+
+  if (!data.access_token) {
+    throw new Error('ESRI OAuth response missing access_token');
+  }
+
+  // Cache the token
+  cachedToken = {
+    token: data.access_token,
+    expiresAt: now + (data.expires_in * 1000), // expires_in is in seconds
+  };
+
+  console.log(`ESRI OAuth token obtained, expires in ${data.expires_in} seconds`);
+
+  return data.access_token;
+}
+
+/**
+ * Clear the cached OAuth token (useful for testing or forcing refresh)
+ */
+export function clearTokenCache(): void {
+  cachedToken = null;
+}
+
+// =================================================================
+// CONFIGURATION HELPERS
+// =================================================================
+
+/**
+ * Check if ESRI is configured (either API Key or OAuth)
+ */
+export function isESRIConfigured(): boolean {
+  // Check for API Key first
+  if (process.env.ESRI_API_KEY) {
+    return true;
+  }
+  // Check for OAuth credentials
+  if (process.env.ESRI_CLIENT_ID && process.env.ESRI_CLIENT_SECRET) {
+    return true;
+  }
+  return false;
+}
+
+/**
+ * Get the authentication method being used
+ */
+export function getESRIAuthMethod(): 'api_key' | 'oauth' | 'none' {
+  if (process.env.ESRI_API_KEY) {
+    return 'api_key';
+  }
+  if (process.env.ESRI_CLIENT_ID && process.env.ESRI_CLIENT_SECRET) {
+    return 'oauth';
+  }
+  return 'none';
+}
+
+/**
+ * Get ESRI token (either API key or OAuth token)
+ * 
+ * @returns Promise resolving to token string
+ */
+export async function getESRIToken(): Promise<string> {
+  // Prefer API Key if available (simpler, no token exchange needed)
+  if (process.env.ESRI_API_KEY) {
+    return process.env.ESRI_API_KEY;
+  }
+
+  // Fall back to OAuth
+  if (process.env.ESRI_CLIENT_ID && process.env.ESRI_CLIENT_SECRET) {
+    return await getOAuthToken();
+  }
+
+  throw new Error('No ESRI credentials configured. Set ESRI_API_KEY or ESRI_CLIENT_ID + ESRI_CLIENT_SECRET');
+}
+
+// Legacy function for backward compatibility
+export function getESRIApiKey(): string | undefined {
+  return process.env.ESRI_API_KEY;
+}
+
+// =================================================================
 // API FUNCTIONS
 // =================================================================
 
@@ -154,14 +299,14 @@ export const INDUSTRY_LABELS: Record<string, string> = {
  * @param latitude - Latitude coordinate
  * @param longitude - Longitude coordinate
  * @param radii - Array of radii in miles (default: [1, 3, 5])
- * @param apiKey - ESRI API key
+ * @param token - ESRI token (API key or OAuth access token)
  * @returns Promise resolving to array of demographics for each radius
  */
 export async function fetchGeoEnrichment(
   latitude: number,
   longitude: number,
   radii: number[] = [1, 3, 5],
-  apiKey: string
+  token: string
 ): Promise<ESRIDemographics[]> {
   // Build analysis variables array
   const analysisVariables = [
@@ -184,7 +329,7 @@ export async function fetchGeoEnrichment(
   // Build request body
   const formData = new URLSearchParams();
   formData.append('f', 'json');
-  formData.append('token', apiKey);
+  formData.append('token', token);
   formData.append('studyAreas', JSON.stringify(studyAreas));
   formData.append('analysisVariables', JSON.stringify(analysisVariables));
   formData.append('returnGeometry', 'false');
@@ -208,6 +353,10 @@ export async function fetchGeoEnrichment(
   const data = await response.json() as ESRIEnrichResponse;
 
   // Check for API errors in response
+  if (data.error) {
+    throw new Error(`ESRI API error ${data.error.code}: ${data.error.message}`);
+  }
+
   if (!data.results || data.results.length === 0) {
     throw new Error('ESRI API returned no results');
   }
@@ -310,19 +459,3 @@ export function transformESRIResponse(
     };
   });
 }
-
-/**
- * Check if ESRI API key is configured
- */
-export function isESRIConfigured(): boolean {
-  return !!process.env.ESRI_API_KEY;
-}
-
-/**
- * Get ESRI API key from environment
- */
-export function getESRIApiKey(): string | undefined {
-  return process.env.ESRI_API_KEY;
-}
-
-

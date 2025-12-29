@@ -11,7 +11,7 @@
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
 import { getRadiusDemographics } from '../_lib/census';
-import { fetchGeoEnrichment, isESRIConfigured, getESRIApiKey } from '../_lib/esri';
+import { fetchGeoEnrichment, isESRIConfigured, getESRIToken, getESRIAuthMethod } from '../_lib/esri';
 
 interface DemographicsRequestBody {
   latitude: number;
@@ -72,32 +72,34 @@ export default async function handler(
     // Try ESRI first if configured
     if (isESRIConfigured()) {
       try {
-        const esriApiKey = getESRIApiKey();
-        if (esriApiKey) {
-          console.log('Using ESRI GeoEnrichment API for demographics');
-          
-          const esriData = await fetchGeoEnrichment(
-            latitude,
-            longitude,
-            radii,
-            esriApiKey
-          );
+        const authMethod = getESRIAuthMethod();
+        console.log(`Using ESRI GeoEnrichment API for demographics (auth: ${authMethod})`);
+        
+        // Get token (works for both API key and OAuth)
+        const token = await getESRIToken();
+        
+        const esriData = await fetchGeoEnrichment(
+          latitude,
+          longitude,
+          radii,
+          token
+        );
 
-          // Format ESRI response
-          const formattedData = esriData.map(data => ({
-            ...data,
-            isApproximate: false,
-          }));
+        // Format ESRI response
+        const formattedData = esriData.map(data => ({
+          ...data,
+          isApproximate: false,
+        }));
 
-          return res.status(200).json({
-            success: true,
-            data: formattedData,
-            source: 'esri',
-            asOfDate: new Date().toISOString(),
-            note: 'Demographics data from ESRI GeoEnrichment API with true ring buffer analysis.',
-            error: null,
-          });
-        }
+        return res.status(200).json({
+          success: true,
+          data: formattedData,
+          source: 'esri',
+          authMethod,
+          asOfDate: new Date().toISOString(),
+          note: `Demographics data from ESRI GeoEnrichment API (${authMethod}) with true ring buffer analysis.`,
+          error: null,
+        });
       } catch (esriError) {
         console.error('ESRI API error, falling back to Census:', esriError);
         // Fall through to Census fallback
