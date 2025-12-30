@@ -320,10 +320,12 @@ export default function SubjectDataPage() {
   const [grantee, setGrantee] = useState('');
 
   // Sync location & site form fields to WizardContext when they change
+  // NOTE: We do NOT update address.county here - that's set in Setup and should not be
+  // overwritten with the display-only cityCounty value (which is city + county concatenated)
   useEffect(() => {
     setSubjectData({
-      // Location fields
-      address: { ...wizardState.subjectData?.address, county: cityCounty },
+      // Location fields - preserve existing address, don't overwrite county
+      address: wizardState.subjectData?.address,
       areaDescription,
       neighborhoodBoundaries,
       neighborhoodCharacteristics,
@@ -353,12 +355,12 @@ export default function SubjectDataPage() {
       // Narratives
       siteDescriptionNarrative,
     });
-  }, [cityCounty, areaDescription, neighborhoodBoundaries, neighborhoodCharacteristics, specificLocation,
+  }, [areaDescription, neighborhoodBoundaries, neighborhoodCharacteristics, specificLocation,
       acres, squareFeet, shape, frontage, topography, environmental, easements,
       zoningClass, zoningDescription, zoningConformance,
       waterSource, sewerType, electricProvider, naturalGas, telecom,
       femaZone, femaMapPanel, femaMapDate, floodInsuranceRequired,
-      siteDescriptionNarrative, setSubjectData]);
+      siteDescriptionNarrative, setSubjectData, wizardState.subjectData?.address]);
 
   // Photos state with metadata support
   const [photos, setPhotos] = useState<Record<string, PhotoData | null>>({});
