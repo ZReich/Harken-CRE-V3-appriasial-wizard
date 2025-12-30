@@ -753,13 +753,35 @@ export function WizardProvider({ children }: { children: ReactNode }) {
 
   // Persist to localStorage on change
   useEffect(() => {
-    try {
-      localStorage.setItem('harken_wizard_react', JSON.stringify(state));
-    } catch (err) {
-      // Avoid hard-crashing the app if storage quota is exceeded (common once photos/large payloads are added)
-      // or if the runtime blocks storage access (privacy modes).
-      console.warn('[WizardContext] Failed to persist wizard state to localStorage:', err);
-    }
+    // IMPORTANT: Subject Data (photos) can introduce large base64 previews and File objects.
+    // JSON.stringify + localStorage writes can become extremely expensive and/or exceed quota,
+    // which manifests as "navigation sticks" (URL changes but UI doesn't update quickly).
+    const persistTimer = window.setTimeout(() => {
+      try {
+        // Strip heavy/non-serializable data before persisting.
+        const persistableState = {
+          ...state,
+          // Do not persist staging photos (contains File + large base64 previews)
+          stagingPhotos: [],
+          // Do not persist cover photo preview/file (can be very large)
+          coverPhoto: state.coverPhoto
+            ? {
+                id: state.coverPhoto.id,
+                sourceSlotId: state.coverPhoto.sourceSlotId,
+                caption: state.coverPhoto.caption,
+                preview: '',
+              }
+            : undefined,
+        };
+
+        localStorage.setItem('harken_wizard_react', JSON.stringify(persistableState));
+      } catch (err) {
+        // Avoid hard-crashing the app if storage quota is exceeded or storage is blocked.
+        console.warn('[WizardContext] Failed to persist wizard state to localStorage:', err);
+      }
+    }, 250);
+
+    return () => window.clearTimeout(persistTimer);
   }, [state]);
 
   // Convenience helpers - all memoized to prevent infinite loops in useEffect dependencies

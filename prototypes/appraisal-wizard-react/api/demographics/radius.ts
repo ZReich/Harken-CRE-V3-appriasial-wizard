@@ -49,13 +49,21 @@ export default async function handler(
 
   try {
     const body = req.body as DemographicsRequestBody;
-    const { latitude, longitude, radii = [1, 3, 5] } = body;
+    const rawLatitude = (body as any)?.latitude;
+    const rawLongitude = (body as any)?.longitude;
+    const rawRadii = (body as any)?.radii;
+
+    const latitude = Number(rawLatitude);
+    const longitude = Number(rawLongitude);
+    const radii = (Array.isArray(rawRadii) ? rawRadii : [1, 3, 5])
+      .map((r: unknown) => Number(r))
+      .filter((r: number) => Number.isFinite(r) && r > 0);
 
     // Validate required fields
-    if (latitude === undefined || longitude === undefined) {
+    if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
       return res.status(400).json({
         success: false,
-        error: 'latitude and longitude are required',
+        error: 'latitude and longitude must be valid numbers',
         data: null,
       });
     }
@@ -65,6 +73,14 @@ export default async function handler(
       return res.status(400).json({
         success: false,
         error: 'Invalid coordinates',
+        data: null,
+      });
+    }
+
+    if (radii.length === 0) {
+      return res.status(400).json({
+        success: false,
+        error: 'radii must be a non-empty array of positive numbers',
         data: null,
       });
     }

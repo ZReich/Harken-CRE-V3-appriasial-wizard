@@ -80,6 +80,9 @@ export function RadiusRingMap({
   onMapTypeChange,
   className = '',
 }: RadiusRingMapProps) {
+  const lat = Number(latitude);
+  const lng = Number(longitude);
+
   const mapRef = useRef<HTMLDivElement>(null);
   const googleMapRef = useRef<google.maps.Map | null>(null);
   const circlesRef = useRef<google.maps.Circle[]>([]);
@@ -98,7 +101,7 @@ export function RadiusRingMap({
     return list.length > 0 ? list : [1, 3, 5];
   })();
 
-  const hasValidCoords = Number.isFinite(latitude) && Number.isFinite(longitude);
+  const hasValidCoords = Number.isFinite(lat) && Number.isFinite(lng);
 
   // Load Google Maps script
   useEffect(() => {
@@ -190,7 +193,7 @@ export function RadiusRingMap({
     // Prevent re-initialization if already initialized
     if (isInitializedRef.current && googleMapRef.current) {
       // Just update circles and marker for coordinate changes
-      const center = { lat: latitude, lng: longitude };
+      const center = { lat, lng };
       googleMapRef.current.setCenter(center);
 
       buildRings(googleMapRef.current!, center);
@@ -203,7 +206,7 @@ export function RadiusRingMap({
       return;
     }
 
-    const center = { lat: latitude, lng: longitude };
+    const center = { lat, lng };
     
     // Calculate appropriate zoom level based on largest radius
     const maxRadius = Math.max(...normalizedRadii);
@@ -256,7 +259,7 @@ export function RadiusRingMap({
     // Mark as initialized
     isInitializedRef.current = true;
 
-  }, [latitude, longitude, normalizedRadii, mapType]);
+  }, [lat, lng, normalizedRadii, mapType]);
 
   // Initialize map when Google Maps is loaded
   useEffect(() => {

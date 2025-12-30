@@ -69,6 +69,9 @@ export function DemographicsPanel({
   onDataLoaded,
   className = '',
 }: DemographicsPanelProps) {
+  const lat = Number(latitude);
+  const lng = Number(longitude);
+
   const normalizedRadii = (() => {
     const list = (radii?.length ? radii : [1, 3, 5])
       .map((r) => Number(r))
@@ -77,7 +80,7 @@ export function DemographicsPanel({
     return list.length > 0 ? list : [1, 3, 5];
   })();
 
-  const hasValidCoords = Number.isFinite(latitude) && Number.isFinite(longitude);
+  const hasValidCoords = Number.isFinite(lat) && Number.isFinite(lng);
 
   const [data, setData] = useState<RadiusDemographics[] | null>(null);
   const [source, setSource] = useState<'esri' | 'census' | 'mock'>('census');
@@ -91,7 +94,7 @@ export function DemographicsPanel({
     setError(null);
 
     try {
-      const response = await getDemographicsByRadius(latitude, longitude, normalizedRadii) as DemographicsResponse & { note?: string };
+      const response = await getDemographicsByRadius(lat, lng, normalizedRadii) as DemographicsResponse & { note?: string };
       
       if (response.success && response.data) {
         setData(response.data);
@@ -111,8 +114,11 @@ export function DemographicsPanel({
   useEffect(() => {
     if (hasValidCoords) {
       fetchData();
+    } else {
+      setIsLoading(false);
+      setError('Demographics requires a valid latitude/longitude.');
     }
-  }, [hasValidCoords, latitude, longitude, normalizedRadii.join(',')]);
+  }, [hasValidCoords, lat, lng, normalizedRadii.join(',')]);
 
   // Loading state
   if (isLoading) {
@@ -157,8 +163,8 @@ export function DemographicsPanel({
           </h3>
         </div>
         <RadiusRingMap
-          latitude={latitude}
-          longitude={longitude}
+          latitude={lat}
+          longitude={lng}
           radii={normalizedRadii}
           mapType={mapType}
           onMapTypeChange={setMapType}
