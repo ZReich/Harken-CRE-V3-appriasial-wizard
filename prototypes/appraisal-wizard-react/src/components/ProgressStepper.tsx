@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { useMemo } from 'react';
 import { useWizard } from '../context/WizardContext';
 import { COMPLETION_SCHEMA, shouldTrackProgress } from '../constants/completionSchema';
@@ -11,6 +10,11 @@ interface ProgressStepperProps {
 
 export default function ProgressStepper({ currentPhase, pages }: ProgressStepperProps) {
   const { getSectionCompletion } = useWizard();
+  
+  // Force full page navigation to work around react-router issues
+  const handleNavigate = (path: string) => {
+    window.location.href = path;
+  };
 
   // Get completion data for each section
   const sectionData = useMemo(() => {
@@ -44,25 +48,27 @@ export default function ProgressStepper({ currentPhase, pages }: ProgressStepper
           return (
             <div key={path} className="flex items-center gap-2">
               {/* Phase Circle + Label */}
-              <Link to={path} className="flex items-center gap-2 no-underline">
+              <div className="flex items-center gap-2">
                 <ProgressCircle
                   phaseNum={phaseNum}
                   completion={completion}
                   isActive={isActive}
                   isCompleted={isCompleted}
                   trackProgress={trackProgress}
-                  onClick={() => {}} // Link handles navigation
+                  onClick={() => handleNavigate(path)}
                 />
-                <span
-                  className={`text-xs font-medium cursor-pointer hover:opacity-80 transition-opacity ${
+                <button
+                  type="button"
+                  className={`text-xs font-medium cursor-pointer hover:opacity-80 transition-opacity bg-transparent border-none ${
                     isActive ? 'text-gray-900 font-semibold' : 
                     isCompleted ? 'text-green-600 font-medium' : 
                     hasVisited ? 'text-gray-600' : 'text-gray-400'
                   }`}
+                  onClick={() => handleNavigate(path)}
                 >
                   {label}
-                </span>
-              </Link>
+                </button>
+              </div>
 
               {/* Connector - only colored when PREVIOUS section is truly complete */}
               {idx < pages.length - 1 && (
