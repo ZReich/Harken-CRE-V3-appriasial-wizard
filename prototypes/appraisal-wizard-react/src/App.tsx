@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { WizardProvider } from './context/WizardContext';
 import { ToastProvider } from './context/ToastContext';
 
@@ -23,19 +23,28 @@ function PageLoader() {
   );
 }
 
+// Wrapper component that uses location key for proper re-rendering
+function AppRoutes() {
+  const location = useLocation();
+  
+  return (
+    <Routes location={location} key={location.pathname}>
+      <Route path="/" element={<Navigate to="/template" replace />} />
+      <Route path="/template" element={<Suspense fallback={<PageLoader />}><TemplatePage /></Suspense>} />
+      <Route path="/document-intake" element={<Suspense fallback={<PageLoader />}><DocumentIntakePage /></Suspense>} />
+      <Route path="/setup" element={<Suspense fallback={<PageLoader />}><SetupPage /></Suspense>} />
+      <Route path="/subject-data" element={<Suspense fallback={<PageLoader />}><SubjectDataPage /></Suspense>} />
+      <Route path="/analysis" element={<Suspense fallback={<PageLoader />}><AnalysisPage /></Suspense>} />
+      <Route path="/review" element={<Suspense fallback={<PageLoader />}><ReviewPage /></Suspense>} />
+    </Routes>
+  );
+}
+
 function App() {
   return (
     <ToastProvider>
       <WizardProvider>
-        <Routes>
-          <Route path="/" element={<Navigate to="/template" replace />} />
-          <Route path="/template" element={<Suspense fallback={<PageLoader />}><TemplatePage /></Suspense>} />
-          <Route path="/document-intake" element={<Suspense fallback={<PageLoader />}><DocumentIntakePage /></Suspense>} />
-          <Route path="/setup" element={<Suspense fallback={<PageLoader />}><SetupPage /></Suspense>} />
-          <Route path="/subject-data" element={<Suspense fallback={<PageLoader />}><SubjectDataPage /></Suspense>} />
-          <Route path="/analysis" element={<Suspense fallback={<PageLoader />}><AnalysisPage /></Suspense>} />
-          <Route path="/review" element={<Suspense fallback={<PageLoader />}><ReviewPage /></Suspense>} />
-        </Routes>
+        <AppRoutes />
       </WizardProvider>
     </ToastProvider>
   );
