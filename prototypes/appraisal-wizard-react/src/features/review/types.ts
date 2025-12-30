@@ -2,7 +2,7 @@
 // REVIEW PAGE TYPES
 // =================================================================
 
-export type ReviewTabId = 'hbu' | 'swot' | 'risk-rating' | 'reconciliation' | 'checklist' | 'preview';
+export type ReviewTabId = 'hbu' | 'swot' | 'risk-rating' | 'cost-seg' | 'reconciliation' | 'checklist' | 'preview';
 
 export interface ReviewTab {
   id: ReviewTabId;
