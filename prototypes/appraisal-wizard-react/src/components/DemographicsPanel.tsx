@@ -23,6 +23,7 @@ import {
 } from 'lucide-react';
 import { RadiusRingMap } from './RadiusRingMap';
 import { getDemographicsByRadius } from '../services/demographicsService';
+import { ApiError } from '../services/api';
 import type { RadiusDemographics, DemographicsResponse } from '../types/api';
 
 // =================================================================
@@ -104,8 +105,19 @@ export function DemographicsPanel({
         throw new Error(response.error || 'Failed to fetch demographics');
       }
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Unknown error';
-      setError(message);
+      // Prefer server-provided error details when available
+      if (err instanceof ApiError) {
+        const resp = err.response as any;
+        const serverMessage =
+          typeof resp === 'string'
+            ? resp
+            : resp?.error || resp?.message;
+
+        setError(serverMessage ? String(serverMessage) : err.message);
+      } else {
+        const message = err instanceof Error ? err.message : 'Unknown error';
+        setError(message);
+      }
     } finally {
       setIsLoading(false);
     }

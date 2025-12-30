@@ -763,6 +763,16 @@ export function WizardProvider({ children }: { children: ReactNode }) {
           ...state,
           // Do not persist staging photos (contains File + large base64 previews)
           stagingPhotos: [],
+          // Do not persist report photo URLs (often base64 previews). Keep captions/slot mapping only.
+          reportPhotos: state.reportPhotos
+            ? {
+                ...state.reportPhotos,
+                assignments: (state.reportPhotos.assignments ?? []).map((a) => ({
+                  ...a,
+                  url: '',
+                })),
+              }
+            : undefined,
           // Do not persist cover photo preview/file (can be very large)
           coverPhoto: state.coverPhoto
             ? {
