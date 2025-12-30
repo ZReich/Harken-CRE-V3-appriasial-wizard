@@ -89,6 +89,8 @@ export interface AreaTypeConfig {
     ceilingTypeIds?: string[];
     flooringTypeIds?: string[];
     wallTypeIds?: string[];
+    plumbingTypeIds?: string[];
+    lightingTypeIds?: string[];
   };
   
   /**

@@ -1994,6 +1994,8 @@ export const ECONOMIC_LIFE_GUIDE = {
     ceilings: { range: '20-40 yrs', typical: 25, examples: 'Drop 20, Drywall 30, Exposed 40' },
     flooring: { range: '10-40 yrs', typical: 20, examples: 'Carpet 10, VCT 15, Tile 30' },
     walls: { range: '20-45 yrs', typical: 25, examples: 'Drywall 25, CMU 40, Tile 30' },
+    plumbing: { range: '15-40 yrs', typical: 25, examples: 'Fixtures 20, Water Heater 15, Piping 40' },
+    lighting: { range: '10-25 yrs', typical: 15, examples: 'Fluorescent 12, LED 20, Emergency 10' },
   },
 } as const;
 
