@@ -56,12 +56,14 @@ export function ProgressCircle({
   };
 
   return (
-    <div
+    <button
+      type="button"
       className={`relative cursor-pointer hover:opacity-90 transition-all duration-200 ${
         justCompleted ? 'scale-110' : ''
       }`}
       onClick={onClick}
       style={{ width: size, height: size }}
+      aria-label={`Go to phase ${phaseNum}`}
     >
       {/* Base circle */}
       <div
@@ -101,7 +103,7 @@ export function ProgressCircle({
       {justCompleted && (
         <div className="absolute inset-0 rounded-full border-2 border-green-400 animate-ping-once" />
       )}
-    </div>
+    </button>
   );
 }
 

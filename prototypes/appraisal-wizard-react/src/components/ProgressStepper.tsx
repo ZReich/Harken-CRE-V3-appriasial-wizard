@@ -54,8 +54,9 @@ export default function ProgressStepper({ currentPhase, pages }: ProgressStepper
                   trackProgress={trackProgress}
                   onClick={() => navigate(path)}
                 />
-                <span
-                  className={`text-xs font-medium cursor-pointer hover:opacity-80 transition-opacity ${
+                <button
+                  type="button"
+                  className={`text-xs font-medium cursor-pointer hover:opacity-80 transition-opacity bg-transparent border-none ${
                     isActive ? 'text-gray-900 font-semibold' : 
                     isCompleted ? 'text-green-600 font-medium' : 
                     hasVisited ? 'text-gray-600' : 'text-gray-400'
@@ -63,7 +64,7 @@ export default function ProgressStepper({ currentPhase, pages }: ProgressStepper
                   onClick={() => navigate(path)}
                 >
                   {label}
-                </span>
+                </button>
               </div>
 
               {/* Connector - only colored when PREVIOUS section is truly complete */}
