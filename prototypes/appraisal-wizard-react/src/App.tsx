@@ -1,27 +1,15 @@
-import { lazy, Suspense } from 'react';
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { Route, Routes, Navigate, useLocation } from 'react-router-dom';
 import { WizardProvider } from './context/WizardContext';
 import { ToastProvider } from './context/ToastContext';
 
-// Lazy-loaded Pages for code-splitting
-const TemplatePage = lazy(() => import('./pages/TemplatePage'));
-const DocumentIntakePage = lazy(() => import('./pages/DocumentIntakePage'));
-const SetupPage = lazy(() => import('./pages/SetupPage'));
-const SubjectDataPage = lazy(() => import('./pages/SubjectDataPage'));
-const AnalysisPage = lazy(() => import('./pages/AnalysisPage'));
-const ReviewPage = lazy(() => import('./pages/ReviewPage'));
-
-// Loading fallback component
-function PageLoader() {
-  return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center">
-      <div className="flex flex-col items-center gap-4">
-        <div className="w-12 h-12 border-4 border-[#0da1c7]/20 border-t-[#0da1c7] rounded-full animate-spin" />
-        <p className="text-sm text-slate-500 font-medium">Loading...</p>
-      </div>
-    </div>
-  );
-}
+// Pages are imported synchronously to avoid route-level Suspense/lazy edge-cases
+// where the URL updates but the rendered page does not.
+import TemplatePage from './pages/TemplatePage';
+import DocumentIntakePage from './pages/DocumentIntakePage';
+import SetupPage from './pages/SetupPage';
+import SubjectDataPage from './pages/SubjectDataPage';
+import AnalysisPage from './pages/AnalysisPage';
+import ReviewPage from './pages/ReviewPage';
 
 // Wrapper component that uses location key for proper re-rendering
 function AppRoutes() {
@@ -30,12 +18,12 @@ function AppRoutes() {
   return (
     <Routes location={location} key={location.pathname}>
       <Route path="/" element={<Navigate to="/template" replace />} />
-      <Route path="/template" element={<Suspense fallback={<PageLoader />}><TemplatePage /></Suspense>} />
-      <Route path="/document-intake" element={<Suspense fallback={<PageLoader />}><DocumentIntakePage /></Suspense>} />
-      <Route path="/setup" element={<Suspense fallback={<PageLoader />}><SetupPage /></Suspense>} />
-      <Route path="/subject-data" element={<Suspense fallback={<PageLoader />}><SubjectDataPage /></Suspense>} />
-      <Route path="/analysis" element={<Suspense fallback={<PageLoader />}><AnalysisPage /></Suspense>} />
-      <Route path="/review" element={<Suspense fallback={<PageLoader />}><ReviewPage /></Suspense>} />
+      <Route path="/template" element={<TemplatePage />} />
+      <Route path="/document-intake" element={<DocumentIntakePage />} />
+      <Route path="/setup" element={<SetupPage />} />
+      <Route path="/subject-data" element={<SubjectDataPage />} />
+      <Route path="/analysis" element={<AnalysisPage />} />
+      <Route path="/review" element={<ReviewPage />} />
     </Routes>
   );
 }

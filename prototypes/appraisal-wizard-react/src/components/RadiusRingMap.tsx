@@ -63,6 +63,8 @@ const RING_STYLES = [
   },
 ];
 
+const OUTLINE_STROKE_COLOR = '#ffffff';
+
 // =================================================================
 // COMPONENT
 // =================================================================
@@ -87,6 +89,10 @@ export function RadiusRingMap({
   const [mapType, setMapType] = useState<'satellite' | 'roadmap'>(initialMapType);
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  const normalizedRadii = (radii ?? [1, 3, 5])
+    .map((r) => Number(r))
+    .filter((r) => Number.isFinite(r) && r > 0);
 
   // Load Google Maps script
   useEffect(() => {
@@ -127,40 +133,61 @@ export function RadiusRingMap({
   // Initialize map
   const initializeMap = useCallback(() => {
     if (!mapRef.current || !window.google?.maps) return;
+
+    const buildRings = (map: google.maps.Map, center: google.maps.LatLngLiteral) => {
+      // Clear existing circles
+      circlesRef.current.forEach(circle => circle.setMap(null));
+      circlesRef.current = [];
+
+      // Add circles (largest first so smaller ones are on top)
+      const sortedRadii = [...normalizedRadii].sort((a, b) => b - a);
+
+      sortedRadii.forEach((radiusMiles, idx) => {
+        const ringStyle = RING_STYLES.find(s => s.radiusMiles === radiusMiles) || {
+          fillColor: '#0da1c7',
+          strokeColor: '#0da1c7',
+          fillOpacity: 0.12,
+          strokeWeight: 3,
+        };
+
+        // White outline ring (high-contrast) so rings remain visible on satellite tiles
+        const outline = new google.maps.Circle({
+          map,
+          center,
+          radius: radiusMiles * MILES_TO_METERS,
+          fillOpacity: 0,
+          strokeColor: OUTLINE_STROKE_COLOR,
+          strokeOpacity: 0.95,
+          strokeWeight: Math.max(4, (ringStyle.strokeWeight ?? 3) + 2),
+          clickable: false,
+          zIndex: 100 + idx, // ensure outline sits under the colored stroke but above the map
+        });
+        circlesRef.current.push(outline);
+
+        // Colored ring
+        const circle = new google.maps.Circle({
+          map,
+          center,
+          radius: radiusMiles * MILES_TO_METERS,
+          fillColor: ringStyle.fillColor,
+          fillOpacity: Math.min(0.2, ringStyle.fillOpacity ?? 0.12),
+          strokeColor: ringStyle.strokeColor,
+          strokeWeight: Math.max(3, ringStyle.strokeWeight ?? 3),
+          strokeOpacity: 1,
+          clickable: false,
+          zIndex: 200 + idx,
+        });
+        circlesRef.current.push(circle);
+      });
+    };
     
     // Prevent re-initialization if already initialized
     if (isInitializedRef.current && googleMapRef.current) {
       // Just update circles and marker for coordinate changes
       const center = { lat: latitude, lng: longitude };
       googleMapRef.current.setCenter(center);
-      
-      // Update circles
-      circlesRef.current.forEach(circle => circle.setMap(null));
-      circlesRef.current = [];
-      
-      const sortedRadii = [...radii].sort((a, b) => b - a);
-      sortedRadii.forEach(radiusMiles => {
-        const ringStyle = RING_STYLES.find(s => s.radiusMiles === radiusMiles) || {
-          fillColor: '#0da1c7',
-          strokeColor: '#0da1c7',
-          fillOpacity: 0.2,
-          strokeWeight: 2,
-        };
 
-        const circle = new google.maps.Circle({
-          map: googleMapRef.current!,
-          center,
-          radius: radiusMiles * MILES_TO_METERS,
-          fillColor: ringStyle.fillColor,
-          fillOpacity: ringStyle.fillOpacity,
-          strokeColor: ringStyle.strokeColor,
-          strokeWeight: ringStyle.strokeWeight,
-          strokeOpacity: 0.8,
-          clickable: false,
-        });
-
-        circlesRef.current.push(circle);
-      });
+      buildRings(googleMapRef.current!, center);
       
       // Update marker
       if (markerRef.current) {
@@ -173,7 +200,7 @@ export function RadiusRingMap({
     const center = { lat: latitude, lng: longitude };
     
     // Calculate appropriate zoom level based on largest radius
-    const maxRadius = Math.max(...radii);
+    const maxRadius = Math.max(...normalizedRadii);
     let zoom = 11; // Default for 5 mile radius
     if (maxRadius <= 1) zoom = 14;
     else if (maxRadius <= 3) zoom = 12;
@@ -199,35 +226,7 @@ export function RadiusRingMap({
 
     googleMapRef.current = map;
 
-    // Clear existing circles
-    circlesRef.current.forEach(circle => circle.setMap(null));
-    circlesRef.current = [];
-
-    // Add circles (largest first so smaller ones are on top)
-    const sortedRadii = [...radii].sort((a, b) => b - a);
-    
-    sortedRadii.forEach(radiusMiles => {
-      const ringStyle = RING_STYLES.find(s => s.radiusMiles === radiusMiles) || {
-        fillColor: '#0da1c7',
-        strokeColor: '#0da1c7',
-        fillOpacity: 0.2,
-        strokeWeight: 2,
-      };
-
-      const circle = new google.maps.Circle({
-        map,
-        center,
-        radius: radiusMiles * MILES_TO_METERS,
-        fillColor: ringStyle.fillColor,
-        fillOpacity: ringStyle.fillOpacity,
-        strokeColor: ringStyle.strokeColor,
-        strokeWeight: ringStyle.strokeWeight,
-        strokeOpacity: 0.8,
-        clickable: false,
-      });
-
-      circlesRef.current.push(circle);
-    });
+    buildRings(map, center);
 
     // Add subject property marker
     if (markerRef.current) {
@@ -251,7 +250,7 @@ export function RadiusRingMap({
     // Mark as initialized
     isInitializedRef.current = true;
 
-  }, [latitude, longitude, radii, mapType]);
+  }, [latitude, longitude, normalizedRadii, mapType]);
 
   // Initialize map when Google Maps is loaded
   useEffect(() => {
