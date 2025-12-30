@@ -1,4 +1,4 @@
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useMemo } from 'react';
 import { useWizard } from '../context/WizardContext';
 import { COMPLETION_SCHEMA, shouldTrackProgress } from '../constants/completionSchema';
@@ -10,7 +10,6 @@ interface ProgressStepperProps {
 }
 
 export default function ProgressStepper({ currentPhase, pages }: ProgressStepperProps) {
-  const navigate = useNavigate();
   const { getSectionCompletion } = useWizard();
 
   // Get completion data for each section
@@ -45,27 +44,25 @@ export default function ProgressStepper({ currentPhase, pages }: ProgressStepper
           return (
             <div key={path} className="flex items-center gap-2">
               {/* Phase Circle + Label */}
-              <div className="flex items-center gap-2">
+              <Link to={path} className="flex items-center gap-2 no-underline">
                 <ProgressCircle
                   phaseNum={phaseNum}
                   completion={completion}
                   isActive={isActive}
                   isCompleted={isCompleted}
                   trackProgress={trackProgress}
-                  onClick={() => navigate(path)}
+                  onClick={() => {}} // Link handles navigation
                 />
-                <button
-                  type="button"
-                  className={`text-xs font-medium cursor-pointer hover:opacity-80 transition-opacity bg-transparent border-none ${
+                <span
+                  className={`text-xs font-medium cursor-pointer hover:opacity-80 transition-opacity ${
                     isActive ? 'text-gray-900 font-semibold' : 
                     isCompleted ? 'text-green-600 font-medium' : 
                     hasVisited ? 'text-gray-600' : 'text-gray-400'
                   }`}
-                  onClick={() => navigate(path)}
                 >
                   {label}
-                </button>
-              </div>
+                </span>
+              </Link>
 
               {/* Connector - only colored when PREVIOUS section is truly complete */}
               {idx < pages.length - 1 && (
