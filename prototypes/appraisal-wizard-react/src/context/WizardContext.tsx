@@ -753,7 +753,13 @@ export function WizardProvider({ children }: { children: ReactNode }) {
 
   // Persist to localStorage on change
   useEffect(() => {
-    localStorage.setItem('harken_wizard_react', JSON.stringify(state));
+    try {
+      localStorage.setItem('harken_wizard_react', JSON.stringify(state));
+    } catch (err) {
+      // Avoid hard-crashing the app if storage quota is exceeded (common once photos/large payloads are added)
+      // or if the runtime blocks storage access (privacy modes).
+      console.warn('[WizardContext] Failed to persist wizard state to localStorage:', err);
+    }
   }, [state]);
 
   // Convenience helpers - all memoized to prevent infinite loops in useEffect dependencies

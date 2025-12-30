@@ -90,9 +90,15 @@ export function RadiusRingMap({
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const normalizedRadii = (radii ?? [1, 3, 5])
-    .map((r) => Number(r))
-    .filter((r) => Number.isFinite(r) && r > 0);
+  const normalizedRadii = (() => {
+    const list = (radii?.length ? radii : [1, 3, 5])
+      .map((r) => Number(r))
+      .filter((r) => Number.isFinite(r) && r > 0);
+
+    return list.length > 0 ? list : [1, 3, 5];
+  })();
+
+  const hasValidCoords = Number.isFinite(latitude) && Number.isFinite(longitude);
 
   // Load Google Maps script
   useEffect(() => {
@@ -254,10 +260,10 @@ export function RadiusRingMap({
 
   // Initialize map when Google Maps is loaded
   useEffect(() => {
-    if (isLoaded && latitude && longitude) {
+    if (isLoaded && hasValidCoords) {
       initializeMap();
     }
-  }, [isLoaded, latitude, longitude, initializeMap]);
+  }, [isLoaded, hasValidCoords, initializeMap]);
 
   // Update map type
   useEffect(() => {

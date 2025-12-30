@@ -69,6 +69,16 @@ export function DemographicsPanel({
   onDataLoaded,
   className = '',
 }: DemographicsPanelProps) {
+  const normalizedRadii = (() => {
+    const list = (radii?.length ? radii : [1, 3, 5])
+      .map((r) => Number(r))
+      .filter((r) => Number.isFinite(r) && r > 0);
+
+    return list.length > 0 ? list : [1, 3, 5];
+  })();
+
+  const hasValidCoords = Number.isFinite(latitude) && Number.isFinite(longitude);
+
   const [data, setData] = useState<RadiusDemographics[] | null>(null);
   const [source, setSource] = useState<'esri' | 'census' | 'mock'>('census');
   const [isLoading, setIsLoading] = useState(true);
@@ -81,7 +91,7 @@ export function DemographicsPanel({
     setError(null);
 
     try {
-      const response = await getDemographicsByRadius(latitude, longitude, radii) as DemographicsResponse & { note?: string };
+      const response = await getDemographicsByRadius(latitude, longitude, normalizedRadii) as DemographicsResponse & { note?: string };
       
       if (response.success && response.data) {
         setData(response.data);
@@ -99,10 +109,10 @@ export function DemographicsPanel({
   };
 
   useEffect(() => {
-    if (latitude && longitude) {
+    if (hasValidCoords) {
       fetchData();
     }
-  }, [latitude, longitude, radii.join(',')]);
+  }, [hasValidCoords, latitude, longitude, normalizedRadii.join(',')]);
 
   // Loading state
   if (isLoading) {
@@ -149,7 +159,7 @@ export function DemographicsPanel({
         <RadiusRingMap
           latitude={latitude}
           longitude={longitude}
-          radii={radii}
+          radii={normalizedRadii}
           mapType={mapType}
           onMapTypeChange={setMapType}
           height={350}
@@ -179,7 +189,7 @@ export function DemographicsPanel({
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200">
                 <th className="text-left px-4 py-3 font-semibold text-slate-600">Metric</th>
-                {radii.map(radius => (
+                {normalizedRadii.map(radius => (
                   <th key={radius} className="text-right px-4 py-3 font-semibold text-slate-600">
                     {radius} Mile{radius !== 1 ? 's' : ''}
                   </th>
@@ -189,7 +199,7 @@ export function DemographicsPanel({
             <tbody className="divide-y divide-slate-100">
               {/* Population Section */}
               <tr className="bg-slate-50/50">
-                <td colSpan={radii.length + 1} className="px-4 py-2">
+                <td colSpan={normalizedRadii.length + 1} className="px-4 py-2">
                   <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide flex items-center gap-1.5">
                     <Users className="w-3.5 h-3.5" />
                     Population
@@ -225,7 +235,7 @@ export function DemographicsPanel({
 
               {/* Households Section */}
               <tr className="bg-slate-50/50">
-                <td colSpan={radii.length + 1} className="px-4 py-2">
+                <td colSpan={normalizedRadii.length + 1} className="px-4 py-2">
                   <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide flex items-center gap-1.5">
                     <Home className="w-3.5 h-3.5" />
                     Households
@@ -251,7 +261,7 @@ export function DemographicsPanel({
 
               {/* Income Section */}
               <tr className="bg-slate-50/50">
-                <td colSpan={radii.length + 1} className="px-4 py-2">
+                <td colSpan={normalizedRadii.length + 1} className="px-4 py-2">
                   <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide flex items-center gap-1.5">
                     <DollarSign className="w-3.5 h-3.5" />
                     Income
@@ -285,7 +295,7 @@ export function DemographicsPanel({
 
               {/* Education Section */}
               <tr className="bg-slate-50/50">
-                <td colSpan={radii.length + 1} className="px-4 py-2">
+                <td colSpan={normalizedRadii.length + 1} className="px-4 py-2">
                   <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide flex items-center gap-1.5">
                     <GraduationCap className="w-3.5 h-3.5" />
                     Education
@@ -311,7 +321,7 @@ export function DemographicsPanel({
 
               {/* Employment Section */}
               <tr className="bg-slate-50/50">
-                <td colSpan={radii.length + 1} className="px-4 py-2">
+                <td colSpan={normalizedRadii.length + 1} className="px-4 py-2">
                   <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide flex items-center gap-1.5">
                     <Briefcase className="w-3.5 h-3.5" />
                     Employment
