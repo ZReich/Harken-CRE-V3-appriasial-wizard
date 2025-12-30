@@ -38,16 +38,29 @@ export interface RadiusRingMapProps {
 // Convert miles to meters for Google Maps
 const MILES_TO_METERS = 1609.344;
 
-// Ring styling - cyan theme matching the design system
-const RING_COLORS = {
-  fill: '#0da1c7',
-  stroke: '#0da1c7',
-};
-
+// Ring styling - distinct colors for each radius for easy differentiation
 const RING_STYLES = [
-  { radiusMiles: 1, fillOpacity: 0.35, strokeWeight: 2 },
-  { radiusMiles: 3, fillOpacity: 0.25, strokeWeight: 2 },
-  { radiusMiles: 5, fillOpacity: 0.15, strokeWeight: 2 },
+  { 
+    radiusMiles: 1, 
+    fillColor: '#10b981', // Emerald green
+    strokeColor: '#059669',
+    fillOpacity: 0.25, 
+    strokeWeight: 2.5 
+  },
+  { 
+    radiusMiles: 3, 
+    fillColor: '#3b82f6', // Blue
+    strokeColor: '#2563eb',
+    fillOpacity: 0.20, 
+    strokeWeight: 2.5 
+  },
+  { 
+    radiusMiles: 5, 
+    fillColor: '#8b5cf6', // Purple
+    strokeColor: '#7c3aed',
+    fillOpacity: 0.15, 
+    strokeWeight: 2.5 
+  },
 ];
 
 // =================================================================
@@ -69,6 +82,7 @@ export function RadiusRingMap({
   const googleMapRef = useRef<google.maps.Map | null>(null);
   const circlesRef = useRef<google.maps.Circle[]>([]);
   const markerRef = useRef<google.maps.Marker | null>(null);
+  const isInitializedRef = useRef(false);
   
   const [mapType, setMapType] = useState<'satellite' | 'roadmap'>(initialMapType);
   const [isLoaded, setIsLoaded] = useState(false);
@@ -113,6 +127,48 @@ export function RadiusRingMap({
   // Initialize map
   const initializeMap = useCallback(() => {
     if (!mapRef.current || !window.google?.maps) return;
+    
+    // Prevent re-initialization if already initialized
+    if (isInitializedRef.current && googleMapRef.current) {
+      // Just update circles and marker for coordinate changes
+      const center = { lat: latitude, lng: longitude };
+      googleMapRef.current.setCenter(center);
+      
+      // Update circles
+      circlesRef.current.forEach(circle => circle.setMap(null));
+      circlesRef.current = [];
+      
+      const sortedRadii = [...radii].sort((a, b) => b - a);
+      sortedRadii.forEach(radiusMiles => {
+        const ringStyle = RING_STYLES.find(s => s.radiusMiles === radiusMiles) || {
+          fillColor: '#0da1c7',
+          strokeColor: '#0da1c7',
+          fillOpacity: 0.2,
+          strokeWeight: 2,
+        };
+
+        const circle = new google.maps.Circle({
+          map: googleMapRef.current!,
+          center,
+          radius: radiusMiles * MILES_TO_METERS,
+          fillColor: ringStyle.fillColor,
+          fillOpacity: ringStyle.fillOpacity,
+          strokeColor: ringStyle.strokeColor,
+          strokeWeight: ringStyle.strokeWeight,
+          strokeOpacity: 0.8,
+          clickable: false,
+        });
+
+        circlesRef.current.push(circle);
+      });
+      
+      // Update marker
+      if (markerRef.current) {
+        markerRef.current.setPosition(center);
+      }
+      
+      return;
+    }
 
     const center = { lat: latitude, lng: longitude };
     
@@ -152,6 +208,8 @@ export function RadiusRingMap({
     
     sortedRadii.forEach(radiusMiles => {
       const ringStyle = RING_STYLES.find(s => s.radiusMiles === radiusMiles) || {
+        fillColor: '#0da1c7',
+        strokeColor: '#0da1c7',
         fillOpacity: 0.2,
         strokeWeight: 2,
       };
@@ -160,9 +218,9 @@ export function RadiusRingMap({
         map,
         center,
         radius: radiusMiles * MILES_TO_METERS,
-        fillColor: RING_COLORS.fill,
+        fillColor: ringStyle.fillColor,
         fillOpacity: ringStyle.fillOpacity,
-        strokeColor: RING_COLORS.stroke,
+        strokeColor: ringStyle.strokeColor,
         strokeWeight: ringStyle.strokeWeight,
         strokeOpacity: 0.8,
         clickable: false,
@@ -189,6 +247,9 @@ export function RadiusRingMap({
         strokeWeight: 3,
       },
     });
+    
+    // Mark as initialized
+    isInitializedRef.current = true;
 
   }, [latitude, longitude, radii, mapType]);
 
@@ -292,8 +353,9 @@ export function RadiusRingMap({
                   <div 
                     className="w-3 h-3 rounded-full border-2"
                     style={{ 
-                      backgroundColor: `rgba(13, 161, 199, ${style?.fillOpacity || 0.2})`,
-                      borderColor: RING_COLORS.stroke,
+                      backgroundColor: style?.fillColor || '#0da1c7',
+                      borderColor: style?.strokeColor || '#0da1c7',
+                      opacity: 0.8,
                     }}
                   />
                   <span className="text-slate-600 font-medium">{radius} Mile{radius !== 1 ? 's' : ''}</span>
