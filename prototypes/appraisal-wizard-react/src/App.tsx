@@ -27,17 +27,15 @@ function App() {
   return (
     <ToastProvider>
       <WizardProvider>
-        <Suspense fallback={<PageLoader />}>
-          <Routes>
-            <Route path="/" element={<Navigate to="/template" replace />} />
-            <Route path="/template" element={<TemplatePage />} />
-            <Route path="/document-intake" element={<DocumentIntakePage />} />
-            <Route path="/setup" element={<SetupPage />} />
-            <Route path="/subject-data" element={<SubjectDataPage />} />
-            <Route path="/analysis" element={<AnalysisPage />} />
-            <Route path="/review" element={<ReviewPage />} />
-          </Routes>
-        </Suspense>
+        <Routes>
+          <Route path="/" element={<Navigate to="/template" replace />} />
+          <Route path="/template" element={<Suspense fallback={<PageLoader />}><TemplatePage /></Suspense>} />
+          <Route path="/document-intake" element={<Suspense fallback={<PageLoader />}><DocumentIntakePage /></Suspense>} />
+          <Route path="/setup" element={<Suspense fallback={<PageLoader />}><SetupPage /></Suspense>} />
+          <Route path="/subject-data" element={<Suspense fallback={<PageLoader />}><SubjectDataPage /></Suspense>} />
+          <Route path="/analysis" element={<Suspense fallback={<PageLoader />}><AnalysisPage /></Suspense>} />
+          <Route path="/review" element={<Suspense fallback={<PageLoader />}><ReviewPage /></Suspense>} />
+        </Routes>
       </WizardProvider>
     </ToastProvider>
   );
