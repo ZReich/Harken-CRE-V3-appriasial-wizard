@@ -1,0 +1,42 @@
+<div class="new-page valuations-page-2 side_graphic">
+    <div class="page-header">
+    <%- chapter %>
+    </div>
+
+    <%- section %>
+
+    <div class="description">
+        <p class="title">Valuation <span class="subtitle">Explanation</span></p>
+
+        <p class="main-description fix-line-height">
+            For this opinion of value the authors will be utilizing the approaches below to estimate the market value of the
+            subject property and they are as follows:
+        </p>
+
+        <% if (evaluation.res_evaluation_scenarios && evaluation.res_evaluation_scenarios.some(s => s.has_income_approach)) { %>
+            <p class="regular-description fix-line-height">
+                <span>Income Valuation Approach</span><br>
+                Considers property's estimated value is based on the net income produced or capable to produce and considers an expected/appropriate rate of return for the type, condition and location of the subject property.
+            </p>
+        <% } %>
+
+        <% if (evaluation.res_evaluation_scenarios && evaluation.res_evaluation_scenarios.some(s => s.has_sales_approach)) { %>
+            <p class="regular-description fix-line-height">
+                <span>Sales Comparison Approach</span><br>
+                Estimates the value of property by comparing it to other similar properties in the marketplace that have sold recently. This approach assumes that a buyer is not willing or liable to spend more than they would for an equally desirable property. The Sales Comparison Approach involves finding sold properties comparable to the subject property, and adjusting/comparing the comparable to the subject property based on their inherent difference i.e. (Time, Motivation, Location, Construction, Type/Use and Economies of Scale).
+            </p>
+        <% } %>
+
+        <% if (evaluation.res_evaluation_scenarios && evaluation.res_evaluation_scenarios.some(s => s.has_cost_approach)) { %>
+            <p class="regular-description fix-line-height">
+                <span>Cost Approach</span><br>
+                Considers the estimated value of a property to be the sum of all its parts, taking into consideration land value, land improvements, structure improvement, and depreciation. This approach is utilized if applicable.
+            </p>
+        <% } %>
+
+        <div>
+            <p>Source(s) of information used in this analysis: City/County Public Records, Company Files, Local Appraisers, Local MLS and other local market participants.</p>
+        </div>
+    </div>
+    <%- watermark %>
+</div>

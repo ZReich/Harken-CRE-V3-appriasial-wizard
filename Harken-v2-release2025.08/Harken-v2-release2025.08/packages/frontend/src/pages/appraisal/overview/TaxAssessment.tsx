@@ -1,0 +1,222 @@
+import StyledField from '@/components/styles/StyleFieldEditComp';
+import { Grid, Typography } from '@mui/material';
+import { HarkenHr } from '@/components/harken-hr';
+import {
+  handleInputChange,
+  sanitizeInputDollarSignComps,
+} from '@/utils/sanitize';
+import { useFormikContext } from 'formik';
+import { TaxAssessmentEnum } from './OverviewEnum';
+import { useEffect } from 'react';
+export const TaxAssessment = () => {
+  const { values, handleChange, setFieldValue } = useFormikContext<any>();
+  console.log('TaxAssessment values:', values.tax_liability, values.land_assessment, values.structure_assessment);
+  const amount1 = values.land_assessment;
+  const amount2 = values.structure_assessment;
+  const number1 = parseFloat(amount1?.replace(/[$,]/g, ''));
+  const number2 = parseFloat(amount2?.replace(/[$,]/g, ''));
+  const sum = number1 + number2;
+  const building = values.zonings?.map((ele: any) => {
+    return {
+      sq_ft:
+        typeof ele?.sq_ft === 'string'
+          ? parseFloat(ele.sq_ft.replace(/,/g, ''))
+          : parseFloat(ele?.sq_ft) || 0,
+    };
+  });
+  const total = building.reduce(
+    (accumulator: any, currentValue: any) => {
+      accumulator.sq_ft += currentValue.sq_ft;
+
+      return accumulator;
+    },
+    {
+      sq_ft: 0,
+    }
+  );
+  const buildingSize = total.sq_ft;
+  const priceSquareFoot = sum / buildingSize;
+  // const priceSqureFootLandOnly = sum / values?.land_size?.replace(/,/g, '');
+  const landSizeInSqFt =
+    values?.land_dimension === 'ACRE'
+      ? values?.land_size?.replace(/,/g, '') * 43560
+      : values?.land_size?.replace(/,/g, '');
+  const priceSqureFootLandOnly = sum / landSizeInSqFt;
+  useEffect(() => {
+    const structure_assessment = parseFloat(
+      values.structure_assessment.replace(/[$,]/g, '')
+    );
+    const land_assessment = parseFloat(
+      values.land_assessment.replace(/[$,]/g, '')
+    );
+    const sum = structure_assessment + land_assessment;
+
+    const formattedSum = new Intl.NumberFormat('en-US', {
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    }).format(sum);
+
+    setFieldValue('total_land_improvement', isNaN(sum) ? 0 : formattedSum);
+  }, [values.structure_assessment, values.land_assessment]);
+
+  const formattedPriceSquareFoot = priceSquareFoot.toLocaleString('en-US', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  });
+  const formattedPriceSquareFootLandOnly = isNaN(priceSqureFootLandOnly)
+    ? ' 0.00'
+    : priceSqureFootLandOnly.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+  useEffect(() => {
+    if (
+      localStorage.getItem('activeType') === 'building_with_land' &&
+      (values.land_assessment || values.structure_assessment)
+    ) {
+      setFieldValue('price_square_foot', formattedPriceSquareFoot);
+    } else if (
+      localStorage.getItem('activeType') === 'land_only' &&
+      (values.land_assessment || values.structure_assessment)
+    ) {
+      setFieldValue('price_square_foot', formattedPriceSquareFootLandOnly);
+    }
+  }, [
+    values.land_assessment,
+    values.structure_assessment,
+    values.comp_type,
+    values?.land_dimension,
+  ]);
+  return (
+    <>
+      <div>
+        <Typography
+          variant="h1"
+          component="h2"
+          className="text-lg font-bold mt-5"
+        >
+          {TaxAssessmentEnum.TAX_ASSESSMENT}
+        </Typography>
+        <Grid container spacing={3} className="mt-2 items-end">
+          <Grid item xs={6} xl={3} className="pt-2">
+            <StyledField
+              label={TaxAssessmentEnum.LAND_ASSESSMENT}
+              name={TaxAssessmentEnum.LAND_ASSESSMENT_NAME}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                const input = sanitizeInputDollarSignComps(e.target.value);
+                handleInputChange(
+                  handleChange,
+                  TaxAssessmentEnum.LAND_ASSESSMENT_NAME,
+                  input
+                );
+              }}
+              value={values.land_assessment}
+            />
+          </Grid>
+          <Grid item xs={6} xl={3} className="pt-2">
+            <StyledField
+              label={TaxAssessmentEnum.IMPORVEMENT_ASSESSED_VALUE}
+              name={TaxAssessmentEnum.STRUCTURE_ASSESSMENT}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                const input = sanitizeInputDollarSignComps(e.target.value);
+                handleInputChange(
+                  handleChange,
+                  TaxAssessmentEnum.STRUCTURE_ASSESSMENT,
+                  input
+                );
+              }}
+              value={values.structure_assessment}
+            />
+          </Grid>
+          <Grid item xs={6} xl={3} className="pt-2">
+            <StyledField
+              label={TaxAssessmentEnum.LAND_PLUS_IMROVEMENTS}
+              name={TaxAssessmentEnum.TOTAL_LAND_IMPROVEMENT}
+              value={'$' + values.total_land_improvement}
+              disabled={true}
+            />
+          </Grid>
+          <Grid item xs={6} xl={3} className="pt-2">
+            <StyledField
+              label={TaxAssessmentEnum.$_SF}
+              name={TaxAssessmentEnum.PRICE_SQUARE_FOOT}
+              // value={
+              //   values.comp_type == 'land_only'
+              //     ? '$' + formattedPriceSquareFootLandOnly
+              //     : buildingSize &&
+              //         sum &&
+              //         values.comp_type == 'building_with_land'
+              //       ? formattedPriceSquareFoot
+              //       : ''
+              // }
+              value={`$${
+                isNaN(
+                  Number(String(values.price_square_foot).replace(/,/g, ''))
+                )
+                  ? 0
+                  : values.price_square_foot
+              }`}
+              disabled={true}
+            />
+          </Grid>
+        </Grid>
+        <Grid container spacing={3} className="mt-2 items-end">
+          <Grid item xs={6} xl={3} className="pt-2">
+            <StyledField
+              label={TaxAssessmentEnum.SIDS}
+              name={TaxAssessmentEnum.SIDS_NAME}
+              value={values.sids}
+            />
+          </Grid>
+          <Grid item xs={6} xl={3} className="pt-2">
+            <StyledField
+              label={TaxAssessmentEnum.TAXES_IN_ARREARS}
+              name={TaxAssessmentEnum.TAXES_IN_ARREARS_NAME}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                const input = sanitizeInputDollarSignComps(e.target.value);
+                handleInputChange(
+                  handleChange,
+                  TaxAssessmentEnum.TAXES_IN_ARREARS_NAME,
+                  input
+                );
+              }}
+              value={values.taxes_in_arrears}
+            />
+          </Grid>
+          <Grid item xs={6} xl={3} className="pt-2">
+            <StyledField
+              label={TaxAssessmentEnum.TAX_LIABILITY}
+              name={TaxAssessmentEnum.TAX_LIABILITY_NAME}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
+                const input = sanitizeInputDollarSignComps(e.target.value);
+                handleInputChange(
+                  handleChange,
+                  TaxAssessmentEnum.TAX_LIABILITY_NAME,
+                  input
+                );
+              }}
+              value={values.tax_liability}
+            />
+          </Grid>
+        </Grid>
+        <Grid container spacing={3} className="mt-2 items-end">
+          <Grid item xs={6} xl={6} className="pt-2">
+            <StyledField
+              label={TaxAssessmentEnum.ASSESSED_MARKET_VALUE_YEAR}
+              name={TaxAssessmentEnum.ASSESSED_MARKET_YEAR}
+              value={values.assessed_market_year}
+            />
+          </Grid>
+          <Grid item xs={6} xl={6} className="pt-2">
+            <StyledField
+              label={TaxAssessmentEnum.TAX_LIABILITY_YEAR}
+              name={TaxAssessmentEnum.TAX_LIABILITY_YEAR_NAME}
+              value={values.tax_liability_year}
+            />
+          </Grid>
+        </Grid>
+        <HarkenHr />
+      </div>
+    </>
+  );
+};

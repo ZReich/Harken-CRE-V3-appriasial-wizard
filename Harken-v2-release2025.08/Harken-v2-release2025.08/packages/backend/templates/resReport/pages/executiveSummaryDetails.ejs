@@ -1,0 +1,179 @@
+<% 
+    const linkedScenariosCount = evaluation.res_evaluation_scenarios ? evaluation.res_evaluation_scenarios.length : 0;
+    let count = (!evaluation.review_summary || evaluation.review_summary === '<p><br></p>') ? 0 : 1;
+    let adjustedLinkedScenariosCount = linkedScenariosCount > 5 ? linkedScenariosCount - 4 : 0;
+    if (linkedScenariosCount > 5) {
+        const maxLines = 18;
+        count = Math.ceil(adjustedLinkedScenariosCount / maxLines);
+    }
+    const scenarios = evaluation.res_evaluation_scenarios;
+    let startScenario = 0;
+    let pageLines = 4;
+    let pageMaxLines = 4;
+%>
+
+<% for (let loop = 0; loop <= count; loop++) { %>
+    <% if (loop === 0 || evaluation.res_evaluation_scenarios) { %>
+
+     <%
+        const propertyRights = evaluation.property_rights|| '';
+           const match = propertyRightOptions.find(obj => obj?.code === propertyRights);
+            const propertyRightValue = match?.name === '--Select--'
+            ? getNotAvailableLabel()
+            : !match
+            ? propertyRights
+            : match.name || getNotAvailableLabel();
+        %>
+
+<div class="new-page executive-summary">
+
+    <div class="page-header">
+        <%- chapter %>
+    </div>
+
+    <div class="body">
+        <div class="<%= loop !== 0 ? 'top-heading' : 'left' %>">
+            <p class="title">Executive</p>
+            <p class="subtitle">Summary</p>
+
+            <% if (loop === 0) { %>
+                <p class="item"><span class="executive-summary-item">Date of Inspection/Effective Date</span><span class="item-description" style="float:right;">
+                    <%= formatDateFormat(evaluation.date_of_analysis) %> / <%= formatDateFormat(evaluation.effective_date) %>
+                </span></p>
+
+                <p class="item"><span class="executive-summary-item">Inspector</span><span class="item-description" style="float:right;">
+                    <%= evaluation.inspector_name || getNotAvailableLabel() %>
+                </span></p>
+
+                <% const intendedUserLen = (evaluation.intended_user || getNotAvailableLabel()).length; %>
+                <p class="item" style="text-align: justify;">
+                    <span class="executive-summary-item">Intended User(s)</span>
+                    <span class="item-description" style="<%= intendedUserLen < 45 ? 'float:right;' : '' %>">
+                        <%= evaluation.intended_user || getNotAvailableLabel() %>
+                    </span>
+                </p>
+
+                <% const intendedUseLen = (evaluation.intended_use || getNotAvailableLabel()).length; %>
+                <p class="item" style="text-align: justify;">
+                    <span class="executive-summary-item">Intended Use</span>
+                    <span class="item-description" style="<%= intendedUseLen < 45 ? 'float:right;text-align: justify;' : '' %>">
+                        <%= evaluation.intended_use || getNotAvailableLabel() %>
+                    </span>
+                </p>
+
+                <p class="item"><span class="executive-summary-item">Client</span><span class="item-description" style="float:right;">
+                    <%= evaluation.client.first_name %> <%= evaluation.client.last_name %> (<%= evaluation.client.company %>)
+                </span></p>
+
+                <p class="item"><span class="executive-summary-item">Owner of Record</span><span class="item-description" style="float:right;">
+                    <%= evaluation.owner_of_record || getNotAvailableLabel() %>
+                </span></p>
+
+                <p class="item"><span class="executive-summary-item">Property Rights</span><span class="item-description" style="float:right;">
+                    <%= propertyRightValue || getNotAvailableLabel() %>
+                </span></p>
+
+                <p class="key-highlights tooltipped" data-tooltip="Key Highlights" data-placement="bottom" data-delay="50">Key Highlights:</p>
+
+                <div class="highlights-list">
+                    <ul class="highlights-list">
+                        <li class="highlight-item">Property SF : <%= evaluation.building_size ? maskArea(evaluation.building_size, 'SF') : getNotAvailableLabel() %></li>
+
+                        <li class="highlight-item"> 
+                            Bed / Bath: 
+                            <%= 
+                                (evaluation.bedrooms ? evaluation.bedrooms : getNotAvailableLabel()) + ' / ' +
+                                (evaluation.bathrooms ? evaluation.bathrooms : getNotAvailableLabel())
+                            %>
+                        </li>                        
+                        <li class="highlight-item">
+                            <% 
+                                if (evaluation.land_dimension === 'ACRE') { %>
+                                    Lot Acres :
+                            <% } else { %>
+                                    Lot SF :
+                            <% }
+                            if (!evaluation.land_size) { %>
+                                <%= getNotAvailableLabel() %>
+                            <% } else {
+                                if(evaluation.land_dimension === 'SF') { %>
+                                    <%= Number(evaluation.land_size).toLocaleString() %>
+                            <%  }else if (evaluation.land_dimension === 'ACRE') { %>
+                                    <%= Number(evaluation.land_size).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }) %>
+                            <%  }else { %>
+                                    <%= Number(evaluation.land_size * 43560).toLocaleString() %>
+                            <%  }
+                            } 
+                            %>
+                        </li>
+                        
+                        <li class="highlight-item">
+                            Year Built / Remodeled :
+                            <% if (!evaluation.year_built && !evaluation.year_remodeled) { %>
+                                <%= getNotAvailableLabel() %>
+                            <% } else { %>
+                                <%= evaluation.year_built || getNotAvailableLabel() %> / <%= evaluation.year_remodeled || getNotAvailableLabel() %>
+                            <% } %>
+                        </li>
+
+                        <li class="highlight-item">Zoning : <%= evaluation.zoning_type || getNotAvailableLabel() %></li>
+                    </ul>
+                </div>
+
+                <p class="most-likely"><b>Most Likely User:</b> <span><%= evaluation.most_likely_owner_user %></span></p>
+            <% } %>
+        </div>
+
+        <% if (loop === 0) { %>
+            <div class="right">
+                <% if (evaluation?.ESDImage) { %>
+                    <img class="place-image image-added" src="<%= evaluation.ESDImage %>" data-image-name="EvaluationImageKey.EXECUTIVE_SUMMARY_DETAILS" data-image />
+                <% } else { %>
+                    <img class="place-image" src="/images/default-placeholder.png" data-image-name="EvaluationImageKey.EXECUTIVE_SUMMARY_DETAILS " data-image />
+                <% } %>
+            </div>
+            <div class="clear"></div>
+        <% } %>
+
+        <div class="bottom">
+            <div class="summary-content">
+                <% if (loop === 0) { %>
+                    <p>The author's analysis and assumptions of: use/condition factors of the property, current market data, actual and market income information and general assessment of the property; results in the following:</p>
+                <% } %>
+                <%
+                if (scenarios?.length) {
+                    let i = 0;
+                    for (let start = startScenario; start < pageMaxLines; start++) {
+                        const scenario = scenarios[start];
+                        if (scenario) {
+                            const name = scenarios?.length > 1 ? scenario.name : '';
+                            const dimension = ' PSF';
+                            const priceSF = getEvalPriceSFeet(evaluation.rounding, evaluation.comparison_basis, evaluation.building_size);
+                            const roundedValue = getRoundedValue(scenario.weighted_market_value, evaluation.rounding);
+                            const psfValue = roundedValue / evaluation.building_size; %>
+                            <%- getExecutiveSummary(null, [name, toCurrency(roundedValue), toCurrency(psfValue) + dimension],
+                            {
+                                executive_summary: '<p><b>Final {0} Market Value of {1} ({2})</b>.</p>',
+                                link_executive_summary: '<p><b>Final "{0}" Market Value of {1} ({2})</b>.</p>'
+                            }) %>
+                            <%
+                        }
+                    }
+                } %>
+            </div>
+
+            <% if (loop === count || !evaluation.res_evaluation_scenarios) { %>
+                <div class="summary-content">
+                    <%- evaluation.review_summary || '' %>
+                </div>
+            <% } %>
+        </div>
+    </div>
+    <%- watermark %>
+</div>
+<% 
+        startScenario = pageLines;
+        pageLines = pageMaxLines;
+        pageMaxLines += 18;
+    } 
+} %>

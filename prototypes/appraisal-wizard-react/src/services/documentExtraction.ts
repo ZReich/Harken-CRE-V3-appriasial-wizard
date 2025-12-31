@@ -2,13 +2,11 @@
  * Document Extraction Service
  * 
  * This service handles document upload, AI-powered classification, and data extraction.
- * Currently uses mock data, but is structured to connect to a real backend API.
+ * Uses real backend API endpoints for AI processing.
  * 
- * Backend API Requirements:
+ * Backend API Endpoints:
  * - POST /api/documents/classify - AI document classification
  * - POST /api/documents/extract - AI data extraction
- * - Accepts: multipart/form-data with file
- * - Returns: JSON with document type, extracted fields, and confidence scores
  */
 
 // ==========================================
@@ -41,7 +39,7 @@ export const DOCUMENT_TYPES: Record<DocumentType, DocumentTypeInfo> = {
     description: 'Property address, legal description, tax ID, owner, land area',
     icon: 'landmark',
     color: 'blue',
-    extractFields: ['propertyAddress', 'legalDescription', 'taxId', 'owner', 'landArea'],
+    extractFields: ['propertyAddress', 'legalDescription', 'taxId', 'owner', 'landArea', 'county', 'state', 'zipCode', 'yearBuilt', 'buildingSize', 'zoning'],
   },
   engagement: {
     id: 'engagement',
@@ -49,7 +47,7 @@ export const DOCUMENT_TYPES: Record<DocumentType, DocumentTypeInfo> = {
     description: 'Client name, fee, appraisal purpose, effective date',
     icon: 'file-signature',
     color: 'purple',
-    extractFields: ['clientName', 'fee', 'appraisalPurpose', 'effectiveDate'],
+    extractFields: ['clientName', 'clientAddress', 'fee', 'appraisalPurpose', 'effectiveDate', 'intendedUse', 'intendedUsers', 'propertyAddress', 'propertyType', 'scopeOfWork', 'dueDate'],
   },
   sale: {
     id: 'sale',
@@ -57,7 +55,7 @@ export const DOCUMENT_TYPES: Record<DocumentType, DocumentTypeInfo> = {
     description: 'Sale price, sale date, buyer/seller, terms',
     icon: 'handshake',
     color: 'green',
-    extractFields: ['salePrice', 'saleDate', 'buyer', 'seller', 'terms'],
+    extractFields: ['salePrice', 'saleDate', 'buyer', 'seller', 'terms', 'earnestMoney', 'closingDate', 'propertyAddress', 'downPayment', 'financingTerms', 'contingencies'],
   },
   lease: {
     id: 'lease',
@@ -65,7 +63,7 @@ export const DOCUMENT_TYPES: Record<DocumentType, DocumentTypeInfo> = {
     description: 'Tenant info, rent amounts, lease terms',
     icon: 'file',
     color: 'orange',
-    extractFields: ['tenantName', 'rentAmount', 'leaseStart', 'leaseEnd', 'terms'],
+    extractFields: ['tenantName', 'landlordName', 'rentAmount', 'leaseStart', 'leaseEnd', 'terms', 'escalations', 'options', 'securityDeposit', 'propertyAddress', 'squareFeet', 'leaseType', 'commonAreaMaintenance'],
   },
   rentroll: {
     id: 'rentroll',
@@ -73,7 +71,7 @@ export const DOCUMENT_TYPES: Record<DocumentType, DocumentTypeInfo> = {
     description: 'Unit mix, occupancy, rental income',
     icon: 'bar-chart-3',
     color: 'teal',
-    extractFields: ['units', 'occupancyRate', 'grossIncome', 'netIncome'],
+    extractFields: ['units', 'occupancyRate', 'grossIncome', 'netIncome', 'averageRent', 'vacancies', 'totalSquareFeet', 'numberOfTenants', 'annualRent', 'monthlyRent'],
   },
   survey: {
     id: 'survey',
@@ -81,7 +79,7 @@ export const DOCUMENT_TYPES: Record<DocumentType, DocumentTypeInfo> = {
     description: 'Property boundaries, easements, dimensions',
     icon: 'map',
     color: 'indigo',
-    extractFields: ['landArea', 'boundaries', 'easements'],
+    extractFields: ['landArea', 'boundaries', 'easements', 'legalDescription', 'dimensions', 'setbacks', 'floodZone', 'surveyDate', 'surveyor', 'zoning'],
   },
   tax_return: {
     id: 'tax_return',
@@ -89,7 +87,7 @@ export const DOCUMENT_TYPES: Record<DocumentType, DocumentTypeInfo> = {
     description: 'Income, expenses, depreciation schedules',
     icon: 'receipt',
     color: 'red',
-    extractFields: ['grossIncome', 'expenses', 'netIncome'],
+    extractFields: ['grossIncome', 'expenses', 'netIncome', 'depreciation', 'mortgageInterest', 'propertyTaxes', 'insurance', 'repairs', 'utilities', 'taxYear'],
   },
   financial_statement: {
     id: 'financial_statement',
@@ -97,7 +95,7 @@ export const DOCUMENT_TYPES: Record<DocumentType, DocumentTypeInfo> = {
     description: 'Operating income, expenses, NOI',
     icon: 'wallet',
     color: 'emerald',
-    extractFields: ['grossIncome', 'expenses', 'netIncome', 'noi'],
+    extractFields: ['grossIncome', 'effectiveGrossIncome', 'expenses', 'netIncome', 'vacancyRate', 'managementFee', 'propertyTaxes', 'insurance', 'utilities', 'repairs', 'reserves', 'period'],
   },
   unknown: {
     id: 'unknown',
@@ -105,7 +103,7 @@ export const DOCUMENT_TYPES: Record<DocumentType, DocumentTypeInfo> = {
     description: 'Document type could not be determined',
     icon: 'help-circle',
     color: 'gray',
-    extractFields: [],
+    extractFields: ['propertyAddress', 'owner', 'value', 'date', 'description'],
   },
 };
 
@@ -115,18 +113,21 @@ export const DOCUMENT_TYPES: Record<DocumentType, DocumentTypeInfo> = {
 export interface ClassificationResult {
   documentType: DocumentType;
   confidence: number;
-  alternativeTypes?: { type: DocumentType; confidence: number }[];
+  alternativeTypes?: { type: DocumentType; confidence: number; reasoning?: string }[];
   processingTimeMs: number;
+  reasoning?: string;
+  keyIndicators?: string[];
 }
 
 // ==========================================
 // EXTRACTION TYPES
 // ==========================================
 export interface ExtractedField {
-  value: string;
+  value: string | null;
   confidence: number;
   edited?: boolean;
   source?: string; // Which document this came from
+  sourceDocumentId?: string;
 }
 
 export interface ExtractedData {
@@ -138,6 +139,12 @@ export interface ExtractionResult {
   data?: ExtractedData;
   error?: string;
   processingTimeMs?: number;
+  tenants?: Array<{
+    name: string;
+    unit?: string;
+    sqft?: string;
+    rent?: string;
+  }>;
 }
 
 export interface CadastralExtraction {
@@ -149,6 +156,9 @@ export interface CadastralExtraction {
   county?: ExtractedField;
   state?: ExtractedField;
   zipCode?: ExtractedField;
+  yearBuilt?: ExtractedField;
+  buildingSize?: ExtractedField;
+  zoning?: ExtractedField;
 }
 
 export interface EngagementExtraction {
@@ -159,6 +169,10 @@ export interface EngagementExtraction {
   clientAddress?: ExtractedField;
   propertyAddress?: ExtractedField;
   intendedUse?: ExtractedField;
+  intendedUsers?: ExtractedField;
+  propertyType?: ExtractedField;
+  scopeOfWork?: ExtractedField;
+  dueDate?: ExtractedField;
 }
 
 export interface SaleAgreementExtraction {
@@ -169,6 +183,10 @@ export interface SaleAgreementExtraction {
   terms: ExtractedField;
   earnestMoney?: ExtractedField;
   closingDate?: ExtractedField;
+  propertyAddress?: ExtractedField;
+  downPayment?: ExtractedField;
+  financingTerms?: ExtractedField;
+  contingencies?: ExtractedField;
 }
 
 export interface LeaseExtraction {
@@ -179,6 +197,12 @@ export interface LeaseExtraction {
   terms: ExtractedField;
   escalations?: ExtractedField;
   options?: ExtractedField;
+  landlordName?: ExtractedField;
+  securityDeposit?: ExtractedField;
+  propertyAddress?: ExtractedField;
+  squareFeet?: ExtractedField;
+  leaseType?: ExtractedField;
+  commonAreaMaintenance?: ExtractedField;
 }
 
 export interface RentRollExtraction {
@@ -188,13 +212,73 @@ export interface RentRollExtraction {
   netIncome: ExtractedField;
   averageRent?: ExtractedField;
   vacancies?: ExtractedField;
+  totalSquareFeet?: ExtractedField;
+  numberOfTenants?: ExtractedField;
+  annualRent?: ExtractedField;
+  monthlyRent?: ExtractedField;
 }
 
 // ==========================================
 // API CONFIGURATION
 // ==========================================
 const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
-const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA !== 'false';
+
+// Set to 'true' to use mock data (for development without API)
+// Defaults to false (real AI enabled)
+const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true';
+
+// ==========================================
+// PDF TEXT EXTRACTION (Client-side)
+// ==========================================
+
+/**
+ * Extract text from a PDF file using pdf.js
+ * Falls back to sending to backend if client-side extraction fails
+ */
+export async function extractTextFromFile(file: File): Promise<string> {
+  // For PDF files, try to extract text client-side first
+  if (file.type === 'application/pdf') {
+    try {
+      // Dynamically import pdf.js
+      const pdfjsLib = await import('pdfjs-dist');
+      
+      // Set worker source
+      pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+      
+      const arrayBuffer = await file.arrayBuffer();
+      const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      
+      let fullText = '';
+      
+      for (let i = 1; i <= pdf.numPages; i++) {
+        const page = await pdf.getPage(i);
+        const textContent = await page.getTextContent();
+        const pageText = textContent.items
+          .map((item: { str?: string }) => item.str || '')
+          .join(' ');
+        fullText += pageText + '\n\n';
+      }
+      
+      // If we got meaningful text, return it
+      if (fullText.trim().length > 100) {
+        console.log(`[DocumentExtraction] Extracted ${fullText.length} chars from PDF client-side`);
+        return fullText.trim();
+      }
+      
+      // If text is too short, might be a scanned document - would need OCR
+      console.warn('[DocumentExtraction] PDF appears to be scanned or has minimal text');
+      return fullText.trim();
+      
+    } catch (error) {
+      console.warn('[DocumentExtraction] Client-side PDF extraction failed:', error);
+      // Fall through to return empty - backend would need to handle OCR
+    }
+  }
+  
+  // For non-PDF files or if extraction failed, return empty
+  // The backend would need to implement OCR for scanned documents
+  return '';
+}
 
 // ==========================================
 // MOCK DATA GENERATORS
@@ -291,31 +375,70 @@ export async function extractDocumentData(
 
   // Real API call
   try {
-    const formData = new FormData();
-    formData.append('file', file);
-    formData.append('documentType', documentType);
+    // First, extract text from the file
+    const text = await extractTextFromFile(file);
+    
+    if (!text || text.length < 50) {
+      return {
+        success: false,
+        error: 'Could not extract text from document. It may be a scanned image that requires OCR.',
+        processingTimeMs: Date.now() - startTime,
+      };
+    }
 
+    // Call the backend extraction API
     const response = await fetch(`${API_BASE_URL}/documents/extract`, {
       method: 'POST',
-      body: formData,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        text,
+        documentType,
+        filename: file.name,
+      }),
     });
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
       return {
         success: false,
-        error: errorData.message || `Server error: ${response.status}`,
+        error: errorData.error || `Server error: ${response.status}`,
         processingTimeMs: Date.now() - startTime,
       };
     }
 
     const data = await response.json();
+    
+    if (!data.success) {
+      return {
+        success: false,
+        error: data.error || 'Extraction failed',
+        processingTimeMs: Date.now() - startTime,
+      };
+    }
+
+    // Transform the response to match our format
+    const extractedData: ExtractedData = {};
+    for (const [key, field] of Object.entries(data.fields || {})) {
+      const typedField = field as { value: string | null; confidence: number };
+      if (typedField.value !== null) {
+        extractedData[key] = {
+          value: typedField.value,
+          confidence: typedField.confidence,
+          source: file.name,
+        };
+      }
+    }
+
     return {
       success: true,
-      data: data.extractedFields,
+      data: extractedData,
       processingTimeMs: Date.now() - startTime,
+      tenants: data.tenants,
     };
   } catch (error) {
+    console.error('[DocumentExtraction] Extraction error:', error);
     return {
       success: false,
       error: error instanceof Error ? error.message : 'Network error',
@@ -378,12 +501,19 @@ export function getFieldLabel(fieldName: string): string {
     county: 'County',
     state: 'State',
     zipCode: 'ZIP Code',
+    yearBuilt: 'Year Built',
+    buildingSize: 'Building Size',
+    zoning: 'Zoning',
     clientName: 'Client Name',
     clientAddress: 'Client Address',
     fee: 'Appraisal Fee',
     appraisalPurpose: 'Appraisal Purpose',
     effectiveDate: 'Effective Date',
     intendedUse: 'Intended Use',
+    intendedUsers: 'Intended Users',
+    propertyType: 'Property Type',
+    scopeOfWork: 'Scope of Work',
+    dueDate: 'Due Date',
     salePrice: 'Sale Price',
     saleDate: 'Sale Date',
     buyer: 'Buyer',
@@ -391,18 +521,52 @@ export function getFieldLabel(fieldName: string): string {
     terms: 'Terms',
     earnestMoney: 'Earnest Money',
     closingDate: 'Closing Date',
+    downPayment: 'Down Payment',
+    financingTerms: 'Financing Terms',
+    contingencies: 'Contingencies',
     tenantName: 'Tenant Name',
+    landlordName: 'Landlord Name',
     rentAmount: 'Rent Amount',
     leaseStart: 'Lease Start',
     leaseEnd: 'Lease End',
     escalations: 'Escalations',
     options: 'Options',
+    securityDeposit: 'Security Deposit',
+    squareFeet: 'Square Feet',
+    leaseType: 'Lease Type',
+    commonAreaMaintenance: 'CAM',
     units: 'Unit Mix',
     occupancyRate: 'Occupancy Rate',
     grossIncome: 'Gross Income',
+    effectiveGrossIncome: 'Effective Gross Income',
     netIncome: 'Net Income',
     averageRent: 'Average Rent',
     vacancies: 'Vacancies',
+    totalSquareFeet: 'Total Square Feet',
+    numberOfTenants: 'Number of Tenants',
+    annualRent: 'Annual Rent',
+    monthlyRent: 'Monthly Rent',
+    boundaries: 'Boundaries',
+    easements: 'Easements',
+    dimensions: 'Dimensions',
+    setbacks: 'Setbacks',
+    floodZone: 'Flood Zone',
+    surveyDate: 'Survey Date',
+    surveyor: 'Surveyor',
+    depreciation: 'Depreciation',
+    mortgageInterest: 'Mortgage Interest',
+    propertyTaxes: 'Property Taxes',
+    insurance: 'Insurance',
+    repairs: 'Repairs',
+    utilities: 'Utilities',
+    taxYear: 'Tax Year',
+    vacancyRate: 'Vacancy Rate',
+    managementFee: 'Management Fee',
+    reserves: 'Reserves',
+    period: 'Period',
+    value: 'Value',
+    date: 'Date',
+    description: 'Description',
   };
 
   return labels[fieldName] || fieldName.replace(/([A-Z])/g, ' $1').trim();
@@ -437,92 +601,152 @@ export function getConfidenceColorClasses(confidence: number): string {
 // ==========================================
 
 /**
- * Keywords that suggest document types based on filename
- */
-const classificationKeywords: Record<DocumentType, string[]> = {
-  cadastral: ['cadastral', 'county', 'record', 'parcel', 'assessor', 'property card', 'tax card'],
-  engagement: ['engagement', 'letter', 'proposal', 'agreement', 'contract', 'loi'],
-  sale: ['sale', 'purchase', 'buy', 'sell', 'psa', 'agreement', 'contract of sale'],
-  lease: ['lease', 'rental agreement', 'tenant', 'sublease', 'amendment'],
-  rentroll: ['rent roll', 'rentroll', 'rent_roll', 'unit mix', 'occupancy', 'tenant list'],
-  survey: ['survey', 'plat', 'boundary', 'alta', 'topographic'],
-  tax_return: ['tax return', 'schedule e', '1040', '1065', '1120', 'k-1'],
-  financial_statement: ['financial', 'income statement', 'p&l', 'profit', 'operating statement', 'proforma'],
-  unknown: [],
-};
-
-/**
- * Classify a document using AI (simulated with filename analysis)
- * In production, this would call an AI/ML backend
+ * Classify a document using AI
+ * Extracts text and sends to backend for classification
  */
 export async function classifyDocument(file: File): Promise<ClassificationResult> {
   const startTime = Date.now();
   
-  // Simulate API processing time
-  await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 700));
-  
-  const filename = file.name.toLowerCase();
-  const scores: { type: DocumentType; score: number }[] = [];
-  
-  // Score based on filename keywords
-  for (const [docType, keywords] of Object.entries(classificationKeywords)) {
-    if (docType === 'unknown') continue;
+  if (USE_MOCK_DATA) {
+    // Simulate API processing time
+    await new Promise(resolve => setTimeout(resolve, 800 + Math.random() * 700));
     
-    let score = 0;
-    for (const keyword of keywords) {
-      if (filename.includes(keyword.toLowerCase().replace(/ /g, ''))) {
-        score += 0.4;
-      }
-      if (filename.includes(keyword.toLowerCase().replace(/ /g, '_'))) {
-        score += 0.4;
-      }
-      if (filename.includes(keyword.toLowerCase().replace(/ /g, '-'))) {
-        score += 0.4;
+    // Use filename-based classification for mock mode
+    const filename = file.name.toLowerCase();
+    const filenameClassifications: Record<string, DocumentType> = {
+      'cadastral': 'cadastral',
+      'county': 'cadastral',
+      'parcel': 'cadastral',
+      'assessor': 'cadastral',
+      'engagement': 'engagement',
+      'letter': 'engagement',
+      'proposal': 'engagement',
+      'sale': 'sale',
+      'purchase': 'sale',
+      'psa': 'sale',
+      'lease': 'lease',
+      'rental': 'lease',
+      'rentroll': 'rentroll',
+      'rent_roll': 'rentroll',
+      'rent-roll': 'rentroll',
+      'occupancy': 'rentroll',
+      'survey': 'survey',
+      'plat': 'survey',
+      'alta': 'survey',
+      'tax': 'tax_return',
+      '1040': 'tax_return',
+      'schedule': 'tax_return',
+      'financial': 'financial_statement',
+      'operating': 'financial_statement',
+      'proforma': 'financial_statement',
+    };
+    
+    let matchedType: DocumentType = 'unknown';
+    let matchedConfidence = 0.5;
+    
+    for (const [keyword, docType] of Object.entries(filenameClassifications)) {
+      if (filename.includes(keyword)) {
+        matchedType = docType;
+        matchedConfidence = 0.85 + Math.random() * 0.10;
+        break;
       }
     }
     
-    // Boost based on file extension
-    if (docType === 'rentroll' && (filename.endsWith('.xlsx') || filename.endsWith('.csv'))) {
-      score += 0.3;
+    if (matchedType === 'unknown') {
+      // Random assignment for demo
+      const types: DocumentType[] = ['cadastral', 'engagement', 'sale', 'lease', 'rentroll'];
+      matchedType = types[Math.floor(Math.random() * types.length)];
+      matchedConfidence = 0.70 + Math.random() * 0.15;
     }
-    if ((docType === 'cadastral' || docType === 'survey') && 
-        (filename.endsWith('.jpg') || filename.endsWith('.png') || filename.endsWith('.pdf'))) {
-      score += 0.1;
-    }
-    
-    if (score > 0) {
-      scores.push({ type: docType as DocumentType, score: Math.min(score, 0.98) });
-    }
-  }
-  
-  // Sort by score descending
-  scores.sort((a, b) => b.score - a.score);
-  
-  // If no matches, use random assignment for demo (simulating AI classification)
-  if (scores.length === 0) {
-    const types: DocumentType[] = ['cadastral', 'engagement', 'sale', 'lease', 'rentroll'];
-    const randomType = types[Math.floor(Math.random() * types.length)];
-    const randomConfidence = 0.75 + Math.random() * 0.20; // 75-95%
     
     return {
-      documentType: randomType,
-      confidence: randomConfidence,
-      alternativeTypes: types
-        .filter(t => t !== randomType)
-        .slice(0, 2)
-        .map(t => ({ type: t, confidence: 0.3 + Math.random() * 0.3 })),
+      documentType: matchedType,
+      confidence: matchedConfidence,
+      alternativeTypes: [],
       processingTimeMs: Date.now() - startTime,
     };
   }
   
-  const topMatch = scores[0];
-  
-  return {
-    documentType: topMatch.type,
-    confidence: topMatch.score,
-    alternativeTypes: scores.slice(1, 3).map(s => ({ type: s.type, confidence: s.score })),
-    processingTimeMs: Date.now() - startTime,
-  };
+  // Real API call
+  try {
+    // Extract text from the file
+    const text = await extractTextFromFile(file);
+    
+    if (!text || text.length < 50) {
+      // If we can't extract text, use filename-based fallback
+      console.warn('[DocumentExtraction] Could not extract text, using filename-based classification');
+      const filename = file.name.toLowerCase();
+      
+      // Simple filename matching
+      if (filename.includes('cadastral') || filename.includes('county') || filename.includes('parcel')) {
+        return { documentType: 'cadastral', confidence: 0.6, processingTimeMs: Date.now() - startTime };
+      }
+      if (filename.includes('engagement') || filename.includes('letter')) {
+        return { documentType: 'engagement', confidence: 0.6, processingTimeMs: Date.now() - startTime };
+      }
+      if (filename.includes('sale') || filename.includes('purchase')) {
+        return { documentType: 'sale', confidence: 0.6, processingTimeMs: Date.now() - startTime };
+      }
+      if (filename.includes('lease') || filename.includes('rental')) {
+        return { documentType: 'lease', confidence: 0.6, processingTimeMs: Date.now() - startTime };
+      }
+      if (filename.includes('rent') && (filename.includes('roll') || filename.includes('list'))) {
+        return { documentType: 'rentroll', confidence: 0.6, processingTimeMs: Date.now() - startTime };
+      }
+      
+      return { documentType: 'unknown', confidence: 0.3, processingTimeMs: Date.now() - startTime };
+    }
+
+    // Call the backend classification API
+    const response = await fetch(`${API_BASE_URL}/documents/classify`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        text,
+        filename: file.name,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json().catch(() => ({}));
+      console.error('[DocumentExtraction] Classification API error:', errorData);
+      return {
+        documentType: 'unknown',
+        confidence: 0.3,
+        processingTimeMs: Date.now() - startTime,
+      };
+    }
+
+    const data = await response.json();
+    
+    if (!data.success) {
+      console.error('[DocumentExtraction] Classification failed:', data.error);
+      return {
+        documentType: 'unknown',
+        confidence: 0.3,
+        processingTimeMs: Date.now() - startTime,
+      };
+    }
+
+    return {
+      documentType: data.documentType as DocumentType,
+      confidence: data.confidence,
+      alternativeTypes: data.alternatives,
+      processingTimeMs: Date.now() - startTime,
+      reasoning: data.reasoning,
+      keyIndicators: data.keyIndicators,
+    };
+    
+  } catch (error) {
+    console.error('[DocumentExtraction] Classification error:', error);
+    return {
+      documentType: 'unknown',
+      confidence: 0.3,
+      processingTimeMs: Date.now() - startTime,
+    };
+  }
 }
 
 /**
@@ -571,10 +795,9 @@ export async function processDocumentBatch(
     extraction: ExtractionResult;
   }> = [];
   
-  // Process files in parallel but stagger the starts for visual effect
-  const promises = files.map(async (file, index) => {
-    // Stagger start by 300ms per file
-    await new Promise(resolve => setTimeout(resolve, index * 300));
+  // Process files sequentially to avoid overwhelming the API
+  for (let index = 0; index < files.length; index++) {
+    const file = files[index];
     
     // Notify: classifying
     onProgress(index, 'classifying');
@@ -585,14 +808,8 @@ export async function processDocumentBatch(
     const extraction = await extractDocumentData(file, classification.documentType);
     onProgress(index, 'complete', { classification, extraction });
     
-    return { file, classification, extraction };
-  });
-  
-  const allResults = await Promise.all(promises);
-  results.push(...allResults);
+    results.push({ file, classification, extraction });
+  }
   
   return results;
 }
-
-
-

@@ -1,0 +1,76 @@
+<!-- COVER -->
+<%
+    let stateName='';
+    const {state} = evaluation;
+    const matchState = states.find((obj) => obj?.code === state);
+    if (!matchState) 
+    {
+    stateName = state;
+    } else {
+    stateName = matchState?.name;
+    }
+%>
+
+<div class="new-page">
+    <% const currentLocale = Intl.DateTimeFormat().resolvedOptions().locale; %>
+    <input type="hidden" value="<%= currentLocale %>">
+
+    <% if (evaluation?.file_number) { %>
+        <div class="file-number">
+            File #<%= evaluation.file_number %>
+        </div>
+    <% } %>
+
+    <div class="cover-header">
+        <p class="cover-title"><%= evaluation.business_name %></p>
+        <p class="cover-subtitle">
+            <%= evaluation.street_address %> |
+            <%= evaluation.city %>, 
+            <%= stateName %> 
+            <%= evaluation.zipcode %>
+        </p>
+    </div>
+
+    <div class="cover-body">
+        <img class="cover-image image-added" src="<%= evaluation.coverImage %>" />
+    </div>
+
+    <div class="cover-footer">
+        <div class="cover-left">
+            <% if (evaluation?.account?.logo_url) { %>
+                <div class="cover-logo" style="background: url('<%= evaluation.baseUrl %><%= evaluation.account.logo_url %>') center left no-repeat; background-size: contain;"></div>
+            <% } else if (evaluation.account.theme === 'nai') { %>
+                <div class="cover-logo" style="background: url('../../images/logo-nai.png') center left no-repeat; background-size: contain;"></div>
+            <% } %>
+        </div>
+
+        <div class="cover-right">
+            <% if (evaluation.account.name) { %>
+                <p class="cover-user-name">
+                    <%= evaluation.account.name %>
+                    <% if (evaluation?.user?.position) { %>
+                        | <i><%= evaluation.user.position %></i>
+                    <% } %>
+                </p>
+            <% } %>
+
+            <% if (evaluation.account.name) { %>
+                <p class="cover-business-name"><%= evaluation.account.name %></p>
+            <% } %>
+
+            <% if (evaluation?.user?.email_address) { %>
+                <p class="cover-email"><%= evaluation?.user?.email_address %></p>
+            <% } %>
+        </div>
+
+        <div class="clear"></div>
+
+        <div class="cover-image">
+            <div class="item harken-blue"></div>
+            <div class="triangle harken-blue"></div>
+            <div class="item mid-blue"></div>
+            <div class="triangle mid-blue"></div>
+            <div class="item dark-blue"></div>
+        </div>
+    </div>
+</div>

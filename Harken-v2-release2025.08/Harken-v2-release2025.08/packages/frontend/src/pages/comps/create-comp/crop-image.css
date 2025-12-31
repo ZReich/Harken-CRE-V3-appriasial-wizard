@@ -1,0 +1,20 @@
+.crop-container {
+  width: 600px;
+  height: 450px;
+  background-image: 
+    linear-gradient(45deg, #ccc 25%, transparent 25%), 
+    linear-gradient(-45deg, #ccc 25%, transparent 25%), 
+    linear-gradient(45deg, transparent 75%, #ccc 75%), 
+    linear-gradient(-45deg, transparent 75%, #ccc 75%);
+  background-size: 20px 20px;
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.crop-image-functionality img {
+  width: 600px !important;
+  height: 450px !important;
+  object-fit: contain !important;
+}

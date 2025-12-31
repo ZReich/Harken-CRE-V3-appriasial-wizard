@@ -1,0 +1,978 @@
+<%
+let paras = [];
+for(let index = 0; index < evaluation.scenarios.length; index++){
+    const scenario = evaluation.scenarios[index];
+    if(scenario.has_lease_approach){
+    let label = '';
+    if (evaluation && evaluation.scenarios && evaluation.scenarios.length > 1 && label === '') {
+        label = evaluation.scenarios[index].name;
+    }
+    const evaluation_lease_approach = scenario?.evaluation_lease_approach;
+     const evaluation_rent_roll_approach = scenario?.evaluation_rent_roll_approach;
+    if(evaluation_lease_approach){
+        const notes = evaluation_lease_approach.notes ? evaluation_lease_approach.notes : getLeaseCompsNotes();
+        let notesLength = notes.length;
+        let count = 1;
+        if (notesLength > 2300) {
+            count = Math.ceil(notesLength / 2300);
+        }
+        let startLen = 0;
+        let endLength = 2300;
+        let limit = 2300;
+        for (let loop = 0; loop <= count; loop++) {
+            const trimmedNotes = notes.replace(/<p><br><\/p>/g, '').trim();
+            if (!loop || trimmedNotes.substr(startLen, limit).length) {
+        %>
+        <%
+        let stateName='';
+        const {state} = evaluation;
+        stateName = state?.toUpperCase();
+        <!-- const matchState = states.find((obj) => obj?.code === state); -->
+        <!-- if (!matchState)  -->
+        <!-- { -->
+        <!-- stateName = state; -->
+        <!-- } else { -->
+        <!-- stateName = matchState?.name; -->
+        <!-- } -->
+        %>
+            <div class="new-page valuations_page_3" data-type="sales-approach">
+                <div class="page-header" style="<%= (loop > 0 && loop <= 5) ? 'padding-bottom:5rem ; margin-left: 50rem;' : '' %>">
+                    <%- chapter %>
+                </div>
+
+                <div class="description">
+                    <% if (loop === 0) { %>
+                        <p class="title">Lease Comparison <span class="subtitle">Approach</span></p>
+                        <p class="label"><%= label %></p>
+                        <p class="regular-description">
+                            When valuing a property through the income approach the author will use either the existing lease on the property if said lease 
+                            is confirmed to be at market or the author will research leased properties that fall within the comparable scope of the subject property and adjust them to fall 
+                            in line with the subject property.
+                        </p>
+                        <table class="comps-table">
+                            <thead>
+                                <tr>
+                                <th></th>
+                                <th>Subject Property</th>
+                                <% if (
+                                    evaluation_lease_approach &&
+                                    (Array.isArray(evaluation_lease_approach.comps) ||
+                                        typeof evaluation_lease_approach.comps === 'object')
+                                ) { %>
+                                    <% evaluation_lease_approach.comps.forEach((comp, i) => { %>
+                                    <th>Comparable #<%= i + 1 %></th>
+                                    <% }) %>
+                                <% } %>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td></td>
+                                    <% let url = ''; %>
+                                    <% if (evaluation.coverImage) {
+                                        url = evaluation.coverImage;
+                                    } else {
+                                        url = '/images/default-placeholder.png';
+                                    } %>
+                                    <td>
+                                        <img width="150" height="80" src="<%= url %>" class="image-added"/>
+                                    </td>
+                                    
+                                    <% let comp_image_url = ''; %>
+                                    <% if (
+                                        evaluation_lease_approach &&
+                                        (Array.isArray(evaluation_lease_approach.comps) ||
+                                            typeof evaluation_lease_approach.comps === 'object')
+                                    ) { %>
+                                        <% evaluation_lease_approach.comps.forEach((comp, i) => { 
+                                            const leaseComp = comp.comp_details;
+                                            if (leaseComp?.property_image_url) {
+                                                const url = leaseComp?.property_image_url;
+                                                comp_image_url = evaluation?.baseUrl+url;
+                                            }else {
+                                                comp_image_url = '/images/default-placeholder.png';
+                                            }
+                                        %>
+                                        <td>
+                                            <img width="150" height="80" src="<%= comp_image_url %>" />
+                                        </td>
+                                        <% }) %>
+                                    <% } %>
+                                </tr>
+                                <tr>
+                                    <td class="blue bold">Location</td>
+                                    <td>
+                                        <div style="white-space: initial;">
+                                        <%= evaluation.street_address %>, <br/>
+                                        <%= evaluation.city %>, <%= stateName %> <%= evaluation.zipcode %>
+                                        </div>
+                                    </td>
+                                    
+                                    <% if (
+                                        evaluation_lease_approach &&
+                                        (Array.isArray(evaluation_lease_approach.comps) ||
+                                            typeof evaluation_lease_approach.comps === 'object')
+                                    ) { %>
+                                        <% evaluation_lease_approach.comps.forEach((comp, i) => { 
+                                            const leaseComp = comp.comp_details;
+                                            if (leaseComp && leaseComp.street_address) { %>
+                                            <td>
+                                                <div style="white-space: initial;">
+                                                    <%= leaseComp.street_address %>, <br/>
+                                                    <%= leaseComp.city %>, <%= leaseComp?.state?.toUpperCase() %> <%= leaseComp.zipcode %>
+                                                </div>
+                                            </td>
+                                            <% } else { %>
+                                                <td>Address Not Provided</td>
+                                            <% } %>
+                                        <% }) %>
+                                    <% } %>
+                                </tr>
+                                <tr class="odd">
+                                    <td>Date Leased</td>
+                                    <td></td>
+                                    <% if (
+                                        evaluation_lease_approach &&
+                                        (Array.isArray(evaluation_lease_approach.comps) ||
+                                            typeof evaluation_lease_approach.comps === 'object')
+                                    ) { %>
+                                        <% evaluation_lease_approach.comps.forEach((comp, i) => { 
+                                            const leaseComp = comp.comp_details;
+                                        %>
+                                        <% if (leaseComp && leaseComp.date_sold) { %>
+                                            <td><%= formatDate(leaseComp.date_sold, true) %></td>
+                                        <% } else { %>
+                                            <td><%= getNotAvailableLabel() %></td>
+                                        <% } %>
+                                        <% }) %>
+                                    <% } %>
+                                </tr>
+                                <tr>
+                                    <td>
+                                    <%
+                                        const isLandOnly = evaluation?.comp_type === 'land_only';
+                                        %>
+                                        <%= isLandOnly ? 'Land Type' : 'Property Type' %>
+                                        <%
+                                            let zoneString = '';
+                                            let zoneValue = '';
+                                            let subZoneValue = '';
+
+                                            if (evaluation && evaluation.zonings && evaluation.zonings[0]) {
+                                                zoneString = evaluation.zonings[0].zone;
+
+                                                const zone = zoneOptions.find((obj) => obj?.code === zoneString);
+                                                zoneValue = zone ? zone.name : zoneString;
+
+                                                const sub_options = zone?.sub_options || [];
+                                                const subZone = sub_options.find((obj) => obj?.code === evaluation.zonings[0]?.sub_zone);
+                                                subZoneValue = subZone ? subZone.name : evaluation.zonings[0]?.sub_zone;
+                                            }
+
+                                            const displayZoneText = zoneValue
+                                                ? zoneValue + ' / ' + (subZoneValue || getNotAvailableLabel())
+                                                : '';
+
+                                            const landType = evaluation?.land_type || '';
+                                            const matchLandType = landOptions.find(obj => obj?.code === landType);
+                                            const landTypeValue = 
+                                                            evaluation?.land_type == 'select' ? ''
+                                                            : !matchLandType ? landType
+                                                            : matchLandType?.name || '';
+                                        %>
+                                    </td>
+                                    <td>
+                                        <div style="white-space: initial;">
+                                            <%= isLandOnly ? (landTypeValue || getNotAvailableLabel()) : displayZoneText %>
+                                        </div>
+                                    </td>
+                                    <%
+                                        if (Array.isArray(evaluation_lease_approach?.comps) || typeof evaluation_lease_approach?.comps === 'object') {
+                                            evaluation_lease_approach?.comps.forEach((comp, i) => {
+                                                const compData = comp?.comp_details;
+                                                if (compData) {
+                                                const compZonings = compData.zonings;
+                                                let compZoneString = '';
+                                                let compZoneValue = '';
+                                                let compSubZoneValue = '';
+
+                                        if (compZonings && compZonings[0]) {
+                                            compZoneString = compZonings[0].zone;
+
+                                            const compZone = zoneOptions.find((obj) => obj?.code === compZoneString);
+                                            compZoneValue = compZone ? compZone.name : compZoneString;
+
+                                            const compSubOptions = compZone?.sub_options || [];
+                                            const compSubZone = compSubOptions.find((obj) => obj?.code === compZonings[0]?.sub_zone);
+                                            compSubZoneValue = compSubZone ? compSubZone.name : compZonings[0]?.sub_zone;
+                                        }
+
+                                        const compDisplayZoneText = compZoneValue
+                                            ? compZoneValue + ' / ' + (compSubZoneValue || 'N/A')
+                                            : '';
+
+                                        const compTypeIsLand = compData?.comp_type === 'land_only';
+
+                                        const landType = compData?.land_type || '';
+                                        const matchLandType = landOptions.find(obj => obj?.code === landType);
+                                        const landTypeValue = 
+                                                        compData?.land_type == 'select' ? ''
+                                                        : !matchLandType ? landType
+                                                        : matchLandType?.name || '';
+                                    %>
+                                    <td>
+                                        <div style="white-space: initial;">
+                                            <%= compTypeIsLand ? (landTypeValue || getNotAvailableLabel()) : compDisplayZoneText %>
+                                        </div>
+                                    </td>
+                                    <%
+                                    } else {
+                                    %>
+                                    <td><%= getNotAvailableLabel() %></td>
+                                    <%
+                                                }
+                                            });
+                                        }
+                                    %>
+                                </tr>
+                                <% 
+                                let rowIndex = 0;
+                                evaluation_lease_approach?.comparison_attributes.forEach(attr => { 
+                                    rowIndex++;
+                                    const key = attr.comparison_key;
+                                    const name = attr.comparison_value;
+                                %>
+                                <tr class="<%= rowIndex % 2 === 0 ? '' : 'odd' %>">
+                                    <td><%= name %></td>
+                                    <!-- Subject property cell -->
+                                    <td>
+                                    <% let totalSqFt = 0; %>
+                                    <% if (evaluation_rent_roll_approach) {
+                                    const rent_roll_type = evaluation_rent_roll_approach?.type;
+                                    if (Array.isArray(evaluation_rent_roll_approach?.rent_rolls) && rent_roll_type === 'summary') {
+                                        totalSqFt = evaluation_rent_roll_approach.rent_rolls.reduce((sum, item) => {
+                                            const sqFt = parseFloat(item?.sq_ft) || 0;
+                                            return sum + sqFt;
+                                        }, 0);
+                                        }
+                                        } %>
+                                        <% 
+                                        let subjectValue = evaluation[key];
+                                        if(key === 'building_size'){
+                                            subjectValue = numberFormat(evaluation[key]); 
+                                        }
+                                        else if (key === 'services') {
+                                            subjectValue = evaluation.utilities_select;
+                                        }
+                                        else if (key === 'unit' && evaluation.comparison_basis === 'Unit' ) {
+                                            subjectValue = numberFormat(evaluation?.total_units);
+                                        }
+                                        else if (key === 'city_county') {
+                                        const city = evaluation?.city || 'N/A';
+                                        const county = evaluation?.county || 'N/A';
+                                        subjectValue = `${city}, ${county}`;
+                                        }
+                                        else if(key === 'city_state'){
+                                            subjectValue = evaluation.city +', '+ stateName;
+                                        }
+                                        else if(key === 'highest_best_use'){
+                                        subjectValue = evaluation?.high_and_best_user;
+                                        }
+                                        else if(key === 'building_size_land_size'){
+                                            const { building_size, land_size, land_dimension } = evaluation;
+                                            let formattedLandSize = getNotAvailableLabel();
+                                            if (land_size && land_dimension === 'SF') {
+                                                formattedLandSize = `${land_size?.toLocaleString()} SF`;
+                                            } else if (land_size && land_dimension === 'ACRE') {
+                                                formattedLandSize = `${Number(land_size).toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 })} AC`;
+                                            }
+                                            const formattedBuildingSize = building_size ? numberFormat(building_size) + ' SF' : getNotAvailableLabel();
+                                            <!-- const formattedLandSize = land_size ? numberFormat(land_size) : 'N/A'; -->
+                                            subjectValue = `${formattedBuildingSize} / ${formattedLandSize}`;
+                                        }
+                                        else if(key === 'year_built_year_remodeled'){
+                                            const year_built = evaluation.year_built ? evaluation.year_built : getNotAvailableLabel(); 
+                                            const year_remodeled = evaluation.year_remodeled ? evaluation.year_remodeled : getNotAvailableLabel(); 
+                                            subjectValue =  year_built+' / ' + year_remodeled;
+                                        }
+                                        else if (key === 'beds') {
+                                            subjectValue = evaluation.total_beds ?
+                                            evaluation?.total_beds.toLocaleString(2) // Show total beds for 'beds'
+                                            : ''
+                                        }
+                                        else if(key === 'quality_condition'){
+                                            const condition = evaluation.condition || '';
+                                            const matchCondition = conditionOptions.find(obj => obj?.code === condition);
+
+                                            const conditionValue = matchCondition?.name === '--Select--'
+                                            ? getNotAvailableLabel()
+                                            : !matchCondition
+                                                ? condition
+                                                : matchCondition.name || getNotAvailableLabel();
+
+                                            subjectValue = conditionValue;
+                                        }
+                                        else if(key === 'unit_size_sq_ft'){
+                                            subjectValue = totalSqFt ? numberFormat(totalSqFt) : 'N/A';  
+                                        }
+                                        else if (key === 'topography') {
+                                            const topography = evaluation.topography || '';
+                                            const matchTopography = topographyOptions.find(obj => obj?.code === topography);
+                                            const topographyValue = matchTopography?.name === '--Select--'
+                                                ? getNotAvailableLabel()
+                                                : !matchTopography
+                                                    ? topography
+                                                    : matchTopography.name || getNotAvailableLabel();
+                                            subjectValue = topographyValue;
+                                        }
+                                        else if (key === 'land_size_sf') {
+                                            const landSizeSfValue =
+                                                evaluation.land_dimension === 'SF'
+                                                ? evaluation.land_size
+                                                : evaluation.land_dimension === 'ACRE'
+                                                ? evaluation.land_size * 43560 : 0;
+                                            subjectValue = numberFormat(landSizeSfValue); // Optional: round to 2 decimal places
+                                        }
+                                        else if (key === 'land_size_acre') {
+                                            const landSizeAcreValue =
+                                                evaluation.land_dimension === 'SF'
+                                                ? evaluation.land_size / 43560
+                                                : evaluation.land_dimension === 'ACRE'
+                                                ? evaluation.land_size : 0;
+                                            subjectValue = landSizeAcreValue ? numberFormat(landSizeAcreValue,3) : getNotAvailableLabel(); // Optional: round to 2 decimal places
+                                        }
+                                        if (typeof subjectValue === 'undefined' || subjectValue === null || subjectValue === '') {
+                                            subjectValue = '';
+                                        }
+                                        %>
+                                        <%= subjectValue %>
+                                    </td>
+                                    <!-- Comps cells -->
+                                    <% if (Array.isArray(evaluation_lease_approach.comps)) { %>
+                                        <% evaluation_lease_approach.comps.forEach((comp, i) => {
+                                        const leaseComp = comp?.comp_details;
+                                        let fullStateName='';
+                                        const {state} = leaseComp;
+                                        fullStateName = state?.toUpperCase();
+                                        <!-- const matchState = states.find((obj) => obj?.code === state); -->
+                                        <!-- if (!matchState)  -->
+                                        <!-- { -->
+                                        <!-- fullStateName = state; -->
+                                        <!-- } else { -->
+                                        <!-- fullStateName = matchState?.name; -->
+                                        <!-- } -->
+                                        let value = leaseComp ? leaseComp[key] : null;
+                                        if(key === 'building_size'){
+                                            value = numberFormat(leaseComp[key]); 
+                                        }
+                                        else if(key === 'date_sold'){
+                                            value = formatDate(leaseComp.date_sold, true);
+                                        }
+                                        else if (key === 'unit' && evaluation.comparison_basis === 'Unit') {
+                                            value = numberFormat(leaseComp?.total_units);
+                                        }
+                                        else if(key === 'city_state'){
+                                            value = leaseComp.city +', '+ fullStateName;
+                                        }
+                                        else if(key === 'space'){
+                                            value = leaseComp.space ? numberFormat(leaseComp.space) + ' SF' : getNotAvailableLabel();
+                                        }
+                                        else if (key === 'building_size_land_size') {
+                                            const { building_size, land_size , land_dimension } = leaseComp;
+                                            let formattedLandSize = getNotAvailableLabel();
+                                            if (land_size) {
+                                                if (
+                                                    evaluation.land_dimension == 'SF' &&
+                                                    land_dimension == 'ACRE'
+                                                ) {
+                                                    formattedLandSize = (land_size * 43560)?.toLocaleString() + ' SF';
+                                                } else if (
+                                                    evaluation.land_dimension == 'ACRE' &&
+                                                    land_dimension == 'SF'
+                                                ) {
+                                                    formattedLandSize =
+                                                    (land_size / 43560)?.toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }) +
+                                                    ' AC';
+                                                } else {
+                                                    if (land_dimension == 'SF') {
+                                                        formattedLandSize = land_size?.toLocaleString() + ' SF';
+                                                    } else if (land_dimension == 'ACRE') {
+                                                        formattedLandSize =
+                                                            land_size?.toLocaleString(undefined, { minimumFractionDigits: 3, maximumFractionDigits: 3 }) + ' AC';
+                                                    }
+                                                }
+                                            }
+                                            const formattedBuildingSize = building_size ? numberFormat(building_size) + ' SF' : getNotAvailableLabel();
+                                            <!-- const formattedLandSize = land_size ? numberFormat(land_size) : 'N/A'; -->
+                                            value = `${formattedBuildingSize} / ${formattedLandSize}`;
+                                        }
+                                        else if (key === 'price_per_unit') {
+                                            value = leaseComp?.total_units ? toCurrency((leaseComp.sale_price / leaseComp.total_units) || 0) : '';
+                                        }
+                                        else if (key === 'land_size_sf') {
+                                            const landSizeAcreValue =
+                                                leaseComp.land_dimension === 'SF'
+                                                ? leaseComp.land_size
+                                                : leaseComp.land_dimension === 'ACRE'
+                                                    ? leaseComp.land_size * 43560
+                                                    : 0;
+                                            value = numberFormat(landSizeAcreValue); // Optional: round to 2 decimal places
+                                        }
+                                        else if (key === 'land_size_acre') {
+                                            const landSizeAcreValue =
+                                                leaseComp.land_dimension === 'SF'
+                                                ? leaseComp.land_size / 43560
+                                                : leaseComp.land_dimension === 'ACRE'
+                                                    ? leaseComp.land_size
+                                                    : 0;
+                                            value = landSizeAcreValue ? numberFormat(landSizeAcreValue, 3) : getNotAvailableLabel();
+                                        }
+                                        else if (key === 'dollar_per_unit') { 
+                                            const price = leaseComp.type === 'sale' ? leaseComp.sale_price : leaseComp.lease_rate;
+                                            let dollarPerUnit = 0;
+                
+                                            if (leaseComp.type === 'sale') {
+                                                if (!price || !leaseComp.total_units) {
+                                                    dollarPerUnit = 0;
+                                                } else {
+                                                    dollarPerUnit = price / leaseComp.total_units;
+                                                }
+                                            } else {
+                                                if (leaseComp.lease_rate === 0 || leaseComp.total_units === 0) {
+                                                    dollarPerUnit = 0;
+                                                } else {
+                                                    if (leaseComp.lease_rate_unit === 'monthly') {
+                                                        dollarPerUnit = price / leaseComp.total_units / 12;
+                                                    } else {
+                                                        dollarPerUnit = price / leaseComp.total_units;
+                                                    }
+                                                }
+                                            }
+                
+                                            value = dollarPerUnit ? toCurrency(dollarPerUnit) : ''; // Optional: round to 2 decimal places
+                                        }
+                                        else if (key === 'dollar_per_bed') {
+                                            const price = leaseComp.type === 'sale' ? leaseComp.sale_price : leaseComp.lease_rate;
+                                            let dollarPerBed = 0;
+
+                                            if (leaseComp.type === 'sale') {
+                                                if (!price || !leaseComp.total_beds) {
+                                                    dollarPerBed = 0;
+                                                } else {
+                                                    dollarPerBed = price / leaseComp.total_beds;
+                                                }
+                                            } else {
+                                                if (leaseComp.lease_rate === 0 || leaseComp.total_beds === 0) {
+                                                    dollarPerBed = 0;
+                                                } else {
+                                                    if (leaseComp.lease_rate_unit === 'monthly') {
+                                                        dollarPerBed = price / leaseComp.total_beds / 12;
+                                                    } else {
+                                                        dollarPerBed = price / leaseComp.total_beds;
+                                                    }
+                                                }
+                                            }
+                                            value = dollarPerBed ? toCurrency(dollarPerBed) : ''; // Optional: round to 2 decimal places
+                                        }
+                                        else if (key === 'price_per_sf_land') {
+                                            let newValue = 0;
+                                            if (leaseComp.land_dimension === 'SF') {
+                                                if (leaseComp.land_size === null || leaseComp.land_size === 0) {
+                                                    newValue = 0; // If land_size is null or 0, show $0.00
+                                                } else {
+                                                    newValue = leaseComp.sale_price / leaseComp.land_size;
+                                                }
+                                            } else {
+                                                if (leaseComp.land_size === null || leaseComp.land_size === 0) {
+                                                    newValue = 0; // If land_size is null or 0, show $0.00
+                                                } else {
+                                                    newValue = leaseComp.sale_price / (leaseComp.land_size * 43560); // Assuming this part was cut off
+                                                }
+                                            }
+                                            value = toCurrency(newValue);
+                                        }
+                                        else if (key === 'price_per_acre') {
+                                            let landSizeAcre = 0;
+                
+                                            if (leaseComp?.land_dimension === 'SF') {
+                                                landSizeAcre = leaseComp?.land_size ? parseFloat((leaseComp?.sale_price / leaseComp?.land_size).toFixed(2)) * 43560 : 0;
+                                            } else {
+                                                landSizeAcre = leaseComp?.land_size ? parseFloat((leaseComp?.sale_price / leaseComp?.land_size).toFixed(2)) : 0;
+                                            }
+                                            value = toCurrency(landSizeAcre);
+                                        }else if (key === 'sale_price') {
+                                            value = toCurrency(leaseComp.sale_price);
+                                        }else if (key === 'services') {
+                                            value = leaseComp.utilities_select;
+                                        }else if (key === 'net_operating_income') {
+                                            value = toCurrency(leaseComp.net_operating_income);
+                                        }else if (key === 'beds') {
+                                            value = leaseComp.total_beds ?
+                                            leaseComp.total_beds.toLocaleString(2) // Show total beds for 'beds'
+                                            : ''
+                                        }
+                                        else if(key === 'year_built_year_remodeled'){
+                                            const year_built = leaseComp.year_built ? leaseComp.year_built : getNotAvailableLabel(); 
+                                            const year_remodeled = leaseComp.year_remodeled ? leaseComp.year_remodeled : getNotAvailableLabel(); 
+                                            value =  year_built+' / ' + year_remodeled;
+                                        }
+                                        else if(key === 'quality_condition'){
+                                            const condition = leaseComp.condition || '';
+                                            const matchCondition = conditionOptions.find(obj => obj?.code === condition);
+
+                                            const conditionValue = matchCondition?.name === '--Select--'
+                                            ? getNotAvailableLabel()
+                                            : !matchCondition
+                                                ? condition
+                                                : matchCondition.name || getNotAvailableLabel();
+
+                                            value = conditionValue;
+                                        }
+                                        else if(key === 'price_per_sf'){
+                                            value = toCurrency(leaseComp.price_square_foot); 
+                                        }
+                                        else if (key === 'topography') {
+                                        const topography = leaseComp.topography || '';
+                                        const matchTopography = topographyOptions.find(obj => obj?.code === topography);
+                                        const topographyValue = matchTopography?.name === '--Select--'
+                                            ? getNotAvailableLabel()
+                                            : !matchTopography
+                                                ? topography
+                                                : matchTopography.name || getNotAvailableLabel();
+                                        value = topographyValue;
+                                        }
+                                        else if (key === 'price_sf_per_year') {
+                                            value = toCurrency(leaseComp.price_square_foot || 0); 
+                                        }
+                                          else if(key === 'price_acre_per_year'){
+                                        value = toCurrency(parseFloat(((leaseComp?.price_square_foot || 0) * 43560).toFixed(2)));
+                                        }
+                                        else if (key === 'cap_rate') {
+                                            value = toPercentage(leaseComp.cap_rate || 0); 
+                                        }
+                                        else if(key === 'unit_size_sq_ft'){
+                                        const{property_units = []} = leaseComp;
+                                        const sqFt = property_units.length ? property_units[0]?.sq_ft : null;
+                                        value = numberFormat(sqFt);
+                                        }
+                                         else if (key === 'city_county') {
+                                        const city = leaseComp?.city || 'N/A';
+                                        const county = leaseComp?.county || 'N/A';
+                                        value = `${city}, ${county}`;
+                                        }
+                                        else if (key === 'lease_type') {
+                                            const leaseType = leaseComp.lease_type || '';
+                                            const matchLeaseType = leaseTypeOptions.find(obj => obj?.code === leaseType);
+                                            const leaseTypeValue = 
+                                                            leaseComp.lease_type == 'select' ? ''
+                                                            : !matchLeaseType ? leaseType
+                                                            : matchLeaseType?.name || '';
+                                            value = leaseTypeValue;
+                                        }   
+                                        if ((!value || value === '')&& key != 'lease_type') {
+                                            value = getNotAvailableLabel();
+                                        }
+                                        %>
+                                        <td><%= value %></td>
+                                        <% }) %>
+                                    <% } %>
+                                </tr>
+                                <% }) %>
+                                <tr>
+                                    <td class="blue bold">Comparison Criteria</td>
+                                    <td></td>
+                                    <% if (
+                                        evaluation_lease_approach &&
+                                        (Array.isArray(evaluation_lease_approach.comps) ||
+                                            typeof evaluation_lease_approach.comps === 'object')
+                                    ) { %>
+                                        <% evaluation_lease_approach.comps.forEach((comp, i) => { %>
+                                        <td></td>
+                                        <% }) %>
+                                    <% } %>
+                                </tr>
+                                <% 
+                                let criteriaIndex = 0;
+                                evaluation_lease_approach?.subject_property_adjustments.forEach(adjustment => { %>
+                                    <tr class="<%= criteriaIndex % 2 === 0 ? 'odd' : '' %>">
+                                        <td><%= adjustment.adj_value %></td>
+                                        <td></td>
+                                        <% if (
+                                            evaluation_lease_approach &&
+                                            (Array.isArray(evaluation_lease_approach.comps) ||
+                                                typeof evaluation_lease_approach.comps === 'object')
+                                        ) { %>
+                                            <% evaluation_lease_approach.comps.forEach((comp, i) => { 
+                                                const leaseComp = comp;
+                                                let matched = null;
+
+                                                if (leaseComp && Array.isArray(leaseComp.comps_adjustments)) {
+                                                    matched = leaseComp.comps_adjustments.find(ca => ca?.adj_key === adjustment?.adj_key);
+                                                }
+
+                                                let perclass = '';
+                                                if(matched?.adj_value > 0){
+                                                    perclass = 'plus';
+                                                }else if(matched?.adj_value < 0){
+                                                    perclass = 'minus';
+                                                }
+                                            %>
+                                            <td class='<%= perclass %>'>
+                                                <% if (matched) { %>
+                                                    <% if (evaluation.comp_adjustment_mode === 'Dollar') { %>
+                                                    <%= toCurrency( matched?.adj_value) %>
+                                                    <% } else { %>
+                                                    <%= toPercentage( matched?.adj_value) %>
+                                                    <% } %>
+                                                <% } else { %>
+                                                    N/A
+                                                <% } %>
+                                            </td>
+                                            <% }) %>
+                                        <% } %>
+                                    </tr>
+                                <% criteriaIndex++; }) %>
+                                <tr>
+                                    <td class="blue bold">Overall Adjustment</td>
+                                    <td></td>
+                                    <% if (
+                                        evaluation_lease_approach &&
+                                        (Array.isArray(evaluation_lease_approach.comps) ||
+                                            typeof evaluation_lease_approach.comps === 'object')
+                                    ) { %>
+                                        <% evaluation_lease_approach.comps.forEach((comp, i) => { 
+                                            const leaseComp = comp;
+                                            const totalAdjustment = leaseComp?.total_adjustment ?? 0;
+                                    %>
+                                        <td>
+                                            <% if (evaluation.comp_adjustment_mode === 'Dollar') { %>
+                                            <%= toCurrency(totalAdjustment) %>
+                                            <% } else { %>
+                                            <%= toPercentage(totalAdjustment) %>
+                                            <% } %>
+                                        </td>
+                                    <% }) %>
+                                <% } %>
+                                </tr>
+                                <tr class="odd">
+                                    <td>
+                                        Adjusted 
+                                        <% if (evaluation.comp_type === 'land_only' && evaluation.analysis_type === '$/Acre') { %>
+                                            $/AC
+                                        <% } else if (evaluation.comparison_basis !== 'SF') { %>
+                                            $/<%= evaluation.comparison_basis %>
+                                        <% } else { %>
+                                            $/SF/YR
+                                        <% } %>
+                                        </td>
+                                        <td></td>
+                                        <% 
+                                        let dimension = '';
+                                        if (evaluation.comp_type === 'land_only' && evaluation.analysis_type === '$/Acre') {
+                                            dimension = ' /AC';
+                                        }
+                                        %>
+                                    
+                                    <% if (
+                                        evaluation_lease_approach &&
+                                        (Array.isArray(evaluation_lease_approach.comps) ||
+                                            typeof evaluation_lease_approach.comps === 'object')
+                                    ) { %>
+                                        <% evaluation_lease_approach.comps.forEach((comp, i) => { 
+                                            const leaseComp = comp;
+                                            const adjusted = leaseComp?.adjusted_psf ?? 0;
+                                        %>
+                                            <td><%= toCurrency(adjusted) + dimension %></td>
+                                        <% }) %>
+                                    <% } %>
+                                </tr>
+                                <tr>
+                                    <td>Adjusted Comp Range</td>
+                                    <td>
+                                        <% 
+                                            let adjustedpsf = [];
+                                            if (Array.isArray(evaluation_lease_approach.comps)) {
+                                                evaluation_lease_approach.comps.forEach((comp, i) => {
+                                                    const leaseComp = comp;
+                                                    if (leaseComp && leaseComp.adjusted_psf != null) {
+                                                        adjustedpsf.push(leaseComp.adjusted_psf);
+                                                    } else {
+                                                        adjustedpsf.push(0);
+                                                    }
+                                                });
+                                            }
+                                            if (adjustedpsf.length > 0) {
+                                                const minVal = Math.min(...adjustedpsf);
+                                                const maxVal = Math.max(...adjustedpsf);
+                                        %>
+                                            <%= toCurrency(minVal) %> - <%= toCurrency(maxVal) %><%= dimension %>
+                                        <% } %>
+                                        </td>
+                                    
+                                    <% if (Array.isArray(evaluation_lease_approach.comps)) { %>
+                                        <td colspan="3"></td>
+                                    <% } %>
+                                </tr>
+                            </tbody>
+                        </table>
+                    <% } %>
+                    <%
+                        // Split notes into paragraphs
+                        let string = trimmedNotes.substr(startLen, limit);
+                        paras = string.split('<p>');
+                        let chars_per_line = 115;
+                        if (theme === 'nai' || theme === 'nai_portland') chars_per_line = 120;
+                        let lineSpacing = 1.9;
+                        let fontSize = 13;
+                        let pageHeight = 203; // mm
+                        let mmToInch = 0.0393701;
+                        let pointsToInch = 1 / 72;
+                        let fontHeightInInches = fontSize * pointsToInch;
+                        let lineSpacingInInches = fontHeightInInches * lineSpacing;
+                        let pageHeightInInches = pageHeight * mmToInch;
+                        let lines = Math.floor(pageHeightInInches / lineSpacingInInches);
+                        let total_page_lines = 0;
+                        let check_para_count = 0;
+                        lines = 30;
+                        if (loop === 0) {
+                            lines = 3;
+                            if (evaluation.getLeaseComps && evaluation_lease_approach.subject_property_adjustments) {
+                                const labels = Object.keys(JSON.parse(evaluation_lease_approach.subject_property_adjustments || '{}')).length;
+                                if (labels < 8) {
+                                    lines += 8 - labels;
+                                } else {
+                                    lines -= labels - 8;
+                                }
+                            }
+                        }
+                        if (paras.length > 12) {
+                            lines = 16;
+                            if (loop === 0) lines = 2;
+                            if (loop > 0) lines = 20;
+                        }
+                        let p_counts_total = 0;
+                        let selected_lines = 0;
+                        for (let j = 0; j < paras.length; j++) {
+                            if (paras[j]) {
+                                let p_counts = paras[j].trim().length;
+                                let total_lines = p_counts / chars_per_line;
+                                total_page_lines += Math.ceil(total_lines);
+                                p_counts_total += p_counts;
+                            }
+                            if (total_page_lines <= lines) {
+                                check_para_count = j;
+                            }
+                        }
+                        if (total_page_lines >= lines) {
+                            let overflow_lines = total_page_lines - lines;
+                            let para_length = paras.length - 1;
+                            let last_p_length = paras[para_length].length;
+                            if (check_para_count < para_length) {
+                                let char_limit = 0;
+                                for (let k = 0; k <= check_para_count; k++) {
+                                    let check_p_length = paras[k].length + 3;
+                                    char_limit += check_p_length;
+                                    let total_lines = check_p_length / chars_per_line;
+                                    selected_lines += Math.ceil(total_lines);
+                                }
+                                if (selected_lines < lines) {
+                                    let check_p_len = paras[check_para_count + 1].length + 3;
+                                    let get_lines = lines - selected_lines;
+                                    let chars = get_lines * chars_per_line;
+                                    char_limit += chars;
+                                }
+                                limit = char_limit;
+                                endLength = startLen + limit;
+                            }
+                        }
+                        let check_string = trimmedNotes.substr(startLen, limit);
+                        let last_dot = check_string.lastIndexOf(' ');
+                        let end_part = check_string.substr(last_dot);
+                        let chars = end_part.length;
+                        if (chars < 10) {
+                            limit -= chars;
+                            endLength -= chars;
+                        }
+                        let data = trimmedNotes.substr(startLen, limit);
+                        if (loop !== 0) {
+                            if (data.startsWith('>')) {
+                                data = data.substr(1);
+                            } else if (data.startsWith('p>')) {
+                                data = data.substr(2);
+                            } else if (data.startsWith('<p>')) {
+                                data = data.substr(3);
+                            }
+                            data = '<p>' + data + '</p>';
+                        }
+                    %>
+                    <p><span class="<%= (loop === 0) ? 'nots' : '' %>"><%= (loop === 0) ? 'Lease Notes - ' : '' %></span><%- data.trim().substr(3) %></p>
+                    <%- watermark %>
+                </div>
+            </div>
+        <%
+            }
+            if (!paras) {
+                limit = 0;
+            } else if (paras.length > 12) {
+                limit = 2300;
+            } else {
+                limit = 3800;
+            }
+            startLen = endLength;
+            endLength = startLen + limit;
+            if (notesLength > startLen && count > loop) {
+                count++;
+            }
+        }
+    %>
+    <div class="new-page valuations_page_3">
+        <div class="page-header">
+            <%- chapter %>
+        </div>
+        <div class="description">
+            <p class="title">Lease Comparison <span class="subtitle">Approach</span></p>
+            <p class="label"><%= label %></p>
+            <p class="regular-description">
+                The below sale comparables for the subject property have been adjusted based on the following criteria noted by the author.
+            </p>
+
+            <% if (
+                evaluation_lease_approach &&
+                (Array.isArray(evaluation_lease_approach.comps) ||
+                    typeof evaluation_lease_approach.comps === 'object')
+            ) { %>
+            <% evaluation_lease_approach.comps.forEach((comp, i) => { %>
+                <table class="comparable-table">
+                <tr>
+                    <td class="comparable-number">Comparable #<%= i + 1 %></td>
+                    <td></td>
+                </tr>
+                <tr>
+                    <td width="20%">
+                    <% 
+                        let imgUrl = '/images/default-placeholder.png';
+                        const leaseComp = comp.comp_details;
+                        if (leaseComp?.property_image_url) {
+                            const url = leaseComp?.property_image_url;
+                            imgUrl = evaluation.baseUrl+url;
+                        }
+                    %>
+                    <img width="210" height="120" src="<%= imgUrl %>" class="image-added" />
+                    </td>
+                    <td width="80%" class="comparable-info">
+                    <p class="comparable-title"><%= leaseComp?.street_address || '' %></p>
+                    <p class="comparable-description"><%- leaseComp?.summary || '' %></p>
+                    <p class="comparable-description"><%- comp.adjustment_note || '' %></p>
+                    </td>
+                </tr>
+                </table>
+            <% }); %>
+            <% } %>
+        </div>
+        <%- watermark %>
+    </div>
+    <div class="new-page valuations_page_3 lease_map" data-type="lease_map">
+        <%
+        const locations = [];
+        // Default map settings
+        locations.push({ lat: evaluation.map_pin_lat, lng: evaluation.map_pin_lng, color: 'red' });
+        let comps = [];
+        let zoom = 20;
+        let area_map_zoom = evaluation_lease_approach?.area_map_zoom ? evaluation_lease_approach.area_map_zoom : 12;
+        const map_type = evaluation_lease_approach?.map_type ?  evaluation_lease_approach.map_type : 'roadmap';
+        const map_center_lat_position = evaluation_lease_approach?.map_center_lat
+            ? evaluation_lease_approach.map_center_lat
+            : evaluation.map_pin_lat;
+        const map_center_lng_position = evaluation_lease_approach?.map_center_lng
+            ? evaluation_lease_approach.map_center_lng
+            : evaluation.map_pin_lng;
+
+        if (area_map_zoom) {
+            zoom = area_map_zoom - 2;
+        }
+
+        const colors = [
+            { color: 'blue' },
+            { color: 'green' }, { color: 'yellow' },
+            { color: 'purple' }, { color: 'orange' }
+        ]; 
+        if (evaluation_lease_approach && Array.isArray(evaluation_lease_approach.comps)) {
+            let leaseComps = evaluation_lease_approach.comps;
+            leaseComps.forEach((comp, index) => {
+                let { map_pin_lat, map_pin_lng } = comp.comp_details;
+                const color = colors[index % colors.length];
+                if (!map_pin_lat) {
+                    map_pin_lat = evaluation?.map_pin_lat;
+                }
+                if (!map_pin_lng) {
+                    map_pin_lng = evaluation?.map_pin_lng;
+                }
+                locations.push({ lat: map_pin_lat, lng: map_pin_lng, color });
+            });
+        } %>
+        <% // Construct the URL with markers
+        const markers = locations
+            .map((location) => `markers=size:small|color:${location.color.color}%7C${location.lat},${location.lng}`)
+            .join('&');
+
+        const url = `https://maps.googleapis.com/maps/api/staticmap?center=${map_center_lat_position},${map_center_lng_position}&zoom=${zoom}&scale=2&size=600x400&maptype=${map_type}&${markers}&key=${googleApiKey}`;
+
+        %>
+        
+        <div class="page-header">
+            <%- chapter %>
+        </div>
+        
+        <div class="description">
+            <p class="title">Lease <span class="subtitle">Comparison Map</span></p>
+            <p class="label"><%= label %></p>
+        </div>
+        
+        <div id="lease_map">
+            <img style="width: 100%; height: 130mm;" src="<%= url %>">
+        </div>        
+        <div id="map-landmarks">
+        <span class="label">Key</span>
+            <div class="map-landmark">
+                <div class="el">
+                    <div class="list subject-text">
+                        <span class="img">
+                        <img src="https://maps.google.com/mapfiles/ms/icons/pink-dot.png" />
+                        </span>
+                        <strong>Subject Property: </strong>
+                         <% 
+                            const stateName = evaluation?.state;
+                           let address = evaluation.street_address?.trim() || '';
+                            if (evaluation.city?.trim()) address += `, ${evaluation.city.trim()}`;
+                             if (stateName?.trim()) address += `, ${stateName.trim().toUpperCase()}`;
+                        %>
+                        <span class="ellip"><%= address %></span>
+                    </div>
+        
+                    <% let n = 1; 
+                    if (evaluation_lease_approach && Array.isArray(evaluation_lease_approach.comps)) {
+                        let leaseComps = evaluation_lease_approach.comps;
+                        leaseComps.forEach(comp => { 
+                            const compDetails = comp.comp_details;
+                                        const {state} = compDetails;
+                            const color = colors[n - 1]?.color || '6b94ff';
+                            let address = compDetails.street_address?.trim() || '';
+                            if (compDetails.city?.trim()) address += `, ${compDetails.city.trim()}`;
+                            if (state?.trim()) address += `, ${state.trim().toUpperCase()}`;
+                        %>
+                        <div class="list">
+                            <span class="img">
+                                <img src="https://maps.google.com/mapfiles/ms/icons/<%= color %>-dot.png" />
+                            </span>
+                            <strong>Comp #<%= n %>:</strong>
+                            <span class="ellip"><%= address %></span>
+                        </div>
+                        <% if (n % 3 === 0) { %></div><div class="el"><% } %>
+                    <% n++; });
+                     } %>
+                </div>
+            </div>
+        </div>
+        <%- watermark %>
+    </div>
+<% } } } %>

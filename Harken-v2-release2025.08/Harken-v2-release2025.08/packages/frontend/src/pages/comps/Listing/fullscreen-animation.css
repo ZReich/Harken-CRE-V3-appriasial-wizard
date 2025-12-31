@@ -1,0 +1,176 @@
+/* Fullscreen Animation Styles for Google Map Component */
+
+/* Enhanced ripple effect for button clicks */
+@keyframes ripple {
+  0% {
+    width: 0;
+    height: 0;
+    opacity: 0.6;
+  }
+  50% {
+    width: 40px;
+    height: 40px;
+    opacity: 0.3;
+  }
+  100% {
+    width: 60px;
+    height: 60px;
+    opacity: 0;
+  }
+}
+
+.fullscreen-button:active .ripple-effect {
+  animation: ripple 0.6s ease-out;
+}
+
+/* Smooth fullscreen container transitions */
+.fullscreen-container {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.fullscreen-container.entering {
+  animation: expandToFullscreen 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.fullscreen-container.exiting {
+  animation: collapseFromFullscreen 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes expandToFullscreen {
+  0% {
+    border-radius: 0px;
+    box-shadow: none;
+  }
+  50% {
+    border-radius: 4px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  }
+  100% {
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  }
+}
+
+@keyframes collapseFromFullscreen {
+  0% {
+    border-radius: 8px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15);
+  }
+  50% {
+    border-radius: 4px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  }
+  100% {
+    border-radius: 0px;
+    box-shadow: none;
+  }
+}
+
+/* Enhanced panel slide transitions */
+.listing-panel {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.listing-panel.hiding {
+  animation: slideOutRight 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.listing-panel.showing {
+  animation: slideInLeft 0.4s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@keyframes slideOutRight {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+}
+
+@keyframes slideInLeft {
+  0% {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+/* Map resize animation helpers */
+.map-container {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: transform, width, height;
+}
+
+/* Smooth icon transition without rotation */
+.fullscreen-icon {
+  transition: all 0.2s ease-in-out;
+}
+
+/* Enhanced hover states */
+.fullscreen-button-enhanced {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.2s ease-in-out;
+}
+
+.fullscreen-button-enhanced::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(
+    circle,
+    rgba(0, 102, 204, 0.1) 0%,
+    transparent 70%
+  );
+  transition: all 0.3s ease-out;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+}
+
+.fullscreen-button-enhanced:hover::before {
+  width: 200%;
+  height: 200%;
+}
+
+/* Focus states for accessibility */
+.fullscreen-button-enhanced:focus {
+  outline: 2px solid #0066cc;
+  outline-offset: 2px;
+}
+
+.fullscreen-button-enhanced:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .fullscreen-container,
+  .listing-panel,
+  .map-container,
+  .fullscreen-icon,
+  .fullscreen-button-enhanced {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .fullscreen-button-enhanced {
+    border: 2px solid currentColor;
+  }
+
+  .fullscreen-button-enhanced:hover {
+    background-color: currentColor;
+    color: white;
+  }
+}

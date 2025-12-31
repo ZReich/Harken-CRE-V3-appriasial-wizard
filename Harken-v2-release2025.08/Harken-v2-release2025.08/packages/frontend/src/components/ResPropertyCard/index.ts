@@ -1,0 +1,1 @@
+export { ResPropertyCard } from './ResPropertyCard';

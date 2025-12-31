@@ -19,6 +19,7 @@ const CostApproachGrid = lazy(() => import('../features/cost-approach').then(m =
 const LandSalesGrid = lazy(() => import('../features/land-valuation').then(m => ({ default: m.LandSalesGrid })));
 const MarketAnalysisGrid = lazy(() => import('../features/market-analysis').then(m => ({ default: m.MarketAnalysisGrid })));
 const MultiFamilyGrid = lazy(() => import('../features/multi-family').then(m => ({ default: m.MultiFamilyGrid })));
+const CostSegTab = lazy(() => import('../features/cost-segregation').then(m => ({ default: m.CostSegTab })));
 import EconomicIndicatorsPanel from '../components/EconomicIndicatorsPanel';
 import { useWizard } from '../context/WizardContext';
 import { getGuidance, type GuidanceContent } from '../constants/guidance';
@@ -93,6 +94,14 @@ const APPROACH_CONFIG = {
     bgClass: 'bg-violet-50',
     borderClass: 'border-l-violet-400',
   },
+  costseg: {
+    id: 'costseg',
+    label: 'Cost Segregation',
+    Icon: Wallet,
+    color: '#10b981', // emerald
+    bgClass: 'bg-emerald-50',
+    borderClass: 'border-l-emerald-400',
+  },
 };
 
 // Map scenario approach names to tab IDs
@@ -151,6 +160,9 @@ export default function AnalysisPage() {
     return activeScenario ? getScenarioAccentColor(activeScenario.name) : '#0da1c7';
   }, [activeScenario]);
 
+  // Check if Cost Segregation is enabled
+  const isCostSegEnabled = state.subjectData?.costSegregationEnabled === true;
+
   // Filter tabs based on active scenario's approaches
   const availableTabs = useMemo(() => {
     if (!activeScenario) return ALL_TABS;
@@ -161,9 +173,23 @@ export default function AnalysisPage() {
     const requiredTabs = ['hbu', 'market'];
     const combinedTabs = [...new Set([...requiredTabs, ...approachIds])];
     
-    // Return in proper display order
-    return ALL_TABS.filter(tab => combinedTabs.includes(tab));
-  }, [activeScenario]);
+    // Add Cost Segregation tab if enabled AND Cost Approach is selected
+    if (isCostSegEnabled && approachIds.includes('cost')) {
+      combinedTabs.push('costseg');
+    }
+    
+    // Return in proper display order (with costseg after cost)
+    const orderedTabs = [...ALL_TABS];
+    if (isCostSegEnabled) {
+      // Insert costseg after cost in the order
+      const costIndex = orderedTabs.indexOf('cost');
+      if (costIndex !== -1) {
+        orderedTabs.splice(costIndex + 1, 0, 'costseg');
+      }
+    }
+    
+    return orderedTabs.filter(tab => combinedTabs.includes(tab));
+  }, [activeScenario, isCostSegEnabled]);
 
   // Switch to first available tab if current tab becomes unavailable
   useEffect(() => {
@@ -423,7 +449,7 @@ export default function AnalysisPage() {
   );
 
   // Keep full-width content for grid-heavy views
-  const isFullWidthView = activeTab === 'sales' || activeTab === 'income' || activeTab === 'cost' || activeTab === 'land' || activeTab === 'market' || activeTab === 'multifamily';
+  const isFullWidthView = activeTab === 'sales' || activeTab === 'income' || activeTab === 'cost' || activeTab === 'land' || activeTab === 'market' || activeTab === 'multifamily' || activeTab === 'costseg';
 
   return (
     <WizardLayout
@@ -629,6 +655,12 @@ export default function AnalysisPage() {
               />
             </div>
           </div>
+        </div>
+      ) : activeTab === 'costseg' ? (
+        <div className="absolute inset-0 flex flex-col">
+          <Suspense fallback={<GridLoader />}>
+            <CostSegTab />
+          </Suspense>
         </div>
       ) : (
         <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">

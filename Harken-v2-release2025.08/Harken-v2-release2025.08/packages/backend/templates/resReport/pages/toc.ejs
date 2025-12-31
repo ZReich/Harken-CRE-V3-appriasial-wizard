@@ -1,0 +1,133 @@
+<!-- TABLE OF CONTENTS -->
+<div class="new-page table-of-contents">
+    <div class="preface-header">
+      <%- chapter %>
+    </div>
+  
+    <div class="image-area">
+      <% if (evaluation?.tableOfContents) { %>
+        <img
+          class="image image-added"
+          src="<%= evaluation?.tableOfContents %>"
+          data-image-name="table_of_contents"
+          data-image
+        />
+      <% } else { %>
+        <img
+          class="image"
+          src="<%= cdn_url + evaluation?.property_image_url %>"
+          data-image-name="table_of_contents"
+          data-image
+        />
+      <% } %>
+    </div>
+  
+    <div class="index">
+      <div class="index-item">
+        <div class="index-number">
+          <p class="number" data-table-of-contents="engagement-letter">03</p>
+        </div>
+        <div class="index-text one-item">
+          <p class="section-text-one">Engagement Letter</p>
+        </div>
+      </div>
+  
+      <div class="index-item">
+        <div class="index-number">
+          <p class="number" data-table-of-contents="executive-summary">04</p>
+        </div>
+        <div class="index-text two-items">
+          <p class="section-text-one">Section 01</p>
+          <p class="section-text-two">Executive Summary</p>
+        </div>
+      </div>
+  
+      <div class="index-item">
+        <div class="index-number">
+          <p class="number" data-table-of-contents="property-summary">06</p>
+        </div>
+        <div class="index-text two-items">
+          <p class="section-text-one">Section 02</p>
+          <p class="section-text-two">Property Summary</p>
+        </div>
+      </div>
+  
+      <div class="index-item">
+        <div class="index-number">
+          <p class="number" data-table-of-contents="evaluation">11</p>
+        </div>
+        <div class="index-text five-items">
+          <p class="section-text-one">Section 03</p>
+          <p class="section-text-two">Evaluation</p>
+          <%
+            let income_flag = false;
+            let sale_flag = false;
+            let cost_flag = false;
+            for(let index = 0; index < evaluation?.res_evaluation_scenarios?.length; index++){
+              const scenario = evaluation.res_evaluation_scenarios[index];
+              if(scenario.has_income_approach && !income_flag){ 
+                income_flag = true;
+              }
+              if(scenario.has_sales_approach && !sale_flag){
+                sale_flag = true;
+              }
+              if(scenario.has_cost_approach && !cost_flag){
+                cost_flag = true;
+              }
+            }
+            if(income_flag){ %>
+              <p class="section-text-three"><span data-table-of-contents="income-approach"></span>) Income Approach</p>
+            <% }
+            if(sale_flag){ %>
+              <p class="section-text-three"><span data-table-of-contents="sales-approach"></span>) Sales Comparison Approach</p>
+            <% }
+            if(cost_flag){ %>
+              <p class="section-text-three"><span data-table-of-contents="cost-approach"></span>) Cost Approach</p>
+            <% }
+          %>
+        </div>
+      </div>
+      <div class="index-item">
+        <div class="index-number">
+          <p class="number" data-table-of-contents="weighted-valuation">19</p>
+        </div>
+        <div class="index-text two-items">
+          <p class="section-text-one">Section 04</p>
+          <p class="section-text-two">Weighted Valuation</p>
+        </div>
+      </div>
+  
+      <div class="index-item">
+        <div class="index-number">
+          <p class="number" data-table-of-contents="about-us">20</p>
+        </div>
+        <div class="index-text two-items">
+          <p class="section-text-one">Section 05</p>
+          <p class="section-text-two">About Us</p>
+        </div>
+      </div>
+  
+      <div class="index-item">
+        <div class="index-number">
+          <p class="number" data-table-of-contents="assumptions">23</p>
+        </div>
+        <div class="index-text two-items">
+          <p class="section-text-one">Section 06</p>
+          <p class="section-text-two">Assumptions</p>
+        </div>
+      </div>
+  
+      <div class="index-item">
+        <div class="index-number">
+          <p class="number" data-table-of-contents="exhibits">24</p>
+        </div>
+        <div class="index-text five-items">
+          <p class="section-text-one">Section 07</p>
+          <p class="section-text-two">Exhibits</p>
+        </div>
+      </div>
+    </div>
+    <!-- Footer Partial -->
+    <%- watermark %>
+  </div>
+  

@@ -1,0 +1,87 @@
+<!--ENGAGEMENT LETTER-->
+<div class="new-page evaluation-engagement-letter" data-type="engagement-letter">
+    <div class="preface-header">
+    </div>
+  
+    <p class="email-date">
+      <%= evaluation?.reportDate ? new Date(evaluation?.reportDate).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) : new Date().toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' }) %>
+    </p>
+  
+    <p class="email-body">
+      <% if (evaluation?.client?.first_name) { %>
+        <%= evaluation.client.first_name %> <%= evaluation.client.last_name %><br>
+      <% } %>
+  
+      <% if (evaluation?.client?.company) { %>
+        <%= evaluation.client.company %><br>
+      <% } %>
+  
+      <% if (evaluation?.client?.street_address) { %>
+        <%= evaluation.client.street_address %><br>
+      <% } %>
+  
+      <% if (evaluation?.client?.city) { %>
+        <%= evaluation.client.city %>, <%= evaluation.client.state %> <%= evaluation.client.zipcode %><br>
+      <% } %>
+    </p>
+  
+    <p class="email-body">
+      Attention: <%= evaluation.client.first_name %> <%= evaluation.client.last_name %><br>
+    </p>
+  
+    <p class="email-greeting">
+      Dear <%= evaluation.client.first_name %> <%= evaluation.client.last_name %>,<br>
+    </p>
+  
+    <% const letterText = [
+        "The Evaluation of a commercial property utilizes a combination of the information gathered from an exterior examination, interior site analysis, external data sources, previous lease data, property assessment data, recent comparable leases, current area leasing information, pertinent property profit and loss information, as well as a thorough photo documentation of the subject property.",
+        "The Evaluation includes area information, site description, structure description, county assessment data, pertinent and available documents of record, three assessments of value (Income, Sales Comparison and Cost), as well as photographs of the subject property. The descriptions and statements made in this analysis are from sources that are deemed reliable, however no warranty is made as to the accuracy thereof.",
+        "This analysis only represents the personal, impartial and unbiased professional opinion of the authors.",
+        "The liability of the analysis to the authors shall be limited to the fee collected from the client, and the authors assume no responsibility for additional costs incurred by the client on this project."
+        ]; %>
+    <% letterText.forEach(paragraph => { %>
+      <p class="email-body"><%= paragraph %></p>
+    <% }); %>
+    <table style="width:100%; border:none;">
+      <tr>
+        <td>
+          <p class="email-body">
+            Sincerely, <br>
+        
+            <% if (evaluation?.user?.signature_image_url) { %>
+              <img class="signature" title="<%= evaluation.user.first_name %>'s signature." src="<%= evaluation.baseUrl %><%= evaluation.user.signature_image_url %>" onerror="this.remove()"><br>
+            <% } else { %>
+              <br><br><hr class="sig">
+            <% } %>
+        
+            <% if (evaluation?.user?.first_name) { %>
+              <%= evaluation?.user.first_name %><br>
+            <% } %>
+        
+            <% if (evaluation?.user?.position) { %>
+              <%= evaluation.user.position %><br>
+            <% } %>
+        
+            <% if (evaluation.account?.logo_url) { %>
+              <div class="logo letter-logo" style="background: url('<%= evaluation.baseUrl %><%= evaluation.account.logo_url %>') center left no-repeat; background-size: contain"></div>
+            <% } else if (evaluation?.account?.theme === 'nai') { %>
+              <div class="logo letter-logo" style="background: url('<%= evaluation.account.naiLogoUrl %>') center left no-repeat; background-size: contain"></div>
+            <% } %>
+          </p>
+        
+          <p class="email-footer">
+            <% if (evaluation?.user?.phone_number) { %>
+              m. +1 <%= evaluation.user.phone_number %><br>
+            <% } %>
+        
+            <% if (evaluation.user?.email_address) { %>
+              e. <%= evaluation.user.email_address %><br>
+            <% } %>
+          </p>
+        </td>
+      </tr>
+    </table>
+    <!-- Footer Partial -->
+    <%- watermark %>
+  </div>
+  

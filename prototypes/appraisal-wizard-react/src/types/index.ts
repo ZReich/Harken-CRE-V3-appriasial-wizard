@@ -492,6 +492,35 @@ export interface UploadedDocument {
   status: 'pending' | 'processing' | 'extracted' | 'error';
   extractedData?: ExtractedData;
   includeInReport?: boolean;
+  documentType?: string; // AI-classified document type
+  classificationConfidence?: number;
+}
+
+// =================================================================
+// DOCUMENT FIELD SOURCE TRACKING TYPES
+// =================================================================
+
+/**
+ * Tracks the source of an auto-populated field value.
+ * Allows UI to show where data came from and confidence level.
+ */
+export interface ExtractedFieldSource {
+  value: string;
+  confidence: number;
+  sourceDocumentId: string;
+  sourceFilename: string;
+  sourceDocumentType: string;
+  extractedAt: string;
+  fieldPath: string; // Wizard field path like 'subjectData.taxId'
+}
+
+/**
+ * State for tracking all document extractions and field sources.
+ */
+export interface DocumentExtractionState {
+  documents: UploadedDocument[];
+  fieldSources: Record<string, ExtractedFieldSource>; // key = field path
+  lastAppliedAt: string | null;
 }
 
 // =================================================================
@@ -1065,6 +1094,9 @@ export interface WizardState {
   extractedData: Record<string, ExtractedData>;
   uploadedDocuments: UploadedDocument[];
   
+  // Document Field Source Tracking
+  documentFieldSources: Record<string, ExtractedFieldSource>;
+  
   // Owners
   owners: Owner[];
   
@@ -1136,6 +1168,9 @@ export type WizardAction =
   | { type: 'ADD_UPLOADED_DOCUMENT'; payload: UploadedDocument }
   | { type: 'UPDATE_UPLOADED_DOCUMENT'; payload: { id: string; updates: Partial<UploadedDocument> } }
   | { type: 'REMOVE_UPLOADED_DOCUMENT'; payload: string }
+  | { type: 'SET_DOCUMENT_FIELD_SOURCE'; payload: ExtractedFieldSource }
+  | { type: 'CLEAR_DOCUMENT_FIELD_SOURCES' }
+  | { type: 'APPLY_DOCUMENT_EXTRACTED_DATA'; payload: { documentId: string; documentName: string; documentType: string; fields: Record<string, { value: string; confidence: number }> } }
   | { type: 'ADD_OWNER'; payload: Owner }
   | { type: 'UPDATE_OWNER'; payload: { id: string; updates: Partial<Owner> } }
   | { type: 'REMOVE_OWNER'; payload: string }

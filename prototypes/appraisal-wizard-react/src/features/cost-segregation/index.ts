@@ -3,14 +3,56 @@
  * 
  * Provides IRS-compliant cost segregation analysis functionality
  * including component classification, building systems valuation,
- * and depreciation schedule generation.
+ * depreciation schedule generation, and comprehensive guidance.
  */
 
-// Components
+// =================================================================
+// MAIN COMPONENTS
+// =================================================================
+
 export { CostSegOverview } from './components/CostSegOverview';
 export { ComponentClassifier } from './components/ComponentClassifier';
 export { BuildingSystems } from './components/BuildingSystems';
 export { DepreciationSchedule } from './components/DepreciationSchedule';
+export { CostSegTab } from './components/CostSegTab';
+export { CostSegReportEditor } from './components/CostSegReportEditor';
+
+// =================================================================
+// GUIDANCE COMPONENTS
+// =================================================================
+
+export { BonusDepreciationGuidance } from './components/BonusDepreciationGuidance';
+export { ClassificationGuidance } from './components/ClassificationGuidance';
+
+// =================================================================
+// REPORT PAGE COMPONENTS
+// =================================================================
+
+export {
+  CostSegCoverPage,
+  CostSegSummaryPage,
+  CostSegMethodologyPage,
+  CostSegComponentsPage,
+  CostSegSchedulePage,
+  CostSegBuildingSystemsPage,
+  CostSegDisclaimerPage,
+} from './components/pages';
+
+// =================================================================
+// HOOKS
+// =================================================================
+
+export { useCostSegReportState, type UseCostSegReportStateReturn, type ReportSection, type CostSegReportSettings } from './hooks/useCostSegReportState';
+
+// =================================================================
+// UTILITIES
+// =================================================================
+
+export { exportCostSegToPdf, type ExportOptions } from './utils/costSegPdfExporter';
+
+// =================================================================
+// RE-EXPORTS FROM SHARED LOCATIONS
+// =================================================================
 
 // Re-export types from main types file
 export type {
@@ -64,4 +106,3 @@ export {
 
 // Re-export hook
 export { useCostSegAnalysis, type UseCostSegAnalysisReturn } from '../../hooks/useCostSegAnalysis';
-

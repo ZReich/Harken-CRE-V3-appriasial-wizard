@@ -1,0 +1,30 @@
+version: '3'
+services:
+  db:
+    image: mysql:5.7
+    container_name: db
+    environment:
+      MYSQL_ROOT_PASSWORD: admin
+      MYSQL_DATABASE: harkendev
+    ports:
+      - '6033:3306'
+    volumes:
+      - dbdata:/var/lib/mysql
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: pma
+    links:
+      - db
+    environment:
+      PMA_HOST: db
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
+      UPLOAD_LIMIT: 500M
+      post_max_size: 500M
+      upload_max_filesize: 500M
+      memory_limit: 900M
+    restart: always
+    ports:
+      - 8080:80
+volumes:
+  dbdata:

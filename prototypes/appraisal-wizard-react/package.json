@@ -26,6 +26,7 @@
     "lucide-react": "^0.562.0",
     "node-fetch": "^2.7.0",
     "openai": "^4.67.0",
+    "pdfjs-dist": "^4.8.69",
     "react": "^19.2.3",
     "react-dom": "^19.2.3",
     "react-router-dom": "^7.11.0",

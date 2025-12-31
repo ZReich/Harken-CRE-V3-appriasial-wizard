@@ -1,8 +1,9 @@
 import { createContext, useContext, useReducer, useEffect, useCallback, ReactNode } from 'react';
-import type { WizardState, WizardAction, ImprovementsInventory, Owner, ExtractedData, UploadedDocument, IncomeApproachState, ReconciliationData, CelebrationState, SubjectData, PreviewEditsPayload, StagingPhoto, CoverPhotoData, SiteImprovement, CostApproachOverrides } from '../types';
+import type { WizardState, WizardAction, ImprovementsInventory, Owner, ExtractedData, UploadedDocument, IncomeApproachState, ReconciliationData, CelebrationState, SubjectData, PreviewEditsPayload, StagingPhoto, CoverPhotoData, SiteImprovement, CostApproachOverrides, ExtractedFieldSource } from '../types';
 import { createDefaultInventory } from '../contracts/improvements';
 import { getSectionSchema } from '../constants/completionSchema';
 import { getNestedValue, isFilled, setNestedValue } from '../utils/stateHelpers';
+import { DOCUMENT_FIELD_MAPPINGS, type DocumentType } from '../config/documentFieldMappings';
 
 // =================================================================
 // INITIAL STATE
@@ -99,6 +100,7 @@ const getInitialState = (): WizardState => {
     costApproachBuildingCostData: {},
     extractedData: {},
     uploadedDocuments: [],
+    documentFieldSources: {},
     owners: [
       { id: 'owner_1', name: '', ownershipType: 'individual', percentage: 100 }
     ],
@@ -315,6 +317,60 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
           ...state,
           uploadedDocuments: state.uploadedDocuments.filter(doc => doc.id !== action.payload),
         };
+
+      case 'SET_DOCUMENT_FIELD_SOURCE':
+        return {
+          ...state,
+          documentFieldSources: {
+            ...state.documentFieldSources,
+            [action.payload.fieldPath]: action.payload,
+          },
+        };
+
+      case 'CLEAR_DOCUMENT_FIELD_SOURCES':
+        return {
+          ...state,
+          documentFieldSources: {},
+        };
+
+      case 'APPLY_DOCUMENT_EXTRACTED_DATA': {
+        const { documentId, documentName, documentType, fields } = action.payload;
+        const mappings = DOCUMENT_FIELD_MAPPINGS[documentType as DocumentType] || [];
+        
+        let updatedState = { ...state };
+        const newFieldSources: Record<string, ExtractedFieldSource> = { ...state.documentFieldSources };
+        
+        // Apply each extracted field to the wizard state
+        for (const [fieldName, fieldData] of Object.entries(fields)) {
+          const mapping = mappings.find(m => m.extractedField === fieldName);
+          if (mapping && fieldData.value) {
+            // Only apply if confidence is above threshold and field is not already filled
+            const currentValue = getNestedValue(updatedState, mapping.wizardPath);
+            const shouldApply = fieldData.confidence >= 0.5 && !isFilled(currentValue);
+            
+            if (shouldApply) {
+              // Apply the value to the wizard state
+              updatedState = setNestedValue(updatedState, mapping.wizardPath, fieldData.value);
+              
+              // Track the source
+              newFieldSources[mapping.wizardPath] = {
+                value: fieldData.value,
+                confidence: fieldData.confidence,
+                sourceDocumentId: documentId,
+                sourceFilename: documentName,
+                sourceDocumentType: documentType,
+                extractedAt: new Date().toISOString(),
+                fieldPath: mapping.wizardPath,
+              };
+            }
+          }
+        }
+        
+        return {
+          ...updatedState,
+          documentFieldSources: newFieldSources,
+        };
+      }
 
       case 'ADD_OWNER':
         return {
@@ -662,6 +718,12 @@ interface WizardContextValue {
   getExtractedField: (slotId: string, field: string) => string | undefined;
   addUploadedDocument: (doc: UploadedDocument) => void;
   
+  // Document field source tracking helpers
+  applyDocumentExtractedData: (documentId: string, documentName: string, documentType: string, fields: Record<string, { value: string; confidence: number }>) => void;
+  getFieldSource: (fieldPath: string) => ExtractedFieldSource | undefined;
+  hasFieldSource: (fieldPath: string) => boolean;
+  clearDocumentFieldSources: () => void;
+  
   // Subject data helpers
   setSubjectData: (data: Partial<SubjectData>) => void;
   getSubjectData: () => SubjectData;
@@ -846,6 +908,31 @@ export function WizardProvider({ children }: { children: ReactNode }) {
 
   const addUploadedDocument = useCallback((doc: UploadedDocument) => {
     dispatch({ type: 'ADD_UPLOADED_DOCUMENT', payload: doc });
+  }, []);
+
+  // Document field source tracking helpers
+  const applyDocumentExtractedData = useCallback((
+    documentId: string,
+    documentName: string,
+    documentType: string,
+    fields: Record<string, { value: string; confidence: number }>
+  ) => {
+    dispatch({
+      type: 'APPLY_DOCUMENT_EXTRACTED_DATA',
+      payload: { documentId, documentName, documentType, fields },
+    });
+  }, []);
+
+  const getFieldSource = useCallback((fieldPath: string): ExtractedFieldSource | undefined => {
+    return state.documentFieldSources?.[fieldPath];
+  }, [state.documentFieldSources]);
+
+  const hasFieldSource = useCallback((fieldPath: string): boolean => {
+    return !!state.documentFieldSources?.[fieldPath];
+  }, [state.documentFieldSources]);
+
+  const clearDocumentFieldSources = useCallback(() => {
+    dispatch({ type: 'CLEAR_DOCUMENT_FIELD_SOURCES' });
   }, []);
 
   // Subject data helpers
@@ -1269,6 +1356,11 @@ export function WizardProvider({ children }: { children: ReactNode }) {
         setExtractedData,
         getExtractedField,
         addUploadedDocument,
+        // Document field source tracking
+        applyDocumentExtractedData,
+        getFieldSource,
+        hasFieldSource,
+        clearDocumentFieldSources,
         setSubjectData,
         getSubjectData,
         addOwner,

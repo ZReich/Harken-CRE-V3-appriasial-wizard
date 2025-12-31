@@ -1,0 +1,225 @@
+<%
+for(let index = 0; index < evaluation.res_evaluation_scenarios.length; index++){
+    const scenario = evaluation.res_evaluation_scenarios[index];
+    let label = '';
+    if (evaluation && evaluation.res_evaluation_scenarios && evaluation.res_evaluation_scenarios.length > 1 && label === '') {
+        label = evaluation.res_evaluation_scenarios[index].name;
+    }
+    let allApproaches = [];
+    let min = '', max = '';
+
+    const evaluation_income_approach = scenario?.res_evaluation_income_approach;
+    const evaluation_sale_approach = scenario?.evaluation_sale_approach;
+    const evaluation_cost_approach = scenario?.evaluation_cost_approach;
+    if (scenario.has_income_approach && evaluation_income_approach) {
+        allApproaches.push(evaluation_income_approach?.indicated_range_annual || 0);
+    }
+    if (scenario.has_sales_approach && evaluation_sale_approach) {
+        allApproaches.push(evaluation_sale_approach?.sales_approach_value || 0);
+    }
+    if (scenario.has_cost_approach && evaluation_cost_approach) {
+        allApproaches.push(evaluation_cost_approach?.total_cost_valuation || 0);
+    }
+    if (allApproaches.length) {
+        min = Math.min(...allApproaches);
+        max = Math.max(...allApproaches);
+    }
+%>
+    <div class="new-page weighted-value valuations-page-1" data-type="weighted-valuation">
+        <div class="page-header">
+            <%- chapter %>
+        </div>
+        <%- section %>
+
+        <div class="description">
+            <p class="title">Weighted Total</p>
+            <p class="subtitle">Valuations</p>
+            <p class="label"><%= label %></p>
+
+            <% if (scenario.has_income_approach) { %>
+                <p class="regular-description"><span>Income Valuation Approach</span> considers property's estimated value is based on the net income produced or capable to produce and considers an expected/appropriate rate of return for the type, condition and location of the subject property. </p>
+            <% } %>
+            <% if (scenario.has_sales_approach) { %>
+                <p class="regular-description"><span>Sales Comparison Approach</span> involves finding sold properties comparable to the subject property, and adjusting/comparing the comparable to the subject property based on their inherent difference i.e (Time, Motivation, Location, Construction, Condition, Type/Use and Economies of Scale). This approach has been used exclusively.</p>
+            <% } %>
+            <% if (scenario.has_cost_approach) { %>
+                <p class="regular-description"><span>Cost Approach</span> considers the estimated value of a property to be the sum of all its parts, taking into consideration land value, land improvements, structure improvement, and depreciation. This approach is utilized if applicable.</p>
+            <% } %>
+            <table>
+            <thead>
+                <tr>
+                <th>Approach to Value</th>
+                <th>Value Indicated</th>
+                <th>Weighting</th>
+                <th>Blended Values</th>
+                <th>$/SF Values</th>
+                </tr>
+            </thead>
+            <tbody>
+
+                <% if (scenario.has_income_approach && evaluation_income_approach) {
+                    let incomeUnderline = (!scenario.has_sales_approach && !scenario.has_cost_approach) ? 'has-underline' : ''; %>
+                    <tr class="odd">
+                        <td>Income Approach</td>
+                        <td class="has-border"><%= toCurrency(evaluation_income_approach?.indicated_range_annual || 0) %></td>
+                        <td class="has-border"><%= ((evaluation_income_approach?.eval_weight || 0) * 100).toFixed(2) %>%</td>
+                        <td class="has-border <%= incomeUnderline %>"><%= toCurrency(evaluation_income_approach?.incremental_value || 0) %></td>
+                        <td class="has-border <%= incomeUnderline %>"><%= toCurrency(evaluation_income_approach?.indicated_psf_annual || 0) %>/SF</td>
+                    </tr>
+                <% } %>
+
+                <% if (scenario.has_sales_approach && evaluation_sale_approach) {
+                    let salesUnderline = (!scenario.has_cost_approach) ? 'has-underline' : ''; %>
+                <tr>
+                    <td>Sales Approach</td>
+                  <td class="has-border"><%= toCurrency(evaluation_sale_approach?.sales_approach_value || 0) %></td>
+                    <td class="has-border"><%= ((evaluation_sale_approach?.eval_weight || 0) * 100).toFixed(2) %>%</td>
+                    <td class="has-border <%= salesUnderline %>"><%= toCurrency(evaluation_sale_approach?.incremental_value || 0) %></td>
+                    <td class="has-border <%= salesUnderline %>"><%= toCurrency(evaluation_sale_approach?.averaged_adjusted_psf || 0) %>/SF</td>
+                </tr>
+                <% } %>
+
+                <% if (scenario.has_cost_approach) { %>
+                <tr class="odd">
+                    <td>Cost Approach</td>
+                    <td class="has-border"><%= toCurrency(evaluation_cost_approach.total_cost_valuation || 0) %></td>
+                    <td class="has-border"><%= ((evaluation_cost_approach?.eval_weight || 0) * 100).toFixed(2) %>%</td>
+                    <td class="has-border has-underline"><%= toCurrency(evaluation_cost_approach?.incremental_value || 0) %></td>
+                    <td class="has-border has-underline"><%= toCurrency(evaluation_cost_approach?.indicated_value_psf || 0) %>/SF</td>
+                </tr>
+                <% } %>
+                <tr>
+                    <td class="blue">Weighted Market Value</td>
+                    <td></td>
+                    <td></td>
+                    <td class="blue"><%= toCurrency(scenario.weighted_market_value || 0) %></td>
+                    <td class="blue">
+                        <% 
+                            let incremental_value = 0;
+                            if(scenario.has_income_approach && evaluation_income_approach){
+                                incremental_value += evaluation_income_approach?.incremental_value || 0;
+                            }
+                            if(scenario.has_sales_approach){
+                                incremental_value += evaluation_sale_approach?.incremental_value || 0;
+                            }
+                            if(scenario.has_cost_approach){
+                                incremental_value += evaluation_cost_approach?.incremental_value || 0;
+                            }
+                            const Weighted_market_value_psf = getWeightedMarketValuePSF(
+                                scenario.weighted_market_value,
+                                evaluation.comp_type,
+                                evaluation.land_size,
+                                evaluation.land_dimension,
+                                evaluation.analysis_type,
+                                evaluation.building_size,
+                                'SF',
+                                evaluation.zonings,
+                                incremental_value,
+                                true, // or false
+                            );
+                        %>
+                        <%= Weighted_market_value_psf %>
+                    </td>
+                </tr>
+            </tbody>
+            </table>
+            <table class="weighted-total-table">
+                <thead>
+                    <tr>
+                        <th>Market Value Breakdown</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (allApproaches.length > 1) { %>
+                    <tr>
+                        <td class="left-align padding-left">Overall Price Range</td>
+                        <td class="mid"><hr/></td>
+                        <td class="left-align padding-left"><%= toCurrency(min || 0) %> - <%= toCurrency(max || 0) %></td>
+                    </tr>
+                    <% } else { %>
+                    <tr>
+                        <td class="left-align padding-left">Overall Value</td>
+                        <td class="mid"><hr/></td>
+                        <td class="left-align padding-left"><%= toCurrency(min || 0) %></td>
+                    </tr>
+                    <% } %>
+                    <tr>
+                        <td class="blue left-align padding-left">Final Market Value</td>
+                        <td class="mid"><hr/></td>
+                        <td class="blue left-align padding-left bold">
+                        <%
+                        const rounded_weighted_value = getRoundedWeightedValue(scenario.weighted_market_value, evaluation.rounding);
+                        const rounded_weighted_market_psf = getRoundedWeightedMarketPSF(
+                                                                evaluation.comp_type,
+                                                                evaluation.land_size,
+                                                                evaluation.land_dimension,
+                                                                evaluation.analysis_type,
+                                                                'SF',
+                                                                evaluation.building_size,
+                                                                evaluation.zonings,
+                                                                rounded_weighted_value
+                                                            )
+                        %>
+                        <%= toCurrency(rounded_weighted_value) %>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                </tr>
+                </tbody>
+            </table>
+            <% if (!label) { %>
+                <br/>
+            <% } %>
+            <table style="width: <% if (evaluation?.reviewedBy) { %> 100% <% }else{ %> 50% <% } %>;" class="signature-table">
+            <tbody>
+                <tr>
+                    <td width="25%" class="has-bottom-border">
+                        <% if (evaluation?.user?.signature_image_url) { %>
+                            <img class="signature" height="40" title="<%= evaluation?.user.first_name %>'s signature." src="<%= evaluation.baseUrl %><%= evaluation.user.signature_image_url %>">
+                        <% } %>
+                    </td>
+                    <td width="5%"></td>
+                    <td width="15%" class="has-bottom-border">
+                        <%= evaluation.report_date ? (new Date(evaluation.report_date)).toLocaleDateString("en-US") : (new Date()).toLocaleDateString("en-US") %><br>
+                    </td>
+                    <% if (evaluation?.reviewedBy) { %>
+                    <td width="5%"></td>
+                    <td width="25%" class="has-bottom-border">
+                        <% if (evaluation.reviewedBy?.signature_image_url) { %>
+                            <img class="signature" height="40" title="<%= evaluation?.reviewedBy?.first_name %>'s signature." src="<%= evaluation.baseUrl %><%= evaluation.reviewedBy?.signature_image_url %>" onerror="this.remove()"><br>
+                        <% } %>
+                    </td>
+                    <td width="5%"></td>
+                    <td width="15%" class="has-bottom-border">
+                        <%= evaluation.review_date ? (new Date(evaluation.review_date)).toLocaleDateString("en-US") : (new Date()).toLocaleDateString("en-US") %><br>
+                    </td>
+                    <% } %>
+                </tr>
+                <tr>
+                    <td><%= evaluation?.user?.first_name %> <%= evaluation?.user?.last_name %></td>
+                    <td></td>
+                    <td>Report Date</td>
+                    <% if (evaluation?.reviewedBy) { %>
+                    <td></td>
+                    <td><%= evaluation?.reviewedBy?.first_name %> <%= evaluation?.reviewedBy?.last_name %></td>
+                    <td></td>
+                    <td>Reviewed Date</td>
+                    <% } %>
+                </tr>
+                <tr>
+                    <td colspan="2"><%= evaluation?.user?.position %></td>
+                    <td colspan="2"></td>
+                    <% if (evaluation?.reviewedBy) { %>
+                    <td colspan="2"><%= evaluation?.reviewedBy?.position %></td>
+                    <% } %>
+                </tr>
+            </tbody>
+            </table>
+        </div>
+        <%- watermark %>
+    </div>
+<% } %>

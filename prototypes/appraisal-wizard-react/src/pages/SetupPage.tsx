@@ -6,6 +6,7 @@ import WizardGuidancePanel from '../components/WizardGuidancePanel';
 import GooglePlacesAutocomplete, { type PlaceDetails } from '../components/GooglePlacesAutocomplete';
 import { useWizard } from '../context/WizardContext';
 import { Trash2, Plus, Lock, Search, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
+import { DocumentSourceIndicator, getDocumentSourceInputClasses } from '../components/DocumentSourceIndicator';
 import type { CadastralData } from '../types/api';
 import { getPropertyData, getLookupCostInfo, type PropertyLookupResult } from '../services/propertyDataRouter';
 import {
@@ -283,7 +284,7 @@ const scenarioNameOptions = [
 // MAIN COMPONENT
 // ==========================================
 export default function SetupPage() {
-  const { state: wizardState, addOwner, updateOwner, removeOwner, setScenarios: syncScenariosToContext, setPropertyType: syncPropertyType, setSubjectData } = useWizard();
+  const { state: wizardState, addOwner, updateOwner, removeOwner, setScenarios: syncScenariosToContext, setPropertyType: syncPropertyType, setSubjectData, hasFieldSource } = useWizard();
   const [activeTab, setActiveTab] = useState('basics');
   
   // Track which fields are locked (pre-filled from extraction)
@@ -1652,8 +1653,9 @@ export default function SetupPage() {
 
       {/* Intended Users */}
       <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
+        <h3 className="flex items-center gap-2 text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
           Intended Users
+          <DocumentSourceIndicator fieldPath="subjectData.intendedUsers" inline />
         </h3>
         <p className="text-sm text-gray-600 mb-4">
           Per USPAP, you must identify the intended user(s) of the appraisal report.
@@ -1661,7 +1663,9 @@ export default function SetupPage() {
         <textarea
           value={context.intendedUsers}
           onChange={(e) => updateContext('intendedUsers', e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+          className={`w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent ${
+            getDocumentSourceInputClasses(hasFieldSource('subjectData.intendedUsers'))
+          }`}
           rows={3}
           placeholder="e.g., ABC Bank, for lending purposes; John Smith, for estate planning..."
         />
@@ -1800,8 +1804,9 @@ export default function SetupPage() {
         </h3>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
               Tax ID / Parcel #
+              <DocumentSourceIndicator fieldPath="subjectData.taxId" inline />
               {lockedFields['taxId'] && (
                 <button
                   onClick={() => setLockedFields(prev => ({ ...prev, taxId: false }))}
@@ -1819,7 +1824,7 @@ export default function SetupPage() {
               disabled={lockedFields['taxId']}
               className={`w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent ${
                 lockedFields['taxId'] ? 'bg-blue-50 border-blue-200' : ''
-              }`}
+              } ${getDocumentSourceInputClasses(hasFieldSource('subjectData.taxId'))}`}
               placeholder="Enter tax ID..."
             />
             <p className="text-xs text-gray-400 mt-1">

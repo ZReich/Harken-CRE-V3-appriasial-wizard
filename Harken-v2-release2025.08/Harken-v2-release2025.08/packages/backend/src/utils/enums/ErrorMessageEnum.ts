@@ -1,0 +1,26 @@
+enum ErrorMessageEnum {
+	INVALID_REQUEST = 'Invalid request created',
+	RECORD_NOT_FOUND = 'Record not found',
+	INVALID_USER_ID = 'Invalid User ID',
+	INVALID_ORGANIZATION_ID = 'Invalid Organization ID',
+	INVALID_DEVICE_ID = 'Invalid Device ID',
+	INVALID_TEST_ID = 'Invalid Test ID',
+	INVALID_PLAN_ID = 'Invalid Plan ID',
+	INVALID_TASK_ID = 'Invalid Task ID',
+	INVALID_SUBSCRIPTION_ID = 'Invalid Subscription ID',
+	INVALID_DEVICEMODEL_ID = 'Invalid device model',
+	INVALID_EMAIL_OR_CODE = 'Invalid email or code',
+	SET_YOUR_PASSWORD = 'Please set your password first',
+	IF_EXIST_IN_SYSTEM_OR_NOT = 'We have sent an email to the specified email address.',
+	REFRESH_TOKEN_REQUIRED = 'Refresh token is required',
+	USER_NOT_FOUND = 'User not found',
+	INVALID_ACCOUNT_ID = 'Invalid account id',
+	PERMISSION_DENIED = 'Permission denied for this role',
+	PLEASE_SELECT_VALID_TYPE = 'Please select valid type',
+	PASSWORD_MISMATCH = "New Password and confirm Password doesn't match",
+	WRONG_DATE_FORMAT = 'must be a valid date in MM/DD/YYYY format',
+	CAN_NOT_CREATE_USER = 'Account details updated and Account details updated and It was not possible to create a user for the account manager. Try again later.',
+	USER_ALREADY_REGISTERED = "Account details updated and There's already a user registered with that email in a different account.",
+}
+
+export default ErrorMessageEnum;

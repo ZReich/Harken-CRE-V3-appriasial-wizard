@@ -9,6 +9,7 @@ import EnhancedTextArea from '../components/EnhancedTextArea';
 import WizardGuidancePanel from '../components/WizardGuidancePanel';
 import DemographicsPanel from '../components/DemographicsPanel';
 import { useWizard } from '../context/WizardContext';
+import { DocumentSourceIndicator, getDocumentSourceInputClasses } from '../components/DocumentSourceIndicator';
 import type { SiteImprovement, PhotoData } from '../types';
 import { fetchTrafficData, type TrafficDataEntry as TrafficServiceEntry } from '../services/trafficService';
 import { fetchBuildingPermits, type BuildingPermitEntry as PermitServiceEntry } from '../services/permitsService';
@@ -1298,6 +1299,9 @@ function SiteContent({
   isRefreshingPermits,
   permitsDataSource,
 }: SiteProps) {
+  // Get field source tracking from wizard context
+  const { hasFieldSource } = useWizard();
+  
   // 1 acre = 43,560 square feet
   const SQFT_PER_ACRE = 43560;
 
@@ -1354,15 +1358,18 @@ Overall, the site is well-suited for its current use and presents no significant
         </h3>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
               Total Acres <span className="text-red-500">*</span>
+              <DocumentSourceIndicator fieldPath="subjectData.siteArea" inline />
             </label>
             <input
               type="number"
               value={acres}
               onChange={(e) => handleAcresChange(e.target.value)}
               step="0.001"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+              className={`w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent ${
+                getDocumentSourceInputClasses(hasFieldSource('subjectData.siteArea'))
+              }`}
               placeholder="0.000"
             />
           </div>
@@ -1463,14 +1470,17 @@ Overall, the site is well-suited for its current use and presents no significant
         </h3>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
               Zoning Classification <span className="text-red-500">*</span>
+              <DocumentSourceIndicator fieldPath="subjectData.zoningClass" inline />
             </label>
             <input
               type="text"
               value={zoningClass}
               onChange={(e) => setZoningClass(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+              className={`w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent ${
+                getDocumentSourceInputClasses(hasFieldSource('subjectData.zoningClass'))
+              }`}
               placeholder="e.g., I1 - Light Industrial"
             />
           </div>

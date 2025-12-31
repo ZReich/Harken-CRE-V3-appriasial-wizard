@@ -1,0 +1,20 @@
+<%
+  let sectionff = 'Montserrat SemiBold';
+  let titleff = 'Roboto Slab Light';
+
+  if (typeof theme !== 'undefined' && (theme === 'nai' || theme === 'nai_portland')) {
+    sectionff = 'Helvetica Neue LT W05 75 Bold';
+    titleff = 'Centennial LT W05_45 Light';
+  }
+%>
+<div class="sloganIcon">
+  <img src="/images/rectangle-image.png" alt="Image">
+  <div class="sloganWrapper">
+    <% if (typeof section !== 'undefined' && typeof title !== 'undefined') { %>
+      <p style="font-family: <%= sectionff %>;"><%= section %></p>
+      <h2 style="font-family: <%= titleff %>;"><%= title %></h2>
+    <% } else if (typeof section === 'undefined' && typeof title !== 'undefined') { %>
+      <h2 style="font-family: <%= titleff %>;"><%= title %></h2>
+    <% } %>
+  </div>
+</div>

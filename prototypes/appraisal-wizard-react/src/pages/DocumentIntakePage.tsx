@@ -327,6 +327,7 @@ export default function DocumentIntakePage() {
     setCoverPhoto,
     removeCoverPhoto,
     setReportPhotos,
+    applyDocumentExtractedData,
   } = useWizard();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
@@ -480,6 +481,22 @@ export default function DocumentIntakePage() {
             extraction: result.extraction,
           } : d
         ));
+
+        // Auto-populate wizard fields from extracted data
+        if (result.extraction.success && result.extraction.data) {
+          const fields: Record<string, { value: string; confidence: number }> = {};
+          for (const [key, field] of Object.entries(result.extraction.data)) {
+            if (field.value) {
+              fields[key] = { value: field.value, confidence: field.confidence };
+            }
+          }
+          applyDocumentExtractedData(
+            doc.id,
+            doc.file.name,
+            result.classification.documentType,
+            fields
+          );
+        }
       } catch (error) {
         setDocuments(prev => prev.map(d => 
           d.id === doc.id ? { 
@@ -527,6 +544,22 @@ export default function DocumentIntakePage() {
           extraction: result.extraction,
         } : d
       ));
+
+      // Auto-populate wizard fields from extracted data (reprocess)
+      if (result.extraction.success && result.extraction.data) {
+        const fields: Record<string, { value: string; confidence: number }> = {};
+        for (const [key, field] of Object.entries(result.extraction.data)) {
+          if (field.value) {
+            fields[key] = { value: field.value, confidence: field.confidence };
+          }
+        }
+        applyDocumentExtractedData(
+          doc.id,
+          doc.file.name,
+          result.classification.documentType,
+          fields
+        );
+      }
     } catch (error) {
       setDocuments(prev => prev.map(d => 
         d.id === docId ? { 
