@@ -22,14 +22,25 @@ import type {
 import {
   CONSTRUCTION_TYPES,
   CONSTRUCTION_QUALITY,
+  CONSTRUCTION_CLASSES,
   CONDITIONS,
 } from '../types';
+import { Building2, Building, Factory, TreePine, Warehouse } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+
+// Icon map for construction classes (matches types/index.ts CONSTRUCTION_CLASSES)
+const CONSTRUCTION_CLASS_ICONS: Record<string, LucideIcon> = {
+  Building2,
+  Building,
+  Warehouse, // Class C - Masonry Bearing Walls
+  TreePine,
+  Factory,
+};
 import {
   ChevronRight,
   ChevronDown,
   Plus,
   Trash2,
-  Building2,
   MapPin,
   Layers,
   AlertTriangle,
@@ -42,6 +53,7 @@ import {
   Columns,
   Square,
   SplitSquareVertical,
+  EyeOff,
 } from 'lucide-react';
 import ExpandableSelector, { YearSelector } from './ExpandableSelector';
 import EnhancedTextArea from './EnhancedTextArea';
@@ -679,6 +691,39 @@ function BuildingCard({
           {/* Construction Details */}
           <CollapsibleSection title="Construction Details" icon={<Ruler className="w-4 h-4" />} isExpanded={expandedSections.has('construction')} onToggle={() => toggleSection('construction')}>
             <div className="space-y-4">
+              {/* M&S Construction Class - ButtonSelector with icons */}
+              <div className="space-y-2">
+                <label className="block text-sm font-medium text-gray-700">
+                  M&S Construction Class
+                </label>
+                <div className="flex flex-wrap gap-2">
+                  {CONSTRUCTION_CLASSES.map((cls) => {
+                    const IconComponent = CONSTRUCTION_CLASS_ICONS[cls.iconName] || Building2;
+                    const isSelected = building.constructionClass === cls.value;
+                    return (
+                      <button
+                        key={cls.value}
+                        type="button"
+                        onClick={() => onUpdate({ constructionClass: cls.value })}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 text-sm font-medium transition-all ${
+                          isSelected
+                            ? 'border-[#0da1c7] bg-[#0da1c7]/10 text-[#0da1c7]'
+                            : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                        }`}
+                      >
+                        <IconComponent className="w-4 h-4" />
+                        {cls.label}
+                      </button>
+                    );
+                  })}
+                </div>
+                {building.constructionClass && (
+                  <p className="text-xs text-slate-500 mt-1">
+                    {CONSTRUCTION_CLASSES.find(c => c.value === building.constructionClass)?.description}
+                  </p>
+                )}
+              </div>
+              
               <div className="grid grid-cols-3 gap-3">
                 <ExpandableSelector id={`construction-type-${building.id}`} label="Construction Type" options={CONSTRUCTION_TYPES} value={building.constructionType || ''} onChange={(v) => onUpdate({ constructionType: Array.isArray(v) ? v[0] : v })} category="structure" required multiple={false} />
                 <ExpandableSelector id={`construction-quality-${building.id}`} label="Construction Quality" options={CONSTRUCTION_QUALITY} value={building.constructionQuality || ''} onChange={(v) => onUpdate({ constructionQuality: Array.isArray(v) ? v[0] : v })} category="structure" multiple={false} />
@@ -995,19 +1040,59 @@ function AreaCard({ area, canRemove, effectivePropertyType, onUpdate, onRemove }
   const areaName = area.type === 'other' && area.customType ? area.customType : 
     currentAreaType?.label || area.type;
 
+  // Default to measured if not set
+  const hasMeasuredSF = area.hasMeasuredSF !== false;
+  
   return (
     <div className="bg-gray-50 rounded-xl p-4 space-y-4">
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-3 flex-wrap">
         <select value={area.type} onChange={(e) => onUpdate({ type: e.target.value as ImprovementArea['type'] })} className="flex-1 min-w-[140px] px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent">
           {filteredAreaTypes.map((t: AreaTypeConfig) => (<option key={t.id} value={t.id}>{t.label}{t.isPrimary ? ' ★' : ''}</option>))}
         </select>
         {area.type === 'other' && (<input type="text" value={area.customType || ''} onChange={(e) => onUpdate({ customType: e.target.value })} placeholder="Specify type" className="w-28 px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent" />)}
-        <div className="flex items-center gap-1.5">
-          <input type="number" value={area.squareFootage || ''} onChange={(e) => onUpdate({ squareFootage: e.target.value ? Number(e.target.value) : null })} placeholder="SF" className="w-24 px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent" />
-          <select value={area.sfType} onChange={(e) => onUpdate({ sfType: e.target.value as ImprovementArea['sfType'] })} className="w-20 px-2 py-2 bg-white border border-gray-200 rounded-lg text-xs font-medium focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent">
-            {SF_TYPES.map((t) => (<option key={t.value} value={t.value}>{t.value}</option>))}
-          </select>
+        
+        {/* SF Measurement Toggle - Styled pill buttons per design system */}
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            onClick={() => onUpdate({ hasMeasuredSF: true })}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 text-xs font-medium transition-all ${
+              hasMeasuredSF
+                ? 'border-[#0da1c7] bg-[#0da1c7]/10 text-[#0da1c7]'
+                : 'border-gray-200 bg-white text-gray-500 hover:border-gray-300'
+            }`}
+          >
+            <Ruler className="w-3.5 h-3.5" />
+            Measured
+          </button>
+          <button
+            type="button"
+            onClick={() => onUpdate({ hasMeasuredSF: false, squareFootage: null })}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 text-xs font-medium transition-all ${
+              !hasMeasuredSF
+                ? 'border-amber-500 bg-amber-50 text-amber-700'
+                : 'border-gray-200 bg-white text-gray-500 hover:border-gray-300'
+            }`}
+          >
+            <EyeOff className="w-3.5 h-3.5" />
+            Not Measured
+          </button>
         </div>
+        
+        {/* SF Input - Only shown when measured */}
+        {hasMeasuredSF ? (
+          <div className="flex items-center gap-1.5">
+            <input type="number" value={area.squareFootage || ''} onChange={(e) => onUpdate({ squareFootage: e.target.value ? Number(e.target.value) : null })} placeholder="SF" className="w-24 px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent" />
+            <select value={area.sfType} onChange={(e) => onUpdate({ sfType: e.target.value as ImprovementArea['sfType'] })} className="w-20 px-2 py-2 bg-white border border-gray-200 rounded-lg text-xs font-medium focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent">
+              {SF_TYPES.map((t) => (<option key={t.value} value={t.value}>{t.value}</option>))}
+            </select>
+          </div>
+        ) : (
+          <span className="px-3 py-1.5 bg-amber-100 text-amber-700 text-xs font-medium rounded-lg">
+            Features Only
+          </span>
+        )}
+        
         <select value={area.condition || ''} onChange={(e) => onUpdate({ condition: e.target.value })} className="w-28 px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent">
           <option value="">Condition</option>
           {CONDITIONS.map((c) => (<option key={c} value={c}>{c}</option>))}

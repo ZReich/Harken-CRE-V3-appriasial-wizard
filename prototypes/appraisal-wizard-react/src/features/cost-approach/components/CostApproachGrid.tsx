@@ -3,6 +3,7 @@ import { ArrowUpRight, Building2, Layers, Calendar, ExternalLink, AlertCircle, C
 import { ImprovementValuation } from './ImprovementValuation';
 import { CostConclusion } from './CostConclusion';
 import { BuildingSelector } from './BuildingSelector';
+import { ContractorCostComparison } from './ContractorCostComparison';
 import EnhancedTextArea from '../../../components/EnhancedTextArea';
 import { ValueScenario } from '../types';
 import { useWizard } from '../../../context/WizardContext';
@@ -232,6 +233,14 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
                 onValueChange={setImprovementsValue} 
                 scenario={scenario}
                 scenarioId={currentScenarioId}
+              />
+            </section>
+            
+            {/* Contractor Cost Comparison Section */}
+            <section className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
+              <ContractorCostComparison
+                scenarioId={currentScenarioId}
+                msTotalCost={improvementsValue}
               />
             </section>
 

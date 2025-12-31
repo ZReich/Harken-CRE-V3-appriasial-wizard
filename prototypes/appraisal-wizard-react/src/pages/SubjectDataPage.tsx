@@ -2,11 +2,14 @@ import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import WizardLayout from '../components/WizardLayout';
 import ImprovementsInventory from '../components/ImprovementsInventory';
 import SiteImprovementsInventory from '../components/SiteImprovementsInventory';
+import BoundaryFieldsCard from '../components/BoundaryFieldsCard';
+import TrafficDataCard from '../components/TrafficDataCard';
+import BuildingPermitsCard from '../components/BuildingPermitsCard';
 import EnhancedTextArea from '../components/EnhancedTextArea';
 import WizardGuidancePanel from '../components/WizardGuidancePanel';
 import DemographicsPanel from '../components/DemographicsPanel';
 import { useWizard } from '../context/WizardContext';
-import type { SiteImprovement } from '../types';
+import type { SiteImprovement, PhotoData } from '../types';
 import { UsersIcon } from '../components/icons';
 import {
   LocationIcon,
@@ -25,7 +28,6 @@ import ButtonSelector from '../components/ButtonSelector';
 import ExpandableNote from '../components/ExpandableNote';
 import PhotoQuickPeek from '../components/PhotoQuickPeek';
 import PhotoLivePreview from '../components/PhotoLivePreview';
-import BulkPhotoDropZone from '../components/BulkPhotoDropZone';
 import PhotoStagingTray from '../components/PhotoStagingTray';
 import PhotoAssignmentModal from '../components/PhotoAssignmentModal';
 import FloatingDropPanel from '../components/FloatingDropPanel';
@@ -132,14 +134,8 @@ const photoCategories: PhotoCategory[] = [
   },
 ];
 
-// Photo metadata structure
-export interface PhotoData {
-  file: File;
-  preview: string;
-  caption: string;
-  takenBy: string;
-  takenDate: string;
-}
+// PhotoData is now imported from shared types
+export type { PhotoData } from '../types';
 
 export default function SubjectDataPage() {
   const { state: wizardState, setSubjectData, setSiteImprovements, setReportPhotos } = useWizard();
@@ -277,6 +273,22 @@ export default function SubjectDataPage() {
   // Site Description Narrative
   const [siteDescriptionNarrative, setSiteDescriptionNarrative] = useState('');
   const [isDraftingSiteDescription, setIsDraftingSiteDescription] = useState(false);
+  
+  // Property Boundaries - initialize from WizardContext
+  const [northBoundary, setNorthBoundary] = useState(() => wizardState.subjectData?.northBoundary || '');
+  const [southBoundary, setSouthBoundary] = useState(() => wizardState.subjectData?.southBoundary || '');
+  const [eastBoundary, setEastBoundary] = useState(() => wizardState.subjectData?.eastBoundary || '');
+  const [westBoundary, setWestBoundary] = useState(() => wizardState.subjectData?.westBoundary || '');
+
+  // Traffic Data state (types defined at module level)
+  const [trafficData, setTrafficData] = useState<TrafficDataEntry[]>([]);
+  const [selectedRoadClass, setSelectedRoadClass] = useState('all');
+  const [trafficNotes, setTrafficNotes] = useState('');
+  
+  // Building Permits state (types defined at module level)
+  const [permits, setPermits] = useState<BuildingPermitEntry[]>([]);
+  const [selectedPermitType, setSelectedPermitType] = useState('all');
+  const [permitNotes, setPermitNotes] = useState('');
 
   // Tax tab state (local - tax assessment details)
   const [taxYear, setTaxYear] = useState(new Date().getFullYear().toString());
@@ -354,13 +366,19 @@ export default function SubjectDataPage() {
       floodInsuranceRequired,
       // Narratives
       siteDescriptionNarrative,
+      // Property Boundaries
+      northBoundary,
+      southBoundary,
+      eastBoundary,
+      westBoundary,
     });
   }, [areaDescription, neighborhoodBoundaries, neighborhoodCharacteristics, specificLocation,
       acres, squareFeet, shape, frontage, topography, environmental, easements,
       zoningClass, zoningDescription, zoningConformance,
       waterSource, sewerType, electricProvider, naturalGas, telecom,
       femaZone, femaMapPanel, femaMapDate, floodInsuranceRequired,
-      siteDescriptionNarrative, setSubjectData, wizardState.subjectData?.address]);
+      siteDescriptionNarrative, northBoundary, southBoundary, eastBoundary, westBoundary,
+      setSubjectData, wizardState.subjectData?.address]);
 
   // Photos state with metadata support
   const [photos, setPhotos] = useState<Record<string, PhotoData | null>>({});
@@ -636,6 +654,31 @@ export default function SubjectDataPage() {
             setSiteDescriptionNarrative={setSiteDescriptionNarrative}
             isDraftingSiteDescription={isDraftingSiteDescription}
             setIsDraftingSiteDescription={setIsDraftingSiteDescription}
+            // Property Boundaries
+            northBoundary={northBoundary}
+            setNorthBoundary={setNorthBoundary}
+            southBoundary={southBoundary}
+            setSouthBoundary={setSouthBoundary}
+            eastBoundary={eastBoundary}
+            setEastBoundary={setEastBoundary}
+            westBoundary={westBoundary}
+            setWestBoundary={setWestBoundary}
+            latitude={wizardState.subjectData?.coordinates?.latitude}
+            longitude={wizardState.subjectData?.coordinates?.longitude}
+            // Traffic Data
+            trafficData={trafficData}
+            setTrafficData={setTrafficData}
+            selectedRoadClass={selectedRoadClass}
+            setSelectedRoadClass={setSelectedRoadClass}
+            trafficNotes={trafficNotes}
+            setTrafficNotes={setTrafficNotes}
+            // Building Permits
+            permits={permits}
+            setPermits={setPermits}
+            selectedPermitType={selectedPermitType}
+            setSelectedPermitType={setSelectedPermitType}
+            permitNotes={permitNotes}
+            setPermitNotes={setPermitNotes}
           />
         ) : activeTab === 'demographics' ? (
           <DemographicsContent 
@@ -973,6 +1016,61 @@ interface SiteProps {
   setSiteDescriptionNarrative: (v: string) => void;
   isDraftingSiteDescription: boolean;
   setIsDraftingSiteDescription: (v: boolean) => void;
+  // Property Boundaries
+  northBoundary: string;
+  setNorthBoundary: (v: string) => void;
+  southBoundary: string;
+  setSouthBoundary: (v: string) => void;
+  eastBoundary: string;
+  setEastBoundary: (v: string) => void;
+  westBoundary: string;
+  setWestBoundary: (v: string) => void;
+  // Coordinates for map
+  latitude?: number;
+  longitude?: number;
+  // Traffic Data
+  trafficData: TrafficDataEntry[];
+  setTrafficData: (data: TrafficDataEntry[]) => void;
+  selectedRoadClass: string;
+  setSelectedRoadClass: (v: string) => void;
+  trafficNotes: string;
+  setTrafficNotes: (v: string) => void;
+  // Building Permits
+  permits: BuildingPermitEntry[];
+  setPermits: (permits: BuildingPermitEntry[]) => void;
+  selectedPermitType: string;
+  setSelectedPermitType: (v: string) => void;
+  permitNotes: string;
+  setPermitNotes: (v: string) => void;
+}
+
+// Traffic Data Entry type (for Site tab external integration)
+interface TrafficDataEntry {
+  roadName: string;
+  roadClass: string;
+  annualAverageDailyTraffic: number;
+  truckPercentage?: number;
+  speedLimit?: number;
+  lanesCount?: number;
+  distance?: string;
+  direction?: string;
+  year?: number;
+}
+
+// Building Permit Entry type (matches BuildingPermit in BuildingPermitsCard)
+interface BuildingPermitEntry {
+  id: string;
+  permitNumber: string;
+  permitType: 'new_construction' | 'addition' | 'alteration' | 'repair' | 'demolition' | 'other';
+  description: string;
+  issuedDate: string;
+  completedDate?: string;
+  status: 'issued' | 'active' | 'completed' | 'expired' | 'cancelled';
+  estimatedValue?: number;
+  actualValue?: number;
+  contractor?: string;
+  inspectionsPassed?: number;
+  inspectionsRequired?: number;
 }
 
 // Button selector option definitions
@@ -1072,6 +1170,19 @@ function SiteContent({
   floodZoneNotes, setFloodZoneNotes,
   siteDescriptionNarrative, setSiteDescriptionNarrative,
   isDraftingSiteDescription, setIsDraftingSiteDescription,
+  northBoundary, setNorthBoundary,
+  southBoundary, setSouthBoundary,
+  eastBoundary, setEastBoundary,
+  westBoundary, setWestBoundary,
+  latitude, longitude,
+  // Traffic Data
+  trafficData, setTrafficData,
+  selectedRoadClass, setSelectedRoadClass,
+  trafficNotes, setTrafficNotes,
+  // Building Permits
+  permits, setPermits,
+  selectedPermitType, setSelectedPermitType,
+  permitNotes, setPermitNotes,
 }: SiteProps) {
   // 1 acre = 43,560 square feet
   const SQFT_PER_ACRE = 43560;
@@ -1187,6 +1298,43 @@ Overall, the site is well-suited for its current use and presents no significant
             helperText="Include any caveats or special considerations about the site."
           />
         </div>
+      </div>
+
+      {/* Property Boundaries with Map Preview */}
+      <BoundaryFieldsCard
+        northBoundary={northBoundary}
+        onNorthBoundaryChange={setNorthBoundary}
+        southBoundary={southBoundary}
+        onSouthBoundaryChange={setSouthBoundary}
+        eastBoundary={eastBoundary}
+        onEastBoundaryChange={setEastBoundary}
+        westBoundary={westBoundary}
+        onWestBoundaryChange={setWestBoundary}
+        latitude={latitude}
+        longitude={longitude}
+        dataSource="manual"
+      />
+
+      {/* External Data Integration - Traffic & Permits */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <TrafficDataCard
+          trafficData={trafficData}
+          onTrafficDataChange={setTrafficData}
+          selectedRoadClass={selectedRoadClass}
+          onRoadClassChange={setSelectedRoadClass}
+          trafficNotes={trafficNotes}
+          onTrafficNotesChange={setTrafficNotes}
+          dataSource={trafficData.length > 0 ? 'mdot' : null}
+        />
+        <BuildingPermitsCard
+          permits={permits}
+          onPermitsChange={setPermits}
+          selectedPermitType={selectedPermitType}
+          onPermitTypeChange={setSelectedPermitType}
+          permitNotes={permitNotes}
+          onPermitNotesChange={setPermitNotes}
+          dataSource={permits.length > 0 ? 'county' : null}
+        />
       </div>
 
       {/* Zoning & Land Use */}
@@ -1921,12 +2069,6 @@ function PhotosContent({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
 
-  // Handle bulk upload completion
-  const handlePhotosProcessed = () => {
-    // Could show the assignment modal automatically
-    // For now, staging tray handles it inline
-  };
-
   // Handle assignment modal apply
   const handleApplyAssignments = (assignments: Record<string, string>) => {
     const stagingPhotos = getStagingPhotos();
@@ -1979,13 +2121,7 @@ function PhotosContent({
         uploadedPhotos={photos}
       />
 
-      {/* Bulk Upload Drop Zone */}
-      <BulkPhotoDropZone
-        onPhotosProcessed={handlePhotosProcessed}
-        existingSlotAssignments={existingSlotAssignments}
-      />
-
-      {/* Staging Tray - Shows unassigned photos */}
+      {/* Staging Tray - Shows unassigned photos (uploaded in Document Intake) */}
       <PhotoStagingTray
         onAssignPhoto={handleAssignStagingPhoto}
         onAcceptAllSuggestions={handleAcceptAllSuggestions}

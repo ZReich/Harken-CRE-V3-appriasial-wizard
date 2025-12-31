@@ -1,4 +1,4 @@
-import { useState, useCallback, useMemo, useRef } from 'react';
+import { useState, useCallback, useMemo, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useWizard } from '../context/WizardContext';
 import WizardLayout from '../components/WizardLayout';
@@ -25,8 +25,15 @@ import {
   Receipt,
   Wallet,
   HelpCircle,
+  Camera,
+  FileText,
   type LucideIcon,
 } from 'lucide-react';
+import BulkPhotoDropZone from '../components/BulkPhotoDropZone';
+import PhotoStagingTray from '../components/PhotoStagingTray';
+import CoverPhotoSection from '../components/CoverPhotoSection';
+import CoverPhotoPickerModal from '../components/CoverPhotoPickerModal';
+import type { PhotoData } from '../types';
 
 // Map icon names to Lucide components
 const ICON_MAP: Record<string, LucideIcon> = {
@@ -309,12 +316,108 @@ function DocumentCard({
 // ==========================================
 export default function DocumentIntakePage() {
   const navigate = useNavigate();
-  const { setSubjectData, addUploadedDocument, state: wizardState } = useWizard();
+  const { 
+    setSubjectData, 
+    addUploadedDocument, 
+    state: wizardState,
+    getStagingPhotos,
+    removeStagingPhoto,
+    assignStagingPhoto,
+    getUnassignedStagingPhotos,
+    setCoverPhoto,
+    removeCoverPhoto,
+    setReportPhotos,
+  } = useWizard();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  
+  // Tab state: 'documents' or 'photos'
+  const [activeTab, setActiveTab] = useState<'documents' | 'photos'>('documents');
   
   const [documents, setDocuments] = useState<ProcessedDocument[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [expandedDocId, setExpandedDocId] = useState<string | null>(null);
+  
+  // Photo state
+  const [photos, setPhotos] = useState<Record<string, PhotoData | null>>({});
+  const [showCoverPhotoPicker, setShowCoverPhotoPicker] = useState(false);
+  
+  // Default metadata values from appraiser info and inspection date
+  const defaultTakenBy = useMemo(() => {
+    const name = wizardState.subjectData?.inspectorName || '';
+    const license = wizardState.subjectData?.inspectorLicense || '';
+    return name ? (license ? `${name}, ${license}` : name) : '';
+  }, [wizardState.subjectData?.inspectorName, wizardState.subjectData?.inspectorLicense]);
+  
+  const defaultTakenDate = wizardState.subjectData?.inspectionDate || '';
+  
+  // Sync photos to WizardContext when they change
+  useEffect(() => {
+    const assignments = Object.entries(photos)
+      .filter(([_, photo]) => photo !== null)
+      .map(([slotId, photo], index) => ({
+        id: `photo-${slotId}-${Date.now()}`,
+        photoId: slotId,
+        slotId,
+        url: photo!.preview,
+        caption: photo!.caption,
+        takenBy: photo!.takenBy || defaultTakenBy,
+        takenDate: photo!.takenDate || defaultTakenDate,
+        sortOrder: index,
+      }));
+    
+    if (assignments.length > 0) {
+      setReportPhotos({ 
+        assignments,
+        coverPhotoId: wizardState.coverPhoto?.id ?? null,
+      });
+    }
+  }, [photos, defaultTakenBy, defaultTakenDate, setReportPhotos, wizardState.coverPhoto?.id]);
+  
+  // Get used slots (slots that already have photos)
+  const usedSlots = useMemo(() => {
+    const used = new Set<string>();
+    Object.entries(photos).forEach(([slotId, photo]) => {
+      if (photo) used.add(slotId);
+    });
+    return used;
+  }, [photos]);
+  
+  // Handle photo upload to a slot
+  const handlePhotoUpload = useCallback((slotId: string, file: File) => {
+    const preview = URL.createObjectURL(file);
+    setPhotos(prev => ({ 
+      ...prev, 
+      [slotId]: { 
+        file, 
+        preview,
+        caption: '',
+        takenBy: defaultTakenBy,
+        takenDate: defaultTakenDate,
+      } 
+    }));
+  }, [defaultTakenBy, defaultTakenDate]);
+  
+  // Handle assigning a staging photo
+  const handleAssignStagingPhoto = (photo: { id: string; file: File }, slotId: string) => {
+    handlePhotoUpload(slotId, photo.file);
+    assignStagingPhoto(photo.id, slotId);
+    removeStagingPhoto(photo.id);
+  };
+  
+  // Handle accepting all AI suggestions
+  const handleAcceptAllSuggestions = useCallback(() => {
+    const unassigned = getUnassignedStagingPhotos();
+    const localUsedSlots = new Set(usedSlots);
+    unassigned.forEach(photo => {
+      const topSuggestion = photo.suggestions?.[0];
+      if (topSuggestion && !localUsedSlots.has(topSuggestion.slotId)) {
+        handlePhotoUpload(topSuggestion.slotId, photo.file);
+        assignStagingPhoto(photo.id, topSuggestion.slotId);
+        removeStagingPhoto(photo.id);
+        localUsedSlots.add(topSuggestion.slotId);
+      }
+    });
+  }, [getUnassignedStagingPhotos, usedSlots, handlePhotoUpload, assignStagingPhoto, removeStagingPhoto]);
 
   // Handle file drop
   const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
@@ -565,14 +668,50 @@ export default function DocumentIntakePage() {
     navigate('/setup');
   };
 
+  // Photo stats
+  const stagingPhotos = getStagingPhotos();
+  const unassignedPhotos = getUnassignedStagingPhotos();
+  const assignedPhotoCount = Object.values(photos).filter(Boolean).length;
+  
   // Sidebar
   const sidebar = (
     <div>
-      <h2 className="text-lg font-bold text-gray-900 mb-1">Document Intake</h2>
-      <p className="text-sm text-gray-500 mb-6">AI-powered document processing</p>
+      <h2 className="text-lg font-bold text-gray-900 mb-1">Document & Photo Intake</h2>
+      <p className="text-sm text-gray-500 mb-6">AI-powered processing</p>
+      
+      {/* Tab Navigation */}
+      <div className="flex gap-1 p-1 bg-gray-100 rounded-lg mb-6">
+        <button
+          onClick={() => setActiveTab('documents')}
+          className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all ${
+            activeTab === 'documents'
+              ? 'bg-white text-[#0da1c7] shadow-sm'
+              : 'text-gray-600 hover:text-gray-800'
+          }`}
+        >
+          <FileText className="w-4 h-4" />
+          Documents
+        </button>
+        <button
+          onClick={() => setActiveTab('photos')}
+          className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all ${
+            activeTab === 'photos'
+              ? 'bg-white text-[#0da1c7] shadow-sm'
+              : 'text-gray-600 hover:text-gray-800'
+          }`}
+        >
+          <Camera className="w-4 h-4" />
+          Photos
+          {stagingPhotos.length > 0 && (
+            <span className="px-1.5 py-0.5 bg-[#0da1c7] text-white text-[10px] rounded-full">
+              {stagingPhotos.length}
+            </span>
+          )}
+        </button>
+      </div>
 
-      {/* Stats */}
-      {documents.length > 0 && (
+      {/* Document Stats */}
+      {activeTab === 'documents' && documents.length > 0 && (
         <div className="space-y-3 mb-6">
           <div className="bg-gradient-to-r from-[#0da1c7]/10 to-[#0da1c7]/5 rounded-xl p-4">
             <div className="flex items-center justify-between mb-2">
@@ -602,9 +741,34 @@ export default function DocumentIntakePage() {
           )}
         </div>
       )}
+      
+      {/* Photo Stats */}
+      {activeTab === 'photos' && (
+        <div className="space-y-3 mb-6">
+          <div className="bg-gradient-to-r from-[#0da1c7]/10 to-[#0da1c7]/5 rounded-xl p-4">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-gray-700">Photos Uploaded</span>
+              <span className="text-lg font-bold text-[#0da1c7]">{stagingPhotos.length + assignedPhotoCount}</span>
+            </div>
+            {unassignedPhotos.length > 0 && (
+              <p className="text-xs text-amber-600 flex items-center gap-1 mt-2">
+                <AlertCircle className="w-3 h-3" />
+                {unassignedPhotos.length} awaiting assignment
+              </p>
+            )}
+          </div>
+          
+          {wizardState.coverPhoto && (
+            <div className="flex items-center gap-2 px-1 text-sm text-green-600">
+              <CheckCircle className="w-4 h-4" />
+              Cover photo selected
+            </div>
+          )}
+        </div>
+      )}
 
       {/* Document Type Summary */}
-      {Object.keys(documentsByType).length > 0 && (
+      {activeTab === 'documents' && Object.keys(documentsByType).length > 0 && (
         <div className="space-y-2">
           <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wide">Identified Documents</h3>
           {Object.entries(documentsByType).map(([type, docs]) => {
@@ -639,102 +803,168 @@ export default function DocumentIntakePage() {
 
   return (
     <WizardLayout
-      title="Document Intake"
+      title="Document & Photo Intake"
       subtitle="Phase 2 of 6 • AI-Powered Data Extraction"
       phase={2}
       sidebar={sidebar}
       helpSidebarGuidance={helpSidebarGuidance}
     >
       <div className="animate-fade-in">
-        {/* Hero Section */}
-        <div className="bg-gradient-to-br from-[#0da1c7]/10 via-[#4db8d1]/5 to-transparent border border-[#0da1c7]/20 rounded-2xl p-6 mb-6">
-          <div className="flex items-start gap-4">
-            <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#0da1c7] to-[#0b8fb0] flex items-center justify-center shadow-lg shadow-[#0da1c7]/20">
-              <Sparkles className="w-7 h-7 text-white" />
+        {activeTab === 'documents' ? (
+          <>
+            {/* Hero Section */}
+            <div className="bg-gradient-to-br from-[#0da1c7]/10 via-[#4db8d1]/5 to-transparent border border-[#0da1c7]/20 rounded-2xl p-6 mb-6">
+              <div className="flex items-start gap-4">
+                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#0da1c7] to-[#0b8fb0] flex items-center justify-center shadow-lg shadow-[#0da1c7]/20">
+                  <Sparkles className="w-7 h-7 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-[#1c3643] mb-1">AI-Powered Document Intake</h3>
+                  <p className="text-gray-600">
+                    Drop all your documents below. Our AI will automatically identify each document type, 
+                    extract relevant data, and pre-fill fields throughout the wizard.
+                  </p>
+                </div>
+              </div>
             </div>
-            <div>
-              <h3 className="text-xl font-bold text-[#1c3643] mb-1">AI-Powered Document Intake</h3>
-              <p className="text-gray-600">
-                Drop all your documents below. Our AI will automatically identify each document type, 
-                extract relevant data, and pre-fill fields throughout the wizard.
-              </p>
-            </div>
-          </div>
-        </div>
 
-        {/* Unified Drop Zone */}
-        <div
-          onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
-          onDragLeave={() => setIsDragging(false)}
-          onDrop={handleDrop}
-          onClick={() => fileInputRef.current?.click()}
-          className={`relative border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-all duration-300 mb-6 ${
-            isDragging 
-              ? 'border-[#0da1c7] bg-[#0da1c7]/10 scale-[1.02]' 
-              : 'border-gray-300 hover:border-[#0da1c7] hover:bg-[#0da1c7]/5'
-          }`}
-        >
-          <input
-            ref={fileInputRef}
-            type="file"
-            multiple
-            accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xlsx,.csv"
-            className="hidden"
-            onChange={handleFileSelect}
-          />
-          
-          <div className={`transition-transform duration-300 ${isDragging ? 'scale-110' : ''}`}>
-            <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-gray-100 to-gray-50 flex items-center justify-center">
-              <Upload className={`w-8 h-8 transition-colors ${isDragging ? 'text-[#0da1c7]' : 'text-gray-400'}`} />
-            </div>
-            <p className="text-lg font-semibold text-gray-700 mb-1">
-              {isDragging ? 'Drop files here' : 'Drop all your documents here'}
-            </p>
-            <p className="text-sm text-gray-500 mb-3">
-              or click to browse
-            </p>
-            <p className="text-xs text-gray-400">
-              Supports PDF, images, Word docs, Excel, and CSV files
-            </p>
-          </div>
+            {/* Unified Drop Zone */}
+            <div
+              onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+              onDragLeave={() => setIsDragging(false)}
+              onDrop={handleDrop}
+              onClick={() => fileInputRef.current?.click()}
+              className={`relative border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-all duration-300 mb-6 ${
+                isDragging 
+                  ? 'border-[#0da1c7] bg-[#0da1c7]/10 scale-[1.02]' 
+                  : 'border-gray-300 hover:border-[#0da1c7] hover:bg-[#0da1c7]/5'
+              }`}
+            >
+              <input
+                ref={fileInputRef}
+                type="file"
+                multiple
+                accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xlsx,.csv"
+                className="hidden"
+                onChange={handleFileSelect}
+              />
+              
+              <div className={`transition-transform duration-300 ${isDragging ? 'scale-110' : ''}`}>
+                <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-gray-100 to-gray-50 flex items-center justify-center">
+                  <Upload className={`w-8 h-8 transition-colors ${isDragging ? 'text-[#0da1c7]' : 'text-gray-400'}`} />
+                </div>
+                <p className="text-lg font-semibold text-gray-700 mb-1">
+                  {isDragging ? 'Drop files here' : 'Drop all your documents here'}
+                </p>
+                <p className="text-sm text-gray-500 mb-3">
+                  or click to browse
+                </p>
+                <p className="text-xs text-gray-400">
+                  Supports PDF, images, Word docs, Excel, and CSV files
+                </p>
+              </div>
 
-          {/* Animated border when dragging */}
-          {isDragging && (
-            <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
-              <div className="absolute inset-0 border-2 border-[#0da1c7] rounded-2xl animate-pulse" />
-            </div>
-          )}
-        </div>
-
-        {/* Document Cards */}
-        {documents.length > 0 && (
-          <div className="space-y-3 mb-6">
-            <div className="flex items-center justify-between">
-              <h3 className="text-sm font-semibold text-gray-700">
-                Uploaded Documents ({documents.length})
-              </h3>
-              {stats.complete === stats.total && stats.total > 0 && (
-                <span className="text-xs text-green-600 font-medium flex items-center gap-1">
-                  <CheckCircle className="w-3 h-3" />
-                  All documents processed
-                </span>
+              {/* Animated border when dragging */}
+              {isDragging && (
+                <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
+                  <div className="absolute inset-0 border-2 border-[#0da1c7] rounded-2xl animate-pulse" />
+                </div>
               )}
             </div>
-            
-            <div className="space-y-3">
-              {documents.map(doc => (
-                <DocumentCard
-                  key={doc.id}
-                  doc={doc}
-                  onRemove={() => removeDocument(doc.id)}
-                  onReprocess={() => reprocessDocument(doc.id)}
-                  onReclassify={(newType) => reclassifyDocument(doc.id, newType)}
-                  isExpanded={expandedDocId === doc.id}
-                  onToggleExpand={() => setExpandedDocId(expandedDocId === doc.id ? null : doc.id)}
-                />
-              ))}
+
+            {/* Document Cards */}
+            {documents.length > 0 && (
+              <div className="space-y-3 mb-6">
+                <div className="flex items-center justify-between">
+                  <h3 className="text-sm font-semibold text-gray-700">
+                    Uploaded Documents ({documents.length})
+                  </h3>
+                  {stats.complete === stats.total && stats.total > 0 && (
+                    <span className="text-xs text-green-600 font-medium flex items-center gap-1">
+                      <CheckCircle className="w-3 h-3" />
+                      All documents processed
+                    </span>
+                  )}
+                </div>
+                
+                <div className="space-y-3">
+                  {documents.map(doc => (
+                    <DocumentCard
+                      key={doc.id}
+                      doc={doc}
+                      onRemove={() => removeDocument(doc.id)}
+                      onReprocess={() => reprocessDocument(doc.id)}
+                      onReclassify={(newType) => reclassifyDocument(doc.id, newType)}
+                      isExpanded={expandedDocId === doc.id}
+                      onToggleExpand={() => setExpandedDocId(expandedDocId === doc.id ? null : doc.id)}
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
+          </>
+        ) : (
+          <>
+            {/* Photos Tab Content */}
+            {/* Hero Section */}
+            <div className="bg-gradient-to-br from-[#0da1c7]/10 via-[#4db8d1]/5 to-transparent border border-[#0da1c7]/20 rounded-2xl p-6 mb-6">
+              <div className="flex items-start gap-4">
+                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#0da1c7] to-[#0b8fb0] flex items-center justify-center shadow-lg shadow-[#0da1c7]/20">
+                  <Camera className="w-7 h-7 text-white" />
+                </div>
+                <div>
+                  <h3 className="text-xl font-bold text-[#1c3643] mb-1">Upload Property Photos</h3>
+                  <p className="text-gray-600">
+                    Upload all your property photos now so they're available throughout data entry.
+                    AI will suggest which slot each photo belongs to, or you can assign them manually later.
+                  </p>
+                </div>
+              </div>
             </div>
-          </div>
+            
+            {/* Cover Photo Section */}
+            <CoverPhotoSection
+              coverPhoto={wizardState.coverPhoto}
+              onSetCoverPhoto={setCoverPhoto}
+              onRemoveCoverPhoto={removeCoverPhoto}
+              uploadedPhotos={photos}
+              subjectData={wizardState.subjectData}
+              onOpenPicker={() => setShowCoverPhotoPicker(true)}
+            />
+            
+            {/* Cover Photo Picker Modal */}
+            <CoverPhotoPickerModal
+              isOpen={showCoverPhotoPicker}
+              onClose={() => setShowCoverPhotoPicker(false)}
+              onSelect={setCoverPhoto}
+              uploadedPhotos={photos}
+            />
+            
+            {/* Bulk Upload Drop Zone */}
+            <BulkPhotoDropZone className="mb-6" />
+            
+            {/* Staging Tray - Shows unassigned photos */}
+            <PhotoStagingTray
+              onAssignPhoto={handleAssignStagingPhoto}
+              onAcceptAllSuggestions={handleAcceptAllSuggestions}
+              usedSlots={usedSlots}
+              className="mb-6"
+            />
+            
+            {/* Info about assigning photos later */}
+            {stagingPhotos.length > 0 && (
+              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                <div>
+                  <p className="text-sm font-medium text-amber-800">Photos ready for assignment</p>
+                  <p className="text-sm text-amber-700 mt-1">
+                    You can accept the AI suggestions above, or assign photos to specific slots 
+                    in the Subject Property → Photos & Maps section.
+                  </p>
+                </div>
+              </div>
+            )}
+          </>
         )}
 
         {/* Continue Button */}

@@ -61,6 +61,21 @@ export interface ComponentDetail {
   quantity?: number;             // For countable items (e.g., 3 RTUs)
   unit?: string;                 // Unit of measure (e.g., "tons", "units", "SF")
   notes?: string;                // Additional details
+  // Depreciation Override
+  depreciationOverride?: number;       // User-specified depreciation % (overrides calculated)
+  depreciationOverrideReason?: string; // Narrative explaining the override rationale
+}
+
+/**
+ * Photo Data - shared type for photo management across the wizard
+ * Used in photo upload, staging, and assignment workflows.
+ */
+export interface PhotoData {
+  file?: File;           // Optional - only present for newly uploaded photos, not for loaded ones
+  preview: string;       // Object URL or data URL for display
+  caption: string;       // User-provided caption
+  takenBy: string;       // Photographer name
+  takenDate: string;     // Date photo was taken
 }
 
 /**
@@ -187,6 +202,7 @@ export interface ImprovementArea {
   customType?: string;
   squareFootage: number | null;
   sfType: 'GBA' | 'NRA' | 'GLA' | 'RSF';
+  hasMeasuredSF?: boolean; // True if SF was measured, false if only documenting finishes
   yearBuilt?: number | null;
   yearRemodeled?: string;
   condition?: string;
@@ -203,6 +219,7 @@ export interface ImprovementBuilding {
   yearRemodeled?: string;
   constructionType?: string;
   constructionQuality?: string;
+  constructionClass?: 'A' | 'B' | 'C' | 'D' | 'S'; // M&S Construction Class
   condition?: string;
   clearHeight?: number | null;
   eaveHeight?: number | null;
@@ -274,6 +291,10 @@ export interface SiteImprovement {
   replacementCostNew?: number;
   depreciationPercent?: number;
   contributoryValue?: number;
+  
+  // Depreciation Override
+  depreciationOverride?: number;       // User-specified depreciation % (overrides calculated)
+  depreciationOverrideReason?: string; // Narrative explaining the override rationale
 }
 
 export interface SiteImprovementsInventory {
@@ -551,6 +572,12 @@ export interface CostApproachOverrides {
   depreciationPhysical?: number;
   depreciationFunctional?: number;
   depreciationExternal?: number;
+  
+  // Contractor Cost Comparison
+  contractorCost?: number;                         // Actual contractor cost/bid
+  contractorSource?: 'bid' | 'invoice' | 'estimate'; // Source type
+  contractorDate?: string;                         // Date of bid/invoice
+  contractorNotes?: string;                        // Reconciliation notes
 }
 
 export interface CelebrationState {
@@ -677,6 +704,38 @@ export interface SubjectData {
   
   // Cost Segregation
   costSegregationEnabled?: boolean;
+  
+  // Property Boundaries (Site Details)
+  northBoundary?: string;
+  southBoundary?: string;
+  eastBoundary?: string;
+  westBoundary?: string;
+  
+  // Traffic Data (Site Details - External Integration)
+  trafficData?: {
+    aadt?: number;           // Annual Average Daily Traffic
+    speedLimit?: number;
+    roadClassification?: 'local' | 'collector' | 'arterial' | 'highway' | 'interstate';
+    truckPercentage?: number;
+    numberOfLanes?: number;
+    source?: string;
+    lastUpdated?: string;
+  };
+  
+  // Building Permits (External Integration)
+  buildingPermits?: BuildingPermit[];
+}
+
+export interface BuildingPermit {
+  id: string;
+  permitNumber: string;
+  type: 'new_construction' | 'renovation' | 'mechanical' | 'electrical' | 'plumbing' | 'demolition' | 'other';
+  description: string;
+  issueDate: string;
+  estimatedValue?: number;
+  contractor?: string;
+  status: 'issued' | 'final' | 'expired' | 'pending';
+  inspectionStatus?: string;
 }
 
 // =================================================================
@@ -1104,6 +1163,25 @@ export const CONSTRUCTION_TYPES = [
   'Reinforced Concrete',
   'Structural Steel',
   'Mixed/Hybrid',
+];
+
+/**
+ * Marshall & Swift Construction Classes
+ * Based on the M&S cost classification system for commercial buildings.
+ */
+export interface ConstructionClass {
+  value: 'A' | 'B' | 'C' | 'D' | 'S';
+  label: string;
+  description: string;
+  iconName: 'Building2' | 'Building' | 'Warehouse' | 'TreePine' | 'Factory';
+}
+
+export const CONSTRUCTION_CLASSES: ConstructionClass[] = [
+  { value: 'A', label: 'Class A', description: 'Steel Frame (Fireproof)', iconName: 'Building2' },
+  { value: 'B', label: 'Class B', description: 'Reinforced Concrete', iconName: 'Building' },
+  { value: 'C', label: 'Class C', description: 'Masonry Bearing Walls', iconName: 'Warehouse' },
+  { value: 'D', label: 'Class D', description: 'Wood Frame', iconName: 'TreePine' },
+  { value: 'S', label: 'Class S', description: 'Pre-Engineered Metal', iconName: 'Factory' },
 ];
 
 export const CONSTRUCTION_QUALITY = [

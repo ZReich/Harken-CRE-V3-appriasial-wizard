@@ -12,7 +12,7 @@ import {
 import type { CoverPhotoData, SubjectData } from '../types';
 
 interface PhotoData {
-  file: File;
+  file?: File;      // Optional - may not be present for loaded/imported photos
   preview: string;
   caption?: string;
   takenBy?: string;

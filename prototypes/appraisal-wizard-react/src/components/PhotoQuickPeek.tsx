@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { createPortal } from 'react-dom';
 import { Sparkles } from 'lucide-react';
-import type { PhotoData } from '../pages/SubjectDataPage';
+import type { PhotoData } from '../types';
 
 interface PhotoQuickPeekProps {
   photo: PhotoData;

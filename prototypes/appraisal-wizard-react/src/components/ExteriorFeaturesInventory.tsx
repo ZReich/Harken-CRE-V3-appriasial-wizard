@@ -20,6 +20,8 @@ import {
   HelpCircle,
   Sparkles,
   MoreHorizontal,
+  PenLine,
+  Camera,
 } from 'lucide-react';
 import {
   EXTERIOR_CATEGORIES,
@@ -34,7 +36,11 @@ import type { PropertyCategory } from '../constants/marshallSwift';
 import { useFilteredBuildingComponents } from '../hooks/useFilteredBuildingComponents';
 import { useCustomBuildingTypes, getSectionFromCategory } from '../hooks/useCustomBuildingTypes';
 import ExpandableNote from './ExpandableNote';
-import type { ExteriorFeatures, ComponentDetail, ComponentCondition } from '../types';
+import EnhancedTextArea from './EnhancedTextArea';
+import PhotoReferencePanel from './PhotoReferencePanel';
+import { useWizard } from '../context/WizardContext';
+import type { ExteriorFeatures, ComponentDetail, ComponentCondition, PhotoData } from '../types';
+import type { DetectedMaterial } from '../services/aiService';
 
 // =================================================================
 // CONSTANTS
@@ -165,6 +171,73 @@ export default function ExteriorFeaturesInventory({
   
   // Expanded items state (for individual notes)
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
+  
+  // Photo reference panel state
+  const [showPhotoPanel, setShowPhotoPanel] = useState(false);
+  const [activeSubSection, setActiveSubSection] = useState('exterior_features');
+  
+  // Get photos from wizard context
+  const { state: wizardState } = useWizard();
+  const photos = useMemo(() => {
+    // Convert report photo assignments to PhotoData format
+    const photoMap: Record<string, PhotoData | null> = {};
+    wizardState.reportPhotos?.assignments?.forEach((assignment) => {
+      if (assignment.url) {
+        photoMap[assignment.slotId] = {
+          // file is optional - only present for newly uploaded photos
+          preview: assignment.url,
+          caption: assignment.caption || '',
+          takenBy: '',
+          takenDate: '',
+        };
+      }
+    });
+    return photoMap;
+  }, [wizardState.reportPhotos?.assignments]);
+  
+  // Count of relevant photos for the current section
+  const contextPhotoCount = useMemo(() => {
+    const mapping: Record<string, string[]> = {
+      'exterior_features': ['ext_front', 'ext_rear', 'ext_side_1', 'ext_side_2', 'ext_additional_1', 'ext_additional_2'],
+      'exterior_roof': ['ext_roof', 'ext_additional_1', 'ext_additional_2'],
+    };
+    const relevantPrefixes = mapping[activeSubSection] || mapping['exterior_features'];
+    return Object.keys(photos).filter(slotId => 
+      relevantPrefixes.some(prefix => slotId.startsWith(prefix)) && photos[slotId]
+    ).length;
+  }, [photos, activeSubSection]);
+
+  // Handle applying detected material from photo analysis
+  const handleApplyMaterial = useCallback((material: DetectedMaterial) => {
+    // Map material category to our component categories
+    const categoryMapping: Record<string, 'foundation' | 'roof' | 'walls' | 'windows'> = {
+      'foundation': 'foundation',
+      'roofing': 'roof',
+      'siding': 'walls',
+      'other': 'walls',
+    };
+    
+    const targetCategory = categoryMapping[material.category];
+    if (!targetCategory) return;
+    
+    // Create a new component detail from the detected material
+    const newComponent: ComponentDetail = {
+      id: `${material.id}_${Date.now()}`,
+      type: material.name,
+      condition: material.suggestedCondition,
+      effectiveAge: material.suggestedAge,
+      notes: material.details,
+    };
+    
+    // Add to the appropriate category
+    const updateKey = `${targetCategory}Details` as 'foundationDetails' | 'roofDetails' | 'wallDetails' | 'windowDetails';
+    const currentDetails = features?.[updateKey] || [];
+    
+    onChange?.({
+      ...features,
+      [updateKey]: [...currentDetails, newComponent],
+    });
+  }, [features, onChange]);
   
   // General notes
   const [generalNotes, setGeneralNotes] = useState(features?.description || '');
@@ -419,6 +492,26 @@ export default function ExteriorFeaturesInventory({
               </p>
             </div>
           </div>
+          
+          {/* Photo Reference Toggle */}
+          <button
+            onClick={() => setShowPhotoPanel(!showPhotoPanel)}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
+              showPhotoPanel
+                ? 'bg-[#0da1c7] text-white'
+                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+            }`}
+          >
+            <Camera className="w-3.5 h-3.5" />
+            {showPhotoPanel ? 'Hide Photos' : 'View Photos'}
+            {contextPhotoCount > 0 && (
+              <span className={`ml-1 px-1.5 py-0.5 rounded-full text-[10px] ${
+                showPhotoPanel ? 'bg-white/20' : 'bg-[#0da1c7] text-white'
+              }`}>
+                {contextPhotoCount}
+              </span>
+            )}
+          </button>
         </div>
       </div>
 
@@ -435,6 +528,8 @@ export default function ExteriorFeaturesInventory({
                   setSelectedCategory(cat.id as ExteriorCategory);
                   setSelectedTypeId(null);
                   setShowCustomForm(false);
+                  // Update active subsection for photo panel filtering
+                  setActiveSubSection(cat.id === 'roofing' ? 'exterior_roof' : 'exterior_features');
                 }}
                 className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all ${
                   selectedCategory === cat.id
@@ -812,10 +907,79 @@ export default function ExteriorFeaturesInventory({
                         </button>
                       </div>
 
-                      {/* Expanded Notes Section */}
+                      {/* Expanded Details Section */}
                       {isExpanded && (
                         <div className="px-3 pb-3 pt-0">
-                          <div className="ml-7 border-l-2 border-[#0da1c7]/20 pl-3">
+                          <div className="ml-7 border-l-2 border-[#0da1c7]/20 pl-3 space-y-4">
+                            {/* Depreciation Override */}
+                            <div className="space-y-2">
+                              <div className="flex items-center gap-3">
+                                <div className="text-sm">
+                                  <span className="text-slate-500">Depreciation:</span>
+                                  <span className={`ml-2 font-semibold ${component.depreciationOverride !== undefined ? 'text-amber-600' : 'text-slate-700'}`}>
+                                    {component.depreciationOverride !== undefined ? component.depreciationOverride : depreciationPct}%
+                                  </span>
+                                  {component.depreciationOverride !== undefined && (
+                                    <span className="ml-1 text-xs text-amber-500">(override)</span>
+                                  )}
+                                </div>
+                                
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    if (component.depreciationOverride !== undefined) {
+                                      updateComponent(component.id, category.id as ExteriorCategory, { 
+                                        depreciationOverride: undefined, 
+                                        depreciationOverrideReason: undefined 
+                                      });
+                                    } else {
+                                      updateComponent(component.id, category.id as ExteriorCategory, { 
+                                        depreciationOverride: depreciationPct 
+                                      });
+                                    }
+                                  }}
+                                  className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-medium transition-all ${
+                                    component.depreciationOverride !== undefined
+                                      ? 'border-amber-400 bg-amber-50 text-amber-700'
+                                      : 'border-slate-200 text-slate-400 hover:border-slate-300 hover:text-slate-500'
+                                  }`}
+                                >
+                                  <PenLine className="w-3 h-3" />
+                                  Override
+                                </button>
+                              </div>
+                              
+                              {component.depreciationOverride !== undefined && (
+                                <div className="p-3 bg-amber-50 rounded-lg border border-amber-200 space-y-3">
+                                  <div className="flex items-center gap-2">
+                                    <label className="text-xs font-medium text-amber-700">Override %</label>
+                                    <input
+                                      type="number"
+                                      min="0"
+                                      max="100"
+                                      className="w-20 px-3 py-1.5 border border-amber-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-400 focus:border-transparent"
+                                      value={component.depreciationOverride}
+                                      onChange={(e) => updateComponent(component.id, category.id as ExteriorCategory, { 
+                                        depreciationOverride: e.target.value ? Number(e.target.value) : 0 
+                                      })}
+                                    />
+                                    <span className="text-xs text-amber-600">
+                                      (calculated: {depreciationPct}%)
+                                    </span>
+                                  </div>
+                                  <EnhancedTextArea
+                                    label="Override Reason"
+                                    value={component.depreciationOverrideReason || ''}
+                                    onChange={(v) => updateComponent(component.id, category.id as ExteriorCategory, { depreciationOverrideReason: v })}
+                                    placeholder="Explain the rationale for this depreciation override..."
+                                    sectionContext="depreciation_override"
+                                    rows={3}
+                                  />
+                                </div>
+                              )}
+                            </div>
+                            
+                            {/* Notes */}
                             <ExpandableNote
                               id={`exterior_${component.id}_notes`}
                               label={`Notes for ${component.type}`}
@@ -854,6 +1018,16 @@ export default function ExteriorFeaturesInventory({
           sectionContext="exterior_description"
         />
       </div>
+      
+      {/* Photo Reference Panel */}
+      {showPhotoPanel && (
+        <PhotoReferencePanel
+          activeSection={activeSubSection}
+          photos={photos}
+          onClose={() => setShowPhotoPanel(false)}
+          onApplyMaterial={handleApplyMaterial}
+        />
+      )}
     </div>
   );
 }

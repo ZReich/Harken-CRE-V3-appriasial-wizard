@@ -82,6 +82,10 @@ export function createDefaultInventory(): ImprovementsInventory {
 // =================================================================
 
 export function calculateAreaSF(area: ImprovementArea): number {
+  // Skip areas that are marked as not measured (features only)
+  if (area.hasMeasuredSF === false) {
+    return 0;
+  }
   return area.squareFootage || 0;
 }
 

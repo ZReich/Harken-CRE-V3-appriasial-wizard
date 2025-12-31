@@ -19,6 +19,7 @@ import {
   Warehouse,
   FileText,
   HelpCircle,
+  PenLine,
 } from 'lucide-react';
 
 // Helper function to generate year options for dropdown
@@ -39,6 +40,7 @@ import {
 } from '../constants/marshallSwift';
 import { useCustomSiteTypes } from '../hooks/useCustomSiteTypes';
 import ExpandableNote from './ExpandableNote';
+import EnhancedTextArea from './EnhancedTextArea';
 import type { SiteImprovement, SiteImprovementCondition } from '../types';
 
 // =================================================================
@@ -860,10 +862,83 @@ export default function SiteImprovementsInventory({
                   </button>
                 </div>
 
-                {/* Expanded Notes Section */}
+                {/* Expanded Details Section */}
                 {isExpanded && (
                   <div className="px-3 pb-3 pt-0">
-                    <div className="ml-7 border-l-2 border-[#0da1c7]/20 pl-3">
+                    <div className="ml-7 border-l-2 border-[#0da1c7]/20 pl-3 space-y-4">
+                      {/* Depreciation Override */}
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-3">
+                          <div className="text-sm">
+                            <span className="text-slate-500">Depreciation:</span>
+                            <span className={`ml-2 font-semibold ${improvement.depreciationOverride !== undefined ? 'text-amber-600' : 'text-slate-700'}`}>
+                              {improvement.depreciationOverride !== undefined ? improvement.depreciationOverride : depreciationPct}%
+                            </span>
+                            {improvement.depreciationOverride !== undefined && (
+                              <span className="ml-1 text-xs text-amber-500">(override)</span>
+                            )}
+                          </div>
+                          
+                          {/* Toggle pill - not a checkbox */}
+                          <button
+                            type="button"
+                            onClick={() => {
+                              if (improvement.depreciationOverride !== undefined) {
+                                // Turn off override
+                                updateImprovement(improvement.id, { 
+                                  depreciationOverride: undefined, 
+                                  depreciationOverrideReason: undefined 
+                                });
+                              } else {
+                                // Turn on override with current calculated value
+                                updateImprovement(improvement.id, { 
+                                  depreciationOverride: depreciationPct 
+                                });
+                              }
+                            }}
+                            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-medium transition-all ${
+                              improvement.depreciationOverride !== undefined
+                                ? 'border-amber-400 bg-amber-50 text-amber-700'
+                                : 'border-slate-200 text-slate-400 hover:border-slate-300 hover:text-slate-500'
+                            }`}
+                          >
+                            <PenLine className="w-3 h-3" />
+                            Override
+                          </button>
+                        </div>
+                        
+                        {/* Override inputs - slide open when active */}
+                        {improvement.depreciationOverride !== undefined && (
+                          <div className="p-3 bg-amber-50 rounded-lg border border-amber-200 space-y-3">
+                            <div className="flex items-center gap-2">
+                              <label className="text-xs font-medium text-amber-700">Override %</label>
+                              <input
+                                type="number"
+                                min="0"
+                                max="100"
+                                className="w-20 px-3 py-1.5 border border-amber-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-400 focus:border-transparent"
+                                value={improvement.depreciationOverride}
+                                onChange={(e) => updateImprovement(improvement.id, { 
+                                  depreciationOverride: e.target.value ? Number(e.target.value) : 0 
+                                })}
+                              />
+                              <span className="text-xs text-amber-600">
+                                (calculated: {depreciationPct}%)
+                              </span>
+                            </div>
+                            <EnhancedTextArea
+                              label="Override Reason"
+                              value={improvement.depreciationOverrideReason || ''}
+                              onChange={(v) => updateImprovement(improvement.id, { depreciationOverrideReason: v })}
+                              placeholder="Explain the rationale for this depreciation override..."
+                              sectionContext="depreciation_override"
+                              rows={3}
+                            />
+                          </div>
+                        )}
+                      </div>
+                      
+                      {/* Notes */}
                       <ExpandableNote
                         id={`site_improvement_${improvement.id}_notes`}
                         label={`Notes for ${improvement.typeName}`}

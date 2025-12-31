@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { ChevronLeft, ChevronRight, Camera } from 'lucide-react';
-import type { PhotoData } from '../pages/SubjectDataPage';
+import type { PhotoData } from '../types';
 
 interface PhotoLivePreviewProps {
   photos: Record<string, PhotoData | null>;
