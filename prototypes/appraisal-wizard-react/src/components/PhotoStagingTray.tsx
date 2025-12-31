@@ -175,10 +175,21 @@ function StagingPhotoCard({
         )}
 
         {photo.status === 'error' && (
-          <div className="flex items-center gap-1.5 text-xs text-red-600">
-            <AlertCircle className="w-3.5 h-3.5" />
-            <span>Classification failed</span>
-          </div>
+          <>
+            <div className="flex items-center gap-1.5 text-xs text-red-600 mb-2">
+              <AlertCircle className="w-3.5 h-3.5" />
+              <span>Classification failed</span>
+            </div>
+            
+            {/* Manual assignment picker for failed classifications */}
+            <VisualSlotPicker
+              value={undefined}
+              onChange={(slotId) => onAssign(slotId)}
+              usedSlots={usedSlots}
+              suggestedSlotId={undefined}
+              photoPreview={photo.preview}
+            />
+          </>
         )}
 
         {photo.status === 'classified' && (
