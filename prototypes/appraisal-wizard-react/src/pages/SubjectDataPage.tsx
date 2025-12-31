@@ -665,6 +665,7 @@ export default function SubjectDataPage() {
             setWestBoundary={setWestBoundary}
             latitude={wizardState.subjectData?.coordinates?.latitude}
             longitude={wizardState.subjectData?.coordinates?.longitude}
+            cadastralData={wizardState.subjectData?.cadastralData}
             // Traffic Data
             trafficData={trafficData}
             setTrafficData={setTrafficData}
@@ -1028,6 +1029,11 @@ interface SiteProps {
   // Coordinates for map
   latitude?: number;
   longitude?: number;
+  // Cadastral data for boundary display
+  cadastralData?: {
+    parcelId?: string;
+    legalDescription?: string;
+  };
   // Traffic Data
   trafficData: TrafficDataEntry[];
   setTrafficData: (data: TrafficDataEntry[]) => void;
@@ -1175,6 +1181,7 @@ function SiteContent({
   eastBoundary, setEastBoundary,
   westBoundary, setWestBoundary,
   latitude, longitude,
+  cadastralData,
   // Traffic Data
   trafficData, setTrafficData,
   selectedRoadClass, setSelectedRoadClass,
@@ -1312,7 +1319,8 @@ Overall, the site is well-suited for its current use and presents no significant
         onWestBoundaryChange={setWestBoundary}
         latitude={latitude}
         longitude={longitude}
-        dataSource="manual"
+        dataSource={cadastralData?.parcelId ? 'cadastral' : 'manual'}
+        parcelId={cadastralData?.parcelId}
       />
 
       {/* External Data Integration - Traffic & Permits */}

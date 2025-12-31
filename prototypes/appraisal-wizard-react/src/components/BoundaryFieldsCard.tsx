@@ -37,6 +37,9 @@ interface BoundaryFieldsCardProps {
   /** Optional: cadastral/parcel data source indicator */
   dataSource?: 'cadastral' | 'manual' | 'cotality' | null;
   
+  /** Optional: parcel ID from cadastral data */
+  parcelId?: string;
+  
   /** Optional: callback when user requests boundary data refresh */
   onRefreshBoundaries?: () => void;
   isRefreshing?: boolean;
@@ -83,6 +86,7 @@ export function BoundaryFieldsCard({
   latitude,
   longitude,
   dataSource,
+  parcelId,
   onRefreshBoundaries,
   isRefreshing = false,
 }: BoundaryFieldsCardProps) {
@@ -289,8 +293,18 @@ export function BoundaryFieldsCard({
             </div>
           </div>
           <div className="px-3 py-2 bg-slate-50 text-[10px] text-slate-500 flex items-center gap-1">
-            <AlertCircle className="w-3 h-3" />
-            Boundary overlay requires Cadastral API integration
+            {dataSource === 'cadastral' && parcelId ? (
+              <>
+                <div className="w-2 h-2 rounded-full bg-green-500" />
+                <span className="text-green-700">Cadastral data connected</span>
+                <span className="text-slate-400 ml-1">• Parcel: {parcelId}</span>
+              </>
+            ) : (
+              <>
+                <AlertCircle className="w-3 h-3" />
+                Boundary overlay will display when Cadastral data is available
+              </>
+            )}
           </div>
         </div>
       )}
