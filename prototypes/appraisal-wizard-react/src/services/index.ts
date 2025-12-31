@@ -97,3 +97,18 @@ export {
   formatCostSegPercent,
   type GenerateCostSegInput,
 } from './costSegregationService';
+
+// SWOT Suggestion Service
+export {
+  generateSWOTSuggestions,
+  convertToSimpleSWOT,
+} from './swotSuggestionService';
+
+// Walk Score Service
+export {
+  getWalkScore,
+  isWalkScoreConfigured,
+  isWalkScoreRelevant,
+  getWalkScoreDescription,
+  interpretWalkScoreForSWOT,
+} from './walkScoreService';

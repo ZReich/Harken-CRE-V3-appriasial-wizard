@@ -23,6 +23,7 @@ import RiskRatingPanel from '../components/RiskRatingPanel';
 import { Info, ArrowLeft, Save, FileCheck, CheckCircle, Sparkles, Loader2, FileText, Shield, Calculator } from 'lucide-react';
 import { CostSegOverview } from '../features/cost-segregation/components/CostSegOverview';
 import { generateCostSegAnalysis } from '../services/costSegregationService';
+import { generateSWOTSuggestions, convertToSimpleSWOT } from '../services/swotSuggestionService';
 import type { CostSegAnalysis } from '../types';
 import type { ReportState, ReportStateActions } from '../features/report-preview/hooks/useReportState';
 import { useFinalizeFlow } from '../features/report-preview/hooks/useFinalizeFlow';
@@ -1065,38 +1066,43 @@ We considered alternative uses including renovation, conversion to alternative u
               data={swotData}
               onChange={handleSwotChange}
               onGenerateSuggestions={async () => {
-                // Generate AI suggestions based on property data
-                const propertyType = state.propertyType || 'commercial';
-                const location = state.subjectData?.address?.city || 'the area';
-                
-                // Component health-based weaknesses and threats
-                const componentWeaknesses = componentHealth.weaknesses.map(issue => issue.suggestion);
-                const componentThreats = componentHealth.threats.map(issue => issue.suggestion);
-                
-                // Simulated AI-generated suggestions + component health issues
-                return {
-                  strengths: [
-                    `Prime location in ${location} with excellent visibility`,
-                    `Modern construction with quality finishes`,
-                    `Strong tenant demand in the local market`,
-                  ],
-                  weaknesses: [
-                    ...componentWeaknesses,
-                    `Limited on-site parking relative to building size`,
-                    `Single-tenant configuration may limit marketability`,
-                  ],
-                  opportunities: [
-                    `Growing ${propertyType} market in the region`,
-                    `Potential for rent increases at lease renewal`,
-                    `Expansion potential on excess land area`,
-                  ],
-                  threats: [
-                    ...componentThreats,
-                    `Rising interest rates may impact cap rates`,
-                    `New competitive supply under construction`,
-                    `Economic uncertainty in the broader market`,
-                  ],
-                };
+                try {
+                  // Generate intelligent SWOT suggestions from wizard state data
+                  const enhancedSuggestions = await generateSWOTSuggestions({
+                    propertyType: state.propertyType,
+                    subjectData: state.subjectData,
+                    demographicsData: state.demographicsData,
+                    economicIndicators: state.economicIndicators,
+                    improvementsInventory: state.improvementsInventory,
+                    marketAnalysis: state.marketAnalysis,
+                    riskRating: state.riskRating,
+                  });
+                  
+                  // Convert to simple string arrays for the component
+                  const simpleSuggestions = convertToSimpleSWOT(enhancedSuggestions);
+                  
+                  // Add component health-based weaknesses and threats
+                  const componentWeaknesses = componentHealth?.weaknesses?.map(issue => issue.suggestion) || [];
+                  const componentThreats = componentHealth?.threats?.map(issue => issue.suggestion) || [];
+                  
+                  return {
+                    strengths: simpleSuggestions.strengths,
+                    weaknesses: [...simpleSuggestions.weaknesses, ...componentWeaknesses],
+                    opportunities: simpleSuggestions.opportunities,
+                    threats: [...simpleSuggestions.threats, ...componentThreats],
+                    dataCompleteness: enhancedSuggestions.dataCompleteness,
+                    impactScore: enhancedSuggestions.impactScore,
+                  };
+                } catch (error) {
+                  console.error('[SWOT] Error generating suggestions:', error);
+                  // Fallback to empty suggestions on error
+                  return {
+                    strengths: [],
+                    weaknesses: componentHealth?.weaknesses?.map(issue => issue.suggestion) || [],
+                    opportunities: [],
+                    threats: componentHealth?.threats?.map(issue => issue.suggestion) || [],
+                  };
+                }
               }}
             />
           </div>

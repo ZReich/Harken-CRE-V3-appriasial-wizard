@@ -781,6 +781,76 @@ export interface SWOTAnalysisData {
   summary: string;
 }
 
+// =================================================================
+// ENHANCED SWOT TYPES (Data-Driven Analysis)
+// =================================================================
+
+export type SWOTCategory = 'location' | 'market' | 'physical' | 'financial' | 'regulatory' | 'environmental';
+export type SWOTConfidence = 'high' | 'medium' | 'low';
+export type SWOTQuadrant = 'strength' | 'weakness' | 'opportunity' | 'threat';
+
+/**
+ * Enhanced SWOT item with metadata for intelligent analysis
+ */
+export interface SWOTItem {
+  id: string;
+  text: string;
+  category: SWOTCategory;
+  confidence: SWOTConfidence;
+  source: string;           // e.g., "Demographics Data", "Site Details", "Walk Score API"
+  sourceField?: string;     // e.g., "subjectData.frontage", "demographicsData.medianIncome"
+  isAISuggested: boolean;
+  isUserAdded: boolean;
+  impact?: 'high' | 'medium' | 'low';  // How much this affects the property value
+  propertyTypeRelevance?: string[];    // Which property types this is relevant for
+}
+
+/**
+ * Enhanced SWOT data structure with intelligence features
+ */
+export interface EnhancedSWOTData {
+  strengths: SWOTItem[];
+  weaknesses: SWOTItem[];
+  opportunities: SWOTItem[];
+  threats: SWOTItem[];
+  summary: string;
+  impactScore: number;      // -100 (all threats) to +100 (all strengths)
+  lastAnalyzed?: string;    // ISO date of last AI analysis
+  propertyType?: string;    // Property type this was analyzed for
+  dataCompleteness: number; // 0-100% how much source data was available
+}
+
+/**
+ * Walk Score API response type
+ */
+export interface WalkScoreResponse {
+  walkscore: number;         // 0-100
+  walkscoreDescription: string;
+  transitScore?: number;     // 0-100
+  transitDescription?: string;
+  bikeScore?: number;        // 0-100
+  bikeDescription?: string;
+  logo_url?: string;
+  snappedLat?: number;
+  snappedLon?: number;
+}
+
+/**
+ * Property-type specific SWOT rules
+ */
+export interface PropertyTypeSWOTRules {
+  propertyType: string;
+  relevantFactors: {
+    location: string[];      // e.g., ['visibility', 'frontage', 'access']
+    physical: string[];      // e.g., ['clearHeight', 'dockDoors', 'sprinklers']
+    market: string[];        // e.g., ['vacancyRate', 'rentGrowth']
+    financial: string[];     // e.g., ['capRate', 'NOI']
+  };
+  externalAPIs: string[];    // e.g., ['walkScore', 'transitScore'] or ['truckRoutes']
+  strengthThresholds: Record<string, number>;   // e.g., { frontage: 200 } means > 200ft is a strength
+  weaknessThresholds: Record<string, number>;   // e.g., { frontage: 50 } means < 50ft is a weakness
+}
+
 export type RiskGrade = 'AAA' | 'AA' | 'A' | 'BBB' | 'BB' | 'B' | 'CCC' | 'CC' | 'C';
 
 export interface RiskDimensionScore {

@@ -3,13 +3,18 @@
  * 
  * Displays the SWOT analysis in a professional four-quadrant layout
  * for the appraisal report.
+ * 
+ * Enhanced with:
+ * - Better visual hierarchy
+ * - Item categorization support
+ * - Professional formatting for print
  */
 
 import React from 'react';
-import type { SWOTData } from '../../../../components/SWOTAnalysis';
+import type { SWOTAnalysisData } from '../../../../types';
 
 interface SWOTPageProps {
-  data: SWOTData;
+  data: SWOTAnalysisData;
   pageNumber?: number;
 }
 
@@ -19,22 +24,36 @@ interface QuadrantProps {
   bgColor: string;
   borderColor: string;
   headerColor: string;
+  bulletColor: string;
+  iconSymbol: string;
 }
 
-const Quadrant: React.FC<QuadrantProps> = ({ title, items, bgColor, borderColor, headerColor }) => (
-  <div className={`${bgColor} rounded-lg border ${borderColor} overflow-hidden`}>
-    <div className={`${headerColor} px-4 py-2`}>
-      <h3 className="font-semibold text-white text-sm">{title}</h3>
+const Quadrant: React.FC<QuadrantProps> = ({ 
+  title, 
+  items, 
+  bgColor, 
+  borderColor, 
+  headerColor,
+  bulletColor,
+  iconSymbol
+}) => (
+  <div className={`${bgColor} rounded-lg border ${borderColor} overflow-hidden h-full`}>
+    <div className={`${headerColor} px-4 py-2.5 flex items-center gap-2`}>
+      <span className="text-lg">{iconSymbol}</span>
+      <h3 className="font-semibold text-white text-sm tracking-wide">{title}</h3>
+      <span className="ml-auto text-white/70 text-xs font-medium">
+        ({items.length})
+      </span>
     </div>
     <div className="p-4">
       {items.length === 0 ? (
-        <p className="text-sm text-slate-400 italic">No items identified</p>
+        <p className="text-sm text-slate-400 italic py-2">No items identified</p>
       ) : (
-        <ul className="space-y-2">
+        <ul className="space-y-2.5">
           {items.map((item, idx) => (
             <li key={idx} className="text-sm text-slate-700 flex items-start gap-2">
-              <span className="text-slate-400 mt-1">•</span>
-              <span>{item}</span>
+              <span className={`${bulletColor} mt-1.5 w-1.5 h-1.5 rounded-full shrink-0`} />
+              <span className="leading-relaxed">{item}</span>
             </li>
           ))}
         </ul>
@@ -56,6 +75,11 @@ export const SWOTPage: React.FC<SWOTPageProps> = ({ data, pageNumber }) => {
   }
 
   const { strengths, weaknesses, opportunities, threats, summary } = data;
+  
+  // Calculate counts for the summary
+  const totalItems = strengths.length + weaknesses.length + opportunities.length + threats.length;
+  const positiveItems = strengths.length + opportunities.length;
+  const negativeItems = weaknesses.length + threats.length;
 
   return (
     <div className="bg-white w-[8.5in] min-h-[11in] p-[1in] shadow-lg mx-auto relative">
@@ -65,14 +89,39 @@ export const SWOTPage: React.FC<SWOTPageProps> = ({ data, pageNumber }) => {
       </h1>
 
       {/* Introductory Text */}
-      <p className="text-sm text-slate-700 mb-6 leading-relaxed">
-        The following SWOT (Strengths, Weaknesses, Opportunities, Threats) analysis provides a strategic 
-        assessment of the subject property's competitive position in the market. This framework evaluates 
-        internal characteristics and external factors that may impact property value and investment potential.
-      </p>
+      <div className="mb-6">
+        <p className="text-sm text-slate-700 leading-relaxed">
+          The following SWOT (Strengths, Weaknesses, Opportunities, Threats) analysis provides a strategic 
+          assessment of the subject property's competitive position in the market. This framework evaluates 
+          internal characteristics and external factors that may impact property value and investment potential.
+        </p>
+        
+        {/* Stats Bar */}
+        {totalItems > 0 && (
+          <div className="mt-4 flex items-center gap-4 text-xs">
+            <div className="flex items-center gap-1.5 px-2 py-1 bg-slate-100 rounded">
+              <span className="text-slate-500">Total Factors:</span>
+              <span className="font-semibold text-slate-700">{totalItems}</span>
+            </div>
+            <div className="flex items-center gap-1.5 px-2 py-1 bg-emerald-50 rounded">
+              <span className="text-emerald-600">Positive:</span>
+              <span className="font-semibold text-emerald-700">{positiveItems}</span>
+            </div>
+            <div className="flex items-center gap-1.5 px-2 py-1 bg-red-50 rounded">
+              <span className="text-red-600">Negative:</span>
+              <span className="font-semibold text-red-700">{negativeItems}</span>
+            </div>
+          </div>
+        )}
+      </div>
 
-      {/* Four Quadrant Grid */}
+      {/* Four Quadrant Grid - Equal height rows */}
       <div className="grid grid-cols-2 gap-4 mb-8">
+        {/* Row 1: Strengths & Weaknesses (Internal) */}
+        <div className="text-center text-xs text-slate-400 font-medium col-span-2 pb-1">
+          INTERNAL FACTORS
+        </div>
+        
         {/* Strengths */}
         <Quadrant
           title="STRENGTHS"
@@ -80,6 +129,8 @@ export const SWOTPage: React.FC<SWOTPageProps> = ({ data, pageNumber }) => {
           bgColor="bg-emerald-50"
           borderColor="border-emerald-200"
           headerColor="bg-emerald-600"
+          bulletColor="bg-emerald-500"
+          iconSymbol="+"
         />
 
         {/* Weaknesses */}
@@ -89,7 +140,14 @@ export const SWOTPage: React.FC<SWOTPageProps> = ({ data, pageNumber }) => {
           bgColor="bg-red-50"
           borderColor="border-red-200"
           headerColor="bg-red-600"
+          bulletColor="bg-red-500"
+          iconSymbol="−"
         />
+
+        {/* Row 2: Opportunities & Threats (External) */}
+        <div className="text-center text-xs text-slate-400 font-medium col-span-2 pt-2 pb-1">
+          EXTERNAL FACTORS
+        </div>
 
         {/* Opportunities */}
         <Quadrant
@@ -98,6 +156,8 @@ export const SWOTPage: React.FC<SWOTPageProps> = ({ data, pageNumber }) => {
           bgColor="bg-blue-50"
           borderColor="border-blue-200"
           headerColor="bg-blue-600"
+          bulletColor="bg-blue-500"
+          iconSymbol="↑"
         />
 
         {/* Threats */}
@@ -107,19 +167,35 @@ export const SWOTPage: React.FC<SWOTPageProps> = ({ data, pageNumber }) => {
           bgColor="bg-amber-50"
           borderColor="border-amber-200"
           headerColor="bg-amber-600"
+          bulletColor="bg-amber-500"
+          iconSymbol="⚠"
         />
+      </div>
+
+      {/* Matrix Legend */}
+      <div className="bg-slate-50 rounded-lg p-3 mb-6 border border-slate-200">
+        <div className="grid grid-cols-2 gap-4 text-xs text-slate-600">
+          <div>
+            <span className="font-semibold text-slate-700">Internal Factors:</span>{' '}
+            Characteristics inherent to the property that can be controlled or influenced through ownership decisions.
+          </div>
+          <div>
+            <span className="font-semibold text-slate-700">External Factors:</span>{' '}
+            Market conditions and environmental factors outside the control of property ownership.
+          </div>
+        </div>
       </div>
 
       {/* Summary Section */}
       {summary && (
-        <>
-          <h2 className="text-lg font-semibold text-slate-800 border-b border-slate-300 pb-2 mb-4">
+        <div className="bg-gradient-to-r from-[#0da1c7]/5 to-transparent border-l-4 border-[#0da1c7] pl-4 py-3">
+          <h2 className="text-sm font-semibold text-slate-800 mb-2">
             Analysis Summary
           </h2>
           <p className="text-sm text-slate-700 leading-relaxed">
             {summary}
           </p>
-        </>
+        </div>
       )}
 
       {/* Page Number */}
@@ -133,5 +209,3 @@ export const SWOTPage: React.FC<SWOTPageProps> = ({ data, pageNumber }) => {
 };
 
 export default SWOTPage;
-
-
