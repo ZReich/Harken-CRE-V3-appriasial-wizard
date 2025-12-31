@@ -24,11 +24,11 @@ import EnhancedTextArea from './EnhancedTextArea';
 interface BuildingPermit {
   id: string;
   permitNumber: string;
-  permitType: 'new_construction' | 'addition' | 'alteration' | 'repair' | 'demolition' | 'other';
+  permitType: 'new_construction' | 'addition' | 'alteration' | 'repair' | 'demolition' | 'mechanical' | 'electrical' | 'plumbing' | 'other';
   description: string;
   issuedDate: string;
   completedDate?: string;
-  status: 'issued' | 'active' | 'completed' | 'expired' | 'cancelled';
+  status: 'issued' | 'active' | 'completed' | 'expired' | 'cancelled' | 'pending';
   estimatedValue?: number;
   actualValue?: number;
   contractor?: string;
@@ -54,7 +54,7 @@ interface BuildingPermitsCardProps {
   isRefreshing?: boolean;
   
   /** Data source indicator */
-  dataSource?: 'county' | 'cotality' | 'manual' | null;
+  dataSource?: 'county' | 'cotality' | 'manual' | 'mock' | null;
   lastUpdated?: string;
 }
 
@@ -227,6 +227,7 @@ export function BuildingPermitsCard({
       county: { label: 'County Records', color: 'bg-blue-100 text-blue-700' },
       cotality: { label: 'Cotality', color: 'bg-purple-100 text-purple-700' },
       manual: { label: 'Manual', color: 'bg-gray-100 text-gray-600' },
+      mock: { label: 'Estimated', color: 'bg-amber-100 text-amber-700' },
     };
     
     const badge = badges[dataSource];

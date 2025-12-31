@@ -50,7 +50,7 @@ interface TrafficDataCardProps {
   isRefreshing?: boolean;
   
   /** Whether data is from an external source */
-  dataSource?: 'mdot' | 'cotality' | 'manual' | null;
+  dataSource?: 'mdot' | 'cotality' | 'manual' | 'mock' | null;
   lastUpdated?: string;
 }
 
@@ -189,6 +189,7 @@ export function TrafficDataCard({
       mdot: { label: 'MDOT Data', color: 'bg-blue-100 text-blue-700' },
       cotality: { label: 'Cotality', color: 'bg-purple-100 text-purple-700' },
       manual: { label: 'Manual', color: 'bg-gray-100 text-gray-600' },
+      mock: { label: 'Estimated', color: 'bg-amber-100 text-amber-700' },
     };
     
     const badge = badges[dataSource];

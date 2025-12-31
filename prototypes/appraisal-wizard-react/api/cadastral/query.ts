@@ -2,8 +2,9 @@
  * Cadastral Query API Route
  * POST /api/cadastral/query
  * 
- * Queries property parcel data. For Montana, uses free state GIS.
- * For other states, returns mock data (Cotality integration pending).
+ * Queries property parcel data:
+ * - Montana: Uses free Montana DNRC/MSL GIS APIs
+ * - Other states: Uses Cotality (CoreLogic) API when configured, mock otherwise
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
@@ -14,6 +15,12 @@ import {
   isMontana,
 } from '../_lib/cadastral';
 import type { MontanaCadastralParcel } from '../_lib/cadastral';
+import {
+  queryCotalityByAddress,
+  queryCotalityByLocation,
+  mapCotalityToCadastral,
+  isCotalityConfigured,
+} from '../_lib/cotality';
 
 interface CadastralRequestBody {
   latitude?: number;
@@ -111,17 +118,52 @@ export default async function handler(
     const isMT = isMontana(effectiveState);
 
     if (!isMT) {
-      // For non-Montana properties, return mock data
-      // In production, this would call Cotality API
+      // For non-Montana properties, use Cotality API
+      console.log('[Cadastral] Non-Montana property, routing to Cotality');
+      
+      let cotalityResult;
+      
+      if (hasCoordinates) {
+        cotalityResult = await queryCotalityByLocation(latitude!, longitude!);
+      } else if (hasAddress) {
+        cotalityResult = await queryCotalityByAddress(address!, city!, effectiveState);
+      } else {
+        // ParcelId lookup not supported for Cotality, use address if available
+        const mockData = generateMockParcel(address, city, state, latitude, longitude);
+        mockData.totalAssessedValue = mockData.assessedLandValue + mockData.assessedImprovementValue;
+        return res.status(200).json({
+          success: true,
+          data: mockData,
+          source: 'mock',
+          message: 'Parcel ID lookup requires address or coordinates for Cotality',
+          error: null,
+        });
+      }
+      
+      if (cotalityResult.success && cotalityResult.data) {
+        const formattedData = mapCotalityToCadastral(cotalityResult.data);
+        return res.status(200).json({
+          success: true,
+          data: formattedData,
+          source: cotalityResult.source,
+          message: cotalityResult.source === 'cotality' 
+            ? 'Property data from Cotality (CoreLogic)'
+            : isCotalityConfigured() 
+              ? 'Cotality API error, showing estimated data'
+              : 'Cotality API not configured, showing estimated data',
+          error: cotalityResult.error || null,
+        });
+      }
+      
+      // Fallback to mock if Cotality fails completely
       const mockData = generateMockParcel(address, city, state, latitude, longitude);
       mockData.totalAssessedValue = mockData.assessedLandValue + mockData.assessedImprovementValue;
-
       return res.status(200).json({
         success: true,
         data: mockData,
         source: 'mock',
-        message: 'Non-Montana properties use mock data. Cotality integration pending.',
-        error: null,
+        message: 'Using estimated data. Cotality lookup failed.',
+        error: cotalityResult.error || null,
       });
     }
 

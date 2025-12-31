@@ -10,6 +10,8 @@ import WizardGuidancePanel from '../components/WizardGuidancePanel';
 import DemographicsPanel from '../components/DemographicsPanel';
 import { useWizard } from '../context/WizardContext';
 import type { SiteImprovement, PhotoData } from '../types';
+import { fetchTrafficData, type TrafficDataEntry as TrafficServiceEntry } from '../services/trafficService';
+import { fetchBuildingPermits, type BuildingPermitEntry as PermitServiceEntry } from '../services/permitsService';
 import { UsersIcon } from '../components/icons';
 import {
   LocationIcon,
@@ -284,11 +286,96 @@ export default function SubjectDataPage() {
   const [trafficData, setTrafficData] = useState<TrafficDataEntry[]>([]);
   const [selectedRoadClass, setSelectedRoadClass] = useState('all');
   const [trafficNotes, setTrafficNotes] = useState('');
+  const [isRefreshingTraffic, setIsRefreshingTraffic] = useState(false);
+  const [trafficDataSource, setTrafficDataSource] = useState<'mdot' | 'cotality' | 'manual' | 'mock' | null>(null);
   
   // Building Permits state (types defined at module level)
   const [permits, setPermits] = useState<BuildingPermitEntry[]>([]);
   const [selectedPermitType, setSelectedPermitType] = useState('all');
   const [permitNotes, setPermitNotes] = useState('');
+  const [isRefreshingPermits, setIsRefreshingPermits] = useState(false);
+  const [permitsDataSource, setPermitsDataSource] = useState<'county' | 'cotality' | 'manual' | 'mock' | null>(null);
+  
+  // Coordinates from wizard state
+  const latitude = wizardState.subjectData?.coordinates?.latitude;
+  const longitude = wizardState.subjectData?.coordinates?.longitude;
+  const propertyState = wizardState.subjectData?.address?.state;
+  
+  // Refresh traffic data from API
+  const handleRefreshTraffic = useCallback(async () => {
+    if (!latitude || !longitude) {
+      console.log('[Traffic] No coordinates available');
+      return;
+    }
+    
+    setIsRefreshingTraffic(true);
+    try {
+      const result = await fetchTrafficData(latitude, longitude, propertyState);
+      if (result.data && result.data.length > 0) {
+        // Map service types to local types
+        const mappedData: TrafficDataEntry[] = result.data.map(d => ({
+          roadName: d.roadName,
+          roadClass: d.roadClass,
+          annualAverageDailyTraffic: d.annualAverageDailyTraffic,
+          truckPercentage: d.truckPercentage,
+          speedLimit: d.speedLimit,
+          lanesCount: d.lanesCount,
+          distance: d.distance,
+          direction: d.direction,
+          year: d.year,
+        }));
+        setTrafficData(mappedData);
+        setTrafficDataSource(result.source === 'mdot' ? 'mdot' : result.source === 'mock' ? 'mock' : 'manual');
+      }
+    } catch (error) {
+      console.error('Failed to refresh traffic data:', error);
+    } finally {
+      setIsRefreshingTraffic(false);
+    }
+  }, [latitude, longitude, propertyState]);
+  
+  // Refresh permits data from API
+  const handleRefreshPermits = useCallback(async () => {
+    const address = wizardState.subjectData?.address;
+    if (!address?.street || !address?.city) {
+      console.log('[Permits] No address available');
+      return;
+    }
+    
+    setIsRefreshingPermits(true);
+    try {
+      const result = await fetchBuildingPermits({
+        address: address.street,
+        city: address.city,
+        state: address.state,
+        county: address.county,
+        parcelId: wizardState.subjectData?.cadastralData?.parcelId,
+      });
+      if (result.data) {
+        // Map service types to local types
+        const mappedData: BuildingPermitEntry[] = result.data.map(d => ({
+          id: d.id,
+          permitNumber: d.permitNumber,
+          permitType: d.permitType,
+          description: d.description,
+          issuedDate: d.issuedDate,
+          completedDate: d.completedDate,
+          status: d.status,
+          estimatedValue: d.estimatedValue,
+          actualValue: d.actualValue,
+          contractor: d.contractor,
+          inspectionsPassed: d.inspectionsPassed,
+          inspectionsRequired: d.inspectionsRequired,
+        }));
+        setPermits(mappedData);
+        setPermitsDataSource(result.source === 'county' ? 'county' : result.source === 'mock' ? 'mock' : 'manual');
+      }
+    } catch (error) {
+      console.error('Failed to refresh permit data:', error);
+    } finally {
+      setIsRefreshingPermits(false);
+    }
+  }, [wizardState.subjectData?.address, wizardState.subjectData?.cadastralData?.parcelId]);
 
   // Tax tab state (local - tax assessment details)
   const [taxYear, setTaxYear] = useState(new Date().getFullYear().toString());
@@ -680,6 +767,13 @@ export default function SubjectDataPage() {
             setSelectedPermitType={setSelectedPermitType}
             permitNotes={permitNotes}
             setPermitNotes={setPermitNotes}
+            // API refresh handlers
+            onRefreshTraffic={handleRefreshTraffic}
+            isRefreshingTraffic={isRefreshingTraffic}
+            trafficDataSource={trafficDataSource}
+            onRefreshPermits={handleRefreshPermits}
+            isRefreshingPermits={isRefreshingPermits}
+            permitsDataSource={permitsDataSource}
           />
         ) : activeTab === 'demographics' ? (
           <DemographicsContent 
@@ -1048,6 +1142,13 @@ interface SiteProps {
   setSelectedPermitType: (v: string) => void;
   permitNotes: string;
   setPermitNotes: (v: string) => void;
+  // API refresh handlers
+  onRefreshTraffic: () => void;
+  isRefreshingTraffic: boolean;
+  trafficDataSource: 'mdot' | 'cotality' | 'manual' | 'mock' | null;
+  onRefreshPermits: () => void;
+  isRefreshingPermits: boolean;
+  permitsDataSource: 'county' | 'cotality' | 'manual' | 'mock' | null;
 }
 
 // Traffic Data Entry type (for Site tab external integration)
@@ -1067,11 +1168,11 @@ interface TrafficDataEntry {
 interface BuildingPermitEntry {
   id: string;
   permitNumber: string;
-  permitType: 'new_construction' | 'addition' | 'alteration' | 'repair' | 'demolition' | 'other';
+  permitType: 'new_construction' | 'addition' | 'alteration' | 'repair' | 'demolition' | 'mechanical' | 'electrical' | 'plumbing' | 'other';
   description: string;
   issuedDate: string;
   completedDate?: string;
-  status: 'issued' | 'active' | 'completed' | 'expired' | 'cancelled';
+  status: 'issued' | 'active' | 'completed' | 'expired' | 'cancelled' | 'pending';
   estimatedValue?: number;
   actualValue?: number;
   contractor?: string;
@@ -1190,6 +1291,12 @@ function SiteContent({
   permits, setPermits,
   selectedPermitType, setSelectedPermitType,
   permitNotes, setPermitNotes,
+  onRefreshTraffic,
+  isRefreshingTraffic,
+  trafficDataSource,
+  onRefreshPermits,
+  isRefreshingPermits,
+  permitsDataSource,
 }: SiteProps) {
   // 1 acre = 43,560 square feet
   const SQFT_PER_ACRE = 43560;
@@ -1332,7 +1439,9 @@ Overall, the site is well-suited for its current use and presents no significant
           onRoadClassChange={setSelectedRoadClass}
           trafficNotes={trafficNotes}
           onTrafficNotesChange={setTrafficNotes}
-          dataSource={trafficData.length > 0 ? 'mdot' : null}
+          onRefresh={onRefreshTraffic}
+          isRefreshing={isRefreshingTraffic}
+          dataSource={trafficDataSource}
         />
         <BuildingPermitsCard
           permits={permits}
@@ -1341,7 +1450,9 @@ Overall, the site is well-suited for its current use and presents no significant
           onPermitTypeChange={setSelectedPermitType}
           permitNotes={permitNotes}
           onPermitNotesChange={setPermitNotes}
-          dataSource={permits.length > 0 ? 'county' : null}
+          onRefresh={onRefreshPermits}
+          isRefreshing={isRefreshingPermits}
+          dataSource={permitsDataSource}
         />
       </div>
 
