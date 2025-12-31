@@ -433,6 +433,7 @@ async function detectComponentsWithGPT4o(
   // TODO: Create a backend API endpoint for component detection similar to photo classification
   console.warn('Component detection is disabled - requires backend API endpoint');
   return [];
+}
 
 /**
  * Generate mock component detection based on photo slot
