@@ -137,10 +137,9 @@ export const PHOTO_SLOTS: PhotoSlotInfo[] = [
 // API CONFIGURATION
 // ==========================================
 
-// API Base URL - reserved for backend integration
-// const API_BASE_URL = import.meta.env.VITE_API_URL || '/api';
-const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_PHOTO_AI !== 'false';
-const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY || '';
+// API Base URL for backend integration
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
+const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_PHOTO_AI === 'true';
 
 // ==========================================
 // UTILITY FUNCTIONS
@@ -328,83 +327,33 @@ Respond in JSON format:
 
 async function classifyWithGPT4o(
   base64Image: string,
-  filename: string
+  filename: string,
+  usedSlots: Set<string> = new Set()
 ): Promise<PhotoClassificationSuggestion[]> {
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
+  const response = await fetch(`${API_BASE_URL}/photos/classify`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      'Authorization': `Bearer ${OPENAI_API_KEY}`,
     },
     body: JSON.stringify({
-      model: 'gpt-4o',
-      messages: [
-        {
-          role: 'user',
-          content: [
-            { type: 'text', text: `${CLASSIFICATION_PROMPT}\n\nFilename: ${filename}` },
-            {
-              type: 'image_url',
-              image_url: {
-                url: `data:image/jpeg;base64,${base64Image}`,
-                detail: 'low', // Use low detail for faster/cheaper classification
-              },
-            },
-          ],
-        },
-      ],
-      max_tokens: 300,
-      temperature: 0.3,
+      image: base64Image,
+      filename,
+      usedSlots: Array.from(usedSlots),
     }),
   });
 
   if (!response.ok) {
-    throw new Error(`OpenAI API error: ${response.status}`);
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.error || `API error: ${response.status}`);
   }
 
   const data = await response.json();
-  const content = data.choices[0]?.message?.content;
   
-  // Parse JSON from response
-  const jsonMatch = content.match(/\{[\s\S]*\}/);
-  if (!jsonMatch) {
-    throw new Error('Failed to parse AI response');
+  if (!data.success) {
+    throw new Error(data.error || 'Classification failed');
   }
   
-  const parsed = JSON.parse(jsonMatch[0]);
-  const suggestions: PhotoClassificationSuggestion[] = [];
-  
-  // Add primary suggestion
-  const primarySlot = PHOTO_SLOTS.find(s => s.id === parsed.primary_slot);
-  if (primarySlot) {
-    suggestions.push({
-      slotId: primarySlot.id,
-      slotLabel: primarySlot.label,
-      category: primarySlot.category,
-      categoryLabel: primarySlot.categoryLabel,
-      confidence: parsed.primary_confidence,
-      reasoning: parsed.primary_reasoning,
-    });
-  }
-  
-  // Add alternatives
-  if (parsed.alternatives) {
-    for (const alt of parsed.alternatives) {
-      const altSlot = PHOTO_SLOTS.find(s => s.id === alt.slot);
-      if (altSlot) {
-        suggestions.push({
-          slotId: altSlot.id,
-          slotLabel: altSlot.label,
-          category: altSlot.category,
-          categoryLabel: altSlot.categoryLabel,
-          confidence: alt.confidence,
-          reasoning: 'Alternative suggestion',
-        });
-      }
-    }
-  }
-  
-  return suggestions;
+  return data.suggestions || [];
 }
 
 // ==========================================
@@ -480,65 +429,10 @@ If no building components are visible, return {"components": []}`;
 async function detectComponentsWithGPT4o(
   base64Image: string
 ): Promise<DetectedBuildingComponent[]> {
-  const response = await fetch('https://api.openai.com/v1/chat/completions', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${OPENAI_API_KEY}`,
-    },
-    body: JSON.stringify({
-      model: 'gpt-4o',
-      messages: [
-        {
-          role: 'user',
-          content: [
-            { type: 'text', text: COMPONENT_DETECTION_PROMPT },
-            {
-              type: 'image_url',
-              image_url: {
-                url: `data:image/jpeg;base64,${base64Image}`,
-                detail: 'high', // Use high detail for component detection
-              },
-            },
-          ],
-        },
-      ],
-      max_tokens: 500,
-      temperature: 0.3,
-    }),
-  });
-
-  if (!response.ok) {
-    throw new Error(`OpenAI API error: ${response.status}`);
-  }
-
-  const data = await response.json();
-  const content = data.choices[0]?.message?.content;
-  
-  // Parse JSON from response
-  const jsonMatch = content.match(/\{[\s\S]*\}/);
-  if (!jsonMatch) {
-    return [];
-  }
-  
-  const parsed = JSON.parse(jsonMatch[0]);
-  const components: DetectedBuildingComponent[] = [];
-  
-  if (parsed.components && Array.isArray(parsed.components)) {
-    for (const comp of parsed.components) {
-      components.push({
-        componentTypeId: comp.id,
-        componentLabel: comp.label,
-        category: comp.category as ComponentDetectionCategory,
-        confidence: comp.confidence,
-        reasoning: comp.reasoning,
-        suggestedCondition: comp.condition,
-      });
-    }
-  }
-  
-  return components;
-}
+  // Note: Component detection still calls OpenAI directly for now
+  // TODO: Create a backend API endpoint for component detection similar to photo classification
+  console.warn('Component detection is disabled - requires backend API endpoint');
+  return [];
 
 /**
  * Generate mock component detection based on photo slot
@@ -671,11 +565,10 @@ export async function classifyPhoto(
     } else {
       // Real AI classification
       const base64 = await fileToBase64(file);
-      suggestions = await classifyWithGPT4o(base64, file.name);
+      suggestions = await classifyWithGPT4o(base64, file.name, usedSlots);
       metadata = await extractMetadata(file);
       
-      // Filter out already used slots
-      suggestions = suggestions.filter(s => !usedSlots.has(s.slotId));
+      // Suggestions are already filtered by the backend API
       
       // Optionally detect components
       if (options.detectComponents) {
