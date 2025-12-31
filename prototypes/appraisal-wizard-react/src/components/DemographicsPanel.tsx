@@ -9,7 +9,7 @@
  * - Data source indicator (ESRI vs Census)
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo, useCallback } from 'react';
 import { 
   Users, 
   Home, 
@@ -73,13 +73,16 @@ export function DemographicsPanel({
   const lat = Number(latitude);
   const lng = Number(longitude);
 
-  const normalizedRadii = (() => {
+  // Memoize radii to prevent infinite re-render loops
+  const radiiKey = radii?.join(',') || '';
+  const normalizedRadii = useMemo(() => {
     const list = (radii?.length ? radii : [1, 3, 5])
       .map((r) => Number(r))
       .filter((r) => Number.isFinite(r) && r > 0);
 
     return list.length > 0 ? list : [1, 3, 5];
-  })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [radiiKey]);
 
   const hasValidCoords = Number.isFinite(lat) && Number.isFinite(lng);
 
@@ -89,8 +92,8 @@ export function DemographicsPanel({
   const [error, setError] = useState<string | null>(null);
   const [mapType, setMapType] = useState<'satellite' | 'roadmap'>('satellite');
 
-  // Fetch demographics data
-  const fetchData = async () => {
+  // Fetch demographics data - memoized to prevent re-creation each render
+  const fetchData = useCallback(async () => {
     setIsLoading(true);
     setError(null);
 
@@ -121,7 +124,8 @@ export function DemographicsPanel({
     } finally {
       setIsLoading(false);
     }
-  };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lat, lng, radiiKey]);
 
   useEffect(() => {
     if (hasValidCoords) {
@@ -130,7 +134,7 @@ export function DemographicsPanel({
       setIsLoading(false);
       setError('Demographics requires a valid latitude/longitude.');
     }
-  }, [hasValidCoords, lat, lng, normalizedRadii.join(',')]);
+  }, [hasValidCoords, fetchData]);
 
   // Loading state
   if (isLoading) {

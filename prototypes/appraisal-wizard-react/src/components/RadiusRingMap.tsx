@@ -12,7 +12,7 @@
  * - Responsive sizing
  */
 
-import { useEffect, useRef, useState, useCallback } from 'react';
+import { useEffect, useRef, useState, useCallback, useMemo } from 'react';
 import { Map, Layers, Satellite } from 'lucide-react';
 
 // =================================================================
@@ -93,13 +93,16 @@ export function RadiusRingMap({
   const [isLoaded, setIsLoaded] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const normalizedRadii = (() => {
+  // Memoize radii to prevent infinite re-render loops
+  const radiiKey = radii?.join(',') || '';
+  const normalizedRadii = useMemo(() => {
     const list = (radii?.length ? radii : [1, 3, 5])
       .map((r) => Number(r))
       .filter((r) => Number.isFinite(r) && r > 0);
 
     return list.length > 0 ? list : [1, 3, 5];
-  })();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [radiiKey]);
 
   const hasValidCoords = Number.isFinite(lat) && Number.isFinite(lng);
 
@@ -259,7 +262,8 @@ export function RadiusRingMap({
     // Mark as initialized
     isInitializedRef.current = true;
 
-  }, [lat, lng, normalizedRadii, mapType]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [lat, lng, radiiKey, mapType]);
 
   // Initialize map when Google Maps is loaded
   useEffect(() => {
