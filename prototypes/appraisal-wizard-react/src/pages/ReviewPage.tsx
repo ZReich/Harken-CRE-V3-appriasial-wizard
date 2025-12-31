@@ -70,9 +70,6 @@ function triggerCelebration() {
 // =================================================================
 
 function SuccessScreen({ onCreateAnother, onViewReport }: { onCreateAnother: () => void; onViewReport: () => void }) {
-  // #region agent log
-  fetch('http://127.0.0.1:7242/ingest/27f3cde2-a2b4-4da7-bb14-08e6bc7cf5dd',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ReviewPage.tsx:65',message:'SuccessScreen rendering',data:{},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H9'})}).catch(()=>{});
-  // #endregion
   return (
     <div className="flex items-center justify-center h-full">
       <div className="text-center animate-fade-in">
@@ -292,9 +289,6 @@ export default function ReviewPage() {
 
   // Handler to receive report state from ReportEditor
   const handleReportStateChange = useCallback((state: ReportState, actions: ReportStateActions) => {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/27f3cde2-a2b4-4da7-bb14-08e6bc7cf5dd',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ReviewPage.tsx:274',message:'handleReportStateChange called',data:{isDirty:state.isDirty,editedFieldsCount:Object.keys(state.editedFields).length},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1'})}).catch(()=>{});
-    // #endregion
     reportStateRef.current = state;
     reportActionsRef.current = actions;
     setEditorIsDirty(state.isDirty); // Update state to trigger re-renders
@@ -378,18 +372,12 @@ export default function ReviewPage() {
 
   // Handler for starting the finalize flow
   const handleFinalize = useCallback(() => {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/27f3cde2-a2b4-4da7-bb14-08e6bc7cf5dd',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ReviewPage.tsx:358',message:'handleFinalize called',data:{editorIsDirty,currentStage:finalizeState.stage},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1-H2'})}).catch(()=>{});
-    // #endregion
     // Start the finalize flow - it will check for unsaved changes
     finalizeActions.startFinalize();
   }, [finalizeActions, editorIsDirty, finalizeState.stage]);
 
   // Handle successful finalization
   const handleFinalizeComplete = useCallback(() => {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/27f3cde2-a2b4-4da7-bb14-08e6bc7cf5dd',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ReviewPage.tsx:363',message:'handleFinalizeComplete called',data:{},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H9'})}).catch(()=>{});
-    // #endregion
     setIsFinalized(true);
     setShowPreviewMode(false);
     triggerCelebration(); // Keep existing confetti
@@ -410,10 +398,6 @@ export default function ReviewPage() {
     const prevStage = prevStageRef.current;
     const currentStage = finalizeState.stage;
     prevStageRef.current = currentStage;
-    
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/27f3cde2-a2b4-4da7-bb14-08e6bc7cf5dd',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ReviewPage.tsx:380',message:'Stage change detected',data:{prevStage,currentStage,error:finalizeState.error},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H7'})}).catch(()=>{});
-    // #endregion
     
     // Show toast when saving template completes (moved from saving-template to finalize-dialog)
     if (prevStage === 'saving-template' && currentStage === 'finalize-dialog' && finalizeState.savedTemplateId) {
@@ -893,10 +877,6 @@ We considered alternative uses including renovation, conversion to alternative u
       )}
     </div>
   );
-
-  // #region agent log
-  fetch('http://127.0.0.1:7242/ingest/27f3cde2-a2b4-4da7-bb14-08e6bc7cf5dd',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ReviewPage.tsx:684',message:'ReviewPage render state',data:{showPreviewMode,isFinalized,showReadyToPreview,stage:finalizeState.stage},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H9'})}).catch(()=>{});
-  // #endregion
   
   // If in full-screen preview mode, render just the preview
   if (showPreviewMode) {

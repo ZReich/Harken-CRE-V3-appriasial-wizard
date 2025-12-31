@@ -232,9 +232,6 @@ export function useFinalizeFlow(options?: FinalizeFlowOptions): [FinalizeFlowSta
 
   // Confirm and execute finalize
   const confirmFinalize = useCallback(async () => {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/27f3cde2-a2b4-4da7-bb14-08e6bc7cf5dd',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'useFinalizeFlow.ts:234',message:'confirmFinalize started',data:{},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H6'})}).catch(()=>{});
-    // #endregion
     setState(prev => ({ ...prev, stage: 'generating', isProcessing: true }));
     
     try {
@@ -243,10 +240,6 @@ export function useFinalizeFlow(options?: FinalizeFlowOptions): [FinalizeFlowSta
       
       // Find the report preview element
       const reportElement = document.querySelector('.report-preview-content') as HTMLElement | null;
-      
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/27f3cde2-a2b4-4da7-bb14-08e6bc7cf5dd',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'useFinalizeFlow.ts:244',message:'PDF support check',data:{clientSide:support.clientSide,print:support.print,hasElement:!!reportElement},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H6'})}).catch(()=>{});
-      // #endregion
       
       if (support.clientSide && reportElement) {
         try {
@@ -258,10 +251,6 @@ export function useFinalizeFlow(options?: FinalizeFlowOptions): [FinalizeFlowSta
             quality: 'high',
           });
           
-          // #region agent log
-          fetch('http://127.0.0.1:7242/ingest/27f3cde2-a2b4-4da7-bb14-08e6bc7cf5dd',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'useFinalizeFlow.ts:258',message:'PDF download completed successfully',data:{},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H6'})}).catch(()=>{});
-          // #endregion
-          
           setState(prev => ({
             ...prev,
             stage: 'complete',
@@ -271,10 +260,6 @@ export function useFinalizeFlow(options?: FinalizeFlowOptions): [FinalizeFlowSta
         } catch (html2pdfError) {
           // html2canvas/html2pdf may fail with unsupported CSS features like oklch colors
           // Fall back to print-to-PDF
-          // #region agent log
-          fetch('http://127.0.0.1:7242/ingest/27f3cde2-a2b4-4da7-bb14-08e6bc7cf5dd',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'useFinalizeFlow.ts:270',message:'html2pdf failed, falling back to print',data:{error:html2pdfError instanceof Error ? html2pdfError.message : String(html2pdfError)},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H6'})}).catch(()=>{});
-          // #endregion
-          
           if (support.print) {
             try {
               printToPDF(reportElement);
@@ -306,9 +291,6 @@ export function useFinalizeFlow(options?: FinalizeFlowOptions): [FinalizeFlowSta
         throw new Error('PDF generation is not supported in this browser. Please try Chrome or Firefox.');
       }
     } catch (error) {
-      // #region agent log
-      fetch('http://127.0.0.1:7242/ingest/27f3cde2-a2b4-4da7-bb14-08e6bc7cf5dd',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'useFinalizeFlow.ts:272',message:'confirmFinalize error caught',data:{errorMessage:error instanceof Error ? error.message : String(error)},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H6'})}).catch(()=>{});
-      // #endregion
       setState(prev => ({
         ...prev,
         stage: 'error',
@@ -320,9 +302,6 @@ export function useFinalizeFlow(options?: FinalizeFlowOptions): [FinalizeFlowSta
 
   // Cancel finalize
   const cancelFinalize = useCallback(() => {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/27f3cde2-a2b4-4da7-bb14-08e6bc7cf5dd',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'useFinalizeFlow.ts:295',message:'cancelFinalize called',data:{},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H8'})}).catch(()=>{});
-    // #endregion
     setState(prev => ({ ...prev, stage: 'idle' }));
   }, []);
 

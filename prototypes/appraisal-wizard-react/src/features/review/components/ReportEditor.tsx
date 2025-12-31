@@ -2177,12 +2177,6 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
     reportId
   );
   const [showRecoveryDialog, setShowRecoveryDialog] = useState(hasRecoveryData);
-  
-  // #region agent log
-  useEffect(() => {
-    fetch('http://127.0.0.1:7242/ingest/27f3cde2-a2b4-4da7-bb14-08e6bc7cf5dd',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ReportEditor.tsx:2175',message:'Recovery state on mount',data:{hasRecoveryData,showRecoveryDialog,versionsCount:versions.length,reportId},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H5'})}).catch(()=>{});
-  }, []);
-  // #endregion
 
   const previewRef = useRef<HTMLDivElement>(null);
   const [selectedElement, setSelectedElement] = useState<string | null>(null);
@@ -2282,10 +2276,6 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
   useEffect(() => {
     if (!isApplyingUndoRedo.current) return;
     
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/27f3cde2-a2b4-4da7-bb14-08e6bc7cf5dd',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ReportEditor.tsx:2271',message:'Applying undo/redo state',data:{editedContentKeys:Object.keys(contentHistoryState.editedContent),stylingKeys:Object.keys(contentHistoryState.styling)},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H4'})}).catch(()=>{});
-    // #endregion
-    
     // Apply the content from history state
     // First revert all, then re-apply from history
     reportActions.revertAllFields();
@@ -2349,9 +2339,6 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
 
   // Expose report state to parent components
   useEffect(() => {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/27f3cde2-a2b4-4da7-bb14-08e6bc7cf5dd',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'ReportEditor.tsx:2337',message:'onReportStateChange effect fired',data:{isDirty:reportState.isDirty,hasCallback:!!onReportStateChange},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H1'})}).catch(()=>{});
-    // #endregion
     onReportStateChange?.(reportState, reportActions);
   }, [reportState, reportActions, onReportStateChange]);
 

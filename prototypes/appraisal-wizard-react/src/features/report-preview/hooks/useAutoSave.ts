@@ -116,9 +116,6 @@ export function useAutoSave(
 
   // Perform the save operation
   const performSave = useCallback(async (description: string = 'Auto-saved') => {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/27f3cde2-a2b4-4da7-bb14-08e6bc7cf5dd',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'useAutoSave.ts:118',message:'performSave called',data:{description,versionsCount:state.versions.length},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H3'})}).catch(()=>{});
-    // #endregion
     const currentData = getData();
     const dataString = JSON.stringify(currentData);
     

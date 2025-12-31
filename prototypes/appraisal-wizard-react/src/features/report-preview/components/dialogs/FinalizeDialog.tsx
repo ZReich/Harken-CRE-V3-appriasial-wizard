@@ -26,19 +26,10 @@ export const FinalizeDialog: React.FC<FinalizeDialogProps> = ({
   const [error, setError] = useState<string | null>(null);
   // Track how PDF was generated (downloaded directly vs print dialog)
   const [completionMethod, setCompletionMethod] = useState<CompletionMethod>(null);
-
-  // #region agent log
-  if (isOpen) {
-    fetch('http://127.0.0.1:7242/ingest/27f3cde2-a2b4-4da7-bb14-08e6bc7cf5dd',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'FinalizeDialog.tsx:31',message:'FinalizeDialog render',data:{isOpen,step,hasUnsavedChanges},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H2'})}).catch(()=>{});
-  }
-  // #endregion
   
   if (!isOpen) return null;
 
   const handleFinalize = async () => {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/27f3cde2-a2b4-4da7-bb14-08e6bc7cf5dd',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'FinalizeDialog.tsx:38',message:'handleFinalize called',data:{currentStep:step},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H8'})}).catch(()=>{});
-    // #endregion
     setStep('processing');
     setProgress(0);
     setError(null);
@@ -80,9 +71,6 @@ export const FinalizeDialog: React.FC<FinalizeDialogProps> = ({
   };
 
   const handleClose = () => {
-    // #region agent log
-    fetch('http://127.0.0.1:7242/ingest/27f3cde2-a2b4-4da7-bb14-08e6bc7cf5dd',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({location:'FinalizeDialog.tsx:79',message:'handleClose called',data:{currentStep:step},timestamp:Date.now(),sessionId:'debug-session',hypothesisId:'H8'})}).catch(()=>{});
-    // #endregion
     setStep('confirm');
     setProgress(0);
     setError(null);
