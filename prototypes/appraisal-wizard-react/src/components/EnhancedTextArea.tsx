@@ -38,6 +38,8 @@ interface EnhancedTextAreaProps {
   required?: boolean;
   minHeight?: number;
   contextData?: Record<string, any>; // Additional context for AI generation
+  additionalContext?: Record<string, any>; // Additional context data to pass to AI
+  aiInstructions?: string; // Custom instructions for AI generation
 }
 
 interface AIPreview {
@@ -57,6 +59,19 @@ const SimulatedAIDrafts: Record<string, string> = {
   'improvement_description': '<b><u>IMPROVEMENT DESCRIPTION</u></b>\n\nThe subject improvements consist of a single-story industrial warehouse building constructed in 2019. The building features a steel frame with metal panel exterior walls and a standing seam metal roof. The structure provides approximately 11,174 square feet of gross building area, including warehouse space with 24-foot clear heights.',
   
   'hbu_analysis': '<b><u>HIGHEST AND BEST USE CONCLUSION</u></b>\n\nBased on analysis of the four tests of highest and best use, the subject site as vacant would be developed with industrial/warehouse use. This conclusion is supported by: (1) Legal permissibility under the I1-Light Industrial zoning; (2) Physical possibility given the level topography; (3) Financial feasibility based on current market demand; and (4) Maximum productivity compared to alternative uses.',
+  
+  'swot_summary_analysis': `<b><u>SWOT ANALYSIS SUMMARY</u></b>
+
+The subject property exhibits a balanced risk-return profile with notable competitive advantages tempered by specific operational considerations. The property's strengths—including favorable zoning, well-maintained improvements in good to excellent condition, and strong market positioning—provide a solid foundation for sustained performance. These attributes enhance marketability and support stable cash flows, positioning the asset favorably within its competitive set.
+
+However, several weaknesses warrant attention. Limited walkability may reduce property desirability in market segments where pedestrian accessibility is valued. Additionally, the concrete slab and building envelope components are approaching the end of their useful economic lives, with significant depreciation already recognized. These factors introduce near-term capital expenditure requirements that must be incorporated into hold-period projections and budgetary planning.
+
+From an opportunity perspective, strong rent growth of 3.2% signals robust demand fundamentals and appreciation potential. Improving market conditions with positive price outlooks further support value enhancement strategies. The property is well-positioned to capture upside through strategic lease renewals and potential operational improvements.
+
+Threat analysis reveals elevated liquidity and asset quality risk scores (70/100 and 80/100 respectively), which require investor consideration and may influence required returns. The approaching replacement needs for roof membrane systems (TPO installed 1989) and window components (LVP/LVT with approximately 3 years remaining useful life) represent material capital obligations that will impact near-term cash flows. These deferred maintenance items, if not addressed proactively, could accelerate depreciation and negatively affect tenant retention.
+
+Overall, the property presents a defensible investment opportunity for operators capable of managing near-term capital requirements while capitalizing on favorable market momentum. The combination of strong operational fundamentals and identifiable risks suggests appropriate pricing should reflect both value-creation potential and capital replacement obligations inherent in the asset's current condition and market positioning.`,
+  
   'reconciliation': `<b><u>VALUE RECONCILIATION</u></b>
 
 In reconciling the value indications from the applicable valuation approaches, I have given primary emphasis to the Income Approach, which indicates a value reflective of investor decision-making for income-producing properties. This approach is considered most reliable because income-producing properties like the subject are typically purchased by investors who base their acquisition decisions on anticipated income and return requirements. The income data utilized reflects actual operating history and market-supported assumptions.
@@ -417,6 +432,8 @@ export default function EnhancedTextArea({
   required = false,
   minHeight: propMinHeight,
   contextData,
+  additionalContext,
+  aiInstructions,
 }: EnhancedTextAreaProps) {
   const editorRef = useRef<HTMLDivElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -484,12 +501,18 @@ export default function EnhancedTextArea({
         apiContext = contextData as AIGenerationContext;
       }
       
+      // Merge additional context if provided
+      if (additionalContext) {
+        apiContext = { ...apiContext, ...additionalContext };
+      }
+      
       // Try to call the backend API using the new AI service
       try {
         const content = await generateAIDraft(
           sectionContext,
           apiContext,
-          value || undefined  // Pass existing text for improvement
+          value || undefined,  // Pass existing text for improvement
+          aiInstructions || undefined  // Pass custom instructions if provided
         );
         
         if (content) {

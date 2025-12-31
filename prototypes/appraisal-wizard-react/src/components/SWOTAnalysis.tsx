@@ -27,6 +27,7 @@ import {
   Minus,
   Database
 } from 'lucide-react';
+import EnhancedTextArea from './EnhancedTextArea';
 
 export interface SWOTData {
   strengths: string[];
@@ -451,25 +452,34 @@ export function SWOTAnalysis({
         />
       </div>
 
-      {/* Summary */}
-      <div className="bg-white rounded-xl border border-slate-200 p-4">
-        <label className="block text-sm font-medium text-slate-700 mb-2">
-          Summary / Analysis Notes
-        </label>
-        {readOnly ? (
+      {/* Summary / Analysis Notes */}
+      {!readOnly ? (
+        <EnhancedTextArea
+          label="Summary / Analysis Notes"
+          value={data.summary}
+          onChange={(newSummary) => onChange({ ...data, summary: newSummary })}
+          placeholder="Synthesize the SWOT analysis into a cohesive narrative assessing the subject property's competitive position..."
+          sectionContext="swot_summary_analysis"
+          minHeight={120}
+          additionalContext={{
+            strengths: data.strengths,
+            weaknesses: data.weaknesses,
+            opportunities: data.opportunities,
+            threats: data.threats,
+            totalItems: data.strengths.length + data.weaknesses.length + data.opportunities.length + data.threats.length,
+          }}
+          aiInstructions="Write a comprehensive SWOT analysis summary in the voice of a 30-year veteran commercial real estate appraiser. Synthesize all identified strengths, weaknesses, opportunities, and threats into a cohesive 2-3 paragraph narrative. Assess the subject property's overall competitive position in the market. Discuss how the strengths can be leveraged, how weaknesses might be mitigated, what opportunities exist for value enhancement, and what threats require monitoring. Conclude with an overall assessment of the property's market positioning and investment outlook. Use professional appraisal terminology and maintain an objective, analytical tone appropriate for a formal appraisal report."
+        />
+      ) : (
+        <div className="bg-white rounded-xl border border-slate-200 p-4">
+          <label className="block text-sm font-medium text-slate-700 mb-2">
+            Summary / Analysis Notes
+          </label>
           <p className="text-sm text-slate-600">
             {data.summary || 'No summary provided.'}
           </p>
-        ) : (
-          <textarea
-            value={data.summary}
-            onChange={(e) => onChange({ ...data, summary: e.target.value })}
-            placeholder="Summarize the key takeaways from the SWOT analysis..."
-            rows={3}
-            className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent resize-none"
-          />
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 }

@@ -58,6 +58,7 @@ export const AI_SECTIONS = {
   MARKET_ANALYSIS: 'market_analysis',
   RECONCILIATION: 'reconciliation',
   IMPROVEMENT_DESCRIPTION: 'improvement_description',
+  SWOT_SUMMARY_ANALYSIS: 'swot_summary_analysis',
 } as const;
 
 export type AISectionType = typeof AI_SECTIONS[keyof typeof AI_SECTIONS];
