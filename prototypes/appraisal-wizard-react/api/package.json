@@ -1,5 +1,9 @@
 {
-  "type": "commonjs"
+  "type": "commonjs",
+  "dependencies": {
+    "node-fetch": "^2.7.0",
+    "@vercel/node": "^3.2.0"
+  }
 }
 
 
