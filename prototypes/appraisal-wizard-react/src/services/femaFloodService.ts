@@ -26,6 +26,10 @@ export interface FloodZoneResult {
   baseFloodElevation?: number;
   /** Static flood map image URL */
   mapImageUrl?: string;
+  /** FEMA official lookup URL for verification */
+  femaLookupUrl?: string;
+  /** Whether the zone has been verified via FEMA API */
+  isVerified?: boolean;
   /** Full zone details */
   details: FloodZoneDetails;
 }

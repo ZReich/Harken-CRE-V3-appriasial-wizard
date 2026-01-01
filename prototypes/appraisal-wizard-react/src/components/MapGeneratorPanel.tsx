@@ -27,7 +27,9 @@ import {
   ChevronUp,
   Trash2,
   Download,
-  Eye
+  Eye,
+  AlertTriangle,
+  ExternalLink
 } from 'lucide-react';
 import { useWizard } from '../context/WizardContext';
 import { 
@@ -372,7 +374,31 @@ export function MapGeneratorPanel({
 
           {/* Flood Zone Info Card */}
           {floodZoneData && (
-            <div className="border border-slate-200 rounded-lg p-4 bg-gradient-to-r from-cyan-50 to-blue-50">
+            <div className={`border rounded-lg p-4 ${
+              floodZoneData.isVerified === false 
+                ? 'border-amber-300 bg-gradient-to-r from-amber-50 to-orange-50' 
+                : 'border-slate-200 bg-gradient-to-r from-cyan-50 to-blue-50'
+            }`}>
+              {/* Verification Warning */}
+              {floodZoneData.isVerified === false && (
+                <div className="flex items-center gap-2 mb-3 pb-3 border-b border-amber-200">
+                  <AlertTriangle className="w-4 h-4 text-amber-600" />
+                  <span className="text-sm text-amber-700 font-medium">
+                    Flood zone needs verification
+                  </span>
+                  {floodZoneData.femaLookupUrl && (
+                    <a 
+                      href={floodZoneData.femaLookupUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="ml-auto flex items-center gap-1 px-3 py-1 bg-amber-600 text-white text-xs font-medium rounded-lg hover:bg-amber-700 transition-colors"
+                    >
+                      <ExternalLink className="w-3 h-3" />
+                      Verify on FEMA
+                    </a>
+                  )}
+                </div>
+              )}
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3">
                   <div 
@@ -387,15 +413,17 @@ export function MapGeneratorPanel({
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="font-bold text-slate-800">
-                        Zone {floodZoneData.floodZone}
+                        {floodZoneData.isVerified === false ? 'Zone TBD' : `Zone ${floodZoneData.floodZone}`}
                       </span>
-                      <span className={`px-2 py-0.5 rounded text-xs font-medium ${
-                        floodZoneData.insuranceRequired 
-                          ? 'bg-red-100 text-red-700' 
-                          : 'bg-green-100 text-green-700'
-                      }`}>
-                        {floodZoneData.insuranceRequired ? 'Insurance Required' : 'Insurance Optional'}
-                      </span>
+                      {floodZoneData.isVerified !== false && (
+                        <span className={`px-2 py-0.5 rounded text-xs font-medium ${
+                          floodZoneData.insuranceRequired 
+                            ? 'bg-red-100 text-red-700' 
+                            : 'bg-green-100 text-green-700'
+                        }`}>
+                          {floodZoneData.insuranceRequired ? 'Insurance Required' : 'Insurance Optional'}
+                        </span>
+                      )}
                     </div>
                     <p className="text-sm text-slate-600 mt-0.5">
                       {floodZoneData.zoneDescription}
@@ -403,7 +431,7 @@ export function MapGeneratorPanel({
                   </div>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4 mt-3 pt-3 border-t border-slate-200">
+              <div className="grid grid-cols-2 gap-4 mt-3 pt-3 border-t border-slate-200/50">
                 <div>
                   <span className="text-xs text-slate-500">Panel Number</span>
                   <p className="text-sm font-medium text-slate-700">{floodZoneData.panelNumber}</p>
