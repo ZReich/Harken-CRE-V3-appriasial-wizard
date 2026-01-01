@@ -245,10 +245,11 @@ export async function extractTextFromFile(file: File): Promise<string> {
       console.log('[DocumentExtraction] Loading pdfjs-dist...');
       const pdfjsLib = await import('pdfjs-dist');
       
-      // Use unpkg CDN which auto-resolves versions, or use a known working version
-      // Using version 3.11.174 which is known to work on unpkg
-      pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.js`;
-      console.log(`[DocumentExtraction] PDF.js worker source set to unpkg version ${pdfjsLib.version}`);
+      // Import the worker from the package itself (best for Vite/Webpack bundling)
+      // This avoids CDN CORS issues and version mismatches
+      const pdfjsWorker = await import('pdfjs-dist/build/pdf.worker.min.mjs?url');
+      pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker.default;
+      console.log('[DocumentExtraction] PDF.js worker loaded from package bundle');
       
       const arrayBuffer = await file.arrayBuffer();
       console.log(`[DocumentExtraction] File loaded, size: ${arrayBuffer.byteLength} bytes`);
