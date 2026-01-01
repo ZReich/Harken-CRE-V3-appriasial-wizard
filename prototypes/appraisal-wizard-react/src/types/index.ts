@@ -524,6 +524,42 @@ export interface DocumentExtractionState {
 }
 
 // =================================================================
+// FIELD SUGGESTION TYPES (Accept/Reject UI)
+// =================================================================
+
+/**
+ * Source type for field suggestions.
+ */
+export type FieldSuggestionSource = 'document' | 'montana_gis' | 'cotality' | 'manual';
+
+/**
+ * Status of a field suggestion.
+ */
+export type FieldSuggestionStatus = 'pending' | 'accepted' | 'rejected';
+
+/**
+ * A pending field suggestion that requires user confirmation.
+ */
+export interface FieldSuggestion {
+  value: string;
+  confidence: number;
+  source: FieldSuggestionSource;
+  sourceFilename?: string;
+  sourceDocumentType?: string;
+  status: FieldSuggestionStatus;
+  rejectedSources: string[]; // Track which sources have been rejected
+  createdAt: string;
+}
+
+/**
+ * State for tracking field suggestions across the wizard.
+ */
+export interface FieldSuggestionsState {
+  suggestions: Record<string, FieldSuggestion>; // key = field path
+  acceptedFields: Record<string, FieldSuggestionSource>; // field path -> source that was accepted
+}
+
+// =================================================================
 // OWNER TYPES
 // =================================================================
 
@@ -1097,6 +1133,10 @@ export interface WizardState {
   // Document Field Source Tracking
   documentFieldSources: Record<string, ExtractedFieldSource>;
   
+  // Field Suggestions (Accept/Reject UI)
+  fieldSuggestions: Record<string, FieldSuggestion>;
+  acceptedFields: Record<string, FieldSuggestionSource>;
+  
   // Owners
   owners: Owner[];
   
@@ -1211,6 +1251,11 @@ export type WizardAction =
   | { type: 'SET_REPORT_PHOTOS'; payload: ReportPhotosData }
   | { type: 'SET_HBU_ANALYSIS'; payload: HBUAnalysis }
   | { type: 'SET_MARKET_ANALYSIS'; payload: MarketAnalysisData }
+  // Field Suggestion Actions
+  | { type: 'ADD_FIELD_SUGGESTION'; payload: { fieldPath: string; suggestion: FieldSuggestion } }
+  | { type: 'ACCEPT_FIELD_SUGGESTION'; payload: { fieldPath: string; value: string } }
+  | { type: 'REJECT_FIELD_SUGGESTION'; payload: { fieldPath: string } }
+  | { type: 'CLEAR_FIELD_SUGGESTIONS' }
   | { type: 'RESET' };
 
 // =================================================================

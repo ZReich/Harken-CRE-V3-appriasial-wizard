@@ -10,6 +10,7 @@ import WizardGuidancePanel from '../components/WizardGuidancePanel';
 import DemographicsPanel from '../components/DemographicsPanel';
 import { useWizard } from '../context/WizardContext';
 import { DocumentSourceIndicator, getDocumentSourceInputClasses } from '../components/DocumentSourceIndicator';
+import { FieldSuggestion } from '../components/FieldSuggestion';
 import type { SiteImprovement, PhotoData } from '../types';
 import { fetchTrafficData, type TrafficDataEntry as TrafficServiceEntry } from '../services/trafficService';
 import { fetchBuildingPermits, type BuildingPermitEntry as PermitServiceEntry } from '../services/permitsService';
@@ -1299,8 +1300,8 @@ function SiteContent({
   isRefreshingPermits,
   permitsDataSource,
 }: SiteProps) {
-  // Get field source tracking from wizard context
-  const { hasFieldSource } = useWizard();
+  // Get field source tracking and suggestion helpers from wizard context
+  const { hasFieldSource, hasPendingFieldSuggestion, acceptFieldSuggestion, rejectFieldSuggestion } = useWizard();
   
   // 1 acre = 43,560 square feet
   const SQFT_PER_ACRE = 43560;
@@ -1372,6 +1373,16 @@ Overall, the site is well-suited for its current use and presents no significant
               }`}
               placeholder="0.000"
             />
+            {hasPendingFieldSuggestion('subjectData.siteArea') && (
+              <FieldSuggestion
+                fieldPath="subjectData.siteArea"
+                onAccept={(value) => {
+                  handleAcresChange(value);
+                  acceptFieldSuggestion('subjectData.siteArea', value);
+                }}
+                onReject={() => rejectFieldSuggestion('subjectData.siteArea')}
+              />
+            )}
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -1483,6 +1494,16 @@ Overall, the site is well-suited for its current use and presents no significant
               }`}
               placeholder="e.g., I1 - Light Industrial"
             />
+            {hasPendingFieldSuggestion('subjectData.zoningClass') && (
+              <FieldSuggestion
+                fieldPath="subjectData.zoningClass"
+                onAccept={(value) => {
+                  setZoningClass(value);
+                  acceptFieldSuggestion('subjectData.zoningClass', value);
+                }}
+                onReject={() => rejectFieldSuggestion('subjectData.zoningClass')}
+              />
+            )}
           </div>
 
           <EnhancedTextArea

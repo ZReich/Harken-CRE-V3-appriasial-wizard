@@ -120,7 +120,7 @@ const ALL_TABS = ['land', 'market', 'sales', 'multifamily', 'income', 'cost'];
 export default function AnalysisPage() {
   const [activeTab, setActiveTab] = useState('sales');
   const [analysisMode, setAnalysisMode] = useState<'standard' | 'residual'>('standard');
-  const { state, setIncomeApproachData, hasImprovements } = useWizard();
+  const { state, setIncomeApproachData, hasImprovements, setEconomicIndicators } = useWizard();
 
   // Get the active scenario
   const activeScenario = useMemo(() => {
@@ -648,6 +648,10 @@ export default function AnalysisPage() {
             {/* Economic Indicators Panel - Plan Part 4.2 */}
             <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
               <EconomicIndicatorsPanel 
+                onDataLoaded={(data) => {
+                  // Save economic data to wizard state for report generation
+                  setEconomicIndicators(data);
+                }}
                 onChartStyleChange={(style) => {
                   // Save chart style to wizard state for report generation
                   console.log('Chart style changed to:', style);

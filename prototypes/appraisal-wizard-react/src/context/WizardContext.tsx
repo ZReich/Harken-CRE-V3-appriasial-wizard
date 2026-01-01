@@ -1,5 +1,5 @@
 import { createContext, useContext, useReducer, useEffect, useCallback, ReactNode } from 'react';
-import type { WizardState, WizardAction, ImprovementsInventory, Owner, ExtractedData, UploadedDocument, IncomeApproachState, ReconciliationData, CelebrationState, SubjectData, PreviewEditsPayload, StagingPhoto, CoverPhotoData, SiteImprovement, CostApproachOverrides, ExtractedFieldSource } from '../types';
+import type { WizardState, WizardAction, ImprovementsInventory, Owner, ExtractedData, UploadedDocument, IncomeApproachState, ReconciliationData, CelebrationState, SubjectData, PreviewEditsPayload, StagingPhoto, CoverPhotoData, SiteImprovement, CostApproachOverrides, ExtractedFieldSource, FieldSuggestion, FieldSuggestionSource } from '../types';
 import { createDefaultInventory } from '../contracts/improvements';
 import { getSectionSchema } from '../constants/completionSchema';
 import { getNestedValue, isFilled, setNestedValue } from '../utils/stateHelpers';
@@ -101,6 +101,8 @@ const getInitialState = (): WizardState => {
     extractedData: {},
     uploadedDocuments: [],
     documentFieldSources: {},
+    fieldSuggestions: {},
+    acceptedFields: {},
     owners: [
       { id: 'owner_1', name: '', ownershipType: 'individual', percentage: 100 }
     ],
@@ -183,6 +185,9 @@ const getInitialState = (): WizardState => {
         },
         // Preserve documentFieldSources from storage
         documentFieldSources: parsedState.documentFieldSources || {},
+        // Preserve field suggestions from storage
+        fieldSuggestions: parsedState.fieldSuggestions || {},
+        acceptedFields: parsedState.acceptedFields || {},
       };
     } catch (e) {
       console.warn('Failed to parse stored wizard state');
@@ -708,6 +713,78 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
           marketAnalysis: action.payload,
         };
 
+      // Field Suggestion Actions
+      case 'ADD_FIELD_SUGGESTION': {
+        const { fieldPath, suggestion } = action.payload;
+        return {
+          ...state,
+          fieldSuggestions: {
+            ...state.fieldSuggestions,
+            [fieldPath]: suggestion,
+          },
+        };
+      }
+
+      case 'ACCEPT_FIELD_SUGGESTION': {
+        const { fieldPath, value } = action.payload;
+        const suggestion = state.fieldSuggestions[fieldPath];
+        
+        if (!suggestion) return state;
+        
+        // Update the suggestion status to accepted
+        const updatedSuggestions = {
+          ...state.fieldSuggestions,
+          [fieldPath]: {
+            ...suggestion,
+            status: 'accepted' as const,
+          },
+        };
+        
+        // Track that this field was accepted from this source
+        const updatedAcceptedFields = {
+          ...state.acceptedFields,
+          [fieldPath]: suggestion.source,
+        };
+        
+        // Apply the value to the wizard state
+        let updatedState = setNestedValue(state, fieldPath, value);
+        
+        return {
+          ...updatedState,
+          fieldSuggestions: updatedSuggestions,
+          acceptedFields: updatedAcceptedFields,
+        };
+      }
+
+      case 'REJECT_FIELD_SUGGESTION': {
+        const { fieldPath } = action.payload;
+        const suggestion = state.fieldSuggestions[fieldPath];
+        
+        if (!suggestion) return state;
+        
+        // Update the suggestion status to rejected and track the rejected source
+        const updatedSuggestions = {
+          ...state.fieldSuggestions,
+          [fieldPath]: {
+            ...suggestion,
+            status: 'rejected' as const,
+            rejectedSources: [...(suggestion.rejectedSources || []), suggestion.source],
+          },
+        };
+        
+        return {
+          ...state,
+          fieldSuggestions: updatedSuggestions,
+        };
+      }
+
+      case 'CLEAR_FIELD_SUGGESTIONS':
+        return {
+          ...state,
+          fieldSuggestions: {},
+          acceptedFields: {},
+        };
+
       case 'RESET':
         return getInitialState();
 
@@ -754,6 +831,16 @@ interface WizardContextValue {
   getFieldSource: (fieldPath: string) => ExtractedFieldSource | undefined;
   hasFieldSource: (fieldPath: string) => boolean;
   clearDocumentFieldSources: () => void;
+  
+  // Field suggestion helpers (Accept/Reject UI)
+  addFieldSuggestion: (fieldPath: string, suggestion: Omit<FieldSuggestion, 'createdAt'>) => void;
+  acceptFieldSuggestion: (fieldPath: string, value: string) => void;
+  rejectFieldSuggestion: (fieldPath: string) => void;
+  getFieldSuggestion: (fieldPath: string) => FieldSuggestion | undefined;
+  hasFieldSuggestion: (fieldPath: string) => boolean;
+  hasPendingFieldSuggestion: (fieldPath: string) => boolean;
+  isFieldAccepted: (fieldPath: string) => boolean;
+  clearFieldSuggestions: () => void;
   
   // Subject data helpers
   setSubjectData: (data: Partial<SubjectData>) => void;
@@ -964,6 +1051,58 @@ export function WizardProvider({ children }: { children: ReactNode }) {
 
   const clearDocumentFieldSources = useCallback(() => {
     dispatch({ type: 'CLEAR_DOCUMENT_FIELD_SOURCES' });
+  }, []);
+
+  // Field suggestion helpers (Accept/Reject UI)
+  const addFieldSuggestion = useCallback((
+    fieldPath: string,
+    suggestion: Omit<FieldSuggestion, 'createdAt'>
+  ) => {
+    dispatch({
+      type: 'ADD_FIELD_SUGGESTION',
+      payload: {
+        fieldPath,
+        suggestion: {
+          ...suggestion,
+          createdAt: new Date().toISOString(),
+        },
+      },
+    });
+  }, []);
+
+  const acceptFieldSuggestion = useCallback((fieldPath: string, value: string) => {
+    dispatch({
+      type: 'ACCEPT_FIELD_SUGGESTION',
+      payload: { fieldPath, value },
+    });
+  }, []);
+
+  const rejectFieldSuggestion = useCallback((fieldPath: string) => {
+    dispatch({
+      type: 'REJECT_FIELD_SUGGESTION',
+      payload: { fieldPath },
+    });
+  }, []);
+
+  const getFieldSuggestion = useCallback((fieldPath: string): FieldSuggestion | undefined => {
+    return state.fieldSuggestions?.[fieldPath];
+  }, [state.fieldSuggestions]);
+
+  const hasFieldSuggestion = useCallback((fieldPath: string): boolean => {
+    return !!state.fieldSuggestions?.[fieldPath];
+  }, [state.fieldSuggestions]);
+
+  const hasPendingFieldSuggestion = useCallback((fieldPath: string): boolean => {
+    const suggestion = state.fieldSuggestions?.[fieldPath];
+    return suggestion?.status === 'pending';
+  }, [state.fieldSuggestions]);
+
+  const isFieldAccepted = useCallback((fieldPath: string): boolean => {
+    return !!state.acceptedFields?.[fieldPath];
+  }, [state.acceptedFields]);
+
+  const clearFieldSuggestions = useCallback(() => {
+    dispatch({ type: 'CLEAR_FIELD_SUGGESTIONS' });
   }, []);
 
   // Subject data helpers
@@ -1392,6 +1531,15 @@ export function WizardProvider({ children }: { children: ReactNode }) {
         getFieldSource,
         hasFieldSource,
         clearDocumentFieldSources,
+        // Field suggestions (Accept/Reject UI)
+        addFieldSuggestion,
+        acceptFieldSuggestion,
+        rejectFieldSuggestion,
+        getFieldSuggestion,
+        hasFieldSuggestion,
+        hasPendingFieldSuggestion,
+        isFieldAccepted,
+        clearFieldSuggestions,
         setSubjectData,
         getSubjectData,
         addOwner,

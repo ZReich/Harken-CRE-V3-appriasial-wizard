@@ -7,6 +7,7 @@ import GooglePlacesAutocomplete, { type PlaceDetails } from '../components/Googl
 import { useWizard } from '../context/WizardContext';
 import { Trash2, Plus, Lock, Search, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
 import { DocumentSourceIndicator, getDocumentSourceInputClasses } from '../components/DocumentSourceIndicator';
+import { FieldSuggestion } from '../components/FieldSuggestion';
 import type { CadastralData } from '../types/api';
 import { getPropertyData, getLookupCostInfo, type PropertyLookupResult } from '../services/propertyDataRouter';
 import {
@@ -284,7 +285,7 @@ const scenarioNameOptions = [
 // MAIN COMPONENT
 // ==========================================
 export default function SetupPage() {
-  const { state: wizardState, addOwner, updateOwner, removeOwner, setScenarios: syncScenariosToContext, setPropertyType: syncPropertyType, setSubjectData, hasFieldSource } = useWizard();
+  const { state: wizardState, addOwner, updateOwner, removeOwner, setScenarios: syncScenariosToContext, setPropertyType: syncPropertyType, setSubjectData, hasFieldSource, hasPendingFieldSuggestion, acceptFieldSuggestion, rejectFieldSuggestion } = useWizard();
   const [activeTab, setActiveTab] = useState('basics');
   
   // Track which fields are locked (pre-filled from extraction)
@@ -1702,6 +1703,16 @@ export default function SetupPage() {
               helperText="Include lot, block, subdivision, section, township and range information. For multi-parcel properties, additional legal descriptions can be entered in Subject Data > Improvements."
               fieldPath="subjectData.legalDescription"
             />
+            {hasPendingFieldSuggestion('subjectData.legalDescription') && (
+              <FieldSuggestion
+                fieldPath="subjectData.legalDescription"
+                onAccept={(value) => {
+                  setLegalDescription(value);
+                  acceptFieldSuggestion('subjectData.legalDescription', value);
+                }}
+                onReject={() => rejectFieldSuggestion('subjectData.legalDescription')}
+              />
+            )}
           </div>
         </div>
       </div>
@@ -1828,6 +1839,16 @@ export default function SetupPage() {
               } ${getDocumentSourceInputClasses(hasFieldSource('subjectData.taxId'))}`}
               placeholder="Enter tax ID..."
             />
+            {hasPendingFieldSuggestion('subjectData.taxId') && (
+              <FieldSuggestion
+                fieldPath="subjectData.taxId"
+                onAccept={(value) => {
+                  setTaxId(value);
+                  acceptFieldSuggestion('subjectData.taxId', value);
+                }}
+                onReject={() => rejectFieldSuggestion('subjectData.taxId')}
+              />
+            )}
             <p className="text-xs text-gray-400 mt-1">
               This is the primary parcel. Additional parcels can be added in Subject Data &gt; Improvements.
             </p>

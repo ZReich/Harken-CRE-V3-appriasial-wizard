@@ -58,6 +58,7 @@ import {
   getFieldLabel,
   getConfidenceColorClasses,
 } from '../services/documentExtraction';
+import { DOCUMENT_FIELD_MAPPINGS, type DocumentType as MappingDocumentType } from '../config/documentFieldMappings';
 
 // ==========================================
 // TYPES
@@ -355,7 +356,7 @@ export default function DocumentIntakePage() {
     setCoverPhoto,
     removeCoverPhoto,
     setReportPhotos,
-    applyDocumentExtractedData,
+    addFieldSuggestion,
   } = useWizard();
   const fileInputRef = useRef<HTMLInputElement>(null);
   
@@ -510,30 +511,50 @@ export default function DocumentIntakePage() {
           } : d
         ));
 
-        // Auto-populate wizard fields from extracted data
+        // Create field suggestions for user to Accept/Reject
         if (result.extraction.success && result.extraction.data) {
           console.log('[DocumentIntake] ✓ Extraction successful for', doc.file.name);
           console.log('[DocumentIntake] Extracted data:', result.extraction.data);
           console.log('[DocumentIntake] Document type:', result.classification.documentType);
           
-          const fields: Record<string, { value: string; confidence: number }> = {};
-          for (const [key, field] of Object.entries(result.extraction.data)) {
-            if (field.value) {
-              fields[key] = { value: field.value, confidence: field.confidence };
-              console.log(`[DocumentIntake] Adding field: ${key} = "${field.value}" (confidence: ${field.confidence})`);
-            } else {
-              console.log(`[DocumentIntake] Skipping field: ${key} (no value)`);
+          // Get field mappings for this document type
+          const docType = result.classification.documentType as MappingDocumentType;
+          const mappings = DOCUMENT_FIELD_MAPPINGS[docType] || DOCUMENT_FIELD_MAPPINGS.unknown;
+          
+          let suggestionsCreated = 0;
+          for (const [extractedField, fieldData] of Object.entries(result.extraction.data)) {
+            if (!fieldData.value) {
+              console.log(`[DocumentIntake] Skipping field: ${extractedField} (no value)`);
+              continue;
             }
+            
+            // Find the wizard path for this extracted field
+            const mapping = mappings.find(m => m.extractedField === extractedField);
+            if (!mapping) {
+              console.log(`[DocumentIntake] No mapping for field: ${extractedField}`);
+              continue;
+            }
+            
+            // Transform value if transformer exists
+            const value = mapping.transform 
+              ? mapping.transform(fieldData.value) 
+              : fieldData.value;
+            
+            // Create a pending suggestion for user to Accept/Reject
+            console.log(`[DocumentIntake] Creating suggestion: ${mapping.wizardPath} = "${value}" (confidence: ${fieldData.confidence})`);
+            addFieldSuggestion(mapping.wizardPath, {
+              value,
+              confidence: fieldData.confidence,
+              source: 'document',
+              sourceFilename: doc.file.name,
+              sourceDocumentType: result.classification.documentType,
+              status: 'pending',
+              rejectedSources: [],
+            });
+            suggestionsCreated++;
           }
           
-          console.log('[DocumentIntake] Applying', Object.keys(fields).length, 'fields to wizard state');
-          applyDocumentExtractedData(
-            doc.id,
-            doc.file.name,
-            result.classification.documentType,
-            fields
-          );
-          console.log('[DocumentIntake] ✓ Document data applied to wizard');
+          console.log('[DocumentIntake] ✓ Created', suggestionsCreated, 'field suggestions for user review');
         } else {
           console.warn('[DocumentIntake] ⚠ Extraction failed or no data for', doc.file.name);
           if (result.extraction.error) {
