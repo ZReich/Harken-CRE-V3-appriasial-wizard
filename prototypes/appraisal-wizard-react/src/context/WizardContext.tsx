@@ -181,6 +181,8 @@ const getInitialState = (): WizardState => {
           ...defaultState.celebration,
           ...(parsedState.celebration || {}),
         },
+        // Preserve documentFieldSources from storage
+        documentFieldSources: parsedState.documentFieldSources || {},
       };
     } catch (e) {
       console.warn('Failed to parse stored wizard state');

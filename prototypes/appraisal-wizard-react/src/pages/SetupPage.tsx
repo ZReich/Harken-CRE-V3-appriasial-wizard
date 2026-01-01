@@ -1700,6 +1700,7 @@ export default function SetupPage() {
               rows={4}
               sectionContext="legal_description"
               helperText="Include lot, block, subdivision, section, township and range information. For multi-parcel properties, additional legal descriptions can be entered in Subject Data > Improvements."
+              fieldPath="subjectData.legalDescription"
             />
           </div>
         </div>

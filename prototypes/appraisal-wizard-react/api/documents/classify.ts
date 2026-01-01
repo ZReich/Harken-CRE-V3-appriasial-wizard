@@ -1,8 +1,8 @@
 /**
  * Document Classification API Endpoint
  * 
- * Classifies appraisal documents using pdf-parse for text extraction
- * and OpenAI GPT for intelligent document type classification.
+ * Classifies appraisal documents using OpenAI GPT for intelligent document type classification.
+ * Text extraction is done client-side before calling this endpoint.
  * 
  * Uses the same proven pattern as Harken's main application.
  */

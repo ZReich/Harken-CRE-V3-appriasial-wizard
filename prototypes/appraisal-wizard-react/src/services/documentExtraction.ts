@@ -123,7 +123,7 @@ export interface ClassificationResult {
 // EXTRACTION TYPES
 // ==========================================
 export interface ExtractedField {
-  value: string | null;
+  value: string;
   confidence: number;
   edited?: boolean;
   source?: string; // Which document this came from
@@ -254,7 +254,10 @@ export async function extractTextFromFile(file: File): Promise<string> {
         const page = await pdf.getPage(i);
         const textContent = await page.getTextContent();
         const pageText = textContent.items
-          .map((item: { str?: string }) => item.str || '')
+          .map((item: any) => {
+            // TextItem has 'str' property, TextMarkedContent doesn't
+            return 'str' in item ? item.str : '';
+          })
           .join(' ');
         fullText += pageText + '\n\n';
       }
@@ -418,22 +421,24 @@ export async function extractDocumentData(
       };
     }
 
-    // Transform the response to match our format
-    const extractedData: ExtractedData = {};
-    for (const [key, field] of Object.entries(data.fields || {})) {
-      const typedField = field as { value: string | null; confidence: number };
-      if (typedField.value !== null) {
-        extractedData[key] = {
-          value: typedField.value,
-          confidence: typedField.confidence,
-          source: file.name,
-        };
+    // Normalize confidence scores to 0-1 range
+    const normalizedFields: Record<string, ExtractedField> = {};
+    if (data.fields) {
+      for (const [key, field] of Object.entries(data.fields)) {
+        const typedField = field as { value: string | null; confidence: number };
+        if (typedField.value !== null && typedField.value !== undefined) {
+          normalizedFields[key] = {
+            value: typedField.value,
+            confidence: typedField.confidence > 1 ? typedField.confidence / 100 : typedField.confidence,
+            source: file.name,
+          };
+        }
       }
     }
 
     return {
       success: true,
-      data: extractedData,
+      data: normalizedFields,
       processingTimeMs: Date.now() - startTime,
       tenants: data.tenants,
     };

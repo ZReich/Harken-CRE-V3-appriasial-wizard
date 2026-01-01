@@ -22,6 +22,7 @@ import { useWizard } from '../context/WizardContext';
 import { buildHBUContext, formatContextForAPI } from '../utils/hbuContextBuilder';
 import { generateDraft as generateAIDraft } from '../services/aiService';
 import type { AIGenerationContext } from '../types/api';
+import DocumentSourceIndicator from './DocumentSourceIndicator';
 
 // ==========================================
 // TYPES
@@ -40,6 +41,7 @@ interface EnhancedTextAreaProps {
   contextData?: Record<string, any>; // Additional context for AI generation
   additionalContext?: Record<string, any>; // Additional context data to pass to AI
   aiInstructions?: string; // Custom instructions for AI generation
+  fieldPath?: string; // For DocumentSourceIndicator
 }
 
 interface AIPreview {
@@ -434,6 +436,7 @@ export default function EnhancedTextArea({
   contextData,
   additionalContext,
   aiInstructions,
+  fieldPath,
 }: EnhancedTextAreaProps) {
   const editorRef = useRef<HTMLDivElement>(null);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -443,10 +446,12 @@ export default function EnhancedTextArea({
   
   // Get wizard context for AI generation (safely - may not be in provider)
   let wizardState: any = null;
+  let hasFieldSource: ((fieldPath: string) => boolean) | null = null;
   try {
     // eslint-disable-next-line react-hooks/rules-of-hooks
     const wizardContext = useWizard();
     wizardState = wizardContext?.state;
+    hasFieldSource = wizardContext?.hasFieldSource || null;
   } catch {
     // Not in WizardProvider - that's ok, we'll use fallbacks
   }
@@ -589,9 +594,12 @@ export default function EnhancedTextArea({
       >
         {/* Label Row */}
         <div className="flex items-center justify-between mb-2">
-          <label htmlFor={id} className={`block font-medium text-gray-700 ${isFullscreen ? 'text-lg' : 'text-sm'}`}>
+          <label htmlFor={id} className={`block font-medium text-gray-700 ${isFullscreen ? 'text-lg' : 'text-sm'} flex items-center gap-2`}>
             {label}
             {required && <span className="text-red-500 ml-1">*</span>}
+            {fieldPath && hasFieldSource && hasFieldSource(fieldPath) && (
+              <DocumentSourceIndicator fieldPath={fieldPath} />
+            )}
           </label>
         </div>
 

@@ -301,7 +301,7 @@ function DocumentCard({
                     {Math.round(data.confidence * 100)}%
                   </span>
                 </div>
-                <p className="text-sm text-gray-900 truncate" title={data.value}>{data.value}</p>
+                <p className="text-sm text-gray-900 truncate" title={data.value || ''}>{data.value || '(not extracted)'}</p>
               </div>
             ))}
           </div>
