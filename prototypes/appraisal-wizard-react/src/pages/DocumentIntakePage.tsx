@@ -220,7 +220,14 @@ function DocumentCard({
             {doc.status === 'complete' && (
               <>
                 <button
-                  onClick={onToggleExpand}
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log('[DocumentIntake] View extracted data button clicked for', doc.file.name);
+                    console.log('[DocumentIntake] Current isExpanded:', isExpanded);
+                    onToggleExpand();
+                  }}
                   className="p-1.5 text-gray-400 hover:text-[#0da1c7] hover:bg-gray-50 rounded-lg transition-colors"
                   title={isExpanded ? "Collapse" : "View extracted data"}
                 >
@@ -231,6 +238,7 @@ function DocumentCard({
                   )}
                 </button>
                 <button
+                  type="button"
                   onClick={onReprocess}
                   className="p-1.5 text-gray-400 hover:text-[#0da1c7] hover:bg-gray-50 rounded-lg transition-colors"
                   title="Reprocess"
@@ -290,23 +298,43 @@ function DocumentCard({
             </span>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-            {Object.entries(doc.extraction.data).map(([field, data]) => (
-              <div
-                key={field}
-                className="bg-white rounded-lg p-3 border border-gray-200"
-              >
-                <div className="flex items-center justify-between mb-1">
-                  <span className="text-xs font-medium text-gray-600">{getFieldLabel(field)}</span>
-                  <span className={`text-[10px] px-1.5 py-0.5 rounded ${getConfidenceColorClasses(data.confidence)}`}>
-                    {Math.round(data.confidence * 100)}%
-                  </span>
+            {Object.entries(doc.extraction.data).map(([field, data]) => {
+              console.log('[DocumentCard] Rendering extracted field:', field, data);
+              return (
+                <div
+                  key={field}
+                  className="bg-white rounded-lg p-3 border border-gray-200"
+                >
+                  <div className="flex items-center justify-between mb-1">
+                    <span className="text-xs font-medium text-gray-600">{getFieldLabel(field)}</span>
+                    <span className={`text-[10px] px-1.5 py-0.5 rounded ${getConfidenceColorClasses(data.confidence)}`}>
+                      {Math.round(data.confidence * 100)}%
+                    </span>
+                  </div>
+                  <p className="text-sm text-gray-900 truncate" title={data.value || ''}>{data.value || '(not extracted)'}</p>
                 </div>
-                <p className="text-sm text-gray-900 truncate" title={data.value || ''}>{data.value || '(not extracted)'}</p>
-              </div>
-            ))}
+              );
+            })}
           </div>
         </div>
       )}
+      {isExpanded && doc.status === 'complete' && !doc.extraction?.data && (
+        <div className="border-t border-gray-100 bg-yellow-50 p-4 text-center">
+          <p className="text-sm text-yellow-800">
+            No data extracted from this document. Try reprocessing or reclassifying.
+          </p>
+        </div>
+      )}
+      {(() => {
+        console.log('[DocumentCard] Expanded panel check:', {
+          isExpanded,
+          status: doc.status,
+          hasExtraction: !!doc.extraction,
+          hasData: !!doc.extraction?.data,
+          dataKeys: doc.extraction?.data ? Object.keys(doc.extraction.data) : []
+        });
+        return null;
+      })()}
     </div>
   );
 }
@@ -944,7 +972,12 @@ export default function DocumentIntakePage() {
                       onReprocess={() => reprocessDocument(doc.id)}
                       onReclassify={(newType) => reclassifyDocument(doc.id, newType)}
                       isExpanded={expandedDocId === doc.id}
-                      onToggleExpand={() => setExpandedDocId(expandedDocId === doc.id ? null : doc.id)}
+                      onToggleExpand={() => {
+                        console.log('[DocumentIntake] onToggleExpand called for doc:', doc.id);
+                        console.log('[DocumentIntake] Current expandedDocId:', expandedDocId);
+                        console.log('[DocumentIntake] Will set to:', expandedDocId === doc.id ? null : doc.id);
+                        setExpandedDocId(expandedDocId === doc.id ? null : doc.id);
+                      }}
                     />
                   ))}
                 </div>
