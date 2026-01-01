@@ -236,17 +236,24 @@ const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true';
  * Falls back to sending to backend if client-side extraction fails
  */
 export async function extractTextFromFile(file: File): Promise<string> {
+  console.log(`[DocumentExtraction] Starting text extraction for: ${file.name} (${file.type})`);
+  
   // For PDF files, try to extract text client-side first
   if (file.type === 'application/pdf') {
     try {
       // Dynamically import pdf.js
+      console.log('[DocumentExtraction] Loading pdfjs-dist...');
       const pdfjsLib = await import('pdfjs-dist');
       
       // Set worker source
       pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
+      console.log(`[DocumentExtraction] PDF.js worker source set to version ${pdfjsLib.version}`);
       
       const arrayBuffer = await file.arrayBuffer();
+      console.log(`[DocumentExtraction] File loaded, size: ${arrayBuffer.byteLength} bytes`);
+      
       const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+      console.log(`[DocumentExtraction] PDF loaded, ${pdf.numPages} pages`);
       
       let fullText = '';
       
@@ -260,26 +267,28 @@ export async function extractTextFromFile(file: File): Promise<string> {
           })
           .join(' ');
         fullText += pageText + '\n\n';
+        console.log(`[DocumentExtraction] Page ${i} extracted: ${pageText.length} chars`);
       }
       
       // If we got meaningful text, return it
       if (fullText.trim().length > 100) {
-        console.log(`[DocumentExtraction] Extracted ${fullText.length} chars from PDF client-side`);
+        console.log(`[DocumentExtraction] ✓ Extracted ${fullText.length} chars from PDF client-side`);
         return fullText.trim();
       }
       
       // If text is too short, might be a scanned document - would need OCR
-      console.warn('[DocumentExtraction] PDF appears to be scanned or has minimal text');
+      console.warn(`[DocumentExtraction] ⚠ PDF appears to be scanned or has minimal text (${fullText.length} chars)`);
       return fullText.trim();
       
     } catch (error) {
-      console.warn('[DocumentExtraction] Client-side PDF extraction failed:', error);
+      console.error('[DocumentExtraction] ✗ Client-side PDF extraction failed:', error);
       // Fall through to return empty - backend would need to handle OCR
     }
   }
   
   // For non-PDF files or if extraction failed, return empty
   // The backend would need to implement OCR for scanned documents
+  console.warn('[DocumentExtraction] No text extracted - file type not supported or extraction failed');
   return '';
 }
 
@@ -683,19 +692,24 @@ export async function classifyDocument(file: File): Promise<ClassificationResult
       const filename = file.name.toLowerCase();
       
       // Simple filename matching
-      if (filename.includes('cadastral') || filename.includes('county') || filename.includes('parcel')) {
+      const lowerFilename = filename.toLowerCase();
+      if (lowerFilename.includes('cadastral') || lowerFilename.includes('county') || 
+          lowerFilename.includes('parcel') || lowerFilename.includes('cad') || 
+          lowerFilename.includes('assessor') || lowerFilename.includes('tax')) {
         return { documentType: 'cadastral', confidence: 0.6, processingTimeMs: Date.now() - startTime };
       }
-      if (filename.includes('engagement') || filename.includes('letter')) {
+      if (lowerFilename.includes('engagement') || lowerFilename.includes('letter') || 
+          lowerFilename.includes('proposal')) {
         return { documentType: 'engagement', confidence: 0.6, processingTimeMs: Date.now() - startTime };
       }
-      if (filename.includes('sale') || filename.includes('purchase')) {
+      if (lowerFilename.includes('sale') || lowerFilename.includes('purchase') || 
+          lowerFilename.includes('deed')) {
         return { documentType: 'sale', confidence: 0.6, processingTimeMs: Date.now() - startTime };
       }
-      if (filename.includes('lease') || filename.includes('rental')) {
+      if (lowerFilename.includes('lease') || lowerFilename.includes('rental')) {
         return { documentType: 'lease', confidence: 0.6, processingTimeMs: Date.now() - startTime };
       }
-      if (filename.includes('rent') && (filename.includes('roll') || filename.includes('list'))) {
+      if (lowerFilename.includes('rent') && (lowerFilename.includes('roll') || lowerFilename.includes('list'))) {
         return { documentType: 'rentroll', confidence: 0.6, processingTimeMs: Date.now() - startTime };
       }
       
