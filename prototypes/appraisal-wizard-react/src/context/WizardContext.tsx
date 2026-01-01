@@ -1,5 +1,5 @@
 import { createContext, useContext, useReducer, useEffect, useCallback, ReactNode } from 'react';
-import type { WizardState, WizardAction, ImprovementsInventory, Owner, ExtractedData, UploadedDocument, IncomeApproachState, ReconciliationData, CelebrationState, SubjectData, PreviewEditsPayload, StagingPhoto, CoverPhotoData, SiteImprovement, CostApproachOverrides, ExtractedFieldSource, FieldSuggestion, FieldSuggestionSource } from '../types';
+import type { WizardState, WizardAction, ImprovementsInventory, Owner, ExtractedData, UploadedDocument, IncomeApproachState, ReconciliationData, CelebrationState, SubjectData, PreviewEditsPayload, StagingPhoto, CoverPhotoData, SiteImprovement, CostApproachOverrides, ExtractedFieldSource, FieldSuggestion, FieldSuggestionSource, MapData, MapType } from '../types';
 import { createDefaultInventory } from '../contracts/improvements';
 import { getSectionSchema } from '../constants/completionSchema';
 import { getNestedValue, isFilled, setNestedValue } from '../utils/stateHelpers';
@@ -110,6 +110,9 @@ const getInitialState = (): WizardState => {
     analysisConclusions: { conclusions: [] },
     reconciliationData: null,
     stagingPhotos: [],
+    // Maps
+    subjectMaps: [],
+    approachMaps: {},
     currentPage: 'template',
     subjectActiveTab: 'location',
     isFullscreen: false,
@@ -791,6 +794,52 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
           acceptedFields: {},
         };
 
+      // Map Actions
+      case 'SET_SUBJECT_MAPS':
+        return {
+          ...state,
+          subjectMaps: action.payload,
+        };
+
+      case 'ADD_SUBJECT_MAP':
+        return {
+          ...state,
+          subjectMaps: [...state.subjectMaps, action.payload],
+        };
+
+      case 'UPDATE_SUBJECT_MAP':
+        return {
+          ...state,
+          subjectMaps: state.subjectMaps.map(map =>
+            map.id === action.payload.id
+              ? { ...map, ...action.payload.updates }
+              : map
+          ),
+        };
+
+      case 'REMOVE_SUBJECT_MAP':
+        return {
+          ...state,
+          subjectMaps: state.subjectMaps.filter(map => map.id !== action.payload),
+        };
+
+      case 'SET_APPROACH_MAP':
+        return {
+          ...state,
+          approachMaps: {
+            ...state.approachMaps,
+            [action.payload.approachType]: action.payload.map,
+          },
+        };
+
+      case 'REMOVE_APPROACH_MAP': {
+        const { [action.payload]: _, ...restApproachMaps } = state.approachMaps;
+        return {
+          ...state,
+          approachMaps: restApproachMaps,
+        };
+      }
+
       case 'RESET':
         return getInitialState();
 
@@ -923,6 +972,17 @@ interface WizardContextValue {
   getEffectiveBuildingPropertyType: (buildingId: string) => string | undefined;
   getEffectiveBuildingOccupancyCode: (buildingId: string) => string | undefined;
   getBuildingById: (buildingId: string) => import('../types').ImprovementBuilding | undefined;
+  
+  // Map helpers
+  setSubjectMaps: (maps: MapData[]) => void;
+  addSubjectMap: (map: MapData) => void;
+  updateSubjectMap: (id: string, updates: Partial<MapData>) => void;
+  removeSubjectMap: (id: string) => void;
+  getSubjectMaps: () => MapData[];
+  getSubjectMapsByType: (type: MapType) => MapData[];
+  setApproachMap: (approachType: string, map: MapData) => void;
+  removeApproachMap: (approachType: string) => void;
+  getApproachMap: (approachType: string) => MapData | undefined;
   
   // Derived state
   hasImprovements: boolean; // True if property type is not 'land'
@@ -1457,6 +1517,46 @@ export function WizardProvider({ children }: { children: ReactNode }) {
   }, [state.marketAnalysis]);
 
   // ================================================================
+  // MAP HELPERS
+  // ================================================================
+
+  const setSubjectMaps = useCallback((maps: MapData[]) => {
+    dispatch({ type: 'SET_SUBJECT_MAPS', payload: maps });
+  }, []);
+
+  const addSubjectMap = useCallback((map: MapData) => {
+    dispatch({ type: 'ADD_SUBJECT_MAP', payload: map });
+  }, []);
+
+  const updateSubjectMap = useCallback((id: string, updates: Partial<MapData>) => {
+    dispatch({ type: 'UPDATE_SUBJECT_MAP', payload: { id, updates } });
+  }, []);
+
+  const removeSubjectMap = useCallback((id: string) => {
+    dispatch({ type: 'REMOVE_SUBJECT_MAP', payload: id });
+  }, []);
+
+  const getSubjectMaps = useCallback((): MapData[] => {
+    return state.subjectMaps || [];
+  }, [state.subjectMaps]);
+
+  const getSubjectMapsByType = useCallback((type: MapType): MapData[] => {
+    return (state.subjectMaps || []).filter(map => map.type === type);
+  }, [state.subjectMaps]);
+
+  const setApproachMap = useCallback((approachType: string, map: MapData) => {
+    dispatch({ type: 'SET_APPROACH_MAP', payload: { approachType, map } });
+  }, []);
+
+  const removeApproachMap = useCallback((approachType: string) => {
+    dispatch({ type: 'REMOVE_APPROACH_MAP', payload: approachType });
+  }, []);
+
+  const getApproachMap = useCallback((approachType: string): MapData | undefined => {
+    return state.approachMaps?.[approachType];
+  }, [state.approachMaps]);
+
+  // ================================================================
   // BUILDING TYPE HELPERS
   // ================================================================
   
@@ -1606,6 +1706,16 @@ export function WizardProvider({ children }: { children: ReactNode }) {
         getEffectiveBuildingPropertyType,
         getEffectiveBuildingOccupancyCode,
         getBuildingById,
+        // Map helpers
+        setSubjectMaps,
+        addSubjectMap,
+        updateSubjectMap,
+        removeSubjectMap,
+        getSubjectMaps,
+        getSubjectMapsByType,
+        setApproachMap,
+        removeApproachMap,
+        getApproachMap,
         // Derived state
         hasImprovements,
       }}

@@ -6,6 +6,12 @@ export interface Property {
   image: string;
   distance?: string;
   status?: string;
+  /** Latitude coordinate for map display */
+  lat?: number;
+  /** Longitude coordinate for map display */
+  lng?: number;
+  /** Sale price for map tooltip */
+  salePrice?: number;
 }
 
 export type GridRowCategory = 'transaction' | 'physical' | 'financial' | 'adjustments' | 'valuation' | 'quantitative' | 'qualitative' | 'cap_rate_extraction';

@@ -5,6 +5,8 @@ import SiteImprovementsInventory from '../components/SiteImprovementsInventory';
 import BoundaryFieldsCard from '../components/BoundaryFieldsCard';
 import TrafficDataCard from '../components/TrafficDataCard';
 import BuildingPermitsCard from '../components/BuildingPermitsCard';
+import MapGeneratorPanel from '../components/MapGeneratorPanel';
+import BoundaryDrawingTool from '../components/BoundaryDrawingTool';
 import EnhancedTextArea from '../components/EnhancedTextArea';
 import WizardGuidancePanel from '../components/WizardGuidancePanel';
 import DemographicsPanel from '../components/DemographicsPanel';
@@ -755,6 +757,8 @@ export default function SubjectDataPage() {
             latitude={wizardState.subjectData?.coordinates?.latitude}
             longitude={wizardState.subjectData?.coordinates?.longitude}
             cadastralData={wizardState.subjectData?.cadastralData}
+            subjectAddress={wizardState.subjectData?.address ? 
+              `${wizardState.subjectData.address.street}, ${wizardState.subjectData.address.city}, ${wizardState.subjectData.address.state} ${wizardState.subjectData.address.zip}` : undefined}
             // Traffic Data
             trafficData={trafficData}
             setTrafficData={setTrafficData}
@@ -1129,7 +1133,10 @@ interface SiteProps {
   cadastralData?: {
     parcelId?: string;
     legalDescription?: string;
+    situsAddress?: string;
   };
+  // Subject address for map display
+  subjectAddress?: string;
   // Traffic Data
   trafficData: TrafficDataEntry[];
   setTrafficData: (data: TrafficDataEntry[]) => void;
@@ -1285,6 +1292,7 @@ function SiteContent({
   westBoundary, setWestBoundary,
   latitude, longitude,
   cadastralData,
+  subjectAddress,
   // Traffic Data
   trafficData, setTrafficData,
   selectedRoadClass, setSelectedRoadClass,
@@ -1450,6 +1458,22 @@ Overall, the site is well-suited for its current use and presents no significant
         dataSource={cadastralData?.parcelId ? 'cadastral' : 'manual'}
         parcelId={cadastralData?.parcelId}
       />
+
+      {/* Site Maps - One-click generation and boundary drawing */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Map Generator - Aerial, Location, Vicinity */}
+        <MapGeneratorPanel
+          coordinates={latitude && longitude ? { lat: latitude, lng: longitude } : undefined}
+          address={subjectAddress}
+          propertyName={undefined}
+        />
+
+        {/* Boundary Drawing Tool - Interactive parcel boundaries */}
+        <BoundaryDrawingTool
+          center={latitude && longitude ? { lat: latitude, lng: longitude } : undefined}
+          height={350}
+        />
+      </div>
 
       {/* External Data Integration - Traffic & Permits */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

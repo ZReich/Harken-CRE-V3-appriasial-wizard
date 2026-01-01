@@ -11,6 +11,10 @@ export interface RentComp {
   leaseDate: string;
   imageUrl: string;
   
+  // Location coordinates for map display
+  lat?: number;
+  lng?: number;
+  
   // Transaction Data
   hbuUse: string;
   sizeSfBldg: number;
@@ -49,6 +53,9 @@ export interface SubjectRentProperty {
   propertyType?: string;
   currentRentPerSf?: number;
   imageUrl: string;
+  // Location coordinates for map display
+  lat?: number;
+  lng?: number;
 }
 
 export interface RentGridRow {

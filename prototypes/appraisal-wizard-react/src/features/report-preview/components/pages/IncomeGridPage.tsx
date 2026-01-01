@@ -1,4 +1,7 @@
 import React from 'react';
+import { MapPin } from 'lucide-react';
+import type { MapData } from '../../../../types';
+import { MARKER_COLORS } from '../../../../services/mapGenerationService';
 
 interface IncomeGridPageProps {
   title?: string;
@@ -8,6 +11,8 @@ interface IncomeGridPageProps {
   data?: IncomeGridData;
   isEditing?: boolean;
   onCellClick?: (row: string, col: string) => void;
+  /** Optional map data for rental comparables display */
+  mapData?: MapData;
 }
 
 interface IncomeGridData {
@@ -46,6 +51,7 @@ export const IncomeGridPage: React.FC<IncomeGridPageProps> = ({
   data = DEFAULT_INCOME_DATA,
   isEditing = false,
   onCellClick,
+  mapData,
 }) => {
   const formatCurrency = (value: number | undefined): string => {
     if (value === undefined) return '-';
@@ -73,6 +79,46 @@ export const IncomeGridPage: React.FC<IncomeGridPageProps> = ({
           )}
         </div>
       </div>
+
+      {/* Map Section - Display rental comparables map if provided */}
+      {mapData && mapData.imageUrl && (
+        <div className="px-12 pt-4 pb-2">
+          <div className="border border-slate-200 rounded-lg overflow-hidden bg-white">
+            {/* Map Header */}
+            <div className="flex items-center justify-between px-4 py-2 bg-slate-50 border-b border-slate-200">
+              <div className="flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-green-600" />
+                <span className="font-semibold text-sm text-slate-700">{mapData.title}</span>
+              </div>
+              {/* Legend */}
+              <div className="flex items-center gap-4 text-xs">
+                <div className="flex items-center gap-1.5">
+                  <div 
+                    className="w-3 h-3 rounded-full border-2 border-white shadow-sm"
+                    style={{ backgroundColor: MARKER_COLORS.subject }}
+                  />
+                  <span className="text-slate-500">Subject</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div 
+                    className="w-3 h-3 rounded-full border-2 border-white shadow-sm"
+                    style={{ backgroundColor: MARKER_COLORS.rental }}
+                  />
+                  <span className="text-slate-500">Rental Comparables</span>
+                </div>
+              </div>
+            </div>
+            {/* Map Image */}
+            <div className="relative" style={{ height: '180px' }}>
+              <img 
+                src={mapData.imageUrl} 
+                alt={mapData.title}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Content */}
       <div className="flex-1 px-12 py-6 overflow-auto">

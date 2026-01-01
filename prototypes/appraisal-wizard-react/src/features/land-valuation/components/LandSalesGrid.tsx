@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
-import { Plus, Trash2, ArrowUpRight, ArrowDownRight, Minus, MapPin, Activity, ChevronDown, PenLine } from 'lucide-react';
+import { Plus, Trash2, ArrowUpRight, ArrowDownRight, Minus, MapPin, Activity, ChevronDown, PenLine, ChevronUp, Map as MapIcon } from 'lucide-react';
 import { LandComp } from '../types';
 import { 
   MOCK_LAND_COMPS, 
@@ -17,6 +17,7 @@ import { useWizard } from '../../../context/WizardContext';
 import { getAvailableElements as filterElements, normalizeSection } from '../../../utils/elementFilter';
 import type { SectionType } from '../../../constants/elementRegistry';
 import type { LandValuationData } from '../../../types';
+import { ComparableMapPreview } from '../../../components/ComparableMapPreview';
 
 // Grid column widths
 const LABEL_COL_WIDTH = 160;
@@ -486,8 +487,63 @@ export const LandSalesGrid: React.FC = () => {
     );
   };
 
+  // Prepare map data - check if subject and comps have coordinates
+  const hasSubjectCoords = SUBJECT_PROPERTY.lat !== undefined && SUBJECT_PROPERTY.lng !== undefined;
+  const compsWithCoords = comps.filter(c => c.lat !== undefined && c.lng !== undefined);
+  
+  // Map collapsed state
+  const [isMapCollapsed, setIsMapCollapsed] = useState(false);
+
   return (
     <div className="flex flex-col h-full bg-slate-50 relative overflow-hidden">
+      
+      {/* LAND SALES MAP SECTION */}
+      {hasSubjectCoords && (
+        <div className="flex-shrink-0 border-b border-slate-200 bg-white">
+          {/* Map Header - Always visible */}
+          <button
+            onClick={() => setIsMapCollapsed(!isMapCollapsed)}
+            className="w-full flex items-center justify-between px-4 py-2 hover:bg-slate-50 transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              <MapIcon className="w-4 h-4 text-orange-600" />
+              <span className="font-semibold text-sm text-slate-700">Land Sales Map</span>
+              <span className="text-xs text-slate-400">
+                ({compsWithCoords.length} of {comps.length} comp{comps.length !== 1 ? 's' : ''} mapped)
+              </span>
+            </div>
+            {isMapCollapsed ? (
+              <ChevronDown className="w-4 h-4 text-slate-400" />
+            ) : (
+              <ChevronUp className="w-4 h-4 text-slate-400" />
+            )}
+          </button>
+          
+          {/* Map Content - Collapsible */}
+          {!isMapCollapsed && (
+            <div className="px-4 pb-4">
+              <ComparableMapPreview
+                subject={{
+                  lat: SUBJECT_PROPERTY.lat!,
+                  lng: SUBJECT_PROPERTY.lng!,
+                  address: `${SUBJECT_PROPERTY.address}, ${SUBJECT_PROPERTY.cityState}`,
+                  propertyName: SUBJECT_PROPERTY.address,
+                }}
+                comparables={compsWithCoords.map((comp, index) => ({
+                  id: comp.id,
+                  lat: comp.lat!,
+                  lng: comp.lng!,
+                  label: `Comp ${index + 1}`,
+                  address: `${comp.address}, ${comp.cityStateZip}`,
+                  details: formatCurrency(comp.salePrice),
+                }))}
+                type="land-sales"
+                height={280}
+              />
+            </div>
+          )}
+        </div>
+      )}
       
       {/* SCROLLABLE AREA - with isolation for proper stacking context */}
       <div 

@@ -1174,6 +1174,10 @@ export interface WizardState {
   reportPhotos?: ReportPhotosData;
   hbuAnalysis?: HBUAnalysis;
   
+  // Maps - Subject property maps and approach comparable maps
+  subjectMaps: MapData[];
+  approachMaps: Record<string, MapData>; // Key: approach type (improved-sales, land-sales, rental-comps)
+  
   // Navigation
   currentPage: string;
   subjectActiveTab: string;
@@ -1257,6 +1261,13 @@ export type WizardAction =
   | { type: 'ACCEPT_FIELD_SUGGESTION'; payload: { fieldPath: string; value: string } }
   | { type: 'REJECT_FIELD_SUGGESTION'; payload: { fieldPath: string } }
   | { type: 'CLEAR_FIELD_SUGGESTIONS' }
+  // Map Actions
+  | { type: 'SET_SUBJECT_MAPS'; payload: MapData[] }
+  | { type: 'ADD_SUBJECT_MAP'; payload: MapData }
+  | { type: 'UPDATE_SUBJECT_MAP'; payload: { id: string; updates: Partial<MapData> } }
+  | { type: 'REMOVE_SUBJECT_MAP'; payload: string }
+  | { type: 'SET_APPROACH_MAP'; payload: { approachType: string; map: MapData } }
+  | { type: 'REMOVE_APPROACH_MAP'; payload: string }
   | { type: 'RESET' };
 
 // =================================================================
@@ -1871,6 +1882,178 @@ export interface AutoSaveConfig {
   saveOnBlur: boolean;
   saveBeforeNavigate: boolean;
   maxAutoSaveVersions: number;
+}
+
+// =================================================================
+// MAP TYPES
+// =================================================================
+
+/**
+ * Type of map for appraisal reports.
+ * Used to categorize maps for display and report placement.
+ */
+export type MapType =
+  | 'aerial'           // Satellite/aerial view of subject
+  | 'location'         // Subject location in broader context
+  | 'vicinity'         // Neighborhood/vicinity map
+  | 'parcel'           // Parcel boundaries
+  | 'plat'             // Official plat/survey map
+  | 'site'             // Site map with details
+  | 'flood'            // FEMA flood zone map
+  | 'zoning'           // Zoning classification map
+  | 'land-sales'       // Land comparable sales locations
+  | 'improved-sales'   // Improved sales comparable locations
+  | 'rental-comps'     // Rental comparable locations
+  | 'area'             // Regional/area map
+  | 'surrounding-area' // Surrounding area with boundaries
+  | 'demographics';    // Demographics radius ring map
+
+/**
+ * Marker type for map pins.
+ * Determines styling and legend display.
+ */
+export type MapMarkerType =
+  | 'subject'       // The subject property (red)
+  | 'improved-sale' // Improved sales comparable (blue)
+  | 'land-sale'     // Land sales comparable (orange)
+  | 'rental'        // Rental comparable (green)
+  | 'landmark';     // Reference landmark (gray)
+
+/**
+ * Individual marker on a map.
+ * Used for subject property and comparables.
+ */
+export interface MapMarker {
+  id: string;
+  lat: number;
+  lng: number;
+  label: string;
+  type: MapMarkerType;
+  color: string;
+  number?: number;        // For numbered comp labels (1, 2, 3...)
+  address?: string;       // Full address for tooltip
+  details?: string;       // Additional details (e.g., sale price)
+}
+
+/**
+ * Annotation on a map (labels, arrows, callouts).
+ */
+export interface MapAnnotation {
+  id: string;
+  type: 'label' | 'boundary' | 'arrow' | 'callout';
+  content: string;
+  position: { lat: number; lng: number };
+  style?: Record<string, string>;
+}
+
+/**
+ * GeoJSON feature for boundaries and shapes.
+ */
+export interface GeoJsonFeature {
+  type: 'Feature';
+  geometry: {
+    type: 'Polygon' | 'LineString' | 'Point';
+    coordinates: number[][] | number[][][] | number[];
+  };
+  properties: Record<string, unknown>;
+}
+
+/**
+ * Complete map data structure.
+ * Used for all map types in the wizard.
+ */
+export interface MapData {
+  id: string;
+  type: MapType;
+  title: string;
+  description?: string;
+  
+  // Source configuration
+  source: 'generated' | 'uploaded' | 'drawn';
+  
+  // Location data
+  center: {
+    lat: number;
+    lng: number;
+  };
+  zoom: number;
+  
+  // Map styling
+  mapType: 'satellite' | 'roadmap' | 'hybrid';
+  
+  // Generated image (for PDF export)
+  imageUrl?: string;      // Static map URL or uploaded image
+  imageData?: string;     // Base64 for embedded
+  
+  // Boundaries/Annotations
+  boundaries?: GeoJsonFeature[];
+  annotations?: MapAnnotation[];
+  
+  // Markers (for comparable maps)
+  markers: MapMarker[];
+  
+  // Metadata
+  capturedAt?: string;
+  capturedBy?: string;
+  
+  // Report placement
+  reportSections: string[];
+}
+
+/**
+ * Configuration for generating a comparable map.
+ * Passed to the map generation service.
+ */
+export interface ComparableMapConfig {
+  subject: {
+    lat: number;
+    lng: number;
+    address: string;
+    propertyName?: string;
+  };
+  comparables: Array<{
+    id: string;
+    lat: number;
+    lng: number;
+    address: string;
+    label: string;          // e.g., "Comp 1"
+    details?: string;       // e.g., "$450,000"
+  }>;
+  mapType: 'satellite' | 'roadmap' | 'hybrid';
+  type: 'improved-sales' | 'land-sales' | 'rental-comps';
+  title?: string;
+}
+
+/**
+ * Result of calculating bounds for markers.
+ * Used for auto-zoom functionality.
+ */
+export interface MapBoundsResult {
+  center: {
+    lat: number;
+    lng: number;
+  };
+  zoom: number;
+  bounds: {
+    north: number;
+    south: number;
+    east: number;
+    west: number;
+  };
+}
+
+/**
+ * Map generation options for the service.
+ */
+export interface MapGenerationOptions {
+  lat: number;
+  lng: number;
+  type: MapType;
+  zoom?: number;
+  size?: { width: number; height: number };
+  markers?: MapMarker[];
+  boundaries?: GeoJsonFeature[];
+  mapStyle?: 'satellite' | 'roadmap' | 'hybrid';
 }
 
 // =================================================================

@@ -1,4 +1,7 @@
 import React from 'react';
+import { MapPin } from 'lucide-react';
+import type { MapData } from '../../../../types';
+import { MARKER_COLORS } from '../../../../services/mapGenerationService';
 
 interface ComparisonGridPageProps {
   approachType: 'sales' | 'income' | 'cost';
@@ -10,6 +13,8 @@ interface ComparisonGridPageProps {
   data?: CompGridData;
   isEditing?: boolean;
   onCellClick?: (row: string, col: string) => void;
+  /** Optional map data for display above the grid */
+  mapData?: MapData;
 }
 
 interface CompGridData {
@@ -146,6 +151,7 @@ export const ComparisonGridPage: React.FC<ComparisonGridPageProps> = ({
   data = DEFAULT_SALES_DATA,
   isEditing = false,
   onCellClick,
+  mapData,
 }) => {
   const formatValue = (value: string | number | null): string => {
     if (value === null || value === undefined) return '-';
@@ -204,6 +210,46 @@ export const ComparisonGridPage: React.FC<ComparisonGridPageProps> = ({
           )}
         </div>
       </div>
+
+      {/* Map Section - Display above grid if mapData is provided */}
+      {mapData && mapData.imageUrl && (
+        <div className="px-10 pt-4 pb-2">
+          <div className="border border-slate-200 rounded-lg overflow-hidden bg-white">
+            {/* Map Header */}
+            <div className="flex items-center justify-between px-4 py-2 bg-slate-50 border-b border-slate-200">
+              <div className="flex items-center gap-2">
+                <MapPin className="w-4 h-4 text-slate-500" />
+                <span className="font-semibold text-sm text-slate-700">{mapData.title}</span>
+              </div>
+              {/* Legend */}
+              <div className="flex items-center gap-4 text-xs">
+                <div className="flex items-center gap-1.5">
+                  <div 
+                    className="w-3 h-3 rounded-full border-2 border-white shadow-sm"
+                    style={{ backgroundColor: MARKER_COLORS.subject }}
+                  />
+                  <span className="text-slate-500">Subject</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <div 
+                    className="w-3 h-3 rounded-full border-2 border-white shadow-sm"
+                    style={{ backgroundColor: approachType === 'sales' ? MARKER_COLORS['improved-sale'] : approachType === 'income' ? MARKER_COLORS.rental : MARKER_COLORS['land-sale'] }}
+                  />
+                  <span className="text-slate-500">Comparables</span>
+                </div>
+              </div>
+            </div>
+            {/* Map Image */}
+            <div className="relative" style={{ height: '200px' }}>
+              <img 
+                src={mapData.imageUrl} 
+                alt={mapData.title}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Grid content */}
       <div className="flex-1 px-10 py-6 overflow-auto">

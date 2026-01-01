@@ -16,7 +16,9 @@ import {
   MessageSquare,
   Plus,
   ChevronDown,
-  PenLine
+  PenLine,
+  ChevronUp,
+  Map as MapIcon
 } from 'lucide-react';
 import { Property, GridRowData, PropertyValues, ComparisonValue, Section, GridRowCategory } from '../types';
 import { PropertyCard } from './PropertyCard';
@@ -26,6 +28,7 @@ import { useWizard } from '../../../context/WizardContext';
 import { getAvailableElements as filterElements, normalizeSection } from '../../../utils/elementFilter';
 import type { SectionType } from '../../../constants/elementRegistry';
 import { HorizontalScrollIndicator } from '../../../components/HorizontalScrollIndicator';
+import { ComparableMapPreview } from '../../../components/ComparableMapPreview';
 
 interface SalesGridProps {
   properties: Property[];
@@ -793,8 +796,68 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
 
   const visibleRows = rows.filter(r => r.mode === 'both' || r.mode === analysisMode);
 
+  // Prepare map data from properties
+  const subjectProperty = properties.find(p => p.type === 'subject');
+  const compProperties = properties.filter(p => p.type === 'comp');
+  
+  const hasSubjectCoords = subjectProperty?.lat !== undefined && subjectProperty?.lng !== undefined;
+  const comparablesWithCoords = compProperties.filter(p => p.lat !== undefined && p.lng !== undefined);
+  
+  // Map collapsed state
+  const [isMapCollapsed, setIsMapCollapsed] = useState(false);
+
   return (
     <div className="flex flex-col h-full bg-slate-50 relative overflow-hidden">
+      
+      {/* COMPARABLE MAP SECTION */}
+      {hasSubjectCoords && (
+        <div className="flex-shrink-0 border-b border-slate-200 bg-white">
+          {/* Map Header - Always visible */}
+          <button
+            onClick={() => setIsMapCollapsed(!isMapCollapsed)}
+            className="w-full flex items-center justify-between px-4 py-2 hover:bg-slate-50 transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              <MapIcon className="w-4 h-4 text-[#0da1c7]" />
+              <span className="font-semibold text-sm text-slate-700">Improved Sales Map</span>
+              <span className="text-xs text-slate-400">
+                ({comparablesWithCoords.length} of {compProperties.length} comp{compProperties.length !== 1 ? 's' : ''} mapped)
+              </span>
+            </div>
+            {isMapCollapsed ? (
+              <ChevronDown className="w-4 h-4 text-slate-400" />
+            ) : (
+              <ChevronUp className="w-4 h-4 text-slate-400" />
+            )}
+          </button>
+          
+          {/* Map Content - Collapsible */}
+          {!isMapCollapsed && (
+            <div className="px-4 pb-4">
+              <ComparableMapPreview
+                subject={{
+                  lat: subjectProperty!.lat!,
+                  lng: subjectProperty!.lng!,
+                  address: subjectProperty?.address,
+                  propertyName: subjectProperty?.name,
+                }}
+                comparables={comparablesWithCoords.map((comp, index) => ({
+                  id: comp.id,
+                  lat: comp.lat!,
+                  lng: comp.lng!,
+                  label: comp.name || `Comp ${index + 1}`,
+                  address: comp.address,
+                  details: comp.salePrice 
+                    ? new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(comp.salePrice)
+                    : undefined,
+                }))}
+                type="improved-sales"
+                height={280}
+              />
+            </div>
+          )}
+        </div>
+      )}
       
       {/* SCROLLABLE AREA - Contains grid and reconciliation */}
       <div ref={scrollContainerRef} className="flex-1 overflow-auto custom-scrollbar relative" style={{ backgroundColor: '#ffffff', isolation: 'isolate' }}>

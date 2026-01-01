@@ -9,6 +9,9 @@ export interface LandComp {
   pricePerAcre: number;
   pricePerSf: number;
   imageUrl: string;
+  // Location coordinates for map display
+  lat?: number;
+  lng?: number;
   // Transaction Data
   location: string;
   hbuUse: string;
@@ -48,6 +51,9 @@ export interface SubjectProperty {
   condSale: string;
   locationQuality: string;
   imageUrl: string;
+  // Location coordinates for map display
+  lat?: number;
+  lng?: number;
 }
 
 export interface GridRow {

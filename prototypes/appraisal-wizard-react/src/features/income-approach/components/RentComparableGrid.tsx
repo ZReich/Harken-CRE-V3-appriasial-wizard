@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { HorizontalScrollIndicator } from '../../../components/HorizontalScrollIndicator';
 import EnhancedTextArea from '../../../components/EnhancedTextArea';
-import { Plus, Trash2, ArrowUpRight, ArrowDownRight, Minus, MapPin, Activity, ChevronDown, PenLine, Calendar } from 'lucide-react';
+import { Plus, Trash2, ArrowUpRight, ArrowDownRight, Minus, MapPin, Activity, ChevronDown, PenLine, Calendar, ChevronUp, Map as MapIcon } from 'lucide-react';
 import { RentComp, RentGridRow } from '../rentTypes';
 import { 
   MOCK_RENT_COMPS, 
@@ -16,6 +16,7 @@ import {
 import { useWizard } from '../../../context/WizardContext';
 import { getAvailableElements as filterElements, normalizeSection } from '../../../utils/elementFilter';
 import type { SectionType } from '../../../constants/elementRegistry';
+import { ComparableMapPreview } from '../../../components/ComparableMapPreview';
 
 // Grid column widths (matching LandSalesGrid)
 const LABEL_COL_WIDTH = 160;
@@ -352,8 +353,63 @@ export const RentComparableGrid: React.FC<RentComparableGridProps> = ({
     ? similarComps.reduce((acc, c) => acc + c.nnnRentPerSf, 0) / similarComps.length
     : averageRentPerSf;
 
+  // Prepare map data - check if subject and comps have coordinates
+  const hasSubjectCoords = SUBJECT_RENT_PROPERTY.lat !== undefined && SUBJECT_RENT_PROPERTY.lng !== undefined;
+  const compsWithCoords = comps.filter(c => c.lat !== undefined && c.lng !== undefined);
+  
+  // Map collapsed state
+  const [isMapCollapsed, setIsMapCollapsed] = useState(false);
+
   return (
     <div className="flex flex-col h-full bg-slate-50 relative overflow-hidden">
+      
+      {/* RENTAL COMPARABLES MAP SECTION */}
+      {hasSubjectCoords && (
+        <div className="flex-shrink-0 border-b border-slate-200 bg-white">
+          {/* Map Header - Always visible */}
+          <button
+            onClick={() => setIsMapCollapsed(!isMapCollapsed)}
+            className="w-full flex items-center justify-between px-4 py-2 hover:bg-slate-50 transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              <MapIcon className="w-4 h-4 text-green-600" />
+              <span className="font-semibold text-sm text-slate-700">Rental Comparables Map</span>
+              <span className="text-xs text-slate-400">
+                ({compsWithCoords.length} of {comps.length} comp{comps.length !== 1 ? 's' : ''} mapped)
+              </span>
+            </div>
+            {isMapCollapsed ? (
+              <ChevronDown className="w-4 h-4 text-slate-400" />
+            ) : (
+              <ChevronUp className="w-4 h-4 text-slate-400" />
+            )}
+          </button>
+          
+          {/* Map Content - Collapsible */}
+          {!isMapCollapsed && (
+            <div className="px-4 pb-4">
+              <ComparableMapPreview
+                subject={{
+                  lat: SUBJECT_RENT_PROPERTY.lat!,
+                  lng: SUBJECT_RENT_PROPERTY.lng!,
+                  address: SUBJECT_RENT_PROPERTY.address,
+                  propertyName: SUBJECT_RENT_PROPERTY.address,
+                }}
+                comparables={compsWithCoords.map((comp, index) => ({
+                  id: comp.id,
+                  lat: comp.lat!,
+                  lng: comp.lng!,
+                  label: `Comp ${index + 1}`,
+                  address: `${comp.address}, ${comp.cityStateZip}`,
+                  details: formatRentPerSf(comp.nnnRentPerSf),
+                }))}
+                type="rental-comps"
+                height={280}
+              />
+            </div>
+          )}
+        </div>
+      )}
       
       {/* SCROLLABLE AREA */}
       <div 
