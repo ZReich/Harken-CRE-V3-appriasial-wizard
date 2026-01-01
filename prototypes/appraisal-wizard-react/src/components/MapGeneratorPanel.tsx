@@ -34,6 +34,12 @@ import {
   generateSubjectMap, 
   generateAllSubjectMaps 
 } from '../services/mapGenerationService';
+import { 
+  getFloodZone, 
+  generateFloodMapUrl,
+  getFloodZoneColor,
+  type FloodZoneResult 
+} from '../services/femaFloodService';
 import type { MapData, MapType } from '../types';
 
 // =================================================================
@@ -97,10 +103,10 @@ const MAP_TYPE_CONFIGS: MapTypeConfig[] = [
   {
     type: 'flood',
     label: 'Flood Map',
-    description: 'FEMA flood zone overlay',
+    description: 'FEMA flood zone lookup',
     icon: Waves,
     color: '#0891b2',
-    implemented: false,
+    implemented: true,
   },
   {
     type: 'zoning',
@@ -128,41 +134,86 @@ export function MapGeneratorPanel({
     removeSubjectMap, 
     getSubjectMaps,
     getSubjectMapsByType,
+    setSubjectData,
   } = useWizard();
 
   const [isGenerating, setIsGenerating] = useState(false);
   const [generatingType, setGeneratingType] = useState<string | null>(null);
   const [isExpanded, setIsExpanded] = useState(true);
   const [previewMap, setPreviewMap] = useState<MapData | null>(null);
+  const [floodZoneData, setFloodZoneData] = useState<FloodZoneResult | null>(null);
 
   const hasCoordinates = coordinates?.lat !== undefined && coordinates?.lng !== undefined;
   const generatedMaps = getSubjectMaps();
 
   // Generate a single map type
-  const handleGenerateMap = useCallback(async (type: 'aerial' | 'location' | 'vicinity') => {
+  const handleGenerateMap = useCallback(async (type: 'aerial' | 'location' | 'vicinity' | 'flood') => {
     if (!hasCoordinates || !coordinates) return;
 
     setGeneratingType(type);
     
     try {
-      // Small delay to show loading state
-      await new Promise(resolve => setTimeout(resolve, 300));
-      
-      const map = generateSubjectMap(
-        coordinates.lat,
-        coordinates.lng,
-        type,
-        { propertyName, address }
-      );
-      
-      addSubjectMap(map);
-      onMapsGenerated?.([map]);
+      // Handle flood map separately - uses FEMA API
+      if (type === 'flood') {
+        const floodResult = await getFloodZone(coordinates.lat, coordinates.lng);
+        
+        if (floodResult) {
+          setFloodZoneData(floodResult);
+          
+          // Update wizard state with flood zone data
+          setSubjectData({
+            femaZone: floodResult.floodZone,
+            femaMapPanel: floodResult.panelNumber,
+            femaMapDate: floodResult.effectiveDate,
+            floodInsuranceRequired: floodResult.insuranceRequired ? 'Yes' : 'No',
+          });
+          
+          // Create a map entry for the flood map
+          const floodMap: MapData = {
+            id: `map_flood_${Date.now()}`,
+            type: 'flood',
+            title: `Flood Zone: ${floodResult.floodZone}`,
+            description: floodResult.zoneDescription,
+            source: 'generated',
+            center: { lat: coordinates.lat, lng: coordinates.lng },
+            zoom: 15,
+            mapType: 'roadmap',
+            markers: [{
+              id: 'subject',
+              lat: coordinates.lat,
+              lng: coordinates.lng,
+              label: 'Subject Property',
+              type: 'subject',
+              color: getFloodZoneColor(floodResult.floodZone),
+            }],
+            imageUrl: floodResult.mapImageUrl,
+            reportSections: ['flood-zone', 'site-analysis', 'addenda'],
+            capturedAt: new Date().toISOString(),
+          };
+          
+          addSubjectMap(floodMap);
+          onMapsGenerated?.([floodMap]);
+        }
+      } else {
+        // Standard map generation
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        const map = generateSubjectMap(
+          coordinates.lat,
+          coordinates.lng,
+          type,
+          { propertyName, address }
+        );
+        
+        addSubjectMap(map);
+        onMapsGenerated?.([map]);
+      }
     } catch (error) {
       console.error(`Failed to generate ${type} map:`, error);
     } finally {
       setGeneratingType(null);
     }
-  }, [coordinates, hasCoordinates, propertyName, address, addSubjectMap, onMapsGenerated]);
+  }, [coordinates, hasCoordinates, propertyName, address, addSubjectMap, onMapsGenerated, setSubjectData]);
 
   // Generate all maps at once
   const handleGenerateAllMaps = useCallback(async () => {
@@ -277,7 +328,7 @@ export function MapGeneratorPanel({
               return (
                 <button
                   key={config.type}
-                  onClick={() => config.implemented && handleGenerateMap(config.type as 'aerial' | 'location' | 'vicinity')}
+                  onClick={() => config.implemented && handleGenerateMap(config.type as 'aerial' | 'location' | 'vicinity' | 'flood')}
                   disabled={disabled}
                   className={`
                     relative flex flex-col items-center p-3 rounded-lg border-2 transition-all
@@ -316,6 +367,52 @@ export function MapGeneratorPanel({
               );
             })}
           </div>
+
+          {/* Flood Zone Info Card */}
+          {floodZoneData && (
+            <div className="border border-slate-200 rounded-lg p-4 bg-gradient-to-r from-cyan-50 to-blue-50">
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-3">
+                  <div 
+                    className="w-10 h-10 rounded-lg flex items-center justify-center"
+                    style={{ backgroundColor: getFloodZoneColor(floodZoneData.floodZone) + '20' }}
+                  >
+                    <Waves 
+                      className="w-5 h-5" 
+                      style={{ color: getFloodZoneColor(floodZoneData.floodZone) }}
+                    />
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="font-bold text-slate-800">
+                        Zone {floodZoneData.floodZone}
+                      </span>
+                      <span className={`px-2 py-0.5 rounded text-xs font-medium ${
+                        floodZoneData.insuranceRequired 
+                          ? 'bg-red-100 text-red-700' 
+                          : 'bg-green-100 text-green-700'
+                      }`}>
+                        {floodZoneData.insuranceRequired ? 'Insurance Required' : 'Insurance Optional'}
+                      </span>
+                    </div>
+                    <p className="text-sm text-slate-600 mt-0.5">
+                      {floodZoneData.zoneDescription}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4 mt-3 pt-3 border-t border-slate-200">
+                <div>
+                  <span className="text-xs text-slate-500">Panel Number</span>
+                  <p className="text-sm font-medium text-slate-700">{floodZoneData.panelNumber}</p>
+                </div>
+                <div>
+                  <span className="text-xs text-slate-500">Effective Date</span>
+                  <p className="text-sm font-medium text-slate-700">{floodZoneData.effectiveDate}</p>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Generated Maps Gallery */}
           {generatedMaps.length > 0 && (

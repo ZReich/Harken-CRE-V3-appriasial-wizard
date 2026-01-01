@@ -759,6 +759,8 @@ export default function SubjectDataPage() {
             cadastralData={wizardState.subjectData?.cadastralData}
             subjectAddress={wizardState.subjectData?.address ? 
               `${wizardState.subjectData.address.street}, ${wizardState.subjectData.address.city}, ${wizardState.subjectData.address.state} ${wizardState.subjectData.address.zip}` : undefined}
+            propertyBoundaryCoordinates={wizardState.subjectData?.propertyBoundaryCoordinates}
+            onPropertyBoundaryChange={(coords) => setSubjectData({ propertyBoundaryCoordinates: coords })}
             // Traffic Data
             trafficData={trafficData}
             setTrafficData={setTrafficData}
@@ -1137,6 +1139,9 @@ interface SiteProps {
   };
   // Subject address for map display
   subjectAddress?: string;
+  // Property boundary polygon coordinates
+  propertyBoundaryCoordinates?: Array<{ lat: number; lng: number }>;
+  onPropertyBoundaryChange?: (coords: Array<{ lat: number; lng: number }>) => void;
   // Traffic Data
   trafficData: TrafficDataEntry[];
   setTrafficData: (data: TrafficDataEntry[]) => void;
@@ -1293,6 +1298,8 @@ function SiteContent({
   latitude, longitude,
   cadastralData,
   subjectAddress,
+  propertyBoundaryCoordinates,
+  onPropertyBoundaryChange,
   // Traffic Data
   trafficData, setTrafficData,
   selectedRoadClass, setSelectedRoadClass,
@@ -1471,6 +1478,8 @@ Overall, the site is well-suited for its current use and presents no significant
         {/* Boundary Drawing Tool - Interactive parcel boundaries */}
         <BoundaryDrawingTool
           center={latitude && longitude ? { lat: latitude, lng: longitude } : undefined}
+          initialBoundary={propertyBoundaryCoordinates}
+          onBoundaryChange={onPropertyBoundaryChange}
           height={350}
         />
       </div>

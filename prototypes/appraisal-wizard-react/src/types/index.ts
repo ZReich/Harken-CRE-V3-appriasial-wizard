@@ -775,6 +775,8 @@ export interface SubjectData {
   southBoundary?: string;
   eastBoundary?: string;
   westBoundary?: string;
+  // Drawn property boundary polygon coordinates
+  propertyBoundaryCoordinates?: Array<{ lat: number; lng: number }>;
   
   // Traffic Data (Site Details - External Integration)
   trafficData?: {
