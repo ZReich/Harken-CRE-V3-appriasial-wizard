@@ -245,9 +245,10 @@ export async function extractTextFromFile(file: File): Promise<string> {
       console.log('[DocumentExtraction] Loading pdfjs-dist...');
       const pdfjsLib = await import('pdfjs-dist');
       
-      // Set worker source
-      pdfjsLib.GlobalWorkerOptions.workerSrc = `https://cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjsLib.version}/pdf.worker.min.js`;
-      console.log(`[DocumentExtraction] PDF.js worker source set to version ${pdfjsLib.version}`);
+      // Use unpkg CDN which auto-resolves versions, or use a known working version
+      // Using version 3.11.174 which is known to work on unpkg
+      pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.js`;
+      console.log(`[DocumentExtraction] PDF.js worker source set to unpkg version ${pdfjsLib.version}`);
       
       const arrayBuffer = await file.arrayBuffer();
       console.log(`[DocumentExtraction] File loaded, size: ${arrayBuffer.byteLength} bytes`);
