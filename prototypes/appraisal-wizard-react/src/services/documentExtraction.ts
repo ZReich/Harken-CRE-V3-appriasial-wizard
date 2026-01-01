@@ -232,6 +232,50 @@ const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_DATA === 'true';
 // ==========================================
 
 /**
+ * Convert PDF first page to base64 image for Vision API
+ */
+async function convertPdfToImage(file: File): Promise<string | null> {
+  try {
+    console.log('[DocumentExtraction] Converting PDF to image...');
+    const pdfjsLib = await import('pdfjs-dist');
+    const pdfjsWorker = await import('pdfjs-dist/build/pdf.worker.min.mjs?url');
+    pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker.default;
+    
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    const page = await pdf.getPage(1); // Get first page only
+    
+    // Create canvas to render PDF page
+    const viewport = page.getViewport({ scale: 2.0 }); // 2x scale for better quality
+    const canvas = document.createElement('canvas');
+    const context = canvas.getContext('2d');
+    
+    if (!context) {
+      console.error('[DocumentExtraction] Could not get canvas context');
+      return null;
+    }
+    
+    canvas.width = viewport.width;
+    canvas.height = viewport.height;
+    
+    // Render PDF page to canvas
+    await page.render({
+      canvasContext: context,
+      viewport: viewport,
+    }).promise;
+    
+    // Convert canvas to base64 image
+    const imageData = canvas.toDataURL('image/jpeg', 0.95).split(',')[1]; // Remove data:image/jpeg;base64, prefix
+    console.log(`[DocumentExtraction] ✓ PDF converted to image (${imageData.length} chars base64)`);
+    
+    return imageData;
+  } catch (error) {
+    console.error('[DocumentExtraction] ✗ PDF to image conversion failed:', error);
+    return null;
+  }
+}
+
+/**
  * Extract text from a PDF file using pdf.js
  * Falls back to sending to backend if client-side extraction fails
  */
@@ -288,19 +332,19 @@ export async function extractTextFromFile(file: File): Promise<string> {
         return fullText.trim();
       }
       
-      // If text is too short, might be a scanned document - would need OCR
-      console.warn(`[DocumentExtraction] ⚠ PDF appears to be scanned or has minimal text (${fullText.length} chars)`);
-      return fullText.trim();
+      // If text is too short, PDF is likely image-based
+      console.warn(`[DocumentExtraction] ⚠ PDF is image-based (${fullText.trim().length} chars extracted)`);
+      console.log('[DocumentExtraction] Will use Vision API for image-based PDF');
+      return ''; // Return empty to signal image-based PDF
       
     } catch (error) {
       console.error('[DocumentExtraction] ✗ Client-side PDF extraction failed:', error);
-      // Fall through to return empty - backend would need to handle OCR
+      // Fall through to return empty
     }
   }
   
   // For non-PDF files or if extraction failed, return empty
-  // The backend would need to implement OCR for scanned documents
-  console.warn('[DocumentExtraction] No text extracted - file type not supported or extraction failed');
+  console.warn('[DocumentExtraction] No text extracted - will try Vision API if supported');
   return '';
 }
 
@@ -402,14 +446,81 @@ export async function extractDocumentData(
     // First, extract text from the file
     const text = await extractTextFromFile(file);
     
+    // If no text was extracted, the PDF is image-based - convert to image
     if (!text || text.length < 50) {
+      console.log('[DocumentExtraction] Image-based PDF detected, converting to image for Vision API');
+      
+      // Convert PDF first page to image
+      const imageData = await convertPdfToImage(file);
+      if (!imageData) {
+        return {
+          success: false,
+          error: 'Could not convert PDF to image for Vision API processing.',
+          processingTimeMs: Date.now() - startTime,
+        };
+      }
+      
+      console.log('[DocumentExtraction] PDF converted to image, sending to Vision API');
+      
+      // Call the backend extraction API with image data
+      const response = await fetch(`${API_BASE_URL}/documents/extract`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          image: imageData, // Send base64 image instead of text
+          documentType,
+          filename: file.name,
+          useVision: true, // Flag to indicate Vision API should be used
+        }),
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        return {
+          success: false,
+          error: errorData.error || `Server error: ${response.status}`,
+          processingTimeMs: Date.now() - startTime,
+        };
+      }
+      
+      const data = await response.json();
+      
+      if (!data.success) {
+        return {
+          success: false,
+          error: data.error || 'Extraction failed',
+          processingTimeMs: Date.now() - startTime,
+        };
+      }
+      
+      // Normalize and return
+      const normalizedFields: Record<string, ExtractedField> = {};
+      if (data.fields) {
+        for (const [key, field] of Object.entries(data.fields)) {
+          const typedField = field as { value: string | null; confidence: number };
+          if (typedField.value !== null && typedField.value !== undefined) {
+            normalizedFields[key] = {
+              value: typedField.value,
+              confidence: typedField.confidence > 1 ? typedField.confidence / 100 : typedField.confidence,
+              source: file.name,
+            };
+          }
+        }
+      }
+      
       return {
-        success: false,
-        error: 'Could not extract text from document. It may be a scanned image that requires OCR.',
+        success: true,
+        data: normalizedFields,
         processingTimeMs: Date.now() - startTime,
+        tenants: data.tenants,
       };
     }
 
+    // Text was extracted successfully, use text-based extraction
+    console.log('[DocumentExtraction] Text extracted successfully, using text-based extraction');
+    
     // Call the backend extraction API
     const response = await fetch(`${API_BASE_URL}/documents/extract`, {
       method: 'POST',

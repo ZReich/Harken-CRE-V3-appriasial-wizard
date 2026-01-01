@@ -308,12 +308,12 @@ export default async function handler(
   }
 
   try {
-    const { text, documentType, filename } = req.body as ExtractionRequest;
+    const { text, image, documentType, filename, useVision } = req.body as ExtractionRequest & { image?: string; useVision?: boolean };
 
-    if (!text) {
+    if (!text && !image) {
       return res.status(400).json({ 
         success: false, 
-        error: 'Missing document text. Please extract text from the document first.' 
+        error: 'Missing document text or image. Please provide either text or image data.' 
       });
     }
 
@@ -329,14 +329,68 @@ export default async function handler(
       return res.status(500).json({ success: false, error: 'OpenAI API key not configured' });
     }
 
-    console.log(`[Documents/Extract] Extracting from ${documentType} document: ${filename || 'unknown'}`);
-    console.log(`[Documents/Extract] Text length: ${text.length} characters`);
-
     // Get the appropriate extraction prompt
     const extractionPrompt = EXTRACTION_PROMPTS[documentType] || EXTRACTION_PROMPTS['unknown'];
 
+    // Handle image-based extraction with Vision API
+    if (useVision && image) {
+      console.log(`[Documents/Extract] Using Vision API for ${documentType} document: ${filename || 'unknown'}`);
+      console.log(`[Documents/Extract] Image data length: ${image.length} characters`);
+
+      // Call OpenAI Vision API
+      const response = await openai.chat.completions.create({
+        model: 'gpt-4o', // Use gpt-4o for vision capabilities
+        messages: [
+          {
+            role: 'user',
+            content: [
+              {
+                type: 'text',
+                text: extractionPrompt,
+              },
+              {
+                type: 'image_url',
+                image_url: {
+                  url: `data:image/jpeg;base64,${image}`,
+                  detail: 'high', // Use high detail for extraction accuracy
+                },
+              },
+            ],
+          },
+        ],
+        max_tokens: 2000,
+        temperature: 0.1,
+        response_format: { type: 'json_object' },
+      });
+
+      const content = response.choices[0]?.message?.content;
+      if (!content) {
+        console.error('[API] No response from OpenAI Vision API');
+        return res.status(500).json({ success: false, error: 'No response from OpenAI Vision API' });
+      }
+
+      console.log(`[Documents/Extract] Vision API response received: ${content.substring(0, 200)}...`);
+
+      let result;
+      try {
+        result = JSON.parse(content);
+      } catch (e) {
+        console.error('[API] Failed to parse Vision API response as JSON:', content);
+        return res.status(500).json({ success: false, error: 'Failed to parse Vision API response' });
+      }
+
+      return res.status(200).json({
+        success: true,
+        ...result,
+      });
+    }
+
+    // Handle text-based extraction
+    console.log(`[Documents/Extract] Extracting from ${documentType} document: ${filename || 'unknown'}`);
+    console.log(`[Documents/Extract] Text length: ${text?.length || 0} characters`);
+
     // Truncate very long texts to avoid token limits (keep first ~12000 chars for extraction)
-    const truncatedText = text.length > 12000 
+    const truncatedText = (text && text.length > 12000)
       ? text.substring(0, 12000) + '\n\n[... document truncated ...]'
       : text;
 
