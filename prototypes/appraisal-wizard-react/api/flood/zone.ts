@@ -6,6 +6,7 @@
  */
 
 import type { VercelRequest, VercelResponse } from '@vercel/node';
+import fetch from 'node-fetch';
 
 // FEMA NFHL API base URL
 const FEMA_NFHL_BASE_URL = 'https://hazards.fema.gov/gis/nfhl/rest/services/public/NFHL/MapServer';
@@ -205,9 +206,21 @@ export default async function handler(req: VercelRequest, res: VercelResponse) {
     return res.status(200).json(result);
   } catch (error) {
     console.error('FEMA API proxy error:', error);
+    
+    // Log detailed error information
+    const errorDetails = {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      stack: error instanceof Error ? error.stack : undefined,
+      latitude,
+      longitude,
+    };
+    
+    console.error('Error details:', JSON.stringify(errorDetails, null, 2));
+    
     return res.status(500).json({ 
       error: 'Failed to fetch flood zone data',
-      message: error instanceof Error ? error.message : 'Unknown error'
+      message: error instanceof Error ? error.message : 'Unknown error',
+      details: errorDetails,
     });
   }
 }
