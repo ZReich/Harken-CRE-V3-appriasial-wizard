@@ -1377,8 +1377,11 @@ Overall, the site is well-suited for its current use and presents no significant
               <FieldSuggestion
                 fieldPath="subjectData.siteArea"
                 onAccept={(value) => {
-                  handleAcresChange(value);
-                  acceptFieldSuggestion('subjectData.siteArea', value);
+                  // Extract numeric value from strings like "2.45 acres" or "2.45 acres (106,722 SF)"
+                  const numericMatch = value.match(/[\d.]+/);
+                  const numericValue = numericMatch ? numericMatch[0] : value;
+                  handleAcresChange(numericValue);
+                  acceptFieldSuggestion('subjectData.siteArea', numericValue);
                 }}
                 onReject={() => rejectFieldSuggestion('subjectData.siteArea')}
               />
