@@ -262,14 +262,24 @@ export async function extractTextFromFile(file: File): Promise<string> {
       for (let i = 1; i <= pdf.numPages; i++) {
         const page = await pdf.getPage(i);
         const textContent = await page.getTextContent();
+        
+        console.log(`[DocumentExtraction] Page ${i} textContent.items count:`, textContent.items.length);
+        console.log(`[DocumentExtraction] Page ${i} first 5 items:`, textContent.items.slice(0, 5));
+        
         const pageText = textContent.items
           .map((item: any) => {
             // TextItem has 'str' property, TextMarkedContent doesn't
-            return 'str' in item ? item.str : '';
+            const text = 'str' in item ? item.str : '';
+            if (text && i === 1) {
+              console.log(`[DocumentExtraction] Found text:`, text);
+            }
+            return text;
           })
           .join(' ');
-        fullText += pageText + '\n\n';
+        
         console.log(`[DocumentExtraction] Page ${i} extracted: ${pageText.length} chars`);
+        console.log(`[DocumentExtraction] Page ${i} text preview:`, pageText.substring(0, 200));
+        fullText += pageText + '\n\n';
       }
       
       // If we got meaningful text, return it
