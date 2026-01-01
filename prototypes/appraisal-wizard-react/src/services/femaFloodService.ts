@@ -79,14 +79,16 @@ export async function getFloodZone(
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(errorData.error || `API error: ${response.statusText}`);
+      const errorMessage = errorData.message || errorData.error || `API error: ${response.statusText}`;
+      console.error('FEMA API error details:', errorData);
+      throw new Error(errorMessage);
     }
 
     const result: FloodZoneResult = await response.json();
     return result;
   } catch (error) {
     console.error('FEMA flood zone lookup error:', error);
-    return null;
+    throw error; // Re-throw to let caller handle it
   }
 }
 

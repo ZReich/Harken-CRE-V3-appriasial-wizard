@@ -210,6 +210,8 @@ export function MapGeneratorPanel({
       }
     } catch (error) {
       console.error(`Failed to generate ${type} map:`, error);
+      // Show error to user
+      alert(`Failed to generate ${type} map: ${error instanceof Error ? error.message : 'Unknown error'}`);
     } finally {
       setGeneratingType(null);
     }
