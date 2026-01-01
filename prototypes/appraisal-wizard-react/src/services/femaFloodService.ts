@@ -56,14 +56,14 @@ const FLOOD_ZONE_DESCRIPTIONS: Record<string, { description: string; insuranceRe
 };
 
 // =================================================================
-// FEMA API INTEGRATION
+// FEMA API INTEGRATION (via server proxy to avoid CORS)
 // =================================================================
 
 const FEMA_NFHL_BASE_URL = 'https://hazards.fema.gov/gis/nfhl/rest/services/public/NFHL/MapServer';
 
 /**
  * Query FEMA NFHL for flood zone at a specific point.
- * Uses the identify operation on the Flood Hazard Zones layer.
+ * Uses our API proxy to avoid CORS issues with direct FEMA requests.
  * 
  * @param lat - Latitude
  * @param lng - Longitude
@@ -74,95 +74,20 @@ export async function getFloodZone(
   lng: number
 ): Promise<FloodZoneResult | null> {
   try {
-    // FEMA NFHL uses Web Mercator projection
-    // We need to query the Flood Hazard Zones layer (layer 28)
-    const params = new URLSearchParams({
-      geometry: JSON.stringify({
-        x: lng,
-        y: lat,
-        spatialReference: { wkid: 4326 }
-      }),
-      geometryType: 'esriGeometryPoint',
-      sr: '4326',
-      layers: 'all:28', // Flood Hazard Zones layer
-      tolerance: '10',
-      mapExtent: `${lng - 0.01},${lat - 0.01},${lng + 0.01},${lat + 0.01}`,
-      imageDisplay: '600,400,96',
-      returnGeometry: 'false',
-      f: 'json'
-    });
-
-    const response = await fetch(
-      `${FEMA_NFHL_BASE_URL}/identify?${params.toString()}`
-    );
+    // Use our API proxy to avoid CORS issues
+    const response = await fetch(`/api/flood/zone?lat=${lat}&lng=${lng}`);
 
     if (!response.ok) {
-      throw new Error(`FEMA API error: ${response.statusText}`);
+      const errorData = await response.json().catch(() => ({}));
+      throw new Error(errorData.error || `API error: ${response.statusText}`);
     }
 
-    const data = await response.json();
-
-    if (data.results && data.results.length > 0) {
-      const result = data.results[0];
-      const attrs = result.attributes;
-
-      const zoneCode = attrs.FLD_ZONE || attrs.ZONE_SUBTY || 'X';
-      const zoneInfo = FLOOD_ZONE_DESCRIPTIONS[zoneCode] || FLOOD_ZONE_DESCRIPTIONS['X'];
-
-      return {
-        floodZone: zoneCode,
-        zoneDescription: zoneInfo.description,
-        panelNumber: attrs.DFIRM_ID || attrs.FLD_AR_ID || 'Unknown',
-        effectiveDate: formatFemaDate(attrs.EFF_DATE),
-        insuranceRequired: zoneInfo.insuranceRequired,
-        baseFloodElevation: attrs.STATIC_BFE ? parseFloat(attrs.STATIC_BFE) : undefined,
-        mapImageUrl: generateFloodMapUrl(lat, lng),
-        details: {
-          communityName: attrs.GNIS_NAME,
-          countyFips: attrs.CO_FIPS,
-          stateFips: attrs.ST_FIPS,
-          floodwayStatus: attrs.FLOODWAY,
-          specialFloodHazardArea: ['A', 'AE', 'AH', 'AO', 'AR', 'A99', 'V', 'VE'].includes(zoneCode),
-          coastalHighHazard: ['V', 'VE'].includes(zoneCode),
-        },
-      };
-    }
-
-    // No flood zone data found - return default X zone
-    return {
-      floodZone: 'X',
-      zoneDescription: 'Moderate to low risk area (outside mapped flood zones)',
-      panelNumber: 'N/A',
-      effectiveDate: 'N/A',
-      insuranceRequired: false,
-      mapImageUrl: generateFloodMapUrl(lat, lng),
-      details: {
-        specialFloodHazardArea: false,
-        coastalHighHazard: false,
-      },
-    };
+    const result: FloodZoneResult = await response.json();
+    return result;
   } catch (error) {
     console.error('FEMA flood zone lookup error:', error);
     return null;
   }
-}
-
-/**
- * Format FEMA date string to readable format.
- */
-function formatFemaDate(dateStr: string | number | undefined): string {
-  if (!dateStr) return 'Unknown';
-  
-  // FEMA dates can be milliseconds since epoch or string
-  if (typeof dateStr === 'number') {
-    return new Date(dateStr).toLocaleDateString('en-US', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-    });
-  }
-  
-  return dateStr;
 }
 
 /**

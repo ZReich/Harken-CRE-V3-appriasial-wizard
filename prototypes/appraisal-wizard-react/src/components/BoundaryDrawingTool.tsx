@@ -109,7 +109,7 @@ export function BoundaryDrawingTool({
       }
 
       const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=drawing,geometry`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=drawing,geometry&loading=async`;
       script.async = true;
       script.defer = true;
       script.onload = () => {
