@@ -484,18 +484,33 @@ export default function DocumentIntakePage() {
 
         // Auto-populate wizard fields from extracted data
         if (result.extraction.success && result.extraction.data) {
+          console.log('[DocumentIntake] ✓ Extraction successful for', doc.file.name);
+          console.log('[DocumentIntake] Extracted data:', result.extraction.data);
+          console.log('[DocumentIntake] Document type:', result.classification.documentType);
+          
           const fields: Record<string, { value: string; confidence: number }> = {};
           for (const [key, field] of Object.entries(result.extraction.data)) {
             if (field.value) {
               fields[key] = { value: field.value, confidence: field.confidence };
+              console.log(`[DocumentIntake] Adding field: ${key} = "${field.value}" (confidence: ${field.confidence})`);
+            } else {
+              console.log(`[DocumentIntake] Skipping field: ${key} (no value)`);
             }
           }
+          
+          console.log('[DocumentIntake] Applying', Object.keys(fields).length, 'fields to wizard state');
           applyDocumentExtractedData(
             doc.id,
             doc.file.name,
             result.classification.documentType,
             fields
           );
+          console.log('[DocumentIntake] ✓ Document data applied to wizard');
+        } else {
+          console.warn('[DocumentIntake] ⚠ Extraction failed or no data for', doc.file.name);
+          if (result.extraction.error) {
+            console.error('[DocumentIntake] Extraction error:', result.extraction.error);
+          }
         }
       } catch (error) {
         setDocuments(prev => prev.map(d => 

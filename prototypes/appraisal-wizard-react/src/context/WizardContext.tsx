@@ -337,10 +337,17 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
 
       case 'APPLY_DOCUMENT_EXTRACTED_DATA': {
         const { documentId, documentName, documentType, fields } = action.payload;
+        console.log('[WizardContext] APPLY_DOCUMENT_EXTRACTED_DATA triggered');
+        console.log('[WizardContext] Document:', documentName, 'Type:', documentType);
+        console.log('[WizardContext] Fields to apply:', fields);
+        
         const mappings = DOCUMENT_FIELD_MAPPINGS[documentType as DocumentType] || [];
+        console.log('[WizardContext] Found', mappings.length, 'mappings for document type:', documentType);
         
         let updatedState = { ...state };
         const newFieldSources: Record<string, ExtractedFieldSource> = { ...state.documentFieldSources };
+        let appliedCount = 0;
+        let skippedCount = 0;
         
         // Apply each extracted field to the wizard state
         for (const [fieldName, fieldData] of Object.entries(fields)) {
@@ -349,6 +356,11 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
             // Only apply if confidence is above threshold and field is not already filled
             const currentValue = getNestedValue(updatedState, mapping.wizardPath);
             const shouldApply = fieldData.confidence >= 0.5 && !isFilled(currentValue);
+            
+            console.log(`[WizardContext] Field "${fieldName}" -> "${mapping.wizardPath}"`);
+            console.log(`[WizardContext]   Current value:`, currentValue);
+            console.log(`[WizardContext]   New value: "${fieldData.value}" (confidence: ${fieldData.confidence})`);
+            console.log(`[WizardContext]   Should apply: ${shouldApply}`);
             
             if (shouldApply) {
               // Apply the value to the wizard state
@@ -364,9 +376,26 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
                 extractedAt: new Date().toISOString(),
                 fieldPath: mapping.wizardPath,
               };
+              appliedCount++;
+              console.log(`[WizardContext]   ✓ Applied to wizard state`);
+            } else {
+              skippedCount++;
+              if (fieldData.confidence < 0.5) {
+                console.log(`[WizardContext]   ✗ Skipped (confidence too low: ${fieldData.confidence})`);
+              } else if (isFilled(currentValue)) {
+                console.log(`[WizardContext]   ✗ Skipped (field already filled with: "${currentValue}")`);
+              }
             }
+          } else if (!mapping) {
+            console.warn(`[WizardContext]   ⚠ No mapping found for field "${fieldName}"`);
+          } else if (!fieldData.value) {
+            console.warn(`[WizardContext]   ⚠ Field "${fieldName}" has no value`);
           }
         }
+        
+        console.log(`[WizardContext] Applied ${appliedCount} fields, skipped ${skippedCount} fields`);
+        console.log('[WizardContext] Updated state subjectData:', updatedState.subjectData);
+        console.log('[WizardContext] Field sources:', newFieldSources);
         
         return {
           ...updatedState,
