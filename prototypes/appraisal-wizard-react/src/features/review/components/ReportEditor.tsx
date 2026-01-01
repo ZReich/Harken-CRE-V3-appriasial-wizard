@@ -2639,6 +2639,7 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
           <EconomicContextPage
             data={state.economicIndicators ?? null}
             pageNumber={pageIndex + 1}
+            chartStyle={state.economicChartStyle}
           />
         );
       case 'swot':

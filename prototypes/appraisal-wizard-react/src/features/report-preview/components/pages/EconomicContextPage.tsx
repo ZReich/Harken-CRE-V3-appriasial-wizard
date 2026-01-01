@@ -1,7 +1,7 @@
 /**
  * Economic Context Page Component
  * 
- * Displays economic indicators from FRED API in a clean tabular format
+ * Displays economic indicators from FRED API with data tables and optional charts
  * for the appraisal report.
  * 
  * Supports both the full API response format (with history) and 
@@ -10,10 +10,13 @@
 
 import React from 'react';
 import type { EconomicIndicators } from '../../../../types';
+import EconomicChart from '../../../../components/EconomicChart';
+import type { ChartStyle } from '../../../../components/ChartStyleSelector';
 
 interface EconomicContextPageProps {
   data: EconomicIndicators | null;
   pageNumber?: number;
+  chartStyle?: ChartStyle;
 }
 
 // Formatting helper
@@ -46,6 +49,7 @@ const getTrendFromData = (
 export const EconomicContextPage: React.FC<EconomicContextPageProps> = ({
   data,
   pageNumber,
+  chartStyle = 'gradient',
 }) => {
   if (!data) {
     return (
@@ -138,6 +142,73 @@ export const EconomicContextPage: React.FC<EconomicContextPageProps> = ({
           ))}
         </tbody>
       </table>
+
+      {/* Economic Indicators Charts - Only show if history data is available */}
+      {(data.federalFundsRate.history || data.treasury10Y.history || data.inflation.history || data.gdpGrowth.history) && (
+        <>
+          <h2 className="text-lg font-semibold text-slate-800 border-b border-slate-300 pb-2 mb-4 mt-8">
+            Historical Trends
+          </h2>
+          <div className="grid grid-cols-2 gap-4 mb-8">
+            {data.federalFundsRate.history && (
+              <div className="bg-slate-50 rounded-lg p-4">
+                <h3 className="text-sm font-semibold text-slate-700 mb-3">Federal Funds Rate</h3>
+                <EconomicChart
+                  data={data.federalFundsRate.history}
+                  chartStyle={chartStyle}
+                  title="Federal Funds Rate"
+                  color="#0da1c7"
+                  height={180}
+                  unit="%"
+                  showAxis={true}
+                />
+              </div>
+            )}
+            {data.treasury10Y.history && (
+              <div className="bg-slate-50 rounded-lg p-4">
+                <h3 className="text-sm font-semibold text-slate-700 mb-3">10-Year Treasury Yield</h3>
+                <EconomicChart
+                  data={data.treasury10Y.history}
+                  chartStyle={chartStyle}
+                  title="10-Year Treasury"
+                  color="#10b981"
+                  height={180}
+                  unit="%"
+                  showAxis={true}
+                />
+              </div>
+            )}
+            {data.inflation.history && (
+              <div className="bg-slate-50 rounded-lg p-4">
+                <h3 className="text-sm font-semibold text-slate-700 mb-3">Inflation (CPI)</h3>
+                <EconomicChart
+                  data={data.inflation.history}
+                  chartStyle={chartStyle}
+                  title="Inflation"
+                  color="#f59e0b"
+                  height={180}
+                  unit="%"
+                  showAxis={true}
+                />
+              </div>
+            )}
+            {data.gdpGrowth.history && (
+              <div className="bg-slate-50 rounded-lg p-4">
+                <h3 className="text-sm font-semibold text-slate-700 mb-3">GDP Growth</h3>
+                <EconomicChart
+                  data={data.gdpGrowth.history}
+                  chartStyle={chartStyle}
+                  title="GDP Growth"
+                  color="#8b5cf6"
+                  height={180}
+                  unit="%"
+                  showAxis={true}
+                />
+              </div>
+            )}
+          </div>
+        </>
+      )}
 
       {/* Analysis Section */}
       <h2 className="text-lg font-semibold text-slate-800 border-b border-slate-300 pb-2 mb-4">

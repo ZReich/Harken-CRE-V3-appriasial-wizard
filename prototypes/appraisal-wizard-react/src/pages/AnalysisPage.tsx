@@ -120,7 +120,7 @@ const ALL_TABS = ['land', 'market', 'sales', 'multifamily', 'income', 'cost'];
 export default function AnalysisPage() {
   const [activeTab, setActiveTab] = useState('sales');
   const [analysisMode, setAnalysisMode] = useState<'standard' | 'residual'>('standard');
-  const { state, setIncomeApproachData, hasImprovements, setEconomicIndicators } = useWizard();
+  const { state, setIncomeApproachData, hasImprovements, setEconomicIndicators, dispatch } = useWizard();
 
   // Get the active scenario
   const activeScenario = useMemo(() => {
@@ -672,28 +672,32 @@ export default function AnalysisPage() {
                   setEconomicIndicators({
                     federalFundsRate: { 
                       current: data.federalFundsRate.current, 
-                      projected1Y: data.federalFundsRate.current // Use current as projection if not available
+                      projected1Y: data.federalFundsRate.current, // Use current as projection if not available
+                      history: data.federalFundsRate.history
                     },
                     treasury10Y: { 
                       current: data.treasury10Y.current, 
-                      projected1Y: data.treasury10Y.current // Use current as projection if not available
+                      projected1Y: data.treasury10Y.current, // Use current as projection if not available
+                      history: data.treasury10Y.history
                     },
                     inflation: { 
                       current: data.inflation.current, 
-                      trend: calcTrendRising(data.inflation)
+                      trend: calcTrendRising(data.inflation),
+                      history: data.inflation.history
                     },
                     gdpGrowth: { 
                       current: data.gdpGrowth.current, 
-                      trend: calcTrendGrowth(data.gdpGrowth)
+                      trend: calcTrendGrowth(data.gdpGrowth),
+                      history: data.gdpGrowth.history
                     },
                     asOfDate: asOfDate || new Date().toISOString(),
                     source: 'FRED Economic Data',
                   });
                 }}
-                onChartStyleChange={(style) => {
-                  // Save chart style to wizard state for report generation
-                  console.log('Chart style changed to:', style);
-                }}
+                  onChartStyleChange={(style) => {
+                    // Save chart style to wizard state for report generation
+                    dispatch({ type: 'SET_ECONOMIC_CHART_STYLE', payload: style });
+                  }}
               />
             </div>
           </div>

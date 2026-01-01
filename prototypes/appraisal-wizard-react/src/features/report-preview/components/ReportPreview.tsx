@@ -224,11 +224,12 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
           );
         }
         case 'economic-context': {
-          const econContent = page.content?.[0]?.content as { economicIndicators?: import('../../../types').EconomicIndicators };
+          const econContent = page.content?.[0]?.content as { economicIndicators?: import('../../../types').EconomicIndicators; chartStyle?: string };
           return (
             <EconomicContextPage 
               data={econContent?.economicIndicators ?? null}
               pageNumber={page.pageNumber}
+              chartStyle={econContent?.chartStyle as any}
             />
           );
         }

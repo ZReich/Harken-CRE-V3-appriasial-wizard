@@ -671,6 +671,12 @@ function wizardReducer(state: WizardState, action: WizardAction): WizardState {
           economicIndicators: action.payload,
         };
 
+      case 'SET_ECONOMIC_CHART_STYLE':
+        return {
+          ...state,
+          economicChartStyle: action.payload,
+        };
+
       case 'SET_SWOT_ANALYSIS':
         return {
           ...state,

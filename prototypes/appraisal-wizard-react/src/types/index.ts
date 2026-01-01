@@ -830,10 +830,10 @@ export interface DemographicsData {
 }
 
 export interface EconomicIndicators {
-  federalFundsRate: { current: number; projected1Y?: number };
-  treasury10Y: { current: number; projected1Y?: number };
-  inflation: { current: number; trend: 'rising' | 'stable' | 'falling' };
-  gdpGrowth: { current: number; trend: 'accelerating' | 'stable' | 'slowing' };
+  federalFundsRate: { current: number; projected1Y?: number; history?: { date: string; value: number }[] };
+  treasury10Y: { current: number; projected1Y?: number; history?: { date: string; value: number }[] };
+  inflation: { current: number; trend: 'rising' | 'stable' | 'falling'; history?: { date: string; value: number }[] };
+  gdpGrowth: { current: number; trend: 'accelerating' | 'stable' | 'slowing'; history?: { date: string; value: number }[] };
   asOfDate: string;
   source: string;
 }
@@ -1243,6 +1243,7 @@ export type WizardAction =
   // CBRE Parity Data Actions
   | { type: 'SET_DEMOGRAPHICS_DATA'; payload: DemographicsData }
   | { type: 'SET_ECONOMIC_INDICATORS'; payload: EconomicIndicators }
+  | { type: 'SET_ECONOMIC_CHART_STYLE'; payload: 'gradient' | 'glass' | 'horizon' | 'pulse' | 'diverging' }
   | { type: 'SET_SWOT_ANALYSIS'; payload: SWOTAnalysisData }
   | { type: 'SET_RISK_RATING'; payload: RiskRatingData }
   // Sales Comparison, Land Valuation, Photos, HBU, Market Analysis Actions
