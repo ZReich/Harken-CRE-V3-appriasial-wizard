@@ -648,9 +648,47 @@ export default function AnalysisPage() {
             {/* Economic Indicators Panel - Plan Part 4.2 */}
             <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
               <EconomicIndicatorsPanel 
-                onDataLoaded={(data) => {
+                onDataLoaded={(data, asOfDate) => {
                   // Save economic data to wizard state for report generation
-                  setEconomicIndicators(data);
+                  // Transform EconomicIndicatorsResponse['data'] to EconomicIndicators format
+                  // Calculate trends from history data
+                  const calcTrendRising = (series: { current: number; history: { value: number }[] }) => {
+                    if (series.history.length < 2) return 'stable' as const;
+                    const recent = series.history.slice(-3).map(h => h.value);
+                    const avg = recent.reduce((a, b) => a + b, 0) / recent.length;
+                    if (series.current > avg * 1.02) return 'rising' as const;
+                    if (series.current < avg * 0.98) return 'falling' as const;
+                    return 'stable' as const;
+                  };
+                  const calcTrendGrowth = (series: { current: number; history: { value: number }[] }) => {
+                    if (series.history.length < 2) return 'stable' as const;
+                    const recent = series.history.slice(-3).map(h => h.value);
+                    const avg = recent.reduce((a, b) => a + b, 0) / recent.length;
+                    if (series.current > avg * 1.02) return 'accelerating' as const;
+                    if (series.current < avg * 0.98) return 'slowing' as const;
+                    return 'stable' as const;
+                  };
+                  
+                  setEconomicIndicators({
+                    federalFundsRate: { 
+                      current: data.federalFundsRate.current, 
+                      projected1Y: data.federalFundsRate.current // Use current as projection if not available
+                    },
+                    treasury10Y: { 
+                      current: data.treasury10Y.current, 
+                      projected1Y: data.treasury10Y.current // Use current as projection if not available
+                    },
+                    inflation: { 
+                      current: data.inflation.current, 
+                      trend: calcTrendRising(data.inflation)
+                    },
+                    gdpGrowth: { 
+                      current: data.gdpGrowth.current, 
+                      trend: calcTrendGrowth(data.gdpGrowth)
+                    },
+                    asOfDate: asOfDate || new Date().toISOString(),
+                    source: 'FRED Economic Data',
+                  });
                 }}
                 onChartStyleChange={(style) => {
                   // Save chart style to wizard state for report generation

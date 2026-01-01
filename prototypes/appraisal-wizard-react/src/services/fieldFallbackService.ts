@@ -97,12 +97,11 @@ async function fetchFromMontanaGIS(
 ): Promise<FallbackResult> {
   try {
     // Use the existing propertyDataRouter which handles Montana GIS
-    const result = await getPropertyData(
-      address.street || '',
-      address.city || '',
-      address.state || '',
-      address.zip
-    );
+    const result = await getPropertyData({
+      address: address.street || '',
+      city: address.city || '',
+      state: address.state || '',
+    });
 
     if (!result.success || !result.data) {
       return {

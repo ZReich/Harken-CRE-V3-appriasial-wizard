@@ -609,20 +609,33 @@ export default function DocumentIntakePage() {
         } : d
       ));
 
-      // Auto-populate wizard fields from extracted data (reprocess)
+      // Create field suggestions for user to Accept/Reject (reprocess)
       if (result.extraction.success && result.extraction.data) {
-        const fields: Record<string, { value: string; confidence: number }> = {};
-        for (const [key, field] of Object.entries(result.extraction.data)) {
-          if (field.value) {
-            fields[key] = { value: field.value, confidence: field.confidence };
-          }
+        console.log('[DocumentIntake] Reprocess: Creating suggestions for', doc.file.name);
+        
+        const docType = result.classification.documentType as MappingDocumentType;
+        const mappings = DOCUMENT_FIELD_MAPPINGS[docType] || DOCUMENT_FIELD_MAPPINGS.unknown;
+        
+        for (const [extractedField, fieldData] of Object.entries(result.extraction.data)) {
+          if (!fieldData.value) continue;
+          
+          const mapping = mappings.find(m => m.extractedField === extractedField);
+          if (!mapping) continue;
+          
+          const value = mapping.transform 
+            ? mapping.transform(fieldData.value) 
+            : fieldData.value;
+          
+          addFieldSuggestion(mapping.wizardPath, {
+            value,
+            confidence: fieldData.confidence,
+            source: 'document',
+            sourceFilename: doc.file.name,
+            sourceDocumentType: result.classification.documentType,
+            status: 'pending',
+            rejectedSources: [],
+          });
         }
-        applyDocumentExtractedData(
-          doc.id,
-          doc.file.name,
-          result.classification.documentType,
-          fields
-        );
       }
     } catch (error) {
       setDocuments(prev => prev.map(d => 
@@ -659,6 +672,35 @@ export default function DocumentIntakePage() {
     setDocuments(prev => prev.map(d => 
       d.id === docId ? { ...d, status: 'complete', extraction } : d
     ));
+
+    // Create field suggestions for the re-extracted data
+    if (extraction.success && extraction.data) {
+      console.log('[DocumentIntake] Reclassify: Creating suggestions for', doc.file.name);
+      
+      const docType = newType as MappingDocumentType;
+      const mappings = DOCUMENT_FIELD_MAPPINGS[docType] || DOCUMENT_FIELD_MAPPINGS.unknown;
+      
+      for (const [extractedField, fieldData] of Object.entries(extraction.data)) {
+        if (!fieldData.value) continue;
+        
+        const mapping = mappings.find(m => m.extractedField === extractedField);
+        if (!mapping) continue;
+        
+        const value = mapping.transform 
+          ? mapping.transform(fieldData.value) 
+          : fieldData.value;
+        
+        addFieldSuggestion(mapping.wizardPath, {
+          value,
+          confidence: fieldData.confidence,
+          source: 'document',
+          sourceFilename: doc.file.name,
+          sourceDocumentType: newType,
+          status: 'pending',
+          rejectedSources: [],
+        });
+      }
+    }
   };
 
   // Calculate stats

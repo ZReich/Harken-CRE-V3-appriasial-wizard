@@ -896,6 +896,16 @@ export default function SetupPage() {
               placeholder="Start typing an address..."
               required
             />
+            {hasPendingFieldSuggestion('subjectData.address.street') && (
+              <FieldSuggestion
+                fieldPath="subjectData.address.street"
+                onAccept={(value) => {
+                  setAddress({ ...address, street: value });
+                  acceptFieldSuggestion('subjectData.address.street', value);
+                }}
+                onReject={() => rejectFieldSuggestion('subjectData.address.street')}
+              />
+            )}
           </div>
           
           {/* Search Button - Subtle, under address */}
@@ -1769,6 +1779,16 @@ export default function SetupPage() {
                     }`}
                     placeholder="Full legal name as shown on title"
                   />
+                  {index === 0 && hasPendingFieldSuggestion('owners.0.name') && (
+                    <FieldSuggestion
+                      fieldPath="owners.0.name"
+                      onAccept={(value) => {
+                        updateOwner(owner.id, { name: value });
+                        acceptFieldSuggestion('owners.0.name', value);
+                      }}
+                      onReject={() => rejectFieldSuggestion('owners.0.name')}
+                    />
+                  )}
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Ownership Type</label>

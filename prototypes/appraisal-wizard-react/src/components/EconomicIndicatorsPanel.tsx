@@ -25,7 +25,7 @@ import type { EconomicIndicatorsResponse, EconomicSeries } from '../types/api';
 
 interface EconomicIndicatorsPanelProps {
   className?: string;
-  onDataLoaded?: (data: EconomicIndicatorsResponse['data']) => void;
+  onDataLoaded?: (data: EconomicIndicatorsResponse['data'], asOfDate?: string) => void;
   onChartStyleChange?: (style: ChartStyle) => void;
 }
 
@@ -119,7 +119,7 @@ export function EconomicIndicatorsPanel({
       if (response.success && response.data) {
         setData(response.data);
         setAsOfDate(response.asOfDate);
-        onDataLoaded?.(response.data);
+        onDataLoaded?.(response.data, response.asOfDate);
       } else {
         setError(response.error || 'Failed to fetch economic data');
       }

@@ -4,11 +4,15 @@
  * Displays a suggestion panel below form fields with Accept/Reject buttons.
  * Shows source attribution (filename + document type) and confidence score.
  * Used for document-extracted data that needs user confirmation.
+ * 
+ * When a suggestion is rejected, the component automatically fetches
+ * fallback data from Montana GIS (for MT properties) or Cotality API.
  */
 
 import { useState, useCallback } from 'react';
-import { Check, X, FileText, ChevronDown, ChevronUp, Loader2 } from 'lucide-react';
+import { Check, X, FileText, ChevronDown, ChevronUp, Loader2, RefreshCw } from 'lucide-react';
 import { useWizard } from '../context/WizardContext';
+import { fetchFallbackValue, isMonatanaProperty } from '../services/fieldFallbackService';
 
 export interface FieldSuggestionData {
   value: string;
@@ -67,9 +71,10 @@ export function FieldSuggestion({
   onReject,
   className = '',
 }: FieldSuggestionProps) {
-  const { state } = useWizard();
+  const { state, addFieldSuggestion, rejectFieldSuggestion } = useWizard();
   const [isExpanded, setIsExpanded] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [fallbackStatus, setFallbackStatus] = useState<'idle' | 'fetching' | 'done'>('idle');
 
   // Get suggestion from wizard state
   const suggestion = state.fieldSuggestions?.[fieldPath];
@@ -90,12 +95,39 @@ export function FieldSuggestion({
 
   const handleReject = useCallback(async () => {
     setIsProcessing(true);
+    setFallbackStatus('fetching');
     try {
+      // First, mark the suggestion as rejected in wizard state
+      rejectFieldSuggestion(fieldPath);
       onReject?.();
+
+      // Then try to fetch fallback data from external APIs
+      const address = state.subjectData?.address;
+      if (address) {
+        console.log(`[FieldSuggestion] Fetching fallback for ${fieldPath}...`);
+        const fallbackResult = await fetchFallbackValue(fieldPath, {
+          street: address.street,
+          city: address.city,
+          state: address.state,
+          zip: address.zip,
+          county: address.county,
+        });
+
+        if (fallbackResult.success && fallbackResult.value) {
+          console.log(`[FieldSuggestion] Fallback found: ${fallbackResult.value} (${fallbackResult.source})`);
+          // Auto-apply the fallback value (no Accept/Reject for API data)
+          onAccept(fallbackResult.value);
+        } else {
+          console.log(`[FieldSuggestion] No fallback available: ${fallbackResult.error}`);
+        }
+      }
+    } catch (error) {
+      console.error('[FieldSuggestion] Error fetching fallback:', error);
     } finally {
       setIsProcessing(false);
+      setFallbackStatus('done');
     }
-  }, [onReject]);
+  }, [fieldPath, state.subjectData?.address, onReject, rejectFieldSuggestion, onAccept]);
 
   const confidenceColor = getConfidenceColor(suggestion.confidence);
 
@@ -154,12 +186,19 @@ export function FieldSuggestion({
               disabled={isProcessing}
               className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              {isProcessing ? (
+              {isProcessing && fallbackStatus === 'fetching' ? (
+                <>
+                  <RefreshCw className="w-4 h-4 animate-spin" />
+                  Finding from {isMonatanaProperty(state.subjectData?.address?.state) ? 'MT GIS' : 'Cotality'}...
+                </>
+              ) : isProcessing ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
-                <X className="w-4 h-4" />
+                <>
+                  <X className="w-4 h-4" />
+                  Reject & Auto-Fill
+                </>
               )}
-              Reject
             </button>
             <button
               type="button"
