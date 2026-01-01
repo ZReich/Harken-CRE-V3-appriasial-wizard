@@ -85,7 +85,7 @@ export function BoundaryDrawingTool({
   // Load Google Maps script with drawing library
   useEffect(() => {
     const loadGoogleMaps = () => {
-      if (window.google?.maps?.drawing) {
+      if (window.google?.maps?.drawing?.DrawingManager) {
         setIsLoaded(true);
         return;
       }
@@ -94,11 +94,19 @@ export function BoundaryDrawingTool({
       const existingScript = document.querySelector('script[src*="maps.googleapis.com"]');
       if (existingScript) {
         const checkLoaded = setInterval(() => {
-          if (window.google?.maps?.drawing) {
+          if (window.google?.maps?.drawing?.DrawingManager) {
             setIsLoaded(true);
             clearInterval(checkLoaded);
           }
         }, 100);
+        
+        // Timeout after 10 seconds
+        setTimeout(() => {
+          clearInterval(checkLoaded);
+          if (!window.google?.maps?.drawing?.DrawingManager) {
+            setError('Google Maps loading timeout');
+          }
+        }, 10000);
         return;
       }
 
@@ -109,12 +117,19 @@ export function BoundaryDrawingTool({
       }
 
       const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=drawing,geometry&loading=async`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=drawing,geometry`;
       script.async = true;
       script.defer = true;
       script.onload = () => {
-        // Wait a bit for the drawing library to initialize
-        setTimeout(() => setIsLoaded(true), 100);
+        // Wait for the drawing library to initialize
+        const checkLoaded = setInterval(() => {
+          if (window.google?.maps?.drawing?.DrawingManager) {
+            setIsLoaded(true);
+            clearInterval(checkLoaded);
+          }
+        }, 50);
+        
+        setTimeout(() => clearInterval(checkLoaded), 5000);
       };
       script.onerror = () => setError('Failed to load Google Maps');
       document.head.appendChild(script);

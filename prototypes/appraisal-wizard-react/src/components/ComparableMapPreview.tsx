@@ -120,14 +120,29 @@ export function ComparableMapPreview({
   // Load Google Maps script
   useEffect(() => {
     const loadGoogleMaps = () => {
-      if (window.google?.maps) {
+      // Check if fully loaded
+      if (window.google?.maps?.Map) {
         setIsLoaded(true);
         return;
       }
 
       const existingScript = document.querySelector('script[src*="maps.googleapis.com"]');
       if (existingScript) {
-        existingScript.addEventListener('load', () => setIsLoaded(true));
+        // Script exists but may not be loaded yet
+        const checkLoaded = setInterval(() => {
+          if (window.google?.maps?.Map) {
+            setIsLoaded(true);
+            clearInterval(checkLoaded);
+          }
+        }, 100);
+        
+        // Timeout after 10 seconds
+        setTimeout(() => {
+          clearInterval(checkLoaded);
+          if (!window.google?.maps?.Map) {
+            setError('Google Maps loading timeout');
+          }
+        }, 10000);
         return;
       }
 
@@ -138,10 +153,20 @@ export function ComparableMapPreview({
       }
 
       const script = document.createElement('script');
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=geometry&loading=async`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=geometry`;
       script.async = true;
       script.defer = true;
-      script.onload = () => setIsLoaded(true);
+      script.onload = () => {
+        // Wait a bit for the API to fully initialize
+        const checkLoaded = setInterval(() => {
+          if (window.google?.maps?.Map) {
+            setIsLoaded(true);
+            clearInterval(checkLoaded);
+          }
+        }, 50);
+        
+        setTimeout(() => clearInterval(checkLoaded), 5000);
+      };
       script.onerror = () => setError('Failed to load Google Maps');
       document.head.appendChild(script);
     };
