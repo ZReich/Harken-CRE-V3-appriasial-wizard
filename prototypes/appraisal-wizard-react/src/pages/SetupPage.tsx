@@ -1668,7 +1668,7 @@ export default function SetupPage() {
                     </svg>
                   </div>
                 )}
-                <h4 className="font-semibold text-sm text-gray-900">{opt.label}</h4>
+                <h4 className="font-semibold text-sm text-gray-900 dark:text-white">{opt.label}</h4>
                 <p className="text-xs text-gray-500 mt-1">{opt.description}</p>
               </button>
             );
@@ -1699,7 +1699,7 @@ export default function SetupPage() {
                     </svg>
                   </div>
                 )}
-                <h4 className="font-semibold text-sm text-gray-900">{opt.label}</h4>
+                <h4 className="font-semibold text-sm text-gray-900 dark:text-white">{opt.label}</h4>
                 <p className="text-xs text-gray-500 mt-1">{opt.description}</p>
               </button>
             );
@@ -1964,7 +1964,7 @@ export default function SetupPage() {
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">Did you personally inspect the property?</label>
             <div className="flex gap-4">
-              <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 flex-1">
+              <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 flex-1">
                 <input
                   type="radio"
                   name="personal_inspection"
@@ -1974,7 +1974,7 @@ export default function SetupPage() {
                 />
                 <span>Yes, I inspected it personally</span>
               </label>
-              <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 flex-1">
+              <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 flex-1">
                 <input
                   type="radio"
                   name="personal_inspection"
@@ -2045,7 +2045,7 @@ export default function SetupPage() {
           </p>
         </div>
         <div className="space-y-3">
-          <label className="flex items-start gap-3 p-4 border rounded-lg cursor-pointer hover:bg-gray-50">
+          <label className="flex items-start gap-3 p-4 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700">
             <input
               type="checkbox"
               checked={certificationAcknowledged}

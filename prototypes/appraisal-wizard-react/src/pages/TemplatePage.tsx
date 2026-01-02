@@ -385,7 +385,7 @@ export default function TemplatePage() {
                               e.stopPropagation();
                               handleEditTemplate(template.id);
                             }}
-                            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700"
                           >
                             <Edit2 className="w-3.5 h-3.5" />
                             Edit
@@ -395,7 +395,7 @@ export default function TemplatePage() {
                               e.stopPropagation();
                               handleDuplicateTemplate(template.id);
                             }}
-                            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 hover:bg-gray-50"
+                            className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700"
                           >
                             <Copy className="w-3.5 h-3.5" />
                             Duplicate

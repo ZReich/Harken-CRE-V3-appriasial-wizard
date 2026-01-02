@@ -397,7 +397,7 @@ export function ValueReconciliation() {
                 
                 return (
                   <React.Fragment key={approach}>
-                    <tr className="border-b border-gray-100 hover:bg-gray-50">
+                    <tr className="border-b border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700">
                       <td className="px-4 py-3 font-medium text-gray-700">
                         <div className="flex items-center gap-2">
                           <span className={colors.text}>{getApproachIcon(approach)}</span>

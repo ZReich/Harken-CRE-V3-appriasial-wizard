@@ -94,7 +94,7 @@ function SuccessScreen({ onCreateAnother, onViewReport }: { onCreateAnother: () 
           </button>
           <button
             onClick={onCreateAnother}
-            className="px-6 py-3 border-2 border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-50"
+            className="px-6 py-3 border-2 border-gray-300 dark:border-slate-600 text-gray-700 dark:text-slate-300 font-semibold rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700"
           >
             Create Another
           </button>
@@ -220,7 +220,7 @@ function ReportPreviewMode({
           <button
             onClick={onSaveDraft}
             disabled={isSaving || !isDirty}
-            className="flex items-center gap-2 px-4 py-2 border border-gray-300 text-gray-700 hover:bg-gray-50 rounded-lg transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-lg transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSaving ? (
               <Loader2 size={16} className="animate-spin" />
