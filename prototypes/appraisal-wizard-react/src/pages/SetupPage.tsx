@@ -1132,7 +1132,7 @@ export default function SetupPage() {
         
         {/* Tier 1: Property Category */}
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 mb-3">
+          <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-3">
             Property Category <span className="text-red-500">*</span>
           </label>
           <div className="grid grid-cols-3 gap-4">
@@ -1502,7 +1502,7 @@ export default function SetupPage() {
               {/* Effective Date and Scenario Type Row */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                     Effective Date for {scenario.name || 'Scenario'} <span className="text-red-500">*</span>
                   </label>
                   <input
@@ -1513,7 +1513,7 @@ export default function SetupPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Change Scenario Type</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">Change Scenario Type</label>
                   <div className="flex flex-wrap gap-2">
                     {scenarioNameOptions.filter(opt => opt.value !== 'Type my own').map((opt) => (
                       <button
@@ -1522,7 +1522,7 @@ export default function SetupPage() {
                         className={`px-3 py-1.5 border rounded-full text-xs font-medium transition-all ${
                           scenario.nameSelect === opt.value || scenario.name === opt.value
                             ? 'border-[#0da1c7] bg-[#0da1c7] text-white'
-                            : 'border-gray-300 bg-white text-gray-700 hover:border-[#0da1c7]'
+                            : 'border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-300 hover:border-[#0da1c7]'
                         }`}
                       >
                         {opt.label}
@@ -1536,7 +1536,7 @@ export default function SetupPage() {
               {(scenario.nameSelect === 'Type my own' || 
                 (!scenarioNameOptions.some(opt => opt.value === scenario.name) && scenario.name)) && (
                 <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                     Custom Scenario Name
                   </label>
                   <input
@@ -1550,7 +1550,7 @@ export default function SetupPage() {
               )}
               
               {/* Approach Selection */}
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                 Select Approaches for this Scenario
               </label>
               <div className="grid grid-cols-3 gap-3">
@@ -1962,7 +1962,7 @@ export default function SetupPage() {
             <p className="text-xs text-blue-600 mt-1">Synced with Assignment Basics &gt; Key Dates</p>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">Did you personally inspect the property?</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">Did you personally inspect the property?</label>
             <div className="flex gap-4">
               <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 flex-1">
                 <input

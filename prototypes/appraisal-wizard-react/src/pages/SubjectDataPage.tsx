@@ -925,7 +925,7 @@ function LocationContent({
         <div className="space-y-4">
           {/* City/County - Auto-populated from Setup */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
               City/County <span className="text-red-500">*</span>
             </label>
             {cityCounty ? (
@@ -1474,7 +1474,7 @@ Overall, the site is well-suited for its current use and presents no significant
         </h3>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
               Total Acres <span className="text-red-500">*</span>
               <DocumentSourceIndicator fieldPath="subjectData.siteArea" inline />
             </label>
@@ -1503,7 +1503,7 @@ Overall, the site is well-suited for its current use and presents no significant
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
               Total Square Feet <span className="text-gray-400 text-xs">(or enter to calculate acres)</span>
             </label>
             <input
@@ -1526,7 +1526,7 @@ Overall, the site is well-suited for its current use and presents no significant
         </div>
 
         <div className="mt-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Frontage</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Frontage</label>
           <input
             type="text"
             value={frontage}
@@ -1617,7 +1617,7 @@ Overall, the site is well-suited for its current use and presents no significant
         </h3>
         <div className="space-y-4">
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
               Zoning Classification <span className="text-red-500">*</span>
               <DocumentSourceIndicator fieldPath="subjectData.zoningClass" inline />
             </label>
@@ -1681,7 +1681,7 @@ Overall, the site is well-suited for its current use and presents no significant
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Water Provider</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Water Provider</label>
                 <input
                   type="text"
                   value={waterProvider}
@@ -1723,7 +1723,7 @@ Overall, the site is well-suited for its current use and presents no significant
           <div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Electric Provider</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Electric Provider</label>
                 <input
                   type="text"
                   value={electricProvider}
@@ -1920,7 +1920,7 @@ Overall, the site is well-suited for its current use and presents no significant
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Map Panel Number</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Map Panel Number</label>
               <input
                 type="text"
                 value={femaMapPanel}
@@ -1930,7 +1930,7 @@ Overall, the site is well-suited for its current use and presents no significant
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Map Effective Date</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Map Effective Date</label>
               <input
                 type="date"
                 value={femaMapDate}
@@ -2063,7 +2063,7 @@ function TaxContent({
         </h3>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Tax Year</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Tax Year</label>
             <select
               value={taxYear}
               onChange={(e) => setTaxYear(e.target.value)}
@@ -2073,7 +2073,7 @@ function TaxContent({
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Current Year Tax Amount</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Current Year Tax Amount</label>
             <input
               type="text"
               value={taxAmount}
@@ -2083,7 +2083,7 @@ function TaxContent({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Assessed Value - Land</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Assessed Value - Land</label>
             <input
               type="text"
               value={assessedLand}
@@ -2093,7 +2093,7 @@ function TaxContent({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Assessed Value - Improvements</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Assessed Value - Improvements</label>
             <input
               type="text"
               value={assessedImprovements}
@@ -2103,7 +2103,7 @@ function TaxContent({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Total Assessed Value</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Total Assessed Value</label>
             <input
               type="text"
               value={totalAssessed}
@@ -2113,7 +2113,7 @@ function TaxContent({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Mill Levy / Tax Rate</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Mill Levy / Tax Rate</label>
             <input
               type="number"
               value={millLevy}
@@ -2133,7 +2133,7 @@ function TaxContent({
         </h3>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Date of Last Sale</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Date of Last Sale</label>
             <input
               type="date"
               value={lastSaleDate}
@@ -2142,7 +2142,7 @@ function TaxContent({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Last Sale Price</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Last Sale Price</label>
             <input
               type="text"
               value={lastSalePrice}
@@ -2152,7 +2152,7 @@ function TaxContent({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Grantor (Seller)</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Grantor (Seller)</label>
             <input
               type="text"
               value={grantor}
@@ -2162,7 +2162,7 @@ function TaxContent({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Grantee (Buyer)</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Grantee (Buyer)</label>
             <input
               type="text"
               value={grantee}
