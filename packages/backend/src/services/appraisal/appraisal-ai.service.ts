@@ -94,11 +94,22 @@ Write in a professional, authoritative voice using proper appraisal terminology:
 
 Your output should read like it came from a Tier 1 national appraisal firm's report.
 
+CRITICAL FORMATTING RULES:
+1. Use ONLY HTML formatting - NEVER use markdown syntax
+2. For bold section headers: use <b><u>HEADER TEXT</u></b> (NOT **text** or __text__)
+3. For bold text: use <b>text</b> (NOT **text**)
+4. For underline: use <u>text</u> (NOT __text__)
+5. For line breaks: use \n (NOT markdown line breaks)
+6. DO NOT use asterisks (*), underscores (_), or hashtags (#) for formatting
+7. DO NOT use markdown bullet points (- or *) - write as flowing narrative paragraphs
+8. DO NOT use any special characters for formatting: ** __ ## ### * - [ ] etc.
+
 Additional guidelines:
 1. Be factual and objective - avoid speculation
 2. Be concise but thorough
 3. Do not include specific dollar values unless provided in context
-4. Follow the specific format and content requirements for each section type`;
+4. Follow the specific format and content requirements for each section type
+5. Output pure narrative text with HTML formatting only - no markdown`;
 
 const SECTION_PROMPTS: Record<string, (context: AIGenerationContext) => string> = {
     area_description: (ctx) => `Write a professional area/regional description for an appraisal report.
@@ -1022,6 +1033,71 @@ export default class AppraisalAIService {
     }
 
     /**
+     * Clean markdown formatting from AI output
+     * Converts markdown to HTML or removes unwanted formatting
+     */
+    private cleanMarkdownFromOutput(text: string): string {
+        let cleaned = text;
+        
+        // Remove markdown bold/italic with asterisks or underscores
+        // **bold** or __bold__ → <b>bold</b>
+        cleaned = cleaned.replace(/\*\*([^*]+)\*\*/g, '<b>$1</b>');
+        cleaned = cleaned.replace(/__([^_]+)__/g, '<b>$1</b>');
+        
+        // Remove single asterisk/underscore emphasis *text* or _text_
+        cleaned = cleaned.replace(/\*([^*]+)\*/g, '$1'); // Just remove, don't emphasize
+        cleaned = cleaned.replace(/_([^_]+)_/g, '$1');
+        
+        // Remove markdown headers (# ## ###)
+        cleaned = cleaned.replace(/^#+\s+(.+)$/gm, '$1');
+        
+        // Remove markdown bullet points (- or * at start of line)
+        cleaned = cleaned.replace(/^[\*\-]\s+/gm, '');
+        
+        // Remove markdown numbered lists (1. 2. etc)
+        cleaned = cleaned.replace(/^\d+\.\s+/gm, '');
+        
+        // Remove markdown blockquotes (>)
+        cleaned = cleaned.replace(/^>\s+/gm, '');
+        
+        // Remove markdown code blocks (```)
+        cleaned = cleaned.replace(/```[\s\S]*?```/g, '');
+        cleaned = cleaned.replace(/`([^`]+)`/g, '$1');
+        
+        // Remove markdown horizontal rules (---, ***)
+        cleaned = cleaned.replace(/^[\-\*]{3,}$/gm, '');
+        
+        // Remove square brackets (markdown links/checkboxes)
+        cleaned = cleaned.replace(/\[([^\]]+)\]\([^\)]+\)/g, '$1'); // [text](url) → text
+        cleaned = cleaned.replace(/\[([ xX])\]/g, ''); // Remove checkboxes
+        
+        return cleaned;
+    }
+
+    /**
+     * Validate output contains no markdown syntax
+     */
+    private validateNoMarkdown(text: string): void {
+        const markdownPatterns = [
+            { pattern: /\*\*[^*]+\*\*/, name: 'bold asterisks (**text**)' },
+            { pattern: /__[^_]+__/, name: 'bold underscores (__text__)' },
+            { pattern: /^#+\s/m, name: 'markdown headers (# ##)' },
+            { pattern: /^[\*\-]\s+/m, name: 'markdown bullet points (- *)' },
+            { pattern: /```/, name: 'code blocks (```)' },
+        ];
+        
+        const found = markdownPatterns.find(({ pattern }) => pattern.test(text));
+        if (found) {
+            helperFunction.log({
+                message: `Markdown syntax detected in AI output: ${found.name}. Output will be cleaned automatically.`,
+                location: 'AppraisalAIService.validateNoMarkdown',
+                level: LoggerEnum.WARN,
+                error: '',
+            });
+        }
+    }
+
+    /**
      * Generate AI draft content for an appraisal section
      */
     public generateDraft = async (
@@ -1058,7 +1134,11 @@ export default class AppraisalAIService {
             }
 
             // Generate content using OpenAI
-            const generatedContent = await this.generateWithOpenAI(userPrompt);
+            let generatedContent = await this.generateWithOpenAI(userPrompt);
+
+            // Validate and clean the output
+            this.validateNoMarkdown(generatedContent);
+            generatedContent = this.cleanMarkdownFromOutput(generatedContent);
 
             helperFunction.log({
                 message: `AI draft generated for section: ${section}`,
