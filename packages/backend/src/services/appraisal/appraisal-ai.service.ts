@@ -2,6 +2,22 @@
  * Appraisal AI Service
  * Provides AI-powered text generation for appraisal report sections
  * Uses GPT-4o through the existing OpenAIService
+ * 
+ * FIX #46-47: SYNC REQUIRED WITH FRONTEND
+ * This backend service should be kept in sync with:
+ * - prototypes/appraisal-wizard-react/api/_lib/openai.ts (prompts)
+ * - prototypes/appraisal-wizard-react/src/utils/hbuContextBuilder.ts (context)
+ * 
+ * Last Frontend Sync: January 1, 2026
+ * - Added 20+ new context fields (demographics, economics, risk, etc.)
+ * - Added adjusted price calculation for sales comps
+ * - Added scenario info and completion flags
+ * - Added proper formatting (currency, percentages)
+ * - Added error handling and validation
+ * 
+ * TODO: Update AIGenerationContext interface to match frontend
+ * TODO: Update prompts to use new context fields
+ * TODO: Add validation and error handling
  */
 
 import { Request, Response } from 'express';

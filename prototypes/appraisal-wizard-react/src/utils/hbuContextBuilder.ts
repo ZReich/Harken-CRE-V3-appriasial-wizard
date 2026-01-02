@@ -403,17 +403,37 @@ export function buildEnhancedContextForAI(
         incomeData.noiFormatted = `$${noi.toLocaleString()}`; // FIX #25
       }
       
-      // Extract rent comparables
+      // FIX #23: Extract rent comparables with verified structure
       const rentComparables = (incomeApproachData as any).rentComparables;
       if (rentComparables && Array.isArray(rentComparables)) {
-        incomeData.rentComps = rentComparables.filter(c => c && c.address); // FIX #43
+        incomeData.rentComps = rentComparables
+          .filter(c => c && c.address) // FIX #43
+          .map(c => ({
+            id: c.id,
+            address: c.address,
+            rentPerSf: c.nnnRentPerSf || 0, // Verified field name from rentTypes.ts
+            leaseDate: c.leaseDate || null,
+            sizeSf: c.sizeSfBldg || 0,
+            condition: c.condition || null,
+            overallComparability: c.overallComparability || null,
+          }));
         incomeData.rentCompNotes = (incomeApproachData as any).rentCompNotes || null;
       }
       
-      // Extract expense comparables
+      // FIX #24: Extract expense comparables with verified structure
       const expenseComparables = (incomeApproachData as any).expenseComparables;
       if (expenseComparables && Array.isArray(expenseComparables)) {
-        incomeData.expenseComps = expenseComparables.filter(c => c && c.address); // FIX #43
+        incomeData.expenseComps = expenseComparables
+          .filter(c => c && c.address) // FIX #43
+          .map(c => ({
+            id: c.id,
+            address: c.address,
+            totalExpensesPerSf: c.totalExpensesPerSf || 0, // Verified field name
+            expenseRatio: c.expenseRatioPercent || 0, // Verified field name
+            propertyType: c.propertyType || null,
+            sizeSf: c.sizeSf || 0,
+            occupancy: c.occupancy || 0,
+          }));
         incomeData.expenseCompNotes = (incomeApproachData as any).expenseCompNotes || null;
       }
     }
@@ -498,6 +518,7 @@ export function buildEnhancedContextForAI(
     const activeScenario = scenarios?.find(s => s.id === activeScenarioId);
     const applicableApproaches = activeScenario?.approaches || [];
     
+    // FIX #35: Check approach completion status
     const scenarioInfo = {
       scenarioName: activeScenario?.name || 'Market Value',
       // scenarioType removed - AppraisalScenario doesn't have a 'type' property
@@ -506,6 +527,11 @@ export function buildEnhancedContextForAI(
       isIncomeApplicable: applicableApproaches.includes('income-approach'),
       isCostApplicable: applicableApproaches.includes('cost-approach'),
       isLandValApplicable: applicableApproaches.includes('land-valuation'),
+      // FIX #35: Completion status flags
+      isSalesComplete: valuationData.salesValue !== null,
+      isIncomeComplete: valuationData.incomeValue !== null,
+      isCostComplete: valuationData.costValue !== null,
+      isLandValComplete: valuationData.landValue !== null,
     };
     
     // FIX #36: Add comp counts

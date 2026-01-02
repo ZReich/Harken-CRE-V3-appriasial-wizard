@@ -49,8 +49,10 @@ interface AIPreview {
   isVisible: boolean;
 }
 
-// Simulated AI responses for demo (templates reserved for future API integration)
+// FIX #48: Simulated AI responses for demo (fallback when API unavailable)
 // Bold and underlined section headers for professional appraisal appearance
+// TODO: These should be updated to template in actual wizard data when available
+// Currently these are static templates - they should use contextData prop to inject real values
 const SimulatedAIDrafts: Record<string, string> = {
   'legal_description': '<b><u>LEGAL DESCRIPTION</u></b>\n\nLot 12, Block 4, of CANYON CREEK INDUSTRIAL PARK, according to the plat thereof, filed in Plat Book 45, at Page 123, records of Yellowstone County, Montana, located in the Southeast Quarter of Section 15, Township 1 South, Range 26 East, Principal Meridian, Montana.',
   
