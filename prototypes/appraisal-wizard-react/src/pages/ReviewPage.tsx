@@ -1014,7 +1014,7 @@ We considered alternative uses including renovation, conversion to alternative u
             </div>
 
             {/* HBU As Vacant */}
-            <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
               <div className="flex items-center justify-between border-b-2 border-gray-200 pb-3 mb-4">
                 <h3 className="text-lg font-bold text-[#1c3643]">
                   Highest & Best Use - As Vacant
@@ -1075,7 +1075,7 @@ We considered alternative uses including renovation, conversion to alternative u
 
             {/* HBU As Improved (only if property has improvements) */}
             {hasImprovements && (
-              <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+              <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
                 <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
                   Highest & Best Use - As Improved
                 </h3>

@@ -148,7 +148,7 @@ export function BoundaryFieldsCard({
   const filledCount = [northBoundary, southBoundary, eastBoundary, westBoundary].filter(b => b.trim()).length;
   
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+    <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Map className="w-5 h-5 text-[#0da1c7]" />

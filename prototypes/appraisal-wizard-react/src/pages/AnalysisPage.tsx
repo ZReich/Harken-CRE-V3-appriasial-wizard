@@ -629,7 +629,7 @@ export default function AnalysisPage() {
 
 function PlaceholderContent({ title, scenarioName }: { title: string; scenarioName?: string }) {
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+    <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3">
           {title}
