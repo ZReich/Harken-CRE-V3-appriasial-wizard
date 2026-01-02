@@ -682,7 +682,7 @@ const Header = () => {
             <ul
               className="flex py-1 rounded-full px-1"
               style={{
-                backgroundColor: 'rgba(232, 248, 252, 1)',
+                backgroundColor: 'var(--accent-cyan-light)',
               }}
             >
               <li
@@ -787,11 +787,17 @@ const Header = () => {
             );
           })}
         </div>
+        {/* Theme Toggle Button - Always visible */}
+        <div 
+          className="flex items-center justify-center" 
+          style={{ 
+            marginRight: '16px',
+            minWidth: '44px',
+          }}
+        >
+          <ThemeToggle showSystemOption size="medium" />
+        </div>
         <div className="all-true-true py-1 mr-2 flex items-center gap-3">
-          {/* Theme Toggle Button */}
-          <div className="flex items-center" style={{ marginRight: '8px' }}>
-            <ThemeToggle showSystemOption size="medium" />
-          </div>
           <ul className="rounded-full all-true m-0">
             <li className="list-none text-lg font-medium flex" style={{ color: 'var(--text-inverse)' }}>
               <div className="pt-1 mr-3">

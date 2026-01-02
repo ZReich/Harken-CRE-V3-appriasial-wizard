@@ -97,7 +97,7 @@ export function ThemeToggle({
             backgroundColor: resolvedTheme === 'dark' 
               ? 'rgba(0, 212, 255, 0.2)' 
               : 'rgba(13, 161, 199, 0.2)',
-            borderColor: resolvedTheme === 'dark' ? '#00d4ff' : '#0da1c7',
+            borderColor: 'var(--accent-cyan)',
             boxShadow: resolvedTheme === 'dark' 
               ? 'var(--shadow-glow-cyan)' 
               : 'var(--shadow-sm)',
