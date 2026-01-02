@@ -259,6 +259,7 @@ export default function SubjectDataPage() {
 
   // Expanded Utilities state
   const [waterSource, setWaterSource] = useState('');
+  const [waterProvider, setWaterProvider] = useState('');
   const [waterNotes, setWaterNotes] = useState('');
   const [sewerType, setSewerType] = useState('');
   const [sewerNotes, setSewerNotes] = useState('');
@@ -269,6 +270,11 @@ export default function SubjectDataPage() {
   const [naturalGasNotes, setNaturalGasNotes] = useState('');
   const [telecom, setTelecom] = useState('');
   const [telecomNotes, setTelecomNotes] = useState('');
+  
+  // Storm Drainage & Fire Protection state
+  const [stormDrainage, setStormDrainage] = useState('');
+  const [stormDrainageNotes, setStormDrainageNotes] = useState('');
+  const [fireHydrantDistance, setFireHydrantDistance] = useState('');
 
   // Enhanced Flood Zone state
   const [femaZone, setFemaZone] = useState('');
@@ -700,6 +706,8 @@ export default function SubjectDataPage() {
             // Utilities
             waterSource={waterSource}
             setWaterSource={setWaterSource}
+            waterProvider={waterProvider}
+            setWaterProvider={setWaterProvider}
             waterNotes={waterNotes}
             setWaterNotes={setWaterNotes}
             sewerType={sewerType}
@@ -720,6 +728,13 @@ export default function SubjectDataPage() {
             setTelecom={setTelecom}
             telecomNotes={telecomNotes}
             setTelecomNotes={setTelecomNotes}
+            // Storm Drainage & Fire Protection
+            stormDrainage={stormDrainage}
+            setStormDrainage={setStormDrainage}
+            stormDrainageNotes={stormDrainageNotes}
+            setStormDrainageNotes={setStormDrainageNotes}
+            fireHydrantDistance={fireHydrantDistance}
+            setFireHydrantDistance={setFireHydrantDistance}
             // Site Improvements Inventory (M&S Section 66)
             siteImprovements={wizardState.siteImprovements || []}
             onSiteImprovementsChange={setSiteImprovements}
@@ -1079,6 +1094,8 @@ interface SiteProps {
   // Utilities
   waterSource: string;
   setWaterSource: (v: string) => void;
+  waterProvider: string;
+  setWaterProvider: (v: string) => void;
   waterNotes: string;
   setWaterNotes: (v: string) => void;
   sewerType: string;
@@ -1099,6 +1116,13 @@ interface SiteProps {
   setTelecom: (v: string) => void;
   telecomNotes: string;
   setTelecomNotes: (v: string) => void;
+  // Storm Drainage & Fire Protection
+  stormDrainage: string;
+  setStormDrainage: (v: string) => void;
+  stormDrainageNotes: string;
+  setStormDrainageNotes: (v: string) => void;
+  fireHydrantDistance: string;
+  setFireHydrantDistance: (v: string) => void;
   // Site Improvements Inventory (M&S Section 66)
   siteImprovements: SiteImprovement[];
   onSiteImprovementsChange: (improvements: SiteImprovement[]) => void;
@@ -1261,6 +1285,21 @@ const DRAINAGE_OPTIONS = [
   { value: 'unknown', label: 'Unknown' },
 ];
 
+const STORM_DRAINAGE_OPTIONS = [
+  { value: 'adequate', label: 'Adequate' },
+  { value: 'limited', label: 'Limited' },
+  { value: 'poor', label: 'Poor' },
+  { value: 'unknown', label: 'Unknown' },
+];
+
+const FIRE_HYDRANT_OPTIONS = [
+  { value: '<500ft', label: '< 500 ft' },
+  { value: '500-1000ft', label: '500-1000 ft' },
+  { value: '>1000ft', label: '> 1000 ft' },
+  { value: 'none', label: 'None Nearby' },
+  { value: 'unknown', label: 'Unknown' },
+];
+
 const ENVIRONMENTAL_OPTIONS = [
   { value: 'none_known', label: 'No Known Issues' },
   { value: 'phase1_clear', label: 'Phase 1 Clear' },
@@ -1291,11 +1330,13 @@ function SiteContent({
   zoningClass, setZoningClass,
   zoningDescription, setZoningDescription,
   zoningConformance, setZoningConformance,
-  waterSource, setWaterSource, waterNotes, setWaterNotes,
+  waterSource, setWaterSource, waterProvider, setWaterProvider, waterNotes, setWaterNotes,
   sewerType, setSewerType, sewerNotes, setSewerNotes,
   electricProvider, setElectricProvider, electricAdequacy, setElectricAdequacy, electricNotes, setElectricNotes,
   naturalGas, setNaturalGas, naturalGasNotes, setNaturalGasNotes,
   telecom, setTelecom, telecomNotes, setTelecomNotes,
+  stormDrainage, setStormDrainage, stormDrainageNotes, setStormDrainageNotes,
+  fireHydrantDistance, setFireHydrantDistance,
   siteImprovements, onSiteImprovementsChange,
   topography, setTopography, drainage, setDrainage,
   environmental, setEnvironmental, easements, setEasements,
@@ -1630,12 +1671,26 @@ Overall, the site is well-suited for its current use and presents no significant
         <div className="space-y-6">
           {/* Water Source */}
           <div>
-            <ButtonSelector
-              label="Water Source"
-              options={WATER_SOURCE_OPTIONS}
-              value={waterSource}
-              onChange={setWaterSource}
-            />
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <ButtonSelector
+                  label="Water Source"
+                  options={WATER_SOURCE_OPTIONS}
+                  value={waterSource}
+                  onChange={setWaterSource}
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">Water Provider</label>
+                <input
+                  type="text"
+                  value={waterProvider}
+                  onChange={(e) => setWaterProvider(e.target.value)}
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                  placeholder="e.g., City of Bozeman Water"
+                />
+              </div>
+            </div>
             <ExpandableNote
               id="water_notes"
               label="Water Notes"
@@ -1730,6 +1785,34 @@ Overall, the site is well-suited for its current use and presents no significant
               onChange={setTelecomNotes}
               placeholder="Add notes about telecommunications..."
               sectionContext="telecom"
+            />
+          </div>
+
+          {/* Storm Drainage */}
+          <div>
+            <ButtonSelector
+              label="Storm Drainage"
+              options={STORM_DRAINAGE_OPTIONS}
+              value={stormDrainage}
+              onChange={setStormDrainage}
+            />
+            <ExpandableNote
+              id="storm_drainage_notes"
+              label="Storm Drainage Notes"
+              value={stormDrainageNotes}
+              onChange={setStormDrainageNotes}
+              placeholder="Add notes about storm drainage, retention requirements..."
+              sectionContext="storm_drainage"
+            />
+          </div>
+
+          {/* Fire Hydrant Proximity */}
+          <div>
+            <ButtonSelector
+              label="Fire Hydrant Distance"
+              options={FIRE_HYDRANT_OPTIONS}
+              value={fireHydrantDistance}
+              onChange={setFireHydrantDistance}
             />
           </div>
         </div>

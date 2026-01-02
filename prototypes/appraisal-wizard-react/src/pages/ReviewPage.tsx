@@ -22,6 +22,7 @@ import EnhancedTextArea from '../components/EnhancedTextArea';
 import SWOTAnalysis, { type SWOTData } from '../components/SWOTAnalysis';
 import RiskRatingPanel from '../components/RiskRatingPanel';
 import { MarketAnalysisGrid } from '../features/market-analysis';
+import EconomicIndicatorsPanel from '../components/EconomicIndicatorsPanel';
 import { Info, ArrowLeft, Save, FileCheck, CheckCircle, Sparkles, Loader2, FileText, Shield, Calculator } from 'lucide-react';
 import { CostSegOverview } from '../features/cost-segregation/components/CostSegOverview';
 import { CostSegFullReportEditor } from '../features/cost-segregation/components/CostSegFullReportEditor';
@@ -442,7 +443,7 @@ export default function ReviewPage() {
     setActiveTab('checklist');
   }, []);
 
-  const { state, setRiskRating, setSwotAnalysis, setHbuAnalysis } = useWizard();
+  const { state, setRiskRating, setSwotAnalysis, setHbuAnalysis, setEconomicIndicators, dispatch } = useWizard();
   
   // Determine if property has improvements (for HBU As Improved visibility)
   const hasImprovements = useMemo(() => {
@@ -1108,7 +1109,7 @@ We considered alternative uses including renovation, conversion to alternative u
             </div>
 
             {/* Market Analysis Grid - Full height content */}
-            <div className="flex-1 min-h-0 overflow-auto">
+            <div className="flex-1 min-h-0 overflow-auto space-y-6">
               <MarketAnalysisGrid 
                 rentCompData={{
                   avgRent: 26.75,
@@ -1121,6 +1122,61 @@ We considered alternative uses including renovation, conversion to alternative u
                   compCount: 8,
                 }}
               />
+              
+              {/* Economic Indicators Panel - FRED Data */}
+              <div className="bg-white rounded-xl border border-slate-200 shadow-sm mx-6 mb-6">
+                <EconomicIndicatorsPanel 
+                  onDataLoaded={(data, asOfDate) => {
+                    // Save economic data to wizard state for report generation
+                    // Calculate trends from history data
+                    const calcTrendRising = (series: { current: number; history: { value: number }[] }) => {
+                      if (series.history.length < 2) return 'stable' as const;
+                      const recent = series.history.slice(-3).map(h => h.value);
+                      const avg = recent.reduce((a, b) => a + b, 0) / recent.length;
+                      if (series.current > avg * 1.02) return 'rising' as const;
+                      if (series.current < avg * 0.98) return 'falling' as const;
+                      return 'stable' as const;
+                    };
+                    const calcTrendGrowth = (series: { current: number; history: { value: number }[] }) => {
+                      if (series.history.length < 2) return 'stable' as const;
+                      const recent = series.history.slice(-3).map(h => h.value);
+                      const avg = recent.reduce((a, b) => a + b, 0) / recent.length;
+                      if (series.current > avg * 1.02) return 'accelerating' as const;
+                      if (series.current < avg * 0.98) return 'slowing' as const;
+                      return 'stable' as const;
+                    };
+                    
+                    setEconomicIndicators({
+                      federalFundsRate: { 
+                        current: data.federalFundsRate.current, 
+                        projected1Y: data.federalFundsRate.current,
+                        history: data.federalFundsRate.history
+                      },
+                      treasury10Y: { 
+                        current: data.treasury10Y.current, 
+                        projected1Y: data.treasury10Y.current,
+                        history: data.treasury10Y.history
+                      },
+                      inflation: { 
+                        current: data.inflation.current, 
+                        trend: calcTrendRising(data.inflation),
+                        history: data.inflation.history
+                      },
+                      gdpGrowth: { 
+                        current: data.gdpGrowth.current, 
+                        trend: calcTrendGrowth(data.gdpGrowth),
+                        history: data.gdpGrowth.history
+                      },
+                      asOfDate: asOfDate || new Date().toISOString(),
+                      source: 'FRED Economic Data',
+                    });
+                  }}
+                  onChartStyleChange={(style) => {
+                    // Save chart style to wizard state for report generation
+                    dispatch({ type: 'SET_ECONOMIC_CHART_STYLE', payload: style });
+                  }}
+                />
+              </div>
             </div>
           </div>
         );

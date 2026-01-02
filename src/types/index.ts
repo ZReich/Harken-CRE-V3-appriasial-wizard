@@ -249,6 +249,17 @@ export interface SubjectData {
   zoningDescription: string;
   zoningConforming: boolean;
   
+  // Utilities (expanded)
+  waterSource?: string;
+  waterProvider?: string;  // Provider name (e.g., "City of Bozeman")
+  sewerType?: string;
+  electricProvider?: string;
+  naturalGas?: string;
+  telecom?: string;
+  stormDrainage?: string;           // Adequacy: 'adequate' | 'limited' | 'poor' | 'unknown'
+  stormDrainageNotes?: string;
+  fireHydrantDistance?: string;     // '<500ft' | '500-1000ft' | '>1000ft' | 'none' | 'unknown'
+  
   // Purpose & Scope (Setup page - Purpose tab)
   appraisalPurpose: string;
   intendedUsers: string;
