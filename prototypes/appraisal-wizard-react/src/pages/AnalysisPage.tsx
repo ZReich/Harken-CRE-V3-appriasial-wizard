@@ -3,7 +3,6 @@ import WizardLayout from '../components/WizardLayout';
 import ScenarioSwitcher, { getScenarioAccentColor, getScenarioColors } from '../components/ScenarioSwitcher';
 import {
   LandIcon,
-  TrendingUpIcon,
   ChartIcon,
   CurrencyIcon,
   ConstructionIcon,
@@ -17,10 +16,8 @@ const SalesGrid = lazy(() => import('../features/sales-comparison').then(m => ({
 const IncomeApproachGrid = lazy(() => import('../features/income-approach').then(m => ({ default: m.IncomeApproachGrid })));
 const CostApproachGrid = lazy(() => import('../features/cost-approach').then(m => ({ default: m.CostApproachGrid })));
 const LandSalesGrid = lazy(() => import('../features/land-valuation').then(m => ({ default: m.LandSalesGrid })));
-const MarketAnalysisGrid = lazy(() => import('../features/market-analysis').then(m => ({ default: m.MarketAnalysisGrid })));
 const MultiFamilyGrid = lazy(() => import('../features/multi-family').then(m => ({ default: m.MultiFamilyGrid })));
 const CostSegTab = lazy(() => import('../features/cost-segregation').then(m => ({ default: m.CostSegTab })));
-import EconomicIndicatorsPanel from '../components/EconomicIndicatorsPanel';
 import { useWizard } from '../context/WizardContext';
 import { getGuidance, type GuidanceContent } from '../constants/guidance';
 import { Layers, Building, Wallet, HardHat, Info, AlertTriangle, CheckCircle2, Lightbulb, BookOpen } from 'lucide-react';
@@ -53,14 +50,6 @@ const APPROACH_CONFIG = {
     color: '#84cc16', // lime
     bgClass: 'bg-lime-50',
     borderClass: 'border-l-lime-400',
-  },
-  market: { 
-    id: 'market', 
-    label: 'Market Analysis', 
-    Icon: TrendingUpIcon,
-    color: '#f59e0b', // amber
-    bgClass: 'bg-amber-50',
-    borderClass: 'border-l-amber-400',
   },
   sales: { 
     id: 'sales', 
@@ -105,17 +94,17 @@ const APPROACH_CONFIG = {
 };
 
 // Map scenario approach names to tab IDs
+// NOTE: Market Analysis has been moved to Review page
 const APPROACH_NAME_TO_ID: Record<string, string> = {
   'Land Valuation': 'land',
-  'Market Analysis': 'market',
   'Sales Comparison': 'sales',
   'Income Approach': 'income',
   'Cost Approach': 'cost',
   'Multi-Family Approach': 'multifamily',
 };
 
-// All possible tabs in display order (HBU moved to Review page)
-const ALL_TABS = ['land', 'market', 'sales', 'multifamily', 'income', 'cost'];
+// All possible tabs in display order (HBU and Market Analysis moved to Review page)
+const ALL_TABS = ['land', 'sales', 'multifamily', 'income', 'cost'];
 
 export default function AnalysisPage() {
   const [activeTab, setActiveTab] = useState('sales');
@@ -169,9 +158,8 @@ export default function AnalysisPage() {
     
     const approachIds = activeScenario.approaches.map(name => APPROACH_NAME_TO_ID[name]).filter(Boolean);
     
-    // Always include HBU and Market Analysis as they're foundational
-    const requiredTabs = ['hbu', 'market'];
-    const combinedTabs = [...new Set([...requiredTabs, ...approachIds])];
+    // Note: HBU and Market Analysis are now in Review page
+    const combinedTabs = [...approachIds];
     
     // Add Cost Segregation tab if enabled AND Cost Approach is selected
     if (isCostSegEnabled && approachIds.includes('cost')) {
@@ -405,12 +393,10 @@ export default function AnalysisPage() {
       />
 
       {/* Contextual Market Data - Changes based on active approach */}
-      {activeTab !== 'market' && (
-        <ContextualMarketData
-          activeApproach={getApproachName(activeTab)}
-          scenarioId={activeScenario?.id || 1}
-        />
-      )}
+      <ContextualMarketData
+        activeApproach={getApproachName(activeTab)}
+        scenarioId={activeScenario?.id || 1}
+      />
 
       {/* Scenario Comparison (if multiple scenarios) */}
       {state.scenarios.length > 1 && (
@@ -449,7 +435,7 @@ export default function AnalysisPage() {
   );
 
   // Keep full-width content for grid-heavy views
-  const isFullWidthView = activeTab === 'sales' || activeTab === 'income' || activeTab === 'cost' || activeTab === 'land' || activeTab === 'market' || activeTab === 'multifamily' || activeTab === 'costseg';
+  const isFullWidthView = activeTab === 'sales' || activeTab === 'income' || activeTab === 'cost' || activeTab === 'land' || activeTab === 'multifamily' || activeTab === 'costseg';
 
   return (
     <WizardLayout
@@ -613,93 +599,6 @@ export default function AnalysisPage() {
             <Suspense fallback={<GridLoader />}>
               <MultiFamilyGrid scenarioId={activeScenario?.id} />
             </Suspense>
-          </div>
-        </div>
-      ) : activeTab === 'market' ? (
-        <div className="absolute inset-0 flex flex-col">
-          {/* Market Analysis Header Bar */}
-          <div 
-            className="h-12 border-b flex items-center justify-between px-6"
-            style={{ borderColor: currentApproach?.color + '40', backgroundColor: currentApproach?.color + '08' }}
-          >
-            <div className="flex items-center gap-3">
-              <span className="text-sm font-bold" style={{ color: currentApproach?.color }}>
-                {activeScenario?.name}: Market Analysis
-              </span>
-            </div>
-          </div>
-          {/* Market Analysis Grid */}
-          <div className="flex-1 min-h-0 overflow-auto space-y-6">
-            <Suspense fallback={<GridLoader />}>
-              <MarketAnalysisGrid 
-                rentCompData={{
-                  avgRent: 26.75,
-                  rentRange: [17.50, 37.50],
-                  compCount: 4,
-                }}
-                salesCompData={{
-                  avgPricePsf: 242,
-                  avgCapRate: 6.50,
-                  compCount: 8,
-                }}
-              />
-            </Suspense>
-            
-            {/* Economic Indicators Panel - Plan Part 4.2 */}
-            <div className="bg-white rounded-xl border border-slate-200 shadow-sm">
-              <EconomicIndicatorsPanel 
-                onDataLoaded={(data, asOfDate) => {
-                  // Save economic data to wizard state for report generation
-                  // Transform EconomicIndicatorsResponse['data'] to EconomicIndicators format
-                  // Calculate trends from history data
-                  const calcTrendRising = (series: { current: number; history: { value: number }[] }) => {
-                    if (series.history.length < 2) return 'stable' as const;
-                    const recent = series.history.slice(-3).map(h => h.value);
-                    const avg = recent.reduce((a, b) => a + b, 0) / recent.length;
-                    if (series.current > avg * 1.02) return 'rising' as const;
-                    if (series.current < avg * 0.98) return 'falling' as const;
-                    return 'stable' as const;
-                  };
-                  const calcTrendGrowth = (series: { current: number; history: { value: number }[] }) => {
-                    if (series.history.length < 2) return 'stable' as const;
-                    const recent = series.history.slice(-3).map(h => h.value);
-                    const avg = recent.reduce((a, b) => a + b, 0) / recent.length;
-                    if (series.current > avg * 1.02) return 'accelerating' as const;
-                    if (series.current < avg * 0.98) return 'slowing' as const;
-                    return 'stable' as const;
-                  };
-                  
-                  setEconomicIndicators({
-                    federalFundsRate: { 
-                      current: data.federalFundsRate.current, 
-                      projected1Y: data.federalFundsRate.current, // Use current as projection if not available
-                      history: data.federalFundsRate.history
-                    },
-                    treasury10Y: { 
-                      current: data.treasury10Y.current, 
-                      projected1Y: data.treasury10Y.current, // Use current as projection if not available
-                      history: data.treasury10Y.history
-                    },
-                    inflation: { 
-                      current: data.inflation.current, 
-                      trend: calcTrendRising(data.inflation),
-                      history: data.inflation.history
-                    },
-                    gdpGrowth: { 
-                      current: data.gdpGrowth.current, 
-                      trend: calcTrendGrowth(data.gdpGrowth),
-                      history: data.gdpGrowth.history
-                    },
-                    asOfDate: asOfDate || new Date().toISOString(),
-                    source: 'FRED Economic Data',
-                  });
-                }}
-                  onChartStyleChange={(style) => {
-                    // Save chart style to wizard state for report generation
-                    dispatch({ type: 'SET_ECONOMIC_CHART_STYLE', payload: style });
-                  }}
-              />
-            </div>
           </div>
         </div>
       ) : activeTab === 'costseg' ? (

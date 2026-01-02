@@ -346,12 +346,10 @@ export default function AnalysisPage() {
       />
 
       {/* Contextual Market Data - Changes based on active approach */}
-      {activeTab !== 'market' && (
-        <ContextualMarketData
-          activeApproach={getApproachName(activeTab)}
-          scenarioId={activeScenario?.id || 1}
-        />
-      )}
+      <ContextualMarketData
+        activeApproach={getApproachName(activeTab)}
+        scenarioId={activeScenario?.id || 1}
+      />
 
       {/* Scenario Comparison (if multiple scenarios) */}
       {state.scenarios.length > 1 && (
