@@ -945,7 +945,7 @@ function LocationContent({
                 value={cityCounty}
                 onChange={(e) => setCityCounty(e.target.value)}
                 placeholder="Enter city and county (e.g., Billings, Yellowstone County)"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white dark:bg-slate-700 dark:text-white"
               />
             )}
           </div>
@@ -2067,7 +2067,7 @@ function TaxContent({
             <select
               value={taxYear}
               onChange={(e) => setTaxYear(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white dark:bg-slate-700 dark:text-white"
             >
               {yearOptions.map(y => <option key={y} value={y}>{y}</option>)}
             </select>
@@ -2532,7 +2532,7 @@ function PhotosContent({
             </div>
             <div>
               <p className="font-semibold text-[#1c3643]">Subject Property Photos</p>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 dark:text-slate-400">
                 {Object.values(photos).filter(Boolean).length} of{' '}
                 {photoCategories.reduce((sum, c) => sum + c.slots.length, 0)} photos uploaded
               </p>

@@ -251,7 +251,7 @@ export default function PhotoComponentSuggestions({
         >
           {isExpanded ? <ChevronDown size={14} className="text-gray-400" /> : <ChevronRight size={14} className="text-gray-400" />}
           {icon}
-          <span className="text-sm font-medium text-gray-700">{label}</span>
+          <span className="text-sm font-medium text-gray-700 dark:text-slate-300">{label}</span>
           <span className="text-xs text-gray-400">({components.length})</span>
         </button>
         

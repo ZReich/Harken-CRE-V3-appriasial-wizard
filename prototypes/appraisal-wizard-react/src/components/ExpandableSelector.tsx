@@ -341,7 +341,7 @@ export default function ExpandableSelector({
                 onChange={(e) => handleCustomChange(e.target.value)}
                 onKeyDown={handleCustomKeyDown}
                 placeholder={placeholder}
-                className="flex-1 px-3 py-2 text-sm border border-gray-200 rounded-lg focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white"
+                className="flex-1 px-3 py-2 text-sm border border-gray-200 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white dark:bg-slate-700 dark:text-white"
                 onClick={(e) => e.stopPropagation()}
               />
               <button

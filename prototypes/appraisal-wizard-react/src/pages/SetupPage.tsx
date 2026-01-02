@@ -1840,7 +1840,7 @@ export default function SetupPage() {
                   <select
                     value={owner.ownershipType}
                     onChange={(e) => updateOwner(owner.id, { ownershipType: e.target.value as any })}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white dark:bg-slate-700 dark:text-white"
                   >
                     <option value="individual">Individual</option>
                     <option value="corporation">Corporation</option>

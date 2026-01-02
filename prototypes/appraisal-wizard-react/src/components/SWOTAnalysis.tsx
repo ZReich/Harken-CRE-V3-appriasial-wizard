@@ -155,7 +155,7 @@ function SWOTQuadrant({
               disabled={!inputValue.trim()}
               className="p-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              <Plus className="w-4 h-4 text-slate-600" />
+              <Plus className="w-4 h-4 text-slate-600 dark:text-slate-400" />
             </button>
           </div>
         </div>
@@ -183,7 +183,7 @@ function ImpactScoreGauge({ score }: { score: number }) {
         ) : (
           <Minus className="w-4 h-4 text-slate-400" />
         )}
-        <span className="text-sm font-medium text-slate-600">Impact Score</span>
+        <span className="text-sm font-medium text-slate-600 dark:text-slate-400">Impact Score</span>
       </div>
       <div className="flex-1 h-2 bg-slate-200 rounded-full overflow-hidden">
         <div 
@@ -475,7 +475,7 @@ export function SWOTAnalysis({
           <label className="block text-sm font-medium text-slate-700 mb-2">
             Summary / Analysis Notes
           </label>
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-slate-600 dark:text-slate-400">
             {data.summary || 'No summary provided.'}
           </p>
         </div>

@@ -384,7 +384,7 @@ export function ValueReconciliation() {
               <tr className="border-b border-gray-100 bg-gray-50">
                 <td className="px-4 py-3 font-medium text-gray-700">Effective Date</td>
                 {scenarios.map((s) => (
-                  <td key={s.id} className="px-4 py-3 text-center text-sm text-gray-600">
+                  <td key={s.id} className="px-4 py-3 text-center text-sm text-gray-600 dark:text-slate-400">
                     {s.effectiveDate || 'TBD'}
                   </td>
                 ))}
@@ -440,14 +440,14 @@ export function ValueReconciliation() {
                     {isIncomeApproach && incomeExpanded && (
                       <>
                         <tr className="border-b border-gray-100 bg-green-50/50">
-                          <td className="px-4 py-2 pl-10 text-sm text-gray-600">
+                          <td className="px-4 py-2 pl-10 text-sm text-gray-600 dark:text-slate-400">
                             <span className="flex items-center gap-2">
                               <span className="w-2 h-2 bg-green-400 rounded-full"></span>
                               Direct Capitalization
                             </span>
                           </td>
                           {scenarios.map((s) => (
-                            <td key={s.id} className="px-4 py-2 text-center text-sm text-gray-600">
+                            <td key={s.id} className="px-4 py-2 text-center text-sm text-gray-600 dark:text-slate-400">
                               {s.approaches.includes('Income Approach') 
                                 ? formatCurrency(incomeSubMethods.directCapValue)
                                 : <span className="text-gray-400">—</span>
@@ -456,14 +456,14 @@ export function ValueReconciliation() {
                           ))}
                         </tr>
                         <tr className="border-b border-gray-100 bg-green-50/50">
-                          <td className="px-4 py-2 pl-10 text-sm text-gray-600">
+                          <td className="px-4 py-2 pl-10 text-sm text-gray-600 dark:text-slate-400">
                             <span className="flex items-center gap-2">
                               <span className="w-2 h-2 bg-green-400 rounded-full"></span>
                               DCF / Yield Capitalization
                             </span>
                           </td>
                           {scenarios.map((s) => (
-                            <td key={s.id} className="px-4 py-2 text-center text-sm text-gray-600">
+                            <td key={s.id} className="px-4 py-2 text-center text-sm text-gray-600 dark:text-slate-400">
                               {s.approaches.includes('Income Approach')
                                 ? formatCurrency(incomeSubMethods.dcfValue)
                                 : <span className="text-gray-400">—</span>

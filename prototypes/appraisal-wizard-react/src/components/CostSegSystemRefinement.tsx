@@ -170,7 +170,7 @@ export const CostSegSystemRefinement: React.FC<CostSegSystemRefinementProps> = (
         <div className="flex items-center gap-3">
           {/* Allocation Progress */}
           <div className="text-right mr-4">
-            <div className="text-xs font-medium text-gray-600">Allocated</div>
+            <div className="text-xs font-medium text-gray-600 dark:text-slate-400">Allocated</div>
             <div className={`text-sm font-bold ${allocationStatus.isComplete ? 'text-emerald-600' : allocationStatus.isOver ? 'text-red-600' : 'text-amber-600'}`}>
               {formatCurrency(allocationStatus.allocated)} ({allocationStatus.percentAllocated.toFixed(1)}%)
             </div>
@@ -197,7 +197,7 @@ export const CostSegSystemRefinement: React.FC<CostSegSystemRefinementProps> = (
         <div className="p-4 space-y-4">
           {/* Progress Bar */}
           <div className="space-y-2">
-            <div className="flex justify-between text-xs text-gray-600">
+            <div className="flex justify-between text-xs text-gray-600 dark:text-slate-400">
               <span>Allocation Progress</span>
               <span>{formatCurrency(allocationStatus.remaining)} remaining</span>
             </div>
@@ -320,7 +320,7 @@ const RefinementLine: React.FC<RefinementLineProps> = ({
               {line.depreciationClass}
             </span>
           </div>
-          <div className="flex items-center gap-4 text-xs text-gray-600">
+          <div className="flex items-center gap-4 text-xs text-gray-600 dark:text-slate-400">
             <span className="font-semibold text-gray-900 dark:text-white">{formatCurrency(line.amount)}</span>
             <span>• {ALLOCATION_METHODS.find(m => m.value === line.allocationMethod)?.label}</span>
             {line.measurements && (

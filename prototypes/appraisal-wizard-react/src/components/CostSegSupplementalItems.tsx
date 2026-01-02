@@ -236,7 +236,7 @@ const SupplementalItemCard: React.FC<SupplementalItemCardProps> = ({
               {item.depreciationClass}
             </span>
           </div>
-          <div className="flex items-center gap-4 text-xs text-gray-600">
+          <div className="flex items-center gap-4 text-xs text-gray-600 dark:text-slate-400">
             <span className="font-semibold text-gray-900 dark:text-white">{formatCurrency(item.cost)}</span>
             <span>• {categoryOption?.label}</span>
             {item.linkedPhotoIds && item.linkedPhotoIds.length > 0 && (

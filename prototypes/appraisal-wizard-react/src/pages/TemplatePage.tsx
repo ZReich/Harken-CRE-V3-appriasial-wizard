@@ -193,7 +193,7 @@ export default function TemplatePage() {
         {/* Header */}
         <div className="text-center mb-8 animate-fade-in">
           <h1 className="text-3xl font-bold text-[#1c3643] mb-2">Select Report Template</h1>
-          <p className="text-gray-600">
+          <p className="text-gray-600 dark:text-slate-400">
             Choose a template that determines which sections and fields will appear in your final report.{' '}
             <button className="text-[#0da1c7] underline hover:text-[#0b8fb0]">
               You can customize this later if needed.
@@ -454,7 +454,7 @@ export default function TemplatePage() {
                         {template.tags.map((tag, idx) => (
                           <span
                             key={idx}
-                            className="text-[10px] px-2 py-0.5 rounded bg-gray-100 text-gray-600"
+                            className="text-[10px] px-2 py-0.5 rounded bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-400"
                           >
                             #{tag}
                           </span>

@@ -210,7 +210,7 @@ export function MapGeneratorPanel({
       >
         <div className="flex items-center gap-2">
           <Map className="w-5 h-5 text-[#0da1c7]" />
-          <span className="font-semibold text-slate-700">Map Generator</span>
+          <span className="font-semibold text-slate-700 dark:text-slate-300">Map Generator</span>
           {generatedMaps.length > 0 && (
             <span className="px-2 py-0.5 bg-[#0da1c7] text-white text-xs rounded-full">
               {generatedMaps.length} generated
@@ -374,7 +374,7 @@ export function MapGeneratorPanel({
                 <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 bg-slate-50">
                   <div className="flex items-center gap-2">
                     <Map className="w-5 h-5 text-[#0da1c7]" />
-                    <span className="font-semibold text-slate-700">{previewMap.title}</span>
+                    <span className="font-semibold text-slate-700 dark:text-slate-300">{previewMap.title}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     {previewMap.imageUrl && (

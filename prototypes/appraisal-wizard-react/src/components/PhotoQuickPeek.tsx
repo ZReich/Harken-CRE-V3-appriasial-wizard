@@ -118,7 +118,7 @@ export const PhotoQuickPeek: React.FC<PhotoQuickPeekProps> = ({
         </div>
 
         {/* Photo Grid Preview */}
-        <div className="p-4 bg-white">
+        <div className="p-4 bg-white dark:bg-slate-800">
           <div className="grid grid-cols-2 gap-2">
             {/* Featured photo (larger) */}
             <div className="col-span-1 row-span-2">

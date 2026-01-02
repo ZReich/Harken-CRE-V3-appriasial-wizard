@@ -316,7 +316,7 @@ const BuildingTypeSelector: FC<BuildingTypeSelectorProps> = ({
                         {oc.label}
                       </span>
                       {isDefault && (
-                        <span className="text-xs px-1.5 py-0.5 rounded bg-gray-200 text-gray-600">
+                        <span className="text-xs px-1.5 py-0.5 rounded bg-gray-200 dark:bg-slate-600 text-gray-600 dark:text-slate-300">
                           Default
                         </span>
                       )}

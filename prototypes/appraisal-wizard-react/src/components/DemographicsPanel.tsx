@@ -210,9 +210,9 @@ export function DemographicsPanel({
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-slate-50 border-b border-slate-200">
-                <th className="text-left px-4 py-3 font-semibold text-slate-600">Metric</th>
+                <th className="text-left px-4 py-3 font-semibold text-slate-600 dark:text-slate-400">Metric</th>
                 {normalizedRadii.map(radius => (
-                  <th key={radius} className="text-right px-4 py-3 font-semibold text-slate-600">
+                  <th key={radius} className="text-right px-4 py-3 font-semibold text-slate-600 dark:text-slate-400">
                     {radius} Mile{radius !== 1 ? 's' : ''}
                   </th>
                 ))}
@@ -229,7 +229,7 @@ export function DemographicsPanel({
                 </td>
               </tr>
               <tr>
-                <td className="px-4 py-2.5 text-slate-700">Current Population</td>
+                <td className="px-4 py-2.5 text-slate-700 dark:text-slate-300">Current Population</td>
                 {data.map(d => (
                   <td key={d.radius} className="text-right px-4 py-2.5 font-medium text-slate-800 dark:text-white">
                     {formatNumber(d.population.current)}
@@ -237,17 +237,17 @@ export function DemographicsPanel({
                 ))}
               </tr>
               <tr>
-                <td className="px-4 py-2.5 text-slate-700">5-Year Projection</td>
+                <td className="px-4 py-2.5 text-slate-700 dark:text-slate-300">5-Year Projection</td>
                 {data.map(d => (
-                  <td key={d.radius} className="text-right px-4 py-2.5 text-slate-600">
+                  <td key={d.radius} className="text-right px-4 py-2.5 text-slate-600 dark:text-slate-400">
                     {formatNumber(d.population.projected5Year)}
                   </td>
                 ))}
               </tr>
               <tr>
-                <td className="px-4 py-2.5 text-slate-700">Annual Growth Rate</td>
+                <td className="px-4 py-2.5 text-slate-700 dark:text-slate-300">Annual Growth Rate</td>
                 {data.map(d => (
-                  <td key={d.radius} className="text-right px-4 py-2.5 text-slate-600">
+                  <td key={d.radius} className="text-right px-4 py-2.5 text-slate-600 dark:text-slate-400">
                     <span className={d.population.annualGrowthRate >= 0 ? 'text-emerald-600' : 'text-red-600'}>
                       {d.population.annualGrowthRate >= 0 ? '+' : ''}{formatPercent(d.population.annualGrowthRate)}
                     </span>
@@ -265,7 +265,7 @@ export function DemographicsPanel({
                 </td>
               </tr>
               <tr>
-                <td className="px-4 py-2.5 text-slate-700">Total Households</td>
+                <td className="px-4 py-2.5 text-slate-700 dark:text-slate-300">Total Households</td>
                 {data.map(d => (
                   <td key={d.radius} className="text-right px-4 py-2.5 font-medium text-slate-800 dark:text-white">
                     {formatNumber(d.households.current)}
@@ -273,9 +273,9 @@ export function DemographicsPanel({
                 ))}
               </tr>
               <tr>
-                <td className="px-4 py-2.5 text-slate-700">Average Household Size</td>
+                <td className="px-4 py-2.5 text-slate-700 dark:text-slate-300">Average Household Size</td>
                 {data.map(d => (
-                  <td key={d.radius} className="text-right px-4 py-2.5 text-slate-600">
+                  <td key={d.radius} className="text-right px-4 py-2.5 text-slate-600 dark:text-slate-400">
                     {d.households.averageSize.toFixed(2)}
                   </td>
                 ))}
@@ -291,7 +291,7 @@ export function DemographicsPanel({
                 </td>
               </tr>
               <tr>
-                <td className="px-4 py-2.5 text-slate-700">Median Household Income</td>
+                <td className="px-4 py-2.5 text-slate-700 dark:text-slate-300">Median Household Income</td>
                 {data.map(d => (
                   <td key={d.radius} className="text-right px-4 py-2.5 font-medium text-slate-800 dark:text-white">
                     {formatCurrency(d.income.medianHousehold)}
@@ -299,17 +299,17 @@ export function DemographicsPanel({
                 ))}
               </tr>
               <tr>
-                <td className="px-4 py-2.5 text-slate-700">Average Household Income</td>
+                <td className="px-4 py-2.5 text-slate-700 dark:text-slate-300">Average Household Income</td>
                 {data.map(d => (
-                  <td key={d.radius} className="text-right px-4 py-2.5 text-slate-600">
+                  <td key={d.radius} className="text-right px-4 py-2.5 text-slate-600 dark:text-slate-400">
                     {formatCurrency(d.income.averageHousehold)}
                   </td>
                 ))}
               </tr>
               <tr>
-                <td className="px-4 py-2.5 text-slate-700">Per Capita Income</td>
+                <td className="px-4 py-2.5 text-slate-700 dark:text-slate-300">Per Capita Income</td>
                 {data.map(d => (
-                  <td key={d.radius} className="text-right px-4 py-2.5 text-slate-600">
+                  <td key={d.radius} className="text-right px-4 py-2.5 text-slate-600 dark:text-slate-400">
                     {formatCurrency(d.income.perCapita)}
                   </td>
                 ))}
@@ -325,7 +325,7 @@ export function DemographicsPanel({
                 </td>
               </tr>
               <tr>
-                <td className="px-4 py-2.5 text-slate-700">College Graduates (Bachelor's+)</td>
+                <td className="px-4 py-2.5 text-slate-700 dark:text-slate-300">College Graduates (Bachelor's+)</td>
                 {data.map(d => (
                   <td key={d.radius} className="text-right px-4 py-2.5 font-medium text-slate-800 dark:text-white">
                     {formatPercent(d.education.percentCollegeGraduates)}
@@ -333,9 +333,9 @@ export function DemographicsPanel({
                 ))}
               </tr>
               <tr>
-                <td className="px-4 py-2.5 text-slate-700">Graduate Degree</td>
+                <td className="px-4 py-2.5 text-slate-700 dark:text-slate-300">Graduate Degree</td>
                 {data.map(d => (
-                  <td key={d.radius} className="text-right px-4 py-2.5 text-slate-600">
+                  <td key={d.radius} className="text-right px-4 py-2.5 text-slate-600 dark:text-slate-400">
                     {formatPercent(d.education.percentGraduateDegree)}
                   </td>
                 ))}
@@ -351,7 +351,7 @@ export function DemographicsPanel({
                 </td>
               </tr>
               <tr>
-                <td className="px-4 py-2.5 text-slate-700">Labor Force</td>
+                <td className="px-4 py-2.5 text-slate-700 dark:text-slate-300">Labor Force</td>
                 {data.map(d => (
                   <td key={d.radius} className="text-right px-4 py-2.5 font-medium text-slate-800 dark:text-white">
                     {formatNumber(d.employment?.laborForce || 0)}
@@ -359,9 +359,9 @@ export function DemographicsPanel({
                 ))}
               </tr>
               <tr>
-                <td className="px-4 py-2.5 text-slate-700">Unemployment Rate</td>
+                <td className="px-4 py-2.5 text-slate-700 dark:text-slate-300">Unemployment Rate</td>
                 {data.map(d => (
-                  <td key={d.radius} className="text-right px-4 py-2.5 text-slate-600">
+                  <td key={d.radius} className="text-right px-4 py-2.5 text-slate-600 dark:text-slate-400">
                     {formatPercent(d.employment?.unemploymentRate || 0)}
                   </td>
                 ))}

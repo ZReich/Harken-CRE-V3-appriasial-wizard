@@ -454,7 +454,7 @@ export const RiskAnalysisModal: React.FC<Props> = ({
         <div className="p-6 border-b border-slate-100 bg-slate-50 flex items-center justify-between flex-shrink-0">
           <div>
             <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Confidence Score</div>
-            <div className="text-3xl font-black text-slate-800">{analysis.score}/100</div>
+            <div className="text-3xl font-black text-slate-800 dark:text-white">{analysis.score}/100</div>
           </div>
           <div className="w-32 h-2 bg-slate-200 rounded-full overflow-hidden">
             <div className={`h-full transition-all duration-1000 ease-out ${analysis.score > 80 ? 'bg-emerald-500' : analysis.score > 50 ? 'bg-amber-500' : 'bg-rose-500'}`} style={{ width: `${analysis.score}%` }}></div>

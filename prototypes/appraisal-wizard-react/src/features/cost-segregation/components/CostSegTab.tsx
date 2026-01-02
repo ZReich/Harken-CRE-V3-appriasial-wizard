@@ -251,7 +251,7 @@ export const CostSegTab: React.FC<CostSegTabProps> = ({ className = '', onOpenFu
   return (
     <div className={`flex flex-col h-full ${className}`}>
       {/* Header */}
-      <div className="px-6 py-4 border-b border-slate-200 bg-white">
+      <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center">

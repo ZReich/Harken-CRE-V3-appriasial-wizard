@@ -280,18 +280,31 @@ function CoverPageReal({
   onContentChange,
   editedContent,
   getAppliedStyle,
+  subjectData,
+  reconciliationData,
+  coverPhoto: coverPhotoData,
 }: { 
   selectedElement: string | null; 
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
   editedContent?: Record<string, string>;
   getAppliedStyle?: (elementId: string) => React.CSSProperties;
+  subjectData?: import('../../../types').SubjectData;
+  reconciliationData?: import('../../../types').ReconciliationData | null;
+  coverPhoto?: import('../../../types').CoverPhotoData;
 }) {
-  const data = sampleAppraisalData;
-  const coverPhoto = data.photos.find(p => p.category === 'cover');
+  const fallbackData = sampleAppraisalData;
+  const coverPhoto = coverPhotoData?.url ? { url: coverPhotoData.url, caption: 'Cover Photo' } : fallbackData.photos.find(p => p.category === 'cover');
   const handleContentChange = onContentChange || (() => {});
   const getContent = (id: string, defaultVal: string) => editedContent?.[id] ?? defaultVal;
   const getStyle = (id: string) => getAppliedStyle?.(id) || {};
+  
+  // Use wizard state or fall back to sample data
+  const propertyName = subjectData?.propertyName || fallbackData.property.name;
+  const fullAddress = subjectData?.address ? 
+    `${subjectData.address.street}, ${subjectData.address.city}, ${subjectData.address.state} ${subjectData.address.zip}` :
+    fallbackData.property.fullAddress;
+  const effectiveDate = subjectData?.effectiveDate || fallbackData.assignment.effectiveDate;
 
   return (
     <div className="bg-white shadow-lg rounded-lg overflow-hidden" style={{ minHeight: '11in', width: '8.5in' }}>
@@ -712,7 +725,8 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
     conclusion: hbuAnalysis?.asVacant?.conclusion || fallbackData.hbu.asVacant.conclusion,
   };
   const asImproved = {
-    analysis: hbuAnalysis?.asImproved?.legallyPermissible || fallbackData.hbu.asImproved.analysis, // Note: using legallyPermissible as main analysis
+    // The wizard stores the full as-improved analysis in the conclusion field
+    analysis: hbuAnalysis?.asImproved?.conclusion || fallbackData.hbu.asImproved.analysis,
     conclusion: hbuAnalysis?.asImproved?.conclusion || fallbackData.hbu.asImproved.conclusion,
   };
 

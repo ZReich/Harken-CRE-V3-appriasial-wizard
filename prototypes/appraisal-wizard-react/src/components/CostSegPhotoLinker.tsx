@@ -221,7 +221,7 @@ export const CostSegPhotoLinker: React.FC<CostSegPhotoLinkerProps> = ({
             <h4 className="text-sm font-semibold text-gray-900 dark:text-white">Select Photo</h4>
             <button
               onClick={() => setIsSelectingPhoto(false)}
-              className="text-gray-400 hover:text-gray-600"
+              className="text-gray-400 hover:text-gray-600 dark:hover:text-slate-300"
             >
               <X className="w-4 h-4" />
             </button>

@@ -277,7 +277,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
       <div className={`element-dropdown relative ${isOpen ? 'z-[500]' : ''}`}>
         <button 
           onClick={() => setOpenElementDropdown(isOpen ? null : section)}
-          className="w-full py-2 px-3 border-2 border-dashed border-slate-300 rounded-lg flex items-center justify-between gap-2 text-slate-500 font-semibold hover:border-[#0da1c7] hover:text-[#0da1c7] hover:bg-[#0da1c7]/5 transition-all duration-300 group text-xs bg-white"
+          className="w-full py-2 px-3 border-2 border-dashed border-slate-300 rounded-lg flex items-center justify-between gap-2 text-slate-500 font-semibold hover:border-[#0da1c7] hover:text-[#0da1c7] hover:bg-[#0da1c7]/5 transition-all duration-300 group text-xs bg-white dark:bg-slate-800"
         >
           <div className="flex items-center gap-2">
             <Plus size={12} className="text-slate-400 group-hover:text-[#0da1c7]" />
@@ -458,7 +458,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
                 <span className="font-medium text-slate-700">{getSubjectTransactionValue(row.id)}</span>
               </div>
               {comps.map(comp => (
-                <div key={`${row.id}-${comp.id}`} className="border-r border-b border-slate-100 p-2 flex items-center justify-center text-xs bg-white">
+                <div key={`${row.id}-${comp.id}`} className="border-r border-b border-slate-100 p-2 flex items-center justify-center text-xs bg-white dark:bg-slate-800">
                   <span className="font-medium text-slate-600">{getTransactionValue(comp, row.id)}</span>
                 </div>
               ))}
@@ -470,7 +470,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
             <AddElementButton section="transaction" />
           </div>
           <div className="sticky left-[160px] z-[55] shadow-[4px_0_16px_rgba(0,0,0,0.05)]" style={{ width: SUBJECT_COL_WIDTH, backgroundColor: '#ffffff' }}></div>
-          {comps.map(comp => <div key={`add-trans-${comp.id}`} className="bg-white"></div>)}
+          {comps.map(comp => <div key={`add-trans-${comp.id}`} className="bg-white dark:bg-slate-800"></div>)}
 
           {/* ========== QUANTITATIVE ADJUSTMENTS SECTION ========== */}
           <div className="col-span-full relative z-[50] mt-4 border-y border-blue-200">
@@ -494,7 +494,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
                 <span className="font-medium text-slate-700">-</span>
               </div>
               {comps.map(comp => (
-                <div key={`${row.id}-${comp.id}`} className="border-r border-b border-slate-100 p-2 flex items-center justify-center text-xs bg-white">
+                <div key={`${row.id}-${comp.id}`} className="border-r border-b border-slate-100 p-2 flex items-center justify-center text-xs bg-white dark:bg-slate-800">
                   {renderQuantitativeCell(comp, row.field || row.id)}
                 </div>
               ))}
@@ -506,7 +506,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
             <AddElementButton section="quantitative" />
           </div>
           <div className="sticky left-[160px] z-[55] shadow-[4px_0_16px_rgba(0,0,0,0.05)]" style={{ width: SUBJECT_COL_WIDTH, backgroundColor: '#f0f9ff' }}></div>
-          {comps.map(comp => <div key={`add-quant-${comp.id}`} className="bg-white"></div>)}
+          {comps.map(comp => <div key={`add-quant-${comp.id}`} className="bg-white dark:bg-slate-800"></div>)}
 
           {/* ========== QUALITATIVE ADJUSTMENTS SECTION ========== */}
           <div className="col-span-full relative z-[50] mt-4 border-y border-emerald-200">
@@ -530,7 +530,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
                 <span className="font-medium text-slate-700">{getSubjectQualitativeValue(row.id)}</span>
               </div>
               {comps.map(comp => (
-                <div key={`${row.id}-${comp.id}`} className="border-r border-b border-slate-100 p-2 flex items-center justify-center text-xs bg-white">
+                <div key={`${row.id}-${comp.id}`} className="border-r border-b border-slate-100 p-2 flex items-center justify-center text-xs bg-white dark:bg-slate-800">
                   <AdjustmentChip compId={comp.id} rowId={row.field || row.id} />
                 </div>
               ))}
@@ -542,7 +542,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
             <AddElementButton section="qualitative" />
           </div>
           <div className="sticky left-[160px] z-[55] shadow-[4px_0_16px_rgba(0,0,0,0.05)]" style={{ width: SUBJECT_COL_WIDTH, backgroundColor: '#ffffff' }}></div>
-          {comps.map(comp => <div key={`add-qual-${comp.id}`} className="bg-white"></div>)}
+          {comps.map(comp => <div key={`add-qual-${comp.id}`} className="bg-white dark:bg-slate-800"></div>)}
 
           {/* ========== SUMMARY SECTION ========== */}
           <div className="col-span-full relative z-[50] mt-4 border-y border-amber-200">
@@ -563,7 +563,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
             {comps.map(comp => {
               const totalAdj = comp.parkingAdj + comp.qualityConditionAdj + comp.yearBuiltAdj;
               return (
-                <div key={`overall-adj-${comp.id}`} className="border-r border-b border-slate-100 p-2 flex items-center justify-center text-xs bg-white">
+                <div key={`overall-adj-${comp.id}`} className="border-r border-b border-slate-100 p-2 flex items-center justify-center text-xs bg-white dark:bg-slate-800">
                   <span className={`font-bold ${totalAdj !== 0 ? (totalAdj > 0 ? 'text-red-600' : 'text-emerald-600') : 'text-slate-500'}`}>
                     {formatPercent(totalAdj)}
                   </span>
@@ -581,7 +581,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
               <span className="font-medium text-slate-700">-</span>
             </div>
             {comps.map(comp => (
-              <div key={`adj-rate-${comp.id}`} className="border-r border-b border-slate-100 p-2 flex items-center justify-center text-xs bg-white">
+              <div key={`adj-rate-${comp.id}`} className="border-r border-b border-slate-100 p-2 flex items-center justify-center text-xs bg-white dark:bg-slate-800">
                 <span className="font-bold text-emerald-700">{formatCurrency(getAdjustedRate(comp))}</span>
               </div>
             ))}

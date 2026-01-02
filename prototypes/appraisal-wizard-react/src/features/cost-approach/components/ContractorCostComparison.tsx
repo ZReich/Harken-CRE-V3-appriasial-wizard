@@ -61,7 +61,7 @@ export const ContractorCostComparison: React.FC<ContractorCostComparisonProps> =
       >
         <div className="flex items-center gap-2">
           <Scale className="w-4 h-4 text-[#0da1c7]" />
-          <h4 className="font-semibold text-slate-800">Contractor Cost Comparison</h4>
+          <h4 className="font-semibold text-slate-800 dark:text-white">Contractor Cost Comparison</h4>
           {contractorCost > 0 && (
             <span className={`ml-2 px-2 py-0.5 text-xs font-medium rounded-full ${
               Math.abs(variance) <= 5 
@@ -86,7 +86,7 @@ export const ContractorCostComparison: React.FC<ContractorCostComparisonProps> =
                 <BookOpen className="w-4 h-4 text-slate-400" />
                 <span className="text-sm font-medium text-slate-600">Marshall & Swift Estimate</span>
               </div>
-              <span className="text-sm font-bold text-slate-800">{formatCurrency(msTotalCost)}</span>
+              <span className="text-sm font-bold text-slate-800 dark:text-white">{formatCurrency(msTotalCost)}</span>
             </div>
             
             <div className="flex items-center justify-between py-3 bg-[#0da1c7]/5 -mx-4 px-4">

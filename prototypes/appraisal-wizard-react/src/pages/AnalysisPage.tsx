@@ -416,7 +416,7 @@ export default function AnalysisPage() {
                   <span className={`w-2 h-2 rounded-full ${colors.dot}`} />
                   <span className="text-xs text-slate-700">{scenario.name}</span>
                 </div>
-                <span className="text-xs font-medium text-slate-800">
+                <span className="text-xs font-medium text-slate-800 dark:text-white">
                   {scenario.name === 'As Is' ? '$1,250,000' 
                     : scenario.name === 'As Completed' ? '$1,450,000'
                     : scenario.name === 'As Stabilized' ? '$1,380,000'

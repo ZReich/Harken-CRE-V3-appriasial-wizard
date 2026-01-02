@@ -156,7 +156,7 @@ export const LandValuation: React.FC<LandValuationProps> = ({ onValueChange }) =
     <div className="flex flex-col h-full bg-white relative font-sans">
       <AdjustmentPopover />
       
-      <div className="flex-1 overflow-auto custom-scrollbar bg-white">
+      <div className="flex-1 overflow-auto custom-scrollbar bg-white dark:bg-slate-800">
         <div className="inline-flex min-w-full">
           
           {/* COLUMN 1: ELEMENTS (Sticky Left) */}
@@ -195,7 +195,7 @@ export const LandValuation: React.FC<LandValuationProps> = ({ onValueChange }) =
                 )}
               </div>
             ))}
-            <div className="h-[57px] border-b border-slate-200 bg-white"></div>
+            <div className="h-[57px] border-b border-slate-200 bg-white dark:bg-slate-800"></div>
           </div>
 
           {/* COLUMN 2: SUBJECT (Sticky Left 2) */}
@@ -245,7 +245,7 @@ export const LandValuation: React.FC<LandValuationProps> = ({ onValueChange }) =
             </div>
 
             {getSectionRows('transaction').map(row => (
-              <div key={`sub_${row.id}`} className="h-14 flex items-center px-4 border-b border-slate-100 text-sm text-slate-900 font-bold bg-white">
+              <div key={`sub_${row.id}`} className="h-14 flex items-center px-4 border-b border-slate-100 text-sm text-slate-900 font-bold bg-white dark:bg-slate-800">
                 {row.id === 'salePrice' ? 'N/A' : 
                  row.id === 'landSf' ? subjectLandSf.toLocaleString() :
                  row.id === 'zoning' ? 'CMU1' : 'N/A'}
@@ -254,18 +254,18 @@ export const LandValuation: React.FC<LandValuationProps> = ({ onValueChange }) =
             
             <div className="h-14 bg-white border-b border-slate-100"></div>
             {getSectionRows('quantitative').map(row => (
-              <div key={`sub_${row.id}`} className="h-14 flex items-center px-4 border-b border-slate-100 text-sm text-slate-400 italic bg-white">
+              <div key={`sub_${row.id}`} className="h-14 flex items-center px-4 border-b border-slate-100 text-sm text-slate-400 italic bg-white dark:bg-slate-800">
                 Subject
               </div>
             ))}
 
             <div className="h-14 bg-white border-b border-slate-100"></div>
             {getSectionRows('qualitative').map(row => (
-              <div key={`sub_${row.id}`} className="h-14 flex items-center px-4 border-b border-slate-100 text-sm text-slate-400 italic bg-white">
+              <div key={`sub_${row.id}`} className="h-14 flex items-center px-4 border-b border-slate-100 text-sm text-slate-400 italic bg-white dark:bg-slate-800">
                 Subject
               </div>
             ))}
-            <div className="p-3 border-b border-slate-200 bg-white">
+            <div className="p-3 border-b border-slate-200 bg-white dark:bg-slate-800">
               <button onClick={() => handleAddRow('qualitative')} className="w-full py-2 bg-[#0da1c7]/10 text-[#0da1c7] border border-[#0da1c7]/20 rounded text-xs font-bold hover:bg-[#0da1c7]/20 transition-colors flex items-center justify-center gap-1 shadow-sm">
                 <Plus size={14}/> Add Characteristic
               </button>
@@ -275,7 +275,7 @@ export const LandValuation: React.FC<LandValuationProps> = ({ onValueChange }) =
           {/* COLUMNS 3+: COMPS */}
           {comps.map((comp) => {
             return (
-              <div key={comp.id} className="w-80 border-r border-slate-200 flex flex-col flex-shrink-0 bg-white">
+              <div key={comp.id} className="w-80 border-r border-slate-200 flex flex-col flex-shrink-0 bg-white dark:bg-slate-800">
                 <div className="h-[280px] border-b border-slate-200 p-4 relative group">
                   <div className="h-40 w-full rounded-lg overflow-hidden bg-slate-100 mb-3 relative shadow-sm border border-slate-200">
                     <img src={comp.imageUrl} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Comp" />
@@ -302,7 +302,7 @@ export const LandValuation: React.FC<LandValuationProps> = ({ onValueChange }) =
                   if (row.id === 'pricePsf') content = formatCurrency(comp.salePrice / comp.landSf);
                   
                   return (
-                    <div key={row.id} className="h-14 flex items-center px-4 border-b border-slate-100 text-sm text-slate-700 bg-white">
+                    <div key={row.id} className="h-14 flex items-center px-4 border-b border-slate-100 text-sm text-slate-700 bg-white dark:bg-slate-800">
                       {row.id === 'pricePsf' ? (
                         <span className="px-2 py-0.5 rounded bg-[#0da1c7]/10 text-[#0da1c7] font-bold">{content}</span>
                       ) : (
@@ -314,18 +314,18 @@ export const LandValuation: React.FC<LandValuationProps> = ({ onValueChange }) =
 
                 <div className="h-14 bg-white border-b border-slate-100"></div>
                 {getSectionRows('quantitative').map(row => (
-                  <div key={row.id} className="h-14 flex items-center border-b border-slate-100 bg-white">
+                  <div key={row.id} className="h-14 flex items-center border-b border-slate-100 bg-white dark:bg-slate-800">
                     <AdjustmentCell comp={comp} row={row} />
                   </div>
                 ))}
 
                 <div className="h-14 bg-white border-b border-slate-100"></div>
                 {getSectionRows('qualitative').map(row => (
-                  <div key={row.id} className="h-14 flex items-center border-b border-slate-100 bg-white">
+                  <div key={row.id} className="h-14 flex items-center border-b border-slate-100 bg-white dark:bg-slate-800">
                     <AdjustmentCell comp={comp} row={row} />
                   </div>
                 ))}
-                <div className="h-[57px] border-b border-slate-200 bg-white"></div>
+                <div className="h-[57px] border-b border-slate-200 bg-white dark:bg-slate-800"></div>
               </div>
             );
           })}

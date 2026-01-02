@@ -842,7 +842,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
           <div className="grid grid-cols-12 gap-4 px-6 py-5 items-center bg-slate-50/30">
             <div className="col-span-4">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-bold text-slate-800">Site Improvements</span>
+                <span className="text-sm font-bold text-slate-800 dark:text-white">Site Improvements</span>
                 {siteImprovementsBreakdown.length > 0 && (
                   <button
                     onClick={() => setShowSiteBreakdown(!showSiteBreakdown)}

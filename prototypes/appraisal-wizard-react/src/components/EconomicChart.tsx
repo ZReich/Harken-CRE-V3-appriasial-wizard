@@ -180,11 +180,11 @@ export function EconomicChart({
         <div className="flex gap-4 text-xs text-slate-500">
           <div>
             <span className="text-slate-400">Low: </span>
-            <span className="font-medium text-slate-600">{minValue.toFixed(2)}{unit}</span>
+            <span className="font-medium text-slate-600 dark:text-slate-400">{minValue.toFixed(2)}{unit}</span>
           </div>
           <div>
             <span className="text-slate-400">High: </span>
-            <span className="font-medium text-slate-600">{maxValue.toFixed(2)}{unit}</span>
+            <span className="font-medium text-slate-600 dark:text-slate-400">{maxValue.toFixed(2)}{unit}</span>
           </div>
         </div>
       </div>

@@ -263,7 +263,7 @@ export function RiskRatingPanel({
             <div className="absolute inset-0 w-16 h-16 border-4 border-[#0da1c7] border-t-transparent rounded-full animate-spin" />
           </div>
           <div className="text-center">
-            <p className="font-medium text-slate-700">Calculating Investment Risk Rating</p>
+            <p className="font-medium text-slate-700 dark:text-slate-300">Calculating Investment Risk Rating</p>
             <p className="text-sm text-slate-500 mt-1">Analyzing market data, property characteristics, and economic indicators...</p>
           </div>
         </div>
@@ -356,7 +356,7 @@ export function RiskRatingPanel({
                   <span className="text-[#0da1c7] font-bold">1</span>
                 </div>
                 <div>
-                  <span className="font-medium text-slate-700">Multi-Source Data Integration</span>
+                  <span className="font-medium text-slate-700 dark:text-slate-300">Multi-Source Data Integration</span>
                   <p className="text-slate-500">Federal economic data, market statistics, and property-specific metrics</p>
                 </div>
               </div>
@@ -365,7 +365,7 @@ export function RiskRatingPanel({
                   <span className="text-[#0da1c7] font-bold">2</span>
                 </div>
                 <div>
-                  <span className="font-medium text-slate-700">Dynamic Weight Calibration</span>
+                  <span className="font-medium text-slate-700 dark:text-slate-300">Dynamic Weight Calibration</span>
                   <p className="text-slate-500">Weights adjusted based on property type and market conditions</p>
                 </div>
               </div>
@@ -374,7 +374,7 @@ export function RiskRatingPanel({
                   <span className="text-[#0da1c7] font-bold">3</span>
                 </div>
                 <div>
-                  <span className="font-medium text-slate-700">Z-Score Normalization</span>
+                  <span className="font-medium text-slate-700 dark:text-slate-300">Z-Score Normalization</span>
                   <p className="text-slate-500">Scores normalized relative to MSA-level benchmarks</p>
                 </div>
               </div>
@@ -383,7 +383,7 @@ export function RiskRatingPanel({
                   <span className="text-[#0da1c7] font-bold">4</span>
                 </div>
                 <div>
-                  <span className="font-medium text-slate-700">Composite Scoring</span>
+                  <span className="font-medium text-slate-700 dark:text-slate-300">Composite Scoring</span>
                   <p className="text-slate-500">Weighted aggregation into AAA-C rating scale</p>
                 </div>
               </div>
@@ -438,7 +438,7 @@ export function RiskRatingPanel({
               </div>
               <div className="text-center mt-3">
                 <span className="text-xs text-slate-500">
-                  This property ranks in the <span className="font-semibold text-slate-700">
+                  This property ranks in the <span className="font-semibold text-slate-700 dark:text-slate-300">
                     {gradeIndex <= 2 ? 'top tier' : gradeIndex <= 4 ? 'middle tier' : 'speculative tier'}
                   </span> of investment-grade properties
                 </span>
@@ -571,7 +571,7 @@ export function RiskRatingPanel({
         >
           <div className="flex items-center gap-3">
             <Info className="w-5 h-5 text-slate-400" />
-            <span className="font-medium text-slate-700">USPAP Compliance Disclosure</span>
+            <span className="font-medium text-slate-700 dark:text-slate-300">USPAP Compliance Disclosure</span>
           </div>
           {showDisclosure ? (
             <ChevronUp className="w-5 h-5 text-slate-400" />

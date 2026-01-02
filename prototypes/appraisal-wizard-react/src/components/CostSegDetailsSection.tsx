@@ -63,7 +63,7 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
   children,
 }) => {
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden bg-white">
+    <div className="border border-gray-200 dark:border-slate-700 rounded-xl overflow-hidden bg-white dark:bg-slate-800">
       <button
         onClick={onToggle}
         className="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors"
@@ -412,7 +412,7 @@ export default function CostSegDetailsSection({
                     <div className="text-lg font-bold text-slate-900">{allocationTotals.thirtyNineYear.toFixed(1)}%</div>
                   </div>
                 </div>
-                <div className="text-sm text-center text-gray-600">
+                <div className="text-sm text-center text-gray-600 dark:text-slate-400">
                   Total Allocated: {formatCurrency(allocationTotals.total)}
                 </div>
               </div>

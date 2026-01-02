@@ -421,7 +421,7 @@ export function BoundaryDrawingTool({
       <div className="flex items-center justify-between px-4 py-2 bg-slate-50 border-b border-slate-200">
         <div className="flex items-center gap-2">
           <PenTool className="w-4 h-4 text-[#0da1c7]" />
-          <span className="font-semibold text-sm text-slate-700">Property Boundary</span>
+          <span className="font-semibold text-sm text-slate-700 dark:text-slate-300">Property Boundary</span>
           {hasBoundary && (
             <span className="flex items-center gap-1 px-2 py-0.5 bg-green-100 text-green-700 text-xs rounded-full">
               <Check className="w-3 h-3" />

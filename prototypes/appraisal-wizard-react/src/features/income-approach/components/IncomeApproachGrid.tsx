@@ -869,7 +869,7 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-1">
                       <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Holding Period</label>
-                      <div className="flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 bg-white">
+                      <div className="flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 bg-white dark:bg-slate-800">
                         <CalendarRange size={16} className="text-slate-400" />
                         <input 
                           type="number"
@@ -882,7 +882,7 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                     </div>
                     <div className="space-y-1">
                       <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block">Growth Rate</label>
-                      <div className="flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 bg-white">
+                      <div className="flex items-center gap-2 border border-slate-200 rounded-lg px-3 py-2 bg-white dark:bg-slate-800">
                         <TrendingUp size={16} className="text-slate-400" />
                         <input 
                           type="number"
@@ -1000,7 +1000,7 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                       <Activity size={24} />
                     </div>
                     <div>
-                      <h3 className="font-bold text-slate-800">Pre-Flight Check</h3>
+                      <h3 className="font-bold text-slate-800 dark:text-white">Pre-Flight Check</h3>
                       <p className="text-sm text-slate-500">Run a comprehensive audit before generating your report draft.</p>
                     </div>
                   </div>

@@ -200,7 +200,7 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
       <div className={`element-dropdown relative ${isOpen ? 'z-[500]' : ''}`}>
         <button 
           onClick={() => setOpenElementDropdown(isOpen ? null : section)}
-          className="w-full py-2 px-3 border-2 border-dashed border-slate-300 rounded-lg flex items-center justify-between gap-2 text-slate-500 font-semibold hover:border-[#0da1c7] hover:text-[#0da1c7] hover:bg-[#0da1c7]/5 transition-all duration-300 group text-xs bg-white"
+          className="w-full py-2 px-3 border-2 border-dashed border-slate-300 rounded-lg flex items-center justify-between gap-2 text-slate-500 font-semibold hover:border-[#0da1c7] hover:text-[#0da1c7] hover:bg-[#0da1c7]/5 transition-all duration-300 group text-xs bg-white dark:bg-slate-800"
         >
           <div className="flex items-center gap-2">
             <Plus size={12} className="text-slate-400 group-hover:text-[#0da1c7]" />
@@ -272,7 +272,7 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
         
         {/* GRID CONTAINER */}
         <div 
-          className="grid relative bg-white" 
+          className="grid relative bg-white dark:bg-slate-800" 
           style={{ 
             gridTemplateColumns: `${LABEL_COL_WIDTH}px ${SUBJECT_COL_WIDTH}px repeat(${comps.length}, ${COMP_COL_WIDTH}px)`, 
             minWidth: `${totalGridWidth}px` 
@@ -404,7 +404,7 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
               {comps.map(comp => (
                 <div 
                   key={`${row.id}-${comp.id}`} 
-                  className="border-r border-b border-slate-100 p-2 flex items-center justify-center text-xs bg-white"
+                  className="border-r border-b border-slate-100 p-2 flex items-center justify-center text-xs bg-white dark:bg-slate-800"
                 >
                   <span className="font-medium text-slate-600">{getPropertyValue(comp, row.id, row.format)}</span>
                 </div>
@@ -424,7 +424,7 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
             style={{ width: SUBJECT_COL_WIDTH }}
           ></div>
           {comps.map(comp => (
-            <div key={`add-prop-${comp.id}`} className="bg-white"></div>
+            <div key={`add-prop-${comp.id}`} className="bg-white dark:bg-slate-800"></div>
           ))}
 
           {/* ========== EXPENSE CATEGORIES SECTION ========== */}
@@ -500,7 +500,7 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
             style={{ width: SUBJECT_COL_WIDTH }}
           ></div>
           {comps.map(comp => (
-            <div key={`add-exp-${comp.id}`} className="bg-white"></div>
+            <div key={`add-exp-${comp.id}`} className="bg-white dark:bg-slate-800"></div>
           ))}
 
           {/* ========== RATIOS SECTION ========== */}

@@ -181,7 +181,7 @@ function DocumentCard({
                 <Loader2 className="w-6 h-6 text-gray-400 animate-spin" />
               ) : (() => {
                 const IconComponent = ICON_MAP[typeInfo.icon] || HelpCircle;
-                return <IconComponent className="w-6 h-6 text-gray-600" />;
+                return <IconComponent className="w-6 h-6 text-gray-600 dark:text-slate-400" />;
               })()}
             </div>
             
@@ -307,7 +307,7 @@ function DocumentCard({
                   className="bg-white rounded-lg p-3 border border-gray-200"
                 >
                   <div className="flex items-center justify-between mb-1">
-                    <span className="text-xs font-medium text-gray-600">{getFieldLabel(field)}</span>
+                    <span className="text-xs font-medium text-gray-600 dark:text-slate-400">{getFieldLabel(field)}</span>
                     <span className={`text-[10px] px-1.5 py-0.5 rounded ${getConfidenceColorClasses(data.confidence)}`}>
                       {Math.round(data.confidence * 100)}%
                     </span>
@@ -867,7 +867,7 @@ export default function DocumentIntakePage() {
 
           {stats.totalFields > 0 && (
             <div className="flex items-center justify-between px-1 text-sm">
-              <span className="text-gray-600">Fields extracted</span>
+              <span className="text-gray-600 dark:text-slate-400">Fields extracted</span>
               <span className="font-semibold text-green-600">{stats.totalFields}</span>
             </div>
           )}
@@ -918,7 +918,7 @@ export default function DocumentIntakePage() {
                 key={type}
                 className="flex items-center gap-3 p-2 rounded-lg bg-gray-50"
               >
-                <IconComponent className="w-5 h-5 text-gray-600" />
+                <IconComponent className="w-5 h-5 text-gray-600 dark:text-slate-400" />
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-medium text-gray-700 truncate">{typeInfo.label}</p>
                   <p className="text-xs text-gray-500">{docs.length} file{docs.length > 1 ? 's' : ''}</p>
@@ -959,7 +959,7 @@ export default function DocumentIntakePage() {
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-[#1c3643] mb-1">AI-Powered Document Intake</h3>
-                  <p className="text-gray-600">
+                  <p className="text-gray-600 dark:text-slate-400">
                     Drop all your documents below. Our AI will automatically identify each document type, 
                     extract relevant data, and pre-fill fields throughout the wizard.
                   </p>
@@ -1058,7 +1058,7 @@ export default function DocumentIntakePage() {
                 </div>
                 <div>
                   <h3 className="text-xl font-bold text-[#1c3643] mb-1">Upload Property Photos</h3>
-                  <p className="text-gray-600">
+                  <p className="text-gray-600 dark:text-slate-400">
                     Upload all your property photos now so they're available throughout data entry.
                     AI will suggest which slot each photo belongs to, or you can assign them manually later.
                   </p>

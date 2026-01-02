@@ -291,7 +291,7 @@ export function BuildingPermitsCard({
             <div className="text-[10px] text-slate-500">Active</div>
           </div>
           <div className="p-3 text-center">
-            <div className="text-xl font-bold text-slate-700">{formatCurrency(totalValue)}</div>
+            <div className="text-xl font-bold text-slate-700 dark:text-slate-300">{formatCurrency(totalValue)}</div>
             <div className="text-[10px] text-slate-500">Total Value</div>
           </div>
         </div>

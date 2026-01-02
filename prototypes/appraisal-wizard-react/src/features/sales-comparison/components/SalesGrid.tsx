@@ -1088,7 +1088,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                   style={{ width: SUBJECT_COL_WIDTH, backgroundColor: '#ffffff' }}
                 ></div>
                 {properties.filter(p => p.type !== 'subject').map(prop => (
-                  <div key={`add-element-${section.id}-${prop.id}`} className="bg-white"></div>
+                  <div key={`add-element-${section.id}-${prop.id}`} className="bg-white dark:bg-slate-800"></div>
                 ))}
                 </React.Fragment>
               );

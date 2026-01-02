@@ -591,7 +591,7 @@ export default function SiteImprovementsInventory({
         {/* Custom Type Form (shown when Custom button is clicked within a category) */}
         {showCustomForm && selectedCategory && (
           <div className="mb-4 p-3 bg-white rounded-lg border border-[#0da1c7]/30 border-dashed">
-            <div className="flex items-center gap-2 mb-3 text-sm text-gray-600">
+            <div className="flex items-center gap-2 mb-3 text-sm text-gray-600 dark:text-slate-400">
               <Plus size={14} className="text-[#0da1c7]" />
               <span>Add custom type to <strong>{ALL_CATEGORIES.find(c => c.id === selectedCategory)?.label}</strong></span>
             </div>
@@ -633,7 +633,7 @@ export default function SiteImprovementsInventory({
             <div className="mb-3 p-2 bg-slate-50 rounded-lg border border-slate-200">
               <div className="flex items-start gap-2">
                 <Calculator size={14} className="text-[#0da1c7] mt-0.5 flex-shrink-0" />
-                <div className="text-xs text-gray-600">
+                <div className="text-xs text-gray-600 dark:text-slate-400">
                   <div className="font-medium text-gray-700 mb-1">
                     Economic Life Guide for {ALL_CATEGORIES.find(c => c.id === selectedCategory)?.label}
                   </div>
@@ -768,7 +768,7 @@ export default function SiteImprovementsInventory({
               <span className="font-medium text-gray-700">Inventory ({totals.count} items)</span>
             </div>
             {totals.totalContributory > 0 && (
-              <span className="text-sm text-gray-600">
+              <span className="text-sm text-gray-600 dark:text-slate-400">
                 Est. Value: <span className="font-semibold">${totals.totalContributory.toLocaleString()}</span>
               </span>
             )}
