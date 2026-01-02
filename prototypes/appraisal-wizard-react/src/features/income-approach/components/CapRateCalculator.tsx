@@ -302,7 +302,7 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
               <Calculator className="w-5 h-5 text-[#0da1c7]" />
             </div>
             <div>
-              <h2 className="text-lg font-bold text-slate-800">Cap Rate Calculator</h2>
+              <h2 className="text-lg font-bold text-slate-800 dark:text-white">Cap Rate Calculator</h2>
               <p className="text-xs text-slate-500">Derive market cap rate using multiple methods</p>
             </div>
           </div>
@@ -440,13 +440,13 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
                   <div className="grid grid-cols-3 gap-4">
                     <div>
                       <p className="text-xs text-slate-500 mb-1">Range</p>
-                      <p className="font-bold text-slate-800">
+                      <p className="font-bold text-slate-800 dark:text-white">
                         {formatPercent(compResults.minRate)} - {formatPercent(compResults.maxRate)}
                       </p>
                     </div>
                     <div>
                       <p className="text-xs text-slate-500 mb-1">Simple Average</p>
-                      <p className="font-bold text-slate-800">{formatPercent(compResults.avgRate)}</p>
+                      <p className="font-bold text-slate-800 dark:text-white">{formatPercent(compResults.avgRate)}</p>
                     </div>
                     <div>
                       <p className="text-xs text-slate-500 mb-1">Weighted Average</p>
@@ -552,13 +552,13 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
                 <div className="grid grid-cols-2 gap-4 pt-2">
                   <div>
                     <p className="text-xs text-slate-500 mb-1">Debt Component</p>
-                    <p className="font-bold text-slate-800">
+                    <p className="font-bold text-slate-800 dark:text-white">
                       {formatPercent(bandInputs.loanToValue)} x {formatPercent(bandResult.mortgageConstant)} = {formatPercent(bandResult.debtComponent)}
                     </p>
                   </div>
                   <div>
                     <p className="text-xs text-slate-500 mb-1">Equity Component</p>
-                    <p className="font-bold text-slate-800">
+                    <p className="font-bold text-slate-800 dark:text-white">
                       {formatPercent(1 - bandInputs.loanToValue)} x {formatPercent(bandInputs.equityDividendRate)} = {formatPercent(bandResult.equityComponent)}
                     </p>
                   </div>
@@ -633,7 +633,7 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
                 </div>
                 <div className="pt-2">
                   <p className="text-xs text-slate-500 mb-1">Calculation</p>
-                  <p className="font-bold text-slate-800">
+                  <p className="font-bold text-slate-800 dark:text-white">
                     {dcrInputs.debtCoverageRatio} x {formatPercent(dcrInputs.loanConstant)} x {formatPercent(dcrInputs.loanToValue)} = {formatPercent(dcrResult.capRate)}
                   </p>
                 </div>
@@ -701,12 +701,12 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
                   <div className="flex items-center justify-between">
                     <div>
                       <p className="text-xs text-slate-500">Current NOI</p>
-                      <p className="font-bold text-slate-800">{formatCurrency(currentNOI)}</p>
+                      <p className="font-bold text-slate-800 dark:text-white">{formatCurrency(currentNOI)}</p>
                     </div>
                     <div className="text-slate-300">/</div>
                     <div>
                       <p className="text-xs text-slate-500">Cap Rate</p>
-                      <p className="font-bold text-slate-800">{formatPercent(marketInputs.capRate)}</p>
+                      <p className="font-bold text-slate-800 dark:text-white">{formatPercent(marketInputs.capRate)}</p>
                     </div>
                     <div className="text-slate-300">=</div>
                     <div>
@@ -762,7 +762,7 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
             <div className="flex items-center gap-3">
               <button
                 onClick={onClose}
-                className="px-5 py-2.5 text-sm font-medium text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors"
+                className="px-5 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
               >
                 Cancel
               </button>

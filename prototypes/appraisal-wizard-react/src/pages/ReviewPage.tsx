@@ -83,7 +83,7 @@ function SuccessScreen({ onCreateAnother, onViewReport }: { onCreateAnother: () 
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-3">Report Finalized!</h2>
+        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-3">Report Finalized!</h2>
         <p className="text-lg text-gray-600 mb-8">Your appraisal report has been successfully generated.</p>
         <div className="flex gap-4 justify-center">
           <button
@@ -129,7 +129,7 @@ function ReadyToPreviewScreen({
         </div>
 
         {/* Message */}
-        <h2 className="text-3xl font-bold text-gray-900 mb-3">
+        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-3">
           Appraisal Analysis Complete!
         </h2>
         <p className="text-lg text-gray-600 mb-8">
@@ -195,7 +195,7 @@ function ReportPreviewMode({
         {/* Left: Back Button */}
         <button
           onClick={onBack}
-          className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors font-medium"
+          className="flex items-center gap-2 px-4 py-2 text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors font-medium"
         >
           <ArrowLeft size={18} />
           Back to Review
@@ -701,7 +701,7 @@ We considered alternative uses including renovation, conversion to alternative u
   // Sidebar with functional tab buttons
   const sidebar = (
     <div>
-      <h2 className="text-lg font-bold text-gray-900 mb-1">Review & Finalize</h2>
+      <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-1">Review & Finalize</h2>
       <p className="text-sm text-gray-500 mb-6">Final Checks</p>
       <nav className="space-y-1">
         {tabs.map((tab) => (
@@ -724,7 +724,7 @@ We considered alternative uses including renovation, conversion to alternative u
   // Help sidebar content based on active tab
   const helpSidebar = (
     <div>
-      <h3 className="text-lg font-bold text-gray-900 mb-3">
+      <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
         {activeTab === 'hbu' && 'Highest & Best Use'}
         {activeTab === 'market-analysis' && 'Market Analysis'}
         {activeTab === 'swot' && 'SWOT Analysis'}
@@ -1182,7 +1182,7 @@ We considered alternative uses including renovation, conversion to alternative u
               <div className="mx-6 mb-6 space-y-3">
                 <div className="flex items-center gap-2">
                   <FileText className="w-5 h-5 text-slate-700" />
-                  <h2 className="text-lg font-bold text-slate-800">Market Outlook & Analysis</h2>
+                  <h2 className="text-lg font-bold text-slate-800 dark:text-white">Market Outlook & Analysis</h2>
                 </div>
                 <EnhancedTextArea
                   label="Market Analysis Narrative"

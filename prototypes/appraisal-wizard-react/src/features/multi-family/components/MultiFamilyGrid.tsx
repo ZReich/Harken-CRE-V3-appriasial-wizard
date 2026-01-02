@@ -390,7 +390,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
               </div>
             </div>
             <div className="p-2 flex-1 flex flex-col gap-0.5 bg-sky-50 border-r border-slate-200">
-              <h3 className="font-bold text-slate-800 text-xs leading-tight line-clamp-1" title={SUBJECT_MF_PROPERTY.address}>
+              <h3 className="font-bold text-slate-800 dark:text-white text-xs leading-tight line-clamp-1" title={SUBJECT_MF_PROPERTY.address}>
                 {SUBJECT_MF_PROPERTY.address}
               </h3>
               <div className="flex items-start gap-1 text-[10px] text-slate-500">
@@ -421,7 +421,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
                 </button>
               </div>
               <div className="p-2 flex-1 flex flex-col gap-0.5 border-r border-slate-200">
-                <h3 className="font-bold text-slate-800 text-xs leading-tight line-clamp-1" title={comp.address}>
+                <h3 className="font-bold text-slate-800 dark:text-white text-xs leading-tight line-clamp-1" title={comp.address}>
                   Rental {idx + 1}
                 </h3>
                 <div className="flex items-start gap-1 text-[10px] text-slate-500">
@@ -555,7 +555,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
           {/* Overall Adjustment Row */}
           <React.Fragment>
             <div className="sticky left-0 z-[60] border-r border-b border-slate-100 flex items-center px-2 py-1.5" style={{ width: LABEL_COL_WIDTH, backgroundColor: '#ffffff', transform: 'translateZ(0)' }}>
-              <span className="text-xs font-semibold text-slate-800 italic">Overall Adjustment:</span>
+              <span className="text-xs font-semibold text-slate-800 dark:text-white italic">Overall Adjustment:</span>
             </div>
             <div className="sticky left-[160px] z-[55] border-r border-b border-slate-100 p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)]" style={{ width: SUBJECT_COL_WIDTH, backgroundColor: '#f0f9ff', transform: 'translateZ(0)' }}>
               <span className="font-medium text-slate-700">-</span>
@@ -575,7 +575,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
           {/* Adjusted Rental Rates Row */}
           <React.Fragment>
             <div className="sticky left-0 z-[60] border-r border-b border-slate-100 flex items-center px-2 py-1.5" style={{ width: LABEL_COL_WIDTH, backgroundColor: '#ffffff', transform: 'translateZ(0)' }}>
-              <span className="text-xs font-semibold text-slate-800">Adjusted Rental Rates $...</span>
+              <span className="text-xs font-semibold text-slate-800 dark:text-white">Adjusted Rental Rates $...</span>
             </div>
             <div className="sticky left-[160px] z-[55] border-r border-b border-slate-100 p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)]" style={{ width: SUBJECT_COL_WIDTH, backgroundColor: '#f0f9ff', transform: 'translateZ(0)' }}>
               <span className="font-medium text-slate-700">-</span>
@@ -640,13 +640,13 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
           <div className="max-w-4xl mx-auto flex flex-col gap-6">
             <div className="flex items-center gap-3">
               <div className="w-2 h-8 bg-[#0da1c7] rounded-full"></div>
-              <h2 className="text-xl font-bold text-slate-800 uppercase tracking-wider">Multi-Family Rental Indication</h2>
+              <h2 className="text-xl font-bold text-slate-800 dark:text-white uppercase tracking-wider">Multi-Family Rental Indication</h2>
             </div>
             <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
               <div className="grid grid-cols-3 gap-6">
                 <div className="text-center">
                   <div className="text-sm text-slate-500 font-medium mb-2">Subject Unit Count</div>
-                  <div className="text-2xl font-bold text-slate-800">{SUBJECT_MF_PROPERTY.unitCount || '-'} Units</div>
+                  <div className="text-2xl font-bold text-slate-800 dark:text-white">{SUBJECT_MF_PROPERTY.unitCount || '-'} Units</div>
                 </div>
                 <div className="text-center">
                   <div className="text-sm text-slate-500 font-medium mb-2">Indicated Market Rent</div>

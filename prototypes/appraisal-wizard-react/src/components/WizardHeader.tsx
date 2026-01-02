@@ -73,7 +73,7 @@ export default function WizardHeader({
             {hasSections && (
               <button
                 onClick={onToggleSections}
-                className="p-2 text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg bg-white"
+                className="p-2 text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800"
                 title={isSectionsCollapsed ? 'Show sections' : 'Hide sections'}
               >
                 <svg
@@ -122,8 +122,8 @@ export default function WizardHeader({
               <button
                 className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
                   guidanceMode === 'guidance'
-                    ? 'bg-white text-gray-900 shadow-sm'
-                    : 'text-gray-600 hover:text-gray-800'
+                    ? 'bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm'
+                    : 'text-gray-600 dark:text-slate-400 hover:text-gray-800 dark:hover:text-white'
                 }`}
                 onClick={() => onGuidanceModeChange?.('guidance')}
               >
@@ -132,8 +132,8 @@ export default function WizardHeader({
               <button
                 className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors border-l border-gray-200 ${
                   guidanceMode === 'values'
-                    ? 'bg-white text-gray-900 shadow-sm'
-                    : 'text-gray-600 hover:text-gray-800'
+                    ? 'bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm'
+                    : 'text-gray-600 dark:text-slate-400 hover:text-gray-800 dark:hover:text-white'
                 }`}
                 onClick={() => onGuidanceModeChange?.('values')}
               >
@@ -143,8 +143,8 @@ export default function WizardHeader({
                 <button
                   className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors border-l border-gray-200 flex items-center gap-1.5 ${
                     guidanceMode === 'preview'
-                      ? 'bg-white text-gray-900 shadow-sm'
-                      : 'text-gray-600 hover:text-gray-800'
+                      ? 'bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm'
+                      : 'text-gray-600 dark:text-slate-400 hover:text-gray-800 dark:hover:text-white'
                   }`}
                   onClick={() => onGuidanceModeChange?.('preview')}
                   title="Live preview of how photos will appear in the report"
@@ -157,7 +157,7 @@ export default function WizardHeader({
                 </button>
               )}
               <button
-                className="ml-2 px-2 py-1 text-xs font-medium text-gray-600 hover:text-gray-900"
+                className="ml-2 px-2 py-1 text-xs font-medium text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white"
                 onClick={onToggleGuidance}
                 title={isGuidanceVisible ? 'Hide panel' : 'Show panel'}
               >

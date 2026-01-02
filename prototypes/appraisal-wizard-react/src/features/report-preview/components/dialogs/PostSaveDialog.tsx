@@ -27,7 +27,7 @@ export const PostSaveDialog: React.FC<PostSaveDialogProps> = ({
             <div className="w-10 h-10 bg-green-100 rounded-lg flex items-center justify-center">
               <CheckCircle className="text-green-600" size={20} />
             </div>
-            <h2 className="text-lg font-semibold text-slate-800">Report Saved Successfully</h2>
+            <h2 className="text-lg font-semibold text-slate-800 dark:text-white">Report Saved Successfully</h2>
           </div>
           <button
             onClick={onClose}
@@ -58,7 +58,7 @@ export const PostSaveDialog: React.FC<PostSaveDialogProps> = ({
                 <Star className="text-amber-600" size={20} />
               </div>
               <div>
-                <h4 className="font-medium text-slate-800">Save as Template</h4>
+                <h4 className="font-medium text-slate-800 dark:text-white">Save as Template</h4>
                 <p className="text-sm text-slate-500 mt-0.5">
                   Save this report structure for future use. Great for similar property types.
                 </p>
@@ -73,7 +73,7 @@ export const PostSaveDialog: React.FC<PostSaveDialogProps> = ({
                 <FileCheck className="text-sky-600" size={20} />
               </div>
               <div>
-                <h4 className="font-medium text-slate-800">Create Final Report</h4>
+                <h4 className="font-medium text-slate-800 dark:text-white">Create Final Report</h4>
                 <p className="text-sm text-slate-500 mt-0.5">
                   Generate the PDF and finalize this appraisal.
                 </p>
@@ -88,7 +88,7 @@ export const PostSaveDialog: React.FC<PostSaveDialogProps> = ({
                 <ArrowLeft className="text-slate-600" size={20} />
               </div>
               <div>
-                <h4 className="font-medium text-slate-800">Continue Editing</h4>
+                <h4 className="font-medium text-slate-800 dark:text-white">Continue Editing</h4>
                 <p className="text-sm text-slate-500 mt-0.5">
                   Go back to the report editor.
                 </p>

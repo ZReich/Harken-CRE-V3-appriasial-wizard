@@ -219,8 +219,8 @@ export default function AnalysisPage() {
   // Left Sidebar - Approach Navigation with subtle color coding
   const sidebar = (
     <div>
-      <h2 className="text-lg font-bold text-gray-900 mb-1">Valuation Analysis</h2>
-      <p className="text-sm text-gray-500 mb-2">
+      <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-1">Valuation Analysis</h2>
+      <p className="text-sm text-gray-500 dark:text-slate-400 mb-2">
         {activeScenario?.name || 'As Is'} Scenario
       </p>
       <p className="text-xs text-slate-400 mb-6">
@@ -240,7 +240,7 @@ export default function AnalysisPage() {
               className={`w-full text-left px-4 py-3 rounded-lg text-sm flex items-center gap-3 transition-all border-l-4 ${
                 isActive
                   ? `${config.bgClass} font-medium ${config.borderClass}`
-                  : 'text-gray-600 hover:bg-gray-100 border-l-transparent'
+                  : 'text-gray-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700 border-l-transparent'
               }`}
               style={isActive ? { color: config.color } : undefined}
             >
@@ -273,7 +273,7 @@ export default function AnalysisPage() {
     <div className="space-y-4">
       {/* Header with approach and scenario context */}
       <div>
-        <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+        <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
           <span 
             className="w-3 h-3 rounded-full" 
             style={{ backgroundColor: currentApproach?.color || '#0da1c7' }}
@@ -378,7 +378,7 @@ export default function AnalysisPage() {
     <div className="space-y-4">
       {/* Scenario Header */}
       <div>
-        <h3 className="text-lg font-bold text-gray-900">Values Overview</h3>
+        <h3 className="text-lg font-bold text-gray-900 dark:text-white">Values Overview</h3>
         <p className="text-xs text-slate-500 mt-1">
           {activeScenario?.name} Scenario
         </p>
@@ -455,7 +455,7 @@ export default function AnalysisPage() {
           {/* Sales Comparison Header Bar */}
           <div className="flex-shrink-0 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-3 flex items-center justify-between z-40 shadow-sm">
             <div className="flex items-center gap-4">
-              <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+              <h2 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
                 <span style={{ color: APPROACH_CONFIG.sales.color }}><ChartIcon className="w-5 h-5" /></span>
                 Sales Comparison Grid
               </h2>
@@ -509,7 +509,7 @@ export default function AnalysisPage() {
           {/* Income Approach Header Bar */}
           <div className="flex-shrink-0 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-3 flex items-center justify-between z-40 shadow-sm">
             <div className="flex items-center gap-4">
-              <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+              <h2 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
                 <Wallet className="w-5 h-5" style={{ color: APPROACH_CONFIG.income.color }} />
                 Income Approach Analysis
               </h2>
@@ -540,7 +540,7 @@ export default function AnalysisPage() {
           {/* Cost Approach Header Bar */}
           <div className="flex-shrink-0 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-3 flex items-center justify-between z-40 shadow-sm">
             <div className="flex items-center gap-4">
-              <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+              <h2 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
                 <HardHat className="w-5 h-5" style={{ color: APPROACH_CONFIG.cost.color }} />
                 Cost Approach Analysis
               </h2>
@@ -562,7 +562,7 @@ export default function AnalysisPage() {
           {/* Land Valuation Header Bar */}
           <div className="flex-shrink-0 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-3 flex items-center justify-between z-40 shadow-sm">
             <div className="flex items-center gap-4">
-              <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+              <h2 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
                 <span style={{ color: APPROACH_CONFIG.land.color }}><LandIcon className="w-5 h-5" /></span>
                 Land Valuation - Sales Comparison
               </h2>
@@ -584,7 +584,7 @@ export default function AnalysisPage() {
           {/* Multi-Family Header Bar */}
           <div className="flex-shrink-0 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-3 flex items-center justify-between z-40 shadow-sm">
             <div className="flex items-center gap-4">
-              <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+              <h2 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
                 <span style={{ color: APPROACH_CONFIG.multifamily.color }}><ResidentialIcon className="w-5 h-5" /></span>
                 Multi-Family Rental Analysis
               </h2>
@@ -631,14 +631,14 @@ function PlaceholderContent({ title, scenarioName }: { title: string; scenarioNa
   return (
     <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3">
+        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3">
           {title}
         </h3>
         <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
           {scenarioName}
         </span>
       </div>
-      <p className="text-sm text-gray-600">
+      <p className="text-sm text-gray-600 dark:text-slate-400">
         Analysis content for {title} ({scenarioName} scenario) will be displayed here...
       </p>
     </div>

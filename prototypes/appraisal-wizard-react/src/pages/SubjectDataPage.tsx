@@ -607,7 +607,7 @@ export default function SubjectDataPage() {
 
   const sidebar = (
     <div>
-      <h2 className="text-lg font-bold text-gray-900 mb-1">Subject Property</h2>
+      <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-1">Subject Property</h2>
       <p className="text-sm text-gray-500 mb-6">
         {wizardState.propertyType ? `${wizardState.propertyType} • ${wizardState.propertySubtype || 'General'}` : 'Commercial • Industrial'}
       </p>
@@ -1043,7 +1043,7 @@ function DemographicsContent({ latitude, longitude }: DemographicsProps) {
         <div className="flex items-start gap-3">
           <Info className="w-5 h-5 text-[#0da1c7] flex-shrink-0 mt-0.5" />
           <div>
-            <h4 className="font-medium text-slate-800">Neighborhood Demographics</h4>
+            <h4 className="font-medium text-slate-800 dark:text-white">Neighborhood Demographics</h4>
             <p className="text-sm text-slate-600">
               View demographic data for the 1, 3, and 5 mile radius rings around the subject property. 
               This data is automatically fetched from the US Census Bureau.
@@ -2981,7 +2981,7 @@ function ExhibitsContent(_props: ExhibitsProps) {
 
                   {/* Name and size */}
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-gray-900 truncate">{doc.name}</p>
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{doc.name}</p>
                     <p className="text-xs text-gray-500">{formatFileSize(doc.size)}</p>
                   </div>
 
@@ -3083,7 +3083,7 @@ function ExhibitsContent(_props: ExhibitsProps) {
                     </div>
                   ) : (
                     <>
-                      <p className="text-sm font-semibold text-gray-900 truncate">
+                      <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
                         {exhibit.name}
                       </p>
                       <p className="text-xs text-gray-500">{formatFileSize(exhibit.file.size)}</p>

@@ -1987,8 +1987,8 @@ export default function SetupPage() {
             </div>
           </div>
           {!personalInspection && (
-            <div className="p-4 bg-gray-50 rounded-lg border border-gray-200 animate-fade-in">
-              <h4 className="text-sm font-semibold text-gray-900 mb-3">Contract Appraiser / Inspector Details</h4>
+            <div className="p-4 bg-gray-50 dark:bg-slate-700 rounded-lg border border-gray-200 dark:border-slate-600 animate-fade-in">
+              <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Contract Appraiser / Inspector Details</h4>
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-1">Inspector Name</label>
@@ -2053,7 +2053,7 @@ export default function SetupPage() {
               className="mt-1 text-[#0da1c7] focus:ring-[#0da1c7]"
             />
             <div>
-              <span className="font-medium text-gray-900">I acknowledge the USPAP certification requirements</span>
+              <span className="font-medium text-gray-900 dark:text-white">I acknowledge the USPAP certification requirements</span>
               <p className="text-sm text-gray-500 mt-1">
                 I certify that my analyses, opinions, and conclusions were developed, and this report was prepared, 
                 in conformity with the Uniform Standards of Professional Appraisal Practice.
@@ -2167,7 +2167,7 @@ export default function SetupPage() {
   // ==========================================
   const sidebar = (
     <div>
-      <h2 className="text-lg font-bold text-gray-900 mb-1">Appraisal Setup</h2>
+      <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-1">Appraisal Setup</h2>
       <p className="text-sm text-gray-500 mb-6">
         {context.propertyType ? `${context.propertyType.charAt(0).toUpperCase() + context.propertyType.slice(1)}${context.subType ? ` • ${context.subType}` : ''}` : 'Configure Assignment'}
       </p>

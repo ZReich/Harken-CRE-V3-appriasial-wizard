@@ -23,7 +23,7 @@ export default function USPAPDetailModal({
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
         <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl max-w-xl w-full mx-4 p-6">
           <div className="flex justify-between items-center mb-4">
-            <h3 className="text-lg font-bold text-gray-900">USPAP Reference</h3>
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white">USPAP Reference</h3>
             <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
               <X className="w-5 h-5" />
             </button>
@@ -60,7 +60,7 @@ export default function USPAPDetailModal({
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <h3 className="text-xl font-bold text-gray-900">{reference}</h3>
+                <h3 className="text-xl font-bold text-gray-900 dark:text-white">{reference}</h3>
                 <span 
                   className="px-2 py-0.5 rounded text-xs font-medium"
                   style={{ 

@@ -143,7 +143,7 @@ export const DCFProjectionTable: React.FC<DCFProjectionTableProps> = ({
               <Calculator className="w-5 h-5 text-[#0da1c7]" />
             </div>
             <div className="text-left">
-              <div className="text-sm font-semibold text-slate-800">Year-by-Year DCF Projection</div>
+              <div className="text-sm font-semibold text-slate-800 dark:text-white">Year-by-Year DCF Projection</div>
               <div className="text-xs text-slate-500">{inputs.holdingPeriod}-year holding period • Click to expand</div>
             </div>
           </div>
@@ -165,7 +165,7 @@ export const DCFProjectionTable: React.FC<DCFProjectionTableProps> = ({
       <div className="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <TrendingUp className="w-5 h-5 text-[#0da1c7]" />
-          <h3 className="font-bold text-lg text-slate-800">Year-by-Year DCF Projection</h3>
+          <h3 className="font-bold text-lg text-slate-800 dark:text-white">Year-by-Year DCF Projection</h3>
         </div>
         <div className="flex items-center gap-3">
           <button className="p-2 rounded-lg bg-slate-200 hover:bg-slate-300 transition-colors text-slate-600" title="Export to Excel">
@@ -238,7 +238,7 @@ export const DCFProjectionTable: React.FC<DCFProjectionTableProps> = ({
                 <td className="px-4 py-2.5 text-right text-red-500">({formatCurrency(data.vacancy)})</td>
                 <td className="px-4 py-2.5 text-right text-slate-600">{formatCurrency(data.egi)}</td>
                 <td className="px-4 py-2.5 text-right text-red-500">({formatCurrency(data.expenses)})</td>
-                <td className="px-4 py-2.5 text-right font-semibold text-slate-800">{formatCurrency(data.noi)}</td>
+                <td className="px-4 py-2.5 text-right font-semibold text-slate-800 dark:text-white">{formatCurrency(data.noi)}</td>
                 <td className="px-4 py-2.5 text-right text-slate-500">{data.pvFactor.toFixed(4)}</td>
                 <td className="px-4 py-2.5 text-right font-semibold text-emerald-600">{formatCurrency(data.pvNoi)}</td>
               </tr>
@@ -278,15 +278,15 @@ export const DCFProjectionTable: React.FC<DCFProjectionTableProps> = ({
         <div className="grid grid-cols-4 gap-6">
           <div className="text-center">
             <div className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">PV of Cash Flows</div>
-            <div className="text-lg font-bold text-slate-800">{formatCurrency(calculations.pvNoiTotal)}</div>
+            <div className="text-lg font-bold text-slate-800 dark:text-white">{formatCurrency(calculations.pvNoiTotal)}</div>
           </div>
           <div className="text-center">
             <div className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">PV of Reversion</div>
-            <div className="text-lg font-bold text-slate-800">{formatCurrency(calculations.pvReversion)}</div>
+            <div className="text-lg font-bold text-slate-800 dark:text-white">{formatCurrency(calculations.pvReversion)}</div>
           </div>
           <div className="text-center">
             <div className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">Implied Going-In Cap</div>
-            <div className="text-lg font-bold text-slate-800">
+            <div className="text-lg font-bold text-slate-800 dark:text-white">
               {formatPercent(yearData[0]?.noi / calculations.totalValue || 0)}
             </div>
           </div>

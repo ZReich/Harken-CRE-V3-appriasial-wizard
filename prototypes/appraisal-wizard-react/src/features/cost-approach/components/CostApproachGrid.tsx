@@ -185,15 +185,15 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
                     <div className="mt-4 pt-4 border-t border-lime-200/50 flex items-center justify-between">
                       <div className="flex items-center gap-4 text-sm text-slate-600">
                         <span>
-                          <strong className="text-slate-800">5</strong> Land Sales Analyzed
+                          <strong className="text-slate-800 dark:text-white">5</strong> Land Sales Analyzed
                         </span>
                         <span className="text-slate-300">|</span>
                         <span>
-                          <strong className="text-slate-800">$12,961</strong> per acre
+                          <strong className="text-slate-800 dark:text-white">$12,961</strong> per acre
                         </span>
                         <span className="text-slate-300">|</span>
                         <span>
-                          <strong className="text-slate-800">63.27</strong> acres
+                          <strong className="text-slate-800 dark:text-white">63.27</strong> acres
                         </span>
                       </div>
                       <button

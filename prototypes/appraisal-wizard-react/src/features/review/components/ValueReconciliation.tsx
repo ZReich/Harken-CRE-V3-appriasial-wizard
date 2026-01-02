@@ -359,7 +359,7 @@ export function ValueReconciliation() {
 
       {/* Value Conclusions Summary Table */}
       <div className="bg-white dark:bg-slate-800 p-6 rounded-lg border border-gray-200 dark:border-slate-700 shadow-sm">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 pb-3 border-b border-gray-200">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 pb-3 border-b border-gray-200 dark:border-slate-600">
           Value Conclusions Summary
         </h3>
         <div className="overflow-x-auto">
@@ -370,7 +370,7 @@ export function ValueReconciliation() {
                 {scenarios.map((s, idx) => (
                   <th
                     key={s.id}
-                    className="text-center px-4 py-3 font-semibold text-gray-900 border-b-2 border-gray-200"
+                    className="text-center px-4 py-3 font-semibold text-gray-900 dark:text-white border-b-2 border-gray-200 dark:border-slate-600"
                   >
                     <span className={idx === 0 ? 'text-blue-600' : idx === 1 ? 'text-green-600' : 'text-purple-600'}>
                       {s.name}
@@ -423,7 +423,7 @@ export function ValueReconciliation() {
                           <td key={s.id} className="px-4 py-3 text-center">
                             {isApplicable ? (
                               <div>
-                                <span className="font-semibold text-gray-900">{formatCurrency(value)}</span>
+                                <span className="font-semibold text-gray-900 dark:text-white">{formatCurrency(value)}</span>
                                 {weight > 0 && (
                                   <span className="ml-2 text-xs text-gray-500">({weight}%)</span>
                                 )}
@@ -479,7 +479,7 @@ export function ValueReconciliation() {
 
               {/* Concluded Value Row */}
               <tr className="bg-gradient-to-r from-emerald-50 to-teal-50">
-                <td className="px-4 py-4 font-bold text-gray-900 uppercase text-sm">Concluded Value</td>
+                <td className="px-4 py-4 font-bold text-gray-900 dark:text-white uppercase text-sm">Concluded Value</td>
                 {scenarios.map((s, idx) => (
                   <td key={s.id} className="px-4 py-4 text-center">
                     <span
@@ -499,8 +499,8 @@ export function ValueReconciliation() {
 
       {/* Reconciliation by Scenario */}
       <div className="bg-white dark:bg-slate-800 p-6 rounded-lg border border-gray-200 dark:border-slate-700 shadow-sm">
-        <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-200">
-          <h3 className="text-lg font-semibold text-gray-900">
+        <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-200 dark:border-slate-600">
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
             Reconciliation by Scenario
           </h3>
           <button
@@ -542,7 +542,7 @@ export function ValueReconciliation() {
                 return (
                   <div key={approach} className="bg-white dark:bg-slate-700 p-3 rounded-lg border border-blue-100 dark:border-slate-600">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="font-medium text-gray-900">{approach}</span>
+                      <span className="font-medium text-gray-900 dark:text-white">{approach}</span>
                       <span className="text-lg font-bold text-blue-600">{weight}%</span>
                     </div>
                     <div className="text-xs text-gray-600 space-y-1">
@@ -640,7 +640,7 @@ export function ValueReconciliation() {
               </div>
               {weightTotal > 0 && (
                 <div className="text-right">
-                  <div className="text-sm font-semibold text-gray-900">
+                  <div className="text-sm font-semibold text-gray-900 dark:text-white">
                     Concluded Value: {formatCurrency(concludedValue)}
                   </div>
                   <div className="text-xs text-gray-500">
@@ -668,7 +668,7 @@ export function ValueReconciliation() {
 
       {/* Exposure & Marketing Time - Enhanced with ranges and tooltips */}
       <div className="bg-white dark:bg-slate-800 p-6 rounded-lg border border-gray-200 dark:border-slate-700 shadow-sm">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 pb-3 border-b border-gray-200">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 pb-3 border-b border-gray-200 dark:border-slate-600">
           Exposure & Marketing Time
         </h3>
         
@@ -763,7 +763,7 @@ export function ValueReconciliation() {
 
       {/* Final Certifications */}
       <div className="bg-white dark:bg-slate-800 p-6 rounded-lg border border-gray-200 dark:border-slate-700 shadow-sm">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4 pb-3 border-b border-gray-200">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 pb-3 border-b border-gray-200 dark:border-slate-600">
           Final Certifications
         </h3>
         <p className="text-sm text-gray-500 mb-4">

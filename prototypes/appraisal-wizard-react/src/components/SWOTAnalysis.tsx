@@ -100,7 +100,7 @@ function SWOTQuadrant({
         <div className={`p-1.5 rounded-lg ${color}`}>
           {icon}
         </div>
-        <span className="font-semibold text-slate-800">{title}</span>
+        <span className="font-semibold text-slate-800 dark:text-white">{title}</span>
         <span className="ml-auto text-sm text-slate-500 flex items-center gap-1.5">
           {aiSuggestedCount > 0 && (
             <span className="flex items-center gap-1 text-xs text-[#0da1c7] bg-[#0da1c7]/10 px-1.5 py-0.5 rounded">
@@ -324,7 +324,7 @@ export function SWOTAnalysis({
       {!readOnly && onGenerateSuggestions && (
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-bold text-slate-800">SWOT Analysis</h3>
+            <h3 className="font-bold text-slate-800 dark:text-white">SWOT Analysis</h3>
             <p className="text-sm text-slate-500">Analyze strengths, weaknesses, opportunities, and threats</p>
           </div>
           <button

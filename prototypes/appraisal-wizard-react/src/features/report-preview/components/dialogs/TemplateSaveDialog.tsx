@@ -117,7 +117,7 @@ export const TemplateSaveDialog: React.FC<TemplateSaveDialogProps> = ({
             <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
               <Star className="text-amber-600" size={20} />
             </div>
-            <h2 className="text-lg font-semibold text-slate-800">Save as Template</h2>
+            <h2 className="text-lg font-semibold text-slate-800 dark:text-white">Save as Template</h2>
           </div>
           <button
             onClick={onClose}

@@ -57,7 +57,7 @@ const CustomTooltip = ({ active, payload, label, unit }: {
     return (
       <div className="bg-white dark:bg-slate-800 px-3 py-2 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700">
         <p className="text-xs text-slate-500">{formatDate(label || '')}</p>
-        <p className="text-sm font-semibold text-slate-800">
+        <p className="text-sm font-semibold text-slate-800 dark:text-white">
           {payload[0].value.toFixed(2)}{unit || '%'}
         </p>
       </div>
@@ -111,7 +111,7 @@ export function EconomicChart({
     return (
       <div className="relative">
         <div className="absolute top-0 right-0 text-right">
-          <span className="text-2xl font-bold text-slate-800">{currentValue?.toFixed(2)}{unit}</span>
+          <span className="text-2xl font-bold text-slate-800 dark:text-white">{currentValue?.toFixed(2)}{unit}</span>
           <p className="text-xs text-slate-500">{title}</p>
         </div>
         <ResponsiveContainer width="100%" height={height}>
@@ -161,7 +161,7 @@ export function EconomicChart({
         <div className="flex items-start justify-between mb-3">
           <div>
             <p className="text-xs text-slate-500 uppercase tracking-wide">{title}</p>
-            <p className="text-3xl font-bold text-slate-800">{currentValue?.toFixed(2)}{unit}</p>
+            <p className="text-3xl font-bold text-slate-800 dark:text-white">{currentValue?.toFixed(2)}{unit}</p>
           </div>
           <div className="w-24 h-12">
             <ResponsiveContainer width="100%" height="100%">
@@ -199,7 +199,7 @@ export function EconomicChart({
       <div className="relative" style={{ height }}>
         <div className="absolute top-2 left-2 z-10">
           <p className="text-xs text-slate-500">{title}</p>
-          <p className="text-xl font-bold text-slate-800">{currentValue?.toFixed(2)}{unit}</p>
+          <p className="text-xl font-bold text-slate-800 dark:text-white">{currentValue?.toFixed(2)}{unit}</p>
         </div>
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data} margin={{ top: 50, right: 0, left: 0, bottom: 20 }}>
@@ -253,7 +253,7 @@ export function EconomicChart({
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: color }} />
               <span className="relative inline-flex rounded-full h-3 w-3" style={{ backgroundColor: color }} />
             </span>
-            <span className="text-2xl font-bold text-slate-800">{currentValue?.toFixed(2)}{unit}</span>
+            <span className="text-2xl font-bold text-slate-800 dark:text-white">{currentValue?.toFixed(2)}{unit}</span>
           </div>
         </div>
         <ResponsiveContainer width="100%" height="100%">
@@ -298,7 +298,7 @@ export function EconomicChart({
       <div className="relative" style={{ height }}>
         <div className="absolute top-2 left-2 z-10">
           <p className="text-xs text-slate-500">{title}</p>
-          <p className="text-xl font-bold text-slate-800">{currentValue?.toFixed(2)}{unit}</p>
+          <p className="text-xl font-bold text-slate-800 dark:text-white">{currentValue?.toFixed(2)}{unit}</p>
         </div>
         <ResponsiveContainer width="100%" height="100%">
           <BarChart 

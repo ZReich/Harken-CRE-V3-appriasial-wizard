@@ -155,7 +155,7 @@ export function PropertyLookupModal({
               <Search className="w-5 h-5 text-[#0da1c7]" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-slate-800">Property Lookup</h2>
+              <h2 className="text-lg font-semibold text-slate-800 dark:text-white">Property Lookup</h2>
               <p className="text-sm text-slate-500">Search for property data to auto-fill fields</p>
             </div>
           </div>
@@ -318,19 +318,19 @@ export function PropertyLookupModal({
                   <div className="grid grid-cols-2 gap-3 text-sm">
                     <div>
                       <span className="text-slate-500">Address:</span>
-                      <p className="font-medium text-slate-800">{result.data.situsAddress}</p>
+                      <p className="font-medium text-slate-800 dark:text-white">{result.data.situsAddress}</p>
                     </div>
                     <div>
                       <span className="text-slate-500">Parcel ID:</span>
-                      <p className="font-medium text-slate-800">{result.data.parcelId}</p>
+                      <p className="font-medium text-slate-800 dark:text-white">{result.data.parcelId}</p>
                     </div>
                     <div>
                       <span className="text-slate-500">County:</span>
-                      <p className="font-medium text-slate-800">{result.data.county}</p>
+                      <p className="font-medium text-slate-800 dark:text-white">{result.data.county}</p>
                     </div>
                     <div>
                       <span className="text-slate-500">Size:</span>
-                      <p className="font-medium text-slate-800">
+                      <p className="font-medium text-slate-800 dark:text-white">
                         {result.data.acres > 0 
                           ? `${result.data.acres.toFixed(2)} acres` 
                           : `${result.data.sqft.toLocaleString()} SF`}
@@ -338,15 +338,15 @@ export function PropertyLookupModal({
                     </div>
                     <div>
                       <span className="text-slate-500">Owner:</span>
-                      <p className="font-medium text-slate-800">{result.data.ownerName}</p>
+                      <p className="font-medium text-slate-800 dark:text-white">{result.data.ownerName}</p>
                     </div>
                     <div>
                       <span className="text-slate-500">Assessed Value:</span>
-                      <p className="font-medium text-slate-800">{formatCurrency(result.data.totalAssessedValue)}</p>
+                      <p className="font-medium text-slate-800 dark:text-white">{formatCurrency(result.data.totalAssessedValue)}</p>
                     </div>
                     <div className="col-span-2">
                       <span className="text-slate-500">Legal Description:</span>
-                      <p className="font-medium text-slate-800 text-xs">{result.data.legalDescription}</p>
+                      <p className="font-medium text-slate-800 dark:text-white text-xs">{result.data.legalDescription}</p>
                     </div>
                   </div>
                 </div>

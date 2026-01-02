@@ -187,7 +187,7 @@ function DocumentCard({
             
             {/* File Details */}
             <div className="min-w-0 flex-1">
-              <p className="font-medium text-gray-900 truncate">{doc.file.name}</p>
+              <p className="font-medium text-gray-900 dark:text-white truncate">{doc.file.name}</p>
               <p className="text-xs text-gray-500">{formatFileSize(doc.file.size)}</p>
               
               {/* Document Type Badge */}
@@ -312,7 +312,7 @@ function DocumentCard({
                       {Math.round(data.confidence * 100)}%
                     </span>
                   </div>
-                  <p className="text-sm text-gray-900 truncate" title={data.value || ''}>{data.value || '(not extracted)'}</p>
+                  <p className="text-sm text-gray-900 dark:text-white truncate" title={data.value || ''}>{data.value || '(not extracted)'}</p>
                 </div>
               );
             })}
@@ -815,7 +815,7 @@ export default function DocumentIntakePage() {
   // Sidebar
   const sidebar = (
     <div>
-      <h2 className="text-lg font-bold text-gray-900 mb-1">Document & Photo Intake</h2>
+      <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-1">Document & Photo Intake</h2>
       <p className="text-sm text-gray-500 mb-6">AI-powered processing</p>
       
       {/* Tab Navigation */}

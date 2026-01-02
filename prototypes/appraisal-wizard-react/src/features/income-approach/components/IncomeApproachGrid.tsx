@@ -427,7 +427,7 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                           Step {index + 1}
                         </div>
                         <div className={`text-sm font-bold ${
-                          isActive ? 'text-slate-800' : 'text-slate-600'
+                          isActive ? 'text-slate-800 dark:text-white' : 'text-slate-600 dark:text-slate-400'
                         }`}>
                           {tab.shortLabel}
                         </div>
@@ -515,7 +515,7 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
               </div>
               <div>
                 <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Property Type</div>
-                <div className="font-black text-slate-800 capitalize text-lg leading-tight">
+                <div className="font-black text-slate-800 dark:text-white capitalize text-lg leading-tight">
                   {propertyMeta.type}
                   <span className="text-xs text-slate-400 font-normal ml-2">(from Setup)</span>
                 </div>
@@ -566,11 +566,11 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
             </div>
             <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col justify-between">
               <div className="text-xs font-bold text-slate-400 uppercase">Price / SF</div>
-              <div className="text-2xl font-black text-slate-800">${(directCapValue / safeSqFt).toFixed(2)}</div>
+              <div className="text-2xl font-black text-slate-800 dark:text-white">${(directCapValue / safeSqFt).toFixed(2)}</div>
             </div>
             <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col justify-between">
               <div className="text-xs font-bold text-slate-400 uppercase">Expense Ratio</div>
-              <div className="text-2xl font-black text-slate-800">{summary.expenseRatio.toFixed(1)}%</div>
+              <div className="text-2xl font-black text-slate-800 dark:text-white">{summary.expenseRatio.toFixed(1)}%</div>
             </div>
             <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col justify-between relative overflow-hidden">
               <div className="absolute top-0 right-0 p-1 bg-emerald-100 rounded-bl-xl">
@@ -588,7 +588,7 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                 onClick={() => setShowChart(!showChart)}
                 className="w-full flex items-center justify-between text-left"
               >
-                <h3 className="font-bold text-slate-800 flex items-center gap-2">
+                <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-2">
                   <PieChart className="text-[#0da1c7]" size={18} />
                   Income Waterfall
                 </h3>
@@ -610,11 +610,11 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                   <div className="p-3 bg-[#0da1c7]/10 rounded-2xl text-[#0da1c7]">
                     <Wallet size={24} />
                   </div>
-                  <h2 className="text-2xl font-black text-slate-800 tracking-tight">Revenue Assumptions</h2>
+                  <h2 className="text-2xl font-black text-slate-800 dark:text-white tracking-tight">Revenue Assumptions</h2>
                 </div>
                 <div className="text-right">
                   <div className="text-sm text-slate-400 font-bold uppercase">Effective Gross Income</div>
-                  <div className="text-xl font-black text-slate-800">${summary.effectiveGrossIncome.toLocaleString()}</div>
+                  <div className="text-xl font-black text-slate-800 dark:text-white">${summary.effectiveGrossIncome.toLocaleString()}</div>
                 </div>
               </div>
 
@@ -664,7 +664,7 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                       type="number"
                       value={incomeData.vacancyRate}
                       onChange={(e) => setIncomeData({...incomeData, vacancyRate: parseFloat(e.target.value) || 0})}
-                      className="w-12 text-right font-black text-lg outline-none text-slate-800 bg-white"
+                      className="w-12 text-right font-black text-lg outline-none text-slate-800 dark:text-white bg-white dark:bg-slate-700"
                     />
                     <span className="font-bold text-slate-400">%</span>
                   </div>
@@ -707,7 +707,7 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                   <div className="p-3 bg-amber-50 rounded-2xl text-amber-600">
                     <Activity size={24} />
                   </div>
-                  <h2 className="text-2xl font-black text-slate-800 tracking-tight">Operating Expenses</h2>
+                  <h2 className="text-2xl font-black text-slate-800 dark:text-white tracking-tight">Operating Expenses</h2>
                 </div>
                 <div className="text-right">
                   <div className="text-sm text-slate-400 font-bold uppercase">Total Expenses</div>
@@ -797,7 +797,7 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                 
                 {/* LEFT: DIRECT CAP */}
                 <div className="space-y-8">
-                  <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest border-b border-slate-100 pb-3 flex items-center gap-2">
+                  <h3 className="text-sm font-black text-slate-800 dark:text-white uppercase tracking-widest border-b border-slate-100 dark:border-slate-600 pb-3 flex items-center gap-2">
                     Direct Capitalization
                     <span className="px-2 py-0.5 bg-slate-100 text-slate-500 rounded text-[10px]">Method A</span>
                   </h3>
@@ -808,7 +808,7 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                       <div className="p-2 bg-white rounded-lg shadow-sm text-slate-400">
                         <DollarSign size={20} />
                       </div>
-                      <span className="text-2xl font-black text-slate-800 tracking-tight">
+                      <span className="text-2xl font-black text-slate-800 dark:text-white tracking-tight">
                         {summary.netOperatingIncome.toLocaleString()}
                       </span>
                     </div>
@@ -846,7 +846,7 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                         {sensitivityRows.slice(1,4).map((row, idx) => (
                           <tr key={idx} className={`transition-colors ${row.isSelected ? 'bg-emerald-50/50' : 'bg-transparent'}`}>
                             <td className="py-2 text-left text-xs font-bold text-slate-500">{row.rate}%</td>
-                            <td className="py-2 text-right font-bold text-slate-800">${row.value.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
+                            <td className="py-2 text-right font-bold text-slate-800 dark:text-white">${row.value.toLocaleString(undefined, { maximumFractionDigits: 0 })}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -858,7 +858,7 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                 <div className="space-y-8 relative">
                   <div className="hidden xl:block absolute -left-6 top-0 bottom-0 w-px bg-slate-100"></div>
 
-                  <h3 className="text-sm font-black text-slate-800 uppercase tracking-widest border-b border-slate-100 pb-3 flex items-center gap-2">
+                  <h3 className="text-sm font-black text-slate-800 dark:text-white uppercase tracking-widest border-b border-slate-100 dark:border-slate-600 pb-3 flex items-center gap-2">
                     Yield Capitalization (DCF)
                     <span className="px-2 py-0.5 bg-slate-100 text-slate-500 rounded text-[10px]">Method B</span>
                     <span className="ml-auto text-xs text-emerald-600 font-bold bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">
@@ -875,7 +875,7 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                           type="number"
                           value={valuationData.holdingPeriod}
                           onChange={(e) => setValuationData({...valuationData, holdingPeriod: parseFloat(e.target.value)})}
-                          className="w-full text-sm font-bold text-slate-800 outline-none bg-white"
+                          className="w-full text-sm font-bold text-slate-800 dark:text-white outline-none bg-white dark:bg-slate-700"
                         />
                         <span className="text-xs font-bold text-slate-400">Yrs</span>
                       </div>
@@ -888,7 +888,7 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                           type="number"
                           value={valuationData.annualGrowthRate}
                           onChange={(e) => setValuationData({...valuationData, annualGrowthRate: parseFloat(e.target.value)})}
-                          className="w-full text-sm font-bold text-slate-800 outline-none bg-white"
+                          className="w-full text-sm font-bold text-slate-800 dark:text-white outline-none bg-white dark:bg-slate-700"
                         />
                         <span className="text-xs font-bold text-slate-400">%</span>
                       </div>

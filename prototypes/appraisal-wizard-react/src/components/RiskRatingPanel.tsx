@@ -321,7 +321,7 @@ export function RiskRatingPanel({
                 <Shield className="w-6 h-6 text-white" />
               </div>
               <div>
-                <h3 className="font-bold text-slate-800 text-lg">Investment Risk Rating</h3>
+                <h3 className="font-bold text-slate-800 dark:text-white text-lg">Investment Risk Rating</h3>
                 <p className="text-sm text-slate-500">Proprietary "Bond Rating for Buildings" Analysis</p>
               </div>
             </div>
@@ -340,7 +340,7 @@ export function RiskRatingPanel({
         {/* Methodology Explainer */}
         {showMethodology && (
           <div className="px-6 py-4 bg-gradient-to-r from-[#0da1c7]/5 to-transparent border-b border-slate-200">
-            <h4 className="font-semibold text-slate-800 mb-3 flex items-center gap-2">
+            <h4 className="font-semibold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
               <Scale className="w-4 h-4 text-[#0da1c7]" />
               Risk Assessment Framework
             </h4>
@@ -448,7 +448,7 @@ export function RiskRatingPanel({
 
           {/* Investor Profile */}
           <div className={`${gradeConfig.lightBg} rounded-xl p-4 mb-6 border ${gradeConfig.border} border-opacity-30`}>
-            <h4 className="font-semibold text-slate-800 mb-2 flex items-center gap-2">
+            <h4 className="font-semibold text-slate-800 dark:text-white mb-2 flex items-center gap-2">
               <Target className="w-4 h-4 text-slate-600" />
               Investor Profile Match
             </h4>
@@ -458,7 +458,7 @@ export function RiskRatingPanel({
           </div>
 
           {/* Dimension Analysis */}
-          <h4 className="font-semibold text-slate-800 mb-4 flex items-center gap-2">
+          <h4 className="font-semibold text-slate-800 dark:text-white mb-4 flex items-center gap-2">
             <PieChart className="w-4 h-4 text-slate-600" />
             Four-Dimension Risk Analysis
           </h4>
@@ -487,7 +487,7 @@ export function RiskRatingPanel({
                         <Icon className="w-5 h-5" />
                       </div>
                       <div className="text-left">
-                        <span className="font-medium text-slate-800">{config.label}</span>
+                        <span className="font-medium text-slate-800 dark:text-white">{config.label}</span>
                         <div className="flex items-center gap-3 text-xs text-slate-500 mt-0.5">
                           <span>Weight: {(weight * 100).toFixed(0)}%</span>
                           <span>•</span>
@@ -504,7 +504,7 @@ export function RiskRatingPanel({
                     <div className="flex items-center gap-4">
                       <div className="w-32">
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-lg font-bold text-slate-800">{score}</span>
+                          <span className="text-lg font-bold text-slate-800 dark:text-white">{score}</span>
                           <span className="text-xs text-slate-400">/100</span>
                         </div>
                         <div className="w-full bg-slate-200 rounded-full h-2">

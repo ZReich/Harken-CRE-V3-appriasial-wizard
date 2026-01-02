@@ -1123,7 +1123,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
           <div className="max-w-4xl mx-auto flex flex-col gap-6">
             <div className="flex items-center gap-3">
               <div className="w-2 h-8 bg-emerald-500 rounded-full"></div>
-              <h2 className="text-xl font-bold text-slate-800 uppercase tracking-wider">Value Reconciliation & Narrative</h2>
+              <h2 className="text-xl font-bold text-slate-800 dark:text-white uppercase tracking-wider">Value Reconciliation & Narrative</h2>
             </div>
 
             <EnhancedTextArea
@@ -1272,7 +1272,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
             {/* Content */}
             <div className="px-6 py-5">
               <p className="text-slate-600 text-sm leading-relaxed">
-                Are you sure you want to remove the <span className="font-semibold text-slate-800">"{confirmDelete.sectionTitle}"</span> section? 
+                Are you sure you want to remove the <span className="font-semibold text-slate-800 dark:text-white">"{confirmDelete.sectionTitle}"</span> section? 
                 All rows within this section will be hidden from the grid.
               </p>
               <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg flex items-start gap-2">

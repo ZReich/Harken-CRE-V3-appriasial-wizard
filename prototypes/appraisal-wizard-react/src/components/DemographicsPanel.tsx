@@ -173,7 +173,7 @@ export function DemographicsPanel({
       {/* Map Section */}
       <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
         <div className="px-4 py-3 border-b border-slate-200 bg-slate-50">
-          <h3 className="text-sm font-semibold text-slate-800 flex items-center gap-2">
+          <h3 className="text-sm font-semibold text-slate-800 dark:text-white flex items-center gap-2">
             <Building2 className="w-4 h-4 text-[#0da1c7]" />
             Demographics Map
           </h3>
@@ -191,7 +191,7 @@ export function DemographicsPanel({
       {/* Data Table */}
       <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
         <div className="px-4 py-3 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
-          <h3 className="text-sm font-semibold text-slate-800 flex items-center gap-2">
+          <h3 className="text-sm font-semibold text-slate-800 dark:text-white flex items-center gap-2">
             <Users className="w-4 h-4 text-[#0da1c7]" />
             Radius Demographics
           </h3>
@@ -231,7 +231,7 @@ export function DemographicsPanel({
               <tr>
                 <td className="px-4 py-2.5 text-slate-700">Current Population</td>
                 {data.map(d => (
-                  <td key={d.radius} className="text-right px-4 py-2.5 font-medium text-slate-800">
+                  <td key={d.radius} className="text-right px-4 py-2.5 font-medium text-slate-800 dark:text-white">
                     {formatNumber(d.population.current)}
                   </td>
                 ))}
@@ -267,7 +267,7 @@ export function DemographicsPanel({
               <tr>
                 <td className="px-4 py-2.5 text-slate-700">Total Households</td>
                 {data.map(d => (
-                  <td key={d.radius} className="text-right px-4 py-2.5 font-medium text-slate-800">
+                  <td key={d.radius} className="text-right px-4 py-2.5 font-medium text-slate-800 dark:text-white">
                     {formatNumber(d.households.current)}
                   </td>
                 ))}
@@ -293,7 +293,7 @@ export function DemographicsPanel({
               <tr>
                 <td className="px-4 py-2.5 text-slate-700">Median Household Income</td>
                 {data.map(d => (
-                  <td key={d.radius} className="text-right px-4 py-2.5 font-medium text-slate-800">
+                  <td key={d.radius} className="text-right px-4 py-2.5 font-medium text-slate-800 dark:text-white">
                     {formatCurrency(d.income.medianHousehold)}
                   </td>
                 ))}
@@ -327,7 +327,7 @@ export function DemographicsPanel({
               <tr>
                 <td className="px-4 py-2.5 text-slate-700">College Graduates (Bachelor's+)</td>
                 {data.map(d => (
-                  <td key={d.radius} className="text-right px-4 py-2.5 font-medium text-slate-800">
+                  <td key={d.radius} className="text-right px-4 py-2.5 font-medium text-slate-800 dark:text-white">
                     {formatPercent(d.education.percentCollegeGraduates)}
                   </td>
                 ))}
@@ -353,7 +353,7 @@ export function DemographicsPanel({
               <tr>
                 <td className="px-4 py-2.5 text-slate-700">Labor Force</td>
                 {data.map(d => (
-                  <td key={d.radius} className="text-right px-4 py-2.5 font-medium text-slate-800">
+                  <td key={d.radius} className="text-right px-4 py-2.5 font-medium text-slate-800 dark:text-white">
                     {formatNumber(d.employment?.laborForce || 0)}
                   </td>
                 ))}
@@ -375,7 +375,7 @@ export function DemographicsPanel({
       {data[0]?.employmentByIndustry && data[0].employmentByIndustry.length > 0 && (
         <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
           <div className="px-4 py-3 border-b border-slate-200 bg-slate-50">
-            <h3 className="text-sm font-semibold text-slate-800 flex items-center gap-2">
+            <h3 className="text-sm font-semibold text-slate-800 dark:text-white flex items-center gap-2">
               <TrendingUp className="w-4 h-4 text-[#0da1c7]" />
               Employment by Industry (1-Mile Radius)
             </h3>
@@ -387,7 +387,7 @@ export function DemographicsPanel({
                   <div className="flex-1">
                     <div className="flex items-center justify-between mb-1">
                       <span className="text-xs text-slate-600 truncate pr-2">{item.industry}</span>
-                      <span className="text-xs font-medium text-slate-800">{formatPercent(item.percentage)}</span>
+                      <span className="text-xs font-medium text-slate-800 dark:text-white">{formatPercent(item.percentage)}</span>
                     </div>
                     <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
                       <div 

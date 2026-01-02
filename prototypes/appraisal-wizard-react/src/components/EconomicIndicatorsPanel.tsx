@@ -53,7 +53,7 @@ function IndicatorCard({ title, icon, series, chartStyle, color, unit = '%' }: I
           <span className="font-medium text-slate-700 text-sm">{title}</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-lg font-bold text-slate-800">
+          <span className="text-lg font-bold text-slate-800 dark:text-white">
             {formatRate(series.current)}
           </span>
           {change !== 0 && (
@@ -189,7 +189,7 @@ export function EconomicIndicatorsPanel({
               <BarChart3 className="w-5 h-5 text-[#0da1c7]" />
             </div>
             <div>
-              <h3 className="font-bold text-slate-800">Economic Indicators</h3>
+              <h3 className="font-bold text-slate-800 dark:text-white">Economic Indicators</h3>
               <p className="text-xs text-slate-500">
                 Source: Federal Reserve Economic Data (FRED) • Fetched {asOfDate ? new Date(asOfDate).toLocaleDateString() : 'Recently'}
               </p>

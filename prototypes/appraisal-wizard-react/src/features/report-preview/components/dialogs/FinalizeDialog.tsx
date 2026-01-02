@@ -103,7 +103,7 @@ export const FinalizeDialog: React.FC<FinalizeDialogProps> = ({
           <div className="w-16 h-16 bg-sky-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <FileCheck className="text-sky-600" size={32} />
           </div>
-          <h3 className="text-xl font-semibold text-slate-800 mb-2">Ready to Finalize</h3>
+          <h3 className="text-xl font-semibold text-slate-800 dark:text-white mb-2">Ready to Finalize</h3>
           <p className="text-slate-600">
             Create the final PDF report for <strong>{reportTitle}</strong>
           </p>
@@ -160,7 +160,7 @@ export const FinalizeDialog: React.FC<FinalizeDialogProps> = ({
         <Loader2 className="text-sky-600 animate-spin" size={40} />
       </div>
       
-      <h3 className="text-xl font-semibold text-slate-800 mb-2">Generating Report</h3>
+      <h3 className="text-xl font-semibold text-slate-800 dark:text-white mb-2">Generating Report</h3>
       <p className="text-slate-600 mb-6">Please wait while we create your PDF...</p>
       
       <div className="max-w-md mx-auto">
@@ -182,7 +182,7 @@ export const FinalizeDialog: React.FC<FinalizeDialogProps> = ({
           <CheckCircle className="text-green-600" size={40} />
         </div>
         
-        <h3 className="text-xl font-semibold text-slate-800 mb-2">Report Generated!</h3>
+        <h3 className="text-xl font-semibold text-slate-800 dark:text-white mb-2">Report Generated!</h3>
         
         {completionMethod === 'downloaded' ? (
           <>
@@ -240,7 +240,7 @@ export const FinalizeDialog: React.FC<FinalizeDialogProps> = ({
           <AlertCircle className="text-red-600" size={40} />
         </div>
         
-        <h3 className="text-xl font-semibold text-slate-800 mb-2">Generation Failed</h3>
+        <h3 className="text-xl font-semibold text-slate-800 dark:text-white mb-2">Generation Failed</h3>
         <p className="text-slate-600 mb-4">
           We encountered an error while creating your report.
         </p>
@@ -272,7 +272,7 @@ export const FinalizeDialog: React.FC<FinalizeDialogProps> = ({
       <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
-          <h2 className="text-lg font-semibold text-slate-800">
+          <h2 className="text-lg font-semibold text-slate-800 dark:text-white">
             {step === 'confirm' && 'Finalize Report'}
             {step === 'processing' && 'Generating...'}
             {step === 'complete' && 'Success!'}
