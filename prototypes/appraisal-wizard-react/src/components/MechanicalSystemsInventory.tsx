@@ -490,7 +490,7 @@ export default function MechanicalSystemsInventory({
   const showCapacityField = selectedCategory === 'heating' || selectedCategory === 'cooling';
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+    <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl shadow-sm overflow-hidden">
       {/* Header */}
       <div className="p-4 border-b border-gray-100">
         <div className="flex items-center justify-between">

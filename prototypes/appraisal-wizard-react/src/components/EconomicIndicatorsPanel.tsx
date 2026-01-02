@@ -44,7 +44,7 @@ function IndicatorCard({ title, icon, series, chartStyle, color, unit = '%' }: I
   const change = previousValue ? series.current - previousValue : 0;
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+    <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
       <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="p-1.5 rounded-lg bg-slate-100" style={{ color }}>
@@ -143,7 +143,7 @@ export function EconomicIndicatorsPanel({
   // Loading state
   if (isLoading) {
     return (
-      <div className={`bg-white rounded-xl border border-slate-200 p-6 ${className}`}>
+      <div className={`bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6 ${className}`}>
         <div className="flex items-center justify-center gap-3 py-8">
           <Loader2 className="w-5 h-5 text-[#0da1c7] animate-spin" />
           <span className="text-slate-600">Loading economic indicators...</span>
@@ -155,7 +155,7 @@ export function EconomicIndicatorsPanel({
   // Error state
   if (error) {
     return (
-      <div className={`bg-white rounded-xl border border-slate-200 p-6 ${className}`}>
+      <div className={`bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6 ${className}`}>
         <div className="flex items-center gap-3 text-red-600 mb-4">
           <AlertCircle className="w-5 h-5" />
           <span>{error}</span>
@@ -173,7 +173,7 @@ export function EconomicIndicatorsPanel({
 
   if (!data) {
     return (
-      <div className={`bg-white rounded-xl border border-slate-200 p-6 ${className}`}>
+      <div className={`bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6 ${className}`}>
         <p className="text-slate-500">No economic data available.</p>
       </div>
     );
@@ -182,7 +182,7 @@ export function EconomicIndicatorsPanel({
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Header with Chart Style Selector */}
-      <div className="bg-white rounded-xl border border-slate-200 p-4">
+      <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-[#0da1c7]/10 rounded-lg">

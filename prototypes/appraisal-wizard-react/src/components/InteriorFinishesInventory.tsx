@@ -465,7 +465,7 @@ export default function InteriorFinishesInventory({
   }, [features, onChange]);
 
   return (
-    <div className={`bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden ${compact ? 'text-sm' : ''}`}>
+    <div className={`bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl shadow-sm overflow-hidden ${compact ? 'text-sm' : ''}`}>
       {/* Header */}
       <div className={`${compact ? 'p-3' : 'p-4'} border-b border-gray-100`}>
         <div className="flex items-center justify-between">

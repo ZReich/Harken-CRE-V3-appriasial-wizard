@@ -83,7 +83,7 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
     <div className="flex flex-col h-full bg-slate-50 overflow-hidden font-sans">
       
       {/* Page Header & View Toggle */}
-      <div className="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-slate-200 px-8 py-4 flex items-center justify-between gap-4 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+      <div className="sticky top-0 z-40 bg-white/95 dark:bg-slate-800/95 backdrop-blur border-b border-slate-200 dark:border-slate-700 px-8 py-4 flex items-center justify-between gap-4 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
         <div className="flex items-center gap-4">
           <div>
             <h1 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
@@ -98,13 +98,13 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
         <div className="bg-slate-100/80 p-1 rounded-lg border border-slate-200 flex items-center">
           <button 
             onClick={() => setActiveSection('all')}
-            className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-2 ${activeSection === 'all' ? 'bg-white text-slate-900 shadow-sm ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-900'}`}
+            className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-2 ${activeSection === 'all' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm ring-1 ring-black/5 dark:ring-white/10' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}
           >
             <Layers size={14} /> Full View
           </button>
           <button 
             onClick={() => setActiveSection('improvements')}
-            className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-2 ${activeSection === 'improvements' ? 'bg-white text-slate-900 shadow-sm ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-900'}`}
+            className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-2 ${activeSection === 'improvements' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm ring-1 ring-black/5 dark:ring-white/10' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}
           >
             <Building2 size={14}/> Improvements Only
           </button>
@@ -219,7 +219,7 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
             )}
 
             {/* Building Selector Section */}
-            <section className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-50">
+            <section className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-50">
               <BuildingSelector
                 scenarioId={currentScenarioId}
                 selectedBuildingIds={selectedBuildingIds}
@@ -228,7 +228,7 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
             </section>
 
             {/* Improvement Valuation Section */}
-            <section className="bg-white rounded-xl shadow-sm border border-slate-200 p-8 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75">
+            <section className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-8 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75">
               <ImprovementValuation 
                 onValueChange={setImprovementsValue} 
                 scenario={scenario}

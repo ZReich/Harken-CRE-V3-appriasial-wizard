@@ -139,7 +139,7 @@ export function DemographicsPanel({
   // Loading state
   if (isLoading) {
     return (
-      <div className={`bg-white rounded-xl border border-slate-200 p-8 ${className}`}>
+      <div className={`bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-8 ${className}`}>
         <div className="flex items-center justify-center gap-3 text-slate-500">
           <RefreshCw className="w-5 h-5 animate-spin" />
           <span>Loading demographics data...</span>
@@ -151,7 +151,7 @@ export function DemographicsPanel({
   // Error state
   if (error) {
     return (
-      <div className={`bg-white rounded-xl border border-slate-200 p-8 ${className}`}>
+      <div className={`bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-8 ${className}`}>
         <div className="flex items-center justify-center gap-3 text-red-500">
           <AlertCircle className="w-5 h-5" />
           <span>{error}</span>
@@ -171,7 +171,7 @@ export function DemographicsPanel({
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Map Section */}
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
         <div className="px-4 py-3 border-b border-slate-200 bg-slate-50">
           <h3 className="text-sm font-semibold text-slate-800 flex items-center gap-2">
             <Building2 className="w-4 h-4 text-[#0da1c7]" />
@@ -189,7 +189,7 @@ export function DemographicsPanel({
       </div>
 
       {/* Data Table */}
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
         <div className="px-4 py-3 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
           <h3 className="text-sm font-semibold text-slate-800 flex items-center gap-2">
             <Users className="w-4 h-4 text-[#0da1c7]" />
@@ -373,7 +373,7 @@ export function DemographicsPanel({
 
       {/* Employment by Industry */}
       {data[0]?.employmentByIndustry && data[0].employmentByIndustry.length > 0 && (
-        <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
           <div className="px-4 py-3 border-b border-slate-200 bg-slate-50">
             <h3 className="text-sm font-semibold text-slate-800 flex items-center gap-2">
               <TrendingUp className="w-4 h-4 text-[#0da1c7]" />

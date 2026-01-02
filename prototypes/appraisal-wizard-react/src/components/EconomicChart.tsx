@@ -55,7 +55,7 @@ const CustomTooltip = ({ active, payload, label, unit }: {
 }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white px-3 py-2 rounded-lg shadow-lg border border-slate-200">
+      <div className="bg-white dark:bg-slate-800 px-3 py-2 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700">
         <p className="text-xs text-slate-500">{formatDate(label || '')}</p>
         <p className="text-sm font-semibold text-slate-800">
           {payload[0].value.toFixed(2)}{unit || '%'}
@@ -157,7 +157,7 @@ export function EconomicChart({
   if (chartStyle === 'glass') {
     const sparklineData = data.slice(-12); // Last 12 data points for sparkline
     return (
-      <div className="backdrop-blur-md bg-white/70 rounded-xl border border-white/50 shadow-lg p-4">
+      <div className="backdrop-blur-md bg-white/70 dark:bg-slate-800/70 rounded-xl border border-white/50 dark:border-slate-700/50 shadow-lg p-4">
         <div className="flex items-start justify-between mb-3">
           <div>
             <p className="text-xs text-slate-500 uppercase tracking-wide">{title}</p>
