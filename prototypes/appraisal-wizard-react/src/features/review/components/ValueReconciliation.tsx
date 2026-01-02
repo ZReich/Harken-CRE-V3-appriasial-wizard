@@ -358,7 +358,7 @@ export function ValueReconciliation() {
       </div>
 
       {/* Value Conclusions Summary Table */}
-      <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+      <div className="bg-white dark:bg-slate-800 p-6 rounded-lg border border-gray-200 dark:border-slate-700 shadow-sm">
         <h3 className="text-lg font-semibold text-gray-900 mb-4 pb-3 border-b border-gray-200">
           Value Conclusions Summary
         </h3>
@@ -498,7 +498,7 @@ export function ValueReconciliation() {
       </div>
 
       {/* Reconciliation by Scenario */}
-      <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+      <div className="bg-white dark:bg-slate-800 p-6 rounded-lg border border-gray-200 dark:border-slate-700 shadow-sm">
         <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-200">
           <h3 className="text-lg font-semibold text-gray-900">
             Reconciliation by Scenario
@@ -530,7 +530,7 @@ export function ValueReconciliation() {
                 </button>
                 <button
                   onClick={() => setShowAiExplanation(false)}
-                  className="px-3 py-1.5 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-50"
+                  className="px-3 py-1.5 text-sm font-medium text-gray-600 dark:text-slate-300 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-md hover:bg-gray-50 dark:hover:bg-slate-600"
                 >
                   Dismiss
                 </button>
@@ -540,7 +540,7 @@ export function ValueReconciliation() {
               {Object.entries(aiWeightResult.weights).map(([approach, weight]) => {
                 const explanation = aiWeightResult.explanations[approach];
                 return (
-                  <div key={approach} className="bg-white p-3 rounded-lg border border-blue-100">
+                  <div key={approach} className="bg-white dark:bg-slate-700 p-3 rounded-lg border border-blue-100 dark:border-slate-600">
                     <div className="flex items-center justify-between mb-2">
                       <span className="font-medium text-gray-900">{approach}</span>
                       <span className="text-lg font-bold text-blue-600">{weight}%</span>
@@ -606,7 +606,7 @@ export function ValueReconciliation() {
                         value={activeReconciliation.weights[approach] || ''}
                         onChange={(e) => handleWeightChange(activeScenario.id, approach, e.target.value)}
                         placeholder="0"
-                        className="w-full bg-white border border-gray-300 rounded-lg px-3 py-2 text-center text-sm text-gray-900 focus:ring-2 focus:ring-[#0da1c7] focus:border-[#0da1c7]"
+                        className="w-full bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-center text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-[#0da1c7]"
                       />
                     </div>
                   </div>
@@ -667,7 +667,7 @@ export function ValueReconciliation() {
       </div>
 
       {/* Exposure & Marketing Time - Enhanced with ranges and tooltips */}
-      <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+      <div className="bg-white dark:bg-slate-800 p-6 rounded-lg border border-gray-200 dark:border-slate-700 shadow-sm">
         <h3 className="text-lg font-semibold text-gray-900 mb-4 pb-3 border-b border-gray-200">
           Exposure & Marketing Time
         </h3>
@@ -762,7 +762,7 @@ export function ValueReconciliation() {
       </div>
 
       {/* Final Certifications */}
-      <div className="bg-white p-6 rounded-lg border border-gray-200 shadow-sm">
+      <div className="bg-white dark:bg-slate-800 p-6 rounded-lg border border-gray-200 dark:border-slate-700 shadow-sm">
         <h3 className="text-lg font-semibold text-gray-900 mb-4 pb-3 border-b border-gray-200">
           Final Certifications
         </h3>

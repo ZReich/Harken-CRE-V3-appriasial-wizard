@@ -417,7 +417,7 @@ function ParcelCard({
   const isAddressSynced = isFirstParcel && addressString && parcel.address === addressString;
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
+    <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-sm">
       <div
         className="px-6 py-4 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors border-l-4 border-[#0da1c7]"
         onClick={onToggle}
@@ -681,7 +681,7 @@ function BuildingCard({
       </div>
 
       {isExpanded && (
-        <div className="px-4 py-4 bg-white border-t border-gray-200 space-y-4">
+        <div className="px-4 py-4 bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 space-y-4">
           {/* Basic Information */}
           <CollapsibleSection title="Basic Information" icon={<Building2 className="w-4 h-4" />} isExpanded={expandedSections.has('basic')} onToggle={() => toggleSection('basic')}>
             <div className="grid grid-cols-4 gap-3 items-end">
@@ -759,21 +759,21 @@ function BuildingCard({
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1.5">Eave Height</label>
                     <div className="flex items-center gap-2">
-                      <input type="text" inputMode="decimal" value={building.eaveHeight ?? ''} onChange={(e) => { const val = e.target.value.replace(/[^0-9.]/g, ''); onUpdate({ eaveHeight: val ? Number(val) : null }); }} placeholder="24" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white" />
+                      <input type="text" inputMode="decimal" value={building.eaveHeight ?? ''} onChange={(e) => { const val = e.target.value.replace(/[^0-9.]/g, ''); onUpdate({ eaveHeight: val ? Number(val) : null }); }} placeholder="24" className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-transparent bg-white dark:bg-slate-700 dark:text-white" />
                       <span className="text-xs font-medium text-gray-500">ft</span>
                     </div>
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1.5">Clear Height *</label>
                     <div className="flex items-center gap-2">
-                      <input type="text" inputMode="decimal" value={building.clearHeight ?? ''} onChange={(e) => { const val = e.target.value.replace(/[^0-9.]/g, ''); onUpdate({ clearHeight: val ? Number(val) : null }); }} placeholder="22" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white" />
+                      <input type="text" inputMode="decimal" value={building.clearHeight ?? ''} onChange={(e) => { const val = e.target.value.replace(/[^0-9.]/g, ''); onUpdate({ clearHeight: val ? Number(val) : null }); }} placeholder="22" className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-transparent bg-white dark:bg-slate-700 dark:text-white" />
                       <span className="text-xs font-medium text-gray-500">ft</span>
                     </div>
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1.5">Ridge Height</label>
                     <div className="flex items-center gap-2">
-                      <input type="text" inputMode="decimal" value={building.ridgeHeight ?? ''} onChange={(e) => { const val = e.target.value.replace(/[^0-9.]/g, ''); onUpdate({ ridgeHeight: val ? Number(val) : null }); }} placeholder="32" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white" />
+                      <input type="text" inputMode="decimal" value={building.ridgeHeight ?? ''} onChange={(e) => { const val = e.target.value.replace(/[^0-9.]/g, ''); onUpdate({ ridgeHeight: val ? Number(val) : null }); }} placeholder="32" className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-transparent bg-white dark:bg-slate-700 dark:text-white" />
                       <span className="text-xs font-medium text-gray-500">ft</span>
                     </div>
                   </div>
@@ -949,7 +949,7 @@ function CollapsibleSection({ title, icon, isExpanded, onToggle, children, actio
         </div>
         {action && <div onClick={(e) => e.stopPropagation()}>{action}</div>}
       </button>
-      {isExpanded && <div className="p-4 bg-white">{children}</div>}
+      {isExpanded && <div className="p-4 bg-white dark:bg-slate-800">{children}</div>}
     </div>
   );
 }
@@ -1022,7 +1022,7 @@ function AgeEconomicLifeSection({ building, actualAge, remainingLife, depreciati
         <div><label className="block text-xs font-medium text-gray-600 mb-1.5">Remaining Life</label><div className="flex items-center gap-2"><input type="text" value={remainingLife !== null ? remainingLife : ''} readOnly placeholder="Auto" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-700" /><span className="text-xs text-gray-500">yrs</span></div></div>
       </div>
 
-      <div className="p-4 bg-white border-2 border-[#0da1c7]/20 rounded-xl">
+      <div className="p-4 bg-white dark:bg-slate-800 border-2 border-[#0da1c7]/20 rounded-xl">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-[#0da1c7]/10 flex items-center justify-center"><Calculator className="w-5 h-5 text-[#0da1c7]" /></div>
@@ -1038,7 +1038,7 @@ function AgeEconomicLifeSection({ building, actualAge, remainingLife, depreciati
       </button>
 
       {showCalculator && (
-        <div className="mt-3 p-5 bg-white border border-gray-200 rounded-xl shadow-sm space-y-5">
+        <div className="mt-3 p-5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl shadow-sm space-y-5">
           <div><label className="block text-sm font-semibold text-gray-800 mb-2">1. Construction Quality - Sets Economic Life</label><div className="grid grid-cols-3 gap-3">{qualityOptions.map((opt) => (<button key={opt.value} type="button" onClick={() => setCalcQuality(opt.value)} className={`p-3 rounded-lg border-2 text-center transition-all ${calcQuality === opt.value ? 'border-[#0da1c7] bg-[#0da1c7]/10' : 'border-gray-200 hover:border-gray-300'}`}><span className="block font-medium text-gray-800">{opt.label}</span><span className="block text-xs text-gray-500">{opt.desc}</span></button>))}</div></div>
           <div><label className="block text-sm font-semibold text-gray-800 mb-2">2. Current Condition - Adjusts Effective Age</label><div className="grid grid-cols-5 gap-2">{conditionOptions.map((opt) => (<button key={opt.value} type="button" onClick={() => setCalcCondition(opt.value)} className={`p-2 rounded-lg border-2 text-center transition-all ${calcCondition === opt.value ? 'border-[#0da1c7] bg-[#0da1c7]/10' : 'border-gray-200 hover:border-gray-300'}`}><span className="block font-medium text-sm text-gray-800">{opt.label}</span><span className={`block text-xs ${opt.color}`}>{formatAdjustment(opt.adjustment)}</span></button>))}</div></div>
           <div><label className="block text-sm font-semibold text-gray-800 mb-2">3. Remodeling Impact - Further Adjustment</label><div className="grid grid-cols-4 gap-2">{remodelOptions.map((opt) => (<button key={opt.value} type="button" onClick={() => setCalcRemodel(opt.value)} className={`p-2 rounded-lg border-2 text-center transition-all ${calcRemodel === opt.value ? 'border-[#0da1c7] bg-[#0da1c7]/10' : 'border-gray-200 hover:border-gray-300'}`}><span className="block font-medium text-sm text-gray-800">{opt.label}</span><span className={`block text-xs ${opt.color}`}>{formatAdjustment(opt.adjustment)}</span></button>))}</div></div>

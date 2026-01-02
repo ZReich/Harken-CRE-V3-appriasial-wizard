@@ -386,7 +386,7 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
       
       {/* STICKY WORKFLOW STEPPER - Always visible */}
       <div className="flex-shrink-0 sticky top-0 z-40 bg-gray-50 px-6 pt-4 pb-2">
-        <div className="bg-white rounded-xl p-4 border border-slate-200 shadow-sm">
+        <div className="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700 shadow-sm">
             <div className="flex items-center justify-between">
               {availableSubTabs.map((tab, index) => {
                 const Icon = tab.Icon;
@@ -503,7 +503,7 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
           {(activeSubTab === 'pro-forma' || activeSubTab === 'valuation') && (
             <>
           {/* PROPERTY CONTEXT BAR */}
-          <div className="bg-white rounded-xl p-4 border border-slate-200 shadow-sm flex flex-col lg:flex-row items-center justify-between gap-6">
+          <div className="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700 shadow-sm flex flex-col lg:flex-row items-center justify-between gap-6">
             
             {/* Left: Property Type Badge - Read-only from WizardContext */}
             <div className="flex items-center gap-4 w-full lg:w-auto">
@@ -560,19 +560,19 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
           
           {/* TOP METRICS */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-            <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between">
+            <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col justify-between">
               <div className="text-xs font-bold text-slate-400 uppercase">Indicated Value</div>
               <div className="text-2xl font-black text-[#0da1c7]">${directCapValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</div>
             </div>
-            <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between">
+            <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col justify-between">
               <div className="text-xs font-bold text-slate-400 uppercase">Price / SF</div>
               <div className="text-2xl font-black text-slate-800">${(directCapValue / safeSqFt).toFixed(2)}</div>
             </div>
-            <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between">
+            <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col justify-between">
               <div className="text-xs font-bold text-slate-400 uppercase">Expense Ratio</div>
               <div className="text-2xl font-black text-slate-800">{summary.expenseRatio.toFixed(1)}%</div>
             </div>
-            <div className="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between relative overflow-hidden">
+            <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col justify-between relative overflow-hidden">
               <div className="absolute top-0 right-0 p-1 bg-emerald-100 rounded-bl-xl">
                 <Check size={14} className="text-emerald-600" />
               </div>
@@ -583,7 +583,7 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
 
           {/* Financial Summary Chart - Collapsible inline */}
           {(activeSubTab === 'pro-forma' || activeSubTab === 'valuation') && (
-            <div className="bg-white rounded-xl p-4 border border-slate-200 shadow-sm">
+            <div className="bg-white dark:bg-slate-800 rounded-xl p-4 border border-slate-200 dark:border-slate-700 shadow-sm">
               <button 
                 onClick={() => setShowChart(!showChart)}
                 className="w-full flex items-center justify-between text-left"
@@ -603,7 +603,7 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
           )}
 
           {/* INCOME SECTION */}
-          <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
             <div className="p-8 pb-4">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-4">
@@ -700,7 +700,7 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
           </div>
 
           {/* EXPENSE SECTION */}
-          <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
             <div className="p-8 pb-4">
               <div className="flex items-center justify-between mb-6">
                 <div className="flex items-center gap-4">
@@ -773,7 +773,7 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
           </div>
 
           {/* VALUATION SECTION */}
-          <div className="bg-white rounded-xl shadow-sm border border-slate-100 overflow-hidden">
+          <div className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-100 dark:border-slate-700 overflow-hidden">
             <div className="p-8 bg-gradient-to-r from-emerald-50 to-white border-b-2 border-emerald-200">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-4">
