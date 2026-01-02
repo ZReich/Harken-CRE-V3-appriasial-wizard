@@ -86,7 +86,7 @@ const ECONOMIC_LIFE_GUIDE: Record<SiteImprovementCategory | 'other', { range: st
 // =================================================================
 
 function generateId(): string {
-  return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
+  return Date.now().toString(36) + Math.random().toString(36).substring(2, 11);
 }
 
 function calculateEffectiveAge(yearInstalled: number | null, condition: SiteImprovementCondition): number {

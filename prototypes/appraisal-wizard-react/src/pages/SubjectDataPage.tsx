@@ -1375,7 +1375,7 @@ function SiteContent({
   permitsDataSource,
 }: SiteProps) {
   // Get field source tracking and suggestion helpers from wizard context
-  const { hasFieldSource, hasPendingFieldSuggestion, acceptFieldSuggestion, rejectFieldSuggestion } = useWizard();
+  const { hasFieldSource, hasPendingFieldSuggestion } = useWizard();
   
   // 1 acre = 43,560 square feet
   const SQFT_PER_ACRE = 43560;
@@ -2897,7 +2897,7 @@ function ExhibitsContent(_props: ExhibitsProps) {
   // Process uploaded files
   const processFiles = (files: File[]) => {
     const newExhibits: CustomExhibit[] = files.map(file => {
-      const id = `exhibit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const id = `exhibit_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
       const suggestedName = extractDocumentName(file.name);
       
       // Create preview for images/PDFs

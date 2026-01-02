@@ -469,7 +469,7 @@ export default function DocumentIntakePage() {
   const processFiles = async (files: File[]) => {
     // Create initial document entries
     const newDocs: ProcessedDocument[] = files.map(file => ({
-      id: `doc_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+      id: `doc_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`,
       file,
       status: 'uploading',
     }));

@@ -5,7 +5,7 @@
  * Shows document list with classification, source info, and toggle for inclusion.
  */
 
-import { FileText, Eye, Check, X, ExternalLink } from 'lucide-react';
+import { FileText, Eye, Check, X } from 'lucide-react';
 import { useWizard } from '../../../context/WizardContext';
 import type { UploadedDocument } from '../../../types';
 
@@ -78,9 +78,9 @@ export function AddendaPage({ selectedElement, onSelectElement }: AddendaPagePro
         </div>
 
         {/* Main Content */}
-        <div className="p-10">
+        <div className="p-10 relative">
           {/* Section Badge */}
-          <div className="absolute top-6 right-8 bg-emerald-700 text-white px-4 py-2 rounded text-xs font-semibold">
+          <div className="absolute top-2 right-2 bg-emerald-700 text-white px-4 py-2 rounded text-xs font-semibold">
             ADDENDA
           </div>
 

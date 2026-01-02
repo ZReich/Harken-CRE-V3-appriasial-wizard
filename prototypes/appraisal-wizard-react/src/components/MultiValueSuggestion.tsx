@@ -9,7 +9,7 @@
 import { useState, useCallback } from 'react';
 import { Check, X, FileText, ChevronDown, ChevronUp, Loader2, RefreshCw } from 'lucide-react';
 import { useWizard } from '../context/WizardContext';
-import { fetchFallbackValue, isMonatanaProperty } from '../services/fieldFallbackService';
+import { fetchFallbackValue, isMontanaProperty } from '../services/fieldFallbackService';
 import type { FieldSuggestion } from '../types';
 
 interface MultiValueSuggestionProps {
@@ -239,7 +239,7 @@ export function MultiValueSuggestion({
                   {isRejectingAll ? (
                     <>
                       <RefreshCw className="w-4 h-4 animate-spin" />
-                      Finding from {isMonatanaProperty(state.subjectData?.address?.state) ? 'MT GIS' : 'Cotality'}...
+                      Finding from {isMontanaProperty(state.subjectData?.address?.state) ? 'MT GIS' : 'Cotality'}...
                     </>
                   ) : (
                     <>
@@ -274,7 +274,7 @@ export function MultiValueSuggestion({
                   {isRejectingAll ? (
                     <>
                       <RefreshCw className="w-4 h-4 animate-spin" />
-                      Finding from {isMonatanaProperty(state.subjectData?.address?.state) ? 'MT GIS' : 'Cotality'}...
+                      Finding from {isMontanaProperty(state.subjectData?.address?.state) ? 'MT GIS' : 'Cotality'}...
                     </>
                   ) : (
                     <>

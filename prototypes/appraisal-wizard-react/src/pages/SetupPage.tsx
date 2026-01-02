@@ -285,7 +285,7 @@ const scenarioNameOptions = [
 // MAIN COMPONENT
 // ==========================================
 export default function SetupPage() {
-  const { state: wizardState, addOwner, updateOwner, removeOwner, setScenarios: syncScenariosToContext, setPropertyType: syncPropertyType, setSubjectData, hasFieldSource, hasPendingFieldSuggestion, acceptFieldSuggestion, rejectFieldSuggestion } = useWizard();
+  const { state: wizardState, addOwner, updateOwner, removeOwner, setScenarios: syncScenariosToContext, setPropertyType: syncPropertyType, setSubjectData, hasFieldSource, hasPendingFieldSuggestion } = useWizard();
   const [activeTab, setActiveTab] = useState('basics');
   
   // Track which fields are locked (pre-filled from extraction)

@@ -46,7 +46,7 @@ interface CapRateCalculatorProps {
 // HELPER FUNCTIONS
 // =================================================================
 
-const generateId = () => Math.random().toString(36).substr(2, 9);
+const generateId = () => Math.random().toString(36).substring(2, 11);
 
 const formatPercent = (value: number, decimals = 2) => 
   `${(value * 100).toFixed(decimals)}%`;

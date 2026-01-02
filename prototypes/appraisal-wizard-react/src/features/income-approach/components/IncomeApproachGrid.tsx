@@ -32,7 +32,7 @@ const INCOME_SUBTABS: Array<{
   { id: 'valuation', label: 'Valuation', shortLabel: 'Valuation', Icon: Calculator, description: 'Apply cap rate and DCF analysis to derive value' },
 ];
 
-const generateId = () => Math.random().toString(36).substr(2, 9);
+const generateId = () => Math.random().toString(36).substring(2, 11);
 
 interface IncomeSubTabVisibility {
   rentComparableGrid?: boolean;

@@ -201,7 +201,7 @@ const USE_MOCK_DATA = import.meta.env.VITE_USE_MOCK_PHOTO_AI === 'true';
  * Generate a unique ID for a photo
  */
 export function generatePhotoId(): string {
-  return `photo_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+  return `photo_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
 }
 
 /**

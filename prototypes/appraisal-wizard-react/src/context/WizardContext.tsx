@@ -1167,7 +1167,7 @@ export function WizardProvider({ children }: { children: ReactNode }) {
         fieldPath,
         suggestion: {
           ...suggestion,
-          id: `${fieldPath}-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+          id: `${fieldPath}-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
           createdAt: new Date().toISOString(),
         },
       },
