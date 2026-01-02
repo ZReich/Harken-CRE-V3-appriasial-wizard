@@ -154,7 +154,7 @@ export default function VisualSlotPicker({
               <Check className="w-3.5 h-3.5 text-white" />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-800">{selectedSlot.label}</p>
+              <p className="text-sm font-medium text-gray-800 dark:text-white">{selectedSlot.label}</p>
               <p className="text-[10px] text-gray-500 dark:text-slate-400">{selectedSlot.categoryLabel}</p>
             </div>
           </div>
@@ -189,7 +189,7 @@ export default function VisualSlotPicker({
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-gray-800">Select a slot for this photo</p>
+                  <p className="text-sm font-semibold text-gray-800 dark:text-white">Select a slot for this photo</p>
                   <p className="text-xs text-gray-500 dark:text-slate-400">Choose from available slots below</p>
                 </div>
                 <button

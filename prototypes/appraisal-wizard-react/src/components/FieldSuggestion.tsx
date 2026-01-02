@@ -144,7 +144,7 @@ export function FieldSuggestion({
           <FileText className="w-4 h-4 text-blue-500" />
           <span className="text-gray-600">
             Suggested from:{' '}
-            <span className="font-medium text-gray-800">
+            <span className="font-medium text-gray-800 dark:text-white">
               {suggestion.sourceFilename || 'Document'}
             </span>
           </span>

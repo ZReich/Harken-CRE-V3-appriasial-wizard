@@ -2647,7 +2647,7 @@ function PhotosContent({
                       <div className="flex items-start justify-between gap-2 mb-3">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
-                            <p className="text-sm font-medium text-gray-800">{slot.label}</p>
+                            <p className="text-sm font-medium text-gray-800 dark:text-white">{slot.label}</p>
                             {slot.recommended && !photo && (
                               <span className="px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-medium rounded">
                                 Recommended
@@ -2685,7 +2685,7 @@ function PhotosContent({
                                 className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg"
                                 title="Preview in report"
                               >
-                                <div className="flex items-center gap-2 px-3 py-1.5 bg-white/90 rounded-full text-sm font-medium text-gray-800">
+                                <div className="flex items-center gap-2 px-3 py-1.5 bg-white/90 rounded-full text-sm font-medium text-gray-800 dark:text-white">
                                   <Eye className="w-4 h-4" />
                                   Preview
                                 </div>

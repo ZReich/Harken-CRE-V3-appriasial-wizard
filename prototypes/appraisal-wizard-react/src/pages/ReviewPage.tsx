@@ -204,7 +204,7 @@ function ReportPreviewMode({
         {/* Center: Title with dirty indicator */}
         <div className="text-center">
           <div className="flex items-center justify-center gap-2">
-            <h1 className="text-lg font-bold text-gray-800">Report Preview</h1>
+            <h1 className="text-lg font-bold text-gray-800 dark:text-white">Report Preview</h1>
             {isDirty && (
               <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-100 text-amber-700 text-xs rounded-full">
                 <span className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse" />
