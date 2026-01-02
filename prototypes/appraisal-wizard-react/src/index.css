@@ -1,7 +1,12 @@
 @import "tailwindcss";
 
-/* Harken Theme Variables */
+/* ============================================
+   HARKEN DARK MODE - Theme Variables
+   ============================================ */
+
+/* Light Theme (Default) */
 :root {
+  /* Brand Colors */
   --harken-dark: #1c3643;
   --harken-accent: #4db8d1;
   --harken-accent-dark: #0da1c7;
@@ -11,6 +16,137 @@
   --harken-success-dark: #22c55e;
   --harken-text: #687f8b;
   --harken-border: #e8eaed;
+
+  /* Surfaces */
+  --bg-primary: #f9fafb;
+  --bg-secondary: #ffffff;
+  --bg-elevated: #ffffff;
+  --bg-card: #ffffff;
+  --bg-input: #ffffff;
+  --bg-header: #1c3643;
+  --bg-hover: #f3f4f6;
+  --bg-sidebar: #ffffff;
+
+  /* Text */
+  --text-primary: #111827;
+  --text-secondary: #4b5563;
+  --text-muted: #9ca3af;
+  --text-inverse: #ffffff;
+
+  /* Borders */
+  --border-subtle: #e5e7eb;
+  --border-default: #d1d5db;
+  --border-accent: #0da1c7;
+
+  /* Accent Colors */
+  --accent-cyan: #0da1c7;
+  --accent-cyan-hover: #0bb8e3;
+  --accent-cyan-light: #e0f7fc;
+  --accent-cyan-bg: rgba(13, 161, 199, 0.08);
+
+  --accent-green: #16a34a;
+  --accent-green-hover: #22c55e;
+  --accent-green-light: #dcfce7;
+  --accent-green-bg: rgba(22, 163, 74, 0.08);
+
+  --accent-purple: #9333ea;
+  --accent-purple-hover: #a855f7;
+  --accent-purple-light: #f3e8ff;
+  --accent-purple-bg: rgba(147, 51, 234, 0.08);
+
+  --accent-red: #dc2626;
+  --accent-red-hover: #ef4444;
+  --accent-red-light: #fef2f2;
+  --accent-red-bg: rgba(220, 38, 38, 0.08);
+
+  --accent-amber: #f59e0b;
+  --accent-amber-light: #fef3c7;
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-glow-cyan: 0 0 20px rgba(13, 161, 199, 0.15);
+}
+
+/* Dark Theme */
+html.dark {
+  /* Brand Colors - Luminous for dark */
+  --harken-dark: #0d1a22;
+  --harken-accent: #00d4ff;
+  --harken-accent-dark: #0da1c7;
+  --harken-accent-light: #33ddff;
+  --harken-accent-soft: rgba(0, 212, 255, 0.15);
+  --harken-success: #4ade80;
+  --harken-success-dark: #22c55e;
+  --harken-text: #94a3b8;
+  --harken-border: #334155;
+
+  /* Surfaces */
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --bg-elevated: #334155;
+  --bg-card: #1e293b;
+  --bg-input: #1e293b;
+  --bg-header: #0f172a;
+  --bg-hover: #334155;
+  --bg-sidebar: #1e293b;
+
+  /* Text */
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-inverse: #0f172a;
+
+  /* Borders */
+  --border-subtle: #334155;
+  --border-default: #475569;
+  --border-accent: #00d4ff;
+
+  /* Accent Colors - Luminous */
+  --accent-cyan: #00d4ff;
+  --accent-cyan-hover: #33ddff;
+  --accent-cyan-light: #0c4a5e;
+  --accent-cyan-bg: rgba(0, 212, 255, 0.12);
+
+  --accent-green: #22c55e;
+  --accent-green-hover: #4ade80;
+  --accent-green-light: #14532d;
+  --accent-green-bg: rgba(34, 197, 94, 0.12);
+
+  --accent-purple: #a855f7;
+  --accent-purple-hover: #c084fc;
+  --accent-purple-light: #3b0764;
+  --accent-purple-bg: rgba(168, 85, 247, 0.12);
+
+  --accent-red: #ef4444;
+  --accent-red-hover: #f87171;
+  --accent-red-light: #450a0a;
+  --accent-red-bg: rgba(239, 68, 68, 0.12);
+
+  --accent-amber: #fbbf24;
+  --accent-amber-light: #451a03;
+
+  /* Shadows - Softer for dark */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+  --shadow-glow-cyan: 0 0 25px rgba(0, 212, 255, 0.25);
+}
+
+/* Smooth theme transitions */
+*,
+*::before,
+*::after {
+  transition-property: background-color, border-color, color, fill, stroke, box-shadow;
+  transition-duration: 150ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Disable transitions for elements that shouldn't animate */
+.no-transition,
+.no-transition * {
+  transition: none !important;
 }
 
 * {
@@ -20,8 +156,8 @@
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-  background-color: #f9fafb;
-  color: #111827;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
 }
 
 /* Custom scrollbar - default subtle */
@@ -40,31 +176,39 @@ body {
   background: rgba(150, 150, 150, 0.6);
 }
 
+/* Dark mode scrollbar */
+html.dark *::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.5);
+}
+html.dark *::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.8);
+}
+
 /* Enhanced scrollbar for grid components - sleek and always visible */
 .custom-scrollbar::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 .custom-scrollbar::-webkit-scrollbar-track {
-  background: #f1f5f9;
+  background: var(--bg-secondary);
   border-radius: 4px;
 }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #cbd5e1;
+  background: var(--border-default);
   border-radius: 4px;
-  border: 1px solid #f1f5f9;
+  border: 1px solid var(--bg-secondary);
 }
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #94a3b8;
+  background: var(--text-muted);
 }
 .custom-scrollbar::-webkit-scrollbar-corner {
-  background: #f1f5f9;
+  background: var(--bg-secondary);
 }
 
 /* Firefox scrollbar support */
 .custom-scrollbar {
   scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 #f1f5f9;
+  scrollbar-color: var(--border-default) var(--bg-secondary);
 }
 
 /* Hide number input spinners - clean professional aesthetic */
