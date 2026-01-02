@@ -74,7 +74,7 @@ export function ThemeToggle({
       <LightModeIcon 
         sx={{ 
           ...iconSx,
-          color: '#f59e0b', // Warm yellow/amber for sun
+          color: 'var(--warning)',
         }} 
       />
     );
