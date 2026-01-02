@@ -127,9 +127,9 @@ export function CompletionChecklist() {
 
       {/* Completion Checklist */}
       <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <div className="flex items-center justify-between border-b-2 border-gray-200 pb-3 mb-4">
-          <h3 className="text-lg font-bold text-[#1c3643]">Completion Checklist</h3>
-          <span className="text-sm text-gray-500">
+        <div className="flex items-center justify-between border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+          <h3 className="text-lg font-bold text-slate-800 dark:text-white">Completion Checklist</h3>
+          <span className="text-sm text-gray-500 dark:text-slate-400">
             {completedCount} of {totalCount} complete
           </span>
         </div>
@@ -138,24 +138,24 @@ export function CompletionChecklist() {
             <div
               key={item.label}
               className={`flex items-center gap-3 p-3 rounded-lg ${
-                item.done ? 'bg-green-50' : 'bg-amber-50'
+                item.done ? 'bg-green-50 dark:bg-green-900/30' : 'bg-amber-50 dark:bg-amber-900/30'
               }`}
             >
               {item.done ? (
-                <svg className="w-5 h-5 text-green-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               ) : (
-                <svg className="w-5 h-5 text-amber-600 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <circle cx="12" cy="12" r="10" strokeWidth={2} />
                 </svg>
               )}
               <div className="flex-1">
-                <span className={`text-sm font-medium ${item.done ? 'text-green-800' : 'text-amber-800'}`}>
+                <span className={`text-sm font-medium ${item.done ? 'text-green-800 dark:text-green-200' : 'text-amber-800 dark:text-amber-200'}`}>
                   {item.label}
                 </span>
                 {item.description && (
-                  <p className={`text-xs mt-0.5 ${item.done ? 'text-green-600' : 'text-amber-600'}`}>
+                  <p className={`text-xs mt-0.5 ${item.done ? 'text-green-600 dark:text-green-300' : 'text-amber-600 dark:text-amber-300'}`}>
                     {item.description}
                   </p>
                 )}
@@ -166,10 +166,10 @@ export function CompletionChecklist() {
       </div>
 
       {/* Finalize Section */}
-      <div className={`border-2 rounded-xl p-6 ${isReadyToFinalize ? 'bg-green-50 border-green-200' : 'bg-amber-50 border-amber-200'}`}>
+      <div className={`border-2 rounded-xl p-6 ${isReadyToFinalize ? 'bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-700' : 'bg-amber-50 dark:bg-amber-900/30 border-amber-200 dark:border-amber-700'}`}>
         <div className="flex items-center gap-4">
           <svg
-            className={`w-12 h-12 ${isReadyToFinalize ? 'text-green-600' : 'text-amber-600'}`}
+            className={`w-12 h-12 ${isReadyToFinalize ? 'text-green-600 dark:text-green-400' : 'text-amber-600 dark:text-amber-400'}`}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -181,10 +181,10 @@ export function CompletionChecklist() {
             )}
           </svg>
           <div className="flex-1">
-            <h3 className={`text-lg font-bold mb-1 ${isReadyToFinalize ? 'text-green-900' : 'text-amber-900'}`}>
+            <h3 className={`text-lg font-bold mb-1 ${isReadyToFinalize ? 'text-green-900 dark:text-green-200' : 'text-amber-900 dark:text-amber-200'}`}>
               {isReadyToFinalize ? 'Ready to Finalize' : 'Complete Remaining Items'}
             </h3>
-            <p className={`text-sm ${isReadyToFinalize ? 'text-green-800' : 'text-amber-800'}`}>
+            <p className={`text-sm ${isReadyToFinalize ? 'text-green-800 dark:text-green-300' : 'text-amber-800 dark:text-amber-300'}`}>
               {isReadyToFinalize
                 ? 'Review your work and click "Finalize Report" to generate the final PDF.'
                 : 'Please complete the remaining checklist items before finalizing.'}

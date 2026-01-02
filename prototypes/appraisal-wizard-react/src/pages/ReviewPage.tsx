@@ -777,21 +777,21 @@ We considered alternative uses including renovation, conversion to alternative u
 
       {activeTab === 'market-analysis' && (
         <>
-          <div className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded mb-4">
-            <h4 className="font-semibold text-sm text-amber-900 mb-1">Market Conditions</h4>
-            <p className="text-xs text-amber-800">
+          <div className="bg-amber-50 dark:bg-amber-900/30 border-l-4 border-amber-400 p-4 rounded mb-4">
+            <h4 className="font-semibold text-sm text-amber-900 dark:text-amber-200 mb-1">Market Conditions</h4>
+            <p className="text-xs text-amber-800 dark:text-amber-300">
               Review market cycle stage, supply & demand balance, and key trends affecting property values in the subject area.
             </p>
           </div>
-          <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded mb-4">
-            <h4 className="font-semibold text-sm text-blue-900 mb-1">Economic Indicators</h4>
-            <p className="text-xs text-blue-800">
+          <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 p-4 rounded mb-4">
+            <h4 className="font-semibold text-sm text-blue-900 dark:text-blue-200 mb-1">Economic Indicators</h4>
+            <p className="text-xs text-blue-800 dark:text-blue-300">
               Analyze interest rates, economic growth, employment trends, and their impact on the real estate market.
             </p>
           </div>
-          <div className="bg-emerald-50 border-l-4 border-emerald-400 p-4 rounded">
-            <h4 className="font-semibold text-sm text-emerald-900 mb-1">Market Data</h4>
-            <p className="text-xs text-emerald-800">
+          <div className="bg-emerald-50 dark:bg-emerald-900/30 border-l-4 border-emerald-400 p-4 rounded">
+            <h4 className="font-semibold text-sm text-emerald-900 dark:text-emerald-200 mb-1">Market Data</h4>
+            <p className="text-xs text-emerald-800 dark:text-emerald-300">
               Reference comparable sales and rental data to understand market conditions and pricing trends.
             </p>
           </div>
@@ -800,15 +800,15 @@ We considered alternative uses including renovation, conversion to alternative u
 
       {activeTab === 'checklist' && (
         <>
-          <div className="bg-green-50 border-l-4 border-green-400 p-4 rounded mb-4">
-            <h4 className="font-semibold text-sm text-green-900 mb-1">Ready to Finalize</h4>
-            <p className="text-xs text-green-800">
+          <div className="bg-green-50 dark:bg-green-900/30 border-l-4 border-green-400 p-4 rounded mb-4">
+            <h4 className="font-semibold text-sm text-green-900 dark:text-green-200 mb-1">Ready to Finalize</h4>
+            <p className="text-xs text-green-800 dark:text-green-300">
               All required sections have been completed. You may proceed with report generation.
             </p>
           </div>
-          <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
-            <h4 className="font-semibold text-sm text-blue-900 mb-1">USPAP Compliance</h4>
-            <p className="text-xs text-blue-800">
+          <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 p-4 rounded">
+            <h4 className="font-semibold text-sm text-blue-900 dark:text-blue-200 mb-1">USPAP Compliance</h4>
+            <p className="text-xs text-blue-800 dark:text-blue-300">
               Ensure all required certifications are signed and limiting conditions are properly disclosed.
             </p>
           </div>
@@ -817,15 +817,15 @@ We considered alternative uses including renovation, conversion to alternative u
 
       {activeTab === 'swot' && (
         <>
-          <div className="bg-emerald-50 border-l-4 border-emerald-400 p-4 rounded mb-4">
-            <h4 className="font-semibold text-sm text-emerald-900 mb-1">Strategic Analysis</h4>
-            <p className="text-xs text-emerald-800">
+          <div className="bg-emerald-50 dark:bg-emerald-900/30 border-l-4 border-emerald-400 p-4 rounded mb-4">
+            <h4 className="font-semibold text-sm text-emerald-900 dark:text-emerald-200 mb-1">Strategic Analysis</h4>
+            <p className="text-xs text-emerald-800 dark:text-emerald-300">
               SWOT analysis provides a framework for evaluating the subject property's competitive position in the market.
             </p>
           </div>
-          <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
-            <h4 className="font-semibold text-sm text-blue-900 mb-1">AI Suggestions</h4>
-            <p className="text-xs text-blue-800">
+          <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 p-4 rounded">
+            <h4 className="font-semibold text-sm text-blue-900 dark:text-blue-200 mb-1">AI Suggestions</h4>
+            <p className="text-xs text-blue-800 dark:text-blue-300">
               Use the AI Suggestions button to generate property-specific SWOT items based on your entered data.
             </p>
           </div>
@@ -834,24 +834,24 @@ We considered alternative uses including renovation, conversion to alternative u
 
       {activeTab === 'risk-rating' && (
         <>
-          <div className="bg-cyan-50 border-l-4 border-cyan-400 p-4 rounded mb-4">
-            <h4 className="font-semibold text-sm text-cyan-900 mb-1">Bond-Style Rating</h4>
-            <p className="text-xs text-cyan-800">
+          <div className="bg-cyan-50 dark:bg-cyan-900/30 border-l-4 border-cyan-400 p-4 rounded mb-4">
+            <h4 className="font-semibold text-sm text-cyan-900 dark:text-cyan-200 mb-1">Bond-Style Rating</h4>
+            <p className="text-xs text-cyan-800 dark:text-cyan-300">
               Similar to bond credit ratings (AAA to C), this system evaluates investment quality across four dimensions.
             </p>
           </div>
-          <div className="bg-indigo-50 border-l-4 border-indigo-400 p-4 rounded mb-4">
-            <h4 className="font-semibold text-sm text-indigo-900 mb-1">Four Risk Dimensions</h4>
-            <p className="text-xs text-indigo-800">
+          <div className="bg-indigo-50 dark:bg-indigo-900/30 border-l-4 border-indigo-400 p-4 rounded mb-4">
+            <h4 className="font-semibold text-sm text-indigo-900 dark:text-indigo-200 mb-1">Four Risk Dimensions</h4>
+            <p className="text-xs text-indigo-800 dark:text-indigo-300">
               <strong>Market Volatility:</strong> Price variance vs market<br/>
               <strong>Liquidity:</strong> Days on market, absorption<br/>
               <strong>Income Stability:</strong> Cap rate vs risk-free rate<br/>
               <strong>Asset Quality:</strong> Physical + location factors
             </p>
           </div>
-          <div className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded">
-            <h4 className="font-semibold text-sm text-amber-900 mb-1">Dynamic Weighting</h4>
-            <p className="text-xs text-amber-800">
+          <div className="bg-amber-50 dark:bg-amber-900/30 border-l-4 border-amber-400 p-4 rounded">
+            <h4 className="font-semibold text-sm text-amber-900 dark:text-amber-200 mb-1">Dynamic Weighting</h4>
+            <p className="text-xs text-amber-800 dark:text-amber-300">
               Weights are calculated based on property type, data completeness, and market conditions - not fixed defaults.
             </p>
           </div>
@@ -860,24 +860,24 @@ We considered alternative uses including renovation, conversion to alternative u
 
       {activeTab === 'cost-seg' && (
         <>
-          <div className="bg-emerald-50 border-l-4 border-emerald-400 p-4 rounded mb-4">
-            <h4 className="font-semibold text-sm text-emerald-900 mb-1">Depreciation Classes</h4>
-            <p className="text-xs text-emerald-800">
+          <div className="bg-emerald-50 dark:bg-emerald-900/30 border-l-4 border-emerald-400 p-4 rounded mb-4">
+            <h4 className="font-semibold text-sm text-emerald-900 dark:text-emerald-200 mb-1">Depreciation Classes</h4>
+            <p className="text-xs text-emerald-800 dark:text-emerald-300">
               <strong>5-Year:</strong> Personal property (carpet, fixtures, equipment)<br/>
               <strong>15-Year:</strong> Land improvements (parking, landscaping, sidewalks)<br/>
               <strong>39-Year:</strong> Building structure (foundation, walls, roof)
             </p>
           </div>
-          <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded mb-4">
-            <h4 className="font-semibold text-sm text-blue-900 mb-1">Tax Benefits</h4>
-            <p className="text-xs text-blue-800">
+          <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 p-4 rounded mb-4">
+            <h4 className="font-semibold text-sm text-blue-900 dark:text-blue-200 mb-1">Tax Benefits</h4>
+            <p className="text-xs text-blue-800 dark:text-blue-300">
               Accelerating depreciation to shorter recovery periods provides immediate tax deductions, 
               improving cash flow in the early years of ownership.
             </p>
           </div>
-          <div className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded">
-            <h4 className="font-semibold text-sm text-amber-900 mb-1">IRS Compliance</h4>
-            <p className="text-xs text-amber-800">
+          <div className="bg-amber-50 dark:bg-amber-900/30 border-l-4 border-amber-400 p-4 rounded">
+            <h4 className="font-semibold text-sm text-amber-900 dark:text-amber-200 mb-1">IRS Compliance</h4>
+            <p className="text-xs text-amber-800 dark:text-amber-300">
               Analysis follows IRS Cost Segregation Audit Techniques Guide methodology and 
               MACRS depreciation rules per Publication 946.
             </p>
@@ -887,22 +887,22 @@ We considered alternative uses including renovation, conversion to alternative u
 
       {activeTab === 'reconciliation' && (
         <>
-          <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded mb-4">
-            <h4 className="font-semibold text-sm text-blue-900 mb-1">Approach Weighting</h4>
-            <p className="text-xs text-blue-800">
+          <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 p-4 rounded mb-4">
+            <h4 className="font-semibold text-sm text-blue-900 dark:text-blue-200 mb-1">Approach Weighting</h4>
+            <p className="text-xs text-blue-800 dark:text-blue-300">
               Weights should reflect the reliability and applicability of each approach for this property type.
             </p>
           </div>
-          <div className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded">
-            <h4 className="font-semibold text-sm text-amber-900 mb-1">Reconciliation Comments</h4>
-            <p className="text-xs text-amber-800">
+          <div className="bg-amber-50 dark:bg-amber-900/30 border-l-4 border-amber-400 p-4 rounded">
+            <h4 className="font-semibold text-sm text-amber-900 dark:text-amber-200 mb-1">Reconciliation Comments</h4>
+            <p className="text-xs text-amber-800 dark:text-amber-300">
               Provide clear reasoning for your weight assignments and how you arrived at the final value.
             </p>
           </div>
           {allTabsComplete && (
-            <div className="bg-green-50 border-l-4 border-green-400 p-4 rounded mt-4">
-              <h4 className="font-semibold text-sm text-green-900 mb-1">Ready for Preview!</h4>
-              <p className="text-xs text-green-800">
+            <div className="bg-green-50 dark:bg-green-900/30 border-l-4 border-green-400 p-4 rounded mt-4">
+              <h4 className="font-semibold text-sm text-green-900 dark:text-green-200 mb-1">Ready for Preview!</h4>
+              <p className="text-xs text-green-800 dark:text-green-300">
                 All sections are complete. You can now preview and finalize your report.
               </p>
             </div>
@@ -1001,13 +1001,13 @@ We considered alternative uses including renovation, conversion to alternative u
         return (
           <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
             {/* Scenario context banner */}
-            <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-4 flex items-start gap-3">
-              <Info className="text-indigo-600 shrink-0 mt-0.5" size={18} />
+            <div className="bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-800 rounded-xl p-4 flex items-start gap-3">
+              <Info className="text-indigo-600 dark:text-indigo-400 shrink-0 mt-0.5" size={18} />
               <div>
-                <p className="text-sm font-semibold text-indigo-900">
+                <p className="text-sm font-semibold text-indigo-900 dark:text-indigo-200">
                   Highest & Best Use Analysis
                 </p>
-                <p className="text-xs text-indigo-800 mt-1">
+                <p className="text-xs text-indigo-800 dark:text-indigo-300 mt-1">
                   Complete the four tests of highest and best use. Click "AI Draft" on any section to generate professional narrative using your property data.
                 </p>
               </div>
@@ -1016,7 +1016,7 @@ We considered alternative uses including renovation, conversion to alternative u
             {/* HBU As Vacant */}
             <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
               <div className="flex items-center justify-between border-b-2 border-gray-200 pb-3 mb-4">
-                <h3 className="text-lg font-bold text-[#1c3643] dark:text-white">
+                <h3 className="text-lg font-bold text-slate-800 dark:text-white">
                   Highest & Best Use - As Vacant
                 </h3>
                 <button
@@ -1076,7 +1076,7 @@ We considered alternative uses including renovation, conversion to alternative u
             {/* HBU As Improved (only if property has improvements) */}
             {hasImprovements && (
               <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-                <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
+                <h3 className="text-lg font-bold text-slate-800 dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
                   Highest & Best Use - As Improved
                 </h3>
                 <EnhancedTextArea
@@ -1096,20 +1096,20 @@ We considered alternative uses including renovation, conversion to alternative u
         return (
           <div className="absolute inset-0 flex flex-col animate-fade-in">
             {/* Market Analysis Header Banner */}
-            <div className="bg-amber-50 border-b border-amber-200 px-6 py-4 flex items-start gap-3">
-              <Info className="text-amber-600 shrink-0 mt-0.5" size={18} />
+            <div className="bg-amber-50 dark:bg-amber-900/30 border-b border-amber-200 dark:border-amber-800 px-6 py-4 flex items-start gap-3">
+              <Info className="text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" size={18} />
               <div>
-                <p className="text-sm font-semibold text-amber-900">
+                <p className="text-sm font-semibold text-amber-900 dark:text-amber-200">
                   Market Analysis
                 </p>
-                <p className="text-xs text-amber-800 mt-1">
+                <p className="text-xs text-amber-800 dark:text-amber-300 mt-1">
                   Review market conditions, supply & demand dynamics, and economic trends affecting property values.
                 </p>
               </div>
             </div>
 
             {/* Market Analysis Content - Single scrollable area with consistent background */}
-            <div className="flex-1 min-h-0 overflow-auto bg-slate-50">
+            <div className="flex-1 min-h-0 overflow-auto bg-slate-50 dark:bg-slate-900">
               <MarketAnalysisGrid 
                 rentCompData={{
                   avgRent: 26.75,
@@ -1124,7 +1124,7 @@ We considered alternative uses including renovation, conversion to alternative u
               />
               
               {/* Economic Indicators Panel - FRED Data */}
-              <div className="bg-white rounded-xl border border-slate-200 shadow-sm mx-6 mb-6 -mt-3">
+              <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm mx-6 mb-6 -mt-3">
                 <EconomicIndicatorsPanel 
                   onDataLoaded={(data, asOfDate) => {
                     // Save economic data to wizard state for report generation
@@ -1181,7 +1181,7 @@ We considered alternative uses including renovation, conversion to alternative u
               {/* Market Outlook & Analysis Narrative - At the very bottom */}
               <div className="mx-6 mb-6 space-y-3">
                 <div className="flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-slate-700" />
+                  <FileText className="w-5 h-5 text-slate-700 dark:text-slate-300" />
                   <h2 className="text-lg font-bold text-slate-800 dark:text-white">Market Outlook & Analysis</h2>
                 </div>
                 <EnhancedTextArea
@@ -1264,13 +1264,13 @@ We considered alternative uses including renovation, conversion to alternative u
         return (
           <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
             {/* Info Banner */}
-            <div className="bg-indigo-50 border border-indigo-200 rounded-xl p-4 flex items-start gap-3">
-              <Info className="text-indigo-600 shrink-0 mt-0.5" size={18} />
+            <div className="bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-800 rounded-xl p-4 flex items-start gap-3">
+              <Info className="text-indigo-600 dark:text-indigo-400 shrink-0 mt-0.5" size={18} />
               <div>
-                <p className="text-sm font-semibold text-indigo-900">
+                <p className="text-sm font-semibold text-indigo-900 dark:text-indigo-200">
                   Investment Risk Rating ("Bond Rating for Buildings")
                 </p>
-                <p className="text-xs text-indigo-800 mt-1">
+                <p className="text-xs text-indigo-800 dark:text-indigo-300 mt-1">
                   This proprietary rating system evaluates the property across four risk dimensions 
                   using Wall Street-style methodology. The rating helps banks and investors assess 
                   investment quality at a glance.
@@ -1298,13 +1298,13 @@ We considered alternative uses including renovation, conversion to alternative u
         return (
           <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
             {/* Info Banner */}
-            <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex items-start gap-3">
-              <Info className="text-emerald-600 shrink-0 mt-0.5" size={18} />
+            <div className="bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 rounded-xl p-4 flex items-start gap-3">
+              <Info className="text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" size={18} />
               <div>
-                <p className="text-sm font-semibold text-emerald-900">
+                <p className="text-sm font-semibold text-emerald-900 dark:text-emerald-200">
                   Cost Segregation Analysis
                 </p>
-                <p className="text-xs text-emerald-800 mt-1">
+                <p className="text-xs text-emerald-800 dark:text-emerald-300 mt-1">
                   Accelerate depreciation deductions by reclassifying building components into 
                   shorter recovery periods (5, 15, and 39 years) per IRS guidelines.
                 </p>
