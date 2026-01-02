@@ -1108,8 +1108,8 @@ We considered alternative uses including renovation, conversion to alternative u
               </div>
             </div>
 
-            {/* Market Analysis Grid - Full height content */}
-            <div className="flex-1 min-h-0 overflow-auto space-y-6">
+            {/* Market Analysis Content - Single scrollable area */}
+            <div className="flex-1 min-h-0 overflow-auto">
               <MarketAnalysisGrid 
                 rentCompData={{
                   avgRent: 26.75,
@@ -1124,7 +1124,7 @@ We considered alternative uses including renovation, conversion to alternative u
               />
               
               {/* Economic Indicators Panel - FRED Data */}
-              <div className="bg-white rounded-xl border border-slate-200 shadow-sm mx-6 mb-6">
+              <div className="bg-white rounded-xl border border-slate-200 shadow-sm mx-6 mb-6 -mt-3">
                 <EconomicIndicatorsPanel 
                   onDataLoaded={(data, asOfDate) => {
                     // Save economic data to wizard state for report generation
@@ -1175,6 +1175,36 @@ We considered alternative uses including renovation, conversion to alternative u
                     // Save chart style to wizard state for report generation
                     dispatch({ type: 'SET_ECONOMIC_CHART_STYLE', payload: style });
                   }}
+                />
+              </div>
+              
+              {/* Market Outlook & Analysis Narrative - At the very bottom */}
+              <div className="mx-6 mb-6 space-y-3">
+                <div className="flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-slate-700" />
+                  <h2 className="text-lg font-bold text-slate-800">Market Outlook & Analysis</h2>
+                </div>
+                <EnhancedTextArea
+                  label="Market Analysis Narrative"
+                  value={state.marketAnalysis?.narrative ?? ''}
+                  onChange={(value) => {
+                    // Update the narrative in wizard state
+                    const currentData = state.marketAnalysis || {
+                      supplyMetrics: { totalInventory: 0, vacancyRate: 0, absorptionRate: 0, inventoryMonths: 0 },
+                      demandMetrics: { averageRent: 0, rentGrowth: 0, averageDaysOnMarket: 0, salesVolume: 0 },
+                      marketTrends: { overallTrend: 'stable', priceOutlook: 'stable', supplyOutlook: 'stable' },
+                      narrative: '',
+                    };
+                    dispatch({ 
+                      type: 'SET_MARKET_ANALYSIS', 
+                      payload: { ...currentData, narrative: value } 
+                    });
+                  }}
+                  placeholder="Enter market outlook narrative covering supply/demand, vacancy trends, rental rates, and sales activity..."
+                  rows={10}
+                  sectionContext="market_analysis"
+                  helperText="AI can draft a comprehensive market analysis based on the market data above."
+                  minHeight={300}
                 />
               </div>
             </div>

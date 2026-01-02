@@ -141,7 +141,7 @@ export const MarketAnalysisGrid: React.FC<MarketAnalysisGridProps> = ({
   );
 
   return (
-    <div className="flex flex-col h-full bg-slate-50 overflow-auto p-6 space-y-6">
+    <div className="flex flex-col bg-slate-50 p-6 space-y-6">
       
       {/* Header */}
       <div className="flex items-center justify-between">
@@ -302,24 +302,6 @@ export const MarketAnalysisGrid: React.FC<MarketAnalysisGridProps> = ({
             value={`${marketData.saleTrends.avgDom} days`}
           />
         </div>
-      </div>
-
-      {/* Market Outlook Section */}
-      <div className="space-y-3">
-        <div className="flex items-center gap-2">
-          <FileText className="w-5 h-5 text-slate-700" />
-          <h2 className="text-lg font-bold text-slate-800">Market Outlook & Analysis</h2>
-        </div>
-        <EnhancedTextArea
-          label="Market Analysis Narrative"
-          value={marketOutlook}
-          onChange={setMarketOutlook}
-          placeholder="Enter market outlook narrative covering supply/demand, vacancy trends, rental rates, and sales activity..."
-          rows={10}
-          sectionContext="market_analysis"
-          helperText="AI can draft a comprehensive market analysis based on the market data above."
-          minHeight={300}
-        />
       </div>
 
       {/* Cap Rate Comparison Chart */}
