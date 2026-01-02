@@ -172,7 +172,7 @@ export function FieldSuggestion({
       {isExpanded && (
         <div className="px-3 pb-3 border-t border-blue-100">
           {/* Suggested Value */}
-          <div className="mt-3 p-3 bg-white rounded-md border border-gray-200">
+          <div className="mt-3 p-3 bg-white dark:bg-slate-700 rounded-md border border-gray-200 dark:border-slate-600">
             <p className="text-sm text-gray-800 font-medium leading-relaxed">
               "{suggestion.value}"
             </p>
@@ -184,7 +184,7 @@ export function FieldSuggestion({
               type="button"
               onClick={handleReject}
               disabled={isProcessing}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 dark:text-slate-300 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-md hover:bg-gray-50 dark:hover:bg-slate-600 hover:text-gray-700 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {isProcessing && fallbackStatus === 'fetching' ? (
                 <>

@@ -256,7 +256,7 @@ export function RiskRatingPanel({
   // Loading state
   if (isLoading) {
     return (
-      <div className={`bg-white rounded-xl border border-slate-200 p-6 ${className}`}>
+      <div className={`bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6 ${className}`}>
         <div className="flex flex-col items-center justify-center gap-4 py-12">
           <div className="relative">
             <div className="w-16 h-16 border-4 border-slate-200 rounded-full" />
@@ -274,7 +274,7 @@ export function RiskRatingPanel({
   // Error state
   if (error) {
     return (
-      <div className={`bg-white rounded-xl border border-slate-200 p-6 ${className}`}>
+      <div className={`bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6 ${className}`}>
         <div className="flex items-center gap-3 text-red-600 mb-4">
           <AlertCircle className="w-5 h-5" />
           <span>{error}</span>
@@ -293,7 +293,7 @@ export function RiskRatingPanel({
   // No data / incomplete inputs
   if (!data) {
     return (
-      <div className={`bg-white rounded-xl border border-slate-200 p-6 ${className}`}>
+      <div className={`bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6 ${className}`}>
         <div className="flex items-center gap-3 text-amber-600 mb-2">
           <Info className="w-5 h-5" />
           <span className="font-medium">Property Data Required</span>
@@ -312,7 +312,7 @@ export function RiskRatingPanel({
   return (
     <div className={`space-y-4 ${className}`}>
       {/* Main Rating Card */}
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
         {/* Header */}
         <div className="px-6 py-4 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white">
           <div className="flex items-center justify-between">
@@ -536,7 +536,7 @@ export function RiskRatingPanel({
                         {config.factors.map((factor, idx) => {
                           const FactorIcon = factor.icon;
                           return (
-                            <div key={idx} className="bg-white rounded-lg p-3 border border-slate-200">
+                            <div key={idx} className="bg-white dark:bg-slate-700 rounded-lg p-3 border border-slate-200 dark:border-slate-600">
                               <FactorIcon className="w-4 h-4 text-slate-400 mb-1" />
                               <span className="text-xs text-slate-600">{factor.label}</span>
                             </div>
@@ -564,7 +564,7 @@ export function RiskRatingPanel({
       </div>
 
       {/* Disclosure Toggle */}
-      <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+      <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
         <button
           onClick={() => setShowDisclosure(!showDisclosure)}
           className="w-full px-6 py-4 flex items-center justify-between hover:bg-slate-50 transition-colors"
