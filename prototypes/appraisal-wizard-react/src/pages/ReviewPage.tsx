@@ -1108,8 +1108,8 @@ We considered alternative uses including renovation, conversion to alternative u
               </div>
             </div>
 
-            {/* Market Analysis Content - Single scrollable area */}
-            <div className="flex-1 min-h-0 overflow-auto">
+            {/* Market Analysis Content - Single scrollable area with consistent background */}
+            <div className="flex-1 min-h-0 overflow-auto bg-slate-50">
               <MarketAnalysisGrid 
                 rentCompData={{
                   avgRent: 26.75,
