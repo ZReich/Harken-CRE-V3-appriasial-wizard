@@ -19,7 +19,7 @@ import {
   Loader2
 } from 'lucide-react';
 import { useWizard } from '../context/WizardContext';
-import { buildHBUContext, formatContextForAPI } from '../utils/hbuContextBuilder';
+import { buildEnhancedContextForAI } from '../utils/hbuContextBuilder';
 import { generateDraft as generateAIDraft } from '../services/aiService';
 import type { AIGenerationContext } from '../types/api';
 import DocumentSourceIndicator from './DocumentSourceIndicator';
@@ -500,8 +500,13 @@ export default function EnhancedTextArea({
       let apiContext: AIGenerationContext = {};
       
       if (wizardState) {
-        const hbuContext = buildHBUContext(wizardState);
-        apiContext = { ...formatContextForAPI(hbuContext), ...contextData };
+        // Use the enhanced context builder for comprehensive data extraction
+        apiContext = buildEnhancedContextForAI(wizardState);
+        
+        // Merge any additional context passed via props
+        if (contextData) {
+          apiContext = { ...apiContext, ...contextData };
+        }
       } else if (contextData) {
         apiContext = contextData as AIGenerationContext;
       }
@@ -540,7 +545,7 @@ export default function EnhancedTextArea({
     }
     
     setIsGeneratingAI(false);
-  }, [sectionContext, contextData, wizardState, value]);
+  }, [sectionContext, contextData, wizardState, value, additionalContext, aiInstructions]);
 
   // Accept AI draft
   const acceptAI = useCallback(() => {

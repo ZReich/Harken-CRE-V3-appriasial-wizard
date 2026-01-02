@@ -115,6 +115,55 @@ Include:
 
 Write 2-3 paragraphs, approximately 150-200 words.`,
 
+    neighborhood_boundaries: (ctx) => `Write a professional neighborhood boundaries section for an appraisal report.
+
+Property Location: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
+Property Type: ${ctx.propertyType || 'Commercial'}
+County: ${ctx.siteData?.county || 'Not specified'}
+
+Describe the neighborhood boundaries using the following format:
+- North: [specific street, landmark, or geographic feature]
+- South: [specific street, landmark, or geographic feature]
+- East: [specific street, landmark, or geographic feature]
+- West: [specific street, landmark, or geographic feature]
+
+Then provide a brief summary of why these boundaries define the competitive market area for similar properties.
+
+Write with specific detail as a 30-year MAI appraiser would, using local knowledge and landmarks. Write 2 paragraphs, approximately 150-200 words.`,
+
+    neighborhood_characteristics: (ctx) => `Write a professional neighborhood characteristics analysis for an appraisal report.
+
+Property Location: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
+Property Type: ${ctx.propertyType || 'Commercial'}
+Property Subtype: ${ctx.propertySubtype || 'Not specified'}
+Zoning: ${ctx.siteData?.zoning || 'Not specified'}
+
+Include:
+- Predominant land uses and development patterns
+- Age and condition of existing development
+- Access and transportation (highways, arterials, public transit)
+- Available amenities (retail, restaurants, services)
+- Factors positively and negatively affecting property values
+- Neighborhood life cycle stage (growth, stability, decline)
+
+Write as a 30-year MAI appraiser would, with specific observations about the market area. Write 2-3 paragraphs, approximately 200-250 words.`,
+
+    specific_location: (ctx) => `Write a professional specific location description for an appraisal report.
+
+Property Location: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
+Property Type: ${ctx.propertyType || 'Commercial'}
+Property Subtype: ${ctx.propertySubtype || 'Not specified'}
+
+Include:
+- Precise location description (street name, block, subdivision)
+- Proximity to major arterials and highways (with distances)
+- Nearby landmarks and points of reference
+- Access characteristics (frontage, ingress/egress)
+- Visibility from major roads
+- Surrounding property uses
+
+Write as a 30-year MAI appraiser would, with enough detail that a reader unfamiliar with the area could locate the property. Write 2 paragraphs, approximately 150-175 words.`,
+
     site_description: (ctx) => `Write a professional site description for an appraisal report.
 
 Site Size: ${ctx.siteData?.siteSize || 'Not specified'}
@@ -290,6 +339,650 @@ Include:
 - Functional utility
 
 Write 2-3 paragraphs, approximately 150-200 words.`,
+
+    // New prompts added - Setup & Subject Data
+    legal_description: (ctx) => `Write a professional legal description narrative for an appraisal report as a 30-year MAI appraiser would.
+
+LEGAL DESCRIPTION PROVIDED:
+${ctx.legalDescription || 'Not specified'}
+
+PROPERTY LOCATION:
+- Address: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
+- County: ${ctx.siteData?.county || 'Not specified'}
+- Site Size: ${ctx.siteData?.siteSize || 'Not specified'}
+
+Write a brief narrative that:
+1. States "The legal description of the subject property is as follows:"
+2. Presents the legal description in a clear, formatted manner
+3. Notes that the appraiser has not verified the legal description and relies on competent sources
+4. References title documentation or other sources if applicable
+
+Format with bold section header. Write 1-2 paragraphs, approximately 100-150 words.`,
+
+    site_notes: (ctx) => `Write professional site analysis notes for an appraisal report as a 30-year MAI appraiser would.
+
+SITE CHARACTERISTICS:
+- Site Size: ${ctx.siteData?.siteSize || 'Not specified'}
+- Shape: ${ctx.siteData?.shape || 'Not specified'}
+- Topography: ${ctx.siteData?.topography || 'Not specified'}
+- Frontage: ${ctx.siteData?.frontage || 'Not specified'}
+- Access: ${ctx.siteData?.accessQuality || 'Not specified'}
+
+Write professional observations about:
+1. Any unique or noteworthy site characteristics
+2. Factors that enhance or detract from site utility
+3. Development constraints or opportunities
+4. Competitive advantages of the site
+
+Use professional appraisal terminology. Write 1-2 paragraphs, approximately 100-150 words.`,
+
+    zoning_description: (ctx) => `Write a professional zoning analysis for an appraisal report as a 30-year MAI appraiser would.
+
+ZONING INFORMATION:
+- Classification: ${ctx.siteData?.zoning || 'Not specified'}
+- Location: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.county || 'Not specified'} County
+
+Write a professional analysis addressing:
+1. Current zoning classification and jurisdiction
+2. Permitted uses by right under the current zoning
+3. Conditional or special exception uses available
+4. Compliance status of existing improvements (conforming/non-conforming/legal non-conforming)
+5. Any relevant setback, parking, or density requirements
+6. Impact on property utility and marketability
+
+Reference that zoning verification should be confirmed with local authorities for transaction purposes. Use proper appraisal terminology. Write 2 paragraphs, approximately 150-200 words.`,
+
+    transaction_history: (ctx) => `Write a USPAP-compliant transaction history analysis as a 30-year MAI appraiser would.
+
+TRANSACTION DATA:
+- Last Sale Date: ${ctx.lastSaleDate || 'Not specified'}
+- Last Sale Price: ${ctx.lastSalePrice || 'Not specified'}
+- Current Owner: Per public records
+${ctx.transactionHistory ? `\n\nADDITIONAL HISTORY:\n${ctx.transactionHistory}` : ''}
+
+Write a professional analysis that:
+1. Begins with: "USPAP Standards Rule 1-5 requires analysis of all sales and transfers within three years of the effective date."
+2. Documents the last transaction (date, price, parties if available)
+3. Analyzes whether the transaction was arms-length
+4. Notes any non-arms-length considerations (family transfer, foreclosure, etc.)
+5. Explains how prior sales do/do not impact current value opinion
+6. States if no sales occurred within the three-year lookback period
+
+Be specific with dates and prices when available. Write 2 paragraphs, approximately 150-200 words.`,
+
+    construction_description: (ctx) => `Write a professional construction description narrative for an appraisal report as a 30-year MAI appraiser would.
+
+BUILDING INFORMATION:
+- Year Built: ${ctx.improvementData?.yearBuilt || 'Not specified'}
+- Building Size: ${ctx.improvementData?.buildingSize || 'Not specified'} SF
+- Construction Type: ${ctx.improvementData?.constructionType || 'Not specified'}
+- Quality: ${ctx.improvementData?.quality || 'Not specified'}
+- Condition: ${ctx.improvementData?.condition || 'Not specified'}
+
+Write a professional narrative describing:
+1. Structural system and framing type
+2. Foundation system
+3. Wall construction and materials
+4. Roof structure and covering
+5. Overall construction quality classification
+6. Age and condition assessment
+
+Use industry-standard construction terminology. Write 2 paragraphs, approximately 150-200 words.`,
+
+    // Utility prompts
+    water_source: (ctx) => `Write a professional water service analysis for an appraisal report as a 30-year MAI appraiser would.
+
+WATER SERVICE:
+${ctx.siteData?.waterSource || 'Municipal water available'}
+
+PROPERTY TYPE: ${ctx.propertyType || 'Commercial'}
+LOCATION: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
+
+Write a brief professional analysis:
+1. Identify the water service provider and type (municipal, well, shared)
+2. Note adequacy for current and anticipated uses
+3. Mention fire suppression capability if applicable for commercial properties
+4. State that no deficiencies were observed that would adversely affect utility
+
+Use authoritative language. Write 1 paragraph, approximately 75-100 words.`,
+
+    sewer_type: (ctx) => `Write a professional sanitary sewer service analysis for an appraisal report as a 30-year MAI appraiser would.
+
+SEWER SERVICE:
+${ctx.siteData?.sewerType || 'Municipal sanitary sewer available'}
+
+PROPERTY TYPE: ${ctx.propertyType || 'Commercial'}
+LOCATION: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
+
+Write a brief professional analysis:
+1. Identify the sewer service type (municipal, septic, package plant)
+2. Note connection status and adequacy
+3. State system capacity is appropriate for the property type
+4. Confirm no deficiencies observed that would affect utility or value
+
+Use authoritative language. Write 1 paragraph, approximately 75-100 words.`,
+
+    electric: (ctx) => `Write a professional electric service analysis for an appraisal report as a 30-year MAI appraiser would.
+
+ELECTRIC SERVICE:
+${ctx.siteData?.electricProvider || 'Electric service available from local utility'}
+
+PROPERTY TYPE: ${ctx.propertyType || 'Commercial'}
+LOCATION: ${ctx.siteData?.city || 'Not specified'}
+
+Write a brief professional analysis:
+1. Identify the electric service provider
+2. Note service type (overhead/underground) and phase (single/three-phase)
+3. State capacity appears adequate for ${ctx.propertyType || 'commercial'} use
+4. Confirm no electrical deficiencies observed
+
+Use authoritative language. Write 1 paragraph, approximately 75-100 words.`,
+
+    natural_gas: (ctx) => `Write a professional natural gas service analysis for an appraisal report as a 30-year MAI appraiser would.
+
+NATURAL GAS SERVICE:
+${ctx.siteData?.naturalGas || 'Natural gas available'}
+
+PROPERTY TYPE: ${ctx.propertyType || 'Commercial'}
+
+Write a brief professional analysis:
+1. Confirm natural gas availability and connection status
+2. Note utility provider if known
+3. State service is adequate for heating and process needs
+4. Mention this is typical for the market area
+
+Use authoritative language. Write 1 paragraph, approximately 50-75 words.`,
+
+    telecom: (ctx) => `Write a professional telecommunications analysis for an appraisal report as a 30-year MAI appraiser would.
+
+PROPERTY TYPE: ${ctx.propertyType || 'Commercial'}
+LOCATION: ${ctx.siteData?.city || 'Not specified'}
+
+Write a brief professional analysis:
+1. Confirm telecommunications availability (phone, internet, cable)
+2. Note multiple provider options are typically available in the area
+3. State fiber optic and high-speed internet service is available
+4. Confirm infrastructure supports modern business communications requirements
+
+Use authoritative language. Write 1 paragraph, approximately 75-100 words.`,
+
+    flood_zone: (ctx) => `Write a professional FEMA flood zone determination for an appraisal report as a 30-year MAI appraiser would.
+
+FLOOD ZONE DATA:
+- FEMA Zone: ${ctx.siteData?.femaZone || 'Zone X'}
+- Location: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.county || 'Not specified'} County
+
+Write a professional flood zone analysis:
+1. State "According to the Federal Emergency Management Agency (FEMA) Flood Insurance Rate Map..."
+2. Identify the specific flood zone designation
+3. Explain what the zone designation means (Zone X = minimal risk, Zone A = 100-year floodplain, etc.)
+4. State flood insurance requirements based on zone (required for Special Flood Hazard Areas, optional for Zone X)
+5. Note this is subject to FEMA map revisions
+6. Conclude with impact on property marketability
+
+Use proper FEMA terminology. Write 2 paragraphs, approximately 125-150 words.`,
+
+    // Site description prompts
+    easements: (ctx) => `Write a professional easements and encumbrances analysis for an appraisal report as a 30-year MAI appraiser would.
+
+PROPERTY LOCATION: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
+SITE SIZE: ${ctx.siteData?.siteSize || 'Not specified'}
+${ctx.siteData?.easements ? `\n\nEASEMENT INFORMATION:\n${ctx.siteData.easements}` : ''}
+
+Write a professional analysis:
+1. State "Based on our title review and inspection..."
+2. Identify any recorded easements (utility, access, drainage)
+3. Assess whether easements adversely impact site utility or value
+4. Note typical utility easements along property boundaries are customary
+5. State if no unusual or adverse easements were identified
+6. Reference that complete title review is recommended for transaction purposes
+
+Use proper legal and appraisal terminology. Write 1-2 paragraphs, approximately 100-150 words.`,
+
+    site_description_full: (ctx) => `Write a comprehensive professional site description for an appraisal report as a 30-year MAI appraiser would.
+
+SITE CHARACTERISTICS:
+- Size: ${ctx.siteData?.siteSize || 'Not specified'}
+- Shape: ${ctx.siteData?.shape || 'Not specified'}
+- Topography: ${ctx.siteData?.topography || 'Not specified'}
+- Frontage: ${ctx.siteData?.frontage || 'Not specified'}
+- Access: ${ctx.siteData?.accessQuality || 'Not specified'}
+- Visibility: ${ctx.siteData?.visibility || 'Not specified'}
+- Zoning: ${ctx.siteData?.zoning || 'Not specified'}
+
+UTILITIES:
+- Water: ${ctx.siteData?.waterSource || 'Municipal'}
+- Sewer: ${ctx.siteData?.sewerType || 'Municipal'}
+- Electric, Gas, Telecom: Available
+
+SITE IMPROVEMENTS:
+- Paving: ${ctx.siteData?.pavingType || 'Asphalt'}
+- Fencing: ${ctx.siteData?.fencingType || 'Per observation'}
+
+FLOOD ZONE: ${ctx.siteData?.femaZone || 'Zone X'}
+
+Write a comprehensive site description with bold section headers:
+1. <b><u>SITE SIZE AND CONFIGURATION</u></b> - Dimensions, shape, and area
+2. <b><u>TOPOGRAPHY AND DRAINAGE</u></b> - Grade, drainage patterns
+3. <b><u>ACCESS AND VISIBILITY</u></b> - Frontage, ingress/egress, visibility analysis
+4. <b><u>UTILITIES</u></b> - All utility services and adequacy
+5. <b><u>SITE IMPROVEMENTS</u></b> - Paving, lighting, fencing, landscaping
+6. <b><u>FLOOD ZONE</u></b> - FEMA designation and implications
+7. <b><u>EASEMENTS</u></b> - Notable easements or statement that none adversely affect value
+8. <b><u>CONCLUSION</u></b> - Overall site suitability assessment
+
+Write 4-6 paragraphs, approximately 350-450 words total. Use definitive professional language throughout.`,
+
+    site_improvements: (ctx) => `Write a professional site improvements description for an appraisal report as a 30-year MAI appraiser would.
+
+SITE IMPROVEMENTS:
+- Paving: ${ctx.siteData?.pavingType || 'Asphalt paving'}
+- Fencing: ${ctx.siteData?.fencingType || 'Chain link perimeter fence'}
+- Property Type: ${ctx.propertyType || 'Commercial'}
+
+Write a professional description:
+1. Describe paving areas (parking, circulation, loading areas)
+2. Note paving condition and adequacy
+3. Describe fencing type, coverage, and condition
+4. Mention exterior lighting for safety and security
+5. Note any landscaping or yard improvements
+6. Assess overall condition and functional adequacy
+7. State whether improvements are typical for the property type
+
+Use professional terminology. Write 2 paragraphs, approximately 150-175 words.`,
+
+    property_boundaries: (ctx) => `Write a professional property boundaries description for an appraisal report as a 30-year MAI appraiser would.
+
+PROPERTY LOCATION:
+- Address: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.county || 'Not specified'} County
+- Site Size: ${ctx.siteData?.siteSize || 'Not specified'}
+
+Write a professional boundary description using the cardinal direction format:
+1. <b><u>PROPERTY BOUNDARIES</u></b>
+   - North: [Identify boundary - street, property, natural feature]
+   - South: [Identify boundary]
+   - East: [Identify boundary]
+   - West: [Identify boundary]
+
+2. Explain how these boundaries define the competitive market area or neighborhood
+3. Note visibility and accessibility from primary boundaries
+4. Reference verification from survey or title documents
+
+Be specific with street names and geographic features when possible. Write 2 paragraphs, approximately 150-175 words.`,
+
+    // Valuation approach prompts
+    sales_comparison: (ctx) => `Write the Sales Comparison Approach reconciliation narrative as a 30-year MAI appraiser would.
+
+SUBJECT PROPERTY:
+- Address: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
+- Property Type: ${ctx.propertyType || 'Commercial'}
+- Building Size: ${ctx.improvementData?.buildingSize || 'Not specified'} SF
+
+${ctx.salesComps && ctx.salesComps.length > 0 ? `COMPARABLE SALES ANALYZED:
+${ctx.salesComps.map((c: any, i: number) => `- Sale ${i+1}: ${c.address || 'Address not specified'}, Sale Price: ${c.salePrice ? '$' + c.salePrice.toLocaleString() : 'Not specified'}${c.adjustedPrice ? `, Adjusted: $${c.adjustedPrice.toLocaleString()}` : ''}`).join('\n')}` : 'Comparable sales were analyzed for this property type.'}
+
+${ctx.valuationData?.salesValue ? `CONCLUDED VALUE: $${ctx.valuationData.salesValue.toLocaleString()}` : ''}
+
+Write a professional narrative that:
+1. Begins with: <b><u>SALES COMPARISON APPROACH</u></b>
+2. States "The Sales Comparison Approach is based on the principle of substitution..."
+3. Discusses comparable selection criteria (location, size, age, quality, condition)
+4. Explains adjustment methodology (market-derived adjustments for key differences)
+5. Discusses the reconciliation process and weighting of comparables
+6. States the concluded value indication with confidence
+7. Notes this approach is reliable when adequate comparable data exists
+
+Format with bold section headers. Write 3-4 paragraphs, approximately 250-300 words. Use authoritative MAI-level language.`,
+
+    land_valuation: (ctx) => `Write a professional land valuation analysis narrative as a 30-year MAI appraiser would.
+
+SUBJECT SITE:
+- Location: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
+- Site Size: ${ctx.siteData?.siteSize || 'Not specified'}
+- Zoning: ${ctx.siteData?.zoning || 'Not specified'}
+- Topography: ${ctx.siteData?.topography || 'Level'}
+
+${ctx.landComps && ctx.landComps.length > 0 ? `LAND SALES ANALYZED:
+${ctx.landComps.map((c: any, i: number) => `- Sale ${i+1}: ${c.address || 'Not specified'}, ${c.pricePerAcre ? `$${c.pricePerAcre.toLocaleString()}/acre` : 'Price not specified'}${c.adjustedPricePerAcre ? `, Adjusted: $${c.adjustedPricePerAcre.toLocaleString()}/acre` : ''}`).join('\n')}` : 'Land sales were analyzed in the subject market area.'}
+
+${ctx.valuationData?.landValue ? `CONCLUDED LAND VALUE: $${ctx.valuationData.landValue.toLocaleString()}` : ''}
+
+Write a professional narrative with sections:
+1. <b><u>LAND VALUATION - SALES COMPARISON APPROACH</u></b>
+2. State "Land value was estimated using the Sales Comparison Approach, the preferred method for vacant land..."
+3. Describe the local land market conditions
+4. Discuss comparable land sales analyzed
+5. Explain adjustments made for: size, location, topography, utilities, zoning
+6. Note after 30 years of appraising land, the adjustment methodology reflects market behavior
+7. Reconcile to a concluded land value per acre and total land value
+8. State this value represents the highest and best use as vacant
+
+Format with bold headers. Write 3-4 paragraphs, approximately 250-300 words.`,
+
+    // Income approach prompts
+    rent_comparable: (ctx) => `Write a professional market rent analysis narrative as a 30-year MAI appraiser would.
+
+SUBJECT PROPERTY:
+- Property Type: ${ctx.propertyType || 'Commercial'}
+- Building Size: ${ctx.improvementData?.buildingSize || 'Not specified'} SF
+- Location: ${ctx.siteData?.city || 'Not specified'}
+
+${ctx.rentComps && ctx.rentComps.length > 0 ? `RENTAL COMPARABLES:
+${ctx.rentComps.map((c: any, i: number) => `- Comp ${i+1}: ${c.address || 'Not specified'}${c.rentPerSf ? `, $${c.rentPerSf.toFixed(2)}/SF/yr` : ''}`).join('\n')}` : 'Market rental comparables were analyzed.'}
+
+Write a professional narrative:
+1. <b><u>MARKET RENT ANALYSIS</u></b>
+2. State "In estimating market rent, I analyzed comparable rental properties in the subject's competitive market..."
+3. Describe current rental market conditions (vacancy, absorption, landlord/tenant market)
+4. Discuss rental comparables and selection criteria
+5. Explain adjustments for location, size, condition, amenities, lease structure
+6. Note typical lease terms in the market (NNN, modified gross, etc.)
+7. Reconcile to a market rent conclusion per SF annually and monthly
+8. State this represents the most probable rent from a knowledgeable tenant
+
+Draw on "30 years of experience in this market" for authority. Write 3 paragraphs, approximately 225-275 words.`,
+
+    expense_comparable: (ctx) => `Write a professional operating expense analysis narrative as a 30-year MAI appraiser would.
+
+SUBJECT PROPERTY:
+- Property Type: ${ctx.propertyType || 'Commercial'}
+- Building Size: ${ctx.improvementData?.buildingSize || 'Not specified'} SF
+
+${ctx.expenseComps && ctx.expenseComps.length > 0 ? `EXPENSE COMPARABLES:
+${ctx.expenseComps.map((c: any, i: number) => `- Comp ${i+1}: ${c.address || 'Not specified'}${c.expenseRatio ? `, Expense Ratio: ${(c.expenseRatio * 100).toFixed(1)}%` : ''}`).join('\n')}` : 'Comparable operating expense data was analyzed.'}
+
+Write a professional narrative:
+1. <b><u>OPERATING EXPENSE ANALYSIS</u></b>
+2. State "Operating expenses were estimated based on comparable expense data and market surveys..."
+3. Discuss expense data sources (property managers, owners, published surveys)
+4. Break down major expense categories:
+   - Real Estate Taxes (based on current assessment)
+   - Insurance (market rates for similar properties)
+   - Utilities (if not tenant-paid)
+   - Repairs & Maintenance (typical expenditures for age/condition)
+   - Management Fee (market-standard percentage of EGI)
+   - Reserves for Replacement (appropriate allowance for capital items)
+5. Compare expense ratio to market (typically 25-40% of EGI for commercial)
+6. State expenses are at stabilized levels appropriate for market conditions
+
+Draw on professional judgment from 30 years of experience. Write 2-3 paragraphs, approximately 200-250 words.`,
+
+    multi_family: (ctx) => `Write a professional multi-family rental analysis narrative as a 30-year MAI appraiser would.
+
+SUBJECT PROPERTY:
+- Property Type: Multi-Family ${ctx.propertySubtype || ''}
+- Location: ${ctx.siteData?.city || 'Not specified'}
+- Building Size: ${ctx.improvementData?.buildingSize || 'Not specified'} SF
+
+Write a professional narrative:
+1. <b><u>MULTI-FAMILY RENTAL ANALYSIS</u></b>
+2. State "In developing the rental analysis for this multi-family property, I applied the methodology refined over 30 years..."
+3. Describe the multi-family market in the subject area
+4. Discuss vacancy rates, absorption, and rental trends
+5. Analyze rental comparables by unit type (studio, 1BR, 2BR, 3BR)
+6. Make adjustments for: location, unit size, amenities, age/condition, parking
+7. Reconcile to market rent per unit and per SF
+8. Discuss lease-up assumptions if applicable
+9. Calculate potential gross income and effective gross income
+
+Use multi-family specific terminology (unit mix, concessions, turnover, tenant profile). Write 3-4 paragraphs, approximately 275-325 words.`,
+
+    // Cost approach prompts
+    cost_approach: (ctx) => `Write a professional Cost Approach narrative as a 30-year MAI appraiser would.
+
+PROPERTY DATA:
+- Property Type: ${ctx.propertyType || 'Commercial'}
+- Building Size: ${ctx.improvementData?.buildingSize || 'Not specified'} SF
+- Year Built: ${ctx.improvementData?.yearBuilt || 'Not specified'}
+- Construction Type: ${ctx.improvementData?.constructionType || 'Not specified'}
+- Condition: ${ctx.improvementData?.condition || 'Average'}
+
+${ctx.replacementCostNew ? `Replacement Cost New: $${ctx.replacementCostNew.toLocaleString()}` : ''}
+${ctx.valuationData?.landValue ? `Land Value: $${ctx.valuationData.landValue.toLocaleString()}` : ''}
+${ctx.valuationData?.costValue ? `Concluded Value: $${ctx.valuationData.costValue.toLocaleString()}` : ''}
+
+Write a professional narrative with sections:
+1. <b><u>COST APPROACH</u></b>
+2. State "The Cost Approach is based on the principle of substitution - a prudent investor would pay no more than the cost to acquire a similar site and construct improvements of equal utility."
+3. <b><u>LAND VALUE</u></b> - Reference the land value from the Land Valuation section
+4. <b><u>IMPROVEMENT COST ESTIMATE</u></b> - Explain the cost estimation method:
+   - Marshall & Swift Valuation Service cost data
+   - Adjusted for local market conditions and current construction costs
+   - Includes direct costs (materials, labor) and indirect costs (fees, financing, developer profit)
+5. <b><u>DEPRECIATION ANALYSIS</u></b>:
+   - Physical Depreciation (based on age, condition, effective age vs. economic life)
+   - Functional Obsolescence (if any design inadequacies or superadequacies)
+   - External Obsolescence (if location or market factors impact value)
+6. <b><u>VALUE INDICATION</u></b> - Depreciated improvement value + land value
+7. Note after 30 years, Cost Approach is most reliable for newer construction
+
+Write 4-5 paragraphs, approximately 300-350 words.`,
+
+    cost_reconciliation: (ctx) => `Write a professional cost data reconciliation narrative as a 30-year MAI appraiser would.
+
+PROPERTY TYPE: ${ctx.propertyType || 'Commercial'}
+BUILDING SIZE: ${ctx.improvementData?.buildingSize || 'Not specified'} SF
+
+${ctx.replacementCostNew ? `Marshall & Swift Cost: $${ctx.replacementCostNew.toLocaleString()}` : ''}
+
+Write a professional narrative:
+1. <b><u>COST DATA RECONCILIATION</u></b>
+2. Discuss the sources of cost data analyzed:
+   - Marshall & Swift Valuation Service (industry standard)
+   - Local contractor estimates or bids (if available)
+   - Recent construction costs for comparable projects
+3. Compare and reconcile differences between cost sources
+4. Explain any necessary adjustments for:
+   - Regional cost multipliers
+   - Current cost trends (inflation/deflation)
+   - Property-specific features
+   - Soft costs (architect, engineering, permits, financing, developer profit)
+5. Conclude with the final replacement cost new adopted
+6. State this reflects current market construction costs as of the effective date
+
+Use authoritative language drawing on 30 years of cost estimation experience. Write 2-3 paragraphs, approximately 200-250 words.`,
+
+    // Building component prompts
+    exterior_component: (ctx) => `Write a professional exterior component description as a 30-year MAI appraiser would.
+
+BUILDING DATA:
+- Year Built: ${ctx.improvementData?.yearBuilt || 'Not specified'}
+- Construction Type: ${ctx.improvementData?.constructionType || 'Not specified'}
+- Condition: ${ctx.improvementData?.condition || 'Average'}
+
+Write a concise professional description of the specific exterior component, including:
+1. Material type and quality
+2. Observed condition
+3. Approximate age or installation date if different from building
+4. Remaining useful life estimate
+5. Any deficiencies or superior features noted
+
+Use construction and appraisal terminology. Write 1 paragraph, approximately 75-100 words.`,
+
+    exterior_description: (ctx) => `Write a professional exterior features summary for an appraisal report as a 30-year MAI appraiser would.
+
+BUILDING DATA:
+- Year Built: ${ctx.improvementData?.yearBuilt || 'Not specified'}
+- Construction Type: ${ctx.improvementData?.constructionType || 'Not specified'}
+- Condition: ${ctx.improvementData?.condition || 'Average'}
+
+Write a comprehensive exterior description with sections:
+1. <b><u>EXTERIOR FEATURES</u></b>
+2. <b>Foundation:</b> Type and condition
+3. <b>Exterior Walls:</b> Materials, finish, condition
+4. <b>Roof:</b> Covering type, structure, condition, age
+5. <b>Windows/Doors:</b> Type, glazing, condition
+6. <b>Overall Assessment:</b> Functional adequacy and condition summary
+
+Use professional construction terminology. Write 2-3 paragraphs, approximately 200-250 words.`,
+
+    interior_component: (ctx) => `Write a professional interior component description as a 30-year MAI appraiser would.
+
+BUILDING DATA:
+- Year Built: ${ctx.improvementData?.yearBuilt || 'Not specified'}
+- Quality: ${ctx.improvementData?.quality || 'Average'}
+- Condition: ${ctx.improvementData?.condition || 'Average'}
+
+Write a concise professional description of the specific interior component, including:
+1. Material or system type
+2. Quality classification
+3. Observed condition
+4. Age if different from building
+5. Functional adequacy for property type
+
+Use professional terminology. Write 1 paragraph, approximately 75-100 words.`,
+
+    interior_description: (ctx) => `Write a professional interior features summary for an appraisal report as a 30-year MAI appraiser would.
+
+BUILDING DATA:
+- Building Size: ${ctx.improvementData?.buildingSize || 'Not specified'} SF
+- Year Built: ${ctx.improvementData?.yearBuilt || 'Not specified'}
+- Quality: ${ctx.improvementData?.quality || 'Average'}
+
+Write a comprehensive interior description with sections:
+1. <b><u>INTERIOR FEATURES</u></b>
+2. <b>Ceilings:</b> Type, height, condition
+3. <b>Flooring:</b> Materials by area, condition
+4. <b>Interior Walls:</b> Construction, finish, condition
+5. <b>Plumbing Fixtures:</b> Quantity, quality, condition
+6. <b>Lighting:</b> Type and adequacy
+7. <b>Overall Assessment:</b> Functional utility and condition
+
+Use professional terminology. Write 2-3 paragraphs, approximately 200-250 words.`,
+
+    mechanical_component: (ctx) => `Write a professional mechanical component description as a 30-year MAI appraiser would.
+
+BUILDING DATA:
+- Year Built: ${ctx.improvementData?.yearBuilt || 'Not specified'}
+- Building Size: ${ctx.improvementData?.buildingSize || 'Not specified'} SF
+
+Write a concise professional description of the specific mechanical component, including:
+1. System type, brand, and capacity
+2. Installation or replacement date
+3. Observed condition and maintenance status
+4. Expected remaining useful life
+5. Adequacy for building size and use
+
+Use HVAC and mechanical systems terminology. Write 1 paragraph, approximately 75-100 words.`,
+
+    mechanical_description: (ctx) => `Write a professional mechanical systems summary for an appraisal report as a 30-year MAI appraiser would.
+
+BUILDING DATA:
+- Building Size: ${ctx.improvementData?.buildingSize || 'Not specified'} SF
+- Year Built: ${ctx.improvementData?.yearBuilt || 'Not specified'}
+- Property Type: ${ctx.propertyType || 'Commercial'}
+
+Write a comprehensive mechanical systems description with sections:
+1. <b><u>MECHANICAL SYSTEMS</u></b>
+2. <b>Heating:</b> System type, fuel source, capacity, condition
+3. <b>Cooling:</b> System type, tonnage, condition
+4. <b>Ventilation:</b> Air handling, make-up air if applicable
+5. <b>Electrical:</b> Service size, phase, panel condition
+6. <b>Plumbing:</b> Supply, waste, fixtures adequacy
+7. <b>Fire Protection:</b> Sprinkler system type and coverage
+8. <b>Overall Assessment:</b> Systems adequacy and condition
+
+Use HVAC and building systems terminology. Write 3-4 paragraphs, approximately 250-300 words.`,
+
+    depreciation_override: (ctx) => `Write a professional depreciation analysis rationale as a 30-year MAI appraiser would.
+
+COMPONENT DATA:
+- Component Type: [Component being analyzed]
+- Building Year: ${ctx.improvementData?.yearBuilt || 'Not specified'}
+- Observed Condition: ${ctx.improvementData?.condition || 'Average'}
+
+Write a professional depreciation rationale:
+1. State "Based on inspection and analysis of the subject property..."
+2. Explain why the calculated depreciation was adjusted
+3. Reference observed condition, deferred maintenance, or superior maintenance
+4. Cite effective age vs. actual age considerations
+5. Note market evidence of value impact
+6. Conclude with the depreciation percentage adopted and supporting rationale
+
+Draw on professional judgment and market experience. Write 1-2 paragraphs, approximately 100-150 words.`,
+
+    // Review & reconciliation prompts
+    exposure: (ctx) => `Write a professional exposure time and marketing time estimate as a 30-year MAI appraiser would.
+
+PROPERTY DATA:
+- Property Type: ${ctx.propertyType || 'Commercial'}
+- Location: ${ctx.siteData?.city || 'Not specified'}
+${ctx.valuationData?.concludedValue ? `- Concluded Value: $${ctx.valuationData.concludedValue.toLocaleString()}` : ''}
+
+Write a professional analysis with sections:
+1. <b><u>EXPOSURE TIME</u></b>
+2. Define: "Exposure time is the estimated length of time the property would have been offered for sale prior to the effective date..."
+3. Estimate: Based on market analysis, exposure time is estimated at [X] to [Y] months
+4. Support with: current market conditions, typical marketing periods for comparable properties, property value level
+5. <b><u>MARKETING TIME</u></b>
+6. Define: "Marketing time is the prospective time to sell after the effective date..."
+7. Estimate: Marketing time is estimated at [X] to [Y] months
+8. Support with: current buyer demand, available financing, property's competitive position
+
+Reference market participant interviews and comparable sales absorption. Write 2-3 paragraphs, approximately 200-250 words.`,
+
+    swot_summary_analysis: (ctx) => `Write a professional SWOT analysis summary narrative as a 30-year MAI appraiser would.
+
+PROPERTY: ${ctx.propertyType || 'Commercial'} property in ${ctx.siteData?.city || 'Not specified'}
+
+${ctx.swotStrengths && ctx.swotStrengths.length > 0 ? `STRENGTHS IDENTIFIED:
+${ctx.swotStrengths.map((s: string) => `- ${s}`).join('\n')}` : ''}
+
+${ctx.swotWeaknesses && ctx.swotWeaknesses.length > 0 ? `WEAKNESSES IDENTIFIED:
+${ctx.swotWeaknesses.map((w: string) => `- ${w}`).join('\n')}` : ''}
+
+${ctx.swotOpportunities && ctx.swotOpportunities.length > 0 ? `OPPORTUNITIES IDENTIFIED:
+${ctx.swotOpportunities.map((o: string) => `- ${o}`).join('\n')}` : ''}
+
+${ctx.swotThreats && ctx.swotThreats.length > 0 ? `THREATS IDENTIFIED:
+${ctx.swotThreats.map((t: string) => `- ${t}`).join('\n')}` : ''}
+
+Write a comprehensive professional SWOT synthesis:
+1. <b><u>SWOT ANALYSIS SUMMARY</u></b>
+2. Begin with an executive statement about the property's overall risk-return profile
+3. <b>Strengths:</b> Synthesize key competitive advantages - how they enhance marketability and support value
+4. <b>Weaknesses:</b> Address limitations and considerations - quantify impact where possible, note capital requirements
+5. <b>Opportunities:</b> Identify value-enhancement potential - market momentum, rent growth, operational improvements
+6. <b>Threats:</b> Analyze risk factors - capital replacement needs, market risks, deferred maintenance implications
+7. <b>Overall Assessment:</b> Conclude with investment perspective - target buyer profile, pricing considerations, market positioning
+
+Use sophisticated investment analysis terminology. Reference how identified factors influenced the valuation approaches and final value conclusion. Write 4-5 paragraphs, approximately 350-450 words. This should read like institutional-quality investment analysis.`,
+
+    // Supplemental data prompts
+    permit_analysis: (ctx) => `Write a professional building permit analysis as a 30-year MAI appraiser would.
+
+PROPERTY: ${ctx.propertyType || 'Commercial'} in ${ctx.siteData?.city || 'Not specified'}
+
+${ctx.buildingPermits && ctx.buildingPermits.length > 0 ? `PERMITS IDENTIFIED:
+${ctx.buildingPermits.map((p: any) => `- ${p.permitNumber || 'Permit'}: ${p.type || 'Type not specified'} - ${p.description || 'No description'}, Issued: ${p.issueDate || 'Date not specified'}`).join('\n')}` : 'Building permit records were reviewed for the subject property.'}
+
+Write a professional analysis:
+1. <b><u>BUILDING PERMIT ANALYSIS</u></b>
+2. State "As part of the due diligence process, building permit records were reviewed..."
+3. Summarize significant permits found (major renovations, additions, systems replacements)
+4. Note permits indicate [construction work completed/improvements made]
+5. Assess impact on property condition and remaining useful life
+6. Note if no permits were found or records were limited
+7. State impact (if any) on the appraisal analysis and value conclusion
+
+Use professional language. Write 1-2 paragraphs, approximately 125-150 words.`,
+
+    traffic_analysis: (ctx) => `Write a professional traffic impact analysis as a 30-year MAI appraiser would.
+
+PROPERTY LOCATION: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
+${ctx.aadt ? `TRAFFIC DATA: Average Annual Daily Traffic (AADT): ${ctx.aadt.toLocaleString()} vehicles/day` : ''}
+
+Write a professional analysis:
+1. <b><u>TRAFFIC AND ACCESS ANALYSIS</u></b>
+2. State traffic volume data for adjacent roadways
+3. Discuss how traffic levels impact property visibility and access
+4. For commercial/retail: Higher traffic generally positive for exposure
+5. For industrial/warehouse: Adequate access without congestion preferred
+6. Note peak hour considerations
+7. Assess whether traffic characteristics are appropriate for the property type
+8. Conclude with impact on marketability and value
+
+Use professional terminology. Write 1-2 paragraphs, approximately 125-150 words.`,
 
     default: (ctx) => `Write a professional narrative paragraph for a commercial real estate appraisal report.
 

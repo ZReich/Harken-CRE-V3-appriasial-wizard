@@ -1091,6 +1091,40 @@ We considered alternative uses including renovation, conversion to alternative u
           </div>
         );
 
+      case 'market-analysis':
+        return (
+          <div className="absolute inset-0 flex flex-col animate-fade-in">
+            {/* Market Analysis Header Banner */}
+            <div className="bg-amber-50 border-b border-amber-200 px-6 py-4 flex items-start gap-3">
+              <Info className="text-amber-600 shrink-0 mt-0.5" size={18} />
+              <div>
+                <p className="text-sm font-semibold text-amber-900">
+                  Market Analysis
+                </p>
+                <p className="text-xs text-amber-800 mt-1">
+                  Review market conditions, supply & demand dynamics, and economic trends affecting property values.
+                </p>
+              </div>
+            </div>
+
+            {/* Market Analysis Grid - Full height content */}
+            <div className="flex-1 min-h-0 overflow-auto">
+              <MarketAnalysisGrid 
+                rentCompData={{
+                  avgRent: 26.75,
+                  rentRange: [17.50, 37.50],
+                  compCount: 4,
+                }}
+                salesCompData={{
+                  avgPricePsf: 242,
+                  avgCapRate: 6.50,
+                  compCount: 8,
+                }}
+              />
+            </div>
+          </div>
+        );
+
       case 'swot':
         return (
           <div className="space-y-6 animate-fade-in">

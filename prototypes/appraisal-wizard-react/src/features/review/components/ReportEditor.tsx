@@ -776,6 +776,102 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
   );
 }
 
+// Market Analysis Page
+function MarketAnalysisPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle }: { 
+  selectedElement: string | null; 
+  onSelectElement: (id: string) => void;
+  onContentChange?: (elementId: string, content: string) => void;
+  editedContent?: Record<string, string>;
+  getAppliedStyle?: (elementId: string) => React.CSSProperties;
+}) {
+  const handleContentChange = onContentChange || (() => {});
+  const getContent = (id: string, defaultVal: string) => editedContent?.[id] ?? defaultVal;
+  const getStyle = (id: string) => getAppliedStyle?.(id) || {};
+
+  const defaultMarketCycle = 'The current market cycle is in an expansion phase, characterized by increasing demand, rising prices, and active development activity in the subject\'s market area.';
+  const defaultSupplyDemand = 'The local market demonstrates balanced supply and demand conditions. Current vacancy rates of approximately 4.8% are below historical averages, indicating healthy absorption of available space.';
+  const defaultMarketTrends = 'Market trends show consistent year-over-year growth in transaction volume and pricing. Average sale prices have increased 8-12% annually over the past three years, reflecting strong investor confidence and sustained demand.';
+
+  return (
+    <ReportPageWrapper section={{ id: 'market-analysis', label: 'Market Analysis', enabled: true, expanded: false, fields: [], type: 'narrative' }} pageNumber={5} sidebarLabel="02C">
+      <div className="p-10">
+        <div className="absolute top-6 right-8 bg-emerald-700 text-white px-4 py-2 rounded text-xs font-semibold">
+          SECTION 2C • MARKET
+        </div>
+
+        <h2 className="text-2xl font-light text-gray-800 mb-6 mt-8">Market Analysis</h2>
+
+        <div className="space-y-6 text-sm text-gray-700">
+          <div>
+            <h3 className="text-lg font-semibold text-gray-800 mb-3">Market Cycle Stage</h3>
+            <EditableElement
+              elementId="market_cycle"
+              content={getContent('market_cycle', defaultMarketCycle)}
+              selectedElement={selectedElement}
+              onSelectElement={onSelectElement}
+              onContentChange={handleContentChange}
+              as="p"
+              className="text-gray-700"
+              appliedStyle={getStyle('market_cycle')}
+            />
+          </div>
+
+          <div>
+            <h3 className="text-lg font-semibold text-gray-800 mb-3">Supply & Demand</h3>
+            <EditableElement
+              elementId="market_supply_demand"
+              content={getContent('market_supply_demand', defaultSupplyDemand)}
+              selectedElement={selectedElement}
+              onSelectElement={onSelectElement}
+              onContentChange={handleContentChange}
+              as="p"
+              className="text-gray-700"
+              appliedStyle={getStyle('market_supply_demand')}
+            />
+          </div>
+
+          <div>
+            <h3 className="text-lg font-semibold text-gray-800 mb-3">Market Trends</h3>
+            <EditableElement
+              elementId="market_trends"
+              content={getContent('market_trends', defaultMarketTrends)}
+              selectedElement={selectedElement}
+              onSelectElement={onSelectElement}
+              onContentChange={handleContentChange}
+              as="p"
+              className="text-gray-700"
+              appliedStyle={getStyle('market_trends')}
+            />
+          </div>
+
+          {/* Market Data Summary */}
+          <div className="mt-8 p-6 bg-gradient-to-r from-amber-50 to-amber-100 rounded-lg border border-amber-200">
+            <h3 className="text-lg font-semibold text-amber-900 mb-4">Market Data Summary</h3>
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div>
+                <div className="text-amber-600 font-medium mb-1">Avg. Sales Price/SF</div>
+                <div className="text-2xl font-bold text-amber-800">$242</div>
+              </div>
+              <div>
+                <div className="text-amber-600 font-medium mb-1">Avg. Cap Rate</div>
+                <div className="text-2xl font-bold text-amber-800">6.50%</div>
+              </div>
+              <div>
+                <div className="text-amber-600 font-medium mb-1">Vacancy Rate</div>
+                <div className="text-2xl font-bold text-amber-800">4.8%</div>
+              </div>
+              <div>
+                <div className="text-amber-600 font-medium mb-1">Sales Comps</div>
+                <div className="text-2xl font-bold text-amber-800">8 Recent</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ReportPageWrapper>
+  );
+}
+
 // Sales Comparison Page with Photos
 function SalesComparisonPage({ selectedElement, onSelectElement }: { 
   selectedElement: string | null; 
@@ -2618,6 +2714,8 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
         return <PropertyDescriptionPage {...commonProps} />;
       case 'hbu':
         return <HBUPage {...commonProps} />;
+      case 'market-analysis':
+        return <MarketAnalysisPage {...commonProps} />;
       case 'risk-rating':
         return state.riskRating ? (
           <RiskRatingPage

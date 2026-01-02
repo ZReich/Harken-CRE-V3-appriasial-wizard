@@ -905,13 +905,11 @@ function BuildingCard({
               onToggle={() => toggleSection('costseg')}
             >
               <CostSegDetailsSection
-                buildingId={building.id}
-                buildingName={building.name || `Building ${index + 1}`}
-                occupancyCode={effectiveOccupancyCode || 'office-lowrise'}
-                totalBuildingCost={totalBuildingCost || buildingSF * 150}
-                yearBuilt={building.yearBuilt}
-                costSegDetails={building.costSegDetails}
-                onUpdate={(details) => onUpdate({ costSegDetails: details })}
+                building={building}
+                isCostSegEnabled={isCostSegEnabled}
+                defaultOccupancyCode={effectiveOccupancyCode || 'office-lowrise'}
+                onUpdateBuilding={(updates: Partial<ImprovementBuilding>) => onUpdate(updates)}
+                propertyType={effectiveOccupancyCode?.split('-')[0] || 'office'}
               />
             </CollapsibleSection>
           )}

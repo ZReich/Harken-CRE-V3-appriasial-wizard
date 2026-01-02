@@ -1,48 +1,40 @@
 /**
  * CostSegDetailsSection Component
  * 
- * Expandable section for Cost Segregation data entry within building cards.
- * Only visible when Cost Segregation is enabled in wizard setup.
- * Allows auto-fill from M&S allocations and manual override of component costs.
+ * NEW IMPLEMENTATION: Integrates all new cost seg components for a streamlined workflow.
+ * Focuses on system refinements and supplemental items rather than re-entering building data.
  */
 
-import React, { useState, useMemo, useCallback } from 'react';
+import React, { useState, useCallback, useMemo } from 'react';
 import {
-  Calculator,
-  RefreshCw,
-  DollarSign,
   ChevronDown,
   ChevronRight,
-  CheckCircle2,
-  AlertCircle,
-  Sparkles,
+  DollarSign,
   Plus,
-  Trash2,
-  Edit2,
+  Info,
+  AlertCircle,
 } from 'lucide-react';
-import { 
-  getMSCostSegAllocations, 
-  getCSSIComponentName,
-  CSSI_COMPONENT_NAMES,
-  LAND_IMPROVEMENT_CSSI_COMPONENTS,
-  type CostSegAllocation,
-} from '../constants/costSegCSSI';
-import type { 
-  CostSegBuildingDetails, 
-  CostSegLineItem 
+import { YearSelector } from './ExpandableSelector';
+import type {
+  CostSegBuildingDetails,
+  CostSegSystemRefinement as CostSegSystemRefinementType,
+  CostSegSupplementalItem,
+  ImprovementBuilding,
 } from '../types';
+import CostSegSystemRefinement from './CostSegSystemRefinement';
+import CostSegSupplementalItems from './CostSegSupplementalItems';
+import CostSegAuditRisk from './CostSegAuditRisk';
+import CostSegBenchmarksPanel from './CostSegBenchmarks';
 
 interface CostSegDetailsSectionProps {
-  buildingId: string;
-  buildingName: string;
-  occupancyCode: string;
-  totalBuildingCost: number;
-  yearBuilt?: number | null;
-  costSegDetails?: CostSegBuildingDetails;
-  onUpdate: (details: CostSegBuildingDetails) => void;
+  building: ImprovementBuilding;
+  isCostSegEnabled: boolean;
+  defaultOccupancyCode?: string;
+  onUpdateBuilding: (updates: Partial<ImprovementBuilding>) => void;
+  availablePhotos?: { id: string; url: string; caption?: string }[];
+  propertyType?: string;
 }
 
-// Format currency
 const formatCurrency = (value: number): string => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
@@ -52,565 +44,372 @@ const formatCurrency = (value: number): string => {
   }).format(value);
 };
 
-// Format percentage
-const formatPercent = (value: number): string => {
-  return `${value.toFixed(1)}%`;
+// Collapsible Section Component
+interface CollapsibleSectionProps {
+  title: string;
+  icon: React.ReactNode;
+  isExpanded: boolean;
+  onToggle: () => void;
+  children: React.ReactNode;
+}
+
+const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
+  title,
+  icon,
+  isExpanded,
+  onToggle,
+  children,
+}) => {
+  return (
+    <div className="border border-gray-200 rounded-xl overflow-hidden bg-white">
+      <button
+        onClick={onToggle}
+        className="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors"
+      >
+        <div className="flex items-center gap-2">
+          {icon}
+          <h4 className="font-semibold text-gray-900">{title}</h4>
+        </div>
+        {isExpanded ? (
+          <ChevronDown className="w-5 h-5 text-gray-400" />
+        ) : (
+          <ChevronRight className="w-5 h-5 text-gray-400" />
+        )}
+      </button>
+      {isExpanded && <div className="p-4">{children}</div>}
+    </div>
+  );
 };
 
 export default function CostSegDetailsSection({
-  buildingId,
-  buildingName,
-  occupancyCode,
-  totalBuildingCost,
-  yearBuilt,
-  costSegDetails,
-  onUpdate,
+  building,
+  isCostSegEnabled,
+  defaultOccupancyCode,
+  onUpdateBuilding,
+  availablePhotos = [],
+  propertyType = 'office',
 }: CostSegDetailsSectionProps) {
-  const [expandedCategories, setExpandedCategories] = useState<Set<string>>(
-    new Set(['personal-property'])
-  );
-  const [editingItemId, setEditingItemId] = useState<string | null>(null);
-  const [editValue, setEditValue] = useState<string>('');
+  const [isExpanded, setIsExpanded] = useState(false);
+  const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
 
-  // Generate line items from M&S allocations
-  const generateLineItemsFromMS = useCallback((): CostSegLineItem[] => {
-    const allocations = getMSCostSegAllocations(occupancyCode);
-    
-    return allocations.map((alloc, index) => {
-      const msAmount = Math.round(totalBuildingCost * (alloc.percent / 100));
-      
-      return {
-        id: `${buildingId}-${alloc.componentId}-${index}`,
-        componentId: alloc.componentId,
-        displayName: getCSSIComponentName(alloc.componentId),
-        category: alloc.depreciationClass === '5-year' || alloc.depreciationClass === '7-year' 
-          ? 'personal-property' 
-          : alloc.depreciationClass === '15-year' 
-            ? 'land-improvement' 
-            : 'real-property',
-        depreciationClass: alloc.depreciationClass,
-        msPercent: alloc.percent,
-        msAmount,
-        actualAmount: undefined,
-        finalAmount: msAmount,
-        source: 'auto' as const,
-      };
-    });
-  }, [buildingId, occupancyCode, totalBuildingCost]);
+  const details = building.costSegDetails;
 
-  // Auto-fill handler
-  const handleAutoFill = useCallback(() => {
-    const lineItems = generateLineItemsFromMS();
-    
-    // Calculate totals
-    const fiveYearTotal = lineItems
-      .filter(i => i.depreciationClass === '5-year')
-      .reduce((sum, i) => sum + i.finalAmount, 0);
-    const sevenYearTotal = lineItems
-      .filter(i => i.depreciationClass === '7-year')
-      .reduce((sum, i) => sum + i.finalAmount, 0);
-    const fifteenYearTotal = lineItems
-      .filter(i => i.depreciationClass === '15-year')
-      .reduce((sum, i) => sum + i.finalAmount, 0);
-    const twentySevenFiveYearTotal = lineItems
-      .filter(i => i.depreciationClass === '27.5-year')
-      .reduce((sum, i) => sum + i.finalAmount, 0);
-    const thirtyNineYearTotal = lineItems
-      .filter(i => i.depreciationClass === '39-year')
-      .reduce((sum, i) => sum + i.finalAmount, 0);
+  // Calculate building totals for system costs
+  const buildingTotals = useMemo(() => {
+    // Get total building cost from areas
+    const totalSF = building.areas?.reduce((sum, area) => sum + (area.squareFootage || 0), 0) || 0;
+    const estimatedCost = totalSF * 150; // $150/SF estimate if no other data
 
-    const newDetails: CostSegBuildingDetails = {
-      buildingId,
-      buildingName,
-      placedInServiceDate: yearBuilt ? `${yearBuilt}-01-01` : '',
-      totalBuildingCost,
-      costSource: 'estimated',
-      lineItems,
-      fiveYearTotal,
-      sevenYearTotal,
-      fifteenYearTotal,
-      twentySevenFiveYearTotal,
-      thirtyNineYearTotal,
-    };
-
-    onUpdate(newDetails);
-  }, [buildingId, buildingName, yearBuilt, totalBuildingCost, generateLineItemsFromMS, onUpdate]);
-
-  // Update a single line item with manual override
-  const handleUpdateLineItem = useCallback((itemId: string, actualAmount: number | undefined) => {
-    if (!costSegDetails) return;
-    
-    const updatedItems = costSegDetails.lineItems.map(item => {
-      if (item.id === itemId) {
-        return {
-          ...item,
-          actualAmount,
-          finalAmount: actualAmount ?? item.msAmount,
-          source: actualAmount !== undefined ? 'manual' as const : 'auto' as const,
-        };
-      }
-      return item;
-    });
-
-    // Recalculate totals
-    const fiveYearTotal = updatedItems
-      .filter(i => i.depreciationClass === '5-year')
-      .reduce((sum, i) => sum + i.finalAmount, 0);
-    const sevenYearTotal = updatedItems
-      .filter(i => i.depreciationClass === '7-year')
-      .reduce((sum, i) => sum + i.finalAmount, 0);
-    const fifteenYearTotal = updatedItems
-      .filter(i => i.depreciationClass === '15-year')
-      .reduce((sum, i) => sum + i.finalAmount, 0);
-    const twentySevenFiveYearTotal = updatedItems
-      .filter(i => i.depreciationClass === '27.5-year')
-      .reduce((sum, i) => sum + i.finalAmount, 0);
-    const thirtyNineYearTotal = updatedItems
-      .filter(i => i.depreciationClass === '39-year')
-      .reduce((sum, i) => sum + i.finalAmount, 0);
-
-    onUpdate({
-      ...costSegDetails,
-      lineItems: updatedItems,
-      fiveYearTotal,
-      sevenYearTotal,
-      fifteenYearTotal,
-      twentySevenFiveYearTotal,
-      thirtyNineYearTotal,
-    });
-  }, [costSegDetails, onUpdate]);
-
-  // Start editing a line item
-  const startEditing = (itemId: string, currentAmount: number) => {
-    setEditingItemId(itemId);
-    setEditValue(currentAmount.toString());
-  };
-
-  // Finish editing
-  const finishEditing = (itemId: string) => {
-    const numValue = parseFloat(editValue.replace(/[^0-9.]/g, ''));
-    if (!isNaN(numValue) && numValue >= 0) {
-      handleUpdateLineItem(itemId, numValue);
-    }
-    setEditingItemId(null);
-    setEditValue('');
-  };
-
-  // Reset to auto
-  const resetToAuto = (itemId: string) => {
-    handleUpdateLineItem(itemId, undefined);
-  };
-
-  // Group line items by category
-  const groupedItems = useMemo(() => {
-    if (!costSegDetails?.lineItems) return null;
-    
-    const groups = {
-      'personal-property': costSegDetails.lineItems.filter(i => i.category === 'personal-property'),
-      'land-improvement': costSegDetails.lineItems.filter(i => i.category === 'land-improvement'),
-      'real-property': costSegDetails.lineItems.filter(i => i.category === 'real-property'),
-    };
-    
-    return groups;
-  }, [costSegDetails?.lineItems]);
-
-  // Calculate summary
-  const summary = useMemo(() => {
-    if (!costSegDetails) return null;
-    
-    const fiveYear = costSegDetails.fiveYearTotal + (costSegDetails.sevenYearTotal || 0);
-    const fifteenYear = costSegDetails.fifteenYearTotal;
-    const realProperty = (costSegDetails.twentySevenFiveYearTotal || 0) + costSegDetails.thirtyNineYearTotal;
-    const total = fiveYear + fifteenYear + realProperty;
+    // Try to extract system costs from mechanical systems if available
+    const mechanicalSystems = building.mechanicalSystems;
     
     return {
-      fiveYear,
-      fiveYearPercent: total > 0 ? (fiveYear / total) * 100 : 0,
-      fifteenYear,
-      fifteenYearPercent: total > 0 ? (fifteenYear / total) * 100 : 0,
-      realProperty,
-      realPropertyPercent: total > 0 ? (realProperty / total) * 100 : 0,
-      total,
+      totalBuildingCost: estimatedCost,
+      electricalCost: 0, // Would come from M&S or mechanical systems
+      hvacCost: 0,
+      plumbingCost: 0,
+      fireProtectionCost: 0,
     };
-  }, [costSegDetails]);
+  }, [building]);
 
-  const toggleCategory = (category: string) => {
-    setExpandedCategories(prev => {
+  const toggleSection = useCallback((section: string) => {
+    setExpandedSections(prev => {
       const next = new Set(prev);
-      if (next.has(category)) {
-        next.delete(category);
+      if (next.has(section)) {
+        next.delete(section);
       } else {
-        next.add(category);
+        next.add(section);
       }
       return next;
     });
-  };
+  }, []);
 
-  // If no data yet, show the auto-fill prompt
-  if (!costSegDetails || costSegDetails.lineItems.length === 0) {
-    return (
-      <div className="space-y-4">
-        <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-6 text-center">
-          <div className="w-12 h-12 mx-auto bg-emerald-100 rounded-full flex items-center justify-center mb-3">
-            <Calculator className="w-6 h-6 text-emerald-600" />
-          </div>
-          <h4 className="text-lg font-semibold text-emerald-900 mb-2">
-            Cost Segregation Analysis
-          </h4>
-          <p className="text-sm text-emerald-700 mb-4 max-w-md mx-auto">
-            Generate component cost allocations based on Marshall & Swift data for this building type.
-            You can override individual costs with actual values if available.
-          </p>
-          <button
-            onClick={handleAutoFill}
-            disabled={totalBuildingCost <= 0}
-            className="inline-flex items-center gap-2 px-6 py-3 bg-emerald-600 text-white rounded-xl font-semibold hover:bg-emerald-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <Sparkles className="w-5 h-5" />
-            Auto-Fill from M&S Data
-          </button>
-          {totalBuildingCost <= 0 && (
-            <p className="text-xs text-amber-600 mt-3 flex items-center justify-center gap-1">
-              <AlertCircle className="w-3 h-3" />
-              Enter a total building cost first
-            </p>
-          )}
-        </div>
-      </div>
-    );
+  const handleToggleEnabled = useCallback((checked: boolean) => {
+    if (checked) {
+      onUpdateBuilding({
+        costSegDetails: {
+          enabled: true,
+          placedInServiceDate: building.yearBuilt ? String(building.yearBuilt) : undefined,
+          systemRefinements: [],
+          supplementalItems: [],
+        },
+      });
+      setIsExpanded(true);
+    } else {
+      onUpdateBuilding({
+        costSegDetails: undefined,
+      });
+      setIsExpanded(false);
+    }
+  }, [onUpdateBuilding, building.yearBuilt]);
+
+  const updateDetails = useCallback((updates: Partial<CostSegBuildingDetails>) => {
+    if (!details) return;
+    
+    onUpdateBuilding({
+      costSegDetails: {
+        ...details,
+        ...updates,
+      },
+    });
+  }, [details, onUpdateBuilding]);
+
+  const handleAddSystemRefinement = useCallback((systemType: 'electrical' | 'plumbing' | 'hvac' | 'fire-protection') => {
+    if (!details) return;
+
+    const systemLabels = {
+      electrical: 'Electrical System',
+      plumbing: 'Plumbing System',
+      hvac: 'HVAC System',
+      'fire-protection': 'Fire Protection System',
+    };
+
+    const systemCosts = {
+      electrical: buildingTotals.electricalCost || buildingTotals.totalBuildingCost * 0.10,
+      plumbing: buildingTotals.plumbingCost || buildingTotals.totalBuildingCost * 0.08,
+      hvac: buildingTotals.hvacCost || buildingTotals.totalBuildingCost * 0.15,
+      'fire-protection': buildingTotals.fireProtectionCost || buildingTotals.totalBuildingCost * 0.05,
+    };
+
+    const newRefinement: CostSegSystemRefinementType = {
+      id: `system-${Date.now()}`,
+      systemType,
+      systemLabel: systemLabels[systemType],
+      totalSystemCost: systemCosts[systemType],
+      refinements: [],
+      totalAllocated: 0,
+      isFullyAllocated: false,
+    };
+
+    updateDetails({
+      systemRefinements: [...details.systemRefinements, newRefinement],
+    });
+  }, [details, updateDetails, buildingTotals]);
+
+  const handleUpdateSystemRefinement = useCallback((refinementId: string, updated: CostSegSystemRefinementType) => {
+    if (!details) return;
+
+    updateDetails({
+      systemRefinements: details.systemRefinements.map(r =>
+        r.id === refinementId ? updated : r
+      ),
+    });
+  }, [details, updateDetails]);
+
+  const handleDeleteSystemRefinement = useCallback((refinementId: string) => {
+    if (!details) return;
+
+    updateDetails({
+      systemRefinements: details.systemRefinements.filter(r => r.id !== refinementId),
+    });
+  }, [details, updateDetails]);
+
+  // Calculate totals for audit risk and benchmarks
+  const allocationTotals = useMemo(() => {
+    if (!details) return { fiveYear: 0, fifteenYear: 0, thirtyNineYear: 0, total: 0 };
+
+    let fiveYear = 0;
+    let fifteenYear = 0;
+    let thirtyNineYear = 0;
+
+    // Sum from system refinements
+    details.systemRefinements.forEach(sys => {
+      sys.refinements.forEach(line => {
+        if (line.depreciationClass === '5-year' || line.depreciationClass === '7-year') {
+          fiveYear += line.amount;
+        } else if (line.depreciationClass === '15-year') {
+          fifteenYear += line.amount;
+        } else if (line.depreciationClass === '39-year' || line.depreciationClass === '27.5-year') {
+          thirtyNineYear += line.amount;
+        }
+      });
+    });
+
+    // Add supplemental items
+    details.supplementalItems.forEach(item => {
+      if (item.depreciationClass === '5-year' || item.depreciationClass === '7-year') {
+        fiveYear += item.cost;
+      } else if (item.depreciationClass === '15-year') {
+        fifteenYear += item.cost;
+      } else if (item.depreciationClass === '39-year' || item.depreciationClass === '27.5-year') {
+        thirtyNineYear += item.cost;
+      }
+    });
+
+    const total = fiveYear + fifteenYear + thirtyNineYear;
+
+    return {
+      fiveYear: total > 0 ? (fiveYear / total) * 100 : 0,
+      fifteenYear: total > 0 ? (fifteenYear / total) * 100 : 0,
+      thirtyNineYear: total > 0 ? (thirtyNineYear / total) * 100 : 0,
+      total,
+    };
+  }, [details]);
+
+  if (!isCostSegEnabled) {
+    return null;
   }
 
   return (
-    <div className="space-y-4">
-      {/* Study Information */}
-      <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
-        <h5 className="text-sm font-semibold text-slate-800 mb-3 flex items-center gap-2">
-          <Calculator className="w-4 h-4 text-emerald-600" />
-          Study Information
-        </h5>
-        <div className="grid grid-cols-3 gap-4">
-          <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1.5">
-              Placed in Service Date
-            </label>
+    <CollapsibleSection
+      title="Cost Segregation Details"
+      icon={<DollarSign className="w-4 h-4 text-emerald-600" />}
+      isExpanded={isExpanded}
+      onToggle={() => setIsExpanded(!isExpanded)}
+    >
+      <div className="space-y-4">
+        {/* Enable Toggle */}
+        <div className="flex items-center justify-between">
+          <label htmlFor={`cost-seg-enabled-${building.id}`} className="flex items-center gap-2 text-sm font-medium text-gray-900 cursor-pointer">
             <input
-              type="date"
-              value={costSegDetails.placedInServiceDate}
-              onChange={(e) => onUpdate({ ...costSegDetails, placedInServiceDate: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+              type="checkbox"
+              id={`cost-seg-enabled-${building.id}`}
+              checked={details?.enabled || false}
+              onChange={(e) => handleToggleEnabled(e.target.checked)}
+              className="form-checkbox h-4 w-4 text-[#0da1c7] rounded"
             />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1.5">
-              Total Building Cost
-            </label>
-            <input
-              type="text"
-              value={formatCurrency(costSegDetails.totalBuildingCost)}
-              readOnly
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-600"
-            />
-          </div>
-          <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1.5">
-              Cost Source
-            </label>
-            <select
-              value={costSegDetails.costSource}
-              onChange={(e) => onUpdate({ ...costSegDetails, costSource: e.target.value as 'actual' | 'estimated' })}
-              className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-            >
-              <option value="estimated">M&S Estimate</option>
-              <option value="actual">Actual Costs</option>
-            </select>
-          </div>
+            Enable Cost Segregation for this Building
+          </label>
         </div>
-      </div>
 
-      {/* Summary Card */}
-      {summary && (
-        <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
-          <div className="bg-emerald-50 px-4 py-3 border-b border-emerald-100">
-            <h5 className="text-sm font-semibold text-emerald-900">
-              Allocation Summary
-            </h5>
-          </div>
-          <div className="p-4">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="text-left border-b border-gray-200">
-                  <th className="pb-2 font-semibold text-gray-700">Recovery Period</th>
-                  <th className="pb-2 font-semibold text-gray-700 text-right">Amount</th>
-                  <th className="pb-2 font-semibold text-gray-700 text-right">% of Total</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr className="border-b border-gray-100">
-                  <td className="py-2 text-gray-600">5-Year Personal Property</td>
-                  <td className="py-2 text-right font-medium text-gray-900">
-                    {formatCurrency(summary.fiveYear)}
-                  </td>
-                  <td className="py-2 text-right text-emerald-600 font-medium">
-                    {formatPercent(summary.fiveYearPercent)}
-                  </td>
-                </tr>
-                <tr className="border-b border-gray-100">
-                  <td className="py-2 text-gray-600">15-Year Land Improvements</td>
-                  <td className="py-2 text-right font-medium text-gray-900">
-                    {formatCurrency(summary.fifteenYear)}
-                  </td>
-                  <td className="py-2 text-right text-emerald-600 font-medium">
-                    {formatPercent(summary.fifteenYearPercent)}
-                  </td>
-                </tr>
-                <tr className="border-b border-gray-200">
-                  <td className="py-2 text-gray-600">39-Year Real Property</td>
-                  <td className="py-2 text-right font-medium text-gray-900">
-                    {formatCurrency(summary.realProperty)}
-                  </td>
-                  <td className="py-2 text-right text-emerald-600 font-medium">
-                    {formatPercent(summary.realPropertyPercent)}
-                  </td>
-                </tr>
-                <tr className="font-bold">
-                  <td className="pt-3 text-gray-900">Total Project Cost</td>
-                  <td className="pt-3 text-right text-gray-900">
-                    {formatCurrency(summary.total)}
-                  </td>
-                  <td className="pt-3 text-right text-gray-900">100.0%</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      )}
+        {details?.enabled && (
+          <div className="space-y-4">
+            {/* Info Banner */}
+            <div className="flex items-start gap-2 p-3 bg-blue-50 border border-blue-200 rounded-lg">
+              <Info className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
+              <div className="text-xs text-blue-800">
+                <p className="font-medium mb-1">Building data auto-pulled from appraisal</p>
+                <p>Add system refinements (electrical, HVAC, plumbing breakdowns) and supplemental items specific to cost segregation.</p>
+              </div>
+            </div>
 
-      {/* Component Categories */}
-      {groupedItems && (
-        <div className="space-y-3">
-          {/* 5-Year Personal Property */}
-          <CategorySection
-            title="5-Year Personal Property"
-            subtitle="Building Components"
-            items={groupedItems['personal-property']}
-            isExpanded={expandedCategories.has('personal-property')}
-            onToggle={() => toggleCategory('personal-property')}
-            editingItemId={editingItemId}
-            editValue={editValue}
-            onStartEdit={startEditing}
-            onEditValueChange={setEditValue}
-            onFinishEdit={finishEditing}
-            onResetToAuto={resetToAuto}
-            colorClass="emerald"
-          />
+            {/* Placed in Service Date */}
+            <div>
+              <YearSelector
+                id={`cs-placed-in-service-${building.id}`}
+                label="Placed In Service Year"
+                value={details.placedInServiceDate ? parseInt(details.placedInServiceDate) : null}
+                onChange={(year) => updateDetails({ placedInServiceDate: year ? String(year) : undefined })}
+                required
+              />
+            </div>
 
-          {/* 15-Year Land Improvements */}
-          <CategorySection
-            title="15-Year Land Improvements"
-            subtitle="Site Improvements (if applicable)"
-            items={groupedItems['land-improvement']}
-            isExpanded={expandedCategories.has('land-improvement')}
-            onToggle={() => toggleCategory('land-improvement')}
-            editingItemId={editingItemId}
-            editValue={editValue}
-            onStartEdit={startEditing}
-            onEditValueChange={setEditValue}
-            onFinishEdit={finishEditing}
-            onResetToAuto={resetToAuto}
-            colorClass="blue"
-          />
+            {/* Building Cost Info */}
+            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3">
+              <div className="text-xs font-medium text-slate-600 mb-2">Building Information</div>
+              <div className="flex items-center justify-between text-sm">
+                <span className="text-slate-700">Estimated Total Cost:</span>
+                <span className="font-bold text-slate-900">{formatCurrency(buildingTotals.totalBuildingCost)}</span>
+              </div>
+              <p className="text-xs text-slate-500 mt-2">
+                System costs estimated from building data. Refine below for accurate cost segregation.
+              </p>
+            </div>
 
-          {/* 39-Year Real Property */}
-          <CategorySection
-            title="39-Year Real Property"
-            subtitle="Building Structure"
-            items={groupedItems['real-property']}
-            isExpanded={expandedCategories.has('real-property')}
-            onToggle={() => toggleCategory('real-property')}
-            editingItemId={editingItemId}
-            editValue={editValue}
-            onStartEdit={startEditing}
-            onEditValueChange={setEditValue}
-            onFinishEdit={finishEditing}
-            onResetToAuto={resetToAuto}
-            colorClass="slate"
-          />
-        </div>
-      )}
+            {/* System Refinements */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <h4 className="text-sm font-semibold text-gray-900">System Refinements</h4>
+                <div className="flex gap-2">
+                  <button
+                    onClick={() => handleAddSystemRefinement('electrical')}
+                    className="px-2 py-1 text-xs font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded transition-colors"
+                  >
+                    + Electrical
+                  </button>
+                  <button
+                    onClick={() => handleAddSystemRefinement('hvac')}
+                    className="px-2 py-1 text-xs font-medium text-blue-700 bg-blue-50 hover:bg-blue-100 rounded transition-colors"
+                  >
+                    + HVAC
+                  </button>
+                  <button
+                    onClick={() => handleAddSystemRefinement('plumbing')}
+                    className="px-2 py-1 text-xs font-medium text-cyan-700 bg-cyan-50 hover:bg-cyan-100 rounded transition-colors"
+                  >
+                    + Plumbing
+                  </button>
+                </div>
+              </div>
 
-      {/* Regenerate Button */}
-      <div className="flex justify-end pt-2">
-        <button
-          onClick={handleAutoFill}
-          className="inline-flex items-center gap-2 px-4 py-2 text-sm font-medium text-emerald-700 bg-emerald-50 rounded-lg hover:bg-emerald-100 transition-colors"
-        >
-          <RefreshCw className="w-4 h-4" />
-          Regenerate from M&S
-        </button>
-      </div>
-    </div>
-  );
-}
+              {details.systemRefinements.length === 0 && (
+                <div className="text-center py-6 text-sm text-gray-500">
+                  No system refinements added yet. Click buttons above to add.
+                </div>
+              )}
 
-// Category Section Component
-interface CategorySectionProps {
-  title: string;
-  subtitle: string;
-  items: CostSegLineItem[];
-  isExpanded: boolean;
-  onToggle: () => void;
-  editingItemId: string | null;
-  editValue: string;
-  onStartEdit: (itemId: string, currentAmount: number) => void;
-  onEditValueChange: (value: string) => void;
-  onFinishEdit: (itemId: string) => void;
-  onResetToAuto: (itemId: string) => void;
-  colorClass: 'emerald' | 'blue' | 'slate';
-}
-
-function CategorySection({
-  title,
-  subtitle,
-  items,
-  isExpanded,
-  onToggle,
-  editingItemId,
-  editValue,
-  onStartEdit,
-  onEditValueChange,
-  onFinishEdit,
-  onResetToAuto,
-  colorClass,
-}: CategorySectionProps) {
-  const total = items.reduce((sum, i) => sum + i.finalAmount, 0);
-  const manualCount = items.filter(i => i.source === 'manual').length;
-  
-  const bgColors = {
-    emerald: 'bg-emerald-50',
-    blue: 'bg-blue-50',
-    slate: 'bg-slate-50',
-  };
-  
-  const borderColors = {
-    emerald: 'border-emerald-200',
-    blue: 'border-blue-200',
-    slate: 'border-slate-200',
-  };
-  
-  const textColors = {
-    emerald: 'text-emerald-700',
-    blue: 'text-blue-700',
-    slate: 'text-slate-700',
-  };
-
-  if (items.length === 0) return null;
-
-  return (
-    <div className={`border ${borderColors[colorClass]} rounded-xl overflow-hidden`}>
-      <button
-        onClick={onToggle}
-        className={`w-full flex items-center justify-between px-4 py-3 ${bgColors[colorClass]} hover:opacity-90 transition-opacity`}
-      >
-        <div className="flex items-center gap-3">
-          {isExpanded ? (
-            <ChevronDown className="w-4 h-4 text-gray-500" />
-          ) : (
-            <ChevronRight className="w-4 h-4 text-gray-500" />
-          )}
-          <div className="text-left">
-            <span className={`text-sm font-semibold ${textColors[colorClass]}`}>{title}</span>
-            <span className="text-xs text-gray-500 ml-2">{subtitle}</span>
-          </div>
-        </div>
-        <div className="flex items-center gap-4">
-          {manualCount > 0 && (
-            <span className="text-xs px-2 py-0.5 bg-amber-100 text-amber-700 rounded-full">
-              {manualCount} manual
-            </span>
-          )}
-          <span className={`text-sm font-bold ${textColors[colorClass]}`}>
-            {formatCurrency(total)}
-          </span>
-        </div>
-      </button>
-      
-      {isExpanded && (
-        <div className="bg-white">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="text-left border-b border-gray-200 bg-gray-50">
-                <th className="px-4 py-2 font-medium text-gray-600">Component</th>
-                <th className="px-4 py-2 font-medium text-gray-600 text-right">M&S %</th>
-                <th className="px-4 py-2 font-medium text-gray-600 text-right">Amount</th>
-                <th className="px-4 py-2 font-medium text-gray-600 text-center w-24">Source</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-100">
-              {items.map((item) => (
-                <tr key={item.id} className="hover:bg-gray-50">
-                  <td className="px-4 py-2.5 text-gray-700">{item.displayName}</td>
-                  <td className="px-4 py-2.5 text-right text-gray-500">
-                    {formatPercent(item.msPercent)}
-                  </td>
-                  <td className="px-4 py-2.5 text-right">
-                    {editingItemId === item.id ? (
-                      <input
-                        type="text"
-                        value={editValue}
-                        onChange={(e) => onEditValueChange(e.target.value)}
-                        onBlur={() => onFinishEdit(item.id)}
-                        onKeyDown={(e) => {
-                          if (e.key === 'Enter') onFinishEdit(item.id);
-                          if (e.key === 'Escape') {
-                            onEditValueChange('');
-                            onFinishEdit(item.id);
-                          }
-                        }}
-                        autoFocus
-                        className="w-28 px-2 py-1 border border-emerald-300 rounded text-right text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
-                      />
-                    ) : (
-                      <button
-                        onClick={() => onStartEdit(item.id, item.finalAmount)}
-                        className="text-gray-900 font-medium hover:text-emerald-600 cursor-pointer"
-                      >
-                        {formatCurrency(item.finalAmount)}
-                      </button>
-                    )}
-                  </td>
-                  <td className="px-4 py-2.5 text-center">
-                    {item.source === 'manual' ? (
-                      <button
-                        onClick={() => onResetToAuto(item.id)}
-                        className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-100 text-amber-700 text-xs rounded-full hover:bg-amber-200 transition-colors"
-                        title="Click to reset to auto"
-                      >
-                        <Edit2 className="w-3 h-3" />
-                        Manual
-                      </button>
-                    ) : (
-                      <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-gray-100 text-gray-600 text-xs rounded-full">
-                        <CheckCircle2 className="w-3 h-3" />
-                        Auto
-                      </span>
-                    )}
-                  </td>
-                </tr>
+              {details.systemRefinements.map(refinement => (
+                <CostSegSystemRefinement
+                  key={refinement.id}
+                  refinement={refinement}
+                  onUpdate={(updated) => handleUpdateSystemRefinement(refinement.id, updated)}
+                  onDelete={() => handleDeleteSystemRefinement(refinement.id)}
+                  availablePhotos={availablePhotos}
+                />
               ))}
-            </tbody>
-            <tfoot>
-              <tr className="border-t border-gray-200 bg-gray-50 font-semibold">
-                <td className="px-4 py-2.5 text-gray-700">Total {title}</td>
-                <td className="px-4 py-2.5"></td>
-                <td className="px-4 py-2.5 text-right text-gray-900">
-                  {formatCurrency(total)}
-                </td>
-                <td className="px-4 py-2.5"></td>
-              </tr>
-            </tfoot>
-          </table>
-        </div>
-      )}
-    </div>
+            </div>
+
+            {/* Supplemental Items */}
+            <CostSegSupplementalItems
+              items={details.supplementalItems}
+              onUpdate={(items) => updateDetails({ supplementalItems: items })}
+              buildingId={building.id}
+              propertyType={propertyType}
+              availablePhotos={availablePhotos}
+            />
+
+            {/* Allocation Summary */}
+            {allocationTotals.total > 0 && (
+              <div className="border-t border-gray-200 pt-4 space-y-3">
+                <h4 className="text-sm font-semibold text-gray-900">Allocation Summary</h4>
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3">
+                    <div className="text-xs text-emerald-700 mb-1">5-Year Personal Property</div>
+                    <div className="text-lg font-bold text-emerald-900">{allocationTotals.fiveYear.toFixed(1)}%</div>
+                  </div>
+                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                    <div className="text-xs text-amber-700 mb-1">15-Year Land Improvements</div>
+                    <div className="text-lg font-bold text-amber-900">{allocationTotals.fifteenYear.toFixed(1)}%</div>
+                  </div>
+                  <div className="bg-slate-50 border border-slate-200 rounded-lg p-3">
+                    <div className="text-xs text-slate-700 mb-1">39-Year Real Property</div>
+                    <div className="text-lg font-bold text-slate-900">{allocationTotals.thirtyNineYear.toFixed(1)}%</div>
+                  </div>
+                </div>
+                <div className="text-sm text-center text-gray-600">
+                  Total Allocated: {formatCurrency(allocationTotals.total)}
+                </div>
+              </div>
+            )}
+
+            {/* Audit Risk & Benchmarks */}
+            {allocationTotals.total > 0 && (
+              <div className="space-y-3">
+                <CostSegAuditRisk
+                  totalCost={allocationTotals.total}
+                  fiveYearTotal={allocationTotals.total * (allocationTotals.fiveYear / 100)}
+                  fifteenYearTotal={allocationTotals.total * (allocationTotals.fifteenYear / 100)}
+                  thirtyNineYearTotal={allocationTotals.total * (allocationTotals.thirtyNineYear / 100)}
+                  hasPhotos={details.systemRefinements.some(r => r.refinements.some(line => line.linkedPhotoIds && line.linkedPhotoIds.length > 0)) ||
+                             details.supplementalItems.some(i => i.linkedPhotoIds && i.linkedPhotoIds.length > 0)}
+                  hasMeasurements={details.systemRefinements.some(r => r.refinements.some(line => line.measurements))}
+                  propertyType={propertyType}
+                />
+
+                <CostSegBenchmarksPanel
+                  userAllocation={{
+                    fiveYear: allocationTotals.fiveYear,
+                    fifteenYear: allocationTotals.fifteenYear,
+                    thirtyNineYear: allocationTotals.thirtyNineYear,
+                  }}
+                  propertyType={propertyType}
+                  buildingSize={building.areas?.reduce((sum, area) => sum + (area.squareFootage || 0), 0) || 0}
+                />
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    </CollapsibleSection>
   );
 }

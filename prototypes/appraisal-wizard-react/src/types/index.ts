@@ -315,6 +315,9 @@ export interface SiteImprovementsInventory {
 
 import type { DepreciationClass, BuildingSystem } from '../constants/costSegregation';
 
+// Re-export for convenience
+export type { DepreciationClass, BuildingSystem };
+
 /**
  * A single component in the cost segregation analysis.
  * Represents an allocated portion of the building or site cost.
