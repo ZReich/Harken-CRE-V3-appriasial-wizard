@@ -22,6 +22,7 @@ import SWOTAnalysis, { type SWOTData } from '../components/SWOTAnalysis';
 import RiskRatingPanel from '../components/RiskRatingPanel';
 import { Info, ArrowLeft, Save, FileCheck, CheckCircle, Sparkles, Loader2, FileText, Shield, Calculator } from 'lucide-react';
 import { CostSegOverview } from '../features/cost-segregation/components/CostSegOverview';
+import { CostSegFullReportEditor } from '../features/cost-segregation/components/CostSegFullReportEditor';
 import { generateCostSegAnalysis } from '../services/costSegregationService';
 import { generateSWOTSuggestions, convertToSimpleSWOT } from '../services/swotSuggestionService';
 import type { CostSegAnalysis } from '../types';
@@ -271,6 +272,7 @@ export default function ReviewPage() {
   const [costSegAnalysis, setCostSegAnalysis] = useState<CostSegAnalysis | null>(null);
   const [isCostSegLoading, setIsCostSegLoading] = useState(false);
   const [costSegError, setCostSegError] = useState<string | null>(null);
+  const [showCostSegReportEditor, setShowCostSegReportEditor] = useState(false);
 
   // Track report state from ReportEditor
   const reportStateRef = useRef<ReportState | null>(null);
@@ -1165,8 +1167,17 @@ We considered alternative uses including renovation, conversion to alternative u
               isLoading={isCostSegLoading}
               error={costSegError}
               onGenerate={handleGenerateCostSeg}
+              onViewFullReport={costSegAnalysis ? () => setShowCostSegReportEditor(true) : undefined}
               className="w-full"
             />
+            
+            {/* Full Report Editor Modal */}
+            {showCostSegReportEditor && costSegAnalysis && (
+              <CostSegFullReportEditor
+                analysis={costSegAnalysis}
+                onBack={() => setShowCostSegReportEditor(false)}
+              />
+            )}
           </div>
         );
 

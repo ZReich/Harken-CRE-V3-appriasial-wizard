@@ -248,6 +248,13 @@ export interface ImprovementBuilding {
    * When null/undefined, inherits from Setup page's msOccupancyCode.
    */
   msOccupancyCodeOverride?: string;
+  
+  /**
+   * Cost Segregation Details (Per-Building)
+   * Only populated when Cost Segregation is enabled in wizard setup.
+   * Contains CSSI-style line item costs for 5/15/39-year component allocations.
+   */
+  costSegDetails?: CostSegBuildingDetails;
 }
 
 export interface ImprovementParcel {
@@ -466,6 +473,152 @@ export interface CostSegState {
   isGenerating: boolean;
   lastGeneratedAt: string | null;
   error: string | null;
+}
+
+// =================================================================
+// CSSI-STYLE COST SEGREGATION TYPES (Per-Building Details)
+// =================================================================
+
+/**
+ * Cost Seg details stored per-building.
+ * Used for CSSI-style professional reports with granular component data.
+ */
+export interface CostSegBuildingDetails {
+  buildingId: string;
+  buildingName: string;
+  placedInServiceDate: string;
+  totalBuildingCost: number;
+  costSource: 'actual' | 'estimated';
+  
+  // Component line items (CSSI granularity)
+  lineItems: CostSegLineItem[];
+  
+  // Calculated totals by depreciation class
+  fiveYearTotal: number;
+  sevenYearTotal: number;
+  fifteenYearTotal: number;
+  twentySevenFiveYearTotal: number;  // For residential
+  thirtyNineYearTotal: number;
+  
+  // Site visit info (for IRS compliance)
+  siteVisitDate?: string;
+  siteVisitNotes?: string;
+  inspectorName?: string;
+}
+
+/**
+ * Individual line item for cost seg detail tables.
+ * Represents a specific component like "Cabinets / Millwork" or "HVAC".
+ */
+export interface CostSegLineItem {
+  id: string;
+  componentId: string;              // Maps to M&S component ID
+  displayName: string;              // CSSI-style name: "Cabinets / Millwork"
+  category: 'personal-property' | 'land-improvement' | 'real-property';
+  depreciationClass: DepreciationClass;
+  
+  // Cost data with M&S basis
+  msPercent: number;                // M&S default percentage for this component
+  msAmount: number;                 // Calculated from M&S % * building cost
+  actualAmount?: number;            // Manual override amount (if user has actual costs)
+  finalAmount: number;              // actualAmount ?? msAmount
+  
+  // Source tracking
+  source: 'auto' | 'manual';        // Whether calculated or manually entered
+  notes?: string;                   // User notes for manual entries
+}
+
+/**
+ * Per-building breakdown for CSSI-style reports.
+ * Generated from CostSegBuildingDetails for report output.
+ */
+export interface CostSegBuildingBreakdown {
+  buildingId: string;
+  buildingName: string;
+  totalBuildingCost: number;
+  
+  // Summary by depreciation class
+  fiveYearTotal: number;
+  fiveYearPercent: number;
+  sevenYearTotal: number;
+  sevenYearPercent: number;
+  fifteenYearTotal: number;
+  fifteenYearPercent: number;
+  twentySevenFiveYearTotal: number;
+  twentySevenFiveYearPercent: number;
+  thirtyNineYearTotal: number;
+  thirtyNineYearPercent: number;
+  
+  // Line items grouped by category (for detail tables)
+  personalPropertyItems: CostSegLineItem[];   // 5-year, 7-year
+  landImprovementItems: CostSegLineItem[];    // 15-year
+  realPropertyItems: CostSegLineItem[];       // 27.5-year, 39-year
+  
+  // Building systems valuation (CSSI format)
+  buildingSystems: BuildingSystemValuation[];
+}
+
+/**
+ * Building system valuation for CSSI-style Building Systems table.
+ * Shows both depreciable cost and current replacement cost.
+ */
+export interface BuildingSystemValuation {
+  system: string;                   // "Ceiling Systems", "HVAC", "Electrical"
+  depreciableCost: number;          // Current depreciable basis
+  currentReplacementCost: number;   // Current replacement cost new
+}
+
+/**
+ * Report metadata for cost seg cover letter and certification.
+ */
+export interface CostSegReportMetadata {
+  // Cover Letter Info
+  recipientName: string;
+  recipientTitle: string;
+  companyName: string;
+  propertyAddress: string;
+  reportDate: string;
+  
+  // Study Info  
+  siteVisitDate: string;
+  inspectorName: string;
+  siteVisitNotes: string;
+  
+  // Preparer Info (from firm settings)
+  preparerName: string;
+  preparerCredentials: string;
+  firmName: string;
+  
+  // Certification
+  certificationDate: string;
+  certifiedBy: string;
+}
+
+/**
+ * Full CSSI-style analysis combining all buildings.
+ */
+export interface CostSegFullAnalysis {
+  propertyId: string;
+  propertyName: string;
+  propertyAddress: string;
+  analysisDate: string;
+  
+  // All buildings analyzed
+  buildings: CostSegBuildingBreakdown[];
+  
+  // Property-level totals
+  totalProjectCost: number;
+  totalFiveYear: number;
+  totalFifteenYear: number;
+  totalThirtyNineYear: number;
+  
+  // Tax benefit calculations
+  firstYearDepreciation: number;
+  acceleratedBenefit: number;
+  presentValueSavings: number;
+  
+  // Report metadata
+  metadata?: CostSegReportMetadata;
 }
 
 // =================================================================

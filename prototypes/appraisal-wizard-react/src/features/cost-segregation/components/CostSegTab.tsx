@@ -36,9 +36,10 @@ type TabView = 'overview' | 'components' | 'schedule' | 'systems' | 'guidance';
 
 interface CostSegTabProps {
   className?: string;
+  onOpenFullReport?: () => void;
 }
 
-export const CostSegTab: React.FC<CostSegTabProps> = ({ className = '' }) => {
+export const CostSegTab: React.FC<CostSegTabProps> = ({ className = '', onOpenFullReport }) => {
   const [activeView, setActiveView] = useState<TabView>('overview');
   const [isSkipped, setIsSkipped] = useState(false);
   const [showGuidance, setShowGuidance] = useState(false);
@@ -422,6 +423,7 @@ export const CostSegTab: React.FC<CostSegTabProps> = ({ className = '' }) => {
                 onGenerate={generate}
                 onViewDetails={() => setActiveView('components')}
                 onViewSchedule={() => setActiveView('schedule')}
+                onViewFullReport={onOpenFullReport}
               />
             )}
             {activeView === 'components' && (

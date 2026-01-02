@@ -16,6 +16,7 @@ export { BuildingSystems } from './components/BuildingSystems';
 export { DepreciationSchedule } from './components/DepreciationSchedule';
 export { CostSegTab } from './components/CostSegTab';
 export { CostSegReportEditor } from './components/CostSegReportEditor';
+export { CostSegFullReportEditor } from './components/CostSegFullReportEditor';
 
 // =================================================================
 // GUIDANCE COMPONENTS
@@ -92,6 +93,23 @@ export {
   type ComponentClassification,
   type OccupancyComponentAllocation,
 } from '../../constants/costSegregation';
+
+// Re-export CSSI-style constants
+export {
+  CSSI_COMPONENT_NAMES,
+  MS_COST_SEG_ALLOCATIONS,
+  LAND_IMPROVEMENT_CSSI_COMPONENTS,
+  CSSI_BUILDING_SYSTEMS,
+  COMPONENT_TO_CSSI_SYSTEM,
+  getCSSIComponentName,
+  getCSSIBuildingSystem,
+  getMSCostSegAllocations,
+  IRS_REFERENCES,
+  COURT_CASE_REFERENCES,
+  METHODOLOGY_TEXT,
+  type CostSegAllocation,
+  type CSSIBuildingSystem,
+} from '../../constants/costSegCSSI';
 
 // Re-export service functions
 export {

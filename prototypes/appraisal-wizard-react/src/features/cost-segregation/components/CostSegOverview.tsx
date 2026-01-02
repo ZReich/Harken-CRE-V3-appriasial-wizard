@@ -28,6 +28,7 @@ interface CostSegOverviewProps {
   onGenerate?: () => void;
   onViewDetails?: () => void;
   onViewSchedule?: () => void;
+  onViewFullReport?: () => void;
   className?: string;
 }
 
@@ -38,6 +39,7 @@ export const CostSegOverview: React.FC<CostSegOverviewProps> = ({
   onGenerate,
   onViewDetails,
   onViewSchedule,
+  onViewFullReport,
   className = '',
 }) => {
   if (isLoading) {
@@ -293,6 +295,16 @@ export const CostSegOverview: React.FC<CostSegOverviewProps> = ({
 
         {/* Action Buttons */}
         <div className="flex flex-wrap gap-3">
+          {onViewFullReport && (
+            <button
+              onClick={onViewFullReport}
+              className="flex items-center gap-2 px-5 py-2.5 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors font-medium text-sm shadow-sm"
+            >
+              <FileText className="w-4 h-4" />
+              View Full Report
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          )}
           {onViewDetails && (
             <button
               onClick={onViewDetails}

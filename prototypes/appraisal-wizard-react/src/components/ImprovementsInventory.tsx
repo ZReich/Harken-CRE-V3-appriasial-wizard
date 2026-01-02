@@ -61,6 +61,8 @@ import ExteriorFeaturesInventory from './ExteriorFeaturesInventory';
 import MechanicalSystemsInventory from './MechanicalSystemsInventory';
 import InteriorFinishesInventory from './InteriorFinishesInventory';
 import BuildingTypeSelector from './BuildingTypeSelector';
+import CostSegDetailsSection from './CostSegDetailsSection';
+import { Calculator as CostSegIcon } from 'lucide-react';
 import { getPropertyType } from '../constants/marshallSwift';
 import { getAreaTypesForBuildingType, type AreaTypeConfig } from '../constants/useAreaTypes';
 import { type ApplicablePropertyType, occupancyCodeToPropertyType } from '../constants/buildingComponents';
@@ -325,6 +327,8 @@ export default function ImprovementsInventory() {
             subjectData={state.subjectData}
             defaultOccupancyCode={state.msOccupancyCode || undefined}
             defaultPropertyType={state.propertyType || undefined}
+            isCostSegEnabled={state.subjectData?.costSegregationEnabled}
+            costApproachValue={state.analysisConclusions?.conclusions.find(c => c.approach === 'Cost Approach')?.valueConclusion || undefined}
             onToggle={() => toggleParcel(parcel.id)}
             onToggleBuilding={toggleBuilding}
             onUpdate={(updates) => updateParcel(parcel.id, updates)}
@@ -365,6 +369,8 @@ interface ParcelCardProps {
   subjectData?: { taxId: string; legalDescription: string; address: { street: string; city: string; state: string; zip: string; county: string } };
   defaultOccupancyCode?: string;
   defaultPropertyType?: string;
+  isCostSegEnabled?: boolean;
+  costApproachValue?: number;
   onToggle: () => void;
   onToggleBuilding: (buildingId: string) => void;
   onUpdate: (updates: Partial<ImprovementParcel>) => void;
@@ -387,6 +393,8 @@ function ParcelCard({
   subjectData,
   defaultOccupancyCode,
   defaultPropertyType,
+  isCostSegEnabled,
+  costApproachValue,
   onToggle,
   onToggleBuilding,
   onUpdate,
@@ -529,6 +537,8 @@ function ParcelCard({
                   canRemove={parcel.buildings.length > 1}
                   defaultOccupancyCode={defaultOccupancyCode}
                   defaultPropertyType={defaultPropertyType}
+                  isCostSegEnabled={isCostSegEnabled}
+                  totalBuildingCost={costApproachValue}
                   onToggle={() => onToggleBuilding(building.id)}
                   onUpdate={(updates) => onUpdateBuilding(building.id, updates)}
                   onRemove={() => onRemoveBuilding(building.id)}
@@ -556,6 +566,8 @@ interface BuildingCardProps {
   canRemove: boolean;
   defaultOccupancyCode?: string;
   defaultPropertyType?: string;
+  isCostSegEnabled?: boolean;
+  totalBuildingCost?: number;
   onToggle: () => void;
   onUpdate: (updates: Partial<ImprovementBuilding>) => void;
   onRemove: () => void;
@@ -571,6 +583,8 @@ function BuildingCard({
   canRemove,
   defaultOccupancyCode,
   defaultPropertyType,
+  isCostSegEnabled,
+  totalBuildingCost,
   onToggle,
   onUpdate,
   onRemove,
@@ -881,6 +895,26 @@ function BuildingCard({
               ))}
             </div>
           </CollapsibleSection>
+
+          {/* Cost Segregation Details - Only shown when enabled */}
+          {isCostSegEnabled && (
+            <CollapsibleSection 
+              title="Cost Segregation Details" 
+              icon={<CostSegIcon className="w-4 h-4 text-emerald-600" />} 
+              isExpanded={expandedSections.has('costseg')} 
+              onToggle={() => toggleSection('costseg')}
+            >
+              <CostSegDetailsSection
+                buildingId={building.id}
+                buildingName={building.name || `Building ${index + 1}`}
+                occupancyCode={effectiveOccupancyCode || 'office-lowrise'}
+                totalBuildingCost={totalBuildingCost || buildingSF * 150}
+                yearBuilt={building.yearBuilt}
+                costSegDetails={building.costSegDetails}
+                onUpdate={(details) => onUpdate({ costSegDetails: details })}
+              />
+            </CollapsibleSection>
+          )}
         </div>
       )}
     </div>
