@@ -84,7 +84,7 @@ function SuccessScreen({ onCreateAnother, onViewReport }: { onCreateAnother: () 
           </svg>
         </div>
         <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-3">Report Finalized!</h2>
-        <p className="text-lg text-gray-600 mb-8">Your appraisal report has been successfully generated.</p>
+        <p className="text-lg text-gray-600 dark:text-slate-400 mb-8">Your appraisal report has been successfully generated.</p>
         <div className="flex gap-4 justify-center">
           <button
             onClick={onViewReport}
@@ -132,7 +132,7 @@ function ReadyToPreviewScreen({
         <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-3">
           Appraisal Analysis Complete!
         </h2>
-        <p className="text-lg text-gray-600 mb-8">
+        <p className="text-lg text-gray-600 dark:text-slate-400 mb-8">
           All sections have been reviewed and validated. Your report data is ready for preview and final generation.
         </p>
 
@@ -149,15 +149,15 @@ function ReadyToPreviewScreen({
           </button>
           <button
             onClick={onBack}
-            className="px-6 py-2 text-gray-500 hover:text-gray-700 font-medium transition-colors"
+            className="px-6 py-2 text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-slate-300 font-medium transition-colors"
           >
             ← Back to Completion Checklist
           </button>
         </div>
 
         {/* Info Note */}
-        <div className="mt-8 bg-blue-50 border border-blue-200 rounded-lg p-4 text-left">
-          <p className="text-sm text-blue-800">
+        <div className="mt-8 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg p-4 text-left">
+          <p className="text-sm text-blue-800 dark:text-blue-200">
             <strong>What's next?</strong> In the report preview, you can customize formatting, 
             edit text, rearrange sections, and generate the final PDF for delivery.
           </p>
@@ -189,9 +189,9 @@ function ReportPreviewMode({
   isDirty?: boolean;
 }) {
   return (
-    <div className="fixed inset-0 bg-gray-100 z-50 flex flex-col overflow-hidden">
+    <div className="fixed inset-0 bg-gray-100 dark:bg-slate-900 z-50 flex flex-col overflow-hidden">
       {/* Custom Header */}
-      <header className="h-16 bg-white border-b border-gray-200 flex items-center justify-between px-8 flex-shrink-0 shadow-sm z-10">
+      <header className="h-16 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 flex items-center justify-between px-8 flex-shrink-0 shadow-sm z-10">
         {/* Left: Back Button */}
         <button
           onClick={onBack}
@@ -212,7 +212,7 @@ function ReportPreviewMode({
               </span>
             )}
           </div>
-          <p className="text-xs text-gray-500">Edit and customize before generating</p>
+          <p className="text-xs text-gray-500 dark:text-slate-400">Edit and customize before generating</p>
         </div>
 
         {/* Right: Actions */}
@@ -733,7 +733,7 @@ We considered alternative uses including renovation, conversion to alternative u
         {activeTab === 'checklist' && 'Finalization'}
         {activeTab === 'reconciliation' && 'Value Reconciliation'}
       </h3>
-      <p className="text-sm text-gray-600 mb-4">
+      <p className="text-sm text-gray-600 dark:text-slate-400 mb-4">
         {activeTab === 'hbu' &&
           'Complete the four tests of highest and best use to determine the most profitable legal use of the subject property.'}
         {activeTab === 'market-analysis' &&
@@ -752,22 +752,22 @@ We considered alternative uses including renovation, conversion to alternative u
 
       {activeTab === 'hbu' && (
         <>
-          <div className="bg-indigo-50 border-l-4 border-indigo-400 p-4 rounded mb-4">
-            <h4 className="font-semibold text-sm text-indigo-900 mb-1">The Four Tests</h4>
-            <p className="text-xs text-indigo-800">
+          <div className="bg-indigo-50 dark:bg-indigo-900/30 border-l-4 border-indigo-400 p-4 rounded mb-4">
+            <h4 className="font-semibold text-sm text-indigo-900 dark:text-indigo-200 mb-1">The Four Tests</h4>
+            <p className="text-xs text-indigo-800 dark:text-indigo-300">
               All four tests must be satisfied: Legally Permissible, Physically Possible, Financially Feasible, and Maximally Productive.
             </p>
           </div>
-          <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded mb-4">
-            <h4 className="font-semibold text-sm text-blue-900 mb-1">AI Draft Feature</h4>
-            <p className="text-xs text-blue-800">
+          <div className="bg-blue-50 dark:bg-blue-900/30 border-l-4 border-blue-400 p-4 rounded mb-4">
+            <h4 className="font-semibold text-sm text-blue-900 dark:text-blue-200 mb-1">AI Draft Feature</h4>
+            <p className="text-xs text-blue-800 dark:text-blue-300">
               Click the "AI Draft" button on any section to generate professional narrative using your property data from earlier phases.
             </p>
           </div>
           {hasImprovements && (
-            <div className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded">
-              <h4 className="font-semibold text-sm text-amber-900 mb-1">As Improved Analysis</h4>
-              <p className="text-xs text-amber-800">
+            <div className="bg-amber-50 dark:bg-amber-900/30 border-l-4 border-amber-400 p-4 rounded">
+              <h4 className="font-semibold text-sm text-amber-900 dark:text-amber-200 mb-1">As Improved Analysis</h4>
+              <p className="text-xs text-amber-800 dark:text-amber-300">
                 For improved properties, analyze whether the current improvements represent the highest and best use or if demolition/conversion should be considered.
               </p>
             </div>

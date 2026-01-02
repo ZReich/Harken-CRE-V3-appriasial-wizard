@@ -6,7 +6,7 @@
  * Allows user to accept one value (rejecting others) or reject all to trigger API fallback.
  */
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { Check, X, FileText, ChevronDown, ChevronUp, Loader2, RefreshCw } from 'lucide-react';
 import { useWizard } from '../context/WizardContext';
 import { fetchFallbackValue, isMontanaProperty } from '../services/fieldFallbackService';
@@ -69,17 +69,15 @@ export function MultiValueSuggestion({
   const [isExpanded, setIsExpanded] = useState(true);
   const [processingId, setProcessingId] = useState<string | null>(null);
   const [isRejectingAll, setIsRejectingAll] = useState(false);
-  const [fallbackStatus, setFallbackStatus] = useState<'idle' | 'fetching' | 'done'>('idle');
 
-  // Get all pending suggestions for this field
+  // Get all pending suggestions for this field - memoized to avoid recalculating on each render
   const allSuggestions = getFieldSuggestions(fieldPath);
-  const pendingSuggestions = allSuggestions.filter(s => s.status === 'pending');
+  const pendingSuggestions = useMemo(
+    () => allSuggestions.filter(s => s.status === 'pending'),
+    [allSuggestions]
+  );
 
-  // Don't render if no pending suggestions
-  if (pendingSuggestions.length === 0) {
-    return null;
-  }
-
+  // All hooks MUST be called before any conditional returns!
   const handleAccept = useCallback(async (suggestion: FieldSuggestion) => {
     setProcessingId(suggestion.id);
     try {
@@ -91,11 +89,13 @@ export function MultiValueSuggestion({
   }, [fieldPath, onAccept, acceptFieldSuggestion]);
 
   const handleRejectAll = useCallback(async () => {
+    // Capture current pending suggestions at call time
+    const currentPendingSuggestions = getFieldSuggestions(fieldPath).filter(s => s.status === 'pending');
+    
     setIsRejectingAll(true);
-    setFallbackStatus('fetching');
     try {
       // Reject all pending suggestions
-      for (const suggestion of pendingSuggestions) {
+      for (const suggestion of currentPendingSuggestions) {
         rejectFieldSuggestion(fieldPath, suggestion.id);
       }
       onRejectAll?.();
@@ -124,11 +124,15 @@ export function MultiValueSuggestion({
       console.error('[MultiValueSuggestion] Error during reject all:', error);
     } finally {
       setIsRejectingAll(false);
-      setFallbackStatus('done');
     }
-  }, [fieldPath, pendingSuggestions, state.subjectData?.address, onRejectAll, rejectFieldSuggestion, onAccept]);
+  }, [fieldPath, getFieldSuggestions, state.subjectData?.address, onRejectAll, rejectFieldSuggestion, onAccept]);
 
   const hasMultipleSuggestions = pendingSuggestions.length > 1;
+
+  // Don't render if no pending suggestions - AFTER all hooks are defined!
+  if (pendingSuggestions.length === 0) {
+    return null;
+  }
 
   return (
     <div

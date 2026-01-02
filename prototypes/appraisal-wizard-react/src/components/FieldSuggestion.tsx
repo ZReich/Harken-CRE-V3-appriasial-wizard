@@ -9,10 +9,11 @@
  * fallback data from Montana GIS (for MT properties) or Cotality API.
  */
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { Check, X, FileText, ChevronDown, ChevronUp, Loader2, RefreshCw } from 'lucide-react';
 import { useWizard } from '../context/WizardContext';
 import { fetchFallbackValue, isMontanaProperty } from '../services/fieldFallbackService';
+import type { FieldSuggestion as FieldSuggestionType } from '../types';
 
 export interface FieldSuggestionData {
   value: string;
@@ -71,7 +72,7 @@ export function FieldSuggestion({
   onReject,
   className = '',
 }: FieldSuggestionProps) {
-  const { state, addFieldSuggestion, rejectFieldSuggestion, getFieldSuggestion } = useWizard();
+  const { state, rejectFieldSuggestion, getFieldSuggestion } = useWizard();
   const [isExpanded, setIsExpanded] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
   const [fallbackStatus, setFallbackStatus] = useState<'idle' | 'fetching' | 'done'>('idle');
@@ -79,19 +80,19 @@ export function FieldSuggestion({
   // Get first pending suggestion from wizard state (array-based now)
   const suggestion = getFieldSuggestion(fieldPath);
 
-  // Don't render if no pending suggestion
-  if (!suggestion || suggestion.status !== 'pending') {
-    return null;
-  }
+  // Memoize the suggestion value to use in callbacks
+  const suggestionValue = useMemo(() => suggestion?.value, [suggestion?.value]);
 
+  // All hooks MUST be called before any conditional returns!
   const handleAccept = useCallback(async () => {
+    if (!suggestionValue) return;
     setIsProcessing(true);
     try {
-      onAccept(suggestion.value);
+      onAccept(suggestionValue);
     } finally {
       setIsProcessing(false);
     }
-  }, [suggestion.value, onAccept]);
+  }, [suggestionValue, onAccept]);
 
   const handleReject = useCallback(async () => {
     setIsProcessing(true);
@@ -129,7 +130,13 @@ export function FieldSuggestion({
     }
   }, [fieldPath, state.subjectData?.address, onReject, rejectFieldSuggestion, onAccept]);
 
-  const confidenceColor = getConfidenceColor(suggestion.confidence);
+  // Calculate confidence color - safe even if suggestion is null
+  const confidenceColor = suggestion ? getConfidenceColor(suggestion.confidence) : '';
+
+  // Don't render if no pending suggestion - AFTER all hooks are defined!
+  if (!suggestion || suggestion.status !== 'pending') {
+    return null;
+  }
 
   return (
     <div
