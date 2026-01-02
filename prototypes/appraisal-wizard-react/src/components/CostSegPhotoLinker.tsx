@@ -7,11 +7,18 @@
 
 import React, { useState, useMemo } from 'react';
 import { Image, Plus, X, Sparkles, CheckCircle2, AlertCircle } from 'lucide-react';
+import {
+  analyzeCostSegComponents,
+  matchPhotoToCostSegItems,
+  type PhotoClassificationResult,
+  type CostSegItemMatch,
+} from '../services/photoClassification';
 
 export interface Photo {
   id: string;
   url: string;
   caption?: string;
+  classification?: PhotoClassificationResult;
 }
 
 interface CostSegPhotoLinkerProps {
@@ -19,15 +26,17 @@ interface CostSegPhotoLinkerProps {
   linkedPhotoIds?: string[];
   /** Available photos to choose from */
   availablePhotos: Photo[];
-  /** Item description for display */
+  /** Item description for AI matching */
   itemDescription: string;
+  /** Item keywords for better matching */
+  itemKeywords?: string[];
   /** Callback when photos are updated */
   onUpdatePhotos: (photoIds: string[]) => void;
   /** Optional label for the section */
   label?: string;
   /** Maximum number of photos allowed */
   maxPhotos?: number;
-  /** Show AI suggestions (TODO: implement AI matching) */
+  /** Show AI suggestions */
   showAISuggestions?: boolean;
 }
 
@@ -35,16 +44,42 @@ export const CostSegPhotoLinker: React.FC<CostSegPhotoLinkerProps> = ({
   linkedPhotoIds = [],
   availablePhotos,
   itemDescription,
+  itemKeywords = [],
   onUpdatePhotos,
   label = 'Linked Photos',
   maxPhotos = 5,
-  showAISuggestions = false, // Disabled for now until AI functions are integrated
+  showAISuggestions = true,
 }) => {
   const [isSelectingPhoto, setIsSelectingPhoto] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(true);
 
-  // TODO: Implement AI suggestions using analyzeCostSegComponents and matchPhotoToCostSegItems
-  // from photoClassification.ts when those functions are fully integrated
-  const aiSuggestions: any[] = [];
+  // Get AI suggestions based on photo classifications
+  const aiSuggestions = useMemo(() => {
+    if (!showAISuggestions) return [];
+
+    const suggestions: Array<{ photo: Photo; match: CostSegItemMatch; costSegInfo: any }> = [];
+
+    for (const photo of availablePhotos) {
+      // Skip already linked photos
+      if (linkedPhotoIds.includes(photo.id)) continue;
+
+      // If photo has classification, try to match
+      if (photo.classification) {
+        const matches = matchPhotoToCostSegItems(
+          photo.classification,
+          [{ id: 'current', description: itemDescription, keywords: itemKeywords }]
+        );
+
+        if (matches.length > 0 && matches[0].matchScore > 30) {
+          const costSegInfo = analyzeCostSegComponents(photo.classification);
+          suggestions.push({ photo, match: matches[0], costSegInfo });
+        }
+      }
+    }
+
+    // Sort by match score
+    return suggestions.sort((a, b) => b.match.matchScore - a.match.matchScore);
+  }, [availablePhotos, linkedPhotoIds, itemDescription, itemKeywords, showAISuggestions]);
 
   const linkedPhotos = useMemo(() => {
     return availablePhotos.filter(p => linkedPhotoIds.includes(p.id));
@@ -68,6 +103,7 @@ export const CostSegPhotoLinker: React.FC<CostSegPhotoLinkerProps> = ({
 
   const handleAcceptSuggestion = (photoId: string) => {
     handleAddPhoto(photoId);
+    setShowSuggestions(false);
   };
 
   const canAddMore = linkedPhotoIds.length < maxPhotos;
@@ -88,12 +124,57 @@ export const CostSegPhotoLinker: React.FC<CostSegPhotoLinkerProps> = ({
         )}
       </div>
 
-      {/* AI Suggestions - Placeholder for future implementation */}
-      {showAISuggestions && aiSuggestions.length > 0 && canAddMore && (
+      {/* AI Suggestions */}
+      {showAISuggestions && aiSuggestions.length > 0 && showSuggestions && canAddMore && (
         <div className="bg-gradient-to-r from-purple-50 to-blue-50 border border-purple-200 rounded-lg p-3">
-          <div className="flex items-center gap-2 mb-2">
-            <Sparkles className="w-4 h-4 text-purple-600" />
-            <span className="text-sm text-purple-900">AI photo suggestions will appear here</span>
+          <div className="flex items-center justify-between mb-2">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-purple-600" />
+              <h4 className="text-sm font-semibold text-purple-900">AI Suggested Photos</h4>
+            </div>
+            <button
+              onClick={() => setShowSuggestions(false)}
+              className="text-purple-600 hover:text-purple-700"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+
+          <div className="space-y-2">
+            {aiSuggestions.slice(0, 3).map(({ photo, match }) => (
+              <div
+                key={photo.id}
+                className="flex items-center gap-3 bg-white border border-purple-200 rounded-lg p-2 hover:border-purple-300 transition-colors"
+              >
+                <img
+                  src={photo.url}
+                  alt={photo.caption || 'Photo'}
+                  className="w-12 h-12 object-cover rounded flex-shrink-0"
+                />
+                <div className="flex-1 min-w-0">
+                  <div className="text-xs font-medium text-gray-900 truncate">
+                    {photo.caption || `Photo ${photo.id.slice(0, 8)}`}
+                  </div>
+                  <div className="text-xs text-gray-600 truncate">{match.reason}</div>
+                  <div className="flex items-center gap-1 mt-1">
+                    <div className="h-1.5 flex-1 bg-gray-200 rounded-full overflow-hidden max-w-[60px]">
+                      <div
+                        className="h-full bg-purple-500 rounded-full"
+                        style={{ width: `${match.matchScore}%` }}
+                      />
+                    </div>
+                    <span className="text-xs text-purple-700 font-medium">{Math.round(match.matchScore)}%</span>
+                  </div>
+                </div>
+                <button
+                  onClick={() => handleAcceptSuggestion(photo.id)}
+                  className="flex items-center gap-1 px-2 py-1 text-xs font-medium text-white bg-purple-600 hover:bg-purple-700 rounded transition-colors flex-shrink-0"
+                >
+                  <CheckCircle2 className="w-3 h-3" />
+                  Link
+                </button>
+              </div>
+            ))}
           </div>
         </div>
       )}

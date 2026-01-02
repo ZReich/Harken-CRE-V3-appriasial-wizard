@@ -104,7 +104,19 @@ export default function CostSegDetailsSection({
     // Try to get actual cost from cost approach data
     const activeScenarioId = state.activeScenarioId;
     const costApproachData = state.costApproachBuildingCostData?.[activeScenarioId]?.[building.id];
-    const actualTotalCost = costApproachData?.totalReplacementCostNew || (totalSF * 150); // Fallback to estimate
+    
+    // Calculate total cost from base cost per SF if available
+    let actualTotalCost = totalSF * 150; // Fallback estimate
+    if (costApproachData?.baseCostPsf && totalSF > 0) {
+      actualTotalCost = costApproachData.baseCostPsf * totalSF;
+      // Apply multipliers if present
+      if (costApproachData.multipliers) {
+        if (costApproachData.multipliers.current) actualTotalCost *= costApproachData.multipliers.current;
+        if (costApproachData.multipliers.local) actualTotalCost *= costApproachData.multipliers.local;
+      }
+    } else if (costApproachData?.contractorCost) {
+      actualTotalCost = costApproachData.contractorCost;
+    }
     
     // Get M&S allocations for the occupancy code
     const occupancyCode = defaultOccupancyCode || 'office-lowrise';

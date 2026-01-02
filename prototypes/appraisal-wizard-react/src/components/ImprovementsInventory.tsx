@@ -592,6 +592,7 @@ function BuildingCard({
   onRemoveArea,
   onUpdateArea,
 }: BuildingCardProps) {
+  const { state } = useWizard(); // Access wizard state for photos
   const buildingSF = calculateBuildingSF(building);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['basic']));
   const [activeZoneIndex, setActiveZoneIndex] = useState<number | null>(null);
@@ -910,6 +911,11 @@ function BuildingCard({
                 defaultOccupancyCode={effectiveOccupancyCode || 'office-lowrise'}
                 onUpdateBuilding={(updates: Partial<ImprovementBuilding>) => onUpdate(updates)}
                 propertyType={effectiveOccupancyCode?.split('-')[0] || 'office'}
+                availablePhotos={state.reportPhotos?.assignments?.map((a: any) => ({
+                  id: a.photoId,
+                  url: a.url,
+                  caption: a.caption,
+                })) || []}
               />
             </CollapsibleSection>
           )}
