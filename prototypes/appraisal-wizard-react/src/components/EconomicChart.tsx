@@ -78,7 +78,7 @@ const calculateDiverging = (data: DataPoint[]) => {
 };
 
 export function EconomicChart({
-  data,
+  data: rawData,
   chartStyle,
   title,
   color = '#0da1c7',
@@ -86,7 +86,7 @@ export function EconomicChart({
   unit = '%',
   showAxis = true,
 }: EconomicChartProps) {
-  if (!data || data.length === 0) {
+  if (!rawData || rawData.length === 0) {
     return (
       <div 
         className="flex items-center justify-center text-slate-400" 
@@ -97,6 +97,11 @@ export function EconomicChart({
     );
   }
 
+  // Reverse data so time flows left-to-right (oldest → newest)
+  // FRED API returns data in descending order (newest first)
+  const data = [...rawData].reverse();
+  
+  // Current value is now the last element (rightmost on chart)
   const currentValue = data[data.length - 1]?.value;
   const minValue = Math.min(...data.map(d => d.value));
   const maxValue = Math.max(...data.map(d => d.value));

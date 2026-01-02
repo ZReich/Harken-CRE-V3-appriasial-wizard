@@ -3,6 +3,204 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ============================================
+   HARKEN DARK MODE - CSS Custom Properties
+   ============================================ */
+
+/* Light Theme (Default) */
+:root {
+  /* Surfaces */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f9f9f9;
+  --bg-elevated: #ffffff;
+  --bg-input: #ffffff;
+  --bg-header: #1c3643;
+  --bg-card: #ffffff;
+  --bg-hover: #f5f5f5;
+
+  /* Borders */
+  --border-subtle: #e5e7eb;
+  --border-default: #d1d5db;
+  --border-accent: #0da1c7;
+
+  /* Text */
+  --text-primary: #1f2937;
+  --text-secondary: #5a5a5a;
+  --text-muted: #9ca3af;
+  --text-inverse: #ffffff;
+
+  /* Accent Colors - Cyan (Primary Brand) */
+  --accent-cyan: #0da1c7;
+  --accent-cyan-hover: #0bb8e3;
+  --accent-cyan-glow: rgba(13, 161, 199, 0.15);
+  --accent-cyan-muted: #37add5;
+  --accent-cyan-light: #e8f8fc;
+  --accent-cyan-bg: rgba(13, 161, 199, 0.08);
+
+  /* Accent Colors - Green (Success, Positive) */
+  --accent-green: #16a34a;
+  --accent-green-hover: #22c55e;
+  --accent-green-glow: rgba(22, 163, 74, 0.15);
+  --accent-green-dark: #15803d;
+  --accent-green-light: #dcfce7;
+  --accent-green-bg: rgba(22, 163, 74, 0.08);
+
+  /* Accent Colors - Purple (Highlight, Special) */
+  --accent-purple: #9333ea;
+  --accent-purple-hover: #a855f7;
+  --accent-purple-glow: rgba(147, 51, 234, 0.15);
+  --accent-purple-dark: #7e22ce;
+  --accent-purple-light: #f3e8ff;
+  --accent-purple-bg: rgba(147, 51, 234, 0.08);
+
+  /* Negative/Error (Red) */
+  --negative: #dc2626;
+  --negative-hover: #ef4444;
+  --negative-glow: rgba(220, 38, 38, 0.15);
+  --negative-light: #fef2f2;
+  --negative-bg: rgba(220, 38, 38, 0.08);
+
+  /* Status Colors */
+  --success: var(--accent-green);
+  --warning: #f59e0b;
+  --warning-bg: rgba(245, 158, 11, 0.08);
+  --error: var(--negative);
+
+  /* Shadows */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+  --shadow-glow-cyan: 0 0 20px var(--accent-cyan-glow);
+  --shadow-glow-green: 0 0 12px var(--accent-green-glow);
+  --shadow-glow-purple: 0 0 12px var(--accent-purple-glow);
+  --shadow-glow-negative: 0 0 12px var(--negative-glow);
+
+  /* Scrollbar */
+  --scrollbar-track: #e1e1e1;
+  --scrollbar-thumb: #9a9b9b;
+  --scrollbar-thumb-hover: #7a7a7a;
+}
+
+/* Dark Theme */
+html.dark {
+  /* Surfaces */
+  --bg-primary: #0f1419;
+  --bg-secondary: #1a2332;
+  --bg-elevated: #243447;
+  --bg-input: #1e2a3a;
+  --bg-header: #0d1117;
+  --bg-card: #1a2332;
+  --bg-hover: #2d3f52;
+
+  /* Borders */
+  --border-subtle: #2d3f52;
+  --border-default: #3d4f62;
+  --border-accent: #00d4ff;
+
+  /* Text */
+  --text-primary: #f1f5f9;
+  --text-secondary: #94a3b8;
+  --text-muted: #64748b;
+  --text-inverse: #0f1419;
+
+  /* Accent Colors - Cyan (Primary Brand) - Luminous for dark mode */
+  --accent-cyan: #00d4ff;
+  --accent-cyan-hover: #33ddff;
+  --accent-cyan-glow: rgba(0, 212, 255, 0.2);
+  --accent-cyan-muted: #0da1c7;
+  --accent-cyan-light: #0d3a4a;
+  --accent-cyan-bg: rgba(0, 212, 255, 0.1);
+
+  /* Accent Colors - Green (Success, Positive) - Luminous for dark mode */
+  --accent-green: #22c55e;
+  --accent-green-hover: #4ade80;
+  --accent-green-glow: rgba(34, 197, 94, 0.2);
+  --accent-green-dark: #16a34a;
+  --accent-green-light: #0d3a24;
+  --accent-green-bg: rgba(34, 197, 94, 0.1);
+
+  /* Accent Colors - Purple (Highlight, Special) - Luminous for dark mode */
+  --accent-purple: #a855f7;
+  --accent-purple-hover: #c084fc;
+  --accent-purple-glow: rgba(168, 85, 247, 0.2);
+  --accent-purple-dark: #9333ea;
+  --accent-purple-light: #2d1a4a;
+  --accent-purple-bg: rgba(168, 85, 247, 0.1);
+
+  /* Negative/Error (Red) - Luminous for dark mode */
+  --negative: #ef4444;
+  --negative-hover: #f87171;
+  --negative-glow: rgba(239, 68, 68, 0.2);
+  --negative-light: #3a1a1a;
+  --negative-bg: rgba(239, 68, 68, 0.1);
+
+  /* Status Colors */
+  --success: var(--accent-green);
+  --warning: #fbbf24;
+  --warning-bg: rgba(251, 191, 36, 0.1);
+  --error: var(--negative);
+
+  /* Shadows - Softer for dark mode */
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4), 0 2px 4px -2px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.5), 0 4px 6px -4px rgba(0, 0, 0, 0.4);
+  --shadow-glow-cyan: 0 0 25px var(--accent-cyan-glow);
+  --shadow-glow-green: 0 0 15px var(--accent-green-glow);
+  --shadow-glow-purple: 0 0 15px var(--accent-purple-glow);
+  --shadow-glow-negative: 0 0 15px var(--negative-glow);
+
+  /* Scrollbar */
+  --scrollbar-track: #1a2332;
+  --scrollbar-thumb: #3d4f62;
+  --scrollbar-thumb-hover: #4d5f72;
+}
+
+/* Smooth theme transitions */
+*,
+*::before,
+*::after {
+  transition-property: background-color, border-color, color, fill, stroke, box-shadow;
+  transition-duration: 200ms;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Disable transitions for elements that shouldn't animate */
+.no-transition,
+.no-transition * {
+  transition: none !important;
+}
+
+/* Apply theme colors to body */
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+/* Dark mode scrollbar styling */
+html.dark ::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+html.dark ::-webkit-scrollbar-track {
+  background: var(--scrollbar-track);
+  border-radius: 10px;
+}
+
+html.dark ::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 10px;
+}
+
+html.dark ::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-thumb-hover);
+}
+
+/* ============================================
+   END DARK MODE CSS Custom Properties
+   ============================================ */
+
 * {
   margin: 0;
   padding: 0;
@@ -11,6 +209,8 @@
 
 body {
   overflow-x: hidden;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
 }
 body,
 * {
