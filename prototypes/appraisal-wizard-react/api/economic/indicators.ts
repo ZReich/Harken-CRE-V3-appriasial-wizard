@@ -12,6 +12,11 @@ export default async function handler(
   req: VercelRequest,
   res: VercelResponse
 ) {
+  // Prevent caching to ensure fresh data on each request
+  res.setHeader('Cache-Control', 'no-cache, no-store, must-revalidate');
+  res.setHeader('Pragma', 'no-cache');
+  res.setHeader('Expires', '0');
+
   // Only allow GET
   if (req.method !== 'GET') {
     return res.status(405).json({

@@ -15,6 +15,26 @@
     />
 
     <title>Harken CRE</title>
+    
+    <!-- Theme initialization script to prevent FOUC -->
+    <script>
+      (function() {
+        const stored = localStorage.getItem('harken-theme-preference');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        let theme = 'light';
+        if (stored === 'dark') {
+          theme = 'dark';
+        } else if (stored === 'light') {
+          theme = 'light';
+        } else if (prefersDark) {
+          theme = 'dark';
+        }
+        
+        document.documentElement.classList.add(theme);
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script>
   </head>
 
   <body id="harken">

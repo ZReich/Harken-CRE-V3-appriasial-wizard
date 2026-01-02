@@ -17,6 +17,7 @@ import {
 import React from 'react';
 import { useDispatch } from 'react-redux';
 import { setId } from '../../utils/userSlice';
+import { ThemeToggle } from '../ThemeToggle';
 
 const Header = () => {
   const [openConfirm, setOpenConfirm] = useState(false);
@@ -651,7 +652,7 @@ const Header = () => {
       <div
         className="flex py-2 header-image lg:gap-3 gap-2"
         style={{
-          backgroundColor: '#1C3643',
+          backgroundColor: 'var(--bg-header)',
         }}
       >
         <div
@@ -758,7 +759,11 @@ const Header = () => {
             );
           })}
         </div>
-        <div className="all-true-true py-1 mr-2">
+        <div className="all-true-true py-1 mr-2 flex items-center gap-3">
+          {/* Theme Toggle Button */}
+          <div className="flex items-center">
+            <ThemeToggle showSystemOption size="small" />
+          </div>
           <ul className="rounded-full all-true m-0">
             <li className="list-none text-lg text-white font-medium flex">
               <div className="pt-1 mr-3">

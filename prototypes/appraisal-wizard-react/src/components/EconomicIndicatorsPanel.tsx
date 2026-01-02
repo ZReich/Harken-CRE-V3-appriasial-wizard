@@ -191,16 +191,31 @@ export function EconomicIndicatorsPanel({
             <div>
               <h3 className="font-bold text-slate-800">Economic Indicators</h3>
               <p className="text-xs text-slate-500">
-                Source: Federal Reserve Economic Data (FRED) • Updated {asOfDate ? new Date(asOfDate).toLocaleDateString() : 'Recently'}
+                Source: Federal Reserve Economic Data (FRED) • Fetched {asOfDate ? new Date(asOfDate).toLocaleDateString() : 'Recently'}
               </p>
             </div>
           </div>
-          <ChartStyleSelector
-            value={chartStyle}
-            onChange={handleChartStyleChange}
-            label=""
-          />
+          <div className="flex items-center gap-3">
+            <button
+              onClick={fetchData}
+              disabled={isLoading}
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors disabled:opacity-50"
+              title="Refresh data from FRED"
+            >
+              <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
+              Refresh
+            </button>
+            <ChartStyleSelector
+              value={chartStyle}
+              onChange={handleChartStyleChange}
+              label=""
+            />
+          </div>
         </div>
+        {/* Data release schedule note */}
+        <p className="text-[10px] text-slate-400 mt-2">
+          Note: Fed Funds & CPI are monthly (2-3 week lag), Treasury is daily, GDP is quarterly (~1 month lag after quarter end).
+        </p>
       </div>
 
       {/* Indicator Cards Grid */}
