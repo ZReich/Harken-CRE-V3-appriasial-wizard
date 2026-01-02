@@ -6,6 +6,7 @@ import {
   ChartIcon,
   ScaleIcon,
   TargetIcon,
+  TrendingUpIcon,
 } from '../components/icons';
 import { CompletionChecklist, ValueReconciliation, ReportEditor } from '../features/review';
 import type { ReviewTabId } from '../features/review';
@@ -20,6 +21,7 @@ import { useToast } from '../context/ToastContext';
 import EnhancedTextArea from '../components/EnhancedTextArea';
 import SWOTAnalysis, { type SWOTData } from '../components/SWOTAnalysis';
 import RiskRatingPanel from '../components/RiskRatingPanel';
+import { MarketAnalysisGrid } from '../features/market-analysis';
 import { Info, ArrowLeft, Save, FileCheck, CheckCircle, Sparkles, Loader2, FileText, Shield, Calculator } from 'lucide-react';
 import { CostSegOverview } from '../features/cost-segregation/components/CostSegOverview';
 import { CostSegFullReportEditor } from '../features/cost-segregation/components/CostSegFullReportEditor';
@@ -615,17 +617,19 @@ We considered alternative uses including renovation, conversion to alternative u
   }, [simulatedDrafts]);
 
 
-  // Tab configuration - dynamically includes Cost Seg if enabled
-  // Order: HBU → SWOT → Risk Rating → [Cost Seg if enabled] → Reconciliation → Checklist
+  // Tab configuration - dynamically includes Cost Seg and Market Analysis
+  // Order: HBU → Market Analysis → SWOT → Risk Rating → [Cost Seg if enabled] → Reconciliation → Checklist
   // 1. Establish HBU first (foundational analysis)
-  // 2. SWOT Analysis (strategic property assessment)
-  // 3. Risk Rating (investment quality assessment - Plan Part 10.7)
-  // 4. Cost Segregation (if enabled - tax optimization analysis)
-  // 5. Reconcile value indications (core conclusion)
-  // 6. Verify completion (quality control gate before finalizing)
+  // 2. Market Analysis (market conditions and trends)
+  // 3. SWOT Analysis (strategic property assessment)
+  // 4. Risk Rating (investment quality assessment - Plan Part 10.7)
+  // 5. Cost Segregation (if enabled - tax optimization analysis)
+  // 6. Reconcile value indications (core conclusion)
+  // 7. Verify completion (quality control gate before finalizing)
   const tabs: { id: ReviewTabId; label: string; icon: typeof ClipboardCheckIcon }[] = useMemo(() => {
     const baseTabs: { id: ReviewTabId; label: string; icon: typeof ClipboardCheckIcon }[] = [
       { id: 'hbu', label: 'Highest & Best Use', icon: ScaleIcon },
+      { id: 'market-analysis', label: 'Market Analysis', icon: TrendingUpIcon },
       { id: 'swot', label: 'SWOT Analysis', icon: TargetIcon },
       { id: 'risk-rating', label: 'Risk Rating', icon: () => <Shield className="w-5 h-5" /> },
     ];
@@ -721,6 +725,7 @@ We considered alternative uses including renovation, conversion to alternative u
     <div>
       <h3 className="text-lg font-bold text-gray-900 mb-3">
         {activeTab === 'hbu' && 'Highest & Best Use'}
+        {activeTab === 'market-analysis' && 'Market Analysis'}
         {activeTab === 'swot' && 'SWOT Analysis'}
         {activeTab === 'risk-rating' && 'Investment Risk Rating'}
         {activeTab === 'cost-seg' && 'Cost Segregation'}
@@ -730,6 +735,8 @@ We considered alternative uses including renovation, conversion to alternative u
       <p className="text-sm text-gray-600 mb-4">
         {activeTab === 'hbu' &&
           'Complete the four tests of highest and best use to determine the most profitable legal use of the subject property.'}
+        {activeTab === 'market-analysis' &&
+          'Analyze current market conditions, trends, and economic indicators that affect property values.'}
         {activeTab === 'swot' &&
           'Identify strengths, weaknesses, opportunities, and threats for the subject property.'}
         {activeTab === 'risk-rating' &&
@@ -764,6 +771,29 @@ We considered alternative uses including renovation, conversion to alternative u
               </p>
             </div>
           )}
+        </>
+      )}
+
+      {activeTab === 'market-analysis' && (
+        <>
+          <div className="bg-amber-50 border-l-4 border-amber-400 p-4 rounded mb-4">
+            <h4 className="font-semibold text-sm text-amber-900 mb-1">Market Conditions</h4>
+            <p className="text-xs text-amber-800">
+              Review market cycle stage, supply & demand balance, and key trends affecting property values in the subject area.
+            </p>
+          </div>
+          <div className="bg-blue-50 border-l-4 border-blue-400 p-4 rounded mb-4">
+            <h4 className="font-semibold text-sm text-blue-900 mb-1">Economic Indicators</h4>
+            <p className="text-xs text-blue-800">
+              Analyze interest rates, economic growth, employment trends, and their impact on the real estate market.
+            </p>
+          </div>
+          <div className="bg-emerald-50 border-l-4 border-emerald-400 p-4 rounded">
+            <h4 className="font-semibold text-sm text-emerald-900 mb-1">Market Data</h4>
+            <p className="text-xs text-emerald-800">
+              Reference comparable sales and rental data to understand market conditions and pricing trends.
+            </p>
+          </div>
         </>
       )}
 

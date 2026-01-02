@@ -163,6 +163,7 @@ export function formatContextForAPI(context: HBUContext): Record<string, any> {
     siteData: context.siteData,
     improvementData: context.improvementData,
     marketData: context.marketData,
+    valuationData: context.analysisData,
     // Flatten some commonly needed fields
     city: context.siteData.city,
     state: context.siteData.state,
@@ -172,6 +173,86 @@ export function formatContextForAPI(context: HBUContext): Record<string, any> {
     buildingSize: context.improvementData?.buildingSize || null,
     yearBuilt: context.improvementData?.yearBuilt || null,
     condition: context.improvementData?.condition || null,
+  };
+}
+
+/**
+ * Build enhanced context for AI generation from wizard state
+ * Includes additional data for non-HBU sections
+ */
+export function buildEnhancedContextForAI(state: WizardState): Record<string, any> {
+  const hbuContext = buildHBUContext(state);
+  const baseContext = formatContextForAPI(hbuContext);
+  
+  const { subjectData, swotAnalysis, buildingPermits, trafficData } = state;
+  
+  // Add extended site data
+  const extendedSiteData = {
+    ...baseContext.siteData,
+    waterSource: subjectData?.waterSource || '',
+    sewerType: subjectData?.sewerType || '',
+    electricProvider: subjectData?.electricProvider || '',
+    naturalGas: subjectData?.naturalGas || '',
+    telecom: subjectData?.telecom || '',
+    femaZone: subjectData?.femaZone || '',
+    easements: subjectData?.easements || '',
+    environmental: subjectData?.environmental || '',
+    approachType: subjectData?.approachType || '',
+    accessQuality: subjectData?.accessQuality || '',
+    visibility: subjectData?.visibility || '',
+    pavingType: subjectData?.pavingType || '',
+    fencingType: subjectData?.fencingType || '',
+  };
+  
+  // Add improvement details
+  const building = state.improvementsInventory?.parcels?.[0]?.buildings?.[0];
+  const extendedImprovementData = baseContext.improvementData ? {
+    ...baseContext.improvementData,
+    exteriorFeatures: building?.exteriorFeatures || {},
+    interiorFeatures: building?.areas?.[0]?.interiorFeatures || {},
+    mechanicalSystems: building?.mechanicalSystems || {},
+  } : null;
+  
+  // Add transaction history
+  const transactionData = {
+    lastSaleDate: subjectData?.lastSaleDate || '',
+    lastSalePrice: subjectData?.lastSalePrice || '',
+    transactionHistory: subjectData?.transactionHistory || '',
+    legalDescription: subjectData?.legalDescription || '',
+  };
+  
+  // Add SWOT data if available
+  const swotData = swotAnalysis ? {
+    swotStrengths: swotAnalysis.strengths || [],
+    swotWeaknesses: swotAnalysis.weaknesses || [],
+    swotOpportunities: swotAnalysis.opportunities || [],
+    swotThreats: swotAnalysis.threats || [],
+  } : {};
+  
+  // Add building permits if available
+  const permitData = buildingPermits?.length ? {
+    buildingPermits: buildingPermits.map(p => ({
+      permitNumber: p.permitNumber,
+      type: p.type,
+      description: p.description,
+      issueDate: p.issueDate,
+    }))
+  } : {};
+  
+  // Add traffic data if available
+  const traffic = trafficData || subjectData?.trafficData;
+  const trafficInfo = traffic?.aadt ? {
+    aadt: traffic.aadt,
+  } : {};
+  
+  return {
+    ...baseContext,
+    siteData: extendedSiteData,
+    improvementData: extendedImprovementData,
+    ...transactionData,
+    ...swotData,
+    ...permitData,
+    ...trafficInfo,
   };
 }
 

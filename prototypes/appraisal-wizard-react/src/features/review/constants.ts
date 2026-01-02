@@ -173,6 +173,19 @@ export const BASE_REPORT_SECTIONS: ReportSection[] = [
     ],
   },
   {
+    id: 'market-analysis',
+    label: 'Market Analysis',
+    type: 'narrative',
+    sectionNumber: '02C',
+    enabled: true,
+    expanded: false,
+    fields: [
+      { id: 'market_cycle', label: 'Market Cycle Stage', enabled: true },
+      { id: 'market_supply_demand', label: 'Supply & Demand', enabled: true },
+      { id: 'market_trends', label: 'Market Trends', enabled: true },
+    ],
+  },
+  {
     id: 'hbu',
     label: 'Highest & Best Use',
     type: 'narrative',

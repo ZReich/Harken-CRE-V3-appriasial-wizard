@@ -3,7 +3,6 @@ import WizardLayout from '../components/WizardLayout';
 import ScenarioSwitcher, { getScenarioAccentColor, getScenarioColors } from '../components/ScenarioSwitcher';
 import {
   LandIcon,
-  TrendingUpIcon,
   ChartIcon,
   CurrencyIcon,
   ConstructionIcon,
@@ -13,7 +12,6 @@ import { SalesGrid, PROPERTIES, MOCK_VALUES } from '../features/sales-comparison
 import { IncomeApproachGrid } from '../features/income-approach';
 import { CostApproachGrid } from '../features/cost-approach';
 import { LandSalesGrid } from '../features/land-valuation';
-import { MarketAnalysisGrid } from '../features/market-analysis';
 import { MultiFamilyGrid } from '../features/multi-family';
 import { useWizard } from '../context/WizardContext';
 import { getGuidance, type GuidanceContent } from '../constants/guidance';
@@ -25,7 +23,7 @@ import { ContextualMarketData } from '../components/ContextualMarketData';
 import { getVisibleComponents } from '../utils/componentVisibility';
 
 // Approach definitions with color coding for navigation
-// NOTE: HBU has been moved to the Review page per plan
+// NOTE: HBU and Market Analysis have been moved to the Review page per plan
 const APPROACH_CONFIG = {
   land: { 
     id: 'land', 
@@ -34,14 +32,6 @@ const APPROACH_CONFIG = {
     color: '#84cc16', // lime
     bgClass: 'bg-lime-50',
     borderClass: 'border-l-lime-400',
-  },
-  market: { 
-    id: 'market', 
-    label: 'Market Analysis', 
-    Icon: TrendingUpIcon,
-    color: '#f59e0b', // amber
-    bgClass: 'bg-amber-50',
-    borderClass: 'border-l-amber-400',
   },
   sales: { 
     id: 'sales', 
@@ -80,15 +70,14 @@ const APPROACH_CONFIG = {
 // Map scenario approach names to tab IDs
 const APPROACH_NAME_TO_ID: Record<string, string> = {
   'Land Valuation': 'land',
-  'Market Analysis': 'market',
   'Sales Comparison': 'sales',
   'Income Approach': 'income',
   'Cost Approach': 'cost',
   'Multi-Family Approach': 'multifamily',
 };
 
-// All possible tabs in display order (HBU moved to Review page)
-const ALL_TABS = ['land', 'market', 'sales', 'multifamily', 'income', 'cost'];
+// All possible tabs in display order (HBU and Market Analysis moved to Review page)
+const ALL_TABS = ['land', 'sales', 'multifamily', 'income', 'cost'];
 
 export default function AnalysisPage() {
   const [activeTab, setActiveTab] = useState('sales');
@@ -139,12 +128,8 @@ export default function AnalysisPage() {
     
     const approachIds = activeScenario.approaches.map(name => APPROACH_NAME_TO_ID[name]).filter(Boolean);
     
-    // Always include HBU and Market Analysis as they're foundational
-    const requiredTabs = ['hbu', 'market'];
-    const combinedTabs = [...new Set([...requiredTabs, ...approachIds])];
-    
-    // Return in proper display order
-    return ALL_TABS.filter(tab => combinedTabs.includes(tab));
+    // Return in proper display order (HBU and Market Analysis have been moved to Review page)
+    return ALL_TABS.filter(tab => approachIds.includes(tab));
   }, [activeScenario]);
 
   // Switch to first available tab if current tab becomes unavailable
@@ -405,7 +390,7 @@ export default function AnalysisPage() {
   );
 
   // Keep full-width content for grid-heavy views
-  const isFullWidthView = activeTab === 'sales' || activeTab === 'income' || activeTab === 'cost' || activeTab === 'land' || activeTab === 'market' || activeTab === 'multifamily';
+  const isFullWidthView = activeTab === 'sales' || activeTab === 'income' || activeTab === 'cost' || activeTab === 'land' || activeTab === 'multifamily';
 
   return (
     <WizardLayout
@@ -559,35 +544,6 @@ export default function AnalysisPage() {
           {/* Multi-Family Grid */}
           <div className="flex-1 min-h-0">
             <MultiFamilyGrid scenarioId={activeScenario?.id} />
-          </div>
-        </div>
-      ) : activeTab === 'market' ? (
-        <div className="absolute inset-0 flex flex-col">
-          {/* Market Analysis Header Bar */}
-          <div 
-            className="h-12 border-b flex items-center justify-between px-6"
-            style={{ borderColor: currentApproach?.color + '40', backgroundColor: currentApproach?.color + '08' }}
-          >
-            <div className="flex items-center gap-3">
-              <span className="text-sm font-bold" style={{ color: currentApproach?.color }}>
-                {activeScenario?.name}: Market Analysis
-              </span>
-            </div>
-          </div>
-          {/* Market Analysis Grid */}
-          <div className="flex-1 min-h-0 overflow-auto">
-            <MarketAnalysisGrid 
-              rentCompData={{
-                avgRent: 26.75,
-                rentRange: [17.50, 37.50],
-                compCount: 4,
-              }}
-              salesCompData={{
-                avgPricePsf: 242,
-                avgCapRate: 6.50,
-                compCount: 8,
-              }}
-            />
           </div>
         </div>
       ) : (

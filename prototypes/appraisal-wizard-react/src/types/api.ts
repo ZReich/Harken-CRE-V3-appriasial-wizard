@@ -169,6 +169,20 @@ export interface AIGenerationContext {
     utilities?: string;
     topography?: string;
     shape?: string;
+    frontage?: string;
+    waterSource?: string;
+    sewerType?: string;
+    electricProvider?: string;
+    naturalGas?: string;
+    telecom?: string;
+    femaZone?: string;
+    easements?: string;
+    environmental?: string;
+    approachType?: string;
+    accessQuality?: string;
+    visibility?: string;
+    pavingType?: string;
+    fencingType?: string;
   };
   improvementData?: {
     buildingSize?: string;
@@ -176,12 +190,17 @@ export interface AIGenerationContext {
     condition?: string;
     constructionType?: string;
     quality?: string;
+    exteriorFeatures?: Record<string, any>;
+    interiorFeatures?: Record<string, any>;
+    mechanicalSystems?: Record<string, any>;
   };
   marketData?: {
     vacancyRate?: string;
     marketTrend?: string;
     capRate?: string;
     rentalRate?: string;
+    salesPricePerSf?: string;
+    daysOnMarket?: string;
   };
   scenarios?: Array<{
     name: string;
@@ -192,8 +211,63 @@ export interface AIGenerationContext {
     salesValue?: number;
     incomeValue?: number;
     costValue?: number;
+    landValue?: number;
     concludedValue?: number;
+    minSalesValue?: number;
+    maxSalesValue?: number;
   };
+  // Sales Comparison Data
+  salesComps?: Array<{
+    id?: string;
+    address?: string;
+    salePrice?: number;
+    adjustedPrice?: number;
+    saleDate?: string;
+  }>;
+  // Land Valuation Data
+  landComps?: Array<{
+    id?: string;
+    address?: string;
+    salePrice?: number;
+    pricePerAcre?: number;
+    adjustedPricePerAcre?: number;
+  }>;
+  // Income Approach Data
+  rentComps?: Array<{
+    id?: string;
+    address?: string;
+    rentPerSf?: number;
+  }>;
+  expenseComps?: Array<{
+    id?: string;
+    address?: string;
+    expenseRatio?: number;
+  }>;
+  noi?: number;
+  // Cost Approach Data
+  replacementCostNew?: number;
+  depreciation?: number;
+  entrepreneurialIncentive?: number;
+  // SWOT Data
+  swotStrengths?: string[];
+  swotWeaknesses?: string[];
+  swotOpportunities?: string[];
+  swotThreats?: string[];
+  // Transaction History
+  lastSaleDate?: string;
+  lastSalePrice?: string;
+  transactionHistory?: string;
+  // Building Permits
+  buildingPermits?: Array<{
+    permitNumber?: string;
+    type?: string;
+    description?: string;
+    issueDate?: string;
+  }>;
+  // Traffic Data
+  aadt?: number;
+  // Legal Description
+  legalDescription?: string;
 }
 
 export interface AIGenerationRequest {

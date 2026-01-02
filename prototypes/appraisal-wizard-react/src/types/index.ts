@@ -480,52 +480,156 @@ export interface CostSegState {
 // =================================================================
 
 /**
- * Cost Seg details stored per-building.
- * Used for CSSI-style professional reports with granular component data.
+ * System refinement for breaking down major building systems.
+ * Used to allocate electrical, HVAC, plumbing, etc. into specific depreciation classes.
+ */
+export interface CostSegSystemRefinement {
+  id: string;
+  systemType: 'electrical' | 'plumbing' | 'hvac' | 'fire-protection' | 'elevators' | 'roofing' | 'structural';
+  systemLabel: string;              // e.g., "Electrical System"
+  totalSystemCost: number;          // From appraisal data (M&S, mechanicalSystems, etc.)
+  
+  refinements: CostSegRefinementLine[];
+  
+  // Validation tracking
+  totalAllocated: number;           // Sum of refinement amounts
+  isFullyAllocated: boolean;        // totalAllocated === totalSystemCost
+}
+
+/**
+ * Individual refinement line within a system breakdown.
+ * Represents a specific allocation like "Branch Circuit Wiring" or "Rooftop HVAC Units".
+ */
+export interface CostSegRefinementLine {
+  id: string;
+  description: string;              // User-defined or template, e.g., "Dedicated Equipment Circuits"
+  depreciationClass: DepreciationClass;
+  amount: number;
+  allocationMethod: 'measured' | 'percentage' | 'engineering-estimate';
+  
+  // Measurement support (for IRS documentation)
+  measurements?: {
+    quantity: number;
+    unit: 'LF' | 'SF' | 'EA' | 'tons' | 'BTU' | 'amps' | 'kW';
+    costPerUnit?: number;
+    notes: string;
+  };
+  
+  // Photo documentation
+  linkedPhotoIds?: string[];        // Links to report photos
+  
+  // IRS support
+  irsAssetClass?: string;           // e.g., "Asset Class 00.11"
+  justification?: string;           // Reasoning for classification
+  notes?: string;
+}
+
+/**
+ * Supplemental items not captured in typical appraisal.
+ * These are cost-seg-specific additions like tenant improvements or specialty equipment.
+ */
+export interface CostSegSupplementalItem {
+  id: string;
+  description: string;              // User-defined, e.g., "Custom Restaurant Equipment Package"
+  category: 'personal-property' | 'land-improvement' | 'tenant-improvement' | 'specialty-equipment';
+  depreciationClass: DepreciationClass;
+  cost: number;
+  
+  // Documentation
+  linkedPhotoIds?: string[];
+  notes?: string;
+  vendor?: string;
+  invoiceDate?: string;
+  
+  // Building association (optional)
+  buildingId?: string;
+}
+
+/**
+ * Simplified cost seg details stored per-building.
+ * Focuses on refinements and supplements rather than re-entering all building data.
  */
 export interface CostSegBuildingDetails {
-  buildingId: string;
-  buildingName: string;
-  placedInServiceDate: string;
-  totalBuildingCost: number;
-  costSource: 'actual' | 'estimated';
+  enabled: boolean;
+  placedInServiceDate?: string;
   
-  // Component line items (CSSI granularity)
-  lineItems: CostSegLineItem[];
+  // System refinements (breaking down big systems from appraisal)
+  systemRefinements: CostSegSystemRefinement[];
   
-  // Calculated totals by depreciation class
-  fiveYearTotal: number;
-  sevenYearTotal: number;
-  fifteenYearTotal: number;
-  twentySevenFiveYearTotal: number;  // For residential
-  thirtyNineYearTotal: number;
+  // Supplemental items (things not in appraisal at all)
+  supplementalItems: CostSegSupplementalItem[];
   
-  // Site visit info (for IRS compliance)
+  // Component overrides (rare - if you disagree with auto-classification)
+  componentOverrides?: {
+    [componentId: string]: {
+      depreciationClass: DepreciationClass;
+      reason: string;
+    };
+  };
+  
+  // Site visit compliance
   siteVisitDate?: string;
   siteVisitNotes?: string;
   inspectorName?: string;
 }
 
 /**
- * Individual line item for cost seg detail tables.
- * Represents a specific component like "Cabinets / Millwork" or "HVAC".
+ * @deprecated - Legacy type, kept for backwards compatibility during migration
  */
 export interface CostSegLineItem {
   id: string;
-  componentId: string;              // Maps to M&S component ID
-  displayName: string;              // CSSI-style name: "Cabinets / Millwork"
+  componentId: string;
+  displayName: string;
   category: 'personal-property' | 'land-improvement' | 'real-property';
   depreciationClass: DepreciationClass;
+  msPercent: number;
+  msAmount: number;
+  actualAmount?: number;
+  finalAmount: number;
+  source: 'auto' | 'manual';
+  notes?: string;
+}
+
+/**
+ * Audit risk assessment for cost segregation study.
+ * Provides real-time feedback on IRS audit risk level.
+ */
+export interface CostSegAuditRisk {
+  overallRisk: 'low' | 'moderate' | 'high';
+  personalPropertyPercent: number;
+  landImprovementPercent: number;
+  realPropertyPercent: number;
   
-  // Cost data with M&S basis
-  msPercent: number;                // M&S default percentage for this component
-  msAmount: number;                 // Calculated from M&S % * building cost
-  actualAmount?: number;            // Manual override amount (if user has actual costs)
-  finalAmount: number;              // actualAmount ?? msAmount
+  flags: {
+    type: 'warning' | 'info' | 'success';
+    message: string;
+    recommendation?: string;
+  }[];
   
-  // Source tracking
-  source: 'auto' | 'manual';        // Whether calculated or manually entered
-  notes?: string;                   // User notes for manual entries
+  recommendations: string[];
+  score: number;  // 0-100, higher = lower risk
+}
+
+/**
+ * Industry benchmark comparison data.
+ * Used to compare user's allocations against typical ranges.
+ */
+export interface CostSegBenchmark {
+  propertyType: string;             // 'office', 'retail', 'restaurant', etc.
+  buildingSizeCategory: string;     // '0-50K SF', '50-150K SF', etc.
+  qualityClass?: string;            // 'Class A', 'Class B', 'Class C'
+  
+  typicalRanges: {
+    fiveYearMin: number;
+    fiveYearMax: number;
+    fifteenYearMin: number;
+    fifteenYearMax: number;
+    thirtyNineYearMin: number;
+    thirtyNineYearMax: number;
+  };
+  
+  source: string;                   // 'CSSI Industry Study 2024', etc.
+  notes?: string;
 }
 
 /**
