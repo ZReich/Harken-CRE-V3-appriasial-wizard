@@ -51,6 +51,56 @@ export const SECTION_PHOTO_MAPPING: Record<string, string[]> = {
   'exterior': ['ext_front', 'ext_rear', 'ext_side_1', 'ext_side_2', 'ext_additional_1', 'ext_additional_2', 'ext_roof'],
   'interior': ['int_lobby', 'int_office', 'int_conference', 'int_shop', 'int_bathroom', 'int_mechanical', 'int_mezzanine', 'int_kitchen'],
   'site': ['site_parking', 'site_yard_n', 'site_yard_s', 'site_yard_e', 'site_yard_w'],
+  
+  // =================================================================
+  // COST SEGREGATION SPECIFIC MAPPINGS
+  // =================================================================
+  
+  // System refinements
+  'costseg_electrical': ['int_electrical', 'int_mechanical', 'int_office', 'ext_roof'],
+  'costseg_electrical_panels': ['int_electrical', 'int_mechanical'],
+  'costseg_electrical_circuits': ['int_electrical', 'int_ceiling', 'int_office'],
+  'costseg_electrical_dedicated': ['int_electrical', 'int_server', 'int_mechanical'],
+  'costseg_hvac': ['int_mechanical', 'int_hvac', 'ext_roof'],
+  'costseg_hvac_units': ['ext_roof', 'int_mechanical'],
+  'costseg_hvac_ductwork': ['int_mechanical', 'int_ceiling', 'int_warehouse'],
+  'costseg_hvac_controls': ['int_mechanical', 'int_office'],
+  'costseg_plumbing': ['int_plumbing', 'int_bathroom', 'int_kitchen', 'int_mechanical'],
+  'costseg_plumbing_fixtures': ['int_bathroom', 'int_kitchen'],
+  'costseg_plumbing_pipes': ['int_mechanical', 'int_bathroom'],
+  'costseg_fire_protection': ['int_mechanical', 'int_ceiling', 'int_warehouse'],
+  
+  // Personal property (5/7-year)
+  'costseg_personal_property': ['int_office', 'int_conference', 'int_lobby', 'int_shop'],
+  'costseg_movable_partitions': ['int_office', 'int_conference'],
+  'costseg_window_treatments': ['int_office', 'int_conference', 'int_lobby'],
+  'costseg_decorative_fixtures': ['int_lobby', 'int_office', 'int_conference'],
+  'costseg_specialty_lighting': ['int_office', 'int_shop', 'int_warehouse'],
+  'costseg_carpeting': ['int_office', 'int_conference', 'int_lobby'],
+  'costseg_equipment': ['int_mechanical', 'int_server', 'int_kitchen'],
+  'costseg_security_systems': ['int_lobby', 'int_office', 'ext_front'],
+  'costseg_av_systems': ['int_conference', 'int_lobby'],
+  
+  // Land improvements (15-year)
+  'costseg_land_improvements': ['site_parking', 'site_landscape', 'site_yard_n', 'site_yard_s'],
+  'costseg_parking_striping': ['site_parking'],
+  'costseg_parking_lighting': ['site_parking'],
+  'costseg_landscaping': ['site_landscape', 'site_yard_n', 'site_yard_s', 'site_yard_e', 'site_yard_w'],
+  'costseg_site_lighting': ['site_parking', 'ext_front'],
+  'costseg_site_fencing': ['site_yard_n', 'site_yard_s', 'site_yard_e', 'site_yard_w'],
+  'costseg_site_signage': ['ext_front', 'site_parking'],
+  'costseg_site_utilities': ['site_yard_n', 'site_parking', 'ext_front'],
+  
+  // Tenant improvements
+  'costseg_tenant_improvements': ['int_office', 'int_conference', 'int_bathroom', 'int_kitchen'],
+  'costseg_demising_walls': ['int_office', 'int_conference'],
+  'costseg_specialized_finishes': ['int_office', 'int_conference', 'int_lobby'],
+  
+  // Measurement documentation
+  'costseg_measurements': ['int_mechanical', 'int_electrical', 'int_plumbing', 'site_parking'],
+  'costseg_conduit_runs': ['int_electrical', 'int_ceiling', 'int_mechanical'],
+  'costseg_piping_runs': ['int_plumbing', 'int_mechanical'],
+  'costseg_ductwork_runs': ['int_hvac', 'int_ceiling', 'int_mechanical'],
 };
 
 /**
@@ -85,6 +135,44 @@ export const SECTION_LABELS: Record<string, string> = {
   'exterior': 'Exterior',
   'interior': 'Interior',
   'site': 'Site',
+  
+  // Cost Segregation
+  'costseg_electrical': 'Electrical System (Cost Seg)',
+  'costseg_electrical_panels': 'Electrical Panels',
+  'costseg_electrical_circuits': 'Electrical Circuits',
+  'costseg_electrical_dedicated': 'Dedicated Equipment Circuits',
+  'costseg_hvac': 'HVAC System (Cost Seg)',
+  'costseg_hvac_units': 'HVAC Units',
+  'costseg_hvac_ductwork': 'HVAC Ductwork',
+  'costseg_hvac_controls': 'HVAC Controls',
+  'costseg_plumbing': 'Plumbing System (Cost Seg)',
+  'costseg_plumbing_fixtures': 'Plumbing Fixtures',
+  'costseg_plumbing_pipes': 'Plumbing Pipes',
+  'costseg_fire_protection': 'Fire Protection System',
+  'costseg_personal_property': 'Personal Property (5/7-Year)',
+  'costseg_movable_partitions': 'Movable Partitions',
+  'costseg_window_treatments': 'Window Treatments',
+  'costseg_decorative_fixtures': 'Decorative Fixtures',
+  'costseg_specialty_lighting': 'Specialty Lighting',
+  'costseg_carpeting': 'Carpeting',
+  'costseg_equipment': 'Equipment',
+  'costseg_security_systems': 'Security Systems',
+  'costseg_av_systems': 'Audio/Visual Systems',
+  'costseg_land_improvements': 'Land Improvements (15-Year)',
+  'costseg_parking_striping': 'Parking Striping',
+  'costseg_parking_lighting': 'Parking Lighting',
+  'costseg_landscaping': 'Landscaping',
+  'costseg_site_lighting': 'Site Lighting',
+  'costseg_site_fencing': 'Site Fencing',
+  'costseg_site_signage': 'Site Signage',
+  'costseg_site_utilities': 'Site Utilities',
+  'costseg_tenant_improvements': 'Tenant Improvements',
+  'costseg_demising_walls': 'Demising Walls',
+  'costseg_specialized_finishes': 'Specialized Finishes',
+  'costseg_measurements': 'Measurement Documentation',
+  'costseg_conduit_runs': 'Conduit Runs',
+  'costseg_piping_runs': 'Piping Runs',
+  'costseg_ductwork_runs': 'Ductwork Runs',
 };
 
 /**

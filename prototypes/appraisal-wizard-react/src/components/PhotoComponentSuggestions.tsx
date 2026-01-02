@@ -52,7 +52,7 @@ interface PhotoComponentSuggestionsProps {
 const CATEGORY_CONFIG: Record<ComponentDetectionCategory, { 
   label: string; 
   icon: typeof Building2;
-  section: 'exterior' | 'mechanical' | 'interior';
+  section: 'exterior' | 'mechanical' | 'interior' | 'costseg';
 }> = {
   roofing: { label: 'Roofing', icon: Building2, section: 'exterior' },
   walls: { label: 'Walls', icon: Building2, section: 'exterior' },
@@ -62,6 +62,13 @@ const CATEGORY_CONFIG: Record<ComponentDetectionCategory, {
   electrical: { label: 'Electrical', icon: Zap, section: 'mechanical' },
   flooring: { label: 'Flooring', icon: Layers, section: 'interior' },
   ceilings: { label: 'Ceilings', icon: Layers, section: 'interior' },
+  // Cost Segregation Categories
+  'personal-property': { label: 'Personal Property', icon: Layers, section: 'costseg' },
+  'land-improvements': { label: 'Land Improvements', icon: Building2, section: 'costseg' },
+  'tenant-improvements': { label: 'Tenant Improvements', icon: Layers, section: 'costseg' },
+  'electrical-refinement': { label: 'Electrical (Cost Seg)', icon: Zap, section: 'costseg' },
+  'hvac-refinement': { label: 'HVAC (Cost Seg)', icon: Zap, section: 'costseg' },
+  'plumbing-refinement': { label: 'Plumbing (Cost Seg)', icon: Zap, section: 'costseg' },
 };
 
 const CONDITION_COLORS: Record<string, string> = {
@@ -180,10 +187,11 @@ export default function PhotoComponentSuggestions({
 
   // Group components by section (exterior, mechanical, interior)
   const groupedComponents = useMemo(() => {
-    const groups: Record<'exterior' | 'mechanical' | 'interior', DetectedBuildingComponent[]> = {
+    const groups: Record<'exterior' | 'mechanical' | 'interior' | 'costseg', DetectedBuildingComponent[]> = {
       exterior: [],
       mechanical: [],
       interior: [],
+      costseg: [],
     };
 
     visibleComponents.forEach(component => {

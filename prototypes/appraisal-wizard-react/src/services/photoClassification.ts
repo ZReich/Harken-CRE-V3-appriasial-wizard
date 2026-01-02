@@ -51,6 +51,8 @@ export interface PhotoClassificationResult {
   error?: string;
   /** Detected building components for inventory pre-population */
   detectedComponents?: DetectedBuildingComponent[];
+  /** Cost segregation component suggestions */
+  costSegSuggestions?: CostSegPhotoSuggestion;
 }
 
 // ==========================================
@@ -65,7 +67,14 @@ export type ComponentDetectionCategory =
   | 'hvac'
   | 'electrical'
   | 'flooring'
-  | 'ceilings';
+  | 'ceilings'
+  // Cost Segregation Categories
+  | 'personal-property'
+  | 'land-improvements'
+  | 'tenant-improvements'
+  | 'electrical-refinement'
+  | 'hvac-refinement'
+  | 'plumbing-refinement';
 
 export interface DetectedBuildingComponent {
   /** Component type ID matching BuildingComponentType.id in buildingComponents.ts */
@@ -82,6 +91,49 @@ export interface DetectedBuildingComponent {
   suggestedCondition?: 'excellent' | 'good' | 'average' | 'fair' | 'poor';
   /** Any additional notes about the component */
   notes?: string;
+}
+
+// ==========================================
+// COST SEGREGATION COMPONENT DETECTION
+// ==========================================
+
+export type CostSegDepreciationClass = '5-year' | '7-year' | '15-year' | '27.5-year' | '39-year';
+
+/**
+ * Detected cost segregation component from photo analysis.
+ * Used to suggest photo links for system refinements and supplemental items.
+ */
+export interface DetectedCostSegComponent {
+  /** Component ID for matching to refinement/supplement items */
+  componentId: string;
+  /** Human-readable label */
+  componentLabel: string;
+  /** Cost seg category */
+  category: 'personal-property' | 'land-improvements' | 'tenant-improvements' | 'electrical-refinement' | 'hvac-refinement' | 'plumbing-refinement' | 'fire-protection';
+  /** Suggested depreciation class */
+  suggestedDepreciationClass: CostSegDepreciationClass;
+  /** Confidence score 0-100 */
+  confidence: number;
+  /** AI reasoning */
+  reasoning: string;
+  /** Keywords for matching to user-created items */
+  keywords: string[];
+  /** Measurement hints (e.g., "visible conduit runs", "10+ LF of dedicated wiring") */
+  measurementHints?: string;
+}
+
+/**
+ * Cost Seg-enhanced classification result
+ */
+export interface CostSegPhotoSuggestion {
+  /** Suggested category for cost seg photo mapping */
+  photoCategory: string; // e.g., 'costseg_electrical_circuits'
+  /** Detected components in the photo */
+  detectedComponents: DetectedCostSegComponent[];
+  /** Overall suggestion for which refinement/supplement this supports */
+  suggestedFor?: 'system-refinement' | 'supplemental-item';
+  /** Specific system type if applicable */
+  systemType?: 'electrical' | 'plumbing' | 'hvac' | 'fire-protection';
 }
 
 export interface StagingPhoto {
