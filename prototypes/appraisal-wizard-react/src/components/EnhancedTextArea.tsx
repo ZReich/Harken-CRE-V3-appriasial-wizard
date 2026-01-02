@@ -499,13 +499,39 @@ export default function EnhancedTextArea({
       // Build context from wizard state if available
       let apiContext: AIGenerationContext = {};
       
+      // FIX #49: Add fallback if context building fails
       if (wizardState) {
-        // Use the enhanced context builder for comprehensive data extraction
-        apiContext = buildEnhancedContextForAI(wizardState);
-        
-        // Merge any additional context passed via props
-        if (contextData) {
-          apiContext = { ...apiContext, ...contextData };
+        try {
+          // Use the enhanced context builder for comprehensive data extraction
+          apiContext = buildEnhancedContextForAI(wizardState, sectionContext);
+          
+          // Check if context builder returned an error
+          if ((apiContext as any).error) {
+            console.warn('Context builder returned error:', (apiContext as any).message);
+            // Continue with minimal context
+            apiContext = {
+              propertyType: wizardState.propertyType || 'Commercial',
+              siteData: {
+                city: wizardState.subjectData?.address?.city || '',
+                state: wizardState.subjectData?.address?.state || '',
+              },
+            };
+          }
+          
+          // Merge any additional context passed via props
+          if (contextData) {
+            apiContext = { ...apiContext, ...contextData };
+          }
+        } catch (contextError) {
+          // FIX #49: If context building fails, use minimal fallback
+          console.error('Failed to build context:', contextError);
+          apiContext = {
+            propertyType: wizardState.propertyType || 'Commercial',
+            siteData: {
+              city: wizardState.subjectData?.address?.city || 'Not specified',
+              state: wizardState.subjectData?.address?.state || 'Not specified',
+            },
+          };
         }
       } else if (contextData) {
         apiContext = contextData as AIGenerationContext;

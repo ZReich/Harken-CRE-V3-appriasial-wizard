@@ -10,9 +10,16 @@
 import OpenAI from 'openai';
 import type { AIGenerationContext } from './types';
 
+// FIX #50: Check for API key and provide helpful error
+const apiKey = process.env.OPENAI_API_KEY;
+if (!apiKey) {
+  console.warn('⚠️  OPENAI_API_KEY not configured. AI draft generation will not work.');
+  console.warn('    Set OPENAI_API_KEY in your environment variables or .env file.');
+}
+
 // Initialize OpenAI client
 const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
+  apiKey: apiKey || 'dummy-key-for-development',
 });
 
 // =================================================================

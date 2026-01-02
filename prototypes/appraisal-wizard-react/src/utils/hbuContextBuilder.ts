@@ -177,201 +177,411 @@ export function formatContextForAPI(context: HBUContext): Record<string, any> {
 }
 
 /**
+ * Helper function to calculate adjusted price for sales comps
+ * FIX #21: Adjusted prices now calculated from grid values
+ */
+function calculateAdjustedPrice(
+  compId: string, 
+  valuesGrid?: Record<string, Record<string, any>>
+): number | null {
+  if (!valuesGrid || !valuesGrid[compId]) return null;
+  
+  const compValues = valuesGrid[compId];
+  let basePrice = 0;
+  
+  // Get base price from sale price row
+  const salePriceCell = compValues['salePrice'];
+  if (salePriceCell && typeof salePriceCell.value === 'number') {
+    basePrice = salePriceCell.value;
+  } else if (typeof salePriceCell?.value === 'string') {
+    basePrice = parseFloat(salePriceCell.value) || 0;
+  }
+  
+  if (basePrice === 0) return null;
+  
+  // Calculate total adjustments
+  let totalAdjustment = 0;
+  Object.entries(compValues).forEach(([rowId, cellValue]: [string, any]) => {
+    if (rowId !== 'salePrice' && cellValue?.adjustment) {
+      const adj = cellValue.adjustment;
+      if (cellValue.unit === 'percent') {
+        totalAdjustment += (basePrice * adj / 100);
+      } else {
+        totalAdjustment += adj;
+      }
+    }
+  });
+  
+  return basePrice + totalAdjustment;
+}
+
+/**
  * Build enhanced context for AI generation from wizard state
  * Includes additional data for non-HBU sections
  * 
- * FIXED: All data extraction now properly connected to actual wizard state structure
+ * SECOND AUDIT FIXES APPLIED:
+ * - #21: Adjusted prices calculated
+ * - #22: Sale dates added to land comps
+ * - #25-26: Currency and percentage formatting
+ * - #27: Full address extraction
+ * - #28: Site size in multiple units
+ * - #29: GBA priority over calculated size
+ * - #30: Building age calculated
+ * - #31: Condition normalized
+ * - #32: Price per SF calculated
+ * - #33-34: Scenario info and applicable approaches
+ * - #36: Comp counts provided
+ * - #38-40: Demographics, economics, risk data
+ * - #41: Validation added
+ * - #42: Standardized null handling
+ * - #43: Filter null elements
+ * - #44: Error handling added
+ * - #45: Selective context building (placeholder)
  */
-export function buildEnhancedContextForAI(state: WizardState): Record<string, any> {
-  const hbuContext = buildHBUContext(state);
-  const baseContext = formatContextForAPI(hbuContext);
-  
-  const { subjectData, swotAnalysis, salesComparisonData, landValuationData, 
-          incomeApproachData, marketAnalysis, reconciliationData, costApproachBuildingCostData,
-          activeScenarioId, analysisConclusions } = state;
-  
-  // Add extended site data
-  const extendedSiteData = {
-    ...baseContext.siteData,
-    waterSource: subjectData?.waterSource || '',
-    sewerType: subjectData?.sewerType || '',
-    electricProvider: subjectData?.electricProvider || '',
-    naturalGas: subjectData?.naturalGas || '',
-    telecom: subjectData?.telecom || '',
-    femaZone: subjectData?.femaZone || '',
-    easements: subjectData?.easements || '',
-    environmental: subjectData?.environmental || '',
-    approachType: subjectData?.approachType || '',
-    accessQuality: subjectData?.accessQuality || '',
-    visibility: subjectData?.visibility || '',
-    pavingType: subjectData?.pavingType || '',
-    fencingType: subjectData?.fencingType || '',
-  };
-  
-  // Add improvement details
-  const building = state.improvementsInventory?.parcels?.[0]?.buildings?.[0];
-  const extendedImprovementData = baseContext.improvementData ? {
-    ...baseContext.improvementData,
-    exteriorFeatures: building?.exteriorFeatures || {},
-    interiorFeatures: building?.areas?.[0]?.interiorFeatures || {},
-    mechanicalSystems: building?.mechanicalSystems || {},
-  } : null;
-  
-  // Add transaction history
-  const transactionData = {
-    lastSaleDate: subjectData?.lastSaleDate || '',
-    lastSalePrice: subjectData?.lastSalePrice || '',
-    transactionHistory: subjectData?.transactionHistory || '',
-    legalDescription: subjectData?.legalDescription || '',
-  };
-  
-  // FIX #1-2: SWOT data - handle both array and string formats
-  const swotData = swotAnalysis ? {
-    swotStrengths: Array.isArray(swotAnalysis.strengths) 
-      ? swotAnalysis.strengths 
-      : (swotAnalysis.strengths ? [swotAnalysis.strengths] : []),
-    swotWeaknesses: Array.isArray(swotAnalysis.weaknesses)
-      ? swotAnalysis.weaknesses
-      : (swotAnalysis.weaknesses ? [swotAnalysis.weaknesses] : []),
-    swotOpportunities: Array.isArray(swotAnalysis.opportunities)
-      ? swotAnalysis.opportunities
-      : (swotAnalysis.opportunities ? [swotAnalysis.opportunities] : []),
-    swotThreats: Array.isArray(swotAnalysis.threats)
-      ? swotAnalysis.threats
-      : (swotAnalysis.threats ? [swotAnalysis.threats] : []),
-  } : {};
-  
-  // FIX #3: Building permits - access from subjectData (not root of state)
-  const permitData = subjectData?.buildingPermits?.length ? {
-    buildingPermits: subjectData.buildingPermits.map(p => ({
-      permitNumber: p.permitNumber,
-      type: p.type,
-      description: p.description,
-      issueDate: p.issueDate,
-      status: p.status,
-    }))
-  } : {};
-  
-  // FIX #4: Traffic data - access from subjectData (not root of state)
-  const traffic = subjectData?.trafficData;
-  const trafficInfo = traffic?.aadt ? {
-    aadt: traffic.aadt,
-    roadClassification: traffic.roadClassification || '',
-  } : {};
-  
-  // FIX #5: Extract Sales Comparison comps
-  const salesComps = salesComparisonData?.properties
-    ?.filter(p => p.type === 'comp')
-    .map(p => ({
-      id: p.id,
-      address: p.address,
-      salePrice: p.salePrice || 0,
-      saleDate: p.saleDate || '',
-    })) || [];
-  
-  // FIX #6: Extract Land Valuation comps
-  const landComps = landValuationData?.landComps?.map(c => ({
-    id: c.id,
-    address: c.address,
-    salePrice: c.salePrice,
-    acreage: c.acreage,
-    pricePerAcre: c.pricePerAcre,
-    adjustedPricePerAcre: c.adjustedPricePerAcre,
-  })) || [];
-  
-  // FIX #7-8: Extract Income Approach data (NOI, rent comps, expense comps)
-  const incomeData: Record<string, any> = {};
-  if (incomeApproachData) {
-    // Extract NOI if available (from valuationData)
-    if ((incomeApproachData as any).valuationData?.noi !== undefined) {
-      incomeData.noi = (incomeApproachData as any).valuationData.noi;
+export function buildEnhancedContextForAI(
+  state: WizardState,
+  sectionContext?: string
+): Record<string, any> {
+  // FIX #44: Add try-catch error handling
+  try {
+    // FIX #41: Validate critical data exists
+    if (!state.subjectData) {
+      console.warn('AI Context: No subject data available');
+      return {
+        error: 'insufficient_data',
+        message: 'Subject property data required for AI generation',
+        dataQuality: 'insufficient',
+      };
     }
-    // Extract rent comparables if available
-    if ((incomeApproachData as any).rentComparables && Array.isArray((incomeApproachData as any).rentComparables)) {
-      incomeData.rentComps = (incomeApproachData as any).rentComparables;
-      incomeData.rentCompNotes = (incomeApproachData as any).rentCompNotes || '';
+
+    const hbuContext = buildHBUContext(state);
+    const baseContext = formatContextForAPI(hbuContext);
+    
+    const { subjectData, swotAnalysis, salesComparisonData, landValuationData, 
+            incomeApproachData, marketAnalysis, reconciliationData, costApproachBuildingCostData,
+            activeScenarioId, analysisConclusions, scenarios, demographicsData, 
+            economicIndicators, riskRating } = state;
+    
+    // FIX #27: Extract full address
+    const fullAddress = [
+      subjectData.address?.street,
+      subjectData.address?.city,
+      subjectData.address?.state,
+      subjectData.address?.zip
+    ].filter(Boolean).join(', ');
+    
+    // FIX #28: Site size in multiple units
+    const siteAcres = subjectData.siteAreaUnit === 'acres' 
+      ? parseFloat(subjectData.siteArea || '0') 
+      : parseFloat(subjectData.siteArea || '0') / 43560;
+    const siteSqFt = subjectData.siteAreaUnit === 'square feet' 
+      ? parseFloat(subjectData.siteArea || '0')
+      : parseFloat(subjectData.siteArea || '0') * 43560;
+    
+    // FIX #29: Use GBA if available, else calculate
+    const building = state.improvementsInventory?.parcels?.[0]?.buildings?.[0];
+    const buildingSizeNum = building?.gba || 
+      building?.areas?.reduce((sum, area) => sum + (area.squareFootage || 0), 0) || 
+      0;
+    
+    // FIX #30: Calculate building age
+    const currentYear = new Date().getFullYear();
+    const yearBuilt = building?.yearBuilt || null;
+    const buildingAge = yearBuilt ? currentYear - yearBuilt : null;
+    
+    // FIX #31: Normalize condition (keep original, add normalized)
+    const conditionRaw = building?.condition || null;
+    const conditionNormalized = conditionRaw ? 
+      conditionRaw.toLowerCase().replace(/[^a-z]/g, '') : null;
+    
+    // Add extended site data
+    const extendedSiteData = {
+      ...baseContext.siteData,
+      fullAddress, // FIX #27
+      siteAcres: siteAcres > 0 ? siteAcres.toFixed(2) : null, // FIX #28
+      siteSqFt: siteSqFt > 0 ? Math.round(siteSqFt) : null, // FIX #28
+      waterSource: subjectData.waterSource || null, // FIX #42: null not ''
+      sewerType: subjectData.sewerType || null,
+      electricProvider: subjectData.electricProvider || null,
+      naturalGas: subjectData.naturalGas || null,
+      telecom: subjectData.telecom || null,
+      femaZone: subjectData.femaZone || null,
+      easements: subjectData.easements || null,
+      environmental: subjectData.environmental || 'No environmental issues observed', // FIX #37
+      approachType: subjectData.approachType || null,
+      accessQuality: subjectData.accessQuality || null,
+      visibility: subjectData.visibility || null,
+      pavingType: subjectData.pavingType || null,
+      fencingType: subjectData.fencingType || null,
+    };
+    
+    // Add improvement details
+    const extendedImprovementData = baseContext.improvementData ? {
+      ...baseContext.improvementData,
+      buildingSize: buildingSizeNum > 0 ? buildingSizeNum.toString() : null, // FIX #29
+      buildingAge, // FIX #30
+      condition: conditionRaw, // Original
+      conditionNormalized, // FIX #31
+      exteriorFeatures: building?.exteriorFeatures || {},
+      interiorFeatures: building?.areas?.[0]?.interiorFeatures || {},
+      mechanicalSystems: building?.mechanicalSystems || {},
+    } : null;
+    
+    // Add transaction history
+    const transactionData = {
+      lastSaleDate: subjectData.lastSaleDate || null, // FIX #42
+      lastSalePrice: subjectData.lastSalePrice || null,
+      transactionHistory: subjectData.transactionHistory || null,
+      legalDescription: subjectData.legalDescription || null,
+    };
+    
+    // SWOT data - handle both array and string formats
+    const swotData = swotAnalysis ? {
+      swotStrengths: Array.isArray(swotAnalysis.strengths) 
+        ? swotAnalysis.strengths 
+        : (swotAnalysis.strengths ? [swotAnalysis.strengths] : []),
+      swotWeaknesses: Array.isArray(swotAnalysis.weaknesses)
+        ? swotAnalysis.weaknesses
+        : (swotAnalysis.weaknesses ? [swotAnalysis.weaknesses] : []),
+      swotOpportunities: Array.isArray(swotAnalysis.opportunities)
+        ? swotAnalysis.opportunities
+        : (swotAnalysis.opportunities ? [swotAnalysis.opportunities] : []),
+      swotThreats: Array.isArray(swotAnalysis.threats)
+        ? swotAnalysis.threats
+        : (swotAnalysis.threats ? [swotAnalysis.threats] : []),
+    } : {};
+    
+    // Building permits - access from subjectData
+    const permitData = subjectData.buildingPermits?.length ? {
+      buildingPermits: subjectData.buildingPermits
+        .filter(p => p && p.type) // FIX #43: Filter nulls
+        .map(p => ({
+          permitNumber: p.permitNumber,
+          type: p.type,
+          description: p.description,
+          issueDate: p.issueDate,
+          status: p.status,
+        }))
+    } : {};
+    
+    // Traffic data - access from subjectData
+    const traffic = subjectData.trafficData;
+    const trafficInfo = traffic?.aadt ? {
+      aadt: traffic.aadt,
+      roadClassification: traffic.roadClassification || null,
+    } : {};
+    
+    // FIX #21: Extract Sales Comparison comps with adjusted prices
+    const salesComps = salesComparisonData?.properties
+      ?.filter(p => p && p.type === 'comp' && p.address) // FIX #43: Filter nulls/incomplete
+      .map(p => ({
+        id: p.id,
+        address: p.address,
+        salePrice: p.salePrice || 0,
+        saleDate: p.saleDate || null,
+        adjustedPrice: calculateAdjustedPrice(p.id, salesComparisonData.values), // FIX #21
+      })) || [];
+    
+    // FIX #22: Extract Land Valuation comps with sale dates
+    const landComps = landValuationData?.landComps
+      ?.filter(c => c && c.address) // FIX #43: Filter nulls
+      ?.map(c => ({
+        id: c.id,
+        address: c.address,
+        salePrice: c.salePrice,
+        saleDate: c.saleDate || null, // FIX #22
+        acreage: c.acreage,
+        pricePerAcre: c.pricePerAcre,
+        adjustedPricePerAcre: c.adjustedPricePerAcre,
+      })) || [];
+    
+    // Extract Income Approach data (NOI, rent comps, expense comps)
+    const incomeData: Record<string, any> = {};
+    if (incomeApproachData) {
+      // Extract NOI with formatting - FIX #25
+      const noi = (incomeApproachData as any).valuationData?.noi;
+      if (noi !== undefined && noi !== null) {
+        incomeData.noi = noi;
+        incomeData.noiFormatted = `$${noi.toLocaleString()}`; // FIX #25
+      }
+      
+      // Extract rent comparables
+      const rentComparables = (incomeApproachData as any).rentComparables;
+      if (rentComparables && Array.isArray(rentComparables)) {
+        incomeData.rentComps = rentComparables.filter(c => c && c.address); // FIX #43
+        incomeData.rentCompNotes = (incomeApproachData as any).rentCompNotes || null;
+      }
+      
+      // Extract expense comparables
+      const expenseComparables = (incomeApproachData as any).expenseComparables;
+      if (expenseComparables && Array.isArray(expenseComparables)) {
+        incomeData.expenseComps = expenseComparables.filter(c => c && c.address); // FIX #43
+        incomeData.expenseCompNotes = (incomeApproachData as any).expenseCompNotes || null;
+      }
     }
-    // Extract expense comparables if available
-    if ((incomeApproachData as any).expenseComparables && Array.isArray((incomeApproachData as any).expenseComparables)) {
-      incomeData.expenseComps = (incomeApproachData as any).expenseComparables;
-      incomeData.expenseCompNotes = (incomeApproachData as any).expenseCompNotes || '';
+    
+    // FIX #26: Extract Market Analysis data with proper formatting
+    const marketData = marketAnalysis ? {
+      vacancyRate: marketAnalysis.supplyMetrics?.vacancyRate 
+        ? `${marketAnalysis.supplyMetrics.vacancyRate}%` // FIX #26: Add %
+        : null,
+      marketTrend: marketAnalysis.marketTrends?.overallTrend || null,
+      averageRent: marketAnalysis.demandMetrics?.averageRent 
+        ? `$${marketAnalysis.demandMetrics.averageRent.toLocaleString()}` // Format as currency
+        : null,
+      rentGrowth: marketAnalysis.demandMetrics?.rentGrowth
+        ? `${marketAnalysis.demandMetrics.rentGrowth}%` // FIX #26: Add %
+        : null,
+      daysOnMarket: marketAnalysis.demandMetrics?.averageDaysOnMarket?.toString() || null,
+      narrative: marketAnalysis.narrative || null,
+    } : {
+      vacancyRate: null,
+      marketTrend: null,
+      averageRent: null,
+      rentGrowth: null,
+      daysOnMarket: null,
+      narrative: null,
+    };
+    
+    // Extract Cost Approach data (RCN, contractor costs)
+    const costData: Record<string, any> = {};
+    if (costApproachBuildingCostData?.[activeScenarioId]) {
+      const buildingCosts = Object.values(costApproachBuildingCostData[activeScenarioId])[0];
+      if (buildingCosts) {
+        costData.contractorCost = buildingCosts.contractorCost || null;
+        costData.contractorCostFormatted = buildingCosts.contractorCost 
+          ? `$${buildingCosts.contractorCost.toLocaleString()}`
+          : null;
+        costData.contractorSource = buildingCosts.contractorSource || null;
+        costData.contractorDate = buildingCosts.contractorDate || null;
+        costData.contractorNotes = buildingCosts.contractorNotes || null;
+      }
     }
+    
+    // Calculate value ranges from approach conclusions
+    const conclusions = analysisConclusions?.conclusions || [];
+    const scenarioConclusions = conclusions.filter(c => c.scenarioId === activeScenarioId);
+    const values = scenarioConclusions
+      .map(c => c.valueConclusion)
+      .filter((v): v is number => v !== null && v !== undefined);
+    
+    const valuationData = {
+      salesValue: conclusions.find(c => c.approach === 'Sales Comparison' && c.scenarioId === activeScenarioId)?.valueConclusion || null,
+      incomeValue: conclusions.find(c => c.approach === 'Income Approach' && c.scenarioId === activeScenarioId)?.valueConclusion || null,
+      costValue: conclusions.find(c => c.approach === 'Cost Approach' && c.scenarioId === activeScenarioId)?.valueConclusion || null,
+      landValue: conclusions.find(c => c.approach === 'Land Valuation' && c.scenarioId === activeScenarioId)?.valueConclusion || null,
+      minValue: values.length > 0 ? Math.min(...values) : null,
+      maxValue: values.length > 0 ? Math.max(...values) : null,
+    };
+    
+    // FIX #32: Calculate price per SF if valuation exists
+    if (valuationData.salesValue && buildingSizeNum > 0) {
+      valuationData.valuePsf = valuationData.salesValue / buildingSizeNum;
+    } else if (valuationData.incomeValue && buildingSizeNum > 0) {
+      valuationData.valuePsf = valuationData.incomeValue / buildingSizeNum;
+    } else if (valuationData.costValue && buildingSizeNum > 0) {
+      valuationData.valuePsf = valuationData.costValue / buildingSizeNum;
+    }
+    
+    // Extract Reconciliation data (weights, exposure times)
+    const reconciliationContext = reconciliationData?.scenarioReconciliations?.find(
+      r => r.scenarioId === activeScenarioId
+    );
+    
+    const reconciliationInfo = reconciliationContext ? {
+      approachWeights: reconciliationContext.weights || {},
+      exposurePeriodMin: reconciliationData?.exposurePeriod || null,
+      marketingTime: reconciliationData?.marketingTime || null,
+      exposureRationale: reconciliationData?.exposureRationale || null,
+    } : {};
+    
+    // FIX #33-34: Extract scenario information and applicable approaches
+    const activeScenario = scenarios?.find(s => s.id === activeScenarioId);
+    const applicableApproaches = activeScenario?.approaches || [];
+    
+    const scenarioInfo = {
+      scenarioName: activeScenario?.name || 'Market Value',
+      scenarioType: activeScenario?.type || 'as-is',
+      applicableApproaches, // FIX #34
+      isSalesApplicable: applicableApproaches.includes('sales-comparison'),
+      isIncomeApplicable: applicableApproaches.includes('income-approach'),
+      isCostApplicable: applicableApproaches.includes('cost-approach'),
+      isLandValApplicable: applicableApproaches.includes('land-valuation'),
+    };
+    
+    // FIX #36: Add comp counts
+    const compCounts = {
+      salesCompsCount: salesComps.length,
+      landCompsCount: landComps.length,
+      rentCompsCount: incomeData.rentComps?.length || 0,
+      expenseCompsCount: incomeData.expenseComps?.length || 0,
+    };
+    
+    // FIX #38: Extract demographics data
+    const demographics = demographicsData ? {
+      population: demographicsData.radiusAnalysis?.[0]?.population || null,
+      medianIncome: demographicsData.radiusAnalysis?.[0]?.medianIncome || null,
+      employmentRate: demographicsData.radiusAnalysis?.[0]?.employmentRate || null,
+      dataSource: demographicsData.dataSource || null,
+    } : {};
+    
+    // FIX #39: Extract economic indicators
+    const economics = economicIndicators ? {
+      gdpGrowth: economicIndicators.gdpGrowth || null,
+      unemployment: economicIndicators.unemployment || null,
+      inflation: economicIndicators.inflation || null,
+      interestRates: economicIndicators.interestRates || null,
+    } : {};
+    
+    // FIX #40: Extract risk rating
+    const riskInfo = riskRating ? {
+      overallGrade: riskRating.overallGrade || null,
+      overallScore: riskRating.overallScore || null,
+    } : {};
+    
+    // FIX #41: Validate section has minimum data for quality check
+    let dataQuality: 'complete' | 'partial' | 'insufficient' = 'complete';
+    if (sectionContext === 'sales_comparison' && salesComps.length === 0) {
+      dataQuality = 'insufficient';
+    } else if (sectionContext === 'land_valuation' && landComps.length === 0) {
+      dataQuality = 'insufficient';
+    } else if (sectionContext?.includes('income') && !incomeData.noi && (!incomeData.rentComps || incomeData.rentComps.length === 0)) {
+      dataQuality = 'partial';
+    }
+    
+    return {
+      ...baseContext,
+      siteData: extendedSiteData,
+      improvementData: extendedImprovementData,
+      marketData,
+      valuationData,
+      ...transactionData,
+      ...swotData,
+      ...permitData,
+      ...trafficInfo,
+      salesComps,
+      landComps,
+      ...incomeData,
+      ...costData,
+      ...reconciliationInfo,
+      ...scenarioInfo, // FIX #33-34
+      ...compCounts, // FIX #36
+      ...demographics, // FIX #38
+      ...economics, // FIX #39
+      ...riskInfo, // FIX #40
+      dataQuality, // FIX #41
+    };
+    
+  } catch (error) {
+    // FIX #44: Catch any errors including circular references
+    console.error('AI Context Builder Error:', error);
+    return {
+      error: 'context_build_failed',
+      message: 'Failed to build context for AI generation',
+      details: error instanceof Error ? error.message : 'Unknown error',
+      dataQuality: 'insufficient',
+    };
   }
-  
-  // FIX #9: Extract Market Analysis data
-  const marketData = marketAnalysis ? {
-    vacancyRate: marketAnalysis.supplyMetrics?.vacancyRate?.toString() || null,
-    marketTrend: marketAnalysis.marketTrends?.overallTrend || null,
-    averageRent: marketAnalysis.demandMetrics?.averageRent?.toString() || null,
-    rentGrowth: marketAnalysis.demandMetrics?.rentGrowth?.toString() || null,
-    daysOnMarket: marketAnalysis.demandMetrics?.averageDaysOnMarket?.toString() || null,
-    narrative: marketAnalysis.narrative || '',
-  } : {
-    vacancyRate: null,
-    marketTrend: null,
-    averageRent: null,
-    rentGrowth: null,
-    daysOnMarket: null,
-    narrative: '',
-  };
-  
-  // FIX #10: Extract Cost Approach data (RCN, contractor costs)
-  const costData: Record<string, any> = {};
-  if (costApproachBuildingCostData?.[activeScenarioId]) {
-    const buildingCosts = Object.values(costApproachBuildingCostData[activeScenarioId])[0];
-    if (buildingCosts) {
-      costData.contractorCost = buildingCosts.contractorCost || null;
-      costData.contractorSource = buildingCosts.contractorSource || null;
-      costData.contractorDate = buildingCosts.contractorDate || null;
-      costData.contractorNotes = buildingCosts.contractorNotes || '';
-    }
-  }
-  
-  // FIX #11: Calculate value ranges from approach conclusions
-  const conclusions = analysisConclusions?.conclusions || [];
-  const scenarioConclusions = conclusions.filter(c => c.scenarioId === activeScenarioId);
-  const values = scenarioConclusions
-    .map(c => c.valueConclusion)
-    .filter((v): v is number => v !== null && v !== undefined);
-  
-  const valuationData = {
-    salesValue: conclusions.find(c => c.approach === 'Sales Comparison' && c.scenarioId === activeScenarioId)?.valueConclusion || null,
-    incomeValue: conclusions.find(c => c.approach === 'Income Approach' && c.scenarioId === activeScenarioId)?.valueConclusion || null,
-    costValue: conclusions.find(c => c.approach === 'Cost Approach' && c.scenarioId === activeScenarioId)?.valueConclusion || null,
-    landValue: conclusions.find(c => c.approach === 'Land Valuation' && c.scenarioId === activeScenarioId)?.valueConclusion || null,
-    minValue: values.length > 0 ? Math.min(...values) : null,
-    maxValue: values.length > 0 ? Math.max(...values) : null,
-  };
-  
-  // FIX #12: Extract Reconciliation data (weights, exposure times)
-  const reconciliationContext = reconciliationData?.scenarioReconciliations?.find(
-    r => r.scenarioId === activeScenarioId
-  );
-  
-  const reconciliationInfo = reconciliationContext ? {
-    approachWeights: reconciliationContext.weights || {},
-    exposurePeriodMin: reconciliationData?.exposurePeriod || null,
-    marketingTime: reconciliationData?.marketingTime || null,
-    exposureRationale: reconciliationData?.exposureRationale || '',
-  } : {};
-  
-  return {
-    ...baseContext,
-    siteData: extendedSiteData,
-    improvementData: extendedImprovementData,
-    marketData, // FIX #9: Now populated from actual market analysis
-    valuationData, // FIX #11: Now includes min/max ranges
-    ...transactionData,
-    ...swotData,
-    ...permitData,
-    ...trafficInfo,
-    // FIX #5-12: All new data extractions
-    salesComps,
-    landComps,
-    ...incomeData,
-    ...costData,
-    ...reconciliationInfo,
-  };
 }
 
 /**
