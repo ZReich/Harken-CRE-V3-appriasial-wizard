@@ -900,8 +900,53 @@ export default function SetupPage() {
               <FieldSuggestion
                 fieldPath="subjectData.address.street"
                 onAccept={(value) => {
-                  setAddress({ ...address, street: value });
-                  acceptFieldSuggestion('subjectData.address.street', value);
+                  // Parse full address string like "159 Edgewater Drive, Libby, Montana 59923"
+                  // into separate components (street, city, state, zip)
+                  const parseFullAddress = (fullAddress: string) => {
+                    // Common patterns: "Street, City, State ZIP" or "Street, City, ST ZIP"
+                    const parts = fullAddress.split(',').map(p => p.trim());
+                    
+                    if (parts.length >= 3) {
+                      // Format: "Street, City, State ZIP"
+                      const street = parts[0];
+                      const city = parts[1];
+                      const stateZip = parts[2];
+                      
+                      // Parse "Montana 59923" or "MT 59923"
+                      const stateZipMatch = stateZip.match(/^([A-Za-z]+)\s*(\d{5}(?:-\d{4})?)?$/);
+                      if (stateZipMatch) {
+                        const stateName = stateZipMatch[1];
+                        const zip = stateZipMatch[2] || '';
+                        // Convert state name to abbreviation if needed
+                        const stateAbbrev = stateName.length > 2 
+                          ? (stateName.toUpperCase() === 'MONTANA' ? 'MT' : stateName.substring(0, 2).toUpperCase())
+                          : stateName.toUpperCase();
+                        return { street, city, state: stateAbbrev, zip };
+                      }
+                      return { street, city, state: stateZip, zip: '' };
+                    } else if (parts.length === 2) {
+                      // Format: "Street, City State ZIP"
+                      const street = parts[0];
+                      const rest = parts[1];
+                      const cityStateZip = rest.match(/^(.+?)\s+([A-Z]{2})\s*(\d{5}(?:-\d{4})?)?$/i);
+                      if (cityStateZip) {
+                        return { street, city: cityStateZip[1], state: cityStateZip[2].toUpperCase(), zip: cityStateZip[3] || '' };
+                      }
+                      return { street, city: rest, state: '', zip: '' };
+                    }
+                    // Fallback: just put everything in street
+                    return { street: fullAddress, city: '', state: '', zip: '' };
+                  };
+
+                  const parsed = parseFullAddress(value);
+                  setAddress(prev => ({ 
+                    ...prev, 
+                    street: parsed.street,
+                    city: parsed.city || prev.city,
+                    state: parsed.state || prev.state,
+                    zip: parsed.zip || prev.zip,
+                  }));
+                  acceptFieldSuggestion('subjectData.address.street', parsed.street);
                 }}
                 onReject={() => rejectFieldSuggestion('subjectData.address.street')}
               />
