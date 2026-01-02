@@ -734,3 +734,263 @@ export function validateImageFile(file: File): { valid: boolean; error?: string 
   
   return { valid: true };
 }
+
+// ==========================================
+// COST SEGREGATION HELPERS
+// ==========================================
+
+/**
+ * Analyze photo for cost segregation components.
+ * This would typically call the backend AI service, but here we provide
+ * a client-side helper for pattern matching based on photo classification results.
+ */
+export function analyzeCostSegComponents(
+  classification: PhotoClassificationResult
+): CostSegPhotoSuggestion | undefined {
+  if (!classification.success || classification.suggestions.length === 0) {
+    return undefined;
+  }
+
+  const detectedComponents: DetectedCostSegComponent[] = [];
+  const topSlot = classification.suggestions[0].slotId;
+  const topCategory = classification.suggestions[0].category;
+  
+  // Electrical system components
+  if (topSlot.includes('electrical') || topSlot.includes('int_mechanical')) {
+    detectedComponents.push({
+      componentId: 'electrical-dedicated-circuits',
+      componentLabel: 'Dedicated Equipment Circuits',
+      category: 'electrical-refinement',
+      suggestedDepreciationClass: '5-year',
+      confidence: 75,
+      reasoning: 'Photo shows electrical panels or equipment-specific wiring',
+      keywords: ['electrical', 'panel', 'circuit', 'conduit', 'wiring'],
+      measurementHints: 'Count visible conduit runs, measure linear feet if possible',
+    });
+  }
+  
+  // HVAC components
+  if (topSlot.includes('hvac') || topSlot.includes('mechanical') || topSlot === 'ext_roof') {
+    detectedComponents.push({
+      componentId: 'hvac-rooftop-units',
+      componentLabel: 'Rooftop HVAC Units',
+      category: 'hvac-refinement',
+      suggestedDepreciationClass: '39-year',
+      confidence: 80,
+      reasoning: 'Photo shows HVAC equipment on roof or mechanical room',
+      keywords: ['hvac', 'rooftop', 'air handler', 'cooling', 'ductwork'],
+      measurementHints: 'Note tonnage capacity if visible on equipment labels',
+    });
+  }
+  
+  // Plumbing components
+  if (topSlot.includes('plumbing') || topSlot.includes('bathroom') || topSlot.includes('kitchen')) {
+    detectedComponents.push({
+      componentId: 'plumbing-fixtures',
+      componentLabel: 'Plumbing Fixtures',
+      category: 'plumbing-refinement',
+      suggestedDepreciationClass: '39-year',
+      confidence: 70,
+      reasoning: 'Photo shows plumbing fixtures or piping',
+      keywords: ['plumbing', 'fixtures', 'sink', 'toilet', 'pipes'],
+    });
+  }
+  
+  // Personal property (movable items)
+  if (topSlot.includes('office') || topSlot.includes('conference') || topSlot.includes('lobby')) {
+    const personalPropertyItems: DetectedCostSegComponent[] = [];
+    
+    // Check for movable partitions
+    if (classification.suggestions.some(s => s.reasoning?.toLowerCase().includes('partition') || s.reasoning?.toLowerCase().includes('wall'))) {
+      personalPropertyItems.push({
+        componentId: 'movable-partitions',
+        componentLabel: 'Movable Partitions',
+        category: 'personal-property',
+        suggestedDepreciationClass: '7-year',
+        confidence: 65,
+        reasoning: 'Photo may show demountable partitions or non-structural walls',
+        keywords: ['partition', 'demountable', 'movable wall'],
+      });
+    }
+    
+    // Check for window treatments
+    if (classification.suggestions.some(s => s.reasoning?.toLowerCase().includes('window') || s.reasoning?.toLowerCase().includes('blind'))) {
+      personalPropertyItems.push({
+        componentId: 'window-treatments',
+        componentLabel: 'Window Treatments',
+        category: 'personal-property',
+        suggestedDepreciationClass: '5-year',
+        confidence: 70,
+        reasoning: 'Photo shows window blinds, shades, or treatments',
+        keywords: ['blinds', 'shades', 'curtains', 'window treatment'],
+      });
+    }
+    
+    // Check for specialty lighting
+    if (classification.suggestions.some(s => s.reasoning?.toLowerCase().includes('lighting') || s.reasoning?.toLowerCase().includes('fixture'))) {
+      personalPropertyItems.push({
+        componentId: 'decorative-fixtures',
+        componentLabel: 'Decorative Light Fixtures',
+        category: 'personal-property',
+        suggestedDepreciationClass: '7-year',
+        confidence: 60,
+        reasoning: 'Photo shows decorative or specialty lighting fixtures',
+        keywords: ['lighting', 'fixture', 'decorative', 'chandelier'],
+      });
+    }
+    
+    detectedComponents.push(...personalPropertyItems);
+  }
+  
+  // Land improvements (15-year)
+  if (topSlot.includes('site_') || topSlot.includes('parking')) {
+    const landImprovements: DetectedCostSegComponent[] = [];
+    
+    if (topSlot.includes('parking')) {
+      landImprovements.push({
+        componentId: 'parking-striping',
+        componentLabel: 'Parking Lot Striping',
+        category: 'land-improvements',
+        suggestedDepreciationClass: '15-year',
+        confidence: 85,
+        reasoning: 'Photo shows parking lot with striping',
+        keywords: ['parking', 'striping', 'pavement', 'asphalt'],
+        measurementHints: 'Count parking spaces, measure lot area if possible',
+      });
+      
+      landImprovements.push({
+        componentId: 'parking-lighting',
+        componentLabel: 'Parking Lot Lighting',
+        category: 'land-improvements',
+        suggestedDepreciationClass: '15-year',
+        confidence: 75,
+        reasoning: 'Photo may show parking lot light poles',
+        keywords: ['parking', 'lighting', 'light pole', 'exterior lighting'],
+        measurementHints: 'Count visible light poles',
+      });
+    }
+    
+    if (topSlot.includes('landscape') || topSlot.includes('yard')) {
+      landImprovements.push({
+        componentId: 'landscaping',
+        componentLabel: 'Landscaping',
+        category: 'land-improvements',
+        suggestedDepreciationClass: '15-year',
+        confidence: 80,
+        reasoning: 'Photo shows landscaping elements',
+        keywords: ['landscaping', 'plants', 'trees', 'irrigation'],
+      });
+    }
+    
+    detectedComponents.push(...landImprovements);
+  }
+  
+  if (detectedComponents.length === 0) {
+    return undefined;
+  }
+  
+  // Determine photo category
+  let photoCategory = 'costseg_measurements';
+  let suggestedFor: 'system-refinement' | 'supplemental-item' = 'supplemental-item';
+  let systemType: 'electrical' | 'plumbing' | 'hvac' | 'fire-protection' | undefined;
+  
+  if (detectedComponents.some(c => c.category === 'electrical-refinement')) {
+    photoCategory = 'costseg_electrical';
+    suggestedFor = 'system-refinement';
+    systemType = 'electrical';
+  } else if (detectedComponents.some(c => c.category === 'hvac-refinement')) {
+    photoCategory = 'costseg_hvac';
+    suggestedFor = 'system-refinement';
+    systemType = 'hvac';
+  } else if (detectedComponents.some(c => c.category === 'plumbing-refinement')) {
+    photoCategory = 'costseg_plumbing';
+    suggestedFor = 'system-refinement';
+    systemType = 'plumbing';
+  } else if (detectedComponents.some(c => c.category === 'personal-property')) {
+    photoCategory = 'costseg_personal_property';
+    suggestedFor = 'supplemental-item';
+  } else if (detectedComponents.some(c => c.category === 'land-improvements')) {
+    photoCategory = 'costseg_land_improvements';
+    suggestedFor = 'supplemental-item';
+  }
+  
+  return {
+    photoCategory,
+    detectedComponents,
+    suggestedFor,
+    systemType,
+  };
+}
+
+/**
+ * Match a photo to existing cost seg refinement or supplemental item.
+ * Returns a list of matching items with confidence scores.
+ */
+export interface CostSegItemMatch {
+  itemId: string;
+  itemDescription: string;
+  matchScore: number; // 0-100
+  reason: string;
+}
+
+export function matchPhotoToCostSegItems(
+  classification: PhotoClassificationResult,
+  existingItems: { id: string; description: string; keywords?: string[] }[]
+): CostSegItemMatch[] {
+  const costSegSuggestions = analyzeCostSegComponents(classification);
+  if (!costSegSuggestions) {
+    return [];
+  }
+  
+  const matches: CostSegItemMatch[] = [];
+  
+  for (const item of existingItems) {
+    let matchScore = 0;
+    let matchReasons: string[] = [];
+    
+    // Check if any detected component keywords match item description
+    for (const component of costSegSuggestions.detectedComponents) {
+      const itemDescLower = item.description.toLowerCase();
+      const keywordMatches = component.keywords.filter(kw => 
+        itemDescLower.includes(kw.toLowerCase())
+      );
+      
+      if (keywordMatches.length > 0) {
+        matchScore += 30 * (keywordMatches.length / component.keywords.length);
+        matchReasons.push(`Keywords match: ${keywordMatches.join(', ')}`);
+      }
+      
+      // Check for exact component label match
+      if (itemDescLower.includes(component.componentLabel.toLowerCase())) {
+        matchScore += 40;
+        matchReasons.push(`Direct match to "${component.componentLabel}"`);
+      }
+    }
+    
+    // Check user-provided keywords if available
+    if (item.keywords) {
+      const userKeywordMatches = item.keywords.filter(kw =>
+        costSegSuggestions.detectedComponents.some(c =>
+          c.keywords.some(ck => ck.toLowerCase() === kw.toLowerCase())
+        )
+      );
+      
+      if (userKeywordMatches.length > 0) {
+        matchScore += 20 * (userKeywordMatches.length / item.keywords.length);
+        matchReasons.push(`User keywords match: ${userKeywordMatches.join(', ')}`);
+      }
+    }
+    
+    if (matchScore > 20) { // Only include matches above threshold
+      matches.push({
+        itemId: item.id,
+        itemDescription: item.description,
+        matchScore: Math.min(matchScore, 100),
+        reason: matchReasons.join('; '),
+      });
+    }
+  }
+  
+  // Sort by match score descending
+  return matches.sort((a, b) => b.matchScore - a.matchScore);
+}

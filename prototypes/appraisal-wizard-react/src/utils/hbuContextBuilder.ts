@@ -274,15 +274,13 @@ export function buildEnhancedContextForAI(
     const siteAcres = subjectData.siteAreaUnit === 'acres' 
       ? parseFloat(subjectData.siteArea || '0') 
       : parseFloat(subjectData.siteArea || '0') / 43560;
-    const siteSqFt = subjectData.siteAreaUnit === 'square feet' 
+    const siteSqFt = subjectData.siteAreaUnit === 'sqft' 
       ? parseFloat(subjectData.siteArea || '0')
       : parseFloat(subjectData.siteArea || '0') * 43560;
     
-    // FIX #29: Use GBA if available, else calculate
+    // FIX #29: Use total SF from areas array (ImprovementBuilding doesn't have gba)
     const building = state.improvementsInventory?.parcels?.[0]?.buildings?.[0];
-    const buildingSizeNum = building?.gba || 
-      building?.areas?.reduce((sum, area) => sum + (area.squareFootage || 0), 0) || 
-      0;
+    const buildingSizeNum = building?.areas?.reduce((sum, area) => sum + (area.squareFootage || 0), 0) || 0;
     
     // FIX #30: Calculate building age
     const currentYear = new Date().getFullYear();
@@ -474,13 +472,14 @@ export function buildEnhancedContextForAI(
       maxValue: values.length > 0 ? Math.max(...values) : null,
     };
     
-    // FIX #32: Calculate price per SF if valuation exists
+    // FIX #32: Calculate price per SF separately (don't modify typed valuationData)
+    let valuePsf: number | null = null;
     if (valuationData.salesValue && buildingSizeNum > 0) {
-      valuationData.valuePsf = valuationData.salesValue / buildingSizeNum;
+      valuePsf = valuationData.salesValue / buildingSizeNum;
     } else if (valuationData.incomeValue && buildingSizeNum > 0) {
-      valuationData.valuePsf = valuationData.incomeValue / buildingSizeNum;
+      valuePsf = valuationData.incomeValue / buildingSizeNum;
     } else if (valuationData.costValue && buildingSizeNum > 0) {
-      valuationData.valuePsf = valuationData.costValue / buildingSizeNum;
+      valuePsf = valuationData.costValue / buildingSizeNum;
     }
     
     // Extract Reconciliation data (weights, exposure times)
@@ -501,7 +500,7 @@ export function buildEnhancedContextForAI(
     
     const scenarioInfo = {
       scenarioName: activeScenario?.name || 'Market Value',
-      scenarioType: activeScenario?.type || 'as-is',
+      // scenarioType removed - AppraisalScenario doesn't have a 'type' property
       applicableApproaches, // FIX #34
       isSalesApplicable: applicableApproaches.includes('sales-comparison'),
       isIncomeApplicable: applicableApproaches.includes('income-approach'),
@@ -517,20 +516,21 @@ export function buildEnhancedContextForAI(
       expenseCompsCount: incomeData.expenseComps?.length || 0,
     };
     
-    // FIX #38: Extract demographics data
+    // FIX #38: Extract demographics data (correct property paths)
     const demographics = demographicsData ? {
-      population: demographicsData.radiusAnalysis?.[0]?.population || null,
-      medianIncome: demographicsData.radiusAnalysis?.[0]?.medianIncome || null,
-      employmentRate: demographicsData.radiusAnalysis?.[0]?.employmentRate || null,
+      population: demographicsData.radiusAnalysis?.[0]?.population?.current || null,
+      medianIncome: demographicsData.radiusAnalysis?.[0]?.income?.medianHousehold || null,
+      employmentRate: demographicsData.radiusAnalysis?.[0]?.employment ? 
+        (100 - (demographicsData.radiusAnalysis[0].employment.unemploymentRate || 0)) : null,
       dataSource: demographicsData.dataSource || null,
     } : {};
     
-    // FIX #39: Extract economic indicators
+    // FIX #39: Extract economic indicators (correct property paths)
     const economics = economicIndicators ? {
-      gdpGrowth: economicIndicators.gdpGrowth || null,
-      unemployment: economicIndicators.unemployment || null,
-      inflation: economicIndicators.inflation || null,
-      interestRates: economicIndicators.interestRates || null,
+      gdpGrowth: economicIndicators.gdpGrowth?.current || null,
+      unemployment: null, // Not a direct property - would need to calculate from employment data
+      inflation: economicIndicators.inflation?.current || null,
+      interestRates: economicIndicators.federalFundsRate?.current || economicIndicators.treasury10Y?.current || null,
     } : {};
     
     // FIX #40: Extract risk rating

@@ -21,6 +21,8 @@ import type {
   CostSegSupplementalItem,
   ImprovementBuilding,
 } from '../types';
+import { MS_COST_SEG_ALLOCATIONS } from '../constants/costSegCSSI';
+import { useWizard } from '../context/WizardContext';
 import CostSegSystemRefinement from './CostSegSystemRefinement';
 import CostSegSupplementalItems from './CostSegSupplementalItems';
 import CostSegAuditRisk from './CostSegAuditRisk';
@@ -91,26 +93,45 @@ export default function CostSegDetailsSection({
 }: CostSegDetailsSectionProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set());
+  const { state } = useWizard();
 
   const details = building.costSegDetails;
 
-  // Calculate building totals for system costs
+  // Calculate building totals using actual cost approach data from wizard
   const buildingTotals = useMemo(() => {
-    // Get total building cost from areas
     const totalSF = building.areas?.reduce((sum, area) => sum + (area.squareFootage || 0), 0) || 0;
-    const estimatedCost = totalSF * 150; // $150/SF estimate if no other data
-
-    // Try to extract system costs from mechanical systems if available
-    const mechanicalSystems = building.mechanicalSystems;
+    
+    // Try to get actual cost from cost approach data
+    const activeScenarioId = state.activeScenarioId;
+    const costApproachData = state.costApproachBuildingCostData?.[activeScenarioId]?.[building.id];
+    const actualTotalCost = costApproachData?.totalReplacementCostNew || (totalSF * 150); // Fallback to estimate
+    
+    // Get M&S allocations for the occupancy code
+    const occupancyCode = defaultOccupancyCode || 'office-lowrise';
+    const allocations = MS_COST_SEG_ALLOCATIONS[occupancyCode] || MS_COST_SEG_ALLOCATIONS['office-lowrise'];
+    
+    // Calculate system costs from M&S allocations
+    const electricalPercent = allocations
+      .filter(a => a.componentId?.includes('electrical'))
+      .reduce((sum, a) => sum + a.percent, 0);
+    const hvacPercent = allocations
+      .filter(a => a.componentId?.includes('hvac'))
+      .reduce((sum, a) => sum + a.percent, 0);
+    const plumbingPercent = allocations
+      .filter(a => a.componentId?.includes('plumbing'))
+      .reduce((sum, a) => sum + a.percent, 0);
+    const fireProtectionPercent = allocations
+      .filter(a => a.componentId?.includes('sprinkler') || a.componentId?.includes('fire'))
+      .reduce((sum, a) => sum + a.percent, 0);
     
     return {
-      totalBuildingCost: estimatedCost,
-      electricalCost: 0, // Would come from M&S or mechanical systems
-      hvacCost: 0,
-      plumbingCost: 0,
-      fireProtectionCost: 0,
+      totalBuildingCost: actualTotalCost,
+      electricalCost: actualTotalCost * (electricalPercent / 100),
+      hvacCost: actualTotalCost * (hvacPercent / 100),
+      plumbingCost: actualTotalCost * (plumbingPercent / 100),
+      fireProtectionCost: actualTotalCost * (fireProtectionPercent / 100),
     };
-  }, [building]);
+  }, [building, defaultOccupancyCode, state.activeScenarioId, state.costApproachBuildingCostData]);
 
   const toggleSection = useCallback((section: string) => {
     setExpandedSections(prev => {
@@ -132,6 +153,9 @@ export default function CostSegDetailsSection({
           placedInServiceDate: building.yearBuilt ? String(building.yearBuilt) : undefined,
           systemRefinements: [],
           supplementalItems: [],
+          // Auto-populate from wizard inspection data
+          siteVisitDate: state.subjectData?.inspectionDate || undefined,
+          inspectorName: undefined, // Could add appraiser name from wizard if available
         },
       });
       setIsExpanded(true);
@@ -141,7 +165,7 @@ export default function CostSegDetailsSection({
       });
       setIsExpanded(false);
     }
-  }, [onUpdateBuilding, building.yearBuilt]);
+  }, [onUpdateBuilding, building.yearBuilt, state.subjectData?.inspectionDate]);
 
   const updateDetails = useCallback((updates: Partial<CostSegBuildingDetails>) => {
     if (!details) return;
