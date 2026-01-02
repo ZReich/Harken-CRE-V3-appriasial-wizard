@@ -305,7 +305,7 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
               </div>
             </div>
             <div className="p-2 flex-1 flex flex-col gap-0.5 bg-sky-50 border-r border-slate-200">
-              <h3 className="font-bold text-slate-800 text-xs leading-tight line-clamp-1" title={SUBJECT_EXPENSE_PROPERTY.address}>
+              <h3 className="font-bold text-slate-800 dark:text-white text-xs leading-tight line-clamp-1" title={SUBJECT_EXPENSE_PROPERTY.address}>
                 {SUBJECT_EXPENSE_PROPERTY.address.split(',')[0]}
               </h3>
               <div className="flex items-start gap-1 text-[10px] text-slate-500">
@@ -341,7 +341,7 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
                 </button>
               </div>
               <div className="p-2 flex-1 flex flex-col gap-0.5 border-r border-slate-200">
-                <h3 className="font-bold text-slate-800 text-xs leading-tight line-clamp-1" title={comp.address}>
+                <h3 className="font-bold text-slate-800 dark:text-white text-xs leading-tight line-clamp-1" title={comp.address}>
                   Comp {idx + 1}
                 </h3>
                 <div className="flex items-start gap-1 text-[10px] text-slate-500">
@@ -589,7 +589,7 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-2 h-8 bg-[#0da1c7] rounded-full"></div>
-                <h2 className="text-xl font-bold text-slate-800 uppercase tracking-wider">Expense Benchmark</h2>
+                <h2 className="text-xl font-bold text-slate-800 dark:text-white uppercase tracking-wider">Expense Benchmark</h2>
               </div>
               <div className="text-sm text-slate-500">
                 Based on {selectedComps.length} selected comparable{selectedComps.length !== 1 ? 's' : ''}
@@ -599,7 +599,7 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
               <div className="grid grid-cols-3 gap-6">
                 <div className="text-center">
                   <div className="text-sm text-slate-500 font-medium mb-2">Subject Expense Ratio</div>
-                  <div className="text-2xl font-bold text-slate-800">
+                  <div className="text-2xl font-bold text-slate-800 dark:text-white">
                     {formatPercent(SUBJECT_EXPENSE_PROPERTY.expenseRatioPercent || 0)}
                   </div>
                 </div>

@@ -279,9 +279,9 @@ export const RentComparableGrid: React.FC<RentComparableGridProps> = ({
       onChange={(e) => handleUpdateComp(comp.id, 'overallComparability', e.target.value as any)}
       className="w-full text-center text-xs py-1.5 px-2 border-0 bg-transparent cursor-pointer focus:outline-none focus:ring-2 focus:ring-white/50 font-semibold text-white"
     >
-      <option value="Superior" className="text-slate-800">Superior</option>
-      <option value="Similar" className="text-slate-800">Similar</option>
-      <option value="Inferior" className="text-slate-800">Inferior</option>
+      <option value="Superior" className="text-slate-800 dark:text-white">Superior</option>
+      <option value="Similar" className="text-slate-800 dark:text-white">Similar</option>
+      <option value="Inferior" className="text-slate-800 dark:text-white">Inferior</option>
     </select>
   );
 
@@ -455,7 +455,7 @@ export const RentComparableGrid: React.FC<RentComparableGridProps> = ({
               </div>
             </div>
             <div className="p-2 flex-1 flex flex-col gap-0.5 bg-sky-50 border-r border-slate-200">
-              <h3 className="font-bold text-slate-800 text-xs leading-tight line-clamp-1" title={SUBJECT_RENT_PROPERTY.address}>
+              <h3 className="font-bold text-slate-800 dark:text-white text-xs leading-tight line-clamp-1" title={SUBJECT_RENT_PROPERTY.address}>
                 {SUBJECT_RENT_PROPERTY.address.split(',')[0]}
               </h3>
               <div className="flex items-start gap-1 text-[10px] text-slate-500">
@@ -491,7 +491,7 @@ export const RentComparableGrid: React.FC<RentComparableGridProps> = ({
                 </button>
               </div>
               <div className="p-2 flex-1 flex flex-col gap-0.5 border-r border-slate-200">
-                <h3 className="font-bold text-slate-800 text-xs leading-tight line-clamp-1" title={comp.address}>
+                <h3 className="font-bold text-slate-800 dark:text-white text-xs leading-tight line-clamp-1" title={comp.address}>
                   Rental {idx + 1}
                 </h3>
                 <div className="flex items-start gap-1 text-[10px] text-slate-500">
@@ -667,14 +667,14 @@ export const RentComparableGrid: React.FC<RentComparableGridProps> = ({
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-2 h-8 bg-[#0da1c7] rounded-full"></div>
-                <h2 className="text-xl font-bold text-slate-800 uppercase tracking-wider">Rent Indication</h2>
+                <h2 className="text-xl font-bold text-slate-800 dark:text-white uppercase tracking-wider">Rent Indication</h2>
               </div>
             </div>
             <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
               <div className="grid grid-cols-3 gap-6">
                 <div className="text-center">
                   <div className="text-sm text-slate-500 font-medium mb-2">Subject Size</div>
-                  <div className="text-2xl font-bold text-slate-800">{formatNumber(SUBJECT_RENT_PROPERTY.sizeSfBldg)} SF</div>
+                  <div className="text-2xl font-bold text-slate-800 dark:text-white">{formatNumber(SUBJECT_RENT_PROPERTY.sizeSfBldg)} SF</div>
                 </div>
                 <div className="text-center">
                   <div className="text-sm text-slate-500 font-medium mb-2">Indicated Market Rent</div>

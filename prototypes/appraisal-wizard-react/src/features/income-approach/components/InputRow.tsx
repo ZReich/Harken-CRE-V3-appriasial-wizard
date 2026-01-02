@@ -133,7 +133,7 @@ export const InputRow: React.FC<InputRowProps> = ({
                 type="number"
                 value={item.amount === 0 ? '' : item.amount}
                 onChange={(e) => handleAnnualChange(e.target.value)}
-                className={`${inputBaseClass} text-right pl-6 font-bold text-slate-800`}
+                className={`${inputBaseClass} text-right pl-6 font-bold text-slate-800 dark:text-white`}
                 placeholder="0.00"
               />
             </div>
@@ -151,7 +151,7 @@ export const InputRow: React.FC<InputRowProps> = ({
               type="number"
               value={item.amount === 0 ? '' : item.amount}
               onChange={(e) => handleAnnualChange(e.target.value)}
-              className={`${inputBaseClass} text-right pl-6 font-bold text-slate-800`}
+              className={`${inputBaseClass} text-right pl-6 font-bold text-slate-800 dark:text-white`}
               placeholder="0.00"
             />
           </div>
@@ -170,7 +170,7 @@ export const InputRow: React.FC<InputRowProps> = ({
                 type="number"
                 value={item.amount === 0 ? '' : item.amount}
                 onChange={(e) => handleAnnualChange(e.target.value)}
-                className={`${inputBaseClass} text-right pl-6 font-bold text-slate-800`}
+                className={`${inputBaseClass} text-right pl-6 font-bold text-slate-800 dark:text-white`}
                 placeholder="0.00"
               />
             </div>
