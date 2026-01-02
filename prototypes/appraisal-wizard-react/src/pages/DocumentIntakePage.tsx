@@ -161,8 +161,8 @@ function DocumentCard({
   return (
     <div
       className={`bg-white dark:bg-slate-800 border rounded-xl overflow-hidden transition-all duration-300 ${doc.status === 'complete' ? 'border-green-200 dark:border-green-700 shadow-sm' :
-          doc.status === 'error' ? 'border-red-200 dark:border-red-700' :
-            'border-gray-200 dark:border-slate-700'
+        doc.status === 'error' ? 'border-red-200 dark:border-red-700' :
+          'border-gray-200 dark:border-slate-700'
         }`}
     >
       {/* Card Header */}
@@ -271,8 +271,8 @@ function DocumentCard({
                       setShowTypeSelector(false);
                     }}
                     className={`text-left px-3 py-2 rounded-lg text-sm transition-colors ${doc.classification?.documentType === type.id
-                        ? 'bg-[#0da1c7] text-white'
-                        : 'bg-white dark:bg-slate-700/50 border border-gray-200 dark:border-slate-600 hover:border-[#0da1c7] hover:text-[#0da1c7]'
+                      ? 'bg-[#0da1c7] text-white'
+                      : 'bg-white dark:bg-slate-700/50 border border-gray-200 dark:border-slate-600 hover:border-[#0da1c7] hover:text-[#0da1c7]'
                       }`}
                   >
                     <span className="mr-2">{type.icon}</span>
@@ -819,8 +819,8 @@ export default function DocumentIntakePage() {
         <button
           onClick={() => setActiveTab('documents')}
           className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'documents'
-              ? 'bg-white text-[#0da1c7] shadow-sm'
-              : 'text-gray-600 hover:text-gray-800'
+            ? 'bg-white text-[#0da1c7] shadow-sm'
+            : 'text-gray-600 hover:text-gray-800'
             }`}
         >
           <FileText className="w-4 h-4" />
@@ -829,8 +829,8 @@ export default function DocumentIntakePage() {
         <button
           onClick={() => setActiveTab('photos')}
           className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'photos'
-              ? 'bg-white text-[#0da1c7] shadow-sm'
-              : 'text-gray-600 hover:text-gray-800'
+            ? 'bg-white text-[#0da1c7] shadow-sm'
+            : 'text-gray-600 hover:text-gray-800'
             }`}
         >
           <Camera className="w-4 h-4" />
@@ -968,8 +968,8 @@ export default function DocumentIntakePage() {
               onDrop={handleDrop}
               onClick={() => fileInputRef.current?.click()}
               className={`relative border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-all duration-300 mb-6 ${isDragging
-                  ? 'border-[#0da1c7] bg-[#0da1c7]/10 scale-[1.02]'
-                  : 'border-gray-300 hover:border-[#0da1c7] hover:bg-[#0da1c7]/5'
+                ? 'border-[#0da1c7] bg-[#0da1c7]/10 scale-[1.02]'
+                : 'border-gray-300 hover:border-[#0da1c7] hover:bg-[#0da1c7]/5'
                 }`}
             >
               <input
@@ -1050,7 +1050,7 @@ export default function DocumentIntakePage() {
                   <Camera className="w-7 h-7 text-white" />
                 </div>
                 <div>
-                  <h3 className="text-xl font-bold text-[#1c3643] mb-1">Upload Property Photos</h3>
+                  <h3 className="text-xl font-bold text-[#1c3643] dark:text-white mb-1">Upload Property Photos</h3>
                   <p className="text-gray-600 dark:text-slate-400">
                     Upload all your property photos now so they're available throughout data entry.
                     AI will suggest which slot each photo belongs to, or you can assign them manually later.
@@ -1090,11 +1090,11 @@ export default function DocumentIntakePage() {
 
             {/* Info about assigning photos later */}
             {stagingPhotos.length > 0 && (
-              <div className="bg-amber-50 border border-amber-200 rounded-xl p-4 flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+              <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/50 rounded-xl p-4 flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-500 flex-shrink-0 mt-0.5" />
                 <div>
-                  <p className="text-sm font-medium text-amber-800">Photos ready for assignment</p>
-                  <p className="text-sm text-amber-700 mt-1">
+                  <p className="text-sm font-medium text-amber-800 dark:text-amber-400">Photos ready for assignment</p>
+                  <p className="text-sm text-amber-700 dark:text-amber-500/80 mt-1">
                     You can accept the AI suggestions above, or assign photos to specific slots
                     in the Subject Property → Photos & Maps section.
                   </p>
@@ -1116,8 +1116,8 @@ export default function DocumentIntakePage() {
             onClick={handleContinue}
             disabled={stats.processing > 0}
             className={`px-6 py-2.5 rounded-lg font-medium flex items-center gap-2 transition-all ${stats.processing > 0
-                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                : 'bg-[#0da1c7] text-white hover:bg-[#0b8fb0] shadow-lg shadow-[#0da1c7]/20 hover:shadow-xl hover:shadow-[#0da1c7]/30'
+              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              : 'bg-[#0da1c7] text-white hover:bg-[#0b8fb0] shadow-lg shadow-[#0da1c7]/20 hover:shadow-xl hover:shadow-[#0da1c7]/30'
               }`}
           >
             {stats.processing > 0 ? (

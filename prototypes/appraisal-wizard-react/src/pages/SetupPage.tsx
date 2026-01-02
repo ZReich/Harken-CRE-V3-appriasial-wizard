@@ -166,11 +166,11 @@ interface AssignmentContext {
 // ==========================================
 function getDefaultApproachesForScenario(scenarioName: string, propertyCategory: string | null, propertyType: string | null): string[] {
   const approaches: string[] = [];
-  
+
   // Check if this is a multi-family property type
-  const isMultiFamily = propertyType === 'multifamily' || propertyType === 'duplex-fourplex' || 
-                        propertyType?.includes('multifamily') || propertyType?.includes('apartment');
-  
+  const isMultiFamily = propertyType === 'multifamily' || propertyType === 'duplex-fourplex' ||
+    propertyType?.includes('multifamily') || propertyType?.includes('apartment');
+
   // Multi-Family properties get Multi-Family Approach automatically
   if (isMultiFamily) {
     approaches.push('Multi-Family Approach');
@@ -195,7 +195,7 @@ function getDefaultApproachesForScenario(scenarioName: string, propertyCategory:
   } else {
     approaches.push('Sales Comparison');
   }
-  
+
   if (scenarioName === 'As Stabilized') {
     if (!approaches.includes('Income Approach') && (propertyType === 'commercial' || isMultiFamily)) {
       approaches.unshift('Income Approach');
@@ -205,23 +205,23 @@ function getDefaultApproachesForScenario(scenarioName: string, propertyCategory:
       approaches.unshift('Multi-Family Approach');
     }
   }
-  
+
   // Ensure Cost Approach always has Land Valuation (for land value extraction)
   if (approaches.includes('Cost Approach') && !approaches.includes('Land Valuation')) {
     approaches.push('Land Valuation');
   }
-  
+
   return approaches;
 }
 
 function determineRequiredScenarios(context: AssignmentContext): Scenario[] {
   const result: Scenario[] = [];
   const { propertyCategory, propertyType, propertyStatus, plannedChanges, occupancyStatus, loanPurpose } = context;
-  
+
   if (!propertyStatus) {
     return [{ id: 1, name: 'As Is', nameSelect: 'As Is', customName: '', approaches: [], isRequired: false, requirementSource: '' }];
   }
-  
+
   // RULE 1: Property Status Drives Primary Scenarios
   if (propertyStatus === 'proposed') {
     result.push({ id: 1, name: 'As Proposed', nameSelect: 'As Proposed', customName: '', approaches: getDefaultApproachesForScenario('As Proposed', propertyCategory, propertyType), isRequired: true, requirementSource: 'Proposed development - no existing improvements' });
@@ -239,7 +239,7 @@ function determineRequiredScenarios(context: AssignmentContext): Scenario[] {
   } else {
     result.push({ id: 1, name: 'As Is', nameSelect: 'As Is', customName: '', approaches: getDefaultApproachesForScenario('As Is', propertyCategory, propertyType), isRequired: true, requirementSource: 'Current market value' });
   }
-  
+
   // RULE 2: Planned Changes Add Scenarios
   if (plannedChanges === 'major' || plannedChanges === 'change_of_use') {
     if (!result.some(s => s.name === 'As Completed')) {
@@ -249,12 +249,12 @@ function determineRequiredScenarios(context: AssignmentContext): Scenario[] {
       result.push({ id: result.length + 1, name: 'As Stabilized', nameSelect: 'As Stabilized', customName: '', approaches: getDefaultApproachesForScenario('As Stabilized', propertyCategory, propertyType), isRequired: false, requirementSource: 'Recommended for income property after renovation' });
     }
   }
-  
+
   // RULE 3: Occupancy Adjustments
   if (occupancyStatus === 'lease_up' && !result.some(s => s.name === 'As Stabilized')) {
     result.push({ id: result.length + 1, name: 'As Stabilized', nameSelect: 'As Stabilized', customName: '', approaches: getDefaultApproachesForScenario('As Stabilized', propertyCategory, propertyType), isRequired: true, requirementSource: 'Property currently in lease-up phase' });
   }
-  
+
   // RULE 4: Loan Purpose Overrides
   if (loanPurpose === 'construction') {
     if (!result.some(s => s.name === 'As Completed')) {
@@ -264,11 +264,11 @@ function determineRequiredScenarios(context: AssignmentContext): Scenario[] {
       result.push({ id: result.length + 1, name: 'As Stabilized', nameSelect: 'As Stabilized', customName: '', approaches: getDefaultApproachesForScenario('As Stabilized', propertyCategory, propertyType), isRequired: true, requirementSource: 'Interagency Guidelines - construction loan requirement' });
     }
   }
-  
+
   if (loanPurpose === 'bridge' && plannedChanges && plannedChanges !== 'none' && !result.some(s => s.name === 'As Completed')) {
     result.push({ id: result.length + 1, name: 'As Completed', nameSelect: 'As Completed', customName: '', approaches: getDefaultApproachesForScenario('As Completed', propertyCategory, propertyType), isRequired: false, requirementSource: 'Recommended for bridge financing with planned improvements' });
   }
-  
+
   result.forEach((s, idx) => s.id = idx + 1);
   return result;
 }
@@ -287,10 +287,10 @@ const scenarioNameOptions = [
 export default function SetupPage() {
   const { state: wizardState, addOwner, updateOwner, removeOwner, setScenarios: syncScenariosToContext, setPropertyType: syncPropertyType, setSubjectData, hasFieldSource, hasPendingFieldSuggestion } = useWizard();
   const [activeTab, setActiveTab] = useState('basics');
-  
+
   // Track which fields are locked (pre-filled from extraction)
   const [lockedFields, setLockedFields] = useState<Record<string, boolean>>({});
-  
+
   // Assignment context state - initialize from WizardContext if available
   const [context, setContext] = useState<AssignmentContext>(() => ({
     // 3-tier M&S classification
@@ -308,7 +308,7 @@ export default function SetupPage() {
     propertyInterest: wizardState.subjectData?.propertyInterest || null,
     intendedUsers: wizardState.subjectData?.intendedUsers || '',
   }));
-  
+
   // Form field state - will be pre-filled from extraction
   // Initialize from WizardContext if available
   const [address, setAddress] = useState(() => wizardState.subjectData?.address || { street: '', city: '', state: '', zip: '', county: '' });
@@ -317,28 +317,28 @@ export default function SetupPage() {
     inspectionDate: wizardState.subjectData?.inspectionDate || '',
     effectiveDate: wizardState.subjectData?.effectiveDate || ''
   }));
-  
+
   // Property ID state - will be pre-filled from extraction
   const [propertyName, setPropertyName] = useState(() => wizardState.subjectData?.propertyName || '');
   const [legalDescription, setLegalDescription] = useState(() => wizardState.subjectData?.legalDescription || '');
   const [taxId, setTaxId] = useState(() => wizardState.subjectData?.taxId || '');
-  
+
   // Property Lookup Modal state
   // Property lookup is now triggered by inline button, no modal needed
-  
+
   // Auto-lookup state
   const [autoLookupStatus, setAutoLookupStatus] = useState<'idle' | 'loading' | 'success' | 'error'>('idle');
   const [autoLookupMessage, setAutoLookupMessage] = useState('');
   const [lastLookupAddress, setLastLookupAddress] = useState('');
-  
+
   // Handle property data import from lookup - MUST be defined before performAutoLookup
   const handlePropertyImport = useCallback((data: CadastralData) => {
     console.log('[PropertyImport] Importing data:', data.parcelId, data.legalDescription?.substring(0, 30));
-    
+
     // Update property ID fields
     if (data.parcelId) setTaxId(data.parcelId);
     if (data.legalDescription) setLegalDescription(data.legalDescription);
-    
+
     // Update address if available (only fill empty fields)
     if (data.situsAddress || data.situsCity || data.situsZip) {
       setAddress(prev => ({
@@ -350,24 +350,24 @@ export default function SetupPage() {
         county: data.county || prev.county,
       }));
     }
-    
+
     // Lock the imported fields
     setLockedFields(prev => ({
       ...prev,
       taxId: !!data.parcelId,
       legalDescription: !!data.legalDescription,
     }));
-    
+
     // Update owner if we have owner name from cadastral
     if (data.ownerName && wizardState.owners && wizardState.owners.length > 0) {
       updateOwner(wizardState.owners[0].id, { name: data.ownerName });
     }
-    
+
     // Build coordinates object if available
     const coordinates = (data.latitude !== undefined && data.longitude !== undefined)
       ? { latitude: data.latitude, longitude: data.longitude }
       : undefined;
-    
+
     // Update the WizardContext with all available data
     setSubjectData({
       // Existing address data
@@ -405,13 +405,13 @@ export default function SetupPage() {
         lastUpdated: new Date().toISOString(),
       },
     });
-    
+
     // Log zoning import
     if (data.zoning) {
       console.log('[PropertyImport] Zoning classification imported:', data.zoning);
     }
   }, [address, taxId, legalDescription, setSubjectData, wizardState.owners, updateOwner]);
-  
+
   // Debounced auto-lookup when address is complete
   const performAutoLookup = useCallback(async (street: string, city: string, state: string, lat?: number, lng?: number) => {
     // Create a signature for this address to avoid duplicate lookups
@@ -419,12 +419,12 @@ export default function SetupPage() {
     if (addressSignature === lastLookupAddress) {
       return; // Already looked up this address
     }
-    
+
     console.log('[AutoLookup] Starting lookup for:', { street, city, state, lat, lng });
     setAutoLookupStatus('loading');
     setAutoLookupMessage('Looking up property data...');
     setLastLookupAddress(addressSignature);
-    
+
     try {
       // If we have coordinates from Google Places, use them directly (skips geocoding)
       // Otherwise fall back to address-based lookup
@@ -435,15 +435,15 @@ export default function SetupPage() {
         latitude: lat,
         longitude: lng,
       });
-      
+
       console.log('[AutoLookup] Result:', result);
-      
+
       if (result.success && result.data) {
         // Check if the parcel data is actually useful (not a placeholder/empty parcel)
-        const hasUsefulData = result.data.legalDescription || 
-                              result.data.ownerName || 
-                              (result.data.parcelId && result.data.parcelId !== '99999999999999999');
-        
+        const hasUsefulData = result.data.legalDescription ||
+          result.data.ownerName ||
+          (result.data.parcelId && result.data.parcelId !== '99999999999999999');
+
         if (!hasUsefulData) {
           // Parcel found but has no useful data (likely hit a road or ROW)
           console.warn('[AutoLookup] Parcel found but has no useful data:', result.data.parcelId);
@@ -455,7 +455,7 @@ export default function SetupPage() {
           }, 5000);
           return;
         }
-        
+
         // Auto-fill the data
         console.log('[AutoLookup] Calling handlePropertyImport with data:', JSON.stringify(result.data));
         try {
@@ -464,16 +464,16 @@ export default function SetupPage() {
         } catch (importError) {
           console.error('[AutoLookup] Error in handlePropertyImport:', importError);
         }
-        
-        const source = result.isFreeService 
-          ? 'Montana Cadastral (FREE)' 
-          : result.source === 'mock' 
-            ? 'Simulated Data' 
+
+        const source = result.isFreeService
+          ? 'Montana Cadastral (FREE)'
+          : result.source === 'mock'
+            ? 'Simulated Data'
             : 'Cotality';
-            
+
         setAutoLookupStatus('success');
         setAutoLookupMessage(`Property data loaded from ${source}`);
-        
+
         // Clear success message after 5 seconds
         setTimeout(() => {
           setAutoLookupStatus('idle');
@@ -483,7 +483,7 @@ export default function SetupPage() {
         console.warn('[AutoLookup] Lookup failed:', result.error);
         setAutoLookupStatus('error');
         setAutoLookupMessage(result.error || 'Property not found');
-        
+
         // Clear error message after 5 seconds
         setTimeout(() => {
           setAutoLookupStatus('idle');
@@ -495,20 +495,20 @@ export default function SetupPage() {
       const errorMessage = error instanceof Error ? error.message : 'Failed to lookup property';
       setAutoLookupStatus('error');
       setAutoLookupMessage(errorMessage);
-      
+
       setTimeout(() => {
         setAutoLookupStatus('idle');
         setAutoLookupMessage('');
       }, 5000);
     }
   }, [lastLookupAddress, handlePropertyImport]);
-  
+
   // Manual property lookup trigger - called when user clicks "Lookup Property" button
   const handleManualLookup = useCallback(() => {
     const street = address.street?.trim();
     const city = address.city?.trim();
     const state = address.state?.trim();
-    
+
     // Need at least street, city, and state for a lookup
     if (!street || !city || !state) {
       setAutoLookupStatus('error');
@@ -519,7 +519,7 @@ export default function SetupPage() {
       }, 3000);
       return;
     }
-    
+
     // Require minimum lengths
     if (street.length < 5 || city.length < 2 || state.length < 2) {
       setAutoLookupStatus('error');
@@ -530,11 +530,11 @@ export default function SetupPage() {
       }, 3000);
       return;
     }
-    
+
     // Get coordinates from wizard state (set when Google Places autocomplete is used)
     const coords = wizardState.subjectData?.coordinates;
     console.log('[ManualLookup] User triggered lookup:', { street, city, state, coords });
-    
+
     // Show warning if no coordinates (address was manually entered)
     if (!coords?.latitude || !coords?.longitude) {
       console.warn('[ManualLookup] No coordinates available - address may have been manually entered');
@@ -546,10 +546,10 @@ export default function SetupPage() {
       }, 5000);
       return;
     }
-    
+
     performAutoLookup(street, city, state, coords.latitude, coords.longitude);
   }, [address.street, address.city, address.state, performAutoLookup, wizardState.subjectData?.coordinates]);
-  
+
   // Check if address is complete enough for lookup button to be enabled
   const isAddressComplete = useMemo(() => {
     const street = address.street?.trim();
@@ -557,11 +557,11 @@ export default function SetupPage() {
     const state = address.state?.trim();
     return street && street.length >= 5 && city && city.length >= 2 && state && state.length >= 2;
   }, [address.street, address.city, address.state]);
-  
+
   // Handle Google Places autocomplete selection
   const handlePlaceSelect = useCallback((place: PlaceDetails) => {
     console.log('[GooglePlaces] Place selected, filling address fields:', place);
-    
+
     const newAddress = {
       street: place.street,
       city: place.city,
@@ -569,9 +569,9 @@ export default function SetupPage() {
       zip: place.zip,
       county: place.county,
     };
-    
+
     setAddress(newAddress);
-    
+
     // Store coordinates if available
     if (place.latitude && place.longitude) {
       setSubjectData({
@@ -580,7 +580,7 @@ export default function SetupPage() {
           longitude: place.longitude,
         },
       });
-      
+
       // Automatically trigger property lookup with the coordinates we just received
       // This avoids stale state issues when user clicks Search immediately
       console.log('[GooglePlaces] Auto-triggering property lookup with coordinates');
@@ -593,7 +593,7 @@ export default function SetupPage() {
       );
     }
   }, [setAddress, setSubjectData, performAutoLookup]);
-  
+
   // Inspection state - declare early so it can be used in sync useEffect
   // Default inspectionType to 'interior_exterior' since that's the default dropdown value
   const [inspectionType, setInspectionType] = useState(() => wizardState.subjectData?.inspectionType || 'interior_exterior');
@@ -604,14 +604,14 @@ export default function SetupPage() {
   const [inspectorName, setInspectorName] = useState(() => wizardState.subjectData?.inspectorName || '');
   const [inspectorLicense, setInspectorLicense] = useState(() => wizardState.subjectData?.inspectorLicense || '');
   const [appraisalAssistance, setAppraisalAssistance] = useState('');
-  
+
   // Certifications state - declare early so it can be used in sync useEffect
   const [certificationAcknowledged, setCertificationAcknowledged] = useState(() => wizardState.subjectData?.certificationAcknowledged || false);
   const [additionalCertifications, setAdditionalCertifications] = useState('');
   const [licenseNumber, setLicenseNumber] = useState(() => wizardState.subjectData?.licenseNumber || '');
   const [licenseState, setLicenseState] = useState(() => wizardState.subjectData?.licenseState || '');
   const [licenseExpiration, setLicenseExpiration] = useState(() => wizardState.subjectData?.licenseExpiration || '');
-  
+
   // Sync form fields to WizardContext when they change
   useEffect(() => {
     setSubjectData({
@@ -642,12 +642,12 @@ export default function SetupPage() {
       plannedChanges: context.plannedChanges as 'none' | 'minor' | 'major' | 'change_of_use' | undefined,
       loanPurpose: context.loanPurpose as 'purchase' | 'refinance' | 'construction' | 'bridge' | 'internal' | undefined,
     });
-  }, [address, dates, propertyName, legalDescription, taxId, context.appraisalPurpose, 
-      context.intendedUsers, context.propertyInterest, inspectorName, inspectorLicense, 
-      inspectionType, personalInspection, certificationAcknowledged, licenseNumber, licenseState, licenseExpiration,
-      context.propertyStatus, context.occupancyStatus, context.plannedChanges,
-      context.loanPurpose, setSubjectData]);
-  
+  }, [address, dates, propertyName, legalDescription, taxId, context.appraisalPurpose,
+    context.intendedUsers, context.propertyInterest, inspectorName, inspectorLicense,
+    inspectionType, personalInspection, certificationAcknowledged, licenseNumber, licenseState, licenseExpiration,
+    context.propertyStatus, context.occupancyStatus, context.plannedChanges,
+    context.loanPurpose, setSubjectData]);
+
   // Pre-fill from extracted data on mount
   useEffect(() => {
     // Check sessionStorage for extracted data (from DocumentIntakePage)
@@ -656,7 +656,7 @@ export default function SetupPage() {
       try {
         const extracted = JSON.parse(storedExtracted);
         const newLocks: Record<string, boolean> = {};
-        
+
         // Pre-fill from cadastral data
         if (extracted.cadastral) {
           const cad = extracted.cadastral;
@@ -690,7 +690,7 @@ export default function SetupPage() {
             setPropertyName(cad.landArea.value);
           }
         }
-        
+
         // Pre-fill from engagement letter
         if (extracted.engagement) {
           const eng = extracted.engagement;
@@ -702,16 +702,16 @@ export default function SetupPage() {
             // Could map to appraisalPurpose context
           }
         }
-        
+
         // Note: Sale agreement data is now handled in SubjectDataPage Tax & Ownership tab
-        
+
         setLockedFields(newLocks);
       } catch (e) {
         console.warn('Failed to parse extracted data', e);
       }
     }
   }, []);
-  
+
   // Scenarios state
   // Initialize scenarios from WizardContext to preserve effective dates and approaches
   const [scenarios, setScenarios] = useState<Scenario[]>(() => {
@@ -730,7 +730,7 @@ export default function SetupPage() {
     // Default if no scenarios exist yet
     return [{ id: 1, name: 'As Is', nameSelect: 'As Is', customName: '', approaches: [] }];
   });
-  
+
   // Update scenarios when RELEVANT context properties change (not appraisalPurpose, intendedUsers, etc.)
   // Only propertyStatus, plannedChanges, occupancyStatus should trigger scenario recalculation
   useEffect(() => {
@@ -744,13 +744,13 @@ export default function SetupPage() {
             preservedDates[s.name] = s.effectiveDate;
           }
         });
-        
+
         // Apply preserved dates to new scenarios
         const scenariosWithDates = newScenarios.map(s => ({
           ...s,
           effectiveDate: preservedDates[s.name] || s.effectiveDate || '',
         }));
-        
+
         const customScenarios = prevScenarios.filter(s => !['As Is', 'As Completed', 'As Stabilized', 'As Proposed'].includes(s.name));
         return [...scenariosWithDates, ...customScenarios];
       });
@@ -777,54 +777,54 @@ export default function SetupPage() {
       syncPropertyType(context.propertyCategory, context.propertyType || undefined);
     }
   }, [context.propertyCategory, context.propertyType, syncPropertyType]);
-  
+
   // Auto-adjust approaches when property category changes to land
   useEffect(() => {
     if (context.propertyCategory === 'land') {
       setScenarios(prevScenarios => prevScenarios.map(s => {
         let newApproaches = [...s.approaches];
-        
+
         // Add Land Valuation if not present
         if (!newApproaches.includes('Land Valuation')) {
           newApproaches.push('Land Valuation');
         }
-        
+
         // For land properties, Sales Comparison is typically not used (land uses Land Valuation)
         // Remove Sales Comparison if Land Valuation is now the primary approach
         if (newApproaches.includes('Land Valuation') && newApproaches.includes('Sales Comparison')) {
           newApproaches = newApproaches.filter(a => a !== 'Sales Comparison');
         }
-        
+
         return { ...s, approaches: newApproaches };
       }));
     }
   }, [context.propertyType]);
-  
+
   // Helper to check if occupancy question should show
   const shouldShowOccupancyQuestion = () => {
     if (context.propertyType === 'commercial') return true;
     if (context.subType && (context.subType.includes('multifamily') || context.subType.includes('2-4unit'))) return true;
     return false;
   };
-  
+
   // Update context helper
   const updateContext = (field: keyof AssignmentContext, value: string | null) => {
     setContext(prev => ({ ...prev, [field]: value }));
   };
-  
+
   // Scenario management functions
   const addScenario = () => {
     const newId = scenarios.length > 0 ? Math.max(...scenarios.map(s => s.id)) + 1 : 1;
     setScenarios([...scenarios, { id: newId, name: '', nameSelect: '', customName: '', approaches: [] }]);
   };
-  
+
   const removeScenario = (id: number) => {
     if (scenarios.length <= 1) return;
     const scenario = scenarios.find(s => s.id === id);
     if (scenario?.isRequired) return;
     setScenarios(scenarios.filter(s => s.id !== id));
   };
-  
+
   const updateScenarioName = (id: number, type: 'pill' | 'custom', value: string) => {
     setScenarios(scenarios.map(s => {
       if (s.id !== id) return s;
@@ -839,12 +839,12 @@ export default function SetupPage() {
       }
     }));
   };
-  
+
   const toggleScenarioApproach = (id: number, approach: string) => {
     setScenarios(scenarios.map(s => {
       if (s.id !== id) return s;
       const hasApproach = s.approaches.includes(approach);
-      
+
       if (hasApproach) {
         // Removing an approach
         let newApproaches = s.approaches.filter(a => a !== approach);
@@ -854,17 +854,17 @@ export default function SetupPage() {
       } else {
         // Adding an approach
         let newApproaches = [...s.approaches, approach];
-        
+
         // Auto-add Land Valuation when Cost Approach is selected (required for land value)
         if (approach === 'Cost Approach' && !newApproaches.includes('Land Valuation')) {
           newApproaches.push('Land Valuation');
         }
-        
+
         return { ...s, approaches: newApproaches };
       }
     }));
   };
-  
+
   const updateScenarioDate = (id: number, date: string) => {
     setScenarios(scenarios.map(s => s.id === id ? { ...s, effectiveDate: date } : s));
   };
@@ -874,7 +874,7 @@ export default function SetupPage() {
   // ==========================================
   // Get cost info for current state
   const lookupCostInfo = getLookupCostInfo(address.state || 'MT');
-  
+
   const renderBasicsTab = () => (
     <div className="space-y-6">
       {/* Property Address - Clean, Progressive Disclosure Design */}
@@ -882,7 +882,7 @@ export default function SetupPage() {
         <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           Property Address
         </h3>
-        
+
         {/* Street Address - Primary Input */}
         <div className="space-y-3">
           <div>
@@ -906,20 +906,20 @@ export default function SetupPage() {
                   const parseFullAddress = (fullAddress: string) => {
                     // Common patterns: "Street, City, State ZIP" or "Street, City, ST ZIP"
                     const parts = fullAddress.split(',').map(p => p.trim());
-                    
+
                     if (parts.length >= 3) {
                       // Format: "Street, City, State ZIP"
                       const street = parts[0];
                       const city = parts[1];
                       const stateZip = parts[2];
-                      
+
                       // Parse "Montana 59923" or "MT 59923"
                       const stateZipMatch = stateZip.match(/^([A-Za-z]+)\s*(\d{5}(?:-\d{4})?)?$/);
                       if (stateZipMatch) {
                         const stateName = stateZipMatch[1];
                         const zip = stateZipMatch[2] || '';
                         // Convert state name to abbreviation if needed
-                        const stateAbbrev = stateName.length > 2 
+                        const stateAbbrev = stateName.length > 2
                           ? (stateName.toUpperCase() === 'MONTANA' ? 'MT' : stateName.substring(0, 2).toUpperCase())
                           : stateName.toUpperCase();
                         return { street, city, state: stateAbbrev, zip };
@@ -940,8 +940,8 @@ export default function SetupPage() {
                   };
 
                   const parsed = parseFullAddress(value);
-                  setAddress(prev => ({ 
-                    ...prev, 
+                  setAddress(prev => ({
+                    ...prev,
                     street: parsed.street,
                     city: parsed.city || prev.city,
                     state: parsed.state || prev.state,
@@ -951,17 +951,16 @@ export default function SetupPage() {
               />
             )}
           </div>
-          
+
           {/* Search Button - Subtle, under address */}
           <div className="flex items-center gap-3">
             <button
               onClick={handleManualLookup}
               disabled={!isAddressComplete || autoLookupStatus === 'loading'}
-              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${
-                isAddressComplete && autoLookupStatus !== 'loading'
+              className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${isAddressComplete && autoLookupStatus !== 'loading'
                   ? 'bg-[#0da1c7] text-white hover:bg-[#0b8fb3] shadow-sm'
                   : 'bg-slate-100 text-slate-400 cursor-not-allowed'
-              }`}
+                }`}
             >
               {autoLookupStatus === 'loading' ? (
                 <>
@@ -975,7 +974,7 @@ export default function SetupPage() {
                 </>
               )}
             </button>
-            
+
             {/* Status feedback - inline */}
             {autoLookupStatus === 'success' && (
               <span className="flex items-center gap-1.5 text-xs text-emerald-600 animate-fade-in">
@@ -989,7 +988,7 @@ export default function SetupPage() {
                 {autoLookupMessage || 'Not found - enter manually'}
               </span>
             )}
-            
+
             {/* Data source hint - only when address complete */}
             {isAddressComplete && autoLookupStatus === 'idle' && (
               <span className="text-xs text-slate-400">
@@ -1002,7 +1001,7 @@ export default function SetupPage() {
             )}
           </div>
         </div>
-        
+
         {/* Address Details - Progressive Disclosure (show when street has value) */}
         {address.street && address.street.length > 3 && (
           <div className="mt-5 pt-4 border-t border-slate-100 animate-fade-in">
@@ -1112,7 +1111,7 @@ export default function SetupPage() {
         <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           Property Classification
         </h3>
-        
+
         {/* Selection Breadcrumb */}
         {(context.propertyCategory || context.propertyType || context.msOccupancyCode) && (
           <div className="mb-4 p-3 bg-slate-50 rounded-lg border border-slate-200">
@@ -1128,7 +1127,7 @@ export default function SetupPage() {
             </div>
           </div>
         )}
-        
+
         {/* Tier 1: Property Category */}
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-3">
@@ -1150,11 +1149,10 @@ export default function SetupPage() {
                       subType: null, // Legacy field
                     }));
                   }}
-                  className={`relative p-6 border-2 rounded-lg text-center transition-all hover:border-[#0da1c7] hover:shadow-md ${
-                    isSelected
-                      ? 'border-[#0da1c7] bg-[#0da1c7]/5'
-                      : 'border-gray-200'
-                  }`}
+                  className={`relative p-6 border-2 rounded-lg text-center transition-all hover:border-[#0da1c7] hover:shadow-md ${isSelected
+                      ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-cyan-500/10'
+                      : 'border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800'
+                    }`}
                 >
                   {isSelected && (
                     <div className="absolute top-2 right-2 w-6 h-6 bg-[#0da1c7] rounded-full flex items-center justify-center">
@@ -1163,8 +1161,8 @@ export default function SetupPage() {
                       </svg>
                     </div>
                   )}
-                  <Icon className={`w-10 h-10 mx-auto mb-3 ${isSelected ? 'text-[#0da1c7]' : 'text-gray-400'}`} />
-                  <span className={`block text-base font-semibold ${isSelected ? 'text-[#0da1c7]' : 'text-gray-700'}`}>{category.label}</span>
+                  <Icon className={`w-10 h-10 mx-auto mb-3 ${isSelected ? 'text-[#0da1c7] dark:text-cyan-400' : 'text-gray-400 dark:text-slate-500'}`} />
+                  <span className={`block text-base font-semibold ${isSelected ? 'text-[#0da1c7] dark:text-cyan-400' : 'text-gray-700 dark:text-slate-300'}`}>{category.label}</span>
                   <span className="block text-xs text-gray-500 mt-1">{category.description}</span>
                 </button>
               );
@@ -1196,11 +1194,10 @@ export default function SetupPage() {
                       subType: propType.id, // Legacy field
                     }));
                   }}
-                  className={`relative p-4 border-2 rounded-lg text-left transition-all hover:border-[#0da1c7] ${
-                    isSelected
-                      ? 'border-[#0da1c7] bg-[#0da1c7]/5'
-                      : 'border-gray-200'
-                  }`}
+                  className={`relative p-4 border-2 rounded-lg text-left transition-all hover:border-[#0da1c7] ${isSelected
+                      ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-cyan-500/10'
+                      : 'border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800'
+                    }`}
                 >
                   {isSelected && (
                     <div className="absolute top-2 right-2 w-5 h-5 bg-[#0da1c7] rounded-full flex items-center justify-center">
@@ -1209,7 +1206,7 @@ export default function SetupPage() {
                       </svg>
                     </div>
                   )}
-                  <span className={`block font-semibold text-sm ${isSelected ? 'text-[#0da1c7]' : 'text-gray-700'}`}>
+                  <span className={`block font-semibold text-sm ${isSelected ? 'text-[#0da1c7] dark:text-cyan-400' : 'text-gray-700 dark:text-slate-300'}`}>
                     {propType.label}
                   </span>
                   <span className="block text-xs text-gray-500 mt-1">{propType.description}</span>
@@ -1249,11 +1246,10 @@ export default function SetupPage() {
                       msOccupancyCode: occCode.id,
                     }));
                   }}
-                  className={`relative p-3 border-2 rounded-lg text-left transition-all hover:border-[#0da1c7] ${
-                    isSelected
-                      ? 'border-[#0da1c7] bg-[#0da1c7]/5'
-                      : 'border-gray-200'
-                  }`}
+                  className={`relative p-3 border-2 rounded-lg text-left transition-all hover:border-[#0da1c7] ${isSelected
+                      ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-cyan-500/10'
+                      : 'border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800'
+                    }`}
                 >
                   {isSelected && (
                     <div className="absolute top-1.5 right-1.5 w-4 h-4 bg-[#0da1c7] rounded-full flex items-center justify-center">
@@ -1262,7 +1258,7 @@ export default function SetupPage() {
                       </svg>
                     </div>
                   )}
-                  <span className={`block font-medium text-xs ${isSelected ? 'text-[#0da1c7]' : 'text-gray-700'}`}>
+                  <span className={`block font-medium text-xs ${isSelected ? 'text-[#0da1c7] dark:text-cyan-400' : 'text-gray-700 dark:text-slate-300'}`}>
                     {occCode.label}
                   </span>
                   <span className="block text-[10px] text-gray-500 mt-0.5 line-clamp-2">{occCode.description}</span>
@@ -1287,7 +1283,7 @@ export default function SetupPage() {
           Property Status
         </h3>
         <p className="text-sm text-gray-600 dark:text-slate-400 mb-4">These questions determine which valuation scenarios are required for your appraisal.</p>
-        
+
         {/* Property Status Selection */}
         <div className="mb-6">
           <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-3">
@@ -1300,9 +1296,8 @@ export default function SetupPage() {
                 <button
                   key={opt.value}
                   onClick={() => updateContext('propertyStatus', opt.value)}
-                  className={`relative p-4 border-2 rounded-lg text-left transition-all hover:border-[#0da1c7]/50 dark:hover:border-cyan-400/50 ${
-                    isSelected ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-cyan-500/10' : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700'
-                  }`}
+                  className={`relative p-4 border-2 rounded-lg text-left transition-all hover:border-[#0da1c7]/50 dark:hover:border-cyan-400/50 ${isSelected ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-cyan-500/10' : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700'
+                    }`}
                 >
                   {isSelected && (
                     <div className="absolute top-2 right-2 w-5 h-5 bg-[#0da1c7] dark:bg-cyan-500 rounded-full flex items-center justify-center">
@@ -1323,7 +1318,7 @@ export default function SetupPage() {
             </div>
           )}
         </div>
-        
+
         {/* Planned Changes (conditional) */}
         {(context.propertyStatus === 'existing' || context.propertyStatus === 'recently_completed') && (
           <div className="mb-6 animate-fade-in">
@@ -1337,9 +1332,8 @@ export default function SetupPage() {
                   <button
                     key={opt.value}
                     onClick={() => updateContext('plannedChanges', opt.value)}
-                    className={`relative p-3 border-2 rounded-lg text-left transition-all hover:border-[#0da1c7]/50 dark:hover:border-cyan-400/50 ${
-                      isSelected ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-cyan-500/10' : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700'
-                    }`}
+                    className={`relative p-3 border-2 rounded-lg text-left transition-all hover:border-[#0da1c7]/50 dark:hover:border-cyan-400/50 ${isSelected ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-cyan-500/10' : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700'
+                      }`}
                   >
                     {isSelected && (
                       <div className="absolute top-2 right-2 w-4 h-4 bg-[#0da1c7] dark:bg-cyan-500 rounded-full flex items-center justify-center">
@@ -1356,7 +1350,7 @@ export default function SetupPage() {
             </div>
           </div>
         )}
-        
+
         {/* Occupancy Status (conditional) */}
         {shouldShowOccupancyQuestion() && (
           <div className="mb-6 animate-fade-in">
@@ -1370,9 +1364,8 @@ export default function SetupPage() {
                   <button
                     key={opt.value}
                     onClick={() => updateContext('occupancyStatus', opt.value)}
-                    className={`relative p-4 pr-8 border-2 rounded-lg text-left transition-all hover:border-[#0da1c7]/50 dark:hover:border-cyan-400/50 min-h-[72px] ${
-                      isSelected ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-cyan-500/10' : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700'
-                    }`}
+                    className={`relative p-4 pr-8 border-2 rounded-lg text-left transition-all hover:border-[#0da1c7]/50 dark:hover:border-cyan-400/50 min-h-[72px] ${isSelected ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-cyan-500/10' : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700'
+                      }`}
                   >
                     {isSelected && (
                       <div className="absolute top-3 right-3 w-5 h-5 bg-[#0da1c7] dark:bg-cyan-500 rounded-full flex items-center justify-center">
@@ -1389,7 +1382,7 @@ export default function SetupPage() {
             </div>
           </div>
         )}
-        
+
         {/* Loan Purpose */}
         <div className="mb-4">
           <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-3">
@@ -1402,9 +1395,8 @@ export default function SetupPage() {
                 <button
                   key={opt.value}
                   onClick={() => updateContext('loanPurpose', opt.value)}
-                  className={`relative p-3 border-2 rounded-lg text-left transition-all hover:border-[#0da1c7]/50 dark:hover:border-cyan-400/50 ${
-                    isSelected ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-cyan-500/10' : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700'
-                  }`}
+                  className={`relative p-3 border-2 rounded-lg text-left transition-all hover:border-[#0da1c7]/50 dark:hover:border-cyan-400/50 ${isSelected ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-cyan-500/10' : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700'
+                    }`}
                 >
                   {isSelected && (
                     <div className="absolute top-2 right-2 w-4 h-4 bg-[#0da1c7] dark:bg-cyan-500 rounded-full flex items-center justify-center">
@@ -1440,19 +1432,18 @@ export default function SetupPage() {
         <p className="text-sm text-gray-600 dark:text-slate-400 mb-4">
           Based on your selections above, these scenarios are recommended. You can customize approaches for each or add additional scenarios.
         </p>
-        
+
         {/* Scenarios List */}
         <div className="space-y-4">
           {scenarios.map((scenario) => (
             <div
               key={scenario.id}
-              className={`border rounded-xl p-5 transition-all hover:shadow-md bg-white dark:bg-slate-700/50 ${
-                scenario.isRequired
+              className={`border rounded-xl p-5 transition-all hover:shadow-md bg-white dark:bg-slate-700/50 ${scenario.isRequired
                   ? 'border-l-4 border-l-red-400 border-gray-200 dark:border-slate-600'
                   : scenario.isRequired === false
-                  ? 'border-l-4 border-l-blue-400 border-gray-200 dark:border-slate-600'
-                  : 'border-gray-200 dark:border-slate-600'
-              }`}
+                    ? 'border-l-4 border-l-blue-400 border-gray-200 dark:border-slate-600'
+                    : 'border-gray-200 dark:border-slate-600'
+                }`}
             >
               {/* Scenario Header */}
               <div className="flex items-center justify-between mb-3">
@@ -1476,11 +1467,10 @@ export default function SetupPage() {
                 <button
                   onClick={() => removeScenario(scenario.id)}
                   disabled={scenario.isRequired || scenarios.length <= 1}
-                  className={`p-2 transition-colors rounded-full ${
-                    scenario.isRequired || scenarios.length <= 1
+                  className={`p-2 transition-colors rounded-full ${scenario.isRequired || scenarios.length <= 1
                       ? 'text-gray-300 cursor-not-allowed'
                       : 'text-red-500 hover:text-red-700 hover:bg-red-50'
-                  }`}
+                    }`}
                   title={scenario.isRequired ? 'Cannot remove required scenario' : 'Remove scenario'}
                 >
                   <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -1488,16 +1478,15 @@ export default function SetupPage() {
                   </svg>
                 </button>
               </div>
-              
+
               {/* Requirement Source */}
               {scenario.requirementSource && (
-                <div className={`mb-4 px-3 py-2 rounded text-xs ${
-                  scenario.isRequired ? 'bg-red-50 border border-red-200' : 'bg-blue-50 border border-blue-200'
-                }`}>
+                <div className={`mb-4 px-3 py-2 rounded text-xs ${scenario.isRequired ? 'bg-red-50 border border-red-200' : 'bg-blue-50 border border-blue-200'
+                  }`}>
                   <span className="font-medium">{scenario.isRequired ? 'Why required:' : 'Why recommended:'}</span> {scenario.requirementSource}
                 </div>
               )}
-              
+
               {/* Effective Date and Scenario Type Row */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
                 <div>
@@ -1518,11 +1507,10 @@ export default function SetupPage() {
                       <button
                         key={opt.value}
                         onClick={() => updateScenarioName(scenario.id, 'pill', opt.value)}
-                        className={`px-3 py-1.5 border rounded-full text-xs font-medium transition-all ${
-                          scenario.nameSelect === opt.value || scenario.name === opt.value
+                        className={`px-3 py-1.5 border rounded-full text-xs font-medium transition-all ${scenario.nameSelect === opt.value || scenario.name === opt.value
                             ? 'border-[#0da1c7] bg-[#0da1c7] text-white'
                             : 'border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-300 hover:border-[#0da1c7]'
-                        }`}
+                          }`}
                       >
                         {opt.label}
                       </button>
@@ -1530,24 +1518,24 @@ export default function SetupPage() {
                   </div>
                 </div>
               </div>
-              
+
               {/* Custom name input */}
-              {(scenario.nameSelect === 'Type my own' || 
+              {(scenario.nameSelect === 'Type my own' ||
                 (!scenarioNameOptions.some(opt => opt.value === scenario.name) && scenario.name)) && (
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-                    Custom Scenario Name
-                  </label>
-                  <input
-                    type="text"
-                    placeholder="Enter custom scenario name..."
-                    value={scenario.customName || scenario.name}
-                    onChange={(e) => updateScenarioName(scenario.id, 'custom', e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-transparent"
-                  />
-                </div>
-              )}
-              
+                  <div className="mb-4">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+                      Custom Scenario Name
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="Enter custom scenario name..."
+                      value={scenario.customName || scenario.name}
+                      onChange={(e) => updateScenarioName(scenario.id, 'custom', e.target.value)}
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-transparent"
+                    />
+                  </div>
+                )}
+
               {/* Approach Selection */}
               <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
                 Select Approaches for this Scenario
@@ -1560,11 +1548,10 @@ export default function SetupPage() {
                     <button
                       key={app.key}
                       onClick={() => toggleScenarioApproach(scenario.id, app.key)}
-                      className={`relative flex flex-col items-center justify-center p-4 border-2 rounded-lg transition-all ${
-                        isSelected
-                          ? 'border-[#0da1c7] bg-[#0da1c7]/5'
-                          : 'border-gray-200 hover:border-[#0da1c7]'
-                      }`}
+                      className={`relative flex flex-col items-center justify-center p-4 border-2 rounded-lg transition-all ${isSelected
+                          ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-cyan-500/10'
+                          : 'border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-[#0da1c7]'
+                        }`}
                     >
                       {isSelected && (
                         <div className="absolute top-2 right-2 w-5 h-5 bg-[#0da1c7] rounded-full flex items-center justify-center">
@@ -1573,15 +1560,15 @@ export default function SetupPage() {
                           </svg>
                         </div>
                       )}
-                      <Icon className={`w-8 h-8 mb-2 ${isSelected ? 'text-[#0da1c7]' : 'text-gray-400'}`} />
-                      <span className={`text-sm font-medium ${isSelected ? 'text-[#0da1c7]' : 'text-gray-700'}`}>
+                      <Icon className={`w-8 h-8 mb-2 ${isSelected ? 'text-[#0da1c7] dark:text-cyan-400' : 'text-gray-400 dark:text-slate-500'}`} />
+                      <span className={`text-sm font-medium ${isSelected ? 'text-[#0da1c7] dark:text-cyan-400' : 'text-gray-700 dark:text-slate-300'}`}>
                         {app.label}
                       </span>
                     </button>
                   );
                 })}
               </div>
-              
+
               {/* Cost Segregation Toggle - Only shows when Cost Approach is selected */}
               {scenario.approaches.includes('Cost Approach') && (
                 <div className="mt-4 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
@@ -1626,7 +1613,7 @@ export default function SetupPage() {
               )}
             </div>
           ))}
-          
+
           {/* Add Scenario Button */}
           <button
             onClick={addScenario}
@@ -1656,9 +1643,8 @@ export default function SetupPage() {
               <button
                 key={opt.value}
                 onClick={() => updateContext('appraisalPurpose', opt.value)}
-                className={`relative p-4 border-2 rounded-lg text-left transition-all hover:border-[#0da1c7]/50 ${
-                  isSelected ? 'border-[#0da1c7] bg-[#0da1c7]/5' : 'border-gray-200'
-                }`}
+                className={`relative p-4 border-2 rounded-lg text-left transition-all hover:border-[#0da1c7]/50 ${isSelected ? 'border-[#0da1c7] bg-[#0da1c7]/5' : 'border-gray-200'
+                  }`}
               >
                 {isSelected && (
                   <div className="absolute top-2 right-2 w-5 h-5 bg-[#0da1c7] rounded-full flex items-center justify-center">
@@ -1687,9 +1673,8 @@ export default function SetupPage() {
               <button
                 key={opt.value}
                 onClick={() => updateContext('propertyInterest', opt.value)}
-                className={`relative p-4 border-2 rounded-lg text-left transition-all hover:border-[#0da1c7]/50 ${
-                  isSelected ? 'border-[#0da1c7] bg-[#0da1c7]/5' : 'border-gray-200'
-                }`}
+                className={`relative p-4 border-2 rounded-lg text-left transition-all hover:border-[#0da1c7]/50 ${isSelected ? 'border-[#0da1c7] bg-[#0da1c7]/5' : 'border-gray-200'
+                  }`}
               >
                 {isSelected && (
                   <div className="absolute top-2 right-2 w-5 h-5 bg-[#0da1c7] rounded-full flex items-center justify-center">
@@ -1718,9 +1703,8 @@ export default function SetupPage() {
         <textarea
           value={context.intendedUsers}
           onChange={(e) => updateContext('intendedUsers', e.target.value)}
-          className={`w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent ${
-            getDocumentSourceInputClasses(hasFieldSource('subjectData.intendedUsers'))
-          }`}
+          className={`w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent ${getDocumentSourceInputClasses(hasFieldSource('subjectData.intendedUsers'))
+            }`}
           rows={3}
           placeholder="e.g., ABC Bank, for lending purposes; John Smith, for estate planning..."
         />
@@ -1782,7 +1766,7 @@ export default function SetupPage() {
             Add Owner
           </button>
         </div>
-        
+
         <div className="space-y-4">
           {wizardState.owners.map((owner, index) => (
             <div key={owner.id} className="p-4 border border-gray-200 rounded-lg bg-gray-50">
@@ -1817,9 +1801,8 @@ export default function SetupPage() {
                     value={owner.name}
                     onChange={(e) => updateOwner(owner.id, { name: e.target.value })}
                     disabled={lockedFields['owner'] && index === 0}
-                    className={`w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent ${
-                      lockedFields['owner'] && index === 0 ? 'bg-blue-50 border-blue-200' : ''
-                    }`}
+                    className={`w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent ${lockedFields['owner'] && index === 0 ? 'bg-blue-50 border-blue-200' : ''
+                      }`}
                     placeholder="Full legal name as shown on title"
                   />
                   {index === 0 && hasPendingFieldSuggestion('owners.0.name') && (
@@ -1896,9 +1879,8 @@ export default function SetupPage() {
               value={taxId}
               onChange={(e) => setTaxId(e.target.value)}
               disabled={lockedFields['taxId']}
-              className={`w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent ${
-                lockedFields['taxId'] ? 'bg-blue-50 border-blue-200' : ''
-              } ${getDocumentSourceInputClasses(hasFieldSource('subjectData.taxId'))}`}
+              className={`w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent ${lockedFields['taxId'] ? 'bg-blue-50 border-blue-200' : ''
+                } ${getDocumentSourceInputClasses(hasFieldSource('subjectData.taxId'))}`}
               placeholder="Enter tax ID..."
             />
             {hasPendingFieldSuggestion('subjectData.taxId') && (
@@ -2051,7 +2033,7 @@ export default function SetupPage() {
             <div>
               <span className="font-medium text-gray-900 dark:text-white">I acknowledge the USPAP certification requirements</span>
               <p className="text-sm text-gray-500 mt-1">
-                I certify that my analyses, opinions, and conclusions were developed, and this report was prepared, 
+                I certify that my analyses, opinions, and conclusions were developed, and this report was prepared,
                 in conformity with the Uniform Standards of Professional Appraisal Practice.
               </p>
             </div>
