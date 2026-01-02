@@ -262,23 +262,55 @@ Write a professional analysis addressing:
 
 Conclude definitively whether the current use should be continued. Reference concepts like "contribution value," "functional obsolescence," and "economic life remaining." Write 2 paragraphs, approximately 175 words.`,
 
-  market_analysis: (ctx) => `Write a professional market analysis for an appraisal report.
+  market_analysis: (ctx) => `Write a comprehensive professional market analysis and outlook for an appraisal report as a 30-year MAI appraiser would.
 
-Property Type: ${ctx.propertyType || 'Commercial'}
-Subtype: ${ctx.propertySubtype || 'Not specified'}
-Location: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
-Vacancy Rate: ${ctx.marketData?.vacancyRate || 'Not specified'}
-Market Trend: ${ctx.marketData?.marketTrend || 'Not specified'}
+PROPERTY INFORMATION:
+- Property Type: ${ctx.propertyType || 'Commercial'}
+- Subtype: ${ctx.propertySubtype || 'Not specified'}
+- Location: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
 
-Include:
-- Supply and demand conditions
-- Vacancy and absorption trends
-- Rental rate trends (if applicable)
-- New construction/competition
-- Market participant interviews (general reference)
-- Market outlook conclusion
+LOCAL MARKET DATA:
+- Vacancy Rate: ${ctx.marketData?.vacancyRate || 'Not specified'}
+- Market Trend: ${ctx.marketData?.marketTrend || 'Not specified'}
+- Average Rent: ${ctx.marketData?.averageRent || 'Not specified'}
+- Rent Growth: ${ctx.marketData?.rentGrowth || 'Not specified'}
+- Days on Market: ${ctx.marketData?.daysOnMarket || 'Not specified'}
 
-Write 2-3 paragraphs, approximately 150-200 words.`,
+ECONOMIC INDICATORS (from Federal Reserve Economic Data):
+${ctx.gdpGrowth ? `- GDP Growth: ${ctx.gdpGrowth}%` : ''}
+${ctx.unemployment ? `- Unemployment Rate: ${ctx.unemployment}%` : ''}
+${ctx.inflation ? `- Inflation Rate: ${ctx.inflation}%` : ''}
+${ctx.interestRates ? `- Interest Rates: ${ctx.interestRates}%` : ''}
+
+DEMOGRAPHICS:
+${ctx.population ? `- Population: ${ctx.population.toLocaleString()}` : ''}
+${ctx.medianIncome ? `- Median Income: $${ctx.medianIncome.toLocaleString()}` : ''}
+${ctx.employmentRate ? `- Employment Rate: ${ctx.employmentRate}%` : ''}
+
+Write a comprehensive market analysis with the following structure:
+
+<b><u>ECONOMIC OVERVIEW</u></b>
+Begin with a paragraph discussing the broader economic conditions affecting the market. Reference the economic indicators provided (GDP growth, unemployment, inflation, interest rates). Explain how these macroeconomic factors are influencing commercial real estate demand, capitalization rates, and investment activity. Connect national/regional economic trends to local market performance.
+
+<b><u>LOCAL MARKET CONDITIONS</u></b>
+Analyze the specific ${ctx.propertyType || 'commercial'} market in ${ctx.siteData?.city || 'the subject area'}. Discuss:
+- Current supply and demand dynamics
+- Vacancy rates and absorption trends
+- Rental rate trends and growth patterns
+- New construction pipeline and competitive supply
+- Factors driving demand (employment growth, population trends, industry mix)
+
+<b><u>MARKET OUTLOOK</u></b>
+Provide a forward-looking analysis of market conditions. Discuss:
+- Short-term outlook (6-12 months) based on current indicators
+- Medium-term trends (1-3 years) considering economic forecasts
+- Factors that could positively or negatively impact values
+- Risk factors and opportunities in the current market
+- How interest rates and inflation are expected to affect cap rates and valuations
+
+Write as a senior MAI appraiser with deep market knowledge. Reference specific data points provided. Be balanced and objective - acknowledge both positive and negative factors. Conclude with a clear statement about whether the market is favorable, stable, or challenging for the subject property type.
+
+Write 4-5 paragraphs, approximately 400-500 words total. Use bold, underlined headers as shown above.`,
 
   reconciliation: (ctx) => `Write a professional reconciliation and final value conclusion for an appraisal report.
 
