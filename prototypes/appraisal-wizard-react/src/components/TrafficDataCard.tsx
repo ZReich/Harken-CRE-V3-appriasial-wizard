@@ -95,7 +95,7 @@ function TrafficRow({ entry, onEdit }: { entry: TrafficDataEntry; onEdit?: () =>
         
         <div className="flex-1 text-left">
           <div className="flex items-center gap-2">
-            <span className="font-medium text-sm text-slate-800">{entry.roadName}</span>
+            <span className="font-medium text-sm text-slate-800 dark:text-white">{entry.roadName}</span>
             <span className={`text-[10px] px-1.5 py-0.5 rounded border ${roadClassColor}`}>
               {entry.roadClass}
             </span>

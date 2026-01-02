@@ -103,7 +103,7 @@ export const CostSegGuidancePanel: React.FC<CostSegGuidancePanelProps> = ({
       <div className="flex items-center justify-between p-4 border-b border-gray-200">
         <div className="flex items-center gap-2">
           <HelpCircle className="w-5 h-5 text-blue-600" />
-          <h3 className="font-semibold text-gray-900">Cost Seg Guidance</h3>
+          <h3 className="font-semibold text-gray-900 dark:text-white">Cost Seg Guidance</h3>
         </div>
         {onClose && (
           <button
@@ -175,7 +175,7 @@ export const CostSegGuidancePanel: React.FC<CostSegGuidancePanelProps> = ({
               className={`flex-1 px-4 py-2 text-sm font-medium transition-colors ${
                 activeTab === 'guidance'
                   ? 'text-blue-600 border-b-2 border-blue-600'
-                  : 'text-gray-600 hover:text-gray-900'
+                  : 'text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white'
               }`}
             >
               Guidance
@@ -185,7 +185,7 @@ export const CostSegGuidancePanel: React.FC<CostSegGuidancePanelProps> = ({
               className={`flex-1 px-4 py-2 text-sm font-medium transition-colors ${
                 activeTab === 'glossary'
                   ? 'text-blue-600 border-b-2 border-blue-600'
-                  : 'text-gray-600 hover:text-gray-900'
+                  : 'text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white'
               }`}
             >
               Glossary
@@ -195,7 +195,7 @@ export const CostSegGuidancePanel: React.FC<CostSegGuidancePanelProps> = ({
               className={`flex-1 px-4 py-2 text-sm font-medium transition-colors ${
                 activeTab === 'irs-refs'
                   ? 'text-blue-600 border-b-2 border-blue-600'
-                  : 'text-gray-600 hover:text-gray-900'
+                  : 'text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white'
               }`}
             >
               IRS Refs
@@ -283,7 +283,7 @@ const GuidanceCard: React.FC<GuidanceCardProps> = ({ guidance, isExpanded = fals
       >
         <div className="flex items-center gap-2">
           <BookOpen className="w-4 h-4 text-blue-600" />
-          <h4 className="text-sm font-semibold text-gray-900">{guidance.title}</h4>
+          <h4 className="text-sm font-semibold text-gray-900 dark:text-white">{guidance.title}</h4>
         </div>
         {onToggle && (
           isExpanded ? (
@@ -358,7 +358,7 @@ interface GlossaryCardProps {
 const GlossaryCard: React.FC<GlossaryCardProps> = ({ term }) => {
   return (
     <div className="border border-gray-200 rounded-lg p-3">
-      <h4 className="text-sm font-semibold text-gray-900 mb-1">{term.term}</h4>
+      <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-1">{term.term}</h4>
       <p className="text-xs text-gray-700 mb-2">{term.definition}</p>
       
       {term.example && (
@@ -400,7 +400,7 @@ const IRSReferenceCard: React.FC<IRSReferenceCardProps> = ({ reference }) => {
   return (
     <div className="border border-gray-200 rounded-lg p-3">
       <div className="flex items-start justify-between mb-2">
-        <h4 className="text-sm font-semibold text-gray-900">{reference.title}</h4>
+        <h4 className="text-sm font-semibold text-gray-900 dark:text-white">{reference.title}</h4>
         {reference.url && (
           <a
             href={reference.url}

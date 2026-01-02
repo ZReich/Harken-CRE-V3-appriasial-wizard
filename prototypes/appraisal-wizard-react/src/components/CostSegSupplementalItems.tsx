@@ -110,12 +110,12 @@ export const CostSegSupplementalItems: React.FC<CostSegSupplementalItemsProps> =
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Package className="w-5 h-5 text-purple-600" />
-          <h3 className="text-lg font-bold text-gray-900">Supplemental Items</h3>
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white">Supplemental Items</h3>
           <span className="px-2 py-0.5 text-xs font-medium bg-purple-100 text-purple-700 rounded-full">
             {items.length} item{items.length !== 1 ? 's' : ''}
           </span>
         </div>
-        <div className="text-sm font-semibold text-gray-900">
+        <div className="text-sm font-semibold text-gray-900 dark:text-white">
           Total: {formatCurrency(totalCost)}
         </div>
       </div>
@@ -179,7 +179,7 @@ export const CostSegSupplementalItems: React.FC<CostSegSupplementalItemsProps> =
                 onClick={() => handleAddItem(example)}
                 className="w-full text-left p-2 bg-white border border-purple-200 hover:border-purple-300 rounded-lg transition-colors"
               >
-                <div className="font-medium text-sm text-gray-900">{example.description}</div>
+                <div className="font-medium text-sm text-gray-900 dark:text-white">{example.description}</div>
                 <div className="flex items-center gap-2 text-xs text-gray-600 mt-1">
                   <span className="px-2 py-0.5 bg-purple-100 text-purple-700 rounded-full">{example.depreciationClass}</span>
                   <span>{example.typicalCost}</span>
@@ -231,13 +231,13 @@ const SupplementalItemCard: React.FC<SupplementalItemCardProps> = ({
       >
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
-            <span className="font-medium text-gray-900">{item.description || 'Unnamed item'}</span>
+            <span className="font-medium text-gray-900 dark:text-white">{item.description || 'Unnamed item'}</span>
             <span className={`px-2 py-0.5 text-xs font-medium rounded-full bg-${depClassOption?.color}-100 text-${depClassOption?.color}-700`}>
               {item.depreciationClass}
             </span>
           </div>
           <div className="flex items-center gap-4 text-xs text-gray-600">
-            <span className="font-semibold text-gray-900">{formatCurrency(item.cost)}</span>
+            <span className="font-semibold text-gray-900 dark:text-white">{formatCurrency(item.cost)}</span>
             <span>• {categoryOption?.label}</span>
             {item.linkedPhotoIds && item.linkedPhotoIds.length > 0 && (
               <span className="flex items-center gap-1">
@@ -341,7 +341,7 @@ const SupplementalItemCard: React.FC<SupplementalItemCardProps> = ({
       <div>
         <button
           onClick={() => setShowPhotoSelector(!showPhotoSelector)}
-          className="flex items-center gap-2 text-xs font-medium text-gray-700 hover:text-gray-900"
+          className="flex items-center gap-2 text-xs font-medium text-gray-700 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white"
         >
           <Camera className="w-4 h-4" />
           Link Photos ({item.linkedPhotoIds?.length || 0})

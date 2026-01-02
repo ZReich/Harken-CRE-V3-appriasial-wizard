@@ -70,7 +70,7 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
       >
         <div className="flex items-center gap-2">
           {icon}
-          <h4 className="font-semibold text-gray-900">{title}</h4>
+          <h4 className="font-semibold text-gray-900 dark:text-white">{title}</h4>
         </div>
         {isExpanded ? (
           <ChevronDown className="w-5 h-5 text-gray-400" />
@@ -296,7 +296,7 @@ export default function CostSegDetailsSection({
       <div className="space-y-4">
         {/* Enable Toggle */}
         <div className="flex items-center justify-between">
-          <label htmlFor={`cost-seg-enabled-${building.id}`} className="flex items-center gap-2 text-sm font-medium text-gray-900 cursor-pointer">
+          <label htmlFor={`cost-seg-enabled-${building.id}`} className="flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-white cursor-pointer">
             <input
               type="checkbox"
               id={`cost-seg-enabled-${building.id}`}
@@ -345,7 +345,7 @@ export default function CostSegDetailsSection({
             {/* System Refinements */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <h4 className="text-sm font-semibold text-gray-900">System Refinements</h4>
+                <h4 className="text-sm font-semibold text-gray-900 dark:text-white">System Refinements</h4>
                 <div className="flex gap-2">
                   <button
                     onClick={() => handleAddSystemRefinement('electrical')}
@@ -397,7 +397,7 @@ export default function CostSegDetailsSection({
             {/* Allocation Summary */}
             {allocationTotals.total > 0 && (
               <div className="border-t border-gray-200 pt-4 space-y-3">
-                <h4 className="text-sm font-semibold text-gray-900">Allocation Summary</h4>
+                <h4 className="text-sm font-semibold text-gray-900 dark:text-white">Allocation Summary</h4>
                 <div className="grid grid-cols-3 gap-3">
                   <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3">
                     <div className="text-xs text-emerald-700 mb-1">5-Year Personal Property</div>

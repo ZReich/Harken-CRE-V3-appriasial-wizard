@@ -564,15 +564,44 @@ function ExecutiveSummaryPage({ selectedElement, onSelectElement }: {
 }
 
 // Property Description Page with Photos
-function PropertyDescriptionPage({ selectedElement, onSelectElement }: { 
+function PropertyDescriptionPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, subjectData, improvementsInventory }: { 
   selectedElement: string | null; 
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
   editedContent?: Record<string, string>;
   getAppliedStyle?: (elementId: string) => React.CSSProperties;
+  subjectData?: import('../../../types').SubjectData;
+  improvementsInventory?: import('../../../types').ImprovementsInventory;
 }) {
-  const data = sampleAppraisalData;
-  const exteriorPhotos = data.photos.filter(p => p.category === 'exterior').slice(0, 3);
+  const fallbackData = sampleAppraisalData;
+  const exteriorPhotos = fallbackData.photos.filter(p => p.category === 'exterior').slice(0, 3);
+  const handleContentChange = onContentChange || (() => {});
+  const getContent = (id: string, defaultVal: string) => editedContent?.[id] ?? defaultVal;
+  const getStyle = (id: string) => getAppliedStyle?.(id) || {};
+
+  // Get site data from wizard state or fall back to sample
+  const siteArea = subjectData?.siteArea || fallbackData.site.landArea;
+  const siteAreaUnit = subjectData?.siteAreaUnit === 'sqft' ? 'SF' : (subjectData?.siteAreaUnit || fallbackData.site.landAreaUnit);
+  const shape = subjectData?.shape || fallbackData.site.shape;
+  const frontage = subjectData?.frontage || fallbackData.site.frontage;
+  const topography = subjectData?.topography || fallbackData.site.topography;
+  const utilities = [
+    subjectData?.waterSource,
+    subjectData?.sewerType,
+    subjectData?.electricProvider,
+    subjectData?.naturalGas,
+    subjectData?.telecom
+  ].filter(Boolean).join(', ') || fallbackData.site.utilities.join(', ');
+  const siteNarrative = subjectData?.siteDescriptionNarrative || '';
+
+  // Get improvements data from wizard state or fall back to sample
+  const primaryBuilding = improvementsInventory?.buildings?.[0];
+  const yearBuilt = primaryBuilding?.yearBuilt || fallbackData.improvements.yearBuilt;
+  const buildingType = primaryBuilding?.buildingType || fallbackData.improvements.buildingType;
+  const grossBuildingArea = primaryBuilding?.grossBuildingArea || fallbackData.improvements.grossBuildingArea;
+  const construction = primaryBuilding?.constructionType || fallbackData.improvements.construction;
+  const condition = primaryBuilding?.physicalCondition || fallbackData.improvements.condition;
+  const quality = primaryBuilding?.qualityGrade || fallbackData.improvements.quality;
 
   return (
     <ReportPageWrapper section={{ id: 'property', label: 'Property Description', enabled: true, expanded: false, fields: [], type: 'narrative' }} pageNumber={3} sidebarLabel="02">
@@ -602,28 +631,41 @@ function PropertyDescriptionPage({ selectedElement, onSelectElement }: {
           className={`mb-6 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'property_site' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
         >
           <h3 className="text-lg font-semibold text-gray-800 mb-3">Site Description</h3>
-          <div className="grid grid-cols-2 gap-4 text-sm">
+          <div className="grid grid-cols-2 gap-4 text-sm mb-4">
             <div>
               <span className="text-gray-500">Land Area:</span>
-              <span className="ml-2 text-gray-800">{data.site.landArea} {data.site.landAreaUnit} ({data.site.landAreaSF.toLocaleString()} SF)</span>
+              <span className="ml-2 text-gray-800">{siteArea} {siteAreaUnit}</span>
             </div>
             <div>
               <span className="text-gray-500">Shape:</span>
-              <span className="ml-2 text-gray-800">{data.site.shape}</span>
+              <span className="ml-2 text-gray-800">{shape}</span>
             </div>
             <div>
               <span className="text-gray-500">Frontage:</span>
-              <span className="ml-2 text-gray-800">{data.site.frontage}</span>
+              <span className="ml-2 text-gray-800">{frontage}</span>
             </div>
             <div>
               <span className="text-gray-500">Topography:</span>
-              <span className="ml-2 text-gray-800">{data.site.topography}</span>
+              <span className="ml-2 text-gray-800">{topography}</span>
             </div>
             <div className="col-span-2">
               <span className="text-gray-500">Utilities:</span>
-              <span className="ml-2 text-gray-800">{data.site.utilities.join(', ')}</span>
+              <span className="ml-2 text-gray-800">{utilities}</span>
             </div>
           </div>
+          {/* Site Description Narrative */}
+          {siteNarrative && (
+            <EditableElement
+              elementId="property_site_narrative"
+              content={getContent('property_site_narrative', siteNarrative)}
+              selectedElement={selectedElement}
+              onSelectElement={onSelectElement}
+              onContentChange={handleContentChange}
+              as="p"
+              className="text-gray-700 text-sm leading-relaxed mt-4"
+              appliedStyle={getStyle('property_site_narrative')}
+            />
+          )}
         </div>
 
         {/* Improvements */}
@@ -633,16 +675,12 @@ function PropertyDescriptionPage({ selectedElement, onSelectElement }: {
         >
           <h3 className="text-lg font-semibold text-gray-800 mb-3">Improvements</h3>
           <div className="grid grid-cols-2 gap-4 text-sm">
-            <div><span className="text-gray-500">Year Built:</span><span className="ml-2 text-gray-800">{data.improvements.yearBuilt}</span></div>
-            <div><span className="text-gray-500">Building Type:</span><span className="ml-2 text-gray-800">{data.improvements.buildingType}</span></div>
-            <div><span className="text-gray-500">Gross Building Area:</span><span className="ml-2 text-gray-800">{data.improvements.grossBuildingArea.toLocaleString()} SF</span></div>
-            <div><span className="text-gray-500">Office Area:</span><span className="ml-2 text-gray-800">{data.improvements.officeArea.toLocaleString()} SF</span></div>
-            <div><span className="text-gray-500">Shop/Warehouse:</span><span className="ml-2 text-gray-800">{data.improvements.shopArea.toLocaleString()} SF</span></div>
-            <div><span className="text-gray-500">Clear Height:</span><span className="ml-2 text-gray-800">{data.improvements.clearHeight} ft</span></div>
-            <div><span className="text-gray-500">Overhead Doors:</span><span className="ml-2 text-gray-800">{data.improvements.overheadDoors}</span></div>
-            <div><span className="text-gray-500">Construction:</span><span className="ml-2 text-gray-800">{data.improvements.construction}</span></div>
-            <div><span className="text-gray-500">Condition:</span><span className="ml-2 text-gray-800">{data.improvements.condition}</span></div>
-            <div><span className="text-gray-500">Quality:</span><span className="ml-2 text-gray-800">{data.improvements.quality}</span></div>
+            <div><span className="text-gray-500">Year Built:</span><span className="ml-2 text-gray-800">{yearBuilt}</span></div>
+            <div><span className="text-gray-500">Building Type:</span><span className="ml-2 text-gray-800">{buildingType}</span></div>
+            <div><span className="text-gray-500">Gross Building Area:</span><span className="ml-2 text-gray-800">{typeof grossBuildingArea === 'number' ? grossBuildingArea.toLocaleString() : grossBuildingArea} SF</span></div>
+            <div><span className="text-gray-500">Construction:</span><span className="ml-2 text-gray-800">{construction}</span></div>
+            <div><span className="text-gray-500">Condition:</span><span className="ml-2 text-gray-800">{condition}</span></div>
+            <div><span className="text-gray-500">Quality:</span><span className="ml-2 text-gray-800">{quality}</span></div>
           </div>
         </div>
       </div>
@@ -2711,7 +2749,7 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
       case 'executive-summary':
         return <ExecutiveSummaryPage {...commonProps} />;
       case 'property-description':
-        return <PropertyDescriptionPage {...commonProps} />;
+        return <PropertyDescriptionPage {...commonProps} subjectData={state.subjectData} improvementsInventory={state.improvementsInventory} />;
       case 'hbu':
         return <HBUPage {...commonProps} />;
       case 'market-analysis':
