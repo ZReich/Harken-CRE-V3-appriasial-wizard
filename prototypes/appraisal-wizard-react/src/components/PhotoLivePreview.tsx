@@ -110,7 +110,7 @@ export const PhotoLivePreview: React.FC<PhotoLivePreviewProps> = ({
         </div>
         <div>
           <h3 className="text-sm font-bold text-[#1c3643]">Live Preview</h3>
-          <p className="text-xs text-gray-500">{uploadedCount} photos uploaded</p>
+          <p className="text-xs text-gray-500 dark:text-slate-400">{uploadedCount} photos uploaded</p>
         </div>
       </div>
 

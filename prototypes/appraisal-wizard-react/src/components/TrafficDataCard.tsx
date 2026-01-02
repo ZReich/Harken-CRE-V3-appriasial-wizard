@@ -209,7 +209,7 @@ export function TrafficDataCard({
             <Car className="w-5 h-5 text-[#0da1c7]" />
             <div>
               <h3 className="text-lg font-bold text-[#1c3643]">Traffic Data</h3>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-500 dark:text-slate-400">
                 Annual Average Daily Traffic (AADT)
               </p>
             </div>

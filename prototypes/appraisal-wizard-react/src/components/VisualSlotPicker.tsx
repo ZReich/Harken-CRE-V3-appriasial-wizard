@@ -155,11 +155,11 @@ export default function VisualSlotPicker({
             </div>
             <div>
               <p className="text-sm font-medium text-gray-800">{selectedSlot.label}</p>
-              <p className="text-[10px] text-gray-500">{selectedSlot.categoryLabel}</p>
+              <p className="text-[10px] text-gray-500 dark:text-slate-400">{selectedSlot.categoryLabel}</p>
             </div>
           </div>
         ) : (
-          <span className="text-sm text-gray-500">Choose where this photo goes...</span>
+          <span className="text-sm text-gray-500 dark:text-slate-400">Choose where this photo goes...</span>
         )}
         <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
         
@@ -190,7 +190,7 @@ export default function VisualSlotPicker({
                 )}
                 <div className="flex-1 min-w-0">
                   <p className="text-sm font-semibold text-gray-800">Select a slot for this photo</p>
-                  <p className="text-xs text-gray-500">Choose from available slots below</p>
+                  <p className="text-xs text-gray-500 dark:text-slate-400">Choose from available slots below</p>
                 </div>
                 <button
                   onClick={() => setIsOpen(false)}
@@ -312,7 +312,7 @@ export default function VisualSlotPicker({
 
               {/* Empty State */}
               {(slotsByCategory[activeCategory] || []).filter(s => !usedSlots.has(s.id)).length === 0 && (
-                <div className="text-center py-8 text-gray-500">
+                <div className="text-center py-8 text-gray-500 dark:text-slate-400">
                   <p className="text-sm">All {getCategoryInfo(activeCategory).label} slots are filled</p>
                   <p className="text-xs mt-1">Try another category</p>
                 </div>

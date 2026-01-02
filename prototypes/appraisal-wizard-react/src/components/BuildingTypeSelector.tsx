@@ -234,7 +234,7 @@ const BuildingTypeSelector: FC<BuildingTypeSelectorProps> = ({
               }}
               className="p-1 hover:bg-gray-200 rounded"
             >
-              <ChevronUp className="w-4 h-4 text-gray-500" />
+              <ChevronUp className="w-4 h-4 text-gray-500 dark:text-slate-400" />
             </button>
           </div>
         </div>

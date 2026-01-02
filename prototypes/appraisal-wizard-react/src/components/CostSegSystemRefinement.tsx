@@ -161,7 +161,7 @@ export const CostSegSystemRefinement: React.FC<CostSegSystemRefinementProps> = (
           <span className="text-2xl">{SYSTEM_ICONS[refinement.systemType] || '🔧'}</span>
           <div>
             <h3 className="text-lg font-bold text-gray-900 dark:text-white">{refinement.systemLabel}</h3>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500 dark:text-slate-400">
               Total: {formatCurrency(refinement.totalSystemCost)} • {refinement.refinements.length} refinement{refinement.refinements.length !== 1 ? 's' : ''}
             </p>
           </div>

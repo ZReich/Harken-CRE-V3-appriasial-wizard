@@ -375,7 +375,7 @@ export default function SiteImprovementsInventory({
             <Warehouse className="w-5 h-5 text-[#0da1c7]" />
             <div>
               <h3 className="text-lg font-bold text-[#1c3643]">Site Improvements</h3>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-500 dark:text-slate-400">
                 M&S Section 66 - Itemized with age-life depreciation
               </p>
             </div>
@@ -957,7 +957,7 @@ export default function SiteImprovementsInventory({
 
         {/* Empty State */}
         {improvements.length === 0 && !selectedCategory && (
-          <div className="text-center py-6 text-gray-500">
+          <div className="text-center py-6 text-gray-500 dark:text-slate-400">
             <p className="text-sm">Select a category above to add site improvements</p>
           </div>
         )}

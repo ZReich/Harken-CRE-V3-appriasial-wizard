@@ -473,10 +473,10 @@ export default function InteriorFinishesInventory({
             <Layers className={`${compact ? 'w-4 h-4' : 'w-5 h-5'} text-[#0da1c7]`} />
             <div>
               <h3 className={`${compact ? 'text-base' : 'text-lg'} font-bold text-[#1c3643]`}>
-                Interior Finishes {areaName && <span className="font-normal text-gray-500">({areaName})</span>}
+                Interior Finishes {areaName && <span className="font-normal text-gray-500 dark:text-slate-400">({areaName})</span>}
               </h3>
               {!compact && (
-                <p className="text-xs text-gray-500">
+                <p className="text-xs text-gray-500 dark:text-slate-400">
                   Track ceilings, flooring, and wall finishes
                 </p>
               )}
@@ -1011,7 +1011,7 @@ export default function InteriorFinishesInventory({
 
         {/* Empty State */}
         {allComponents.length === 0 && !selectedCategory && (
-          <div className="text-center py-4 text-gray-500">
+          <div className="text-center py-4 text-gray-500 dark:text-slate-400">
             <p className="text-sm">Select a category above to add interior finishes</p>
           </div>
         )}

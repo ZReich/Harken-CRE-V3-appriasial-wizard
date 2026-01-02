@@ -487,7 +487,7 @@ export default function ExteriorFeaturesInventory({
             <Home className="w-5 h-5 text-[#0da1c7]" />
             <div>
               <h3 className="text-lg font-bold text-[#1c3643]">Exterior Features</h3>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-500 dark:text-slate-400">
                 Track individual components with installation dates and conditions
               </p>
             </div>
@@ -1001,7 +1001,7 @@ export default function ExteriorFeaturesInventory({
 
         {/* Empty State */}
         {allComponents.length === 0 && !selectedCategory && (
-          <div className="text-center py-6 text-gray-500">
+          <div className="text-center py-6 text-gray-500 dark:text-slate-400">
             <p className="text-sm">Select a category above to add exterior features</p>
           </div>
         )}

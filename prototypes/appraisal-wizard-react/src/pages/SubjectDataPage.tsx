@@ -285,8 +285,10 @@ export default function SubjectDataPage() {
   const [isLookingUpFloodZone, setIsLookingUpFloodZone] = useState(false);
   const [floodZoneLookupError, setFloodZoneLookupError] = useState<string | null>(null);
 
-  // Site Description Narrative
-  const [siteDescriptionNarrative, setSiteDescriptionNarrative] = useState('');
+  // Site Description Narrative - initialize from WizardContext
+  const [siteDescriptionNarrative, setSiteDescriptionNarrative] = useState(() => 
+    wizardState.subjectData?.siteDescriptionNarrative || ''
+  );
   const [isDraftingSiteDescription, setIsDraftingSiteDescription] = useState(false);
   
   // Property Boundaries - initialize from WizardContext

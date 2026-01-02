@@ -159,7 +159,7 @@ export const CostSegGuidancePanel: React.FC<CostSegGuidancePanelProps> = ({
           )}
           
           {searchResults.guidance.length === 0 && searchResults.glossary.length === 0 && (
-            <div className="text-center py-8 text-sm text-gray-500">
+            <div className="text-center py-8 text-sm text-gray-500 dark:text-slate-400">
               No results found for "{searchQuery}"
             </div>
           )}
@@ -235,7 +235,7 @@ export const CostSegGuidancePanel: React.FC<CostSegGuidancePanelProps> = ({
                 ))}
 
                 {contextualGuidance.length === 0 && (
-                  <div className="text-center py-8 text-sm text-gray-500">
+                  <div className="text-center py-8 text-sm text-gray-500 dark:text-slate-400">
                     No specific guidance for this context
                   </div>
                 )}

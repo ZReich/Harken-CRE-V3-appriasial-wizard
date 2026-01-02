@@ -71,7 +71,7 @@ export default function USPAPDetailModal({
                   {detail.type}
                 </span>
               </div>
-              <p className="text-sm text-gray-500">{detail.title}</p>
+              <p className="text-sm text-gray-500 dark:text-slate-400">{detail.title}</p>
             </div>
           </div>
           <button 

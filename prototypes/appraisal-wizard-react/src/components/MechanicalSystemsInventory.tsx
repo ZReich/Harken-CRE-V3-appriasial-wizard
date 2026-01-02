@@ -498,7 +498,7 @@ export default function MechanicalSystemsInventory({
             <Wrench className="w-5 h-5 text-[#0da1c7]" />
             <div>
               <h3 className="text-lg font-bold text-[#1c3643]">Mechanical Systems</h3>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-500 dark:text-slate-400">
                 Track HVAC, electrical, fire protection, and elevators
               </p>
             </div>
@@ -1036,7 +1036,7 @@ export default function MechanicalSystemsInventory({
 
         {/* Empty State */}
         {allComponents.length === 0 && !selectedCategory && (
-          <div className="text-center py-6 text-gray-500">
+          <div className="text-center py-6 text-gray-500 dark:text-slate-400">
             <p className="text-sm">Select a category above to add mechanical systems</p>
           </div>
         )}

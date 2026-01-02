@@ -157,7 +157,7 @@ const AllocationBar: React.FC<AllocationBarProps> = ({ label, userValue, minRang
         <span className="text-sm font-medium text-gray-700 dark:text-slate-300">{label}</span>
         <div className="flex items-center gap-2">
           <span className={`text-sm font-bold ${statusColors.text}`}>{userValue.toFixed(1)}%</span>
-          <span className="text-xs text-gray-500">
+          <span className="text-xs text-gray-500 dark:text-slate-400">
             (typical: {minRange}-{maxRange}%)
           </span>
         </div>

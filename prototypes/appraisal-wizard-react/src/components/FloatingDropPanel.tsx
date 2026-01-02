@@ -110,7 +110,7 @@ export default function FloatingDropPanel({
                 Drop Photo Here
                 <span className="inline-flex h-2 w-2 rounded-full bg-[#0da1c7] animate-pulse" />
               </h3>
-              <p className="text-xs text-gray-500">Drag to any slot below</p>
+              <p className="text-xs text-gray-500 dark:text-slate-400">Drag to any slot below</p>
             </div>
           </div>
           

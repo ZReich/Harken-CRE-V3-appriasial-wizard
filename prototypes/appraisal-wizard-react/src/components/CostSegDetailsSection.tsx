@@ -369,7 +369,7 @@ export default function CostSegDetailsSection({
               </div>
 
               {details.systemRefinements.length === 0 && (
-                <div className="text-center py-6 text-sm text-gray-500">
+                <div className="text-center py-6 text-sm text-gray-500 dark:text-slate-400">
                   No system refinements added yet. Click buttons above to add.
                 </div>
               )}

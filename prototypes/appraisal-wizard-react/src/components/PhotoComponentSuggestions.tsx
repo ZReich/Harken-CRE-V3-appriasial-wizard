@@ -300,9 +300,9 @@ export default function PhotoComponentSuggestions({
       </div>
 
       {/* Component Sections */}
-      {renderSection('exterior', 'Exterior Features', <Building2 size={14} className="text-gray-500" />)}
-      {renderSection('mechanical', 'Mechanical Systems', <Zap size={14} className="text-gray-500" />)}
-      {renderSection('interior', 'Interior Finishes', <Layers size={14} className="text-gray-500" />)}
+      {renderSection('exterior', 'Exterior Features', <Building2 size={14} className="text-gray-500 dark:text-slate-400" />)}
+      {renderSection('mechanical', 'Mechanical Systems', <Zap size={14} className="text-gray-500 dark:text-slate-400" />)}
+      {renderSection('interior', 'Interior Finishes', <Layers size={14} className="text-gray-500 dark:text-slate-400" />)}
 
       {/* Summary Footer */}
       <div className="mt-3 pt-3 border-t border-amber-200 flex items-center justify-between">

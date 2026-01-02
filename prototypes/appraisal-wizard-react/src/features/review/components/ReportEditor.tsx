@@ -294,7 +294,7 @@ function CoverPageReal({
   coverPhoto?: import('../../../types').CoverPhotoData;
 }) {
   const fallbackData = sampleAppraisalData;
-  const coverPhoto = coverPhotoData?.url ? { url: coverPhotoData.url, caption: 'Cover Photo' } : fallbackData.photos.find(p => p.category === 'cover');
+  const coverPhoto = coverPhotoData?.preview ? { url: coverPhotoData.preview, caption: coverPhotoData.caption || 'Cover Photo' } : fallbackData.photos.find(p => p.category === 'cover');
   const handleContentChange = onContentChange || (() => {});
   const getContent = (id: string, defaultVal: string) => editedContent?.[id] ?? defaultVal;
   const getStyle = (id: string) => getAppliedStyle?.(id) || {};
@@ -633,6 +633,10 @@ function PropertyDescriptionPage({ selectedElement, onSelectElement, onContentCh
     subjectData?.telecom
   ].filter(Boolean).join(', ') || fallbackData.site.utilities.join(', ');
   const siteNarrative = subjectData?.siteDescriptionNarrative || '';
+  
+  // Area/neighborhood narratives from wizard state
+  const areaDescription = subjectData?.areaDescription || '';
+  const neighborhoodCharacteristics = subjectData?.neighborhoodCharacteristics || '';
 
   // Get improvements data from wizard state or fall back to sample
   const primaryBuilding = improvementsInventory?.parcels?.[0]?.buildings?.[0];
@@ -652,6 +656,40 @@ function PropertyDescriptionPage({ selectedElement, onSelectElement, onContentCh
         </div>
 
         <h2 className="text-2xl font-light text-gray-800 mb-6 mt-8">Property Description</h2>
+
+        {/* Area/Neighborhood Description */}
+        {(areaDescription || neighborhoodCharacteristics) && (
+          <div 
+            onClick={() => onSelectElement('property_area')}
+            className={`mb-6 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'property_area' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
+          >
+            <h3 className="text-lg font-semibold text-gray-800 mb-3">Area & Neighborhood</h3>
+            {areaDescription && (
+              <EditableElement
+                elementId="property_area_description"
+                content={getContent('property_area_description', areaDescription)}
+                selectedElement={selectedElement}
+                onSelectElement={onSelectElement}
+                onContentChange={handleContentChange}
+                as="p"
+                className="text-gray-700 text-sm leading-relaxed mb-3"
+                appliedStyle={getStyle('property_area_description')}
+              />
+            )}
+            {neighborhoodCharacteristics && (
+              <EditableElement
+                elementId="property_neighborhood"
+                content={getContent('property_neighborhood', neighborhoodCharacteristics)}
+                selectedElement={selectedElement}
+                onSelectElement={onSelectElement}
+                onContentChange={handleContentChange}
+                as="p"
+                className="text-gray-700 text-sm leading-relaxed"
+                appliedStyle={getStyle('property_neighborhood')}
+              />
+            )}
+          </div>
+        )}
 
         {/* Photos Grid */}
         <div className="grid grid-cols-3 gap-4 mb-8">
@@ -1810,14 +1848,20 @@ function AssumptionsPage({ selectedElement, onSelectElement }: {
 }
 
 // Certification Page
-function CertificationPage({ selectedElement, onSelectElement }: { 
+function CertificationPage({ selectedElement, onSelectElement, subjectData }: { 
   selectedElement: string | null; 
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
   editedContent?: Record<string, string>;
   getAppliedStyle?: (elementId: string) => React.CSSProperties;
+  subjectData?: import('../../../types').SubjectData;
 }) {
-  const data = sampleAppraisalData;
+  const fallbackData = sampleAppraisalData;
+  
+  // Use wizard state or fall back to sample data
+  const appraiserName = subjectData?.inspectorName || fallbackData.assignment.appraiser;
+  const appraiserLicense = subjectData?.inspectorLicense || fallbackData.assignment.appraiserLicense;
+  const reportDate = subjectData?.reportDate || fallbackData.assignment.reportDate;
 
   return (
     <ReportPageWrapper section={{ id: 'certification', label: 'Certification', enabled: true, expanded: false, fields: [], type: 'narrative' }} pageNumber={11} sidebarLabel="10">
@@ -1843,7 +1887,7 @@ function CertificationPage({ selectedElement, onSelectElement }: {
           className={`mb-8 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'certifications_list' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
         >
           <ol className="list-decimal list-outside ml-5 space-y-3 text-sm text-gray-700 leading-relaxed">
-            {data.certifications.map((cert, idx) => (
+            {fallbackData.certifications.map((cert, idx) => (
               <li key={idx}>{cert}</li>
             ))}
           </ol>
@@ -1857,16 +1901,16 @@ function CertificationPage({ selectedElement, onSelectElement }: {
           <div className="grid grid-cols-2 gap-8">
             <div>
               <div className="border-b-2 border-gray-400 pb-2 mb-2 h-16"></div>
-              <div className="text-sm font-semibold text-gray-800">{data.assignment.appraiser}</div>
-              <div className="text-xs text-gray-600">{data.assignment.appraiserLicense}</div>
-              <div className="text-xs text-gray-600 mt-2">Date: {data.assignment.reportDate}</div>
+              <div className="text-sm font-semibold text-gray-800">{appraiserName}</div>
+              <div className="text-xs text-gray-600">{appraiserLicense}</div>
+              <div className="text-xs text-gray-600 mt-2">Date: {reportDate}</div>
             </div>
             <div>
               <div className="text-center">
                 <div className="text-2xl font-bold text-emerald-700 mb-2">ROVE</div>
-                <div className="text-sm text-gray-600">{data.assignment.appraiserCompany}</div>
-                <div className="text-xs text-gray-500 mt-1">{data.assignment.appraiserAddress}</div>
-                <div className="text-xs text-gray-500">{data.assignment.appraiserPhone}</div>
+                <div className="text-sm text-gray-600">{fallbackData.assignment.appraiserCompany}</div>
+                <div className="text-xs text-gray-500 mt-1">{fallbackData.assignment.appraiserAddress}</div>
+                <div className="text-xs text-gray-500">{fallbackData.assignment.appraiserPhone}</div>
               </div>
             </div>
           </div>
@@ -2994,7 +3038,7 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
       case 'assumptions':
         return <AssumptionsPage {...commonProps} />;
       case 'certification':
-        return <CertificationPage {...commonProps} />;
+        return <CertificationPage {...commonProps} subjectData={state.subjectData} />;
       case 'exhibits':
         return <PhotoExhibitsPage {...photoProps} />;
       default:
