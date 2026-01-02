@@ -48,6 +48,7 @@ import { SUBJECT_DATA_GUIDANCE, type SectionGuidance } from '../constants/wizard
 import { generateDraft } from '../services/aiService';
 import type { AIGenerationContext } from '../types/api';
 import { getPropertyType } from '../constants/marshallSwift';
+import { getFloodZone } from '../services/femaFloodService';
 
 const tabs = [
   { id: 'location', label: 'Location & Area', Icon: LocationIcon },
@@ -275,6 +276,8 @@ export default function SubjectDataPage() {
   const [femaMapDate, setFemaMapDate] = useState('');
   const [floodInsuranceRequired, setFloodInsuranceRequired] = useState('');
   const [floodZoneNotes, setFloodZoneNotes] = useState('');
+  const [isLookingUpFloodZone, setIsLookingUpFloodZone] = useState(false);
+  const [floodZoneLookupError, setFloodZoneLookupError] = useState<string | null>(null);
 
   // Site Description Narrative
   const [siteDescriptionNarrative, setSiteDescriptionNarrative] = useState('');
@@ -740,6 +743,11 @@ export default function SubjectDataPage() {
             setFloodInsuranceRequired={setFloodInsuranceRequired}
             floodZoneNotes={floodZoneNotes}
             setFloodZoneNotes={setFloodZoneNotes}
+            isLookingUpFloodZone={isLookingUpFloodZone}
+            setIsLookingUpFloodZone={setIsLookingUpFloodZone}
+            floodZoneLookupError={floodZoneLookupError}
+            setFloodZoneLookupError={setFloodZoneLookupError}
+            subjectCoordinates={wizardState.subjectData?.coordinates}
             // Site Description Narrative
             siteDescriptionNarrative={siteDescriptionNarrative}
             setSiteDescriptionNarrative={setSiteDescriptionNarrative}
@@ -1114,6 +1122,11 @@ interface SiteProps {
   setFloodInsuranceRequired: (v: string) => void;
   floodZoneNotes: string;
   setFloodZoneNotes: (v: string) => void;
+  isLookingUpFloodZone: boolean;
+  setIsLookingUpFloodZone: (v: boolean) => void;
+  floodZoneLookupError: string | null;
+  setFloodZoneLookupError: (v: string | null) => void;
+  subjectCoordinates?: { latitude: number; longitude: number };
   // Site Description Narrative
   siteDescriptionNarrative: string;
   setSiteDescriptionNarrative: (v: string) => void;
@@ -1289,6 +1302,9 @@ function SiteContent({
   femaZone, setFemaZone, femaMapPanel, setFemaMapPanel,
   femaMapDate, setFemaMapDate, floodInsuranceRequired, setFloodInsuranceRequired,
   floodZoneNotes, setFloodZoneNotes,
+  isLookingUpFloodZone, setIsLookingUpFloodZone,
+  floodZoneLookupError, setFloodZoneLookupError,
+  subjectCoordinates,
   siteDescriptionNarrative, setSiteDescriptionNarrative,
   isDraftingSiteDescription, setIsDraftingSiteDescription,
   northBoundary, setNorthBoundary,
@@ -1341,6 +1357,49 @@ function SiteContent({
       setAcres(ac.toFixed(3));
     } else {
       setAcres('');
+    }
+  };
+
+  // Lookup Flood Zone from FEMA
+  const handleLookupFloodZone = async () => {
+    if (!subjectCoordinates?.latitude || !subjectCoordinates?.longitude) {
+      setFloodZoneLookupError('Property coordinates required. Please enter an address first.');
+      return;
+    }
+
+    setIsLookingUpFloodZone(true);
+    setFloodZoneLookupError(null);
+
+    try {
+      const result = await getFloodZone(subjectCoordinates.latitude, subjectCoordinates.longitude);
+      
+      if (result) {
+        // Map the zone to our FEMA zone options
+        const zoneMap: Record<string, string> = {
+          'X': 'zone_x',
+          'A': 'zone_a',
+          'AE': 'zone_ae',
+          'AO': 'zone_a',
+          'AH': 'zone_a',
+          'V': 'zone_ve',
+          'VE': 'zone_ve',
+        };
+        
+        const mappedZone = zoneMap[result.floodZone] || 'other';
+        setFemaZone(mappedZone);
+        setFemaMapPanel(result.panelNumber || '');
+        setFloodInsuranceRequired(result.insuranceRequired ? 'required' : 'not_required');
+        
+        // Add lookup result to notes
+        const noteText = `FEMA Lookup: ${result.floodZone} - ${result.zoneDescription}`;
+        const newNotes = floodZoneNotes ? `${floodZoneNotes}\n${noteText}` : noteText;
+        setFloodZoneNotes(newNotes);
+      }
+    } catch (error) {
+      console.error('Flood zone lookup failed:', error);
+      setFloodZoneLookupError(error instanceof Error ? error.message : 'Lookup failed. Please try again.');
+    } finally {
+      setIsLookingUpFloodZone(false);
     }
   };
 
@@ -1728,10 +1787,46 @@ Overall, the site is well-suited for its current use and presents no significant
 
       {/* Flood Zone - Enhanced */}
       <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4 flex items-center gap-2">
-          <AlertTriangle className="w-5 h-5 text-[#0da1c7]" />
-          Flood Zone
-        </h3>
+        <div className="flex items-center justify-between border-b-2 border-gray-200 pb-3 mb-4">
+          <h3 className="text-lg font-bold text-[#1c3643] flex items-center gap-2">
+            <Droplets className="w-5 h-5 text-[#0da1c7]" />
+            Flood Zone
+          </h3>
+          <button
+            onClick={handleLookupFloodZone}
+            disabled={isLookingUpFloodZone || !subjectCoordinates}
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-[#0da1c7] to-[#0891b2] rounded-lg hover:from-[#0b8fb3] hover:to-[#0782a1] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
+          >
+            {isLookingUpFloodZone ? (
+              <>
+                <Loader2 className="w-4 h-4 animate-spin" />
+                Looking up...
+              </>
+            ) : (
+              <>
+                <Map className="w-4 h-4" />
+                Lookup Flood Zone
+              </>
+            )}
+          </button>
+        </div>
+        
+        {/* Error message */}
+        {floodZoneLookupError && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-red-700 text-sm">
+            <AlertTriangle className="w-4 h-4" />
+            {floodZoneLookupError}
+          </div>
+        )}
+        
+        {/* No coordinates warning */}
+        {!subjectCoordinates && (
+          <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg flex items-center gap-2 text-amber-700 text-sm">
+            <Info className="w-4 h-4" />
+            Enter a property address in Setup to enable automatic flood zone lookup.
+          </div>
+        )}
+        
         <div className="space-y-4">
           <ButtonSelector
             label="FEMA Zone"
