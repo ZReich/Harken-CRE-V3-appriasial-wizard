@@ -12,7 +12,7 @@ import WizardGuidancePanel from '../components/WizardGuidancePanel';
 import DemographicsPanel from '../components/DemographicsPanel';
 import { useWizard } from '../context/WizardContext';
 import { DocumentSourceIndicator, getDocumentSourceInputClasses } from '../components/DocumentSourceIndicator';
-import { FieldSuggestion } from '../components/FieldSuggestion';
+import { MultiValueSuggestion } from '../components/MultiValueSuggestion';
 import type { SiteImprovement, PhotoData } from '../types';
 import { fetchTrafficData, type TrafficDataEntry as TrafficServiceEntry } from '../services/trafficService';
 import { fetchBuildingPermits, type BuildingPermitEntry as PermitServiceEntry } from '../services/permitsService';
@@ -1491,16 +1491,15 @@ Overall, the site is well-suited for its current use and presents no significant
               placeholder="0.000"
             />
             {hasPendingFieldSuggestion('subjectData.siteArea') && (
-              <FieldSuggestion
+              <MultiValueSuggestion
                 fieldPath="subjectData.siteArea"
+                fieldLabel="Total Acres"
                 onAccept={(value) => {
                   // Extract numeric value from strings like "2.45 acres" or "2.45 acres (106,722 SF)"
                   const numericMatch = value.match(/[\d.]+/);
                   const numericValue = numericMatch ? numericMatch[0] : value;
                   handleAcresChange(numericValue);
-                  acceptFieldSuggestion('subjectData.siteArea', numericValue);
                 }}
-                onReject={() => rejectFieldSuggestion('subjectData.siteArea')}
               />
             )}
           </div>
@@ -1633,13 +1632,12 @@ Overall, the site is well-suited for its current use and presents no significant
               placeholder="e.g., I1 - Light Industrial"
             />
             {hasPendingFieldSuggestion('subjectData.zoningClass') && (
-              <FieldSuggestion
+              <MultiValueSuggestion
                 fieldPath="subjectData.zoningClass"
+                fieldLabel="Zoning Classification"
                 onAccept={(value) => {
                   setZoningClass(value);
-                  acceptFieldSuggestion('subjectData.zoningClass', value);
                 }}
-                onReject={() => rejectFieldSuggestion('subjectData.zoningClass')}
               />
             )}
           </div>

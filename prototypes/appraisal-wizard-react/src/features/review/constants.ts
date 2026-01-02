@@ -348,5 +348,16 @@ export const CLOSING_REPORT_SECTIONS: ReportSection[] = [
       { id: 'exhibits_maps', label: 'Location Maps', enabled: true },
     ],
   },
+  {
+    id: 'addenda',
+    label: 'Addenda - Supporting Documents',
+    type: 'addenda-list',
+    sectionNumber: '11',
+    enabled: true,
+    expanded: false,
+    fields: [
+      { id: 'addenda_documents', label: 'Uploaded Documents', enabled: true },
+    ],
+  },
 ];
 

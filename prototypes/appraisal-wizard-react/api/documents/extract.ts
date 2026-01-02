@@ -245,6 +245,93 @@ IMPORTANT: Respond ONLY with valid JSON in this exact format:
 
 If a field cannot be found, set value to null and confidence to 0.`,
 
+  // NEW: Deed documents (Grant Deed, Warranty Deed, Quitclaim Deed)
+  deed: `You are an expert at extracting information from property deeds including grant deeds, warranty deeds, and quitclaim deeds.
+
+Extract the following fields from the document:
+
+FIELDS TO EXTRACT:
+- grantor: The seller/grantor name(s) who is transferring the property
+- grantee: The buyer/grantee name(s) who is receiving the property
+- recordingDate: Date the deed was recorded (format: YYYY-MM-DD if possible)
+- salePrice: Sale price or consideration amount
+- legalDescription: Legal description of the property
+- propertyAddress: Property street address
+- documentNumber: Recording document number or instrument number
+- county: County where property is located
+- state: State (two-letter abbreviation)
+- bookPage: Book and page number if recorded
+
+IMPORTANT: Respond ONLY with valid JSON in this exact format:
+{
+  "fields": {
+    "grantor": { "value": "John Smith and Jane Smith", "confidence": 95 },
+    "grantee": { "value": "ABC Holdings LLC", "confidence": 95 },
+    "recordingDate": { "value": "2024-06-15", "confidence": 90 },
+    ...
+  }
+}
+
+If a field cannot be found, set value to null and confidence to 0.`,
+
+  // NEW: FEMA Flood Zone Determination
+  flood_map: `You are an expert at extracting information from FEMA flood zone determination documents and flood maps.
+
+Extract the following fields from the document:
+
+FIELDS TO EXTRACT:
+- floodZone: FEMA flood zone designation (e.g., Zone X, Zone AE, Zone A, Zone VE)
+- panelNumber: FEMA map panel number
+- effectiveDate: Effective date of the flood map
+- communityNumber: FEMA community number
+- propertyAddress: Property address
+- mapNumber: Full FEMA map number (FIRM panel)
+- determination: Flood zone determination description (e.g., "Not in a Special Flood Hazard Area")
+- baseFloodElevation: Base flood elevation if in flood zone
+
+IMPORTANT: Respond ONLY with valid JSON in this exact format:
+{
+  "fields": {
+    "floodZone": { "value": "Zone X", "confidence": 98 },
+    "panelNumber": { "value": "30031C0125E", "confidence": 95 },
+    "effectiveDate": { "value": "2021-09-30", "confidence": 90 },
+    ...
+  }
+}
+
+If a field cannot be found, set value to null and confidence to 0.`,
+
+  // NEW: Property Tax Assessment records
+  tax_assessment: `You are an expert at extracting information from property tax assessment records and tax bills.
+
+Extract the following fields from the document:
+
+FIELDS TO EXTRACT:
+- taxId: Tax ID, parcel number, or APN
+- assessedValue: Total assessed value
+- taxYear: Tax year
+- annualTax: Annual property tax amount
+- landValue: Assessed land value
+- improvementValue: Assessed improvement/building value
+- owner: Property owner name(s)
+- propertyAddress: Property address
+- propertyClass: Property classification (residential, commercial, agricultural, etc.)
+- millLevy: Mill levy or tax rate
+- exemptions: Any exemptions applied
+
+IMPORTANT: Respond ONLY with valid JSON in this exact format:
+{
+  "fields": {
+    "taxId": { "value": "12-3456-78-9-00-00", "confidence": 98 },
+    "assessedValue": { "value": "$425,000", "confidence": 95 },
+    "taxYear": { "value": "2024", "confidence": 98 },
+    "annualTax": { "value": "$4,250.00", "confidence": 92 },
+    ...
+  }
+}
+
+If a field cannot be found, set value to null and confidence to 0.`,
+
   unknown: `You are an expert at extracting information from various real estate documents.
 
 Try to extract any relevant property or transaction information you can find:

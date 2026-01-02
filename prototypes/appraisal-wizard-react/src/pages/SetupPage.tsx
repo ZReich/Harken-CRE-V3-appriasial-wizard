@@ -7,7 +7,7 @@ import GooglePlacesAutocomplete, { type PlaceDetails } from '../components/Googl
 import { useWizard } from '../context/WizardContext';
 import { Trash2, Plus, Lock, Search, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
 import { DocumentSourceIndicator, getDocumentSourceInputClasses } from '../components/DocumentSourceIndicator';
-import { FieldSuggestion } from '../components/FieldSuggestion';
+import { MultiValueSuggestion } from '../components/MultiValueSuggestion';
 import type { CadastralData } from '../types/api';
 import { getPropertyData, getLookupCostInfo, type PropertyLookupResult } from '../services/propertyDataRouter';
 import {
@@ -897,9 +897,10 @@ export default function SetupPage() {
               required
             />
             {hasPendingFieldSuggestion('subjectData.address.street') && (
-              <FieldSuggestion
+              <MultiValueSuggestion
                 fieldPath="subjectData.address.street"
-                onAccept={(value) => {
+                fieldLabel="Street Address"
+                onAccept={(value, suggestionId) => {
                   // Parse full address string like "159 Edgewater Drive, Libby, Montana 59923"
                   // into separate components (street, city, state, zip)
                   const parseFullAddress = (fullAddress: string) => {
@@ -946,9 +947,7 @@ export default function SetupPage() {
                     state: parsed.state || prev.state,
                     zip: parsed.zip || prev.zip,
                   }));
-                  acceptFieldSuggestion('subjectData.address.street', parsed.street);
                 }}
-                onReject={() => rejectFieldSuggestion('subjectData.address.street')}
               />
             )}
           </div>
@@ -1759,13 +1758,12 @@ export default function SetupPage() {
               fieldPath="subjectData.legalDescription"
             />
             {hasPendingFieldSuggestion('subjectData.legalDescription') && (
-              <FieldSuggestion
+              <MultiValueSuggestion
                 fieldPath="subjectData.legalDescription"
+                fieldLabel="Legal Description"
                 onAccept={(value) => {
                   setLegalDescription(value);
-                  acceptFieldSuggestion('subjectData.legalDescription', value);
                 }}
-                onReject={() => rejectFieldSuggestion('subjectData.legalDescription')}
               />
             )}
           </div>
@@ -1825,13 +1823,12 @@ export default function SetupPage() {
                     placeholder="Full legal name as shown on title"
                   />
                   {index === 0 && hasPendingFieldSuggestion('owners.0.name') && (
-                    <FieldSuggestion
+                    <MultiValueSuggestion
                       fieldPath="owners.0.name"
+                      fieldLabel="Owner Name"
                       onAccept={(value) => {
                         updateOwner(owner.id, { name: value });
-                        acceptFieldSuggestion('owners.0.name', value);
                       }}
-                      onReject={() => rejectFieldSuggestion('owners.0.name')}
                     />
                   )}
                 </div>
@@ -1905,13 +1902,12 @@ export default function SetupPage() {
               placeholder="Enter tax ID..."
             />
             {hasPendingFieldSuggestion('subjectData.taxId') && (
-              <FieldSuggestion
+              <MultiValueSuggestion
                 fieldPath="subjectData.taxId"
+                fieldLabel="Tax ID / Parcel #"
                 onAccept={(value) => {
                   setTaxId(value);
-                  acceptFieldSuggestion('subjectData.taxId', value);
                 }}
-                onReject={() => rejectFieldSuggestion('subjectData.taxId')}
               />
             )}
             <p className="text-xs text-gray-400 mt-1">

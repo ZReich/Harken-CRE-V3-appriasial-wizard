@@ -71,13 +71,13 @@ export function FieldSuggestion({
   onReject,
   className = '',
 }: FieldSuggestionProps) {
-  const { state, addFieldSuggestion, rejectFieldSuggestion } = useWizard();
+  const { state, addFieldSuggestion, rejectFieldSuggestion, getFieldSuggestion } = useWizard();
   const [isExpanded, setIsExpanded] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
   const [fallbackStatus, setFallbackStatus] = useState<'idle' | 'fetching' | 'done'>('idle');
 
-  // Get suggestion from wizard state
-  const suggestion = state.fieldSuggestions?.[fieldPath];
+  // Get first pending suggestion from wizard state (array-based now)
+  const suggestion = getFieldSuggestion(fieldPath);
 
   // Don't render if no pending suggestion
   if (!suggestion || suggestion.status !== 'pending') {
@@ -231,16 +231,17 @@ export function FieldSourceBadge({
   fieldPath: string;
   className?: string;
 }) {
-  const { state } = useWizard();
+  const { state, getFieldSuggestions } = useWizard();
   
-  // Check for accepted suggestion
-  const suggestion = state.fieldSuggestions?.[fieldPath];
+  // Check for accepted suggestion in the array
+  const suggestions = getFieldSuggestions(fieldPath);
+  const acceptedSuggestion = suggestions.find(s => s.status === 'accepted');
   
   // Also check documentFieldSources for legacy/existing source tracking
   const legacySource = state.documentFieldSources?.[fieldPath];
   
-  // Determine which source to show
-  const source = suggestion?.status === 'accepted' ? suggestion : legacySource;
+  // Determine which source to show (accepted suggestion takes precedence)
+  const source = acceptedSuggestion || legacySource;
   
   if (!source) {
     return null;

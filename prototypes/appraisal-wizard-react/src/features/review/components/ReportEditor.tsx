@@ -13,6 +13,7 @@ import { RiskRatingPage } from '../../report-preview/components/pages/RiskRating
 import { DemographicsPage } from '../../report-preview/components/pages/DemographicsPage';
 import { EconomicContextPage } from '../../report-preview/components/pages/EconomicContextPage';
 import { SWOTPage } from '../../report-preview/components/pages/SWOTPage';
+import { AddendaPage } from './AddendaPage';
 
 // =================================================================
 // TYPES
@@ -3041,6 +3042,8 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
         return <CertificationPage {...commonProps} subjectData={state.subjectData} />;
       case 'exhibits':
         return <PhotoExhibitsPage {...photoProps} />;
+      case 'addenda':
+        return <AddendaPage selectedElement={selectedElement} onSelectElement={setSelectedElement} />;
       default:
         // Generic page for other sections
         return (
