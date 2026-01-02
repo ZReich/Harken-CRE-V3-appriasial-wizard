@@ -160,10 +160,10 @@ function DocumentCard({
 
   return (
     <div 
-      className={`bg-white border rounded-xl overflow-hidden transition-all duration-300 ${
-        doc.status === 'complete' ? 'border-green-200 shadow-sm' : 
-        doc.status === 'error' ? 'border-red-200' : 
-        'border-gray-200'
+      className={`bg-white dark:bg-slate-800 border rounded-xl overflow-hidden transition-all duration-300 ${
+        doc.status === 'complete' ? 'border-green-200 dark:border-green-700 shadow-sm' : 
+        doc.status === 'error' ? 'border-red-200 dark:border-red-700' : 
+        'border-gray-200 dark:border-slate-700'
       }`}
     >
       {/* Card Header */}
@@ -173,7 +173,7 @@ function DocumentCard({
           <div className="flex items-start gap-3 min-w-0 flex-1">
             {/* Icon */}
             <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-              doc.status === 'complete' ? 'bg-green-50' : 'bg-gray-50'
+              doc.status === 'complete' ? 'bg-green-50 dark:bg-green-900/30' : 'bg-gray-50 dark:bg-slate-700'
             }`}>
               {doc.status === 'classifying' || doc.status === 'extracting' ? (
                 <Sparkles className="w-6 h-6 text-[#0da1c7] animate-pulse" />

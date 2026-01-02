@@ -281,16 +281,16 @@ export default function TemplatePage() {
               <div
                 key={template.id}
                 onClick={() => handleSelect(template.id)}
-                className={`bg-white rounded-xl p-5 cursor-pointer transition-all duration-200 border-2 ${
+                className={`bg-white dark:bg-slate-800 rounded-xl p-5 cursor-pointer transition-all duration-200 border-2 ${
                   selected === template.id
                     ? 'border-[#0da1c7] shadow-lg shadow-[#0da1c7]/20'
-                    : 'border-gray-200 hover:border-[#0da1c7]/50 hover:shadow-md'
+                    : 'border-gray-200 dark:border-slate-700 hover:border-[#0da1c7]/50 hover:shadow-md'
                 }`}
               >
                 <div className="flex items-start justify-between mb-3">
-                  <h3 className="text-lg font-bold text-[#1c3643]">{template.name}</h3>
+                  <h3 className="text-lg font-bold text-[#1c3643] dark:text-white">{template.name}</h3>
                   {template.isSystem && (
-                    <span className="text-[10px] font-semibold px-2 py-0.5 bg-gray-100 text-gray-500 rounded border border-gray-200">
+                    <span className="text-[10px] font-semibold px-2 py-0.5 bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-slate-400 rounded border border-gray-200 dark:border-slate-600">
                       SYSTEM
                     </span>
                   )}
@@ -308,10 +308,10 @@ export default function TemplatePage() {
                   ))}
                 </div>
 
-                <p className="text-sm text-gray-600 mb-4">{template.description}</p>
+                <p className="text-sm text-gray-600 dark:text-slate-400 mb-4">{template.description}</p>
 
                 {/* Metadata */}
-                <div className="flex items-center gap-4 text-xs text-gray-500">
+                <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-slate-400">
                   <span className="flex items-center gap-1">
                     <FileText className="w-3.5 h-3.5" />
                     {template.sections} sections
@@ -346,7 +346,7 @@ export default function TemplatePage() {
         {activeTab === 'custom' && (
           <div className="mb-10">
             {customTemplates.length === 0 ? (
-              <div className="bg-white rounded-xl p-12 text-center border-2 border-dashed border-gray-300">
+              <div className="bg-white dark:bg-slate-800 rounded-xl p-12 text-center border-2 border-dashed border-gray-300 dark:border-slate-600">
                 <Star className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-semibold text-gray-600 mb-2">No Custom Templates Yet</h3>
                 <p className="text-gray-500 mb-4">
@@ -379,7 +379,7 @@ export default function TemplatePage() {
                       
                       {/* Dropdown Menu */}
                       {menuOpen === template.id && (
-                        <div className="absolute right-0 top-8 bg-white border border-gray-200 rounded-lg shadow-lg py-1 z-10 min-w-[140px]">
+                        <div className="absolute right-0 top-8 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg shadow-lg py-1 z-10 min-w-[140px]">
                           <button
                             onClick={(e) => {
                               e.stopPropagation();

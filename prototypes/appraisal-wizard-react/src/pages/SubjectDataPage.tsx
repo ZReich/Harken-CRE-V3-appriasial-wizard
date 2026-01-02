@@ -918,8 +918,8 @@ function LocationContent({
       </div>
 
       {/* General Area Analysis */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
+      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           General Area Analysis
         </h3>
         <div className="space-y-4">
@@ -964,8 +964,8 @@ function LocationContent({
       </div>
 
       {/* Neighborhood Analysis */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
+      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           Neighborhood Analysis
         </h3>
         <div className="space-y-4">
@@ -995,8 +995,8 @@ function LocationContent({
       </div>
 
       {/* Location Description */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
+      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           Location Description
         </h3>
         <EnhancedTextArea
@@ -1468,8 +1468,8 @@ Overall, the site is well-suited for its current use and presents no significant
   return (
     <div className="space-y-6">
       {/* Site Size & Shape */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
+      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           Site Size & Shape
         </h3>
         <div className="grid grid-cols-2 gap-4">
@@ -1611,8 +1611,8 @@ Overall, the site is well-suited for its current use and presents no significant
       </div>
 
       {/* Zoning & Land Use */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
+      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           Zoning & Land Use
         </h3>
         <div className="space-y-4">
@@ -1663,8 +1663,8 @@ Overall, the site is well-suited for its current use and presents no significant
       </div>
 
       {/* Utilities & Services - Expanded */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4 flex items-center gap-2">
+      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4 flex items-center gap-2">
           <Zap className="w-5 h-5 text-[#0da1c7]" />
           Utilities & Services
         </h3>
@@ -1826,8 +1826,8 @@ Overall, the site is well-suited for its current use and presents no significant
       />
 
       {/* Additional Site Characteristics */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
+      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           Additional Site Characteristics
         </h3>
         <div className="space-y-4">
@@ -1869,7 +1869,7 @@ Overall, the site is well-suited for its current use and presents no significant
       </div>
 
       {/* Flood Zone - Enhanced */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
         <div className="flex items-center justify-between border-b-2 border-gray-200 pb-3 mb-4">
           <h3 className="text-lg font-bold text-[#1c3643] flex items-center gap-2">
             <Droplets className="w-5 h-5 text-[#0da1c7]" />
@@ -1959,7 +1959,7 @@ Overall, the site is well-suited for its current use and presents no significant
       </div>
 
       {/* Site Description Narrative - New Card */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
         <div className="flex items-center justify-between border-b-2 border-gray-200 pb-3 mb-4">
           <h3 className="text-lg font-bold text-[#1c3643]">
             Site Description Narrative
@@ -2057,8 +2057,8 @@ function TaxContent({
       )}
       
       {/* Property Tax Information */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
+      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           Property Tax Information
         </h3>
         <div className="grid grid-cols-2 gap-4">
@@ -2127,8 +2127,8 @@ function TaxContent({
       </div>
 
       {/* Sale & Ownership History */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
+      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           Sale & Ownership History
         </h3>
         <div className="grid grid-cols-2 gap-4">
@@ -2571,7 +2571,7 @@ function PhotosContent({
       {photoCategories.map((category) => (
         <div 
           key={category.id}
-          className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden"
+          className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl shadow-sm overflow-hidden"
         >
           {/* Category Header */}
           <button
@@ -2751,8 +2751,8 @@ function PhotosContent({
       ))}
 
       {/* Auto-Generate Maps */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4 flex items-center gap-2">
+      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4 flex items-center gap-2">
           <MapPin className="w-5 h-5 text-[#0da1c7]" />
           Maps
         </h3>
@@ -2954,7 +2954,7 @@ function ExhibitsContent(_props: ExhibitsProps) {
     <div className="space-y-6">
       {/* Documents from Intake - styled like Document Intake page */}
       {hasIntakeDocuments && (
-        <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+        <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-bold text-[#1c3643] flex items-center gap-2">
               <FileText className="w-5 h-5 text-[#0da1c7]" />
@@ -3019,8 +3019,8 @@ function ExhibitsContent(_props: ExhibitsProps) {
       )}
 
       {/* Additional Exhibits */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
+      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           Additional Exhibits
         </h3>
         <p className="text-sm text-gray-600 mb-4">

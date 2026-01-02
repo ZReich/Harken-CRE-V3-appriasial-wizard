@@ -551,7 +551,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
       <div className={`element-dropdown relative ${isOpen ? 'z-[500]' : ''}`}>
         <button 
           onClick={() => setOpenElementDropdown(isOpen ? null : sectionId)}
-          className="w-full py-2 px-3 border-2 border-dashed border-slate-300 rounded-lg flex items-center justify-between gap-2 text-slate-500 font-semibold hover:border-[#0da1c7] hover:text-[#0da1c7] hover:bg-[#0da1c7]/5 transition-all duration-300 group text-xs bg-white"
+          className="w-full py-2 px-3 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg flex items-center justify-between gap-2 text-slate-500 dark:text-slate-400 font-semibold hover:border-[#0da1c7] hover:text-[#0da1c7] hover:bg-[#0da1c7]/5 transition-all duration-300 group text-xs bg-white dark:bg-slate-800"
         >
           <div className="flex items-center gap-2">
             <Plus size={12} className="text-slate-400 group-hover:text-[#0da1c7]" />
@@ -561,7 +561,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
         </button>
         
         {isOpen && (
-          <div className="absolute top-full left-0 mt-1 w-64 bg-white rounded-xl shadow-2xl border border-slate-200 z-[500] overflow-hidden">
+          <div className="absolute top-full left-0 mt-1 w-64 bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 z-[500] overflow-hidden">
             <div className="px-3 py-2 bg-slate-50 border-b border-slate-200">
               <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Available Elements</span>
             </div>
@@ -639,7 +639,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
           }} 
         />
         {isOpen && (
-          <div className="adjustment-popover absolute top-full left-0 mt-2 w-48 bg-white rounded-xl shadow-2xl border border-slate-200 z-[200] overflow-hidden">
+          <div className="adjustment-popover absolute top-full left-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 z-[200] overflow-hidden">
             {/* Mode Toggle Header */}
             <div className="flex items-center justify-between px-3 py-2 border-b border-slate-100 bg-slate-50">
               <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
@@ -811,7 +811,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
       
       {/* COMPARABLE MAP SECTION */}
       {hasSubjectCoords && (
-        <div className="flex-shrink-0 border-b border-slate-200 bg-white">
+        <div className="flex-shrink-0 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
           {/* Map Header - Always visible */}
           <button
             onClick={() => setIsMapCollapsed(!isMapCollapsed)}
@@ -871,7 +871,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
         >
           {/* GRID CONTAINER */}
           <div 
-            className="grid relative bg-white flex-shrink-0" 
+            className="grid relative bg-white dark:bg-slate-800 flex-shrink-0" 
             style={{ 
               gridTemplateColumns: `${LABEL_COL_WIDTH}px ${SUBJECT_COL_WIDTH}px repeat(${properties.length - 1}, ${COMP_COL_WIDTH}px)`, 
               minWidth: `${totalGridWidth}px`,
@@ -1147,7 +1147,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
       {notesEditor?.isOpen && (
         <div className="fixed inset-0 z-[1100] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
           <div 
-            className="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden"
+            className="bg-white dark:bg-slate-800 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
@@ -1255,7 +1255,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
       {confirmDelete?.isOpen && (
         <div className="fixed inset-0 z-[1100] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div 
-            className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200"
+            className="bg-white dark:bg-slate-800 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Warning Header */}
