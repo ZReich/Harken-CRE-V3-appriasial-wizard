@@ -109,7 +109,7 @@ export const PhotoLivePreview: React.FC<PhotoLivePreviewProps> = ({
           <Camera className="w-4 h-4 text-[#0da1c7]" />
         </div>
         <div>
-          <h3 className="text-sm font-bold text-[#1c3643]">Live Preview</h3>
+          <h3 className="text-sm font-bold text-[#1c3643] dark:text-white">Live Preview</h3>
           <p className="text-xs text-gray-500 dark:text-slate-400">{uploadedCount} photos uploaded</p>
         </div>
       </div>
@@ -223,7 +223,7 @@ export const PhotoLivePreview: React.FC<PhotoLivePreviewProps> = ({
 
       {/* Helper Text */}
       <div className="mt-3 p-2 bg-gradient-to-r from-[#0da1c7]/10 to-transparent rounded-lg">
-        <p className="text-[10px] text-[#1c3643]">
+        <p className="text-[10px] text-[#1c3643] dark:text-white">
           <span className="font-medium">Real-time preview</span> — Photos update live as you upload them
         </p>
       </div>

@@ -128,7 +128,7 @@ export default function PhotoAssignmentModal({
               <Sparkles className="w-5 h-5 text-[#0da1c7]" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-[#1c3643]">Review Photo Assignments</h2>
+              <h2 className="text-xl font-bold text-[#1c3643] dark:text-white">Review Photo Assignments</h2>
               <p className="text-sm text-gray-500 dark:text-slate-400">
                 {stagingPhotos.length} photos analyzed - review and confirm assignments
               </p>

@@ -497,7 +497,7 @@ export default function MechanicalSystemsInventory({
           <div className="flex items-center gap-2">
             <Wrench className="w-5 h-5 text-[#0da1c7]" />
             <div>
-              <h3 className="text-lg font-bold text-[#1c3643]">Mechanical Systems</h3>
+              <h3 className="text-lg font-bold text-[#1c3643] dark:text-white">Mechanical Systems</h3>
               <p className="text-xs text-gray-500 dark:text-slate-400">
                 Track HVAC, electrical, fire protection, and elevators
               </p>

@@ -420,7 +420,7 @@ export default function TemplatePage() {
                         <Star className="w-5 h-5 text-amber-600" />
                       </div>
                       <div className="flex-1 pr-8">
-                        <h3 className="text-lg font-bold text-[#1c3643]">{template.name}</h3>
+                        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white">{template.name}</h3>
                         <p className="text-xs text-gray-500">{template.useCase}</p>
                       </div>
                     </div>

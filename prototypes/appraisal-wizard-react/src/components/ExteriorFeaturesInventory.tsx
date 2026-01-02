@@ -486,7 +486,7 @@ export default function ExteriorFeaturesInventory({
           <div className="flex items-center gap-2">
             <Home className="w-5 h-5 text-[#0da1c7]" />
             <div>
-              <h3 className="text-lg font-bold text-[#1c3643]">Exterior Features</h3>
+              <h3 className="text-lg font-bold text-[#1c3643] dark:text-white">Exterior Features</h3>
               <p className="text-xs text-gray-500 dark:text-slate-400">
                 Track individual components with installation dates and conditions
               </p>

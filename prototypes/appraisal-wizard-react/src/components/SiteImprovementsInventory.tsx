@@ -374,7 +374,7 @@ export default function SiteImprovementsInventory({
           <div className="flex items-center gap-2">
             <Warehouse className="w-5 h-5 text-[#0da1c7]" />
             <div>
-              <h3 className="text-lg font-bold text-[#1c3643]">Site Improvements</h3>
+              <h3 className="text-lg font-bold text-[#1c3643] dark:text-white">Site Improvements</h3>
               <p className="text-xs text-gray-500 dark:text-slate-400">
                 M&S Section 66 - Itemized with age-life depreciation
               </p>

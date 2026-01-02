@@ -191,7 +191,7 @@ export default function BulkPhotoDropZone({
                 <Sparkles className="w-8 h-8 text-[#0da1c7] animate-pulse" />
               </div>
               <div>
-                <p className="text-lg font-semibold text-[#1c3643]">
+                <p className="text-lg font-semibold text-[#1c3643] dark:text-white">
                   Analyzing Photos with AI
                 </p>
                 <p className="text-sm text-gray-500 mt-1">
@@ -232,7 +232,7 @@ export default function BulkPhotoDropZone({
                 <Upload className="w-8 h-8 text-gray-400" />
               </div>
               <div>
-                <p className="text-lg font-semibold text-[#1c3643]">
+                <p className="text-lg font-semibold text-[#1c3643] dark:text-white">
                   Bulk Upload Photos
                 </p>
                 <p className="text-sm text-gray-500 mt-1">

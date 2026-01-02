@@ -106,7 +106,7 @@ function TrafficRow({ entry, onEdit }: { entry: TrafficDataEntry; onEdit?: () =>
         </div>
         
         <div className="text-right">
-          <div className="font-bold text-[#1c3643]">
+          <div className="font-bold text-[#1c3643] dark:text-white">
             {formatNumber(entry.annualAverageDailyTraffic)}
           </div>
           <div className="text-[10px] text-slate-400">AADT</div>
@@ -208,7 +208,7 @@ export function TrafficDataCard({
           <div className="flex items-center gap-2">
             <Car className="w-5 h-5 text-[#0da1c7]" />
             <div>
-              <h3 className="text-lg font-bold text-[#1c3643]">Traffic Data</h3>
+              <h3 className="text-lg font-bold text-[#1c3643] dark:text-white">Traffic Data</h3>
               <p className="text-xs text-gray-500 dark:text-slate-400">
                 Annual Average Daily Traffic (AADT)
               </p>
@@ -249,7 +249,7 @@ export function TrafficDataCard({
             <div className="text-xs text-slate-500 dark:text-slate-400">Average AADT</div>
           </div>
           <div className="p-4 text-center">
-            <div className="text-2xl font-bold text-[#1c3643]">{formatNumber(maxAADT)}</div>
+            <div className="text-2xl font-bold text-[#1c3643] dark:text-white">{formatNumber(maxAADT)}</div>
             <div className="text-xs text-slate-500 dark:text-slate-400">Peak AADT</div>
           </div>
         </div>

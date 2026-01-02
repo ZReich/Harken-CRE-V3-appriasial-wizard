@@ -429,7 +429,7 @@ function ParcelCard({
               <MapPin className="w-5 h-5 text-[#0da1c7]" />
             </div>
             <div>
-              <div className="font-bold text-[#1c3643]">
+              <div className="font-bold text-[#1c3643] dark:text-white">
                 Parcel {index + 1}
                 {parcel.parcelNumber && <span className="text-gray-500 font-normal ml-2 text-sm">#{parcel.parcelNumber}</span>}
               </div>
@@ -515,8 +515,8 @@ function ParcelCard({
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Building2 className="w-5 h-5 text-[#1c3643]" />
-                <h4 className="font-bold text-[#1c3643]">Buildings</h4>
+                <Building2 className="w-5 h-5 text-[#1c3643] dark:text-white" />
+                <h4 className="font-bold text-[#1c3643] dark:text-white">Buildings</h4>
               </div>
               <button
                 onClick={onAddBuilding}
@@ -648,10 +648,10 @@ function BuildingCard({
         <div className="flex items-center gap-3">
           {isExpanded ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronRight className="w-4 h-4 text-gray-400" />}
           <div className="w-8 h-8 rounded-lg bg-[#1c3643]/10 flex items-center justify-center">
-            <Building2 className="w-4 h-4 text-[#1c3643]" />
+            <Building2 className="w-4 h-4 text-[#1c3643] dark:text-white" />
           </div>
           <div>
-            <span className="font-semibold text-sm text-[#1c3643]">{building.name || `Building ${index + 1}`}</span>
+            <span className="font-semibold text-sm text-[#1c3643] dark:text-white">{building.name || `Building ${index + 1}`}</span>
             <span className="text-xs text-gray-500 ml-2">({building.areas.length} area{building.areas.length !== 1 ? 's' : ''})</span>
           </div>
         </div>
@@ -944,7 +944,7 @@ function CollapsibleSection({ title, icon, isExpanded, onToggle, children, actio
       <button type="button" onClick={onToggle} className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors">
         <div className="flex items-center gap-2">
           {isExpanded ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronRight className="w-4 h-4 text-gray-400" />}
-          <span className="text-[#1c3643]">{icon}</span>
+          <span className="text-[#1c3643] dark:text-white">{icon}</span>
           <span className="text-sm font-semibold text-gray-800 dark:text-white">{title}</span>
         </div>
         {action && <div onClick={(e) => e.stopPropagation()}>{action}</div>}

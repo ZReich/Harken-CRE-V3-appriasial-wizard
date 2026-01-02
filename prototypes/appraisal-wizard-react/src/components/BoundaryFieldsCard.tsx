@@ -152,7 +152,7 @@ export function BoundaryFieldsCard({
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Map className="w-5 h-5 text-[#0da1c7]" />
-          <h3 className="text-lg font-bold text-[#1c3643]">Property Boundaries</h3>
+          <h3 className="text-lg font-bold text-[#1c3643] dark:text-white">Property Boundaries</h3>
           {getDataSourceBadge()}
         </div>
         

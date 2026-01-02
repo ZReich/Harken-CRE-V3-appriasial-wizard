@@ -897,7 +897,7 @@ function LocationContent({
       {/* Page Header with AI Draft All Button */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold text-[#1c3643]">Location & Area Analysis</h2>
+          <h2 className="text-xl font-bold text-[#1c3643] dark:text-white">Location & Area Analysis</h2>
           <p className="text-sm text-gray-500 mt-1">Describe the regional, neighborhood, and specific location context</p>
         </div>
         <button
@@ -1873,7 +1873,7 @@ Overall, the site is well-suited for its current use and presents no significant
       {/* Flood Zone - Enhanced */}
       <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
         <div className="flex items-center justify-between border-b-2 border-gray-200 pb-3 mb-4">
-          <h3 className="text-lg font-bold text-[#1c3643] flex items-center gap-2">
+          <h3 className="text-lg font-bold text-[#1c3643] dark:text-white flex items-center gap-2">
             <Droplets className="w-5 h-5 text-[#0da1c7]" />
             Flood Zone
           </h3>
@@ -1963,7 +1963,7 @@ Overall, the site is well-suited for its current use and presents no significant
       {/* Site Description Narrative - New Card */}
       <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
         <div className="flex items-center justify-between border-b-2 border-gray-200 pb-3 mb-4">
-          <h3 className="text-lg font-bold text-[#1c3643]">
+          <h3 className="text-lg font-bold text-[#1c3643] dark:text-white">
             Site Description Narrative
           </h3>
           <button
@@ -2533,7 +2533,7 @@ function PhotosContent({
               <Camera className="w-5 h-5 text-[#0da1c7]" />
             </div>
             <div>
-              <p className="font-semibold text-[#1c3643]">Subject Property Photos</p>
+              <p className="font-semibold text-[#1c3643] dark:text-white">Subject Property Photos</p>
               <p className="text-sm text-gray-600 dark:text-slate-400">
                 {Object.values(photos).filter(Boolean).length} of{' '}
                 {photoCategories.reduce((sum, c) => sum + c.slots.length, 0)} photos uploaded
@@ -2585,7 +2585,7 @@ function PhotosContent({
                 <category.Icon className="w-5 h-5 text-[#0da1c7]" />
               </div>
               <div className="text-left">
-                <h3 className="font-bold text-[#1c3643]">{category.label}</h3>
+                <h3 className="font-bold text-[#1c3643] dark:text-white">{category.label}</h3>
                 <p className="text-sm text-gray-500">{category.description}</p>
               </div>
             </div>
@@ -2958,7 +2958,7 @@ function ExhibitsContent(_props: ExhibitsProps) {
       {hasIntakeDocuments && (
         <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-bold text-[#1c3643] flex items-center gap-2">
+            <h3 className="text-lg font-bold text-[#1c3643] dark:text-white flex items-center gap-2">
               <FileText className="w-5 h-5 text-[#0da1c7]" />
               Documents from Intake ({intakeDocuments.length})
             </h3>
