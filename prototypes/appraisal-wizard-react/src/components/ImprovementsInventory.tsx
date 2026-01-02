@@ -811,7 +811,7 @@ function BuildingCard({
 
                     <div className="overflow-x-auto border border-gray-200 rounded-lg">
                       <table className="min-w-full text-sm">
-                        <thead className="bg-gray-50 border-b border-gray-200">
+                        <thead className="bg-gray-50 dark:bg-slate-700 border-b border-gray-200 dark:border-slate-600">
                           <tr className="text-left text-xs font-semibold text-gray-600 dark:text-slate-400">
                             <th className="px-4 py-3 w-48">Zone</th>
                             <th className="px-4 py-3 w-32">Clear (ft) *</th>

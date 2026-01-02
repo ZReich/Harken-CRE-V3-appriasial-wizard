@@ -331,7 +331,7 @@ export default function ExpandableSelector({
 
         {/* Add custom value */}
         {allowCustom && (
-          <div className="border-t border-gray-100 px-4 py-3 bg-gray-50">
+          <div className="border-t border-gray-100 dark:border-slate-700 px-4 py-3 bg-gray-50 dark:bg-slate-700">
             <div className="text-xs font-medium text-gray-500 mb-2">Add custom option (saved for future use)</div>
             <div className="flex items-center gap-2">
               <input

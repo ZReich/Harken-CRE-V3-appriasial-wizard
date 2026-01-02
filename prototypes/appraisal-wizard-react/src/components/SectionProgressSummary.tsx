@@ -21,7 +21,7 @@ export function SectionProgressSummary({
   }, [isComplete, accentColor]);
 
   return (
-    <div className="mt-6 pt-4 border-t border-gray-200">
+    <div className="mt-6 pt-4 border-t border-gray-200 dark:border-slate-700">
       <div className="flex items-center justify-between mb-2">
         <span className="text-xs font-medium text-gray-600">{label}</span>
         {showPercentage && (

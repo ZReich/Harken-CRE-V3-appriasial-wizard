@@ -514,7 +514,7 @@ export default function SiteImprovementsInventory({
                 </button>
                 
                 {showOtherTypes && (
-                  <div className="flex flex-wrap gap-2 pl-2 border-l-2 border-gray-200">
+                  <div className="flex flex-wrap gap-2 pl-2 border-l-2 border-gray-200 dark:border-slate-700">
                     {otherTypes.map(type => {
                       const isCustom = type.id.startsWith('custom-');
                       return (
@@ -670,7 +670,7 @@ export default function SiteImprovementsInventory({
 
         {/* Quick Add Form (shown when type or custom form is active) */}
         {(selectedTypeId || showCustomForm) && (
-          <div className="p-3 bg-white rounded-lg border border-gray-200">
+          <div className="p-3 bg-white rounded-lg border border-gray-200 dark:border-slate-700">
             <div className="grid grid-cols-4 gap-3 mb-3">
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1">Quantity</label>

@@ -211,7 +211,7 @@ const BuildingTypeSelector: FC<BuildingTypeSelectorProps> = ({
     return (
       <div className="absolute z-50 top-full right-0 mt-1 bg-white rounded-xl shadow-lg border border-gray-200 w-[400px] max-h-[400px] overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 bg-gray-50">
+        <div className="flex items-center justify-between px-4 py-3 border-b border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-700">
           <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
             {selectedPropertyType ? 'Select Occupancy Type' : 'Select Building Type'}
           </h4>

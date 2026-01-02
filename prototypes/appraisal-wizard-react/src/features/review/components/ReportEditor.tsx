@@ -327,7 +327,7 @@ function CoverPageReal({
         <div className="px-12 py-6">
           <EditableElement
             elementId="cover_title"
-            content={getContent('cover_title', data.property.name)}
+            content={getContent('cover_title', propertyName)}
             selectedElement={selectedElement}
             onSelectElement={onSelectElement}
             onContentChange={handleContentChange}
@@ -337,7 +337,7 @@ function CoverPageReal({
           />
           <EditableElement
             elementId="cover_address"
-            content={getContent('cover_address', data.property.fullAddress)}
+            content={getContent('cover_address', fullAddress)}
             selectedElement={selectedElement}
             onSelectElement={onSelectElement}
             onContentChange={handleContentChange}
@@ -377,15 +377,15 @@ function CoverPageReal({
           <div className="grid grid-cols-3 gap-6 text-sm">
             <div>
               <div className="text-emerald-200 text-xs uppercase mb-1">Property Type</div>
-              <div className="font-medium">{data.property.propertySubtype}</div>
+              <div className="font-medium">{fallbackData.property.propertySubtype}</div>
             </div>
             <div>
               <div className="text-emerald-200 text-xs uppercase mb-1">Effective Date</div>
-              <div className="font-medium">{data.assignment.effectiveDate}</div>
+              <div className="font-medium">{effectiveDate}</div>
             </div>
             <div>
               <div className="text-emerald-200 text-xs uppercase mb-1">Final Value</div>
-              <div className="font-medium text-lg">${data.valuation.asIsValue.toLocaleString()}</div>
+              <div className="font-medium text-lg">${fallbackData.valuation.asIsValue.toLocaleString()}</div>
             </div>
           </div>
         </div>
@@ -395,28 +395,34 @@ function CoverPageReal({
 }
 
 // Letter of Transmittal Page
-function LetterPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle }: { 
+function LetterPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, subjectData }: { 
   selectedElement: string | null; 
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
   editedContent?: Record<string, string>;
   getAppliedStyle?: (elementId: string) => React.CSSProperties;
+  subjectData?: import('../../../types').SubjectData;
 }) {
-  const data = sampleAppraisalData;
+  const fallbackData = sampleAppraisalData;
   const handleContentChange = onContentChange || (() => {});
   const getContent = (id: string, defaultVal: string) => editedContent?.[id] ?? defaultVal;
   const getStyle = (id: string) => getAppliedStyle?.(id) || {};
+  
+  // Use wizard state or fall back to sample data
+  const propertyName = subjectData?.propertyName || fallbackData.property.name;
+  const effectiveDate = subjectData?.effectiveDate || fallbackData.assignment.effectiveDate;
+  const reportDate = subjectData?.reportDate || fallbackData.assignment.reportDate;
 
   return (
     <ReportPageWrapper section={{ id: 'letter', label: 'Letter of Transmittal', enabled: true, expanded: false, fields: [], type: 'letter' }} pageNumber={1}>
       <div className="p-12">
         <div className="mb-8">
-          <div className="text-sm text-gray-500 mb-6">{data.assignment.reportDate}</div>
+          <div className="text-sm text-gray-500 mb-6">{reportDate}</div>
           
           <div className="mb-6">
             <EditableElement
               elementId="letter_client"
-              content={getContent('letter_client', data.assignment.client)}
+              content={getContent('letter_client', fallbackData.assignment.client)}
               selectedElement={selectedElement}
               onSelectElement={onSelectElement}
               onContentChange={handleContentChange}
@@ -426,7 +432,7 @@ function LetterPage({ selectedElement, onSelectElement, onContentChange, editedC
             />
             <EditableElement
               elementId="letter_client_address"
-              content={getContent('letter_client_address', data.assignment.clientAddress)}
+              content={getContent('letter_client_address', fallbackData.assignment.clientAddress)}
               selectedElement={selectedElement}
               onSelectElement={onSelectElement}
               onContentChange={handleContentChange}
@@ -438,7 +444,7 @@ function LetterPage({ selectedElement, onSelectElement, onContentChange, editedC
 
           <div className="text-sm text-gray-600 mb-6">
             <span className="font-semibold">RE: </span>
-            Appraisal of {data.property.name}
+            Appraisal of {propertyName}
           </div>
         </div>
 
@@ -462,14 +468,14 @@ function LetterPage({ selectedElement, onSelectElement, onContentChange, editedC
             appliedStyle={getStyle('letter_intro')}
           />
           <p>
-            <strong>Intended Use:</strong> {data.assignment.intendedUse}
+            <strong>Intended Use:</strong> {subjectData?.appraisalPurpose || fallbackData.assignment.intendedUse}
           </p>
           <p>
-            <strong>Interest Appraised:</strong> {data.assignment.interestValued}
+            <strong>Interest Appraised:</strong> {subjectData?.propertyInterest || fallbackData.assignment.interestValued}
           </p>
           <EditableElement
             elementId="letter_conclusion_intro"
-            content={getContent('letter_conclusion_intro', `Based on my analysis and subject to the assumptions and limiting conditions in this report, my opinion of the market value of the subject property, as of ${data.assignment.effectiveDate}, is:`)}
+            content={getContent('letter_conclusion_intro', `Based on my analysis and subject to the assumptions and limiting conditions in this report, my opinion of the market value of the subject property, as of ${effectiveDate}, is:`)}
             selectedElement={selectedElement}
             onSelectElement={onSelectElement}
             onContentChange={handleContentChange}
@@ -478,13 +484,13 @@ function LetterPage({ selectedElement, onSelectElement, onContentChange, editedC
           />
           <div className="text-center py-6 bg-gray-50 rounded-lg my-6">
             <div className="text-sm text-gray-500 uppercase mb-2">Market Value Conclusion</div>
-            <div className="text-4xl font-bold text-emerald-700">${data.valuation.asIsValue.toLocaleString()}</div>
+            <div className="text-4xl font-bold text-emerald-700">${fallbackData.valuation.asIsValue.toLocaleString()}</div>
           </div>
           <p>Respectfully submitted,</p>
           <div className="mt-8">
-            <div className="font-semibold">{data.assignment.appraiser}</div>
-            <div className="text-gray-600">{data.assignment.appraiserLicense}</div>
-            <div className="text-gray-600">{data.assignment.appraiserCompany}</div>
+            <div className="font-semibold">{subjectData?.inspectorName || fallbackData.assignment.appraiser}</div>
+            <div className="text-gray-600">{subjectData?.inspectorLicense || fallbackData.assignment.appraiserLicense}</div>
+            <div className="text-gray-600">{fallbackData.assignment.appraiserCompany}</div>
           </div>
         </div>
       </div>
@@ -493,37 +499,58 @@ function LetterPage({ selectedElement, onSelectElement, onContentChange, editedC
 }
 
 // Executive Summary Page
-function ExecutiveSummaryPage({ selectedElement, onSelectElement }: { 
+function ExecutiveSummaryPage({ selectedElement, onSelectElement, subjectData, improvementsInventory, reconciliationData }: { 
   selectedElement: string | null; 
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
   editedContent?: Record<string, string>;
   getAppliedStyle?: (elementId: string) => React.CSSProperties;
+  subjectData?: import('../../../types').SubjectData;
+  improvementsInventory?: import('../../../types').ImprovementsInventory;
+  reconciliationData?: import('../../../types').ReconciliationData | null;
 }) {
-  const data = sampleAppraisalData;
+  const fallbackData = sampleAppraisalData;
+  
+  // Use wizard state or fall back to sample data
+  const propertyName = subjectData?.propertyName || fallbackData.property.name;
+  const fullAddress = subjectData?.address ? 
+    `${subjectData.address.street}, ${subjectData.address.city}, ${subjectData.address.state} ${subjectData.address.zip}` :
+    fallbackData.property.fullAddress;
+  const taxId = subjectData?.taxId || fallbackData.property.taxId;
+  const landArea = subjectData?.siteArea || fallbackData.site.landArea;
+  const landAreaUnit = subjectData?.siteAreaUnit === 'sqft' ? 'SF' : (subjectData?.siteAreaUnit || fallbackData.site.landAreaUnit);
+  const primaryBuilding = improvementsInventory?.parcels?.[0]?.buildings?.[0];
+  const buildingArea = primaryBuilding?.areas?.reduce((sum, area) => sum + (area.squareFootage || 0), 0) || fallbackData.improvements.grossBuildingArea;
+  const yearBuilt = primaryBuilding?.yearBuilt || fallbackData.improvements.yearBuilt;
+  const zoning = subjectData?.zoningClass || fallbackData.site.zoning;
+  const zoningDesc = subjectData?.zoningDescription?.split(',')[0] || fallbackData.site.zoningDescription.split(',')[0];
+  const floodZone = subjectData?.femaZone || fallbackData.site.floodZone;
+  const effectiveDate = subjectData?.effectiveDate || fallbackData.assignment.effectiveDate;
+  const inspectionDate = subjectData?.inspectionDate || fallbackData.assignment.inspectionDate;
+  const exposurePeriod = reconciliationData?.exposurePeriod ? `${reconciliationData.exposurePeriod} months` : fallbackData.valuation.exposurePeriod;
 
   const summaryRows = [
-    { label: 'Property Name', value: data.property.name },
-    { label: 'Property Address', value: data.property.fullAddress },
-    { label: 'Property Type', value: data.property.propertySubtype },
-    { label: 'Owner of Record', value: data.property.ownerOfRecord },
-    { label: 'Tax ID', value: data.property.taxId },
-    { label: 'Land Area', value: `${data.site.landArea} ${data.site.landAreaUnit} (${data.site.landAreaSF.toLocaleString()} SF)` },
-    { label: 'Building Area', value: `${data.improvements.grossBuildingArea.toLocaleString()} SF` },
-    { label: 'Year Built', value: data.improvements.yearBuilt.toString() },
-    { label: 'Zoning', value: `${data.site.zoning} - ${data.site.zoningDescription.split(',')[0]}` },
-    { label: 'Flood Zone', value: data.site.floodZone },
-    { label: 'Effective Date of Value', value: data.assignment.effectiveDate },
-    { label: 'Date of Inspection', value: data.assignment.inspectionDate },
+    { label: 'Property Name', value: propertyName },
+    { label: 'Property Address', value: fullAddress },
+    { label: 'Property Type', value: fallbackData.property.propertySubtype },
+    { label: 'Owner of Record', value: fallbackData.property.ownerOfRecord },
+    { label: 'Tax ID', value: taxId },
+    { label: 'Land Area', value: `${landArea} ${landAreaUnit}` },
+    { label: 'Building Area', value: `${typeof buildingArea === 'number' ? buildingArea.toLocaleString() : buildingArea} SF` },
+    { label: 'Year Built', value: String(yearBuilt || 'N/A') },
+    { label: 'Zoning', value: `${zoning} - ${zoningDesc}` },
+    { label: 'Flood Zone', value: floodZone },
+    { label: 'Effective Date of Value', value: effectiveDate },
+    { label: 'Date of Inspection', value: inspectionDate },
   ];
 
   const valueRows = [
-    { label: 'Land Value', value: `$${data.valuation.landValue.toLocaleString()}` },
-    { label: 'Cost Approach', value: `$${data.valuation.costApproachValue.toLocaleString()}` },
-    { label: 'Sales Comparison Approach', value: `$${data.valuation.salesComparisonValue.toLocaleString()}` },
-    { label: 'Income Approach', value: `$${data.valuation.incomeApproachValue.toLocaleString()}` },
-    { label: 'Final "As Is" Market Value', value: `$${data.valuation.asIsValue.toLocaleString()}`, emphasized: true },
-    { label: 'Exposure Period', value: data.valuation.exposurePeriod },
+    { label: 'Land Value', value: `$${fallbackData.valuation.landValue.toLocaleString()}` },
+    { label: 'Cost Approach', value: `$${fallbackData.valuation.costApproachValue.toLocaleString()}` },
+    { label: 'Sales Comparison Approach', value: `$${fallbackData.valuation.salesComparisonValue.toLocaleString()}` },
+    { label: 'Income Approach', value: `$${fallbackData.valuation.incomeApproachValue.toLocaleString()}` },
+    { label: 'Final "As Is" Market Value', value: `$${fallbackData.valuation.asIsValue.toLocaleString()}`, emphasized: true },
+    { label: 'Exposure Period', value: exposurePeriod },
   ];
 
   return (
@@ -2912,13 +2939,13 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
 
     switch (section.id) {
       case 'cover':
-        return <CoverPageReal {...commonProps} />;
+        return <CoverPageReal {...commonProps} subjectData={state.subjectData} reconciliationData={state.reconciliationData} coverPhoto={state.coverPhoto} />;
       case 'toc':
         return <TOCPage {...photoProps} enabledSections={reportSections} />;
       case 'letter':
-        return <LetterPage {...commonProps} />;
+        return <LetterPage {...commonProps} subjectData={state.subjectData} />;
       case 'executive-summary':
-        return <ExecutiveSummaryPage {...commonProps} />;
+        return <ExecutiveSummaryPage {...commonProps} subjectData={state.subjectData} improvementsInventory={state.improvementsInventory} reconciliationData={state.reconciliationData} />;
       case 'property-description':
         return <PropertyDescriptionPage {...commonProps} subjectData={state.subjectData} improvementsInventory={state.improvementsInventory} />;
       case 'hbu':

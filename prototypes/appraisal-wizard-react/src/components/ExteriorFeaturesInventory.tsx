@@ -616,7 +616,7 @@ export default function ExteriorFeaturesInventory({
             
             {/* Other Options Expanded */}
             {showOtherOptions && otherTypes.length > 0 && (
-              <div className="mt-2 pt-2 border-t border-gray-200">
+              <div className="mt-2 pt-2 border-t border-gray-200 dark:border-slate-700">
                 <div className="text-xs text-gray-500 mb-2">Other Options</div>
                 <div className="flex flex-wrap gap-2">
                   {otherTypes.map(type => (
@@ -720,7 +720,7 @@ export default function ExteriorFeaturesInventory({
 
         {/* Quick Add Form (shown when type or custom form is active) */}
         {(selectedTypeId || showCustomForm) && (
-          <div className="p-3 bg-white rounded-lg border border-gray-200">
+          <div className="p-3 bg-white rounded-lg border border-gray-200 dark:border-slate-700">
             <div className="grid grid-cols-3 gap-3 mb-3">
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1 flex items-center gap-1">

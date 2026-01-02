@@ -118,7 +118,7 @@ export default function WizardHeader({
         <div className="flex items-center gap-3">
           {/* Guidance/Values/Preview Toggle */}
           {hasGuidance && (
-            <div className="flex items-center bg-gray-100 rounded-lg p-1 border border-gray-200">
+            <div className="flex items-center bg-gray-100 dark:bg-slate-700 rounded-lg p-1 border border-gray-200 dark:border-slate-600">
               <button
                 className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
                   guidanceMode === 'guidance'

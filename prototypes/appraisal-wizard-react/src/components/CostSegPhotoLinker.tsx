@@ -216,7 +216,7 @@ export const CostSegPhotoLinker: React.FC<CostSegPhotoLinkerProps> = ({
 
       {/* Photo Selection Grid */}
       {isSelectingPhoto && (
-        <div className="border border-gray-300 rounded-lg p-3 bg-gray-50">
+        <div className="border border-gray-300 dark:border-slate-600 rounded-lg p-3 bg-gray-50 dark:bg-slate-700">
           <div className="flex items-center justify-between mb-3">
             <h4 className="text-sm font-semibold text-gray-900 dark:text-white">Select Photo</h4>
             <button
