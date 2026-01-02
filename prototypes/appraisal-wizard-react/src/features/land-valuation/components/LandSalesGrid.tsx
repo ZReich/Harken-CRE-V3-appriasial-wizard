@@ -597,7 +597,7 @@ export const LandSalesGrid: React.FC = () => {
             </div>
             {/* Subject Info - solid light blue background */}
             <div className="p-2 flex-1 flex flex-col gap-0.5 bg-sky-50 border-r border-slate-200">
-              <h3 className="font-bold text-slate-800 text-xs leading-tight line-clamp-1" title={SUBJECT_PROPERTY.address}>
+              <h3 className="font-bold text-slate-800 dark:text-white text-xs leading-tight line-clamp-1" title={SUBJECT_PROPERTY.address}>
                 {SUBJECT_PROPERTY.address.split(',')[0]}
               </h3>
               <div className="flex items-start gap-1 text-[10px] text-slate-500">
@@ -635,7 +635,7 @@ export const LandSalesGrid: React.FC = () => {
               </div>
               {/* Comp Info */}
               <div className="p-2 flex-1 flex flex-col gap-0.5 border-r border-slate-200">
-                <h3 className="font-bold text-slate-800 text-xs leading-tight line-clamp-1" title={comp.address}>
+                <h3 className="font-bold text-slate-800 dark:text-white text-xs leading-tight line-clamp-1" title={comp.address}>
                   Sale {idx + 1}
                 </h3>
                 <div className="flex items-start gap-1 text-[10px] text-slate-500">
@@ -927,14 +927,14 @@ export const LandSalesGrid: React.FC = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <div className="w-2 h-8 bg-[#0da1c7] rounded-full"></div>
-                <h2 className="text-xl font-bold text-slate-800 uppercase tracking-wider">Land Value Indication</h2>
+                <h2 className="text-xl font-bold text-slate-800 dark:text-white uppercase tracking-wider">Land Value Indication</h2>
               </div>
             </div>
             <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
               <div className="grid grid-cols-3 gap-6">
                 <div className="text-center">
                   <div className="text-sm text-slate-500 font-medium mb-2">Subject Land Size</div>
-                  <div className="text-2xl font-bold text-slate-800">{formatNumber(SUBJECT_PROPERTY.landAcres, 3)} Acres</div>
+                  <div className="text-2xl font-bold text-slate-800 dark:text-white">{formatNumber(SUBJECT_PROPERTY.landAcres, 3)} Acres</div>
                 </div>
                 <div className="text-center">
                   <div className="text-sm text-slate-500 font-medium mb-2">Average Adjusted $/Acre</div>

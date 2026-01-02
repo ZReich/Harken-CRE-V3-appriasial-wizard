@@ -860,7 +860,7 @@ export default function InteriorFinishesInventory({
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
                             {isCustom && <Star size={12} className="text-amber-400 flex-shrink-0" />}
-                            <span className="font-medium text-sm text-gray-900 truncate">
+                            <span className="font-medium text-sm text-gray-900 dark:text-white truncate">
                               {component.type}
                             </span>
                             {hasNotes && !isExpanded && (
