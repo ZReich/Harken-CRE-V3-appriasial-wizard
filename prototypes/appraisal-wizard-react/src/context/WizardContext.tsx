@@ -49,10 +49,15 @@ const getInitialState = (): WizardState => {
       zoningConforming: false,
       // Utilities (expanded)
       waterSource: '',
+      waterProvider: '',
       sewerType: '',
       electricProvider: '',
       naturalGas: '',
       telecom: '',
+      // Storm Drainage & Fire Protection
+      stormDrainage: '',
+      stormDrainageNotes: '',
+      fireHydrantDistance: '',
       // Access & Visibility
       approachType: '',
       accessQuality: '',
