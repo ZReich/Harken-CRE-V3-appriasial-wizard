@@ -52,7 +52,7 @@ export function ScenarioCelebration({
             </svg>
           </div>
           <div>
-            <h3 className="font-bold text-gray-900">
+            <h3 className="font-bold text-gray-900 dark:text-white">
               {scenarioName} Complete!
             </h3>
             <p className="text-sm text-gray-600">

@@ -127,11 +127,11 @@ export const CostSegQuickEstimator: React.FC<QuickEstimatorProps> = ({
       <div className="bg-white border border-amber-200 rounded-lg p-3">
         <div className="flex justify-between text-sm mb-2">
           <span className="text-gray-600">Property Type:</span>
-          <span className="font-semibold text-gray-900 capitalize">{propertyType}</span>
+          <span className="font-semibold text-gray-900 dark:text-white capitalize">{propertyType}</span>
         </div>
         <div className="flex justify-between text-sm">
           <span className="text-gray-600">Building Size:</span>
-          <span className="font-semibold text-gray-900">{buildingSquareFeet.toLocaleString()} SF</span>
+          <span className="font-semibold text-gray-900 dark:text-white">{buildingSquareFeet.toLocaleString()} SF</span>
         </div>
       </div>
 

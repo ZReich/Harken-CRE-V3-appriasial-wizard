@@ -256,7 +256,7 @@ export default function AnalysisPage() {
         <div className={`text-xs font-semibold uppercase tracking-wide ${scenarioColors.activeText} mb-1`}>
           Active Scenario
         </div>
-        <div className="text-sm font-medium text-slate-800">
+        <div className="text-sm font-medium text-slate-800 dark:text-white">
           {activeScenario?.name || 'As Is'}
         </div>
         {activeScenario?.effectiveDate && (
@@ -304,7 +304,7 @@ export default function AnalysisPage() {
       <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
         <div className="flex items-center gap-2 mb-3">
           <CheckCircle2 className="text-green-600" size={16} />
-          <h4 className="text-sm font-semibold text-slate-800">Key Assumptions</h4>
+          <h4 className="text-sm font-semibold text-slate-800 dark:text-white">Key Assumptions</h4>
         </div>
         <ul className="space-y-2">
           {guidance.assumptions.map((assumption, i) => (

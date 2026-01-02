@@ -118,7 +118,7 @@ export default function CoverPhotoSection({
             <Star className="w-5 h-5" />
           </div>
           <div>
-            <h3 className="font-bold text-lg text-slate-800">Cover Photo</h3>
+            <h3 className="font-bold text-lg text-slate-800 dark:text-white">Cover Photo</h3>
             <p className="text-sm text-slate-500">The hero image on your report's title page</p>
           </div>
         </div>

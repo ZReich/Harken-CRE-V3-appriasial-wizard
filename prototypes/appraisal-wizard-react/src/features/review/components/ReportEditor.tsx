@@ -595,13 +595,14 @@ function PropertyDescriptionPage({ selectedElement, onSelectElement, onContentCh
   const siteNarrative = subjectData?.siteDescriptionNarrative || '';
 
   // Get improvements data from wizard state or fall back to sample
-  const primaryBuilding = improvementsInventory?.buildings?.[0];
+  const primaryBuilding = improvementsInventory?.parcels?.[0]?.buildings?.[0];
   const yearBuilt = primaryBuilding?.yearBuilt || fallbackData.improvements.yearBuilt;
-  const buildingType = primaryBuilding?.buildingType || fallbackData.improvements.buildingType;
-  const grossBuildingArea = primaryBuilding?.grossBuildingArea || fallbackData.improvements.grossBuildingArea;
+  const buildingType = primaryBuilding?.name || fallbackData.improvements.buildingType;
+  // Sum all areas in the building to get gross building area
+  const grossBuildingArea = primaryBuilding?.areas?.reduce((sum, area) => sum + (area.squareFootage || 0), 0) || fallbackData.improvements.grossBuildingArea;
   const construction = primaryBuilding?.constructionType || fallbackData.improvements.construction;
-  const condition = primaryBuilding?.physicalCondition || fallbackData.improvements.condition;
-  const quality = primaryBuilding?.qualityGrade || fallbackData.improvements.quality;
+  const condition = primaryBuilding?.condition || fallbackData.improvements.condition;
+  const quality = primaryBuilding?.constructionQuality || fallbackData.improvements.quality;
 
   return (
     <ReportPageWrapper section={{ id: 'property', label: 'Property Description', enabled: true, expanded: false, fields: [], type: 'narrative' }} pageNumber={3} sidebarLabel="02">
@@ -689,17 +690,31 @@ function PropertyDescriptionPage({ selectedElement, onSelectElement, onContentCh
 }
 
 // HBU Page
-function HBUPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle }: { 
+function HBUPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, hbuAnalysis }: { 
   selectedElement: string | null; 
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
   editedContent?: Record<string, string>;
   getAppliedStyle?: (elementId: string) => React.CSSProperties;
+  hbuAnalysis?: import('../../../types').HBUAnalysis;
 }) {
-  const data = sampleAppraisalData;
+  const fallbackData = sampleAppraisalData;
   const handleContentChange = onContentChange || (() => {});
   const getContent = (id: string, defaultVal: string) => editedContent?.[id] ?? defaultVal;
   const getStyle = (id: string) => getAppliedStyle?.(id) || {};
+
+  // Use wizard state HBU data or fall back to sample data
+  const asVacant = {
+    legallyPermissible: hbuAnalysis?.asVacant?.legallyPermissible || fallbackData.hbu.asVacant.legallyPermissible,
+    physicallyPossible: hbuAnalysis?.asVacant?.physicallyPossible || fallbackData.hbu.asVacant.physicallyPossible,
+    financiallyFeasible: hbuAnalysis?.asVacant?.financiallyFeasible || fallbackData.hbu.asVacant.financiallyFeasible,
+    maximallyProductive: hbuAnalysis?.asVacant?.maximallyProductive || fallbackData.hbu.asVacant.maximallyProductive,
+    conclusion: hbuAnalysis?.asVacant?.conclusion || fallbackData.hbu.asVacant.conclusion,
+  };
+  const asImproved = {
+    analysis: hbuAnalysis?.asImproved?.legallyPermissible || fallbackData.hbu.asImproved.analysis, // Note: using legallyPermissible as main analysis
+    conclusion: hbuAnalysis?.asImproved?.conclusion || fallbackData.hbu.asImproved.conclusion,
+  };
 
   return (
     <ReportPageWrapper section={{ id: 'hbu', label: 'Highest & Best Use', enabled: true, expanded: false, fields: [], type: 'narrative' }} pageNumber={4} sidebarLabel="03">
@@ -717,7 +732,7 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
               <h4 className="font-semibold text-gray-800 mb-1">Legally Permissible</h4>
               <EditableElement
                 elementId="hbu_legally_permissible"
-                content={getContent('hbu_legally_permissible', data.hbu.asVacant.legallyPermissible)}
+                content={getContent('hbu_legally_permissible', asVacant.legallyPermissible)}
                 selectedElement={selectedElement}
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
@@ -730,7 +745,7 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
               <h4 className="font-semibold text-gray-800 mb-1">Physically Possible</h4>
               <EditableElement
                 elementId="hbu_physically_possible"
-                content={getContent('hbu_physically_possible', data.hbu.asVacant.physicallyPossible)}
+                content={getContent('hbu_physically_possible', asVacant.physicallyPossible)}
                 selectedElement={selectedElement}
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
@@ -743,7 +758,7 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
               <h4 className="font-semibold text-gray-800 mb-1">Financially Feasible</h4>
               <EditableElement
                 elementId="hbu_financially_feasible"
-                content={getContent('hbu_financially_feasible', data.hbu.asVacant.financiallyFeasible)}
+                content={getContent('hbu_financially_feasible', asVacant.financiallyFeasible)}
                 selectedElement={selectedElement}
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
@@ -756,7 +771,7 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
               <h4 className="font-semibold text-gray-800 mb-1">Maximally Productive</h4>
               <EditableElement
                 elementId="hbu_maximally_productive"
-                content={getContent('hbu_maximally_productive', data.hbu.asVacant.maximallyProductive)}
+                content={getContent('hbu_maximally_productive', asVacant.maximallyProductive)}
                 selectedElement={selectedElement}
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
@@ -769,7 +784,7 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
               <h4 className="font-semibold text-emerald-800">Conclusion (As Vacant)</h4>
               <EditableElement
                 elementId="hbu_vacant_conclusion"
-                content={getContent('hbu_vacant_conclusion', data.hbu.asVacant.conclusion)}
+                content={getContent('hbu_vacant_conclusion', asVacant.conclusion)}
                 selectedElement={selectedElement}
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
@@ -786,7 +801,7 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
           <div className="space-y-4 text-sm text-gray-700">
             <EditableElement
               elementId="hbu_improved_analysis"
-              content={getContent('hbu_improved_analysis', data.hbu.asImproved.analysis)}
+              content={getContent('hbu_improved_analysis', asImproved.analysis)}
               selectedElement={selectedElement}
               onSelectElement={onSelectElement}
               onContentChange={handleContentChange}
@@ -798,7 +813,7 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
               <h4 className="font-semibold text-emerald-800">Conclusion (As Improved)</h4>
               <EditableElement
                 elementId="hbu_improved_conclusion"
-                content={getContent('hbu_improved_conclusion', data.hbu.asImproved.conclusion)}
+                content={getContent('hbu_improved_conclusion', asImproved.conclusion)}
                 selectedElement={selectedElement}
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
@@ -815,12 +830,13 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
 }
 
 // Market Analysis Page
-function MarketAnalysisPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle }: { 
+function MarketAnalysisPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, marketAnalysis }: { 
   selectedElement: string | null; 
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
   editedContent?: Record<string, string>;
   getAppliedStyle?: (elementId: string) => React.CSSProperties;
+  marketAnalysis?: import('../../../types').MarketAnalysisData;
 }) {
   const handleContentChange = onContentChange || (() => {});
   const getContent = (id: string, defaultVal: string) => editedContent?.[id] ?? defaultVal;
@@ -829,6 +845,14 @@ function MarketAnalysisPage({ selectedElement, onSelectElement, onContentChange,
   const defaultMarketCycle = 'The current market cycle is in an expansion phase, characterized by increasing demand, rising prices, and active development activity in the subject\'s market area.';
   const defaultSupplyDemand = 'The local market demonstrates balanced supply and demand conditions. Current vacancy rates of approximately 4.8% are below historical averages, indicating healthy absorption of available space.';
   const defaultMarketTrends = 'Market trends show consistent year-over-year growth in transaction volume and pricing. Average sale prices have increased 8-12% annually over the past three years, reflecting strong investor confidence and sustained demand.';
+
+  // Use wizard state market data or fall back to defaults
+  const vacancyRate = marketAnalysis?.supplyMetrics?.vacancyRate ?? 4.8;
+  const avgRent = marketAnalysis?.demandMetrics?.averageRent ?? 0;
+  const rentGrowth = marketAnalysis?.demandMetrics?.rentGrowth ?? 0;
+  const marketNarrative = marketAnalysis?.narrative || '';
+  const marketTrendLabel = marketAnalysis?.marketTrends?.overallTrend === 'improving' ? 'Improving' : 
+                          marketAnalysis?.marketTrends?.overallTrend === 'declining' ? 'Declining' : 'Stable';
 
   return (
     <ReportPageWrapper section={{ id: 'market-analysis', label: 'Market Analysis', enabled: true, expanded: false, fields: [], type: 'narrative' }} pageNumber={5} sidebarLabel="02C">
@@ -882,26 +906,47 @@ function MarketAnalysisPage({ selectedElement, onSelectElement, onContentChange,
             />
           </div>
 
+          {/* Market Narrative from Wizard */}
+          {marketNarrative && (
+            <div>
+              <h3 className="text-lg font-semibold text-gray-800 mb-3">Market Outlook & Analysis</h3>
+              <EditableElement
+                elementId="market_narrative"
+                content={getContent('market_narrative', marketNarrative)}
+                selectedElement={selectedElement}
+                onSelectElement={onSelectElement}
+                onContentChange={handleContentChange}
+                as="p"
+                className="text-gray-700"
+                appliedStyle={getStyle('market_narrative')}
+              />
+            </div>
+          )}
+
           {/* Market Data Summary */}
           <div className="mt-8 p-6 bg-gradient-to-r from-amber-50 to-amber-100 rounded-lg border border-amber-200">
             <h3 className="text-lg font-semibold text-amber-900 mb-4">Market Data Summary</h3>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <div className="text-amber-600 font-medium mb-1">Avg. Sales Price/SF</div>
-                <div className="text-2xl font-bold text-amber-800">$242</div>
-              </div>
-              <div>
-                <div className="text-amber-600 font-medium mb-1">Avg. Cap Rate</div>
-                <div className="text-2xl font-bold text-amber-800">6.50%</div>
-              </div>
-              <div>
                 <div className="text-amber-600 font-medium mb-1">Vacancy Rate</div>
-                <div className="text-2xl font-bold text-amber-800">4.8%</div>
+                <div className="text-2xl font-bold text-amber-800">{vacancyRate.toFixed(1)}%</div>
               </div>
               <div>
-                <div className="text-amber-600 font-medium mb-1">Sales Comps</div>
-                <div className="text-2xl font-bold text-amber-800">8 Recent</div>
+                <div className="text-amber-600 font-medium mb-1">Market Trend</div>
+                <div className="text-2xl font-bold text-amber-800">{marketTrendLabel}</div>
               </div>
+              {avgRent > 0 && (
+                <div>
+                  <div className="text-amber-600 font-medium mb-1">Avg. Rent</div>
+                  <div className="text-2xl font-bold text-amber-800">${avgRent.toFixed(2)}/SF</div>
+                </div>
+              )}
+              {rentGrowth !== 0 && (
+                <div>
+                  <div className="text-amber-600 font-medium mb-1">Rent Growth</div>
+                  <div className="text-2xl font-bold text-amber-800">{rentGrowth > 0 ? '+' : ''}{rentGrowth.toFixed(1)}%</div>
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -911,14 +956,22 @@ function MarketAnalysisPage({ selectedElement, onSelectElement, onContentChange,
 }
 
 // Sales Comparison Page with Photos
-function SalesComparisonPage({ selectedElement, onSelectElement }: { 
+function SalesComparisonPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, salesComparisonData }: { 
   selectedElement: string | null; 
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
   editedContent?: Record<string, string>;
   getAppliedStyle?: (elementId: string) => React.CSSProperties;
+  salesComparisonData?: import('../../../types').SalesComparisonData;
 }) {
   const data = sampleAppraisalData;
+  const handleContentChange = onContentChange || (() => {});
+  const getContent = (id: string, defaultVal: string) => editedContent?.[id] ?? defaultVal;
+  const getStyle = (id: string) => getAppliedStyle?.(id) || {};
+  
+  // Get narrative from wizard state
+  const reconciliationNarrative = salesComparisonData?.reconciliationText || '';
+  const concludedValue = salesComparisonData?.concludedValue;
 
   return (
     <ReportPageWrapper section={{ id: 'sales-comparison', label: 'Sales Comparison', enabled: true, expanded: false, fields: [], type: 'analysis-grid' }} pageNumber={5} sidebarLabel="04">
@@ -1055,6 +1108,23 @@ function SalesComparisonPage({ selectedElement, onSelectElement }: {
           </table>
         </div>
 
+        {/* Sales Comparison Reconciliation Narrative */}
+        {reconciliationNarrative && (
+          <div className="mt-6">
+            <h3 className="text-lg font-semibold text-gray-800 mb-3">Sales Comparison Analysis</h3>
+            <EditableElement
+              elementId="sales_reconciliation_narrative"
+              content={getContent('sales_reconciliation_narrative', reconciliationNarrative)}
+              selectedElement={selectedElement}
+              onSelectElement={onSelectElement}
+              onContentChange={handleContentChange}
+              as="p"
+              className="text-gray-700 text-sm leading-relaxed"
+              appliedStyle={getStyle('sales_reconciliation_narrative')}
+            />
+          </div>
+        )}
+
         {/* Value Conclusion */}
         <div className="mt-6 p-4 bg-gradient-to-r from-emerald-50 to-emerald-100 rounded-lg">
           <div className="flex items-center justify-between">
@@ -1063,8 +1133,8 @@ function SalesComparisonPage({ selectedElement, onSelectElement }: {
               <p className="text-sm text-emerald-700">Based on adjusted price range of ${Math.min(...data.comparables.map(c => c.adjustedPricePerSF)).toFixed(2)} - ${Math.max(...data.comparables.map(c => c.adjustedPricePerSF)).toFixed(2)}/SF</p>
             </div>
             <div className="text-right">
-              <div className="text-3xl font-bold text-emerald-700">${data.valuation.salesComparisonValue.toLocaleString()}</div>
-              <div className="text-sm text-emerald-600">${(data.valuation.salesComparisonValue / data.improvements.grossBuildingArea).toFixed(2)}/SF</div>
+              <div className="text-3xl font-bold text-emerald-700">${(concludedValue ?? data.valuation.salesComparisonValue).toLocaleString()}</div>
+              <div className="text-sm text-emerald-600">${((concludedValue ?? data.valuation.salesComparisonValue) / data.improvements.grossBuildingArea).toFixed(2)}/SF</div>
             </div>
           </div>
         </div>
@@ -1074,14 +1144,22 @@ function SalesComparisonPage({ selectedElement, onSelectElement }: {
 }
 
 // Income Approach Page
-function IncomeApproachPage({ selectedElement, onSelectElement }: { 
+function IncomeApproachPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, incomeApproachData }: { 
   selectedElement: string | null; 
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
   editedContent?: Record<string, string>;
   getAppliedStyle?: (elementId: string) => React.CSSProperties;
+  incomeApproachData?: import('../../../features/income-approach/types').IncomeApproachState | null;
 }) {
   const data = sampleAppraisalData;
+  const handleContentChange = onContentChange || (() => {});
+  const getContent = (id: string, defaultVal: string) => editedContent?.[id] ?? defaultVal;
+  const getStyle = (id: string) => getAppliedStyle?.(id) || {};
+  
+  // Get narratives from wizard state
+  const rentCompNotes = incomeApproachData?.rentCompNotes || '';
+  const expenseCompNotes = incomeApproachData?.expenseCompNotes || '';
 
   return (
     <ReportPageWrapper section={{ id: 'income', label: 'Income Approach', enabled: true, expanded: false, fields: [], type: 'analysis-grid' }} pageNumber={6} sidebarLabel="05">
@@ -1134,6 +1212,40 @@ function IncomeApproachPage({ selectedElement, onSelectElement }: {
               </tr>
             </tbody>
           </table>
+
+          {/* Rent Comparable Analysis Narrative */}
+          {rentCompNotes && (
+            <div className="mt-6">
+              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Rent Comparable Analysis</h3>
+              <EditableElement
+                elementId="income_rent_narrative"
+                content={getContent('income_rent_narrative', rentCompNotes)}
+                selectedElement={selectedElement}
+                onSelectElement={onSelectElement}
+                onContentChange={handleContentChange}
+                as="p"
+                className="text-gray-700 text-sm leading-relaxed"
+                appliedStyle={getStyle('income_rent_narrative')}
+              />
+            </div>
+          )}
+
+          {/* Expense Comparable Analysis Narrative */}
+          {expenseCompNotes && (
+            <div className="mt-4">
+              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Expense Analysis</h3>
+              <EditableElement
+                elementId="income_expense_narrative"
+                content={getContent('income_expense_narrative', expenseCompNotes)}
+                selectedElement={selectedElement}
+                onSelectElement={onSelectElement}
+                onContentChange={handleContentChange}
+                as="p"
+                className="text-gray-700 text-sm leading-relaxed"
+                appliedStyle={getStyle('income_expense_narrative')}
+              />
+            </div>
+          )}
 
           <div className="mt-6 p-4 bg-gradient-to-r from-emerald-50 to-emerald-100 rounded-lg text-center">
             <div className="text-sm text-emerald-600 mb-1">Income Approach Value Indication</div>
@@ -1260,17 +1372,22 @@ The land value of $${data.costApproach.landValue.toLocaleString()} was derived f
 }
 
 // Reconciliation Page
-function ReconciliationPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle }: { 
+function ReconciliationPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, reconciliationData }: { 
   selectedElement: string | null; 
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
   editedContent?: Record<string, string>;
   getAppliedStyle?: (elementId: string) => React.CSSProperties;
+  reconciliationData?: import('../../../types').ReconciliationData | null;
 }) {
   const data = sampleAppraisalData;
   const handleContentChange = onContentChange || (() => {});
   const getContent = (id: string, defaultVal: string) => editedContent?.[id] ?? defaultVal;
   const getStyle = (id: string) => getAppliedStyle?.(id) || {};
+
+  // Get narrative from wizard state (first scenario)
+  const reconciliationNarrative = reconciliationData?.scenarioReconciliations?.[0]?.comments || '';
+  const exposureRationale = reconciliationData?.exposureRationale || '';
 
   // Calculate value range and spread
   const values = [data.valuation.costApproachValue, data.valuation.salesComparisonValue, data.valuation.incomeApproachValue];
@@ -1412,6 +1529,26 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
             />
           </div>
 
+          {/* Reconciliation Narrative from Wizard */}
+          {reconciliationNarrative && (
+            <div 
+              onClick={() => onSelectElement('recon_narrative')}
+              className={`mb-4 p-4 bg-purple-50 rounded-lg border-l-4 border-purple-400 cursor-pointer ${selectedElement === 'recon_narrative' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-purple-100'}`}
+            >
+              <h4 className="text-sm font-semibold text-purple-800 mb-2">Reconciliation Analysis</h4>
+              <EditableElement
+                elementId="recon_narrative"
+                content={getContent('recon_narrative', reconciliationNarrative)}
+                selectedElement={selectedElement}
+                onSelectElement={onSelectElement}
+                onContentChange={handleContentChange}
+                as="p"
+                className="text-sm text-purple-700 leading-relaxed"
+                appliedStyle={getStyle('recon_narrative')}
+              />
+            </div>
+          )}
+
           {/* Final Conclusion */}
           <div 
             onClick={() => onSelectElement('recon_conclusion')}
@@ -1429,6 +1566,26 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
               appliedStyle={getStyle('recon_final')}
             />
           </div>
+
+          {/* Exposure Time Rationale from Wizard */}
+          {exposureRationale && (
+            <div 
+              onClick={() => onSelectElement('exposure_rationale')}
+              className={`mt-4 p-4 bg-slate-50 rounded-lg border-l-4 border-slate-400 cursor-pointer ${selectedElement === 'exposure_rationale' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-slate-100'}`}
+            >
+              <h4 className="text-sm font-semibold text-slate-700 mb-2">Exposure & Marketing Time</h4>
+              <EditableElement
+                elementId="exposure_rationale"
+                content={getContent('exposure_rationale', exposureRationale)}
+                selectedElement={selectedElement}
+                onSelectElement={onSelectElement}
+                onContentChange={handleContentChange}
+                as="p"
+                className="text-sm text-slate-700 leading-relaxed"
+                appliedStyle={getStyle('exposure_rationale')}
+              />
+            </div>
+          )}
         </div>
 
         {/* Final Value Banner */}
@@ -2751,9 +2908,9 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
       case 'property-description':
         return <PropertyDescriptionPage {...commonProps} subjectData={state.subjectData} improvementsInventory={state.improvementsInventory} />;
       case 'hbu':
-        return <HBUPage {...commonProps} />;
+        return <HBUPage {...commonProps} hbuAnalysis={state.hbuAnalysis} />;
       case 'market-analysis':
-        return <MarketAnalysisPage {...commonProps} />;
+        return <MarketAnalysisPage {...commonProps} marketAnalysis={state.marketAnalysis} />;
       case 'risk-rating':
         return state.riskRating ? (
           <RiskRatingPage
@@ -2786,13 +2943,13 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
           />
         ) : null;
       case 'sales-comparison':
-        return <SalesComparisonPage {...commonProps} />;
+        return <SalesComparisonPage {...commonProps} salesComparisonData={state.salesComparisonData} />;
       case 'income-approach':
-        return <IncomeApproachPage {...commonProps} />;
+        return <IncomeApproachPage {...commonProps} incomeApproachData={state.incomeApproachData} />;
       case 'cost-approach':
         return <CostApproachPage {...commonProps} />;
       case 'reconciliation':
-        return <ReconciliationPage {...commonProps} />;
+        return <ReconciliationPage {...commonProps} reconciliationData={state.reconciliationData} />;
       case 'assumptions':
         return <AssumptionsPage {...commonProps} />;
       case 'certification':

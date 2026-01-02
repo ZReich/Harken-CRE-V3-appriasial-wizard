@@ -239,7 +239,7 @@ export const ReconciliationSummary: React.FC<ReconciliationSummaryProps> = ({
               {/* Value and weight row */}
               <div className="flex items-baseline justify-between">
                 <div>
-                  <span className="text-lg font-black text-slate-800">
+                  <span className="text-lg font-black text-slate-800 dark:text-white">
                     {formatCurrency(av.value)}
                   </span>
                   <span className="text-sm font-bold text-slate-400 ml-2">
