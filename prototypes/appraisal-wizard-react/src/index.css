@@ -1,6 +1,12 @@
 @import "tailwindcss";
 
 /* ============================================
+   TAILWIND V4 DARK MODE CONFIGURATION
+   Enable class-based dark mode for manual toggle
+   ============================================ */
+@variant dark (&:where(.dark, .dark *));
+
+/* ============================================
    HARKEN DARK MODE - Theme Variables
    ============================================ */
 
