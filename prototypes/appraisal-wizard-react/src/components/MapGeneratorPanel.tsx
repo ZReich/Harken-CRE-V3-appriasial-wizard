@@ -228,7 +228,7 @@ export function MapGeneratorPanel({
         <div className="p-4">
           {/* Quick Actions */}
           <div className="flex items-center justify-between mb-4">
-            <p className="text-sm text-slate-500">
+            <p className="text-sm text-slate-500 dark:text-slate-400">
               Generate maps for your report with one click
             </p>
             <button
@@ -413,7 +413,7 @@ export function MapGeneratorPanel({
                 </div>
 
                 {/* Preview Footer */}
-                <div className="px-4 py-3 border-t border-slate-200 bg-slate-50 text-sm text-slate-500">
+                <div className="px-4 py-3 border-t border-slate-200 bg-slate-50 text-sm text-slate-500 dark:text-slate-400">
                   <div className="flex items-center justify-between">
                     <span>
                       Center: {previewMap.center.lat.toFixed(6)}, {previewMap.center.lng.toFixed(6)}

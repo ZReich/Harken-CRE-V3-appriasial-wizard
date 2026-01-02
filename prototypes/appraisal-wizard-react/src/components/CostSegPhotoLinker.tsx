@@ -228,7 +228,7 @@ export const CostSegPhotoLinker: React.FC<CostSegPhotoLinkerProps> = ({
           </div>
 
           {availableUnlinkedPhotos.length === 0 ? (
-            <div className="text-center py-6 text-sm text-gray-500">
+            <div className="text-center py-6 text-sm text-gray-500 dark:text-slate-400">
               <AlertCircle className="w-6 h-6 mx-auto mb-2 text-gray-400" />
               No photos available to link
             </div>

@@ -169,7 +169,7 @@ export default function CoverPhotoPickerModal({
               </div>
               <div>
                 <h2 className="text-xl font-bold text-slate-800 dark:text-white">Select Cover Photo</h2>
-                <p className="text-sm text-slate-500">Choose from your uploaded photos</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Choose from your uploaded photos</p>
               </div>
             </div>
             <button
@@ -291,7 +291,7 @@ export default function CoverPhotoPickerModal({
 
         {/* Footer */}
         <div className="flex-shrink-0 px-6 py-4 border-t border-slate-200 bg-slate-50 flex items-center justify-between">
-          <p className="text-sm text-slate-500">
+          <p className="text-sm text-slate-500 dark:text-slate-400">
             {selectedSlotId 
               ? `Selected: ${photos.find(p => p.slotId === selectedSlotId)?.label}`
               : 'Click a photo to select it'

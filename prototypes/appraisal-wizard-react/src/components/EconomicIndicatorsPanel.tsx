@@ -82,7 +82,7 @@ function IndicatorCard({ title, icon, series, chartStyle, color, unit = '%' }: I
           showAxis={chartStyle !== 'glass'}
         />
       </div>
-      <div className="px-4 py-2 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+      <div className="px-4 py-2 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
         <span>
           Trend: {' '}
           <span className={`font-medium ${
@@ -174,7 +174,7 @@ export function EconomicIndicatorsPanel({
   if (!data) {
     return (
       <div className={`bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6 ${className}`}>
-        <p className="text-slate-500">No economic data available.</p>
+        <p className="text-slate-500 dark:text-slate-400">No economic data available.</p>
       </div>
     );
   }
@@ -190,7 +190,7 @@ export function EconomicIndicatorsPanel({
             </div>
             <div>
               <h3 className="font-bold text-slate-800 dark:text-white">Economic Indicators</h3>
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 Source: Federal Reserve Economic Data (FRED) • Fetched {asOfDate ? new Date(asOfDate).toLocaleDateString() : 'Recently'}
               </p>
             </div>

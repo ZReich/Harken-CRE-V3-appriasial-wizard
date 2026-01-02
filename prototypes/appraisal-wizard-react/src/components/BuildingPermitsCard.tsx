@@ -155,36 +155,36 @@ function PermitRow({ permit }: { permit: BuildingPermit }) {
         <div className="px-4 py-3 bg-slate-50 border-t border-slate-100">
           <div className="grid grid-cols-2 gap-3 text-xs">
             <div>
-              <span className="text-slate-500">Issued:</span>
+              <span className="text-slate-500 dark:text-slate-400">Issued:</span>
               <span className="ml-1 font-medium">{formatDate(permit.issuedDate)}</span>
             </div>
             {permit.completedDate && (
               <div>
-                <span className="text-slate-500">Completed:</span>
+                <span className="text-slate-500 dark:text-slate-400">Completed:</span>
                 <span className="ml-1 font-medium">{formatDate(permit.completedDate)}</span>
               </div>
             )}
             {permit.estimatedValue && (
               <div>
-                <span className="text-slate-500">Est. Value:</span>
+                <span className="text-slate-500 dark:text-slate-400">Est. Value:</span>
                 <span className="ml-1 font-medium">{formatCurrency(permit.estimatedValue)}</span>
               </div>
             )}
             {permit.actualValue && (
               <div>
-                <span className="text-slate-500">Actual Value:</span>
+                <span className="text-slate-500 dark:text-slate-400">Actual Value:</span>
                 <span className="ml-1 font-medium">{formatCurrency(permit.actualValue)}</span>
               </div>
             )}
             {permit.contractor && (
               <div className="col-span-2">
-                <span className="text-slate-500">Contractor:</span>
+                <span className="text-slate-500 dark:text-slate-400">Contractor:</span>
                 <span className="ml-1 font-medium">{permit.contractor}</span>
               </div>
             )}
             {permit.inspectionsRequired !== undefined && (
               <div className="col-span-2">
-                <span className="text-slate-500">Inspections:</span>
+                <span className="text-slate-500 dark:text-slate-400">Inspections:</span>
                 <span className="ml-1 font-medium">
                   {permit.inspectionsPassed || 0} of {permit.inspectionsRequired} passed
                 </span>
@@ -247,7 +247,7 @@ export function BuildingPermitsCard({
             <ClipboardList className="w-5 h-5 text-[#0da1c7]" />
             <div>
               <h3 className="text-lg font-bold text-[#1c3643]">Building Permits</h3>
-              <p className="text-xs text-gray-500">
+              <p className="text-xs text-gray-500 dark:text-slate-400">
                 Permit history and construction activity
               </p>
             </div>
@@ -284,15 +284,15 @@ export function BuildingPermitsCard({
         <div className="grid grid-cols-3 divide-x divide-gray-100 border-b border-gray-100">
           <div className="p-3 text-center">
             <div className="text-xl font-bold text-[#0da1c7]">{filteredPermits.length}</div>
-            <div className="text-[10px] text-slate-500">Total Permits</div>
+            <div className="text-[10px] text-slate-500 dark:text-slate-400">Total Permits</div>
           </div>
           <div className="p-3 text-center">
             <div className="text-xl font-bold text-green-600">{activeCount}</div>
-            <div className="text-[10px] text-slate-500">Active</div>
+            <div className="text-[10px] text-slate-500 dark:text-slate-400">Active</div>
           </div>
           <div className="p-3 text-center">
             <div className="text-xl font-bold text-slate-700 dark:text-slate-300">{formatCurrency(totalValue)}</div>
-            <div className="text-[10px] text-slate-500">Total Value</div>
+            <div className="text-[10px] text-slate-500 dark:text-slate-400">Total Value</div>
           </div>
         </div>
       )}
@@ -308,7 +308,7 @@ export function BuildingPermitsCard({
         ) : (
           <div className="text-center py-6">
             <FileText className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-            <p className="text-sm text-slate-500">No permits found</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">No permits found</p>
             <p className="text-xs text-slate-400 mt-1">
               Building permits will be imported from county records
             </p>

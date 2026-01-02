@@ -140,7 +140,7 @@ export function DemographicsPanel({
   if (isLoading) {
     return (
       <div className={`bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-8 ${className}`}>
-        <div className="flex items-center justify-center gap-3 text-slate-500">
+        <div className="flex items-center justify-center gap-3 text-slate-500 dark:text-slate-400">
           <RefreshCw className="w-5 h-5 animate-spin" />
           <span>Loading demographics data...</span>
         </div>

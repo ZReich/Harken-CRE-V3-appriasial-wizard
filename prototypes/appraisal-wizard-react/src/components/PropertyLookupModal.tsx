@@ -156,7 +156,7 @@ export function PropertyLookupModal({
             </div>
             <div>
               <h2 className="text-lg font-semibold text-slate-800 dark:text-white">Property Lookup</h2>
-              <p className="text-sm text-slate-500">Search for property data to auto-fill fields</p>
+              <p className="text-sm text-slate-500 dark:text-slate-400">Search for property data to auto-fill fields</p>
             </div>
           </div>
           <button
@@ -317,19 +317,19 @@ export function PropertyLookupModal({
                   </div>
                   <div className="grid grid-cols-2 gap-3 text-sm">
                     <div>
-                      <span className="text-slate-500">Address:</span>
+                      <span className="text-slate-500 dark:text-slate-400">Address:</span>
                       <p className="font-medium text-slate-800 dark:text-white">{result.data.situsAddress}</p>
                     </div>
                     <div>
-                      <span className="text-slate-500">Parcel ID:</span>
+                      <span className="text-slate-500 dark:text-slate-400">Parcel ID:</span>
                       <p className="font-medium text-slate-800 dark:text-white">{result.data.parcelId}</p>
                     </div>
                     <div>
-                      <span className="text-slate-500">County:</span>
+                      <span className="text-slate-500 dark:text-slate-400">County:</span>
                       <p className="font-medium text-slate-800 dark:text-white">{result.data.county}</p>
                     </div>
                     <div>
-                      <span className="text-slate-500">Size:</span>
+                      <span className="text-slate-500 dark:text-slate-400">Size:</span>
                       <p className="font-medium text-slate-800 dark:text-white">
                         {result.data.acres > 0 
                           ? `${result.data.acres.toFixed(2)} acres` 
@@ -337,15 +337,15 @@ export function PropertyLookupModal({
                       </p>
                     </div>
                     <div>
-                      <span className="text-slate-500">Owner:</span>
+                      <span className="text-slate-500 dark:text-slate-400">Owner:</span>
                       <p className="font-medium text-slate-800 dark:text-white">{result.data.ownerName}</p>
                     </div>
                     <div>
-                      <span className="text-slate-500">Assessed Value:</span>
+                      <span className="text-slate-500 dark:text-slate-400">Assessed Value:</span>
                       <p className="font-medium text-slate-800 dark:text-white">{formatCurrency(result.data.totalAssessedValue)}</p>
                     </div>
                     <div className="col-span-2">
-                      <span className="text-slate-500">Legal Description:</span>
+                      <span className="text-slate-500 dark:text-slate-400">Legal Description:</span>
                       <p className="font-medium text-slate-800 dark:text-white text-xs">{result.data.legalDescription}</p>
                     </div>
                   </div>
@@ -363,7 +363,7 @@ export function PropertyLookupModal({
           {!costInfo.isFree && (
             <div className="mt-4 p-3 bg-slate-50 rounded-lg flex items-start gap-2">
               <Info className="w-4 h-4 text-slate-400 mt-0.5 flex-shrink-0" />
-              <p className="text-xs text-slate-500">
+              <p className="text-xs text-slate-500 dark:text-slate-400">
                 Out-of-state lookups currently use simulated data. Full Cotality API integration 
                 will be available when the enterprise API key is activated.
               </p>

@@ -119,7 +119,7 @@ export default function CoverPhotoSection({
           </div>
           <div>
             <h3 className="font-bold text-lg text-slate-800 dark:text-white">Cover Photo</h3>
-            <p className="text-sm text-slate-500">The hero image on your report's title page</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">The hero image on your report's title page</p>
           </div>
         </div>
         <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-full">

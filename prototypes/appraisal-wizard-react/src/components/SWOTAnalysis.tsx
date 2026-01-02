@@ -223,7 +223,7 @@ function DataCompletenessIndicator({ completeness }: { completeness: number }) {
   return (
     <div className="flex items-center gap-2 text-sm">
       <Database className="w-4 h-4 text-slate-400" />
-      <span className="text-slate-500">Data Completeness:</span>
+      <span className="text-slate-500 dark:text-slate-400">Data Completeness:</span>
       <span className={`px-2 py-0.5 rounded font-medium ${getColor()}`}>
         {completeness}% ({getLabel()})
       </span>
@@ -325,7 +325,7 @@ export function SWOTAnalysis({
         <div className="flex items-center justify-between">
           <div>
             <h3 className="font-bold text-slate-800 dark:text-white">SWOT Analysis</h3>
-            <p className="text-sm text-slate-500">Analyze strengths, weaknesses, opportunities, and threats</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">Analyze strengths, weaknesses, opportunities, and threats</p>
           </div>
           <button
             onClick={handleGenerateSuggestions}
@@ -360,7 +360,7 @@ export function SWOTAnalysis({
             {totalAiItems > 0 && (
               <div className="flex items-center gap-2 text-sm">
                 <Sparkles className="w-4 h-4 text-[#0da1c7]" />
-                <span className="text-slate-500">AI-generated:</span>
+                <span className="text-slate-500 dark:text-slate-400">AI-generated:</span>
                 <span className="text-[#0da1c7] font-medium">
                   {totalAiItems} of {totalItems} items
                 </span>

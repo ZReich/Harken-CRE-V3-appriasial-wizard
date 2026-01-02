@@ -118,31 +118,31 @@ function TrafficRow({ entry, onEdit }: { entry: TrafficDataEntry; onEdit?: () =>
           <div className="grid grid-cols-2 gap-3 text-xs">
             {entry.truckPercentage !== undefined && (
               <div>
-                <span className="text-slate-500">Truck Traffic:</span>
+                <span className="text-slate-500 dark:text-slate-400">Truck Traffic:</span>
                 <span className="ml-1 font-medium">{entry.truckPercentage}%</span>
               </div>
             )}
             {entry.speedLimit !== undefined && (
               <div>
-                <span className="text-slate-500">Speed Limit:</span>
+                <span className="text-slate-500 dark:text-slate-400">Speed Limit:</span>
                 <span className="ml-1 font-medium">{entry.speedLimit} mph</span>
               </div>
             )}
             {entry.lanesCount !== undefined && (
               <div>
-                <span className="text-slate-500">Lanes:</span>
+                <span className="text-slate-500 dark:text-slate-400">Lanes:</span>
                 <span className="ml-1 font-medium">{entry.lanesCount}</span>
               </div>
             )}
             {entry.year && (
               <div>
-                <span className="text-slate-500">Data Year:</span>
+                <span className="text-slate-500 dark:text-slate-400">Data Year:</span>
                 <span className="ml-1 font-medium">{entry.year}</span>
               </div>
             )}
             {entry.direction && (
               <div className="col-span-2">
-                <span className="text-slate-500">Direction:</span>
+                <span className="text-slate-500 dark:text-slate-400">Direction:</span>
                 <span className="ml-1 font-medium">{entry.direction}</span>
               </div>
             )}
@@ -246,11 +246,11 @@ export function TrafficDataCard({
         <div className="grid grid-cols-2 divide-x divide-gray-100 border-b border-gray-100">
           <div className="p-4 text-center">
             <div className="text-2xl font-bold text-[#0da1c7]">{formatNumber(avgAADT)}</div>
-            <div className="text-xs text-slate-500">Average AADT</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400">Average AADT</div>
           </div>
           <div className="p-4 text-center">
             <div className="text-2xl font-bold text-[#1c3643]">{formatNumber(maxAADT)}</div>
-            <div className="text-xs text-slate-500">Peak AADT</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400">Peak AADT</div>
           </div>
         </div>
       )}
@@ -266,7 +266,7 @@ export function TrafficDataCard({
         ) : (
           <div className="text-center py-6">
             <Route className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-            <p className="text-sm text-slate-500">No traffic data available</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">No traffic data available</p>
             <p className="text-xs text-slate-400 mt-1">
               Traffic counts will be imported from MDOT or entered manually
             </p>

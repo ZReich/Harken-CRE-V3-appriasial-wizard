@@ -298,7 +298,7 @@ export function RiskRatingPanel({
           <Info className="w-5 h-5" />
           <span className="font-medium">Property Data Required</span>
         </div>
-        <p className="text-sm text-slate-500">
+        <p className="text-sm text-slate-500 dark:text-slate-400">
           Complete property location and type information to calculate the investment risk rating.
         </p>
       </div>
@@ -322,7 +322,7 @@ export function RiskRatingPanel({
               </div>
               <div>
                 <h3 className="font-bold text-slate-800 dark:text-white text-lg">Investment Risk Rating</h3>
-                <p className="text-sm text-slate-500">Proprietary "Bond Rating for Buildings" Analysis</p>
+                <p className="text-sm text-slate-500 dark:text-slate-400">Proprietary "Bond Rating for Buildings" Analysis</p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -357,7 +357,7 @@ export function RiskRatingPanel({
                 </div>
                 <div>
                   <span className="font-medium text-slate-700 dark:text-slate-300">Multi-Source Data Integration</span>
-                  <p className="text-slate-500">Federal economic data, market statistics, and property-specific metrics</p>
+                  <p className="text-slate-500 dark:text-slate-400">Federal economic data, market statistics, and property-specific metrics</p>
                 </div>
               </div>
               <div className="flex items-start gap-2">
@@ -366,7 +366,7 @@ export function RiskRatingPanel({
                 </div>
                 <div>
                   <span className="font-medium text-slate-700 dark:text-slate-300">Dynamic Weight Calibration</span>
-                  <p className="text-slate-500">Weights adjusted based on property type and market conditions</p>
+                  <p className="text-slate-500 dark:text-slate-400">Weights adjusted based on property type and market conditions</p>
                 </div>
               </div>
               <div className="flex items-start gap-2">
@@ -375,7 +375,7 @@ export function RiskRatingPanel({
                 </div>
                 <div>
                   <span className="font-medium text-slate-700 dark:text-slate-300">Z-Score Normalization</span>
-                  <p className="text-slate-500">Scores normalized relative to MSA-level benchmarks</p>
+                  <p className="text-slate-500 dark:text-slate-400">Scores normalized relative to MSA-level benchmarks</p>
                 </div>
               </div>
               <div className="flex items-start gap-2">
@@ -384,7 +384,7 @@ export function RiskRatingPanel({
                 </div>
                 <div>
                   <span className="font-medium text-slate-700 dark:text-slate-300">Composite Scoring</span>
-                  <p className="text-slate-500">Weighted aggregation into AAA-C rating scale</p>
+                  <p className="text-slate-500 dark:text-slate-400">Weighted aggregation into AAA-C rating scale</p>
                 </div>
               </div>
             </div>
@@ -437,7 +437,7 @@ export function RiskRatingPanel({
                 })}
               </div>
               <div className="text-center mt-3">
-                <span className="text-xs text-slate-500">
+                <span className="text-xs text-slate-500 dark:text-slate-400">
                   This property ranks in the <span className="font-semibold text-slate-700 dark:text-slate-300">
                     {gradeIndex <= 2 ? 'top tier' : gradeIndex <= 4 ? 'middle tier' : 'speculative tier'}
                   </span> of investment-grade properties
@@ -554,7 +554,7 @@ export function RiskRatingPanel({
           {data.weightingRationale && (
             <div className="mt-6 p-4 bg-gradient-to-r from-slate-50 to-white rounded-xl border border-slate-200">
               <h4 className="font-medium text-slate-700 mb-2 flex items-center gap-2">
-                <Scale className="w-4 h-4 text-slate-500" />
+                <Scale className="w-4 h-4 text-slate-500 dark:text-slate-400" />
                 Dynamic Weight Rationale
               </h4>
               <p className="text-sm text-slate-600 leading-relaxed">{data.weightingRationale}</p>

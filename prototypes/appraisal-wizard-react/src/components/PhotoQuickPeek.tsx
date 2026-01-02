@@ -147,7 +147,7 @@ export const PhotoQuickPeek: React.FC<PhotoQuickPeekProps> = ({
           {/* Attribution */}
           {(photo.takenBy || formattedDate) && (
             <div className="mt-3 pt-2 border-t border-slate-100 text-center">
-              <p className="text-[10px] text-slate-500">
+              <p className="text-[10px] text-slate-500 dark:text-slate-400">
                 {photo.takenBy && `Taken By: ${photo.takenBy}`}
                 {photo.takenBy && formattedDate && ', '}
                 {formattedDate}

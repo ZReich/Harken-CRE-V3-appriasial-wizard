@@ -407,7 +407,7 @@ export function BoundaryDrawingTool({
         className={`bg-slate-100 rounded-xl flex items-center justify-center ${className}`}
         style={{ height }}
       >
-        <div className="text-center text-slate-500">
+        <div className="text-center text-slate-500 dark:text-slate-400">
           <div className="w-8 h-8 border-2 border-slate-300 border-t-[#0da1c7] rounded-full animate-spin mx-auto mb-2" />
           <p className="text-sm">Loading drawing tools...</p>
         </div>
@@ -535,7 +535,7 @@ export function BoundaryDrawingTool({
 
       {/* Footer */}
       <div className="px-4 py-2 bg-slate-50 border-t border-slate-200">
-        <p className="text-xs text-slate-500">
+        <p className="text-xs text-slate-500 dark:text-slate-400">
           {hasBoundary 
             ? 'Drag corners to adjust. Click polygon to edit vertices.'
             : 'Click "Draw Boundary" to outline the property.'}

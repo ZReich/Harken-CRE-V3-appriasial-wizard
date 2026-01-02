@@ -246,7 +246,7 @@ export const ReconciliationSummary: React.FC<ReconciliationSummaryProps> = ({
                     {weight}%
                   </span>
                 </div>
-                <div className="text-xs font-medium text-slate-500">
+                <div className="text-xs font-medium text-slate-500 dark:text-slate-400">
                   ${Math.round(perUnit).toLocaleString()}{unitLabel}
                 </div>
               </div>

@@ -915,7 +915,7 @@ export default function ExteriorFeaturesInventory({
                             <div className="space-y-2">
                               <div className="flex items-center gap-3">
                                 <div className="text-sm">
-                                  <span className="text-slate-500">Depreciation:</span>
+                                  <span className="text-slate-500 dark:text-slate-400">Depreciation:</span>
                                   <span className={`ml-2 font-semibold ${component.depreciationOverride !== undefined ? 'text-amber-600' : 'text-slate-700'}`}>
                                     {component.depreciationOverride !== undefined ? component.depreciationOverride : depreciationPct}%
                                   </span>

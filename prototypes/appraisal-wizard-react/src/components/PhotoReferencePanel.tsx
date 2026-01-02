@@ -161,7 +161,7 @@ function MaterialChip({
           {material.details && (
             <p className="text-[10px] text-slate-500 truncate mt-0.5">{material.details}</p>
           )}
-          <div className="flex items-center gap-2 mt-1 text-[10px] text-slate-500">
+          <div className="flex items-center gap-2 mt-1 text-[10px] text-slate-500 dark:text-slate-400">
             {material.suggestedAge !== undefined && (
               <span>Age: ~{material.suggestedAge} yrs</span>
             )}
