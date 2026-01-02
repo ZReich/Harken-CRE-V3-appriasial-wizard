@@ -21,7 +21,7 @@ export default function USPAPDetailModal({
   if (!detail) {
     return (
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
-        <div className="bg-white rounded-2xl shadow-xl max-w-xl w-full mx-4 p-6">
+        <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl max-w-xl w-full mx-4 p-6">
           <div className="flex justify-between items-center mb-4">
             <h3 className="text-lg font-bold text-gray-900">USPAP Reference</h3>
             <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
@@ -46,7 +46,7 @@ export default function USPAPDetailModal({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm">
       <div 
-        className="bg-white rounded-2xl shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] flex flex-col overflow-hidden"
+        className="bg-white dark:bg-slate-800 rounded-2xl shadow-xl max-w-2xl w-full mx-4 max-h-[90vh] flex flex-col overflow-hidden"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}

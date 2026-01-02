@@ -453,7 +453,7 @@ export default function AnalysisPage() {
       {activeTab === 'sales' ? (
         <div className="absolute inset-0 flex flex-col">
           {/* Sales Comparison Header Bar */}
-          <div className="flex-shrink-0 bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between z-40 shadow-sm">
+          <div className="flex-shrink-0 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-3 flex items-center justify-between z-40 shadow-sm">
             <div className="flex items-center gap-4">
               <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
                 <span style={{ color: APPROACH_CONFIG.sales.color }}><ChartIcon className="w-5 h-5" /></span>
@@ -470,7 +470,7 @@ export default function AnalysisPage() {
                     onClick={() => setAnalysisMode('standard')}
                     className={`px-3 py-1.5 text-xs font-semibold rounded-md flex items-center gap-2 transition-all ${
                       analysisMode === 'standard' 
-                        ? 'bg-white text-slate-800 shadow-sm' 
+                        ? 'bg-white dark:bg-slate-700 text-slate-800 dark:text-white shadow-sm' 
                         : 'text-slate-500 hover:text-slate-700'
                     }`}
                  >
@@ -507,7 +507,7 @@ export default function AnalysisPage() {
       ) : activeTab === 'income' ? (
         <div className="absolute inset-0 flex flex-col">
           {/* Income Approach Header Bar */}
-          <div className="flex-shrink-0 bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between z-40 shadow-sm">
+          <div className="flex-shrink-0 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-3 flex items-center justify-between z-40 shadow-sm">
             <div className="flex items-center gap-4">
               <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
                 <Wallet className="w-5 h-5" style={{ color: APPROACH_CONFIG.income.color }} />
@@ -538,7 +538,7 @@ export default function AnalysisPage() {
       ) : activeTab === 'cost' ? (
         <div className="absolute inset-0 flex flex-col">
           {/* Cost Approach Header Bar */}
-          <div className="flex-shrink-0 bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between z-40 shadow-sm">
+          <div className="flex-shrink-0 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-3 flex items-center justify-between z-40 shadow-sm">
             <div className="flex items-center gap-4">
               <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
                 <HardHat className="w-5 h-5" style={{ color: APPROACH_CONFIG.cost.color }} />
@@ -560,7 +560,7 @@ export default function AnalysisPage() {
       ) : activeTab === 'land' ? (
         <div className="absolute inset-0 flex flex-col">
           {/* Land Valuation Header Bar */}
-          <div className="flex-shrink-0 bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between z-40 shadow-sm">
+          <div className="flex-shrink-0 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-3 flex items-center justify-between z-40 shadow-sm">
             <div className="flex items-center gap-4">
               <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
                 <span style={{ color: APPROACH_CONFIG.land.color }}><LandIcon className="w-5 h-5" /></span>
@@ -582,7 +582,7 @@ export default function AnalysisPage() {
       ) : activeTab === 'multifamily' ? (
         <div className="absolute inset-0 flex flex-col">
           {/* Multi-Family Header Bar */}
-          <div className="flex-shrink-0 bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between z-40 shadow-sm">
+          <div className="flex-shrink-0 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-3 flex items-center justify-between z-40 shadow-sm">
             <div className="flex items-center gap-4">
               <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
                 <span style={{ color: APPROACH_CONFIG.multifamily.color }}><ResidentialIcon className="w-5 h-5" /></span>
