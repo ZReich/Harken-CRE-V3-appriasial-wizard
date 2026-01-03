@@ -91,10 +91,10 @@ function generateId(): string {
 
 function calculateEffectiveAge(yearInstalled: number | null, condition: SiteImprovementCondition): number {
   if (!yearInstalled) return 0;
-  
+
   const currentYear = new Date().getFullYear();
   const actualAge = currentYear - yearInstalled;
-  
+
   const conditionMultipliers: Record<SiteImprovementCondition, number> = {
     excellent: 0.6,
     good: 0.8,
@@ -102,7 +102,7 @@ function calculateEffectiveAge(yearInstalled: number | null, condition: SiteImpr
     fair: 1.2,
     poor: 1.5,
   };
-  
+
   return Math.round(actualAge * conditionMultipliers[condition]);
 }
 
@@ -137,26 +137,26 @@ export default function SiteImprovementsInventory({
   const [showMoreCategories, setShowMoreCategories] = useState(false);
   const [showOtherTypes, setShowOtherTypes] = useState(false);
   const [generalNotes, setGeneralNotes] = useState('');
-  
+
   // Quick add form state
   const [quantity, setQuantity] = useState<string>('');
   const [unit, setUnit] = useState<'SF' | 'LF' | 'EA' | 'LS'>('SF');
   const [yearInstalled, setYearInstalled] = useState<string>('');
   const [condition, setCondition] = useState<SiteImprovementCondition>('average');
-  
+
   // Custom type state (for inline custom within each category)
   const [showCustomForm, setShowCustomForm] = useState(false);
   const [customName, setCustomName] = useState('');
   const [customEconomicLife, setCustomEconomicLife] = useState('20');
   const [saveForFuture, setSaveForFuture] = useState(false);
-  
+
   // Expanded items state (for individual notes)
   const [expandedItems, setExpandedItems] = useState<Set<string>>(new Set());
-  
+
   // Custom types hook
-  const { 
-    customTypes, 
-    addCustomType, 
+  const {
+    customTypes,
+    addCustomType,
     getCustomTypesByCategory,
     toSiteImprovementType,
   } = useCustomSiteTypes();
@@ -166,11 +166,11 @@ export default function SiteImprovementsInventory({
     if (!selectedCategory || selectedCategory === 'other') {
       return { recommendedTypes: [], otherTypes: [], allTypes: [] };
     }
-    
+
     const categoryTypes = getSiteImprovementTypesByCategory(selectedCategory);
     const customTypesForCategory = getCustomTypesByCategory(selectedCategory).map(toSiteImprovementType);
     const allTypesArray = [...categoryTypes, ...customTypesForCategory];
-    
+
     // If no property category, all are "recommended"
     if (!propertyCategory) {
       return {
@@ -179,11 +179,11 @@ export default function SiteImprovementsInventory({
         allTypes: allTypesArray,
       };
     }
-    
+
     // Split into recommended (matching property category) and other
     const recommended: SiteImprovementType[] = [];
     const other: SiteImprovementType[] = [];
-    
+
     categoryTypes.forEach(type => {
       if (type.applicablePropertyCategories.includes(propertyCategory)) {
         recommended.push(type);
@@ -191,17 +191,17 @@ export default function SiteImprovementsInventory({
         other.push(type);
       }
     });
-    
+
     // Custom types go to "other" unless they don't have the property restriction
     customTypesForCategory.forEach(type => {
       if (!type.applicablePropertyCategories || type.applicablePropertyCategories.length === 0 ||
-          type.applicablePropertyCategories.includes(propertyCategory)) {
+        type.applicablePropertyCategories.includes(propertyCategory)) {
         recommended.push(type);
       } else {
         other.push(type);
       }
     });
-    
+
     return {
       recommendedTypes: recommended,
       otherTypes: other,
@@ -212,25 +212,25 @@ export default function SiteImprovementsInventory({
   // Legacy compatibility - total available types
   const availableTypes = useMemo(() => {
     if (!selectedCategory || selectedCategory === 'other') return [];
-    
+
     const msTypes = getSiteImprovementTypesByCategory(selectedCategory);
     const customTypesForCategory = getCustomTypesByCategory(selectedCategory).map(toSiteImprovementType);
-    
+
     return [...msTypes, ...customTypesForCategory];
   }, [selectedCategory, getCustomTypesByCategory, toSiteImprovementType]);
 
   // Get the selected type details
   const selectedType = useMemo(() => {
     if (!selectedTypeId) return null;
-    
+
     // Check M&S types first
     const msType = getSiteImprovementType(selectedTypeId);
     if (msType) return msType;
-    
+
     // Check custom types
     const customType = customTypes.find(t => t.id === selectedTypeId);
     if (customType) return toSiteImprovementType(customType);
-    
+
     return null;
   }, [selectedTypeId, customTypes, toSiteImprovementType]);
 
@@ -276,10 +276,10 @@ export default function SiteImprovementsInventory({
     if (showCustomForm && selectedCategory) {
       // Custom type within the selected category
       if (!customName.trim()) return;
-      
+
       typeName = customName.trim();
       economicLife = parseInt(customEconomicLife) || 20;
-      
+
       // Save for future if requested
       if (saveForFuture) {
         const newCustomType = addCustomType({
@@ -324,7 +324,7 @@ export default function SiteImprovementsInventory({
     resetForm();
     setShowCustomForm(false);
   }, [
-    showCustomForm, selectedCategory, selectedTypeId, selectedType, 
+    showCustomForm, selectedCategory, selectedTypeId, selectedType,
     quantity, unit, yearInstalled, condition,
     customName, customEconomicLife, saveForFuture,
     addCustomType, improvements, onChange, resetForm
@@ -384,10 +384,10 @@ export default function SiteImprovementsInventory({
       </div>
 
       {/* Add Form Section */}
-      <div className="p-4 bg-slate-50/50 border-b border-gray-100">
+      <div className="p-4 bg-slate-50/50 dark:bg-slate-800/50 border-b border-gray-100 dark:border-slate-700">
         {/* Category Selector */}
         <div className="mb-4">
-          <label className="block text-xs font-medium text-gray-600 mb-2">Category</label>
+          <label className="block text-xs font-medium text-gray-600 dark:text-slate-400 mb-2">Category</label>
           <div className="flex flex-wrap gap-2">
             {/* Categories visible on all screens (first 7) */}
             {ALL_CATEGORIES.slice(0, VISIBLE_ON_SMALL).map(cat => (
@@ -398,16 +398,15 @@ export default function SiteImprovementsInventory({
                   setSelectedTypeId(null);
                   setShowCustomForm(false);
                 }}
-                className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all ${
-                  selectedCategory === cat.id
-                    ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
-                    : 'bg-white text-gray-700 border-gray-200 hover:border-[#0da1c7] hover:text-[#0da1c7]'
-                }`}
+                className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all ${selectedCategory === cat.id
+                  ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
+                  : 'bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-300 border-gray-200 dark:border-slate-600 hover:border-[#0da1c7] dark:hover:border-[#0da1c7] hover:text-[#0da1c7] dark:hover:text-[#0da1c7]'
+                  }`}
               >
                 {cat.label}
               </button>
             ))}
-            
+
             {/* Categories hidden on small screens (show as buttons on large, dropdown on small) */}
             {ALL_CATEGORIES.slice(VISIBLE_ON_SMALL).map(cat => (
               <button
@@ -417,32 +416,30 @@ export default function SiteImprovementsInventory({
                   setSelectedTypeId(null);
                   setShowCustomForm(false);
                 }}
-                className={`hidden xl:block px-3 py-1.5 text-sm font-medium rounded-lg border transition-all ${
-                  selectedCategory === cat.id
-                    ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
-                    : 'bg-white text-gray-700 border-gray-200 hover:border-[#0da1c7] hover:text-[#0da1c7]'
-                }`}
+                className={`hidden xl:block px-3 py-1.5 text-sm font-medium rounded-lg border transition-all ${selectedCategory === cat.id
+                  ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
+                  : 'bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-300 border-gray-200 dark:border-slate-600 hover:border-[#0da1c7] dark:hover:border-[#0da1c7] hover:text-[#0da1c7] dark:hover:text-[#0da1c7]'
+                  }`}
               >
                 {cat.label}
               </button>
             ))}
-            
+
             {/* More categories dropdown - only visible on small screens */}
             {ALL_CATEGORIES.length > VISIBLE_ON_SMALL && (
               <div className="relative xl:hidden">
                 <button
                   onClick={() => setShowMoreCategories(!showMoreCategories)}
-                  className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all flex items-center gap-1 ${
-                    ALL_CATEGORIES.slice(VISIBLE_ON_SMALL).some(c => c.id === selectedCategory)
-                      ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
-                      : 'bg-white text-gray-700 border-gray-200 hover:border-[#0da1c7] hover:text-[#0da1c7]'
-                  }`}
+                  className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all flex items-center gap-1 ${ALL_CATEGORIES.slice(VISIBLE_ON_SMALL).some(c => c.id === selectedCategory)
+                    ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
+                    : 'bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-300 border-gray-200 dark:border-slate-600 hover:border-[#0da1c7] dark:hover:border-[#0da1c7] hover:text-[#0da1c7] dark:hover:text-[#0da1c7]'
+                    }`}
                 >
                   +{ALL_CATEGORIES.length - VISIBLE_ON_SMALL}
                   <ChevronDown size={14} />
                 </button>
                 {showMoreCategories && (
-                  <div className="absolute top-full left-0 mt-1 bg-white border border-gray-200 rounded-lg shadow-lg z-10 py-1 min-w-[140px]">
+                  <div className="absolute top-full left-0 mt-1 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg shadow-lg z-10 py-1 min-w-[140px]">
                     {ALL_CATEGORIES.slice(VISIBLE_ON_SMALL).map(cat => (
                       <button
                         key={cat.id}
@@ -452,9 +449,8 @@ export default function SiteImprovementsInventory({
                           setShowMoreCategories(false);
                           setShowCustomForm(false);
                         }}
-                        className={`w-full px-3 py-2 text-sm text-left hover:bg-gray-50 ${
-                          selectedCategory === cat.id ? 'text-[#0da1c7] font-medium' : 'text-gray-700'
-                        }`}
+                        className={`w-full px-3 py-2 text-sm text-left hover:bg-gray-50 dark:hover:bg-slate-700 ${selectedCategory === cat.id ? 'text-[#0da1c7] font-medium' : 'text-gray-700 dark:text-slate-300'
+                          }`}
                       >
                         {cat.label}
                       </button>
@@ -473,7 +469,7 @@ export default function SiteImprovementsInventory({
             {recommendedTypes.length > 0 && (
               <>
                 <label className="block text-xs font-medium text-gray-600 mb-2">
-                  {propertyCategory 
+                  {propertyCategory
                     ? `Recommended for ${propertyCategory === 'commercial' ? 'Commercial' : propertyCategory === 'residential' ? 'Residential' : 'This'} Properties`
                     : `Type (${ALL_CATEGORIES.find(c => c.id === selectedCategory)?.label})`}
                 </label>
@@ -487,11 +483,10 @@ export default function SiteImprovementsInventory({
                           handleTypeSelect(type.id);
                           setShowCustomForm(false);
                         }}
-                        className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all flex items-center gap-1 ${
-                          selectedTypeId === type.id && !showCustomForm
-                            ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
-                            : 'bg-white text-gray-700 border-gray-200 hover:border-[#0da1c7] hover:text-[#0da1c7]'
-                        }`}
+                        className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all flex items-center gap-1 ${selectedTypeId === type.id && !showCustomForm
+                          ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
+                          : 'bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-300 border-gray-200 dark:border-slate-600 hover:border-[#0da1c7] dark:hover:border-[#0da1c7] hover:text-[#0da1c7] dark:hover:text-[#0da1c7]'
+                          }`}
                       >
                         {isCustom && <Star size={12} className="text-amber-400" />}
                         {type.label}
@@ -501,18 +496,18 @@ export default function SiteImprovementsInventory({
                 </div>
               </>
             )}
-            
+
             {/* Other Options (collapsible) */}
             {otherTypes.length > 0 && (
               <div className="mb-3">
                 <button
                   onClick={() => setShowOtherTypes(!showOtherTypes)}
-                  className="flex items-center gap-1.5 text-xs font-medium text-gray-500 hover:text-gray-700 mb-2"
+                  className="flex items-center gap-1.5 text-xs font-medium text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-slate-200 mb-2"
                 >
                   {showOtherTypes ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                   Other Options ({otherTypes.length})
                 </button>
-                
+
                 {showOtherTypes && (
                   <div className="flex flex-wrap gap-2 pl-2 border-l-2 border-gray-200 dark:border-slate-700">
                     {otherTypes.map(type => {
@@ -524,11 +519,10 @@ export default function SiteImprovementsInventory({
                             handleTypeSelect(type.id);
                             setShowCustomForm(false);
                           }}
-                          className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all flex items-center gap-1 ${
-                            selectedTypeId === type.id && !showCustomForm
-                              ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
-                              : 'bg-white text-gray-700 border-gray-200 hover:border-[#0da1c7] hover:text-[#0da1c7]'
-                          }`}
+                          className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all flex items-center gap-1 ${selectedTypeId === type.id && !showCustomForm
+                            ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
+                            : 'bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-300 border-gray-200 dark:border-slate-600 hover:border-[#0da1c7] dark:hover:border-[#0da1c7] hover:text-[#0da1c7] dark:hover:text-[#0da1c7]'
+                            }`}
                         >
                           {isCustom && <Star size={12} className="text-amber-400" />}
                           {type.label}
@@ -539,7 +533,7 @@ export default function SiteImprovementsInventory({
                 )}
               </div>
             )}
-            
+
             {/* Fallback if no recommended types - show all */}
             {recommendedTypes.length === 0 && otherTypes.length === 0 && (
               <div className="flex flex-wrap gap-2 mb-3">
@@ -552,11 +546,10 @@ export default function SiteImprovementsInventory({
                         handleTypeSelect(type.id);
                         setShowCustomForm(false);
                       }}
-                      className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all flex items-center gap-1 ${
-                        selectedTypeId === type.id && !showCustomForm
-                          ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
-                          : 'bg-white text-gray-700 border-gray-200 hover:border-[#0da1c7] hover:text-[#0da1c7]'
-                      }`}
+                      className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all flex items-center gap-1 ${selectedTypeId === type.id && !showCustomForm
+                        ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
+                        : 'bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-300 border-gray-200 dark:border-slate-600 hover:border-[#0da1c7] dark:hover:border-[#0da1c7] hover:text-[#0da1c7] dark:hover:text-[#0da1c7]'
+                        }`}
                     >
                       {isCustom && <Star size={12} className="text-amber-400" />}
                       {type.label}
@@ -565,7 +558,7 @@ export default function SiteImprovementsInventory({
                 })}
               </div>
             )}
-              
+
             {/* Custom button within each category */}
             <button
               onClick={() => {
@@ -576,11 +569,10 @@ export default function SiteImprovementsInventory({
                 setCustomEconomicLife('20');
                 setSaveForFuture(false);
               }}
-              className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all flex items-center gap-1 ${
-                showCustomForm
-                  ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
-                  : 'bg-white text-gray-700 border-gray-200 hover:border-[#0da1c7] hover:text-[#0da1c7]'
-              }`}
+              className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all flex items-center gap-1 ${showCustomForm
+                ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
+                : 'bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-300 border-gray-200 dark:border-slate-600 hover:border-[#0da1c7] dark:hover:border-[#0da1c7] hover:text-[#0da1c7] dark:hover:text-[#0da1c7]'
+                }`}
             >
               <Plus size={12} />
               Custom
@@ -590,7 +582,7 @@ export default function SiteImprovementsInventory({
 
         {/* Custom Type Form (shown when Custom button is clicked within a category) */}
         {showCustomForm && selectedCategory && (
-          <div className="mb-4 p-3 bg-white rounded-lg border border-[#0da1c7]/30 border-dashed">
+          <div className="mb-4 p-3 bg-white dark:bg-slate-800 rounded-lg border border-[#0da1c7]/30 border-dashed">
             <div className="flex items-center gap-2 mb-3 text-sm text-gray-600 dark:text-slate-400">
               <Plus size={14} className="text-[#0da1c7]" />
               <span>Add custom type to <strong>{ALL_CATEGORIES.find(c => c.id === selectedCategory)?.label}</strong></span>
@@ -604,14 +596,14 @@ export default function SiteImprovementsInventory({
                   type="text"
                   value={customName}
                   onChange={(e) => setCustomName(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-lg focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
                   placeholder="e.g., Loading Ramp, Flag Pole"
                 />
               </div>
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1 flex items-center gap-1">
                   Economic Life (yrs)
-                  <span 
+                  <span
                     className="inline-flex items-center cursor-help"
                     title={`Typical range for ${ALL_CATEGORIES.find(c => c.id === selectedCategory)?.label}: ${ECONOMIC_LIFE_GUIDE[selectedCategory as keyof typeof ECONOMIC_LIFE_GUIDE]?.range || '10-30 yrs'}`}
                   >
@@ -622,26 +614,26 @@ export default function SiteImprovementsInventory({
                   type="number"
                   value={customEconomicLife}
                   onChange={(e) => setCustomEconomicLife(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-lg focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
                   min="1"
                   max="100"
                 />
               </div>
             </div>
-            
+
             {/* Economic Life Calculator / Reference Guide */}
-            <div className="mb-3 p-2 bg-slate-50 rounded-lg border border-slate-200">
+            <div className="mb-3 p-2 bg-slate-50 dark:bg-slate-700/50 rounded-lg border border-slate-200 dark:border-slate-600">
               <div className="flex items-start gap-2">
                 <Calculator size={14} className="text-[#0da1c7] mt-0.5 flex-shrink-0" />
                 <div className="text-xs text-gray-600 dark:text-slate-400">
-                  <div className="font-medium text-gray-700 mb-1">
+                  <div className="font-medium text-gray-700 dark:text-slate-300 mb-1">
                     Economic Life Guide for {ALL_CATEGORIES.find(c => c.id === selectedCategory)?.label}
                   </div>
                   <div className="flex flex-wrap gap-x-4 gap-y-1">
                     <span><strong>Range:</strong> {ECONOMIC_LIFE_GUIDE[selectedCategory as keyof typeof ECONOMIC_LIFE_GUIDE]?.range || '10-30 yrs'}</span>
                     <span><strong>Typical:</strong> {ECONOMIC_LIFE_GUIDE[selectedCategory as keyof typeof ECONOMIC_LIFE_GUIDE]?.typical || 20} yrs</span>
                   </div>
-                  <div className="mt-1 text-gray-500 italic">
+                  <div className="mt-1 text-gray-500 dark:text-slate-500 italic">
                     {ECONOMIC_LIFE_GUIDE[selectedCategory as keyof typeof ECONOMIC_LIFE_GUIDE]?.examples || 'Varies by type'}
                   </div>
                   <button
@@ -654,8 +646,8 @@ export default function SiteImprovementsInventory({
                 </div>
               </div>
             </div>
-            
-            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+
+            <label className="flex items-center gap-2 text-sm text-gray-600 dark:text-slate-400 cursor-pointer">
               <input
                 type="checkbox"
                 checked={saveForFuture}
@@ -673,28 +665,27 @@ export default function SiteImprovementsInventory({
           <div className="p-3 bg-white rounded-lg border border-gray-200 dark:border-slate-700">
             <div className="grid grid-cols-4 gap-3 mb-3">
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">Quantity</label>
+                <label className="block text-xs font-medium text-gray-600 dark:text-slate-400 mb-1">Quantity</label>
                 <input
                   type="number"
                   value={quantity}
                   onChange={(e) => setQuantity(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-lg focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
                   placeholder="0"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">Unit</label>
+                <label className="block text-xs font-medium text-gray-600 dark:text-slate-400 mb-1">Unit</label>
                 <div className="flex gap-1">
                   {UNIT_OPTIONS.map(opt => (
                     <button
                       key={opt.value}
                       onClick={() => setUnit(opt.value)}
                       title={opt.fullName}
-                      className={`flex-1 px-2 py-2 text-xs font-medium rounded border transition-all ${
-                        unit === opt.value
-                          ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
-                          : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300'
-                      }`}
+                      className={`flex-1 px-2 py-2 text-xs font-medium rounded border transition-all ${unit === opt.value
+                        ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
+                        : 'bg-white dark:bg-slate-700 text-gray-600 dark:text-slate-300 border-gray-200 dark:border-slate-600 hover:border-gray-300'
+                        }`}
                     >
                       {opt.label}
                     </button>
@@ -702,14 +693,14 @@ export default function SiteImprovementsInventory({
                 </div>
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1 flex items-center gap-1">
+                <label className="block text-xs font-medium text-gray-600 dark:text-slate-400 mb-1 flex items-center gap-1">
                   <Calendar size={12} />
                   Year
                 </label>
                 <select
                   value={yearInstalled}
                   onChange={(e) => setYearInstalled(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-lg focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
                 >
                   <option value="">Select year...</option>
                   {generateYearOptions(new Date().getFullYear()).map((year) => (
@@ -723,31 +714,29 @@ export default function SiteImprovementsInventory({
                 <button
                   onClick={addToInventory}
                   disabled={!canAdd}
-                  className={`w-full flex items-center justify-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
-                    canAdd
-                      ? 'bg-[#0da1c7] text-white hover:bg-[#0da1c7]/90'
-                      : 'bg-gray-100 text-gray-400 cursor-not-allowed'
-                  }`}
+                  className={`w-full flex items-center justify-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${canAdd
+                    ? 'bg-[#0da1c7] text-white hover:bg-[#0da1c7]/90'
+                    : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                    }`}
                 >
                   <Plus size={14} />
                   Add
                 </button>
               </div>
             </div>
-            
+
             {/* Condition Selector */}
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1.5">Condition</label>
+              <label className="block text-xs font-medium text-gray-600 dark:text-slate-400 mb-1.5">Condition</label>
               <div className="flex gap-2">
                 {CONDITION_OPTIONS.map(opt => (
                   <button
                     key={opt.value}
                     onClick={() => setCondition(opt.value)}
-                    className={`flex-1 px-2 py-1.5 text-xs font-medium rounded-lg border transition-all ${
-                      condition === opt.value
-                        ? opt.color
-                        : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300'
-                    }`}
+                    className={`flex-1 px-2 py-1.5 text-xs font-medium rounded-lg border transition-all ${condition === opt.value
+                      ? opt.color
+                      : 'bg-white dark:bg-slate-700 text-gray-500 dark:text-slate-400 border-gray-200 dark:border-slate-600 hover:border-gray-300'
+                      }`}
                   >
                     {opt.abbrev}
                   </button>
@@ -782,20 +771,19 @@ export default function SiteImprovementsInventory({
             const isCustom = isCustomType(improvement.typeId);
             const isExpanded = expandedItems.has(improvement.id);
             const hasNotes = improvement.description && improvement.description.trim().length > 0;
-            
+
             return (
               <div
                 key={improvement.id}
-                className="bg-slate-50 rounded-lg border border-slate-100 hover:border-slate-200 transition-colors overflow-hidden"
+                className="bg-slate-50 dark:bg-slate-800/50 rounded-lg border border-slate-100 dark:border-slate-700 hover:border-slate-200 dark:hover:border-slate-600 transition-colors overflow-hidden"
               >
                 {/* Main Row */}
                 <div className="flex items-center gap-3 p-3">
                   {/* Expand/Collapse Button */}
                   <button
                     onClick={() => toggleExpanded(improvement.id)}
-                    className={`p-1 rounded transition-colors flex-shrink-0 ${
-                      hasNotes ? 'text-[#0da1c7] hover:bg-[#0da1c7]/10' : 'text-gray-400 hover:bg-gray-100'
-                    }`}
+                    className={`p-1 rounded transition-colors flex-shrink-0 ${hasNotes ? 'text-[#0da1c7] hover:bg-[#0da1c7]/10' : 'text-gray-400 hover:bg-gray-100'
+                      }`}
                     title={isExpanded ? 'Collapse notes' : 'Add/view notes'}
                   >
                     {isExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
@@ -827,20 +815,18 @@ export default function SiteImprovementsInventory({
                   </div>
 
                   {/* Condition Badge */}
-                  <div className={`px-2 py-0.5 text-xs font-medium rounded ${
-                    CONDITION_OPTIONS.find(c => c.value === improvement.condition)?.color || 'bg-gray-100 text-gray-600'
-                  }`}>
+                  <div className={`px-2 py-0.5 text-xs font-medium rounded ${CONDITION_OPTIONS.find(c => c.value === improvement.condition)?.color || 'bg-gray-100 text-gray-600'
+                    }`}>
                     {CONDITION_OPTIONS.find(c => c.value === improvement.condition)?.abbrev || improvement.condition}
                   </div>
 
                   {/* Depreciation */}
-                  <div 
-                    className={`px-2 py-0.5 text-xs font-medium rounded whitespace-nowrap cursor-help ${
-                      depreciationPct >= 75 ? 'bg-red-100 text-red-700' :
+                  <div
+                    className={`px-2 py-0.5 text-xs font-medium rounded whitespace-nowrap cursor-help ${depreciationPct >= 75 ? 'bg-red-100 text-red-700' :
                       depreciationPct >= 50 ? 'bg-amber-100 text-amber-700' :
-                      depreciationPct > 0 ? 'bg-lime-100 text-lime-700' :
-                      'bg-gray-100 text-gray-500'
-                    }`}
+                        depreciationPct > 0 ? 'bg-lime-100 text-lime-700' :
+                          'bg-gray-100 text-gray-500'
+                      }`}
                     title={`Depreciation: ${depreciationPct}% | Economic Life: ${improvement.economicLife} yrs | Effective Age: ${improvement.effectiveAge} yrs`}
                   >
                     {depreciationPct}%
@@ -878,35 +864,34 @@ export default function SiteImprovementsInventory({
                               <span className="ml-1 text-xs text-amber-500">(override)</span>
                             )}
                           </div>
-                          
+
                           {/* Toggle pill - not a checkbox */}
                           <button
                             type="button"
                             onClick={() => {
                               if (improvement.depreciationOverride !== undefined) {
                                 // Turn off override
-                                updateImprovement(improvement.id, { 
-                                  depreciationOverride: undefined, 
-                                  depreciationOverrideReason: undefined 
+                                updateImprovement(improvement.id, {
+                                  depreciationOverride: undefined,
+                                  depreciationOverrideReason: undefined
                                 });
                               } else {
                                 // Turn on override with current calculated value
-                                updateImprovement(improvement.id, { 
-                                  depreciationOverride: depreciationPct 
+                                updateImprovement(improvement.id, {
+                                  depreciationOverride: depreciationPct
                                 });
                               }
                             }}
-                            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-medium transition-all ${
-                              improvement.depreciationOverride !== undefined
-                                ? 'border-amber-400 bg-amber-50 text-amber-700'
-                                : 'border-slate-200 text-slate-400 hover:border-slate-300 hover:text-slate-500'
-                            }`}
+                            className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-medium transition-all ${improvement.depreciationOverride !== undefined
+                              ? 'border-amber-400 bg-amber-50 text-amber-700'
+                              : 'border-slate-200 text-slate-400 hover:border-slate-300 hover:text-slate-500'
+                              }`}
                           >
                             <PenLine className="w-3 h-3" />
                             Override
                           </button>
                         </div>
-                        
+
                         {/* Override inputs - slide open when active */}
                         {improvement.depreciationOverride !== undefined && (
                           <div className="p-3 bg-amber-50 rounded-lg border border-amber-200 space-y-3">
@@ -918,8 +903,8 @@ export default function SiteImprovementsInventory({
                                 max="100"
                                 className="w-20 px-3 py-1.5 border border-amber-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-400 focus:border-transparent"
                                 value={improvement.depreciationOverride}
-                                onChange={(e) => updateImprovement(improvement.id, { 
-                                  depreciationOverride: e.target.value ? Number(e.target.value) : 0 
+                                onChange={(e) => updateImprovement(improvement.id, {
+                                  depreciationOverride: e.target.value ? Number(e.target.value) : 0
                                 })}
                               />
                               <span className="text-xs text-amber-600">
@@ -937,7 +922,7 @@ export default function SiteImprovementsInventory({
                           </div>
                         )}
                       </div>
-                      
+
                       {/* Notes */}
                       <ExpandableNote
                         id={`site_improvement_${improvement.id}_notes`}

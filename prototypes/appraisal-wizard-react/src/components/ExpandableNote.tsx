@@ -54,10 +54,10 @@ export default function ExpandableNote({
   const handleQuickDraft = useCallback(async (e: React.MouseEvent) => {
     e.stopPropagation();
     setIsQuickDrafting(true);
-    
+
     // Simulate AI generation - in real implementation this would call the API
     await new Promise(resolve => setTimeout(resolve, 800));
-    
+
     // Generate a simple placeholder based on context
     const draftContent = generateQuickDraft(sectionContext);
     onChange(draftContent);
@@ -97,28 +97,27 @@ export default function ExpandableNote({
         <button
           type="button"
           onClick={() => setIsExpanded(true)}
-          className={`w-full group flex items-center justify-between px-4 py-3 rounded-xl border-2 border-dashed transition-all ${
-            hasContent
-              ? 'border-gray-200 bg-gray-50/50 hover:border-[#0da1c7]/50 hover:bg-[#0da1c7]/5'
-              : 'border-gray-300 hover:border-[#0da1c7] hover:bg-[#0da1c7]/5'
-          }`}
+          className={`w-full group flex items-center justify-between px-4 py-3 rounded-xl border-2 border-dashed transition-all ${hasContent
+              ? 'border-gray-200 bg-gray-50/50 dark:border-slate-700 dark:bg-slate-800/50 hover:border-[#0da1c7]/50 hover:bg-[#0da1c7]/5'
+              : 'border-gray-300 dark:border-slate-600 hover:border-[#0da1c7] hover:bg-[#0da1c7]/5 dark:hover:border-[#0da1c7]/50'
+            }`}
         >
           <div className="flex items-center gap-2 flex-1 min-w-0">
             {hasContent ? (
               <>
                 <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-[#0da1c7] flex-shrink-0" />
-                <span className="text-sm text-gray-600 truncate">{preview}</span>
+                <span className="text-sm text-gray-600 dark:text-slate-300 truncate">{preview}</span>
               </>
             ) : (
               <>
                 <Plus className="w-4 h-4 text-gray-400 group-hover:text-[#0da1c7]" />
-                <span className="text-sm text-gray-500 group-hover:text-[#0da1c7]">
+                <span className="text-sm text-gray-500 dark:text-slate-400 group-hover:text-[#0da1c7]">
                   {placeholder}
                 </span>
               </>
             )}
           </div>
-          
+
           {/* Quick AI Draft Button */}
           {!hasContent && (
             <button

@@ -11,11 +11,11 @@
  */
 
 import { useEffect, useRef, useState, useCallback } from 'react';
-import { 
-  PenTool, 
-  Trash2, 
-  Download, 
-  Upload, 
+import {
+  PenTool,
+  Trash2,
+  Download,
+  Upload,
   Undo2,
   Layers,
   Satellite,
@@ -99,7 +99,7 @@ export function BoundaryDrawingTool({
             clearInterval(checkLoaded);
           }
         }, 100);
-        
+
         // Timeout after 10 seconds
         setTimeout(() => {
           clearInterval(checkLoaded);
@@ -128,7 +128,7 @@ export function BoundaryDrawingTool({
             clearInterval(checkLoaded);
           }
         }, 50);
-        
+
         setTimeout(() => clearInterval(checkLoaded), 5000);
       };
       script.onerror = () => setError('Failed to load Google Maps');
@@ -160,10 +160,10 @@ export function BoundaryDrawingTool({
   // Undo last change
   const handleUndo = useCallback(() => {
     if (boundaryHistory.length === 0) return;
-    
+
     const prevBoundary = boundaryHistory[boundaryHistory.length - 1];
     setBoundaryHistory(prev => prev.slice(0, -1));
-    
+
     if (polygonRef.current && prevBoundary.length > 0) {
       const path = prevBoundary.map(c => new google.maps.LatLng(c.lat, c.lng));
       polygonRef.current.setPath(path);
@@ -318,7 +318,7 @@ export function BoundaryDrawingTool({
     // Convert GeoJSON coordinates to Google Maps path
     // GeoJSON is [lng, lat], Google Maps is {lat, lng}
     const coords = parcelData.geometry.coordinates[0];
-    const path = coords.map((coord: number[]) => 
+    const path = coords.map((coord: number[]) =>
       new google.maps.LatLng(coord[1], coord[0])
     );
 
@@ -360,7 +360,7 @@ export function BoundaryDrawingTool({
 
     const coords = getBoundaryFromPolygon(polygonRef.current);
     const json = JSON.stringify(coords, null, 2);
-    
+
     // Copy to clipboard
     navigator.clipboard.writeText(json).then(() => {
       alert('Boundary coordinates copied to clipboard!');
@@ -370,11 +370,11 @@ export function BoundaryDrawingTool({
   // No coordinates state
   if (!hasValidCenter) {
     return (
-      <div 
-        className={`bg-slate-50 rounded-xl border border-slate-200 flex items-center justify-center ${className}`}
+      <div
+        className={`bg-slate-50 dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 flex items-center justify-center ${className}`}
         style={{ height }}
       >
-        <div className="text-center text-slate-400 p-6">
+        <div className="text-center text-slate-400 dark:text-slate-500 p-6">
           <Square className="w-12 h-12 mx-auto mb-3 opacity-50" />
           <p className="font-medium text-slate-600">Property Location Required</p>
           <p className="text-sm mt-1">
@@ -388,7 +388,7 @@ export function BoundaryDrawingTool({
   // Error state
   if (error) {
     return (
-      <div 
+      <div
         className={`bg-slate-100 rounded-xl flex items-center justify-center ${className}`}
         style={{ height }}
       >
@@ -403,7 +403,7 @@ export function BoundaryDrawingTool({
   // Loading state
   if (!isLoaded) {
     return (
-      <div 
+      <div
         className={`bg-slate-100 rounded-xl flex items-center justify-center ${className}`}
         style={{ height }}
       >
@@ -416,9 +416,9 @@ export function BoundaryDrawingTool({
   }
 
   return (
-    <div className={`bg-white rounded-xl border border-slate-200 overflow-hidden ${className}`}>
+    <div className={`bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden ${className}`}>
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-2 bg-slate-50 border-b border-slate-200">
+      <div className="flex items-center justify-between px-4 py-2 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700">
         <div className="flex items-center gap-2">
           <PenTool className="w-4 h-4 text-[#0da1c7]" />
           <span className="font-semibold text-sm text-slate-700 dark:text-slate-300">Property Boundary</span>
@@ -429,27 +429,25 @@ export function BoundaryDrawingTool({
             </span>
           )}
         </div>
-        
+
         {/* Map Type Toggle */}
         <div className="flex bg-white rounded-lg border border-slate-200 overflow-hidden">
           <button
             onClick={() => setMapType('satellite')}
-            className={`flex items-center gap-1 px-2 py-1 text-xs font-medium transition-colors ${
-              mapType === 'satellite'
+            className={`flex items-center gap-1 px-2 py-1 text-xs font-medium transition-colors ${mapType === 'satellite'
                 ? 'bg-[#0da1c7] text-white'
                 : 'bg-white text-slate-600 hover:bg-slate-50'
-            }`}
+              }`}
           >
             <Satellite className="w-3 h-3" />
             Satellite
           </button>
           <button
             onClick={() => setMapType('roadmap')}
-            className={`flex items-center gap-1 px-2 py-1 text-xs font-medium transition-colors ${
-              mapType === 'roadmap'
+            className={`flex items-center gap-1 px-2 py-1 text-xs font-medium transition-colors ${mapType === 'roadmap'
                 ? 'bg-[#0da1c7] text-white'
-                : 'bg-white text-slate-600 hover:bg-slate-50'
-            }`}
+                : 'bg-white dark:bg-slate-700 text-slate-600 dark:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-600'
+              }`}
           >
             <Layers className="w-3 h-3" />
             Street
@@ -460,7 +458,7 @@ export function BoundaryDrawingTool({
       {/* Map Container */}
       <div className="relative" style={{ height: height - 96 }}>
         <div ref={mapRef} className="w-full h-full" />
-        
+
         {/* Drawing Controls Overlay */}
         <div className="absolute top-3 left-3 flex flex-col gap-2">
           {/* Draw Button */}
@@ -534,9 +532,9 @@ export function BoundaryDrawingTool({
       </div>
 
       {/* Footer */}
-      <div className="px-4 py-2 bg-slate-50 border-t border-slate-200">
+      <div className="px-4 py-2 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-700">
         <p className="text-xs text-slate-500 dark:text-slate-400">
-          {hasBoundary 
+          {hasBoundary
             ? 'Drag corners to adjust. Click polygon to edit vertices.'
             : 'Click "Draw Boundary" to outline the property.'}
         </p>

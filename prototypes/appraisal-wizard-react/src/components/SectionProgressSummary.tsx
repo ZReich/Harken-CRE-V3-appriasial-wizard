@@ -23,23 +23,22 @@ export function SectionProgressSummary({
   return (
     <div className="mt-6 pt-4 border-t border-gray-200 dark:border-slate-700">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-xs font-medium text-gray-600">{label}</span>
+        <span className="text-xs font-medium text-gray-600 dark:text-slate-400">{label}</span>
         {showPercentage && (
-          <span 
-            className={`text-xs font-semibold tabular-nums ${
-              isComplete ? 'text-green-600' : 'text-gray-700'
-            }`}
+          <span
+            className={`text-xs font-semibold tabular-nums ${isComplete ? 'text-green-600 dark:text-green-400' : 'text-gray-700 dark:text-slate-300'
+              }`}
           >
             {completion}%
           </span>
         )}
       </div>
-      
+
       {/* Progress bar */}
-      <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
-        <div 
+      <div className="h-2 bg-gray-200 dark:bg-slate-700 rounded-full overflow-hidden">
+        <div
           className="h-full rounded-full transition-all duration-700 ease-out"
-          style={{ 
+          style={{
             width: `${completion}%`,
             backgroundColor: progressBarColor,
           }}

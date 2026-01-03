@@ -886,7 +886,7 @@ export default function SetupPage() {
         {/* Street Address - Primary Input */}
         <div className="space-y-3">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1.5">
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">
               Street Address <span className="text-red-500">*</span>
             </label>
             <GooglePlacesAutocomplete
@@ -958,8 +958,8 @@ export default function SetupPage() {
               onClick={handleManualLookup}
               disabled={!isAddressComplete || autoLookupStatus === 'loading'}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${isAddressComplete && autoLookupStatus !== 'loading'
-                  ? 'bg-[#0da1c7] text-white hover:bg-[#0b8fb3] shadow-sm'
-                  : 'bg-slate-100 text-slate-400 cursor-not-allowed'
+                ? 'bg-[#0da1c7] text-white hover:bg-[#0b8fb3] shadow-sm'
+                : 'bg-slate-100 text-slate-400 cursor-not-allowed dark:bg-slate-700 dark:text-slate-500'
                 }`}
             >
               {autoLookupStatus === 'loading' ? (
@@ -1005,7 +1005,7 @@ export default function SetupPage() {
         {/* Address Details - Progressive Disclosure (show when street has value) */}
         {address.street && address.street.length > 3 && (
           <div className="mt-5 pt-4 border-t border-slate-100 animate-fade-in">
-            <p className="text-xs font-medium text-slate-500 uppercase tracking-wide mb-3">
+            <p className="text-xs font-medium text-slate-500 dark:text-slate-200 uppercase tracking-wide mb-3">
               Address Details
             </p>
             <div className="grid grid-cols-4 gap-3">
@@ -1015,7 +1015,7 @@ export default function SetupPage() {
                   type="text"
                   value={address.city}
                   onChange={(e) => setAddress({ ...address, city: e.target.value })}
-                  className="w-full px-2.5 py-1.5 border border-gray-200 rounded-md text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                  className="w-full px-2.5 py-1.5 border border-gray-200 rounded-md text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:placeholder-slate-400"
                   placeholder="City"
                 />
               </div>
@@ -1025,7 +1025,7 @@ export default function SetupPage() {
                   type="text"
                   value={address.state}
                   onChange={(e) => setAddress({ ...address, state: e.target.value.toUpperCase() })}
-                  className="w-full px-2.5 py-1.5 border border-gray-200 rounded-md text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                  className="w-full px-2.5 py-1.5 border border-gray-200 rounded-md text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:placeholder-slate-400"
                   placeholder="MT"
                   maxLength={2}
                 />
@@ -1036,7 +1036,7 @@ export default function SetupPage() {
                   type="text"
                   value={address.zip}
                   onChange={(e) => setAddress({ ...address, zip: e.target.value })}
-                  className="w-full px-2.5 py-1.5 border border-gray-200 rounded-md text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                  className="w-full px-2.5 py-1.5 border border-gray-200 rounded-md text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:placeholder-slate-400"
                   placeholder="59102"
                 />
               </div>
@@ -1046,7 +1046,7 @@ export default function SetupPage() {
                   type="text"
                   value={address.county}
                   onChange={(e) => setAddress({ ...address, county: e.target.value })}
-                  className="w-full px-2.5 py-1.5 border border-gray-200 rounded-md text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                  className="w-full px-2.5 py-1.5 border border-gray-200 rounded-md text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:placeholder-slate-400"
                   placeholder="County"
                 />
               </div>
@@ -1065,36 +1065,36 @@ export default function SetupPage() {
         </h3>
         <div className="grid grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
               Date of Report <span className="text-red-500">*</span>
             </label>
             <input
               type="date"
               value={dates.reportDate}
               onChange={(e) => setDates({ ...dates, reportDate: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-500 rounded-lg text-sm bg-white dark:bg-slate-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-transparent dark:[color-scheme:dark]"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
               Date of Inspection <span className="text-red-500">*</span>
             </label>
             <input
               type="date"
               value={dates.inspectionDate}
               onChange={(e) => setDates({ ...dates, inspectionDate: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-500 rounded-lg text-sm bg-white dark:bg-slate-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-transparent dark:[color-scheme:dark]"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
               Effective Date of Appraisal <span className="text-red-500">*</span>
             </label>
             <input
               type="date"
               value={dates.effectiveDate}
               onChange={(e) => setDates({ ...dates, effectiveDate: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-500 rounded-lg text-sm bg-white dark:bg-slate-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-transparent dark:[color-scheme:dark]"
             />
           </div>
         </div>
@@ -1114,9 +1114,9 @@ export default function SetupPage() {
 
         {/* Selection Breadcrumb */}
         {(context.propertyCategory || context.propertyType || context.msOccupancyCode) && (
-          <div className="mb-4 p-3 bg-slate-50 rounded-lg border border-slate-200">
+          <div className="mb-4 p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg border border-slate-200 dark:border-slate-600">
             <div className="flex items-center gap-2 text-sm">
-              <span className="text-gray-500">Selected:</span>
+              <span className="text-gray-500 dark:text-slate-400">Selected:</span>
               <span className="font-medium text-[#1c3643] dark:text-white">
                 {getPropertyHierarchyLabel(
                   context.propertyCategory || 'commercial',
@@ -1150,8 +1150,8 @@ export default function SetupPage() {
                     }));
                   }}
                   className={`relative p-6 border-2 rounded-lg text-center transition-all hover:border-[#0da1c7] hover:shadow-md ${isSelected
-                      ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-cyan-500/10'
-                      : 'border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800'
+                    ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-cyan-500/10'
+                    : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700'
                     }`}
                 >
                   {isSelected && (
@@ -1176,7 +1176,7 @@ export default function SetupPage() {
         <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm animate-fade-in">
           <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4 flex items-center gap-2">
             Property Type
-            <span className="text-xs font-normal text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+            <span className="text-xs font-normal text-gray-500 bg-gray-100 dark:bg-slate-700 dark:text-slate-300 px-2 py-0.5 rounded">
               M&S Section Reference
             </span>
           </h3>
@@ -1195,8 +1195,8 @@ export default function SetupPage() {
                     }));
                   }}
                   className={`relative p-4 border-2 rounded-lg text-left transition-all hover:border-[#0da1c7] ${isSelected
-                      ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-cyan-500/10'
-                      : 'border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800'
+                    ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-cyan-500/10'
+                    : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700'
                     }`}
                 >
                   {isSelected && (
@@ -1211,7 +1211,7 @@ export default function SetupPage() {
                   </span>
                   <span className="block text-xs text-gray-500 mt-1">{propType.description}</span>
                   {propType.msSection && (
-                    <span className="inline-block mt-2 text-[10px] font-medium text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">
+                    <span className="inline-block mt-2 text-[10px] font-medium text-gray-400 bg-gray-100 dark:bg-slate-700 dark:text-slate-300 px-1.5 py-0.5 rounded">
                       {propType.msSection}
                     </span>
                   )}
@@ -1227,7 +1227,7 @@ export default function SetupPage() {
         <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm animate-fade-in">
           <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4 flex items-center gap-2">
             M&S Occupancy Code
-            <span className="text-xs font-normal text-gray-500 bg-gray-100 px-2 py-0.5 rounded">
+            <span className="text-xs font-normal text-gray-500 bg-gray-100 dark:bg-slate-700 dark:text-slate-300 px-2 py-0.5 rounded">
               Specific Building Type
             </span>
           </h3>
@@ -1247,8 +1247,8 @@ export default function SetupPage() {
                     }));
                   }}
                   className={`relative p-3 border-2 rounded-lg text-left transition-all hover:border-[#0da1c7] ${isSelected
-                      ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-cyan-500/10'
-                      : 'border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800'
+                    ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-cyan-500/10'
+                    : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700'
                     }`}
                 >
                   {isSelected && (
@@ -1263,10 +1263,10 @@ export default function SetupPage() {
                   </span>
                   <span className="block text-[10px] text-gray-500 mt-0.5 line-clamp-2">{occCode.description}</span>
                   <div className="flex items-center gap-2 mt-2">
-                    <span className="text-[9px] font-medium text-gray-400 bg-gray-100 px-1 py-0.5 rounded">
+                    <span className="text-[9px] font-medium text-gray-400 bg-gray-100 dark:bg-slate-700 dark:text-slate-300 px-1 py-0.5 rounded">
                       {occCode.msSection} {occCode.msPage || ''}
                     </span>
-                    <span className="text-[9px] text-gray-400">
+                    <span className="text-[9px] text-gray-400 dark:text-slate-400">
                       {occCode.defaultEconomicLife}yr life
                     </span>
                   </div>
@@ -1439,10 +1439,10 @@ export default function SetupPage() {
             <div
               key={scenario.id}
               className={`border rounded-xl p-5 transition-all hover:shadow-md bg-white dark:bg-slate-700/50 ${scenario.isRequired
-                  ? 'border-l-4 border-l-red-400 border-gray-200 dark:border-slate-600'
-                  : scenario.isRequired === false
-                    ? 'border-l-4 border-l-blue-400 border-gray-200 dark:border-slate-600'
-                    : 'border-gray-200 dark:border-slate-600'
+                ? 'border-l-4 border-l-red-400 border-gray-200 dark:border-slate-600'
+                : scenario.isRequired === false
+                  ? 'border-l-4 border-l-blue-400 border-gray-200 dark:border-slate-600'
+                  : 'border-gray-200 dark:border-slate-600'
                 }`}
             >
               {/* Scenario Header */}
@@ -1468,8 +1468,8 @@ export default function SetupPage() {
                   onClick={() => removeScenario(scenario.id)}
                   disabled={scenario.isRequired || scenarios.length <= 1}
                   className={`p-2 transition-colors rounded-full ${scenario.isRequired || scenarios.length <= 1
-                      ? 'text-gray-300 cursor-not-allowed'
-                      : 'text-red-500 hover:text-red-700 hover:bg-red-50'
+                    ? 'text-gray-300 cursor-not-allowed'
+                    : 'text-red-500 hover:text-red-700 hover:bg-red-50'
                     }`}
                   title={scenario.isRequired ? 'Cannot remove required scenario' : 'Remove scenario'}
                 >
@@ -1481,7 +1481,9 @@ export default function SetupPage() {
 
               {/* Requirement Source */}
               {scenario.requirementSource && (
-                <div className={`mb-4 px-3 py-2 rounded text-xs ${scenario.isRequired ? 'bg-red-50 border border-red-200' : 'bg-blue-50 border border-blue-200'
+                <div className={`mb-4 px-3 py-2 rounded text-xs ${scenario.isRequired
+                  ? 'bg-red-50 border border-red-200 dark:bg-red-900/20 dark:border-red-800 dark:text-red-200'
+                  : 'bg-blue-50 border border-blue-200 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-200'
                   }`}>
                   <span className="font-medium">{scenario.isRequired ? 'Why required:' : 'Why recommended:'}</span> {scenario.requirementSource}
                 </div>
@@ -1497,7 +1499,7 @@ export default function SetupPage() {
                     type="date"
                     value={scenario.effectiveDate || ''}
                     onChange={(e) => updateScenarioDate(scenario.id, e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-[#f0f9fb] dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-[#f0f9fb] dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-transparent dark:[color-scheme:dark]"
                   />
                 </div>
                 <div>
@@ -1508,8 +1510,8 @@ export default function SetupPage() {
                         key={opt.value}
                         onClick={() => updateScenarioName(scenario.id, 'pill', opt.value)}
                         className={`px-3 py-1.5 border rounded-full text-xs font-medium transition-all ${scenario.nameSelect === opt.value || scenario.name === opt.value
-                            ? 'border-[#0da1c7] bg-[#0da1c7] text-white'
-                            : 'border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-300 hover:border-[#0da1c7]'
+                          ? 'border-[#0da1c7] bg-[#0da1c7] text-white'
+                          : 'border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-300 hover:border-[#0da1c7]'
                           }`}
                       >
                         {opt.label}
@@ -1549,8 +1551,8 @@ export default function SetupPage() {
                       key={app.key}
                       onClick={() => toggleScenarioApproach(scenario.id, app.key)}
                       className={`relative flex flex-col items-center justify-center p-4 border-2 rounded-lg transition-all ${isSelected
-                          ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-cyan-500/10'
-                          : 'border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-[#0da1c7]'
+                        ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-cyan-500/10'
+                        : 'border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-[#0da1c7]'
                         }`}
                     >
                       {isSelected && (
@@ -1643,7 +1645,9 @@ export default function SetupPage() {
               <button
                 key={opt.value}
                 onClick={() => updateContext('appraisalPurpose', opt.value)}
-                className={`relative p-4 border-2 rounded-lg text-left transition-all hover:border-[#0da1c7]/50 ${isSelected ? 'border-[#0da1c7] bg-[#0da1c7]/5' : 'border-gray-200'
+                className={`relative p-4 border-2 rounded-lg text-left transition-all hover:border-[#0da1c7]/50 dark:hover:border-cyan-400/50 ${isSelected
+                  ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-cyan-500/10'
+                  : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700'
                   }`}
               >
                 {isSelected && (
@@ -1654,7 +1658,7 @@ export default function SetupPage() {
                   </div>
                 )}
                 <h4 className="font-semibold text-sm text-gray-900 dark:text-white">{opt.label}</h4>
-                <p className="text-xs text-gray-500 mt-1">{opt.description}</p>
+                <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">{opt.description}</p>
               </button>
             );
           })}
@@ -1673,7 +1677,9 @@ export default function SetupPage() {
               <button
                 key={opt.value}
                 onClick={() => updateContext('propertyInterest', opt.value)}
-                className={`relative p-4 border-2 rounded-lg text-left transition-all hover:border-[#0da1c7]/50 ${isSelected ? 'border-[#0da1c7] bg-[#0da1c7]/5' : 'border-gray-200'
+                className={`relative p-4 border-2 rounded-lg text-left transition-all hover:border-[#0da1c7]/50 dark:hover:border-cyan-400/50 ${isSelected
+                  ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-cyan-500/10'
+                  : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700'
                   }`}
               >
                 {isSelected && (
@@ -1684,7 +1690,7 @@ export default function SetupPage() {
                   </div>
                 )}
                 <h4 className="font-semibold text-sm text-gray-900 dark:text-white">{opt.label}</h4>
-                <p className="text-xs text-gray-500 mt-1">{opt.description}</p>
+                <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">{opt.description}</p>
               </button>
             );
           })}
@@ -1703,7 +1709,7 @@ export default function SetupPage() {
         <textarea
           value={context.intendedUsers}
           onChange={(e) => updateContext('intendedUsers', e.target.value)}
-          className={`w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent ${getDocumentSourceInputClasses(hasFieldSource('subjectData.intendedUsers'))
+          className={`w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent dark:bg-slate-700 dark:border-slate-600 dark:text-white ${getDocumentSourceInputClasses(hasFieldSource('subjectData.intendedUsers'))
             }`}
           rows={3}
           placeholder="e.g., ABC Bank, for lending purposes; John Smith, for estate planning..."
@@ -1720,7 +1726,7 @@ export default function SetupPage() {
         </h3>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Property Name (e.g. Canyon Creek Apts)</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Property Name (e.g. Canyon Creek Apts)</label>
             <input
               type="text"
               value={propertyName}
@@ -1769,9 +1775,9 @@ export default function SetupPage() {
 
         <div className="space-y-4">
           {wizardState.owners.map((owner, index) => (
-            <div key={owner.id} className="p-4 border border-gray-200 rounded-lg bg-gray-50">
+            <div key={owner.id} className="p-4 border border-gray-200 dark:border-slate-600 rounded-lg bg-gray-50 dark:bg-slate-700/50">
               <div className="flex items-start justify-between mb-3">
-                <span className="text-sm font-medium text-gray-700">Owner {index + 1}</span>
+                <span className="text-sm font-medium text-gray-700 dark:text-slate-300">Owner {index + 1}</span>
                 {wizardState.owners.length > 1 && (
                   <button
                     onClick={() => removeOwner(owner.id)}
@@ -1784,7 +1790,7 @@ export default function SetupPage() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
                     Owner Name <span className="text-red-500">*</span>
                     {lockedFields['owner'] && index === 0 && (
                       <button
@@ -1801,7 +1807,7 @@ export default function SetupPage() {
                     value={owner.name}
                     onChange={(e) => updateOwner(owner.id, { name: e.target.value })}
                     disabled={lockedFields['owner'] && index === 0}
-                    className={`w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent ${lockedFields['owner'] && index === 0 ? 'bg-blue-50 border-blue-200' : ''
+                    className={`w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent dark:bg-slate-700 dark:border-slate-600 dark:text-white ${lockedFields['owner'] && index === 0 ? 'bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800' : ''
                       }`}
                     placeholder="Full legal name as shown on title"
                   />
@@ -1816,7 +1822,7 @@ export default function SetupPage() {
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Ownership Type</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Ownership Type</label>
                   <select
                     value={owner.ownershipType}
                     onChange={(e) => updateOwner(owner.id, { ownershipType: e.target.value as any })}
@@ -1834,7 +1840,7 @@ export default function SetupPage() {
               </div>
               {wizardState.owners.length > 1 && (
                 <div className="mt-3">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Ownership Percentage</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Ownership Percentage</label>
                   <div className="flex items-center gap-2">
                     <input
                       type="number"
@@ -1843,9 +1849,9 @@ export default function SetupPage() {
                       min="0"
                       max="100"
                       step="0.01"
-                      className="w-24 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                      className="w-24 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent dark:bg-slate-700 dark:border-slate-600 dark:text-white"
                     />
-                    <span className="text-gray-500">%</span>
+                    <span className="text-gray-500 dark:text-slate-400">%</span>
                   </div>
                 </div>
               )}
@@ -1861,7 +1867,7 @@ export default function SetupPage() {
         </h3>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
               Tax ID / Parcel #
               <DocumentSourceIndicator fieldPath="subjectData.taxId" inline />
               {lockedFields['taxId'] && (
@@ -1879,7 +1885,7 @@ export default function SetupPage() {
               value={taxId}
               onChange={(e) => setTaxId(e.target.value)}
               disabled={lockedFields['taxId']}
-              className={`w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent ${lockedFields['taxId'] ? 'bg-blue-50 border-blue-200' : ''
+              className={`w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent dark:bg-slate-700 dark:border-slate-600 dark:text-white ${lockedFields['taxId'] ? 'bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800' : ''
                 } ${getDocumentSourceInputClasses(hasFieldSource('subjectData.taxId'))}`}
               placeholder="Enter tax ID..."
             />
@@ -1915,7 +1921,7 @@ export default function SetupPage() {
         </h3>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Inspection Type</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Inspection Type</label>
             <select
               value={inspectionType}
               onChange={(e) => setInspectionType(e.target.value)}
@@ -1927,22 +1933,22 @@ export default function SetupPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
               Date of Inspection
-              <span className="text-xs text-gray-500 font-normal ml-2">(from Key Dates)</span>
+              <span className="text-xs text-gray-500 dark:text-slate-400 font-normal ml-2">(from Key Dates)</span>
             </label>
             <input
               type="date"
               value={dates.inspectionDate}
               onChange={(e) => setDates({ ...dates, inspectionDate: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-blue-50 border-blue-200"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-blue-50 border-blue-200 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-400"
             />
             <p className="text-xs text-blue-600 mt-1">Synced with Assignment Basics &gt; Key Dates</p>
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">Did you personally inspect the property?</label>
             <div className="flex gap-4">
-              <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 flex-1">
+              <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 dark:border-slate-600 flex-1">
                 <input
                   type="radio"
                   name="personal_inspection"
@@ -1952,7 +1958,7 @@ export default function SetupPage() {
                 />
                 <span>Yes, I inspected it personally</span>
               </label>
-              <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 flex-1">
+              <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 dark:border-slate-600 flex-1">
                 <input
                   type="radio"
                   name="personal_inspection"
@@ -1969,7 +1975,7 @@ export default function SetupPage() {
               <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Contract Appraiser / Inspector Details</h4>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Inspector Name</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Inspector Name</label>
                   <input
                     type="text"
                     value={inspectorName}
@@ -1978,7 +1984,7 @@ export default function SetupPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">License Number</label>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">License Number</label>
                   <input
                     type="text"
                     value={inspectorLicense}
@@ -1996,7 +2002,7 @@ export default function SetupPage() {
         <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           USPAP Certification & Assistance
         </h3>
-        <p className="text-sm text-gray-500 mb-4">
+        <p className="text-sm text-gray-500 dark:text-slate-400 mb-4">
           Identify any significant professional assistance provided by others.
         </p>
         <textarea
@@ -2016,14 +2022,14 @@ export default function SetupPage() {
         <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           USPAP Certifications
         </h3>
-        <div className="bg-blue-50 border-l-4 border-blue-500 p-4 rounded mb-4">
-          <p className="text-sm text-blue-800">
+        <div className="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 dark:border-blue-500/50 p-4 rounded mb-4">
+          <p className="text-sm text-blue-800 dark:text-blue-200">
             USPAP Standards Rule 2-3 requires certification statements in appraisal reports.
             These certifications will be included in your final report.
           </p>
         </div>
         <div className="space-y-3">
-          <label className="flex items-start gap-3 p-4 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700">
+          <label className="flex items-start gap-3 p-4 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 dark:border-slate-600">
             <input
               type="checkbox"
               checked={certificationAcknowledged}
@@ -2032,7 +2038,7 @@ export default function SetupPage() {
             />
             <div>
               <span className="font-medium text-gray-900 dark:text-white">I acknowledge the USPAP certification requirements</span>
-              <p className="text-sm text-gray-500 mt-1">
+              <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">
                 I certify that my analyses, opinions, and conclusions were developed, and this report was prepared,
                 in conformity with the Uniform Standards of Professional Appraisal Practice.
               </p>
@@ -2040,7 +2046,7 @@ export default function SetupPage() {
           </label>
         </div>
         <div className="mt-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Additional Certifications (if any)</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Additional Certifications (if any)</label>
           <textarea
             value={additionalCertifications}
             onChange={(e) => setAdditionalCertifications(e.target.value)}
@@ -2057,7 +2063,7 @@ export default function SetupPage() {
         </h3>
         <div className="grid grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">License Number</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">License Number</label>
             <input
               type="text"
               value={licenseNumber}
@@ -2067,7 +2073,7 @@ export default function SetupPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">License State</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">License State</label>
             <input
               type="text"
               value={licenseState}
@@ -2077,7 +2083,7 @@ export default function SetupPage() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Expiration Date</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Expiration Date</label>
             <input
               type="date"
               value={licenseExpiration}

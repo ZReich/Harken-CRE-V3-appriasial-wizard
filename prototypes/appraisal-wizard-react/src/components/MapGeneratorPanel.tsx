@@ -12,11 +12,11 @@
  */
 
 import { useState, useCallback } from 'react';
-import { 
-  Map, 
-  Satellite, 
-  MapPin, 
-  Navigation, 
+import {
+  Map,
+  Satellite,
+  MapPin,
+  Navigation,
   RefreshCw,
   Check,
   X,
@@ -28,9 +28,9 @@ import {
   Eye,
 } from 'lucide-react';
 import { useWizard } from '../context/WizardContext';
-import { 
-  generateSubjectMap, 
-  generateAllSubjectMaps 
+import {
+  generateSubjectMap,
+  generateAllSubjectMaps
 } from '../services/mapGenerationService';
 import type { MapData, MapType } from '../types';
 
@@ -105,9 +105,9 @@ export function MapGeneratorPanel({
   onMapsGenerated,
   className = '',
 }: MapGeneratorPanelProps) {
-  const { 
-    addSubjectMap, 
-    removeSubjectMap, 
+  const {
+    addSubjectMap,
+    removeSubjectMap,
     getSubjectMaps,
     getSubjectMapsByType,
   } = useWizard();
@@ -125,18 +125,18 @@ export function MapGeneratorPanel({
     if (!hasCoordinates || !coordinates) return;
 
     setGeneratingType(type);
-    
+
     try {
       // Standard map generation
       await new Promise(resolve => setTimeout(resolve, 300));
-      
+
       const map = generateSubjectMap(
         coordinates.lat,
         coordinates.lng,
         type,
         { propertyName, address }
       );
-      
+
       addSubjectMap(map);
       onMapsGenerated?.([map]);
     } catch (error) {
@@ -153,16 +153,16 @@ export function MapGeneratorPanel({
     if (!hasCoordinates || !coordinates) return;
 
     setIsGenerating(true);
-    
+
     try {
       await new Promise(resolve => setTimeout(resolve, 500));
-      
+
       const maps = generateAllSubjectMaps(
         coordinates.lat,
         coordinates.lng,
         { propertyName, address }
       );
-      
+
       maps.forEach(map => addSubjectMap(map));
       onMapsGenerated?.(maps);
     } catch (error) {
@@ -189,8 +189,8 @@ export function MapGeneratorPanel({
   // No coordinates state
   if (!hasCoordinates) {
     return (
-      <div className={`bg-slate-50 rounded-xl border border-slate-200 p-6 ${className}`}>
-        <div className="text-center text-slate-400">
+      <div className={`bg-slate-50 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 rounded-xl p-6 ${className}`}>
+        <div className="text-center text-slate-400 dark:text-slate-500">
           <Map className="w-12 h-12 mx-auto mb-3 opacity-50" />
           <p className="font-medium text-slate-600">Property Location Required</p>
           <p className="text-sm mt-1">
@@ -202,11 +202,11 @@ export function MapGeneratorPanel({
   }
 
   return (
-    <div className={`bg-white rounded-xl border border-slate-200 overflow-hidden ${className}`}>
+    <div className={`bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden ${className}`}>
       {/* Header */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between px-4 py-3 bg-slate-50 hover:bg-slate-100 transition-colors border-b border-slate-200"
+        className="w-full flex items-center justify-between px-4 py-3 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border-b border-slate-200 dark:border-slate-700"
       >
         <div className="flex items-center gap-2">
           <Map className="w-5 h-5 text-[#0da1c7]" />
@@ -265,10 +265,10 @@ export function MapGeneratorPanel({
                   disabled={disabled}
                   className={`
                     relative flex flex-col items-center p-3 rounded-lg border-2 transition-all
-                    ${generated 
-                      ? 'border-green-300 bg-green-50' 
-                      : disabled 
-                        ? 'border-slate-200 bg-slate-50 opacity-60 cursor-not-allowed' 
+                    ${generated
+                      ? 'border-green-300 bg-green-50'
+                      : disabled
+                        ? 'border-slate-200 bg-slate-50 opacity-60 cursor-not-allowed'
                         : 'border-slate-200 hover:border-[#0da1c7] hover:bg-[#0da1c7]/5 cursor-pointer'
                     }
                   `}
@@ -286,11 +286,11 @@ export function MapGeneratorPanel({
                     </div>
                   )}
 
-                  <Icon 
-                    className="w-6 h-6 mb-1.5" 
+                  <Icon
+                    className="w-6 h-6 mb-1.5"
                     style={{ color: generated ? '#16a34a' : config.color }}
                   />
-                  <span className="text-xs font-medium text-slate-700 text-center">
+                  <span className="text-xs font-medium text-slate-700 dark:text-slate-300 text-center">
                     {config.label}
                   </span>
                   {!config.implemented && (
@@ -309,21 +309,21 @@ export function MapGeneratorPanel({
               </h4>
               <div className="grid grid-cols-3 gap-3">
                 {generatedMaps.map(map => (
-                  <div 
+                  <div
                     key={map.id}
                     className={`
                       relative group rounded-lg overflow-hidden border-2 cursor-pointer transition-all
-                      ${previewMap?.id === map.id 
-                        ? 'border-[#0da1c7] ring-2 ring-[#0da1c7]/20' 
-                        : 'border-slate-200 hover:border-slate-300'
+                      ${previewMap?.id === map.id
+                        ? 'border-[#0da1c7] ring-2 ring-[#0da1c7]/20'
+                        : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
                       }
                     `}
                     onClick={() => setPreviewMap(previewMap?.id === map.id ? null : map)}
                   >
                     {/* Thumbnail */}
                     {map.imageUrl ? (
-                      <img 
-                        src={map.imageUrl} 
+                      <img
+                        src={map.imageUrl}
                         alt={map.title}
                         className="w-full h-20 object-cover"
                       />
@@ -332,7 +332,7 @@ export function MapGeneratorPanel({
                         <Map className="w-6 h-6 text-slate-300" />
                       </div>
                     )}
-                    
+
                     {/* Overlay */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity">
                       <div className="absolute bottom-0 left-0 right-0 p-2 flex items-center justify-between">
@@ -396,12 +396,12 @@ export function MapGeneratorPanel({
                     </button>
                   </div>
                 </div>
-                
+
                 {/* Preview Image */}
                 <div className="relative" style={{ height: '450px' }}>
                   {previewMap.imageUrl ? (
-                    <img 
-                      src={previewMap.imageUrl} 
+                    <img
+                      src={previewMap.imageUrl}
                       alt={previewMap.title}
                       className="w-full h-full object-contain bg-slate-100"
                     />

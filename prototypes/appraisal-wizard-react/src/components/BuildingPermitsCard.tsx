@@ -6,8 +6,8 @@
  */
 
 import React, { useState } from 'react';
-import { 
-  FileText, 
+import {
+  FileText,
   RefreshCw,
   AlertCircle,
   ChevronDown,
@@ -40,19 +40,19 @@ interface BuildingPermitsCardProps {
   /** Permits for the subject property */
   permits: BuildingPermit[];
   onPermitsChange?: (permits: BuildingPermit[]) => void;
-  
+
   /** Selected permit type filter */
   selectedPermitType: string;
   onPermitTypeChange: (value: string) => void;
-  
+
   /** Permit notes */
   permitNotes: string;
   onPermitNotesChange: (value: string) => void;
-  
+
   /** Data refresh callback */
   onRefresh?: () => void;
   isRefreshing?: boolean;
-  
+
   /** Data source indicator */
   dataSource?: 'county' | 'cotality' | 'manual' | 'mock' | null;
   lastUpdated?: string;
@@ -110,10 +110,10 @@ function formatCurrency(amount: number): string {
  */
 function PermitRow({ permit }: { permit: BuildingPermit }) {
   const [isExpanded, setIsExpanded] = useState(false);
-  
+
   const typeInfo = PERMIT_TYPE_LABELS[permit.permitType] || PERMIT_TYPE_LABELS.other;
   const statusInfo = STATUS_LABELS[permit.status] || STATUS_LABELS.issued;
-  
+
   return (
     <div className="border border-slate-200 rounded-lg overflow-hidden">
       <button
@@ -125,7 +125,7 @@ function PermitRow({ permit }: { permit: BuildingPermit }) {
         ) : (
           <ChevronRight className="w-4 h-4 text-slate-400 shrink-0" />
         )}
-        
+
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
             <span className="font-mono text-xs text-slate-600">{permit.permitNumber}</span>
@@ -138,7 +138,7 @@ function PermitRow({ permit }: { permit: BuildingPermit }) {
           </div>
           <p className="text-sm text-slate-700 truncate mt-0.5">{permit.description}</p>
         </div>
-        
+
         <div className="text-right shrink-0">
           {permit.estimatedValue && (
             <div className="font-bold text-[#1c3643] dark:text-white">
@@ -150,9 +150,9 @@ function PermitRow({ permit }: { permit: BuildingPermit }) {
           </div>
         </div>
       </button>
-      
+
       {isExpanded && (
-        <div className="px-4 py-3 bg-slate-50 border-t border-slate-100">
+        <div className="px-4 py-3 bg-slate-50 border-t border-slate-100 dark:bg-slate-800/50 dark:border-slate-700">
           <div className="grid grid-cols-2 gap-3 text-xs">
             <div>
               <span className="text-slate-500 dark:text-slate-400">Issued:</span>
@@ -213,23 +213,23 @@ export function BuildingPermitsCard({
   const filteredPermits = selectedPermitType === 'all'
     ? permits
     : permits.filter(p => p.permitType === selectedPermitType);
-  
+
   // Calculate summary stats
   const totalValue = filteredPermits.reduce((sum, p) => sum + (p.estimatedValue || 0), 0);
   const activeCount = filteredPermits.filter(p => ['issued', 'active'].includes(p.status)).length;
   const completedCount = filteredPermits.filter(p => p.status === 'completed').length;
-  
+
   // Data source badge
   const getDataSourceBadge = () => {
     if (!dataSource) return null;
-    
+
     const badges: Record<string, { label: string; color: string }> = {
       county: { label: 'County Records', color: 'bg-blue-100 text-blue-700' },
       cotality: { label: 'Cotality', color: 'bg-purple-100 text-purple-700' },
       manual: { label: 'Manual', color: 'bg-gray-100 text-gray-600' },
       mock: { label: 'Estimated', color: 'bg-amber-100 text-amber-700' },
     };
-    
+
     const badge = badges[dataSource];
     return (
       <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${badge.color}`}>
@@ -237,7 +237,7 @@ export function BuildingPermitsCard({
       </span>
     );
   };
-  
+
   return (
     <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl shadow-sm overflow-hidden">
       {/* Header */}
@@ -252,7 +252,7 @@ export function BuildingPermitsCard({
               </p>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-2">
             {getDataSourceBadge()}
             {onRefresh && (
@@ -268,9 +268,9 @@ export function BuildingPermitsCard({
           </div>
         </div>
       </div>
-      
+
       {/* Permit Type Filter */}
-      <div className="p-4 bg-slate-50/50 border-b border-gray-100">
+      <div className="p-4 bg-slate-50/50 border-b border-gray-100 dark:bg-slate-800/50 dark:border-slate-700">
         <ButtonSelector
           label="Permit Type"
           options={PERMIT_TYPE_OPTIONS}
@@ -278,7 +278,7 @@ export function BuildingPermitsCard({
           onChange={onPermitTypeChange}
         />
       </div>
-      
+
       {/* Summary Stats */}
       {filteredPermits.length > 0 && (
         <div className="grid grid-cols-3 divide-x divide-gray-100 border-b border-gray-100">
@@ -296,7 +296,7 @@ export function BuildingPermitsCard({
           </div>
         </div>
       )}
-      
+
       {/* Permits List */}
       <div className="p-4">
         {filteredPermits.length > 0 ? (
@@ -315,7 +315,7 @@ export function BuildingPermitsCard({
           </div>
         )}
       </div>
-      
+
       {/* Notes */}
       <div className="p-4 pt-0">
         <EnhancedTextArea
@@ -329,7 +329,7 @@ export function BuildingPermitsCard({
           helperText="Note any permit-related findings that impact the appraisal."
         />
       </div>
-      
+
       {/* Last Updated Footer */}
       {lastUpdated && (
         <div className="px-4 py-2 bg-slate-50 border-t border-slate-100 text-[10px] text-slate-400 flex items-center gap-1">
