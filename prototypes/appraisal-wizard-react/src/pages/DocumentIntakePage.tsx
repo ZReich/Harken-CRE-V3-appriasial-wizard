@@ -978,229 +978,254 @@ export default function DocumentIntakePage() {
       sidebar={sidebar}
       helpSidebarGuidance={helpSidebarGuidance}
     >
-      <div className="animate-fade-in">
-        {activeTab === 'documents' ? (
-          <>
-            {/* Hero Section */}
-            <div className="bg-gradient-to-br from-[#0da1c7]/10 via-[#4db8d1]/5 to-transparent border border-[#0da1c7]/20 rounded-2xl p-6 mb-6">
-              <div className="flex items-start gap-4">
-                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#0da1c7] to-[#0b8fb0] flex items-center justify-center shadow-lg shadow-[#0da1c7]/20">
-                  <Sparkles className="w-7 h-7 text-white" />
+      <ErrorBoundary
+        name="DocumentIntakePage-Main"
+        fallback={
+          <div className="p-8 text-center">
+            <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-red-100 mb-4">
+              <AlertCircle className="w-8 h-8 text-red-600" />
+            </div>
+            <h2 className="text-xl font-bold text-gray-900 mb-2">Something went wrong</h2>
+            <p className="text-gray-600 mb-6 max-w-md mx-auto">
+              The application encountered an error while processing the document intake page.
+              please try refreshing the page.
+            </p>
+            <div className="p-4 bg-gray-100 rounded-lg text-left max-w-lg mx-auto overflow-auto max-h-48 mb-6 font-mono text-xs">
+              Please provide this error to support.
+            </div>
+            <button
+              onClick={() => window.location.reload()}
+              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Reload Page
+            </button>
+          </div>
+        }
+      >
+        <div className="animate-fade-in">
+          {activeTab === 'documents' ? (
+            <>
+              {/* Hero Section */}
+              <div className="bg-gradient-to-br from-[#0da1c7]/10 via-[#4db8d1]/5 to-transparent border border-[#0da1c7]/20 rounded-2xl p-6 mb-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#0da1c7] to-[#0b8fb0] flex items-center justify-center shadow-lg shadow-[#0da1c7]/20">
+                    <Sparkles className="w-7 h-7 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-[#1c3643] mb-1">AI-Powered Document Intake</h3>
+                    <p className="text-gray-600 dark:text-slate-400">
+                      Drop all your documents below. Our AI will automatically identify each document type,
+                      extract relevant data, and pre-fill fields throughout the wizard.
+                    </p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-xl font-bold text-[#1c3643] mb-1">AI-Powered Document Intake</h3>
-                  <p className="text-gray-600 dark:text-slate-400">
-                    Drop all your documents below. Our AI will automatically identify each document type,
-                    extract relevant data, and pre-fill fields throughout the wizard.
+              </div>
+
+              {/* Unified Drop Zone */}
+              <div
+                onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
+                onDragLeave={() => setIsDragging(false)}
+                onDrop={handleDrop}
+                onClick={() => fileInputRef.current?.click()}
+                className={`relative border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-all duration-300 mb-6 ${isDragging
+                  ? 'border-[#0da1c7] bg-[#0da1c7]/10 scale-[1.02]'
+                  : 'border-gray-300 hover:border-[#0da1c7] hover:bg-[#0da1c7]/5'
+                  }`}
+              >
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  multiple
+                  accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xlsx,.csv"
+                  className="hidden"
+                  onChange={handleFileSelect}
+                />
+
+                <div className={`transition-transform duration-300 ${isDragging ? 'scale-110' : ''}`}>
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-gray-100 to-gray-50 flex items-center justify-center">
+                    <Upload className={`w-8 h-8 transition-colors ${isDragging ? 'text-[#0da1c7]' : 'text-gray-400'}`} />
+                  </div>
+                  <p className="text-lg font-semibold text-gray-700 mb-1">
+                    {isDragging ? 'Drop files here' : 'Drop all your documents here'}
+                  </p>
+                  <p className="text-sm text-gray-500 mb-3">
+                    or click to browse
+                  </p>
+                  <p className="text-xs text-gray-400">
+                    Supports PDF, images, Word docs, Excel, and CSV files
                   </p>
                 </div>
-              </div>
-            </div>
 
-            {/* Unified Drop Zone */}
-            <div
-              onDragOver={(e) => { e.preventDefault(); setIsDragging(true); }}
-              onDragLeave={() => setIsDragging(false)}
-              onDrop={handleDrop}
-              onClick={() => fileInputRef.current?.click()}
-              className={`relative border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-all duration-300 mb-6 ${isDragging
-                ? 'border-[#0da1c7] bg-[#0da1c7]/10 scale-[1.02]'
-                : 'border-gray-300 hover:border-[#0da1c7] hover:bg-[#0da1c7]/5'
-                }`}
-            >
-              <input
-                ref={fileInputRef}
-                type="file"
-                multiple
-                accept=".pdf,.jpg,.jpeg,.png,.doc,.docx,.xlsx,.csv"
-                className="hidden"
-                onChange={handleFileSelect}
-              />
-
-              <div className={`transition-transform duration-300 ${isDragging ? 'scale-110' : ''}`}>
-                <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-gray-100 to-gray-50 flex items-center justify-center">
-                  <Upload className={`w-8 h-8 transition-colors ${isDragging ? 'text-[#0da1c7]' : 'text-gray-400'}`} />
-                </div>
-                <p className="text-lg font-semibold text-gray-700 mb-1">
-                  {isDragging ? 'Drop files here' : 'Drop all your documents here'}
-                </p>
-                <p className="text-sm text-gray-500 mb-3">
-                  or click to browse
-                </p>
-                <p className="text-xs text-gray-400">
-                  Supports PDF, images, Word docs, Excel, and CSV files
-                </p>
+                {/* Animated border when dragging */}
+                {isDragging && (
+                  <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
+                    <div className="absolute inset-0 border-2 border-[#0da1c7] rounded-2xl animate-pulse" />
+                  </div>
+                )}
               </div>
 
-              {/* Animated border when dragging */}
-              {isDragging && (
-                <div className="absolute inset-0 rounded-2xl overflow-hidden pointer-events-none">
-                  <div className="absolute inset-0 border-2 border-[#0da1c7] rounded-2xl animate-pulse" />
+              {/* Document Cards */}
+              {documents.length > 0 && (
+                <div className="space-y-3 mb-6">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-sm font-semibold text-gray-700">
+                      Uploaded Documents ({documents.length})
+                    </h3>
+                    {stats.complete === stats.total && stats.total > 0 && (
+                      <span className="text-xs text-green-600 font-medium flex items-center gap-1">
+                        <CheckCircle className="w-3 h-3" />
+                        All documents processed
+                      </span>
+                    )}
+                  </div>
+
+                  <div className="space-y-3">
+                    {documents.map(doc => (
+                      <ErrorBoundary
+                        key={doc.id}
+                        name={`DocumentCard-${doc.file.name}`}
+                        fallback={
+                          <div className="p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3">
+                            <div className="p-2 bg-red-100 rounded-full">
+                              <AlertCircle className="w-5 h-5 text-red-600" />
+                            </div>
+                            <div className="flex-1">
+                              <h3 className="text-sm font-medium text-red-800">Error displaying document</h3>
+                              <p className="text-xs text-red-600">
+                                {doc.file.name} could not be rendered.
+                                <button
+                                  onClick={() => removeDocument(doc.id)}
+                                  className="ml-2 underline hover:text-red-800"
+                                >
+                                  Remove
+                                </button>
+                              </p>
+                            </div>
+                          </div>
+                        }
+                      >
+                        <DocumentCard
+                          doc={doc}
+                          onRemove={() => removeDocument(doc.id)}
+                          onReprocess={() => reprocessDocument(doc.id)}
+                          onReclassify={(newType) => reclassifyDocument(doc.id, newType)}
+                          isExpanded={expandedDocId === doc.id}
+                          onToggleExpand={() => {
+                            setExpandedDocId(expandedDocId === doc.id ? null : doc.id);
+                          }}
+                        />
+                      </ErrorBoundary>
+                    ))}
+                  </div>
                 </div>
               )}
-            </div>
-
-            {/* Document Cards */}
-            {documents.length > 0 && (
-              <div className="space-y-3 mb-6">
-                <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-semibold text-gray-700">
-                    Uploaded Documents ({documents.length})
-                  </h3>
-                  {stats.complete === stats.total && stats.total > 0 && (
-                    <span className="text-xs text-green-600 font-medium flex items-center gap-1">
-                      <CheckCircle className="w-3 h-3" />
-                      All documents processed
-                    </span>
-                  )}
-                </div>
-
-                <div className="space-y-3">
-                  {documents.map(doc => (
-                    <ErrorBoundary
-                      key={doc.id}
-                      name={`DocumentCard-${doc.file.name}`}
-                      fallback={
-                        <div className="p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3">
-                          <div className="p-2 bg-red-100 rounded-full">
-                            <AlertCircle className="w-5 h-5 text-red-600" />
-                          </div>
-                          <div className="flex-1">
-                            <h3 className="text-sm font-medium text-red-800">Error displaying document</h3>
-                            <p className="text-xs text-red-600">
-                              {doc.file.name} could not be rendered.
-                              <button
-                                onClick={() => removeDocument(doc.id)}
-                                className="ml-2 underline hover:text-red-800"
-                              >
-                                Remove
-                              </button>
-                            </p>
-                          </div>
-                        </div>
-                      }
-                    >
-                      <DocumentCard
-                        doc={doc}
-                        onRemove={() => removeDocument(doc.id)}
-                        onReprocess={() => reprocessDocument(doc.id)}
-                        onReclassify={(newType) => reclassifyDocument(doc.id, newType)}
-                        isExpanded={expandedDocId === doc.id}
-                        onToggleExpand={() => {
-                          setExpandedDocId(expandedDocId === doc.id ? null : doc.id);
-                        }}
-                      />
-                    </ErrorBoundary>
-                  ))}
+            </>
+          ) : (
+            <>
+              {/* Photos Tab Content */}
+              {/* Hero Section */}
+              <div className="bg-gradient-to-br from-[#0da1c7]/10 via-[#4db8d1]/5 to-transparent border border-[#0da1c7]/20 rounded-2xl p-6 mb-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#0da1c7] to-[#0b8fb0] flex items-center justify-center shadow-lg shadow-[#0da1c7]/20">
+                    <Camera className="w-7 h-7 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-[#1c3643] dark:text-white mb-1">Upload Property Photos</h3>
+                    <p className="text-gray-600 dark:text-slate-400">
+                      Upload all your property photos now so they're available throughout data entry.
+                      AI will suggest which slot each photo belongs to, or you can assign them manually later.
+                    </p>
+                  </div>
                 </div>
               </div>
-            )}
-          </>
-        ) : (
-          <>
-            {/* Photos Tab Content */}
-            {/* Hero Section */}
-            <div className="bg-gradient-to-br from-[#0da1c7]/10 via-[#4db8d1]/5 to-transparent border border-[#0da1c7]/20 rounded-2xl p-6 mb-6">
-              <div className="flex items-start gap-4">
-                <div className="w-14 h-14 rounded-xl bg-gradient-to-br from-[#0da1c7] to-[#0b8fb0] flex items-center justify-center shadow-lg shadow-[#0da1c7]/20">
-                  <Camera className="w-7 h-7 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-xl font-bold text-[#1c3643] dark:text-white mb-1">Upload Property Photos</h3>
-                  <p className="text-gray-600 dark:text-slate-400">
-                    Upload all your property photos now so they're available throughout data entry.
-                    AI will suggest which slot each photo belongs to, or you can assign them manually later.
-                  </p>
-                </div>
-              </div>
-            </div>
 
-            {/* Cover Photo Section */}
-            <div className="mb-6">
-              <CoverPhotoSection
-                coverPhoto={wizardState.coverPhoto}
-                onSetCoverPhoto={setCoverPhoto}
-                onRemoveCoverPhoto={removeCoverPhoto}
+              {/* Cover Photo Section */}
+              <div className="mb-6">
+                <CoverPhotoSection
+                  coverPhoto={wizardState.coverPhoto}
+                  onSetCoverPhoto={setCoverPhoto}
+                  onRemoveCoverPhoto={removeCoverPhoto}
+                  uploadedPhotos={photos}
+                  subjectData={wizardState.subjectData}
+                  onOpenPicker={() => setShowCoverPhotoPicker(true)}
+                />
+              </div>
+
+              {/* Cover Photo Picker Modal */}
+              <CoverPhotoPickerModal
+                isOpen={showCoverPhotoPicker}
+                onClose={() => setShowCoverPhotoPicker(false)}
+                onSelect={setCoverPhoto}
                 uploadedPhotos={photos}
-                subjectData={wizardState.subjectData}
-                onOpenPicker={() => setShowCoverPhotoPicker(true)}
               />
-            </div>
 
-            {/* Cover Photo Picker Modal */}
-            <CoverPhotoPickerModal
-              isOpen={showCoverPhotoPicker}
-              onClose={() => setShowCoverPhotoPicker(false)}
-              onSelect={setCoverPhoto}
-              uploadedPhotos={photos}
-            />
+              {/* Bulk Upload Drop Zone */}
+              <BulkPhotoDropZone className="mb-6" />
 
-            {/* Bulk Upload Drop Zone */}
-            <BulkPhotoDropZone className="mb-6" />
+              {/* Staging Tray - Shows unassigned photos */}
+              <PhotoStagingTray
+                onAssignPhoto={handleAssignStagingPhoto}
+                onAcceptAllSuggestions={handleAcceptAllSuggestions}
+                usedSlots={usedSlots}
+                className="mb-6"
+                onDragStart={handlePhotoDragStart}
+                onDragEnd={handlePhotoDragEnd}
+              />
 
-            {/* Staging Tray - Shows unassigned photos */}
-            <PhotoStagingTray
-              onAssignPhoto={handleAssignStagingPhoto}
-              onAcceptAllSuggestions={handleAcceptAllSuggestions}
-              usedSlots={usedSlots}
-              className="mb-6"
-              onDragStart={handlePhotoDragStart}
-              onDragEnd={handlePhotoDragEnd}
-            />
-
-            {/* Info about assigning photos later */}
-            {stagingPhotos.length > 0 && (
-              <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/50 rounded-xl p-4 flex items-start gap-3">
-                <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-500 flex-shrink-0 mt-0.5" />
-                <div>
-                  <p className="text-sm font-medium text-amber-800 dark:text-amber-400">Photos ready for assignment</p>
-                  <p className="text-sm text-amber-700 dark:text-amber-500/80 mt-1">
-                    You can accept the AI suggestions above, or assign photos to specific slots
-                    in the Subject Property → Photos & Maps section.
-                  </p>
+              {/* Info about assigning photos later */}
+              {stagingPhotos.length > 0 && (
+                <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/50 rounded-xl p-4 flex items-start gap-3">
+                  <AlertCircle className="w-5 h-5 text-amber-600 dark:text-amber-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <p className="text-sm font-medium text-amber-800 dark:text-amber-400">Photos ready for assignment</p>
+                    <p className="text-sm text-amber-700 dark:text-amber-500/80 mt-1">
+                      You can accept the AI suggestions above, or assign photos to specific slots
+                      in the Subject Property → Photos & Maps section.
+                    </p>
+                  </div>
                 </div>
-              </div>
-            )}
-            {/* Floating Drop Panel */}
-            <FloatingDropPanel
-              isVisible={isPhotoDragging}
-              draggedPhotoPreview={draggedPhotoData?.preview}
-              usedSlots={usedSlots}
-              onDropToSlot={handlePanelDrop}
-            />
-          </>
-        )}
+              )}
+              {/* Floating Drop Panel */}
+              <FloatingDropPanel
+                isVisible={isPhotoDragging}
+                draggedPhotoPreview={draggedPhotoData?.preview}
+                usedSlots={usedSlots}
+                onDropToSlot={handlePanelDrop}
+              />
+            </>
+          )}
 
-        {/* Continue Button */}
-        <div className="mt-8 pt-6 border-t border-gray-200 flex justify-between items-center">
-          <button
-            onClick={() => navigate('/template')}
-            className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
-          >
-            ← Back to Templates
-          </button>
-          <button
-            onClick={handleContinue}
-            disabled={stats.processing > 0}
-            className={`px-6 py-2.5 rounded-lg font-medium flex items-center gap-2 transition-all ${stats.processing > 0
-              ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-              : 'bg-[#0da1c7] text-white hover:bg-[#0b8fb0] shadow-lg shadow-[#0da1c7]/20 hover:shadow-xl hover:shadow-[#0da1c7]/30'
-              }`}
-          >
-            {stats.processing > 0 ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Processing...
-              </>
-            ) : (
-              <>
-                Continue to Setup
-                <ChevronRight className="w-4 h-4" />
-              </>
-            )}
-          </button>
+          {/* Continue Button */}
+          <div className="mt-8 pt-6 border-t border-gray-200 flex justify-between items-center">
+            <button
+              onClick={() => navigate('/template')}
+              className="px-4 py-2 text-gray-600 hover:text-gray-800 transition-colors"
+            >
+              ← Back to Templates
+            </button>
+            <button
+              onClick={handleContinue}
+              disabled={stats.processing > 0}
+              className={`px-6 py-2.5 rounded-lg font-medium flex items-center gap-2 transition-all ${stats.processing > 0
+                ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                : 'bg-[#0da1c7] text-white hover:bg-[#0b8fb0] shadow-lg shadow-[#0da1c7]/20 hover:shadow-xl hover:shadow-[#0da1c7]/30'
+                }`}
+            >
+              {stats.processing > 0 ? (
+                <>
+                  <Loader2 className="w-4 h-4 animate-spin" />
+                  Processing...
+                </>
+              ) : (
+                <>
+                  Continue to Setup
+                  <ChevronRight className="w-4 h-4" />
+                </>
+              )}
+            </button>
+          </div>
         </div>
-      </div>
+      </ErrorBoundary>
     </WizardLayout >
   );
 }
