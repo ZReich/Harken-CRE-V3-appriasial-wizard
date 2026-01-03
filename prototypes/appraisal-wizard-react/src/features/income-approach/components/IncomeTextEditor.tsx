@@ -314,7 +314,7 @@ export function IncomeTextEditor({
       
       <div 
         className={`relative ${isFullscreen 
-          ? 'fixed inset-8 z-50 bg-white rounded-2xl shadow-2xl p-8 flex flex-col max-w-6xl mx-auto' 
+          ? 'fixed inset-8 z-50 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 flex flex-col max-w-6xl mx-auto' 
           : 'mt-6'
         }`}
         style={isFullscreen ? { minHeight: '80vh', maxHeight: '90vh' } : undefined}
@@ -400,7 +400,7 @@ export function IncomeTextEditor({
           onBlur={() => setIsFocused(false)}
           data-placeholder={placeholder}
           className={`
-            w-full border border-gray-200 border-t-0 rounded-b-xl bg-white
+            w-full border border-gray-200 dark:border-slate-700 border-t-0 rounded-b-xl bg-white dark:bg-slate-800
             text-gray-700 leading-relaxed
             focus:outline-none focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent
             overflow-y-auto
@@ -439,7 +439,7 @@ export function IncomeTextEditor({
                 </button>
                 <button
                   onClick={rejectAI}
-                  className="px-3 py-1 text-xs font-medium text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-50 flex items-center gap-1 transition-colors"
+                  className="px-3 py-1 text-xs font-medium text-gray-600 dark:text-slate-300 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-md hover:bg-gray-50 dark:hover:bg-slate-600 flex items-center gap-1 transition-colors"
                 >
                   <X className="w-3 h-3" />
                   Reject

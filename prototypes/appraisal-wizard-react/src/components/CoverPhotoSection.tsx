@@ -1,9 +1,9 @@
 import React, { useState, useRef, useCallback } from 'react';
-import { 
-  Image as ImageIcon, 
-  Upload, 
-  X, 
-  Star, 
+import {
+  Image as ImageIcon,
+  Upload,
+  X,
+  Star,
   Sparkles,
   RefreshCw,
   FileImage,
@@ -61,7 +61,7 @@ export default function CoverPhotoSection({
 
     const files = Array.from(e.dataTransfer.files);
     const imageFile = files.find(f => f.type.startsWith('image/'));
-    
+
     if (imageFile) {
       const preview = URL.createObjectURL(imageFile);
       onSetCoverPhoto({
@@ -104,7 +104,7 @@ export default function CoverPhotoSection({
   ].filter(Boolean).join(', ') || 'Address Not Specified';
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border-2 border-[#0da1c7]/30 bg-gradient-to-br from-slate-50 via-white to-[#0da1c7]/5">
+    <div className="relative overflow-hidden rounded-2xl border-2 border-[#0da1c7]/30 bg-gradient-to-br from-slate-50 via-white to-[#0da1c7]/5 dark:from-slate-800 dark:via-slate-800 dark:to-slate-900">
       {/* Decorative background elements */}
       <div className="absolute inset-0 opacity-20 pointer-events-none">
         <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-[#0da1c7] to-cyan-400 rounded-full blur-3xl" />
@@ -122,8 +122,8 @@ export default function CoverPhotoSection({
             <p className="text-sm text-slate-500 dark:text-slate-400">The hero image on your report's title page</p>
           </div>
         </div>
-        <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 rounded-full">
-          <span className="text-xs font-medium text-slate-600">Page 1</span>
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-700 rounded-full">
+          <span className="text-xs font-medium text-slate-600 dark:text-slate-300">Page 1</span>
         </div>
       </div>
 
@@ -133,10 +133,10 @@ export default function CoverPhotoSection({
           {/* Mini Cover Page Preview */}
           <div className="flex-shrink-0 w-56">
             <div className="text-xs font-medium text-slate-500 mb-2 text-center">Report Preview</div>
-            <div 
+            <div
               className="relative w-full aspect-[8.5/11] rounded-lg overflow-hidden shadow-xl border border-slate-200"
               style={{
-                background: coverPhoto 
+                background: coverPhoto
                   ? `linear-gradient(to top, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.5) 50%, rgba(15, 23, 42, 0.3)), url(${coverPhoto.preview}) center/cover`
                   : 'linear-gradient(135deg, #1e293b 0%, #0f172a 50%, #020617 100%)',
               }}
@@ -170,7 +170,7 @@ export default function CoverPhotoSection({
                   <div>
                     <div className="text-[5px] text-white/50 uppercase">Date</div>
                     <div className="text-[7px] font-medium">
-                      {subjectData.effectiveDate 
+                      {subjectData.effectiveDate
                         ? new Date(subjectData.effectiveDate).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
                         : 'TBD'}
                     </div>
@@ -203,12 +203,12 @@ export default function CoverPhotoSection({
               // Photo is set - show preview with actions
               <div className="flex-1 flex flex-col">
                 <div className="relative flex-1 rounded-xl overflow-hidden border-2 border-green-200 bg-green-50/30">
-                  <img 
-                    src={coverPhoto.preview} 
-                    alt="Cover photo" 
+                  <img
+                    src={coverPhoto.preview}
+                    alt="Cover photo"
                     className="w-full h-full object-cover"
                   />
-                  
+
                   {/* Overlay with actions */}
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
                     <div className="flex gap-2">
@@ -256,27 +256,27 @@ export default function CoverPhotoSection({
                     flex-1 flex flex-col items-center justify-center gap-3 
                     border-2 border-dashed rounded-xl cursor-pointer
                     transition-all duration-200
-                    ${isDragOver 
-                      ? 'border-[#0da1c7] bg-[#0da1c7]/10 scale-[1.02]' 
-                      : 'border-slate-300 hover:border-[#0da1c7] hover:bg-[#0da1c7]/5'
+                    ${isDragOver
+                      ? 'border-[#0da1c7] bg-[#0da1c7]/10 scale-[1.02]'
+                      : 'border-slate-300 dark:border-slate-600 hover:border-[#0da1c7] hover:bg-[#0da1c7]/5 dark:hover:bg-[#0da1c7]/10'
                     }
                   `}
                 >
                   <div className={`
                     w-14 h-14 rounded-xl flex items-center justify-center
                     transition-all duration-200
-                    ${isDragOver 
-                      ? 'bg-[#0da1c7] text-white scale-110' 
-                      : 'bg-slate-100 text-slate-400'
+                    ${isDragOver
+                      ? 'bg-[#0da1c7] text-white scale-110'
+                      : 'bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-300'
                     }
                   `}>
                     <Upload className="w-7 h-7" />
                   </div>
                   <div className="text-center">
-                    <p className={`font-medium ${isDragOver ? 'text-[#0da1c7]' : 'text-slate-700'}`}>
+                    <p className={`font-medium ${isDragOver ? 'text-[#0da1c7]' : 'text-slate-700 dark:text-slate-200'}`}>
                       {isDragOver ? 'Drop photo here' : 'Drop photo here or click to upload'}
                     </p>
-                    <p className="text-sm text-slate-500 mt-1">
+                    <p className="text-sm text-slate-500 dark:text-slate-400 mt-1">
                       JPG, PNG, WebP, HEIC
                     </p>
                   </div>
@@ -284,9 +284,9 @@ export default function CoverPhotoSection({
 
                 {/* Divider */}
                 <div className="flex items-center gap-3">
-                  <div className="flex-1 h-px bg-slate-200" />
-                  <span className="text-xs font-medium text-slate-400">or</span>
-                  <div className="flex-1 h-px bg-slate-200" />
+                  <div className="flex-1 h-px bg-slate-200 dark:bg-slate-700" />
+                  <span className="text-xs font-medium text-slate-400 dark:text-slate-500">or</span>
+                  <div className="flex-1 h-px bg-slate-200 dark:bg-slate-700" />
                 </div>
 
                 {/* Select from uploads button */}
@@ -297,13 +297,13 @@ export default function CoverPhotoSection({
                     flex items-center justify-center gap-2 px-4 py-3 rounded-xl
                     font-medium transition-all
                     ${availablePhotosCount > 0
-                      ? 'bg-slate-100 hover:bg-slate-200 text-slate-700'
-                      : 'bg-slate-50 text-slate-400 cursor-not-allowed'
+                      ? 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200'
+                      : 'bg-slate-50 dark:bg-slate-800/50 text-slate-400 dark:text-slate-600 cursor-not-allowed'
                     }
                   `}
                 >
                   <FileImage className="w-5 h-5" />
-                  {availablePhotosCount > 0 
+                  {availablePhotosCount > 0
                     ? `Select from ${availablePhotosCount} uploaded photo${availablePhotosCount !== 1 ? 's' : ''}`
                     : 'No photos uploaded yet'
                   }
@@ -311,7 +311,7 @@ export default function CoverPhotoSection({
 
                 {/* Recommendation hint */}
                 {availablePhotosCount === 0 && (
-                  <p className="text-xs text-slate-500 text-center">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 text-center">
                     Upload photos below, then come back to select your cover
                   </p>
                 )}

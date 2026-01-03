@@ -440,7 +440,7 @@ export const RiskAnalysisModal: React.FC<Props> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onClick={onClose}></div>
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-lg relative overflow-hidden animate-fade-in flex flex-col max-h-[90vh]">
+      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-lg relative overflow-hidden animate-fade-in flex flex-col max-h-[90vh]">
         <div className="bg-gradient-to-r from-[#0da1c7] to-[#0b8eb0] p-6 flex justify-between items-start text-white flex-shrink-0">
           <div>
             <div className="flex items-center gap-2 mb-1">
@@ -456,7 +456,7 @@ export const RiskAnalysisModal: React.FC<Props> = ({
             <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Confidence Score</div>
             <div className="text-3xl font-black text-slate-800 dark:text-white">{analysis.score}/100</div>
           </div>
-          <div className="w-32 h-2 bg-slate-200 rounded-full overflow-hidden">
+          <div className="w-32 h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
             <div className={`h-full transition-all duration-1000 ease-out ${analysis.score > 80 ? 'bg-emerald-500' : analysis.score > 50 ? 'bg-amber-500' : 'bg-rose-500'}`} style={{ width: `${analysis.score}%` }}></div>
           </div>
         </div>
@@ -476,7 +476,7 @@ export const RiskAnalysisModal: React.FC<Props> = ({
           ))}
         </div>
         <div className="p-4 border-t border-slate-100 bg-slate-50 text-center flex-shrink-0">
-          <button onClick={onClose} className="text-sm font-semibold text-slate-600 hover:text-[#0da1c7] transition-colors w-full py-2 rounded-lg hover:bg-slate-100">Return to Editor</button>
+          <button onClick={onClose} className="text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-[#0da1c7] transition-colors w-full py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700">Return to Editor</button>
         </div>
       </div>
     </div>
