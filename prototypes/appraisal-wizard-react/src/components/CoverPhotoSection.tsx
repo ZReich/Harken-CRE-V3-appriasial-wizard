@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback } from 'react';
+import React, { useState, useRef, useCallback, useEffect } from 'react';
 import {
   Image as ImageIcon,
   Upload,
@@ -37,7 +37,13 @@ export default function CoverPhotoSection({
   onOpenPicker,
 }: CoverPhotoSectionProps) {
   const [isDragOver, setIsDragOver] = useState(false);
+  const [imageError, setImageError] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Reset error state when photo changes
+  useEffect(() => {
+    setImageError(false);
+  }, [coverPhoto?.preview]);
 
   // Count available photos for the picker
   const availablePhotosCount = Object.values(uploadedPhotos).filter(Boolean).length;
@@ -202,22 +208,34 @@ export default function CoverPhotoSection({
             {coverPhoto ? (
               // Photo is set - show preview with actions
               <div className="flex-1 flex flex-col">
-                <div className="relative flex-1 rounded-xl overflow-hidden border-2 border-green-200 bg-green-50/30">
-                  <img
-                    src={coverPhoto.preview}
-                    alt="Cover photo"
-                    className="w-full h-full object-cover"
-                  />
+                <div className="relative flex-1 rounded-xl overflow-hidden border-2 border-green-200 dark:border-green-800 bg-green-50/30 dark:bg-green-900/20">
+                  {/* Image with error handling */}
+                  {!imageError ? (
+                    <img
+                      src={coverPhoto.preview}
+                      alt="Cover photo"
+                      className="w-full h-full object-cover"
+                      onError={() => setImageError(true)}
+                    />
+                  ) : (
+                    /* Fallback for broken image */
+                    <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-400 dark:text-slate-500">
+                      <div className="w-12 h-12 mb-2 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                        <FileImage className="w-6 h-6 opacity-50" />
+                      </div>
+                      <span className="text-xs font-medium">Image preview unavailable</span>
+                    </div>
+                  )}
 
-                  {/* Overlay with actions */}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
+                  {/* Overlay with actions - always show so user can fix it */}
+                  <div className={`absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent flex flex-col justify-end p-4 transition-opacity ${imageError ? 'opacity-100' : 'opacity-0 hover:opacity-100'}`}>
                     <div className="flex gap-2">
                       <button
                         onClick={handleUploadClick}
                         className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-white/90 hover:bg-white text-slate-700 text-sm font-medium rounded-lg transition-all shadow-lg"
                       >
                         <RefreshCw className="w-4 h-4" />
-                        Change Photo
+                        {imageError ? 'Try Another Photo' : 'Change Photo'}
                       </button>
                       <button
                         onClick={onRemoveCoverPhoto}
@@ -238,7 +256,7 @@ export default function CoverPhotoSection({
                 </div>
 
                 {/* Helper text */}
-                <div className="mt-3 flex items-center gap-2 text-sm text-green-700">
+                <div className="mt-3 flex items-center gap-2 text-sm text-green-700 dark:text-green-400">
                   <Sparkles className="w-4 h-4" />
                   <span>Cover photo set! Hover to change or remove.</span>
                 </div>
