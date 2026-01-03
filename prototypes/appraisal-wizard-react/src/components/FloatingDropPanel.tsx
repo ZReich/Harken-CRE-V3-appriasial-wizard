@@ -116,11 +116,11 @@ export default function FloatingDropPanel({
 
           {/* Preview of dragged photo */}
           {draggedPhotoPreview && (
-            <div className="mt-3 flex items-center gap-2 p-2 bg-white rounded-lg shadow-sm">
+            <div className="mt-3 flex items-center gap-2 p-2 bg-white dark:bg-slate-700/50 rounded-lg shadow-sm border border-gray-100 dark:border-slate-600/50">
               <div className="w-10 h-10 rounded-md overflow-hidden flex-shrink-0">
                 <img src={draggedPhotoPreview} alt="Dragging" className="w-full h-full object-cover" />
               </div>
-              <p className="text-xs text-gray-600 truncate">Dragging photo...</p>
+              <p className="text-xs text-gray-600 dark:text-slate-300 truncate">Dragging photo...</p>
             </div>
           )}
         </div>
@@ -146,11 +146,11 @@ export default function FloatingDropPanel({
                   bg-gradient-to-r from-${category.color}-50 to-white dark:from-${category.color}-900/30 dark:to-slate-800
                   border-b border-${category.color}-100/50 dark:border-${category.color}-700/50
                 `}>
-                  <CatIcon className={`w-4 h-4 text-${category.color}-500`} />
-                  <span className="text-xs font-bold text-gray-700 uppercase tracking-wide">
+                  <CatIcon className={`w-4 h-4 text-${category.color}-500 dark:text-${category.color}-400`} />
+                  <span className="text-xs font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wide">
                     {category.label}
                   </span>
-                  <span className={`ml-auto px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-${category.color}-100 text-${category.color}-600`}>
+                  <span className={`ml-auto px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-${category.color}-100 dark:bg-${category.color}-900/40 text-${category.color}-600 dark:text-${category.color}-300`}>
                     {availableCount}
                   </span>
                 </div>
@@ -174,7 +174,7 @@ export default function FloatingDropPanel({
                           transition-all duration-200 border-2 animate-slot-reveal
                           ${isHovered
                             ? 'border-[#0da1c7] bg-[#0da1c7]/10 scale-[1.02] shadow-lg shadow-[#0da1c7]/20 animate-glow-pulse'
-                            : 'border-transparent bg-gray-50 hover:bg-gray-100'
+                            : 'border-transparent bg-gray-50 dark:bg-slate-700/40 hover:bg-gray-100 dark:hover:bg-slate-700/60'
                           }
                         `}
                         style={{
