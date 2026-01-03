@@ -21,6 +21,9 @@ export type DocumentType =
   | 'survey'
   | 'tax_return'
   | 'financial_statement'
+  | 'deed'           // NEW: Grant deeds, warranty deeds, quitclaim deeds
+  | 'flood_map'      // NEW: FEMA flood zone determinations
+  | 'tax_assessment' // NEW: Property tax assessment/records
   | 'unknown';
 
 export interface DocumentTypeInfo {
@@ -96,6 +99,33 @@ export const DOCUMENT_TYPES: Record<DocumentType, DocumentTypeInfo> = {
     icon: 'wallet',
     color: 'emerald',
     extractFields: ['grossIncome', 'effectiveGrossIncome', 'expenses', 'netIncome', 'vacancyRate', 'managementFee', 'propertyTaxes', 'insurance', 'utilities', 'repairs', 'reserves', 'period'],
+  },
+  // NEW: Property Deeds
+  deed: {
+    id: 'deed',
+    label: 'Property Deed',
+    description: 'Grantor, grantee, recording date, sale price, legal description',
+    icon: 'file-text',
+    color: 'amber',
+    extractFields: ['grantor', 'grantee', 'recordingDate', 'salePrice', 'legalDescription', 'propertyAddress', 'documentNumber', 'county', 'state', 'bookPage'],
+  },
+  // NEW: FEMA Flood Maps
+  flood_map: {
+    id: 'flood_map',
+    label: 'FEMA Flood Map',
+    description: 'Flood zone, panel number, effective date, community number',
+    icon: 'droplets',
+    color: 'cyan',
+    extractFields: ['floodZone', 'panelNumber', 'effectiveDate', 'communityNumber', 'propertyAddress', 'mapNumber', 'determination', 'baseFloodElevation'],
+  },
+  // NEW: Property Tax Assessment
+  tax_assessment: {
+    id: 'tax_assessment',
+    label: 'Tax Assessment',
+    description: 'Tax ID, assessed value, tax year, annual tax, land/improvement values',
+    icon: 'building-2',
+    color: 'rose',
+    extractFields: ['taxId', 'assessedValue', 'taxYear', 'annualTax', 'landValue', 'improvementValue', 'owner', 'propertyAddress', 'propertyClass', 'millLevy', 'exemptions'],
   },
   unknown: {
     id: 'unknown',
@@ -751,31 +781,53 @@ export async function classifyDocument(file: File): Promise<ClassificationResult
     // Use filename-based classification for mock mode
     const filename = file.name.toLowerCase();
     const filenameClassifications: Record<string, DocumentType> = {
+      // Cadastral / County Records
       'cadastral': 'cadastral',
       'county': 'cadastral',
       'parcel': 'cadastral',
       'assessor': 'cadastral',
+      'cad': 'cadastral',
+      // Engagement Letters
       'engagement': 'engagement',
       'letter': 'engagement',
       'proposal': 'engagement',
+      // Sale Documents
       'sale': 'sale',
       'purchase': 'sale',
       'psa': 'sale',
+      // Lease Documents
       'lease': 'lease',
       'rental': 'lease',
+      // Rent Roll
       'rentroll': 'rentroll',
       'rent_roll': 'rentroll',
       'rent-roll': 'rentroll',
       'occupancy': 'rentroll',
+      // Survey
       'survey': 'survey',
       'plat': 'survey',
       'alta': 'survey',
-      'tax': 'tax_return',
+      // Tax Returns (income tax)
       '1040': 'tax_return',
       'schedule': 'tax_return',
+      // Financial Statements
       'financial': 'financial_statement',
       'operating': 'financial_statement',
       'proforma': 'financial_statement',
+      // NEW: Deeds
+      'deed': 'deed',
+      'grant': 'deed',
+      'warranty': 'deed',
+      'quitclaim': 'deed',
+      // NEW: Flood Maps
+      'flood': 'flood_map',
+      'fema': 'flood_map',
+      'floodmap': 'flood_map',
+      'flood_map': 'flood_map',
+      // NEW: Tax Assessment (property tax, not income tax)
+      'tax': 'tax_assessment',
+      'assessment': 'tax_assessment',
+      'property_tax': 'tax_assessment',
     };
     
     let matchedType: DocumentType = 'unknown';
@@ -812,28 +864,47 @@ export async function classifyDocument(file: File): Promise<ClassificationResult
     if (!text || text.length < 50) {
       // If we can't extract text, use filename-based fallback
       console.warn('[DocumentExtraction] Could not extract text, using filename-based classification');
-      const filename = file.name.toLowerCase();
+      const lowerFilename = file.name.toLowerCase();
       
-      // Simple filename matching
-      const lowerFilename = filename.toLowerCase();
+      // NEW: Deed documents (check first since "deed" is specific)
+      if (lowerFilename.includes('deed') || lowerFilename.includes('grant') || 
+          lowerFilename.includes('warranty') || lowerFilename.includes('quitclaim')) {
+        return { documentType: 'deed', confidence: 0.7, processingTimeMs: Date.now() - startTime };
+      }
+      // NEW: Flood maps
+      if (lowerFilename.includes('flood') || lowerFilename.includes('fema')) {
+        return { documentType: 'flood_map', confidence: 0.7, processingTimeMs: Date.now() - startTime };
+      }
+      // NEW: Tax assessment (property tax, check before cadastral since both may have "tax")
+      if (lowerFilename.includes('tax') && !lowerFilename.includes('1040') && !lowerFilename.includes('return')) {
+        return { documentType: 'tax_assessment', confidence: 0.6, processingTimeMs: Date.now() - startTime };
+      }
+      // Cadastral / County Records
       if (lowerFilename.includes('cadastral') || lowerFilename.includes('county') || 
           lowerFilename.includes('parcel') || lowerFilename.includes('cad') || 
-          lowerFilename.includes('assessor') || lowerFilename.includes('tax')) {
+          lowerFilename.includes('assessor')) {
         return { documentType: 'cadastral', confidence: 0.6, processingTimeMs: Date.now() - startTime };
       }
+      // Engagement Letters
       if (lowerFilename.includes('engagement') || lowerFilename.includes('letter') || 
           lowerFilename.includes('proposal')) {
         return { documentType: 'engagement', confidence: 0.6, processingTimeMs: Date.now() - startTime };
       }
-      if (lowerFilename.includes('sale') || lowerFilename.includes('purchase') || 
-          lowerFilename.includes('deed')) {
+      // Sale Documents
+      if (lowerFilename.includes('sale') || lowerFilename.includes('purchase')) {
         return { documentType: 'sale', confidence: 0.6, processingTimeMs: Date.now() - startTime };
       }
+      // Lease Documents
       if (lowerFilename.includes('lease') || lowerFilename.includes('rental')) {
         return { documentType: 'lease', confidence: 0.6, processingTimeMs: Date.now() - startTime };
       }
+      // Rent Roll
       if (lowerFilename.includes('rent') && (lowerFilename.includes('roll') || lowerFilename.includes('list'))) {
         return { documentType: 'rentroll', confidence: 0.6, processingTimeMs: Date.now() - startTime };
+      }
+      // Survey
+      if (lowerFilename.includes('survey') || lowerFilename.includes('plat') || lowerFilename.includes('alta')) {
+        return { documentType: 'survey', confidence: 0.6, processingTimeMs: Date.now() - startTime };
       }
       
       return { documentType: 'unknown', confidence: 0.3, processingTimeMs: Date.now() - startTime };

@@ -54,7 +54,7 @@ export const RecoveryDialog: React.FC<RecoveryDialogProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg max-h-[80vh] overflow-hidden">
+      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-lg max-h-[80vh] overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-amber-50">
           <div className="flex items-center gap-3">
@@ -62,7 +62,7 @@ export const RecoveryDialog: React.FC<RecoveryDialogProps> = ({
               <AlertTriangle className="text-amber-600" size={20} />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-slate-800">Unsaved Work Found</h2>
+              <h2 className="text-lg font-semibold text-slate-800 dark:text-white">Unsaved Work Found</h2>
               <p className="text-sm text-slate-600">Would you like to recover your previous session?</p>
             </div>
           </div>
@@ -98,7 +98,7 @@ export const RecoveryDialog: React.FC<RecoveryDialogProps> = ({
                     </div>
                     <div>
                       <div className="flex items-center gap-2">
-                        <span className="font-medium text-slate-800">
+                        <span className="font-medium text-slate-800 dark:text-white">
                           {formatDate(version.timestamp)}
                         </span>
                         {index === 0 && (

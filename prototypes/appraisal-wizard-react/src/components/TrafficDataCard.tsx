@@ -6,8 +6,8 @@
  */
 
 import React, { useState } from 'react';
-import { 
-  Car, 
+import {
+  Car,
   TrendingUp,
   RefreshCw,
   MapPin,
@@ -36,19 +36,19 @@ interface TrafficDataCardProps {
   /** Nearest roads with traffic data */
   trafficData: TrafficDataEntry[];
   onTrafficDataChange?: (data: TrafficDataEntry[]) => void;
-  
+
   /** Selected road class filter */
   selectedRoadClass: string;
   onRoadClassChange: (value: string) => void;
-  
+
   /** Traffic notes */
   trafficNotes: string;
   onTrafficNotesChange: (value: string) => void;
-  
+
   /** Data refresh callback */
   onRefresh?: () => void;
   isRefreshing?: boolean;
-  
+
   /** Whether data is from an external source */
   dataSource?: 'mdot' | 'cotality' | 'manual' | 'mock' | null;
   lastUpdated?: string;
@@ -78,9 +78,9 @@ function formatNumber(num: number): string {
  */
 function TrafficRow({ entry, onEdit }: { entry: TrafficDataEntry; onEdit?: () => void }) {
   const [isExpanded, setIsExpanded] = useState(false);
-  
+
   const roadClassColor = ROAD_CLASS_COLORS[entry.roadClass.toLowerCase()] || 'bg-gray-100 text-gray-700 border-gray-300';
-  
+
   return (
     <div className="border border-slate-200 rounded-lg overflow-hidden">
       <button
@@ -92,10 +92,10 @@ function TrafficRow({ entry, onEdit }: { entry: TrafficDataEntry; onEdit?: () =>
         ) : (
           <ChevronRight className="w-4 h-4 text-slate-400 shrink-0" />
         )}
-        
+
         <div className="flex-1 text-left">
           <div className="flex items-center gap-2">
-            <span className="font-medium text-sm text-slate-800">{entry.roadName}</span>
+            <span className="font-medium text-sm text-slate-800 dark:text-white">{entry.roadName}</span>
             <span className={`text-[10px] px-1.5 py-0.5 rounded border ${roadClassColor}`}>
               {entry.roadClass}
             </span>
@@ -104,45 +104,45 @@ function TrafficRow({ entry, onEdit }: { entry: TrafficDataEntry; onEdit?: () =>
             <span className="text-[10px] text-slate-400">{entry.distance}</span>
           )}
         </div>
-        
+
         <div className="text-right">
-          <div className="font-bold text-[#1c3643]">
+          <div className="font-bold text-[#1c3643] dark:text-white">
             {formatNumber(entry.annualAverageDailyTraffic)}
           </div>
           <div className="text-[10px] text-slate-400">AADT</div>
         </div>
       </button>
-      
+
       {isExpanded && (
-        <div className="px-4 py-3 bg-slate-50 border-t border-slate-100">
+        <div className="px-4 py-3 bg-slate-50 border-t border-slate-100 dark:bg-slate-800/50 dark:border-slate-700">
           <div className="grid grid-cols-2 gap-3 text-xs">
             {entry.truckPercentage !== undefined && (
               <div>
-                <span className="text-slate-500">Truck Traffic:</span>
+                <span className="text-slate-500 dark:text-slate-400">Truck Traffic:</span>
                 <span className="ml-1 font-medium">{entry.truckPercentage}%</span>
               </div>
             )}
             {entry.speedLimit !== undefined && (
               <div>
-                <span className="text-slate-500">Speed Limit:</span>
+                <span className="text-slate-500 dark:text-slate-400">Speed Limit:</span>
                 <span className="ml-1 font-medium">{entry.speedLimit} mph</span>
               </div>
             )}
             {entry.lanesCount !== undefined && (
               <div>
-                <span className="text-slate-500">Lanes:</span>
+                <span className="text-slate-500 dark:text-slate-400">Lanes:</span>
                 <span className="ml-1 font-medium">{entry.lanesCount}</span>
               </div>
             )}
             {entry.year && (
               <div>
-                <span className="text-slate-500">Data Year:</span>
+                <span className="text-slate-500 dark:text-slate-400">Data Year:</span>
                 <span className="ml-1 font-medium">{entry.year}</span>
               </div>
             )}
             {entry.direction && (
               <div className="col-span-2">
-                <span className="text-slate-500">Direction:</span>
+                <span className="text-slate-500 dark:text-slate-400">Direction:</span>
                 <span className="ml-1 font-medium">{entry.direction}</span>
               </div>
             )}
@@ -166,32 +166,32 @@ export function TrafficDataCard({
   lastUpdated,
 }: TrafficDataCardProps) {
   const [showAddRoad, setShowAddRoad] = useState(false);
-  
+
   // Filter traffic data by road class
-  const filteredData = selectedRoadClass === 'all' 
-    ? trafficData 
+  const filteredData = selectedRoadClass === 'all'
+    ? trafficData
     : trafficData.filter(d => d.roadClass.toLowerCase() === selectedRoadClass.toLowerCase());
-  
+
   // Calculate summary stats
   const avgAADT = filteredData.length > 0
     ? Math.round(filteredData.reduce((sum, d) => sum + d.annualAverageDailyTraffic, 0) / filteredData.length)
     : 0;
-  
+
   const maxAADT = filteredData.length > 0
     ? Math.max(...filteredData.map(d => d.annualAverageDailyTraffic))
     : 0;
-  
+
   // Data source badge
   const getDataSourceBadge = () => {
     if (!dataSource) return null;
-    
+
     const badges: Record<string, { label: string; color: string }> = {
       mdot: { label: 'MDOT Data', color: 'bg-blue-100 text-blue-700' },
       cotality: { label: 'Cotality', color: 'bg-purple-100 text-purple-700' },
       manual: { label: 'Manual', color: 'bg-gray-100 text-gray-600' },
       mock: { label: 'Estimated', color: 'bg-amber-100 text-amber-700' },
     };
-    
+
     const badge = badges[dataSource];
     return (
       <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${badge.color}`}>
@@ -199,22 +199,22 @@ export function TrafficDataCard({
       </span>
     );
   };
-  
+
   return (
-    <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+    <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl shadow-sm overflow-hidden">
       {/* Header */}
       <div className="p-4 border-b border-gray-100">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Car className="w-5 h-5 text-[#0da1c7]" />
             <div>
-              <h3 className="text-lg font-bold text-[#1c3643]">Traffic Data</h3>
-              <p className="text-xs text-gray-500">
+              <h3 className="text-lg font-bold text-[#1c3643] dark:text-white">Traffic Data</h3>
+              <p className="text-xs text-gray-500 dark:text-slate-400">
                 Annual Average Daily Traffic (AADT)
               </p>
             </div>
           </div>
-          
+
           <div className="flex items-center gap-2">
             {getDataSourceBadge()}
             {onRefresh && (
@@ -230,9 +230,9 @@ export function TrafficDataCard({
           </div>
         </div>
       </div>
-      
+
       {/* Road Class Filter */}
-      <div className="p-4 bg-slate-50/50 border-b border-gray-100">
+      <div className="p-4 bg-slate-50/50 border-b border-gray-100 dark:bg-slate-800/50 dark:border-slate-700">
         <ButtonSelector
           label="Road Classification"
           options={ROAD_CLASS_OPTIONS}
@@ -240,21 +240,21 @@ export function TrafficDataCard({
           onChange={onRoadClassChange}
         />
       </div>
-      
+
       {/* Summary Stats */}
       {filteredData.length > 0 && (
         <div className="grid grid-cols-2 divide-x divide-gray-100 border-b border-gray-100">
           <div className="p-4 text-center">
             <div className="text-2xl font-bold text-[#0da1c7]">{formatNumber(avgAADT)}</div>
-            <div className="text-xs text-slate-500">Average AADT</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400">Average AADT</div>
           </div>
           <div className="p-4 text-center">
-            <div className="text-2xl font-bold text-[#1c3643]">{formatNumber(maxAADT)}</div>
-            <div className="text-xs text-slate-500">Peak AADT</div>
+            <div className="text-2xl font-bold text-[#1c3643] dark:text-white">{formatNumber(maxAADT)}</div>
+            <div className="text-xs text-slate-500 dark:text-slate-400">Peak AADT</div>
           </div>
         </div>
       )}
-      
+
       {/* Traffic Data List */}
       <div className="p-4">
         {filteredData.length > 0 ? (
@@ -266,14 +266,14 @@ export function TrafficDataCard({
         ) : (
           <div className="text-center py-6">
             <Route className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-            <p className="text-sm text-slate-500">No traffic data available</p>
+            <p className="text-sm text-slate-500 dark:text-slate-400">No traffic data available</p>
             <p className="text-xs text-slate-400 mt-1">
               Traffic counts will be imported from MDOT or entered manually
             </p>
           </div>
         )}
       </div>
-      
+
       {/* Notes */}
       <div className="p-4 pt-0">
         <EnhancedTextArea
@@ -287,7 +287,7 @@ export function TrafficDataCard({
           helperText="Note any traffic impact on the property's value or use."
         />
       </div>
-      
+
       {/* Last Updated Footer */}
       {lastUpdated && (
         <div className="px-4 py-2 bg-slate-50 border-t border-slate-100 text-[10px] text-slate-400 flex items-center gap-1">

@@ -417,7 +417,7 @@ function ParcelCard({
   const isAddressSynced = isFirstParcel && addressString && parcel.address === addressString;
 
   return (
-    <div className="bg-white border border-gray-200 rounded-2xl overflow-hidden shadow-sm">
+    <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-sm">
       <div
         className="px-6 py-4 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors border-l-4 border-[#0da1c7]"
         onClick={onToggle}
@@ -429,11 +429,11 @@ function ParcelCard({
               <MapPin className="w-5 h-5 text-[#0da1c7]" />
             </div>
             <div>
-              <div className="font-bold text-[#1c3643]">
+              <div className="font-bold text-[#1c3643] dark:text-white">
                 Parcel {index + 1}
                 {parcel.parcelNumber && <span className="text-gray-500 font-normal ml-2 text-sm">#{parcel.parcelNumber}</span>}
               </div>
-              <div className="text-xs text-gray-500">
+              <div className="text-xs text-gray-500 dark:text-slate-400">
                 {parcel.buildings.length} Building{parcel.buildings.length !== 1 ? 's' : ''} | {parcelSF.toLocaleString()} SF
               </div>
             </div>
@@ -515,8 +515,8 @@ function ParcelCard({
           <div className="space-y-4">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <Building2 className="w-5 h-5 text-[#1c3643]" />
-                <h4 className="font-bold text-[#1c3643]">Buildings</h4>
+                <Building2 className="w-5 h-5 text-[#1c3643] dark:text-white" />
+                <h4 className="font-bold text-[#1c3643] dark:text-white">Buildings</h4>
               </div>
               <button
                 onClick={onAddBuilding}
@@ -648,10 +648,10 @@ function BuildingCard({
         <div className="flex items-center gap-3">
           {isExpanded ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronRight className="w-4 h-4 text-gray-400" />}
           <div className="w-8 h-8 rounded-lg bg-[#1c3643]/10 flex items-center justify-center">
-            <Building2 className="w-4 h-4 text-[#1c3643]" />
+            <Building2 className="w-4 h-4 text-[#1c3643] dark:text-white" />
           </div>
           <div>
-            <span className="font-semibold text-sm text-[#1c3643]">{building.name || `Building ${index + 1}`}</span>
+            <span className="font-semibold text-sm text-[#1c3643] dark:text-white">{building.name || `Building ${index + 1}`}</span>
             <span className="text-xs text-gray-500 ml-2">({building.areas.length} area{building.areas.length !== 1 ? 's' : ''})</span>
           </div>
         </div>
@@ -669,7 +669,7 @@ function BuildingCard({
             />
           </div>
           {building.yearBuilt && (
-            <span className="px-2 py-0.5 text-xs font-medium bg-white rounded border text-gray-600">Built {building.yearBuilt}</span>
+            <span className="px-2 py-0.5 text-xs font-medium bg-white dark:bg-slate-700 rounded border dark:border-slate-600 text-gray-600 dark:text-slate-400">Built {building.yearBuilt}</span>
           )}
           <span className="text-sm font-bold text-[#0da1c7]">{buildingSF.toLocaleString()} SF</span>
           {canRemove && (
@@ -681,7 +681,7 @@ function BuildingCard({
       </div>
 
       {isExpanded && (
-        <div className="px-4 py-4 bg-white border-t border-gray-200 space-y-4">
+        <div className="px-4 py-4 bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 space-y-4">
           {/* Basic Information */}
           <CollapsibleSection title="Basic Information" icon={<Building2 className="w-4 h-4" />} isExpanded={expandedSections.has('basic')} onToggle={() => toggleSection('basic')}>
             <div className="grid grid-cols-4 gap-3 items-end">
@@ -708,7 +708,7 @@ function BuildingCard({
             <div className="space-y-4">
               {/* M&S Construction Class - ButtonSelector with icons */}
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700">
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300">
                   M&S Construction Class
                 </label>
                 <div className="flex flex-wrap gap-2">
@@ -752,29 +752,29 @@ function BuildingCard({
                     <Ruler className="w-4 h-4 text-[#0da1c7]" />
                     Building Heights
                   </h5>
-                  <span className="text-xs text-gray-500">Clear height is interior usable height</span>
+                  <span className="text-xs text-gray-500 dark:text-slate-400">Clear height is interior usable height</span>
                 </div>
 
                 <div className="grid grid-cols-3 gap-3">
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1.5">Eave Height</label>
                     <div className="flex items-center gap-2">
-                      <input type="text" inputMode="decimal" value={building.eaveHeight ?? ''} onChange={(e) => { const val = e.target.value.replace(/[^0-9.]/g, ''); onUpdate({ eaveHeight: val ? Number(val) : null }); }} placeholder="24" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white" />
-                      <span className="text-xs font-medium text-gray-500">ft</span>
+                      <input type="text" inputMode="decimal" value={building.eaveHeight ?? ''} onChange={(e) => { const val = e.target.value.replace(/[^0-9.]/g, ''); onUpdate({ eaveHeight: val ? Number(val) : null }); }} placeholder="24" className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-transparent bg-white dark:bg-slate-700 dark:text-white" />
+                      <span className="text-xs font-medium text-gray-500 dark:text-slate-400">ft</span>
                     </div>
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1.5">Clear Height *</label>
                     <div className="flex items-center gap-2">
-                      <input type="text" inputMode="decimal" value={building.clearHeight ?? ''} onChange={(e) => { const val = e.target.value.replace(/[^0-9.]/g, ''); onUpdate({ clearHeight: val ? Number(val) : null }); }} placeholder="22" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white" />
-                      <span className="text-xs font-medium text-gray-500">ft</span>
+                      <input type="text" inputMode="decimal" value={building.clearHeight ?? ''} onChange={(e) => { const val = e.target.value.replace(/[^0-9.]/g, ''); onUpdate({ clearHeight: val ? Number(val) : null }); }} placeholder="22" className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-transparent bg-white dark:bg-slate-700 dark:text-white" />
+                      <span className="text-xs font-medium text-gray-500 dark:text-slate-400">ft</span>
                     </div>
                   </div>
                   <div>
                     <label className="block text-xs font-medium text-gray-600 mb-1.5">Ridge Height</label>
                     <div className="flex items-center gap-2">
-                      <input type="text" inputMode="decimal" value={building.ridgeHeight ?? ''} onChange={(e) => { const val = e.target.value.replace(/[^0-9.]/g, ''); onUpdate({ ridgeHeight: val ? Number(val) : null }); }} placeholder="32" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white" />
-                      <span className="text-xs font-medium text-gray-500">ft</span>
+                      <input type="text" inputMode="decimal" value={building.ridgeHeight ?? ''} onChange={(e) => { const val = e.target.value.replace(/[^0-9.]/g, ''); onUpdate({ ridgeHeight: val ? Number(val) : null }); }} placeholder="32" className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-transparent bg-white dark:bg-slate-700 dark:text-white" />
+                      <span className="text-xs font-medium text-gray-500 dark:text-slate-400">ft</span>
                     </div>
                   </div>
                 </div>
@@ -801,7 +801,7 @@ function BuildingCard({
                   <div className="bg-white border border-gray-200 rounded-xl p-4">
                     <div className="flex items-center justify-between mb-3">
                       <div>
-                        <div className="text-sm font-semibold text-gray-800">Height Zones</div>
+                        <div className="text-sm font-semibold text-gray-800 dark:text-white">Height Zones</div>
                         <div className="text-xs text-gray-500 mt-0.5">Use zones when clear height differs across bays/areas.</div>
                       </div>
                       <button type="button" onClick={() => { const zones = building.heightZones || []; const newZone = { id: `zone-${Date.now()}`, label: `Zone ${zones.length + 1}`, clearHeight: null, eaveHeight: null, ridgeHeight: null }; onUpdate({ heightZones: [...zones, newZone] }); }} className="px-3 py-1.5 rounded-lg bg-white border border-gray-200 text-xs font-semibold text-gray-700 hover:bg-gray-50 transition-all">
@@ -811,8 +811,8 @@ function BuildingCard({
 
                     <div className="overflow-x-auto border border-gray-200 rounded-lg">
                       <table className="min-w-full text-sm">
-                        <thead className="bg-gray-50 border-b border-gray-200">
-                          <tr className="text-left text-xs font-semibold text-gray-600">
+                        <thead className="bg-gray-50 dark:bg-slate-700 border-b border-gray-200 dark:border-slate-600">
+                          <tr className="text-left text-xs font-semibold text-gray-600 dark:text-slate-400">
                             <th className="px-4 py-3 w-48">Zone</th>
                             <th className="px-4 py-3 w-32">Clear (ft) *</th>
                             <th className="px-4 py-3 w-32">Eave (ft)</th>
@@ -843,9 +843,9 @@ function BuildingCard({
                 {/* Quick Presets */}
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <label className="block text-xs font-medium text-gray-600">Quick Presets</label>
+                    <label className="block text-xs font-medium text-gray-600 dark:text-slate-400">Quick Presets</label>
                     {building.buildingConfiguration === 'variable' && (
-                      <span className="text-xs text-gray-500">{activeZoneIndex !== null ? `Applying to: ${(building.heightZones || [])[activeZoneIndex]?.label || 'Zone'}` : 'Click a zone row to select it first'}</span>
+                      <span className="text-xs text-gray-500 dark:text-slate-400">{activeZoneIndex !== null ? `Applying to: ${(building.heightZones || [])[activeZoneIndex]?.label || 'Zone'}` : 'Click a zone row to select it first'}</span>
                     )}
                   </div>
                   <div className="flex flex-wrap gap-2">
@@ -944,12 +944,12 @@ function CollapsibleSection({ title, icon, isExpanded, onToggle, children, actio
       <button type="button" onClick={onToggle} className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors">
         <div className="flex items-center gap-2">
           {isExpanded ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronRight className="w-4 h-4 text-gray-400" />}
-          <span className="text-[#1c3643]">{icon}</span>
-          <span className="text-sm font-semibold text-gray-800">{title}</span>
+          <span className="text-[#1c3643] dark:text-white">{icon}</span>
+          <span className="text-sm font-semibold text-gray-800 dark:text-white">{title}</span>
         </div>
         {action && <div onClick={(e) => e.stopPropagation()}>{action}</div>}
       </button>
-      {isExpanded && <div className="p-4 bg-white">{children}</div>}
+      {isExpanded && <div className="p-4 bg-white dark:bg-slate-800">{children}</div>}
     </div>
   );
 }
@@ -1016,34 +1016,34 @@ function AgeEconomicLifeSection({ building, actualAge, remainingLife, depreciati
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-4 gap-3">
-        <div><label className="block text-xs font-medium text-gray-600 mb-1.5">Actual Age</label><div className="flex items-center gap-2"><input type="text" value={actualAge !== null ? actualAge : ''} readOnly placeholder="Auto" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-700" /><span className="text-xs text-gray-500">yrs</span></div></div>
-        <div><label className="block text-xs font-medium text-gray-600 mb-1.5">Effective Age</label><div className="flex items-center gap-2"><input type="number" value={building.effectiveAge ?? ''} onChange={(e) => onUpdate({ effectiveAge: e.target.value ? Number(e.target.value) : undefined })} placeholder={actualAge !== null ? `Suggest: ${actualAge}` : 'Enter'} min="0" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent" /><span className="text-xs text-gray-500">yrs</span></div></div>
-        <div><label className="block text-xs font-medium text-gray-600 mb-1.5">Total Economic Life</label><div className="flex items-center gap-2"><input type="number" value={building.totalEconomicLife ?? 50} onChange={(e) => onUpdate({ totalEconomicLife: e.target.value ? Number(e.target.value) : 50 })} min="1" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent" /><span className="text-xs text-gray-500">yrs</span></div></div>
-        <div><label className="block text-xs font-medium text-gray-600 mb-1.5">Remaining Life</label><div className="flex items-center gap-2"><input type="text" value={remainingLife !== null ? remainingLife : ''} readOnly placeholder="Auto" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm bg-gray-50 text-gray-700" /><span className="text-xs text-gray-500">yrs</span></div></div>
+        <div><label className="block text-xs font-medium text-gray-600 mb-1.5">Actual Age</label><div className="flex items-center gap-2"><input type="text" value={actualAge !== null ? actualAge : ''} readOnly placeholder="Auto" className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg text-sm bg-gray-50 dark:bg-slate-700 text-gray-700 dark:text-slate-300" /><span className="text-xs text-gray-500 dark:text-slate-400">yrs</span></div></div>
+        <div><label className="block text-xs font-medium text-gray-600 mb-1.5">Effective Age</label><div className="flex items-center gap-2"><input type="number" value={building.effectiveAge ?? ''} onChange={(e) => onUpdate({ effectiveAge: e.target.value ? Number(e.target.value) : undefined })} placeholder={actualAge !== null ? `Suggest: ${actualAge}` : 'Enter'} min="0" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent" /><span className="text-xs text-gray-500 dark:text-slate-400">yrs</span></div></div>
+        <div><label className="block text-xs font-medium text-gray-600 mb-1.5">Total Economic Life</label><div className="flex items-center gap-2"><input type="number" value={building.totalEconomicLife ?? 50} onChange={(e) => onUpdate({ totalEconomicLife: e.target.value ? Number(e.target.value) : 50 })} min="1" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent" /><span className="text-xs text-gray-500 dark:text-slate-400">yrs</span></div></div>
+        <div><label className="block text-xs font-medium text-gray-600 mb-1.5">Remaining Life</label><div className="flex items-center gap-2"><input type="text" value={remainingLife !== null ? remainingLife : ''} readOnly placeholder="Auto" className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg text-sm bg-gray-50 dark:bg-slate-700 text-gray-700 dark:text-slate-300" /><span className="text-xs text-gray-500 dark:text-slate-400">yrs</span></div></div>
       </div>
 
-      <div className="p-4 bg-white border-2 border-[#0da1c7]/20 rounded-xl">
+      <div className="p-4 bg-white dark:bg-slate-800 border-2 border-[#0da1c7]/20 rounded-xl">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-[#0da1c7]/10 flex items-center justify-center"><Calculator className="w-5 h-5 text-[#0da1c7]" /></div>
-            <div><p className="font-semibold text-gray-800">Physical Depreciation (Age-Life Method)</p><p className="text-xs text-gray-500">Effective Age / Total Economic Life</p></div>
+            <div><p className="font-semibold text-gray-800 dark:text-white">Physical Depreciation (Age-Life Method)</p><p className="text-xs text-gray-500 dark:text-slate-400">Effective Age / Total Economic Life</p></div>
           </div>
           <span className="text-2xl font-bold text-[#0da1c7]">{depreciation !== null ? `${depreciation}%` : '--'}</span>
         </div>
       </div>
 
       <button type="button" onClick={() => setShowCalculator(!showCalculator)} className="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 transition-colors">
-        <div className="flex items-center gap-2"><Calculator className="w-5 h-5 text-[#0da1c7]" /><span className="font-medium text-gray-700">Need help? Use the Effective Age Calculator</span></div>
+        <div className="flex items-center gap-2"><Calculator className="w-5 h-5 text-[#0da1c7]" /><span className="font-medium text-gray-700 dark:text-slate-300">Need help? Use the Effective Age Calculator</span></div>
         <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${showCalculator ? 'rotate-180' : ''}`} />
       </button>
 
       {showCalculator && (
-        <div className="mt-3 p-5 bg-white border border-gray-200 rounded-xl shadow-sm space-y-5">
-          <div><label className="block text-sm font-semibold text-gray-800 mb-2">1. Construction Quality - Sets Economic Life</label><div className="grid grid-cols-3 gap-3">{qualityOptions.map((opt) => (<button key={opt.value} type="button" onClick={() => setCalcQuality(opt.value)} className={`p-3 rounded-lg border-2 text-center transition-all ${calcQuality === opt.value ? 'border-[#0da1c7] bg-[#0da1c7]/10' : 'border-gray-200 hover:border-gray-300'}`}><span className="block font-medium text-gray-800">{opt.label}</span><span className="block text-xs text-gray-500">{opt.desc}</span></button>))}</div></div>
-          <div><label className="block text-sm font-semibold text-gray-800 mb-2">2. Current Condition - Adjusts Effective Age</label><div className="grid grid-cols-5 gap-2">{conditionOptions.map((opt) => (<button key={opt.value} type="button" onClick={() => setCalcCondition(opt.value)} className={`p-2 rounded-lg border-2 text-center transition-all ${calcCondition === opt.value ? 'border-[#0da1c7] bg-[#0da1c7]/10' : 'border-gray-200 hover:border-gray-300'}`}><span className="block font-medium text-sm text-gray-800">{opt.label}</span><span className={`block text-xs ${opt.color}`}>{formatAdjustment(opt.adjustment)}</span></button>))}</div></div>
-          <div><label className="block text-sm font-semibold text-gray-800 mb-2">3. Remodeling Impact - Further Adjustment</label><div className="grid grid-cols-4 gap-2">{remodelOptions.map((opt) => (<button key={opt.value} type="button" onClick={() => setCalcRemodel(opt.value)} className={`p-2 rounded-lg border-2 text-center transition-all ${calcRemodel === opt.value ? 'border-[#0da1c7] bg-[#0da1c7]/10' : 'border-gray-200 hover:border-gray-300'}`}><span className="block font-medium text-sm text-gray-800">{opt.label}</span><span className={`block text-xs ${opt.color}`}>{formatAdjustment(opt.adjustment)}</span></button>))}</div></div>
+        <div className="mt-3 p-5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl shadow-sm space-y-5">
+          <div><label className="block text-sm font-semibold text-gray-800 mb-2">1. Construction Quality - Sets Economic Life</label><div className="grid grid-cols-3 gap-3">{qualityOptions.map((opt) => (<button key={opt.value} type="button" onClick={() => setCalcQuality(opt.value)} className={`p-3 rounded-lg border-2 text-center transition-all ${calcQuality === opt.value ? 'border-[#0da1c7] bg-[#0da1c7]/10' : 'border-gray-200 hover:border-gray-300'}`}><span className="block font-medium text-gray-800 dark:text-white">{opt.label}</span><span className="block text-xs text-gray-500 dark:text-slate-400">{opt.desc}</span></button>))}</div></div>
+          <div><label className="block text-sm font-semibold text-gray-800 mb-2">2. Current Condition - Adjusts Effective Age</label><div className="grid grid-cols-5 gap-2">{conditionOptions.map((opt) => (<button key={opt.value} type="button" onClick={() => setCalcCondition(opt.value)} className={`p-2 rounded-lg border-2 text-center transition-all ${calcCondition === opt.value ? 'border-[#0da1c7] bg-[#0da1c7]/10' : 'border-gray-200 hover:border-gray-300'}`}><span className="block font-medium text-sm text-gray-800 dark:text-white">{opt.label}</span><span className={`block text-xs ${opt.color}`}>{formatAdjustment(opt.adjustment)}</span></button>))}</div></div>
+          <div><label className="block text-sm font-semibold text-gray-800 mb-2">3. Remodeling Impact - Further Adjustment</label><div className="grid grid-cols-4 gap-2">{remodelOptions.map((opt) => (<button key={opt.value} type="button" onClick={() => setCalcRemodel(opt.value)} className={`p-2 rounded-lg border-2 text-center transition-all ${calcRemodel === opt.value ? 'border-[#0da1c7] bg-[#0da1c7]/10' : 'border-gray-200 hover:border-gray-300'}`}><span className="block font-medium text-sm text-gray-800 dark:text-white">{opt.label}</span><span className={`block text-xs ${opt.color}`}>{formatAdjustment(opt.adjustment)}</span></button>))}</div></div>
           <div className="bg-[#0da1c7]/5 rounded-xl p-4 border border-[#0da1c7]/20">
-            <div className="grid grid-cols-3 gap-4 text-center"><div><p className="text-xs text-gray-500 uppercase mb-1">Economic Life</p><p className="text-xl font-bold text-gray-800">{calcEconomicLife !== null ? calcEconomicLife : '--'}</p><p className="text-xs text-gray-400">years</p></div><div><p className="text-xs text-gray-500 uppercase mb-1">Effective Age</p><p className="text-xl font-bold text-[#0da1c7]">{calcEffectiveAge !== null ? calcEffectiveAge : '--'}</p><p className="text-xs text-gray-400">years</p></div><div><p className="text-xs text-gray-500 uppercase mb-1">Depreciation</p><p className="text-xl font-bold text-gray-800">{calcDepreciation !== null ? `${calcDepreciation}%` : '--%'}</p></div></div>
+            <div className="grid grid-cols-3 gap-4 text-center"><div><p className="text-xs text-gray-500 uppercase mb-1">Economic Life</p><p className="text-xl font-bold text-gray-800 dark:text-white">{calcEconomicLife !== null ? calcEconomicLife : '--'}</p><p className="text-xs text-gray-400">years</p></div><div><p className="text-xs text-gray-500 uppercase mb-1">Effective Age</p><p className="text-xl font-bold text-[#0da1c7]">{calcEffectiveAge !== null ? calcEffectiveAge : '--'}</p><p className="text-xs text-gray-400">years</p></div><div><p className="text-xs text-gray-500 uppercase mb-1">Depreciation</p><p className="text-xl font-bold text-gray-800 dark:text-white">{calcDepreciation !== null ? `${calcDepreciation}%` : '--%'}</p></div></div>
             <button type="button" onClick={applyCalculatedValues} disabled={calcEconomicLife === null || calcEffectiveAge === null} className="mt-4 w-full py-2.5 bg-[#0da1c7] text-white rounded-lg font-medium hover:bg-[#0b8fb0] transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Apply These Values</button>
           </div>
         </div>

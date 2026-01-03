@@ -31,10 +31,10 @@ import { Loader2 } from 'lucide-react';
 // Loading fallback for lazy-loaded feature grids
 function GridLoader() {
   return (
-    <div className="flex-1 flex items-center justify-center bg-slate-50/50">
+    <div className="flex-1 flex items-center justify-center bg-slate-50/50 dark:bg-slate-800/50">
       <div className="flex flex-col items-center gap-3">
         <Loader2 className="w-8 h-8 text-[#0da1c7] animate-spin" />
-        <p className="text-sm text-slate-500">Loading analysis...</p>
+        <p className="text-sm text-slate-500 dark:text-slate-400">Loading analysis...</p>
       </div>
     </div>
   );
@@ -219,8 +219,8 @@ export default function AnalysisPage() {
   // Left Sidebar - Approach Navigation with subtle color coding
   const sidebar = (
     <div>
-      <h2 className="text-lg font-bold text-gray-900 mb-1">Valuation Analysis</h2>
-      <p className="text-sm text-gray-500 mb-2">
+      <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-1">Valuation Analysis</h2>
+      <p className="text-sm text-gray-500 dark:text-slate-400 mb-2">
         {activeScenario?.name || 'As Is'} Scenario
       </p>
       <p className="text-xs text-slate-400 mb-6">
@@ -240,7 +240,7 @@ export default function AnalysisPage() {
               className={`w-full text-left px-4 py-3 rounded-lg text-sm flex items-center gap-3 transition-all border-l-4 ${
                 isActive
                   ? `${config.bgClass} font-medium ${config.borderClass}`
-                  : 'text-gray-600 hover:bg-gray-100 border-l-transparent'
+                  : 'text-gray-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700 border-l-transparent'
               }`}
               style={isActive ? { color: config.color } : undefined}
             >
@@ -256,7 +256,7 @@ export default function AnalysisPage() {
         <div className={`text-xs font-semibold uppercase tracking-wide ${scenarioColors.activeText} mb-1`}>
           Active Scenario
         </div>
-        <div className="text-sm font-medium text-slate-800">
+        <div className="text-sm font-medium text-slate-800 dark:text-white">
           {activeScenario?.name || 'As Is'}
         </div>
         {activeScenario?.effectiveDate && (
@@ -273,7 +273,7 @@ export default function AnalysisPage() {
     <div className="space-y-4">
       {/* Header with approach and scenario context */}
       <div>
-        <h3 className="text-lg font-bold text-gray-900 flex items-center gap-2">
+        <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
           <span 
             className="w-3 h-3 rounded-full" 
             style={{ backgroundColor: currentApproach?.color || '#0da1c7' }}
@@ -293,7 +293,7 @@ export default function AnalysisPage() {
             <p className={`text-sm font-semibold ${scenarioColors.activeText} mb-1`}>
               Scenario Context
             </p>
-            <p className="text-xs text-slate-700">
+            <p className="text-xs text-slate-700 dark:text-slate-300">
               {guidance.context}
             </p>
           </div>
@@ -301,14 +301,14 @@ export default function AnalysisPage() {
       </div>
 
       {/* Key Assumptions */}
-      <div className="bg-slate-50 border border-slate-200 rounded-xl p-4">
+      <div className="bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-4">
         <div className="flex items-center gap-2 mb-3">
-          <CheckCircle2 className="text-green-600" size={16} />
-          <h4 className="text-sm font-semibold text-slate-800">Key Assumptions</h4>
+          <CheckCircle2 className="text-green-600 dark:text-green-400" size={16} />
+          <h4 className="text-sm font-semibold text-slate-800 dark:text-white">Key Assumptions</h4>
         </div>
         <ul className="space-y-2">
           {guidance.assumptions.map((assumption, i) => (
-            <li key={i} className="text-xs text-slate-600 flex items-start gap-2">
+            <li key={i} className="text-xs text-slate-600 dark:text-slate-400 flex items-start gap-2">
               <span className="w-1 h-1 rounded-full bg-green-400 mt-1.5 shrink-0" />
               {assumption}
             </li>
@@ -317,14 +317,14 @@ export default function AnalysisPage() {
       </div>
 
       {/* Common Pitfalls */}
-      <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+      <div className="bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-800 rounded-xl p-4">
         <div className="flex items-center gap-2 mb-3">
-          <AlertTriangle className="text-amber-600" size={16} />
-          <h4 className="text-sm font-semibold text-amber-900">Common Pitfalls</h4>
+          <AlertTriangle className="text-amber-600 dark:text-amber-400" size={16} />
+          <h4 className="text-sm font-semibold text-amber-900 dark:text-amber-200">Common Pitfalls</h4>
         </div>
         <ul className="space-y-2">
           {guidance.pitfalls.map((pitfall, i) => (
-            <li key={i} className="text-xs text-amber-800 flex items-start gap-2">
+            <li key={i} className="text-xs text-amber-800 dark:text-amber-300 flex items-start gap-2">
               <span className="w-1 h-1 rounded-full bg-amber-400 mt-1.5 shrink-0" />
               {pitfall}
             </li>
@@ -333,25 +333,25 @@ export default function AnalysisPage() {
       </div>
 
       {/* USPAP Requirements */}
-      <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+      <div className="bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-xl p-4">
         <div className="flex items-center gap-2 mb-2">
-          <BookOpen className="text-blue-600" size={16} />
-          <h4 className="text-sm font-semibold text-blue-900">USPAP</h4>
+          <BookOpen className="text-blue-600 dark:text-blue-400" size={16} />
+          <h4 className="text-sm font-semibold text-blue-900 dark:text-blue-200">USPAP</h4>
         </div>
-        <p className="text-xs text-blue-800">
+        <p className="text-xs text-blue-800 dark:text-blue-300">
           {guidance.uspap}
         </p>
       </div>
 
       {/* Tips */}
-      <div className="bg-green-50 border border-green-200 rounded-xl p-4">
+      <div className="bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-800 rounded-xl p-4">
         <div className="flex items-center gap-2 mb-3">
-          <Lightbulb className="text-green-600" size={16} />
-          <h4 className="text-sm font-semibold text-green-900">Tips</h4>
+          <Lightbulb className="text-green-600 dark:text-green-400" size={16} />
+          <h4 className="text-sm font-semibold text-green-900 dark:text-green-200">Tips</h4>
         </div>
         <ul className="space-y-2">
           {guidance.tips.map((tip, i) => (
-            <li key={i} className="text-xs text-green-800 flex items-start gap-2">
+            <li key={i} className="text-xs text-green-800 dark:text-green-300 flex items-start gap-2">
               <span className="w-1 h-1 rounded-full bg-green-400 mt-1.5 shrink-0" />
               {tip}
             </li>
@@ -378,7 +378,7 @@ export default function AnalysisPage() {
     <div className="space-y-4">
       {/* Scenario Header */}
       <div>
-        <h3 className="text-lg font-bold text-gray-900">Values Overview</h3>
+        <h3 className="text-lg font-bold text-gray-900 dark:text-white">Values Overview</h3>
         <p className="text-xs text-slate-500 mt-1">
           {activeScenario?.name} Scenario
         </p>
@@ -400,8 +400,8 @@ export default function AnalysisPage() {
 
       {/* Scenario Comparison (if multiple scenarios) */}
       {state.scenarios.length > 1 && (
-        <div className="bg-violet-50 border border-violet-200 rounded-xl p-4">
-          <div className="text-xs font-semibold text-violet-900 mb-2">
+        <div className="bg-violet-50 dark:bg-violet-900/30 border border-violet-200 dark:border-violet-800 rounded-xl p-4">
+          <div className="text-xs font-semibold text-violet-900 dark:text-violet-200 mb-2">
             Scenario Comparison
           </div>
           {state.scenarios.map(scenario => {
@@ -414,9 +414,9 @@ export default function AnalysisPage() {
               >
                 <div className="flex items-center gap-2">
                   <span className={`w-2 h-2 rounded-full ${colors.dot}`} />
-                  <span className="text-xs text-slate-700">{scenario.name}</span>
+                  <span className="text-xs text-slate-700 dark:text-slate-300">{scenario.name}</span>
                 </div>
-                <span className="text-xs font-medium text-slate-800">
+                <span className="text-xs font-medium text-slate-800 dark:text-white">
                   {scenario.name === 'As Is' ? '$1,250,000' 
                     : scenario.name === 'As Completed' ? '$1,450,000'
                     : scenario.name === 'As Stabilized' ? '$1,380,000'
@@ -428,7 +428,7 @@ export default function AnalysisPage() {
         </div>
       )}
 
-      <div className="bg-slate-100 border border-slate-200 rounded-lg p-3 text-xs text-slate-600">
+      <div className="bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg p-3 text-xs text-slate-600 dark:text-slate-400">
         Hover over approach values to adjust weights. Values update automatically as you make changes.
       </div>
     </div>
@@ -453,25 +453,25 @@ export default function AnalysisPage() {
       {activeTab === 'sales' ? (
         <div className="absolute inset-0 flex flex-col">
           {/* Sales Comparison Header Bar */}
-          <div className="flex-shrink-0 bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between z-40 shadow-sm">
+          <div className="flex-shrink-0 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-3 flex items-center justify-between z-40 shadow-sm">
             <div className="flex items-center gap-4">
-              <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+              <h2 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
                 <span style={{ color: APPROACH_CONFIG.sales.color }}><ChartIcon className="w-5 h-5" /></span>
                 Sales Comparison Grid
               </h2>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
+              <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
                 {activeScenario?.name}
               </span>
             </div>
             <div className="flex items-center gap-4">
                {/* Analysis Mode Toggle */}
-               <div className="flex items-center bg-slate-100 rounded-lg p-1 border border-slate-200">
+               <div className="flex items-center bg-slate-100 dark:bg-slate-700 rounded-lg p-1 border border-slate-200 dark:border-slate-600">
                  <button 
                     onClick={() => setAnalysisMode('standard')}
                     className={`px-3 py-1.5 text-xs font-semibold rounded-md flex items-center gap-2 transition-all ${
                       analysisMode === 'standard' 
-                        ? 'bg-white text-slate-800 shadow-sm' 
-                        : 'text-slate-500 hover:text-slate-700'
+                        ? 'bg-white dark:bg-slate-600 text-slate-800 dark:text-white shadow-sm' 
+                        : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
                     }`}
                  >
                     <Layers className="w-3.5 h-3.5" />
@@ -482,7 +482,7 @@ export default function AnalysisPage() {
                     className={`px-3 py-1.5 text-xs font-semibold rounded-md flex items-center gap-2 transition-all ${
                       analysisMode === 'residual' 
                         ? 'bg-purple-600 text-white shadow-sm' 
-                        : 'text-slate-500 hover:text-slate-700'
+                        : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
                     }`}
                  >
                     <Building className="w-3.5 h-3.5" />
@@ -507,13 +507,13 @@ export default function AnalysisPage() {
       ) : activeTab === 'income' ? (
         <div className="absolute inset-0 flex flex-col">
           {/* Income Approach Header Bar */}
-          <div className="flex-shrink-0 bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between z-40 shadow-sm">
+          <div className="flex-shrink-0 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-3 flex items-center justify-between z-40 shadow-sm">
             <div className="flex items-center gap-4">
-              <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+              <h2 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
                 <Wallet className="w-5 h-5" style={{ color: APPROACH_CONFIG.income.color }} />
                 Income Approach Analysis
               </h2>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
+              <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
                 {activeScenario?.name}
               </span>
             </div>
@@ -538,13 +538,13 @@ export default function AnalysisPage() {
       ) : activeTab === 'cost' ? (
         <div className="absolute inset-0 flex flex-col">
           {/* Cost Approach Header Bar */}
-          <div className="flex-shrink-0 bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between z-40 shadow-sm">
+          <div className="flex-shrink-0 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-3 flex items-center justify-between z-40 shadow-sm">
             <div className="flex items-center gap-4">
-              <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+              <h2 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
                 <HardHat className="w-5 h-5" style={{ color: APPROACH_CONFIG.cost.color }} />
                 Cost Approach Analysis
               </h2>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
+              <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
                 {activeScenario?.name}
               </span>
             </div>
@@ -560,13 +560,13 @@ export default function AnalysisPage() {
       ) : activeTab === 'land' ? (
         <div className="absolute inset-0 flex flex-col">
           {/* Land Valuation Header Bar */}
-          <div className="flex-shrink-0 bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between z-40 shadow-sm">
+          <div className="flex-shrink-0 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-3 flex items-center justify-between z-40 shadow-sm">
             <div className="flex items-center gap-4">
-              <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+              <h2 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
                 <span style={{ color: APPROACH_CONFIG.land.color }}><LandIcon className="w-5 h-5" /></span>
                 Land Valuation - Sales Comparison
               </h2>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
+              <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
                 {activeScenario?.name}
               </span>
             </div>
@@ -582,13 +582,13 @@ export default function AnalysisPage() {
       ) : activeTab === 'multifamily' ? (
         <div className="absolute inset-0 flex flex-col">
           {/* Multi-Family Header Bar */}
-          <div className="flex-shrink-0 bg-white border-b border-slate-200 px-6 py-3 flex items-center justify-between z-40 shadow-sm">
+          <div className="flex-shrink-0 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 px-6 py-3 flex items-center justify-between z-40 shadow-sm">
             <div className="flex items-center gap-4">
-              <h2 className="text-lg font-bold text-slate-800 flex items-center gap-2">
+              <h2 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
                 <span style={{ color: APPROACH_CONFIG.multifamily.color }}><ResidentialIcon className="w-5 h-5" /></span>
                 Multi-Family Rental Analysis
               </h2>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
+              <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
                 {activeScenario?.name}
               </span>
             </div>
@@ -629,16 +629,16 @@ export default function AnalysisPage() {
 
 function PlaceholderContent({ title, scenarioName }: { title: string; scenarioName?: string }) {
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+    <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3">
+        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3">
           {title}
         </h3>
-        <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 text-slate-600">
+        <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
           {scenarioName}
         </span>
       </div>
-      <p className="text-sm text-gray-600">
+      <p className="text-sm text-gray-600 dark:text-slate-400">
         Analysis content for {title} ({scenarioName} scenario) will be displayed here...
       </p>
     </div>

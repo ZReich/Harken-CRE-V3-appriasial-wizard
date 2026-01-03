@@ -141,7 +141,7 @@ export const BuildingSelector: React.FC<BuildingSelectorProps> = ({
           </div>
           <div>
             <h3 className="text-sm font-bold text-slate-900">Select Buildings to Cost</h3>
-            <p className="text-xs text-slate-500">
+            <p className="text-xs text-slate-500 dark:text-slate-400">
               Choose which buildings to include in this scenario's cost calculation
             </p>
           </div>
@@ -191,7 +191,7 @@ export const BuildingSelector: React.FC<BuildingSelectorProps> = ({
               className={`relative p-4 border-2 rounded-xl text-left transition-all hover:shadow-md ${
                 isSelected
                   ? 'border-[#0da1c7] bg-[#0da1c7]/5'
-                  : 'border-gray-200 bg-white hover:border-gray-300'
+                  : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-gray-300 dark:hover:border-slate-500'
               }`}
             >
               {/* Checkbox Indicator */}
@@ -222,20 +222,20 @@ export const BuildingSelector: React.FC<BuildingSelectorProps> = ({
                     {building.name || `Building ${allBuildings.indexOf(info) + 1}`}
                   </h4>
                   
-                  <div className="flex items-center gap-2 mt-1 text-xs text-slate-500">
+                  <div className="flex items-center gap-2 mt-1 text-xs text-slate-500 dark:text-slate-400">
                     <MapPin size={10} />
                     <span className="truncate">{info.parcelNumber}</span>
                   </div>
                   
                   <div className="flex items-center gap-3 mt-2">
                     {info.totalSF > 0 && (
-                      <div className="flex items-center gap-1 text-xs text-slate-600">
+                      <div className="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-300">
                         <Ruler size={10} />
                         <span>{info.totalSF.toLocaleString()} SF</span>
                       </div>
                     )}
                     {building.yearBuilt && (
-                      <div className="flex items-center gap-1 text-xs text-slate-600">
+                      <div className="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-300">
                         <Calendar size={10} />
                         <span>{building.yearBuilt}</span>
                       </div>

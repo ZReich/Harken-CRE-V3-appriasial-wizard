@@ -100,7 +100,7 @@ function SWOTQuadrant({
         <div className={`p-1.5 rounded-lg ${color}`}>
           {icon}
         </div>
-        <span className="font-semibold text-slate-800">{title}</span>
+        <span className="font-semibold text-slate-800 dark:text-white">{title}</span>
         <span className="ml-auto text-sm text-slate-500 flex items-center gap-1.5">
           {aiSuggestedCount > 0 && (
             <span className="flex items-center gap-1 text-xs text-[#0da1c7] bg-[#0da1c7]/10 px-1.5 py-0.5 rounded">
@@ -122,7 +122,7 @@ function SWOTQuadrant({
           items.map((item, index) => (
             <div 
               key={index}
-              className="flex items-start gap-2 bg-white/60 rounded-lg px-3 py-2 group"
+              className="flex items-start gap-2 bg-white/60 dark:bg-slate-700/60 rounded-lg px-3 py-2 group"
             >
               <span className="text-sm text-slate-700 flex-1">{item}</span>
               {!readOnly && (
@@ -148,14 +148,14 @@ function SWOTQuadrant({
               onChange={(e) => setInputValue(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder={placeholder}
-              className="flex-1 px-3 py-2 text-sm bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+              className="flex-1 px-3 py-2 text-sm bg-white dark:bg-slate-700 dark:text-white border border-slate-200 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-transparent"
             />
             <button
               onClick={handleAdd}
               disabled={!inputValue.trim()}
-              className="p-2 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="p-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
-              <Plus className="w-4 h-4 text-slate-600" />
+              <Plus className="w-4 h-4 text-slate-600 dark:text-slate-400" />
             </button>
           </div>
         </div>
@@ -183,7 +183,7 @@ function ImpactScoreGauge({ score }: { score: number }) {
         ) : (
           <Minus className="w-4 h-4 text-slate-400" />
         )}
-        <span className="text-sm font-medium text-slate-600">Impact Score</span>
+        <span className="text-sm font-medium text-slate-600 dark:text-slate-400">Impact Score</span>
       </div>
       <div className="flex-1 h-2 bg-slate-200 rounded-full overflow-hidden">
         <div 
@@ -223,7 +223,7 @@ function DataCompletenessIndicator({ completeness }: { completeness: number }) {
   return (
     <div className="flex items-center gap-2 text-sm">
       <Database className="w-4 h-4 text-slate-400" />
-      <span className="text-slate-500">Data Completeness:</span>
+      <span className="text-slate-500 dark:text-slate-400">Data Completeness:</span>
       <span className={`px-2 py-0.5 rounded font-medium ${getColor()}`}>
         {completeness}% ({getLabel()})
       </span>
@@ -324,8 +324,8 @@ export function SWOTAnalysis({
       {!readOnly && onGenerateSuggestions && (
         <div className="flex items-center justify-between">
           <div>
-            <h3 className="font-bold text-slate-800">SWOT Analysis</h3>
-            <p className="text-sm text-slate-500">Analyze strengths, weaknesses, opportunities, and threats</p>
+            <h3 className="font-bold text-slate-800 dark:text-white">SWOT Analysis</h3>
+            <p className="text-sm text-slate-500 dark:text-slate-400">Analyze strengths, weaknesses, opportunities, and threats</p>
           </div>
           <button
             onClick={handleGenerateSuggestions}
@@ -360,7 +360,7 @@ export function SWOTAnalysis({
             {totalAiItems > 0 && (
               <div className="flex items-center gap-2 text-sm">
                 <Sparkles className="w-4 h-4 text-[#0da1c7]" />
-                <span className="text-slate-500">AI-generated:</span>
+                <span className="text-slate-500 dark:text-slate-400">AI-generated:</span>
                 <span className="text-[#0da1c7] font-medium">
                   {totalAiItems} of {totalItems} items
                 </span>
@@ -471,11 +471,11 @@ export function SWOTAnalysis({
           aiInstructions="Write a comprehensive SWOT analysis summary in the voice of a 30-year veteran commercial real estate appraiser. Synthesize all identified strengths, weaknesses, opportunities, and threats into a cohesive 2-3 paragraph narrative. Assess the subject property's overall competitive position in the market. Discuss how the strengths can be leveraged, how weaknesses might be mitigated, what opportunities exist for value enhancement, and what threats require monitoring. Conclude with an overall assessment of the property's market positioning and investment outlook. Use professional appraisal terminology and maintain an objective, analytical tone appropriate for a formal appraisal report."
         />
       ) : (
-        <div className="bg-white rounded-xl border border-slate-200 p-4">
+        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4">
           <label className="block text-sm font-medium text-slate-700 mb-2">
             Summary / Analysis Notes
           </label>
-          <p className="text-sm text-slate-600">
+          <p className="text-sm text-slate-600 dark:text-slate-400">
             {data.summary || 'No summary provided.'}
           </p>
         </div>

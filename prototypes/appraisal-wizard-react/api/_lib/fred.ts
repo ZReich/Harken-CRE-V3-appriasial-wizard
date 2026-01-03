@@ -68,10 +68,6 @@ export async function getFredData(
   url.searchParams.set('sort_order', 'desc');
   url.searchParams.set('limit', String(observationCount));
   
-  // Use realtime_end=9999-12-31 to get the latest vintage of data
-  // This ensures we get the most recent data releases
-  url.searchParams.set('realtime_end', '9999-12-31');
-  
   if (frequency) {
     url.searchParams.set('frequency', frequency);
   }

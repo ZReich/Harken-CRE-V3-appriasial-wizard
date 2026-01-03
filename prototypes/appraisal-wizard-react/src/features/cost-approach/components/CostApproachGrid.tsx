@@ -83,7 +83,7 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
     <div className="flex flex-col h-full bg-slate-50 overflow-hidden font-sans">
       
       {/* Page Header & View Toggle */}
-      <div className="sticky top-0 z-40 bg-white/95 backdrop-blur border-b border-slate-200 px-8 py-4 flex items-center justify-between gap-4 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
+      <div className="sticky top-0 z-40 bg-white/95 dark:bg-slate-800/95 backdrop-blur border-b border-slate-200 dark:border-slate-700 px-8 py-4 flex items-center justify-between gap-4 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
         <div className="flex items-center gap-4">
           <div>
             <h1 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
@@ -95,16 +95,16 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
           </div>
         </div>
         
-        <div className="bg-slate-100/80 p-1 rounded-lg border border-slate-200 flex items-center">
+        <div className="bg-slate-100/80 dark:bg-slate-700/80 p-1 rounded-lg border border-slate-200 dark:border-slate-600 flex items-center">
           <button 
             onClick={() => setActiveSection('all')}
-            className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-2 ${activeSection === 'all' ? 'bg-white text-slate-900 shadow-sm ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-900'}`}
+            className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-2 ${activeSection === 'all' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm ring-1 ring-black/5 dark:ring-white/10' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}
           >
             <Layers size={14} /> Full View
           </button>
           <button 
             onClick={() => setActiveSection('improvements')}
-            className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-2 ${activeSection === 'improvements' ? 'bg-white text-slate-900 shadow-sm ring-1 ring-black/5' : 'text-slate-500 hover:text-slate-900'}`}
+            className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-2 ${activeSection === 'improvements' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm ring-1 ring-black/5 dark:ring-white/10' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}
           >
             <Building2 size={14}/> Improvements Only
           </button>
@@ -121,7 +121,7 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
               <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                 <div className="flex items-center gap-2 mb-3 px-2">
                   <span className="text-sm font-bold text-slate-900 uppercase tracking-wider">Land Value</span>
-                  <div className="h-px bg-slate-200 flex-1"></div>
+                  <div className="h-px bg-slate-200 dark:bg-slate-700 flex-1"></div>
                 </div>
                 
                 <div className={`rounded-xl border-2 p-6 ${
@@ -183,17 +183,17 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
 
                   {hasLandValue && (
                     <div className="mt-4 pt-4 border-t border-lime-200/50 flex items-center justify-between">
-                      <div className="flex items-center gap-4 text-sm text-slate-600">
+                      <div className="flex items-center gap-4 text-sm text-slate-600 dark:text-slate-400">
                         <span>
-                          <strong className="text-slate-800">5</strong> Land Sales Analyzed
+                          <strong className="text-slate-800 dark:text-white">5</strong> Land Sales Analyzed
                         </span>
                         <span className="text-slate-300">|</span>
                         <span>
-                          <strong className="text-slate-800">$12,961</strong> per acre
+                          <strong className="text-slate-800 dark:text-white">$12,961</strong> per acre
                         </span>
                         <span className="text-slate-300">|</span>
                         <span>
-                          <strong className="text-slate-800">63.27</strong> acres
+                          <strong className="text-slate-800 dark:text-white">63.27</strong> acres
                         </span>
                       </div>
                       <button
@@ -210,7 +210,7 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
                 {/* Info callout */}
                 <div className="mt-3 flex items-start gap-2 px-2">
                   <AlertCircle size={14} className="text-slate-400 mt-0.5 shrink-0" />
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
                     Land is valued separately using Sales Comparison Approach. The concluded value automatically 
                     flows into this Cost Approach. This ensures consistency across all approaches requiring land value.
                   </p>
@@ -219,7 +219,7 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
             )}
 
             {/* Building Selector Section */}
-            <section className="bg-white rounded-xl shadow-sm border border-slate-200 p-6 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-50">
+            <section className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-50">
               <BuildingSelector
                 scenarioId={currentScenarioId}
                 selectedBuildingIds={selectedBuildingIds}
@@ -228,7 +228,7 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
             </section>
 
             {/* Improvement Valuation Section */}
-            <section className="bg-white rounded-xl shadow-sm border border-slate-200 p-8 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75">
+            <section className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-8 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75">
               <ImprovementValuation 
                 onValueChange={setImprovementsValue} 
                 scenario={scenario}

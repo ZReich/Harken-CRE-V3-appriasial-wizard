@@ -52,7 +52,7 @@ export function ProgressCircle({
     if (isActive) {
       return 'bg-[#0da1c7] text-white';
     }
-    return 'bg-gray-200 text-gray-400';
+    return 'bg-gray-200 dark:bg-slate-600 text-gray-400 dark:text-slate-300';
   };
 
   return (

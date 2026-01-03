@@ -24,12 +24,16 @@ const DOCUMENT_TYPES = [
   { id: 'survey', label: 'Survey / Plat Map', keywords: ['survey', 'alta', 'plat', 'boundary', 'legal description'] },
   { id: 'tax_return', label: 'Tax Return', keywords: ['schedule e', 'form 1040', 'k-1', 'tax return', 'irs'] },
   { id: 'financial_statement', label: 'Financial Statement', keywords: ['income statement', 'operating statement', 'p&l', 'profit and loss', 'proforma'] },
+  // NEW document types
+  { id: 'deed', label: 'Property Deed', keywords: ['grant deed', 'warranty deed', 'quitclaim', 'grantor', 'grantee', 'conveyance'] },
+  { id: 'flood_map', label: 'FEMA Flood Map', keywords: ['flood zone', 'fema', 'firm', 'flood determination', 'special flood hazard', 'base flood elevation'] },
+  { id: 'tax_assessment', label: 'Property Tax Assessment', keywords: ['assessed value', 'property tax', 'mill levy', 'tax bill', 'land value', 'improvement value'] },
 ];
 
 const CLASSIFICATION_PROMPT = `You are an expert real estate appraiser assistant. Analyze the following document text and classify it into one of these categories:
 
 DOCUMENT TYPES:
-1. cadastral - County records, property cards, assessor data, parcel information, tax cards
+1. cadastral - County records, property cards, assessor data, parcel information, county assessor records
 2. engagement - Engagement letters, proposals, letters of intent (LOI), scope of work documents
 3. sale - Purchase agreements, sale contracts, closing statements, HUD-1, settlement statements
 4. lease - Lease agreements, rental contracts, lease amendments, tenant agreements
@@ -37,6 +41,9 @@ DOCUMENT TYPES:
 6. survey - ALTA surveys, plat maps, boundary surveys, legal description documents
 7. tax_return - Tax returns, Schedule E, K-1 forms, IRS documents related to property income
 8. financial_statement - Operating statements, P&L statements, proforma, income/expense reports
+9. deed - Property deeds including grant deeds, warranty deeds, quitclaim deeds, conveyance documents with grantor/grantee information
+10. flood_map - FEMA flood zone determinations, flood maps, FIRM panels, flood insurance rate maps, flood certificates
+11. tax_assessment - Property tax assessment records, annual tax bills, property tax statements with assessed values, mill levies, land/improvement values
 
 Based on the document content, determine the most likely document type.
 

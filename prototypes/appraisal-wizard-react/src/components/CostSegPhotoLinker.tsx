@@ -152,7 +152,7 @@ export const CostSegPhotoLinker: React.FC<CostSegPhotoLinkerProps> = ({
                   className="w-12 h-12 object-cover rounded flex-shrink-0"
                 />
                 <div className="flex-1 min-w-0">
-                  <div className="text-xs font-medium text-gray-900 truncate">
+                  <div className="text-xs font-medium text-gray-900 dark:text-white truncate">
                     {photo.caption || `Photo ${photo.id.slice(0, 8)}`}
                   </div>
                   <div className="text-xs text-gray-600 truncate">{match.reason}</div>
@@ -216,19 +216,19 @@ export const CostSegPhotoLinker: React.FC<CostSegPhotoLinkerProps> = ({
 
       {/* Photo Selection Grid */}
       {isSelectingPhoto && (
-        <div className="border border-gray-300 rounded-lg p-3 bg-gray-50">
+        <div className="border border-gray-300 dark:border-slate-600 rounded-lg p-3 bg-gray-50 dark:bg-slate-700">
           <div className="flex items-center justify-between mb-3">
-            <h4 className="text-sm font-semibold text-gray-900">Select Photo</h4>
+            <h4 className="text-sm font-semibold text-gray-900 dark:text-white">Select Photo</h4>
             <button
               onClick={() => setIsSelectingPhoto(false)}
-              className="text-gray-400 hover:text-gray-600"
+              className="text-gray-400 hover:text-gray-600 dark:hover:text-slate-300"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
 
           {availableUnlinkedPhotos.length === 0 ? (
-            <div className="text-center py-6 text-sm text-gray-500">
+            <div className="text-center py-6 text-sm text-gray-500 dark:text-slate-400">
               <AlertCircle className="w-6 h-6 mx-auto mb-2 text-gray-400" />
               No photos available to link
             </div>

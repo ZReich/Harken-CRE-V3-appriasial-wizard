@@ -35,7 +35,7 @@ export default function ProgressStepper({ currentPhase, pages }: ProgressStepper
   }, [pages, getSectionCompletion]);
 
   return (
-    <div className="bg-white border-b border-gray-200 py-4 px-8">
+    <div className="bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 py-4 px-8">
       <div className="flex items-center justify-center gap-2">
         {sectionData.map((section, idx) => {
           const { phaseNum, trackProgress, completion, path, label } = section;
@@ -60,9 +60,9 @@ export default function ProgressStepper({ currentPhase, pages }: ProgressStepper
                 <button
                   type="button"
                   className={`text-xs font-medium cursor-pointer hover:opacity-80 transition-opacity bg-transparent border-none ${
-                    isActive ? 'text-gray-900 font-semibold' : 
-                    isCompleted ? 'text-green-600 font-medium' : 
-                    hasVisited ? 'text-gray-600' : 'text-gray-400'
+                    isActive ? 'text-gray-900 dark:text-white font-semibold' : 
+                    isCompleted ? 'text-green-600 dark:text-green-400 font-medium' : 
+                    hasVisited ? 'text-gray-600 dark:text-slate-400' : 'text-gray-400 dark:text-slate-500'
                   }`}
                   onClick={() => handleNavigate(path)}
                 >
@@ -74,7 +74,7 @@ export default function ProgressStepper({ currentPhase, pages }: ProgressStepper
               {idx < pages.length - 1 && (
                 <div
                   className={`w-16 h-0.5 transition-colors duration-300 ${
-                    isCompleted ? 'bg-[#0da1c7]' : 'bg-gray-200'
+                    isCompleted ? 'bg-[#0da1c7] dark:bg-cyan-400' : 'bg-gray-200 dark:bg-slate-600'
                   }`}
                 />
               )}

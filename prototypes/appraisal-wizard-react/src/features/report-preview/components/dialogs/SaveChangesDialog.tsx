@@ -27,14 +27,14 @@ export const SaveChangesDialog: React.FC<SaveChangesDialogProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-lg overflow-hidden">
+      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-lg overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
               <AlertCircle className="text-amber-600" size={20} />
             </div>
-            <h2 className="text-lg font-semibold text-slate-800">Save Changes</h2>
+            <h2 className="text-lg font-semibold text-slate-800 dark:text-white">Save Changes</h2>
           </div>
           <button
             onClick={onClose}
@@ -79,7 +79,7 @@ export const SaveChangesDialog: React.FC<SaveChangesDialogProps> = ({
                 <Save className="text-sky-600" size={20} />
               </div>
               <div>
-                <h4 className="font-medium text-slate-800">Update Report</h4>
+                <h4 className="font-medium text-slate-800 dark:text-white">Update Report</h4>
                 <p className="text-sm text-slate-500 mt-0.5">
                   Apply these changes to the appraisal record. This updates the source data for future edits.
                 </p>
@@ -94,7 +94,7 @@ export const SaveChangesDialog: React.FC<SaveChangesDialogProps> = ({
                 <Copy className="text-slate-600" size={20} />
               </div>
               <div>
-                <h4 className="font-medium text-slate-800">Save as Copy</h4>
+                <h4 className="font-medium text-slate-800 dark:text-white">Save as Copy</h4>
                 <p className="text-sm text-slate-500 mt-0.5">
                   Create a new version with these changes. Original report remains unchanged.
                 </p>
@@ -109,7 +109,7 @@ export const SaveChangesDialog: React.FC<SaveChangesDialogProps> = ({
                 <RotateCcw className="text-red-600" size={20} />
               </div>
               <div>
-                <h4 className="font-medium text-slate-800">Discard Changes</h4>
+                <h4 className="font-medium text-slate-800 dark:text-white">Discard Changes</h4>
                 <p className="text-sm text-slate-500 mt-0.5">
                   Revert to the original data from the wizard.
                 </p>

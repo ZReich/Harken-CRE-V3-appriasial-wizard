@@ -196,7 +196,7 @@ export const ReconciliationSummary: React.FC<ReconciliationSummaryProps> = ({
 
   if (approachValues.length === 0) {
     return (
-      <div className={`bg-white border border-slate-200 rounded-xl p-4 ${className}`}>
+      <div className={`bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl p-4 ${className}`}>
         <h4 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">
           Reconciliation Summary
         </h4>
@@ -208,7 +208,7 @@ export const ReconciliationSummary: React.FC<ReconciliationSummaryProps> = ({
   }
 
   return (
-    <div className={`bg-white border border-slate-200 rounded-xl overflow-hidden ${className}`}>
+    <div className={`bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden ${className}`}>
       {/* Header */}
       <div className="px-4 py-3 bg-slate-50 border-b border-slate-200">
         <h4 className="text-xs font-bold text-slate-500 uppercase tracking-widest">
@@ -239,14 +239,14 @@ export const ReconciliationSummary: React.FC<ReconciliationSummaryProps> = ({
               {/* Value and weight row */}
               <div className="flex items-baseline justify-between">
                 <div>
-                  <span className="text-lg font-black text-slate-800">
+                  <span className="text-lg font-black text-slate-800 dark:text-white">
                     {formatCurrency(av.value)}
                   </span>
                   <span className="text-sm font-bold text-slate-400 ml-2">
                     {weight}%
                   </span>
                 </div>
-                <div className="text-xs font-medium text-slate-500">
+                <div className="text-xs font-medium text-slate-500 dark:text-slate-400">
                   ${Math.round(perUnit).toLocaleString()}{unitLabel}
                 </div>
               </div>
@@ -264,7 +264,7 @@ export const ReconciliationSummary: React.FC<ReconciliationSummaryProps> = ({
                   step="5"
                   value={weight}
                   onChange={(e) => updateWeight(av.approach, parseInt(e.target.value))}
-                  className="w-full h-2 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#0da1c7]"
+                  className="w-full h-2 bg-slate-200 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-[#0da1c7]"
                 />
               </div>
             </div>

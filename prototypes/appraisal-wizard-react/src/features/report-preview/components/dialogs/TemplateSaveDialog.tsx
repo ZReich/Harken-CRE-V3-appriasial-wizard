@@ -110,14 +110,14 @@ export const TemplateSaveDialog: React.FC<TemplateSaveDialogProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-white rounded-xl shadow-2xl w-full max-w-xl max-h-[90vh] overflow-hidden">
+      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-xl max-h-[90vh] overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
               <Star className="text-amber-600" size={20} />
             </div>
-            <h2 className="text-lg font-semibold text-slate-800">Save as Template</h2>
+            <h2 className="text-lg font-semibold text-slate-800 dark:text-white">Save as Template</h2>
           </div>
           <button
             onClick={onClose}

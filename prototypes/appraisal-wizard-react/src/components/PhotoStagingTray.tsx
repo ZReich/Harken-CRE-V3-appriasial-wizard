@@ -1,10 +1,10 @@
 import { useState, useMemo } from 'react';
-import { 
-  ChevronDown, 
-  Check, 
-  X, 
-  GripVertical, 
-  Sparkles, 
+import {
+  ChevronDown,
+  Check,
+  X,
+  GripVertical,
+  Sparkles,
   AlertCircle,
   Loader2,
   Trash2,
@@ -30,21 +30,21 @@ interface PhotoStagingTrayProps {
 
 // Confidence color coding
 function getConfidenceColor(confidence: number): { bg: string; text: string; border: string; glow: string } {
-  if (confidence >= 80) return { 
-    bg: 'bg-gradient-to-br from-green-100 to-emerald-100', 
-    text: 'text-green-700', 
+  if (confidence >= 80) return {
+    bg: 'bg-gradient-to-br from-green-100 to-emerald-100',
+    text: 'text-green-700',
     border: 'border-green-300',
     glow: 'shadow-green-200'
   };
-  if (confidence >= 50) return { 
-    bg: 'bg-gradient-to-br from-amber-100 to-yellow-100', 
-    text: 'text-amber-700', 
+  if (confidence >= 50) return {
+    bg: 'bg-gradient-to-br from-amber-100 to-yellow-100',
+    text: 'text-amber-700',
     border: 'border-amber-300',
     glow: 'shadow-amber-200'
   };
-  return { 
-    bg: 'bg-gradient-to-br from-red-100 to-orange-100', 
-    text: 'text-red-700', 
+  return {
+    bg: 'bg-gradient-to-br from-red-100 to-orange-100',
+    text: 'text-red-700',
     border: 'border-red-300',
     glow: 'shadow-red-200'
   };
@@ -67,11 +67,11 @@ function StagingPhotoCard({
   onDragEnd?: () => void;
 }) {
   const [isDragging, setIsDragging] = useState(false);
-  
+
   const topSuggestion = photo.suggestions?.[0];
   const isSlotAvailable = topSuggestion && !usedSlots.has(topSuggestion.slotId);
   const confidenceColors = topSuggestion ? getConfidenceColor(topSuggestion.confidence) : null;
-  
+
   const handleDragStart = (e: React.DragEvent) => {
     setIsDragging(true);
     e.dataTransfer.setData('application/json', JSON.stringify({
@@ -100,7 +100,7 @@ function StagingPhotoCard({
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       className={`
-        relative bg-white border-2 rounded-xl overflow-hidden
+        relative bg-white dark:bg-slate-800 border-2 rounded-xl overflow-hidden
         transition-all duration-200 cursor-grab active:cursor-grabbing
         ${isDragging ? 'opacity-50 scale-95' : 'hover:shadow-lg hover:scale-[1.02]'}
         ${photo.status === 'error' ? 'border-red-300' : 'border-gray-200'}
@@ -114,7 +114,7 @@ function StagingPhotoCard({
           alt={photo.filename}
           className="w-full h-full object-cover"
         />
-        
+
         {/* Status Overlay */}
         {photo.status === 'classifying' && (
           <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent flex items-center justify-center">
@@ -127,12 +127,12 @@ function StagingPhotoCard({
             </div>
           </div>
         )}
-        
+
         {/* Drag Handle */}
         <div className="absolute top-1.5 left-1.5 p-1.5 bg-black/40 backdrop-blur-sm rounded-lg text-white opacity-0 group-hover:opacity-100 hover:opacity-100 transition-opacity">
           <GripVertical className="w-3.5 h-3.5" />
         </div>
-        
+
         {/* Remove Button */}
         <button
           onClick={onRemove}
@@ -146,10 +146,10 @@ function StagingPhotoCard({
           <div className={`
             absolute bottom-1.5 left-1.5 right-1.5 px-2 py-1 rounded-lg
             backdrop-blur-sm flex items-center justify-between
-            ${topSuggestion.confidence >= 80 
-              ? 'bg-green-500/90 text-white' 
-              : topSuggestion.confidence >= 50 
-                ? 'bg-amber-500/90 text-white' 
+            ${topSuggestion.confidence >= 80
+              ? 'bg-green-500/90 text-white'
+              : topSuggestion.confidence >= 50
+                ? 'bg-amber-500/90 text-white'
                 : 'bg-gray-800/80 text-white'
             }
           `}>
@@ -162,7 +162,7 @@ function StagingPhotoCard({
       {/* Info & Actions */}
       <div className="p-2.5 space-y-2">
         {/* Filename */}
-        <p className="text-xs font-medium text-gray-700 truncate" title={photo.filename}>
+        <p className="text-xs font-medium text-gray-700 dark:text-slate-300 truncate" title={photo.filename}>
           {photo.filename}
         </p>
 
@@ -180,7 +180,7 @@ function StagingPhotoCard({
               <AlertCircle className="w-3.5 h-3.5" />
               <span>Classification failed</span>
             </div>
-            
+
             {/* Manual assignment picker for failed classifications */}
             <VisualSlotPicker
               value={undefined}
@@ -230,11 +230,11 @@ function StagingPhotoCard({
 }
 
 // Section to display detected building components from classified photos
-function DetectedComponentsSection({ 
+function DetectedComponentsSection({
   classifiedPhotos,
   onAcceptComponent,
   existingComponentTypeIds,
-}: { 
+}: {
   classifiedPhotos: StagingPhoto[];
   onAcceptComponent?: (component: DetectedBuildingComponent) => void;
   existingComponentTypeIds?: Set<string>;
@@ -243,7 +243,7 @@ function DetectedComponentsSection({
   const allDetectedComponents = useMemo(() => {
     const components: DetectedBuildingComponent[] = [];
     const seenIds = new Set<string>();
-    
+
     for (const photo of classifiedPhotos) {
       if (photo.detectedComponents) {
         for (const component of photo.detectedComponents) {
@@ -255,15 +255,15 @@ function DetectedComponentsSection({
         }
       }
     }
-    
+
     return components;
   }, [classifiedPhotos]);
-  
+
   // Don't render if no components detected
   if (allDetectedComponents.length === 0) {
     return null;
   }
-  
+
   return (
     <div className="mt-4">
       <PhotoComponentSuggestions
@@ -290,7 +290,7 @@ export default function PhotoStagingTray({
   const { getStagingPhotos, removeStagingPhoto, clearStagingPhotos } = useWizard();
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isAcceptingAll, setIsAcceptingAll] = useState(false);
-  
+
   const stagingPhotos = getStagingPhotos();
   const unassignedPhotos = stagingPhotos.filter(p => !p.assignedSlot);
   const classifiedPhotos = unassignedPhotos.filter(p => p.status === 'classified');
@@ -327,26 +327,27 @@ export default function PhotoStagingTray({
   return (
     <div className={`
       relative overflow-hidden rounded-2xl
-      bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50
-      border-2 border-amber-200/50
-      shadow-xl shadow-amber-200/20
+      bg-gradient-to-br from-cyan-50 via-teal-50 to-blue-50
+      dark:from-slate-800 dark:via-slate-800/80 dark:to-slate-900
+      border-2 border-cyan-200/50 dark:border-slate-700
+      shadow-xl shadow-cyan-200/20 dark:shadow-black/20
       ${className}
     `}>
       {/* Decorative Background */}
       <div className="absolute inset-0 opacity-30 pointer-events-none">
-        <div className="absolute -top-24 -right-24 w-48 h-48 bg-gradient-to-br from-amber-300 to-orange-300 rounded-full blur-3xl" />
-        <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-gradient-to-br from-yellow-300 to-amber-300 rounded-full blur-3xl" />
+        <div className="absolute -top-24 -right-24 w-48 h-48 bg-gradient-to-br from-cyan-300 to-teal-300 rounded-full blur-3xl" />
+        <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-gradient-to-br from-blue-300 to-cyan-300 rounded-full blur-3xl" />
       </div>
 
       {/* Header */}
       <div
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="relative flex items-center justify-between px-5 py-4 cursor-pointer hover:bg-white/30 transition-colors"
+        className="relative flex items-center justify-between px-5 py-4 cursor-pointer hover:bg-white/30 dark:hover:bg-slate-700/30 transition-colors"
       >
         <div className="flex items-center gap-4">
           {/* Count Badge */}
           <div className="relative">
-            <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 text-white shadow-lg shadow-amber-400/30">
+            <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-400 to-teal-600 text-white shadow-lg shadow-cyan-400/30">
               <span className="text-lg font-black">{unassignedPhotos.length}</span>
             </div>
             {processingPhotos.length > 0 && (
@@ -357,8 +358,8 @@ export default function PhotoStagingTray({
           </div>
 
           <div>
-            <h3 className="font-bold text-lg text-amber-900">Photos Ready to Assign</h3>
-            <p className="text-sm text-amber-700">
+            <h3 className="font-bold text-lg text-cyan-900 dark:text-cyan-400">Photos Ready to Assign</h3>
+            <p className="text-sm text-cyan-700 dark:text-cyan-500/80">
               {processingPhotos.length > 0
                 ? `${processingPhotos.length} analyzing with AI...`
                 : `${classifiedPhotos.length} classified - use dropdown or drag to assign`}
@@ -399,20 +400,20 @@ export default function PhotoStagingTray({
                   e.stopPropagation();
                   clearStagingPhotos();
                 }}
-                className="flex items-center gap-2 px-4 py-2.5 bg-white/80 hover:bg-white text-gray-600 text-sm font-medium rounded-xl border border-gray-200 transition-all hover:shadow-md"
+                className="flex items-center gap-2 px-4 py-2.5 bg-white/80 dark:bg-slate-700/80 hover:bg-white dark:hover:bg-slate-700 text-gray-600 dark:text-slate-300 text-sm font-medium rounded-xl border border-gray-200 dark:border-slate-600 transition-all hover:shadow-md"
               >
                 <Trash2 className="w-4 h-4" />
                 Clear All
               </button>
             </>
           )}
-          
+
           {/* Collapse Toggle */}
           <div className={`
-            p-2 rounded-lg bg-white/50 transition-transform duration-300
+            p-2 rounded-lg bg-white/50 dark:bg-slate-700/50 transition-transform duration-300
             ${isCollapsed ? '' : 'rotate-180'}
           `}>
-            <ChevronDown className="w-5 h-5 text-amber-700" />
+            <ChevronDown className="w-5 h-5 text-cyan-700 dark:text-cyan-400" />
           </div>
         </div>
       </div>
@@ -421,14 +422,14 @@ export default function PhotoStagingTray({
       {!isCollapsed && (
         <div className="relative px-5 pb-5">
           {/* Helper Text - At top for visibility */}
-          <div className="mb-4 p-3 bg-white/60 backdrop-blur-sm rounded-xl border border-amber-200/50">
+          <div className="mb-4 p-3 bg-white/60 dark:bg-slate-700/40 backdrop-blur-sm rounded-xl border border-cyan-200/50 dark:border-slate-600/50">
             <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
+              <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-400 to-teal-600 flex items-center justify-center">
                 <Sparkles className="w-4 h-4 text-white" />
               </div>
               <div>
-                <p className="text-sm font-medium text-amber-900">Three ways to assign photos:</p>
-                <ul className="mt-1 text-xs text-amber-700 space-y-0.5">
+                <p className="text-sm font-medium text-cyan-900 dark:text-cyan-400">Three ways to assign photos:</p>
+                <ul className="mt-1 text-xs text-cyan-700 dark:text-cyan-500 space-y-0.5">
                   <li><strong>1. Accept All</strong> - Use AI suggestions for all photos at once</li>
                   <li><strong>2. Visual Picker</strong> - Click dropdown to see all slots in a beautiful grid</li>
                   <li><strong>3. Drag & Drop</strong> - Drag photos to slots (panel appears when dragging)</li>
@@ -456,9 +457,9 @@ export default function PhotoStagingTray({
               </div>
             ))}
           </div>
-          
+
           {/* Detected Building Components Section */}
-          <DetectedComponentsSection 
+          <DetectedComponentsSection
             classifiedPhotos={classifiedPhotos}
             onAcceptComponent={onAcceptDetectedComponent}
             existingComponentTypeIds={existingComponentTypeIds}

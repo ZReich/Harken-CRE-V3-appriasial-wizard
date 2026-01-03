@@ -29,12 +29,12 @@ export function SidebarTab({
   // Compute styles based on state
   const containerClasses = useMemo(() => {
     const base = 'w-full text-left px-4 py-3 rounded-lg text-sm transition-all duration-200';
-    
+
     if (isActive) {
       return `${base} bg-opacity-10 font-medium`;
     }
-    
-    return `${base} text-gray-600 hover:bg-gray-50`;
+
+    return `${base} text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800`;
   }, [isActive]);
 
   const containerStyle = useMemo(() => {
@@ -55,7 +55,7 @@ export function SidebarTab({
         <div className="relative flex-shrink-0">
           <Icon className="w-5 h-5" />
           {showProgress && isComplete && (
-            <div 
+            <div
               className="absolute -top-1 -right-1 w-3.5 h-3.5 rounded-full flex items-center justify-center bg-green-500 animate-scale-in"
             >
               <svg className="w-2 h-2 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -70,25 +70,23 @@ export function SidebarTab({
           <div className="flex items-center justify-between gap-2">
             <span className="truncate">{label}</span>
             {showProgress && (
-              <span 
-                className={`text-xs tabular-nums flex-shrink-0 ${
-                  isComplete ? 'text-green-600 font-medium' : 
-                  hasProgress ? 'text-gray-500' : 'text-gray-400'
-                }`}
+              <span
+                className={`text-xs tabular-nums flex-shrink-0 ${isComplete ? 'text-green-600 dark:text-green-400 font-medium' :
+                    hasProgress ? 'text-gray-500 dark:text-slate-300' : 'text-gray-400 dark:text-slate-400'
+                  }`}
               >
                 {completion}%
               </span>
             )}
           </div>
-          
+
           {/* Progress bar */}
           {showProgress && (
-            <div className="h-1 bg-gray-200 rounded-full mt-1.5 overflow-hidden">
-              <div 
-                className={`h-full rounded-full transition-all duration-500 ease-out ${
-                  isComplete ? 'bg-green-500' : ''
-                }`}
-                style={{ 
+            <div className="h-1 bg-gray-200 dark:bg-slate-700 rounded-full mt-1.5 overflow-hidden">
+              <div
+                className={`h-full rounded-full transition-all duration-500 ease-out ${isComplete ? 'bg-green-500' : ''
+                  }`}
+                style={{
                   width: `${completion}%`,
                   backgroundColor: isComplete ? undefined : accentColor,
                 }}

@@ -12,7 +12,7 @@ import WizardGuidancePanel from '../components/WizardGuidancePanel';
 import DemographicsPanel from '../components/DemographicsPanel';
 import { useWizard } from '../context/WizardContext';
 import { DocumentSourceIndicator, getDocumentSourceInputClasses } from '../components/DocumentSourceIndicator';
-import { FieldSuggestion } from '../components/FieldSuggestion';
+import { MultiValueSuggestion } from '../components/MultiValueSuggestion';
 import type { SiteImprovement, PhotoData } from '../types';
 import { fetchTrafficData, type TrafficDataEntry as TrafficServiceEntry } from '../services/trafficService';
 import { fetchBuildingPermits, type BuildingPermitEntry as PermitServiceEntry } from '../services/permitsService';
@@ -25,7 +25,7 @@ import {
   PhotoIcon,
   DocumentIcon,
 } from '../components/icons';
-import { 
+import {
   Upload, X, FileText, CheckCircle, Image, MapPin, Building2, FileCheck, Camera, Eye, ChevronDown,
   Home, Sofa, Trees, Route, Landmark, FileSignature, Handshake, File, BarChart3, Map, Receipt, Wallet, Folder,
   Sparkles, Loader2, Info, Droplets, Zap, AlertTriangle, Check
@@ -152,7 +152,7 @@ export default function SubjectDataPage() {
   // Auto-populate city/county from address entered in Setup phase
   const [cityCounty, setCityCounty] = useState(() => {
     const addr = wizardState.subjectData?.address;
-    
+
     // Helper to clean up potentially corrupted city/county values
     const cleanValue = (value: string | undefined): string => {
       if (!value) return '';
@@ -162,20 +162,20 @@ export default function SubjectDataPage() {
       const uniqueParts = [...new Set(parts)];
       return uniqueParts.join(', ');
     };
-    
+
     const rawCity = addr?.city || '';
     const rawCounty = addr?.county || '';
-    
+
     // Clean both values first
     const cleanedCity = cleanValue(rawCity);
     const cleanedCounty = cleanValue(rawCounty);
-    
+
     // If we already have a comma-separated string in city, it might be "City, County" already
     // In that case, use it as-is (after cleaning)
     if (cleanedCity.includes(',')) {
       return cleanedCity;
     }
-    
+
     // Otherwise, build it from separate city and county
     if (cleanedCity && cleanedCounty) {
       return `${cleanedCity}, ${cleanedCounty}`;
@@ -190,7 +190,7 @@ export default function SubjectDataPage() {
   const [neighborhoodBoundaries, setNeighborhoodBoundaries] = useState(() => wizardState.subjectData?.neighborhoodBoundaries || '');
   const [neighborhoodCharacteristics, setNeighborhoodCharacteristics] = useState(() => wizardState.subjectData?.neighborhoodCharacteristics || '');
   const [specificLocation, setSpecificLocation] = useState(() => wizardState.subjectData?.specificLocation || '');
-  
+
   // AI Draft All state for Location & Area
   const [isDraftingAllLocation, setIsDraftingAllLocation] = useState(false);
 
@@ -215,25 +215,25 @@ export default function SubjectDataPage() {
   // Calls the real OpenAI API to generate professional appraisal text
   const handleDraftAllLocation = useCallback(async () => {
     setIsDraftingAllLocation(true);
-    
+
     try {
       // Generate all 4 sections using the AI API with specific prompts
       // Area Description
       const areaDescriptionDraft = await generateDraft('area_description', aiContext);
       setAreaDescription(areaDescriptionDraft);
-      
+
       // Neighborhood Boundaries (uses dedicated neighborhood_boundaries prompt)
       const neighborhoodBoundariesDraft = await generateDraft('neighborhood_boundaries', aiContext);
       setNeighborhoodBoundaries(neighborhoodBoundariesDraft);
-      
+
       // Neighborhood Characteristics (uses dedicated neighborhood_characteristics prompt)
       const neighborhoodCharacteristicsDraft = await generateDraft('neighborhood_characteristics', aiContext);
       setNeighborhoodCharacteristics(neighborhoodCharacteristicsDraft);
-      
+
       // Specific Location (uses dedicated specific_location prompt)
       const specificLocationDraft = await generateDraft('specific_location', aiContext);
       setSpecificLocation(specificLocationDraft);
-      
+
     } catch (error) {
       console.error('Error generating AI drafts:', error);
       // Show error to user
@@ -270,7 +270,7 @@ export default function SubjectDataPage() {
   const [naturalGasNotes, setNaturalGasNotes] = useState('');
   const [telecom, setTelecom] = useState('');
   const [telecomNotes, setTelecomNotes] = useState('');
-  
+
   // Storm Drainage & Fire Protection state
   const [stormDrainage, setStormDrainage] = useState('');
   const [stormDrainageNotes, setStormDrainageNotes] = useState('');
@@ -285,10 +285,12 @@ export default function SubjectDataPage() {
   const [isLookingUpFloodZone, setIsLookingUpFloodZone] = useState(false);
   const [floodZoneLookupError, setFloodZoneLookupError] = useState<string | null>(null);
 
-  // Site Description Narrative
-  const [siteDescriptionNarrative, setSiteDescriptionNarrative] = useState('');
+  // Site Description Narrative - initialize from WizardContext
+  const [siteDescriptionNarrative, setSiteDescriptionNarrative] = useState(() =>
+    wizardState.subjectData?.siteDescriptionNarrative || ''
+  );
   const [isDraftingSiteDescription, setIsDraftingSiteDescription] = useState(false);
-  
+
   // Property Boundaries - initialize from WizardContext
   const [northBoundary, setNorthBoundary] = useState(() => wizardState.subjectData?.northBoundary || '');
   const [southBoundary, setSouthBoundary] = useState(() => wizardState.subjectData?.southBoundary || '');
@@ -301,26 +303,26 @@ export default function SubjectDataPage() {
   const [trafficNotes, setTrafficNotes] = useState('');
   const [isRefreshingTraffic, setIsRefreshingTraffic] = useState(false);
   const [trafficDataSource, setTrafficDataSource] = useState<'mdot' | 'cotality' | 'manual' | 'mock' | null>(null);
-  
+
   // Building Permits state (types defined at module level)
   const [permits, setPermits] = useState<BuildingPermitEntry[]>([]);
   const [selectedPermitType, setSelectedPermitType] = useState('all');
   const [permitNotes, setPermitNotes] = useState('');
   const [isRefreshingPermits, setIsRefreshingPermits] = useState(false);
   const [permitsDataSource, setPermitsDataSource] = useState<'county' | 'cotality' | 'manual' | 'mock' | null>(null);
-  
+
   // Coordinates from wizard state
   const latitude = wizardState.subjectData?.coordinates?.latitude;
   const longitude = wizardState.subjectData?.coordinates?.longitude;
   const propertyState = wizardState.subjectData?.address?.state;
-  
+
   // Refresh traffic data from API
   const handleRefreshTraffic = useCallback(async () => {
     if (!latitude || !longitude) {
       console.log('[Traffic] No coordinates available');
       return;
     }
-    
+
     setIsRefreshingTraffic(true);
     try {
       const result = await fetchTrafficData(latitude, longitude, propertyState);
@@ -346,7 +348,7 @@ export default function SubjectDataPage() {
       setIsRefreshingTraffic(false);
     }
   }, [latitude, longitude, propertyState]);
-  
+
   // Refresh permits data from API
   const handleRefreshPermits = useCallback(async () => {
     const address = wizardState.subjectData?.address;
@@ -354,7 +356,7 @@ export default function SubjectDataPage() {
       console.log('[Permits] No address available');
       return;
     }
-    
+
     setIsRefreshingPermits(true);
     try {
       const result = await fetchBuildingPermits({
@@ -398,7 +400,7 @@ export default function SubjectDataPage() {
   const [totalAssessed, setTotalAssessed] = useState('');
   const [millLevy, setMillLevy] = useState('');
   const [taxDataAutoFilled, setTaxDataAutoFilled] = useState(false);
-  
+
   // Auto-populate tax fields from cadastralData when available
   useEffect(() => {
     const cadastral = wizardState.subjectData?.cadastralData;
@@ -419,7 +421,7 @@ export default function SubjectDataPage() {
       setTaxDataAutoFilled(true);
     }
   }, [wizardState.subjectData?.cadastralData, taxDataAutoFilled, assessedLand, assessedImprovements, totalAssessed]);
-  
+
   // Sale history from WizardContext (centralized)
   const lastSaleDate = wizardState.subjectData?.lastSaleDate || '';
   const lastSalePrice = wizardState.subjectData?.lastSalePrice || '';
@@ -473,12 +475,12 @@ export default function SubjectDataPage() {
       westBoundary,
     });
   }, [areaDescription, neighborhoodBoundaries, neighborhoodCharacteristics, specificLocation,
-      acres, squareFeet, shape, frontage, topography, environmental, easements,
-      zoningClass, zoningDescription, zoningConformance,
-      waterSource, sewerType, electricProvider, naturalGas, telecom,
-      femaZone, femaMapPanel, femaMapDate, floodInsuranceRequired,
-      siteDescriptionNarrative, northBoundary, southBoundary, eastBoundary, westBoundary,
-      setSubjectData, wizardState.subjectData?.address]);
+    acres, squareFeet, shape, frontage, topography, environmental, easements,
+    zoningClass, zoningDescription, zoningConformance,
+    waterSource, sewerType, electricProvider, naturalGas, telecom,
+    femaZone, femaMapPanel, femaMapDate, floodInsuranceRequired,
+    siteDescriptionNarrative, northBoundary, southBoundary, eastBoundary, westBoundary,
+    setSubjectData, wizardState.subjectData?.address]);
 
   // Photos state with metadata support
   const [photos, setPhotos] = useState<Record<string, PhotoData | null>>({});
@@ -489,7 +491,7 @@ export default function SubjectDataPage() {
     const license = wizardState.subjectData?.inspectorLicense || '';
     return name ? (license ? `${name}, ${license}` : name) : '';
   }, [wizardState.subjectData?.inspectorName, wizardState.subjectData?.inspectorLicense]);
-  
+
   const defaultTakenDate = wizardState.subjectData?.inspectionDate || '';
 
   // Exhibits state
@@ -512,15 +514,15 @@ export default function SubjectDataPage() {
 
   const handlePhotoUpload = (slotId: string, file: File) => {
     const preview = URL.createObjectURL(file);
-    setPhotos(prev => ({ 
-      ...prev, 
-      [slotId]: { 
-        file, 
+    setPhotos(prev => ({
+      ...prev,
+      [slotId]: {
+        file,
         preview,
         caption: '',
         takenBy: defaultTakenBy,
         takenDate: defaultTakenDate,
-      } 
+      }
     }));
   };
 
@@ -558,7 +560,7 @@ export default function SubjectDataPage() {
         sortOrder: index,
         url: photo!.preview,
       }));
-    
+
     setReportPhotos({
       assignments,
       coverPhotoId: wizardState.coverPhoto?.id ?? null,
@@ -607,8 +609,8 @@ export default function SubjectDataPage() {
 
   const sidebar = (
     <div>
-      <h2 className="text-lg font-bold text-gray-900 mb-1">Subject Property</h2>
-      <p className="text-sm text-gray-500 mb-6">
+      <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-1">Subject Property</h2>
+      <p className="text-sm text-gray-500 dark:text-slate-400 mb-6">
         {wizardState.propertyType ? `${wizardState.propertyType} • ${wizardState.propertySubtype || 'General'}` : 'Commercial • Industrial'}
       </p>
       <nav className="space-y-1">
@@ -780,7 +782,7 @@ export default function SubjectDataPage() {
             latitude={wizardState.subjectData?.coordinates?.latitude}
             longitude={wizardState.subjectData?.coordinates?.longitude}
             cadastralData={wizardState.subjectData?.cadastralData}
-            subjectAddress={wizardState.subjectData?.address ? 
+            subjectAddress={wizardState.subjectData?.address ?
               `${wizardState.subjectData.address.street}, ${wizardState.subjectData.address.city}, ${wizardState.subjectData.address.state} ${wizardState.subjectData.address.zip}` : undefined}
             propertyBoundaryCoordinates={wizardState.subjectData?.propertyBoundaryCoordinates}
             onPropertyBoundaryChange={(coords) => setSubjectData({ propertyBoundaryCoordinates: coords })}
@@ -807,7 +809,7 @@ export default function SubjectDataPage() {
             permitsDataSource={permitsDataSource}
           />
         ) : activeTab === 'demographics' ? (
-          <DemographicsContent 
+          <DemographicsContent
             latitude={wizardState.subjectData?.coordinates?.latitude}
             longitude={wizardState.subjectData?.coordinates?.longitude}
           />
@@ -895,7 +897,7 @@ function LocationContent({
       {/* Page Header with AI Draft All Button */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold text-[#1c3643]">Location & Area Analysis</h2>
+          <h2 className="text-xl font-bold text-[#1c3643] dark:text-white">Location & Area Analysis</h2>
           <p className="text-sm text-gray-500 mt-1">Describe the regional, neighborhood, and specific location context</p>
         </div>
         <button
@@ -918,14 +920,14 @@ function LocationContent({
       </div>
 
       {/* General Area Analysis */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
+      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           General Area Analysis
         </h3>
         <div className="space-y-4">
           {/* City/County - Auto-populated from Setup */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
               City/County <span className="text-red-500">*</span>
             </label>
             {cityCounty ? (
@@ -945,7 +947,7 @@ function LocationContent({
                 value={cityCounty}
                 onChange={(e) => setCityCounty(e.target.value)}
                 placeholder="Enter city and county (e.g., Billings, Yellowstone County)"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white dark:bg-slate-700 dark:text-white"
               />
             )}
           </div>
@@ -964,8 +966,8 @@ function LocationContent({
       </div>
 
       {/* Neighborhood Analysis */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
+      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           Neighborhood Analysis
         </h3>
         <div className="space-y-4">
@@ -995,8 +997,8 @@ function LocationContent({
       </div>
 
       {/* Location Description */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
+      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           Location Description
         </h3>
         <EnhancedTextArea
@@ -1027,7 +1029,7 @@ interface DemographicsProps {
 function DemographicsContent({ latitude, longitude }: DemographicsProps) {
   const { setDemographicsData } = useWizard();
   const hasCoordinates = latitude !== undefined && longitude !== undefined;
-  
+
   const handleDataLoaded = (data: import('../types/api').RadiusDemographics[]) => {
     // Save demographics data to wizard state for report generation
     setDemographicsData({
@@ -1036,24 +1038,24 @@ function DemographicsContent({ latitude, longitude }: DemographicsProps) {
       dataPullDate: new Date().toISOString(),
     });
   };
-  
+
   return (
     <div className="space-y-6">
       <div className="bg-gradient-to-r from-[#0da1c7]/5 to-transparent border border-[#0da1c7]/20 rounded-xl p-4 mb-6">
         <div className="flex items-start gap-3">
           <Info className="w-5 h-5 text-[#0da1c7] flex-shrink-0 mt-0.5" />
           <div>
-            <h4 className="font-medium text-slate-800">Neighborhood Demographics</h4>
+            <h4 className="font-medium text-slate-800 dark:text-white">Neighborhood Demographics</h4>
             <p className="text-sm text-slate-600">
-              View demographic data for the 1, 3, and 5 mile radius rings around the subject property. 
+              View demographic data for the 1, 3, and 5 mile radius rings around the subject property.
               This data is automatically fetched from the US Census Bureau.
             </p>
           </div>
         </div>
       </div>
-      
+
       {hasCoordinates ? (
-        <DemographicsPanel 
+        <DemographicsPanel
           latitude={latitude}
           longitude={longitude}
           onDataLoaded={handleDataLoaded}
@@ -1373,8 +1375,8 @@ function SiteContent({
   permitsDataSource,
 }: SiteProps) {
   // Get field source tracking and suggestion helpers from wizard context
-  const { hasFieldSource, hasPendingFieldSuggestion, acceptFieldSuggestion, rejectFieldSuggestion } = useWizard();
-  
+  const { hasFieldSource, hasPendingFieldSuggestion } = useWizard();
+
   // 1 acre = 43,560 square feet
   const SQFT_PER_ACRE = 43560;
 
@@ -1413,7 +1415,7 @@ function SiteContent({
 
     try {
       const result = await getFloodZone(subjectCoordinates.latitude, subjectCoordinates.longitude);
-      
+
       if (result) {
         // Map the zone to our FEMA zone options
         const zoneMap: Record<string, string> = {
@@ -1425,12 +1427,12 @@ function SiteContent({
           'V': 'zone_ve',
           'VE': 'zone_ve',
         };
-        
+
         const mappedZone = zoneMap[result.floodZone] || 'other';
         setFemaZone(mappedZone);
         setFemaMapPanel(result.panelNumber || '');
         setFloodInsuranceRequired(result.insuranceRequired ? 'required' : 'not_required');
-        
+
         // Add lookup result to notes
         const noteText = `FEMA Lookup: ${result.floodZone} - ${result.zoneDescription}`;
         const newNotes = floodZoneNotes ? `${floodZoneNotes}\n${noteText}` : noteText;
@@ -1448,7 +1450,7 @@ function SiteContent({
   const handleDraftSiteDescription = async () => {
     setIsDraftingSiteDescription(true);
     await new Promise(resolve => setTimeout(resolve, 1200));
-    
+
     const draftContent = `The subject site is located with ${frontage || 'adequate frontage'} providing good access. The site contains approximately ${acres ? `${acres} acres (${parseInt(squareFeet || '0').toLocaleString()} square feet)` : 'the stated land area'} with a ${shape || 'regular'} configuration.
 
 ${topography ? `The site topography is ${topography.replace(/_/g, ' ')}, ` : ''}${drainage ? `with ${drainage} drainage characteristics. ` : ''}The site is accessible from the adjacent roadway.
@@ -1468,13 +1470,13 @@ Overall, the site is well-suited for its current use and presents no significant
   return (
     <div className="space-y-6">
       {/* Site Size & Shape */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
+      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           Site Size & Shape
         </h3>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
               Total Acres <span className="text-red-500">*</span>
               <DocumentSourceIndicator fieldPath="subjectData.siteArea" inline />
             </label>
@@ -1483,39 +1485,37 @@ Overall, the site is well-suited for its current use and presents no significant
               value={acres}
               onChange={(e) => handleAcresChange(e.target.value)}
               step="0.001"
-              className={`w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent ${
-                getDocumentSourceInputClasses(hasFieldSource('subjectData.siteArea'))
-              }`}
+              className={`w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white dark:bg-slate-700 dark:text-white dark:placeholder-slate-400 ${getDocumentSourceInputClasses(hasFieldSource('subjectData.siteArea'))
+                }`}
               placeholder="0.000"
             />
             {hasPendingFieldSuggestion('subjectData.siteArea') && (
-              <FieldSuggestion
+              <MultiValueSuggestion
                 fieldPath="subjectData.siteArea"
+                fieldLabel="Total Acres"
                 onAccept={(value) => {
                   // Extract numeric value from strings like "2.45 acres" or "2.45 acres (106,722 SF)"
                   const numericMatch = value.match(/[\d.]+/);
                   const numericValue = numericMatch ? numericMatch[0] : value;
                   handleAcresChange(numericValue);
-                  acceptFieldSuggestion('subjectData.siteArea', numericValue);
                 }}
-                onReject={() => rejectFieldSuggestion('subjectData.siteArea')}
               />
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
               Total Square Feet <span className="text-gray-400 text-xs">(or enter to calculate acres)</span>
             </label>
             <input
               type="text"
               value={squareFeet ? parseInt(squareFeet).toLocaleString() : ''}
               onChange={(e) => handleSquareFeetChange(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white dark:bg-slate-700 dark:text-white dark:placeholder-slate-400"
               placeholder="0"
             />
           </div>
         </div>
-        
+
         <div className="mt-4">
           <ButtonSelector
             label="Shape"
@@ -1526,12 +1526,12 @@ Overall, the site is well-suited for its current use and presents no significant
         </div>
 
         <div className="mt-4">
-          <label className="block text-sm font-medium text-gray-700 mb-1">Frontage</label>
+          <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Frontage</label>
           <input
             type="text"
             value={frontage}
             onChange={(e) => setFrontage(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white dark:bg-slate-700 dark:text-white dark:placeholder-slate-400"
             placeholder="e.g., 475' along South 30th Street West"
           />
         </div>
@@ -1611,13 +1611,13 @@ Overall, the site is well-suited for its current use and presents no significant
       </div>
 
       {/* Zoning & Land Use */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
+      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           Zoning & Land Use
         </h3>
         <div className="space-y-4">
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 mb-1">
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
               Zoning Classification <span className="text-red-500">*</span>
               <DocumentSourceIndicator fieldPath="subjectData.zoningClass" inline />
             </label>
@@ -1625,19 +1625,17 @@ Overall, the site is well-suited for its current use and presents no significant
               type="text"
               value={zoningClass}
               onChange={(e) => setZoningClass(e.target.value)}
-              className={`w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent ${
-                getDocumentSourceInputClasses(hasFieldSource('subjectData.zoningClass'))
-              }`}
+              className={`w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white dark:bg-slate-700 dark:text-white dark:placeholder-slate-400 ${getDocumentSourceInputClasses(hasFieldSource('subjectData.zoningClass'))
+                }`}
               placeholder="e.g., I1 - Light Industrial"
             />
             {hasPendingFieldSuggestion('subjectData.zoningClass') && (
-              <FieldSuggestion
+              <MultiValueSuggestion
                 fieldPath="subjectData.zoningClass"
+                fieldLabel="Zoning Classification"
                 onAccept={(value) => {
                   setZoningClass(value);
-                  acceptFieldSuggestion('subjectData.zoningClass', value);
                 }}
-                onReject={() => rejectFieldSuggestion('subjectData.zoningClass')}
               />
             )}
           </div>
@@ -1663,8 +1661,8 @@ Overall, the site is well-suited for its current use and presents no significant
       </div>
 
       {/* Utilities & Services - Expanded */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4 flex items-center gap-2">
+      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4 flex items-center gap-2">
           <Zap className="w-5 h-5 text-[#0da1c7]" />
           Utilities & Services
         </h3>
@@ -1681,12 +1679,12 @@ Overall, the site is well-suited for its current use and presents no significant
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Water Provider</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Water Provider</label>
                 <input
                   type="text"
                   value={waterProvider}
                   onChange={(e) => setWaterProvider(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white dark:bg-slate-700 dark:text-white dark:placeholder-slate-400"
                   placeholder="e.g., City of Bozeman Water"
                 />
               </div>
@@ -1723,12 +1721,12 @@ Overall, the site is well-suited for its current use and presents no significant
           <div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Electric Provider</label>
+                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Electric Provider</label>
                 <input
                   type="text"
                   value={electricProvider}
                   onChange={(e) => setElectricProvider(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white dark:bg-slate-700 dark:text-white dark:placeholder-slate-400"
                   placeholder="e.g., NorthWestern Energy"
                 />
               </div>
@@ -1826,8 +1824,8 @@ Overall, the site is well-suited for its current use and presents no significant
       />
 
       {/* Additional Site Characteristics */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
+      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           Additional Site Characteristics
         </h3>
         <div className="space-y-4">
@@ -1869,9 +1867,9 @@ Overall, the site is well-suited for its current use and presents no significant
       </div>
 
       {/* Flood Zone - Enhanced */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
         <div className="flex items-center justify-between border-b-2 border-gray-200 pb-3 mb-4">
-          <h3 className="text-lg font-bold text-[#1c3643] flex items-center gap-2">
+          <h3 className="text-lg font-bold text-[#1c3643] dark:text-white flex items-center gap-2">
             <Droplets className="w-5 h-5 text-[#0da1c7]" />
             Flood Zone
           </h3>
@@ -1893,7 +1891,7 @@ Overall, the site is well-suited for its current use and presents no significant
             )}
           </button>
         </div>
-        
+
         {/* Error message */}
         {floodZoneLookupError && (
           <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-red-700 text-sm">
@@ -1901,15 +1899,15 @@ Overall, the site is well-suited for its current use and presents no significant
             {floodZoneLookupError}
           </div>
         )}
-        
+
         {/* No coordinates warning */}
         {!subjectCoordinates && (
-          <div className="mb-4 p-3 bg-amber-50 border border-amber-200 rounded-lg flex items-center gap-2 text-amber-700 text-sm">
+          <div className="mb-4 p-3 bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-700/50 rounded-lg flex items-center gap-2 text-amber-700 dark:text-amber-200 text-sm">
             <Info className="w-4 h-4" />
             Enter a property address in Setup to enable automatic flood zone lookup.
           </div>
         )}
-        
+
         <div className="space-y-4">
           <ButtonSelector
             label="FEMA Zone"
@@ -1920,22 +1918,22 @@ Overall, the site is well-suited for its current use and presents no significant
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Map Panel Number</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Map Panel Number</label>
               <input
                 type="text"
                 value={femaMapPanel}
                 onChange={(e) => setFemaMapPanel(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white dark:bg-slate-700 dark:text-white dark:placeholder-slate-400"
                 placeholder="e.g., 30111C2175E"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Map Effective Date</label>
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Map Effective Date</label>
               <input
                 type="date"
                 value={femaMapDate}
                 onChange={(e) => setFemaMapDate(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white dark:bg-slate-700 dark:text-white dark:[color-scheme:dark]"
               />
             </div>
           </div>
@@ -1959,9 +1957,9 @@ Overall, the site is well-suited for its current use and presents no significant
       </div>
 
       {/* Site Description Narrative - New Card */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
         <div className="flex items-center justify-between border-b-2 border-gray-200 pb-3 mb-4">
-          <h3 className="text-lg font-bold text-[#1c3643]">
+          <h3 className="text-lg font-bold text-[#1c3643] dark:text-white">
             Site Description Narrative
           </h3>
           <button
@@ -2055,25 +2053,25 @@ function TaxContent({
           <span>Tax assessment data auto-filled from property records</span>
         </div>
       )}
-      
+
       {/* Property Tax Information */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
+      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           Property Tax Information
         </h3>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Tax Year</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Tax Year</label>
             <select
               value={taxYear}
               onChange={(e) => setTaxYear(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white dark:bg-slate-700 dark:text-white"
             >
               {yearOptions.map(y => <option key={y} value={y}>{y}</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Current Year Tax Amount</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Current Year Tax Amount</label>
             <input
               type="text"
               value={taxAmount}
@@ -2083,7 +2081,7 @@ function TaxContent({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Assessed Value - Land</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Assessed Value - Land</label>
             <input
               type="text"
               value={assessedLand}
@@ -2093,7 +2091,7 @@ function TaxContent({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Assessed Value - Improvements</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Assessed Value - Improvements</label>
             <input
               type="text"
               value={assessedImprovements}
@@ -2103,7 +2101,7 @@ function TaxContent({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Total Assessed Value</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Total Assessed Value</label>
             <input
               type="text"
               value={totalAssessed}
@@ -2113,7 +2111,7 @@ function TaxContent({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Mill Levy / Tax Rate</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Mill Levy / Tax Rate</label>
             <input
               type="number"
               value={millLevy}
@@ -2127,13 +2125,13 @@ function TaxContent({
       </div>
 
       {/* Sale & Ownership History */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
+      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           Sale & Ownership History
         </h3>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Date of Last Sale</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Date of Last Sale</label>
             <input
               type="date"
               value={lastSaleDate}
@@ -2142,7 +2140,7 @@ function TaxContent({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Last Sale Price</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Last Sale Price</label>
             <input
               type="text"
               value={lastSalePrice}
@@ -2152,7 +2150,7 @@ function TaxContent({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Grantor (Seller)</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Grantor (Seller)</label>
             <input
               type="text"
               value={grantor}
@@ -2162,7 +2160,7 @@ function TaxContent({
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Grantee (Buyer)</label>
+            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Grantee (Buyer)</label>
             <input
               type="text"
               value={grantee}
@@ -2211,26 +2209,26 @@ interface PhotosProps {
   onPreviewPhoto?: (slotId: string, photo: PhotoData) => void;
 }
 
-function PhotosContent({ 
-  photos, 
-  onUpload, 
-  onRemove, 
+function PhotosContent({
+  photos,
+  onUpload,
+  onRemove,
   onUpdateMetadata,
   defaultTakenBy,
   defaultTakenDate,
   onPreviewPhoto,
 }: PhotosProps) {
-  const { 
+  const {
     state: wizardState,
-    getStagingPhotos, 
-    removeStagingPhoto, 
+    getStagingPhotos,
+    removeStagingPhoto,
     assignStagingPhoto,
     getUnassignedStagingPhotos,
     setCoverPhoto,
     removeCoverPhoto,
   } = useWizard();
-  
-  const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>(() => 
+
+  const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>(() =>
     Object.fromEntries(photoCategories.map(c => [c.id, true]))
   );
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -2531,8 +2529,8 @@ function PhotosContent({
               <Camera className="w-5 h-5 text-[#0da1c7]" />
             </div>
             <div>
-              <p className="font-semibold text-[#1c3643]">Subject Property Photos</p>
-              <p className="text-sm text-gray-600">
+              <p className="font-semibold text-[#1c3643] dark:text-white">Subject Property Photos</p>
+              <p className="text-sm text-gray-600 dark:text-slate-400">
                 {Object.values(photos).filter(Boolean).length} of{' '}
                 {photoCategories.reduce((sum, c) => sum + c.slots.length, 0)} photos uploaded
               </p>
@@ -2542,13 +2540,12 @@ function PhotosContent({
             {photoCategories.map(cat => {
               const CatIcon = cat.Icon;
               return (
-                <div 
+                <div
                   key={cat.id}
-                  className={`px-2 py-1 rounded-full flex items-center gap-1 ${
-                    getUploadedCount(cat) > 0 
-                      ? 'bg-green-100 text-green-700' 
-                      : 'bg-gray-100 text-gray-500'
-                  }`}
+                  className={`px-2 py-1 rounded-full flex items-center gap-1 ${getUploadedCount(cat) > 0
+                    ? 'bg-green-100 text-green-700'
+                    : 'bg-gray-100 text-gray-500'
+                    }`}
                 >
                   <CatIcon className="w-3 h-3" />
                   <span>{getUploadedCount(cat)}/{cat.slots.length}</span>
@@ -2569,9 +2566,9 @@ function PhotosContent({
 
       {/* Photo Categories */}
       {photoCategories.map((category) => (
-        <div 
+        <div
           key={category.id}
-          className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden"
+          className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl shadow-sm overflow-hidden"
         >
           {/* Category Header */}
           <button
@@ -2583,16 +2580,15 @@ function PhotosContent({
                 <category.Icon className="w-5 h-5 text-[#0da1c7]" />
               </div>
               <div className="text-left">
-                <h3 className="font-bold text-[#1c3643]">{category.label}</h3>
+                <h3 className="font-bold text-[#1c3643] dark:text-white">{category.label}</h3>
                 <p className="text-sm text-gray-500">{category.description}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${
-                getUploadedCount(category) > 0 
-                  ? 'bg-green-100 text-green-700' 
-                  : 'bg-gray-100 text-gray-500'
-              }`}>
+              <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getUploadedCount(category) > 0
+                ? 'bg-green-100 text-green-700'
+                : 'bg-gray-100 text-gray-500'
+                }`}>
                 {getUploadedCount(category)}/{category.slots.length}
               </span>
               {category.reportPages && (
@@ -2600,9 +2596,8 @@ function PhotosContent({
                   {category.reportPages}
                 </span>
               )}
-              <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${
-                expandedCategories[category.id] ? 'rotate-180' : ''
-              }`} />
+              <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${expandedCategories[category.id] ? 'rotate-180' : ''
+                }`} />
             </div>
           </button>
 
@@ -2615,25 +2610,23 @@ function PhotosContent({
                   const isDragOver = dragOverSlot === slot.id;
                   const globalIndex = allSlots.findIndex(s => s.id === slot.id);
                   const isFocused = focusedSlotIndex === globalIndex;
-                  
+
                   return (
-                    <div 
+                    <div
                       key={slot.id}
                       ref={(el) => { photoSlotRefs.current[slot.id] = el; }}
                       tabIndex={0}
-                      className={`border-2 rounded-xl p-4 transition-all outline-none ${
-                        isFocused
-                          ? 'ring-2 ring-[#0da1c7] ring-offset-2'
-                          : ''
-                      } ${
-                        isDragOver && !photo
+                      className={`border-2 rounded-xl p-4 transition-all outline-none ${isFocused
+                        ? 'ring-2 ring-[#0da1c7] ring-offset-2'
+                        : ''
+                        } ${isDragOver && !photo
                           ? 'border-[#0da1c7] bg-[#0da1c7]/10 scale-[1.02]'
-                          : photo 
-                            ? 'border-green-200 bg-green-50/30' 
-                            : slot.recommended 
-                              ? 'border-[#0da1c7]/30 bg-[#0da1c7]/5' 
+                          : photo
+                            ? 'border-green-200 bg-green-50/30'
+                            : slot.recommended
+                              ? 'border-[#0da1c7]/30 bg-[#0da1c7]/5'
                               : 'border-gray-200'
-                      }`}
+                        }`}
                       onMouseEnter={() => handleMouseEnter(slot.id)}
                       onMouseLeave={handleMouseLeave}
                       onDragOver={(e) => handleSlotDragOver(e, slot.id)}
@@ -2645,7 +2638,7 @@ function PhotosContent({
                       <div className="flex items-start justify-between gap-2 mb-3">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
-                            <p className="text-sm font-medium text-gray-800">{slot.label}</p>
+                            <p className="text-sm font-medium text-gray-800 dark:text-white">{slot.label}</p>
                             {slot.recommended && !photo && (
                               <span className="px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-medium rounded">
                                 Recommended
@@ -2683,7 +2676,7 @@ function PhotosContent({
                                 className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg"
                                 title="Preview in report"
                               >
-                                <div className="flex items-center gap-2 px-3 py-1.5 bg-white/90 rounded-full text-sm font-medium text-gray-800">
+                                <div className="flex items-center gap-2 px-3 py-1.5 bg-white/90 rounded-full text-sm font-medium text-gray-800 dark:text-white">
                                   <Eye className="w-4 h-4" />
                                   Preview
                                 </div>
@@ -2701,7 +2694,7 @@ function PhotosContent({
                               onChange={(e) => onUpdateMetadata(slot.id, { caption: e.target.value })}
                               className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/40"
                             />
-                            
+
                             {/* Taken By & Date (collapsed row) */}
                             <div className="flex gap-2">
                               <input
@@ -2721,13 +2714,12 @@ function PhotosContent({
                           </div>
                         </div>
                       ) : (
-                        <label className={`block border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-all ${
-                          isDragOver 
-                            ? 'border-[#0da1c7] bg-[#0da1c7]/10' 
-                            : isFocused
-                              ? 'border-[#0da1c7] bg-[#0da1c7]/5'
-                              : 'border-gray-300 hover:border-[#0da1c7] hover:bg-[#0da1c7]/5'
-                        }`}>
+                        <label className={`block border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-all ${isDragOver
+                          ? 'border-[#0da1c7] bg-[#0da1c7]/10'
+                          : isFocused
+                            ? 'border-[#0da1c7] bg-[#0da1c7]/5'
+                            : 'border-gray-300 hover:border-[#0da1c7] hover:bg-[#0da1c7]/5'
+                          }`}>
                           <input
                             ref={(el) => { fileInputRefs.current[slot.id] = el; }}
                             type="file"
@@ -2751,8 +2743,8 @@ function PhotosContent({
       ))}
 
       {/* Auto-Generate Maps */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4 flex items-center gap-2">
+      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4 flex items-center gap-2">
           <MapPin className="w-5 h-5 text-[#0da1c7]" />
           Maps
         </h3>
@@ -2845,7 +2837,7 @@ function ExhibitsContent(_props: ExhibitsProps) {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editName, setEditName] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
+
   // Get documents from WizardContext (uploaded during Document Intake phase)
   const intakeDocuments = wizardState.uploadedDocuments || [];
   const hasIntakeDocuments = intakeDocuments.length > 0;
@@ -2897,9 +2889,9 @@ function ExhibitsContent(_props: ExhibitsProps) {
   // Process uploaded files
   const processFiles = (files: File[]) => {
     const newExhibits: CustomExhibit[] = files.map(file => {
-      const id = `exhibit_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      const id = `exhibit_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
       const suggestedName = extractDocumentName(file.name);
-      
+
       // Create preview for images/PDFs
       let preview: string | undefined;
       if (file.type.startsWith('image/')) {
@@ -2933,7 +2925,7 @@ function ExhibitsContent(_props: ExhibitsProps) {
   // Save edited name
   const handleSaveName = (id: string) => {
     if (editName.trim()) {
-      setCustomExhibits(prev => prev.map(e => 
+      setCustomExhibits(prev => prev.map(e =>
         e.id === id ? { ...e, name: editName.trim() } : e
       ));
     }
@@ -2954,9 +2946,9 @@ function ExhibitsContent(_props: ExhibitsProps) {
     <div className="space-y-6">
       {/* Documents from Intake - styled like Document Intake page */}
       {hasIntakeDocuments && (
-        <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+        <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-bold text-[#1c3643] flex items-center gap-2">
+            <h3 className="text-lg font-bold text-[#1c3643] dark:text-white flex items-center gap-2">
               <FileText className="w-5 h-5 text-[#0da1c7]" />
               Documents from Intake ({intakeDocuments.length})
             </h3>
@@ -2968,10 +2960,10 @@ function ExhibitsContent(_props: ExhibitsProps) {
           <div className="space-y-3">
             {intakeDocuments.map((doc) => {
               const typeInfo = DOCUMENT_TYPE_INFO[doc.slotId] || DOCUMENT_TYPE_INFO.unknown;
-              
+
               return (
-                <div 
-                  key={doc.id} 
+                <div
+                  key={doc.id}
                   className="flex items-center gap-4 p-4 bg-white rounded-xl border border-gray-200 hover:border-[#0da1c7]/30 transition-all group"
                 >
                   {/* Icon */}
@@ -2981,7 +2973,7 @@ function ExhibitsContent(_props: ExhibitsProps) {
 
                   {/* Name and size */}
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-gray-900 truncate">{doc.name}</p>
+                    <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{doc.name}</p>
                     <p className="text-xs text-gray-500">{formatFileSize(doc.size)}</p>
                   </div>
 
@@ -3019,8 +3011,8 @@ function ExhibitsContent(_props: ExhibitsProps) {
       )}
 
       {/* Additional Exhibits */}
-      <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] border-b-2 border-gray-200 pb-3 mb-4">
+      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           Additional Exhibits
         </h3>
         <p className="text-sm text-gray-600 mb-4">
@@ -3083,7 +3075,7 @@ function ExhibitsContent(_props: ExhibitsProps) {
                     </div>
                   ) : (
                     <>
-                      <p className="text-sm font-semibold text-gray-900 truncate">
+                      <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
                         {exhibit.name}
                       </p>
                       <p className="text-xs text-gray-500">{formatFileSize(exhibit.file.size)}</p>
@@ -3127,8 +3119,8 @@ function ExhibitsContent(_props: ExhibitsProps) {
           className={`
             w-full px-4 py-6 border-2 border-dashed rounded-xl cursor-pointer
             transition-all duration-200 flex flex-col items-center gap-2
-            ${isDragOver 
-              ? 'border-[#0da1c7] bg-[#0da1c7]/10 scale-[1.01]' 
+            ${isDragOver
+              ? 'border-[#0da1c7] bg-[#0da1c7]/10 scale-[1.01]'
               : 'border-gray-300 hover:border-[#0da1c7] hover:bg-[#0da1c7]/5'
             }
           `}

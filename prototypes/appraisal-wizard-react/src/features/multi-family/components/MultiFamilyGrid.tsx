@@ -232,7 +232,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
       </span>
     );
     return (
-      <span onClick={handleClick} className={`${baseClass} bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100 hover:border-slate-300`} title="Click to change">
+      <span onClick={handleClick} className={`${baseClass} bg-slate-50 dark:bg-slate-700 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-600 hover:border-slate-300 dark:hover:border-slate-500`} title="Click to change">
         <Minus className="w-3 h-3" /> SIM
       </span>
     );
@@ -277,7 +277,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
       <div className={`element-dropdown relative ${isOpen ? 'z-[500]' : ''}`}>
         <button 
           onClick={() => setOpenElementDropdown(isOpen ? null : section)}
-          className="w-full py-2 px-3 border-2 border-dashed border-slate-300 rounded-lg flex items-center justify-between gap-2 text-slate-500 font-semibold hover:border-[#0da1c7] hover:text-[#0da1c7] hover:bg-[#0da1c7]/5 transition-all duration-300 group text-xs bg-white"
+          className="w-full py-2 px-3 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg flex items-center justify-between gap-2 text-slate-500 dark:text-slate-400 font-semibold hover:border-[#0da1c7] hover:text-[#0da1c7] hover:bg-[#0da1c7]/5 transition-all duration-300 group text-xs bg-white dark:bg-slate-800"
         >
           <div className="flex items-center gap-2">
             <Plus size={12} className="text-slate-400 group-hover:text-[#0da1c7]" />
@@ -287,7 +287,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
         </button>
         
         {isOpen && (
-          <div className="absolute top-full left-0 mt-1 w-64 bg-white rounded-xl shadow-2xl border border-slate-200 z-[500] overflow-hidden">
+          <div className="absolute top-full left-0 mt-1 w-64 bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 z-[500] overflow-hidden">
             <div className="px-3 py-2 bg-slate-50 border-b border-slate-200">
               <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Available Elements</span>
             </div>
@@ -361,7 +361,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
         >
           {/* GRID CONTAINER */}
           <div 
-            className="grid relative bg-white flex-shrink-0" 
+            className="grid relative bg-white dark:bg-slate-800 flex-shrink-0" 
             style={{ 
               gridTemplateColumns: `${LABEL_COL_WIDTH}px ${SUBJECT_COL_WIDTH}px repeat(${comps.length}, ${COMP_COL_WIDTH}px)`, 
               minWidth: `${LABEL_COL_WIDTH + SUBJECT_COL_WIDTH + (comps.length * COMP_COL_WIDTH)}px`,
@@ -370,7 +370,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
           
           {/* ========== HEADER ROW ========== */}
           <div 
-            className="sticky top-0 left-0 z-[120] bg-white border-b border-slate-200 flex items-end" 
+            className="sticky top-0 left-0 z-[120] bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 flex items-end" 
             style={{ width: LABEL_COL_WIDTH, height: 120, backgroundColor: '#ffffff', transform: 'translateZ(0)', willChange: 'transform' }}
           >
             <div className="p-2 pl-3">
@@ -390,10 +390,10 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
               </div>
             </div>
             <div className="p-2 flex-1 flex flex-col gap-0.5 bg-sky-50 border-r border-slate-200">
-              <h3 className="font-bold text-slate-800 text-xs leading-tight line-clamp-1" title={SUBJECT_MF_PROPERTY.address}>
+              <h3 className="font-bold text-slate-800 dark:text-white text-xs leading-tight line-clamp-1" title={SUBJECT_MF_PROPERTY.address}>
                 {SUBJECT_MF_PROPERTY.address}
               </h3>
-              <div className="flex items-start gap-1 text-[10px] text-slate-500">
+              <div className="flex items-start gap-1 text-[10px] text-slate-500 dark:text-slate-400">
                 <MapPin className="w-3 h-3 flex-shrink-0 mt-0.5 text-[#0da1c7]" />
                 <span className="line-clamp-1 leading-tight">{SUBJECT_MF_PROPERTY.cityState}</span>
               </div>
@@ -421,10 +421,10 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
                 </button>
               </div>
               <div className="p-2 flex-1 flex flex-col gap-0.5 border-r border-slate-200">
-                <h3 className="font-bold text-slate-800 text-xs leading-tight line-clamp-1" title={comp.address}>
+                <h3 className="font-bold text-slate-800 dark:text-white text-xs leading-tight line-clamp-1" title={comp.address}>
                   Rental {idx + 1}
                 </h3>
-                <div className="flex items-start gap-1 text-[10px] text-slate-500">
+                <div className="flex items-start gap-1 text-[10px] text-slate-500 dark:text-slate-400">
                   <MapPin className="w-3 h-3 flex-shrink-0 mt-0.5 text-[#0da1c7]" />
                   <span className="line-clamp-1 leading-tight">{comp.cityStateZip}</span>
                 </div>
@@ -438,7 +438,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
 
           {/* ========== TRANSACTION DATA SECTION ========== */}
           <div className="col-span-full relative z-[50] mt-4 border-y border-slate-200">
-            <div className="absolute left-0 right-0 h-full bg-slate-100" style={{ opacity: 0.3 }}></div>
+            <div className="absolute left-0 right-0 h-full bg-slate-100 dark:bg-slate-700" style={{ opacity: 0.3 }}></div>
             <div className="sticky left-0 w-fit px-4 py-2 font-bold text-xs uppercase tracking-widest text-slate-700 flex items-center gap-2" style={{ zIndex: 51, backgroundColor: '#f9fafb' }}>
               TRANSACTION DATA
             </div>
@@ -455,11 +455,11 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
                 )}
               </div>
               <div className="sticky left-[160px] z-[55] border-r border-b border-slate-100 p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)]" style={{ width: SUBJECT_COL_WIDTH, backgroundColor: '#f0f9ff', transform: 'translateZ(0)' }}>
-                <span className="font-medium text-slate-700">{getSubjectTransactionValue(row.id)}</span>
+                <span className="font-medium text-slate-700 dark:text-slate-200">{getSubjectTransactionValue(row.id)}</span>
               </div>
               {comps.map(comp => (
-                <div key={`${row.id}-${comp.id}`} className="border-r border-b border-slate-100 p-2 flex items-center justify-center text-xs bg-white">
-                  <span className="font-medium text-slate-600">{getTransactionValue(comp, row.id)}</span>
+                <div key={`${row.id}-${comp.id}`} className="border-r border-b border-slate-100 dark:border-slate-700 p-2 flex items-center justify-center text-xs bg-white dark:bg-slate-800">
+                  <span className="font-medium text-slate-600 dark:text-slate-300">{getTransactionValue(comp, row.id)}</span>
                 </div>
               ))}
             </React.Fragment>
@@ -470,7 +470,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
             <AddElementButton section="transaction" />
           </div>
           <div className="sticky left-[160px] z-[55] shadow-[4px_0_16px_rgba(0,0,0,0.05)]" style={{ width: SUBJECT_COL_WIDTH, backgroundColor: '#ffffff' }}></div>
-          {comps.map(comp => <div key={`add-trans-${comp.id}`} className="bg-white"></div>)}
+          {comps.map(comp => <div key={`add-trans-${comp.id}`} className="bg-white dark:bg-slate-800"></div>)}
 
           {/* ========== QUANTITATIVE ADJUSTMENTS SECTION ========== */}
           <div className="col-span-full relative z-[50] mt-4 border-y border-blue-200">
@@ -491,10 +491,10 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
                 )}
               </div>
               <div className="sticky left-[160px] z-[55] border-r border-b border-slate-100 p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)]" style={{ width: SUBJECT_COL_WIDTH, backgroundColor: '#f0f9ff', transform: 'translateZ(0)' }}>
-                <span className="font-medium text-slate-700">-</span>
+                <span className="font-medium text-slate-700 dark:text-slate-200">-</span>
               </div>
               {comps.map(comp => (
-                <div key={`${row.id}-${comp.id}`} className="border-r border-b border-slate-100 p-2 flex items-center justify-center text-xs bg-white">
+                <div key={`${row.id}-${comp.id}`} className="border-r border-b border-slate-100 dark:border-slate-700 p-2 flex items-center justify-center text-xs bg-white dark:bg-slate-800">
                   {renderQuantitativeCell(comp, row.field || row.id)}
                 </div>
               ))}
@@ -506,7 +506,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
             <AddElementButton section="quantitative" />
           </div>
           <div className="sticky left-[160px] z-[55] shadow-[4px_0_16px_rgba(0,0,0,0.05)]" style={{ width: SUBJECT_COL_WIDTH, backgroundColor: '#f0f9ff' }}></div>
-          {comps.map(comp => <div key={`add-quant-${comp.id}`} className="bg-white"></div>)}
+          {comps.map(comp => <div key={`add-quant-${comp.id}`} className="bg-white dark:bg-slate-800"></div>)}
 
           {/* ========== QUALITATIVE ADJUSTMENTS SECTION ========== */}
           <div className="col-span-full relative z-[50] mt-4 border-y border-emerald-200">
@@ -527,10 +527,10 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
                 )}
               </div>
               <div className="sticky left-[160px] z-[55] border-r border-b border-slate-100 p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)]" style={{ width: SUBJECT_COL_WIDTH, backgroundColor: '#f0f9ff', transform: 'translateZ(0)' }}>
-                <span className="font-medium text-slate-700">{getSubjectQualitativeValue(row.id)}</span>
+                <span className="font-medium text-slate-700 dark:text-slate-200">{getSubjectQualitativeValue(row.id)}</span>
               </div>
               {comps.map(comp => (
-                <div key={`${row.id}-${comp.id}`} className="border-r border-b border-slate-100 p-2 flex items-center justify-center text-xs bg-white">
+                <div key={`${row.id}-${comp.id}`} className="border-r border-b border-slate-100 dark:border-slate-700 p-2 flex items-center justify-center text-xs bg-white dark:bg-slate-800">
                   <AdjustmentChip compId={comp.id} rowId={row.field || row.id} />
                 </div>
               ))}
@@ -542,7 +542,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
             <AddElementButton section="qualitative" />
           </div>
           <div className="sticky left-[160px] z-[55] shadow-[4px_0_16px_rgba(0,0,0,0.05)]" style={{ width: SUBJECT_COL_WIDTH, backgroundColor: '#ffffff' }}></div>
-          {comps.map(comp => <div key={`add-qual-${comp.id}`} className="bg-white"></div>)}
+          {comps.map(comp => <div key={`add-qual-${comp.id}`} className="bg-white dark:bg-slate-800"></div>)}
 
           {/* ========== SUMMARY SECTION ========== */}
           <div className="col-span-full relative z-[50] mt-4 border-y border-amber-200">
@@ -555,15 +555,15 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
           {/* Overall Adjustment Row */}
           <React.Fragment>
             <div className="sticky left-0 z-[60] border-r border-b border-slate-100 flex items-center px-2 py-1.5" style={{ width: LABEL_COL_WIDTH, backgroundColor: '#ffffff', transform: 'translateZ(0)' }}>
-              <span className="text-xs font-semibold text-slate-800 italic">Overall Adjustment:</span>
+              <span className="text-xs font-semibold text-slate-800 dark:text-white italic">Overall Adjustment:</span>
             </div>
             <div className="sticky left-[160px] z-[55] border-r border-b border-slate-100 p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)]" style={{ width: SUBJECT_COL_WIDTH, backgroundColor: '#f0f9ff', transform: 'translateZ(0)' }}>
-              <span className="font-medium text-slate-700">-</span>
+              <span className="font-medium text-slate-700 dark:text-slate-200">-</span>
             </div>
             {comps.map(comp => {
               const totalAdj = comp.parkingAdj + comp.qualityConditionAdj + comp.yearBuiltAdj;
               return (
-                <div key={`overall-adj-${comp.id}`} className="border-r border-b border-slate-100 p-2 flex items-center justify-center text-xs bg-white">
+                <div key={`overall-adj-${comp.id}`} className="border-r border-b border-slate-100 dark:border-slate-700 p-2 flex items-center justify-center text-xs bg-white dark:bg-slate-800">
                   <span className={`font-bold ${totalAdj !== 0 ? (totalAdj > 0 ? 'text-red-600' : 'text-emerald-600') : 'text-slate-500'}`}>
                     {formatPercent(totalAdj)}
                   </span>
@@ -575,13 +575,13 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
           {/* Adjusted Rental Rates Row */}
           <React.Fragment>
             <div className="sticky left-0 z-[60] border-r border-b border-slate-100 flex items-center px-2 py-1.5" style={{ width: LABEL_COL_WIDTH, backgroundColor: '#ffffff', transform: 'translateZ(0)' }}>
-              <span className="text-xs font-semibold text-slate-800">Adjusted Rental Rates $...</span>
+              <span className="text-xs font-semibold text-slate-800 dark:text-white">Adjusted Rental Rates $...</span>
             </div>
             <div className="sticky left-[160px] z-[55] border-r border-b border-slate-100 p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)]" style={{ width: SUBJECT_COL_WIDTH, backgroundColor: '#f0f9ff', transform: 'translateZ(0)' }}>
-              <span className="font-medium text-slate-700">-</span>
+              <span className="font-medium text-slate-700 dark:text-slate-200">-</span>
             </div>
             {comps.map(comp => (
-              <div key={`adj-rate-${comp.id}`} className="border-r border-b border-slate-100 p-2 flex items-center justify-center text-xs bg-white">
+              <div key={`adj-rate-${comp.id}`} className="border-r border-b border-slate-100 dark:border-slate-700 p-2 flex items-center justify-center text-xs bg-white dark:bg-slate-800">
                 <span className="font-bold text-emerald-700">{formatCurrency(getAdjustedRate(comp))}</span>
               </div>
             ))}
@@ -622,7 +622,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
           {/* ACTION COLUMN */}
           <div className="flex-shrink-0 bg-slate-50 flex flex-col items-center justify-start py-8 sticky top-0 self-start" style={{ width: ACTION_COL_WIDTH, height: 'auto', minHeight: 400 }}>
             <div className="flex flex-col items-center justify-center h-80 py-4">
-              <button className="flex flex-col items-center gap-2 p-4 rounded-xl hover:bg-white transition-colors group" title="Add a new comp">
+              <button className="flex flex-col items-center gap-2 p-4 rounded-xl hover:bg-white dark:hover:bg-slate-700 transition-colors group" title="Add a new comp">
                 <div className="w-12 h-12 rounded-full bg-[#0da1c7]/20 flex items-center justify-center group-hover:bg-[#0da1c7]/30 transition-colors">
                   <Plus className="w-6 h-6 text-[#0da1c7]" />
                 </div>
@@ -640,13 +640,13 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
           <div className="max-w-4xl mx-auto flex flex-col gap-6">
             <div className="flex items-center gap-3">
               <div className="w-2 h-8 bg-[#0da1c7] rounded-full"></div>
-              <h2 className="text-xl font-bold text-slate-800 uppercase tracking-wider">Multi-Family Rental Indication</h2>
+              <h2 className="text-xl font-bold text-slate-800 dark:text-white uppercase tracking-wider">Multi-Family Rental Indication</h2>
             </div>
-            <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
               <div className="grid grid-cols-3 gap-6">
                 <div className="text-center">
                   <div className="text-sm text-slate-500 font-medium mb-2">Subject Unit Count</div>
-                  <div className="text-2xl font-bold text-slate-800">{SUBJECT_MF_PROPERTY.unitCount || '-'} Units</div>
+                  <div className="text-2xl font-bold text-slate-800 dark:text-white">{SUBJECT_MF_PROPERTY.unitCount || '-'} Units</div>
                 </div>
                 <div className="text-center">
                   <div className="text-sm text-slate-500 font-medium mb-2">Indicated Market Rent</div>

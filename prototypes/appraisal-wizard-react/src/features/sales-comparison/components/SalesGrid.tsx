@@ -478,7 +478,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
     if (isInf) return <span onClick={onClick} className={`${baseClass} bg-red-50 text-red-700 border-red-200 hover:bg-red-100`}>
       <ArrowDownRight className="w-3 h-3" /> INF {showValue && value !== 0 && <span className="ml-1 border-l border-red-200 pl-1">{Math.abs(value * 100).toFixed(1)}%</span>}
     </span>;
-    return <span onClick={onClick} className={`${baseClass} bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100`}><Minus className="w-3 h-3" /> SIM</span>;
+    return <span onClick={onClick} className={`${baseClass} bg-slate-50 dark:bg-slate-700 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-600`}><Minus className="w-3 h-3" /> SIM</span>;
   };
 
   // Click-to-cycle function for qualitative adjustments
@@ -534,7 +534,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
     return (
       <span 
         onClick={handleClick} 
-        className={`${baseClass} bg-slate-50 text-slate-500 border-slate-200 hover:bg-slate-100 hover:border-slate-300`}
+        className={`${baseClass} bg-slate-50 dark:bg-slate-700 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-600 hover:border-slate-300 dark:hover:border-slate-500`}
         title="Click to change"
       >
         <Minus className="w-3 h-3" /> SIM
@@ -551,7 +551,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
       <div className={`element-dropdown relative ${isOpen ? 'z-[500]' : ''}`}>
         <button 
           onClick={() => setOpenElementDropdown(isOpen ? null : sectionId)}
-          className="w-full py-2 px-3 border-2 border-dashed border-slate-300 rounded-lg flex items-center justify-between gap-2 text-slate-500 font-semibold hover:border-[#0da1c7] hover:text-[#0da1c7] hover:bg-[#0da1c7]/5 transition-all duration-300 group text-xs bg-white"
+          className="w-full py-2 px-3 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg flex items-center justify-between gap-2 text-slate-500 dark:text-slate-400 font-semibold hover:border-[#0da1c7] hover:text-[#0da1c7] hover:bg-[#0da1c7]/5 transition-all duration-300 group text-xs bg-white dark:bg-slate-800"
         >
           <div className="flex items-center gap-2">
             <Plus size={12} className="text-slate-400 group-hover:text-[#0da1c7]" />
@@ -561,7 +561,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
         </button>
         
         {isOpen && (
-          <div className="absolute top-full left-0 mt-1 w-64 bg-white rounded-xl shadow-2xl border border-slate-200 z-[500] overflow-hidden">
+          <div className="absolute top-full left-0 mt-1 w-64 bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 z-[500] overflow-hidden">
             <div className="px-3 py-2 bg-slate-50 border-b border-slate-200">
               <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Available Elements</span>
             </div>
@@ -639,10 +639,10 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
           }} 
         />
         {isOpen && (
-          <div className="adjustment-popover absolute top-full left-0 mt-2 w-48 bg-white rounded-xl shadow-2xl border border-slate-200 z-[200] overflow-hidden">
+          <div className="adjustment-popover absolute top-full left-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 z-[200] overflow-hidden">
             {/* Mode Toggle Header */}
             <div className="flex items-center justify-between px-3 py-2 border-b border-slate-100 bg-slate-50">
-              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
                 Adjustment Mode
               </span>
               <div className="flex gap-1">
@@ -651,7 +651,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                   className={`px-2.5 py-1 text-xs font-bold rounded-md transition-all ${
                     adjustmentMode === 'Percent'
                       ? 'bg-[#0da1c7] text-white shadow-sm'
-                      : 'bg-white text-slate-500 border border-slate-200 hover:bg-slate-50'
+                      : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700'
                   }`}
                   onClick={() => setAdjustmentMode('Percent')}
                 >
@@ -662,7 +662,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                   className={`px-2.5 py-1 text-xs font-bold rounded-md transition-all ${
                     adjustmentMode === 'Dollar'
                       ? 'bg-[#0da1c7] text-white shadow-sm'
-                      : 'bg-white text-slate-500 border border-slate-200 hover:bg-slate-50'
+                      : 'bg-white dark:bg-slate-800 text-slate-500 dark:text-slate-400 border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700'
                   }`}
                   onClick={() => setAdjustmentMode('Dollar')}
                 >
@@ -693,7 +693,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                           ? 'text-red-600 bg-red-50' 
                           : option.value < 0 
                             ? 'text-emerald-600 bg-emerald-50' 
-                            : 'text-slate-500 bg-slate-100'
+                            : 'text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700'
                       }`}>
                         {getStatusLabel(option.value)}
                       </span>
@@ -811,7 +811,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
       
       {/* COMPARABLE MAP SECTION */}
       {hasSubjectCoords && (
-        <div className="flex-shrink-0 border-b border-slate-200 bg-white">
+        <div className="flex-shrink-0 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
           {/* Map Header - Always visible */}
           <button
             onClick={() => setIsMapCollapsed(!isMapCollapsed)}
@@ -819,7 +819,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
           >
             <div className="flex items-center gap-2">
               <MapIcon className="w-4 h-4 text-[#0da1c7]" />
-              <span className="font-semibold text-sm text-slate-700">Improved Sales Map</span>
+              <span className="font-semibold text-sm text-slate-700 dark:text-slate-200">Improved Sales Map</span>
               <span className="text-xs text-slate-400">
                 ({comparablesWithCoords.length} of {compProperties.length} comp{compProperties.length !== 1 ? 's' : ''} mapped)
               </span>
@@ -871,7 +871,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
         >
           {/* GRID CONTAINER */}
           <div 
-            className="grid relative bg-white flex-shrink-0" 
+            className="grid relative bg-white dark:bg-slate-800 flex-shrink-0" 
             style={{ 
               gridTemplateColumns: `${LABEL_COL_WIDTH}px ${SUBJECT_COL_WIDTH}px repeat(${properties.length - 1}, ${COMP_COL_WIDTH}px)`, 
               minWidth: `${totalGridWidth}px`,
@@ -1088,7 +1088,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                   style={{ width: SUBJECT_COL_WIDTH, backgroundColor: '#ffffff' }}
                 ></div>
                 {properties.filter(p => p.type !== 'subject').map(prop => (
-                  <div key={`add-element-${section.id}-${prop.id}`} className="bg-white"></div>
+                  <div key={`add-element-${section.id}-${prop.id}`} className="bg-white dark:bg-slate-800"></div>
                 ))}
                 </React.Fragment>
               );
@@ -1103,7 +1103,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
             <div className="flex flex-col items-center justify-center h-80 py-4">
               {/* Add Comps */}
               <button 
-                className="flex flex-col items-center gap-2 p-4 rounded-xl hover:bg-white transition-colors group"
+                className="flex flex-col items-center gap-2 p-4 rounded-xl hover:bg-white dark:hover:bg-slate-700 transition-colors group"
                 title="Add a new comp manually"
               >
                 <div className="w-12 h-12 rounded-full bg-[#0da1c7]/20 flex items-center justify-center group-hover:bg-[#0da1c7]/30 transition-colors">
@@ -1123,7 +1123,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
           <div className="max-w-4xl mx-auto flex flex-col gap-6">
             <div className="flex items-center gap-3">
               <div className="w-2 h-8 bg-emerald-500 rounded-full"></div>
-              <h2 className="text-xl font-bold text-slate-800 uppercase tracking-wider">Value Reconciliation & Narrative</h2>
+              <h2 className="text-xl font-bold text-slate-800 dark:text-white uppercase tracking-wider">Value Reconciliation & Narrative</h2>
             </div>
 
             <EnhancedTextArea
@@ -1147,7 +1147,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
       {notesEditor?.isOpen && (
         <div className="fixed inset-0 z-[1100] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4">
           <div 
-            className="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden"
+            className="bg-white dark:bg-slate-800 w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
@@ -1170,50 +1170,50 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
             <div className="px-5 py-3 border-b border-slate-200 flex items-center gap-1">
               <button 
                 onClick={() => applyFormatting('bold')}
-                className="p-2 rounded hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition-colors"
+                className="p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
                 title="Bold"
               >
                 <Bold className="w-4 h-4" />
               </button>
               <button 
                 onClick={() => applyFormatting('italic')}
-                className="p-2 rounded hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition-colors"
+                className="p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
                 title="Italic"
               >
                 <Italic className="w-4 h-4" />
               </button>
               <button 
                 onClick={() => applyFormatting('underline')}
-                className="p-2 rounded hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition-colors"
+                className="p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
                 title="Underline"
               >
                 <Underline className="w-4 h-4" />
               </button>
-              <div className="w-px h-5 bg-slate-200 mx-1"></div>
+              <div className="w-px h-5 bg-slate-200 dark:bg-slate-600 mx-1"></div>
               <button 
                 onClick={() => applyFormatting('alignLeft')}
-                className="p-2 rounded hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition-colors"
+                className="p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
                 title="Align Left"
               >
                 <AlignLeft className="w-4 h-4" />
               </button>
               <button 
                 onClick={() => applyFormatting('alignCenter')}
-                className="p-2 rounded hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition-colors"
+                className="p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
                 title="Align Center"
               >
                 <AlignCenter className="w-4 h-4" />
               </button>
               <button 
                 onClick={() => applyFormatting('bullet')}
-                className="p-2 rounded hover:bg-slate-100 text-slate-500 hover:text-slate-700 transition-colors"
+                className="p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-200 transition-colors"
                 title="Bullet List"
               >
                 <List className="w-4 h-4" />
               </button>
               <div className="flex-1"></div>
               <button 
-                className="p-2 rounded hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors"
+                className="p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 transition-colors"
                 title="Full Screen"
               >
                 <Maximize2 className="w-4 h-4" />
@@ -1236,7 +1236,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
             <div className="px-5 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-3">
               <button
                 onClick={closeNotesEditor}
-                className="px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-200 transition-colors"
+                className="px-4 py-2 rounded-lg text-sm font-medium text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
               >
                 Cancel
               </button>
@@ -1255,7 +1255,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
       {confirmDelete?.isOpen && (
         <div className="fixed inset-0 z-[1100] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div 
-            className="bg-white w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200"
+            className="bg-white dark:bg-slate-800 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200"
             onClick={(e) => e.stopPropagation()}
           >
             {/* Warning Header */}
@@ -1272,7 +1272,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
             {/* Content */}
             <div className="px-6 py-5">
               <p className="text-slate-600 text-sm leading-relaxed">
-                Are you sure you want to remove the <span className="font-semibold text-slate-800">"{confirmDelete.sectionTitle}"</span> section? 
+                Are you sure you want to remove the <span className="font-semibold text-slate-800 dark:text-white">"{confirmDelete.sectionTitle}"</span> section? 
                 All rows within this section will be hidden from the grid.
               </p>
               <div className="mt-4 p-3 bg-amber-50 border border-amber-200 rounded-lg flex items-start gap-2">
@@ -1287,7 +1287,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
             <div className="px-6 py-4 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-3">
               <button
                 onClick={cancelSectionDelete}
-                className="px-5 py-2.5 rounded-lg text-sm font-semibold text-slate-600 hover:bg-slate-200 transition-colors"
+                className="px-5 py-2.5 rounded-lg text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
               >
                 No, Keep It
               </button>

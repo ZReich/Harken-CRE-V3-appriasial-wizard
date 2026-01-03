@@ -7,6 +7,26 @@
     <title>Harken Appraisal Wizard</title>
     <!-- html2pdf.js for PDF generation -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    
+    <!-- Theme initialization script to prevent FOUC -->
+    <script>
+      (function() {
+        const stored = localStorage.getItem('harken-wizard-theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        
+        let theme = 'light';
+        if (stored === 'dark') {
+          theme = 'dark';
+        } else if (stored === 'light') {
+          theme = 'light';
+        } else if (prefersDark) {
+          theme = 'dark';
+        }
+        
+        document.documentElement.classList.add(theme);
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

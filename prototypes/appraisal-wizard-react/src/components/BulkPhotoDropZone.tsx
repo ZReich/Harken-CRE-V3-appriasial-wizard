@@ -167,7 +167,7 @@ export default function BulkPhotoDropZone({
           relative overflow-hidden rounded-xl border-2 border-dashed transition-all duration-200 cursor-pointer
           ${isDragging
             ? 'border-[#0da1c7] bg-[#0da1c7]/10 scale-[1.02]'
-            : 'border-gray-300 hover:border-[#0da1c7]/50 hover:bg-gray-50'
+            : 'border-gray-300 dark:border-slate-700 hover:border-[#0da1c7]/50 hover:bg-gray-50 dark:hover:bg-slate-800'
           }
           ${isProcessing ? 'cursor-wait' : ''}
         `}
@@ -191,7 +191,7 @@ export default function BulkPhotoDropZone({
                 <Sparkles className="w-8 h-8 text-[#0da1c7] animate-pulse" />
               </div>
               <div>
-                <p className="text-lg font-semibold text-[#1c3643]">
+                <p className="text-lg font-semibold text-[#1c3643] dark:text-white">
                   Analyzing Photos with AI
                 </p>
                 <p className="text-sm text-gray-500 mt-1">
@@ -232,14 +232,14 @@ export default function BulkPhotoDropZone({
                 <Upload className="w-8 h-8 text-gray-400" />
               </div>
               <div>
-                <p className="text-lg font-semibold text-[#1c3643]">
+                <p className="text-lg font-semibold text-[#1c3643] dark:text-white">
                   Bulk Upload Photos
                 </p>
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">
                   Drag & drop multiple photos or{' '}
                   <span className="text-[#0da1c7] font-medium">click to browse</span>
                 </p>
-                <p className="text-xs text-gray-400 mt-2">
+                <p className="text-xs text-gray-400 dark:text-slate-500 mt-2">
                   AI will automatically suggest where each photo belongs
                 </p>
               </div>

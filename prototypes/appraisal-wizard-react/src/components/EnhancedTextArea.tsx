@@ -616,7 +616,7 @@ export default function EnhancedTextArea({
       
       <div 
         className={`relative ${isFullscreen 
-          ? 'fixed top-1/2 left-1/2 z-50 bg-white rounded-2xl shadow-2xl p-8 flex flex-col w-[90vw] max-w-6xl overflow-hidden' 
+          ? 'fixed top-1/2 left-1/2 z-50 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 flex flex-col w-[90vw] max-w-6xl overflow-hidden' 
           : ''
         }`}
         style={isFullscreen ? { 
@@ -627,7 +627,7 @@ export default function EnhancedTextArea({
       >
         {/* Label Row */}
         <div className="flex items-center justify-between mb-2">
-          <label htmlFor={id} className={`block font-medium text-gray-700 ${isFullscreen ? 'text-lg' : 'text-sm'} flex items-center gap-2`}>
+          <label htmlFor={id} className={`block font-medium text-gray-700 dark:text-slate-300 ${isFullscreen ? 'text-lg' : 'text-sm'} flex items-center gap-2`}>
             {label}
             {required && <span className="text-red-500 ml-1">*</span>}
             {fieldPath && hasFieldSource && hasFieldSource(fieldPath) && (
@@ -637,29 +637,29 @@ export default function EnhancedTextArea({
         </div>
 
         {/* Toolbar */}
-        <div className={`flex flex-wrap items-center gap-1 bg-gray-50 border border-gray-200 rounded-t-xl ${isFullscreen ? 'p-4 gap-2' : 'p-2'}`}>
+        <div className={`flex flex-wrap items-center gap-1 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-t-xl ${isFullscreen ? 'p-4 gap-2' : 'p-2'}`}>
           {/* History */}
-          <div className="flex items-center gap-0.5 pr-2 border-r border-gray-300">
+          <div className="flex items-center gap-0.5 pr-2 border-r border-gray-300 dark:border-slate-500">
             <ToolbarButton icon={<Undo className="w-4 h-4" />} onClick={() => execCommand('undo')} title="Undo" />
             <ToolbarButton icon={<Redo className="w-4 h-4" />} onClick={() => execCommand('redo')} title="Redo" />
           </div>
 
           {/* Text Formatting */}
-          <div className="flex items-center gap-0.5 px-2 border-r border-gray-300">
+          <div className="flex items-center gap-0.5 px-2 border-r border-gray-300 dark:border-slate-500">
             <ToolbarButton icon={<Bold className="w-4 h-4" />} onClick={() => execCommand('bold')} title="Bold (Ctrl+B)" />
             <ToolbarButton icon={<Italic className="w-4 h-4" />} onClick={() => execCommand('italic')} title="Italic (Ctrl+I)" />
             <ToolbarButton icon={<Underline className="w-4 h-4" />} onClick={() => execCommand('underline')} title="Underline (Ctrl+U)" />
           </div>
 
           {/* Alignment */}
-          <div className="flex items-center gap-0.5 px-2 border-r border-gray-300">
+          <div className="flex items-center gap-0.5 px-2 border-r border-gray-300 dark:border-slate-500">
             <ToolbarButton icon={<AlignLeft className="w-4 h-4" />} onClick={() => execCommand('justifyLeft')} title="Align Left" />
             <ToolbarButton icon={<AlignCenter className="w-4 h-4" />} onClick={() => execCommand('justifyCenter')} title="Align Center" />
             <ToolbarButton icon={<AlignRight className="w-4 h-4" />} onClick={() => execCommand('justifyRight')} title="Align Right" />
           </div>
 
           {/* Lists */}
-          <div className="flex items-center gap-0.5 px-2 border-r border-gray-300">
+          <div className="flex items-center gap-0.5 px-2 border-r border-gray-300 dark:border-slate-500">
             <ToolbarButton icon={<List className="w-4 h-4" />} onClick={() => execCommand('insertUnorderedList')} title="Bullet List" />
             <ToolbarButton icon={<ListOrdered className="w-4 h-4" />} onClick={() => execCommand('insertOrderedList')} title="Numbered List" />
           </div>
@@ -707,8 +707,8 @@ export default function EnhancedTextArea({
           onBlur={() => setIsFocused(false)}
           data-placeholder={placeholder}
           className={`
-            w-full border border-gray-200 border-t-0 rounded-b-xl bg-white
-            text-gray-700 leading-relaxed
+            w-full border border-gray-200 dark:border-slate-600 border-t-0 rounded-b-xl bg-white dark:bg-slate-800
+            text-gray-700 dark:text-slate-200 leading-relaxed
             focus:outline-none focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent
             overflow-y-auto
             ${isFullscreen ? 'flex-1 p-8 text-lg leading-loose' : 'p-4 text-sm'}
@@ -748,7 +748,7 @@ export default function EnhancedTextArea({
                 </button>
                 <button
                   onClick={rejectAI}
-                  className="px-3 py-1 text-xs font-medium text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-50 flex items-center gap-1 transition-colors"
+                  className="px-3 py-1 text-xs font-medium text-gray-600 dark:text-slate-300 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-500 rounded-md hover:bg-gray-50 dark:hover:bg-slate-600 flex items-center gap-1 transition-colors"
                 >
                   <X className="w-3 h-3" />
                   Reject

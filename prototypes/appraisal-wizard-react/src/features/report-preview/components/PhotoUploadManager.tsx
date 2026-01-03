@@ -56,7 +56,7 @@ const PhotoSlotGroup: React.FC<PhotoSlotGroupProps> = ({
   const canAddMore = photoCount < slot.maxCount;
 
   return (
-    <div className="border border-slate-200 rounded-lg overflow-hidden bg-white">
+    <div className="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden bg-white dark:bg-slate-800">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 bg-slate-50 border-b border-slate-200">
         <div className="flex items-center gap-3">

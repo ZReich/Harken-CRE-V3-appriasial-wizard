@@ -49,8 +49,8 @@ interface PhotoComponentSuggestionsProps {
 // CONSTANTS
 // =================================================================
 
-const CATEGORY_CONFIG: Record<ComponentDetectionCategory, { 
-  label: string; 
+const CATEGORY_CONFIG: Record<ComponentDetectionCategory, {
+  label: string;
   icon: typeof Building2;
   section: 'exterior' | 'mechanical' | 'interior' | 'costseg';
 }> = {
@@ -92,17 +92,17 @@ interface ComponentCardProps {
 }
 
 function ComponentCard({ component, isAdded, onAccept, onReject, compact }: ComponentCardProps) {
-  const confidenceColor = component.confidence >= 80 
-    ? 'text-green-600' 
-    : component.confidence >= 60 
-      ? 'text-amber-600' 
+  const confidenceColor = component.confidence >= 80
+    ? 'text-green-600'
+    : component.confidence >= 60
+      ? 'text-amber-600'
       : 'text-gray-500';
 
   return (
     <div className={`
       bg-white rounded-lg border transition-all
-      ${isAdded 
-        ? 'border-green-300 bg-green-50' 
+      ${isAdded
+        ? 'border-green-300 bg-green-50'
         : 'border-gray-200 hover:border-[#0da1c7] hover:shadow-sm'}
       ${compact ? 'p-2' : 'p-3'}
     `}>
@@ -121,20 +121,20 @@ function ComponentCard({ component, isAdded, onAccept, onReject, compact }: Comp
               </span>
             )}
           </div>
-          
+
           {!compact && component.reasoning && (
             <p className="text-xs text-gray-500 mt-1 line-clamp-2">
               {component.reasoning}
             </p>
           )}
-          
+
           <div className="flex items-center gap-2 mt-1">
             <span className={`text-xs font-medium ${confidenceColor}`}>
               {Math.round(component.confidence)}% confidence
             </span>
           </div>
         </div>
-        
+
         <div className="flex items-center gap-1.5 flex-shrink-0">
           {isAdded ? (
             <span className="flex items-center gap-1 text-xs font-medium text-green-600">
@@ -251,10 +251,10 @@ export default function PhotoComponentSuggestions({
         >
           {isExpanded ? <ChevronDown size={14} className="text-gray-400" /> : <ChevronRight size={14} className="text-gray-400" />}
           {icon}
-          <span className="text-sm font-medium text-gray-700">{label}</span>
+          <span className="text-sm font-medium text-gray-700 dark:text-slate-300">{label}</span>
           <span className="text-xs text-gray-400">({components.length})</span>
         </button>
-        
+
         {isExpanded && (
           <div className="space-y-2 pl-5">
             {components.map(component => (
@@ -275,44 +275,44 @@ export default function PhotoComponentSuggestions({
 
   return (
     <div className={`
-      bg-amber-50 border border-amber-200 rounded-xl overflow-hidden
+      bg-cyan-50 dark:bg-slate-800/50 border border-cyan-200 dark:border-cyan-900/30 rounded-xl overflow-hidden
       ${compact ? 'p-3' : 'p-4'}
     `}>
       {/* Header */}
       <div className="flex items-center gap-2 mb-3">
-        <div className="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center">
-          <Camera className="w-4 h-4 text-amber-600" />
+        <div className="w-8 h-8 rounded-lg bg-cyan-100 dark:bg-cyan-900/30 flex items-center justify-center">
+          <Camera className="w-4 h-4 text-cyan-600 dark:text-cyan-400" />
         </div>
         <div>
-          <h4 className={`font-semibold text-amber-900 ${compact ? 'text-sm' : 'text-base'}`}>
+          <h4 className={`font-semibold text-cyan-900 dark:text-cyan-400 ${compact ? 'text-sm' : 'text-base'}`}>
             Detected Components
           </h4>
           {photoFilename && (
-            <p className="text-xs text-amber-700">
+            <p className="text-xs text-cyan-700 dark:text-cyan-500/70">
               From: {photoFilename}
             </p>
           )}
         </div>
-        <div className="ml-auto flex items-center gap-1 text-xs text-amber-700">
+        <div className="ml-auto flex items-center gap-1 text-xs text-cyan-700 dark:text-cyan-500/70">
           <AlertTriangle size={12} />
           <span>Review & add to inventory</span>
         </div>
       </div>
 
       {/* Component Sections */}
-      {renderSection('exterior', 'Exterior Features', <Building2 size={14} className="text-gray-500" />)}
-      {renderSection('mechanical', 'Mechanical Systems', <Zap size={14} className="text-gray-500" />)}
-      {renderSection('interior', 'Interior Finishes', <Layers size={14} className="text-gray-500" />)}
+      {renderSection('exterior', 'Exterior Features', <Building2 size={14} className="text-gray-500 dark:text-slate-400" />)}
+      {renderSection('mechanical', 'Mechanical Systems', <Zap size={14} className="text-gray-500 dark:text-slate-400" />)}
+      {renderSection('interior', 'Interior Finishes', <Layers size={14} className="text-gray-500 dark:text-slate-400" />)}
 
       {/* Summary Footer */}
-      <div className="mt-3 pt-3 border-t border-amber-200 flex items-center justify-between">
-        <span className="text-xs text-amber-700">
+      <div className="mt-3 pt-3 border-t border-cyan-200 dark:border-cyan-900/30 flex items-center justify-between">
+        <span className="text-xs text-cyan-700 dark:text-cyan-500/70">
           {visibleComponents.length} component{visibleComponents.length !== 1 ? 's' : ''} detected
         </span>
         {visibleComponents.length > 0 && (
           <button
             onClick={() => visibleComponents.forEach(c => handleAccept(c))}
-            className="text-xs font-medium text-amber-700 hover:text-amber-900 flex items-center gap-1"
+            className="text-xs font-medium text-cyan-700 dark:text-cyan-400 hover:text-cyan-900 dark:hover:text-cyan-300 flex items-center gap-1"
           >
             <Plus size={12} />
             Add All to Inventory

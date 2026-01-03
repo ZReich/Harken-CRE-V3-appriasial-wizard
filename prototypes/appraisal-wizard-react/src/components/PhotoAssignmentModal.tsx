@@ -122,14 +122,14 @@ export default function PhotoAssignmentModal({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
       <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-slate-700">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-[#0da1c7]/20 flex items-center justify-center">
               <Sparkles className="w-5 h-5 text-[#0da1c7]" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-[#1c3643]">Review Photo Assignments</h2>
-              <p className="text-sm text-gray-500">
+              <h2 className="text-xl font-bold text-[#1c3643] dark:text-white">Review Photo Assignments</h2>
+              <p className="text-sm text-gray-500 dark:text-slate-400">
                 {stagingPhotos.length} photos analyzed - review and confirm assignments
               </p>
             </div>
@@ -138,7 +138,7 @@ export default function PhotoAssignmentModal({
             onClick={onClose}
             className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
           >
-            <X className="w-5 h-5 text-gray-500" />
+            <X className="w-5 h-5 text-gray-500 dark:text-slate-400" />
           </button>
         </div>
 
@@ -207,7 +207,7 @@ export default function PhotoAssignmentModal({
                     <p className="font-medium text-gray-800 truncate">{photo.filename}</p>
                     {topSuggestion && (
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="text-xs text-gray-500">AI Suggestion:</span>
+                        <span className="text-xs text-gray-500 dark:text-slate-400">AI Suggestion:</span>
                         <span className={`text-xs font-medium ${getConfidenceColor(topSuggestion.confidence)}`}>
                           {topSuggestion.slotLabel}
                         </span>
@@ -264,7 +264,7 @@ export default function PhotoAssignmentModal({
                     className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
                     title="Skip this photo"
                   >
-                    <X className="w-4 h-4 text-gray-500" />
+                    <X className="w-4 h-4 text-gray-500 dark:text-slate-400" />
                   </button>
                 </div>
               );
@@ -272,15 +272,15 @@ export default function PhotoAssignmentModal({
           </div>
 
           {stagingPhotos.length === 0 && (
-            <div className="text-center py-12 text-gray-500">
+            <div className="text-center py-12 text-gray-500 dark:text-slate-400">
               <p>No photos waiting for assignment</p>
             </div>
           )}
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200 bg-gray-50">
-          <div className="text-sm text-gray-500">
+        <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-700">
+          <div className="text-sm text-gray-500 dark:text-slate-400">
             {Object.keys(assignments).length} of {stagingPhotos.length} photos will be assigned
           </div>
           <div className="flex items-center gap-3">

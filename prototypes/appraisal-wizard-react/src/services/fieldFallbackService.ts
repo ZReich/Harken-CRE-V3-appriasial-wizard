@@ -30,7 +30,7 @@ export interface FallbackResult {
 /**
  * Determine if a property is in Montana based on state field.
  */
-export function isMonatanaProperty(state: string | undefined): boolean {
+export function isMontanaProperty(state: string | undefined): boolean {
   if (!state) return false;
   const normalized = state.toUpperCase().trim();
   return normalized === 'MT' || normalized === 'MONTANA';
@@ -52,7 +52,7 @@ export async function fetchFallbackValue(
 ): Promise<FallbackResult> {
   try {
     // Determine which source to use based on state
-    const isMontana = isMonatanaProperty(address.state);
+    const isMontana = isMontanaProperty(address.state);
     const source: FallbackSource = isMontana ? 'montana_gis' : 'cotality';
 
     console.log(`[FieldFallback] Fetching ${fieldPath} from ${source}`);
@@ -220,13 +220,33 @@ async function fetchFromCotality(
 }
 
 /**
+ * Property data structure returned from Montana GIS or similar services.
+ */
+interface PropertyDataResponse {
+  situsAddress?: string;
+  situsCity?: string;
+  situsState?: string;
+  situsZip?: string;
+  county?: string;
+  parcelId?: string;
+  legalDescription?: string;
+  acres?: number;
+  sqft?: number;
+  zoning?: string;
+  ownerName?: string;
+  assessedLandValue?: number;
+  assessedImprovementValue?: number;
+  totalAssessedValue?: number;
+}
+
+/**
  * Extract field value from property data based on wizard path.
  */
 function getFieldValueFromPropertyData(
-  data: any,
+  data: PropertyDataResponse,
   fieldPath: string
 ): string | undefined {
-  const pathMap: Record<string, (d: any) => string | undefined> = {
+  const pathMap: Record<string, (d: PropertyDataResponse) => string | undefined> = {
     'subjectData.address.street': (d) => d.situsAddress,
     'subjectData.address.city': (d) => d.situsCity,
     'subjectData.address.state': (d) => d.situsState || 'MT',

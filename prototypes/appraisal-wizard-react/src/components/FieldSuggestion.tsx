@@ -9,10 +9,11 @@
  * fallback data from Montana GIS (for MT properties) or Cotality API.
  */
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useMemo } from 'react';
 import { Check, X, FileText, ChevronDown, ChevronUp, Loader2, RefreshCw } from 'lucide-react';
 import { useWizard } from '../context/WizardContext';
-import { fetchFallbackValue, isMonatanaProperty } from '../services/fieldFallbackService';
+import { fetchFallbackValue, isMontanaProperty } from '../services/fieldFallbackService';
+import type { FieldSuggestion as FieldSuggestionType } from '../types';
 
 export interface FieldSuggestionData {
   value: string;
@@ -71,27 +72,27 @@ export function FieldSuggestion({
   onReject,
   className = '',
 }: FieldSuggestionProps) {
-  const { state, addFieldSuggestion, rejectFieldSuggestion } = useWizard();
+  const { state, rejectFieldSuggestion, getFieldSuggestion } = useWizard();
   const [isExpanded, setIsExpanded] = useState(true);
   const [isProcessing, setIsProcessing] = useState(false);
   const [fallbackStatus, setFallbackStatus] = useState<'idle' | 'fetching' | 'done'>('idle');
 
-  // Get suggestion from wizard state
-  const suggestion = state.fieldSuggestions?.[fieldPath];
+  // Get first pending suggestion from wizard state (array-based now)
+  const suggestion = getFieldSuggestion(fieldPath);
 
-  // Don't render if no pending suggestion
-  if (!suggestion || suggestion.status !== 'pending') {
-    return null;
-  }
+  // Memoize the suggestion value to use in callbacks
+  const suggestionValue = useMemo(() => suggestion?.value, [suggestion?.value]);
 
+  // All hooks MUST be called before any conditional returns!
   const handleAccept = useCallback(async () => {
+    if (!suggestionValue) return;
     setIsProcessing(true);
     try {
-      onAccept(suggestion.value);
+      onAccept(suggestionValue);
     } finally {
       setIsProcessing(false);
     }
-  }, [suggestion.value, onAccept]);
+  }, [suggestionValue, onAccept]);
 
   const handleReject = useCallback(async () => {
     setIsProcessing(true);
@@ -129,7 +130,13 @@ export function FieldSuggestion({
     }
   }, [fieldPath, state.subjectData?.address, onReject, rejectFieldSuggestion, onAccept]);
 
-  const confidenceColor = getConfidenceColor(suggestion.confidence);
+  // Calculate confidence color - safe even if suggestion is null
+  const confidenceColor = suggestion ? getConfidenceColor(suggestion.confidence) : '';
+
+  // Don't render if no pending suggestion - AFTER all hooks are defined!
+  if (!suggestion || suggestion.status !== 'pending') {
+    return null;
+  }
 
   return (
     <div
@@ -144,7 +151,7 @@ export function FieldSuggestion({
           <FileText className="w-4 h-4 text-blue-500" />
           <span className="text-gray-600">
             Suggested from:{' '}
-            <span className="font-medium text-gray-800">
+            <span className="font-medium text-gray-800 dark:text-white">
               {suggestion.sourceFilename || 'Document'}
             </span>
           </span>
@@ -172,7 +179,7 @@ export function FieldSuggestion({
       {isExpanded && (
         <div className="px-3 pb-3 border-t border-blue-100">
           {/* Suggested Value */}
-          <div className="mt-3 p-3 bg-white rounded-md border border-gray-200">
+          <div className="mt-3 p-3 bg-white dark:bg-slate-700 rounded-md border border-gray-200 dark:border-slate-600">
             <p className="text-sm text-gray-800 font-medium leading-relaxed">
               "{suggestion.value}"
             </p>
@@ -184,12 +191,12 @@ export function FieldSuggestion({
               type="button"
               onClick={handleReject}
               disabled={isProcessing}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 dark:text-slate-300 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-md hover:bg-gray-50 dark:hover:bg-slate-600 hover:text-gray-700 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {isProcessing && fallbackStatus === 'fetching' ? (
                 <>
                   <RefreshCw className="w-4 h-4 animate-spin" />
-                  Finding from {isMonatanaProperty(state.subjectData?.address?.state) ? 'MT GIS' : 'Cotality'}...
+                  Finding from {isMontanaProperty(state.subjectData?.address?.state) ? 'MT GIS' : 'Cotality'}...
                 </>
               ) : isProcessing ? (
                 <Loader2 className="w-4 h-4 animate-spin" />
@@ -231,16 +238,17 @@ export function FieldSourceBadge({
   fieldPath: string;
   className?: string;
 }) {
-  const { state } = useWizard();
+  const { state, getFieldSuggestions } = useWizard();
   
-  // Check for accepted suggestion
-  const suggestion = state.fieldSuggestions?.[fieldPath];
+  // Check for accepted suggestion in the array
+  const suggestions = getFieldSuggestions(fieldPath);
+  const acceptedSuggestion = suggestions.find(s => s.status === 'accepted');
   
   // Also check documentFieldSources for legacy/existing source tracking
   const legacySource = state.documentFieldSources?.[fieldPath];
   
-  // Determine which source to show
-  const source = suggestion?.status === 'accepted' ? suggestion : legacySource;
+  // Determine which source to show (accepted suggestion takes precedence)
+  const source = acceptedSuggestion || legacySource;
   
   if (!source) {
     return null;

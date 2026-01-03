@@ -74,7 +74,7 @@ export function ThemeToggle({
       <LightModeIcon 
         sx={{ 
           ...iconSx,
-          color: '#f59e0b', // Warm yellow/amber for sun
+          color: 'var(--warning)',
         }} 
       />
     );
@@ -86,17 +86,22 @@ export function ThemeToggle({
         onClick={handleClick}
         className={className}
         sx={{
-          padding: size === 'small' ? 0.5 : 1,
-          backgroundColor: 'transparent',
-          border: '1px solid var(--border-subtle)',
+          padding: size === 'small' ? 0.5 : size === 'large' ? 1.5 : 1,
+          backgroundColor: resolvedTheme === 'dark' 
+            ? 'rgba(0, 212, 255, 0.1)' 
+            : 'rgba(13, 161, 199, 0.1)',
+          border: `1px solid ${resolvedTheme === 'dark' ? 'rgba(0, 212, 255, 0.3)' : 'rgba(13, 161, 199, 0.3)'}`,
           borderRadius: '8px',
           transition: 'all 0.2s cubic-bezier(0.4, 0, 0.2, 1)',
           '&:hover': {
-            backgroundColor: 'var(--bg-hover)',
-            borderColor: 'var(--border-accent)',
+            backgroundColor: resolvedTheme === 'dark' 
+              ? 'rgba(0, 212, 255, 0.2)' 
+              : 'rgba(13, 161, 199, 0.2)',
+            borderColor: 'var(--accent-cyan)',
             boxShadow: resolvedTheme === 'dark' 
               ? 'var(--shadow-glow-cyan)' 
               : 'var(--shadow-sm)',
+            transform: 'scale(1.05)',
           },
         }}
         aria-label={getTooltipTitle()}

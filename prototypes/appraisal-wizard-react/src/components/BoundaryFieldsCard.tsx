@@ -6,8 +6,8 @@
  */
 
 import React, { useState } from 'react';
-import { 
-  Map, 
+import {
+  Map,
   Navigation,
   ArrowUp,
   ArrowDown,
@@ -29,17 +29,17 @@ interface BoundaryFieldsCardProps {
   onEastBoundaryChange: (value: string) => void;
   westBoundary: string;
   onWestBoundaryChange: (value: string) => void;
-  
+
   /** Optional: property coordinates for map display */
   latitude?: number;
   longitude?: number;
-  
+
   /** Optional: cadastral/parcel data source indicator */
   dataSource?: 'cadastral' | 'manual' | 'cotality' | null;
-  
+
   /** Optional: parcel ID from cadastral data */
   parcelId?: string;
-  
+
   /** Optional: callback when user requests boundary data refresh */
   onRefreshBoundaries?: () => void;
   isRefreshing?: boolean;
@@ -48,25 +48,24 @@ interface BoundaryFieldsCardProps {
 /**
  * Direction indicator button
  */
-function DirectionIndicator({ 
-  direction, 
-  icon: Icon, 
+function DirectionIndicator({
+  direction,
+  icon: Icon,
   isActive,
   onClick,
-}: { 
-  direction: string; 
-  icon: React.ElementType; 
+}: {
+  direction: string;
+  icon: React.ElementType;
   isActive: boolean;
   onClick: () => void;
 }) {
   return (
     <button
       onClick={onClick}
-      className={`p-1.5 rounded-full transition-all ${
-        isActive
+      className={`p-1.5 rounded-full transition-all ${isActive
           ? 'bg-[#0da1c7] text-white'
           : 'bg-slate-100 text-slate-400 hover:bg-slate-200'
-      }`}
+        }`}
       title={`Edit ${direction} boundary`}
     >
       <Icon className="w-3.5 h-3.5" />
@@ -92,9 +91,9 @@ export function BoundaryFieldsCard({
 }: BoundaryFieldsCardProps) {
   const [activeDirection, setActiveDirection] = useState<'north' | 'south' | 'east' | 'west'>('north');
   const [showMapPreview, setShowMapPreview] = useState(false);
-  
+
   const hasCoordinates = latitude !== undefined && longitude !== undefined;
-  
+
   // Get the current boundary value based on direction
   const getBoundaryValue = () => {
     switch (activeDirection) {
@@ -104,7 +103,7 @@ export function BoundaryFieldsCard({
       case 'west': return westBoundary;
     }
   };
-  
+
   // Set the boundary value based on direction
   const setBoundaryValue = (value: string) => {
     switch (activeDirection) {
@@ -114,7 +113,7 @@ export function BoundaryFieldsCard({
       case 'west': onWestBoundaryChange(value); break;
     }
   };
-  
+
   // Get placeholder text
   const getPlaceholder = () => {
     const examples: Record<string, string> = {
@@ -125,17 +124,17 @@ export function BoundaryFieldsCard({
     };
     return examples[activeDirection];
   };
-  
+
   // Data source indicator
   const getDataSourceBadge = () => {
     if (!dataSource) return null;
-    
+
     const badges: Record<string, { label: string; color: string }> = {
-      cadastral: { label: 'Cadastral Data', color: 'bg-purple-100 text-purple-700' },
-      cotality: { label: 'Cotality', color: 'bg-blue-100 text-blue-700' },
-      manual: { label: 'Manual Entry', color: 'bg-gray-100 text-gray-600' },
+      cadastral: { label: 'Cadastral Data', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300' },
+      cotality: { label: 'Cotality', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300' },
+      manual: { label: 'Manual Entry', color: 'bg-gray-100 text-gray-600 dark:bg-slate-700 dark:text-slate-300' },
     };
-    
+
     const badge = badges[dataSource];
     return (
       <span className={`text-[10px] px-2 py-0.5 rounded-full font-medium ${badge.color}`}>
@@ -143,25 +142,25 @@ export function BoundaryFieldsCard({
       </span>
     );
   };
-  
+
   // Count filled boundaries
   const filledCount = [northBoundary, southBoundary, eastBoundary, westBoundary].filter(b => b.trim()).length;
-  
+
   return (
-    <div className="bg-white border border-gray-200 rounded-xl p-6 shadow-sm">
+    <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Map className="w-5 h-5 text-[#0da1c7]" />
-          <h3 className="text-lg font-bold text-[#1c3643]">Property Boundaries</h3>
+          <h3 className="text-lg font-bold text-[#1c3643] dark:text-white">Property Boundaries</h3>
           {getDataSourceBadge()}
         </div>
-        
+
         <div className="flex items-center gap-2">
           {/* Progress indicator */}
-          <span className="text-xs text-slate-500">
+          <span className="text-xs text-slate-500 dark:text-slate-400">
             {filledCount}/4 defined
           </span>
-          
+
           {/* Refresh button (if data source available) */}
           {onRefreshBoundaries && (
             <button
@@ -173,16 +172,15 @@ export function BoundaryFieldsCard({
               <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
             </button>
           )}
-          
+
           {/* Map preview toggle */}
           {hasCoordinates && (
             <button
               onClick={() => setShowMapPreview(!showMapPreview)}
-              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
-                showMapPreview
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${showMapPreview
                   ? 'bg-[#0da1c7] text-white'
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-              }`}
+                }`}
             >
               <Maximize2 className="w-3.5 h-3.5" />
               {showMapPreview ? 'Hide Map' : 'Show Map'}
@@ -190,7 +188,7 @@ export function BoundaryFieldsCard({
           )}
         </div>
       </div>
-      
+
       {/* Directional compass navigation */}
       <div className="flex justify-center mb-6">
         <div className="relative w-24 h-24">
@@ -198,7 +196,7 @@ export function BoundaryFieldsCard({
           <div className="absolute inset-0 flex items-center justify-center">
             <Navigation className="w-8 h-8 text-slate-200" />
           </div>
-          
+
           {/* Direction buttons */}
           <div className="absolute top-0 left-1/2 -translate-x-1/2">
             <DirectionIndicator
@@ -234,7 +232,7 @@ export function BoundaryFieldsCard({
           </div>
         </div>
       </div>
-      
+
       {/* Active boundary input */}
       <div className="mb-4">
         <EnhancedTextArea
@@ -248,27 +246,27 @@ export function BoundaryFieldsCard({
           helperText="Describe what borders the property on this side."
         />
       </div>
-      
+
       {/* Quick summary of all boundaries */}
-      <div className="grid grid-cols-2 gap-2 p-3 bg-slate-50 rounded-lg text-xs">
-        <div className={`flex items-center gap-1.5 ${northBoundary ? 'text-slate-700' : 'text-slate-400'}`}>
+      <div className="grid grid-cols-2 gap-2 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg text-xs">
+        <div className={`flex items-center gap-1.5 ${northBoundary ? 'text-slate-700 dark:text-slate-300' : 'text-slate-400 dark:text-slate-500'}`}>
           <ArrowUp className="w-3 h-3" />
           <span className="truncate">{northBoundary || 'North: Not defined'}</span>
         </div>
-        <div className={`flex items-center gap-1.5 ${southBoundary ? 'text-slate-700' : 'text-slate-400'}`}>
+        <div className={`flex items-center gap-1.5 ${southBoundary ? 'text-slate-700 dark:text-slate-300' : 'text-slate-400 dark:text-slate-500'}`}>
           <ArrowDown className="w-3 h-3" />
           <span className="truncate">{southBoundary || 'South: Not defined'}</span>
         </div>
-        <div className={`flex items-center gap-1.5 ${eastBoundary ? 'text-slate-700' : 'text-slate-400'}`}>
+        <div className={`flex items-center gap-1.5 ${eastBoundary ? 'text-slate-700 dark:text-slate-300' : 'text-slate-400 dark:text-slate-500'}`}>
           <ArrowRight className="w-3 h-3" />
           <span className="truncate">{eastBoundary || 'East: Not defined'}</span>
         </div>
-        <div className={`flex items-center gap-1.5 ${westBoundary ? 'text-slate-700' : 'text-slate-400'}`}>
+        <div className={`flex items-center gap-1.5 ${westBoundary ? 'text-slate-700 dark:text-slate-300' : 'text-slate-400 dark:text-slate-500'}`}>
           <ArrowLeft className="w-3 h-3" />
           <span className="truncate">{westBoundary || 'West: Not defined'}</span>
         </div>
       </div>
-      
+
       {/* Map Preview */}
       {showMapPreview && hasCoordinates && (
         <div className="mt-4 rounded-lg overflow-hidden border border-slate-200">

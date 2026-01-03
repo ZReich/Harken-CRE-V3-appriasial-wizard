@@ -212,7 +212,7 @@ export const ContextualMarketData: React.FC<ContextualMarketDataProps> = ({
   };
 
   return (
-    <div className={`bg-white border border-slate-200 rounded-xl overflow-hidden ${className}`}>
+    <div className={`bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden ${className}`}>
       {/* Header */}
       <div className={`px-4 py-3 ${theme.bg} border-b ${theme.border}`}>
         <h4 className={`text-xs font-bold uppercase tracking-widest ${theme.accent}`}>
@@ -239,7 +239,7 @@ export const ContextualMarketData: React.FC<ContextualMarketDataProps> = ({
               
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-xs font-medium text-slate-500">
+                  <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
                     {metric.label}
                   </span>
                   <TrendIcon trend={metric.trend} />

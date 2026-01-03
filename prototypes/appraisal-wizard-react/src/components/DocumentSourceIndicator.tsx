@@ -179,7 +179,7 @@ export function DocumentSourceIndicator({
         {/* Filename */}
         <div>
           <div className="text-xs text-gray-500 mb-0.5">File</div>
-          <div className="text-sm text-gray-900 font-medium flex items-center gap-1.5">
+          <div className="text-sm text-gray-900 dark:text-white font-medium flex items-center gap-1.5">
             <FileText className="w-4 h-4 text-gray-400 flex-shrink-0" />
             <span className="truncate" title={source.sourceFilename}>
               {source.sourceFilename}
@@ -190,7 +190,7 @@ export function DocumentSourceIndicator({
         {/* Document Type */}
         <div>
           <div className="text-xs text-gray-500 mb-0.5">Document Type</div>
-          <div className="text-sm text-gray-900">
+          <div className="text-sm text-gray-900 dark:text-white">
             {formatDocumentType(source.sourceDocumentType)}
           </div>
         </div>
@@ -198,7 +198,7 @@ export function DocumentSourceIndicator({
         {/* Extracted Value */}
         <div>
           <div className="text-xs text-gray-500 mb-0.5">Extracted Value</div>
-          <div className="text-sm text-gray-900 bg-gray-50 px-2 py-1 rounded border border-gray-100 break-words">
+          <div className="text-sm text-gray-900 dark:text-white bg-gray-50 dark:bg-slate-700 px-2 py-1 rounded border border-gray-100 dark:border-slate-600 break-words">
             {source.value}
           </div>
         </div>

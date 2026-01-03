@@ -160,8 +160,8 @@ export const CostSegSystemRefinement: React.FC<CostSegSystemRefinementProps> = (
         <div className="flex items-center gap-3 flex-1">
           <span className="text-2xl">{SYSTEM_ICONS[refinement.systemType] || '🔧'}</span>
           <div>
-            <h3 className="text-lg font-bold text-gray-900">{refinement.systemLabel}</h3>
-            <p className="text-sm text-gray-500">
+            <h3 className="text-lg font-bold text-gray-900 dark:text-white">{refinement.systemLabel}</h3>
+            <p className="text-sm text-gray-500 dark:text-slate-400">
               Total: {formatCurrency(refinement.totalSystemCost)} • {refinement.refinements.length} refinement{refinement.refinements.length !== 1 ? 's' : ''}
             </p>
           </div>
@@ -170,7 +170,7 @@ export const CostSegSystemRefinement: React.FC<CostSegSystemRefinementProps> = (
         <div className="flex items-center gap-3">
           {/* Allocation Progress */}
           <div className="text-right mr-4">
-            <div className="text-xs font-medium text-gray-600">Allocated</div>
+            <div className="text-xs font-medium text-gray-600 dark:text-slate-400">Allocated</div>
             <div className={`text-sm font-bold ${allocationStatus.isComplete ? 'text-emerald-600' : allocationStatus.isOver ? 'text-red-600' : 'text-amber-600'}`}>
               {formatCurrency(allocationStatus.allocated)} ({allocationStatus.percentAllocated.toFixed(1)}%)
             </div>
@@ -197,7 +197,7 @@ export const CostSegSystemRefinement: React.FC<CostSegSystemRefinementProps> = (
         <div className="p-4 space-y-4">
           {/* Progress Bar */}
           <div className="space-y-2">
-            <div className="flex justify-between text-xs text-gray-600">
+            <div className="flex justify-between text-xs text-gray-600 dark:text-slate-400">
               <span>Allocation Progress</span>
               <span>{formatCurrency(allocationStatus.remaining)} remaining</span>
             </div>
@@ -315,13 +315,13 @@ const RefinementLine: React.FC<RefinementLineProps> = ({
       >
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
-            <span className="font-medium text-gray-900">{line.description || 'Unnamed refinement'}</span>
+            <span className="font-medium text-gray-900 dark:text-white">{line.description || 'Unnamed refinement'}</span>
             <span className={`px-2 py-0.5 text-xs font-medium rounded-full bg-${depClassOption?.color}-100 text-${depClassOption?.color}-700`}>
               {line.depreciationClass}
             </span>
           </div>
-          <div className="flex items-center gap-4 text-xs text-gray-600">
-            <span className="font-semibold text-gray-900">{formatCurrency(line.amount)}</span>
+          <div className="flex items-center gap-4 text-xs text-gray-600 dark:text-slate-400">
+            <span className="font-semibold text-gray-900 dark:text-white">{formatCurrency(line.amount)}</span>
             <span>• {ALLOCATION_METHODS.find(m => m.value === line.allocationMethod)?.label}</span>
             {line.measurements && (
               <span>• {line.measurements.quantity} {line.measurements.unit}</span>
@@ -502,7 +502,7 @@ const RefinementLine: React.FC<RefinementLineProps> = ({
       <div>
         <button
           onClick={() => setShowPhotoSelector(!showPhotoSelector)}
-          className="flex items-center gap-2 text-xs font-medium text-gray-700 hover:text-gray-900"
+          className="flex items-center gap-2 text-xs font-medium text-gray-700 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white"
         >
           <Camera className="w-4 h-4" />
           Link Photos ({line.linkedPhotoIds?.length || 0})

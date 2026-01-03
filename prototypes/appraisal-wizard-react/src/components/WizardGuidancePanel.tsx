@@ -36,10 +36,10 @@ function CollapsibleSection({
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden bg-white">
+    <div className="border border-gray-200 dark:border-slate-700 rounded-xl overflow-hidden bg-white dark:bg-slate-800">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 transition-colors"
+        className="w-full flex items-center justify-between px-4 py-3 hover:bg-gray-50 dark:hover:bg-slate-700 transition-colors"
       >
         <div className="flex items-center gap-3">
           <div 
@@ -48,16 +48,16 @@ function CollapsibleSection({
           >
             <span style={{ color: iconColor }}>{icon}</span>
           </div>
-          <span className="text-sm font-semibold text-gray-800">{title}</span>
+          <span className="text-sm font-semibold text-gray-800 dark:text-white">{title}</span>
         </div>
         {isOpen ? (
-          <ChevronUp className="w-4 h-4 text-gray-400" />
+          <ChevronUp className="w-4 h-4 text-gray-400 dark:text-slate-500 dark:text-slate-400" />
         ) : (
-          <ChevronDown className="w-4 h-4 text-gray-400" />
+          <ChevronDown className="w-4 h-4 text-gray-400 dark:text-slate-500 dark:text-slate-400" />
         )}
       </button>
       {isOpen && (
-        <div className="px-4 pb-4 pt-1 border-t border-gray-100">
+        <div className="px-4 pb-4 pt-1 border-t border-gray-100 dark:border-slate-700">
           {children}
         </div>
       )}
@@ -73,7 +73,7 @@ export default function WizardGuidancePanel({
 
   if (!guidance) {
     return (
-      <div className="text-center py-8 text-gray-500">
+      <div className="text-center py-8 text-gray-500 dark:text-slate-400">
         <Info className="w-8 h-8 mx-auto mb-2 opacity-50" />
         <p className="text-sm">Select a section to view guidance</p>
       </div>
@@ -89,8 +89,8 @@ export default function WizardGuidancePanel({
           style={{ backgroundColor: themeColor }}
         />
         <div>
-          <h3 className="text-lg font-bold text-gray-900">{guidance.title}</h3>
-          <p className="text-sm text-gray-500">Section Guidance</p>
+          <h3 className="text-lg font-bold text-gray-900 dark:text-white">{guidance.title}</h3>
+          <p className="text-sm text-gray-500 dark:text-slate-400">Section Guidance</p>
         </div>
       </div>
 
@@ -102,7 +102,7 @@ export default function WizardGuidancePanel({
         iconColor="#2563eb"
         defaultOpen={true}
       >
-        <p className="text-sm text-gray-700 leading-relaxed mt-2">
+        <p className="text-sm text-gray-700 dark:text-slate-300 leading-relaxed mt-2">
           {guidance.context}
         </p>
       </CollapsibleSection>
@@ -118,7 +118,7 @@ export default function WizardGuidancePanel({
         >
           <ul className="space-y-2 mt-2">
             {guidance.tips.map((tip, index) => (
-              <li key={index} className="flex items-start gap-2 text-sm text-gray-700">
+              <li key={index} className="flex items-start gap-2 text-sm text-gray-700 dark:text-slate-300">
                 <span 
                   className="w-1.5 h-1.5 rounded-full mt-1.5 shrink-0"
                   style={{ backgroundColor: themeColor }}
@@ -141,7 +141,7 @@ export default function WizardGuidancePanel({
         >
           <ul className="space-y-2 mt-2">
             {guidance.mistakes.map((mistake, index) => (
-              <li key={index} className="flex items-start gap-2 text-sm text-gray-700">
+              <li key={index} className="flex items-start gap-2 text-sm text-gray-700 dark:text-slate-300">
                 <span className="w-1.5 h-1.5 rounded-full bg-red-400 mt-1.5 shrink-0" />
                 <span>{mistake}</span>
               </li>
@@ -173,7 +173,7 @@ export default function WizardGuidancePanel({
                     USPAP: {guidance.uspap.reference}
                   </span>
                 </div>
-                <p className="text-xs text-gray-500 truncate">
+                <p className="text-xs text-gray-500 dark:text-slate-400 truncate">
                   {guidance.uspap.summary}
                 </p>
               </div>

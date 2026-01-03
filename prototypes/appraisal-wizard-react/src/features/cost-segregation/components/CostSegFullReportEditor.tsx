@@ -152,7 +152,7 @@ export const CostSegFullReportEditor: React.FC<CostSegFullReportEditorProps> = (
                 <Calculator className="w-5 h-5 text-emerald-600" />
               </div>
               <div>
-                <h1 className="text-lg font-bold text-gray-900">Cost Segregation Report</h1>
+                <h1 className="text-lg font-bold text-gray-900 dark:text-white">Cost Segregation Report</h1>
                 <p className="text-sm text-gray-500">{analysis.propertyName}</p>
               </div>
             </div>
@@ -238,8 +238,8 @@ export const CostSegFullReportEditor: React.FC<CostSegFullReportEditorProps> = (
             {/* Paper-like container */}
             <div className="bg-white shadow-lg rounded-lg overflow-hidden">
               {/* Section Header */}
-              <div className="bg-gray-50 px-8 py-4 border-b border-gray-200">
-                <h2 className="text-lg font-bold text-gray-900">
+              <div className="bg-gray-50 dark:bg-slate-800 px-8 py-4 border-b border-gray-200 dark:border-slate-700">
+                <h2 className="text-lg font-bold text-gray-900 dark:text-white">
                   {sections.find(s => s.id === activeSection)?.title}
                 </h2>
               </div>

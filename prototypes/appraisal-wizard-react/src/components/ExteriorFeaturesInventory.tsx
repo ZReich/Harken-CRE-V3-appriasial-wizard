@@ -59,7 +59,7 @@ const CONDITION_OPTIONS: { value: ComponentCondition; label: string; abbrev: str
 // =================================================================
 
 function generateId(): string {
-  return Date.now().toString(36) + Math.random().toString(36).substr(2, 9);
+  return Date.now().toString(36) + Math.random().toString(36).substring(2, 11);
 }
 
 function calculateEffectiveAge(yearInstalled: number | undefined, condition: ComponentCondition): number {
@@ -479,15 +479,15 @@ export default function ExteriorFeaturesInventory({
   }, [features, onChange]);
 
   return (
-    <div className="bg-white border border-gray-200 rounded-xl shadow-sm overflow-hidden">
+    <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl shadow-sm overflow-hidden">
       {/* Header */}
       <div className="p-4 border-b border-gray-100">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Home className="w-5 h-5 text-[#0da1c7]" />
             <div>
-              <h3 className="text-lg font-bold text-[#1c3643]">Exterior Features</h3>
-              <p className="text-xs text-gray-500">
+              <h3 className="text-lg font-bold text-[#1c3643] dark:text-white">Exterior Features</h3>
+              <p className="text-xs text-gray-500 dark:text-slate-400">
                 Track individual components with installation dates and conditions
               </p>
             </div>
@@ -547,7 +547,7 @@ export default function ExteriorFeaturesInventory({
         {selectedCategory && (
           <div className="mb-4">
             <div className="flex items-center justify-between mb-2">
-              <label className="block text-xs font-medium text-gray-600">
+              <label className="block text-xs font-medium text-gray-600 dark:text-slate-400">
                 Type ({EXTERIOR_CATEGORIES.find(c => c.id === selectedCategory)?.label})
               </label>
               {effectivePropertyType && (
@@ -616,7 +616,7 @@ export default function ExteriorFeaturesInventory({
             
             {/* Other Options Expanded */}
             {showOtherOptions && otherTypes.length > 0 && (
-              <div className="mt-2 pt-2 border-t border-gray-200">
+              <div className="mt-2 pt-2 border-t border-gray-200 dark:border-slate-700">
                 <div className="text-xs text-gray-500 mb-2">Other Options</div>
                 <div className="flex flex-wrap gap-2">
                   {otherTypes.map(type => (
@@ -641,7 +641,7 @@ export default function ExteriorFeaturesInventory({
         {/* Custom Type Form */}
         {showCustomForm && selectedCategory && (
           <div className="mb-4 p-3 bg-white rounded-lg border border-[#0da1c7]/30 border-dashed">
-            <div className="flex items-center gap-2 mb-3 text-sm text-gray-600">
+            <div className="flex items-center gap-2 mb-3 text-sm text-gray-600 dark:text-slate-400">
               <Plus size={14} className="text-[#0da1c7]" />
               <span>Add custom type to <strong>{EXTERIOR_CATEGORIES.find(c => c.id === selectedCategory)?.label}</strong></span>
             </div>
@@ -683,7 +683,7 @@ export default function ExteriorFeaturesInventory({
             <div className="mb-3 p-2 bg-slate-50 rounded-lg border border-slate-200">
               <div className="flex items-start gap-2">
                 <Calculator size={14} className="text-[#0da1c7] mt-0.5 flex-shrink-0" />
-                <div className="text-xs text-gray-600">
+                <div className="text-xs text-gray-600 dark:text-slate-400">
                   <div className="font-medium text-gray-700 mb-1">
                     Economic Life Guide for {EXTERIOR_CATEGORIES.find(c => c.id === selectedCategory)?.label}
                   </div>
@@ -720,7 +720,7 @@ export default function ExteriorFeaturesInventory({
 
         {/* Quick Add Form (shown when type or custom form is active) */}
         {(selectedTypeId || showCustomForm) && (
-          <div className="p-3 bg-white rounded-lg border border-gray-200">
+          <div className="p-3 bg-white rounded-lg border border-gray-200 dark:border-slate-700">
             <div className="grid grid-cols-3 gap-3 mb-3">
               <div>
                 <label className="block text-xs font-medium text-gray-600 mb-1 flex items-center gap-1">
@@ -730,7 +730,7 @@ export default function ExteriorFeaturesInventory({
                 <select
                   value={yearInstalled}
                   onChange={(e) => setYearInstalled(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white dark:bg-slate-700 dark:text-white"
                 >
                   <option value="">Select year...</option>
                   {generateYearOptions(buildingYearBuilt).map((year) => (
@@ -850,7 +850,7 @@ export default function ExteriorFeaturesInventory({
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
                             {isCustom && <Star size={12} className="text-amber-400 flex-shrink-0" />}
-                            <span className="font-medium text-sm text-gray-900 truncate">
+                            <span className="font-medium text-sm text-gray-900 dark:text-white truncate">
                               {component.type}
                             </span>
                             {hasNotes && !isExpanded && (
@@ -915,7 +915,7 @@ export default function ExteriorFeaturesInventory({
                             <div className="space-y-2">
                               <div className="flex items-center gap-3">
                                 <div className="text-sm">
-                                  <span className="text-slate-500">Depreciation:</span>
+                                  <span className="text-slate-500 dark:text-slate-400">Depreciation:</span>
                                   <span className={`ml-2 font-semibold ${component.depreciationOverride !== undefined ? 'text-amber-600' : 'text-slate-700'}`}>
                                     {component.depreciationOverride !== undefined ? component.depreciationOverride : depreciationPct}%
                                   </span>
@@ -1001,7 +1001,7 @@ export default function ExteriorFeaturesInventory({
 
         {/* Empty State */}
         {allComponents.length === 0 && !selectedCategory && (
-          <div className="text-center py-6 text-gray-500">
+          <div className="text-center py-6 text-gray-500 dark:text-slate-400">
             <p className="text-sm">Select a category above to add exterior features</p>
           </div>
         )}

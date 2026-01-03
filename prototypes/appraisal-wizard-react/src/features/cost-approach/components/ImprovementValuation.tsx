@@ -157,18 +157,18 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
 
     return (
       <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-        <div className="bg-white rounded-xl shadow-2xl border border-slate-200 w-full max-w-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[85vh]" onClick={(e) => e.stopPropagation()}>
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 w-full max-w-2xl overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[85vh]" onClick={(e) => e.stopPropagation()}>
           <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
             <div>
               <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wide">M&S Depreciation Tables</h3>
               <p className="text-xs text-slate-500 mt-0.5">Recommended values highlighted for Effective Age {formData.effectiveAge}.</p>
             </div>
-            <button onClick={() => setShowDepreciationTable(false)} className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-200 rounded-full transition-colors"><X size={18}/></button>
+            <button onClick={() => setShowDepreciationTable(false)} className="p-1.5 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-full transition-colors"><X size={18}/></button>
           </div>
           
           <div className="overflow-y-auto p-0 flex-1 custom-scrollbar">
             <table className="w-full text-center border-collapse">
-              <thead className="bg-white sticky top-0 z-10 text-[10px] font-bold text-slate-500 uppercase tracking-wider shadow-sm">
+              <thead className="bg-white dark:bg-slate-800 sticky top-0 z-10 text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider shadow-sm">
                 <tr>
                   <th className="py-3 px-2 border-b border-slate-100 bg-slate-50/80 backdrop-blur">Effective Age</th>
                   <th className="py-3 px-2 border-b border-slate-100 bg-slate-50/80 backdrop-blur">Frame</th>
@@ -176,7 +176,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                   <th className="py-3 px-2 border-b border-slate-100 bg-slate-50/80 backdrop-blur">Masonry / Steel</th>
                 </tr>
               </thead>
-              <tbody className="text-sm text-slate-600">
+              <tbody className="text-sm text-slate-600 dark:text-slate-300">
                 {DEPRECIATION_TABLE_DATA.map((row) => {
                   const isRecommended = row.age === closestRow.age;
                   return (
@@ -185,7 +185,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                       <td className="p-1.5">
                         <button 
                           onClick={() => { updateForm('depreciationPhysical', row.frame/100); setShowDepreciationTable(false); }} 
-                          className={`w-full py-1.5 rounded transition-all border border-transparent ${isRecommended ? 'bg-white shadow-sm text-[#0da1c7] font-bold border-[#0da1c7]/20' : 'hover:bg-white hover:shadow-sm hover:text-[#0da1c7] hover:border-slate-200'}`}
+                          className={`w-full py-1.5 rounded transition-all border border-transparent ${isRecommended ? 'bg-white dark:bg-slate-700 shadow-sm text-[#0da1c7] font-bold border-[#0da1c7]/20' : 'hover:bg-white dark:hover:bg-slate-700 hover:shadow-sm hover:text-[#0da1c7] hover:border-slate-200 dark:hover:border-slate-600'}`}
                         >
                           {row.frame}%
                         </button>
@@ -193,7 +193,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                       <td className="p-1.5">
                         <button 
                           onClick={() => { updateForm('depreciationPhysical', row.masonryWood/100); setShowDepreciationTable(false); }} 
-                          className={`w-full py-1.5 rounded transition-all border border-transparent ${isRecommended ? 'bg-white shadow-sm text-[#0da1c7] font-bold border-[#0da1c7]/20' : 'hover:bg-white hover:shadow-sm hover:text-[#0da1c7] hover:border-slate-200'}`}
+                          className={`w-full py-1.5 rounded transition-all border border-transparent ${isRecommended ? 'bg-white dark:bg-slate-700 shadow-sm text-[#0da1c7] font-bold border-[#0da1c7]/20' : 'hover:bg-white dark:hover:bg-slate-700 hover:shadow-sm hover:text-[#0da1c7] hover:border-slate-200 dark:hover:border-slate-600'}`}
                         >
                           {row.masonryWood}%
                         </button>
@@ -201,7 +201,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                       <td className="p-1.5">
                         <button 
                           onClick={() => { updateForm('depreciationPhysical', row.masonrySteel/100); setShowDepreciationTable(false); }} 
-                          className={`w-full py-1.5 rounded transition-all border border-transparent ${isRecommended ? 'bg-white shadow-sm text-[#0da1c7] font-bold border-[#0da1c7]/20' : 'hover:bg-white hover:shadow-sm hover:text-[#0da1c7] hover:border-slate-200'}`}
+                          className={`w-full py-1.5 rounded transition-all border border-transparent ${isRecommended ? 'bg-white dark:bg-slate-700 shadow-sm text-[#0da1c7] font-bold border-[#0da1c7]/20' : 'hover:bg-white dark:hover:bg-slate-700 hover:shadow-sm hover:text-[#0da1c7] hover:border-slate-200 dark:hover:border-slate-600'}`}
                         >
                           {row.masonrySteel}%
                         </button>
@@ -270,7 +270,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
 
     return (
       <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/40 backdrop-blur-sm p-4 animate-in fade-in duration-200">
-        <div className="bg-white rounded-xl shadow-2xl border border-slate-200 w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
+        <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 w-full max-w-md overflow-hidden animate-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
           <div className="px-6 py-4 border-b border-slate-200 flex justify-between items-center bg-slate-50">
             <div>
               <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wide">Base Cost Estimator</h3>
@@ -283,14 +283,14 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
             {isLoading ? (
               <div className="bg-slate-50 rounded-lg p-8 border border-slate-100 flex flex-col items-center justify-center text-center space-y-3">
                 <Loader2 size={24} className="animate-spin text-[#0da1c7]"/>
-                <div className="text-sm font-medium text-slate-600">Querying CoreLogic M&S API...</div>
+                <div className="text-sm font-medium text-slate-600 dark:text-slate-300">Querying CoreLogic M&S API...</div>
                 <div className="text-xs text-slate-400">Authenticating & retrieving Section 14 data</div>
               </div>
             ) : (
               <div className="bg-blue-50 rounded-lg p-4 border border-blue-100 animate-in fade-in duration-300">
                 <div className="flex justify-between items-start mb-2">
                   <span className="text-xs font-bold text-blue-700 uppercase tracking-wide">Live Data Return</span>
-                  <span className="text-[10px] text-blue-400 bg-white px-2 py-0.5 rounded-full border border-blue-100">Success (200 OK)</span>
+                  <span className="text-[10px] text-blue-400 bg-white dark:bg-slate-800 px-2 py-0.5 rounded-full border border-blue-100 dark:border-blue-800">Success (200 OK)</span>
                 </div>
                 <div className="text-sm text-blue-900 mb-3">
                   {formData.occupancy} - {formData.class.split('-')[0].trim()} - {formData.quality}
@@ -306,23 +306,23 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
               <label className="text-xs font-bold text-slate-500 uppercase tracking-wide">Common Additives</label>
               <div className="space-y-2">
                 <label className="flex items-center justify-between p-3 border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors">
-                  <span className="text-sm text-slate-700">Fire Sprinklers</span>
+                  <span className="text-sm text-slate-700 dark:text-slate-200">Fire Sprinklers</span>
                   <div className="flex items-center gap-3">
-                    <span className="text-xs font-mono text-slate-500">+$3.50</span>
+                    <span className="text-xs font-mono text-slate-500 dark:text-slate-400">+$3.50</span>
                     <input type="checkbox" checked={additives.sprinklers} onChange={e => setAdditives({...additives, sprinklers: e.target.checked})} className="rounded text-[#0da1c7] focus:ring-[#0da1c7]"/>
                   </div>
                 </label>
                 <label className="flex items-center justify-between p-3 border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors">
-                  <span className="text-sm text-slate-700">Complete HVAC</span>
+                  <span className="text-sm text-slate-700 dark:text-slate-200">Complete HVAC</span>
                   <div className="flex items-center gap-3">
-                    <span className="text-xs font-mono text-slate-500">+$4.25</span>
+                    <span className="text-xs font-mono text-slate-500 dark:text-slate-400">+$4.25</span>
                     <input type="checkbox" checked={additives.hvac} onChange={e => setAdditives({...additives, hvac: e.target.checked})} className="rounded text-[#0da1c7] focus:ring-[#0da1c7]"/>
                   </div>
                 </label>
                 <label className="flex items-center justify-between p-3 border border-slate-200 rounded-lg hover:bg-slate-50 cursor-pointer transition-colors">
-                  <span className="text-sm text-slate-700">Elevators</span>
+                  <span className="text-sm text-slate-700 dark:text-slate-200">Elevators</span>
                   <div className="flex items-center gap-3">
-                    <span className="text-xs font-mono text-slate-500">+$8.00</span>
+                    <span className="text-xs font-mono text-slate-500 dark:text-slate-400">+$8.00</span>
                     <input type="checkbox" checked={additives.elevators} onChange={e => setAdditives({...additives, elevators: e.target.checked})} className="rounded text-[#0da1c7] focus:ring-[#0da1c7]"/>
                   </div>
                 </label>
@@ -385,7 +385,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
         
         {/* Show site improvements even if no buildings */}
         {siteImprovementsCost > 0 && (
-          <div className="bg-white border border-slate-200 rounded-lg shadow-sm p-6">
+          <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm p-6">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-bold text-slate-900">Site Improvements</h3>
               <button
@@ -399,14 +399,14 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
               <div className="space-y-2 mb-4">
                 {siteImprovementsBreakdown.map((item, idx) => (
                   <div key={idx} className="flex justify-between text-sm">
-                    <span className="text-slate-600">{item.label}</span>
+                    <span className="text-slate-600 dark:text-slate-300">{item.label}</span>
                     <span className="font-medium text-slate-900">{formatCurrency(item.contributoryValue)}</span>
                   </div>
                 ))}
               </div>
             )}
             <div className="flex justify-between items-center pt-3 border-t border-slate-200">
-              <span className="font-medium text-slate-700">Total Site Improvements</span>
+              <span className="font-medium text-slate-700 dark:text-slate-200">Total Site Improvements</span>
               <span className="text-lg font-bold text-slate-900">{formatCurrency(siteImprovementsCost)}</span>
             </div>
           </div>
@@ -421,7 +421,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
     const hasOverrides = editingId && costOverrides[editingId];
     
     return (
-      <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden animate-in fade-in duration-200 relative">
+      <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm overflow-hidden animate-in fade-in duration-200 relative">
         <DepreciationTableModal />
         <CostEstimatorModal />
 
@@ -467,7 +467,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                   type="text" 
                   value={formData.name} 
                   onChange={e => updateForm('name', e.target.value)}
-                  className="w-full bg-white border border-slate-200 rounded-md px-3 py-2 text-sm text-slate-900 focus:border-[#0da1c7] focus:ring-1 focus:ring-[#0da1c7] outline-none transition-all"
+                  className="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-md px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-[#0da1c7] focus:ring-1 focus:ring-[#0da1c7] outline-none transition-all"
                 />
               </div>
               
@@ -477,7 +477,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                   <select
                     value={formData.yearBuilt} 
                     onChange={e => updateForm('yearBuilt', +e.target.value)}
-                    className="w-full bg-white border border-slate-200 rounded-md px-3 py-2 text-sm text-slate-900 focus:border-[#0da1c7] focus:ring-1 focus:ring-[#0da1c7] outline-none transition-all"
+                    className="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-md px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-[#0da1c7] focus:ring-1 focus:ring-[#0da1c7] outline-none transition-all"
                   >
                     {Array.from({length: 100}, (_, i) => new Date().getFullYear() - i).map(year => (
                       <option key={year} value={year}>{year}</option>
@@ -489,7 +489,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                   <select 
                     value={formData.occupancy} 
                     onChange={e => updateForm('occupancy', e.target.value)}
-                    className="w-full bg-white border border-slate-200 rounded-md px-3 py-2 text-sm text-slate-900 focus:border-[#0da1c7] focus:ring-1 focus:ring-[#0da1c7] outline-none transition-all"
+                    className="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-md px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-[#0da1c7] focus:ring-1 focus:ring-[#0da1c7] outline-none transition-all"
                   >
                     {OCCUPANCY_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
                   </select>
@@ -502,7 +502,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                   <select 
                     value={formData.class} 
                     onChange={e => updateForm('class', e.target.value)}
-                    className="w-full bg-white border border-slate-200 rounded-md px-3 py-2 text-sm text-slate-900 focus:border-[#0da1c7] focus:ring-1 focus:ring-[#0da1c7] outline-none transition-all"
+                    className="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-md px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-[#0da1c7] focus:ring-1 focus:ring-[#0da1c7] outline-none transition-all"
                   >
                     {CLASS_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
                   </select>
@@ -512,7 +512,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                   <select 
                     value={formData.quality} 
                     onChange={e => updateForm('quality', e.target.value)}
-                    className="w-full bg-white border border-slate-200 rounded-md px-3 py-2 text-sm text-slate-900 focus:border-[#0da1c7] focus:ring-1 focus:ring-[#0da1c7] outline-none transition-all"
+                    className="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-md px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-[#0da1c7] focus:ring-1 focus:ring-[#0da1c7] outline-none transition-all"
                   >
                     {QUALITY_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
                   </select>
@@ -555,7 +555,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                     type="number" 
                     value={formData.areaSf}
                     disabled
-                    className="w-full bg-slate-100 border border-slate-200 rounded-md px-3 py-2 text-sm font-semibold text-slate-600 cursor-not-allowed"
+                    className="w-full bg-slate-100 dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-md px-3 py-2 text-sm font-semibold text-slate-600 dark:text-slate-300 cursor-not-allowed"
                     title="Area is read from Improvements inventory"
                   />
                   <p className="text-[10px] text-slate-400 mt-1">From Improvements tab</p>
@@ -567,7 +567,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                       type="number" 
                       value={formData.baseCostPsf}
                       onChange={e => updateForm('baseCostPsf', +e.target.value)}
-                      className="w-full bg-white border border-slate-200 rounded-md pl-3 pr-8 py-2 text-sm font-semibold text-slate-900 focus:border-[#0da1c7] focus:ring-1 focus:ring-[#0da1c7] outline-none transition-all"
+                      className="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-md pl-3 pr-8 py-2 text-sm font-semibold text-slate-900 dark:text-slate-100 focus:border-[#0da1c7] focus:ring-1 focus:ring-[#0da1c7] outline-none transition-all"
                     />
                     <button 
                       onClick={() => setShowCostEstimator(true)}
@@ -582,30 +582,30 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
 
               <div className="space-y-3 pt-2">
                 <div className="flex items-center justify-between">
-                  <label className="text-sm text-slate-500">Current Mult.</label>
+                  <label className="text-sm text-slate-500 dark:text-slate-400">Current Mult.</label>
                   <input 
                     type="number" 
                     value={formData.multipliers.current}
                     onChange={e => updateMultiplier('current', +e.target.value)}
-                    className="w-20 bg-white border border-slate-200 rounded px-2 py-1 text-right text-sm text-slate-700 focus:border-[#0da1c7] outline-none"
+                    className="w-20 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-right text-sm text-slate-700 dark:text-slate-200 focus:border-[#0da1c7] outline-none"
                   />
                 </div>
                 <div className="flex items-center justify-between">
-                  <label className="text-sm text-slate-500">Local Mult.</label>
+                  <label className="text-sm text-slate-500 dark:text-slate-400">Local Mult.</label>
                   <input 
                     type="number" 
                     value={formData.multipliers.local}
                     onChange={e => updateMultiplier('local', +e.target.value)}
-                    className="w-20 bg-white border border-slate-200 rounded px-2 py-1 text-right text-sm text-slate-700 focus:border-[#0da1c7] outline-none"
+                    className="w-20 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-right text-sm text-slate-700 dark:text-slate-200 focus:border-[#0da1c7] outline-none"
                   />
                 </div>
                 <div className="flex items-center justify-between">
-                  <label className="text-sm text-slate-500">Perimeter Mult.</label>
+                  <label className="text-sm text-slate-500 dark:text-slate-400">Perimeter Mult.</label>
                   <input 
                     type="number" 
                     value={formData.multipliers.perimeter}
                     onChange={e => updateMultiplier('perimeter', +e.target.value)}
-                    className="w-20 bg-white border border-slate-200 rounded px-2 py-1 text-right text-sm text-slate-700 focus:border-[#0da1c7] outline-none"
+                    className="w-20 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-right text-sm text-slate-700 dark:text-slate-200 focus:border-[#0da1c7] outline-none"
                   />
                 </div>
                 <div className="flex items-center justify-between pt-2 border-t border-slate-100">
@@ -623,12 +623,12 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
               </div>
 
               <div className="bg-slate-50 p-4 rounded-lg border border-slate-100 space-y-2">
-                <div className="flex justify-between text-xs text-slate-500">
+                <div className="flex justify-between text-xs text-slate-500 dark:text-slate-400">
                   <span>Profit Amount</span>
                   <span className="font-mono">{formatCurrency(incentiveAmount)}</span>
                 </div>
                 <div className="flex justify-between items-end border-t border-slate-200 pt-2">
-                  <span className="text-sm font-bold text-slate-700">Total Cost New</span>
+                  <span className="text-sm font-bold text-slate-700 dark:text-slate-200">Total Cost New</span>
                   <span className="text-lg font-bold text-slate-900">{formatCurrency(costNew)}</span>
                 </div>
               </div>
@@ -647,7 +647,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                     type="number" 
                     value={formData.effectiveAge} 
                     onChange={e => updateForm('effectiveAge', +e.target.value)}
-                    className="w-full bg-white border border-slate-200 rounded-md px-3 py-2 text-sm text-slate-900 focus:border-[#0da1c7] focus:ring-1 focus:ring-[#0da1c7] outline-none transition-all"
+                    className="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-md px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-[#0da1c7] focus:ring-1 focus:ring-[#0da1c7] outline-none transition-all"
                   />
                 </div>
                 <div>
@@ -656,7 +656,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                     type="number" 
                     value={formData.economicLife} 
                     onChange={e => updateForm('economicLife', +e.target.value)}
-                    className="w-full bg-white border border-slate-200 rounded-md px-3 py-2 text-sm text-slate-900 focus:border-[#0da1c7] focus:ring-1 focus:ring-[#0da1c7] outline-none transition-all"
+                    className="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-md px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-[#0da1c7] focus:ring-1 focus:ring-[#0da1c7] outline-none transition-all"
                   />
                 </div>
               </div>
@@ -669,18 +669,18 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
 
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <label className="text-sm text-slate-500">Physical</label>
+                  <label className="text-sm text-slate-500 dark:text-slate-400">Physical</label>
                   <div className="flex items-center gap-2">
                     <div className="relative">
                       <input 
                         type="number" 
                         value={(formData.depreciationPhysical * 100).toFixed(1)}
                         onChange={e => updateForm('depreciationPhysical', +e.target.value / 100)}
-                        className="w-24 bg-white border border-slate-200 rounded px-2 py-1 text-right text-sm text-slate-700 focus:border-[#0da1c7] outline-none pr-8"
+                        className="w-24 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-right text-sm text-slate-700 dark:text-slate-200 focus:border-[#0da1c7] outline-none pr-8"
                       />
                       <button 
                         onClick={() => setShowDepreciationTable(true)}
-                        className="absolute right-1 top-1 bottom-1 px-1 text-slate-400 hover:text-[#0da1c7] hover:bg-slate-100 rounded transition-colors"
+                        className="absolute right-1 top-1 bottom-1 px-1 text-slate-400 hover:text-[#0da1c7] hover:bg-slate-100 dark:hover:bg-slate-600 rounded transition-colors"
                         title="Open Depreciation Guide"
                       >
                         <Table2 size={14} />
@@ -690,25 +690,25 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
-                  <label className="text-sm text-slate-500">Functional</label>
+                  <label className="text-sm text-slate-500 dark:text-slate-400">Functional</label>
                   <div className="flex items-center gap-2">
                     <input 
                       type="number" 
                       value={(formData.depreciationFunctional * 100).toFixed(1)}
                       onChange={e => updateForm('depreciationFunctional', +e.target.value / 100)}
-                      className="w-20 bg-white border border-slate-200 rounded px-2 py-1 text-right text-sm text-slate-700 focus:border-[#0da1c7] outline-none"
+                      className="w-20 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-right text-sm text-slate-700 dark:text-slate-200 focus:border-[#0da1c7] outline-none"
                     />
                     <span className="text-xs text-slate-400 w-3">%</span>
                   </div>
                 </div>
                 <div className="flex items-center justify-between">
-                  <label className="text-sm text-slate-500">External</label>
+                  <label className="text-sm text-slate-500 dark:text-slate-400">External</label>
                   <div className="flex items-center gap-2">
                     <input 
                       type="number" 
                       value={(formData.depreciationExternal * 100).toFixed(1)}
                       onChange={e => updateForm('depreciationExternal', +e.target.value / 100)}
-                      className="w-20 bg-white border border-slate-200 rounded px-2 py-1 text-right text-sm text-slate-700 focus:border-[#0da1c7] outline-none"
+                      className="w-20 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-right text-sm text-slate-700 dark:text-slate-200 focus:border-[#0da1c7] outline-none"
                     />
                     <span className="text-xs text-slate-400 w-3">%</span>
                   </div>
@@ -763,20 +763,20 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
           MVS Cost Analysis
         </h2>
         <div className="flex items-center gap-3">
-          <span className="text-xs text-slate-500">
+          <span className="text-xs text-slate-500 dark:text-slate-400">
             {improvements.length} building{improvements.length !== 1 ? 's' : ''} selected
           </span>
           <a href="#" className="flex items-center gap-1 text-xs font-medium text-[#0da1c7] hover:text-[#0b8fb0] transition-colors">
             <ExternalLink size={12} /> Open MVS Online
           </a>
-          <div className="text-[10px] font-medium text-slate-500 bg-slate-100 px-3 py-1.5 rounded-full border border-slate-200">
+          <div className="text-[10px] font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-600">
             Source: Marshall Valuation Service
           </div>
         </div>
       </div>
       
-      <div className="bg-white border border-slate-200 rounded-lg shadow-sm overflow-hidden">
-        <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-white border-b border-slate-200 text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+      <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-lg shadow-sm overflow-hidden">
+        <div className="grid grid-cols-12 gap-4 px-6 py-3 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">
           <div className="col-span-4">Improvement</div>
           <div className="col-span-1 text-right">Area</div>
           <div className="col-span-1 text-right">Profit</div>
@@ -805,7 +805,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                   <div className="text-xs text-slate-400 mt-0.5">{imp.occupancy} - {imp.quality}</div>
                 </div>
                 
-                <div className="col-span-1 text-right text-sm text-slate-600">
+                <div className="col-span-1 text-right text-sm text-slate-600 dark:text-slate-300">
                   {imp.areaSf.toLocaleString()}
                 </div>
 
@@ -813,7 +813,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                   +{(profitPct * 100).toFixed(0)}%
                 </div>
 
-                <div className="col-span-2 text-right text-sm font-medium text-slate-600">
+                <div className="col-span-2 text-right text-sm font-medium text-slate-600 dark:text-slate-300">
                   {formatCurrency(costNew)}
                 </div>
 
@@ -842,7 +842,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
           <div className="grid grid-cols-12 gap-4 px-6 py-5 items-center bg-slate-50/30">
             <div className="col-span-4">
               <div className="flex items-center gap-2">
-                <span className="text-sm font-bold text-slate-800">Site Improvements</span>
+                <span className="text-sm font-bold text-slate-800 dark:text-white">Site Improvements</span>
                 {siteImprovementsBreakdown.length > 0 && (
                   <button
                     onClick={() => setShowSiteBreakdown(!showSiteBreakdown)}
@@ -860,7 +860,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
             </div>
             <div className="col-span-1 text-right text-sm text-slate-400">-</div>
             <div className="col-span-1 text-right text-sm text-slate-400">-</div>
-            <div className="col-span-2 text-right text-sm font-medium text-slate-600">
+            <div className="col-span-2 text-right text-sm font-medium text-slate-600 dark:text-slate-300">
               {formatCurrency(siteImprovementsCost)}
             </div>
             <div className="col-span-2 text-right text-sm text-slate-400">-</div>
@@ -872,13 +872,13 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
             <div className="px-6 py-3 bg-slate-50/50">
               <div className="space-y-1.5 pl-8">
                 {siteImprovementsBreakdown.map((item, idx) => (
-                  <div key={idx} className="grid grid-cols-12 gap-4 text-xs text-slate-500">
+                  <div key={idx} className="grid grid-cols-12 gap-4 text-xs text-slate-500 dark:text-slate-400">
                     <div className="col-span-4">{item.label}</div>
                     <div className="col-span-1"></div>
                     <div className="col-span-1"></div>
                     <div className="col-span-2 text-right">{formatCurrency(item.rcn)}</div>
                     <div className="col-span-2 text-right text-red-400">-{formatCurrency(item.depreciation)}</div>
-                    <div className="col-span-2 text-right font-medium text-slate-700">{formatCurrency(item.contributoryValue)}</div>
+                    <div className="col-span-2 text-right font-medium text-slate-700 dark:text-slate-200">{formatCurrency(item.contributoryValue)}</div>
                   </div>
                 ))}
               </div>
@@ -889,11 +889,11 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
 
       <div className="flex flex-col items-end gap-1 pr-6 pt-2">
         <div className="flex items-center justify-end gap-12 text-sm">
-          <span className="text-slate-500">Total Cost New (Incl. Profit)</span>
+          <span className="text-slate-500 dark:text-slate-400">Total Cost New (Incl. Profit)</span>
           <span className="font-medium text-slate-700 min-w-[100px] text-right">{formatCurrency(totals.mvsCostNewTotal)}</span>
         </div>
         <div className="flex items-center justify-end gap-12 text-sm">
-          <span className="text-slate-500">Total Depreciation</span>
+          <span className="text-slate-500 dark:text-slate-400">Total Depreciation</span>
           <span className="font-medium text-red-500 min-w-[100px] text-right">-{formatCurrency(totals.totalDepreciationAmount)}</span>
         </div>
         <div className="flex items-center justify-end gap-12 text-base mt-2 pt-2 border-t border-slate-200">

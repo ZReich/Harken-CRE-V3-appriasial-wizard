@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { ThemeToggle } from './ThemeToggle';
 
 interface WizardHeaderProps {
   title: string;
@@ -53,9 +54,8 @@ export default function WizardHeader({
 
   return (
     <div
-      className={`bg-gray-50 border-b border-gray-200 ${
-        isFullscreen ? 'py-2 px-6' : 'py-3 px-8'
-      }`}
+      className={`bg-gray-50 dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 ${isFullscreen ? 'py-2 px-6' : 'py-3 px-8'
+        }`}
       style={themeAccent ? { borderBottomColor: `${themeAccent}20` } : undefined}
     >
       {/* Scenario Switcher Row (if provided) */}
@@ -72,7 +72,7 @@ export default function WizardHeader({
             {hasSections && (
               <button
                 onClick={onToggleSections}
-                className="p-2 text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg bg-white"
+                className="p-2 text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800"
                 title={isSectionsCollapsed ? 'Show sections' : 'Hide sections'}
               >
                 <svg
@@ -91,15 +91,14 @@ export default function WizardHeader({
               </button>
             )}
             <h1
-              className={`font-bold text-gray-900 ${
-                isFullscreen ? 'text-lg' : 'text-2xl'
-              }`}
+              className={`font-bold text-gray-900 dark:text-white ${isFullscreen ? 'text-lg' : 'text-2xl'
+                }`}
             >
               {title}
             </h1>
-            <span 
+            <span
               className="px-3 py-1 rounded-md text-xs font-semibold"
-              style={themeAccent 
+              style={themeAccent
                 ? { backgroundColor: `${themeAccent}15`, color: themeAccent }
                 : undefined
               }
@@ -109,7 +108,7 @@ export default function WizardHeader({
             </span>
           </div>
           {!isFullscreen && (
-            <p className="text-sm text-gray-600">{subtitle}</p>
+            <p className="text-sm text-gray-600 dark:text-slate-400">{subtitle}</p>
           )}
         </div>
 
@@ -117,34 +116,31 @@ export default function WizardHeader({
         <div className="flex items-center gap-3">
           {/* Guidance/Values/Preview Toggle */}
           {hasGuidance && (
-            <div className="flex items-center bg-gray-100 rounded-lg p-1 border border-gray-200">
+            <div className="flex items-center bg-gray-100 dark:bg-slate-700 rounded-lg p-1 border border-gray-200 dark:border-slate-600">
               <button
-                className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${
-                  guidanceMode === 'guidance'
-                    ? 'bg-white text-gray-900 shadow-sm'
-                    : 'text-gray-600 hover:text-gray-800'
-                }`}
+                className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${guidanceMode === 'guidance'
+                    ? 'bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm'
+                    : 'text-gray-600 dark:text-slate-400 hover:text-gray-800 dark:hover:text-white'
+                  }`}
                 onClick={() => onGuidanceModeChange?.('guidance')}
               >
                 Guidance
               </button>
               <button
-                className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors border-l border-gray-200 ${
-                  guidanceMode === 'values'
-                    ? 'bg-white text-gray-900 shadow-sm'
-                    : 'text-gray-600 hover:text-gray-800'
-                }`}
+                className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors border-l border-gray-200 dark:border-slate-600 ${guidanceMode === 'values'
+                    ? 'bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm'
+                    : 'text-gray-600 dark:text-slate-400 hover:text-gray-800 dark:hover:text-white'
+                  }`}
                 onClick={() => onGuidanceModeChange?.('values')}
               >
                 Values
               </button>
               {showPreviewMode && (
                 <button
-                  className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors border-l border-gray-200 flex items-center gap-1.5 ${
-                    guidanceMode === 'preview'
-                      ? 'bg-white text-gray-900 shadow-sm'
-                      : 'text-gray-600 hover:text-gray-800'
-                  }`}
+                  className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors border-l border-gray-200 dark:border-slate-600 flex items-center gap-1.5 ${guidanceMode === 'preview'
+                      ? 'bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm'
+                      : 'text-gray-600 dark:text-slate-400 hover:text-gray-800 dark:hover:text-white'
+                    }`}
                   onClick={() => onGuidanceModeChange?.('preview')}
                   title="Live preview of how photos will appear in the report"
                 >
@@ -156,7 +152,7 @@ export default function WizardHeader({
                 </button>
               )}
               <button
-                className="ml-2 px-2 py-1 text-xs font-medium text-gray-600 hover:text-gray-900"
+                className="ml-2 px-2 py-1 text-xs font-medium text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white"
                 onClick={onToggleGuidance}
                 title={isGuidanceVisible ? 'Hide panel' : 'Show panel'}
               >
@@ -168,7 +164,7 @@ export default function WizardHeader({
           {/* Fullscreen Toggle */}
           <button
             onClick={onToggleFullscreen}
-            className="p-2 text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg hover:bg-gray-50"
+            className="p-2 text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white border border-gray-300 dark:border-slate-600 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700"
             title={isFullscreen ? 'Exit Full Screen' : 'Enter Full Screen'}
           >
             {isFullscreen ? (
@@ -185,13 +181,16 @@ export default function WizardHeader({
 
         {/* Right Actions */}
         <div className="flex items-center gap-3">
-          <button className="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 flex items-center gap-2">
+          {/* Theme Toggle */}
+          <ThemeToggle size="sm" showSystemOption />
+
+          <button className="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 flex items-center gap-2">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
             Exit
           </button>
-          <button className="px-4 py-2 text-sm font-medium text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 flex items-center gap-2">
+          <button className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-600 flex items-center gap-2">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
             </svg>

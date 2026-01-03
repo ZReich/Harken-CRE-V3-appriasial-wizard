@@ -799,13 +799,16 @@ export type FieldSuggestionStatus = 'pending' | 'accepted' | 'rejected';
 
 /**
  * A pending field suggestion that requires user confirmation.
+ * Multiple suggestions can exist for the same field (e.g., from different documents).
  */
 export interface FieldSuggestion {
+  id: string; // Unique ID for this suggestion (used for selection in multi-value UI)
   value: string;
   confidence: number;
   source: FieldSuggestionSource;
   sourceFilename?: string;
   sourceDocumentType?: string;
+  sourceDocumentId?: string; // ID of the document this came from
   status: FieldSuggestionStatus;
   rejectedSources: string[]; // Track which sources have been rejected
   createdAt: string;
@@ -813,9 +816,10 @@ export interface FieldSuggestion {
 
 /**
  * State for tracking field suggestions across the wizard.
+ * Supports multiple suggestions per field for side-by-side comparison.
  */
 export interface FieldSuggestionsState {
-  suggestions: Record<string, FieldSuggestion>; // key = field path
+  suggestions: Record<string, FieldSuggestion[]>; // key = field path, value = array of suggestions
   acceptedFields: Record<string, FieldSuggestionSource>; // field path -> source that was accepted
 }
 
@@ -1401,8 +1405,8 @@ export interface WizardState {
   // Document Field Source Tracking
   documentFieldSources: Record<string, ExtractedFieldSource>;
   
-  // Field Suggestions (Accept/Reject UI)
-  fieldSuggestions: Record<string, FieldSuggestion>;
+  // Field Suggestions (Accept/Reject UI) - supports multiple values per field
+  fieldSuggestions: Record<string, FieldSuggestion[]>;
   acceptedFields: Record<string, FieldSuggestionSource>;
   
   // Owners
@@ -1524,10 +1528,10 @@ export type WizardAction =
   | { type: 'SET_REPORT_PHOTOS'; payload: ReportPhotosData }
   | { type: 'SET_HBU_ANALYSIS'; payload: HBUAnalysis }
   | { type: 'SET_MARKET_ANALYSIS'; payload: MarketAnalysisData }
-  // Field Suggestion Actions
+  // Field Suggestion Actions - supports multiple suggestions per field
   | { type: 'ADD_FIELD_SUGGESTION'; payload: { fieldPath: string; suggestion: FieldSuggestion } }
-  | { type: 'ACCEPT_FIELD_SUGGESTION'; payload: { fieldPath: string; value: string } }
-  | { type: 'REJECT_FIELD_SUGGESTION'; payload: { fieldPath: string } }
+  | { type: 'ACCEPT_FIELD_SUGGESTION'; payload: { fieldPath: string; value: string; suggestionId?: string } }
+  | { type: 'REJECT_FIELD_SUGGESTION'; payload: { fieldPath: string; suggestionId?: string } }
   | { type: 'CLEAR_FIELD_SUGGESTIONS' }
   // Map Actions
   | { type: 'SET_SUBJECT_MAPS'; payload: MapData[] }

@@ -81,7 +81,7 @@ export async function saveTemplate(
   const db = await openDatabase();
   
   const template: StoredTemplate = {
-    id: `template-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`,
+    id: `template-${Date.now()}-${Math.random().toString(36).substring(2, 11)}`,
     metadata,
     content,
     createdAt: new Date().toISOString(),

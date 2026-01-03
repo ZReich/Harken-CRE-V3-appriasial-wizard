@@ -14,6 +14,9 @@ export type DocumentType =
   | 'survey'
   | 'tax_return'
   | 'financial_statement'
+  | 'deed'           // NEW: Grant deeds, warranty deeds, quitclaim deeds
+  | 'flood_map'      // NEW: FEMA flood zone determinations
+  | 'tax_assessment' // NEW: Property tax assessment/records
   | 'unknown';
 
 /**
@@ -116,6 +119,43 @@ export const DOCUMENT_FIELD_MAPPINGS: Record<DocumentType, FieldMapping[]> = {
     { extractedField: 'insurance', wizardPath: 'incomeApproachData.expenses.insurance' },
   ],
   
+  // NEW: Deed documents (Grant Deed, Warranty Deed, Quitclaim Deed)
+  deed: [
+    { extractedField: 'grantor', wizardPath: 'transaction.seller' },
+    { extractedField: 'grantee', wizardPath: 'owners.0.name' },
+    { extractedField: 'recordingDate', wizardPath: 'subjectData.lastSaleDate' },
+    { extractedField: 'salePrice', wizardPath: 'subjectData.lastSalePrice' },
+    { extractedField: 'legalDescription', wizardPath: 'subjectData.legalDescription' },
+    { extractedField: 'propertyAddress', wizardPath: 'subjectData.address.street' },
+    { extractedField: 'documentNumber', wizardPath: 'subjectData.deedDocumentNumber' },
+    { extractedField: 'county', wizardPath: 'subjectData.address.county' },
+    { extractedField: 'state', wizardPath: 'subjectData.address.state' },
+  ],
+  
+  // NEW: FEMA Flood Zone Determination documents
+  flood_map: [
+    { extractedField: 'floodZone', wizardPath: 'subjectData.femaZone' },
+    { extractedField: 'panelNumber', wizardPath: 'subjectData.femaPanelNumber' },
+    { extractedField: 'effectiveDate', wizardPath: 'subjectData.femaMapDate' },
+    { extractedField: 'communityNumber', wizardPath: 'subjectData.femaCommunityNumber' },
+    { extractedField: 'propertyAddress', wizardPath: 'subjectData.address.street' },
+    { extractedField: 'mapNumber', wizardPath: 'subjectData.femaMapNumber' },
+    { extractedField: 'determination', wizardPath: 'subjectData.floodZoneDescription' },
+  ],
+  
+  // NEW: Property Tax Assessment records
+  tax_assessment: [
+    { extractedField: 'taxId', wizardPath: 'subjectData.taxId' },
+    { extractedField: 'assessedValue', wizardPath: 'subjectData.assessedValue' },
+    { extractedField: 'taxYear', wizardPath: 'subjectData.taxYear' },
+    { extractedField: 'annualTax', wizardPath: 'subjectData.annualPropertyTax' },
+    { extractedField: 'landValue', wizardPath: 'subjectData.assessedLandValue' },
+    { extractedField: 'improvementValue', wizardPath: 'subjectData.assessedImprovementValue' },
+    { extractedField: 'owner', wizardPath: 'owners.0.name' },
+    { extractedField: 'propertyAddress', wizardPath: 'subjectData.address.street' },
+    { extractedField: 'propertyClass', wizardPath: 'subjectData.propertyClass' },
+  ],
+  
   unknown: [
     { extractedField: 'propertyAddress', wizardPath: 'subjectData.address.street' },
     { extractedField: 'owner', wizardPath: 'owners.0.name' },
@@ -180,6 +220,25 @@ export const FIELDS_WITH_SOURCE_INDICATORS = [
   'subjectData.easements',
   'subjectData.femaZone',
   'subjectData.frontage',
+  
+  // Flood Map fields (NEW)
+  'subjectData.femaPanelNumber',
+  'subjectData.femaMapDate',
+  'subjectData.femaCommunityNumber',
+  'subjectData.femaMapNumber',
+  'subjectData.floodZoneDescription',
+  
+  // Tax Assessment fields (NEW)
+  'subjectData.assessedValue',
+  'subjectData.taxYear',
+  'subjectData.annualPropertyTax',
+  'subjectData.assessedLandValue',
+  'subjectData.assessedImprovementValue',
+  'subjectData.propertyClass',
+  
+  // Deed fields (NEW)
+  'subjectData.deedDocumentNumber',
+  'transaction.seller',
   
   // Subject Data - Ownership
   'owners.0.name',

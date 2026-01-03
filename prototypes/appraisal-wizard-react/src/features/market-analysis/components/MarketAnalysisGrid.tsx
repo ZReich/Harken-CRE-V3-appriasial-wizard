@@ -130,7 +130,7 @@ export const MarketAnalysisGrid: React.FC<MarketAnalysisGridProps> = ({
         )}
       </div>
       <div className="text-xs text-slate-500 font-medium mb-1">{label}</div>
-      <div className={`text-2xl font-black text-slate-800 ${valueClassName}`}>{value}</div>
+      <div className={`text-2xl font-black text-slate-800 dark:text-white ${valueClassName}`}>{value}</div>
       {change !== undefined && (
         <div className="mt-2 flex items-center gap-2">
           <TrendBadge change={change} suffix="%" />
@@ -150,7 +150,7 @@ export const MarketAnalysisGrid: React.FC<MarketAnalysisGridProps> = ({
             <BarChart3 className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-black text-slate-800">Market Analysis</h1>
+            <h1 className="text-2xl font-black text-slate-800 dark:text-white">Market Analysis</h1>
             <p className="text-sm text-slate-500">Data as of {marketData.dataAsOf}</p>
           </div>
         </div>
@@ -186,7 +186,7 @@ export const MarketAnalysisGrid: React.FC<MarketAnalysisGridProps> = ({
       <div className="space-y-3">
         <div className="flex items-center gap-2">
           <Building2 className="w-5 h-5 text-slate-700" />
-          <h2 className="text-lg font-bold text-slate-800">Supply & Demand</h2>
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">Supply & Demand</h2>
         </div>
         <div className="grid grid-cols-4 gap-4">
           <MetricCard 
@@ -223,7 +223,7 @@ export const MarketAnalysisGrid: React.FC<MarketAnalysisGridProps> = ({
       <div className="space-y-3">
         <div className="flex items-center gap-2">
           <Home className="w-5 h-5 text-slate-700" />
-          <h2 className="text-lg font-bold text-slate-800">Rent Trends</h2>
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">Rent Trends</h2>
         </div>
         <div className="grid grid-cols-4 gap-4">
           <MetricCard 
@@ -272,7 +272,7 @@ export const MarketAnalysisGrid: React.FC<MarketAnalysisGridProps> = ({
       <div className="space-y-3">
         <div className="flex items-center gap-2">
           <DollarSign className="w-5 h-5 text-slate-700" />
-          <h2 className="text-lg font-bold text-slate-800">Sale Trends</h2>
+          <h2 className="text-lg font-bold text-slate-800 dark:text-white">Sale Trends</h2>
         </div>
         <div className="grid grid-cols-4 gap-4">
           <MetricCard 
@@ -307,7 +307,7 @@ export const MarketAnalysisGrid: React.FC<MarketAnalysisGridProps> = ({
       {/* Cap Rate Comparison Chart */}
       <div className="bg-white rounded-2xl border border-slate-200 p-6 shadow-sm">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-bold text-slate-800 flex items-center gap-2">
+          <h3 className="text-sm font-bold text-slate-800 dark:text-white flex items-center gap-2">
             <Percent className="w-4 h-4 text-[#0da1c7]" />
             Cap Rate Summary
           </h3>

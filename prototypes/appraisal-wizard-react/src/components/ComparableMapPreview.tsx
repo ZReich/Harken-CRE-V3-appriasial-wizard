@@ -376,7 +376,7 @@ export function ComparableMapPreview({
         className={`bg-slate-100 rounded-xl flex items-center justify-center ${className}`}
         style={{ height }}
       >
-        <div className="text-center text-slate-500">
+        <div className="text-center text-slate-500 dark:text-slate-400">
           <div className="w-8 h-8 border-2 border-slate-300 border-t-[#0da1c7] rounded-full animate-spin mx-auto mb-2" />
           <p className="text-sm">Loading map...</p>
         </div>
@@ -388,7 +388,7 @@ export function ComparableMapPreview({
     <div className={`relative ${className}`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-2">
-        <h4 className="text-sm font-semibold text-slate-700">
+        <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300">
           {TYPE_LABELS[type]} Map
           <span className="ml-2 text-xs font-normal text-slate-400">
             ({validComparables.length} comparable{validComparables.length !== 1 ? 's' : ''})

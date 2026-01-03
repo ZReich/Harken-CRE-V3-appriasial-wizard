@@ -18,8 +18,10 @@ import React from 'react';
 import { useDispatch } from 'react-redux';
 import { setId } from '../../utils/userSlice';
 import { ThemeToggle } from '../ThemeToggle';
+import { useTheme } from '../../context/ThemeContext';
 
 const Header = () => {
+  const { resolvedTheme } = useTheme();
   const [openConfirm, setOpenConfirm] = useState(false);
   const [pendingAction, setPendingAction] = useState<(() => void) | null>(null);
 
@@ -76,8 +78,11 @@ const Header = () => {
   const ListItem = ({ text, onClick, style }: ListItemHoverProps) => (
     <li
       onClick={onClick}
-      style={style}
-      className="rounded-full list-none  lg:text-md text-sm text-customDeeperSkyBlue px-4 cursor-pointer px-2 py-1"
+      style={{
+        ...style,
+        color: style?.color || 'var(--accent-cyan)',
+      }}
+      className="rounded-full list-none lg:text-md text-sm px-4 cursor-pointer px-2 py-1"
     >
       {text}
     </li>
@@ -85,7 +90,18 @@ const Header = () => {
 
   const ListItemHover = ({ text, onClick }: ListItemHoverProps) => (
     <li
-      className="list-none cursor-pointer text-gray-500 font-medium text-sm p-3 ps-5 hover:bg-customDeeperSkyBlue hover:text-white"
+      className="list-none cursor-pointer font-medium text-sm p-3 ps-5 transition-colors"
+      style={{
+        color: 'var(--text-secondary)',
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.backgroundColor = 'var(--accent-cyan-bg)';
+        e.currentTarget.style.color = 'var(--accent-cyan)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.backgroundColor = 'transparent';
+        e.currentTarget.style.color = 'var(--text-secondary)';
+      }}
       onClick={onClick}
     >
       {text}
@@ -666,39 +682,51 @@ const Header = () => {
             <ul
               className="flex py-1 rounded-full px-1"
               style={{
-                backgroundColor: 'rgba(232, 248, 252, 1)',
+                backgroundColor: 'var(--accent-cyan-light)',
               }}
             >
               <li
-                className={`list-none lg:text-lg text-base font-normal rounded-full ml-1 px-2 cursor-pointer ${
+                className={`list-none lg:text-lg text-base font-normal rounded-full ml-1 px-2 cursor-pointer transition-colors ${
                   activeButton === HeaderEnum.COMMERCIAL
-                    ? 'text-white bg-[#0DA1C7]'
-                    : 'border-indigo-500 text-[#90BCC8]'
+                    ? ''
+                    : ''
                 }`}
+                style={{
+                  backgroundColor: activeButton === HeaderEnum.COMMERCIAL ? 'var(--accent-cyan)' : 'transparent',
+                  color: activeButton === HeaderEnum.COMMERCIAL ? 'var(--text-inverse)' : 'var(--accent-cyan-muted)',
+                  border: activeButton === HeaderEnum.COMMERCIAL ? 'none' : '1px solid var(--border-subtle)',
+                }}
                 onClick={handleClickCommercial}
               >
                 {HeaderEnum.COMMERCIAL}
               </li>
 
               <li
-                className={`list-none lg:text-lg text-base lg:px-3 px-2 font-normal rounded-full ml-1 cursor-pointer ${
+                className={`list-none lg:text-lg text-base lg:px-3 px-2 font-normal rounded-full ml-1 cursor-pointer transition-colors ${
                   activeButton === HeaderEnum.RESIDENTIAL
-                    ? 'text-white bg-[#0DA1C7]'
-                    : 'border-indigo-500 text-[#90BCC8]'
+                    ? ''
+                    : ''
                 }`}
+                style={{
+                  backgroundColor: activeButton === HeaderEnum.RESIDENTIAL ? 'var(--accent-cyan)' : 'transparent',
+                  color: activeButton === HeaderEnum.RESIDENTIAL ? 'var(--text-inverse)' : 'var(--accent-cyan-muted)',
+                  border: activeButton === HeaderEnum.RESIDENTIAL ? 'none' : '1px solid var(--border-subtle)',
+                }}
                 onClick={handleClickResidential}
               >
                 {HeaderEnum.RESIDENTIAL}
               </li>
               <li
-                className={`list-none lg:text-lg text-base lg:px-3 px-2 font-normal rounded-full ml-1 cursor-pointer ${
+                className={`list-none lg:text-lg text-base lg:px-3 px-2 font-normal rounded-full ml-1 cursor-pointer transition-colors ${
                   localStorage.getItem('activeType') === 'land_only'
-                    ? // localStorage.getItem('selectedComp') === 'land_only' ||
-                      // localStorage.getItem('activeType') === 'land_only' || location.pathname === '/evaluation/cost/create-comp'
-                      // activeButton === HeaderEnum.LAND
-                      'text-white bg-[#0DA1C7]'
-                    : 'border-indigo-500 text-[#90BCC8]'
+                    ? ''
+                    : ''
                 }`}
+                style={{
+                  backgroundColor: localStorage.getItem('activeType') === 'land_only' ? 'var(--accent-cyan)' : 'transparent',
+                  color: localStorage.getItem('activeType') === 'land_only' ? 'var(--text-inverse)' : 'var(--accent-cyan-muted)',
+                  border: localStorage.getItem('activeType') === 'land_only' ? 'none' : '1px solid var(--border-subtle)',
+                }}
                 onClick={handleClickLand}
               >
                 {HeaderEnum.LAND}
@@ -725,8 +753,8 @@ const Header = () => {
                 <ListItem
                   style={{
                     border:
-                      compsText === HeaderEnum.COMPS ? '1px solid #37add5' : '',
-                    color: compsText === HeaderEnum.COMPS ? '#37add5' : 'white',
+                      compsText === HeaderEnum.COMPS ? '1px solid var(--accent-cyan-muted)' : 'none',
+                    color: compsText === HeaderEnum.COMPS ? 'var(--accent-cyan-muted)' : 'var(--text-inverse)',
                   }}
                   onClick={handleClickComps}
                   text={item.comps}
@@ -735,10 +763,10 @@ const Header = () => {
                   style={{
                     border:
                       compsText === HeaderEnum.APPRAISAL
-                        ? '1px solid #37add5'
-                        : '',
+                        ? '1px solid var(--accent-cyan-muted)'
+                        : 'none',
                     color:
-                      compsText === HeaderEnum.APPRAISAL ? '#37add5' : 'white',
+                      compsText === HeaderEnum.APPRAISAL ? 'var(--accent-cyan-muted)' : 'var(--text-inverse)',
                   }}
                   onClick={handleClickAppraisal}
                   text={item.evaluations}
@@ -747,10 +775,10 @@ const Header = () => {
                   style={{
                     border:
                       compsText === HeaderEnum.EVALUATION
-                        ? '1px solid #37add5'
-                        : '',
+                        ? '1px solid var(--accent-cyan-muted)'
+                        : 'none',
                     color:
-                      compsText === HeaderEnum.EVALUATION ? '#37add5' : 'white',
+                      compsText === HeaderEnum.EVALUATION ? 'var(--accent-cyan-muted)' : 'var(--text-inverse)',
                   }}
                   onClick={handleClickEvaluation}
                   text={HeaderEnum.EVALUATION}
@@ -759,15 +787,21 @@ const Header = () => {
             );
           })}
         </div>
+        {/* Theme Toggle Button - Always visible */}
+        <div 
+          className="flex items-center justify-center" 
+          style={{ 
+            marginRight: '16px',
+            minWidth: '44px',
+          }}
+        >
+          <ThemeToggle showSystemOption size="medium" />
+        </div>
         <div className="all-true-true py-1 mr-2 flex items-center gap-3">
-          {/* Theme Toggle Button */}
-          <div className="flex items-center">
-            <ThemeToggle showSystemOption size="small" />
-          </div>
           <ul className="rounded-full all-true m-0">
-            <li className="list-none text-lg text-white font-medium flex">
+            <li className="list-none text-lg font-medium flex" style={{ color: 'var(--text-inverse)' }}>
               <div className="pt-1 mr-3">
-                <div className="text-customDeeperSkyBlue text-sm flex">
+                <div className="text-sm flex" style={{ color: 'var(--accent-cyan)' }}>
                   <div className="lg:text-base text-sm capitalize cursor-pointer w-full overflow-hidden text-ellipsis whitespace-nowrap lg:mt-2.5 mt-2">
                     {fullName}
                   </div>
@@ -790,8 +824,11 @@ const Header = () => {
           </ul>
           {menu.map((item, index) => (
             <ul
-              className="bg-white text-black text-base
-              rounded-sm shadow-md w-[300px] absolute top-14 right-2 shadow-lg p-0 all-fail"
+              className="text-base rounded-sm shadow-md w-[300px] absolute top-14 right-2 shadow-lg p-0 all-fail"
+              style={{
+                backgroundColor: 'var(--bg-card)',
+                color: 'var(--text-primary)',
+              }}
               key={index}
             >
               <ListItemHover

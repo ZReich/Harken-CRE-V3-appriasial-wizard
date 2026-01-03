@@ -1592,3 +1592,404 @@ input {
     margin-bottom: 0;
 }
 
+/* ============================================
+   DARK MODE OVERRIDES
+   ============================================ */
+
+/* Navbar dark mode */
+html.dark .navbar {
+  background-color: var(--bg-header) !important;
+}
+
+/* Header image background */
+html.dark .header-image {
+  background-color: var(--bg-header);
+}
+
+/* Modal header */
+html.dark .modal-header-image {
+  background: url('../src/images/accent-white-bright.png') top left/contain var(--bg-header);
+}
+
+/* White backgrounds to surface */
+html.dark .white,
+html.dark .bg-white {
+  background-color: var(--bg-secondary) !important;
+}
+
+/* Cards and panels */
+html.dark .common-approach {
+  background-color: var(--bg-card);
+  border-color: var(--border-subtle);
+}
+
+html.dark .common-approach:hover {
+  box-shadow: 0px 0px 15px var(--accent-cyan-glow);
+}
+
+/* Tables */
+html.dark .table-head-wrapper thead tr {
+  background-color: var(--bg-elevated);
+}
+
+html.dark .table-cell-header {
+  color: var(--accent-cyan);
+}
+
+html.dark .table-cell-border {
+  border-color: var(--border-subtle);
+}
+
+/* MUI Drawer dark mode */
+html.dark .css-12i7wg6-MuiPaper-root-MuiDrawer-paper {
+  border-right: 1px solid var(--border-subtle);
+  background-color: var(--bg-secondary);
+}
+
+/* Custom tabs indicator */
+html.dark .custom-tabs::before,
+html.dark .custom-tabs .MuiTabs-flexContainer:before {
+  background-color: var(--bg-elevated);
+}
+
+html.dark .custom-tabs button:before,
+html.dark .custom-tabs button.Mui-selected:before {
+  background: var(--accent-cyan);
+}
+
+html.dark .custom-tabs .MuiTab-textColorPrimary {
+  color: var(--text-secondary);
+}
+
+html.dark .custom-tabs .MuiTab-textColorPrimary.Mui-selected {
+  color: var(--accent-cyan);
+}
+
+/* Dialog title */
+html.dark .dialog-title {
+  background: var(--bg-elevated);
+  color: var(--accent-cyan);
+}
+
+/* Info boxes */
+html.dark .red-text {
+  color: var(--accent-cyan) !important;
+  background-color: var(--accent-cyan-bg);
+  border-color: var(--border-accent);
+}
+
+/* Overlay content */
+html.dark .overlay-content {
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.4);
+  background-color: var(--bg-secondary);
+}
+
+/* Border comps */
+html.dark .border-comps {
+  border: 1px solid var(--accent-cyan);
+}
+
+/* Checkboxes */
+html.dark .round label {
+  background-color: var(--bg-input);
+  border: 1px solid var(--border-default);
+}
+
+html.dark .round input[type='checkbox']:checked + label {
+  background-color: var(--accent-cyan);
+  border-color: var(--accent-cyan);
+}
+
+/* Comp select */
+html.dark .comp-select {
+  color: var(--accent-cyan);
+}
+
+html.dark .checkmark {
+  border: 1px solid var(--border-default);
+  background-color: var(--bg-input);
+}
+
+html.dark .comp-select input:checked ~ .checkmark {
+  background-color: var(--accent-cyan);
+  border-color: var(--accent-cyan);
+}
+
+/* Inputs and form elements */
+html.dark input,
+html.dark textarea {
+  background-color: var(--bg-input);
+  color: var(--text-primary);
+  border-color: var(--border-default) !important;
+}
+
+html.dark .streetAddressField .addressField input {
+  border-bottom: 1px solid var(--border-default);
+}
+
+html.dark .datePickerField {
+  border-bottom: 1px solid var(--border-default);
+}
+
+/* MUI input underlines */
+html.dark .MuiTextField-root .MuiInput-underline:before,
+html.dark .MuiOutlinedInput-notchedOutline {
+  border-bottom: 1px solid var(--border-default) !important;
+}
+
+/* Labels */
+html.dark .multiselectLabel label {
+  color: var(--text-primary);
+}
+
+html.dark .template-labels .MuiFormControlLabel-label {
+  color: var(--text-primary) !important;
+}
+
+/* Main heading */
+html.dark .mainHeading {
+  border-bottom: 1px solid var(--border-subtle);
+}
+
+html.dark .mainHeading h1 {
+  color: var(--text-primary);
+}
+
+html.dark .mainHeading .instructionRight {
+  color: var(--text-primary);
+}
+
+/* Pagination */
+html.dark .css-yuzg60-MuiButtonBase-root-MuiPaginationItem-root.Mui-selected {
+  background-color: var(--accent-cyan);
+  color: var(--text-inverse);
+}
+
+/* Custom filters */
+html.dark .customFilter .removeRadius {
+  border: 1px solid var(--accent-cyan);
+}
+
+/* Multi-select dropdown */
+html.dark .multiSelectDtopDown .MuiInputBase-formControl {
+  border: 1px solid var(--accent-cyan) !important;
+  background-color: var(--bg-input);
+}
+
+html.dark .multiSelectDtopDown .MuiSelect-select {
+  color: var(--text-secondary);
+}
+
+/* Map header */
+html.dark .map-header-sticky {
+  background-color: var(--bg-secondary);
+}
+
+/* Modal content */
+html.dark .modal-content {
+  background-color: var(--bg-secondary);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Preview wrapper */
+html.dark .previewWrapper h1,
+html.dark .previewWrapper h2 {
+  color: var(--text-primary);
+}
+
+html.dark .previewWrapper p,
+html.dark .previewWrapper ul li {
+  color: var(--text-secondary);
+}
+
+/* Approach menus */
+html.dark .appraisal-menu-hover {
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.4);
+  background-color: var(--bg-elevated);
+}
+
+html.dark .income-approach-wrapper .appraisal-menu-hover ul li a:hover,
+html.dark .active-li-class {
+  color: var(--text-primary) !important;
+}
+
+/* Previous button */
+html.dark .appraisal-previous-button {
+  background-color: var(--bg-elevated);
+}
+
+html.dark .appraisal-previous-button:hover {
+  background-color: var(--accent-cyan);
+  color: var(--text-inverse);
+}
+
+/* Back to top button */
+html.dark #backToTop,
+html.dark #backToTopMenuOptions {
+  background: var(--accent-cyan);
+  color: var(--text-inverse);
+}
+
+/* Quill editor */
+html.dark .quill,
+html.dark .ql-container,
+html.dark .ql-toolbar.ql-snow {
+  background-color: var(--bg-input);
+  border-color: var(--border-default);
+}
+
+html.dark .ql-editor {
+  color: var(--text-primary);
+}
+
+/* Other amenities modal */
+html.dark .otherAmenitiesModal .MuiDialog-paper {
+  background-color: var(--bg-secondary);
+}
+
+html.dark .otherAmenitiesModal .MuiDialog-paper h2.MuiTypography-h6 {
+  color: var(--text-primary);
+}
+
+html.dark .otherAmenitiesModal .MuiDialog-paper table tr td {
+  border-top: 1px solid var(--border-subtle);
+}
+
+html.dark .otherAmenitiesModal .MuiDialog-paper table tr td input {
+  border-bottom: 1px solid var(--border-subtle);
+  background-color: var(--bg-input);
+  color: var(--text-primary);
+}
+
+/* Dropdown menus - user profile */
+html.dark .all-fail {
+  background-color: var(--bg-elevated);
+}
+
+html.dark .all-fail li {
+  color: var(--text-primary);
+}
+
+html.dark .all-fail li:hover {
+  background-color: var(--accent-cyan);
+  color: var(--text-inverse);
+}
+
+/* Popup table wrapper */
+html.dark .popupTableWrapper table {
+  background-color: var(--bg-secondary);
+}
+
+html.dark .popupTableWrapper table td,
+html.dark .popupTableWrapper table th {
+  border-color: var(--border-subtle);
+  color: var(--text-primary);
+}
+
+/* Report template wrapper */
+html.dark .report-template-wrapper {
+  background-color: var(--bg-secondary);
+}
+
+/* Create client wrapper */
+html.dark .create-client-wrapper {
+  background-color: var(--bg-primary);
+}
+
+/* Google map container */
+html.dark .googleMap {
+  background-color: var(--bg-secondary);
+}
+
+/* Loader */
+html.dark .img-update-loader {
+  background-color: var(--bg-primary);
+}
+
+/* Active appraisal highlight */
+html.dark .active-appraisal .css-hyxlzm {
+  color: var(--accent-cyan);
+}
+
+/* ============================================
+   SUCCESS/ERROR/WARNING STATE COLORS
+   ============================================ */
+
+/* Success states */
+html.dark .success,
+html.dark .text-success {
+  color: var(--accent-green) !important;
+}
+
+html.dark .bg-success {
+  background-color: var(--accent-green-bg) !important;
+}
+
+/* Error states */
+html.dark .error,
+html.dark .text-error,
+html.dark .Mui-error {
+  color: var(--negative) !important;
+}
+
+html.dark .bg-error {
+  background-color: var(--negative-bg) !important;
+}
+
+/* Warning states */
+html.dark .warning,
+html.dark .text-warning {
+  color: var(--warning) !important;
+}
+
+html.dark .bg-warning {
+  background-color: var(--warning-bg) !important;
+}
+
+/* Purple/info states */
+html.dark .info,
+html.dark .text-info {
+  color: var(--accent-purple) !important;
+}
+
+html.dark .bg-info {
+  background-color: var(--accent-purple-bg) !important;
+}
+
+/* ============================================
+   GLOW EFFECTS FOR DARK MODE
+   ============================================ */
+
+html.dark .glow-cyan {
+  box-shadow: var(--shadow-glow-cyan);
+}
+
+html.dark .glow-green {
+  box-shadow: var(--shadow-glow-green);
+}
+
+html.dark .glow-purple {
+  box-shadow: var(--shadow-glow-purple);
+}
+
+html.dark .glow-negative {
+  box-shadow: var(--shadow-glow-negative);
+}
+
+/* Interactive elements get glow on hover in dark mode */
+html.dark button:not(:disabled):hover,
+html.dark .MuiButton-containedPrimary:hover {
+  box-shadow: var(--shadow-glow-cyan);
+}
+
+html.dark .MuiButton-containedSuccess:hover {
+  box-shadow: var(--shadow-glow-green);
+}
+
+html.dark .MuiButton-containedError:hover {
+  box-shadow: var(--shadow-glow-negative);
+}
+
+/* ============================================
+   END DARK MODE OVERRIDES
+   ============================================ */
