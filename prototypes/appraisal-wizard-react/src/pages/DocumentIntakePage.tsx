@@ -33,6 +33,7 @@ import BulkPhotoDropZone from '../components/BulkPhotoDropZone';
 import PhotoStagingTray from '../components/PhotoStagingTray';
 import CoverPhotoSection from '../components/CoverPhotoSection';
 import CoverPhotoPickerModal from '../components/CoverPhotoPickerModal';
+import FloatingDropPanel from '../components/FloatingDropPanel';
 import type { PhotoData } from '../types';
 
 // Map icon names to Lucide components
@@ -359,6 +360,10 @@ export default function DocumentIntakePage() {
   // Tab state: 'documents' or 'photos'
   const [activeTab, setActiveTab] = useState<'documents' | 'photos'>('documents');
 
+  // Drag and Drop state for photos
+  const [isPhotoDragging, setIsPhotoDragging] = useState(false);
+  const [draggedPhotoData, setDraggedPhotoData] = useState<{ id: string, file: File, preview: string } | null>(null);
+
   const [documents, setDocuments] = useState<ProcessedDocument[]>([]);
   const [isDragging, setIsDragging] = useState(false);
   const [expandedDocId, setExpandedDocId] = useState<string | null>(null);
@@ -444,6 +449,26 @@ export default function DocumentIntakePage() {
       }
     });
   }, [getUnassignedStagingPhotos, usedSlots, handlePhotoUpload, assignStagingPhoto, removeStagingPhoto]);
+
+  // Handle photo drag start/end for the drop panel
+  const handlePhotoDragStart = useCallback((photo: { id: string; file: File; preview: string }) => {
+    setIsPhotoDragging(true);
+    setDraggedPhotoData(photo);
+  }, []);
+
+  const handlePhotoDragEnd = useCallback(() => {
+    setIsPhotoDragging(false);
+    setDraggedPhotoData(null);
+  }, []);
+
+  // Handle drop to specific slot from panel
+  const handlePanelDrop = useCallback((slotId: string) => {
+    if (draggedPhotoData) {
+      handleAssignStagingPhoto(draggedPhotoData, slotId);
+      setIsPhotoDragging(false);
+      setDraggedPhotoData(null);
+    }
+  }, [draggedPhotoData, handleAssignStagingPhoto]);
 
   // Handle file drop
   const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
@@ -815,12 +840,12 @@ export default function DocumentIntakePage() {
       <p className="text-sm text-gray-500 mb-6">AI-powered processing</p>
 
       {/* Tab Navigation */}
-      <div className="flex gap-1 p-1 bg-gray-100 rounded-lg mb-6">
+      <div className="flex gap-1 p-1 bg-gray-100 dark:bg-slate-700 rounded-lg mb-6">
         <button
           onClick={() => setActiveTab('documents')}
           className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'documents'
-            ? 'bg-white text-[#0da1c7] shadow-sm'
-            : 'text-gray-600 hover:text-gray-800'
+            ? 'bg-white dark:bg-slate-600 text-[#0da1c7] dark:text-cyan-400 shadow-sm'
+            : 'text-gray-600 dark:text-slate-400 hover:text-gray-800 dark:hover:text-white'
             }`}
         >
           <FileText className="w-4 h-4" />
@@ -829,8 +854,8 @@ export default function DocumentIntakePage() {
         <button
           onClick={() => setActiveTab('photos')}
           className={`flex-1 flex items-center justify-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'photos'
-            ? 'bg-white text-[#0da1c7] shadow-sm'
-            : 'text-gray-600 hover:text-gray-800'
+            ? 'bg-white dark:bg-slate-600 text-[#0da1c7] dark:text-cyan-400 shadow-sm'
+            : 'text-gray-600 dark:text-slate-400 hover:text-gray-800 dark:hover:text-white'
             }`}
         >
           <Camera className="w-4 h-4" />
@@ -1060,14 +1085,16 @@ export default function DocumentIntakePage() {
             </div>
 
             {/* Cover Photo Section */}
-            <CoverPhotoSection
-              coverPhoto={wizardState.coverPhoto}
-              onSetCoverPhoto={setCoverPhoto}
-              onRemoveCoverPhoto={removeCoverPhoto}
-              uploadedPhotos={photos}
-              subjectData={wizardState.subjectData}
-              onOpenPicker={() => setShowCoverPhotoPicker(true)}
-            />
+            <div className="mb-6">
+              <CoverPhotoSection
+                coverPhoto={wizardState.coverPhoto}
+                onSetCoverPhoto={setCoverPhoto}
+                onRemoveCoverPhoto={removeCoverPhoto}
+                uploadedPhotos={photos}
+                subjectData={wizardState.subjectData}
+                onOpenPicker={() => setShowCoverPhotoPicker(true)}
+              />
+            </div>
 
             {/* Cover Photo Picker Modal */}
             <CoverPhotoPickerModal
@@ -1086,6 +1113,8 @@ export default function DocumentIntakePage() {
               onAcceptAllSuggestions={handleAcceptAllSuggestions}
               usedSlots={usedSlots}
               className="mb-6"
+              onDragStart={handlePhotoDragStart}
+              onDragEnd={handlePhotoDragEnd}
             />
 
             {/* Info about assigning photos later */}
@@ -1101,6 +1130,13 @@ export default function DocumentIntakePage() {
                 </div>
               </div>
             )}
+            {/* Floating Drop Panel */}
+            <FloatingDropPanel
+              isVisible={isPhotoDragging}
+              draggedPhotoPreview={draggedPhotoData?.preview}
+              usedSlots={usedSlots}
+              onDropToSlot={handlePanelDrop}
+            />
           </>
         )}
 
@@ -1134,6 +1170,6 @@ export default function DocumentIntakePage() {
           </button>
         </div>
       </div>
-    </WizardLayout>
+    </WizardLayout >
   );
 }

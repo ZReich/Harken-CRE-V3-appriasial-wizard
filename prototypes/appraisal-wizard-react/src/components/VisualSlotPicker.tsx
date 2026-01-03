@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { 
-  ChevronDown, 
-  Check, 
+import {
+  ChevronDown,
+  Check,
   Plus,
   Home,
   Sofa,
@@ -74,10 +74,10 @@ export default function VisualSlotPicker({
       const rect = triggerRef.current.getBoundingClientRect();
       const panelWidth = Math.min(480, window.innerWidth - 32);
       const panelHeight = 400;
-      
+
       let top = rect.bottom + 8;
       let left = rect.left;
-      
+
       // Adjust if panel would go off screen
       if (left + panelWidth > window.innerWidth - 16) {
         left = window.innerWidth - panelWidth - 16;
@@ -85,7 +85,7 @@ export default function VisualSlotPicker({
       if (top + panelHeight > window.innerHeight - 16) {
         top = rect.top - panelHeight - 8;
       }
-      
+
       setPanelPosition({ top, left, width: panelWidth });
     }
   }, [isOpen]);
@@ -93,10 +93,10 @@ export default function VisualSlotPicker({
   // Close on outside click
   useEffect(() => {
     if (!isOpen) return;
-    
+
     const handleClick = (e: MouseEvent) => {
       if (
-        panelRef.current && 
+        panelRef.current &&
         !panelRef.current.contains(e.target as Node) &&
         triggerRef.current &&
         !triggerRef.current.contains(e.target as Node)
@@ -104,7 +104,7 @@ export default function VisualSlotPicker({
         setIsOpen(false);
       }
     };
-    
+
     document.addEventListener('mousedown', handleClick);
     return () => document.removeEventListener('mousedown', handleClick);
   }, [isOpen]);
@@ -112,13 +112,13 @@ export default function VisualSlotPicker({
   // Close on Escape
   useEffect(() => {
     if (!isOpen) return;
-    
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         setIsOpen(false);
       }
     };
-    
+
     document.addEventListener('keydown', handleKeyDown);
     return () => document.removeEventListener('keydown', handleKeyDown);
   }, [isOpen]);
@@ -140,10 +140,10 @@ export default function VisualSlotPicker({
         onClick={() => setIsOpen(!isOpen)}
         className={`
           relative w-full flex items-center justify-between gap-2 px-3 py-2.5 
-          bg-white border-2 rounded-xl text-left transition-all duration-200
-          ${isOpen 
-            ? 'border-[#0da1c7] ring-4 ring-[#0da1c7]/20' 
-            : 'border-gray-200 hover:border-[#0da1c7]/50'
+          bg-white dark:bg-slate-800 border-2 rounded-xl text-left transition-all duration-200
+          ${isOpen
+            ? 'border-[#0da1c7] ring-4 ring-[#0da1c7]/20'
+            : 'border-gray-200 dark:border-slate-600 hover:border-[#0da1c7]/50'
           }
           ${className}
         `}
@@ -162,7 +162,7 @@ export default function VisualSlotPicker({
           <span className="text-sm text-gray-500 dark:text-slate-400">Choose where this photo goes...</span>
         )}
         <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
-        
+
         {/* Subtle glow effect */}
         <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-[#0da1c7]/0 via-[#0da1c7]/5 to-[#0da1c7]/0 opacity-0 hover:opacity-100 transition-opacity pointer-events-none" />
       </button>
@@ -179,9 +179,9 @@ export default function VisualSlotPicker({
           }}
         >
           {/* Frosted glass panel */}
-          <div className="bg-white/95 backdrop-blur-xl border border-gray-200 rounded-2xl shadow-2xl shadow-black/20 overflow-hidden">
+          <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl border border-gray-200 dark:border-slate-700 rounded-2xl shadow-2xl shadow-black/20 overflow-hidden">
             {/* Header with photo preview */}
-            <div className="relative px-4 py-3 border-b border-gray-100 bg-gradient-to-r from-gray-50 to-white">
+            <div className="relative px-4 py-3 border-b border-gray-100 dark:border-slate-700 bg-gradient-to-r from-gray-50 to-white dark:from-slate-700 dark:to-slate-800">
               <div className="flex items-center gap-3">
                 {photoPreview && (
                   <div className="w-12 h-12 rounded-lg overflow-hidden shadow-md flex-shrink-0">
@@ -194,9 +194,9 @@ export default function VisualSlotPicker({
                 </div>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="p-1.5 hover:bg-gray-100 rounded-lg transition-colors"
+                  className="p-1.5 hover:bg-gray-100 dark:hover:bg-slate-600 rounded-lg transition-colors"
                 >
-                  <X className="w-4 h-4 text-gray-400" />
+                  <X className="w-4 h-4 text-gray-400 dark:text-slate-400" />
                 </button>
               </div>
             </div>
@@ -207,7 +207,7 @@ export default function VisualSlotPicker({
                 const isActive = activeCategory === cat.id;
                 const availableCount = (slotsByCategory[cat.id] || []).filter(s => !usedSlots.has(s.id)).length;
                 const CatIcon = cat.Icon;
-                
+
                 return (
                   <button
                     key={cat.id}
@@ -215,9 +215,9 @@ export default function VisualSlotPicker({
                     className={`
                       flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium whitespace-nowrap
                       transition-all duration-200 flex-shrink-0 animate-slot-reveal
-                      ${isActive 
-                        ? `bg-gradient-to-r ${cat.color} text-white shadow-lg shadow-${cat.id === 'exterior' ? 'blue' : cat.id === 'interior' ? 'purple' : cat.id === 'site' ? 'green' : 'amber'}-500/25 animate-tab-spring` 
-                        : 'text-gray-600 hover:bg-gray-100 hover:scale-105'
+                      ${isActive
+                        ? `bg-gradient-to-r ${cat.color} text-white shadow-lg shadow-${cat.id === 'exterior' ? 'blue' : cat.id === 'interior' ? 'purple' : cat.id === 'site' ? 'green' : 'amber'}-500/25 animate-tab-spring`
+                        : 'text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-700 hover:scale-105'
                       }
                     `}
                     style={{
@@ -228,7 +228,7 @@ export default function VisualSlotPicker({
                     <span>{cat.label}</span>
                     <span className={`
                       px-1.5 py-0.5 rounded-full text-[10px] font-bold
-                      ${isActive ? 'bg-white/30' : 'bg-gray-200 text-gray-500'}
+                      ${isActive ? 'bg-white/30' : 'bg-gray-200 dark:bg-slate-600 text-gray-500 dark:text-slate-400'}
                     `}>
                       {availableCount}
                     </span>
@@ -245,7 +245,7 @@ export default function VisualSlotPicker({
                   const isSuggested = slot.id === suggestedSlotId;
                   const isHovered = hoveredSlot === slot.id;
                   const isSelected = value === slot.id;
-                  
+
                   return (
                     <button
                       key={slot.id}
@@ -255,13 +255,13 @@ export default function VisualSlotPicker({
                       disabled={isUsed}
                       className={`
                         relative p-3 rounded-xl border-2 transition-all duration-200 animate-slot-reveal
-                        ${isUsed 
-                          ? 'border-gray-200 bg-gray-50 opacity-50 cursor-not-allowed'
+                        ${isUsed
+                          ? 'border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-700/50 opacity-50 cursor-not-allowed'
                           : isSelected
-                            ? 'border-[#0da1c7] bg-[#0da1c7]/10 shadow-lg shadow-[#0da1c7]/20 animate-success-pulse'
+                            ? 'border-[#0da1c7] bg-[#0da1c7]/10 dark:bg-[#0da1c7]/20 shadow-lg shadow-[#0da1c7]/20 animate-success-pulse'
                             : isSuggested
-                              ? 'border-[#0da1c7]/50 bg-[#0da1c7]/5 hover:border-[#0da1c7] hover:bg-[#0da1c7]/10 animate-glow-pulse'
-                              : 'border-gray-200 hover:border-[#0da1c7]/50 hover:bg-gray-50'
+                              ? 'border-[#0da1c7]/50 bg-[#0da1c7]/5 dark:bg-[#0da1c7]/10 hover:border-[#0da1c7] hover:bg-[#0da1c7]/10 animate-glow-pulse'
+                              : 'border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-[#0da1c7]/50 hover:bg-gray-50 dark:hover:bg-slate-700'
                         }
                         ${isHovered && !isUsed ? 'scale-105 shadow-lg' : ''}
                       `}
@@ -272,11 +272,11 @@ export default function VisualSlotPicker({
                       {/* Slot Preview Area */}
                       <div className={`
                         aspect-[4/3] rounded-lg mb-2 flex items-center justify-center
-                        ${isUsed 
-                          ? 'bg-gray-200' 
+                        ${isUsed
+                          ? 'bg-gray-200 dark:bg-slate-600'
                           : isSelected
                             ? 'bg-[#0da1c7]/20'
-                            : 'bg-gradient-to-br from-gray-100 to-gray-50 border-2 border-dashed border-gray-300'
+                            : 'bg-gradient-to-br from-gray-100 to-gray-50 dark:from-slate-700 dark:to-slate-800 border-2 border-dashed border-gray-300 dark:border-slate-600'
                         }
                       `}>
                         {isSelected ? (
@@ -287,9 +287,9 @@ export default function VisualSlotPicker({
                           <Plus className={`w-5 h-5 ${isHovered ? 'text-[#0da1c7]' : 'text-gray-400'}`} />
                         )}
                       </div>
-                      
+
                       {/* Slot Label */}
-                      <p className={`text-xs font-medium text-center truncate ${isUsed ? 'text-gray-400' : 'text-gray-700'}`}>
+                      <p className={`text-xs font-medium text-center truncate ${isUsed ? 'text-gray-400 dark:text-slate-500' : 'text-gray-700 dark:text-slate-300'}`}>
                         {slot.label}
                       </p>
 
@@ -320,9 +320,9 @@ export default function VisualSlotPicker({
             </div>
 
             {/* Footer with keyboard hint */}
-            <div className="px-4 py-2 border-t border-gray-100 bg-gray-50/50">
-              <p className="text-[10px] text-gray-400 text-center">
-                Click to select • Press <kbd className="px-1 py-0.5 bg-gray-200 rounded text-gray-600 font-mono">Esc</kbd> to close
+            <div className="px-4 py-2 border-t border-gray-100 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-700/50">
+              <p className="text-[10px] text-gray-400 dark:text-slate-400 text-center">
+                Click to select • Press <kbd className="px-1 py-0.5 bg-gray-200 dark:bg-slate-600 rounded text-gray-600 dark:text-slate-300 font-mono">Esc</kbd> to close
               </p>
             </div>
           </div>
