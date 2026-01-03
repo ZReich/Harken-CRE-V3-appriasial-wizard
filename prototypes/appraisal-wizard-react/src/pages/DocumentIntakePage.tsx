@@ -27,6 +27,8 @@ import {
   HelpCircle,
   Camera,
   FileText,
+  Building2,
+  Droplets,
   type LucideIcon,
 } from 'lucide-react';
 import BulkPhotoDropZone from '../components/BulkPhotoDropZone';
@@ -47,6 +49,9 @@ const ICON_MAP: Record<string, LucideIcon> = {
   receipt: Receipt,
   wallet: Wallet,
   'help-circle': HelpCircle,
+  'file-text': FileText,
+  'droplets': Droplets,
+  'building-2': Building2,
 };
 import {
   classifyAndExtract,
@@ -93,7 +98,7 @@ function DocumentCard({
 }) {
   const [showTypeSelector, setShowTypeSelector] = useState(false);
 
-  const typeInfo = doc.classification
+  const typeInfo = (doc.classification && DOCUMENT_TYPES[doc.classification.documentType])
     ? DOCUMENT_TYPES[doc.classification.documentType]
     : DOCUMENT_TYPES.unknown;
 
@@ -157,6 +162,9 @@ function DocumentCard({
     red: 'bg-red-100 text-red-700 border-red-200',
     emerald: 'bg-emerald-100 text-emerald-700 border-emerald-200',
     gray: 'bg-gray-100 text-gray-700 border-gray-200',
+    amber: 'bg-amber-100 text-amber-700 border-amber-200',
+    cyan: 'bg-cyan-100 text-cyan-700 border-cyan-200',
+    rose: 'bg-rose-100 text-rose-700 border-rose-200',
   };
 
   return (
