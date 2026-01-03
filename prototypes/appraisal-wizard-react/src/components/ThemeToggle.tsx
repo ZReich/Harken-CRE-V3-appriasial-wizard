@@ -7,8 +7,8 @@ interface ThemeToggleProps {
   className?: string;
 }
 
-export function ThemeToggle({ 
-  showSystemOption = true, 
+export function ThemeToggle({
+  showSystemOption = false,
   size = 'md',
   className = ''
 }: ThemeToggleProps) {
@@ -42,24 +42,24 @@ export function ThemeToggle({
   const renderIcon = () => {
     if (showSystemOption && theme === 'system') {
       return (
-        <Monitor 
+        <Monitor
           size={iconSize}
           className="text-purple-500 dark:text-purple-400 transition-transform hover:rotate-12"
         />
       );
     }
-    
+
     if (resolvedTheme === 'dark') {
       return (
-        <Moon 
+        <Moon
           size={iconSize}
           className="text-cyan-400 transition-transform hover:rotate-12"
         />
       );
     }
-    
+
     return (
-      <Sun 
+      <Sun
         size={iconSize}
         className="text-amber-500 transition-transform hover:rotate-12"
       />

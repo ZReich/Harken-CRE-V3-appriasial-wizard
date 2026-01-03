@@ -12,12 +12,12 @@
  */
 
 import { useState } from 'react';
-import { 
-  Plus, 
-  X, 
-  CheckCircle2, 
-  AlertTriangle, 
-  Lightbulb, 
+import {
+  Plus,
+  X,
+  CheckCircle2,
+  AlertTriangle,
+  Lightbulb,
   ShieldAlert,
   Sparkles,
   Loader2,
@@ -120,11 +120,11 @@ function SWOTQuadrant({
           </p>
         ) : (
           items.map((item, index) => (
-            <div 
+            <div
               key={index}
               className="flex items-start gap-2 bg-white/60 dark:bg-slate-700/60 rounded-lg px-3 py-2 group"
             >
-              <span className="text-sm text-slate-700 flex-1">{item}</span>
+              <span className="text-sm text-slate-700 dark:text-slate-200 flex-1">{item}</span>
               {!readOnly && (
                 <button
                   onClick={() => onRemove(index)}
@@ -140,7 +140,7 @@ function SWOTQuadrant({
 
       {/* Add Input */}
       {!readOnly && (
-        <div className="p-3 border-t border-slate-200/50">
+        <div className="p-3 border-t border-slate-200/50 dark:border-slate-700/50">
           <div className="flex gap-2">
             <input
               type="text"
@@ -172,7 +172,7 @@ function ImpactScoreGauge({ score }: { score: number }) {
   const normalizedScore = (score + 100) / 2;
   const isPositive = score > 10;
   const isNegative = score < -10;
-  
+
   return (
     <div className="flex items-center gap-3 bg-slate-50 rounded-lg px-3 py-2">
       <div className="flex items-center gap-1.5">
@@ -186,16 +186,14 @@ function ImpactScoreGauge({ score }: { score: number }) {
         <span className="text-sm font-medium text-slate-600 dark:text-slate-400">Impact Score</span>
       </div>
       <div className="flex-1 h-2 bg-slate-200 rounded-full overflow-hidden">
-        <div 
-          className={`h-full transition-all duration-500 ${
-            isPositive ? 'bg-emerald-500' : isNegative ? 'bg-red-500' : 'bg-slate-400'
-          }`}
+        <div
+          className={`h-full transition-all duration-500 ${isPositive ? 'bg-emerald-500' : isNegative ? 'bg-red-500' : 'bg-slate-400'
+            }`}
           style={{ width: `${normalizedScore}%` }}
         />
       </div>
-      <span className={`text-sm font-bold ${
-        isPositive ? 'text-emerald-600' : isNegative ? 'text-red-600' : 'text-slate-600'
-      }`}>
+      <span className={`text-sm font-bold ${isPositive ? 'text-emerald-600' : isNegative ? 'text-red-600' : 'text-slate-600'
+        }`}>
         {score > 0 ? '+' : ''}{score}
       </span>
     </div>
@@ -212,14 +210,14 @@ function DataCompletenessIndicator({ completeness }: { completeness: number }) {
     if (completeness >= 40) return 'Fair';
     return 'Limited';
   };
-  
+
   const getColor = () => {
     if (completeness >= 80) return 'text-emerald-600 bg-emerald-50';
     if (completeness >= 60) return 'text-blue-600 bg-blue-50';
     if (completeness >= 40) return 'text-amber-600 bg-amber-50';
     return 'text-slate-600 bg-slate-100';
   };
-  
+
   return (
     <div className="flex items-center gap-2 text-sm">
       <Database className="w-4 h-4 text-slate-400" />
@@ -231,12 +229,12 @@ function DataCompletenessIndicator({ completeness }: { completeness: number }) {
   );
 }
 
-export function SWOTAnalysis({ 
-  data, 
-  onChange, 
+export function SWOTAnalysis({
+  data,
+  onChange,
   onGenerateSuggestions,
   className = '',
-  readOnly = false 
+  readOnly = false
 }: SWOTAnalysisProps) {
   const [isGenerating, setIsGenerating] = useState(false);
   const [aiSuggestedCounts, setAiSuggestedCounts] = useState({
@@ -272,7 +270,7 @@ export function SWOTAnalysis({
 
   const handleGenerateSuggestions = async () => {
     if (!onGenerateSuggestions) return;
-    
+
     setIsGenerating(true);
     try {
       const suggestions = await onGenerateSuggestions();
@@ -281,7 +279,7 @@ export function SWOTAnalysis({
         const newWeaknesses = suggestions.weaknesses || [];
         const newOpportunities = suggestions.opportunities || [];
         const newThreats = suggestions.threats || [];
-        
+
         // Track AI-suggested counts (append to existing counts)
         setAiSuggestedCounts(prev => ({
           strengths: prev.strengths + newStrengths.length,
@@ -289,7 +287,7 @@ export function SWOTAnalysis({
           opportunities: prev.opportunities + newOpportunities.length,
           threats: prev.threats + newThreats.length,
         }));
-        
+
         // Update data completeness and impact score if provided
         if (suggestions.dataCompleteness !== undefined) {
           setDataCompleteness(suggestions.dataCompleteness);
@@ -297,7 +295,7 @@ export function SWOTAnalysis({
         if (suggestions.impactScore !== undefined) {
           setImpactScore(suggestions.impactScore);
         }
-        
+
         onChange({
           ...data,
           strengths: [...data.strengths, ...newStrengths],
@@ -313,10 +311,10 @@ export function SWOTAnalysis({
     }
   };
 
-  const totalItems = data.strengths.length + data.weaknesses.length + 
-                     data.opportunities.length + data.threats.length;
+  const totalItems = data.strengths.length + data.weaknesses.length +
+    data.opportunities.length + data.threats.length;
   const totalAiItems = aiSuggestedCounts.strengths + aiSuggestedCounts.weaknesses +
-                       aiSuggestedCounts.opportunities + aiSuggestedCounts.threats;
+    aiSuggestedCounts.opportunities + aiSuggestedCounts.threats;
 
   return (
     <div className={`space-y-4 ${className}`}>
@@ -346,7 +344,7 @@ export function SWOTAnalysis({
           </button>
         </div>
       )}
-      
+
       {/* AI Analysis Stats Bar */}
       {(dataCompleteness !== null || impactScore !== null || totalAiItems > 0) && (
         <div className="bg-gradient-to-r from-slate-50 to-slate-100 rounded-xl border border-slate-200 p-4 space-y-3">
@@ -355,7 +353,7 @@ export function SWOTAnalysis({
             {dataCompleteness !== null && (
               <DataCompletenessIndicator completeness={dataCompleteness} />
             )}
-            
+
             {/* AI Stats */}
             {totalAiItems > 0 && (
               <div className="flex items-center gap-2 text-sm">
@@ -367,7 +365,7 @@ export function SWOTAnalysis({
               </div>
             )}
           </div>
-          
+
           {/* Impact Score Gauge */}
           {impactScore !== null && (
             <ImpactScoreGauge score={impactScore} />
@@ -377,12 +375,12 @@ export function SWOTAnalysis({
 
       {/* Info Banner when no suggestions yet */}
       {!readOnly && totalItems === 0 && (
-        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-start gap-3">
-          <Info className="text-blue-600 shrink-0 mt-0.5" size={18} />
-          <div className="text-sm text-blue-800">
+        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-4 flex items-start gap-3">
+          <Info className="text-blue-600 dark:text-blue-400 shrink-0 mt-0.5" size={18} />
+          <div className="text-sm text-blue-800 dark:text-blue-200">
             <p className="font-medium">Generate intelligent suggestions</p>
-            <p className="text-blue-600 mt-1">
-              Click "AI Suggestions" to analyze your property data (site details, demographics, 
+            <p className="text-blue-600 dark:text-blue-400 mt-1">
+              Click "AI Suggestions" to analyze your property data (site details, demographics,
               economic indicators, improvements, and market data) and generate relevant SWOT items.
             </p>
           </div>
@@ -396,9 +394,9 @@ export function SWOTAnalysis({
           title="Strengths"
           items={data.strengths}
           aiSuggestedCount={aiSuggestedCounts.strengths}
-          color="bg-emerald-100 text-emerald-600"
-          bgColor="bg-emerald-50/50"
-          borderColor="border-emerald-200"
+          color="bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400"
+          bgColor="bg-emerald-50/50 dark:bg-emerald-900/10"
+          borderColor="border-emerald-200 dark:border-emerald-800"
           icon={<CheckCircle2 className="w-4 h-4" />}
           placeholder="Add a strength..."
           onAdd={addItem('strengths')}
@@ -411,9 +409,9 @@ export function SWOTAnalysis({
           title="Weaknesses"
           items={data.weaknesses}
           aiSuggestedCount={aiSuggestedCounts.weaknesses}
-          color="bg-red-100 text-red-600"
-          bgColor="bg-red-50/50"
-          borderColor="border-red-200"
+          color="bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400"
+          bgColor="bg-red-50/50 dark:bg-red-900/10"
+          borderColor="border-red-200 dark:border-red-800"
           icon={<AlertTriangle className="w-4 h-4" />}
           placeholder="Add a weakness..."
           onAdd={addItem('weaknesses')}
@@ -426,9 +424,9 @@ export function SWOTAnalysis({
           title="Opportunities"
           items={data.opportunities}
           aiSuggestedCount={aiSuggestedCounts.opportunities}
-          color="bg-blue-100 text-blue-600"
-          bgColor="bg-blue-50/50"
-          borderColor="border-blue-200"
+          color="bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400"
+          bgColor="bg-blue-50/50 dark:bg-blue-900/10"
+          borderColor="border-blue-200 dark:border-blue-800"
           icon={<Lightbulb className="w-4 h-4" />}
           placeholder="Add an opportunity..."
           onAdd={addItem('opportunities')}
@@ -441,9 +439,9 @@ export function SWOTAnalysis({
           title="Threats"
           items={data.threats}
           aiSuggestedCount={aiSuggestedCounts.threats}
-          color="bg-amber-100 text-amber-600"
-          bgColor="bg-amber-50/50"
-          borderColor="border-amber-200"
+          color="bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400"
+          bgColor="bg-amber-50/50 dark:bg-amber-900/10"
+          borderColor="border-amber-200 dark:border-amber-800"
           icon={<ShieldAlert className="w-4 h-4" />}
           placeholder="Add a threat..."
           onAdd={addItem('threats')}

@@ -5,11 +5,11 @@ import { APPROACH_COLORS } from '../constants';
 import { DEFAULT_CERTIFICATIONS } from '../types';
 import type { ScenarioReconciliation } from '../types';
 import EnhancedTextArea from '../../../components/EnhancedTextArea';
-import { 
-  calculateAIWeights, 
+import {
+  calculateAIWeights,
   getIncomeSubMethodValues,
   getTypicalExposureRanges,
-  type WeightCalculationResult 
+  type WeightCalculationResult
 } from '../utils/weightCalculator';
 import {
   type ReconciliationContextData,
@@ -83,7 +83,7 @@ export function ValueReconciliation() {
       comments: '',
     }))
   );
-  
+
   // Exposure time as ranges
   const [exposureMin, setExposureMin] = useState<string>(
     () => reconciliationData?.exposurePeriod?.toString() || ''
@@ -99,10 +99,10 @@ export function ValueReconciliation() {
   const [selectedCertifications, setSelectedCertifications] = useState<string[]>(
     () => reconciliationData?.certifications || []
   );
-  
+
   // Income sub-method visibility
   const [incomeExpanded, setIncomeExpanded] = useState(false);
-  
+
   // AI weight suggestion state
   const [aiWeightResult, setAiWeightResult] = useState<WeightCalculationResult | null>(null);
   const [showAiExplanation, setShowAiExplanation] = useState(false);
@@ -129,7 +129,7 @@ export function ValueReconciliation() {
   }, [extractedData, improvementsInventory]);
 
   // Get typical exposure ranges for guidance
-  const typicalRanges = useMemo(() => 
+  const typicalRanges = useMemo(() =>
     getTypicalExposureRanges(state.propertyType || 'commercial'),
     [state.propertyType]
   );
@@ -138,7 +138,7 @@ export function ValueReconciliation() {
   const incomeSubMethods = useMemo(() => {
     const incomeData = getIncomeApproachData();
     const calculated = getIncomeSubMethodValues(incomeData);
-    
+
     // If no actual data, use mock values for demo purposes
     if (calculated.directCapValue === 0 && calculated.dcfValue === 0) {
       return {
@@ -228,7 +228,7 @@ export function ValueReconciliation() {
     if (!activeScenario) return;
 
     const incomeData = getIncomeApproachData();
-    
+
     const result = calculateAIWeights(
       state.propertyType || 'commercial',
       activeScenario.name,
@@ -394,7 +394,7 @@ export function ValueReconciliation() {
               {Array.from(new Set(scenarios.flatMap(s => s.approaches))).map((approach) => {
                 const colors = APPROACH_COLORS[approach] || { text: 'text-gray-600' };
                 const isIncomeApproach = approach === 'Income Approach';
-                
+
                 return (
                   <React.Fragment key={approach}>
                     <tr className="border-b border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700">
@@ -418,7 +418,7 @@ export function ValueReconciliation() {
                         const isApplicable = s.approaches.includes(approach);
                         const recon = reconciliations.find(r => r.scenarioId === s.id);
                         const weight = recon?.weights[approach] || 0;
-                        
+
                         return (
                           <td key={s.id} className="px-4 py-3 text-center">
                             {isApplicable ? (
@@ -435,7 +435,7 @@ export function ValueReconciliation() {
                         );
                       })}
                     </tr>
-                    
+
                     {/* Income Sub-Methods - Render immediately after Income Approach row */}
                     {isIncomeApproach && incomeExpanded && (
                       <>
@@ -448,7 +448,7 @@ export function ValueReconciliation() {
                           </td>
                           {scenarios.map((s) => (
                             <td key={s.id} className="px-4 py-2 text-center text-sm text-gray-600 dark:text-slate-400">
-                              {s.approaches.includes('Income Approach') 
+                              {s.approaches.includes('Income Approach')
                                 ? formatCurrency(incomeSubMethods.directCapValue)
                                 : <span className="text-gray-400">—</span>
                               }
@@ -483,9 +483,8 @@ export function ValueReconciliation() {
                 {scenarios.map((s, idx) => (
                   <td key={s.id} className="px-4 py-4 text-center">
                     <span
-                      className={`text-xl font-bold ${
-                        idx === 0 ? 'text-blue-600' : idx === 1 ? 'text-green-600' : 'text-purple-600'
-                      }`}
+                      className={`text-xl font-bold ${idx === 0 ? 'text-blue-600' : idx === 1 ? 'text-green-600' : 'text-purple-600'
+                        }`}
                     >
                       {formatCurrency(getConcludedValue(s.id))}
                     </span>
@@ -565,11 +564,10 @@ export function ValueReconciliation() {
             <button
               key={s.id}
               onClick={() => setActiveScenarioIndex(idx)}
-              className={`px-4 py-2 text-sm font-medium -mb-px transition-colors ${
-                idx === activeScenarioIndex
+              className={`px-4 py-2 text-sm font-medium -mb-px transition-colors ${idx === activeScenarioIndex
                   ? 'text-blue-600 dark:text-cyan-400 border-b-2 border-blue-600 dark:border-cyan-400 font-semibold'
                   : 'text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-slate-300'
-              }`}
+                }`}
             >
               {s.name}
             </button>
@@ -580,8 +578,8 @@ export function ValueReconciliation() {
         {activeScenario && activeReconciliation && (
           <div className="space-y-6">
             {/* Approach Value Boxes - Only for current scenario's approaches */}
-            <div 
-              className="grid gap-4" 
+            <div
+              className="grid gap-4"
               style={{ gridTemplateColumns: `repeat(${activeScenario.approaches.length}, 1fr)` }}
             >
               {activeScenario.approaches.map((approach) => {
@@ -591,7 +589,7 @@ export function ValueReconciliation() {
                 return (
                   <div
                     key={approach}
-                    className={`rounded-xl p-5 text-center border-2 ${colors.bg} ${colors.border}`}
+                    className={`rounded-xl p-5 text-center border-2 ${colors.bg} dark:bg-slate-800 ${colors.border} dark:border-slate-600`}
                   >
                     <div className="text-xs text-gray-500 dark:text-slate-400 uppercase mb-2 font-medium">{approach}</div>
                     <div className={`text-xl font-bold mb-3 ${colors.text}`}>
@@ -615,13 +613,12 @@ export function ValueReconciliation() {
             </div>
 
             {/* Weight Total Validation */}
-            <div className={`flex items-center justify-between p-4 rounded-lg ${
-              weightTotal === 100 
-                ? 'bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700' 
-                : weightTotal > 0 
+            <div className={`flex items-center justify-between p-4 rounded-lg ${weightTotal === 100
+                ? 'bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700'
+                : weightTotal > 0
                   ? 'bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700'
                   : 'bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600'
-            }`}>
+              }`}>
               <div className="flex items-center gap-2">
                 {weightTotal === 100 ? (
                   <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400" />
@@ -630,9 +627,8 @@ export function ValueReconciliation() {
                 ) : (
                   <Info className="w-5 h-5 text-gray-400" />
                 )}
-                <span className={`font-medium ${
-                  weightTotal === 100 ? 'text-green-800 dark:text-green-200' : weightTotal > 0 ? 'text-amber-800 dark:text-amber-200' : 'text-gray-600 dark:text-slate-400'
-                }`}>
+                <span className={`font-medium ${weightTotal === 100 ? 'text-green-800 dark:text-green-200' : weightTotal > 0 ? 'text-amber-800 dark:text-amber-200' : 'text-gray-600 dark:text-slate-400'
+                  }`}>
                   Weight Total: {weightTotal}%
                   {weightTotal !== 100 && weightTotal > 0 && ' — Weights should sum to 100%'}
                   {weightTotal === 0 && ' — Enter weights or use AI Suggest'}
@@ -671,14 +667,14 @@ export function ValueReconciliation() {
         <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 pb-3 border-b border-gray-200 dark:border-slate-600">
           Exposure & Marketing Time
         </h3>
-        
+
         {/* Guidance Panel */}
         <div className="mb-4 p-3 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg flex items-start gap-3">
           <Info className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
           <div className="text-sm text-blue-800 dark:text-blue-200">
             <strong>{typicalRanges.description}</strong>
             <p className="mt-1 text-blue-700 dark:text-blue-300">
-              Exposure time is <em>retrospective</em> (how long the property would have been on the market prior to the effective date). 
+              Exposure time is <em>retrospective</em> (how long the property would have been on the market prior to the effective date).
               Marketing time is <em>prospective</em> (estimated time to sell from the effective date forward).
             </p>
           </div>
@@ -776,17 +772,15 @@ export function ValueReconciliation() {
               <button
                 key={cert.id}
                 onClick={() => toggleCertification(cert.id)}
-                className={`w-full text-left p-4 border-2 rounded-lg cursor-pointer transition-all ${
-                  isSelected
+                className={`w-full text-left p-4 border-2 rounded-lg cursor-pointer transition-all ${isSelected
                     ? 'border-[#0da1c7] dark:border-cyan-400 bg-[#0da1c7]/5 dark:bg-cyan-400/10'
                     : 'border-gray-200 dark:border-slate-600 hover:border-[#0da1c7]/50 dark:hover:border-cyan-400/50 hover:bg-[#0da1c7]/5 dark:hover:bg-cyan-400/10'
-                }`}
+                  }`}
               >
                 <div className="flex items-start gap-3">
                   <div
-                    className={`w-6 h-6 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-all ${
-                      isSelected ? 'bg-[#0da1c7] dark:bg-cyan-400 border-[#0da1c7] dark:border-cyan-400' : 'border-gray-300 dark:border-slate-500'
-                    }`}
+                    className={`w-6 h-6 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-all ${isSelected ? 'bg-[#0da1c7] dark:bg-cyan-400 border-[#0da1c7] dark:border-cyan-400' : 'border-gray-300 dark:border-slate-500'
+                      }`}
                   >
                     {isSelected && (
                       <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">

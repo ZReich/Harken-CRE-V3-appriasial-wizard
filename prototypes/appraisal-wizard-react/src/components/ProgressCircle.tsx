@@ -17,7 +17,7 @@ export function ProgressCircle({
   isCompleted,
   trackProgress,
   onClick,
-  size = 40,
+  size = 36, // Slightly smaller default for better density
 }: ProgressCircleProps) {
   const [justCompleted, setJustCompleted] = useState(false);
 
@@ -33,75 +33,74 @@ export function ProgressCircle({
   // Calculate gradient for partial fill
   const gradientStyle = useMemo(() => {
     if (!trackProgress || isCompleted) return {};
-    
-    // Fill from bottom to top
+
     const fillPercent = Math.min(100, Math.max(0, completion));
     return {
-      background: `linear-gradient(to top, 
-        rgba(34, 197, 94, 0.5) ${fillPercent}%, 
-        transparent ${fillPercent}%
-      )`,
+      background: `conic-gradient(rgba(34, 197, 94, 0.4) ${fillPercent * 3.6}deg, transparent 0deg)`,
     };
   }, [completion, trackProgress, isCompleted]);
 
-  // Determine circle background
+  // Determine circle background and border
   const getCircleClasses = () => {
     if (isCompleted) {
-      return `bg-green-500 text-white ${justCompleted ? 'animate-pulse-once' : ''}`;
+      return 'bg-green-500 border-green-500 text-white';
     }
     if (isActive) {
-      return 'bg-[#0da1c7] text-white';
+      return 'bg-[#0da1c7] border-[#0da1c7] text-white shadow-md shadow-cyan-500/20';
     }
-    return 'bg-gray-200 dark:bg-slate-600 text-gray-400 dark:text-slate-300';
+    // Visited but not complete -> Slight emphasis
+    if (completion > 0 && !isCompleted) {
+      return 'bg-white dark:bg-slate-800 border-green-400 text-gray-700 dark:text-gray-200';
+    }
+    // Pending
+    return 'bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-600 text-gray-400 dark:text-slate-500';
   };
 
   return (
     <button
       type="button"
-      className={`relative cursor-pointer hover:opacity-90 transition-all duration-200 ${
-        justCompleted ? 'scale-110' : ''
-      }`}
+      className={`relative rounded-full flex items-center justify-center transition-all duration-300 outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0da1c7] dark:focus:ring-offset-slate-900 ${isActive ? 'ring-2 ring-offset-2 ring-[#0da1c7] dark:ring-offset-slate-900 scale-110' : 'hover:border-gray-300 dark:hover:border-slate-500'
+        } ${justCompleted ? 'scale-125' : ''}`}
       onClick={onClick}
       style={{ width: size, height: size }}
       aria-label={`Go to phase ${phaseNum}`}
     >
-      {/* Base circle */}
-      <div
-        className={`w-full h-full rounded-full flex items-center justify-center font-semibold text-sm relative overflow-hidden ${getCircleClasses()}`}
-      >
-        {/* Fill overlay for progress (only for trackProgress sections) */}
-        {trackProgress && !isCompleted && completion > 0 && (
-          <div 
-            className="absolute inset-0 rounded-full transition-all duration-500"
-            style={gradientStyle}
-          />
-        )}
+      {/* Background/Base Border */}
+      <div className={`absolute inset-0 rounded-full border-2 transition-colors duration-300 ${getCircleClasses().split(' ').filter(c => c.startsWith('bg-') || c.startsWith('border-')).join(' ')}`} />
 
-        {/* Content */}
-        <div className="relative z-10">
-          {isCompleted ? (
-            <svg 
-              className={`w-5 h-5 ${justCompleted ? 'animate-bounce-once' : ''}`} 
-              fill="none" 
-              stroke="currentColor" 
-              viewBox="0 0 24 24"
-            >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth={3} 
-                d="M5 13l4 4L19 7" 
-              />
-            </svg>
-          ) : (
-            <span>{phaseNum}</span>
-          )}
-        </div>
+      {/* Partial Fill (Conic for circular progress feel) - Only if not active/complete to avoid clash */}
+      {trackProgress && !isCompleted && !isActive && completion > 0 && (
+        <div
+          className="absolute inset-[2px] rounded-full transition-all duration-500 opacity-50"
+          style={gradientStyle}
+        />
+      )}
+
+      {/* Content */}
+      <div className={`relative z-10 flex items-center justify-center font-bold text-sm transition-colors duration-300 ${isCompleted || isActive ? 'text-white' : 'text-gray-500 dark:text-slate-400'}`}>
+        {isCompleted ? (
+          <svg
+            className={`w-4 h-4 ${justCompleted ? 'animate-bounce-once' : ''}`}
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            strokeWidth={3}
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+        ) : (
+          <span>{phaseNum}</span>
+        )}
       </div>
 
-      {/* Completion ring effect */}
+      {/* Active Indicator Pulse (Subtle) */}
+      {isActive && !isCompleted && (
+        <div className="absolute inset-0 rounded-full border border-white dark:border-slate-900 animate-ping-slow opacity-30" />
+      )}
+
+      {/* Completion Ring Effect */}
       {justCompleted && (
-        <div className="absolute inset-0 rounded-full border-2 border-green-400 animate-ping-once" />
+        <div className="absolute inset-0 rounded-full border-2 border-green-500 animate-ping-once opacity-50" />
       )}
     </button>
   );

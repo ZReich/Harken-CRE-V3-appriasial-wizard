@@ -513,6 +513,18 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   animation: ping-once 0.6s ease-out forwards;
 }
 
+/* Ping slow - Standard ping but slower */
+@keyframes ping {
+  75%, 100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+.animate-ping-slow {
+  animation: ping 3s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
 /* Slide in from right */
 @keyframes slide-in-right {
   from { 
