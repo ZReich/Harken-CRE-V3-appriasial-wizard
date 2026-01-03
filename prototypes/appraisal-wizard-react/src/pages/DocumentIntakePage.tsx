@@ -65,6 +65,8 @@ import {
   getConfidenceColorClasses,
 } from '../services/documentExtraction';
 import { DOCUMENT_FIELD_MAPPINGS, type DocumentType as MappingDocumentType } from '../config/documentFieldMappings';
+import { ErrorBoundary } from '../components/ErrorBoundary';
+
 
 // ==========================================
 // TYPES
@@ -586,11 +588,12 @@ export default function DocumentIntakePage() {
           console.log('[DocumentIntake] ✓ Created', suggestionsCreated, 'field suggestions for user review');
         } else {
           console.warn('[DocumentIntake] ⚠ Extraction failed or no data for', doc.file.name);
-          if (result.extraction.error) {
+          if (result.extraction && result.extraction.error) {
             console.error('[DocumentIntake] Extraction error:', result.extraction.error);
           }
         }
       } catch (error) {
+        console.error('[DocumentIntake] Generic error processing file:', doc.file.name, error);
         setDocuments(prev => prev.map(d =>
           d.id === doc.id ? {
             ...d,
@@ -1054,20 +1057,40 @@ export default function DocumentIntakePage() {
 
                 <div className="space-y-3">
                   {documents.map(doc => (
-                    <DocumentCard
+                    <ErrorBoundary
                       key={doc.id}
-                      doc={doc}
-                      onRemove={() => removeDocument(doc.id)}
-                      onReprocess={() => reprocessDocument(doc.id)}
-                      onReclassify={(newType) => reclassifyDocument(doc.id, newType)}
-                      isExpanded={expandedDocId === doc.id}
-                      onToggleExpand={() => {
-                        console.log('[DocumentIntake] onToggleExpand called for doc:', doc.id);
-                        console.log('[DocumentIntake] Current expandedDocId:', expandedDocId);
-                        console.log('[DocumentIntake] Will set to:', expandedDocId === doc.id ? null : doc.id);
-                        setExpandedDocId(expandedDocId === doc.id ? null : doc.id);
-                      }}
-                    />
+                      name={`DocumentCard-${doc.file.name}`}
+                      fallback={
+                        <div className="p-4 bg-red-50 border border-red-200 rounded-xl flex items-center gap-3">
+                          <div className="p-2 bg-red-100 rounded-full">
+                            <AlertCircle className="w-5 h-5 text-red-600" />
+                          </div>
+                          <div className="flex-1">
+                            <h3 className="text-sm font-medium text-red-800">Error displaying document</h3>
+                            <p className="text-xs text-red-600">
+                              {doc.file.name} could not be rendered.
+                              <button
+                                onClick={() => removeDocument(doc.id)}
+                                className="ml-2 underline hover:text-red-800"
+                              >
+                                Remove
+                              </button>
+                            </p>
+                          </div>
+                        </div>
+                      }
+                    >
+                      <DocumentCard
+                        doc={doc}
+                        onRemove={() => removeDocument(doc.id)}
+                        onReprocess={() => reprocessDocument(doc.id)}
+                        onReclassify={(newType) => reclassifyDocument(doc.id, newType)}
+                        isExpanded={expandedDocId === doc.id}
+                        onToggleExpand={() => {
+                          setExpandedDocId(expandedDocId === doc.id ? null : doc.id);
+                        }}
+                      />
+                    </ErrorBoundary>
                   ))}
                 </div>
               </div>
