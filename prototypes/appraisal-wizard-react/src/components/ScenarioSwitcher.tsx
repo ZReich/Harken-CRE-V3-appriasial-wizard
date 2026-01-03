@@ -17,29 +17,29 @@ const SCENARIO_COLORS: Record<string, {
 }> = {
   'As Is': {
     accent: '#0da1c7',
-    activeBg: 'bg-[#0da1c7]/10',
-    activeBorder: 'border-[#0da1c7]',
-    activeText: 'text-[#0da1c7]',
-    inactiveBg: 'bg-slate-50',
-    inactiveText: 'text-slate-600',
+    activeBg: 'bg-[#0da1c7]/10 dark:bg-[#0da1c7]/20',
+    activeBorder: 'border-[#0da1c7] dark:border-[#0da1c7]',
+    activeText: 'text-[#0da1c7] dark:text-[#0da1c7]',
+    inactiveBg: 'bg-slate-50 dark:bg-slate-800',
+    inactiveText: 'text-slate-600 dark:text-slate-400',
     dot: 'bg-[#0da1c7]',
   },
   'As Completed': {
     accent: '#10b981',
-    activeBg: 'bg-emerald-50',
-    activeBorder: 'border-emerald-500',
-    activeText: 'text-emerald-700',
-    inactiveBg: 'bg-slate-50',
-    inactiveText: 'text-slate-600',
+    activeBg: 'bg-emerald-50 dark:bg-emerald-900/20',
+    activeBorder: 'border-emerald-500 dark:border-emerald-500',
+    activeText: 'text-emerald-700 dark:text-emerald-400',
+    inactiveBg: 'bg-slate-50 dark:bg-slate-800',
+    inactiveText: 'text-slate-600 dark:text-slate-400',
     dot: 'bg-emerald-500',
   },
   'As Stabilized': {
     accent: '#8b5cf6',
-    activeBg: 'bg-violet-50',
-    activeBorder: 'border-violet-500',
-    activeText: 'text-violet-700',
-    inactiveBg: 'bg-slate-50',
-    inactiveText: 'text-slate-600',
+    activeBg: 'bg-violet-50 dark:bg-violet-900/20',
+    activeBorder: 'border-violet-500 dark:border-violet-500',
+    activeText: 'text-violet-700 dark:text-violet-400',
+    inactiveBg: 'bg-slate-50 dark:bg-slate-800',
+    inactiveText: 'text-slate-600 dark:text-slate-400',
     dot: 'bg-violet-500',
   },
 };
@@ -47,11 +47,11 @@ const SCENARIO_COLORS: Record<string, {
 // Default colors for custom scenarios
 const DEFAULT_COLORS = {
   accent: '#64748b',
-  activeBg: 'bg-slate-100',
-  activeBorder: 'border-slate-500',
-  activeText: 'text-slate-700',
-  inactiveBg: 'bg-slate-50',
-  inactiveText: 'text-slate-600',
+  activeBg: 'bg-slate-100 dark:bg-slate-800',
+  activeBorder: 'border-slate-500 dark:border-slate-400',
+  activeText: 'text-slate-700 dark:text-slate-200',
+  inactiveBg: 'bg-slate-50 dark:bg-slate-800',
+  inactiveText: 'text-slate-600 dark:text-slate-400',
   dot: 'bg-slate-500',
 };
 
@@ -90,10 +90,10 @@ export default function ScenarioSwitcher({ className = '' }: ScenarioSwitcherPro
 
   return (
     <div className={`flex items-center gap-2 ${className}`}>
-      <span className="text-xs font-medium text-slate-500 uppercase tracking-wide mr-2">
+      <span className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide mr-2">
         Scenario:
       </span>
-      <div className="flex items-center gap-1.5 bg-slate-100/80 rounded-lg p-1 border border-slate-200">
+      <div className="flex items-center gap-1.5 bg-slate-100/80 dark:bg-slate-800/80 rounded-lg p-1 border border-slate-200 dark:border-slate-700">
         {scenarios.map((scenario) => {
           const isActive = scenario.id === activeScenarioId;
           const colors = getScenarioColors(scenario.name);
@@ -113,7 +113,7 @@ export default function ScenarioSwitcher({ className = '' }: ScenarioSwitcherPro
             >
               {/* Color dot indicator */}
               <span className={`w-2 h-2 rounded-full ${colors.dot} ${isActive ? 'opacity-100' : 'opacity-40'}`} />
-              
+
               <div className="flex flex-col items-start">
                 <span className="leading-tight">{scenario.name}</span>
                 {scenario.effectiveDate && (
@@ -125,8 +125,8 @@ export default function ScenarioSwitcher({ className = '' }: ScenarioSwitcherPro
 
               {/* Required indicator */}
               {scenario.isRequired && (
-                <span className={`absolute -top-1 -right-1 w-2 h-2 rounded-full bg-amber-400 border border-white`} 
-                      title="Required scenario" />
+                <span className={`absolute -top-1 -right-1 w-2 h-2 rounded-full bg-amber-400 border border-white`}
+                  title="Required scenario" />
               )}
             </button>
           );

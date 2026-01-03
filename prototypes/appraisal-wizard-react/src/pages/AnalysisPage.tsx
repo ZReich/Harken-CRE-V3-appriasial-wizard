@@ -43,36 +43,36 @@ function GridLoader() {
 // Approach definitions with color coding for navigation
 // NOTE: HBU has been moved to the Review page per plan
 const APPROACH_CONFIG = {
-  land: { 
-    id: 'land', 
-    label: 'Land Valuation', 
+  land: {
+    id: 'land',
+    label: 'Land Valuation',
     Icon: LandIcon,
     color: '#84cc16', // lime
-    bgClass: 'bg-lime-50',
+    bgClass: 'bg-lime-50 dark:bg-lime-900/20',
     borderClass: 'border-l-lime-400',
   },
-  sales: { 
-    id: 'sales', 
-    label: 'Sales Comparison', 
+  sales: {
+    id: 'sales',
+    label: 'Sales Comparison',
     Icon: ChartIcon,
     color: '#0da1c7', // teal (primary)
-    bgClass: 'bg-cyan-50',
+    bgClass: 'bg-cyan-50 dark:bg-cyan-900/20',
     borderClass: 'border-l-cyan-400',
   },
-  income: { 
-    id: 'income', 
-    label: 'Income Approach', 
+  income: {
+    id: 'income',
+    label: 'Income Approach',
     Icon: CurrencyIcon,
     color: '#22c55e', // green
-    bgClass: 'bg-green-50',
+    bgClass: 'bg-green-50 dark:bg-green-900/20',
     borderClass: 'border-l-green-400',
   },
-  cost: { 
-    id: 'cost', 
-    label: 'Cost Approach', 
+  cost: {
+    id: 'cost',
+    label: 'Cost Approach',
     Icon: ConstructionIcon,
     color: '#f97316', // orange
-    bgClass: 'bg-orange-50',
+    bgClass: 'bg-orange-50 dark:bg-orange-900/20',
     borderClass: 'border-l-orange-400',
   },
   multifamily: {
@@ -80,7 +80,7 @@ const APPROACH_CONFIG = {
     label: 'Multi-Family',
     Icon: ResidentialIcon,
     color: '#8b5cf6', // violet
-    bgClass: 'bg-violet-50',
+    bgClass: 'bg-violet-50 dark:bg-violet-900/20',
     borderClass: 'border-l-violet-400',
   },
   costseg: {
@@ -88,7 +88,7 @@ const APPROACH_CONFIG = {
     label: 'Cost Segregation',
     Icon: Wallet,
     color: '#10b981', // emerald
-    bgClass: 'bg-emerald-50',
+    bgClass: 'bg-emerald-50 dark:bg-emerald-900/20',
     borderClass: 'border-l-emerald-400',
   },
 };
@@ -133,7 +133,7 @@ export default function AnalysisPage() {
       hasActualExpenses: (state.incomeApproachData?.expenseData?.expenses?.length ?? 0) > 0,
     });
   }, [
-    state.propertyType, state.propertySubtype, 
+    state.propertyType, state.propertySubtype,
     state.subjectData?.propertyInterest, state.subjectData?.propertyStatus,
     state.subjectData?.occupancyStatus, state.subjectData?.plannedChanges,
     state.incomeApproachData,
@@ -155,17 +155,17 @@ export default function AnalysisPage() {
   // Filter tabs based on active scenario's approaches
   const availableTabs = useMemo(() => {
     if (!activeScenario) return ALL_TABS;
-    
+
     const approachIds = activeScenario.approaches.map(name => APPROACH_NAME_TO_ID[name]).filter(Boolean);
-    
+
     // Note: HBU and Market Analysis are now in Review page
     const combinedTabs = [...approachIds];
-    
+
     // Add Cost Segregation tab if enabled AND Cost Approach is selected
     if (isCostSegEnabled && approachIds.includes('cost')) {
       combinedTabs.push('costseg');
     }
-    
+
     // Return in proper display order (with costseg after cost)
     const orderedTabs = [...ALL_TABS];
     if (isCostSegEnabled) {
@@ -175,7 +175,7 @@ export default function AnalysisPage() {
         orderedTabs.splice(costIndex + 1, 0, 'costseg');
       }
     }
-    
+
     return orderedTabs.filter(tab => combinedTabs.includes(tab));
   }, [activeScenario, isCostSegEnabled]);
 
@@ -200,7 +200,7 @@ export default function AnalysisPage() {
   // Celebration system
   const { triggerGrandCelebration } = useCelebration();
   const { areAllScenariosComplete: checkAllComplete } = useWizard();
-  
+
   // Track scenario mini-celebration
   const [showScenarioCelebration, setShowScenarioCelebration] = useState(false);
   const [celebratingScenarioName, setCelebratingScenarioName] = useState('');
@@ -209,7 +209,7 @@ export default function AnalysisPage() {
   const handleDismissScenarioCelebration = useCallback(() => {
     setShowScenarioCelebration(false);
     setCelebratingScenarioName('');
-    
+
     // Check if all scenarios are now complete
     if (checkAllComplete()) {
       triggerGrandCelebration();
@@ -237,11 +237,10 @@ export default function AnalysisPage() {
             <button
               key={tabId}
               onClick={() => setActiveTab(tabId)}
-              className={`w-full text-left px-4 py-3 rounded-lg text-sm flex items-center gap-3 transition-all border-l-4 ${
-                isActive
+              className={`w-full text-left px-4 py-3 rounded-lg text-sm flex items-center gap-3 transition-all border-l-4 ${isActive
                   ? `${config.bgClass} font-medium ${config.borderClass}`
                   : 'text-gray-600 dark:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-700 border-l-transparent'
-              }`}
+                }`}
               style={isActive ? { color: config.color } : undefined}
             >
               <Icon className="w-5 h-5" />
@@ -274,8 +273,8 @@ export default function AnalysisPage() {
       {/* Header with approach and scenario context */}
       <div>
         <h3 className="text-lg font-bold text-gray-900 dark:text-white flex items-center gap-2">
-          <span 
-            className="w-3 h-3 rounded-full" 
+          <span
+            className="w-3 h-3 rounded-full"
             style={{ backgroundColor: currentApproach?.color || '#0da1c7' }}
           />
           {currentApproach?.label || 'Analysis'}
@@ -408,7 +407,7 @@ export default function AnalysisPage() {
             const colors = getScenarioColors(scenario.name);
             const isActive = scenario.id === state.activeScenarioId;
             return (
-              <div 
+              <div
                 key={scenario.id}
                 className={`flex items-center justify-between py-1.5 ${isActive ? 'opacity-100' : 'opacity-60'}`}
               >
@@ -417,10 +416,10 @@ export default function AnalysisPage() {
                   <span className="text-xs text-slate-700 dark:text-slate-300">{scenario.name}</span>
                 </div>
                 <span className="text-xs font-medium text-slate-800 dark:text-white">
-                  {scenario.name === 'As Is' ? '$1,250,000' 
+                  {scenario.name === 'As Is' ? '$1,250,000'
                     : scenario.name === 'As Completed' ? '$1,450,000'
-                    : scenario.name === 'As Stabilized' ? '$1,380,000'
-                    : '$1,250,000'}
+                      : scenario.name === 'As Stabilized' ? '$1,380,000'
+                        : '$1,250,000'}
                 </span>
               </div>
             );
@@ -464,40 +463,38 @@ export default function AnalysisPage() {
               </span>
             </div>
             <div className="flex items-center gap-4">
-               {/* Analysis Mode Toggle */}
-               <div className="flex items-center bg-slate-100 dark:bg-slate-700 rounded-lg p-1 border border-slate-200 dark:border-slate-600">
-                 <button 
-                    onClick={() => setAnalysisMode('standard')}
-                    className={`px-3 py-1.5 text-xs font-semibold rounded-md flex items-center gap-2 transition-all ${
-                      analysisMode === 'standard' 
-                        ? 'bg-white dark:bg-slate-600 text-slate-800 dark:text-white shadow-sm' 
-                        : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
+              {/* Analysis Mode Toggle */}
+              <div className="flex items-center bg-slate-100 dark:bg-slate-700 rounded-lg p-1 border border-slate-200 dark:border-slate-600">
+                <button
+                  onClick={() => setAnalysisMode('standard')}
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-md flex items-center gap-2 transition-all ${analysisMode === 'standard'
+                      ? 'bg-white dark:bg-slate-600 text-slate-800 dark:text-white shadow-sm'
+                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
                     }`}
-                 >
-                    <Layers className="w-3.5 h-3.5" />
-                    Standard
-                 </button>
-                 <button 
-                    onClick={() => setAnalysisMode('residual')}
-                    className={`px-3 py-1.5 text-xs font-semibold rounded-md flex items-center gap-2 transition-all ${
-                      analysisMode === 'residual' 
-                        ? 'bg-purple-600 text-white shadow-sm' 
-                        : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
+                >
+                  <Layers className="w-3.5 h-3.5" />
+                  Standard
+                </button>
+                <button
+                  onClick={() => setAnalysisMode('residual')}
+                  className={`px-3 py-1.5 text-xs font-semibold rounded-md flex items-center gap-2 transition-all ${analysisMode === 'residual'
+                      ? 'bg-purple-600 text-white shadow-sm'
+                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-slate-300'
                     }`}
-                 >
-                    <Building className="w-3.5 h-3.5" />
-                    Improvement Analysis
-                 </button>
-               </div>
+                >
+                  <Building className="w-3.5 h-3.5" />
+                  Improvement Analysis
+                </button>
+              </div>
             </div>
           </div>
 
           {/* Sales Grid */}
           <div className="flex-1 min-h-0">
             <Suspense fallback={<GridLoader />}>
-              <SalesGrid 
-                properties={PROPERTIES} 
-                values={MOCK_VALUES} 
+              <SalesGrid
+                properties={PROPERTIES}
+                values={MOCK_VALUES}
                 analysisMode={analysisMode}
                 scenarioId={activeScenario?.id}
               />
@@ -522,7 +519,7 @@ export default function AnalysisPage() {
           {/* Income Approach Grid */}
           <div className="flex-1 min-h-0 overflow-auto">
             <Suspense fallback={<GridLoader />}>
-              <IncomeApproachGrid 
+              <IncomeApproachGrid
                 initialData={state.incomeApproachData}
                 onDataChange={setIncomeApproachData}
                 showGuidancePanel={true}
@@ -609,8 +606,8 @@ export default function AnalysisPage() {
         </div>
       ) : (
         <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
-          <PlaceholderContent 
-            title={APPROACH_CONFIG[activeTab as keyof typeof APPROACH_CONFIG]?.label || ''} 
+          <PlaceholderContent
+            title={APPROACH_CONFIG[activeTab as keyof typeof APPROACH_CONFIG]?.label || ''}
             scenarioName={activeScenario?.name}
           />
         </div>

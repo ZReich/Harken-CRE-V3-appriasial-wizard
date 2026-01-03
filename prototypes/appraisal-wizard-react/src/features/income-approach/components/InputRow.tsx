@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Trash2, Calendar, MessageSquare, X } from 'lucide-react';
 import type { LineItem } from '../types';
 
@@ -10,19 +10,23 @@ interface InputRowProps {
   placeholder?: string;
   totalPropertySqFt?: number;
   effectiveGrossIncome?: number;
+  onEditNotes?: (item: LineItem) => void;
 }
 
-export const InputRow: React.FC<InputRowProps> = ({ 
-  item, 
-  variant, 
-  onChange, 
-  onDelete, 
+export const InputRow: React.FC<InputRowProps> = ({
+  item,
+  variant,
+  onChange,
+  onDelete,
   placeholder = "Item Name",
   totalPropertySqFt = 1,
-  effectiveGrossIncome = 0
+  effectiveGrossIncome = 0,
+  onEditNotes
 }) => {
-  const [isNoteOpen, setIsNoteOpen] = useState(false);
-  
+  // Removed internal isNoteOpen state as we are using parent modal
+  const dateInputRef = useRef<HTMLInputElement>(null);
+  // const [isNoteOpen, setIsNoteOpen] = useState(false); // we are using parent modal
+
   const handleAnnualChange = (val: string) => {
     const annual = parseFloat(val) || 0;
     onChange({ ...item, amount: annual });
@@ -48,7 +52,7 @@ export const InputRow: React.FC<InputRowProps> = ({
 
   return (
     <div className="group relative flex flex-col sm:flex-row items-start sm:items-center gap-3 py-3 border-b border-slate-100 dark:border-slate-700 last:border-0 hover:bg-white/50 dark:hover:bg-slate-800/50 transition-colors p-2 rounded-xl z-0 hover:z-10">
-      
+
       {/* 1. NAME COLUMN */}
       <div className="flex-grow w-full sm:w-auto min-w-[150px]">
         <div className={`${inputContainerClass}`}>
@@ -62,23 +66,28 @@ export const InputRow: React.FC<InputRowProps> = ({
           />
         </div>
       </div>
-      
+
       {/* 1b. LEASE EXPIRY - For Rental Variant (separate column, not nested) */}
       {variant === 'rental' && (
         <div className={`w-36 flex-shrink-0 ${inputContainerClass}`}>
           <label className={labelClass}>Lease Expiry</label>
           <div className="flex items-center gap-2 px-3 py-2">
-            <Calendar size={14} className="text-[#0da1c7] flex-shrink-0" />
-            <input 
+            <input
+              ref={dateInputRef}
               type="date"
               value={item.leaseExpiry || ''}
-              onChange={(e) => onChange({...item, leaseExpiry: e.target.value})}
-              className="text-sm bg-transparent text-slate-700 dark:text-slate-200 font-semibold hover:text-[#0da1c7] focus:text-[#0da1c7] outline-none cursor-pointer w-full"
+              onChange={(e) => onChange({ ...item, leaseExpiry: e.target.value })}
+              className="text-sm bg-transparent text-slate-700 dark:text-slate-200 font-semibold hover:text-[#0da1c7] focus:text-[#0da1c7] outline-none cursor-pointer w-full dark:[color-scheme:dark] [&::-webkit-calendar-picker-indicator]:hidden"
+            />
+            <Calendar
+              size={14}
+              className="text-[#0da1c7] flex-shrink-0 cursor-pointer hover:text-[#0b8dad]"
+              onClick={() => dateInputRef.current?.showPicker()}
             />
           </div>
         </div>
       )}
-      
+
       {/* 2. RENTAL VARIANT COLUMNS */}
       {variant === 'rental' && (
         <div className="flex gap-2 w-full sm:w-auto">
@@ -88,7 +97,7 @@ export const InputRow: React.FC<InputRowProps> = ({
             <input
               type="number"
               value={item.itemSqFt === 0 || !item.itemSqFt ? '' : item.itemSqFt}
-              onChange={(e) => onChange({...item, itemSqFt: parseFloat(e.target.value) || 0})}
+              onChange={(e) => onChange({ ...item, itemSqFt: parseFloat(e.target.value) || 0 })}
               className={`${inputBaseClass} text-center`}
               placeholder="0"
             />
@@ -117,7 +126,7 @@ export const InputRow: React.FC<InputRowProps> = ({
               <input
                 type="number"
                 value={item.marketRentPerSf === 0 || !item.marketRentPerSf ? '' : item.marketRentPerSf}
-                onChange={(e) => onChange({...item, marketRentPerSf: parseFloat(e.target.value) || 0})}
+                onChange={(e) => onChange({ ...item, marketRentPerSf: parseFloat(e.target.value) || 0 })}
                 className={`${inputBaseClass} text-right pl-6 text-[#0da1c7]`}
                 placeholder="0.00"
               />
@@ -190,59 +199,27 @@ export const InputRow: React.FC<InputRowProps> = ({
         </div>
       )}
 
-      {/* 5. NOTES (Interactive Popover) */}
-      <div className="relative w-full sm:w-48 hidden md:block">
-        {/* Trigger (Closed State) */}
-        <div 
-          onClick={() => setIsNoteOpen(true)}
-          className={`${inputContainerClass} cursor-text hover:bg-white hover:shadow-sm hover:ring-1 hover:ring-[#0da1c7]/30 transition-all`}
+      {/* 5. NOTES (Interactive Icon) */}
+      <div className="relative w-full sm:w-auto hidden md:block">
+        <button
+          onClick={() => onEditNotes && onEditNotes(item)}
+          className={`p-2 rounded-lg transition-all group/notes ${item.comments
+            ? 'bg-[#0da1c7]/10 text-[#0da1c7] hover:bg-[#0da1c7]/20 border border-[#0da1c7]/20'
+            : 'text-slate-300 dark:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-500 dark:hover:text-slate-400'
+            }`}
+          title={item.comments ? "Edit Notes" : "Add Notes"}
         >
-          <div className="flex justify-between items-start">
-            <label className={labelClass}>Notes</label>
-            <MessageSquare size={12} className="text-[#0da1c7] mt-2 mr-2 opacity-50" />
-          </div>
-          <div className={`${inputBaseClass} truncate text-slate-500 dark:text-slate-400 font-medium h-[36px] flex items-center`}>
-            {item.comments ? (
-              <span className="text-slate-700 dark:text-slate-200">{item.comments.replace(/<[^>]*>/g, '').substring(0, 20) + (item.comments.length > 20 ? '...' : '')}</span>
-            ) : (
-              <span className="text-slate-400 italic">Add details...</span>
-            )}
-          </div>
+          <MessageSquare size={16} className={item.comments ? "fill-current" : ""} />
+        </button>
+
+        {/* Tooltip on hover */}
+        <div className="absolute bottom-full right-0 mb-2 w-64 p-3 bg-slate-900 dark:bg-slate-800 text-white text-xs rounded-xl shadow-xl opacity-0 invisible group-hover/notes:opacity-100 group-hover/notes:visible transition-all z-50 pointer-events-none">
+          <div className="font-bold text-slate-400 uppercase text-[10px] mb-1">Notes</div>
+          <p className="line-clamp-3 leading-relaxed">
+            {item.comments ? item.comments.replace(/<[^>]*>/g, '') : "Click to add analysis notes..."}
+          </p>
+          <div className="absolute bottom-[-6px] right-4 w-3 h-3 bg-slate-900 dark:bg-slate-800 rotate-45"></div>
         </div>
-
-        {/* Popover (Open State) */}
-        {isNoteOpen && (
-          <>
-            <div className="fixed inset-0 z-40 bg-black/5 backdrop-blur-[1px]" onClick={() => setIsNoteOpen(false)}></div>
-            <div className="absolute top-0 right-0 w-[600px] z-50 animate-fade-in origin-top-right">
-              <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl border border-slate-100 dark:border-slate-700 overflow-hidden ring-1 ring-slate-200 dark:ring-slate-600 p-1">
-                <div className="bg-slate-50/50 dark:bg-slate-700/50 p-2 flex items-center justify-between border-b border-slate-100 dark:border-slate-600 mb-0">
-                  <span className="text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wide px-2">
-                    Editing Notes: {item.name || "Untitled Item"}
-                  </span>
-                  <button onClick={() => setIsNoteOpen(false)} className="p-1 hover:bg-slate-200 dark:hover:bg-slate-600 rounded-md text-slate-400 transition-colors">
-                    <X size={14} />
-                  </button>
-                </div>
-                
-                <div className="px-3 py-3">
-                  <textarea
-                    value={item.comments || ''}
-                    onChange={(e) => onChange({ ...item, comments: e.target.value })}
-                    placeholder="Enter notes, assumptions, or details about this line item..."
-                    className="w-full min-h-[120px] p-3 text-sm text-gray-700 dark:text-slate-200 bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-xl resize-y focus:outline-none focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent leading-relaxed"
-                  />
-                </div>
-
-                <div className="p-2 bg-slate-50 dark:bg-slate-700 border-t border-slate-100 dark:border-slate-600 flex justify-end rounded-b-xl">
-                  <button onClick={() => setIsNoteOpen(false)} className="px-4 py-2 bg-slate-900 hover:bg-slate-800 text-white text-xs font-bold rounded-lg transition-colors shadow-sm">
-                    Done
-                  </button>
-                </div>
-              </div>
-            </div>
-          </>
-        )}
       </div>
 
       <button

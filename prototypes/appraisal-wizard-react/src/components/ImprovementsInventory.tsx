@@ -113,33 +113,33 @@ export default function ImprovementsInventory() {
   // Auto-populate first parcel from centralized subjectData
   useEffect(() => {
     if (!state.subjectData) return;
-    
+
     const firstParcel = inventory.parcels[0];
     if (!firstParcel) return;
-    
+
     const { taxId, legalDescription, address } = state.subjectData;
-    const addressString = address?.street 
+    const addressString = address?.street
       ? `${address.street}, ${address.city}, ${address.state} ${address.zip}`
       : '';
-    
+
     // Only auto-populate if first parcel fields are empty and subjectData has values
     const needsUpdate = (
       (!firstParcel.parcelNumber && taxId) ||
       (!firstParcel.legalDescription && legalDescription) ||
       (!firstParcel.address && addressString)
     );
-    
+
     if (needsUpdate) {
       setImprovementsInventory({
         ...inventory,
-        parcels: inventory.parcels.map((p, idx) => 
-          idx === 0 
-            ? { 
-                ...p, 
-                parcelNumber: p.parcelNumber || taxId || '',
-                legalDescription: p.legalDescription || legalDescription || '',
-                address: p.address || addressString,
-              }
+        parcels: inventory.parcels.map((p, idx) =>
+          idx === 0
+            ? {
+              ...p,
+              parcelNumber: p.parcelNumber || taxId || '',
+              legalDescription: p.legalDescription || legalDescription || '',
+              address: p.address || addressString,
+            }
             : p
         ),
       });
@@ -202,11 +202,11 @@ export default function ImprovementsInventory() {
       parcels: inv.parcels.map((p) =>
         p.id === parcelId
           ? {
-              ...p,
-              buildings: p.buildings.map((b) =>
-                b.id === buildingId ? { ...b, areas: [...b.areas, createDefaultArea()] } : b
-              ),
-            }
+            ...p,
+            buildings: p.buildings.map((b) =>
+              b.id === buildingId ? { ...b, areas: [...b.areas, createDefaultArea()] } : b
+            ),
+          }
           : p
       ),
     }));
@@ -218,11 +218,11 @@ export default function ImprovementsInventory() {
       parcels: inv.parcels.map((p) =>
         p.id === parcelId
           ? {
-              ...p,
-              buildings: p.buildings.map((b) =>
-                b.id === buildingId ? { ...b, areas: b.areas.filter((a) => a.id !== areaId) } : b
-              ),
-            }
+            ...p,
+            buildings: p.buildings.map((b) =>
+              b.id === buildingId ? { ...b, areas: b.areas.filter((a) => a.id !== areaId) } : b
+            ),
+          }
           : p
       ),
     }));
@@ -234,13 +234,13 @@ export default function ImprovementsInventory() {
       parcels: inv.parcels.map((p) =>
         p.id === parcelId
           ? {
-              ...p,
-              buildings: p.buildings.map((b) =>
-                b.id === buildingId
-                  ? { ...b, areas: b.areas.map((a) => (a.id === areaId ? { ...a, ...updates } : a)) }
-                  : b
-              ),
-            }
+            ...p,
+            buildings: p.buildings.map((b) =>
+              b.id === buildingId
+                ? { ...b, areas: b.areas.map((a) => (a.id === areaId ? { ...a, ...updates } : a)) }
+                : b
+            ),
+          }
           : p
       ),
     }));
@@ -407,11 +407,11 @@ function ParcelCard({
   onUpdateArea,
 }: ParcelCardProps) {
   const parcelSF = calculateParcelSF(parcel);
-  
+
   // Check if fields are synced from Setup
   const isTaxIdSynced = isFirstParcel && subjectData?.taxId && parcel.parcelNumber === subjectData.taxId;
   const isLegalDescSynced = isFirstParcel && subjectData?.legalDescription && parcel.legalDescription === subjectData.legalDescription;
-  const addressString = subjectData?.address?.street 
+  const addressString = subjectData?.address?.street
     ? `${subjectData.address.street}, ${subjectData.address.city}, ${subjectData.address.state} ${subjectData.address.zip}`
     : '';
   const isAddressSynced = isFirstParcel && addressString && parcel.address === addressString;
@@ -470,9 +470,8 @@ function ParcelCard({
                 value={parcel.parcelNumber}
                 onChange={(e) => onUpdate({ parcelNumber: e.target.value })}
                 placeholder="e.g., 12-345-678"
-                className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent ${
-                  isTaxIdSynced ? 'border-blue-200 bg-blue-50' : 'border-gray-200'
-                }`}
+                className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent ${isTaxIdSynced ? 'border-blue-200 bg-blue-50' : 'border-gray-200'
+                  }`}
               />
             </div>
             <div>
@@ -487,18 +486,17 @@ function ParcelCard({
                 value={parcel.address || ''}
                 onChange={(e) => onUpdate({ address: e.target.value })}
                 placeholder="Street address"
-                className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent ${
-                  isAddressSynced ? 'border-blue-200 bg-blue-50' : 'border-gray-200'
-                }`}
+                className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent ${isAddressSynced ? 'border-blue-200 bg-blue-50' : 'border-gray-200'
+                  }`}
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-600 mb-1.5 flex items-center gap-2">
+            <label className="block text-xs font-medium text-gray-600 dark:text-slate-400 mb-1.5 flex items-center gap-2">
               Legal Description
               {isLegalDescSynced && (
-                <span className="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-normal">From Setup</span>
+                <span className="text-[10px] bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 px-1.5 py-0.5 rounded font-normal">From Setup</span>
               )}
             </label>
             <input
@@ -506,9 +504,8 @@ function ParcelCard({
               value={parcel.legalDescription || ''}
               onChange={(e) => onUpdate({ legalDescription: e.target.value })}
               placeholder="e.g., Lot 1, Block 2, Canyon Creek Industrial Park"
-              className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent ${
-                isLegalDescSynced ? 'border-blue-200 bg-blue-50' : 'border-gray-200'
-              }`}
+              className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white dark:bg-slate-700 dark:text-white ${isLegalDescSynced ? 'border-blue-200 bg-blue-50 dark:border-blue-700 dark:bg-blue-900/20' : 'border-gray-200 dark:border-slate-600'
+                }`}
             />
           </div>
 
@@ -596,15 +593,15 @@ function BuildingCard({
   const buildingSF = calculateBuildingSF(building);
   const [expandedSections, setExpandedSections] = useState<Set<string>>(new Set(['basic']));
   const [activeZoneIndex, setActiveZoneIndex] = useState<number | null>(null);
-  
+
   // Get property category for component filtering
   const effectivePropertyType = building.propertyTypeOverride || defaultPropertyType;
   const propertyTypeConfig = effectivePropertyType ? getPropertyType(effectivePropertyType) : null;
   const propertyCategory = propertyTypeConfig?.category;
-  
+
   // Derive ApplicablePropertyType from occupancy code or property type
   const effectiveOccupancyCode = building.msOccupancyCodeOverride || defaultOccupancyCode;
-  const applicablePropertyType = effectivePropertyType 
+  const applicablePropertyType = effectivePropertyType
     ? occupancyCodeToPropertyType(effectivePropertyType)
     : undefined;
 
@@ -643,16 +640,16 @@ function BuildingCard({
   };
 
   return (
-    <div className="bg-gray-50 border border-gray-200 rounded-xl overflow-hidden">
-      <div className="px-4 py-3 flex items-center justify-between cursor-pointer hover:bg-gray-100 transition-colors" onClick={onToggle}>
+    <div className="bg-gray-50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 rounded-xl overflow-hidden">
+      <div className="px-4 py-3 flex items-center justify-between cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors" onClick={onToggle}>
         <div className="flex items-center gap-3">
           {isExpanded ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronRight className="w-4 h-4 text-gray-400" />}
-          <div className="w-8 h-8 rounded-lg bg-[#1c3643]/10 flex items-center justify-center">
+          <div className="w-8 h-8 rounded-lg bg-[#1c3643]/10 dark:bg-slate-700 flex items-center justify-center">
             <Building2 className="w-4 h-4 text-[#1c3643] dark:text-white" />
           </div>
           <div>
             <span className="font-semibold text-sm text-[#1c3643] dark:text-white">{building.name || `Building ${index + 1}`}</span>
-            <span className="text-xs text-gray-500 ml-2">({building.areas.length} area{building.areas.length !== 1 ? 's' : ''})</span>
+            <span className="text-xs text-gray-500 dark:text-slate-400 ml-2">({building.areas.length} area{building.areas.length !== 1 ? 's' : ''})</span>
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -686,12 +683,12 @@ function BuildingCard({
           <CollapsibleSection title="Basic Information" icon={<Building2 className="w-4 h-4" />} isExpanded={expandedSections.has('basic')} onToggle={() => toggleSection('basic')}>
             <div className="grid grid-cols-4 gap-3 items-end">
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1.5">Building Name</label>
-                <input type="text" value={building.name} onChange={(e) => onUpdate({ name: e.target.value })} placeholder="e.g., Building A" className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent" />
+                <label className="block text-xs font-medium text-gray-600 dark:text-slate-400 mb-1.5">Building Name</label>
+                <input type="text" value={building.name} onChange={(e) => onUpdate({ name: e.target.value })} placeholder="e.g., Building A" className="w-full px-3 py-2.5 border border-gray-200 dark:border-slate-600 rounded-xl text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white dark:bg-slate-700 dark:text-white" />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1.5">Address Override</label>
-                <input type="text" value={building.addressOverride || ''} onChange={(e) => onUpdate({ addressOverride: e.target.value })} placeholder="If different from parcel" className="w-full px-3 py-2.5 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent" />
+                <label className="block text-xs font-medium text-gray-600 dark:text-slate-400 mb-1.5">Address Override</label>
+                <input type="text" value={building.addressOverride || ''} onChange={(e) => onUpdate({ addressOverride: e.target.value })} placeholder="If different from parcel" className="w-full px-3 py-2.5 border border-gray-200 dark:border-slate-600 rounded-xl text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white dark:bg-slate-700 dark:text-white" />
               </div>
               <YearSelector id={`year-built-${building.id}`} label="Year Built" value={building.yearBuilt} onChange={(v) => onUpdate({ yearBuilt: v })} required />
               <YearSelector id={`year-remodeled-${building.id}`} label="Year Remodeled" value={building.yearRemodeled ? parseInt(building.yearRemodeled) : null} onChange={(v) => onUpdate({ yearRemodeled: v?.toString() || '' })} includeNA />
@@ -720,11 +717,10 @@ function BuildingCard({
                         key={cls.value}
                         type="button"
                         onClick={() => onUpdate({ constructionClass: cls.value })}
-                        className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 text-sm font-medium transition-all ${
-                          isSelected
-                            ? 'border-[#0da1c7] bg-[#0da1c7]/10 text-[#0da1c7]'
-                            : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
-                        }`}
+                        className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 text-sm font-medium transition-all ${isSelected
+                          ? 'border-[#0da1c7] bg-[#0da1c7]/10 text-[#0da1c7]'
+                          : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                          }`}
                       >
                         <IconComponent className="w-4 h-4" />
                         {cls.label}
@@ -738,7 +734,7 @@ function BuildingCard({
                   </p>
                 )}
               </div>
-              
+
               <div className="grid grid-cols-3 gap-3">
                 <ExpandableSelector id={`construction-type-${building.id}`} label="Construction Type" options={CONSTRUCTION_TYPES} value={building.constructionType || ''} onChange={(v) => onUpdate({ constructionType: Array.isArray(v) ? v[0] : v })} category="structure" required multiple={false} />
                 <ExpandableSelector id={`construction-quality-${building.id}`} label="Construction Quality" options={CONSTRUCTION_QUALITY} value={building.constructionQuality || ''} onChange={(v) => onUpdate({ constructionQuality: Array.isArray(v) ? v[0] : v })} category="structure" multiple={false} />
@@ -899,10 +895,10 @@ function BuildingCard({
 
           {/* Cost Segregation Details - Only shown when enabled */}
           {isCostSegEnabled && (
-            <CollapsibleSection 
-              title="Cost Segregation Details" 
-              icon={<CostSegIcon className="w-4 h-4 text-emerald-600" />} 
-              isExpanded={expandedSections.has('costseg')} 
+            <CollapsibleSection
+              title="Cost Segregation Details"
+              icon={<CostSegIcon className="w-4 h-4 text-emerald-600" />}
+              isExpanded={expandedSections.has('costseg')}
               onToggle={() => toggleSection('costseg')}
             >
               <CostSegDetailsSection
@@ -940,8 +936,8 @@ interface CollapsibleSectionProps {
 
 function CollapsibleSection({ title, icon, isExpanded, onToggle, children, action }: CollapsibleSectionProps) {
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden">
-      <button type="button" onClick={onToggle} className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100 transition-colors">
+    <div className="border border-gray-200 dark:border-slate-700 rounded-xl overflow-hidden">
+      <button type="button" onClick={onToggle} className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 dark:bg-slate-800 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
         <div className="flex items-center gap-2">
           {isExpanded ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronRight className="w-4 h-4 text-gray-400" />}
           <span className="text-[#1c3643] dark:text-white">{icon}</span>
@@ -949,7 +945,7 @@ function CollapsibleSection({ title, icon, isExpanded, onToggle, children, actio
         </div>
         {action && <div onClick={(e) => e.stopPropagation()}>{action}</div>}
       </button>
-      {isExpanded && <div className="p-4 bg-white dark:bg-slate-800">{children}</div>}
+      {isExpanded && <div className="p-4 bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-slate-700">{children}</div>}
     </div>
   );
 }
@@ -1067,38 +1063,37 @@ interface AreaCardProps {
 
 function AreaCard({ area, canRemove, effectivePropertyType, onUpdate, onRemove }: AreaCardProps) {
   const [showInterior, setShowInterior] = useState(false);
-  
+
   // Get filtered area types based on building's property type
   const filteredAreaTypes = useMemo(() => {
     return getAreaTypesForBuildingType(effectivePropertyType);
   }, [effectivePropertyType]);
-  
+
   // Get area name for display
   const currentAreaType = filteredAreaTypes.find((t: AreaTypeConfig) => t.id === area.type);
-  const areaName = area.type === 'other' && area.customType ? area.customType : 
+  const areaName = area.type === 'other' && area.customType ? area.customType :
     currentAreaType?.label || area.type;
 
   // Default to measured if not set
   const hasMeasuredSF = area.hasMeasuredSF !== false;
-  
+
   return (
-    <div className="bg-gray-50 rounded-xl p-4 space-y-4">
+    <div className="bg-gray-50 dark:bg-slate-800 border-2 border-transparent hover:border-slate-200 dark:hover:border-slate-700 transition-all rounded-xl p-4 space-y-4">
       <div className="flex items-center gap-3 flex-wrap">
-        <select value={area.type} onChange={(e) => onUpdate({ type: e.target.value as ImprovementArea['type'] })} className="flex-1 min-w-[140px] px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent">
+        <select value={area.type} onChange={(e) => onUpdate({ type: e.target.value as ImprovementArea['type'] })} className="flex-1 min-w-[140px] px-3 py-2 bg-white dark:bg-slate-700 dark:text-white border border-gray-200 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent">
           {filteredAreaTypes.map((t: AreaTypeConfig) => (<option key={t.id} value={t.id}>{t.label}{t.isPrimary ? ' ★' : ''}</option>))}
         </select>
-        {area.type === 'other' && (<input type="text" value={area.customType || ''} onChange={(e) => onUpdate({ customType: e.target.value })} placeholder="Specify type" className="w-28 px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent" />)}
-        
+        {area.type === 'other' && (<input type="text" value={area.customType || ''} onChange={(e) => onUpdate({ customType: e.target.value })} placeholder="Specify type" className="w-28 px-3 py-2 bg-white dark:bg-slate-700 dark:text-white border border-gray-200 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent" />)}
+
         {/* SF Measurement Toggle - Styled pill buttons per design system */}
         <div className="flex items-center gap-1">
           <button
             type="button"
             onClick={() => onUpdate({ hasMeasuredSF: true })}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 text-xs font-medium transition-all ${
-              hasMeasuredSF
-                ? 'border-[#0da1c7] bg-[#0da1c7]/10 text-[#0da1c7]'
-                : 'border-gray-200 bg-white text-gray-500 hover:border-gray-300'
-            }`}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 text-xs font-medium transition-all ${hasMeasuredSF
+              ? 'border-[#0da1c7] bg-[#0da1c7]/10 text-[#0da1c7]'
+              : 'border-gray-200 bg-white text-gray-500 hover:border-gray-300'
+              }`}
           >
             <Ruler className="w-3.5 h-3.5" />
             Measured
@@ -1106,22 +1101,21 @@ function AreaCard({ area, canRemove, effectivePropertyType, onUpdate, onRemove }
           <button
             type="button"
             onClick={() => onUpdate({ hasMeasuredSF: false, squareFootage: null })}
-            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 text-xs font-medium transition-all ${
-              !hasMeasuredSF
-                ? 'border-amber-500 bg-amber-50 text-amber-700'
-                : 'border-gray-200 bg-white text-gray-500 hover:border-gray-300'
-            }`}
+            className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 text-xs font-medium transition-all ${!hasMeasuredSF
+              ? 'border-amber-500 bg-amber-50 text-amber-700'
+              : 'border-gray-200 bg-white text-gray-500 hover:border-gray-300'
+              }`}
           >
             <EyeOff className="w-3.5 h-3.5" />
             Not Measured
           </button>
         </div>
-        
+
         {/* SF Input - Only shown when measured */}
         {hasMeasuredSF ? (
           <div className="flex items-center gap-1.5">
-            <input type="number" value={area.squareFootage || ''} onChange={(e) => onUpdate({ squareFootage: e.target.value ? Number(e.target.value) : null })} placeholder="SF" className="w-24 px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent" />
-            <select value={area.sfType} onChange={(e) => onUpdate({ sfType: e.target.value as ImprovementArea['sfType'] })} className="w-20 px-2 py-2 bg-white border border-gray-200 rounded-lg text-xs font-medium focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent">
+            <input type="number" value={area.squareFootage || ''} onChange={(e) => onUpdate({ squareFootage: e.target.value ? Number(e.target.value) : null })} placeholder="SF" className="w-24 px-3 py-2 bg-white dark:bg-slate-700 dark:text-white border border-gray-200 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent" />
+            <select value={area.sfType} onChange={(e) => onUpdate({ sfType: e.target.value as ImprovementArea['sfType'] })} className="w-20 px-2 py-2 bg-white dark:bg-slate-700 dark:text-white border border-gray-200 dark:border-slate-600 rounded-lg text-xs font-medium focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent">
               {SF_TYPES.map((t) => (<option key={t.value} value={t.value}>{t.value}</option>))}
             </select>
           </div>
@@ -1130,8 +1124,8 @@ function AreaCard({ area, canRemove, effectivePropertyType, onUpdate, onRemove }
             Features Only
           </span>
         )}
-        
-        <select value={area.condition || ''} onChange={(e) => onUpdate({ condition: e.target.value })} className="w-28 px-3 py-2 bg-white border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent">
+
+        <select value={area.condition || ''} onChange={(e) => onUpdate({ condition: e.target.value })} className="w-28 px-3 py-2 bg-white dark:bg-slate-700 dark:text-white border border-gray-200 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent">
           <option value="">Condition</option>
           {CONDITIONS.map((c) => (<option key={c} value={c}>{c}</option>))}
         </select>

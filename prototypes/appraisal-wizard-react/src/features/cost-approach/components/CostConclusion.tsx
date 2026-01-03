@@ -11,15 +11,15 @@ interface CostConclusionProps {
   onFinalValueChange: (val: number) => void;
 }
 
-export const CostConclusion: React.FC<CostConclusionProps> = ({ 
-  landValue, 
-  improvementsValue, 
+export const CostConclusion: React.FC<CostConclusionProps> = ({
+  landValue,
+  improvementsValue,
   scenario,
   stabilizationAdjustment,
-  onFinalValueChange 
+  onFinalValueChange
 }) => {
   const exactTotal = landValue + improvementsValue + stabilizationAdjustment;
-  
+
   const [finalValue, setFinalValue] = useState<number>(exactTotal);
   const [isManualOverride, setIsManualOverride] = useState(false);
 
@@ -31,7 +31,8 @@ export const CostConclusion: React.FC<CostConclusionProps> = ({
   }, [exactTotal, isManualOverride, onFinalValueChange]);
 
   const handleRound = (precision: number) => {
-    const rounded = Math.round(exactTotal / precision) * precision;
+    // Round the CURRENT value (whether calculated or manually entered)
+    const rounded = Math.round(finalValue / precision) * precision;
     setFinalValue(rounded);
     setIsManualOverride(true);
     onFinalValueChange(rounded);
@@ -45,15 +46,15 @@ export const CostConclusion: React.FC<CostConclusionProps> = ({
 
   return (
     <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-700">
-      <div className="px-6 py-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+      <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wide flex items-center gap-2">
-            <Calculator size={16} className="text-[#0da1c7]"/>
+          <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wide flex items-center gap-2">
+            <Calculator size={16} className="text-[#0da1c7]" />
             {scenario} Value Conclusion
           </h3>
           {scenario === 'As Stabilized' && (
-            <span className="flex items-center gap-1 bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded text-[10px] font-bold border border-emerald-200">
-              <TrendingUp size={10}/> OPTIMIZED SCENARIO
+            <span className="flex items-center gap-1 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded text-[10px] font-bold border border-emerald-200 dark:border-emerald-800">
+              <TrendingUp size={10} /> OPTIMIZED SCENARIO
             </span>
           )}
         </div>
@@ -63,21 +64,21 @@ export const CostConclusion: React.FC<CostConclusionProps> = ({
       </div>
 
       <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-12 items-start">
-        
+
         {/* Left: The Math Breakdown */}
         <div className="space-y-4">
           <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Cost Components Breakdown</h4>
-          
+
           <div className="flex justify-between items-center text-sm group">
-            <span className="text-slate-600 font-medium">Land Value Conclusion</span>
-            <span className="font-bold text-slate-900 group-hover:text-[#0da1c7] transition-colors">{formatCurrency(landValue)}</span>
+            <span className="text-slate-600 dark:text-slate-400 font-medium">Land Value Conclusion</span>
+            <span className="font-bold text-slate-900 dark:text-white group-hover:text-[#0da1c7] transition-colors">{formatCurrency(landValue)}</span>
           </div>
-          
+
           <div className="flex justify-between items-center text-sm group">
-            <span className="text-slate-600 font-medium">Depreciated Improvements</span>
+            <span className="text-slate-600 dark:text-slate-400 font-medium">Depreciated Improvements</span>
             <div className="flex items-center gap-2">
               <span className="text-xs text-slate-400 font-normal">(+)</span>
-              <span className="font-bold text-slate-900 group-hover:text-[#0da1c7] transition-colors">{formatCurrency(improvementsValue)}</span>
+              <span className="font-bold text-slate-900 dark:text-white group-hover:text-[#0da1c7] transition-colors">{formatCurrency(improvementsValue)}</span>
             </div>
           </div>
 
@@ -91,9 +92,9 @@ export const CostConclusion: React.FC<CostConclusionProps> = ({
             </div>
           )}
 
-          <div className="border-t border-slate-200 my-2 pt-3 flex justify-between items-center bg-slate-50 p-3 rounded-lg border border-slate-100">
+          <div className="border-t border-slate-200 dark:border-slate-700 my-2 pt-3 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-700/50">
             <div className="flex flex-col">
-              <span className="text-slate-500 font-bold text-[10px] uppercase tracking-wide">Exact Mathematical Total</span>
+              <span className="text-slate-500 dark:text-slate-400 font-bold text-[10px] uppercase tracking-wide">Exact Mathematical Total</span>
               {scenario !== 'As Is' && <span className="text-[9px] text-[#0da1c7] font-medium mt-0.5">Prospective Valuation Logic Applied</span>}
             </div>
             <span className="font-mono font-medium text-slate-600 dark:text-slate-300">{formatCurrency(exactTotal)}</span>
@@ -101,18 +102,18 @@ export const CostConclusion: React.FC<CostConclusionProps> = ({
         </div>
 
         {/* Right: The Indicated Value (Review) */}
-        <div className="bg-[#0da1c7]/5 rounded-xl border border-[#0da1c7]/20 p-6 relative h-full">
+        <div className="bg-[#0da1c7]/5 dark:bg-[#0da1c7]/10 rounded-xl border border-[#0da1c7]/20 dark:border-[#0da1c7]/30 p-6 relative h-full">
           <div className="absolute -top-3 left-6 bg-white dark:bg-slate-800 px-2 text-xs font-bold text-[#0da1c7] uppercase tracking-wider border border-[#0da1c7]/20 rounded shadow-sm">
             Final Conclusion
           </div>
 
           <div className="space-y-6 flex flex-col h-full">
             <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">Reported {scenario} Value</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Reported {scenario} Value</label>
               <div className="relative">
                 <span className="absolute left-4 top-3.5 text-slate-400 font-medium">$</span>
-                <input 
-                  type="number" 
+                <input
+                  type="number"
                   value={finalValue}
                   onChange={(e) => handleManualChange(+e.target.value)}
                   className="w-full pl-8 pr-4 py-3 text-2xl font-bold text-slate-900 dark:text-white bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg shadow-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-[#0da1c7] outline-none transition-all"
@@ -125,7 +126,7 @@ export const CostConclusion: React.FC<CostConclusionProps> = ({
               </div>
               {isManualOverride ? (
                 <div className="text-xs text-emerald-600 mt-2 font-medium flex items-center gap-1">
-                  <Sparkles size={12}/> Conclusion refined to avoid false precision.
+                  <Sparkles size={12} /> Conclusion refined to avoid false precision.
                 </div>
               ) : (
                 <div className="text-xs text-slate-400 mt-2">
@@ -138,13 +139,13 @@ export const CostConclusion: React.FC<CostConclusionProps> = ({
 
             {/* Smart Rounding Actions */}
             <div className="grid grid-cols-2 gap-3 mt-auto">
-              <button 
+              <button
                 onClick={() => handleRound(1000)}
                 className="flex items-center justify-center gap-2 px-4 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 shadow-sm text-slate-700 dark:text-slate-200 text-[10px] font-bold uppercase tracking-wide rounded hover:bg-slate-50 dark:hover:bg-slate-600 hover:text-[#0da1c7] transition-colors"
               >
                 <Wand2 size={12} /> Round to $1k
               </button>
-              <button 
+              <button
                 onClick={() => handleRound(5000)}
                 className="flex items-center justify-center gap-2 px-4 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 shadow-sm text-slate-700 dark:text-slate-200 text-[10px] font-bold uppercase tracking-wide rounded hover:bg-slate-50 dark:hover:bg-slate-600 hover:text-[#0da1c7] transition-colors"
               >

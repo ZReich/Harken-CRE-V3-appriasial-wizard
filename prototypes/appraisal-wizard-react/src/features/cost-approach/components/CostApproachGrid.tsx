@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect, useCallback } from 'react';
-import { ArrowUpRight, Building2, Layers, Calendar, ExternalLink, AlertCircle, CheckCircle2 } from 'lucide-react';
+import { ArrowUpRight, Calendar, ExternalLink, AlertCircle, CheckCircle2 } from 'lucide-react';
 import { ImprovementValuation } from './ImprovementValuation';
 import { CostConclusion } from './CostConclusion';
 import { BuildingSelector } from './BuildingSelector';
@@ -17,8 +17,8 @@ interface CostApproachGridProps {
   scenarioId?: number;
 }
 
-export const CostApproachGrid: React.FC<CostApproachGridProps> = ({ 
-  onValueChange, 
+export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
+  onValueChange,
   onScenarioChange,
   landValueFromLandSection = 820000, // Default mock value for demonstration
   onNavigateToLand,
@@ -28,20 +28,18 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
   const [improvementsValue, setImprovementsValue] = useState(0);
   const [finalIndicatedValue, setFinalIndicatedValue] = useState(0);
   const [narrativeText, setNarrativeText] = useState('');
-  
-  const [activeSection, setActiveSection] = useState<'all' | 'improvements'>('all');
-  
+
   // Derive scenario from the active scenario in context (synced with top-level scenario switcher)
   const activeScenario = useMemo(() => {
     return state.scenarios.find(s => s.id === (scenarioId ?? state.activeScenarioId)) || state.scenarios[0];
   }, [state.scenarios, scenarioId, state.activeScenarioId]);
-  
+
   const scenario: ValueScenario = (activeScenario?.name as ValueScenario) || 'As Is';
-  
+
   // Get selected building IDs for the current scenario
   const currentScenarioId = scenarioId ?? state.activeScenarioId;
   const selectedBuildingIds = state.costApproachBuildingSelections?.[currentScenarioId] || [];
-  
+
   // Handler for building selection changes
   const handleBuildingSelectionChange = useCallback((buildingIds: string[]) => {
     setCostApproachBuildingSelections(currentScenarioId, buildingIds);
@@ -80,143 +78,109 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-full bg-slate-50 overflow-hidden font-sans">
-      
-      {/* Page Header & View Toggle */}
-      <div className="sticky top-0 z-40 bg-white/95 dark:bg-slate-800/95 backdrop-blur border-b border-slate-200 dark:border-slate-700 px-8 py-4 flex items-center justify-between gap-4 shadow-[0_1px_3px_rgba(0,0,0,0.02)]">
-        <div className="flex items-center gap-4">
-          <div>
-            <h1 className="text-xl font-bold text-slate-900 tracking-tight flex items-center gap-2">
-              Cost Approach
-            </h1>
-            <div className="flex items-center gap-2 text-xs font-medium text-[#0da1c7] bg-[#0da1c7]/10 px-2 py-0.5 rounded border border-[#0da1c7]/20 mt-1">
-              <Calendar size={12}/> {scenario} Value
-            </div>
-          </div>
-        </div>
-        
-        <div className="bg-slate-100/80 dark:bg-slate-700/80 p-1 rounded-lg border border-slate-200 dark:border-slate-600 flex items-center">
-          <button 
-            onClick={() => setActiveSection('all')}
-            className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-2 ${activeSection === 'all' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm ring-1 ring-black/5 dark:ring-white/10' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}
-          >
-            <Layers size={14} /> Full View
-          </button>
-          <button 
-            onClick={() => setActiveSection('improvements')}
-            className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-2 ${activeSection === 'improvements' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm ring-1 ring-black/5 dark:ring-white/10' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}
-          >
-            <Building2 size={14}/> Improvements Only
-          </button>
-        </div>
-      </div>
+    <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-900 overflow-hidden font-sans">
 
       {/* Scrollable Content */}
-      <div className="flex-1 overflow-y-auto bg-slate-50/50 scroll-smooth">
+      <div className="flex-1 overflow-y-auto bg-slate-50/50 dark:bg-slate-900/50 scroll-smooth">
         <div className="w-full min-h-full pb-20">
           <div className="p-6 space-y-8">
-            
-            {/* Land Value Summary Card (replaces embedded Land Valuation) */}
-            {activeSection === 'all' && (
-              <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                <div className="flex items-center gap-2 mb-3 px-2">
-                  <span className="text-sm font-bold text-slate-900 uppercase tracking-wider">Land Value</span>
-                  <div className="h-px bg-slate-200 dark:bg-slate-700 flex-1"></div>
-                </div>
-                
-                <div className={`rounded-xl border-2 p-6 ${
-                  hasLandValue 
-                    ? 'bg-gradient-to-br from-lime-50 to-white border-lime-200' 
-                    : 'bg-gradient-to-br from-amber-50 to-white border-amber-200'
-                }`}>
-                  <div className="flex items-start justify-between">
-                    <div className="flex items-start gap-4">
-                      <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${
-                        hasLandValue ? 'bg-lime-100 text-lime-600' : 'bg-amber-100 text-amber-600'
-                      }`}>
-                        <ArrowUpRight size={24} />
-                      </div>
-                      <div>
-                        <div className="flex items-center gap-2 mb-1">
-                          <h3 className="text-lg font-bold text-slate-900">Land Valuation</h3>
-                          {hasLandValue ? (
-                            <span className="flex items-center gap-1 text-xs font-medium text-lime-700 bg-lime-100 px-2 py-0.5 rounded-full">
-                              <CheckCircle2 size={12} />
-                              Completed
-                            </span>
-                          ) : (
-                            <span className="flex items-center gap-1 text-xs font-medium text-amber-700 bg-amber-100 px-2 py-0.5 rounded-full">
-                              <AlertCircle size={12} />
-                              Incomplete
-                            </span>
-                          )}
-                        </div>
-                        <p className="text-sm text-slate-600 max-w-md">
-                          {hasLandValue 
-                            ? 'Land value concluded via Sales Comparison Approach in the Land Valuation section.'
-                            : 'Complete the Land Valuation section to provide a land value for the Cost Approach.'}
-                        </p>
-                      </div>
-                    </div>
 
-                    <div className="text-right">
-                      {hasLandValue ? (
-                        <>
-                          <div className="text-3xl font-bold text-slate-900">
-                            {formatCurrency(landValue)}
-                          </div>
-                          <div className="text-xs text-slate-500 mt-1">
-                            Indicated Land Value
-                          </div>
-                        </>
-                      ) : (
-                        <button
-                          onClick={onNavigateToLand}
-                          className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2"
-                        >
-                          Complete Land Valuation
-                          <ExternalLink size={14} />
-                        </button>
-                      )}
+            {/* Land Value Summary Card (replaces embedded Land Valuation) */}
+            <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+              <div className="flex items-center gap-2 mb-3 px-2">
+                <span className="text-sm font-bold text-slate-900 uppercase tracking-wider">Land Value</span>
+                <div className="h-px bg-slate-200 dark:bg-slate-700 flex-1"></div>
+              </div>
+
+              <div className={`rounded-xl border-2 p-6 ${hasLandValue
+                ? 'bg-gradient-to-br from-lime-50 to-white dark:from-lime-900/20 dark:to-slate-800 border-lime-200 dark:border-lime-800'
+                : 'bg-gradient-to-br from-amber-50 to-white dark:from-amber-900/20 dark:to-slate-800 border-amber-200 dark:border-amber-800'
+                }`}>
+                <div className="flex items-start justify-between">
+                  <div className="flex items-start gap-4">
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${hasLandValue ? 'bg-lime-100 dark:bg-lime-900/50 text-lime-600 dark:text-lime-400' : 'bg-amber-100 dark:bg-amber-900/50 text-amber-600 dark:text-amber-400'
+                      }`}>
+                      <ArrowUpRight size={24} />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 mb-1">
+                        <h3 className="text-lg font-bold text-slate-900 dark:text-white">Land Valuation</h3>
+                        {hasLandValue ? (
+                          <span className="flex items-center gap-1 text-xs font-medium text-lime-700 dark:text-lime-300 bg-lime-100 dark:bg-lime-900/50 px-2 py-0.5 rounded-full">
+                            <CheckCircle2 size={12} />
+                            Completed
+                          </span>
+                        ) : <span className="flex items-center gap-1 text-xs font-medium text-amber-700 dark:text-amber-300 bg-amber-100 dark:bg-amber-900/50 px-2 py-0.5 rounded-full">
+                          <AlertCircle size={12} />
+                          Incomplete
+                        </span>
+                        }
+                      </div>
+                      <p className="text-sm text-slate-600 dark:text-slate-300 max-w-md">
+                        {hasLandValue
+                          ? 'Land value concluded via Sales Comparison Approach in the Land Valuation section.'
+                          : 'Complete the Land Valuation section to provide a land value for the Cost Approach.'}
+                      </p>
                     </div>
                   </div>
 
-                  {hasLandValue && (
-                    <div className="mt-4 pt-4 border-t border-lime-200/50 flex items-center justify-between">
-                      <div className="flex items-center gap-4 text-sm text-slate-600 dark:text-slate-400">
-                        <span>
-                          <strong className="text-slate-800 dark:text-white">5</strong> Land Sales Analyzed
-                        </span>
-                        <span className="text-slate-300">|</span>
-                        <span>
-                          <strong className="text-slate-800 dark:text-white">$12,961</strong> per acre
-                        </span>
-                        <span className="text-slate-300">|</span>
-                        <span>
-                          <strong className="text-slate-800 dark:text-white">63.27</strong> acres
-                        </span>
-                      </div>
+                  <div className="text-right">
+                    {hasLandValue ? (
+                      <>
+                        <div className="text-3xl font-bold text-slate-900 dark:text-white">
+                          {formatCurrency(landValue)}
+                        </div>
+                        <div className="text-xs text-slate-500 dark:text-slate-400 mt-1">
+                          Indicated Land Value
+                        </div>
+                      </>
+                    ) : (
                       <button
                         onClick={onNavigateToLand}
-                        className="text-sm font-medium text-lime-700 hover:text-lime-800 flex items-center gap-1"
+                        className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2"
                       >
-                        View Land Analysis
-                        <ExternalLink size={12} />
+                        Complete Land Valuation
+                        <ExternalLink size={14} />
                       </button>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </div>
 
-                {/* Info callout */}
-                <div className="mt-3 flex items-start gap-2 px-2">
-                  <AlertCircle size={14} className="text-slate-400 mt-0.5 shrink-0" />
-                  <p className="text-xs text-slate-500 dark:text-slate-400">
-                    Land is valued separately using Sales Comparison Approach. The concluded value automatically 
-                    flows into this Cost Approach. This ensures consistency across all approaches requiring land value.
-                  </p>
-                </div>
-              </section>
-            )}
+                {hasLandValue && (
+                  <div className="mt-4 pt-4 border-t border-lime-200/50 dark:border-lime-700/50 flex items-center justify-between">
+                    <div className="flex items-center gap-4 text-sm text-slate-600 dark:text-slate-400">
+                      <span>
+                        <strong className="text-slate-800 dark:text-white">5</strong> Land Sales Analyzed
+                      </span>
+                      <span className="text-slate-300">|</span>
+                      <span>
+                        <strong className="text-slate-800 dark:text-white">$12,961</strong> per acre
+                      </span>
+                      <span className="text-slate-300">|</span>
+                      <span>
+                        <strong className="text-slate-800 dark:text-white">63.27</strong> acres
+                      </span>
+                    </div>
+                    <button
+                      onClick={onNavigateToLand}
+                      className="text-sm font-medium text-lime-700 dark:text-lime-400 hover:text-lime-800 dark:hover:text-lime-300 flex items-center gap-1"
+                    >
+                      View Land Analysis
+                      <ExternalLink size={12} />
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* Info callout */}
+              <div className="mt-3 flex items-start gap-2 px-2">
+                <AlertCircle size={14} className="text-slate-400 mt-0.5 shrink-0" />
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Land is valued separately using Sales Comparison Approach. The concluded value automatically
+                  flows into this Cost Approach. This ensures consistency across all approaches requiring land value.
+                </p>
+              </div>
+            </section>
 
             {/* Building Selector Section */}
             <section className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-50">
@@ -229,13 +193,13 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
 
             {/* Improvement Valuation Section */}
             <section className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-8 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75">
-              <ImprovementValuation 
-                onValueChange={setImprovementsValue} 
+              <ImprovementValuation
+                onValueChange={setImprovementsValue}
                 scenario={scenario}
                 scenarioId={currentScenarioId}
               />
             </section>
-            
+
             {/* Contractor Cost Comparison Section */}
             <section className="animate-in fade-in slide-in-from-bottom-4 duration-500 delay-100">
               <ContractorCostComparison
@@ -246,8 +210,8 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
 
             {/* Conclusion Section */}
             <section>
-              <CostConclusion 
-                landValue={landValue} 
+              <CostConclusion
+                landValue={landValue}
                 improvementsValue={improvementsValue}
                 scenario={scenario}
                 stabilizationAdjustment={stabilizationAdjustment}

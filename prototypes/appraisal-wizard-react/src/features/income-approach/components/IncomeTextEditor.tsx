@@ -1,12 +1,12 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
-import { 
-  Bold, 
-  Italic, 
-  Underline, 
-  List, 
-  ListOrdered, 
-  Sparkles, 
-  Maximize2, 
+import {
+  Bold,
+  Italic,
+  Underline,
+  List,
+  ListOrdered,
+  Sparkles,
+  Maximize2,
   Minimize2,
   Undo,
   Redo,
@@ -87,10 +87,10 @@ interface AIPreview {
 // CURRENCY FORMATTER
 // ==========================================
 const formatCurrency = (value: number): string => {
-  return new Intl.NumberFormat('en-US', { 
-    style: 'currency', 
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
     currency: 'USD',
-    maximumFractionDigits: 0 
+    maximumFractionDigits: 0
   }).format(value);
 };
 
@@ -108,7 +108,7 @@ function generateRevenueDraft(data: RevenueContextData): string {
   const totalRent = data.rentalIncome.reduce((sum, t) => sum + t.amount, 0);
   const totalReimb = data.reimbursements.reduce((sum, r) => sum + r.amount, 0);
   const rentPerSf = data.sqFt > 0 ? totalRent / data.sqFt : 0;
-  
+
   // Build tenant summary
   const tenantList = data.rentalIncome.map(t => {
     const sf = t.itemSqFt || 0;
@@ -135,8 +135,8 @@ A vacancy and credit loss allowance of ${data.vacancyRate.toFixed(1)}% has been 
 
 function generateExpensesDraft(data: ExpensesContextData): string {
   const expenseList = data.expenses.map(e => {
-    const pctEgi = data.effectiveGrossIncome > 0 
-      ? ((e.amount / data.effectiveGrossIncome) * 100).toFixed(1) 
+    const pctEgi = data.effectiveGrossIncome > 0
+      ? ((e.amount / data.effectiveGrossIncome) * 100).toFixed(1)
       : '0.0';
     const perSf = data.sqFt > 0 ? (e.amount / data.sqFt).toFixed(2) : '0.00';
     return `${e.name}: ${formatCurrency(e.amount)} (${pctEgi}% of EGI, $${perSf}/SF)`;
@@ -181,9 +181,9 @@ A ${data.holdingPeriod}-year DCF analysis was performed using a discount rate (y
 
 <b><u>RECONCILIATION</u></b>
 
-${Math.abs(data.directCapValue - data.dcfValue) / data.directCapValue < 0.05 
-  ? 'The two methodologies produce closely aligned value indications, which provides strong support for the concluded value.' 
-  : 'The variance between the two approaches reflects differing assumptions regarding stabilization and market conditions.'} 
+${Math.abs(data.directCapValue - data.dcfValue) / data.directCapValue < 0.05
+      ? 'The two methodologies produce closely aligned value indications, which provides strong support for the concluded value.'
+      : 'The variance between the two approaches reflects differing assumptions regarding stabilization and market conditions.'} 
 Given the ${data.scenario.includes('stabilized') ? 'stabilized nature of the income stream' : 'specific assumptions required for this valuation scenario'}, ${data.directCapValue > data.dcfValue ? 'primary weight is given to the Direct Capitalization approach' : 'the DCF analysis is given greater emphasis'} in the final value conclusion.`;
 }
 
@@ -240,12 +240,12 @@ export function IncomeTextEditor({
   // Generate AI content based on section type and context data
   const generateAI = useCallback(async () => {
     setIsGeneratingAI(true);
-    
+
     // Simulate API call delay
     await new Promise(resolve => setTimeout(resolve, 1800));
-    
+
     let draft = '';
-    
+
     switch (sectionType) {
       case 'revenue':
         draft = generateRevenueDraft(contextData as RevenueContextData);
@@ -257,7 +257,7 @@ export function IncomeTextEditor({
         draft = generateValuationDraft(contextData as ValuationContextData);
         break;
     }
-    
+
     setAIPreview({ content: draft, isVisible: true });
     setIsGeneratingAI(false);
   }, [sectionType, contextData]);
@@ -311,18 +311,18 @@ export function IncomeTextEditor({
       {isFullscreen && (
         <div className="fixed inset-0 bg-black/60 z-40" onClick={toggleFullscreen} />
       )}
-      
-      <div 
-        className={`relative ${isFullscreen 
-          ? 'fixed inset-8 z-50 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 flex flex-col max-w-6xl mx-auto' 
+
+      <div
+        className={`relative ${isFullscreen
+          ? 'fixed inset-8 z-50 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 flex flex-col max-w-6xl mx-auto'
           : 'mt-6'
-        }`}
+          }`}
         style={isFullscreen ? { minHeight: '80vh', maxHeight: '90vh' } : undefined}
       >
         {/* Label Row */}
         <div className="flex items-center justify-between mb-2">
-          <label 
-            htmlFor={id} 
+          <label
+            htmlFor={id}
             className={`block font-bold uppercase tracking-widest text-slate-400 ${isFullscreen ? 'text-sm' : 'text-xs'}`}
           >
             {label}
@@ -330,29 +330,29 @@ export function IncomeTextEditor({
         </div>
 
         {/* Toolbar */}
-        <div className={`flex flex-wrap items-center gap-1 bg-gray-50 border border-gray-200 rounded-t-xl ${isFullscreen ? 'p-4 gap-2' : 'p-2'}`}>
+        <div className={`flex flex-wrap items-center gap-1 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-t-xl ${isFullscreen ? 'p-4 gap-2' : 'p-2'}`}>
           {/* History */}
-          <div className="flex items-center gap-0.5 pr-2 border-r border-gray-300">
+          <div className="flex items-center gap-0.5 pr-2 border-r border-gray-300 dark:border-slate-600">
             <ToolbarButton icon={<Undo className="w-4 h-4" />} onClick={() => execCommand('undo')} title="Undo" />
             <ToolbarButton icon={<Redo className="w-4 h-4" />} onClick={() => execCommand('redo')} title="Redo" />
           </div>
 
           {/* Text Formatting */}
-          <div className="flex items-center gap-0.5 px-2 border-r border-gray-300">
+          <div className="flex items-center gap-0.5 px-2 border-r border-gray-300 dark:border-slate-600">
             <ToolbarButton icon={<Bold className="w-4 h-4" />} onClick={() => execCommand('bold')} title="Bold (Ctrl+B)" />
             <ToolbarButton icon={<Italic className="w-4 h-4" />} onClick={() => execCommand('italic')} title="Italic (Ctrl+I)" />
             <ToolbarButton icon={<Underline className="w-4 h-4" />} onClick={() => execCommand('underline')} title="Underline (Ctrl+U)" />
           </div>
 
           {/* Alignment */}
-          <div className="flex items-center gap-0.5 px-2 border-r border-gray-300">
+          <div className="flex items-center gap-0.5 px-2 border-r border-gray-300 dark:border-slate-600">
             <ToolbarButton icon={<AlignLeft className="w-4 h-4" />} onClick={() => execCommand('justifyLeft')} title="Align Left" />
             <ToolbarButton icon={<AlignCenter className="w-4 h-4" />} onClick={() => execCommand('justifyCenter')} title="Align Center" />
             <ToolbarButton icon={<AlignRight className="w-4 h-4" />} onClick={() => execCommand('justifyRight')} title="Align Right" />
           </div>
 
           {/* Lists */}
-          <div className="flex items-center gap-0.5 px-2 border-r border-gray-300">
+          <div className="flex items-center gap-0.5 px-2 border-r border-gray-300 dark:border-slate-600">
             <ToolbarButton icon={<List className="w-4 h-4" />} onClick={() => execCommand('insertUnorderedList')} title="Bullet List" />
             <ToolbarButton icon={<ListOrdered className="w-4 h-4" />} onClick={() => execCommand('insertOrderedList')} title="Numbered List" />
           </div>
@@ -381,16 +381,16 @@ export function IncomeTextEditor({
 
           {/* Fullscreen Toggle */}
           <div className="ml-auto">
-            <ToolbarButton 
-              icon={isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />} 
-              onClick={toggleFullscreen} 
-              title={isFullscreen ? 'Exit Fullscreen (Esc)' : 'Fullscreen'} 
+            <ToolbarButton
+              icon={isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+              onClick={toggleFullscreen}
+              title={isFullscreen ? 'Exit Fullscreen (Esc)' : 'Fullscreen'}
             />
           </div>
         </div>
 
         {/* Editor */}
-        <div 
+        <div
           ref={editorRef}
           id={id}
           contentEditable
@@ -400,8 +400,8 @@ export function IncomeTextEditor({
           onBlur={() => setIsFocused(false)}
           data-placeholder={placeholder}
           className={`
-            w-full border border-gray-200 dark:border-slate-700 border-t-0 rounded-b-xl bg-white dark:bg-slate-800
-            text-gray-700 leading-relaxed
+            w-full border border-gray-200 dark:border-slate-600 border-t-0 rounded-b-xl bg-white dark:bg-slate-800
+            text-gray-700 dark:text-slate-200 leading-relaxed
             focus:outline-none focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent
             overflow-y-auto
             ${isFullscreen ? 'flex-1 p-8 text-lg leading-loose' : 'p-4 text-sm'}
@@ -449,7 +449,7 @@ export function IncomeTextEditor({
             <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
               {aiPreview.content.split('\n\n').map((paragraph, idx) => (
                 <p key={idx} className="mb-3 last:mb-0">
-                  {paragraph.split('**').map((part, i) => 
+                  {paragraph.split('**').map((part, i) =>
                     i % 2 === 1 ? <strong key={i}>{part}</strong> : part
                   )}
                 </p>
@@ -485,14 +485,14 @@ export function IncomeTextEditor({
 // ==========================================
 // TOOLBAR BUTTON COMPONENT
 // ==========================================
-function ToolbarButton({ 
-  icon, 
-  onClick, 
+function ToolbarButton({
+  icon,
+  onClick,
   title,
-  active = false 
-}: { 
-  icon: React.ReactNode; 
-  onClick: () => void; 
+  active = false
+}: {
+  icon: React.ReactNode;
+  onClick: () => void;
   title: string;
   active?: boolean;
 }) {
@@ -503,9 +503,9 @@ function ToolbarButton({
       title={title}
       className={`
         w-8 h-8 flex items-center justify-center rounded-md transition-colors
-        ${active 
-          ? 'bg-[#0da1c7] text-white' 
-          : 'text-gray-500 hover:text-gray-700 hover:bg-gray-200'
+        ${active
+          ? 'bg-[#0da1c7] text-white'
+          : 'text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-slate-200 hover:bg-gray-200 dark:hover:bg-slate-600'
         }
       `}
     >
