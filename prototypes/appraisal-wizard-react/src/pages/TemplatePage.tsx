@@ -547,7 +547,7 @@ export default function TemplatePage() {
               </div>
             </div>
 
-            {/* Continue Button */}
+            {/* Continue Button - Dark mode styled */}
             <div className="text-center pt-4">
               <button
                 onClick={handleContinue}
