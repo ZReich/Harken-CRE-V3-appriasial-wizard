@@ -905,7 +905,7 @@ export default function DocumentIntakePage() {
         <div className="space-y-3 mb-6">
           <div className="bg-gradient-to-r from-[#0da1c7]/10 to-[#0da1c7]/5 rounded-xl p-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-700">Photos Uploaded</span>
+              <span className="text-sm font-medium text-gray-700 dark:text-slate-400">Photos Uploaded</span>
               <span className="text-lg font-bold text-[#0da1c7]">{stagingPhotos.length + assignedPhotoCount}</span>
             </div>
             {unassignedPhotos.length > 0 && (
