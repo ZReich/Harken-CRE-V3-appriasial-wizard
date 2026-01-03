@@ -95,7 +95,7 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
           </div>
         </div>
         
-        <div className="bg-slate-100/80 p-1 rounded-lg border border-slate-200 flex items-center">
+        <div className="bg-slate-100/80 dark:bg-slate-700/80 p-1 rounded-lg border border-slate-200 dark:border-slate-600 flex items-center">
           <button 
             onClick={() => setActiveSection('all')}
             className={`px-4 py-1.5 rounded-md text-sm font-medium transition-all flex items-center gap-2 ${activeSection === 'all' ? 'bg-white dark:bg-slate-700 text-slate-900 dark:text-white shadow-sm ring-1 ring-black/5 dark:ring-white/10' : 'text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'}`}
@@ -121,7 +121,7 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
               <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
                 <div className="flex items-center gap-2 mb-3 px-2">
                   <span className="text-sm font-bold text-slate-900 uppercase tracking-wider">Land Value</span>
-                  <div className="h-px bg-slate-200 flex-1"></div>
+                  <div className="h-px bg-slate-200 dark:bg-slate-700 flex-1"></div>
                 </div>
                 
                 <div className={`rounded-xl border-2 p-6 ${
@@ -183,7 +183,7 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
 
                   {hasLandValue && (
                     <div className="mt-4 pt-4 border-t border-lime-200/50 flex items-center justify-between">
-                      <div className="flex items-center gap-4 text-sm text-slate-600">
+                      <div className="flex items-center gap-4 text-sm text-slate-600 dark:text-slate-400">
                         <span>
                           <strong className="text-slate-800 dark:text-white">5</strong> Land Sales Analyzed
                         </span>
@@ -210,7 +210,7 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
                 {/* Info callout */}
                 <div className="mt-3 flex items-start gap-2 px-2">
                   <AlertCircle size={14} className="text-slate-400 mt-0.5 shrink-0" />
-                  <p className="text-xs text-slate-500">
+                  <p className="text-xs text-slate-500 dark:text-slate-400">
                     Land is valued separately using Sales Comparison Approach. The concluded value automatically 
                     flows into this Cost Approach. This ensures consistency across all approaches requiring land value.
                   </p>
