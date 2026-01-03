@@ -212,7 +212,7 @@ export const ContextualMarketData: React.FC<ContextualMarketDataProps> = ({
   };
 
   return (
-    <div className={`bg-white border border-slate-200 rounded-xl overflow-hidden ${className}`}>
+    <div className={`bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden ${className}`}>
       {/* Header */}
       <div className={`px-4 py-3 ${theme.bg} border-b ${theme.border}`}>
         <h4 className={`text-xs font-bold uppercase tracking-widest ${theme.accent}`}>
