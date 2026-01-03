@@ -327,16 +327,16 @@ export default function PhotoStagingTray({
   return (
     <div className={`
       relative overflow-hidden rounded-2xl
-      bg-gradient-to-br from-amber-50 via-orange-50 to-yellow-50
+      bg-gradient-to-br from-cyan-50 via-teal-50 to-blue-50
       dark:from-slate-800 dark:via-slate-800/80 dark:to-slate-900
-      border-2 border-amber-200/50 dark:border-slate-700
-      shadow-xl shadow-amber-200/20 dark:shadow-black/20
+      border-2 border-cyan-200/50 dark:border-slate-700
+      shadow-xl shadow-cyan-200/20 dark:shadow-black/20
       ${className}
     `}>
       {/* Decorative Background */}
       <div className="absolute inset-0 opacity-30 pointer-events-none">
-        <div className="absolute -top-24 -right-24 w-48 h-48 bg-gradient-to-br from-amber-300 to-orange-300 rounded-full blur-3xl" />
-        <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-gradient-to-br from-yellow-300 to-amber-300 rounded-full blur-3xl" />
+        <div className="absolute -top-24 -right-24 w-48 h-48 bg-gradient-to-br from-cyan-300 to-teal-300 rounded-full blur-3xl" />
+        <div className="absolute -bottom-24 -left-24 w-48 h-48 bg-gradient-to-br from-blue-300 to-cyan-300 rounded-full blur-3xl" />
       </div>
 
       {/* Header */}
@@ -347,7 +347,7 @@ export default function PhotoStagingTray({
         <div className="flex items-center gap-4">
           {/* Count Badge */}
           <div className="relative">
-            <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-amber-400 to-orange-500 text-white shadow-lg shadow-amber-400/30">
+            <div className="flex items-center justify-center w-12 h-12 rounded-xl bg-gradient-to-br from-cyan-400 to-teal-600 text-white shadow-lg shadow-cyan-400/30">
               <span className="text-lg font-black">{unassignedPhotos.length}</span>
             </div>
             {processingPhotos.length > 0 && (
@@ -358,8 +358,8 @@ export default function PhotoStagingTray({
           </div>
 
           <div>
-            <h3 className="font-bold text-lg text-amber-900 dark:text-amber-400">Photos Ready to Assign</h3>
-            <p className="text-sm text-amber-700 dark:text-amber-500/80">
+            <h3 className="font-bold text-lg text-cyan-900 dark:text-cyan-400">Photos Ready to Assign</h3>
+            <p className="text-sm text-cyan-700 dark:text-cyan-500/80">
               {processingPhotos.length > 0
                 ? `${processingPhotos.length} analyzing with AI...`
                 : `${classifiedPhotos.length} classified - use dropdown or drag to assign`}
@@ -413,7 +413,7 @@ export default function PhotoStagingTray({
             p-2 rounded-lg bg-white/50 dark:bg-slate-700/50 transition-transform duration-300
             ${isCollapsed ? '' : 'rotate-180'}
           `}>
-            <ChevronDown className="w-5 h-5 text-amber-700 dark:text-amber-400" />
+            <ChevronDown className="w-5 h-5 text-cyan-700 dark:text-cyan-400" />
           </div>
         </div>
       </div>
@@ -422,14 +422,14 @@ export default function PhotoStagingTray({
       {!isCollapsed && (
         <div className="relative px-5 pb-5">
           {/* Helper Text - At top for visibility */}
-          <div className="mb-4 p-3 bg-white/60 dark:bg-slate-700/40 backdrop-blur-sm rounded-xl border border-amber-200/50 dark:border-slate-600/50">
+          <div className="mb-4 p-3 bg-white/60 dark:bg-slate-700/40 backdrop-blur-sm rounded-xl border border-cyan-200/50 dark:border-slate-600/50">
             <div className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-amber-400 to-orange-500 flex items-center justify-center">
+              <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-400 to-teal-600 flex items-center justify-center">
                 <Sparkles className="w-4 h-4 text-white" />
               </div>
               <div>
-                <p className="text-sm font-medium text-amber-900 dark:text-amber-400">Three ways to assign photos:</p>
-                <ul className="mt-1 text-xs text-amber-700 dark:text-amber-500 space-y-0.5">
+                <p className="text-sm font-medium text-cyan-900 dark:text-cyan-400">Three ways to assign photos:</p>
+                <ul className="mt-1 text-xs text-cyan-700 dark:text-cyan-500 space-y-0.5">
                   <li><strong>1. Accept All</strong> - Use AI suggestions for all photos at once</li>
                   <li><strong>2. Visual Picker</strong> - Click dropdown to see all slots in a beautiful grid</li>
                   <li><strong>3. Drag & Drop</strong> - Drag photos to slots (panel appears when dragging)</li>
