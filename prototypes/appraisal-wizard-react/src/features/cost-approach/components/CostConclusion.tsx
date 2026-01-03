@@ -44,7 +44,7 @@ export const CostConclusion: React.FC<CostConclusionProps> = ({
   };
 
   return (
-    <div className="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-700">
+    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-700">
       <div className="px-6 py-4 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <h3 className="text-sm font-bold text-slate-900 uppercase tracking-wide flex items-center gap-2">
@@ -57,7 +57,7 @@ export const CostConclusion: React.FC<CostConclusionProps> = ({
             </span>
           )}
         </div>
-        <div className="text-xs text-slate-500 font-medium bg-slate-200/50 px-2 py-1 rounded">
+        <div className="text-xs text-slate-500 dark:text-slate-400 font-medium bg-slate-200/50 dark:bg-slate-700/50 px-2 py-1 rounded">
           Cost Approach Module
         </div>
       </div>
@@ -96,13 +96,13 @@ export const CostConclusion: React.FC<CostConclusionProps> = ({
               <span className="text-slate-500 font-bold text-[10px] uppercase tracking-wide">Exact Mathematical Total</span>
               {scenario !== 'As Is' && <span className="text-[9px] text-[#0da1c7] font-medium mt-0.5">Prospective Valuation Logic Applied</span>}
             </div>
-            <span className="font-mono font-medium text-slate-600">{formatCurrency(exactTotal)}</span>
+            <span className="font-mono font-medium text-slate-600 dark:text-slate-300">{formatCurrency(exactTotal)}</span>
           </div>
         </div>
 
         {/* Right: The Indicated Value (Review) */}
         <div className="bg-[#0da1c7]/5 rounded-xl border border-[#0da1c7]/20 p-6 relative h-full">
-          <div className="absolute -top-3 left-6 bg-white px-2 text-xs font-bold text-[#0da1c7] uppercase tracking-wider border border-[#0da1c7]/20 rounded shadow-sm">
+          <div className="absolute -top-3 left-6 bg-white dark:bg-slate-800 px-2 text-xs font-bold text-[#0da1c7] uppercase tracking-wider border border-[#0da1c7]/20 rounded shadow-sm">
             Final Conclusion
           </div>
 
@@ -115,7 +115,7 @@ export const CostConclusion: React.FC<CostConclusionProps> = ({
                   type="number" 
                   value={finalValue}
                   onChange={(e) => handleManualChange(+e.target.value)}
-                  className="w-full pl-8 pr-4 py-3 text-2xl font-bold text-slate-900 bg-white border border-slate-300 rounded-lg shadow-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-[#0da1c7] outline-none transition-all"
+                  className="w-full pl-8 pr-4 py-3 text-2xl font-bold text-slate-900 dark:text-white bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg shadow-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-[#0da1c7] outline-none transition-all"
                 />
                 {isManualOverride && (
                   <div className="absolute right-4 top-4 text-emerald-600 animate-in zoom-in duration-300">
@@ -140,13 +140,13 @@ export const CostConclusion: React.FC<CostConclusionProps> = ({
             <div className="grid grid-cols-2 gap-3 mt-auto">
               <button 
                 onClick={() => handleRound(1000)}
-                className="flex items-center justify-center gap-2 px-4 py-2 bg-white border border-slate-200 shadow-sm text-slate-700 text-[10px] font-bold uppercase tracking-wide rounded hover:bg-slate-50 hover:text-[#0da1c7] transition-colors"
+                className="flex items-center justify-center gap-2 px-4 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 shadow-sm text-slate-700 dark:text-slate-200 text-[10px] font-bold uppercase tracking-wide rounded hover:bg-slate-50 dark:hover:bg-slate-600 hover:text-[#0da1c7] transition-colors"
               >
                 <Wand2 size={12} /> Round to $1k
               </button>
               <button 
                 onClick={() => handleRound(5000)}
-                className="flex items-center justify-center gap-2 px-4 py-2 bg-white border border-slate-200 shadow-sm text-slate-700 text-[10px] font-bold uppercase tracking-wide rounded hover:bg-slate-50 hover:text-[#0da1c7] transition-colors"
+                className="flex items-center justify-center gap-2 px-4 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 shadow-sm text-slate-700 dark:text-slate-200 text-[10px] font-bold uppercase tracking-wide rounded hover:bg-slate-50 dark:hover:bg-slate-600 hover:text-[#0da1c7] transition-colors"
               >
                 <Wand2 size={12} /> Round to $5k
               </button>

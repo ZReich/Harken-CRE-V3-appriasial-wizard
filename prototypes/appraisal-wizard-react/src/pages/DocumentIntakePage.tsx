@@ -840,28 +840,28 @@ export default function DocumentIntakePage() {
       <p className="text-sm text-gray-500 mb-6">AI-powered processing</p>
 
       {/* Tab Navigation */}
-      <div className="flex gap-1 p-1 bg-gray-100 dark:bg-slate-700 rounded-lg mb-6 w-full max-w-full overflow-hidden">
+      <div className="flex gap-1 p-1 bg-gray-100 dark:bg-slate-700 rounded-lg mb-6 w-full overflow-hidden">
         <button
           onClick={() => setActiveTab('documents')}
-          className={`flex-1 flex items-center justify-center gap-1.5 px-1.5 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'documents'
+          className={`flex-1 flex items-center justify-center gap-1 px-1 py-1.5 rounded-md text-xs font-semibold transition-all ${activeTab === 'documents'
             ? 'bg-white dark:bg-slate-600 text-[#0da1c7] dark:text-cyan-400 shadow-sm'
             : 'text-gray-600 dark:text-slate-400 hover:text-gray-800 dark:hover:text-white'
             }`}
         >
-          <FileText className="w-4 h-4" />
-          Documents
+          <FileText className="w-3.5 h-3.5 flex-shrink-0" />
+          <span className="truncate">Documents</span>
         </button>
         <button
           onClick={() => setActiveTab('photos')}
-          className={`flex-1 flex items-center justify-center gap-1.5 px-1.5 py-2 rounded-md text-sm font-medium transition-all ${activeTab === 'photos'
+          className={`flex-1 flex items-center justify-center gap-1 px-1 py-1.5 rounded-md text-xs font-semibold transition-all ${activeTab === 'photos'
             ? 'bg-white dark:bg-slate-600 text-[#0da1c7] dark:text-cyan-400 shadow-sm'
             : 'text-gray-600 dark:text-slate-400 hover:text-gray-800 dark:hover:text-white'
             }`}
         >
-          <Camera className="w-4 h-4" />
-          Photos
+          <Camera className="w-3.5 h-3.5 flex-shrink-0" />
+          <span className="truncate">Photos</span>
           {stagingPhotos.length > 0 && (
-            <span className="px-1.5 py-0.5 bg-[#0da1c7] text-white text-[10px] rounded-full">
+            <span className="ml-auto px-1.5 py-0.5 bg-[#0da1c7] text-white text-[9px] font-bold rounded-full flex-shrink-0">
               {stagingPhotos.length}
             </span>
           )}

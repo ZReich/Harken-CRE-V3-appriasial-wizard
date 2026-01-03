@@ -44,7 +44,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
       <div 
         className={`
-          bg-white border-slate-200 shadow-sm overflow-hidden transition-all duration-300 ease-in-out
+          bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden transition-all duration-300 ease-in-out
           ${isFullScreen 
             ? 'fixed inset-0 z-[100] border-0 rounded-none h-screen w-screen flex flex-col' 
             : 'border rounded-lg relative'
@@ -57,29 +57,29 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         `}>
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1 pr-3 border-r border-slate-300">
-              <button className="p-1.5 rounded hover:bg-slate-200 text-slate-600 transition-colors"><Bold size={16} /></button>
-              <button className="p-1.5 rounded hover:bg-slate-200 text-slate-600 transition-colors"><Italic size={16} /></button>
-              <button className="p-1.5 rounded hover:bg-slate-200 text-slate-600 transition-colors"><Underline size={16} /></button>
+              <button className="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors"><Bold size={16} /></button>
+              <button className="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors"><Italic size={16} /></button>
+              <button className="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors"><Underline size={16} /></button>
             </div>
             <div className="flex items-center gap-1 px-3 border-r border-slate-300 hidden sm:flex">
-              <div className="flex items-center gap-1 text-xs text-slate-600 bg-white border border-slate-300 rounded px-2 py-1 cursor-pointer hover:border-slate-400 transition-colors">
+              <div className="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded px-2 py-1 cursor-pointer hover:border-slate-400 dark:hover:border-slate-500 transition-colors">
                 <Type size={12} />
                 <span>Sans Serif</span>
               </div>
-              <div className="flex items-center gap-1 text-xs text-slate-600 bg-white border border-slate-300 rounded px-2 py-1 cursor-pointer hover:border-slate-400 transition-colors">
+              <div className="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded px-2 py-1 cursor-pointer hover:border-slate-400 dark:hover:border-slate-500 transition-colors">
                 <span>Normal</span>
               </div>
             </div>
             <div className="flex items-center gap-1 pl-3">
-              <button className="p-1.5 rounded hover:bg-slate-200 text-slate-600 transition-colors"><AlignLeft size={16} /></button>
-              <button className="p-1.5 rounded hover:bg-slate-200 text-slate-600 transition-colors"><List size={16} /></button>
-              <button className="p-1.5 rounded hover:bg-slate-200 text-slate-600 transition-colors"><ListOrdered size={16} /></button>
+              <button className="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors"><AlignLeft size={16} /></button>
+              <button className="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors"><List size={16} /></button>
+              <button className="p-1.5 rounded hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 transition-colors"><ListOrdered size={16} /></button>
             </div>
           </div>
           <div className="flex items-center gap-3">
             <div className="hidden sm:flex gap-2">
               <button className="text-xs font-medium text-[#0da1c7] border border-[#0da1c7]/20 bg-[#0da1c7]/10 px-3 py-1.5 rounded hover:bg-[#0da1c7]/20 transition">Merge Field</button>
-              <button className="text-xs font-medium text-slate-600 border border-slate-200 bg-white px-3 py-1.5 rounded hover:bg-slate-50 transition">Snippet Data</button>
+              <button className="text-xs font-medium text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 px-3 py-1.5 rounded hover:bg-slate-50 dark:hover:bg-slate-600 transition">Snippet Data</button>
             </div>
             
             <div className="w-px h-5 bg-slate-300 mx-1 hidden sm:block"></div>
@@ -90,7 +90,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
                 p-2 rounded-md transition-all duration-200 flex items-center gap-2 text-xs font-medium
                 ${isFullScreen 
                   ? 'bg-[#0da1c7] text-white hover:bg-[#0b8fb0] shadow-sm' 
-                  : 'text-slate-500 hover:bg-slate-200 hover:text-slate-900'
+                  : 'text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 hover:text-slate-900 dark:hover:text-white'
                 }
               `}
               title={isFullScreen ? "Exit Full Screen (Esc)" : "Full Screen"}

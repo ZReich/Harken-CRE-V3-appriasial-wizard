@@ -53,11 +53,11 @@ export const ContractorCostComparison: React.FC<ContractorCostComparisonProps> =
   ];
 
   return (
-    <div className="bg-white rounded-xl border border-slate-200 overflow-hidden">
+    <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
       {/* Header */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full px-4 py-3 bg-slate-50 border-b border-slate-200 flex items-center justify-between hover:bg-slate-100 transition-colors"
+        className="w-full px-4 py-3 bg-slate-50 dark:bg-slate-700 border-b border-slate-200 dark:border-slate-600 flex items-center justify-between hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors"
       >
         <div className="flex items-center gap-2">
           <Scale className="w-4 h-4 text-[#0da1c7]" />
@@ -84,7 +84,7 @@ export const ContractorCostComparison: React.FC<ContractorCostComparisonProps> =
             <div className="flex items-center justify-between py-3">
               <div className="flex items-center gap-2">
                 <BookOpen className="w-4 h-4 text-slate-400" />
-                <span className="text-sm font-medium text-slate-600">Marshall & Swift Estimate</span>
+                <span className="text-sm font-medium text-slate-600 dark:text-slate-300">Marshall & Swift Estimate</span>
               </div>
               <span className="text-sm font-bold text-slate-800 dark:text-white">{formatCurrency(msTotalCost)}</span>
             </div>
@@ -109,7 +109,7 @@ export const ContractorCostComparison: React.FC<ContractorCostComparisonProps> =
             {/* Variance */}
             {contractorCost > 0 && (
               <div className="flex items-center justify-between py-3">
-                <span className="text-sm text-slate-500">Variance</span>
+                <span className="text-sm text-slate-500 dark:text-slate-400">Variance</span>
                 <span className={`text-sm font-bold ${
                   variance > 0 ? 'text-red-600' : variance < 0 ? 'text-emerald-600' : 'text-slate-500'
                 }`}>
@@ -134,7 +134,7 @@ export const ContractorCostComparison: React.FC<ContractorCostComparisonProps> =
                     className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 text-xs font-medium transition-all ${
                       isSelected
                         ? 'border-[#0da1c7] bg-[#0da1c7]/10 text-[#0da1c7]'
-                        : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                        : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-600 dark:text-slate-300 hover:border-gray-300 dark:hover:border-slate-500'
                     }`}
                   >
                     <IconComponent className="w-3.5 h-3.5" />
