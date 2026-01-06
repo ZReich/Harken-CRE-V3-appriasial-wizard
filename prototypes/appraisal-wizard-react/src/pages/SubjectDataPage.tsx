@@ -2543,8 +2543,8 @@ function PhotosContent({
                 <div
                   key={cat.id}
                   className={`px-2 py-1 rounded-full flex items-center gap-1 ${getUploadedCount(cat) > 0
-                    ? 'bg-green-100 text-green-700'
-                    : 'bg-gray-100 text-gray-500'
+                    ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                    : 'bg-gray-100 text-gray-500 dark:bg-slate-700 dark:text-slate-400'
                     }`}
                 >
                   <CatIcon className="w-3 h-3" />
@@ -2573,7 +2573,7 @@ function PhotosContent({
           {/* Category Header */}
           <button
             onClick={() => toggleCategory(category.id)}
-            className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
+            className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors"
           >
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-[#0da1c7]/10 flex items-center justify-center">
@@ -2581,18 +2581,18 @@ function PhotosContent({
               </div>
               <div className="text-left">
                 <h3 className="font-bold text-[#1c3643] dark:text-white">{category.label}</h3>
-                <p className="text-sm text-gray-500">{category.description}</p>
+                <p className="text-sm text-gray-500 dark:text-slate-400">{category.description}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getUploadedCount(category) > 0
-                ? 'bg-green-100 text-green-700'
-                : 'bg-gray-100 text-gray-500'
+                ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
+                : 'bg-gray-100 text-gray-500 dark:bg-slate-700 dark:text-slate-400'
                 }`}>
                 {getUploadedCount(category)}/{category.slots.length}
               </span>
               {category.reportPages && (
-                <span className="text-xs text-gray-400">
+                <span className="text-xs text-gray-400 dark:text-slate-500">
                   {category.reportPages}
                 </span>
               )}
@@ -2603,7 +2603,7 @@ function PhotosContent({
 
           {/* Category Content */}
           {expandedCategories[category.id] && (
-            <div className="border-t border-gray-100 p-6">
+            <div className="border-t border-gray-100 dark:border-slate-700 p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {category.slots.map((slot) => {
                   const photo = photos[slot.id];
@@ -2617,15 +2617,15 @@ function PhotosContent({
                       ref={(el) => { photoSlotRefs.current[slot.id] = el; }}
                       tabIndex={0}
                       className={`border-2 rounded-xl p-4 transition-all outline-none ${isFocused
-                        ? 'ring-2 ring-[#0da1c7] ring-offset-2'
+                        ? 'ring-2 ring-[#0da1c7] ring-offset-2 dark:ring-offset-slate-900'
                         : ''
                         } ${isDragOver && !photo
-                          ? 'border-[#0da1c7] bg-[#0da1c7]/10 scale-[1.02]'
+                          ? 'border-[#0da1c7] bg-[#0da1c7]/10 dark:bg-[#0da1c7]/20 scale-[1.02]'
                           : photo
-                            ? 'border-green-200 bg-green-50/30'
+                            ? 'border-green-200 dark:border-green-900/50 bg-green-50/30 dark:bg-green-900/10'
                             : slot.recommended
-                              ? 'border-[#0da1c7]/30 bg-[#0da1c7]/5'
-                              : 'border-gray-200'
+                              ? 'border-[#0da1c7]/30 dark:border-[#0da1c7]/50 bg-[#0da1c7]/5 dark:bg-[#0da1c7]/10'
+                              : 'border-gray-200 dark:border-slate-700 hover:border-[#0da1c7]/40'
                         }`}
                       onMouseEnter={() => handleMouseEnter(slot.id)}
                       onMouseLeave={handleMouseLeave}
@@ -2646,13 +2646,13 @@ function PhotosContent({
                             )}
                           </div>
                           {slot.description && (
-                            <p className="text-xs text-gray-500">{slot.description}</p>
+                            <p className="text-xs text-gray-500 dark:text-slate-400">{slot.description}</p>
                           )}
                         </div>
                         {photo && (
                           <button
                             onClick={() => onRemove(slot.id)}
-                            className="p-1 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors"
+                            className="p-1 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
                             title="Remove photo"
                           >
                             <X className="w-4 h-4" />
@@ -2692,7 +2692,7 @@ function PhotosContent({
                               placeholder="Photo caption (e.g., South Elevation)"
                               value={photo.caption || ''}
                               onChange={(e) => onUpdateMetadata(slot.id, { caption: e.target.value })}
-                              className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/40"
+                              className="w-full px-3 py-2 text-sm border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/40"
                             />
 
                             {/* Taken By & Date (collapsed row) */}
@@ -2702,23 +2702,23 @@ function PhotosContent({
                                 placeholder="Taken by"
                                 value={photo.takenBy || defaultTakenBy}
                                 onChange={(e) => onUpdateMetadata(slot.id, { takenBy: e.target.value })}
-                                className="flex-1 px-2 py-1.5 text-xs border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-[#0da1c7]/40"
+                                className="flex-1 px-2 py-1.5 text-xs border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white rounded focus:outline-none focus:ring-1 focus:ring-[#0da1c7]/40"
                               />
                               <input
                                 type="date"
                                 value={photo.takenDate || defaultTakenDate}
                                 onChange={(e) => onUpdateMetadata(slot.id, { takenDate: e.target.value })}
-                                className="w-32 px-2 py-1.5 text-xs border border-gray-200 rounded focus:outline-none focus:ring-1 focus:ring-[#0da1c7]/40"
+                                className="w-32 px-2 py-1.5 text-xs border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white dark:[color-scheme:dark] rounded focus:outline-none focus:ring-1 focus:ring-[#0da1c7]/40"
                               />
                             </div>
                           </div>
                         </div>
                       ) : (
                         <label className={`block border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-all ${isDragOver
-                          ? 'border-[#0da1c7] bg-[#0da1c7]/10'
+                          ? 'border-[#0da1c7] bg-[#0da1c7]/10 dark:bg-[#0da1c7]/20'
                           : isFocused
-                            ? 'border-[#0da1c7] bg-[#0da1c7]/5'
-                            : 'border-gray-300 hover:border-[#0da1c7] hover:bg-[#0da1c7]/5'
+                            ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-[#0da1c7]/10'
+                            : 'border-gray-300 dark:border-slate-700 hover:border-[#0da1c7] hover:bg-[#0da1c7]/5 dark:hover:bg-[#0da1c7]/10'
                           }`}>
                           <input
                             ref={(el) => { fileInputRefs.current[slot.id] = el; }}
@@ -2964,17 +2964,17 @@ function ExhibitsContent(_props: ExhibitsProps) {
               return (
                 <div
                   key={doc.id}
-                  className="flex items-center gap-4 p-4 bg-white rounded-xl border border-gray-200 hover:border-[#0da1c7]/30 transition-all group"
+                  className="flex items-center gap-4 p-4 bg-white dark:bg-slate-800/50 rounded-xl border border-gray-200 dark:border-slate-700 hover:border-[#0da1c7]/30 dark:hover:border-[#0da1c7]/40 transition-all group"
                 >
                   {/* Icon */}
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center flex-shrink-0 border border-slate-200">
-                    <typeInfo.Icon className="w-5 h-5 text-slate-600" />
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-700 dark:to-slate-800 flex items-center justify-center flex-shrink-0 border border-slate-200 dark:border-slate-600">
+                    <typeInfo.Icon className="w-5 h-5 text-slate-600 dark:text-slate-400" />
                   </div>
 
                   {/* Name and size */}
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{doc.name}</p>
-                    <p className="text-xs text-gray-500">{formatFileSize(doc.size)}</p>
+                    <p className="text-xs text-gray-500 dark:text-slate-400">{formatFileSize(doc.size)}</p>
                   </div>
 
                   {/* Classification badge */}
@@ -2998,13 +2998,13 @@ function ExhibitsContent(_props: ExhibitsProps) {
 
       {/* Empty State if no documents */}
       {!hasIntakeDocuments && (
-        <div className="bg-gray-50 border border-gray-200 rounded-xl p-8 text-center">
-          <FileText className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-          <h3 className="text-lg font-medium text-gray-700 mb-2">No Documents Uploaded</h3>
-          <p className="text-sm text-gray-500 mb-4">
+        <div className="bg-gray-50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 rounded-xl p-8 text-center">
+          <FileText className="w-12 h-12 text-gray-300 dark:text-slate-600 mx-auto mb-3" />
+          <h3 className="text-lg font-medium text-gray-700 dark:text-slate-200 mb-2">No Documents Uploaded</h3>
+          <p className="text-sm text-gray-500 dark:text-slate-400 mb-4">
             Documents uploaded during the Document Intake phase will appear here.
           </p>
-          <p className="text-xs text-gray-400">
+          <p className="text-xs text-gray-400 dark:text-slate-500">
             You can add additional exhibits below.
           </p>
         </div>
@@ -3015,7 +3015,7 @@ function ExhibitsContent(_props: ExhibitsProps) {
         <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           Additional Exhibits
         </h3>
-        <p className="text-sm text-gray-600 mb-4">
+        <p className="text-sm text-gray-600 dark:text-slate-400 mb-4">
           Upload additional documents to include in the report addenda.
         </p>
 
@@ -3023,7 +3023,7 @@ function ExhibitsContent(_props: ExhibitsProps) {
         {customExhibits.length > 0 && (
           <div className="space-y-3 mb-4">
             <div className="flex items-center justify-between">
-              <p className="text-sm font-medium text-gray-700">
+              <p className="text-sm font-medium text-gray-700 dark:text-slate-300">
                 Uploaded Exhibits ({customExhibits.length})
               </p>
               <p className="text-xs text-green-600 flex items-center gap-1">
@@ -3034,10 +3034,10 @@ function ExhibitsContent(_props: ExhibitsProps) {
             {customExhibits.map((exhibit) => (
               <div
                 key={exhibit.id}
-                className="flex items-center gap-4 p-4 bg-white rounded-xl border border-gray-200 hover:border-[#0da1c7]/30 transition-all group"
+                className="flex items-center gap-4 p-4 bg-white dark:bg-slate-800/50 rounded-xl border border-gray-200 dark:border-slate-700 hover:border-[#0da1c7]/30 dark:hover:border-[#0da1c7]/40 transition-all group"
               >
                 {/* Icon */}
-                <div className="w-10 h-10 rounded-xl overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center flex-shrink-0 border border-slate-200">
+                <div className="w-10 h-10 rounded-xl overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-700 dark:to-slate-800 flex items-center justify-center flex-shrink-0 border border-slate-200 dark:border-slate-600">
                   {exhibit.preview ? (
                     <img src={exhibit.preview} alt="" className="w-full h-full object-cover" />
                   ) : (
@@ -3058,7 +3058,7 @@ function ExhibitsContent(_props: ExhibitsProps) {
                           if (e.key === 'Escape') { setEditingId(null); setEditName(''); }
                         }}
                         autoFocus
-                        className="flex-1 px-3 py-1.5 text-sm border border-[#0da1c7] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/30"
+                        className="flex-1 px-3 py-1.5 text-sm border border-[#0da1c7] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/30 bg-white dark:bg-slate-700 dark:text-white"
                       />
                       <button
                         onClick={() => handleSaveName(exhibit.id)}
@@ -3068,7 +3068,7 @@ function ExhibitsContent(_props: ExhibitsProps) {
                       </button>
                       <button
                         onClick={() => { setEditingId(null); setEditName(''); }}
-                        className="p-1.5 text-gray-400 hover:bg-gray-100 rounded-lg"
+                        className="p-1.5 text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg"
                       >
                         <X className="w-4 h-4" />
                       </button>
@@ -3120,22 +3120,22 @@ function ExhibitsContent(_props: ExhibitsProps) {
             w-full px-4 py-6 border-2 border-dashed rounded-xl cursor-pointer
             transition-all duration-200 flex flex-col items-center gap-2
             ${isDragOver
-              ? 'border-[#0da1c7] bg-[#0da1c7]/10 scale-[1.01]'
-              : 'border-gray-300 hover:border-[#0da1c7] hover:bg-[#0da1c7]/5'
+              ? 'border-[#0da1c7] bg-[#0da1c7]/10 dark:bg-[#0da1c7]/20 scale-[1.01]'
+              : 'border-gray-300 dark:border-slate-700 hover:border-[#0da1c7] dark:hover:border-[#0da1c7] hover:bg-[#0da1c7]/5 dark:hover:bg-[#0da1c7]/10'
             }
           `}
         >
           <div className={`
             w-12 h-12 rounded-xl flex items-center justify-center transition-all
-            ${isDragOver ? 'bg-[#0da1c7] text-white scale-110' : 'bg-gray-100 text-gray-400'}
+            ${isDragOver ? 'bg-[#0da1c7] text-white scale-110' : 'bg-gray-100 dark:bg-slate-700 text-gray-400 dark:text-slate-500'}
           `}>
             <Upload className="w-6 h-6" />
           </div>
           <div className="text-center">
-            <p className={`font-medium ${isDragOver ? 'text-[#0da1c7]' : 'text-gray-700'}`}>
+            <p className={`font-medium ${isDragOver ? 'text-[#0da1c7]' : 'text-gray-700 dark:text-slate-300'}`}>
               {isDragOver ? 'Drop files here' : 'Drop files here or click to browse'}
             </p>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">
               PDF, Word, Excel, Images, and more
             </p>
           </div>
@@ -3152,7 +3152,7 @@ function ExhibitsContent(_props: ExhibitsProps) {
         />
 
         {/* Helper text */}
-        <p className="text-xs text-gray-500 mt-3 flex items-center gap-1.5">
+        <p className="text-xs text-gray-500 dark:text-slate-400 mt-3 flex items-center gap-1.5">
           <Sparkles className="w-3.5 h-3.5 text-amber-500" />
           Document names are auto-detected. Click any name to edit it.
         </p>

@@ -1,0 +1,403 @@
+/**
+ * Report Preview Animations & Visual Polish
+ * 
+ * Professional animations and transitions for the report editor
+ * All animations follow the "INTENTIONAL MINIMALISM" design philosophy:
+ * - Fast enough to feel responsive (150-300ms)
+ * - Smooth enough to feel professional (ease-out curves)
+ * - Purposeful - every animation communicates state change
+ */
+
+/* =================================================================
+   SECTION TOGGLE ANIMATIONS
+   ================================================================= */
+
+@keyframes slideDown {
+  from {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    max-height: 2000px;
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    max-height: 2000px;
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    max-height: 0;
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+}
+
+.section-toggle-enter {
+  animation: slideDown 0.3s ease-out forwards;
+}
+
+.section-toggle-exit {
+  animation: slideUp 0.2s ease-in forwards;
+}
+
+/* =================================================================
+   PAGE ELEMENT SELECTION
+   ================================================================= */
+
+.element-selected {
+  outline: 2px solid #0da1c7;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(13, 161, 199, 0.1);
+  transition: all 0.2s ease-out;
+}
+
+.element-selectable:hover {
+  outline: 1px solid rgba(13, 161, 199, 0.3);
+  outline-offset: 1px;
+  cursor: pointer;
+  transition: all 0.15s ease-out;
+}
+
+/* =================================================================
+   SAVE STATUS PULSE
+   ================================================================= */
+
+@keyframes savePulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+.save-indicator {
+  animation: savePulse 2s ease-in-out infinite;
+}
+
+/* =================================================================
+   LOADING STATES
+   ================================================================= */
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: -1000px 0;
+  }
+  100% {
+    background-position: 1000px 0;
+  }
+}
+
+.skeleton-loading {
+  background: linear-gradient(
+    90deg,
+    #f0f0f0 0%,
+    #f8f8f8 50%,
+    #f0f0f0 100%
+  );
+  background-size: 1000px 100%;
+  animation: shimmer 2s infinite linear;
+}
+
+/* =================================================================
+   PROPERTY PANEL TRANSITIONS
+   ================================================================= */
+
+.panel-section-enter {
+  animation: fadeIn 0.2s ease-out forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.accordion-content-enter {
+  animation: accordionOpen 0.25s ease-out forwards;
+}
+
+.accordion-content-exit {
+  animation: accordionClose 0.2s ease-in forwards;
+}
+
+@keyframes accordionOpen {
+  from {
+    max-height: 0;
+    opacity: 0;
+  }
+  to {
+    max-height: 500px;
+    opacity: 1;
+  }
+}
+
+@keyframes accordionClose {
+  from {
+    max-height: 500px;
+    opacity: 1;
+  }
+  to {
+    max-height: 0;
+    opacity: 0;
+  }
+}
+
+/* =================================================================
+   PAGE BREAK INDICATORS
+   ================================================================= */
+
+.page-break-indicator {
+  position: relative;
+  margin: 2rem 0;
+  height: 2px;
+  background: repeating-linear-gradient(
+    90deg,
+    #cbd5e1 0px,
+    #cbd5e1 10px,
+    transparent 10px,
+    transparent 20px
+  );
+}
+
+.page-break-indicator::before {
+  content: 'Page Break';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 0.25rem 0.75rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #64748b;
+  border: 1px solid #cbd5e1;
+  border-radius: 0.375rem;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* =================================================================
+   CONTEXT MENU ENTRANCE
+   ================================================================= */
+
+@keyframes contextMenuAppear {
+  from {
+    opacity: 0;
+    transform: scale(0.95) translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.context-menu-enter {
+  animation: contextMenuAppear 0.15s ease-out forwards;
+}
+
+/* =================================================================
+   TOAST NOTIFICATIONS
+   ================================================================= */
+
+@keyframes toastSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes toastSlideOut {
+  from {
+    opacity: 1;
+    transform: translateX(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+}
+
+.toast-enter {
+  animation: toastSlideIn 0.3s ease-out forwards;
+}
+
+.toast-exit {
+  animation: toastSlideOut 0.2s ease-in forwards;
+}
+
+/* =================================================================
+   BUTTON INTERACTIONS
+   ================================================================= */
+
+.button-press {
+  transform: scale(0.98);
+  transition: transform 0.1s ease-out;
+}
+
+.button-hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease-out;
+}
+
+/* =================================================================
+   AI GENERATION LOADING
+   ================================================================= */
+
+@keyframes aiGradient {
+  0%, 100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.ai-generating {
+  background: linear-gradient(
+    90deg,
+    #0da1c7,
+    #06b6d4,
+    #0284c7,
+    #0da1c7
+  );
+  background-size: 200% 100%;
+  animation: aiGradient 2s ease-in-out infinite;
+}
+
+/* =================================================================
+   RESIZE HANDLES
+   ================================================================= */
+
+.resize-handle {
+  width: 8px;
+  height: 8px;
+  background: #0da1c7;
+  border: 1px solid white;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.1);
+  transition: all 0.2s ease-out;
+}
+
+.resize-handle:hover {
+  width: 10px;
+  height: 10px;
+  background: #0890a8;
+  box-shadow: 0 0 0 2px rgba(13, 161, 199, 0.2);
+}
+
+/* =================================================================
+   DRAG PREVIEW
+   ================================================================= */
+
+.dragging-element {
+  opacity: 0.5;
+  cursor: grabbing;
+  transform: rotate(2deg);
+  transition: all 0.1s ease-out;
+}
+
+.drop-zone-active {
+  background: rgba(13, 161, 199, 0.05);
+  border: 2px dashed #0da1c7;
+  transition: all 0.2s ease-out;
+}
+
+/* =================================================================
+   FOCUS STATES - Accessibility
+   ================================================================= */
+
+*:focus-visible {
+  outline: 2px solid #0da1c7;
+  outline-offset: 2px;
+  border-radius: 0.25rem;
+}
+
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid #0da1c7;
+  outline-offset: 2px;
+}
+
+/* =================================================================
+   DARK MODE ADJUSTMENTS
+   ================================================================= */
+
+@media (prefers-color-scheme: dark) {
+  .skeleton-loading {
+    background: linear-gradient(
+      90deg,
+      #1e293b 0%,
+      #334155 50%,
+      #1e293b 100%
+    );
+    background-size: 1000px 100%;
+  }
+
+  .page-break-indicator {
+    background: repeating-linear-gradient(
+      90deg,
+      #475569 0px,
+      #475569 10px,
+      transparent 10px,
+      transparent 20px
+    );
+  }
+
+  .page-break-indicator::before {
+    background: #1e293b;
+    color: #cbd5e1;
+    border-color: #475569;
+  }
+}
+
+/* =================================================================
+   PRINT STYLES - Hide UI Elements
+   ================================================================= */
+
+@media print {
+  .element-selected,
+  .element-selectable:hover,
+  .resize-handle,
+  .page-break-indicator::before {
+    display: none !important;
+  }
+  
+  .page-break-indicator {
+    page-break-after: always;
+    break-after: page;
+    margin: 0;
+    height: 0;
+    background: none;
+  }
+}

@@ -13,13 +13,29 @@ interface UseReportBuilderResult {
 /**
  * Hook that assembles report pages from wizard state
  * Handles section visibility, page ordering, and TOC generation
+ * 
+ * @param wizardState - The wizard state containing all report data
+ * @param sectionVisibility - Optional visibility overrides for sections (false = hidden)
  */
-export function useReportBuilder(wizardState: WizardState): UseReportBuilderResult {
+export function useReportBuilder(
+  wizardState: WizardState,
+  sectionVisibility?: Record<string, boolean>
+): UseReportBuilderResult {
   return useMemo(() => {
     const pages: ReportPage[] = [];
     const tocEntries: TOCEntry[] = [];
     const sectionPageMap: Record<string, number> = {};
     let currentPageNumber = 1;
+
+    // Helper to check if a section should be included
+    const isSectionVisible = (sectionId: string): boolean => {
+      // If no visibility overrides, everything is visible
+      if (!sectionVisibility) return true;
+      // If explicitly set to false, hide it
+      if (sectionVisibility[sectionId] === false) return false;
+      // Otherwise, visible by default
+      return true;
+    };
 
     // Helper to add a page and track page number
     const addPage = (page: Omit<ReportPage, 'pageNumber'>): void => {
@@ -62,14 +78,16 @@ export function useReportBuilder(wizardState: WizardState): UseReportBuilderResu
     // =================================================================
     // 2. LETTER OF TRANSMITTAL
     // =================================================================
-    addTocEntry('letter', 'Letter of Transmittal');
-    addPage({
-      id: 'letter-page',
-      layout: 'letter',
-      sectionId: 'letter',
-      title: 'Letter of Transmittal',
-      content: buildLetterContent(wizardState),
-    });
+    if (isSectionVisible('letter')) {
+      addTocEntry('letter', 'Letter of Transmittal');
+      addPage({
+        id: 'letter-page',
+        layout: 'letter',
+        sectionId: 'letter',
+        title: 'Letter of Transmittal',
+        content: buildLetterContent(wizardState),
+      });
+    }
 
     // =================================================================
     // 3. TABLE OF CONTENTS (placeholder - populated after all pages)
@@ -85,23 +103,25 @@ export function useReportBuilder(wizardState: WizardState): UseReportBuilderResu
     // =================================================================
     // 4. SUMMARY OF APPRAISAL
     // =================================================================
-    addTocEntry('executive-summary', 'Summary of Appraisal');
-    const summaryPages = buildSummaryPages(wizardState);
-    summaryPages.forEach((content, i) => {
-      addPage({
-        id: `summary-page-${i}`,
-        layout: 'summary-table',
-        sectionId: 'executive-summary',
-        title: i === 0 ? 'Summary of Appraisal' : undefined,
-        content,
+    if (isSectionVisible('executive-summary')) {
+      addTocEntry('executive-summary', 'Summary of Appraisal');
+      const summaryPages = buildSummaryPages(wizardState);
+      summaryPages.forEach((content, i) => {
+        addPage({
+          id: `summary-page-${i}`,
+          layout: 'summary-table',
+          sectionId: 'executive-summary',
+          title: i === 0 ? 'Summary of Appraisal' : undefined,
+          content,
+        });
       });
-    });
+    }
 
     // =================================================================
     // 5. INVESTMENT RISK ANALYSIS (Plan Part 10.9 - after Summary)
     // =================================================================
     // Only include if risk rating data is available
-    if (wizardState.riskRating) {
+    if (isSectionVisible('risk-rating') && wizardState.riskRating) {
       addTocEntry('risk-rating', 'Investment Risk Analysis');
       addPage({
         id: 'risk-rating-page',
@@ -125,19 +145,21 @@ export function useReportBuilder(wizardState: WizardState): UseReportBuilderResu
     // =================================================================
     // 6. PURPOSE, USE & USERS
     // =================================================================
-    addTocEntry('purpose', 'Purpose of Appraisal');
-    addPage({
-      id: 'purpose-page',
-      layout: 'narrative',
-      sectionId: 'purpose',
-      title: 'Purpose of Appraisal',
-      content: buildPurposeContent(wizardState),
-    });
+    if (isSectionVisible('purpose')) {
+      addTocEntry('purpose', 'Purpose of Appraisal');
+      addPage({
+        id: 'purpose-page',
+        layout: 'narrative',
+        sectionId: 'purpose',
+        title: 'Purpose of Appraisal',
+        content: buildPurposeContent(wizardState),
+      });
+    }
 
     // =================================================================
     // 6. EXTRAORDINARY ASSUMPTIONS (if any)
     // =================================================================
-    if (hasExtraordinaryAssumptions(wizardState)) {
+    if (isSectionVisible('assumptions-extra') && hasExtraordinaryAssumptions(wizardState)) {
       addTocEntry('assumptions-extra', 'Extraordinary Assumptions', 2);
       addPage({
         id: 'assumptions-extra-page',
@@ -151,19 +173,21 @@ export function useReportBuilder(wizardState: WizardState): UseReportBuilderResu
     // =================================================================
     // 8. GENERAL AREA ANALYSIS
     // =================================================================
-    addTocEntry('area-analysis', 'General Area Analysis');
-    addPage({
-      id: 'area-analysis-page',
-      layout: 'narrative',
-      sectionId: 'area-analysis',
-      title: 'General Area Analysis',
-      content: buildAreaAnalysisContent(wizardState),
-    });
+    if (isSectionVisible('area-analysis')) {
+      addTocEntry('area-analysis', 'General Area Analysis');
+      addPage({
+        id: 'area-analysis-page',
+        layout: 'narrative',
+        sectionId: 'area-analysis',
+        title: 'General Area Analysis',
+        content: buildAreaAnalysisContent(wizardState),
+      });
+    }
 
     // =================================================================
     // 8.1 NEIGHBORHOOD DEMOGRAPHICS (Plan Part 6.1)
     // =================================================================
-    if (wizardState.demographicsData && wizardState.demographicsData.radiusAnalysis?.length > 0) {
+    if (isSectionVisible('demographics') && wizardState.demographicsData && wizardState.demographicsData.radiusAnalysis?.length > 0) {
       addTocEntry('demographics', 'Neighborhood Demographics', 2);
       addPage({
         id: 'demographics-page',
@@ -187,7 +211,7 @@ export function useReportBuilder(wizardState: WizardState): UseReportBuilderResu
     // =================================================================
     // 8.2 ECONOMIC CONTEXT (Plan Part 6.1)
     // =================================================================
-    if (wizardState.economicIndicators) {
+    if (isSectionVisible('economic-context') && wizardState.economicIndicators) {
       addTocEntry('economic-context', 'Economic Context', 2);
       addPage({
         id: 'economic-context-page',
@@ -212,34 +236,38 @@ export function useReportBuilder(wizardState: WizardState): UseReportBuilderResu
     // =================================================================
     // 9. NEIGHBORHOOD ANALYSIS
     // =================================================================
-    addTocEntry('neighborhood', 'Neighborhood Analysis');
-    addPage({
-      id: 'neighborhood-page',
-      layout: 'narrative',
-      sectionId: 'neighborhood',
-      title: 'Neighborhood Analysis',
-      content: buildNeighborhoodContent(wizardState),
-    });
+    if (isSectionVisible('neighborhood')) {
+      addTocEntry('neighborhood', 'Neighborhood Analysis');
+      addPage({
+        id: 'neighborhood-page',
+        layout: 'narrative',
+        sectionId: 'neighborhood',
+        title: 'Neighborhood Analysis',
+        content: buildNeighborhoodContent(wizardState),
+      });
+    }
 
     // =================================================================
     // 9. SITE ANALYSIS
     // =================================================================
-    addTocEntry('site-analysis', 'Site Analysis');
-    const sitePages = buildSiteAnalysisPages(wizardState);
-    sitePages.forEach((content, i) => {
-      addPage({
-        id: `site-analysis-page-${i}`,
-        layout: 'narrative',
-        sectionId: 'site-analysis',
-        title: i === 0 ? 'Site Analysis' : undefined,
-        content,
+    if (isSectionVisible('site-analysis')) {
+      addTocEntry('site-analysis', 'Site Analysis');
+      const sitePages = buildSiteAnalysisPages(wizardState);
+      sitePages.forEach((content, i) => {
+        addPage({
+          id: `site-analysis-page-${i}`,
+          layout: 'narrative',
+          sectionId: 'site-analysis',
+          title: i === 0 ? 'Site Analysis' : undefined,
+          content,
+        });
       });
-    });
+    }
 
     // =================================================================
     // 10. IMPROVEMENT ANALYSIS (if not land)
     // =================================================================
-    if (wizardState.propertyType !== 'land') {
+    if (isSectionVisible('improvement-analysis') && wizardState.propertyType !== 'land') {
       addTocEntry('improvement-analysis', 'Improvement Analysis');
       const improvementPages = buildImprovementPages(wizardState);
       improvementPages.forEach((content, i) => {
@@ -256,49 +284,55 @@ export function useReportBuilder(wizardState: WizardState): UseReportBuilderResu
     // =================================================================
     // 11. TAXES
     // =================================================================
-    addTocEntry('taxes', 'Tax Analysis');
-    addPage({
-      id: 'taxes-page',
-      layout: 'summary-table',
-      sectionId: 'taxes',
-      title: 'Tax Analysis',
-      content: buildTaxesContent(wizardState),
-    });
+    if (isSectionVisible('taxes')) {
+      addTocEntry('taxes', 'Tax Analysis');
+      addPage({
+        id: 'taxes-page',
+        layout: 'summary-table',
+        sectionId: 'taxes',
+        title: 'Tax Analysis',
+        content: buildTaxesContent(wizardState),
+      });
+    }
 
     // =================================================================
     // 12. PROPERTY OWNERSHIP
     // =================================================================
-    addTocEntry('ownership', 'Property Ownership');
-    addPage({
-      id: 'ownership-page',
-      layout: 'narrative',
-      sectionId: 'ownership',
-      title: 'Property Ownership',
-      content: buildOwnershipContent(wizardState),
-    });
+    if (isSectionVisible('ownership')) {
+      addTocEntry('ownership', 'Property Ownership');
+      addPage({
+        id: 'ownership-page',
+        layout: 'narrative',
+        sectionId: 'ownership',
+        title: 'Property Ownership',
+        content: buildOwnershipContent(wizardState),
+      });
+    }
 
     // =================================================================
     // 13. HIGHEST AND BEST USE
     // =================================================================
-    addTocEntry('highest-best-use', 'Highest and Best Use');
-    addPage({
-      id: 'hbu-page-1',
-      layout: 'narrative',
-      sectionId: 'highest-best-use',
-      title: 'Highest and Best Use',
-      content: buildHBUContent(wizardState, 'as-vacant'),
-    });
-    addPage({
-      id: 'hbu-page-2',
-      layout: 'narrative',
-      sectionId: 'highest-best-use',
-      content: buildHBUContent(wizardState, 'as-improved'),
-    });
+    if (isSectionVisible('highest-best-use')) {
+      addTocEntry('highest-best-use', 'Highest and Best Use');
+      addPage({
+        id: 'hbu-page-1',
+        layout: 'narrative',
+        sectionId: 'highest-best-use',
+        title: 'Highest and Best Use',
+        content: buildHBUContent(wizardState, 'as-vacant'),
+      });
+      addPage({
+        id: 'hbu-page-2',
+        layout: 'narrative',
+        sectionId: 'highest-best-use',
+        content: buildHBUContent(wizardState, 'as-improved'),
+      });
+    }
 
     // =================================================================
     // 14. SWOT ANALYSIS (Plan Part 6.1)
     // =================================================================
-    if (wizardState.swotAnalysis && (
+    if (isSectionVisible('swot-analysis') && wizardState.swotAnalysis && (
       wizardState.swotAnalysis.strengths.length > 0 ||
       wizardState.swotAnalysis.weaknesses.length > 0 ||
       wizardState.swotAnalysis.opportunities.length > 0 ||
@@ -333,7 +367,7 @@ export function useReportBuilder(wizardState: WizardState): UseReportBuilderResu
         : '';
 
       // Cost Approach
-      if (scenario.approaches.includes('Cost Approach')) {
+      if (isSectionVisible(`cost-${scenario.id}`) && scenario.approaches.includes('Cost Approach')) {
         addTocEntry(`cost-${scenario.id}`, `${scenarioPrefix}Cost Approach`);
         const costPages = buildCostApproachPages(wizardState, scenario.id);
         costPages.forEach((content, i) => {
@@ -348,7 +382,7 @@ export function useReportBuilder(wizardState: WizardState): UseReportBuilderResu
       }
 
       // Sales Comparison
-      if (scenario.approaches.includes('Sales Comparison')) {
+      if (isSectionVisible(`sales-${scenario.id}`) && scenario.approaches.includes('Sales Comparison')) {
         addTocEntry(`sales-${scenario.id}`, `${scenarioPrefix}Sales Comparison Approach`);
         const salesPages = buildSalesComparisonPages(wizardState, scenario.id);
         salesPages.forEach((content, i) => {
@@ -363,7 +397,7 @@ export function useReportBuilder(wizardState: WizardState): UseReportBuilderResu
       }
 
       // Income Approach
-      if (scenario.approaches.includes('Income Approach')) {
+      if (isSectionVisible(`income-${scenario.id}`) && scenario.approaches.includes('Income Approach')) {
         addTocEntry(`income-${scenario.id}`, `${scenarioPrefix}Income Approach`);
         const incomePages = buildIncomeApproachPages(wizardState, scenario.id);
         incomePages.forEach((content, i) => {
@@ -381,98 +415,112 @@ export function useReportBuilder(wizardState: WizardState): UseReportBuilderResu
     // =================================================================
     // 17. RECONCILIATION
     // =================================================================
-    addTocEntry('reconciliation', 'Reconciliation');
-    const reconPages = buildReconciliationPages(wizardState);
-    reconPages.forEach((content, i) => {
-      addPage({
-        id: `recon-page-${i}`,
-        layout: 'narrative',
-        sectionId: 'reconciliation',
-        title: i === 0 ? 'Reconciliation' : undefined,
-        content,
+    if (isSectionVisible('reconciliation')) {
+      addTocEntry('reconciliation', 'Reconciliation');
+      const reconPages = buildReconciliationPages(wizardState);
+      reconPages.forEach((content, i) => {
+        addPage({
+          id: `recon-page-${i}`,
+          layout: 'narrative',
+          sectionId: 'reconciliation',
+          title: i === 0 ? 'Reconciliation' : undefined,
+          content,
+        });
       });
-    });
+    }
 
     // =================================================================
     // 18. CERTIFICATION
     // =================================================================
-    addTocEntry('certification', 'Certification');
-    addPage({
-      id: 'certification-page',
-      layout: 'letter',
-      sectionId: 'certification',
-      title: 'Certification',
-      content: buildCertificationContent(wizardState),
-    });
+    if (isSectionVisible('certification')) {
+      addTocEntry('certification', 'Certification');
+      addPage({
+        id: 'certification-page',
+        layout: 'letter',
+        sectionId: 'certification',
+        title: 'Certification',
+        content: buildCertificationContent(wizardState),
+      });
+    }
 
     // =================================================================
     // 19. APPRAISER QUALIFICATIONS
     // =================================================================
-    addTocEntry('qualifications', 'Appraiser Qualifications');
-    addPage({
-      id: 'qualifications-page',
-      layout: 'narrative',
-      sectionId: 'qualifications',
-      title: 'Appraiser Qualifications',
-      content: buildQualificationsContent(wizardState),
-    });
+    if (isSectionVisible('qualifications')) {
+      addTocEntry('qualifications', 'Appraiser Qualifications');
+      addPage({
+        id: 'qualifications-page',
+        layout: 'narrative',
+        sectionId: 'qualifications',
+        title: 'Appraiser Qualifications',
+        content: buildQualificationsContent(wizardState),
+      });
+    }
 
     // =================================================================
     // 20. ASSUMPTIONS & LIMITING CONDITIONS
     // =================================================================
-    addTocEntry('limiting-conditions', 'Assumptions & Limiting Conditions');
-    const limitingPages = buildLimitingConditionsPages(wizardState);
-    limitingPages.forEach((content, i) => {
-      addPage({
-        id: `limiting-page-${i}`,
-        layout: 'narrative',
-        sectionId: 'limiting-conditions',
-        title: i === 0 ? 'Assumptions & Limiting Conditions' : undefined,
-        content,
+    if (isSectionVisible('limiting-conditions')) {
+      addTocEntry('limiting-conditions', 'Assumptions & Limiting Conditions');
+      const limitingPages = buildLimitingConditionsPages(wizardState);
+      limitingPages.forEach((content, i) => {
+        addPage({
+          id: `limiting-page-${i}`,
+          layout: 'narrative',
+          sectionId: 'limiting-conditions',
+          title: i === 0 ? 'Assumptions & Limiting Conditions' : undefined,
+          content,
+        });
       });
-    });
+    }
 
     // =================================================================
     // 21. ADDENDA
     // =================================================================
-    addTocEntry('addenda', 'Addenda');
-    addPage({
-      id: 'addenda-header-page',
-      layout: 'addenda-header',
-      sectionId: 'addenda',
-      title: 'ADDENDA',
-      content: [],
-    });
-
-    // Photo pages
-    const photoPages = buildPhotoPages(wizardState);
-    photoPages.forEach((page, i) => {
-      if (i === 0) {
-        addTocEntry('photos', 'Subject Property Photos', 2);
-      }
+    if (isSectionVisible('addenda')) {
+      addTocEntry('addenda', 'Addenda');
       addPage({
-        id: `photo-page-${i}`,
-        layout: page.layout || 'photo-grid-6',
-        sectionId: 'photos',
-        title: page.title,
-        content: page.content || [],
-        photos: page.photos,
-        showAttribution: page.showAttribution,
+        id: 'addenda-header-page',
+        layout: 'addenda-header',
+        sectionId: 'addenda',
+        title: 'ADDENDA',
+        content: [],
       });
-    });
 
-    // Map pages
-    addTocEntry('maps', 'Maps', 2);
-    addPage({
-      id: 'location-map-page',
-      layout: 'map-page',
-      sectionId: 'maps',
-      title: 'Location Map',
-      content: [],
-    });
+      // Photo pages
+      if (isSectionVisible('photos')) {
+        const photoPages = buildPhotoPages(wizardState);
+        photoPages.forEach((page, i) => {
+          if (i === 0) {
+            addTocEntry('photos', 'Subject Property Photos', 2);
+          }
+          addPage({
+            id: `photo-page-${i}`,
+            layout: page.layout || 'photo-grid-6',
+            sectionId: 'photos',
+            title: page.title,
+            content: page.content || [],
+            photos: page.photos,
+            showAttribution: page.showAttribution,
+          });
+        });
+      }
 
-    // Comp detail pages (if any)
-    // ... additional addenda items
+      // Map pages
+      if (isSectionVisible('maps')) {
+        addTocEntry('maps', 'Maps', 2);
+        addPage({
+          id: 'location-map-page',
+          layout: 'map-page',
+          sectionId: 'maps',
+          title: 'Location Map',
+          content: [],
+        });
+      }
+
+      // Comp detail pages (if any)
+      // ... additional addenda items
+    }
 
     return {
       pages,
@@ -480,7 +528,7 @@ export function useReportBuilder(wizardState: WizardState): UseReportBuilderResu
       totalPages: currentPageNumber - 1,
       sectionPageMap,
     };
-  }, [wizardState]);
+  }, [wizardState, sectionVisibility]);
 }
 
 // =================================================================

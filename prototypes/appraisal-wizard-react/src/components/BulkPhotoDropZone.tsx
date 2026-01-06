@@ -194,7 +194,7 @@ export default function BulkPhotoDropZone({
                 <p className="text-lg font-semibold text-[#1c3643] dark:text-white">
                   Analyzing Photos with AI
                 </p>
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">
                   Classifying {processingProgress.current} of {processingProgress.total} photos...
                 </p>
               </div>
@@ -217,10 +217,10 @@ export default function BulkPhotoDropZone({
                 <ImagePlus className="w-8 h-8 text-[#0da1c7]" />
               </div>
               <div>
-                <p className="text-lg font-semibold text-[#0da1c7]">
+                <p className="text-lg font-semibold text-[#0da1c7] dark:text-cyan-400">
                   Drop photos here
                 </p>
-                <p className="text-sm text-gray-500 mt-1">
+                <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">
                   Release to upload and classify
                 </p>
               </div>
@@ -228,8 +228,8 @@ export default function BulkPhotoDropZone({
           ) : (
             // Default State
             <div className="space-y-4">
-              <div className="w-16 h-16 mx-auto rounded-full bg-gray-100 flex items-center justify-center group-hover:bg-[#0da1c7]/10 transition-colors">
-                <Upload className="w-8 h-8 text-gray-400" />
+              <div className="w-16 h-16 mx-auto rounded-2xl bg-gray-100 dark:bg-slate-700/50 flex items-center justify-center border border-gray-200 dark:border-slate-600 transition-colors group-hover:bg-[#0da1c7]/10 dark:group-hover:bg-[#0da1c7]/20">
+                <Upload className="w-8 h-8 text-gray-400 dark:text-slate-500" />
               </div>
               <div>
                 <p className="text-lg font-semibold text-[#1c3643] dark:text-white">
@@ -244,11 +244,11 @@ export default function BulkPhotoDropZone({
                 </p>
               </div>
               {/* Supported Formats */}
-              <div className="flex items-center justify-center gap-2 text-xs text-gray-400">
-                <span className="px-2 py-0.5 bg-gray-100 rounded">JPG</span>
-                <span className="px-2 py-0.5 bg-gray-100 rounded">PNG</span>
-                <span className="px-2 py-0.5 bg-gray-100 rounded">WebP</span>
-                <span className="px-2 py-0.5 bg-gray-100 rounded">HEIC</span>
+              <div className="flex items-center justify-center gap-2 text-[10px] font-bold text-gray-400 dark:text-slate-500">
+                <span className="px-2 py-0.5 bg-gray-100 dark:bg-slate-700/50 border border-gray-200 dark:border-slate-600 rounded">JPG</span>
+                <span className="px-2 py-0.5 bg-gray-100 dark:bg-slate-700/50 border border-gray-200 dark:border-slate-600 rounded">PNG</span>
+                <span className="px-2 py-0.5 bg-gray-100 dark:bg-slate-700/50 border border-gray-200 dark:border-slate-600 rounded">WebP</span>
+                <span className="px-2 py-0.5 bg-gray-100 dark:bg-slate-700/50 border border-gray-200 dark:border-slate-600 rounded">HEIC</span>
               </div>
             </div>
           )}
@@ -264,15 +264,15 @@ export default function BulkPhotoDropZone({
 
       {/* Errors */}
       {errors.length > 0 && (
-        <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+        <div className="mt-4 p-4 bg-red-50 dark:bg-red-900/10 border border-red-200 dark:border-red-800/50 rounded-lg">
           <div className="flex items-start justify-between gap-3">
             <div className="flex items-start gap-2">
-              <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+              <AlertCircle className="w-5 h-5 text-red-500 dark:text-red-400 flex-shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-red-800">
+                <p className="text-sm font-medium text-red-800 dark:text-red-300">
                   Some files couldn't be uploaded
                 </p>
-                <ul className="mt-1 text-sm text-red-600 list-disc list-inside">
+                <ul className="mt-1 text-sm text-red-600 dark:text-red-400/80 list-disc list-inside">
                   {errors.map((error, i) => (
                     <li key={i}>{error}</li>
                   ))}

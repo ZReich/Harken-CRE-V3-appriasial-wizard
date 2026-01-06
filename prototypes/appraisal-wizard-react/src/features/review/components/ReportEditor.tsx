@@ -8,6 +8,7 @@ import { useAutoSave, useAutoSaveRecovery } from '../../report-preview/hooks/use
 import { useUndoRedo } from '../../report-preview/hooks/useUndoRedo';
 import { RecoveryDialog } from '../../report-preview/components/dialogs';
 import { PhotoEditorDialog, type PhotoData, type PhotoEdits } from './PhotoEditorDialog';
+import { PropertiesPanelSimplified } from './PropertiesPanelSimplified';
 // Report page components for connected data display
 import { RiskRatingPage } from '../../report-preview/components/pages/RiskRatingPage';
 import { DemographicsPage } from '../../report-preview/components/pages/DemographicsPage';
@@ -67,13 +68,12 @@ function SectionTree({
           {/* Section Row - Pill Style */}
           <div
             onClick={() => onToggleSection(section.id)}
-            className={`flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer transition-all ${
-              section.enabled
-                ? activeSectionId === section.id
-                  ? 'bg-[#0da1c7]/15 border-l-4 border-[#0da1c7]'
-                  : 'bg-[#0da1c7]/10 border-l-4 border-[#0da1c7]/50 hover:bg-[#0da1c7]/15'
-                : 'bg-gray-50 border-l-4 border-transparent opacity-60 hover:opacity-80'
-            }`}
+            className={`flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer transition-all ${section.enabled
+              ? activeSectionId === section.id
+                ? 'bg-[#0da1c7]/15 border-l-4 border-[#0da1c7]'
+                : 'bg-[#0da1c7]/10 border-l-4 border-[#0da1c7]/50 hover:bg-[#0da1c7]/15'
+              : 'bg-gray-50 dark:bg-slate-800/50 border-l-4 border-transparent opacity-60 hover:opacity-80'
+              }`}
           >
             {/* Expand/Collapse Arrow */}
             {section.fields.length > 0 && (
@@ -82,11 +82,10 @@ function SectionTree({
                   e.stopPropagation();
                   onToggleExpand(section.id);
                 }}
-                className={`p-0.5 rounded transition-all ${
-                  section.enabled
-                    ? 'text-[#0da1c7] hover:bg-[#0da1c7]/20'
-                    : 'text-gray-400 hover:bg-gray-200'
-                } ${section.expanded ? 'rotate-90' : ''}`}
+                className={`p-0.5 rounded transition-all ${section.enabled
+                  ? 'text-[#0da1c7] hover:bg-[#0da1c7]/20'
+                  : 'text-gray-400 hover:bg-gray-200 dark:hover:bg-slate-700'
+                  } ${section.expanded ? 'rotate-90' : ''}`}
               >
                 <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -103,17 +102,16 @@ function SectionTree({
                   onScrollToSection(section.id);
                 }
               }}
-              className={`flex-1 text-sm transition-colors ${
-                section.enabled
-                  ? activeSectionId === section.id
-                    ? 'text-[#0da1c7] font-semibold'
-                    : 'text-gray-800 font-medium'
-                  : 'text-gray-400'
-              }`}
+              className={`flex-1 text-sm transition-colors ${section.enabled
+                ? activeSectionId === section.id
+                  ? 'text-[#0da1c7] font-semibold'
+                  : 'text-gray-800 dark:text-gray-200 font-medium'
+                : 'text-gray-400'
+                }`}
             >
               {section.label}
             </span>
-            
+
             {/* Enable/Disable indicator */}
             <span className={`w-2 h-2 rounded-full flex-shrink-0 ${section.enabled ? 'bg-green-500' : 'bg-gray-300'}`} />
           </div>
@@ -125,23 +123,20 @@ function SectionTree({
                 <div
                   key={field.id}
                   onClick={() => onToggleField(section.id, field.id)}
-                  className={`flex items-center gap-2.5 px-3 py-1.5 rounded-md cursor-pointer transition-all ${
-                    field.enabled
-                      ? 'bg-[#0da1c7]/5 hover:bg-[#0da1c7]/10'
-                      : 'bg-transparent hover:bg-gray-50'
-                  }`}
+                  className={`flex items-center gap-2.5 px-3 py-1.5 rounded-md cursor-pointer transition-all ${field.enabled
+                    ? 'bg-[#0da1c7]/5 hover:bg-[#0da1c7]/10'
+                    : 'bg-transparent hover:bg-gray-50 dark:hover:bg-slate-700/50'
+                    }`}
                 >
                   {/* Dot Indicator */}
                   <span
-                    className={`w-2 h-2 rounded-full flex-shrink-0 transition-colors ${
-                      field.enabled ? 'bg-[#0da1c7]' : 'bg-gray-300'
-                    }`}
+                    className={`w-2 h-2 rounded-full flex-shrink-0 transition-colors ${field.enabled ? 'bg-[#0da1c7]' : 'bg-gray-300'
+                      }`}
                   />
                   {/* Field Label */}
                   <span
-                    className={`text-xs transition-colors ${
-                      field.enabled ? 'text-gray-700' : 'text-gray-400'
-                    }`}
+                    className={`text-xs transition-colors ${field.enabled ? 'text-gray-700 dark:text-gray-300' : 'text-gray-400'
+                      }`}
                   >
                     {field.label}
                   </span>
@@ -193,14 +188,14 @@ function PhotoSlot({ photo, placeholder, aspectRatio = 'auto', className = '', o
 
   if (photo?.url) {
     return (
-      <div 
+      <div
         className={`relative overflow-hidden rounded-lg cursor-pointer group ${aspectClasses[aspectRatio]} ${className} ${selected ? 'ring-2 ring-[#0da1c7]' : ''}`}
         onClick={onSelect}
         onDoubleClick={onDoubleClick}
       >
-        <img 
-          src={photo.url} 
-          alt={displayCaption || ''} 
+        <img
+          src={photo.url}
+          alt={displayCaption || ''}
           className="w-full h-full object-cover transition-transform"
           style={transformStyle}
         />
@@ -218,7 +213,7 @@ function PhotoSlot({ photo, placeholder, aspectRatio = 'auto', className = '', o
   }
 
   return (
-    <div 
+    <div
       className={`bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center rounded-lg cursor-pointer ${aspectClasses[aspectRatio]} ${className} ${selected ? 'ring-2 ring-[#0da1c7]' : ''}`}
       onClick={onSelect}
       onDoubleClick={onDoubleClick}
@@ -261,7 +256,7 @@ function ReportPageWrapper({ section, pageNumber, children, sidebarLabel }: Repo
         {/* Content */}
         <div className="relative">
           {children}
-          
+
           {/* Page Footer */}
           <div className="absolute bottom-4 right-8 text-xs text-gray-400 flex items-center gap-4">
             <span>ROVE Valuations</span>
@@ -275,8 +270,8 @@ function ReportPageWrapper({ section, pageNumber, children, sidebarLabel }: Repo
 }
 
 // Cover Page with Real Data
-function CoverPageReal({ 
-  selectedElement, 
+function CoverPageReal({
+  selectedElement,
   onSelectElement,
   onContentChange,
   editedContent,
@@ -284,8 +279,9 @@ function CoverPageReal({
   subjectData,
   reconciliationData,
   coverPhoto: coverPhotoData,
-}: { 
-  selectedElement: string | null; 
+  fieldVisibility,
+}: {
+  selectedElement: string | null;
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
   editedContent?: Record<string, string>;
@@ -293,16 +289,20 @@ function CoverPageReal({
   subjectData?: import('../../../types').SubjectData;
   reconciliationData?: import('../../../types').ReconciliationData | null;
   coverPhoto?: import('../../../types').CoverPhotoData;
+  fieldVisibility?: Record<string, boolean>;
 }) {
   const fallbackData = sampleAppraisalData;
   const coverPhoto = coverPhotoData?.preview ? { url: coverPhotoData.preview, caption: coverPhotoData.caption || 'Cover Photo' } : fallbackData.photos.find(p => p.category === 'cover');
-  const handleContentChange = onContentChange || (() => {});
+  const handleContentChange = onContentChange || (() => { });
   const getContent = (id: string, defaultVal: string) => editedContent?.[id] ?? defaultVal;
   const getStyle = (id: string) => getAppliedStyle?.(id) || {};
   
+  // Field visibility helper - returns true if field is visible (defaults to true if not set)
+  const isVisible = (fieldId: string) => fieldVisibility?.[fieldId] !== false;
+
   // Use wizard state or fall back to sample data
   const propertyName = subjectData?.propertyName || fallbackData.property.name;
-  const fullAddress = subjectData?.address ? 
+  const fullAddress = subjectData?.address ?
     `${subjectData.address.street}, ${subjectData.address.city}, ${subjectData.address.state} ${subjectData.address.zip}` :
     fallbackData.property.fullAddress;
   const effectiveDate = subjectData?.effectiveDate || fallbackData.assignment.effectiveDate;
@@ -312,7 +312,7 @@ function CoverPageReal({
       <div className="flex flex-col h-full" style={{ minHeight: '11in' }}>
         {/* Header with logo */}
         <div className="p-8 pb-4 flex justify-between items-start">
-          <div 
+          <div
             onClick={() => onSelectElement('cover_logo')}
             className={`cursor-pointer transition-all ${selectedElement === 'cover_logo' ? 'ring-2 ring-[#0da1c7] rounded' : ''}`}
           >
@@ -324,91 +324,103 @@ function CoverPageReal({
           </div>
         </div>
 
-        {/* Title Section */}
+        {/* Title Section - conditionally rendered */}
         <div className="px-12 py-6">
-          <EditableElement
-            elementId="cover_title"
-            content={getContent('cover_title', propertyName)}
-            selectedElement={selectedElement}
-            onSelectElement={onSelectElement}
-            onContentChange={handleContentChange}
-            as="h1"
-            className="text-4xl font-light text-emerald-700 leading-tight mb-2"
-            appliedStyle={getStyle('cover_title')}
-          />
-          <EditableElement
-            elementId="cover_address"
-            content={getContent('cover_address', fullAddress)}
-            selectedElement={selectedElement}
-            onSelectElement={onSelectElement}
-            onContentChange={handleContentChange}
-            as="p"
-            className="text-xl text-gray-600"
-            appliedStyle={getStyle('cover_address')}
-          />
+          {isVisible('cover_title') && (
+            <EditableElement
+              elementId="cover_title"
+              content={getContent('cover_title', propertyName)}
+              selectedElement={selectedElement}
+              onSelectElement={onSelectElement}
+              onContentChange={handleContentChange}
+              as="h1"
+              className="text-4xl font-light text-emerald-700 leading-tight mb-2"
+              appliedStyle={getStyle('cover_title')}
+            />
+          )}
+          {isVisible('cover_address') && (
+            <EditableElement
+              elementId="cover_address"
+              content={getContent('cover_address', fullAddress)}
+              selectedElement={selectedElement}
+              onSelectElement={onSelectElement}
+              onContentChange={handleContentChange}
+              as="p"
+              className="text-xl text-gray-600"
+              appliedStyle={getStyle('cover_address')}
+            />
+          )}
         </div>
 
-        {/* Cover Photo */}
-        <div 
-          className="flex-1 mx-8 mb-4"
-          onClick={() => onSelectElement('cover_photo')}
-        >
-          <div className={`h-full rounded-lg overflow-hidden ${selectedElement === 'cover_photo' ? 'ring-2 ring-[#0da1c7]' : ''}`}>
-            {coverPhoto ? (
-              <img 
-                src={coverPhoto.url} 
-                alt={coverPhoto.caption}
-                className="w-full h-full object-cover"
-              />
-            ) : (
-              <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
-                <div className="text-center text-gray-500">
-                  <svg className="w-16 h-16 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                  <p className="text-sm">Cover Photo</p>
+        {/* Cover Photo - conditionally rendered */}
+        {isVisible('cover_image') && (
+          <div
+            className="flex-1 mx-8 mb-4"
+            onClick={() => onSelectElement('cover_photo')}
+          >
+            <div className={`h-full rounded-lg overflow-hidden ${selectedElement === 'cover_photo' ? 'ring-2 ring-[#0da1c7]' : ''}`}>
+              {coverPhoto ? (
+                <img
+                  src={coverPhoto.url}
+                  alt={coverPhoto.caption}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
+                  <div className="text-center text-gray-500">
+                    <svg className="w-16 h-16 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                    </svg>
+                    <p className="text-sm">Cover Photo</p>
+                  </div>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
-        </div>
+        )}
 
-        {/* Footer Info */}
-        <div className="bg-emerald-700 text-white px-8 py-6">
-          <div className="grid grid-cols-3 gap-6 text-sm">
-            <div>
-              <div className="text-emerald-200 text-xs uppercase mb-1">Property Type</div>
-              <div className="font-medium">{fallbackData.property.propertySubtype}</div>
-            </div>
-            <div>
-              <div className="text-emerald-200 text-xs uppercase mb-1">Effective Date</div>
-              <div className="font-medium">{effectiveDate}</div>
-            </div>
-            <div>
-              <div className="text-emerald-200 text-xs uppercase mb-1">Final Value</div>
-              <div className="font-medium text-lg">${fallbackData.valuation.asIsValue.toLocaleString()}</div>
+        {/* Footer Info - conditionally rendered */}
+        {isVisible('cover_footer') && (
+          <div className="bg-emerald-700 text-white px-8 py-6">
+            <div className="grid grid-cols-3 gap-6 text-sm">
+              <div>
+                <div className="text-emerald-200 text-xs uppercase mb-1">Property Type</div>
+                <div className="font-medium">{fallbackData.property.propertySubtype}</div>
+              </div>
+              <div>
+                <div className="text-emerald-200 text-xs uppercase mb-1">Effective Date</div>
+                <div className="font-medium">{effectiveDate}</div>
+              </div>
+              <div>
+                <div className="text-emerald-200 text-xs uppercase mb-1">Final Value</div>
+                <div className="font-medium text-lg">${fallbackData.valuation.asIsValue.toLocaleString()}</div>
+              </div>
             </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
 }
 
 // Letter of Transmittal Page
-function LetterPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, subjectData }: { 
-  selectedElement: string | null; 
+function LetterPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, subjectData, fieldVisibility }: {
+  selectedElement: string | null;
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
   editedContent?: Record<string, string>;
   getAppliedStyle?: (elementId: string) => React.CSSProperties;
   subjectData?: import('../../../types').SubjectData;
+  fieldVisibility?: Record<string, boolean>;
 }) {
   const fallbackData = sampleAppraisalData;
-  const handleContentChange = onContentChange || (() => {});
+  const handleContentChange = onContentChange || (() => { });
   const getContent = (id: string, defaultVal: string) => editedContent?.[id] ?? defaultVal;
   const getStyle = (id: string) => getAppliedStyle?.(id) || {};
   
+  // Field visibility helper
+  const isVisible = (fieldId: string) => fieldVisibility?.[fieldId] !== false;
+
   // Use wizard state or fall back to sample data
   const propertyName = subjectData?.propertyName || fallbackData.property.name;
   const effectiveDate = subjectData?.effectiveDate || fallbackData.assignment.effectiveDate;
@@ -417,91 +429,107 @@ function LetterPage({ selectedElement, onSelectElement, onContentChange, editedC
   return (
     <ReportPageWrapper section={{ id: 'letter', label: 'Letter of Transmittal', enabled: true, expanded: false, fields: [], type: 'letter' }} pageNumber={1}>
       <div className="p-12">
-        <div className="mb-8">
-          <div className="text-sm text-gray-500 mb-6">{reportDate}</div>
-          
-          <div className="mb-6">
+        {/* Client Information - conditionally rendered */}
+        {isVisible('letter_client') && (
+          <div className="mb-8">
+            <div className="text-sm text-gray-500 mb-6">{reportDate}</div>
+
+            <div className="mb-6">
+              <EditableElement
+                elementId="letter_client"
+                content={getContent('letter_client', fallbackData.assignment.client)}
+                selectedElement={selectedElement}
+                onSelectElement={onSelectElement}
+                onContentChange={handleContentChange}
+                as="div"
+                className="font-semibold text-gray-800"
+                appliedStyle={getStyle('letter_client')}
+              />
+              <EditableElement
+                elementId="letter_client_address"
+                content={getContent('letter_client_address', fallbackData.assignment.clientAddress)}
+                selectedElement={selectedElement}
+                onSelectElement={onSelectElement}
+                onContentChange={handleContentChange}
+                as="div"
+                className="text-sm text-gray-600"
+                appliedStyle={getStyle('letter_client_address')}
+              />
+            </div>
+
+            <div className="text-sm text-gray-600 mb-6">
+              <span className="font-semibold">RE: </span>
+              Appraisal of {propertyName}
+            </div>
+          </div>
+        )}
+
+        {/* Letter Body - conditionally rendered */}
+        {isVisible('letter_body') && (
+          <div className="text-sm text-gray-700 leading-relaxed space-y-4">
             <EditableElement
-              elementId="letter_client"
-              content={getContent('letter_client', fallbackData.assignment.client)}
+              elementId="letter_greeting"
+              content={getContent('letter_greeting', 'Dear Client:')}
               selectedElement={selectedElement}
               onSelectElement={onSelectElement}
               onContentChange={handleContentChange}
-              as="div"
-              className="font-semibold text-gray-800"
-              appliedStyle={getStyle('letter_client')}
+              as="p"
+              appliedStyle={getStyle('letter_greeting')}
             />
             <EditableElement
-              elementId="letter_client_address"
-              content={getContent('letter_client_address', fallbackData.assignment.clientAddress)}
+              elementId="letter_intro"
+              content={getContent('letter_intro', `At your request, we have prepared an appraisal report on the above referenced property. This is an Appraisal Report that is intended to comply with the reporting requirements set forth under Standards Rule 2-2(a) of the Uniform Standards of Professional Appraisal Practice.`)}
               selectedElement={selectedElement}
               onSelectElement={onSelectElement}
               onContentChange={handleContentChange}
-              as="div"
-              className="text-sm text-gray-600"
-              appliedStyle={getStyle('letter_client_address')}
+              as="p"
+              appliedStyle={getStyle('letter_intro')}
+            />
+            <p>
+              <strong>Intended Use:</strong> {subjectData?.appraisalPurpose || fallbackData.assignment.intendedUse}
+            </p>
+            <p>
+              <strong>Interest Appraised:</strong> {subjectData?.propertyInterest || fallbackData.assignment.interestValued}
+            </p>
+            <EditableElement
+              elementId="letter_conclusion_intro"
+              content={getContent('letter_conclusion_intro', `Based on my analysis and subject to the assumptions and limiting conditions in this report, my opinion of the market value of the subject property, as of ${effectiveDate}, is:`)}
+              selectedElement={selectedElement}
+              onSelectElement={onSelectElement}
+              onContentChange={handleContentChange}
+              as="p"
+              appliedStyle={getStyle('letter_conclusion_intro')}
             />
           </div>
+        )}
 
-          <div className="text-sm text-gray-600 mb-6">
-            <span className="font-semibold">RE: </span>
-            Appraisal of {propertyName}
-          </div>
-        </div>
-
-        <div className="text-sm text-gray-700 leading-relaxed space-y-4">
-          <EditableElement
-            elementId="letter_greeting"
-            content={getContent('letter_greeting', 'Dear Client:')}
-            selectedElement={selectedElement}
-            onSelectElement={onSelectElement}
-            onContentChange={handleContentChange}
-            as="p"
-            appliedStyle={getStyle('letter_greeting')}
-          />
-          <EditableElement
-            elementId="letter_intro"
-            content={getContent('letter_intro', `At your request, we have prepared an appraisal report on the above referenced property. This is an Appraisal Report that is intended to comply with the reporting requirements set forth under Standards Rule 2-2(a) of the Uniform Standards of Professional Appraisal Practice.`)}
-            selectedElement={selectedElement}
-            onSelectElement={onSelectElement}
-            onContentChange={handleContentChange}
-            as="p"
-            appliedStyle={getStyle('letter_intro')}
-          />
-          <p>
-            <strong>Intended Use:</strong> {subjectData?.appraisalPurpose || fallbackData.assignment.intendedUse}
-          </p>
-          <p>
-            <strong>Interest Appraised:</strong> {subjectData?.propertyInterest || fallbackData.assignment.interestValued}
-          </p>
-          <EditableElement
-            elementId="letter_conclusion_intro"
-            content={getContent('letter_conclusion_intro', `Based on my analysis and subject to the assumptions and limiting conditions in this report, my opinion of the market value of the subject property, as of ${effectiveDate}, is:`)}
-            selectedElement={selectedElement}
-            onSelectElement={onSelectElement}
-            onContentChange={handleContentChange}
-            as="p"
-            appliedStyle={getStyle('letter_conclusion_intro')}
-          />
+        {/* Value Conclusion - conditionally rendered */}
+        {isVisible('letter_value') && (
           <div className="text-center py-6 bg-gray-50 rounded-lg my-6">
             <div className="text-sm text-gray-500 uppercase mb-2">Market Value Conclusion</div>
             <div className="text-4xl font-bold text-emerald-700">${fallbackData.valuation.asIsValue.toLocaleString()}</div>
           </div>
-          <p>Respectfully submitted,</p>
-          <div className="mt-8">
-            <div className="font-semibold">{subjectData?.inspectorName || fallbackData.assignment.appraiser}</div>
-            <div className="text-gray-600">{subjectData?.inspectorLicense || fallbackData.assignment.appraiserLicense}</div>
-            <div className="text-gray-600">{fallbackData.assignment.appraiserCompany}</div>
+        )}
+
+        {/* Signature - conditionally rendered */}
+        {isVisible('letter_signature') && (
+          <div className="text-sm text-gray-700 leading-relaxed">
+            <p>Respectfully submitted,</p>
+            <div className="mt-8">
+              <div className="font-semibold">{subjectData?.inspectorName || fallbackData.assignment.appraiser}</div>
+              <div className="text-gray-600">{subjectData?.inspectorLicense || fallbackData.assignment.appraiserLicense}</div>
+              <div className="text-gray-600">{fallbackData.assignment.appraiserCompany}</div>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </ReportPageWrapper>
   );
 }
 
 // Executive Summary Page
-function ExecutiveSummaryPage({ selectedElement, onSelectElement, subjectData, improvementsInventory, reconciliationData }: { 
-  selectedElement: string | null; 
+function ExecutiveSummaryPage({ selectedElement, onSelectElement, subjectData, improvementsInventory, reconciliationData, fieldVisibility }: {
+  selectedElement: string | null;
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
   editedContent?: Record<string, string>;
@@ -509,12 +537,16 @@ function ExecutiveSummaryPage({ selectedElement, onSelectElement, subjectData, i
   subjectData?: import('../../../types').SubjectData;
   improvementsInventory?: import('../../../types').ImprovementsInventory;
   reconciliationData?: import('../../../types').ReconciliationData | null;
+  fieldVisibility?: Record<string, boolean>;
 }) {
   const fallbackData = sampleAppraisalData;
   
+  // Field visibility helper
+  const isVisible = (fieldId: string) => fieldVisibility?.[fieldId] !== false;
+
   // Use wizard state or fall back to sample data
   const propertyName = subjectData?.propertyName || fallbackData.property.name;
-  const fullAddress = subjectData?.address ? 
+  const fullAddress = subjectData?.address ?
     `${subjectData.address.street}, ${subjectData.address.city}, ${subjectData.address.state} ${subjectData.address.zip}` :
     fallbackData.property.fullAddress;
   const taxId = subjectData?.taxId || fallbackData.property.taxId;
@@ -564,61 +596,78 @@ function ExecutiveSummaryPage({ selectedElement, onSelectElement, subjectData, i
 
         <h2 className="text-2xl font-light text-gray-800 mb-8 mt-8">Executive Summary</h2>
 
-        {/* Property Summary Table */}
-        <div 
-          onClick={() => onSelectElement('summary_property')}
-          className={`mb-8 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'summary_property' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
-        >
-          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Property Identification</h3>
-          <table className="w-full text-sm">
-            <tbody>
-              {summaryRows.map((row, idx) => (
-                <tr key={idx} className="border-b border-gray-100">
-                  <td className="py-2 pr-4 text-gray-600 w-1/3">{row.label}</td>
-                  <td className="py-2 text-gray-800 font-medium">{row.value}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        {/* Property Summary Table - conditionally rendered */}
+        {isVisible('exec_property') && (
+          <div
+            onClick={() => onSelectElement('summary_property')}
+            className={`mb-8 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'summary_property' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
+          >
+            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Property Identification</h3>
+            <table className="w-full text-sm">
+              <tbody>
+                {summaryRows.map((row, idx) => (
+                  <tr key={idx} className="border-b border-gray-100">
+                    <td className="py-2 pr-4 text-gray-600 w-1/3">{row.label}</td>
+                    <td className="py-2 text-gray-800 font-medium">{row.value}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
 
-        {/* Value Summary */}
-        <div 
-          onClick={() => onSelectElement('summary_values')}
-          className={`p-4 -m-4 rounded cursor-pointer ${selectedElement === 'summary_values' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
-        >
-          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Value Conclusions</h3>
-          <table className="w-full text-sm">
-            <tbody>
-              {valueRows.map((row, idx) => (
-                <tr key={idx} className={`border-b border-gray-100 ${row.emphasized ? 'bg-emerald-50' : ''}`}>
-                  <td className={`py-2 pr-4 w-1/2 ${row.emphasized ? 'font-semibold text-emerald-800' : 'text-gray-600'}`}>{row.label}</td>
-                  <td className={`py-2 text-right ${row.emphasized ? 'font-bold text-emerald-700 text-xl' : 'text-gray-800 font-medium'}`}>{row.value}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        {/* Value Summary - conditionally rendered */}
+        {isVisible('exec_values') && (
+          <div
+            onClick={() => onSelectElement('summary_values')}
+            className={`p-4 -m-4 rounded cursor-pointer ${selectedElement === 'summary_values' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
+          >
+            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Value Conclusions</h3>
+            <table className="w-full text-sm">
+              <tbody>
+                {valueRows.map((row, idx) => (
+                  <tr key={idx} className={`border-b border-gray-100 ${row.emphasized ? 'bg-emerald-50' : ''}`}>
+                    <td className={`py-2 pr-4 w-1/2 ${row.emphasized ? 'font-semibold text-emerald-800' : 'text-gray-600'}`}>{row.label}</td>
+                    <td className={`py-2 text-right ${row.emphasized ? 'font-bold text-emerald-700 text-xl' : 'text-gray-800 font-medium'}`}>{row.value}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+
+        {/* Key Dates - conditionally rendered */}
+        {isVisible('exec_dates') && (
+          <div className="mt-6 text-sm text-gray-500">
+            <span>Effective Date: {effectiveDate}</span>
+            <span className="mx-2">|</span>
+            <span>Inspection: {inspectionDate}</span>
+          </div>
+        )}
       </div>
     </ReportPageWrapper>
   );
 }
 
 // Property Description Page with Photos
-function PropertyDescriptionPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, subjectData, improvementsInventory }: { 
-  selectedElement: string | null; 
+function PropertyDescriptionPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, subjectData, improvementsInventory, fieldVisibility }: {
+  selectedElement: string | null;
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
   editedContent?: Record<string, string>;
   getAppliedStyle?: (elementId: string) => React.CSSProperties;
   subjectData?: import('../../../types').SubjectData;
   improvementsInventory?: import('../../../types').ImprovementsInventory;
+  fieldVisibility?: Record<string, boolean>;
 }) {
   const fallbackData = sampleAppraisalData;
   const exteriorPhotos = fallbackData.photos.filter(p => p.category === 'exterior').slice(0, 3);
-  const handleContentChange = onContentChange || (() => {});
+  const handleContentChange = onContentChange || (() => { });
   const getContent = (id: string, defaultVal: string) => editedContent?.[id] ?? defaultVal;
   const getStyle = (id: string) => getAppliedStyle?.(id) || {};
+  
+  // Field visibility helper
+  const isVisible = (fieldId: string) => fieldVisibility?.[fieldId] !== false;
 
   // Get site data from wizard state or fall back to sample
   const siteArea = subjectData?.siteArea || fallbackData.site.landArea;
@@ -634,7 +683,7 @@ function PropertyDescriptionPage({ selectedElement, onSelectElement, onContentCh
     subjectData?.telecom
   ].filter(Boolean).join(', ') || fallbackData.site.utilities.join(', ');
   const siteNarrative = subjectData?.siteDescriptionNarrative || '';
-  
+
   // Area/neighborhood narratives from wizard state
   const areaDescription = subjectData?.areaDescription || '';
   const neighborhoodCharacteristics = subjectData?.neighborhoodCharacteristics || '';
@@ -660,7 +709,7 @@ function PropertyDescriptionPage({ selectedElement, onSelectElement, onContentCh
 
         {/* Area/Neighborhood Description */}
         {(areaDescription || neighborhoodCharacteristics) && (
-          <div 
+          <div
             onClick={() => onSelectElement('property_area')}
             className={`mb-6 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'property_area' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
           >
@@ -692,95 +741,105 @@ function PropertyDescriptionPage({ selectedElement, onSelectElement, onContentCh
           </div>
         )}
 
-        {/* Photos Grid */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
-          {exteriorPhotos.map((photo) => (
-            <PhotoSlot
-              key={photo.id}
-              photo={photo}
-              aspectRatio="4/3"
-              selected={selectedElement === `photo_${photo.id}`}
-              onSelect={() => onSelectElement(`photo_${photo.id}`)}
-            />
-          ))}
-        </div>
+        {/* Photos Grid - conditionally rendered */}
+        {isVisible('prop_photos') && (
+          <div className="grid grid-cols-3 gap-4 mb-8">
+            {exteriorPhotos.map((photo) => (
+              <PhotoSlot
+                key={photo.id}
+                photo={photo}
+                aspectRatio="4/3"
+                selected={selectedElement === `photo_${photo.id}`}
+                onSelect={() => onSelectElement(`photo_${photo.id}`)}
+              />
+            ))}
+          </div>
+        )}
 
-        {/* Site Description */}
-        <div 
-          onClick={() => onSelectElement('property_site')}
-          className={`mb-6 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'property_site' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
-        >
-          <h3 className="text-lg font-semibold text-gray-800 mb-3">Site Description</h3>
-          <div className="grid grid-cols-2 gap-4 text-sm mb-4">
-            <div>
-              <span className="text-gray-500">Land Area:</span>
-              <span className="ml-2 text-gray-800">{siteArea} {siteAreaUnit}</span>
+        {/* Site Description - conditionally rendered */}
+        {isVisible('prop_site') && (
+          <div
+            onClick={() => onSelectElement('property_site')}
+            className={`mb-6 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'property_site' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
+          >
+            <h3 className="text-lg font-semibold text-gray-800 mb-3">Site Description</h3>
+            <div className="grid grid-cols-2 gap-4 text-sm mb-4">
+              <div>
+                <span className="text-gray-500">Land Area:</span>
+                <span className="ml-2 text-gray-800">{siteArea} {siteAreaUnit}</span>
+              </div>
+              <div>
+                <span className="text-gray-500">Shape:</span>
+                <span className="ml-2 text-gray-800">{shape}</span>
+              </div>
+              <div>
+                <span className="text-gray-500">Frontage:</span>
+                <span className="ml-2 text-gray-800">{frontage}</span>
+              </div>
+              <div>
+                <span className="text-gray-500">Topography:</span>
+                <span className="ml-2 text-gray-800">{topography}</span>
+              </div>
+              <div className="col-span-2">
+                <span className="text-gray-500">Utilities:</span>
+                <span className="ml-2 text-gray-800">{utilities}</span>
+              </div>
             </div>
-            <div>
-              <span className="text-gray-500">Shape:</span>
-              <span className="ml-2 text-gray-800">{shape}</span>
-            </div>
-            <div>
-              <span className="text-gray-500">Frontage:</span>
-              <span className="ml-2 text-gray-800">{frontage}</span>
-            </div>
-            <div>
-              <span className="text-gray-500">Topography:</span>
-              <span className="ml-2 text-gray-800">{topography}</span>
-            </div>
-            <div className="col-span-2">
-              <span className="text-gray-500">Utilities:</span>
-              <span className="ml-2 text-gray-800">{utilities}</span>
+            {/* Site Description Narrative */}
+            {siteNarrative && (
+              <EditableElement
+                elementId="property_site_narrative"
+                content={getContent('property_site_narrative', siteNarrative)}
+                selectedElement={selectedElement}
+                onSelectElement={onSelectElement}
+                onContentChange={handleContentChange}
+                as="p"
+                className="text-gray-700 text-sm leading-relaxed mt-4"
+                appliedStyle={getStyle('property_site_narrative')}
+              />
+            )}
+          </div>
+        )}
+
+        {/* Improvements - conditionally rendered */}
+        {isVisible('prop_improvements') && (
+          <div
+            onClick={() => onSelectElement('property_improvements')}
+            className={`p-4 -m-4 rounded cursor-pointer ${selectedElement === 'property_improvements' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
+          >
+            <h3 className="text-lg font-semibold text-gray-800 mb-3">Improvements</h3>
+            <div className="grid grid-cols-2 gap-4 text-sm">
+              <div><span className="text-gray-500">Year Built:</span><span className="ml-2 text-gray-800">{yearBuilt}</span></div>
+              <div><span className="text-gray-500">Building Type:</span><span className="ml-2 text-gray-800">{buildingType}</span></div>
+              <div><span className="text-gray-500">Gross Building Area:</span><span className="ml-2 text-gray-800">{typeof grossBuildingArea === 'number' ? grossBuildingArea.toLocaleString() : grossBuildingArea} SF</span></div>
+              <div><span className="text-gray-500">Construction:</span><span className="ml-2 text-gray-800">{construction}</span></div>
+              <div><span className="text-gray-500">Condition:</span><span className="ml-2 text-gray-800">{condition}</span></div>
+              <div><span className="text-gray-500">Quality:</span><span className="ml-2 text-gray-800">{quality}</span></div>
             </div>
           </div>
-          {/* Site Description Narrative */}
-          {siteNarrative && (
-            <EditableElement
-              elementId="property_site_narrative"
-              content={getContent('property_site_narrative', siteNarrative)}
-              selectedElement={selectedElement}
-              onSelectElement={onSelectElement}
-              onContentChange={handleContentChange}
-              as="p"
-              className="text-gray-700 text-sm leading-relaxed mt-4"
-              appliedStyle={getStyle('property_site_narrative')}
-            />
-          )}
-        </div>
-
-        {/* Improvements */}
-        <div 
-          onClick={() => onSelectElement('property_improvements')}
-          className={`p-4 -m-4 rounded cursor-pointer ${selectedElement === 'property_improvements' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
-        >
-          <h3 className="text-lg font-semibold text-gray-800 mb-3">Improvements</h3>
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div><span className="text-gray-500">Year Built:</span><span className="ml-2 text-gray-800">{yearBuilt}</span></div>
-            <div><span className="text-gray-500">Building Type:</span><span className="ml-2 text-gray-800">{buildingType}</span></div>
-            <div><span className="text-gray-500">Gross Building Area:</span><span className="ml-2 text-gray-800">{typeof grossBuildingArea === 'number' ? grossBuildingArea.toLocaleString() : grossBuildingArea} SF</span></div>
-            <div><span className="text-gray-500">Construction:</span><span className="ml-2 text-gray-800">{construction}</span></div>
-            <div><span className="text-gray-500">Condition:</span><span className="ml-2 text-gray-800">{condition}</span></div>
-            <div><span className="text-gray-500">Quality:</span><span className="ml-2 text-gray-800">{quality}</span></div>
-          </div>
-        </div>
+        )}
       </div>
     </ReportPageWrapper>
   );
 }
 
 // HBU Page
-function HBUPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, hbuAnalysis }: { 
-  selectedElement: string | null; 
+function HBUPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, hbuAnalysis, fieldVisibility }: {
+  selectedElement: string | null;
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
   editedContent?: Record<string, string>;
   getAppliedStyle?: (elementId: string) => React.CSSProperties;
   hbuAnalysis?: import('../../../types').HBUAnalysis;
+  fieldVisibility?: Record<string, boolean>;
 }) {
   const fallbackData = sampleAppraisalData;
-  const handleContentChange = onContentChange || (() => {});
+  const handleContentChange = onContentChange || (() => { });
   const getContent = (id: string, defaultVal: string) => editedContent?.[id] ?? defaultVal;
   const getStyle = (id: string) => getAppliedStyle?.(id) || {};
+  
+  // Field visibility helper
+  const isVisible = (fieldId: string) => fieldVisibility?.[fieldId] !== false;
 
   // Use wizard state HBU data or fall back to sample data
   const asVacant = {
@@ -910,17 +969,21 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
 }
 
 // Market Analysis Page
-function MarketAnalysisPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, marketAnalysis }: { 
-  selectedElement: string | null; 
+function MarketAnalysisPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, marketAnalysis, fieldVisibility }: {
+  selectedElement: string | null;
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
   editedContent?: Record<string, string>;
   getAppliedStyle?: (elementId: string) => React.CSSProperties;
   marketAnalysis?: import('../../../types').MarketAnalysisData;
+  fieldVisibility?: Record<string, boolean>;
 }) {
-  const handleContentChange = onContentChange || (() => {});
+  const handleContentChange = onContentChange || (() => { });
   const getContent = (id: string, defaultVal: string) => editedContent?.[id] ?? defaultVal;
   const getStyle = (id: string) => getAppliedStyle?.(id) || {};
+  
+  // Field visibility helper (for future use)
+  const isVisible = (fieldId: string) => fieldVisibility?.[fieldId] !== false;
 
   const defaultMarketCycle = 'The current market cycle is in an expansion phase, characterized by increasing demand, rising prices, and active development activity in the subject\'s market area.';
   const defaultSupplyDemand = 'The local market demonstrates balanced supply and demand conditions. Current vacancy rates of approximately 4.8% are below historical averages, indicating healthy absorption of available space.';
@@ -931,8 +994,8 @@ function MarketAnalysisPage({ selectedElement, onSelectElement, onContentChange,
   const avgRent = marketAnalysis?.demandMetrics?.averageRent ?? 0;
   const rentGrowth = marketAnalysis?.demandMetrics?.rentGrowth ?? 0;
   const marketNarrative = marketAnalysis?.narrative || '';
-  const marketTrendLabel = marketAnalysis?.marketTrends?.overallTrend === 'improving' ? 'Improving' : 
-                          marketAnalysis?.marketTrends?.overallTrend === 'declining' ? 'Declining' : 'Stable';
+  const marketTrendLabel = marketAnalysis?.marketTrends?.overallTrend === 'improving' ? 'Improving' :
+    marketAnalysis?.marketTrends?.overallTrend === 'declining' ? 'Declining' : 'Stable';
 
   return (
     <ReportPageWrapper section={{ id: 'market-analysis', label: 'Market Analysis', enabled: true, expanded: false, fields: [], type: 'narrative' }} pageNumber={5} sidebarLabel="02C">
@@ -1036,8 +1099,8 @@ function MarketAnalysisPage({ selectedElement, onSelectElement, onContentChange,
 }
 
 // Sales Comparison Page with Photos
-function SalesComparisonPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, salesComparisonData }: { 
-  selectedElement: string | null; 
+function SalesComparisonPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, salesComparisonData }: {
+  selectedElement: string | null;
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
   editedContent?: Record<string, string>;
@@ -1045,10 +1108,10 @@ function SalesComparisonPage({ selectedElement, onSelectElement, onContentChange
   salesComparisonData?: import('../../../types').SalesComparisonData;
 }) {
   const data = sampleAppraisalData;
-  const handleContentChange = onContentChange || (() => {});
+  const handleContentChange = onContentChange || (() => { });
   const getContent = (id: string, defaultVal: string) => editedContent?.[id] ?? defaultVal;
   const getStyle = (id: string) => getAppliedStyle?.(id) || {};
-  
+
   // Get narrative from wizard state
   const reconciliationNarrative = salesComparisonData?.reconciliationText || '';
   const concludedValue = salesComparisonData?.concludedValue;
@@ -1065,7 +1128,7 @@ function SalesComparisonPage({ selectedElement, onSelectElement, onContentChange
         <p className="text-sm text-gray-600 mb-6">{data.salesComparison.methodology}</p>
 
         {/* Comparison Grid */}
-        <div 
+        <div
           onClick={() => onSelectElement('sales_grid')}
           className={`rounded cursor-pointer ${selectedElement === 'sales_grid' ? 'ring-2 ring-[#0da1c7]' : ''}`}
         >
@@ -1224,8 +1287,8 @@ function SalesComparisonPage({ selectedElement, onSelectElement, onContentChange
 }
 
 // Income Approach Page
-function IncomeApproachPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, incomeApproachData }: { 
-  selectedElement: string | null; 
+function IncomeApproachPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, incomeApproachData }: {
+  selectedElement: string | null;
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
   editedContent?: Record<string, string>;
@@ -1233,10 +1296,10 @@ function IncomeApproachPage({ selectedElement, onSelectElement, onContentChange,
   incomeApproachData?: import('../../../features/income-approach/types').IncomeApproachState | null;
 }) {
   const data = sampleAppraisalData;
-  const handleContentChange = onContentChange || (() => {});
+  const handleContentChange = onContentChange || (() => { });
   const getContent = (id: string, defaultVal: string) => editedContent?.[id] ?? defaultVal;
   const getStyle = (id: string) => getAppliedStyle?.(id) || {};
-  
+
   // Get narratives from wizard state
   const rentCompNotes = incomeApproachData?.rentCompNotes || '';
   const expenseCompNotes = incomeApproachData?.expenseCompNotes || '';
@@ -1252,7 +1315,7 @@ function IncomeApproachPage({ selectedElement, onSelectElement, onContentChange,
 
         <p className="text-sm text-gray-600 mb-6">{data.incomeApproach.methodology}</p>
 
-        <div 
+        <div
           onClick={() => onSelectElement('income_analysis')}
           className={`p-4 -m-4 rounded cursor-pointer ${selectedElement === 'income_analysis' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
         >
@@ -1338,14 +1401,14 @@ function IncomeApproachPage({ selectedElement, onSelectElement, onContentChange,
 }
 
 // Cost Approach Page
-function CostApproachPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle }: { 
-  selectedElement: string | null; 
+function CostApproachPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle }: {
+  selectedElement: string | null;
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
   editedContent?: Record<string, string>;
   getAppliedStyle?: (elementId: string) => React.CSSProperties;
 }) {
-  const handleContentChange = onContentChange || (() => {});
+  const handleContentChange = onContentChange || (() => { });
   const getContent = (id: string, defaultVal: string) => editedContent?.[id] ?? defaultVal;
   const getStyle = (id: string) => getAppliedStyle?.(id) || {};
   const data = sampleAppraisalData;
@@ -1386,7 +1449,7 @@ The land value of $${data.costApproach.landValue.toLocaleString()} was derived f
         {/* Cost Breakdown Table */}
         <div className="mb-6">
           <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Cost Summary</h3>
-          <div 
+          <div
             onClick={() => onSelectElement('cost_table')}
             className={`p-4 bg-white rounded-lg border border-gray-200 cursor-pointer ${selectedElement === 'cost_table' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
           >
@@ -1452,8 +1515,8 @@ The land value of $${data.costApproach.landValue.toLocaleString()} was derived f
 }
 
 // Reconciliation Page
-function ReconciliationPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, reconciliationData }: { 
-  selectedElement: string | null; 
+function ReconciliationPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, reconciliationData }: {
+  selectedElement: string | null;
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
   editedContent?: Record<string, string>;
@@ -1461,7 +1524,7 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
   reconciliationData?: import('../../../types').ReconciliationData | null;
 }) {
   const data = sampleAppraisalData;
-  const handleContentChange = onContentChange || (() => {});
+  const handleContentChange = onContentChange || (() => { });
   const getContent = (id: string, defaultVal: string) => editedContent?.[id] ?? defaultVal;
   const getStyle = (id: string) => getAppliedStyle?.(id) || {};
 
@@ -1485,7 +1548,7 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
         <h2 className="text-2xl font-light text-gray-800 mb-6 mt-8">Reconciliation of Value</h2>
 
         {/* Value Indications Grid */}
-        <div 
+        <div
           onClick={() => onSelectElement('recon_approaches')}
           className={`mb-6 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'recon_approaches' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
         >
@@ -1512,9 +1575,9 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
         {/* Analysis Section - Restructured for readability */}
         <div className="mb-6">
           <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Analysis</h3>
-          
+
           {/* Value Range Summary */}
-          <div 
+          <div
             onClick={() => onSelectElement('recon_range')}
             className={`mb-4 p-4 bg-slate-50 rounded-lg border-l-4 border-slate-400 cursor-pointer ${selectedElement === 'recon_range' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-slate-100'}`}
           >
@@ -1541,12 +1604,12 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
           </div>
 
           {/* Sales Comparison Approach */}
-          <div 
+          <div
             onClick={() => onSelectElement('recon_sales')}
             className={`mb-4 p-4 bg-emerald-50 rounded-lg border-l-4 border-emerald-500 cursor-pointer ${selectedElement === 'recon_sales' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-emerald-100'}`}
           >
             <h4 className="text-sm font-semibold text-emerald-800 mb-2">
-              Sales Comparison Approach 
+              Sales Comparison Approach
               <span className="ml-2 px-2 py-0.5 bg-emerald-200 text-emerald-700 rounded text-xs font-medium">
                 {data.reconciliation.salesComparisonWeight}% Weight — Primary
               </span>
@@ -1564,12 +1627,12 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
           </div>
 
           {/* Income Approach */}
-          <div 
+          <div
             onClick={() => onSelectElement('recon_income')}
             className={`mb-4 p-4 bg-blue-50 rounded-lg border-l-4 border-blue-400 cursor-pointer ${selectedElement === 'recon_income' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-blue-100'}`}
           >
             <h4 className="text-sm font-semibold text-blue-800 mb-2">
-              Income Approach 
+              Income Approach
               <span className="ml-2 px-2 py-0.5 bg-blue-200 text-blue-700 rounded text-xs font-medium">
                 {data.reconciliation.incomeApproachWeight}% Weight — Secondary
               </span>
@@ -1587,12 +1650,12 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
           </div>
 
           {/* Cost Approach */}
-          <div 
+          <div
             onClick={() => onSelectElement('recon_cost')}
             className={`mb-4 p-4 bg-amber-50 rounded-lg border-l-4 border-amber-400 cursor-pointer ${selectedElement === 'recon_cost' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-amber-100'}`}
           >
             <h4 className="text-sm font-semibold text-amber-800 mb-2">
-              Cost Approach 
+              Cost Approach
               <span className="ml-2 px-2 py-0.5 bg-amber-200 text-amber-700 rounded text-xs font-medium">
                 {data.reconciliation.costApproachWeight}% Weight — Supporting
               </span>
@@ -1611,7 +1674,7 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
 
           {/* Reconciliation Narrative from Wizard */}
           {reconciliationNarrative && (
-            <div 
+            <div
               onClick={() => onSelectElement('recon_narrative')}
               className={`mb-4 p-4 bg-purple-50 rounded-lg border-l-4 border-purple-400 cursor-pointer ${selectedElement === 'recon_narrative' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-purple-100'}`}
             >
@@ -1630,7 +1693,7 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
           )}
 
           {/* Final Conclusion */}
-          <div 
+          <div
             onClick={() => onSelectElement('recon_conclusion')}
             className={`p-4 bg-gray-100 rounded-lg border-l-4 border-gray-500 cursor-pointer ${selectedElement === 'recon_conclusion' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-gray-200'}`}
           >
@@ -1649,7 +1712,7 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
 
           {/* Exposure Time Rationale from Wizard */}
           {exposureRationale && (
-            <div 
+            <div
               onClick={() => onSelectElement('exposure_rationale')}
               className={`mt-4 p-4 bg-slate-50 rounded-lg border-l-4 border-slate-400 cursor-pointer ${selectedElement === 'exposure_rationale' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-slate-100'}`}
             >
@@ -1680,13 +1743,13 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
 }
 
 // Photo Exhibits Page
-function PhotoExhibitsPage({ 
-  selectedElement, 
-  onSelectElement, 
+function PhotoExhibitsPage({
+  selectedElement,
+  onSelectElement,
   onOpenPhotoEditor,
   getPhotoEdits,
-}: { 
-  selectedElement: string | null; 
+}: {
+  selectedElement: string | null;
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
   editedContent?: Record<string, string>;
@@ -1730,14 +1793,14 @@ function PhotoExhibitsPage({
 }
 
 // Table of Contents Page
-function TOCPage({ 
-  selectedElement, 
-  onSelectElement, 
-  enabledSections, 
+function TOCPage({
+  selectedElement,
+  onSelectElement,
+  enabledSections,
   onOpenPhotoEditor,
   getPhotoEdits,
-}: { 
-  selectedElement: string | null; 
+}: {
+  selectedElement: string | null;
   onSelectElement: (id: string) => void;
   enabledSections: ReportSection[];
   onContentChange?: (elementId: string, content: string) => void;
@@ -1761,13 +1824,13 @@ function TOCPage({
       <div className="p-12">
         <h2 className="text-3xl font-light text-emerald-700 mb-12 mt-8">Table of Contents</h2>
 
-        <div 
+        <div
           onClick={() => onSelectElement('toc_entries')}
           className={`space-y-0 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'toc_entries' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
         >
           {tocEntries.map((entry, idx) => (
-            <div 
-              key={idx} 
+            <div
+              key={idx}
               className="flex items-baseline border-b border-dotted border-gray-300 py-3 group"
             >
               <span className="text-gray-800 font-medium flex-shrink-0">{entry.title}</span>
@@ -1800,8 +1863,8 @@ function TOCPage({
 }
 
 // Assumptions & Limiting Conditions Page
-function AssumptionsPage({ selectedElement, onSelectElement }: { 
-  selectedElement: string | null; 
+function AssumptionsPage({ selectedElement, onSelectElement }: {
+  selectedElement: string | null;
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
   editedContent?: Record<string, string>;
@@ -1819,7 +1882,7 @@ function AssumptionsPage({ selectedElement, onSelectElement }: {
         <h2 className="text-2xl font-light text-gray-800 mb-6 mt-8">Assumptions and Limiting Conditions</h2>
 
         {/* Assumptions */}
-        <div 
+        <div
           onClick={() => onSelectElement('assumptions_list')}
           className={`mb-8 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'assumptions_list' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
         >
@@ -1832,7 +1895,7 @@ function AssumptionsPage({ selectedElement, onSelectElement }: {
         </div>
 
         {/* Limiting Conditions */}
-        <div 
+        <div
           onClick={() => onSelectElement('limiting_conditions')}
           className={`p-4 -m-4 rounded cursor-pointer ${selectedElement === 'limiting_conditions' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
         >
@@ -1849,8 +1912,8 @@ function AssumptionsPage({ selectedElement, onSelectElement }: {
 }
 
 // Certification Page
-function CertificationPage({ selectedElement, onSelectElement, subjectData }: { 
-  selectedElement: string | null; 
+function CertificationPage({ selectedElement, onSelectElement, subjectData }: {
+  selectedElement: string | null;
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
   editedContent?: Record<string, string>;
@@ -1858,7 +1921,7 @@ function CertificationPage({ selectedElement, onSelectElement, subjectData }: {
   subjectData?: import('../../../types').SubjectData;
 }) {
   const fallbackData = sampleAppraisalData;
-  
+
   // Use wizard state or fall back to sample data
   const appraiserName = subjectData?.inspectorName || fallbackData.assignment.appraiser;
   const appraiserLicense = subjectData?.inspectorLicense || fallbackData.assignment.appraiserLicense;
@@ -1873,7 +1936,7 @@ function CertificationPage({ selectedElement, onSelectElement, subjectData }: {
 
         <h2 className="text-2xl font-light text-gray-800 mb-6 mt-8">Appraiser's Certification</h2>
 
-        <div 
+        <div
           onClick={() => onSelectElement('certification_intro')}
           className={`mb-6 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'certification_intro' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
         >
@@ -1883,7 +1946,7 @@ function CertificationPage({ selectedElement, onSelectElement, subjectData }: {
         </div>
 
         {/* Certifications List */}
-        <div 
+        <div
           onClick={() => onSelectElement('certifications_list')}
           className={`mb-8 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'certifications_list' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
         >
@@ -1895,7 +1958,7 @@ function CertificationPage({ selectedElement, onSelectElement, subjectData }: {
         </div>
 
         {/* Signature Block */}
-        <div 
+        <div
           onClick={() => onSelectElement('signature_block')}
           className={`mt-12 p-6 border-2 border-gray-200 rounded-lg ${selectedElement === 'signature_block' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
         >
@@ -1998,7 +2061,7 @@ function EditableElement({
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
         className={`w-full border-2 border-[#0da1c7] rounded px-2 py-1 resize-none focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/50 ${className}`}
-        style={{ 
+        style={{
           ...mergedStyle,
           minHeight: '2em',
           height: 'auto',
@@ -2012,11 +2075,10 @@ function EditableElement({
     <Component
       onClick={() => onSelectElement(elementId)}
       onDoubleClick={handleDoubleClick}
-      className={`cursor-pointer transition-all rounded px-1 -mx-1 ${
-        isSelected
-          ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5'
-          : 'hover:bg-gray-50'
-      } ${className}`}
+      className={`cursor-pointer transition-all rounded px-1 -mx-1 ${isSelected
+        ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5'
+        : 'hover:bg-gray-50'
+        } ${className}`}
       style={mergedStyle}
       title="Click to select, double-click to edit"
     >
@@ -2061,7 +2123,7 @@ function PropertiesPanel({ selectedElement, elementStyles, elementContent, onSty
   if (!selectedElement) {
     return (
       <div className="h-full flex items-center justify-center text-center p-8">
-        <div className="text-gray-400">
+        <div className="text-gray-400 dark:text-gray-500">
           <svg className="w-12 h-12 mx-auto mb-3 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
           </svg>
@@ -2075,10 +2137,10 @@ function PropertiesPanel({ selectedElement, elementStyles, elementContent, onSty
   return (
     <div className="h-full flex flex-col">
       {/* Header with Save Status */}
-      <div className="p-4 border-b border-gray-200 bg-gray-50">
+      <div className="p-4 border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800">
         <div className="flex items-center justify-between">
           <div>
-            <div className="text-sm font-bold text-gray-800">Element Properties</div>
+            <div className="text-sm font-bold text-gray-800 dark:text-gray-100">Element Properties</div>
             <div className="text-xs text-gray-500 mt-1 font-mono">{selectedElement}</div>
           </div>
           {isDirty && (
@@ -2102,16 +2164,15 @@ function PropertiesPanel({ selectedElement, elementStyles, elementContent, onSty
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-gray-200">
+      <div className="flex border-b border-gray-200 dark:border-slate-700">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${
-              activeTab === tab.id
-                ? 'text-[#0da1c7] border-b-2 border-[#0da1c7]'
-                : 'text-gray-500 hover:text-gray-700'
-            }`}
+            className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${activeTab === tab.id
+              ? 'text-[#0da1c7] border-b-2 border-[#0da1c7]'
+              : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+              }`}
           >
             {tab.label}
           </button>
@@ -2127,11 +2188,11 @@ function PropertiesPanel({ selectedElement, elementStyles, elementContent, onSty
               <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Typography</h4>
               <div className="space-y-3">
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">Font Family</label>
+                  <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Font Family</label>
                   <select
                     value={elementStyles.fontFamily || 'Montserrat'}
                     onChange={(e) => onStyleChange({ fontFamily: e.target.value })}
-                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                    className="w-full border border-gray-300 dark:border-slate-600 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100"
                   >
                     <option value="Montserrat">Montserrat</option>
                     <option value="Georgia">Georgia</option>
@@ -2180,7 +2241,7 @@ function PropertiesPanel({ selectedElement, elementStyles, elementContent, onSty
                     type="text"
                     value={elementStyles.color || '#1c3643'}
                     onChange={(e) => onStyleChange({ color: e.target.value })}
-                    className="flex-1 border border-gray-300 rounded px-3 py-2 text-sm font-mono focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                    className="flex-1 border border-gray-300 dark:border-slate-600 rounded px-3 py-2 text-sm font-mono focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100"
                   />
                 </div>
               </div>
@@ -2194,11 +2255,10 @@ function PropertiesPanel({ selectedElement, elementStyles, elementContent, onSty
                   <button
                     key={align}
                     onClick={() => onStyleChange({ textAlign: align })}
-                    className={`flex-1 py-2 border rounded text-sm capitalize transition-all ${
-                      elementStyles.textAlign === align
-                        ? 'border-[#0da1c7] bg-[#0da1c7]/10 text-[#0da1c7]'
-                        : 'border-gray-300 hover:border-gray-400'
-                    }`}
+                    className={`flex-1 py-2 border rounded text-sm capitalize transition-all ${elementStyles.textAlign === align
+                      ? 'border-[#0da1c7] bg-[#0da1c7]/10 text-[#0da1c7]'
+                      : 'border-gray-300 dark:border-slate-600 hover:border-gray-400 dark:hover:border-slate-500'
+                      }`}
                   >
                     {align}
                   </button>
@@ -2288,7 +2348,7 @@ function DraggableTextBlock({ block, selected, onSelect, onUpdate, onDelete }: D
   const [dragStart, setDragStart] = useState({ x: 0, y: 0, width: 0, height: 0, blockX: 0, blockY: 0 });
   const blockRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  
+
   // Default placeholder text
   const DEFAULT_TEXT = 'New text block - double-click to edit';
   const isDefaultText = block.content === DEFAULT_TEXT;
@@ -2298,10 +2358,10 @@ function DraggableTextBlock({ block, selected, onSelect, onUpdate, onDelete }: D
     e.stopPropagation();
     onSelect();
     setIsDragging(true);
-    setDragStart({ 
-      x: e.clientX - block.x, 
-      y: e.clientY - block.y, 
-      width: block.width, 
+    setDragStart({
+      x: e.clientX - block.x,
+      y: e.clientY - block.y,
+      width: block.width,
       height: block.height,
       blockX: block.x,
       blockY: block.y,
@@ -2313,10 +2373,10 @@ function DraggableTextBlock({ block, selected, onSelect, onUpdate, onDelete }: D
     e.preventDefault();
     onSelect();
     setIsResizing(direction);
-    setDragStart({ 
-      x: e.clientX, 
-      y: e.clientY, 
-      width: block.width, 
+    setDragStart({
+      x: e.clientX,
+      y: e.clientY,
+      width: block.width,
       height: block.height,
       blockX: block.x,
       blockY: block.y,
@@ -2468,22 +2528,22 @@ function DraggableTextBlock({ block, selected, onSelect, onUpdate, onDelete }: D
           onBlur={handleBlur}
           placeholder="Enter your text here..."
           className="w-full h-full p-2 border-2 border-[#0da1c7] rounded bg-white resize-none focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/30"
-          style={{ 
-            fontSize: block.fontSize, 
-            fontWeight: block.fontWeight, 
+          style={{
+            fontSize: block.fontSize,
+            fontWeight: block.fontWeight,
             color: block.color,
             minHeight: block.height,
           }}
         />
       ) : (
-        <div 
+        <div
           className={`p-2 bg-white rounded border-2 h-full ${isDefaultText ? 'border-dashed border-gray-300 text-gray-400 italic' : 'border-solid border-gray-200'}`}
           style={{ minHeight: block.height - 16 }}
         >
           {block.content}
         </div>
       )}
-      
+
       {/* Delete button */}
       {selected && !isEditing && (
         <button
@@ -2531,8 +2591,11 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
   // Use the centralized report state hook for persistence
   const [reportState, reportActions] = useReportState();
 
+  // Feature flag for simplified properties panel
+  const [useSimplifiedPanel, setUseSimplifiedPanel] = useState(true); // Default to new design
+
   // Generate a stable report ID based on property info
-  const reportId = useMemo(() => 
+  const reportId = useMemo(() =>
     `report-${state.subjectData?.propertyName || 'draft'}-${state.subjectData?.address?.street || 'unknown'}`.replace(/\s+/g, '-').toLowerCase().slice(0, 50),
     [state.subjectData?.propertyName, state.subjectData?.address?.street]
   );
@@ -2558,7 +2621,7 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
   const previewRef = useRef<HTMLDivElement>(null);
   const [selectedElement, setSelectedElement] = useState<string | null>(null);
   const [textBlocks, setTextBlocks] = useState<TextBlock[]>([]);
-  
+
   // Photo editor state
   const [photoEditorOpen, setPhotoEditorOpen] = useState(false);
   const [editingPhoto, setEditingPhoto] = useState<PhotoData | null>(null);
@@ -2602,7 +2665,7 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
     styling: Record<string, React.CSSProperties>;
     timestamp: number;
   }
-  
+
   const {
     state: contentHistoryState,
     setState: setContentHistory,
@@ -2620,12 +2683,12 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
   // Update history when report state changes (but not from undo/redo operations)
   useEffect(() => {
     if (isApplyingUndoRedo.current) return;
-    
+
     const stateKey = JSON.stringify({
       customContent: reportState.customContent,
       styling: reportState.styling,
     });
-    
+
     // Only push to history if state actually changed
     if (reportState.isDirty && stateKey !== lastPushedStateRef.current) {
       lastPushedStateRef.current = stateKey;
@@ -2652,27 +2715,27 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
   // Effect to apply undo/redo state back to reportState
   useEffect(() => {
     if (!isApplyingUndoRedo.current) return;
-    
+
     // Apply the content from history state
     // First revert all, then re-apply from history
     reportActions.revertAllFields();
-    
+
     // Apply custom content
     Object.entries(contentHistoryState.editedContent).forEach(([key, value]) => {
       reportActions.setCustomContent(key, value);
     });
-    
+
     // Apply styling
     Object.entries(contentHistoryState.styling).forEach(([id, styles]) => {
       reportActions.setElementStyle(id, styles);
     });
-    
+
     // Update our tracking ref
     lastPushedStateRef.current = JSON.stringify({
       customContent: contentHistoryState.editedContent,
       styling: contentHistoryState.styling,
     });
-    
+
     isApplyingUndoRedo.current = false;
   }, [contentHistoryState, reportActions]);
 
@@ -2692,7 +2755,7 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
           undoContent();
         }
       }
-      
+
       // Ctrl+Shift+Z / Cmd+Shift+Z or Ctrl+Y / Cmd+Y for redo
       if ((e.ctrlKey || e.metaKey) && ((e.key === 'z' && e.shiftKey) || e.key === 'y')) {
         e.preventDefault();
@@ -2700,7 +2763,7 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
           redoContent();
         }
       }
-      
+
       // Ctrl+S / Cmd+S for save
       if ((e.ctrlKey || e.metaKey) && e.key === 's') {
         e.preventDefault();
@@ -2763,14 +2826,22 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
   }, [reportActions]);
 
   const handleToggleField = useCallback((sectionId: string, fieldId: string) => {
-    setReportSections((prev) =>
-      prev.map((s) =>
+    setReportSections((prev) => {
+      const section = prev.find(s => s.id === sectionId);
+      const field = section?.fields.find(f => f.id === fieldId);
+      const currentlyEnabled = field?.enabled ?? true;
+      const newEnabled = !currentlyEnabled;
+      
+      // Persist to report state
+      reportActions.setFieldVisibility(sectionId, fieldId, newEnabled);
+      
+      return prev.map((s) =>
         s.id === sectionId
-          ? { ...s, fields: s.fields.map((f) => (f.id === fieldId ? { ...f, enabled: !f.enabled } : f)) }
+          ? { ...s, fields: s.fields.map((f) => (f.id === fieldId ? { ...f, enabled: newEnabled } : f)) }
           : s
-      )
-    );
-  }, []);
+      );
+    });
+  }, [reportActions]);
 
   const handleToggleExpand = useCallback((sectionId: string) => {
     setReportSections((prev) =>
@@ -2839,7 +2910,7 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
     if (styles.textAlign) cssStyles.textAlign = styles.textAlign;
     if (styles.marginTop !== undefined) cssStyles.marginTop = `${styles.marginTop}px`;
     if (styles.marginBottom !== undefined) cssStyles.marginBottom = `${styles.marginBottom}px`;
-    
+
     reportActions.setElementStyle(elementId, cssStyles);
   }, [reportActions]);
 
@@ -2858,23 +2929,60 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
   }, []);
 
   const handleAddTextBlock = useCallback(() => {
+    // Smart positioning: Determine position based on scroll and visible page
+    const previewContainer = previewRef.current;
+    let targetPageId = activeSectionId || 'cover';
+    let yPosition = 100;
+    
+    if (previewContainer) {
+      const scrollTop = previewContainer.scrollTop;
+      const containerRect = previewContainer.getBoundingClientRect();
+      const viewportCenter = containerRect.height / 2;
+      
+      // Find which page element is currently in view
+      const enabledSections = reportSections.filter(s => s.enabled);
+      for (const section of enabledSections) {
+        const pageElement = document.getElementById(`page_${section.id}`);
+        if (pageElement) {
+          const pageRect = pageElement.getBoundingClientRect();
+          const pageRelativeTop = pageRect.top - containerRect.top;
+          const pageRelativeBottom = pageRelativeTop + pageRect.height;
+          
+          // Check if this page is visible in the viewport
+          if (pageRelativeTop < viewportCenter && pageRelativeBottom > 0) {
+            targetPageId = section.id;
+            
+            // Calculate Y position relative to the page element
+            // Position it roughly where the user is looking (center of visible area)
+            const visibleTop = Math.max(0, -pageRelativeTop);
+            const visibleBottom = Math.min(pageRect.height, containerRect.height - pageRelativeTop);
+            yPosition = (visibleTop + visibleBottom) / 2 - 40; // -40 to account for block height/2
+            
+            // Clamp to reasonable bounds
+            yPosition = Math.max(50, Math.min(yPosition, pageRect.height - 100));
+            break;
+          }
+        }
+      }
+    }
+    
     const newBlock: TextBlock = {
       id: `text-block-${Date.now()}`,
       content: 'New text block - double-click to edit',
       x: 100,
-      y: 100,
+      y: yPosition,
       width: 220,
       height: 80,
       fontSize: 14,
       fontWeight: 'normal',
       color: '#1c3643',
-      pageId: activeSectionId || 'cover',
+      pageId: targetPageId,
     };
     setTextBlocks((prev) => [...prev, newBlock]);
     setSelectedElement(newBlock.id);
     // Also store in custom content for persistence
     reportActions.setCustomContent(`textBlock:${newBlock.id}`, newBlock);
-  }, [activeSectionId, reportActions]);
+  }, [activeSectionId, reportActions, reportSections]);
 
   const handleUpdateTextBlock = useCallback((blockId: string, updates: Partial<TextBlock>) => {
     setTextBlocks((prev) => {
@@ -2966,14 +3074,32 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
     handleContentChange(elementId, content);
   }, [handleContentChange]);
 
+  // Helper: Get field visibility map for a specific section
+  // Converts from "sectionId:fieldId" format to just "fieldId" for the component
+  const getFieldVisibilityForSection = useCallback((sectionId: string): Record<string, boolean> => {
+    const prefix = `${sectionId}:`;
+    const result: Record<string, boolean> = {};
+    Object.entries(reportState.fieldVisibility).forEach(([key, value]) => {
+      if (key.startsWith(prefix)) {
+        const fieldId = key.slice(prefix.length);
+        result[fieldId] = value;
+      }
+    });
+    return result;
+  }, [reportState.fieldVisibility]);
+
   // Render the appropriate page component
   const renderPage = (section: ReportSection, pageIndex: number) => {
+    // Get field visibility for this section
+    const fieldVisibility = getFieldVisibilityForSection(section.id);
+    
     const commonProps = {
       selectedElement,
       onSelectElement: setSelectedElement,
       onContentChange: handleInlineContentChange,
       editedContent,
       getAppliedStyle: getElementStyle,
+      fieldVisibility,
     };
 
     const photoProps = {
@@ -3060,12 +3186,12 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
   };
 
   return (
-    <div className="h-full flex bg-gray-100">
+    <div className="h-full flex bg-gray-100 dark:bg-slate-900">
       {/* Left Panel: Section Tree */}
-      <div className="w-80 bg-white border-r border-gray-200 flex flex-col flex-shrink-0">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="font-bold text-gray-800">Report Pages</h3>
-          <p className="text-xs text-gray-500 mt-1">Click to toggle • Arrow to expand</p>
+      <div className="w-80 bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700 flex flex-col flex-shrink-0">
+        <div className="px-6 py-4 border-b border-gray-200 dark:border-slate-700">
+          <h3 className="font-bold text-gray-800 dark:text-gray-100">Report Pages</h3>
+          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Click to toggle • Arrow to expand</p>
         </div>
         <div className="flex-1 overflow-auto py-4 px-4">
           <SectionTree
@@ -3081,39 +3207,54 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
 
       {/* Center Panel: Preview */}
       <div className="flex-1 flex flex-col min-w-0">
-        <div className="p-4 bg-white border-b border-gray-200 flex items-center justify-between">
+        <div className="p-4 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 flex items-center justify-between">
           <div>
-            <div className="font-bold text-gray-800">Report Preview</div>
-            <div className="text-xs text-gray-500">{sampleAppraisalData.property.name}</div>
+            <div className="font-bold text-gray-800 dark:text-gray-100">Report Preview</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400">{sampleAppraisalData.property.name}</div>
           </div>
           <div className="flex items-center gap-4">
+            {/* Panel Style Toggle */}
+            <div className="flex items-center gap-2 border-r border-gray-200 dark:border-slate-700 pr-4">
+              <button
+                onClick={() => setUseSimplifiedPanel(!useSimplifiedPanel)}
+                className="px-3 py-1.5 text-xs font-medium rounded-lg border transition-all"
+                style={{
+                  backgroundColor: useSimplifiedPanel ? '#0da1c7' : 'transparent',
+                  borderColor: useSimplifiedPanel ? '#0da1c7' : '#cbd5e1',
+                  color: useSimplifiedPanel ? 'white' : '#64748b'
+                }}
+                title="Toggle between simplified and 3-tab panel design"
+              >
+                {useSimplifiedPanel ? 'Simplified Panel' : '3-Tab Panel'}
+              </button>
+            </div>
             {/* Undo/Redo buttons */}
-            <div className="flex items-center gap-1 border-r border-gray-200 pr-4">
+            <div className="flex items-center gap-1 border-r border-gray-200 dark:border-slate-700 pr-4">
               <button
                 onClick={undoContent}
                 disabled={!canUndo}
-                className="p-2 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                className="p-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                 title="Undo (Ctrl+Z)"
               >
-                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
                 </svg>
               </button>
               <button
                 onClick={redoContent}
                 disabled={!canRedo}
-                className="p-2 rounded hover:bg-gray-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                className="p-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                 title="Redo (Ctrl+Shift+Z)"
               >
-                <svg className="w-5 h-5 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 10H11a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6" />
                 </svg>
               </button>
             </div>
-            
+
             {/* Auto-save indicator */}
             {autoSaveState.isEnabled && (
-              <div className="flex items-center gap-2 text-xs text-gray-500">
+              <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
                 {autoSaveState.isSaving ? (
                   <>
                     <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
@@ -3138,7 +3279,7 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
             </button>
           </div>
         </div>
-        <div ref={previewRef} className="flex-1 overflow-auto p-8 bg-gray-400/30 relative">
+        <div ref={previewRef} className="flex-1 overflow-auto p-8 bg-gray-400/30 dark:bg-slate-900/50 relative">
           <div className="report-preview-content space-y-8 flex flex-col items-center">
             {reportSections
               .filter((s) => s.enabled)
@@ -3165,17 +3306,30 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
       </div>
 
       {/* Right Panel: Properties */}
-      <div className="w-96 bg-white border-l border-gray-200 flex-shrink-0">
-        <PropertiesPanel
-          selectedElement={selectedElement}
-          elementStyles={elementStyles}
-          elementContent={elementContent}
-          onStyleChange={(styles) => selectedElement && handleStyleChange(selectedElement, styles)}
-          onContentChange={handleContentChange}
-          onDeleteElement={handleDeleteElement}
-          isDirty={reportState.isDirty}
-          onSave={onSaveDraft}
-        />
+      <div className="w-96 bg-white dark:bg-slate-800 border-l border-gray-200 dark:border-slate-700 flex-shrink-0">
+        {useSimplifiedPanel ? (
+          <PropertiesPanelSimplified
+            selectedElement={selectedElement}
+            elementStyles={elementStyles}
+            elementContent={elementContent}
+            onStyleChange={(styles) => selectedElement && handleStyleChange(selectedElement, styles)}
+            onContentChange={handleContentChange}
+            onDeleteElement={handleDeleteElement}
+            isDirty={reportState.isDirty}
+            onSave={onSaveDraft}
+          />
+        ) : (
+          <PropertiesPanel
+            selectedElement={selectedElement}
+            elementStyles={elementStyles}
+            elementContent={elementContent}
+            onStyleChange={(styles) => selectedElement && handleStyleChange(selectedElement, styles)}
+            onContentChange={handleContentChange}
+            onDeleteElement={handleDeleteElement}
+            isDirty={reportState.isDirty}
+            onSave={onSaveDraft}
+          />
+        )}
       </div>
 
       {/* Recovery Dialog */}

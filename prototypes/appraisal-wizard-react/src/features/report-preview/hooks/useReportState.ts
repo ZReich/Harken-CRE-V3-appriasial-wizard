@@ -37,6 +37,7 @@ export interface ReportState {
   // Content
   sectionOrder: string[];
   sectionVisibility: Record<string, boolean>;
+  fieldVisibility: Record<string, boolean>; // key = "sectionId:fieldId"
   customContent: Record<string, any>;
   styling: Record<string, React.CSSProperties>;
 }
@@ -49,6 +50,8 @@ export interface ReportStateActions {
   
   // Section operations
   setSectionVisibility: (sectionId: string, visible: boolean) => void;
+  setFieldVisibility: (sectionId: string, fieldId: string, visible: boolean) => void;
+  isFieldVisible: (sectionId: string, fieldId: string) => boolean;
   reorderSections: (newOrder: string[]) => void;
   
   // Styling operations
@@ -144,6 +147,7 @@ export function useReportState(): [ReportState, ReportStateActions] {
     lastWizardSync: new Date().toISOString(),
     sectionOrder: [],
     sectionVisibility: {},
+    fieldVisibility: {},
     customContent: {},
     styling: {},
   });
@@ -230,6 +234,26 @@ export function useReportState(): [ReportState, ReportStateActions] {
       },
     }));
   }, []);
+
+  // Set field visibility within a section (e.g., cover_title, cover_address)
+  const setFieldVisibility = useCallback((sectionId: string, fieldId: string, visible: boolean) => {
+    const key = `${sectionId}:${fieldId}`;
+    setState(prev => ({
+      ...prev,
+      isDirty: true,
+      fieldVisibility: {
+        ...prev.fieldVisibility,
+        [key]: visible,
+      },
+    }));
+  }, []);
+
+  // Check if a field is visible (returns true if not explicitly set to false)
+  const isFieldVisible = useCallback((sectionId: string, fieldId: string): boolean => {
+    const key = `${sectionId}:${fieldId}`;
+    // If explicitly set to false, return false; otherwise return true
+    return state.fieldVisibility[key] !== false;
+  }, [state.fieldVisibility]);
 
   // Reorder sections
   const reorderSections = useCallback((newOrder: string[]) => {
@@ -397,6 +421,8 @@ export function useReportState(): [ReportState, ReportStateActions] {
     revertField,
     revertAllFields,
     setSectionVisibility,
+    setFieldVisibility,
+    isFieldVisible,
     reorderSections,
     setElementStyle,
     setCustomContent,
@@ -411,6 +437,8 @@ export function useReportState(): [ReportState, ReportStateActions] {
     revertField,
     revertAllFields,
     setSectionVisibility,
+    setFieldVisibility,
+    isFieldVisible,
     reorderSections,
     setElementStyle,
     setCustomContent,

@@ -882,12 +882,12 @@ export default function DocumentIntakePage() {
       {/* Document Stats */}
       {activeTab === 'documents' && documents.length > 0 && (
         <div className="space-y-3 mb-6">
-          <div className="bg-gradient-to-r from-[#0da1c7]/10 to-[#0da1c7]/5 rounded-xl p-4">
+          <div className="bg-gradient-to-r from-[#0da1c7]/10 to-[#0da1c7]/5 dark:from-[#0da1c7]/20 dark:to-slate-800/50 rounded-xl p-4 border border-[#0da1c7]/10 dark:border-[#0da1c7]/20">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-700">Documents</span>
-              <span className="text-lg font-bold text-[#0da1c7]">{stats.complete}/{stats.total}</span>
+              <span className="text-sm font-medium text-gray-700 dark:text-slate-300">Documents</span>
+              <span className="text-lg font-bold text-[#0da1c7] dark:text-cyan-400">{stats.complete}/{stats.total}</span>
             </div>
-            <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+            <div className="h-2 bg-gray-200 dark:bg-slate-700 rounded-full overflow-hidden">
               <div
                 className="h-full bg-[#0da1c7] rounded-full transition-all duration-500"
                 style={{ width: `${stats.total ? (stats.complete / stats.total) * 100 : 0}%` }}
@@ -914,13 +914,13 @@ export default function DocumentIntakePage() {
       {/* Photo Stats */}
       {activeTab === 'photos' && (
         <div className="space-y-3 mb-6">
-          <div className="bg-gradient-to-r from-[#0da1c7]/10 to-[#0da1c7]/5 rounded-xl p-4">
+          <div className="bg-gradient-to-r from-[#0da1c7]/10 to-[#0da1c7]/5 dark:from-[#0da1c7]/20 dark:to-slate-800/50 rounded-xl p-4 border border-[#0da1c7]/10 dark:border-[#0da1c7]/20">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-gray-700 dark:text-slate-400">Photos Uploaded</span>
-              <span className="text-lg font-bold text-[#0da1c7]">{stagingPhotos.length + assignedPhotoCount}</span>
+              <span className="text-sm font-medium text-gray-700 dark:text-slate-300">Photos Uploaded</span>
+              <span className="text-lg font-bold text-[#0da1c7] dark:text-cyan-400">{stagingPhotos.length + assignedPhotoCount}</span>
             </div>
             {unassignedPhotos.length > 0 && (
-              <p className="text-xs text-amber-600 flex items-center gap-1 mt-2">
+              <p className="text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1 mt-2 font-medium">
                 <AlertCircle className="w-3 h-3" />
                 {unassignedPhotos.length} awaiting assignment
               </p>
@@ -946,7 +946,7 @@ export default function DocumentIntakePage() {
             return (
               <div
                 key={type}
-                className="flex items-center gap-3 p-2 rounded-lg bg-gray-50"
+                className="flex items-center gap-3 p-2.5 rounded-lg bg-gray-50 dark:bg-slate-800/50 border border-transparent dark:border-slate-700/50 hover:bg-gray-100 dark:hover:bg-slate-700/50 transition-colors"
               >
                 <IconComponent className="w-5 h-5 text-gray-600 dark:text-slate-400" />
                 <div className="flex-1 min-w-0">
@@ -1012,8 +1012,8 @@ export default function DocumentIntakePage() {
                     <Sparkles className="w-7 h-7 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-[#1c3643] mb-1">AI-Powered Document Intake</h3>
-                    <p className="text-gray-600 dark:text-slate-400">
+                    <h3 className="text-xl font-bold text-[#1c3643] dark:text-white mb-1">AI-Powered Document Intake</h3>
+                    <p className="text-gray-600 dark:text-slate-300/90">
                       Drop all your documents below. Our AI will automatically identify each document type,
                       extract relevant data, and pre-fill fields throughout the wizard.
                     </p>
@@ -1029,7 +1029,7 @@ export default function DocumentIntakePage() {
                 onClick={() => fileInputRef.current?.click()}
                 className={`relative border-2 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-all duration-300 mb-6 ${isDragging
                   ? 'border-[#0da1c7] bg-[#0da1c7]/10 scale-[1.02]'
-                  : 'border-gray-300 hover:border-[#0da1c7] hover:bg-[#0da1c7]/5'
+                  : 'border-gray-300 dark:border-slate-700 hover:border-[#0da1c7] dark:hover:border-[#0da1c7] hover:bg-[#0da1c7]/5'
                   }`}
               >
                 <input
@@ -1042,16 +1042,16 @@ export default function DocumentIntakePage() {
                 />
 
                 <div className={`transition-transform duration-300 ${isDragging ? 'scale-110' : ''}`}>
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-gray-100 to-gray-50 flex items-center justify-center">
-                    <Upload className={`w-8 h-8 transition-colors ${isDragging ? 'text-[#0da1c7]' : 'text-gray-400'}`} />
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-gray-100 to-gray-50 dark:from-slate-700 dark:to-slate-800 flex items-center justify-center border border-gray-200 dark:border-slate-600 shadow-sm">
+                    <Upload className={`w-8 h-8 transition-colors ${isDragging ? 'text-[#0da1c7]' : 'text-gray-400 dark:text-slate-500'}`} />
                   </div>
-                  <p className="text-lg font-semibold text-gray-700 mb-1">
+                  <p className="text-lg font-semibold text-gray-700 dark:text-slate-200 mb-1">
                     {isDragging ? 'Drop files here' : 'Drop all your documents here'}
                   </p>
-                  <p className="text-sm text-gray-500 mb-3">
+                  <p className="text-sm text-gray-500 dark:text-slate-400 mb-3">
                     or click to browse
                   </p>
-                  <p className="text-xs text-gray-400">
+                  <p className="text-xs text-gray-400 dark:text-slate-500 underline-offset-4">
                     Supports PDF, images, Word docs, Excel, and CSV files
                   </p>
                 </div>

@@ -50,10 +50,10 @@ export function ProgressCircle({
     }
     // Visited but not complete -> Slight emphasis
     if (completion > 0 && !isCompleted) {
-      return 'bg-white dark:bg-slate-800 border-green-400 text-gray-700 dark:text-gray-200';
+      return 'bg-white dark:bg-slate-900 border-green-400 dark:border-green-500/50 text-gray-700 dark:text-gray-200';
     }
     // Pending
-    return 'bg-white dark:bg-slate-800 border-gray-200 dark:border-slate-600 text-gray-400 dark:text-slate-500';
+    return 'bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 text-gray-400 dark:text-slate-500';
   };
 
   return (
@@ -66,7 +66,12 @@ export function ProgressCircle({
       aria-label={`Go to phase ${phaseNum}`}
     >
       {/* Background/Base Border */}
-      <div className={`absolute inset-0 rounded-full border-2 transition-colors duration-300 ${getCircleClasses().split(' ').filter(c => c.startsWith('bg-') || c.startsWith('border-')).join(' ')}`} />
+      <div className={`absolute inset-0 rounded-full border-2 transition-colors duration-300 ${getCircleClasses().split(' ').filter(c =>
+        c.startsWith('bg-') ||
+        c.startsWith('border-') ||
+        c.startsWith('dark:bg-') ||
+        c.startsWith('dark:border-')
+      ).join(' ')}`} />
 
       {/* Partial Fill (Conic for circular progress feel) - Only if not active/complete to avoid clash */}
       {trackProgress && !isCompleted && !isActive && completion > 0 && (
@@ -77,7 +82,7 @@ export function ProgressCircle({
       )}
 
       {/* Content */}
-      <div className={`relative z-10 flex items-center justify-center font-bold text-sm transition-colors duration-300 ${isCompleted || isActive ? 'text-white' : 'text-gray-500 dark:text-slate-400'}`}>
+      <div className={`relative z-10 flex items-center justify-center font-bold text-sm transition-colors duration-300 ${isCompleted || isActive ? 'text-white' : 'text-gray-400 dark:text-slate-300'}`}>
         {isCompleted ? (
           <svg
             className={`w-4 h-4 ${justCompleted ? 'animate-bounce-once' : ''}`}

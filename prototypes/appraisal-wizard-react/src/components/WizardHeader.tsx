@@ -116,20 +116,20 @@ export default function WizardHeader({
         <div className="flex items-center gap-3">
           {/* Guidance/Values/Preview Toggle */}
           {hasGuidance && (
-            <div className="flex items-center bg-gray-100 dark:bg-slate-700 rounded-lg p-1 border border-gray-200 dark:border-slate-600">
+            <div className="flex items-center bg-gray-100 dark:bg-slate-700/50 rounded-lg p-1 border border-gray-200 dark:border-slate-600 shadow-inner">
               <button
-                className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors ${guidanceMode === 'guidance'
-                  ? 'bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm'
-                  : 'text-gray-600 dark:text-slate-400 hover:text-gray-800 dark:hover:text-white'
+                className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200 ${guidanceMode === 'guidance'
+                  ? 'bg-white dark:bg-[#1c3643] text-[#0da1c7] dark:text-cyan-400 shadow-md ring-1 ring-black/5'
+                  : 'text-gray-600 dark:text-slate-400 hover:text-gray-800 dark:hover:text-slate-200'
                   }`}
                 onClick={() => onGuidanceModeChange?.('guidance')}
               >
                 Guidance
               </button>
               <button
-                className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors border-l border-gray-200 dark:border-slate-600 ${guidanceMode === 'values'
-                  ? 'bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm'
-                  : 'text-gray-600 dark:text-slate-400 hover:text-gray-800 dark:hover:text-white'
+                className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200 ${guidanceMode === 'values'
+                  ? 'bg-white dark:bg-[#1c3643] text-[#0da1c7] dark:text-cyan-400 shadow-md ring-1 ring-black/5'
+                  : 'text-gray-600 dark:text-slate-400 hover:text-gray-800 dark:hover:text-slate-200'
                   }`}
                 onClick={() => onGuidanceModeChange?.('values')}
               >
@@ -137,9 +137,9 @@ export default function WizardHeader({
               </button>
               {showPreviewMode && (
                 <button
-                  className={`px-3 py-1.5 text-sm font-medium rounded-md transition-colors border-l border-gray-200 dark:border-slate-600 flex items-center gap-1.5 ${guidanceMode === 'preview'
-                    ? 'bg-white dark:bg-slate-700 text-gray-900 dark:text-white shadow-sm'
-                    : 'text-gray-600 dark:text-slate-400 hover:text-gray-800 dark:hover:text-white'
+                  className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200 flex items-center gap-1.5 ${guidanceMode === 'preview'
+                    ? 'bg-white dark:bg-[#1c3643] text-[#0da1c7] dark:text-cyan-400 shadow-md ring-1 ring-black/5'
+                    : 'text-gray-600 dark:text-slate-400 hover:text-gray-800 dark:hover:text-slate-200'
                     }`}
                   onClick={() => onGuidanceModeChange?.('preview')}
                   title="Live preview of how photos will appear in the report"
@@ -152,7 +152,7 @@ export default function WizardHeader({
                 </button>
               )}
               <button
-                className="ml-2 px-2 py-1 text-xs font-medium text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white"
+                className="ml-2 px-2.5 py-1 text-xs font-semibold text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white uppercase tracking-wider"
                 onClick={onToggleGuidance}
                 title={isGuidanceVisible ? 'Hide panel' : 'Show panel'}
               >
@@ -184,13 +184,13 @@ export default function WizardHeader({
           {/* Theme Toggle */}
           <ThemeToggle size="sm" />
 
-          <button className="px-4 py-2 text-sm font-medium text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 flex items-center gap-2">
+          <button className="px-4 py-2 text-sm font-medium text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 transition-colors flex items-center gap-2">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
             Exit
           </button>
-          <button className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-slate-300 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-600 flex items-center gap-2">
+          <button className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-slate-200 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-600 hover:border-gray-400 dark:hover:border-slate-500 transition-all shadow-sm flex items-center gap-2">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
             </svg>
@@ -198,7 +198,7 @@ export default function WizardHeader({
           </button>
           <button
             onClick={onContinue}
-            className={`px-6 py-2 text-sm font-semibold text-white rounded-lg flex items-center gap-2 ${continueButtonHoverClass}`}
+            className={`px-6 py-2 text-sm font-bold text-white rounded-lg flex items-center gap-2 transition-all shadow-lg hover:shadow-xl hover:translate-y-[-1px] active:translate-y-[0px] ${continueButtonHoverClass}`}
             style={continueButtonStyle}
           >
             Continue

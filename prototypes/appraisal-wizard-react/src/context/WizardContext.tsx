@@ -150,6 +150,20 @@ const getInitialState = (): WizardState => {
     try {
       const parsedState = JSON.parse(stored);
 
+      // MIGRATION: Fix legacy fieldSuggestions (object -> array)
+      // This prevents "fieldSuggestions.some is not a function" errors when users have old data
+      if (parsedState.fieldSuggestions) {
+        Object.keys(parsedState.fieldSuggestions).forEach(key => {
+          const val = parsedState.fieldSuggestions[key];
+          if (val && !Array.isArray(val)) {
+            console.log(`[WizardContext] Migrating legacy fieldSuggestion for ${key} to array`);
+            // Wrap legacy object in array and ensure it has necessary array-item properties if needed
+            // Legacy schema was just the object, new schema is FieldSuggestion[]
+            parsedState.fieldSuggestions[key] = [val];
+          }
+        });
+      }
+
       // Helper to clean corrupted address fields (e.g., "Bozeman, Bozeman, Bozeman" -> "Bozeman")
       const cleanAddressField = (value: string | undefined): string => {
         if (!value) return '';

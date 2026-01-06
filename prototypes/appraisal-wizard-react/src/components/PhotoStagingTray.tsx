@@ -103,7 +103,7 @@ function StagingPhotoCard({
         relative bg-white dark:bg-slate-800 border-2 rounded-xl overflow-hidden
         transition-all duration-200 cursor-grab active:cursor-grabbing
         ${isDragging ? 'opacity-50 scale-95' : 'hover:shadow-lg hover:scale-[1.02]'}
-        ${photo.status === 'error' ? 'border-red-300' : 'border-gray-200'}
+        ${photo.status === 'error' ? 'border-red-300' : 'border-gray-200 dark:border-slate-700'}
         ${confidenceColors ? `shadow-md ${confidenceColors.glow}` : 'shadow-sm'}
       `}
     >

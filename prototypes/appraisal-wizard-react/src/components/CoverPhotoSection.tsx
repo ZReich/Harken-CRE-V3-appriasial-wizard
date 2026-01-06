@@ -140,7 +140,7 @@ export default function CoverPhotoSection({
           <div className="flex-shrink-0 w-56">
             <div className="text-xs font-medium text-slate-500 mb-2 text-center">Report Preview</div>
             <div
-              className="relative w-full aspect-[8.5/11] rounded-lg overflow-hidden shadow-xl border border-slate-200"
+              className="relative w-full aspect-[8.5/11] rounded-lg overflow-hidden shadow-xl border border-slate-200 dark:border-slate-700"
               style={{
                 background: coverPhoto
                   ? `linear-gradient(to top, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.5) 50%, rgba(15, 23, 42, 0.3)), url(${coverPhoto.preview}) center/cover`
@@ -232,7 +232,7 @@ export default function CoverPhotoSection({
                     <div className="flex gap-2">
                       <button
                         onClick={handleUploadClick}
-                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-white/90 hover:bg-white text-slate-700 text-sm font-medium rounded-lg transition-all shadow-lg"
+                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-white/90 hover:bg-white dark:bg-slate-800/90 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-100 text-sm font-medium rounded-lg transition-all shadow-lg"
                       >
                         <RefreshCw className="w-4 h-4" />
                         {imageError ? 'Try Another Photo' : 'Change Photo'}

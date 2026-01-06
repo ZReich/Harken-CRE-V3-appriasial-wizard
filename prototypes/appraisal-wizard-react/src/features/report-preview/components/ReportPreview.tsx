@@ -13,14 +13,14 @@ import {
   Download,
 } from 'lucide-react';
 import type { ReportPage, TOCEntry, EditorMode } from '../../../types';
-import { 
-  CoverPage, 
-  LetterPage, 
-  SummaryPage, 
-  NarrativePage, 
-  PhotoGridPage, 
-  TOCPage, 
-  AnalysisGridPage, 
+import {
+  CoverPage,
+  LetterPage,
+  SummaryPage,
+  NarrativePage,
+  PhotoGridPage,
+  TOCPage,
+  AnalysisGridPage,
   AddendaHeaderPage,
   DemographicsPage,
   EconomicContextPage,
@@ -206,16 +206,16 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
         case 'risk-rating': {
           const riskContent = page.content?.[0]?.content as { riskRating?: import('../../../types/api').RiskRatingData };
           return (
-            <RiskRatingPage 
-              data={riskContent?.riskRating as import('../../../types/api').RiskRatingData} 
-              pageNumber={page.pageNumber} 
+            <RiskRatingPage
+              data={riskContent?.riskRating as import('../../../types/api').RiskRatingData}
+              pageNumber={page.pageNumber}
             />
           );
         }
         case 'demographics': {
           const demoContent = page.content?.[0]?.content as { demographics?: import('../../../types').DemographicsData };
           return (
-            <DemographicsPage 
+            <DemographicsPage
               data={demoContent?.demographics?.radiusAnalysis ?? []}
               source={demoContent?.demographics?.dataSource}
               asOfDate={demoContent?.demographics?.dataPullDate}
@@ -226,7 +226,7 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
         case 'economic-context': {
           const econContent = page.content?.[0]?.content as { economicIndicators?: import('../../../types').EconomicIndicators; chartStyle?: string };
           return (
-            <EconomicContextPage 
+            <EconomicContextPage
               data={econContent?.economicIndicators ?? null}
               pageNumber={page.pageNumber}
               chartStyle={econContent?.chartStyle as any}
@@ -236,7 +236,7 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
         case 'swot': {
           const swotContent = page.content?.[0]?.content as { swotAnalysis?: import('../../../types').SWOTAnalysisData };
           return (
-            <SWOTPage 
+            <SWOTPage
               data={swotContent?.swotAnalysis as import('../../../types').SWOTAnalysisData}
               pageNumber={page.pageNumber}
             />
@@ -289,20 +289,20 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
   return (
     <div
       ref={containerRef}
-      className={`flex flex-col h-full bg-slate-200 ${isFullscreen ? 'fixed inset-0 z-50' : ''}`}
+      className={`flex flex-col h-full bg-slate-200 dark:bg-slate-900 ${isFullscreen ? 'fixed inset-0 z-50' : ''}`}
     >
       {/* Toolbar */}
-      <div className="flex items-center justify-between px-4 py-2 bg-white border-b border-slate-200 shadow-sm">
+      <div className="flex items-center justify-between px-4 py-2 bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 shadow-sm">
         {/* Left: Page navigation */}
         <div className="flex items-center gap-2">
           <button
             onClick={() => handlePageChange(currentPage - 1)}
             disabled={currentPage <= 1}
-            className="p-1.5 rounded hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ChevronLeft size={18} />
           </button>
-          
+
           <div className="flex items-center gap-1.5">
             <input
               type="number"
@@ -310,15 +310,15 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
               max={totalPages}
               value={currentPage}
               onChange={(e) => handlePageChange(Number(e.target.value))}
-              className="w-12 px-2 py-1 text-sm text-center border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-sky-500"
+              className="w-12 px-2 py-1 text-sm text-center border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white rounded focus:outline-none focus:ring-1 focus:ring-sky-500"
             />
-            <span className="text-sm text-slate-500">of {totalPages}</span>
+            <span className="text-sm text-slate-500 dark:text-slate-400">of {totalPages}</span>
           </div>
-          
+
           <button
             onClick={() => handlePageChange(currentPage + 1)}
             disabled={currentPage >= totalPages}
-            className="p-1.5 rounded hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ChevronRight size={18} />
           </button>
@@ -329,25 +329,25 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
           <button
             onClick={handleZoomOut}
             disabled={zoom <= ZOOM_LEVELS[0]}
-            className="p-1.5 rounded hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ZoomOut size={18} />
           </button>
-          
+
           <select
             value={zoom}
             onChange={handleZoomChange}
-            className="px-2 py-1 text-sm border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-sky-500"
+            className="px-2 py-1 text-sm border border-slate-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-white rounded focus:outline-none focus:ring-1 focus:ring-sky-500"
           >
             {ZOOM_LEVELS.map((level) => (
               <option key={level} value={level}>{level}%</option>
             ))}
           </select>
-          
+
           <button
             onClick={handleZoomIn}
             disabled={zoom >= ZOOM_LEVELS[ZOOM_LEVELS.length - 1]}
-            className="p-1.5 rounded hover:bg-slate-100 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <ZoomIn size={18} />
           </button>
@@ -356,28 +356,28 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
         {/* Right: Mode & actions */}
         <div className="flex items-center gap-2">
           {/* Mode toggle */}
-          <div className="flex items-center bg-slate-100 rounded-lg p-0.5">
+          <div className="flex items-center bg-slate-100 dark:bg-slate-700 rounded-lg p-0.5">
             <button
               onClick={() => onModeChange?.('view')}
-              className={`p-1.5 rounded ${mode === 'view' ? 'bg-white shadow-sm' : 'hover:bg-slate-200'}`}
+              className={`p-1.5 rounded ${mode === 'view' ? 'bg-white dark:bg-slate-600 text-sky-600 dark:text-sky-400 shadow-sm' : 'hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-500 dark:text-slate-400'}`}
               title="View mode"
             >
               <Eye size={16} />
             </button>
             <button
               onClick={() => onModeChange?.('select')}
-              className={`p-1.5 rounded ${mode === 'select' ? 'bg-white shadow-sm' : 'hover:bg-slate-200'}`}
+              className={`p-1.5 rounded ${mode === 'select' ? 'bg-white dark:bg-slate-600 text-sky-600 dark:text-sky-400 shadow-sm' : 'hover:bg-slate-200 dark:hover:bg-slate-600 text-slate-500 dark:text-slate-400'}`}
               title="Edit mode"
             >
               <Edit3 size={16} />
             </button>
           </div>
 
-          <div className="w-px h-6 bg-slate-200" />
+          <div className="w-px h-6 bg-slate-200 dark:bg-slate-700" />
 
           <button
             onClick={() => setShowThumbnails(!showThumbnails)}
-            className={`p-1.5 rounded ${showThumbnails ? 'bg-slate-100' : 'hover:bg-slate-100'}`}
+            className={`p-1.5 rounded ${showThumbnails ? 'bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-white' : 'hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400'}`}
             title="Toggle thumbnails"
           >
             <Grid size={18} />
@@ -385,7 +385,7 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
 
           <button
             onClick={toggleFullscreen}
-            className="p-1.5 rounded hover:bg-slate-100"
+            className="p-1.5 rounded hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-500 dark:text-slate-400"
             title={isFullscreen ? 'Exit fullscreen' : 'Fullscreen'}
           >
             {isFullscreen ? <Minimize2 size={18} /> : <Maximize2 size={18} />}
@@ -407,16 +407,15 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
       <div className="flex-1 flex overflow-hidden">
         {/* Thumbnail sidebar */}
         {showSidebar && showThumbnails && (
-          <div className="w-48 bg-slate-100 border-r border-slate-200 overflow-y-auto p-3 space-y-3">
+          <div className="w-48 bg-slate-100 dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 overflow-y-auto p-3 space-y-3">
             {pages.map((page, index) => (
               <button
                 key={page.id}
                 onClick={() => handlePageChange(index + 1)}
-                className={`w-full aspect-[8.5/11] bg-white rounded shadow-sm overflow-hidden border-2 transition-colors ${
-                  currentPage === index + 1
-                    ? 'border-sky-500'
-                    : 'border-transparent hover:border-slate-300'
-                }`}
+                className={`w-full aspect-[8.5/11] bg-white rounded shadow-sm overflow-hidden border-2 transition-colors ${currentPage === index + 1
+                  ? 'border-sky-500'
+                  : 'border-transparent hover:border-slate-300 dark:hover:border-slate-600'
+                  }`}
               >
                 <div className="w-full h-full flex items-center justify-center text-xs text-slate-400">
                   {index + 1}
@@ -446,7 +445,7 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
       </div>
 
       {/* Bottom status bar */}
-      <div className="px-4 py-2 bg-white border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
+      <div className="px-4 py-2 bg-white dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
         <div className="flex items-center gap-4">
           <span>{totalPages} pages</span>
           <span>•</span>

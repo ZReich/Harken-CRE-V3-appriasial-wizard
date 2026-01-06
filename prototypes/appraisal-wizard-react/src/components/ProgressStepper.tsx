@@ -72,16 +72,16 @@ export default function ProgressStepper({ currentPhase, pages }: ProgressStepper
                   {/* Label - Hide on very small screens if needed, or adjust font */}
                   <div className="hidden md:flex flex-col cursor-pointer" onClick={() => handleNavigate(path)}>
                     <span className={`text-xs font-bold uppercase tracking-wider transition-colors duration-200 ${isActive ? 'text-[#0da1c7] dark:text-[#22d3ee]' :
-                        isCompleted ? 'text-green-600 dark:text-green-500' :
-                          hasVisited ? 'text-gray-600 dark:text-slate-400' :
-                            'text-gray-400 dark:text-slate-600 group-hover:text-gray-500 dark:group-hover:text-slate-500'
+                      isCompleted ? 'text-green-600 dark:text-green-500' :
+                        hasVisited ? 'text-gray-600 dark:text-slate-400' :
+                          'text-gray-400 dark:text-slate-600 group-hover:text-gray-500 dark:group-hover:text-slate-500'
                       }`}>
                       Step {phaseNum}
                     </span>
                     <span className={`text-sm font-semibold transition-colors duration-200 whitespace-nowrap ${isActive ? 'text-gray-900 dark:text-white' :
-                        isCompleted ? 'text-gray-800 dark:text-gray-200' :
-                          hasVisited ? 'text-gray-600 dark:text-slate-400' :
-                            'text-gray-400 dark:text-slate-600'
+                      isCompleted ? 'text-gray-800 dark:text-gray-200' :
+                        hasVisited ? 'text-gray-600 dark:text-slate-400' :
+                          'text-gray-400 dark:text-slate-600'
                       }`}>
                       {label}
                     </span>
@@ -93,10 +93,10 @@ export default function ProgressStepper({ currentPhase, pages }: ProgressStepper
                   <div className="flex-1 h-[2px] mx-4 rounded-full relative overflow-hidden bg-gray-100 dark:bg-slate-800">
                     <div
                       className={`absolute inset-0 transition-all duration-500 ease-out ${isCompleted
-                          ? 'bg-green-500 dark:bg-green-500 translate-x-0'
-                          : isActive
-                            ? 'bg-gradient-to-r from-[#0da1c7] to-gray-200 dark:from-[#0da1c7] dark:to-slate-800 opacity-50'
-                            : '-translate-x-full bg-gray-200 dark:bg-slate-700'
+                        ? 'bg-green-500 dark:bg-green-600 translate-x-0'
+                        : isActive
+                          ? 'bg-gradient-to-r from-[#0da1c7] to-gray-200 dark:from-[#0da1c7] dark:to-slate-800 opacity-50'
+                          : '-translate-x-full bg-gray-200 dark:bg-slate-700'
                         }`}
                     />
                   </div>
