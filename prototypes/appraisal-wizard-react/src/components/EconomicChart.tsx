@@ -24,6 +24,7 @@ import {
   Cell,
 } from 'recharts';
 import type { ChartStyle } from './ChartStyleSelector';
+import { useChartColors } from '../hooks/useThemeColors';
 
 interface DataPoint {
   date: string;
@@ -81,11 +82,14 @@ export function EconomicChart({
   data: rawData,
   chartStyle,
   title,
-  color = '#0da1c7',
+  color,
   height = 200,
   unit = '%',
   showAxis = true,
 }: EconomicChartProps) {
+  const chartColors = useChartColors();
+  // Use provided color or default to theme-aware primary
+  const primaryColor = color || chartColors.primary;
   if (!rawData || rawData.length === 0) {
     return (
       <div 
@@ -118,8 +122,8 @@ export function EconomicChart({
           <AreaChart data={data} margin={{ top: 40, right: 80, left: 0, bottom: 0 }}>
             <defs>
               <linearGradient id={`gradient-${title}`} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor={color} stopOpacity={0.4} />
-                <stop offset="100%" stopColor={color} stopOpacity={0} />
+                <stop offset="0%" stopColor={primaryColor} stopOpacity={0.4} />
+                <stop offset="100%" stopColor={primaryColor} stopOpacity={0} />
               </linearGradient>
               <filter id="glow">
                 <feGaussianBlur stdDeviation="2" result="coloredBlur" />
@@ -133,7 +137,7 @@ export function EconomicChart({
               <XAxis 
                 dataKey="date" 
                 tickFormatter={formatDate} 
-                tick={{ fontSize: 10, fill: '#64748b' }}
+                tick={{ fontSize: 10, fill: chartColors.axis }}
                 axisLine={false}
                 tickLine={false}
               />
@@ -142,7 +146,7 @@ export function EconomicChart({
             <Area
               type="monotone"
               dataKey="value"
-              stroke={color}
+              stroke={primaryColor}
               strokeWidth={2}
               fill={`url(#gradient-${title})`}
               filter="url(#glow)"
@@ -169,7 +173,7 @@ export function EconomicChart({
                 <Line 
                   type="monotone" 
                   dataKey="value" 
-                  stroke={color} 
+                  stroke={primaryColor} 
                   strokeWidth={1.5} 
                   dot={false}
                 />
@@ -205,25 +209,25 @@ export function EconomicChart({
           <AreaChart data={data} margin={{ top: 50, right: 0, left: 0, bottom: 20 }}>
             <defs>
               <linearGradient id={`horizon-high-${title}`} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#10b981" stopOpacity={0.8} />
-                <stop offset="100%" stopColor="#10b981" stopOpacity={0.3} />
+                <stop offset="0%" stopColor={chartColors.positive} stopOpacity={0.8} />
+                <stop offset="100%" stopColor={chartColors.positive} stopOpacity={0.3} />
               </linearGradient>
               <linearGradient id={`horizon-mid-${title}`} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor={color} stopOpacity={0.6} />
-                <stop offset="100%" stopColor={color} stopOpacity={0.2} />
+                <stop offset="0%" stopColor={primaryColor} stopOpacity={0.6} />
+                <stop offset="100%" stopColor={primaryColor} stopOpacity={0.2} />
               </linearGradient>
               <linearGradient id={`horizon-low-${title}`} x1="0" y1="0" x2="0" y2="1">
-                <stop offset="0%" stopColor="#f59e0b" stopOpacity={0.5} />
-                <stop offset="100%" stopColor="#f59e0b" stopOpacity={0.1} />
+                <stop offset="0%" stopColor={chartColors.quaternary} stopOpacity={0.5} />
+                <stop offset="100%" stopColor={chartColors.quaternary} stopOpacity={0.1} />
               </linearGradient>
             </defs>
-            <ReferenceLine y={minValue + third * 2} stroke="#10b981" strokeDasharray="3 3" strokeOpacity={0.5} />
-            <ReferenceLine y={minValue + third} stroke="#f59e0b" strokeDasharray="3 3" strokeOpacity={0.5} />
+            <ReferenceLine y={minValue + third * 2} stroke={chartColors.positive} strokeDasharray="3 3" strokeOpacity={0.5} />
+            <ReferenceLine y={minValue + third} stroke={chartColors.quaternary} strokeDasharray="3 3" strokeOpacity={0.5} />
             {showAxis && (
               <XAxis 
                 dataKey="date" 
                 tickFormatter={formatDate} 
-                tick={{ fontSize: 10, fill: '#64748b' }}
+                tick={{ fontSize: 10, fill: chartColors.axis }}
                 axisLine={false}
                 tickLine={false}
               />
@@ -232,7 +236,7 @@ export function EconomicChart({
             <Area
               type="stepAfter"
               dataKey="value"
-              stroke={color}
+              stroke={primaryColor}
               strokeWidth={1}
               fill={`url(#horizon-mid-${title})`}
             />
@@ -250,8 +254,8 @@ export function EconomicChart({
           <p className="text-xs text-slate-500 dark:text-slate-400">{title}</p>
           <div className="flex items-center gap-2">
             <span className="relative flex h-3 w-3">
-              <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: color }} />
-              <span className="relative inline-flex rounded-full h-3 w-3" style={{ backgroundColor: color }} />
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full opacity-75" style={{ backgroundColor: primaryColor }} />
+              <span className="relative inline-flex rounded-full h-3 w-3" style={{ backgroundColor: primaryColor }} />
             </span>
             <span className="text-2xl font-bold text-slate-800 dark:text-white">{currentValue?.toFixed(2)}{unit}</span>
           </div>
@@ -271,7 +275,7 @@ export function EconomicChart({
               <XAxis 
                 dataKey="date" 
                 tickFormatter={formatDate} 
-                tick={{ fontSize: 10, fill: '#64748b' }}
+                tick={{ fontSize: 10, fill: chartColors.axis }}
                 axisLine={false}
                 tickLine={false}
               />
@@ -280,7 +284,7 @@ export function EconomicChart({
             <Line
               type="monotone"
               dataKey="value"
-              stroke={color}
+              stroke={primaryColor}
               strokeWidth={2}
               dot={false}
               filter="url(#pulseGlow)"
@@ -311,19 +315,19 @@ export function EconomicChart({
                 dataKey="date" 
                 type="category"
                 tickFormatter={formatDate} 
-                tick={{ fontSize: 10, fill: '#64748b' }}
+                tick={{ fontSize: 10, fill: chartColors.axis }}
                 axisLine={false}
                 tickLine={false}
               />
             )}
             <XAxis type="number" hide />
-            <ReferenceLine x={0} stroke="#64748b" />
+            <ReferenceLine x={0} stroke={chartColors.neutral} />
             <Tooltip content={<CustomTooltip unit={unit} />} />
             <Bar dataKey="deviation" radius={[0, 4, 4, 0]}>
               {divergingData.map((entry, index) => (
                 <Cell 
                   key={`cell-${index}`} 
-                  fill={entry.deviation >= 0 ? '#10b981' : '#ef4444'}
+                  fill={entry.deviation >= 0 ? chartColors.positive : chartColors.negative}
                   fillOpacity={0.8}
                 />
               ))}

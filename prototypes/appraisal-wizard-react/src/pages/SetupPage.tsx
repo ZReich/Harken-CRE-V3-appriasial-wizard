@@ -1,3 +1,45 @@
+/**
+ * SetupPage - Appraisal Assignment Configuration
+ * ===============================================
+ * 
+ * This is the assignment setup page (~2,200 lines) that configures the appraisal
+ * context, property identification, and required scenarios/approaches. It's
+ * intentionally large as a page-level orchestrator.
+ * 
+ * ## Tab Structure
+ * 1. **Assignment Basics** - Client info, effective date, purpose
+ * 2. **Purpose & Scope** - Valuation purpose, intended use
+ * 3. **Property ID** - Address lookup, property type selection
+ * 4. **Inspection** - Inspection date, type, access
+ * 5. **Certifications** - USPAP certifications, limiting conditions
+ * 
+ * ## Key Features
+ * - Google Places autocomplete for address
+ * - Property data lookup (Montana GIS, Cotality)
+ * - Dynamic scenario generation based on property type
+ * - Approach selection per scenario
+ * - M&S occupancy code hierarchy (3-tier)
+ * 
+ * ## Business Logic
+ * - Multi-scenario support: As Is, As If Complete, As Stabilized
+ * - Approach requirements vary by property type
+ * - Cost approach uses M&S construction classes
+ * 
+ * ## Component Dependencies
+ * - GooglePlacesAutocomplete: Address search
+ * - PropertyLookup: External data integration
+ * - EnhancedTextArea: Rich text input
+ * - WizardGuidancePanel: Context-aware help
+ * 
+ * ## Section Navigation (search for `// ===`)
+ * - SETUP TAB CONFIGURATION: Tab definitions
+ * - SCENARIO LOGIC: Scenario/approach helpers
+ * - TAB CONTENT: Tab-specific render functions
+ * - MAIN RENDER: Layout and navigation
+ * 
+ * @see DEVELOPER_GUIDE.md for architecture decisions
+ */
+
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import WizardLayout from '../components/WizardLayout';
 import EnhancedTextArea from '../components/EnhancedTextArea';
@@ -36,6 +78,8 @@ import {
   getPropertyHierarchyLabel,
   type PropertyCategory,
 } from '../constants/marshallSwift';
+import { determineGridConfiguration } from '../constants/gridConfigurations';
+import type { MultiFamilyUnitMix, MultiFamilyCalculationMethod } from '../types';
 
 // ==========================================
 // SETUP TAB CONFIGURATION
@@ -322,6 +366,29 @@ export default function SetupPage() {
   const [propertyName, setPropertyName] = useState(() => wizardState.subjectData?.propertyName || '');
   const [legalDescription, setLegalDescription] = useState(() => wizardState.subjectData?.legalDescription || '');
   const [taxId, setTaxId] = useState(() => wizardState.subjectData?.taxId || '');
+  
+  // Multi-Family Unit Configuration state
+  const [totalUnitCount, setTotalUnitCount] = useState(() => wizardState.subjectData?.totalUnitCount || 0);
+  const [calculationMethod, setCalculationMethod] = useState<MultiFamilyCalculationMethod>(() => 
+    wizardState.subjectData?.calculationMethod || 'per_unit'
+  );
+  const [unitMix, setUnitMix] = useState<MultiFamilyUnitMix[]>(() => 
+    wizardState.subjectData?.unitMix || [
+      { unitType: 'studio', count: 0, avgSF: 450, bedrooms: 0, bathrooms: 1 },
+      { unitType: '1br', count: 0, avgSF: 650, bedrooms: 1, bathrooms: 1 },
+      { unitType: '2br', count: 0, avgSF: 900, bedrooms: 2, bathrooms: 2 },
+      { unitType: '3br', count: 0, avgSF: 1200, bedrooms: 3, bathrooms: 2 },
+      { unitType: '4br+', count: 0, avgSF: 1500, bedrooms: 4, bathrooms: 2 },
+    ]
+  );
+  
+  // Check if current property type is multi-family
+  const isMultiFamilyProperty = useMemo(() => {
+    return context.propertyType === 'multifamily' || 
+           context.propertyType === 'duplex-fourplex' ||
+           context.propertyType?.includes('multifamily') || 
+           context.propertyType?.includes('apartment');
+  }, [context.propertyType]);
 
   // Property Lookup Modal state
   // Property lookup is now triggered by inline button, no modal needed
@@ -778,6 +845,40 @@ export default function SetupPage() {
     }
   }, [context.propertyCategory, context.propertyType, syncPropertyType]);
 
+  // Determine and sync grid configuration when property type changes
+  useEffect(() => {
+    if (context.propertyCategory) {
+      const siteSize = wizardState.subjectData?.siteArea 
+        ? parseFloat(wizardState.subjectData.siteArea) 
+        : undefined;
+      const siteUnit = wizardState.subjectData?.siteAreaUnit || 'sqft';
+      
+      const gridConfig = determineGridConfiguration(
+        context.propertyCategory,
+        context.propertyType,
+        context.msOccupancyCode,
+        siteSize,
+        siteUnit === 'sqft' ? 'sf' : 'acres'
+      );
+      
+      // Store grid configuration in subject data
+      setSubjectData({
+        gridConfiguration: gridConfig,
+      });
+    }
+  }, [context.propertyCategory, context.propertyType, context.msOccupancyCode, wizardState.subjectData?.siteArea, wizardState.subjectData?.siteAreaUnit, setSubjectData]);
+
+  // Sync multi-family unit configuration when it changes
+  useEffect(() => {
+    if (isMultiFamilyProperty && totalUnitCount > 0) {
+      setSubjectData({
+        totalUnitCount,
+        unitMix,
+        calculationMethod,
+      });
+    }
+  }, [isMultiFamilyProperty, totalUnitCount, unitMix, calculationMethod, setSubjectData]);
+
   // Auto-adjust approaches when property category changes to land
   useEffect(() => {
     if (context.propertyCategory === 'land') {
@@ -879,7 +980,7 @@ export default function SetupPage() {
     <div className="space-y-6">
       {/* Property Address - Clean, Progressive Disclosure Design */}
       <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           Property Address
         </h3>
 
@@ -958,7 +1059,7 @@ export default function SetupPage() {
               onClick={handleManualLookup}
               disabled={!isAddressComplete || autoLookupStatus === 'loading'}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${isAddressComplete && autoLookupStatus !== 'loading'
-                ? 'bg-[#0da1c7] text-white hover:bg-[#0b8fb3] shadow-sm'
+                ? 'bg-harken-blue text-white hover:bg-harken-blue/90 shadow-sm'
                 : 'bg-slate-100 text-slate-400 cursor-not-allowed dark:bg-slate-700 dark:text-slate-500'
                 }`}
             >
@@ -1015,7 +1116,7 @@ export default function SetupPage() {
                   type="text"
                   value={address.city}
                   onChange={(e) => setAddress({ ...address, city: e.target.value })}
-                  className="w-full px-2.5 py-1.5 border border-gray-200 rounded-md text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:placeholder-slate-400"
+                  className="w-full px-2.5 py-1.5 border border-gray-200 rounded-md text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:placeholder-slate-400"
                   placeholder="City"
                 />
               </div>
@@ -1025,7 +1126,7 @@ export default function SetupPage() {
                   type="text"
                   value={address.state}
                   onChange={(e) => setAddress({ ...address, state: e.target.value.toUpperCase() })}
-                  className="w-full px-2.5 py-1.5 border border-gray-200 rounded-md text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:placeholder-slate-400"
+                  className="w-full px-2.5 py-1.5 border border-gray-200 rounded-md text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:placeholder-slate-400"
                   placeholder="MT"
                   maxLength={2}
                 />
@@ -1036,7 +1137,7 @@ export default function SetupPage() {
                   type="text"
                   value={address.zip}
                   onChange={(e) => setAddress({ ...address, zip: e.target.value })}
-                  className="w-full px-2.5 py-1.5 border border-gray-200 rounded-md text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:placeholder-slate-400"
+                  className="w-full px-2.5 py-1.5 border border-gray-200 rounded-md text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:placeholder-slate-400"
                   placeholder="59102"
                 />
               </div>
@@ -1046,7 +1147,7 @@ export default function SetupPage() {
                   type="text"
                   value={address.county}
                   onChange={(e) => setAddress({ ...address, county: e.target.value })}
-                  className="w-full px-2.5 py-1.5 border border-gray-200 rounded-md text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:placeholder-slate-400"
+                  className="w-full px-2.5 py-1.5 border border-gray-200 rounded-md text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:placeholder-slate-400"
                   placeholder="County"
                 />
               </div>
@@ -1060,7 +1161,7 @@ export default function SetupPage() {
 
       {/* Key Dates */}
       <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           Key Dates
         </h3>
         <div className="grid grid-cols-3 gap-4">
@@ -1072,7 +1173,7 @@ export default function SetupPage() {
               type="date"
               value={dates.reportDate}
               onChange={(e) => setDates({ ...dates, reportDate: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-500 rounded-lg text-sm bg-white dark:bg-slate-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-transparent dark:[color-scheme:dark]"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-500 rounded-lg text-sm bg-white dark:bg-slate-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent dark:[color-scheme:dark]"
             />
           </div>
           <div>
@@ -1083,7 +1184,7 @@ export default function SetupPage() {
               type="date"
               value={dates.inspectionDate}
               onChange={(e) => setDates({ ...dates, inspectionDate: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-500 rounded-lg text-sm bg-white dark:bg-slate-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-transparent dark:[color-scheme:dark]"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-500 rounded-lg text-sm bg-white dark:bg-slate-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent dark:[color-scheme:dark]"
             />
           </div>
           <div>
@@ -1094,7 +1195,7 @@ export default function SetupPage() {
               type="date"
               value={dates.effectiveDate}
               onChange={(e) => setDates({ ...dates, effectiveDate: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-500 rounded-lg text-sm bg-white dark:bg-slate-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-transparent dark:[color-scheme:dark]"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-500 rounded-lg text-sm bg-white dark:bg-slate-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent dark:[color-scheme:dark]"
             />
           </div>
         </div>
@@ -1108,7 +1209,7 @@ export default function SetupPage() {
 
       {/* Property Classification - 3-Tier M&S Hierarchy */}
       <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           Property Classification
         </h3>
 
@@ -1117,7 +1218,7 @@ export default function SetupPage() {
           <div className="mb-4 p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg border border-slate-200 dark:border-slate-600">
             <div className="flex items-center gap-2 text-sm">
               <span className="text-gray-500 dark:text-slate-400">Selected:</span>
-              <span className="font-medium text-[#1c3643] dark:text-white">
+              <span className="font-medium text-harken-dark dark:text-white">
                 {getPropertyHierarchyLabel(
                   context.propertyCategory || 'commercial',
                   context.propertyType || '',
@@ -1149,20 +1250,20 @@ export default function SetupPage() {
                       subType: null, // Legacy field
                     }));
                   }}
-                  className={`relative p-6 border-2 rounded-lg text-center transition-all hover:border-[#0da1c7] hover:shadow-md ${isSelected
-                    ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-cyan-500/10'
+                  className={`relative p-6 border-2 rounded-lg text-center transition-all hover:border-harken-blue hover:shadow-md ${isSelected
+                    ? 'border-harken-blue bg-harken-blue/5 dark:bg-cyan-500/10'
                     : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700'
                     }`}
                 >
                   {isSelected && (
-                    <div className="absolute top-2 right-2 w-6 h-6 bg-[#0da1c7] rounded-full flex items-center justify-center">
+                    <div className="absolute top-2 right-2 w-6 h-6 bg-harken-blue rounded-full flex items-center justify-center">
                       <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
                     </div>
                   )}
-                  <Icon className={`w-10 h-10 mx-auto mb-3 ${isSelected ? 'text-[#0da1c7] dark:text-cyan-400' : 'text-gray-400 dark:text-slate-500'}`} />
-                  <span className={`block text-base font-semibold ${isSelected ? 'text-[#0da1c7] dark:text-cyan-400' : 'text-gray-700 dark:text-slate-300'}`}>{category.label}</span>
+                  <Icon className={`w-10 h-10 mx-auto mb-3 ${isSelected ? 'text-harken-blue dark:text-cyan-400' : 'text-gray-400 dark:text-slate-500'}`} />
+                  <span className={`block text-base font-semibold ${isSelected ? 'text-harken-blue dark:text-cyan-400' : 'text-gray-700 dark:text-slate-300'}`}>{category.label}</span>
                   <span className="block text-xs text-gray-500 mt-1">{category.description}</span>
                 </button>
               );
@@ -1174,7 +1275,7 @@ export default function SetupPage() {
       {/* Tier 2: Property Type (conditional) */}
       {context.propertyCategory && (
         <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm animate-fade-in">
-          <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4 flex items-center gap-2">
+          <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4 flex items-center gap-2">
             Property Type
             <span className="text-xs font-normal text-gray-500 bg-gray-100 dark:bg-slate-700 dark:text-slate-300 px-2 py-0.5 rounded">
               M&S Section Reference
@@ -1194,19 +1295,19 @@ export default function SetupPage() {
                       subType: propType.id, // Legacy field
                     }));
                   }}
-                  className={`relative p-4 border-2 rounded-lg text-left transition-all hover:border-[#0da1c7] ${isSelected
-                    ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-cyan-500/10'
+                  className={`relative p-4 border-2 rounded-lg text-left transition-all hover:border-harken-blue ${isSelected
+                    ? 'border-harken-blue bg-harken-blue/5 dark:bg-cyan-500/10'
                     : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700'
                     }`}
                 >
                   {isSelected && (
-                    <div className="absolute top-2 right-2 w-5 h-5 bg-[#0da1c7] rounded-full flex items-center justify-center">
+                    <div className="absolute top-2 right-2 w-5 h-5 bg-harken-blue rounded-full flex items-center justify-center">
                       <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
                     </div>
                   )}
-                  <span className={`block font-semibold text-sm ${isSelected ? 'text-[#0da1c7] dark:text-cyan-400' : 'text-gray-700 dark:text-slate-300'}`}>
+                  <span className={`block font-semibold text-sm ${isSelected ? 'text-harken-blue dark:text-cyan-400' : 'text-gray-700 dark:text-slate-300'}`}>
                     {propType.label}
                   </span>
                   <span className="block text-xs text-gray-500 mt-1">{propType.description}</span>
@@ -1225,7 +1326,7 @@ export default function SetupPage() {
       {/* Tier 3: M&S Occupancy Code (conditional) */}
       {context.propertyType && getOccupancyCodesByPropertyType(context.propertyType).length > 0 && (
         <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm animate-fade-in">
-          <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4 flex items-center gap-2">
+          <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4 flex items-center gap-2">
             M&S Occupancy Code
             <span className="text-xs font-normal text-gray-500 bg-gray-100 dark:bg-slate-700 dark:text-slate-300 px-2 py-0.5 rounded">
               Specific Building Type
@@ -1246,19 +1347,19 @@ export default function SetupPage() {
                       msOccupancyCode: occCode.id,
                     }));
                   }}
-                  className={`relative p-3 border-2 rounded-lg text-left transition-all hover:border-[#0da1c7] ${isSelected
-                    ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-cyan-500/10'
+                  className={`relative p-3 border-2 rounded-lg text-left transition-all hover:border-harken-blue ${isSelected
+                    ? 'border-harken-blue bg-harken-blue/5 dark:bg-cyan-500/10'
                     : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700'
                     }`}
                 >
                   {isSelected && (
-                    <div className="absolute top-1.5 right-1.5 w-4 h-4 bg-[#0da1c7] rounded-full flex items-center justify-center">
+                    <div className="absolute top-1.5 right-1.5 w-4 h-4 bg-harken-blue rounded-full flex items-center justify-center">
                       <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
                     </div>
                   )}
-                  <span className={`block font-medium text-xs ${isSelected ? 'text-[#0da1c7] dark:text-cyan-400' : 'text-gray-700 dark:text-slate-300'}`}>
+                  <span className={`block font-medium text-xs ${isSelected ? 'text-harken-blue dark:text-cyan-400' : 'text-gray-700 dark:text-slate-300'}`}>
                     {occCode.label}
                   </span>
                   <span className="block text-[10px] text-gray-500 mt-0.5 line-clamp-2">{occCode.description}</span>
@@ -1277,9 +1378,151 @@ export default function SetupPage() {
         </div>
       )}
 
+      {/* Unit Configuration - Multi-Family Properties Only */}
+      {isMultiFamilyProperty && (
+        <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm animate-fade-in">
+          <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4 flex items-center gap-2">
+            Unit Configuration
+            <span className="text-xs font-normal text-gray-500 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 px-2 py-0.5 rounded">
+              Multi-Family
+            </span>
+          </h3>
+          <p className="text-sm text-gray-600 dark:text-slate-400 mb-4">
+            Configure the unit count and mix for accurate price-per-unit calculations in the Sales Comparison grid.
+          </p>
+
+          {/* Total Units and Calculation Method */}
+          <div className="grid grid-cols-2 gap-6 mb-6">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+                Total Units <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="number"
+                value={totalUnitCount || ''}
+                onChange={(e) => setTotalUnitCount(parseInt(e.target.value) || 0)}
+                placeholder="e.g., 45"
+                className={`w-full px-4 py-2.5 border rounded-lg text-lg font-semibold bg-white dark:bg-slate-700 text-harken-dark dark:text-white focus:ring-2 focus:ring-harken-blue focus:border-transparent ${
+                  totalUnitCount > 0 && totalUnitCount !== unitMix.reduce((acc, u) => acc + u.count, 0)
+                    ? 'border-amber-500 bg-amber-50 dark:bg-amber-900/20'
+                    : 'border-gray-300 dark:border-slate-600'
+                }`}
+              />
+              {/* Validation warning when total doesn't match sum */}
+              {totalUnitCount > 0 && totalUnitCount !== unitMix.reduce((acc, u) => acc + u.count, 0) && (
+                <p className="mt-1.5 text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
+                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+                  </svg>
+                  <span>Total ({totalUnitCount}) doesn't match unit mix sum ({unitMix.reduce((acc, u) => acc + u.count, 0)})</span>
+                </p>
+              )}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+                Primary Calculation Method
+              </label>
+              <div className="flex gap-2">
+                {(['per_unit', 'per_sf', 'per_room'] as MultiFamilyCalculationMethod[]).map((method) => (
+                  <button
+                    key={method}
+                    onClick={() => setCalculationMethod(method)}
+                    className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
+                      calculationMethod === method
+                        ? 'bg-harken-blue text-white'
+                        : 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300 hover:bg-gray-200 dark:hover:bg-slate-600'
+                    }`}
+                  >
+                    {method === 'per_unit' ? '$/Unit' : method === 'per_sf' ? '$/SF' : '$/Room'}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Unit Mix Table */}
+          <div className="border border-gray-200 dark:border-slate-600 rounded-lg overflow-hidden">
+            <table className="w-full text-sm">
+              <thead className="bg-slate-50 dark:bg-slate-700">
+                <tr>
+                  <th className="px-4 py-2 text-left font-semibold text-gray-700 dark:text-slate-200">Type</th>
+                  <th className="px-4 py-2 text-center font-semibold text-gray-700 dark:text-slate-200">Count</th>
+                  <th className="px-4 py-2 text-center font-semibold text-gray-700 dark:text-slate-200">Avg SF</th>
+                  <th className="px-4 py-2 text-center font-semibold text-gray-700 dark:text-slate-200">Beds</th>
+                  <th className="px-4 py-2 text-center font-semibold text-gray-700 dark:text-slate-200">Baths</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200 dark:divide-slate-600">
+                {unitMix.map((unit, idx) => (
+                  <tr key={unit.unitType} className="bg-white dark:bg-slate-800">
+                    <td className="px-4 py-2 font-medium text-gray-700 dark:text-slate-200">
+                      {unit.unitType === 'studio' ? 'Studio' : 
+                       unit.unitType === '1br' ? '1-Bedroom' :
+                       unit.unitType === '2br' ? '2-Bedroom' :
+                       unit.unitType === '3br' ? '3-Bedroom' : '4+ Bedroom'}
+                    </td>
+                    <td className="px-4 py-2">
+                      <input
+                        type="number"
+                        value={unit.count || ''}
+                        onChange={(e) => {
+                          const newMix = [...unitMix];
+                          newMix[idx] = { ...newMix[idx], count: parseInt(e.target.value) || 0 };
+                          setUnitMix(newMix);
+                          // Auto-update total
+                          setTotalUnitCount(newMix.reduce((acc, u) => acc + u.count, 0));
+                        }}
+                        className="w-20 px-2 py-1 text-center border border-gray-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-harken-dark dark:text-white"
+                      />
+                    </td>
+                    <td className="px-4 py-2">
+                      <input
+                        type="number"
+                        value={unit.avgSF || ''}
+                        onChange={(e) => {
+                          const newMix = [...unitMix];
+                          newMix[idx] = { ...newMix[idx], avgSF: parseInt(e.target.value) || 0 };
+                          setUnitMix(newMix);
+                        }}
+                        className="w-20 px-2 py-1 text-center border border-gray-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-harken-dark dark:text-white"
+                      />
+                    </td>
+                    <td className="px-4 py-2 text-center text-gray-500 dark:text-slate-400">
+                      {unit.bedrooms}
+                    </td>
+                    <td className="px-4 py-2 text-center text-gray-500 dark:text-slate-400">
+                      {unit.bathrooms}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+              <tfoot className="bg-slate-50 dark:bg-slate-700">
+                <tr>
+                  <td className="px-4 py-2 font-bold text-gray-700 dark:text-slate-200">Total</td>
+                  <td className="px-4 py-2 text-center font-bold text-harken-blue">
+                    {unitMix.reduce((acc, u) => acc + u.count, 0)} units
+                  </td>
+                  <td className="px-4 py-2 text-center font-medium text-gray-600 dark:text-slate-300">
+                    {unitMix.reduce((acc, u) => acc + (u.count * u.avgSF), 0).toLocaleString()} SF
+                  </td>
+                  <td colSpan={2}></td>
+                </tr>
+              </tfoot>
+            </table>
+          </div>
+
+          <p className="mt-4 text-xs text-gray-500 dark:text-slate-400 flex items-center gap-2">
+            <svg className="w-4 h-4 text-harken-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>The Sales Comparison grid will display both $/Unit and $/SF. Your primary calculation method determines which is used for the concluded value.</span>
+          </p>
+        </div>
+      )}
+
       {/* Property Status */}
       <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           Property Status
         </h3>
         <p className="text-sm text-gray-600 dark:text-slate-400 mb-4">These questions determine which valuation scenarios are required for your appraisal.</p>
@@ -1296,11 +1539,11 @@ export default function SetupPage() {
                 <button
                   key={opt.value}
                   onClick={() => updateContext('propertyStatus', opt.value)}
-                  className={`relative p-4 border-2 rounded-lg text-left transition-all hover:border-[#0da1c7]/50 dark:hover:border-cyan-400/50 ${isSelected ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-cyan-500/10' : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700'
+                  className={`relative p-4 border-2 rounded-lg text-left transition-all hover:border-harken-blue/50 dark:hover:border-cyan-400/50 ${isSelected ? 'border-harken-blue bg-harken-blue/5 dark:bg-cyan-500/10' : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700'
                     }`}
                 >
                   {isSelected && (
-                    <div className="absolute top-2 right-2 w-5 h-5 bg-[#0da1c7] dark:bg-cyan-500 rounded-full flex items-center justify-center">
+                    <div className="absolute top-2 right-2 w-5 h-5 bg-harken-blue dark:bg-cyan-500 rounded-full flex items-center justify-center">
                       <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
@@ -1332,11 +1575,11 @@ export default function SetupPage() {
                   <button
                     key={opt.value}
                     onClick={() => updateContext('plannedChanges', opt.value)}
-                    className={`relative p-3 border-2 rounded-lg text-left transition-all hover:border-[#0da1c7]/50 dark:hover:border-cyan-400/50 ${isSelected ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-cyan-500/10' : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700'
+                    className={`relative p-3 border-2 rounded-lg text-left transition-all hover:border-harken-blue/50 dark:hover:border-cyan-400/50 ${isSelected ? 'border-harken-blue bg-harken-blue/5 dark:bg-cyan-500/10' : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700'
                       }`}
                   >
                     {isSelected && (
-                      <div className="absolute top-2 right-2 w-4 h-4 bg-[#0da1c7] dark:bg-cyan-500 rounded-full flex items-center justify-center">
+                      <div className="absolute top-2 right-2 w-4 h-4 bg-harken-blue dark:bg-cyan-500 rounded-full flex items-center justify-center">
                         <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                         </svg>
@@ -1364,11 +1607,11 @@ export default function SetupPage() {
                   <button
                     key={opt.value}
                     onClick={() => updateContext('occupancyStatus', opt.value)}
-                    className={`relative p-4 pr-8 border-2 rounded-lg text-left transition-all hover:border-[#0da1c7]/50 dark:hover:border-cyan-400/50 min-h-[72px] ${isSelected ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-cyan-500/10' : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700'
+                    className={`relative p-4 pr-8 border-2 rounded-lg text-left transition-all hover:border-harken-blue/50 dark:hover:border-cyan-400/50 min-h-[72px] ${isSelected ? 'border-harken-blue bg-harken-blue/5 dark:bg-cyan-500/10' : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700'
                       }`}
                   >
                     {isSelected && (
-                      <div className="absolute top-3 right-3 w-5 h-5 bg-[#0da1c7] dark:bg-cyan-500 rounded-full flex items-center justify-center">
+                      <div className="absolute top-3 right-3 w-5 h-5 bg-harken-blue dark:bg-cyan-500 rounded-full flex items-center justify-center">
                         <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                         </svg>
@@ -1395,11 +1638,11 @@ export default function SetupPage() {
                 <button
                   key={opt.value}
                   onClick={() => updateContext('loanPurpose', opt.value)}
-                  className={`relative p-3 border-2 rounded-lg text-left transition-all hover:border-[#0da1c7]/50 dark:hover:border-cyan-400/50 ${isSelected ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-cyan-500/10' : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700'
+                  className={`relative p-3 border-2 rounded-lg text-left transition-all hover:border-harken-blue/50 dark:hover:border-cyan-400/50 ${isSelected ? 'border-harken-blue bg-harken-blue/5 dark:bg-cyan-500/10' : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700'
                     }`}
                 >
                   {isSelected && (
-                    <div className="absolute top-2 right-2 w-4 h-4 bg-[#0da1c7] dark:bg-cyan-500 rounded-full flex items-center justify-center">
+                    <div className="absolute top-2 right-2 w-4 h-4 bg-harken-blue dark:bg-cyan-500 rounded-full flex items-center justify-center">
                       <svg className="w-2.5 h-2.5 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                       </svg>
@@ -1417,7 +1660,7 @@ export default function SetupPage() {
       {/* Valuation Scenarios */}
       <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 flex-1">
+          <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 flex-1">
             Valuation Scenarios
           </h3>
           {context.propertyStatus && (
@@ -1499,7 +1742,7 @@ export default function SetupPage() {
                     type="date"
                     value={scenario.effectiveDate || ''}
                     onChange={(e) => updateScenarioDate(scenario.id, e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-[#f0f9fb] dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-transparent dark:[color-scheme:dark]"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-harken-gray-light dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent dark:[color-scheme:dark]"
                   />
                 </div>
                 <div>
@@ -1510,8 +1753,8 @@ export default function SetupPage() {
                         key={opt.value}
                         onClick={() => updateScenarioName(scenario.id, 'pill', opt.value)}
                         className={`px-3 py-1.5 border rounded-full text-xs font-medium transition-all ${scenario.nameSelect === opt.value || scenario.name === opt.value
-                          ? 'border-[#0da1c7] bg-[#0da1c7] text-white'
-                          : 'border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-300 hover:border-[#0da1c7]'
+                          ? 'border-harken-blue bg-harken-blue text-white'
+                          : 'border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-300 hover:border-harken-blue'
                           }`}
                       >
                         {opt.label}
@@ -1533,7 +1776,7 @@ export default function SetupPage() {
                       placeholder="Enter custom scenario name..."
                       value={scenario.customName || scenario.name}
                       onChange={(e) => updateScenarioName(scenario.id, 'custom', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent"
                     />
                   </div>
                 )}
@@ -1551,19 +1794,19 @@ export default function SetupPage() {
                       key={app.key}
                       onClick={() => toggleScenarioApproach(scenario.id, app.key)}
                       className={`relative flex flex-col items-center justify-center p-4 border-2 rounded-lg transition-all ${isSelected
-                        ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-cyan-500/10'
-                        : 'border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-[#0da1c7]'
+                        ? 'border-harken-blue bg-harken-blue/5 dark:bg-cyan-500/10'
+                        : 'border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-harken-blue'
                         }`}
                     >
                       {isSelected && (
-                        <div className="absolute top-2 right-2 w-5 h-5 bg-[#0da1c7] rounded-full flex items-center justify-center">
+                        <div className="absolute top-2 right-2 w-5 h-5 bg-harken-blue rounded-full flex items-center justify-center">
                           <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                           </svg>
                         </div>
                       )}
-                      <Icon className={`w-8 h-8 mb-2 ${isSelected ? 'text-[#0da1c7] dark:text-cyan-400' : 'text-gray-400 dark:text-slate-500'}`} />
-                      <span className={`text-sm font-medium ${isSelected ? 'text-[#0da1c7] dark:text-cyan-400' : 'text-gray-700 dark:text-slate-300'}`}>
+                      <Icon className={`w-8 h-8 mb-2 ${isSelected ? 'text-harken-blue dark:text-cyan-400' : 'text-gray-400 dark:text-slate-500'}`} />
+                      <span className={`text-sm font-medium ${isSelected ? 'text-harken-blue dark:text-cyan-400' : 'text-gray-700 dark:text-slate-300'}`}>
                         {app.label}
                       </span>
                     </button>
@@ -1635,7 +1878,7 @@ export default function SetupPage() {
     <div className="space-y-6">
       {/* Purpose of Appraisal */}
       <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           What type of value are you estimating?
         </h3>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
@@ -1645,13 +1888,13 @@ export default function SetupPage() {
               <button
                 key={opt.value}
                 onClick={() => updateContext('appraisalPurpose', opt.value)}
-                className={`relative p-4 border-2 rounded-lg text-left transition-all hover:border-[#0da1c7]/50 dark:hover:border-cyan-400/50 ${isSelected
-                  ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-cyan-500/10'
+                className={`relative p-4 border-2 rounded-lg text-left transition-all hover:border-harken-blue/50 dark:hover:border-cyan-400/50 ${isSelected
+                  ? 'border-harken-blue bg-harken-blue/5 dark:bg-cyan-500/10'
                   : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700'
                   }`}
               >
                 {isSelected && (
-                  <div className="absolute top-2 right-2 w-5 h-5 bg-[#0da1c7] rounded-full flex items-center justify-center">
+                  <div className="absolute top-2 right-2 w-5 h-5 bg-harken-blue rounded-full flex items-center justify-center">
                     <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
@@ -1667,7 +1910,7 @@ export default function SetupPage() {
 
       {/* Property Interest */}
       <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           What property interest is being appraised?
         </h3>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
@@ -1677,13 +1920,13 @@ export default function SetupPage() {
               <button
                 key={opt.value}
                 onClick={() => updateContext('propertyInterest', opt.value)}
-                className={`relative p-4 border-2 rounded-lg text-left transition-all hover:border-[#0da1c7]/50 dark:hover:border-cyan-400/50 ${isSelected
-                  ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-cyan-500/10'
+                className={`relative p-4 border-2 rounded-lg text-left transition-all hover:border-harken-blue/50 dark:hover:border-cyan-400/50 ${isSelected
+                  ? 'border-harken-blue bg-harken-blue/5 dark:bg-cyan-500/10'
                   : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700'
                   }`}
               >
                 {isSelected && (
-                  <div className="absolute top-2 right-2 w-5 h-5 bg-[#0da1c7] rounded-full flex items-center justify-center">
+                  <div className="absolute top-2 right-2 w-5 h-5 bg-harken-blue rounded-full flex items-center justify-center">
                     <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                     </svg>
@@ -1699,7 +1942,7 @@ export default function SetupPage() {
 
       {/* Intended Users */}
       <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="flex items-center gap-2 text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+        <h3 className="flex items-center gap-2 text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           Intended Users
           <DocumentSourceIndicator fieldPath="subjectData.intendedUsers" inline />
         </h3>
@@ -1709,7 +1952,7 @@ export default function SetupPage() {
         <textarea
           value={context.intendedUsers}
           onChange={(e) => updateContext('intendedUsers', e.target.value)}
-          className={`w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent dark:bg-slate-700 dark:border-slate-600 dark:text-white ${getDocumentSourceInputClasses(hasFieldSource('subjectData.intendedUsers'))
+          className={`w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent dark:bg-slate-700 dark:border-slate-600 dark:text-white ${getDocumentSourceInputClasses(hasFieldSource('subjectData.intendedUsers'))
             }`}
           rows={3}
           placeholder="e.g., ABC Bank, for lending purposes; John Smith, for estate planning..."
@@ -1721,7 +1964,7 @@ export default function SetupPage() {
   const renderPropertyIdTab = () => (
     <div className="space-y-6">
       <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           Property Identification Details
         </h3>
         <div className="space-y-4">
@@ -1731,7 +1974,7 @@ export default function SetupPage() {
               type="text"
               value={propertyName}
               onChange={(e) => setPropertyName(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent"
               placeholder="Enter property name..."
             />
           </div>
@@ -1763,10 +2006,10 @@ export default function SetupPage() {
       {/* Ownership Section - Multiple Owners */}
       <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
         <div className="flex items-center justify-between border-b-2 border-gray-200 pb-3 mb-4">
-          <h3 className="text-lg font-bold text-[#1c3643] dark:text-white">Property Ownership</h3>
+          <h3 className="text-lg font-bold text-harken-dark dark:text-white">Property Ownership</h3>
           <button
             onClick={addOwner}
-            className="text-sm text-[#0da1c7] hover:text-[#0b8fb0] font-medium flex items-center gap-1"
+            className="text-sm text-harken-blue hover:text-harken-blue/80 font-medium flex items-center gap-1"
           >
             <Plus className="w-4 h-4" />
             Add Owner
@@ -1795,7 +2038,7 @@ export default function SetupPage() {
                     {lockedFields['owner'] && index === 0 && (
                       <button
                         onClick={() => setLockedFields(prev => ({ ...prev, owner: false }))}
-                        className="ml-2 text-[#0da1c7]"
+                        className="ml-2 text-harken-blue"
                         title="Unlock to edit (pre-filled from document)"
                       >
                         <Lock className="w-3 h-3 inline" />
@@ -1807,7 +2050,7 @@ export default function SetupPage() {
                     value={owner.name}
                     onChange={(e) => updateOwner(owner.id, { name: e.target.value })}
                     disabled={lockedFields['owner'] && index === 0}
-                    className={`w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent dark:bg-slate-700 dark:border-slate-600 dark:text-white ${lockedFields['owner'] && index === 0 ? 'bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800' : ''
+                    className={`w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent dark:bg-slate-700 dark:border-slate-600 dark:text-white ${lockedFields['owner'] && index === 0 ? 'bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800' : ''
                       }`}
                     placeholder="Full legal name as shown on title"
                   />
@@ -1826,7 +2069,7 @@ export default function SetupPage() {
                   <select
                     value={owner.ownershipType}
                     onChange={(e) => updateOwner(owner.id, { ownershipType: e.target.value as any })}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white dark:bg-slate-700 dark:text-white"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-white dark:bg-slate-700 dark:text-white"
                   >
                     <option value="individual">Individual</option>
                     <option value="corporation">Corporation</option>
@@ -1849,7 +2092,7 @@ export default function SetupPage() {
                       min="0"
                       max="100"
                       step="0.01"
-                      className="w-24 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                      className="w-24 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent dark:bg-slate-700 dark:border-slate-600 dark:text-white"
                     />
                     <span className="text-gray-500 dark:text-slate-400">%</span>
                   </div>
@@ -1862,7 +2105,7 @@ export default function SetupPage() {
 
       {/* Tax Identification Section */}
       <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           Tax Identification
         </h3>
         <div className="grid grid-cols-2 gap-4">
@@ -1873,7 +2116,7 @@ export default function SetupPage() {
               {lockedFields['taxId'] && (
                 <button
                   onClick={() => setLockedFields(prev => ({ ...prev, taxId: false }))}
-                  className="ml-2 text-[#0da1c7]"
+                  className="ml-2 text-harken-blue"
                   title="Unlock to edit"
                 >
                   <Lock className="w-3 h-3 inline" />
@@ -1885,7 +2128,7 @@ export default function SetupPage() {
               value={taxId}
               onChange={(e) => setTaxId(e.target.value)}
               disabled={lockedFields['taxId']}
-              className={`w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent dark:bg-slate-700 dark:border-slate-600 dark:text-white ${lockedFields['taxId'] ? 'bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800' : ''
+              className={`w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent dark:bg-slate-700 dark:border-slate-600 dark:text-white ${lockedFields['taxId'] ? 'bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800' : ''
                 } ${getDocumentSourceInputClasses(hasFieldSource('subjectData.taxId'))}`}
               placeholder="Enter tax ID..."
             />
@@ -1916,7 +2159,7 @@ export default function SetupPage() {
   const renderInspectionTab = () => (
     <div className="space-y-6">
       <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           Subject Property Inspection
         </h3>
         <div className="space-y-4">
@@ -1925,7 +2168,7 @@ export default function SetupPage() {
             <select
               value={inspectionType}
               onChange={(e) => setInspectionType(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent"
             >
               <option value="interior_exterior">Interior & Exterior Inspection</option>
               <option value="exterior_only">Exterior Only Inspection</option>
@@ -1941,7 +2184,7 @@ export default function SetupPage() {
               type="date"
               value={dates.inspectionDate}
               onChange={(e) => setDates({ ...dates, inspectionDate: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-blue-50 border-blue-200 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-400"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-blue-50 border-blue-200 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-400"
             />
             <p className="text-xs text-blue-600 mt-1">Synced with Assignment Basics &gt; Key Dates</p>
           </div>
@@ -1954,7 +2197,7 @@ export default function SetupPage() {
                   name="personal_inspection"
                   checked={personalInspection}
                   onChange={() => setPersonalInspection(true)}
-                  className="mr-2 text-[#0da1c7] focus:ring-[#0da1c7]"
+                  className="mr-2 text-harken-blue focus:ring-harken-blue"
                 />
                 <span>Yes, I inspected it personally</span>
               </label>
@@ -1964,7 +2207,7 @@ export default function SetupPage() {
                   name="personal_inspection"
                   checked={!personalInspection}
                   onChange={() => setPersonalInspection(false)}
-                  className="mr-2 text-[#0da1c7] focus:ring-[#0da1c7]"
+                  className="mr-2 text-harken-blue focus:ring-harken-blue"
                 />
                 <span>No, I did not inspect it</span>
               </label>
@@ -1980,7 +2223,7 @@ export default function SetupPage() {
                     type="text"
                     value={inspectorName}
                     onChange={(e) => setInspectorName(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent"
                   />
                 </div>
                 <div>
@@ -1989,7 +2232,7 @@ export default function SetupPage() {
                     type="text"
                     value={inspectorLicense}
                     onChange={(e) => setInspectorLicense(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent"
                   />
                 </div>
               </div>
@@ -1999,7 +2242,7 @@ export default function SetupPage() {
       </div>
 
       <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           USPAP Certification & Assistance
         </h3>
         <p className="text-sm text-gray-500 dark:text-slate-400 mb-4">
@@ -2008,7 +2251,7 @@ export default function SetupPage() {
         <textarea
           value={appraisalAssistance}
           onChange={(e) => setAppraisalAssistance(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-transparent"
+          className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent"
           rows={3}
           placeholder="Name and description of assistance (e.g. John Doe provided market research...)"
         />
@@ -2019,7 +2262,7 @@ export default function SetupPage() {
   const renderCertificationsTab = () => (
     <div className="space-y-6">
       <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           USPAP Certifications
         </h3>
         <div className="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 dark:border-blue-500/50 p-4 rounded mb-4">
@@ -2034,7 +2277,7 @@ export default function SetupPage() {
               type="checkbox"
               checked={certificationAcknowledged}
               onChange={(e) => setCertificationAcknowledged(e.target.checked)}
-              className="mt-1 text-[#0da1c7] focus:ring-[#0da1c7]"
+              className="mt-1 text-harken-blue focus:ring-harken-blue"
             />
             <div>
               <span className="font-medium text-gray-900 dark:text-white">I acknowledge the USPAP certification requirements</span>
@@ -2050,7 +2293,7 @@ export default function SetupPage() {
           <textarea
             value={additionalCertifications}
             onChange={(e) => setAdditionalCertifications(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-transparent"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent"
             rows={4}
             placeholder="Add any additional certifications required for this assignment..."
           />
@@ -2058,7 +2301,7 @@ export default function SetupPage() {
       </div>
 
       <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           Licenses & Certifications
         </h3>
         <div className="grid grid-cols-3 gap-4">
@@ -2068,7 +2311,7 @@ export default function SetupPage() {
               type="text"
               value={licenseNumber}
               onChange={(e) => setLicenseNumber(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent"
               placeholder="Enter license number..."
             />
           </div>
@@ -2078,7 +2321,7 @@ export default function SetupPage() {
               type="text"
               value={licenseState}
               onChange={(e) => setLicenseState(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent"
               placeholder="e.g., Montana"
             />
           </div>
@@ -2088,7 +2331,7 @@ export default function SetupPage() {
               type="date"
               value={licenseExpiration}
               onChange={(e) => setLicenseExpiration(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent"
             />
           </div>
         </div>
@@ -2182,7 +2425,7 @@ export default function SetupPage() {
   const helpSidebar = (
     <WizardGuidancePanel
       guidance={activeGuidance}
-      themeColor="#0da1c7"
+      themeColor="harken-blue"
     />
   );
 

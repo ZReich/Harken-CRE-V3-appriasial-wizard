@@ -441,7 +441,7 @@ export const RiskAnalysisModal: React.FC<Props> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onClick={onClose}></div>
       <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-lg relative overflow-hidden animate-fade-in flex flex-col max-h-[90vh]">
-        <div className="bg-gradient-to-r from-[#0da1c7] to-[#0b8eb0] p-6 flex justify-between items-start text-white flex-shrink-0">
+        <div className="bg-gradient-to-r from-gradient-action-start to-gradient-action-end p-6 flex justify-between items-start text-white flex-shrink-0">
           <div>
             <div className="flex items-center gap-2 mb-1">
               <FileCheck className={analysis.score > 80 ? "text-emerald-300" : "text-amber-300"} size={24} />
@@ -476,7 +476,7 @@ export const RiskAnalysisModal: React.FC<Props> = ({
           ))}
         </div>
         <div className="p-4 border-t border-slate-100 bg-slate-50 text-center flex-shrink-0">
-          <button onClick={onClose} className="text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-[#0da1c7] transition-colors w-full py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700">Return to Editor</button>
+          <button onClick={onClose} className="text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-harken-blue transition-colors w-full py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700">Return to Editor</button>
         </div>
       </div>
     </div>

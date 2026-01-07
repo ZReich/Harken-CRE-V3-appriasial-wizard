@@ -470,7 +470,7 @@ export default function InteriorFinishesInventory({
       <div className={`${compact ? 'p-3' : 'p-4'} border-b border-gray-100`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Layers className={`${compact ? 'w-4 h-4' : 'w-5 h-5'} text-[#0da1c7]`} />
+            <Layers className={`${compact ? 'w-4 h-4' : 'w-5 h-5'} text-harken-blue`} />
             <div>
               <h3 className={`${compact ? 'text-base' : 'text-lg'} font-bold text-[#1c3643]`}>
                 Interior Finishes {areaName && <span className="font-normal text-gray-500 dark:text-slate-400">({areaName})</span>}
@@ -488,7 +488,7 @@ export default function InteriorFinishesInventory({
             onClick={() => setShowPhotoPanel(!showPhotoPanel)}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
               showPhotoPanel
-                ? 'bg-[#0da1c7] text-white'
+                ? 'bg-harken-blue text-white'
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
@@ -496,7 +496,7 @@ export default function InteriorFinishesInventory({
             {showPhotoPanel ? 'Hide Photos' : 'View Photos'}
             {contextPhotoCount > 0 && (
               <span className={`ml-1 px-1.5 py-0.5 rounded-full text-[10px] ${
-                showPhotoPanel ? 'bg-white/20' : 'bg-[#0da1c7] text-white'
+                showPhotoPanel ? 'bg-white/20' : 'bg-harken-blue text-white'
               }`}>
                 {contextPhotoCount}
               </span>
@@ -523,8 +523,8 @@ export default function InteriorFinishesInventory({
                 }}
                 className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all ${
                   selectedCategory === cat.id
-                    ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
-                    : 'bg-white text-gray-700 border-gray-200 hover:border-[#0da1c7] hover:text-[#0da1c7]'
+                    ? 'bg-harken-blue text-white border-harken-blue'
+                    : 'bg-white text-gray-700 border-gray-200 hover:border-harken-blue hover:text-harken-blue'
                 }`}
               >
                 {cat.label}
@@ -549,8 +549,8 @@ export default function InteriorFinishesInventory({
                       onClick={() => handleTypeSelect(type.id)}
                       className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all flex items-center gap-1 ${
                         selectedTypeId === type.id && !showCustomForm
-                          ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
-                          : 'bg-white text-gray-700 border-gray-200 hover:border-[#0da1c7] hover:text-[#0da1c7]'
+                          ? 'bg-harken-blue text-white border-harken-blue'
+                          : 'bg-white text-gray-700 border-gray-200 hover:border-harken-blue hover:text-harken-blue'
                       }`}
                     >
                       {type.isPrimary && <CheckCircle2 size={12} className="text-green-500" />}
@@ -582,8 +582,8 @@ export default function InteriorFinishesInventory({
                           onClick={() => handleTypeSelect(type.id)}
                           className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all flex items-center gap-1 ${
                             selectedTypeId === type.id && !showCustomForm
-                              ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
-                              : 'bg-white text-gray-700 border-gray-200 hover:border-[#0da1c7] hover:text-[#0da1c7]'
+                              ? 'bg-harken-blue text-white border-harken-blue'
+                              : 'bg-white text-gray-700 border-gray-200 hover:border-harken-blue hover:text-harken-blue'
                           }`}
                         >
                           {isCustom && <Star size={12} className="text-amber-400" />}
@@ -611,8 +611,8 @@ export default function InteriorFinishesInventory({
                         onClick={() => handleTypeSelect(type.id)}
                         className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all flex items-center gap-1 ${
                           selectedTypeId === type.id && !showCustomForm
-                            ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
-                            : 'bg-white text-gray-700 border-gray-200 hover:border-[#0da1c7] hover:text-[#0da1c7]'
+                            ? 'bg-harken-blue text-white border-harken-blue'
+                            : 'bg-white text-gray-700 border-gray-200 hover:border-harken-blue hover:text-harken-blue'
                         }`}
                       >
                         {isCustom && <Star size={12} className="text-amber-400" />}
@@ -636,8 +636,8 @@ export default function InteriorFinishesInventory({
               }}
               className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all flex items-center gap-1 ${
                 showCustomForm
-                  ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
-                  : 'bg-white text-gray-700 border-gray-200 hover:border-[#0da1c7] hover:text-[#0da1c7]'
+                  ? 'bg-harken-blue text-white border-harken-blue'
+                  : 'bg-white text-gray-700 border-gray-200 hover:border-harken-blue hover:text-harken-blue'
               }`}
             >
               <Plus size={12} />
@@ -648,9 +648,9 @@ export default function InteriorFinishesInventory({
 
         {/* Custom Type Form */}
         {showCustomForm && selectedCategory && (
-          <div className="mb-3 p-3 bg-white rounded-lg border border-[#0da1c7]/30 border-dashed">
+          <div className="mb-3 p-3 bg-white rounded-lg border border-harken-blue/30 border-dashed">
             <div className="flex items-center gap-2 mb-3 text-sm text-gray-600 dark:text-slate-400">
-              <Plus size={14} className="text-[#0da1c7]" />
+              <Plus size={14} className="text-harken-blue" />
               <span>Add custom type to <strong>{INTERIOR_CATEGORIES.find(c => c.id === selectedCategory)?.label}</strong></span>
             </div>
             <div className="grid grid-cols-2 gap-3 mb-3">
@@ -662,7 +662,7 @@ export default function InteriorFinishesInventory({
                   type="text"
                   value={customName}
                   onChange={(e) => setCustomName(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-harken-blue focus:border-transparent"
                   placeholder="e.g., Luxury Vinyl Plank"
                 />
               </div>
@@ -680,7 +680,7 @@ export default function InteriorFinishesInventory({
                   type="number"
                   value={customDefaultLife}
                   onChange={(e) => setCustomDefaultLife(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-harken-blue focus:border-transparent"
                   min="1"
                   max="100"
                 />
@@ -691,7 +691,7 @@ export default function InteriorFinishesInventory({
             {!compact && (
               <div className="mb-3 p-2 bg-slate-50 rounded-lg border border-slate-200">
                 <div className="flex items-start gap-2">
-                  <Calculator size={14} className="text-[#0da1c7] mt-0.5 flex-shrink-0" />
+                  <Calculator size={14} className="text-harken-blue mt-0.5 flex-shrink-0" />
                   <div className="text-xs text-gray-600 dark:text-slate-400">
                     <div className="font-medium text-gray-700 mb-1">
                       Economic Life Guide for {INTERIOR_CATEGORIES.find(c => c.id === selectedCategory)?.label}
@@ -706,7 +706,7 @@ export default function InteriorFinishesInventory({
                     <button
                       type="button"
                       onClick={() => setCustomDefaultLife(String(ECONOMIC_LIFE_GUIDE.interior[selectedCategory]?.typical || 15))}
-                      className="mt-1.5 text-[#0da1c7] hover:text-[#0da1c7]/80 font-medium underline"
+                      className="mt-1.5 text-harken-blue hover:text-harken-blue/80 font-medium underline"
                     >
                       Use typical ({ECONOMIC_LIFE_GUIDE.interior[selectedCategory]?.typical || 15} yrs)
                     </button>
@@ -720,7 +720,7 @@ export default function InteriorFinishesInventory({
                 type="checkbox"
                 checked={saveForFuture}
                 onChange={(e) => setSaveForFuture(e.target.checked)}
-                className="rounded border-gray-300 text-[#0da1c7] focus:ring-[#0da1c7]"
+                className="rounded border-gray-300 text-harken-blue focus:ring-harken-blue"
               />
               <Star size={14} className="text-amber-400" />
               Save to My Finish Types (for future appraisals)
@@ -740,7 +740,7 @@ export default function InteriorFinishesInventory({
                 <select
                   value={yearInstalled}
                   onChange={(e) => setYearInstalled(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white dark:bg-slate-700 dark:text-white"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-white dark:bg-slate-700 dark:text-white"
                 >
                   <option value="">Select year...</option>
                   {generateYearOptions(buildingYearBuilt).map((year) => (
@@ -759,7 +759,7 @@ export default function InteriorFinishesInventory({
                   type="number"
                   value={customEconomicLife}
                   onChange={(e) => setCustomEconomicLife(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-harken-blue focus:border-transparent"
                   placeholder={selectedType?.defaultEconomicLife?.toString() || '15'}
                   min="1"
                   max="100"
@@ -771,7 +771,7 @@ export default function InteriorFinishesInventory({
                   disabled={!canAdd}
                   className={`w-full flex items-center justify-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
                     canAdd
-                      ? 'bg-[#0da1c7] text-white hover:bg-[#0da1c7]/90'
+                      ? 'bg-harken-blue text-white hover:bg-harken-blue/90'
                       : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                   }`}
                 >
@@ -849,7 +849,7 @@ export default function InteriorFinishesInventory({
                         <button
                           onClick={() => toggleExpanded(component.id)}
                           className={`p-1 rounded transition-colors flex-shrink-0 ${
-                            hasNotes ? 'text-[#0da1c7] hover:bg-[#0da1c7]/10' : 'text-gray-400 hover:bg-gray-100'
+                            hasNotes ? 'text-harken-blue hover:bg-harken-blue/10' : 'text-gray-400 hover:bg-gray-100'
                           }`}
                           title={isExpanded ? 'Collapse notes' : 'Add/view notes'}
                         >
@@ -865,7 +865,7 @@ export default function InteriorFinishesInventory({
                             </span>
                             {hasNotes && !isExpanded && (
                               <span title="Has notes">
-                                <FileText size={12} className="text-[#0da1c7] flex-shrink-0" />
+                                <FileText size={12} className="text-harken-blue flex-shrink-0" />
                               </span>
                             )}
                           </div>
@@ -920,7 +920,7 @@ export default function InteriorFinishesInventory({
                       {/* Expanded Details Section */}
                       {isExpanded && (
                         <div className="px-3 pb-3 pt-0">
-                          <div className="ml-7 border-l-2 border-[#0da1c7]/20 pl-3 space-y-4">
+                          <div className="ml-7 border-l-2 border-harken-blue/20 pl-3 space-y-4">
                             {/* Depreciation Override */}
                             <div className="space-y-2">
                               <div className="flex items-center gap-3">

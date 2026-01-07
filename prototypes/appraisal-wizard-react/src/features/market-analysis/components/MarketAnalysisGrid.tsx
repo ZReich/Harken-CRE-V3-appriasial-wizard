@@ -145,7 +145,7 @@ export const MarketAnalysisGrid: React.FC<MarketAnalysisGridProps> = ({
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <div className="p-3 bg-[#0da1c7] rounded-xl">
+          <div className="p-3 bg-harken-blue rounded-xl">
             <BarChart3 className="w-6 h-6 text-white" />
           </div>
           <div>
@@ -231,7 +231,7 @@ export const MarketAnalysisGrid: React.FC<MarketAnalysisGridProps> = ({
             value={`${formatCurrency(marketData.rentTrends.currentAskingRent)}/SF`}
             change={marketData.rentTrends.rentChange}
             changeLabel="YoY Growth"
-            valueClassName="text-[#0da1c7]"
+            valueClassName="text-harken-blue"
           />
           <MetricCard
             icon={TrendingUp}
@@ -251,7 +251,7 @@ export const MarketAnalysisGrid: React.FC<MarketAnalysisGridProps> = ({
               <div className="text-lg font-bold text-slate-600 dark:text-slate-300">{formatCurrency(marketData.rentTrends.rentRangeLow)}</div>
               <div className="flex-1 h-2 bg-gradient-to-r from-slate-200 via-[#0da1c7] to-slate-200 dark:from-slate-700 dark:to-slate-700 rounded-full relative">
                 <div
-                  className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-[#0da1c7] rounded-full border-2 border-white dark:border-slate-800 shadow-md"
+                  className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-harken-blue rounded-full border-2 border-white dark:border-slate-800 shadow-md"
                   style={{
                     left: `${((marketData.rentTrends.currentAskingRent - marketData.rentTrends.rentRangeLow) /
                       (marketData.rentTrends.rentRangeHigh - marketData.rentTrends.rentRangeLow)) * 100}%`
@@ -261,7 +261,7 @@ export const MarketAnalysisGrid: React.FC<MarketAnalysisGridProps> = ({
               <div className="text-lg font-bold text-slate-600 dark:text-slate-300">{formatCurrency(marketData.rentTrends.rentRangeHigh)}</div>
             </div>
             <div className="text-center text-[10px] text-slate-400 dark:text-slate-500 mt-2">
-              Subject Market Position: <span className="font-bold text-[#0da1c7]">{formatCurrency(marketData.rentTrends.currentAskingRent)}/SF</span>
+              Subject Market Position: <span className="font-bold text-harken-blue">{formatCurrency(marketData.rentTrends.currentAskingRent)}/SF</span>
             </div>
           </div>
         </div>
@@ -307,7 +307,7 @@ export const MarketAnalysisGrid: React.FC<MarketAnalysisGridProps> = ({
       <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-sm font-bold text-slate-800 dark:text-white flex items-center gap-2">
-            <Percent className="w-4 h-4 text-[#0da1c7]" />
+            <Percent className="w-4 h-4 text-harken-blue" />
             Cap Rate Summary
           </h3>
           <span className="text-[10px] text-slate-400 dark:text-slate-500">From Sales Comparables</span>
@@ -321,9 +321,9 @@ export const MarketAnalysisGrid: React.FC<MarketAnalysisGridProps> = ({
             <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase mb-1">25th %ile</div>
             <div className="text-xl font-bold text-slate-700 dark:text-slate-200">6.12%</div>
           </div>
-          <div className="text-center p-3 bg-[#0da1c7]/10 rounded-xl border-2 border-[#0da1c7]">
-            <div className="text-[10px] text-[#0da1c7] uppercase mb-1 font-bold">Median</div>
-            <div className="text-xl font-black text-[#0da1c7]">6.50%</div>
+          <div className="text-center p-3 bg-harken-blue/10 rounded-xl border-2 border-harken-blue">
+            <div className="text-[10px] text-harken-blue uppercase mb-1 font-bold">Median</div>
+            <div className="text-xl font-black text-harken-blue">6.50%</div>
           </div>
           <div className="text-center p-3 bg-slate-50 dark:bg-slate-900 rounded-xl">
             <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase mb-1">75th %ile</div>

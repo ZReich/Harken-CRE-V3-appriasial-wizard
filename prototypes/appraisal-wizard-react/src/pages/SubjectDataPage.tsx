@@ -1,3 +1,43 @@
+/**
+ * SubjectDataPage - Subject Property Data Entry
+ * ==============================================
+ * 
+ * This is the main data entry page (~3,100 lines) for subject property information.
+ * It coordinates 30+ extracted components across 7 tabs and is intentionally large
+ * as a page-level orchestrator.
+ * 
+ * ## Tab Structure
+ * 1. **Site** - Land/site characteristics, parcel data
+ * 2. **Improvements** - Building inventory, component details
+ * 3. **Site Improvements** - M&S Section 66 items (paving, landscaping)
+ * 4. **Ownership** - Ownership history, sale details
+ * 5. **Tax** - Tax assessment, millage rates
+ * 6. **Photos** - Photo staging, classification, assignment
+ * 7. **Maps** - Map generation, boundary drawing
+ * 
+ * ## Key Features
+ * - Multi-source field suggestions (documents, GIS, Cotality)
+ * - Document extraction integration
+ * - Photo AI classification
+ * - Map generation with boundary drawing
+ * - Progress tracking per section
+ * 
+ * ## Component Dependencies
+ * - ImprovementsInventory: Building inventory grid
+ * - SiteImprovementsInventory: Site improvements management
+ * - PhotoStagingTray: Photo upload and staging
+ * - MapGeneratorPanel: ESRI map integration
+ * - DemographicsPanel: Census data display
+ * 
+ * ## Section Navigation (search for `// ===`)
+ * - TAB CONFIGURATION: Tab definitions and icons
+ * - STATE MANAGEMENT: Local state hooks
+ * - TAB CONTENT: Tab-specific render functions
+ * - MAIN RENDER: Layout and tab switching
+ * 
+ * @see DEVELOPER_GUIDE.md for architecture decisions
+ */
+
 import { useState, useEffect, useMemo, useRef, useCallback } from 'react';
 import WizardLayout from '../components/WizardLayout';
 import ImprovementsInventory from '../components/ImprovementsInventory';
@@ -640,7 +680,7 @@ export default function SubjectDataPage() {
   const helpSidebar = (
     <WizardGuidancePanel
       guidance={currentGuidance}
-      themeColor="#0da1c7"
+      themeColor="harken-blue"
     />
   );
 
@@ -897,13 +937,13 @@ function LocationContent({
       {/* Page Header with AI Draft All Button */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-bold text-[#1c3643] dark:text-white">Location & Area Analysis</h2>
+          <h2 className="text-xl font-bold text-harken-dark dark:text-white">Location & Area Analysis</h2>
           <p className="text-sm text-gray-500 mt-1">Describe the regional, neighborhood, and specific location context</p>
         </div>
         <button
           onClick={onDraftAll}
           disabled={isDraftingAll}
-          className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-[#4db8d1] to-[#7fcce0] rounded-lg hover:from-[#3da8c1] hover:to-[#6fc0d4] flex items-center gap-2 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-gradient-light-from to-gradient-light-to rounded-lg hover:from-gradient-light-hover-from hover:to-gradient-light-hover-to flex items-center gap-2 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {isDraftingAll ? (
             <>
@@ -921,7 +961,7 @@ function LocationContent({
 
       {/* General Area Analysis */}
       <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           General Area Analysis
         </h3>
         <div className="space-y-4">
@@ -947,7 +987,7 @@ function LocationContent({
                 value={cityCounty}
                 onChange={(e) => setCityCounty(e.target.value)}
                 placeholder="Enter city and county (e.g., Billings, Yellowstone County)"
-                className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white dark:bg-slate-700 dark:text-white"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-white dark:bg-slate-700 dark:text-white"
               />
             )}
           </div>
@@ -967,7 +1007,7 @@ function LocationContent({
 
       {/* Neighborhood Analysis */}
       <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           Neighborhood Analysis
         </h3>
         <div className="space-y-4">
@@ -998,7 +1038,7 @@ function LocationContent({
 
       {/* Location Description */}
       <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           Location Description
         </h3>
         <EnhancedTextArea
@@ -1041,9 +1081,9 @@ function DemographicsContent({ latitude, longitude }: DemographicsProps) {
 
   return (
     <div className="space-y-6">
-      <div className="bg-gradient-to-r from-[#0da1c7]/5 to-transparent border border-[#0da1c7]/20 rounded-xl p-4 mb-6">
+      <div className="bg-gradient-to-r from-harken-blue/5 to-transparent border border-harken-blue/20 rounded-xl p-4 mb-6">
         <div className="flex items-start gap-3">
-          <Info className="w-5 h-5 text-[#0da1c7] flex-shrink-0 mt-0.5" />
+          <Info className="w-5 h-5 text-harken-blue flex-shrink-0 mt-0.5" />
           <div>
             <h4 className="font-medium text-slate-800 dark:text-white">Neighborhood Demographics</h4>
             <p className="text-sm text-slate-600">
@@ -1471,7 +1511,7 @@ Overall, the site is well-suited for its current use and presents no significant
     <div className="space-y-6">
       {/* Site Size & Shape */}
       <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           Site Size & Shape
         </h3>
         <div className="grid grid-cols-2 gap-4">
@@ -1485,7 +1525,7 @@ Overall, the site is well-suited for its current use and presents no significant
               value={acres}
               onChange={(e) => handleAcresChange(e.target.value)}
               step="0.001"
-              className={`w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white dark:bg-slate-700 dark:text-white dark:placeholder-slate-400 ${getDocumentSourceInputClasses(hasFieldSource('subjectData.siteArea'))
+              className={`w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-white dark:bg-slate-700 dark:text-white dark:placeholder-slate-400 ${getDocumentSourceInputClasses(hasFieldSource('subjectData.siteArea'))
                 }`}
               placeholder="0.000"
             />
@@ -1510,7 +1550,7 @@ Overall, the site is well-suited for its current use and presents no significant
               type="text"
               value={squareFeet ? parseInt(squareFeet).toLocaleString() : ''}
               onChange={(e) => handleSquareFeetChange(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white dark:bg-slate-700 dark:text-white dark:placeholder-slate-400"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-white dark:bg-slate-700 dark:text-white dark:placeholder-slate-400"
               placeholder="0"
             />
           </div>
@@ -1531,7 +1571,7 @@ Overall, the site is well-suited for its current use and presents no significant
             type="text"
             value={frontage}
             onChange={(e) => setFrontage(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white dark:bg-slate-700 dark:text-white dark:placeholder-slate-400"
+            className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-white dark:bg-slate-700 dark:text-white dark:placeholder-slate-400"
             placeholder="e.g., 475' along South 30th Street West"
           />
         </div>
@@ -1612,7 +1652,7 @@ Overall, the site is well-suited for its current use and presents no significant
 
       {/* Zoning & Land Use */}
       <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           Zoning & Land Use
         </h3>
         <div className="space-y-4">
@@ -1625,7 +1665,7 @@ Overall, the site is well-suited for its current use and presents no significant
               type="text"
               value={zoningClass}
               onChange={(e) => setZoningClass(e.target.value)}
-              className={`w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white dark:bg-slate-700 dark:text-white dark:placeholder-slate-400 ${getDocumentSourceInputClasses(hasFieldSource('subjectData.zoningClass'))
+              className={`w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-white dark:bg-slate-700 dark:text-white dark:placeholder-slate-400 ${getDocumentSourceInputClasses(hasFieldSource('subjectData.zoningClass'))
                 }`}
               placeholder="e.g., I1 - Light Industrial"
             />
@@ -1662,8 +1702,8 @@ Overall, the site is well-suited for its current use and presents no significant
 
       {/* Utilities & Services - Expanded */}
       <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4 flex items-center gap-2">
-          <Zap className="w-5 h-5 text-[#0da1c7]" />
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4 flex items-center gap-2">
+          <Zap className="w-5 h-5 text-harken-blue" />
           Utilities & Services
         </h3>
         <div className="space-y-6">
@@ -1684,7 +1724,7 @@ Overall, the site is well-suited for its current use and presents no significant
                   type="text"
                   value={waterProvider}
                   onChange={(e) => setWaterProvider(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white dark:bg-slate-700 dark:text-white dark:placeholder-slate-400"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-white dark:bg-slate-700 dark:text-white dark:placeholder-slate-400"
                   placeholder="e.g., City of Bozeman Water"
                 />
               </div>
@@ -1726,7 +1766,7 @@ Overall, the site is well-suited for its current use and presents no significant
                   type="text"
                   value={electricProvider}
                   onChange={(e) => setElectricProvider(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white dark:bg-slate-700 dark:text-white dark:placeholder-slate-400"
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-white dark:bg-slate-700 dark:text-white dark:placeholder-slate-400"
                   placeholder="e.g., NorthWestern Energy"
                 />
               </div>
@@ -1825,7 +1865,7 @@ Overall, the site is well-suited for its current use and presents no significant
 
       {/* Additional Site Characteristics */}
       <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           Additional Site Characteristics
         </h3>
         <div className="space-y-4">
@@ -1869,14 +1909,14 @@ Overall, the site is well-suited for its current use and presents no significant
       {/* Flood Zone - Enhanced */}
       <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
         <div className="flex items-center justify-between border-b-2 border-gray-200 pb-3 mb-4">
-          <h3 className="text-lg font-bold text-[#1c3643] dark:text-white flex items-center gap-2">
-            <Droplets className="w-5 h-5 text-[#0da1c7]" />
+          <h3 className="text-lg font-bold text-harken-dark dark:text-white flex items-center gap-2">
+            <Droplets className="w-5 h-5 text-harken-blue" />
             Flood Zone
           </h3>
           <button
             onClick={handleLookupFloodZone}
             disabled={isLookingUpFloodZone || !subjectCoordinates}
-            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-[#0da1c7] to-[#0891b2] rounded-lg hover:from-[#0b8fb3] hover:to-[#0782a1] disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
+            className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-gradient-action-from to-gradient-action-to rounded-lg hover:from-gradient-action-hover-from hover:to-gradient-action-hover-to disabled:opacity-50 disabled:cursor-not-allowed transition-all shadow-sm"
           >
             {isLookingUpFloodZone ? (
               <>
@@ -1923,7 +1963,7 @@ Overall, the site is well-suited for its current use and presents no significant
                 type="text"
                 value={femaMapPanel}
                 onChange={(e) => setFemaMapPanel(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white dark:bg-slate-700 dark:text-white dark:placeholder-slate-400"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-white dark:bg-slate-700 dark:text-white dark:placeholder-slate-400"
                 placeholder="e.g., 30111C2175E"
               />
             </div>
@@ -1933,7 +1973,7 @@ Overall, the site is well-suited for its current use and presents no significant
                 type="date"
                 value={femaMapDate}
                 onChange={(e) => setFemaMapDate(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white dark:bg-slate-700 dark:text-white dark:[color-scheme:dark]"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-white dark:bg-slate-700 dark:text-white dark:[color-scheme:dark]"
               />
             </div>
           </div>
@@ -1959,13 +1999,13 @@ Overall, the site is well-suited for its current use and presents no significant
       {/* Site Description Narrative - New Card */}
       <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
         <div className="flex items-center justify-between border-b-2 border-gray-200 pb-3 mb-4">
-          <h3 className="text-lg font-bold text-[#1c3643] dark:text-white">
+          <h3 className="text-lg font-bold text-harken-dark dark:text-white">
             Site Description Narrative
           </h3>
           <button
             onClick={handleDraftSiteDescription}
             disabled={isDraftingSiteDescription}
-            className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-[#4db8d1] to-[#7fcce0] rounded-lg hover:from-[#3da8c1] hover:to-[#6fc0d4] flex items-center gap-2 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+            className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-gradient-light-from to-gradient-light-to rounded-lg hover:from-gradient-light-hover-from hover:to-gradient-light-hover-to flex items-center gap-2 transition-all shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isDraftingSiteDescription ? (
               <>
@@ -2056,7 +2096,7 @@ function TaxContent({
 
       {/* Property Tax Information */}
       <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           Property Tax Information
         </h3>
         <div className="grid grid-cols-2 gap-4">
@@ -2065,7 +2105,7 @@ function TaxContent({
             <select
               value={taxYear}
               onChange={(e) => setTaxYear(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white dark:bg-slate-700 dark:text-white"
+              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-white dark:bg-slate-700 dark:text-white"
             >
               {yearOptions.map(y => <option key={y} value={y}>{y}</option>)}
             </select>
@@ -2076,7 +2116,7 @@ function TaxContent({
               type="text"
               value={taxAmount}
               onChange={(e) => setTaxAmount(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent"
               placeholder="$0.00"
             />
           </div>
@@ -2086,7 +2126,7 @@ function TaxContent({
               type="text"
               value={assessedLand}
               onChange={(e) => setAssessedLand(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent"
               placeholder="$0.00"
             />
           </div>
@@ -2096,7 +2136,7 @@ function TaxContent({
               type="text"
               value={assessedImprovements}
               onChange={(e) => setAssessedImprovements(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent"
               placeholder="$0.00"
             />
           </div>
@@ -2106,7 +2146,7 @@ function TaxContent({
               type="text"
               value={totalAssessed}
               onChange={(e) => setTotalAssessed(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent"
               placeholder="$0.00"
             />
           </div>
@@ -2117,7 +2157,7 @@ function TaxContent({
               value={millLevy}
               onChange={(e) => setMillLevy(e.target.value)}
               step="0.001"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent"
               placeholder="0.000"
             />
           </div>
@@ -2126,7 +2166,7 @@ function TaxContent({
 
       {/* Sale & Ownership History */}
       <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           Sale & Ownership History
         </h3>
         <div className="grid grid-cols-2 gap-4">
@@ -2136,7 +2176,7 @@ function TaxContent({
               type="date"
               value={lastSaleDate}
               onChange={(e) => setLastSaleDate(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent"
             />
           </div>
           <div>
@@ -2145,7 +2185,7 @@ function TaxContent({
               type="text"
               value={lastSalePrice}
               onChange={(e) => setLastSalePrice(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent"
               placeholder="$0.00"
             />
           </div>
@@ -2155,7 +2195,7 @@ function TaxContent({
               type="text"
               value={grantor}
               onChange={(e) => setGrantor(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent"
               placeholder="Name of seller"
             />
           </div>
@@ -2165,7 +2205,7 @@ function TaxContent({
               type="text"
               value={grantee}
               onChange={(e) => setGrantee(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent"
               placeholder="Name of buyer"
             />
           </div>
@@ -2522,14 +2562,14 @@ function PhotosContent({
       />
 
       {/* Photo Stats Summary */}
-      <div className="bg-gradient-to-r from-[#0da1c7]/10 to-[#4db8d1]/5 border border-[#0da1c7]/20 rounded-xl p-4">
+      <div className="bg-gradient-to-r from-harken-blue/10 to-harken-accent/5 border border-harken-blue/20 rounded-xl p-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-lg bg-[#0da1c7]/20 flex items-center justify-center">
-              <Camera className="w-5 h-5 text-[#0da1c7]" />
+            <div className="w-10 h-10 rounded-lg bg-harken-blue/20 flex items-center justify-center">
+              <Camera className="w-5 h-5 text-harken-blue" />
             </div>
             <div>
-              <p className="font-semibold text-[#1c3643] dark:text-white">Subject Property Photos</p>
+              <p className="font-semibold text-harken-dark dark:text-white">Subject Property Photos</p>
               <p className="text-sm text-gray-600 dark:text-slate-400">
                 {Object.values(photos).filter(Boolean).length} of{' '}
                 {photoCategories.reduce((sum, c) => sum + c.slots.length, 0)} photos uploaded
@@ -2576,11 +2616,11 @@ function PhotosContent({
             className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors"
           >
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-lg bg-[#0da1c7]/10 flex items-center justify-center">
-                <category.Icon className="w-5 h-5 text-[#0da1c7]" />
+              <div className="w-10 h-10 rounded-lg bg-harken-blue/10 flex items-center justify-center">
+                <category.Icon className="w-5 h-5 text-harken-blue" />
               </div>
               <div className="text-left">
-                <h3 className="font-bold text-[#1c3643] dark:text-white">{category.label}</h3>
+                <h3 className="font-bold text-harken-dark dark:text-white">{category.label}</h3>
                 <p className="text-sm text-gray-500 dark:text-slate-400">{category.description}</p>
               </div>
             </div>
@@ -2617,15 +2657,15 @@ function PhotosContent({
                       ref={(el) => { photoSlotRefs.current[slot.id] = el; }}
                       tabIndex={0}
                       className={`border-2 rounded-xl p-4 transition-all outline-none ${isFocused
-                        ? 'ring-2 ring-[#0da1c7] ring-offset-2 dark:ring-offset-slate-900'
+                        ? 'ring-2 ring-harken-blue ring-offset-2 dark:ring-offset-slate-900'
                         : ''
                         } ${isDragOver && !photo
-                          ? 'border-[#0da1c7] bg-[#0da1c7]/10 dark:bg-[#0da1c7]/20 scale-[1.02]'
+                          ? 'border-harken-blue bg-harken-blue/10 dark:bg-harken-blue/20 scale-[1.02]'
                           : photo
                             ? 'border-green-200 dark:border-green-900/50 bg-green-50/30 dark:bg-green-900/10'
                             : slot.recommended
-                              ? 'border-[#0da1c7]/30 dark:border-[#0da1c7]/50 bg-[#0da1c7]/5 dark:bg-[#0da1c7]/10'
-                              : 'border-gray-200 dark:border-slate-700 hover:border-[#0da1c7]/40'
+                              ? 'border-harken-blue/30 dark:border-harken-blue/50 bg-harken-blue/5 dark:bg-harken-blue/10'
+                              : 'border-gray-200 dark:border-slate-700 hover:border-harken-blue/40'
                         }`}
                       onMouseEnter={() => handleMouseEnter(slot.id)}
                       onMouseLeave={handleMouseLeave}
@@ -2692,7 +2732,7 @@ function PhotosContent({
                               placeholder="Photo caption (e.g., South Elevation)"
                               value={photo.caption || ''}
                               onChange={(e) => onUpdateMetadata(slot.id, { caption: e.target.value })}
-                              className="w-full px-3 py-2 text-sm border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/40"
+                              className="w-full px-3 py-2 text-sm border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-harken-blue/40"
                             />
 
                             {/* Taken By & Date (collapsed row) */}
@@ -2702,23 +2742,23 @@ function PhotosContent({
                                 placeholder="Taken by"
                                 value={photo.takenBy || defaultTakenBy}
                                 onChange={(e) => onUpdateMetadata(slot.id, { takenBy: e.target.value })}
-                                className="flex-1 px-2 py-1.5 text-xs border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white rounded focus:outline-none focus:ring-1 focus:ring-[#0da1c7]/40"
+                                className="flex-1 px-2 py-1.5 text-xs border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white rounded focus:outline-none focus:ring-1 focus:ring-harken-blue/40"
                               />
                               <input
                                 type="date"
                                 value={photo.takenDate || defaultTakenDate}
                                 onChange={(e) => onUpdateMetadata(slot.id, { takenDate: e.target.value })}
-                                className="w-32 px-2 py-1.5 text-xs border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white dark:[color-scheme:dark] rounded focus:outline-none focus:ring-1 focus:ring-[#0da1c7]/40"
+                                className="w-32 px-2 py-1.5 text-xs border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white dark:[color-scheme:dark] rounded focus:outline-none focus:ring-1 focus:ring-harken-blue/40"
                               />
                             </div>
                           </div>
                         </div>
                       ) : (
                         <label className={`block border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-all ${isDragOver
-                          ? 'border-[#0da1c7] bg-[#0da1c7]/10 dark:bg-[#0da1c7]/20'
+                          ? 'border-harken-blue bg-harken-blue/10 dark:bg-harken-blue/20'
                           : isFocused
-                            ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-[#0da1c7]/10'
-                            : 'border-gray-300 dark:border-slate-700 hover:border-[#0da1c7] hover:bg-[#0da1c7]/5 dark:hover:bg-[#0da1c7]/10'
+                            ? 'border-harken-blue bg-harken-blue/5 dark:bg-harken-blue/10'
+                            : 'border-gray-300 dark:border-slate-700 hover:border-harken-blue hover:bg-harken-blue/5 dark:hover:bg-harken-blue/10'
                           }`}>
                           <input
                             ref={(el) => { fileInputRefs.current[slot.id] = el; }}
@@ -2727,8 +2767,8 @@ function PhotosContent({
                             className="hidden"
                             onChange={(e) => handleFileChange(slot.id, e)}
                           />
-                          <Image className={`w-8 h-8 mx-auto mb-2 ${isDragOver || isFocused ? 'text-[#0da1c7]' : 'text-gray-400'}`} />
-                          <p className={`text-xs ${isDragOver || isFocused ? 'text-[#0da1c7] font-medium' : 'text-gray-500'}`}>
+                          <Image className={`w-8 h-8 mx-auto mb-2 ${isDragOver || isFocused ? 'text-harken-blue' : 'text-gray-400'}`} />
+                          <p className={`text-xs ${isDragOver || isFocused ? 'text-harken-blue font-medium' : 'text-gray-500'}`}>
                             {isDragOver ? 'Drop here' : isFocused ? 'Press Enter to upload' : 'Click or drag to upload'}
                           </p>
                         </label>
@@ -2744,23 +2784,23 @@ function PhotosContent({
 
       {/* Auto-Generate Maps */}
       <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4 flex items-center gap-2">
-          <MapPin className="w-5 h-5 text-[#0da1c7]" />
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4 flex items-center gap-2">
+          <MapPin className="w-5 h-5 text-harken-blue" />
           Maps
         </h3>
         <p className="text-sm text-gray-600 mb-4">
           Generate maps automatically from the property address.
         </p>
         <div className="flex flex-wrap gap-3">
-          <button className="px-4 py-2 border border-[#0da1c7] text-[#0da1c7] rounded-lg text-sm font-medium hover:bg-[#0da1c7]/10 flex items-center gap-2">
+          <button className="px-4 py-2 border border-harken-blue text-harken-blue rounded-lg text-sm font-medium hover:bg-harken-blue/10 flex items-center gap-2">
             <MapPin className="w-4 h-4" />
             Generate Location Map
           </button>
-          <button className="px-4 py-2 border border-[#0da1c7] text-[#0da1c7] rounded-lg text-sm font-medium hover:bg-[#0da1c7]/10 flex items-center gap-2">
+          <button className="px-4 py-2 border border-harken-blue text-harken-blue rounded-lg text-sm font-medium hover:bg-harken-blue/10 flex items-center gap-2">
             <Building2 className="w-4 h-4" />
             Generate Aerial View
           </button>
-          <button className="px-4 py-2 border border-[#0da1c7] text-[#0da1c7] rounded-lg text-sm font-medium hover:bg-[#0da1c7]/10 flex items-center gap-2">
+          <button className="px-4 py-2 border border-harken-blue text-harken-blue rounded-lg text-sm font-medium hover:bg-harken-blue/10 flex items-center gap-2">
             <FileCheck className="w-4 h-4" />
             Generate Flood Map
           </button>
@@ -2936,7 +2976,7 @@ function ExhibitsContent(_props: ExhibitsProps) {
   // Get file type icon
   const getFileIcon = (file: File) => {
     if (file.type.startsWith('image/')) return <Image className="w-5 h-5 text-violet-500" />;
-    if (file.type === 'application/pdf') return <FileText className="w-5 h-5 text-[#0da1c7]" />;
+    if (file.type === 'application/pdf') return <FileText className="w-5 h-5 text-harken-blue" />;
     if (file.type.includes('spreadsheet') || file.type.includes('excel')) return <BarChart3 className="w-5 h-5 text-emerald-500" />;
     if (file.type.includes('document') || file.type.includes('word')) return <File className="w-5 h-5 text-blue-500" />;
     return <Folder className="w-5 h-5 text-slate-500" />;
@@ -2948,8 +2988,8 @@ function ExhibitsContent(_props: ExhibitsProps) {
       {hasIntakeDocuments && (
         <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-bold text-[#1c3643] dark:text-white flex items-center gap-2">
-              <FileText className="w-5 h-5 text-[#0da1c7]" />
+            <h3 className="text-lg font-bold text-harken-dark dark:text-white flex items-center gap-2">
+              <FileText className="w-5 h-5 text-harken-blue" />
               Documents from Intake ({intakeDocuments.length})
             </h3>
             <p className="text-xs text-green-600 flex items-center gap-1">
@@ -2964,7 +3004,7 @@ function ExhibitsContent(_props: ExhibitsProps) {
               return (
                 <div
                   key={doc.id}
-                  className="flex items-center gap-4 p-4 bg-white dark:bg-slate-800/50 rounded-xl border border-gray-200 dark:border-slate-700 hover:border-[#0da1c7]/30 dark:hover:border-[#0da1c7]/40 transition-all group"
+                  className="flex items-center gap-4 p-4 bg-white dark:bg-slate-800/50 rounded-xl border border-gray-200 dark:border-slate-700 hover:border-harken-blue/30 dark:hover:border-harken-blue/40 transition-all group"
                 >
                   {/* Icon */}
                   <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-700 dark:to-slate-800 flex items-center justify-center flex-shrink-0 border border-slate-200 dark:border-slate-600">
@@ -2978,7 +3018,7 @@ function ExhibitsContent(_props: ExhibitsProps) {
                   </div>
 
                   {/* Classification badge */}
-                  <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-[#0da1c7]/10 text-[#0da1c7] border border-[#0da1c7]/20">
+                  <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-harken-blue/10 text-harken-blue border border-harken-blue/20">
                     {typeInfo.label}
                   </span>
 
@@ -3012,7 +3052,7 @@ function ExhibitsContent(_props: ExhibitsProps) {
 
       {/* Additional Exhibits */}
       <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
           Additional Exhibits
         </h3>
         <p className="text-sm text-gray-600 dark:text-slate-400 mb-4">
@@ -3034,7 +3074,7 @@ function ExhibitsContent(_props: ExhibitsProps) {
             {customExhibits.map((exhibit) => (
               <div
                 key={exhibit.id}
-                className="flex items-center gap-4 p-4 bg-white dark:bg-slate-800/50 rounded-xl border border-gray-200 dark:border-slate-700 hover:border-[#0da1c7]/30 dark:hover:border-[#0da1c7]/40 transition-all group"
+                className="flex items-center gap-4 p-4 bg-white dark:bg-slate-800/50 rounded-xl border border-gray-200 dark:border-slate-700 hover:border-harken-blue/30 dark:hover:border-harken-blue/40 transition-all group"
               >
                 {/* Icon */}
                 <div className="w-10 h-10 rounded-xl overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-700 dark:to-slate-800 flex items-center justify-center flex-shrink-0 border border-slate-200 dark:border-slate-600">
@@ -3058,11 +3098,11 @@ function ExhibitsContent(_props: ExhibitsProps) {
                           if (e.key === 'Escape') { setEditingId(null); setEditName(''); }
                         }}
                         autoFocus
-                        className="flex-1 px-3 py-1.5 text-sm border border-[#0da1c7] rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/30 bg-white dark:bg-slate-700 dark:text-white"
+                        className="flex-1 px-3 py-1.5 text-sm border border-harken-blue rounded-lg focus:outline-none focus:ring-2 focus:ring-harken-blue/30 bg-white dark:bg-slate-700 dark:text-white"
                       />
                       <button
                         onClick={() => handleSaveName(exhibit.id)}
-                        className="p-1.5 text-[#0da1c7] hover:bg-[#0da1c7]/10 rounded-lg"
+                        className="p-1.5 text-harken-blue hover:bg-harken-blue/10 rounded-lg"
                       >
                         <Check className="w-4 h-4" />
                       </button>
@@ -3084,7 +3124,7 @@ function ExhibitsContent(_props: ExhibitsProps) {
                 </div>
 
                 {/* Classification badge */}
-                <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-[#0da1c7]/10 text-[#0da1c7] border border-[#0da1c7]/20">
+                <span className="px-2.5 py-1 rounded-full text-xs font-medium bg-harken-blue/10 text-harken-blue border border-harken-blue/20">
                   Custom Exhibit
                 </span>
 
@@ -3092,7 +3132,7 @@ function ExhibitsContent(_props: ExhibitsProps) {
                 {editingId !== exhibit.id && (
                   <button
                     onClick={() => handleStartEdit(exhibit)}
-                    className="text-xs text-gray-400 hover:text-[#0da1c7] transition-colors"
+                    className="text-xs text-gray-400 hover:text-harken-blue transition-colors"
                   >
                     Change
                   </button>
@@ -3120,19 +3160,19 @@ function ExhibitsContent(_props: ExhibitsProps) {
             w-full px-4 py-6 border-2 border-dashed rounded-xl cursor-pointer
             transition-all duration-200 flex flex-col items-center gap-2
             ${isDragOver
-              ? 'border-[#0da1c7] bg-[#0da1c7]/10 dark:bg-[#0da1c7]/20 scale-[1.01]'
-              : 'border-gray-300 dark:border-slate-700 hover:border-[#0da1c7] dark:hover:border-[#0da1c7] hover:bg-[#0da1c7]/5 dark:hover:bg-[#0da1c7]/10'
+              ? 'border-harken-blue bg-harken-blue/10 dark:bg-harken-blue/20 scale-[1.01]'
+              : 'border-gray-300 dark:border-slate-700 hover:border-harken-blue dark:hover:border-harken-blue hover:bg-harken-blue/5 dark:hover:bg-harken-blue/10'
             }
           `}
         >
           <div className={`
             w-12 h-12 rounded-xl flex items-center justify-center transition-all
-            ${isDragOver ? 'bg-[#0da1c7] text-white scale-110' : 'bg-gray-100 dark:bg-slate-700 text-gray-400 dark:text-slate-500'}
+            ${isDragOver ? 'bg-harken-blue text-white scale-110' : 'bg-gray-100 dark:bg-slate-700 text-gray-400 dark:text-slate-500'}
           `}>
             <Upload className="w-6 h-6" />
           </div>
           <div className="text-center">
-            <p className={`font-medium ${isDragOver ? 'text-[#0da1c7]' : 'text-gray-700 dark:text-slate-300'}`}>
+            <p className={`font-medium ${isDragOver ? 'text-harken-blue' : 'text-gray-700 dark:text-slate-300'}`}>
               {isDragOver ? 'Drop files here' : 'Drop files here or click to browse'}
             </p>
             <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">

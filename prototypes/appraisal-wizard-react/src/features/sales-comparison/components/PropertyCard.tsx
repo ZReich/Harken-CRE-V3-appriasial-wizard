@@ -44,7 +44,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property, isSubject,
 
       {/* Info section - sky-50 background for subject, white for comps */}
       <div
-        className={`p-2 flex-1 flex flex-col gap-0.5 border-r border-slate-200 dark:border-slate-700 ${isSubject ? 'bg-sky-50 dark:bg-sky-900/20' : 'bg-white dark:bg-slate-800'}`}
+        className={`p-2 flex-1 flex flex-col gap-0.5 border-r border-slate-200 dark:border-slate-700 ${isSubject ? 'bg-sky-50 dark:bg-[#0f1f3a]' : 'bg-white dark:bg-slate-800'}`}
       >
         <h3 className="font-bold text-slate-800 dark:text-slate-100 text-xs leading-tight line-clamp-1" title={property.name}>
           {property.name}

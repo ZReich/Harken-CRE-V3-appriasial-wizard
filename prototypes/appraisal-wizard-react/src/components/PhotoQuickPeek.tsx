@@ -122,7 +122,7 @@ export const PhotoQuickPeek: React.FC<PhotoQuickPeekProps> = ({
           <div className="grid grid-cols-2 gap-2">
             {/* Featured photo (larger) */}
             <div className="col-span-1 row-span-2">
-              <div className="relative h-32 bg-slate-100 rounded-lg overflow-hidden border-2 border-[#0da1c7]">
+              <div className="relative h-32 bg-slate-100 rounded-lg overflow-hidden border-2 border-harken-blue">
                 <img
                   src={photo.preview}
                   alt={photo.caption || slotLabel}
@@ -157,9 +157,9 @@ export const PhotoQuickPeek: React.FC<PhotoQuickPeekProps> = ({
         </div>
 
         {/* Helper Text */}
-        <div className="px-4 py-3 bg-gradient-to-r from-[#0da1c7]/10 to-[#4db8d1]/5 border-t border-[#0da1c7]/20">
-          <p className="text-xs text-[#1c3643] flex items-center gap-2">
-            <Sparkles className="w-4 h-4 text-[#0da1c7]" />
+        <div className="px-4 py-3 bg-gradient-to-r from-harken-blue/10 to-[#4db8d1]/5 border-t border-harken-blue/20">
+          <p className="text-xs text-harken-dark flex items-center gap-2">
+            <Sparkles className="w-4 h-4 text-harken-blue" />
             <span>
               This is how your <strong>{categoryLabel}</strong> photo will appear in the final report's photo addenda.
             </span>

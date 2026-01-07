@@ -43,7 +43,7 @@ export const NotesEditorModal: React.FC<NotesEditorModalProps> = ({
                 onClick={(e) => e.stopPropagation()}
             >
                 {/* Header */}
-                <div className="bg-gradient-to-r from-[#0da1c7] to-[#0b8dad] px-5 py-3 flex items-center justify-between flex-shrink-0">
+                <div className="bg-gradient-to-r from-gradient-action-start to-gradient-action-end px-5 py-3 flex items-center justify-between flex-shrink-0">
                     <div className="flex items-center gap-2">
                         <MessageSquare className="w-4 h-4 text-white/80" />
                         <h3 className="text-white font-semibold text-sm uppercase tracking-wide">
@@ -121,7 +121,7 @@ export const NotesEditorModal: React.FC<NotesEditorModalProps> = ({
                         contentEditable
                         onInput={(e) => onInput(e.currentTarget.innerHTML)}
                         dangerouslySetInnerHTML={{ __html: content }}
-                        className={`w-full px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-lg text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/30 focus:border-[#0da1c7] overflow-y-auto transition-all empty:before:content-['Type_your_analysis_and_assumptions_here...'] empty:before:text-slate-400 dark:bg-slate-700/50 ${isFullscreen ? 'flex-1 text-base leading-relaxed p-6' : 'min-h-[192px]'}`}
+                        className={`w-full px-4 py-3 border border-slate-200 dark:border-slate-600 rounded-lg text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-harken-blue/30 focus:border-harken-blue overflow-y-auto transition-all empty:before:content-['Type_your_analysis_and_assumptions_here...'] empty:before:text-slate-400 dark:bg-slate-700/50 ${isFullscreen ? 'flex-1 text-base leading-relaxed p-6' : 'min-h-[192px]'}`}
                         style={isFullscreen ? {} : { minHeight: '192px' }}
                     />
                 </div>
@@ -139,7 +139,7 @@ export const NotesEditorModal: React.FC<NotesEditorModalProps> = ({
                             if (onSave) onSave();
                             onClose();
                         }}
-                        className="px-6 py-2 bg-[#0da1c7] hover:bg-[#0b8eb0] text-white font-bold rounded-lg shadow-sm transition-all transform active:scale-95"
+                        className="px-6 py-2 bg-harken-blue hover:bg-harken-blue/90 text-white font-bold rounded-lg shadow-sm transition-all transform active:scale-95"
                     >
                         Save Notes
                     </button>

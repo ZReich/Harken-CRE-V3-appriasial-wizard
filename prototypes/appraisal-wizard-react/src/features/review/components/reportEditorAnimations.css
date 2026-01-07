@@ -315,7 +315,7 @@
 }
 
 /* =================================================================
-   DRAG PREVIEW
+   DRAG-DROP REORDERING (DND-KIT)
    ================================================================= */
 
 .dragging-element {
@@ -329,6 +329,64 @@
   background: rgba(13, 161, 199, 0.05);
   border: 2px dashed #0da1c7;
   transition: all 0.2s ease-out;
+}
+
+/* Drag handle styling */
+.drag-handle {
+  cursor: grab;
+  opacity: 0.5;
+  transition: all 0.15s ease-out;
+}
+
+.drag-handle:hover {
+  opacity: 1;
+  color: #0da1c7;
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+}
+
+/* Section being dragged */
+@keyframes sectionDragging {
+  0%, 100% {
+    box-shadow: 0 10px 25px -5px rgba(13, 161, 199, 0.3);
+  }
+  50% {
+    box-shadow: 0 15px 30px -5px rgba(13, 161, 199, 0.4);
+  }
+}
+
+.section-dragging {
+  z-index: 1000;
+  background: white;
+  border-radius: 0.5rem;
+  animation: sectionDragging 0.5s ease-in-out infinite;
+}
+
+/* Drop indicator line */
+.drop-indicator {
+  height: 3px;
+  background: linear-gradient(90deg, transparent, #0da1c7, transparent);
+  border-radius: 2px;
+  margin: 0.25rem 0;
+  animation: dropIndicatorPulse 1s ease-in-out infinite;
+}
+
+@keyframes dropIndicatorPulse {
+  0%, 100% {
+    opacity: 0.5;
+    transform: scaleX(0.9);
+  }
+  50% {
+    opacity: 1;
+    transform: scaleX(1);
+  }
+}
+
+/* Smooth reorder animation */
+.section-reorder-animate {
+  transition: transform 0.25s cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 /* =================================================================

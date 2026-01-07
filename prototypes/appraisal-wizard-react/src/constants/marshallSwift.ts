@@ -149,6 +149,15 @@ export const PROPERTY_TYPES: PropertyType[] = [
     msSection: 'Section 17',
   },
 
+  // Commercial Types - Recreational & Special Use (Section 15 Extended)
+  {
+    id: 'recreational',
+    label: 'Recreational & Special Use',
+    description: 'Golf courses, mobile home parks, RV parks, marinas',
+    category: 'commercial',
+    msSection: 'Section 15',
+  },
+
   // Land Types
   {
     id: 'vacant-land',
@@ -177,13 +186,14 @@ export interface OccupancyCode {
   propertyTypeId: string;
   msSection: string;
   msPage?: string;
+  msCode?: string;  // Marshall & Swift occupancy code number (e.g., '100' for golf, '851' for MH parks)
   defaultEconomicLife: number;
   applicableClasses: ConstructionClass[];
   qualityGrades: QualityGrade[];
 }
 
 export type ConstructionClass = 'A' | 'B' | 'C' | 'D' | 'S';
-export type QualityGrade = 'low' | 'fair' | 'average' | 'good' | 'excellent' | 'luxury';
+export type QualityGrade = 'low' | 'fair' | 'average' | 'good' | 'very-good' | 'excellent' | 'luxury';
 
 export const CONSTRUCTION_CLASSES: { id: ConstructionClass; label: string; description: string }[] = [
   { id: 'A', label: 'Class A - Fireproof Steel', description: 'Steel frame, fireproof construction' },
@@ -740,6 +750,111 @@ export const OCCUPANCY_CODES: OccupancyCode[] = [
     defaultEconomicLife: 50,
     applicableClasses: ['B', 'C'],
     qualityGrades: ['fair', 'average', 'good'],
+  },
+
+  // =================================================================
+  // RECREATIONAL & SPECIAL USE (Section 15 Extended)
+  // M&S Codes: 100 (Golf), 851 (Mobile Home Parks)
+  // =================================================================
+  
+  // Golf Courses - M&S Occupancy Code 100
+  {
+    id: 'golf-course-public',
+    label: 'Golf Course - Public / Daily Fee',
+    description: 'Public or daily-fee golf course',
+    propertyTypeId: 'recreational',
+    msSection: 'Section 15',
+    msPage: 'P 50',
+    msCode: '100',
+    defaultEconomicLife: 40,
+    applicableClasses: ['C', 'D'],
+    qualityGrades: ['fair', 'average', 'good', 'excellent'],
+  },
+  {
+    id: 'golf-course-semi-private',
+    label: 'Golf Course - Semi-Private',
+    description: 'Semi-private golf club with limited memberships',
+    propertyTypeId: 'recreational',
+    msSection: 'Section 15',
+    msPage: 'P 51',
+    msCode: '100',
+    defaultEconomicLife: 45,
+    applicableClasses: ['B', 'C'],
+    qualityGrades: ['average', 'good', 'excellent'],
+  },
+  {
+    id: 'golf-course-private',
+    label: 'Golf Course - Private / Country Club',
+    description: 'Private equity or non-equity membership golf club',
+    propertyTypeId: 'recreational',
+    msSection: 'Section 15',
+    msPage: 'P 52',
+    msCode: '100',
+    defaultEconomicLife: 50,
+    applicableClasses: ['A', 'B'],
+    qualityGrades: ['good', 'excellent', 'luxury'],
+  },
+  {
+    id: 'driving-range',
+    label: 'Driving Range / Practice Facility',
+    description: 'Standalone driving range or practice facility',
+    propertyTypeId: 'recreational',
+    msSection: 'Section 15',
+    msPage: 'P 55',
+    msCode: '100',
+    defaultEconomicLife: 30,
+    applicableClasses: ['C', 'D'],
+    qualityGrades: ['fair', 'average', 'good'],
+  },
+  
+  // Mobile Home Parks - M&S Occupancy Code 851
+  {
+    id: 'mobile-home-park',
+    label: 'Mobile Home Park / MH Community',
+    description: 'Manufactured housing community with rental pads',
+    propertyTypeId: 'recreational',
+    msSection: 'Section 15',
+    msPage: 'P 60',
+    msCode: '851',
+    defaultEconomicLife: 40,
+    applicableClasses: ['C', 'D'],
+    qualityGrades: ['low', 'fair', 'average', 'good', 'very-good'],
+  },
+  {
+    id: 'mobile-home-park-senior',
+    label: 'Mobile Home Park - Age-Restricted (55+)',
+    description: 'Senior/age-restricted manufactured housing community',
+    propertyTypeId: 'recreational',
+    msSection: 'Section 15',
+    msPage: 'P 61',
+    msCode: '851',
+    defaultEconomicLife: 45,
+    applicableClasses: ['B', 'C'],
+    qualityGrades: ['average', 'good', 'very-good', 'excellent'],
+  },
+  {
+    id: 'rv-park',
+    label: 'RV Park / Campground',
+    description: 'Recreational vehicle park with rental spaces',
+    propertyTypeId: 'recreational',
+    msSection: 'Section 15',
+    msPage: 'P 65',
+    msCode: '851',
+    defaultEconomicLife: 35,
+    applicableClasses: ['C', 'D'],
+    qualityGrades: ['low', 'fair', 'average', 'good'],
+  },
+  {
+    id: 'marina',
+    label: 'Marina / Boat Storage',
+    description: 'Marina with boat slips and storage',
+    propertyTypeId: 'recreational',
+    msSection: 'Section 15',
+    msPage: 'P 70',
+    msCode: '852',
+    defaultEconomicLife: 40,
+    applicableClasses: ['B', 'C', 'D'],
+    qualityGrades: ['fair', 'average', 'good', 'excellent'],
   },
 
   // =================================================================

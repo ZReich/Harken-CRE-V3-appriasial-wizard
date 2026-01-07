@@ -254,19 +254,19 @@ export default function ExpandableSelector({
     >
       {/* Selected items header (for multi-select) */}
       {multiple && selectedValues.length > 0 && (
-        <div className="border-b border-gray-200 px-3 py-2 bg-[#0da1c7]/5">
+        <div className="border-b border-gray-200 px-3 py-2 bg-harken-blue/5">
           <div className="text-xs font-medium text-gray-500 mb-1.5">Selected ({selectedValues.length})</div>
           <div className="flex flex-wrap gap-1.5">
             {selectedValues.filter(v => v !== 'Type My Own').map((val) => (
               <span
                 key={val}
-                className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-[#0da1c7]/10 text-[#0da1c7] rounded-full"
+                className="inline-flex items-center gap-1 px-2 py-1 text-xs font-medium bg-harken-blue/10 text-harken-blue rounded-full"
               >
                 {val.length > 15 ? val.substring(0, 12) + '...' : val}
                 <button
                   type="button"
                   onClick={(e) => handleRemoveValue(val, e)}
-                  className="hover:bg-[#0da1c7]/20 rounded-full p-0.5"
+                  className="hover:bg-harken-blue/20 rounded-full p-0.5"
                 >
                   <X className="w-3 h-3" />
                 </button>
@@ -285,7 +285,7 @@ export default function ExpandableSelector({
             onClick={() => handleSelect(option)}
             className={`w-full flex items-center justify-between px-4 py-2.5 text-left text-sm transition-colors ${
               isSelected(option)
-                ? 'bg-[#0da1c7]/10 text-[#0da1c7] font-semibold'
+                ? 'bg-harken-blue/10 text-harken-blue font-semibold'
                 : 'text-gray-700 hover:bg-gray-50'
             }`}
             role="option"
@@ -293,7 +293,7 @@ export default function ExpandableSelector({
           >
             <span>{option}</span>
             {isSelected(option) && (
-              <Check className="w-4 h-4 text-[#0da1c7]" />
+              <Check className="w-4 h-4 text-harken-blue" />
             )}
           </button>
         ))}
@@ -311,7 +311,7 @@ export default function ExpandableSelector({
                 onClick={() => handleSelect(option)}
                 className={`w-full flex items-center justify-between px-4 py-2.5 text-left text-sm transition-colors ${
                   isSelected(option)
-                    ? 'bg-[#0da1c7]/10 text-[#0da1c7] font-semibold'
+                    ? 'bg-harken-blue/10 text-harken-blue font-semibold'
                     : 'text-gray-700 hover:bg-gray-50'
                 }`}
                 role="option"
@@ -322,7 +322,7 @@ export default function ExpandableSelector({
                   {option}
                 </span>
                 {isSelected(option) && (
-                  <Check className="w-4 h-4 text-[#0da1c7]" />
+                  <Check className="w-4 h-4 text-harken-blue" />
                 )}
               </button>
             ))}
@@ -341,14 +341,14 @@ export default function ExpandableSelector({
                 onChange={(e) => handleCustomChange(e.target.value)}
                 onKeyDown={handleCustomKeyDown}
                 placeholder={placeholder}
-                className="flex-1 px-3 py-2 text-sm border border-gray-200 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white dark:bg-slate-700 dark:text-white"
+                className="flex-1 px-3 py-2 text-sm border border-gray-200 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-white dark:bg-slate-700 dark:text-white"
                 onClick={(e) => e.stopPropagation()}
               />
               <button
                 type="button"
                 onClick={handleAddCustom}
                 disabled={!customValue.trim()}
-                className="px-3 py-2 text-sm font-medium text-white bg-[#0da1c7] rounded-lg hover:bg-[#0b8fb0] disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-3 py-2 text-sm font-medium text-white bg-harken-blue rounded-lg hover:bg-harken-blue/90 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Add
               </button>
@@ -373,7 +373,7 @@ export default function ExpandableSelector({
           compact ? 'py-2' : 'py-2.5'
         } rounded-xl border ${
           isExpanded
-            ? 'border-[#0da1c7] bg-white shadow-md ring-2 ring-[#0da1c7]'
+            ? 'border-harken-blue bg-white shadow-md ring-2 ring-harken-blue'
             : hasSelection || hasCustomValue
             ? `${colors.border} ${colors.bg}`
             : 'border-gray-200 bg-white hover:border-gray-300'
@@ -388,7 +388,7 @@ export default function ExpandableSelector({
 
         <div className="flex items-center gap-2">
           {displayText && (
-            <span className="px-2.5 py-0.5 text-xs font-semibold bg-[#0da1c7]/10 text-[#0da1c7] rounded-full">
+            <span className="px-2.5 py-0.5 text-xs font-semibold bg-harken-blue/10 text-harken-blue rounded-full">
               {displayText}
             </span>
           )}

@@ -1,3 +1,38 @@
+/**
+ * Harken Appraisal Wizard - Type Definitions
+ * ==========================================
+ * 
+ * This file contains all TypeScript type definitions for the appraisal wizard.
+ * It's organized into clearly marked sections - search for `// ===` to navigate.
+ * 
+ * ## Quick Navigation
+ * | Search Term                  | Section                              |
+ * |------------------------------|--------------------------------------|
+ * | `WIZARD STATE TYPES`         | Core appraisal scenarios             |
+ * | `COMPONENT DETAIL`           | Building component tracking          |
+ * | `IMPROVEMENTS INVENTORY`     | Building inventory types             |
+ * | `SITE IMPROVEMENTS`          | M&S Section 66 types                 |
+ * | `COST SEGREGATION`           | IRS cost seg analysis                |
+ * | `DOCUMENT TYPES`             | Document extraction                  |
+ * | `FIELD SUGGESTIONS`          | AI field suggestions                 |
+ * | `RECONCILIATION`             | Value reconciliation                 |
+ * | `PROGRESS TRACKING`          | Completion tracking                  |
+ * | `SUBJECT DATA`               | Subject property types               |
+ * | `EXTERNAL DATA`              | Cadastral, demographics, SWOT        |
+ * | `SALES COMPARISON`           | Sales comp types                     |
+ * | `WizardState`                | Main state interface                 |
+ * | `WizardAction`               | Redux-style action types             |
+ * | `REPORT CONFIGURATION`       | Report builder types                 |
+ * | `EDITOR STATE`               | WYSIWYG editor types                 |
+ * 
+ * ## Usage
+ * ```typescript
+ * import type { SubjectData, WizardState } from '../types';
+ * ```
+ * 
+ * @see types/README.md for full documentation
+ */
+
 // =================================================================
 // IMPORTS FOR INTERNAL USE
 // =================================================================
@@ -1061,6 +1096,18 @@ export interface SubjectData {
   
   // Building Permits (External Integration)
   buildingPermits?: BuildingPermit[];
+  
+  // Multi-Family specific fields (populated when propertyType is multifamily)
+  totalUnitCount?: number;
+  totalRoomCount?: number;        // For hotels/motels
+  totalPadCount?: number;         // For mobile home parks
+  totalHoleCount?: number;        // For golf courses
+  unitMix?: MultiFamilyUnitMix[];
+  calculationMethod?: MultiFamilyCalculationMethod;
+  primaryValueDriver?: PrimaryValueDriver;
+  
+  // Grid Configuration (determined by Setup page)
+  gridConfiguration?: SalesGridConfiguration;
 }
 
 export interface BuildingPermit {
@@ -1213,6 +1260,95 @@ export interface RiskRatingData {
   dataAsOfDate?: string;
   disclaimer?: string;
 }
+
+// =================================================================
+// SALES GRID CONFIGURATION TYPES
+// =================================================================
+
+/**
+ * Grid type taxonomy for Sales Comparison variants.
+ * All share the same underlying methodology with different field configurations.
+ */
+export type SalesGridType = 
+  | 'retail_office' 
+  | 'medical_office' 
+  | 'industrial'
+  | 'land_sf' 
+  | 'land_acre' 
+  | 'multi_family' 
+  | 'residential'
+  | 'hotel_motel'
+  | 'mobile_home_park'
+  | 'golf_course';
+
+/**
+ * Unit of measurement for grid calculations.
+ * Determines how values are displayed and calculated.
+ */
+export type UnitOfMeasure = 
+  | 'sf_building'   // Price per SF of building
+  | 'sf_land'       // Price per SF of land
+  | 'acre'          // Price per acre
+  | 'per_unit'      // Price per unit (multifamily)
+  | 'per_room'      // Price per room (hotels)
+  | 'per_pad'       // Price per pad (mobile home parks)
+  | 'per_hole';     // Price per hole (golf courses)
+
+/**
+ * Primary value driver indicator for dual-metric display.
+ * Used when showing both $/SF and $/unit.
+ */
+export type PrimaryValueDriver = 'price_per_sf' | 'price_per_unit' | 'price_per_acre';
+
+/**
+ * Grid field definition for dynamic row generation.
+ * Each field can appear in transactional or physical sections.
+ */
+export interface GridFieldDefinition {
+  id: string;
+  label: string;
+  category: 'transactional' | 'physical';
+  adjustmentType: 'quantitative' | 'qualitative';
+  propertyTypes: SalesGridType[];
+  format?: 'text' | 'currency' | 'percent' | 'number' | 'currency_sf';
+  required: boolean;
+  description?: string;
+}
+
+/**
+ * Complete grid configuration for a property type.
+ * Determines which fields are shown and how calculations work.
+ */
+export interface SalesGridConfiguration {
+  gridType: SalesGridType;
+  unitOfMeasure: UnitOfMeasure;
+  secondaryUnitOfMeasure?: UnitOfMeasure;  // For dual-metric display
+  primaryValueDriver?: PrimaryValueDriver;
+  transactionalFields: string[];
+  physicalFields: string[];
+  metrics: string[];
+  showCapRate: boolean;
+  showResidualMode: boolean;
+}
+
+/**
+ * Multi-Family Unit Mix Configuration.
+ * Captures the breakdown of unit types in a multi-family property.
+ */
+export interface MultiFamilyUnitMix {
+  unitType: 'studio' | '1br' | '2br' | '3br' | '4br+';
+  count: number;
+  avgSF: number;
+  bedrooms: number;
+  bathrooms: number;
+  avgRent?: number;  // Monthly rent for income analysis
+}
+
+/**
+ * Multi-Family Calculation Method.
+ * Determines primary valuation unit for the grid.
+ */
+export type MultiFamilyCalculationMethod = 'per_unit' | 'per_room' | 'per_sf' | 'per_pad' | 'per_hole';
 
 // =================================================================
 // SALES COMPARISON DATA (for grid persistence)

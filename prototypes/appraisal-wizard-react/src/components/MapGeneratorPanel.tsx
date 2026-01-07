@@ -209,10 +209,10 @@ export function MapGeneratorPanel({
         className="w-full flex items-center justify-between px-4 py-3 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border-b border-slate-200 dark:border-slate-700"
       >
         <div className="flex items-center gap-2">
-          <Map className="w-5 h-5 text-[#0da1c7]" />
+          <Map className="w-5 h-5 text-harken-blue" />
           <span className="font-semibold text-slate-700 dark:text-slate-300">Map Generator</span>
           {generatedMaps.length > 0 && (
-            <span className="px-2 py-0.5 bg-[#0da1c7] text-white text-xs rounded-full">
+            <span className="px-2 py-0.5 bg-harken-blue text-white text-xs rounded-full">
               {generatedMaps.length} generated
             </span>
           )}
@@ -234,7 +234,7 @@ export function MapGeneratorPanel({
             <button
               onClick={handleGenerateAllMaps}
               disabled={isGenerating}
-              className="flex items-center gap-2 px-3 py-1.5 bg-[#0da1c7] text-white text-sm font-medium rounded-lg hover:bg-[#0b8eaf] transition-colors disabled:opacity-50"
+              className="flex items-center gap-2 px-3 py-1.5 bg-harken-blue text-white text-sm font-medium rounded-lg hover:bg-harken-blue/90 transition-colors disabled:opacity-50"
             >
               {isGenerating ? (
                 <>
@@ -269,7 +269,7 @@ export function MapGeneratorPanel({
                       ? 'border-green-300 bg-green-50'
                       : disabled
                         ? 'border-slate-200 bg-slate-50 opacity-60 cursor-not-allowed'
-                        : 'border-slate-200 hover:border-[#0da1c7] hover:bg-[#0da1c7]/5 cursor-pointer'
+                        : 'border-slate-200 hover:border-harken-blue hover:bg-harken-blue/5 cursor-pointer'
                     }
                   `}
                   title={!config.implemented ? 'Coming soon' : config.description}
@@ -281,7 +281,7 @@ export function MapGeneratorPanel({
                     </div>
                   )}
                   {isLoading && (
-                    <div className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-[#0da1c7] rounded-full flex items-center justify-center">
+                    <div className="absolute -top-1.5 -right-1.5 w-5 h-5 bg-harken-blue rounded-full flex items-center justify-center">
                       <Loader2 className="w-3 h-3 text-white animate-spin" />
                     </div>
                   )}
@@ -314,7 +314,7 @@ export function MapGeneratorPanel({
                     className={`
                       relative group rounded-lg overflow-hidden border-2 cursor-pointer transition-all
                       ${previewMap?.id === map.id
-                        ? 'border-[#0da1c7] ring-2 ring-[#0da1c7]/20'
+                        ? 'border-harken-blue ring-2 ring-harken-blue/20'
                         : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
                       }
                     `}
@@ -373,7 +373,7 @@ export function MapGeneratorPanel({
                 {/* Preview Header */}
                 <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 bg-slate-50">
                   <div className="flex items-center gap-2">
-                    <Map className="w-5 h-5 text-[#0da1c7]" />
+                    <Map className="w-5 h-5 text-harken-blue" />
                     <span className="font-semibold text-slate-700 dark:text-slate-300">{previewMap.title}</span>
                   </div>
                   <div className="flex items-center gap-2">

@@ -12,7 +12,7 @@ export default function USPAPDetailModal({
   reference,
   isOpen,
   onClose,
-  themeColor = '#0da1c7',
+  themeColor = 'var(--harken-blue)',
 }: USPAPDetailModalProps) {
   if (!isOpen) return null;
 

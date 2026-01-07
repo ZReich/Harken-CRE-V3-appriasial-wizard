@@ -211,7 +211,7 @@ export function FieldSuggestion({
               type="button"
               onClick={handleAccept}
               disabled={isProcessing}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-[#0da1c7] border border-[#0da1c7] rounded-md hover:bg-[#0b8eb0] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-white bg-harken-blue border border-harken-blue rounded-md hover:bg-harken-blue/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {isProcessing ? (
                 <Loader2 className="w-4 h-4 animate-spin" />

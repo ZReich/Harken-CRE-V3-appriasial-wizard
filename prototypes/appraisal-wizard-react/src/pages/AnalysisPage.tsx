@@ -110,6 +110,9 @@ export default function AnalysisPage() {
   const [activeTab, setActiveTab] = useState('sales');
   const [analysisMode, setAnalysisMode] = useState<'standard' | 'residual'>('standard');
   const { state, setIncomeApproachData, hasImprovements, setEconomicIndicators, dispatch } = useWizard();
+  
+  // Extract subjectData for grid configuration
+  const { subjectData } = state;
 
   // Get the active scenario
   const activeScenario = useMemo(() => {
@@ -497,6 +500,7 @@ export default function AnalysisPage() {
                 values={MOCK_VALUES}
                 analysisMode={analysisMode}
                 scenarioId={activeScenario?.id}
+                gridConfig={subjectData?.gridConfiguration}
               />
             </Suspense>
           </div>

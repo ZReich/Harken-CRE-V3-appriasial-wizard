@@ -1,5 +1,26 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { Plus, Trash2, ArrowUpRight, ArrowDownRight, Minus, MapPin, Activity, ChevronDown, PenLine, ChevronUp, Map as MapIcon } from 'lucide-react';
+
+// Preset percent options for quantitative adjustments (matching SalesGrid)
+const percentOptions = [
+  { value: 20, label: '+20%' },
+  { value: 17.5, label: '+17.5%' },
+  { value: 15, label: '+15%' },
+  { value: 12.5, label: '+12.5%' },
+  { value: 10, label: '+10%' },
+  { value: 7.5, label: '+7.5%' },
+  { value: 5, label: '+5%' },
+  { value: 2.5, label: '+2.5%' },
+  { value: 0, label: '0%' },
+  { value: -2.5, label: '-2.5%' },
+  { value: -5, label: '-5%' },
+  { value: -7.5, label: '-7.5%' },
+  { value: -10, label: '-10%' },
+  { value: -12.5, label: '-12.5%' },
+  { value: -15, label: '-15%' },
+  { value: -17.5, label: '-17.5%' },
+  { value: -20, label: '-20%' },
+];
 import { LandComp } from '../types';
 import { 
   MOCK_LAND_COMPS, 
@@ -37,6 +58,7 @@ export const LandSalesGrid: React.FC = () => {
   const [qualitativeRows, setQualitativeRows] = useState(QUALITATIVE_ROWS);
   const [activePopover, setActivePopover] = useState<{rowId: string, compId: string} | null>(null);
   const [openElementDropdown, setOpenElementDropdown] = useState<'transaction' | 'adjustments' | 'qualitative' | null>(null);
+  const [customInputValue, setCustomInputValue] = useState<string>('');
   
   // Notes section - load from context if available
   const [notesText, setNotesText] = useState(landValuationData?.reconciliationText ?? '');
@@ -429,6 +451,122 @@ export const LandSalesGrid: React.FC = () => {
     );
   };
 
+  // Quantitative Adjustment Cell with popover - matching SalesGrid pattern
+  const QuantitativeAdjustmentCell = ({ comp }: { comp: LandComp }) => {
+    const value = comp.adjustment || 0;
+    const isOpen = activePopover?.rowId === 'adjustment' && activePopover?.compId === comp.id;
+    
+    const getStatusLabel = (val: number) => val > 0 ? 'INF' : val < 0 ? 'SUP' : 'SIM';
+
+    // Determine badge styling based on value
+    const isSup = value < 0; // Negative = superior
+    const isInf = value > 0; // Positive = inferior
+    const baseClass = `inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide border shadow-sm transition-all cursor-pointer`;
+
+    return (
+      <div className="flex items-center w-full relative adjustment-popover">
+        <span 
+          onClick={() => {
+            setActivePopover(isOpen ? null : { rowId: 'adjustment', compId: comp.id });
+            setCustomInputValue('');
+          }}
+          className={`${baseClass} ${
+            isSup ? 'bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100' :
+            isInf ? 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100' :
+            'bg-slate-50 dark:bg-slate-700 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-600'
+          }`}
+        >
+          {isSup && <ArrowUpRight className="w-3 h-3" />}
+          {isInf && <ArrowDownRight className="w-3 h-3" />}
+          {!isSup && !isInf && <Minus className="w-3 h-3" />}
+          {isSup ? 'SUP' : isInf ? 'INF' : 'SIM'}
+          {value !== 0 && <span className="ml-1 border-l border-current pl-1 opacity-70">{Math.abs(value).toFixed(1)}%</span>}
+        </span>
+        
+        {isOpen && (
+          <div className="absolute top-full left-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 z-[200] overflow-hidden">
+            {/* Header */}
+            <div className="flex items-center justify-between px-3 py-2 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-900">
+              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
+                Adjustment
+              </span>
+            </div>
+
+            {/* Scrollable Percent Options */}
+            <div className="max-h-48 overflow-y-auto">
+              {percentOptions.map((option) => (
+                <button
+                  type="button"
+                  key={option.value}
+                  className={`w-full px-3 py-2 text-left text-sm hover:bg-slate-50 dark:hover:bg-slate-700/50 flex items-center justify-between transition-colors ${
+                    value === option.value ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300' : 'text-slate-700 dark:text-slate-200'
+                  }`}
+                  onClick={() => {
+                    handleUpdateComp(comp.id, 'adjustment', option.value);
+                    setActivePopover(null);
+                  }}
+                >
+                  <span className="font-medium">{option.label}</span>
+                  <span className={`text-[10px] uppercase font-bold px-1.5 py-0.5 rounded ${
+                    option.value > 0 ? 'text-red-600 bg-red-50 dark:bg-red-900/30' :
+                    option.value < 0 ? 'text-emerald-600 bg-emerald-50 dark:bg-emerald-900/30' :
+                    'text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700'
+                  }`}>
+                    {getStatusLabel(option.value)}
+                  </span>
+                </button>
+              ))}
+            </div>
+            
+            {/* Custom Input */}
+            <div className="border-t border-slate-100 dark:border-slate-700 px-3 py-2.5 bg-slate-50 dark:bg-slate-900">
+              <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
+                Custom %
+              </label>
+              <div className="flex gap-2 mt-1.5">
+                <input
+                  type="text"
+                  className="flex-1 border border-slate-200 dark:border-slate-600 rounded-md px-2 py-1.5 text-sm bg-white dark:bg-slate-800 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-accent-cyan focus:border-transparent"
+                  value={customInputValue}
+                  placeholder="e.g. 12.5"
+                  onChange={(e) => {
+                    const val = e.target.value.replace(/[^0-9.-]/g, '');
+                    setCustomInputValue(val);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      const parsed = parseFloat(customInputValue);
+                      if (!isNaN(parsed)) {
+                        handleUpdateComp(comp.id, 'adjustment', parsed);
+                        setActivePopover(null);
+                      }
+                    }
+                  }}
+                />
+                <button
+                  type="button"
+                  className="px-3 py-1.5 bg-accent-cyan text-white text-xs font-bold rounded-md hover:bg-accent-cyan/90 transition-colors"
+                  onClick={() => {
+                    const parsed = parseFloat(customInputValue);
+                    if (!isNaN(parsed)) {
+                      handleUpdateComp(comp.id, 'adjustment', parsed);
+                      setActivePopover(null);
+                    }
+                  }}
+                >
+                  Apply
+                </button>
+              </div>
+              <p className="text-[10px] text-slate-400 mt-1">
+                Positive = inferior, negative = superior
+              </p>
+            </div>
+          </div>
+        )}
+      </div>
+    );
+  };
+
   // Add Element Button with Dropdown - now positioned in the Elements column
   const AddElementButton = ({ section }: { section: 'transaction' | 'adjustments' | 'qualitative' }) => {
     const isOpen = openElementDropdown === section;
@@ -438,19 +576,19 @@ export const LandSalesGrid: React.FC = () => {
       <div className={`element-dropdown relative ${isOpen ? 'z-[500]' : ''}`}>
         <button 
           onClick={() => setOpenElementDropdown(isOpen ? null : section)}
-          className="w-full py-2 px-3 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg flex items-center justify-between gap-2 text-slate-500 dark:text-slate-400 font-semibold hover:border-[#0da1c7] hover:text-[#0da1c7] hover:bg-[#0da1c7]/5 transition-all duration-300 group text-xs bg-white dark:bg-slate-800"
+          className="w-full py-2 px-3 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg flex items-center justify-between gap-2 text-slate-500 dark:text-slate-400 font-semibold hover:border-accent-cyan hover:text-accent-cyan hover:bg-accent-cyan/5 transition-all duration-300 group text-xs bg-white dark:bg-slate-800"
         >
           <div className="flex items-center gap-2">
-            <Plus size={12} className="text-slate-400 group-hover:text-[#0da1c7]" />
+            <Plus size={12} className="text-slate-400 group-hover:text-accent-cyan" />
             <span>Add Element</span>
           </div>
-          <ChevronDown size={12} className={`text-slate-400 group-hover:text-[#0da1c7] transition-transform ${isOpen ? 'rotate-180' : ''}`} />
+          <ChevronDown size={12} className={`text-slate-400 group-hover:text-accent-cyan transition-transform ${isOpen ? 'rotate-180' : ''}`} />
         </button>
         
         {isOpen && (
           <div className="absolute top-full left-0 mt-1 w-64 bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 z-[500] overflow-hidden">
-            <div className="px-3 py-2 bg-slate-50 border-b border-slate-200">
-              <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Available Elements</span>
+            <div className="px-3 py-2 bg-slate-50 dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700">
+              <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Available Elements</span>
             </div>
             <div className="max-h-48 overflow-y-auto">
               {availableElements.length > 0 ? (
@@ -458,24 +596,24 @@ export const LandSalesGrid: React.FC = () => {
                   <button
                     key={element.id}
                     onClick={() => handleAddElement(section, element)}
-                    className="w-full text-left px-3 py-2 text-xs hover:bg-[#0da1c7]/5 transition-colors border-b border-slate-100 last:border-b-0 group"
+                    className="w-full text-left px-3 py-2 text-xs hover:bg-accent-cyan/5 dark:hover:bg-accent-cyan/10 transition-colors border-b border-slate-100 dark:border-slate-700 last:border-b-0 group"
                   >
-                    <div className="font-medium text-slate-700 group-hover:text-[#0da1c7]">{element.label}</div>
+                    <div className="font-medium text-slate-700 dark:text-slate-300 group-hover:text-accent-cyan">{element.label}</div>
                     {element.description && (
-                      <div className="text-[10px] text-slate-400 mt-0.5">{element.description}</div>
+                      <div className="text-[10px] text-slate-400 dark:text-slate-500 mt-0.5">{element.description}</div>
                     )}
                   </button>
                 ))
               ) : (
-                <div className="px-3 py-3 text-xs text-slate-400 italic text-center">
+                <div className="px-3 py-3 text-xs text-slate-400 dark:text-slate-500 italic text-center">
                   All elements have been added
                 </div>
               )}
             </div>
-            <div className="border-t border-slate-200">
+            <div className="border-t border-slate-200 dark:border-slate-700">
               <button
                 onClick={() => handleAddCustomElement(section)}
-                className="w-full text-left px-3 py-2.5 text-xs hover:bg-[#0da1c7]/5 transition-colors flex items-center gap-2 text-[#0da1c7] font-medium"
+                className="w-full text-left px-3 py-2.5 text-xs hover:bg-accent-cyan/5 dark:hover:bg-accent-cyan/10 transition-colors flex items-center gap-2 text-accent-cyan font-medium"
               >
                 <PenLine size={12} />
                 Add Custom
@@ -495,7 +633,7 @@ export const LandSalesGrid: React.FC = () => {
   const [isMapCollapsed, setIsMapCollapsed] = useState(false);
 
   return (
-    <div className="flex flex-col h-full bg-slate-50 relative overflow-hidden">
+    <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-900 relative overflow-hidden">
       
       {/* LAND SALES MAP SECTION */}
       {hasSubjectCoords && (
@@ -503,7 +641,7 @@ export const LandSalesGrid: React.FC = () => {
           {/* Map Header - Always visible */}
           <button
             onClick={() => setIsMapCollapsed(!isMapCollapsed)}
-            className="w-full flex items-center justify-between px-4 py-2 hover:bg-slate-50 transition-colors"
+            className="w-full flex items-center justify-between px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
           >
             <div className="flex items-center gap-2">
               <MapIcon className="w-4 h-4 text-orange-600" />
@@ -548,11 +686,11 @@ export const LandSalesGrid: React.FC = () => {
       {/* SCROLLABLE AREA - with isolation for proper stacking context */}
       <div 
         ref={scrollContainerRef}
-        className="flex-1 overflow-auto custom-scrollbar relative" 
-        style={{ backgroundColor: '#ffffff', isolation: 'isolate' }}
+        className="flex-1 overflow-auto custom-scrollbar relative bg-white dark:bg-slate-900" 
+        style={{ isolation: 'isolate' }}
       >
-        {/* Horizontal Scroll Indicator - offset to avoid action column */}
-        <HorizontalScrollIndicator scrollContainerRef={scrollContainerRef} stickyTop={120} rightOffset={ACTION_COL_WIDTH} />
+        {/* Horizontal Scroll Indicator - hidden but keeps scroll functionality */}
+        <HorizontalScrollIndicator scrollContainerRef={scrollContainerRef} stickyTop={120} rightOffset={ACTION_COL_WIDTH} hideIndicator={true} />
         
         {/* Flex container for grid + action column */}
         <div 
@@ -561,18 +699,17 @@ export const LandSalesGrid: React.FC = () => {
         >
           {/* GRID CONTAINER */}
           <div 
-            className="grid relative bg-white dark:bg-slate-800 flex-shrink-0" 
+            className="grid relative bg-white dark:bg-slate-900 flex-shrink-0" 
             style={{ 
               gridTemplateColumns: `${LABEL_COL_WIDTH}px ${SUBJECT_COL_WIDTH}px repeat(${comps.length}, ${COMP_COL_WIDTH}px)`, 
-              minWidth: `${LABEL_COL_WIDTH + SUBJECT_COL_WIDTH + (comps.length * COMP_COL_WIDTH)}px`,
-              backgroundColor: '#ffffff'
+              minWidth: `${LABEL_COL_WIDTH + SUBJECT_COL_WIDTH + (comps.length * COMP_COL_WIDTH)}px`
             }}
           >
           
           {/* ========== HEADER ROW ========== */}
           <div 
-            className="sticky top-0 left-0 z-[120] bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 flex items-end" 
-            style={{ width: LABEL_COL_WIDTH, height: 120, backgroundColor: '#ffffff', transform: 'translateZ(0)', willChange: 'transform' }}
+            className="sticky top-0 left-0 z-[120] bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-700 flex items-end" 
+            style={{ width: LABEL_COL_WIDTH, height: 120, transform: 'translateZ(0)', willChange: 'transform' }}
           >
             <div className="p-2 pl-3">
               <div className="font-bold text-slate-400 text-xs uppercase tracking-wider">Element</div>
@@ -581,8 +718,8 @@ export const LandSalesGrid: React.FC = () => {
           
           {/* Subject Header with Photo - SOLID background to prevent content showing through */}
           <div 
-            className="sticky top-0 left-[160px] z-[110] border-b-2 border-[#0da1c7] shadow-[4px_0_16px_rgba(0,0,0,0.08)] flex flex-col"
-            style={{ width: SUBJECT_COL_WIDTH, height: 120, backgroundColor: '#ffffff', transform: 'translateZ(0)', willChange: 'transform' }}
+            className="sticky top-0 left-[160px] z-[110] border-b-2 border-accent-cyan shadow-[4px_0_16px_rgba(0,0,0,0.08)] dark:shadow-none flex flex-col bg-white dark:bg-slate-900"
+            style={{ width: SUBJECT_COL_WIDTH, height: 120, transform: 'translateZ(0)', willChange: 'transform' }}
           >
             {/* Subject Photo - same height as comp photos */}
             <div className="relative h-16 w-full overflow-hidden group">
@@ -591,17 +728,17 @@ export const LandSalesGrid: React.FC = () => {
                 alt="Subject Property" 
                 className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" 
               />
-              <div className="absolute top-1.5 left-1.5 bg-[#0da1c7] text-white text-[10px] font-bold px-1.5 py-0.5 rounded shadow-sm">
+              <div className="absolute top-1.5 left-1.5 bg-accent-cyan text-white text-[10px] font-bold px-1.5 py-0.5 rounded shadow-sm">
                 SUBJECT
               </div>
             </div>
             {/* Subject Info - solid light blue background */}
-            <div className="p-2 flex-1 flex flex-col gap-0.5 bg-sky-50 border-r border-slate-200">
+            <div className="p-2 flex-1 flex flex-col gap-0.5 bg-sky-50 dark:bg-[#0f1f3a] border-r border-slate-200 dark:border-slate-700">
               <h3 className="font-bold text-slate-800 dark:text-white text-xs leading-tight line-clamp-1" title={SUBJECT_PROPERTY.address}>
                 {SUBJECT_PROPERTY.address.split(',')[0]}
               </h3>
               <div className="flex items-start gap-1 text-[10px] text-slate-500 dark:text-slate-400">
-                <MapPin className="w-3 h-3 flex-shrink-0 mt-0.5 text-[#0da1c7]" />
+                <MapPin className="w-3 h-3 flex-shrink-0 mt-0.5 text-accent-cyan" />
                 <span className="line-clamp-1 leading-tight">{SUBJECT_PROPERTY.cityState}</span>
               </div>
             </div>
@@ -611,8 +748,8 @@ export const LandSalesGrid: React.FC = () => {
           {comps.map((comp, idx) => (
             <div 
               key={comp.id} 
-              className="sticky top-0 z-[100] border-b border-slate-200 flex flex-col"
-              style={{ height: 120, backgroundColor: '#ffffff', transform: 'translateZ(0)', willChange: 'transform' }}
+              className="sticky top-0 z-[100] border-b border-slate-200 dark:border-slate-700 flex flex-col bg-white dark:bg-slate-900"
+              style={{ height: 120, transform: 'translateZ(0)', willChange: 'transform' }}
             >
               {/* Comp Photo */}
               <div className="relative h-16 w-full overflow-hidden group">
@@ -634,12 +771,12 @@ export const LandSalesGrid: React.FC = () => {
                 </button>
               </div>
               {/* Comp Info */}
-              <div className="p-2 flex-1 flex flex-col gap-0.5 border-r border-slate-200">
+              <div className="p-2 flex-1 flex flex-col gap-0.5 border-r border-slate-200 dark:border-slate-700">
                 <h3 className="font-bold text-slate-800 dark:text-white text-xs leading-tight line-clamp-1" title={comp.address}>
                   Sale {idx + 1}
                 </h3>
                 <div className="flex items-start gap-1 text-[10px] text-slate-500 dark:text-slate-400">
-                  <MapPin className="w-3 h-3 flex-shrink-0 mt-0.5 text-[#0da1c7]" />
+                  <MapPin className="w-3 h-3 flex-shrink-0 mt-0.5 text-accent-cyan" />
                   <span className="line-clamp-1 leading-tight">{comp.cityStateZip}</span>
                 </div>
                 <div className="flex items-center gap-1 text-[10px] text-slate-400 mt-auto">
@@ -652,11 +789,11 @@ export const LandSalesGrid: React.FC = () => {
 
 
           {/* ========== TRANSACTION DATA SECTION ========== */}
-          <div className="col-span-full relative z-[50] mt-4 border-y border-slate-200">
-            <div className="absolute left-0 right-0 h-full bg-slate-100 dark:bg-slate-700" style={{ opacity: 0.3 }}></div>
+          <div className="col-span-full relative z-[50] mt-4 border-y border-slate-200 dark:border-slate-700">
+            <div className="absolute left-0 right-0 h-full bg-slate-100 dark:bg-slate-800" style={{ opacity: 0.3 }}></div>
             <div 
-              className="sticky left-0 w-fit px-4 py-2 font-bold text-xs uppercase tracking-widest text-slate-700 flex items-center gap-2"
-              style={{ zIndex: 51, backgroundColor: '#f9fafb' }}
+              className="sticky left-0 w-fit px-4 py-2 font-bold text-xs uppercase tracking-widest text-slate-700 dark:text-slate-300 flex items-center gap-2 bg-slate-50 dark:bg-slate-900"
+              style={{ zIndex: 51 }}
             >
               TRANSACTION DATA
             </div>
@@ -667,13 +804,13 @@ export const LandSalesGrid: React.FC = () => {
             <React.Fragment key={row.id}>
               {/* Label Column - Never scrolls horizontally */}
               <div 
-                className="sticky left-0 z-[60] border-r border-b border-slate-100 flex items-center justify-between px-2 py-1.5 group"
-                style={{ width: LABEL_COL_WIDTH, backgroundColor: '#ffffff', transform: 'translateZ(0)' }}
+                className="sticky left-0 z-[60] border-r border-b border-slate-100 dark:border-slate-700 flex items-center justify-between px-2 py-1.5 group bg-white dark:bg-slate-900"
+                style={{ width: LABEL_COL_WIDTH, transform: 'translateZ(0)' }}
               >
-                <span className="text-xs font-medium text-slate-600 truncate">{row.label}</span>
+                <span className="text-xs font-medium text-slate-600 dark:text-slate-400 truncate">{row.label}</span>
                 <button
                   onClick={() => handleDeleteRow(row.id, 'transaction')}
-                  className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-red-100 text-slate-300 hover:text-red-500 transition-all"
+                  className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-red-100 dark:hover:bg-red-900/30 text-slate-300 hover:text-red-500 transition-all"
                   title={`Remove ${row.label}`}
                 >
                   <Trash2 className="w-3 h-3" />
@@ -682,8 +819,8 @@ export const LandSalesGrid: React.FC = () => {
               
               {/* Subject Column - Never scrolls horizontally */}
               <div 
-                className="sticky left-[160px] z-[55] border-r border-b border-slate-100 p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)]"
-                style={{ width: SUBJECT_COL_WIDTH, backgroundColor: '#f0f9ff', transform: 'translateZ(0)' }}
+                className="sticky left-[160px] z-[55] border-r border-b border-slate-100 dark:border-slate-700 p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none bg-sky-50 dark:bg-[#0f1f3a]"
+                style={{ width: SUBJECT_COL_WIDTH, transform: 'translateZ(0)' }}
               >
                 <span className="font-medium text-slate-700 dark:text-slate-200">{getSubjectTransactionValue(row.id)}</span>
               </div>
@@ -702,25 +839,25 @@ export const LandSalesGrid: React.FC = () => {
 
           {/* Add Element Button for Transaction Section - in Elements column */}
           <div 
-            className={`sticky left-0 p-2 ${openElementDropdown === 'transaction' ? 'z-[500]' : 'z-[60]'}`}
-            style={{ width: LABEL_COL_WIDTH, backgroundColor: '#ffffff' }}
+            className={`sticky left-0 p-2 bg-white dark:bg-slate-900 ${openElementDropdown === 'transaction' ? 'z-[500]' : 'z-[60]'}`}
+            style={{ width: LABEL_COL_WIDTH }}
           >
             <AddElementButton section="transaction" />
           </div>
           <div 
-            className="sticky left-[160px] z-[55] shadow-[4px_0_16px_rgba(0,0,0,0.05)]"
-            style={{ width: SUBJECT_COL_WIDTH, backgroundColor: '#ffffff' }}
+            className="sticky left-[160px] z-[55] shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none bg-white dark:bg-slate-900"
+            style={{ width: SUBJECT_COL_WIDTH }}
           ></div>
           {comps.map(comp => (
             <div key={`add-trans-${comp.id}`} className="bg-white dark:bg-slate-800"></div>
           ))}
 
           {/* ========== TRANSACTION ADJUSTMENTS SECTION ========== */}
-          <div className="col-span-full relative z-[50] mt-4 border-y border-blue-200">
-            <div className="absolute left-0 right-0 h-full bg-blue-50" style={{ opacity: 0.3 }}></div>
+          <div className="col-span-full relative z-[50] mt-4 border-y border-blue-200 dark:border-blue-800">
+            <div className="absolute left-0 right-0 h-full bg-blue-50 dark:bg-blue-900/20" style={{ opacity: 0.3 }}></div>
             <div 
-              className="sticky left-0 w-fit px-4 py-2 font-bold text-xs uppercase tracking-widest text-blue-700 flex items-center gap-2"
-              style={{ zIndex: 51, backgroundColor: '#eff6ff' }}
+              className="sticky left-0 w-fit px-4 py-2 font-bold text-xs uppercase tracking-widest text-blue-700 dark:text-blue-300 flex items-center gap-2 bg-blue-50 dark:bg-slate-900"
+              style={{ zIndex: 51 }}
             >
               TRANSACTION ADJUSTMENTS
             </div>
@@ -731,10 +868,10 @@ export const LandSalesGrid: React.FC = () => {
             <React.Fragment key={row.id}>
               {/* Label Column - Never scrolls horizontally */}
               <div 
-                className={`sticky left-0 z-[60] border-r border-b border-slate-100 flex items-center justify-between px-2 py-1.5 group ${
-                  row.id === 'adjPriceAcre' ? 'border-t-2 border-t-slate-800' : ''
+                className={`sticky left-0 z-[60] border-r border-b border-slate-100 dark:border-slate-700 flex items-center justify-between px-2 py-1.5 group ${
+                  row.id === 'adjPriceAcre' ? 'border-t-2 border-t-slate-800 dark:border-t-slate-600 bg-slate-50 dark:bg-slate-800' : 'bg-white dark:bg-slate-900'
                 }`}
-                style={{ width: LABEL_COL_WIDTH, backgroundColor: row.id === 'adjPriceAcre' ? '#f8fafc' : '#ffffff', transform: 'translateZ(0)' }}
+                style={{ width: LABEL_COL_WIDTH, transform: 'translateZ(0)' }}
               >
                 <span className={`text-xs truncate ${
                   row.id === 'adjPriceAcre' ? 'font-black text-slate-900 uppercase' : 'font-medium text-slate-600'
@@ -750,10 +887,10 @@ export const LandSalesGrid: React.FC = () => {
               
               {/* Subject Column - Never scrolls horizontally */}
               <div 
-                className={`sticky left-[160px] z-[55] border-r border-b border-slate-100 p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)] ${
-                  row.id === 'adjPriceAcre' ? 'border-t-2 border-t-slate-800' : ''
+                className={`sticky left-[160px] z-[55] border-r border-b border-slate-100 dark:border-slate-700 p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none ${
+                  row.id === 'adjPriceAcre' ? 'border-t-2 border-t-slate-800 dark:border-t-slate-600 bg-blue-100 dark:bg-blue-900/30' : 'bg-sky-50 dark:bg-[#0f1f3a]'
                 }`}
-                style={{ width: SUBJECT_COL_WIDTH, backgroundColor: row.id === 'adjPriceAcre' ? '#dbeafe' : '#f0f9ff', transform: 'translateZ(0)' }}
+                style={{ width: SUBJECT_COL_WIDTH, transform: 'translateZ(0)' }}
               >
                 <span className="font-medium text-slate-700 dark:text-slate-200">{getSubjectAdjustmentValue(row.id)}</span>
               </div>
@@ -769,9 +906,7 @@ export const LandSalesGrid: React.FC = () => {
                   {row.id === 'marketCond' ? (
                     <MarketCondChip comp={comp} />
                   ) : row.id === 'adjustment' ? (
-                    <span className={`font-medium ${comp.adjustment !== 0 ? (comp.adjustment > 0 ? 'text-red-600' : 'text-emerald-600') : 'text-slate-500'}`}>
-                      {comp.adjustment !== 0 ? `${comp.adjustment > 0 ? '+' : ''}${comp.adjustment.toFixed(1)}%` : '-'}
-                    </span>
+                    <QuantitativeAdjustmentCell comp={comp} />
                   ) : row.id === 'adjPriceAcre' ? (
                     <span className="font-bold text-emerald-700">{formatCurrency(getAdjustedPricePerAcre(comp))}</span>
                   ) : row.id === 'propRights' ? (
@@ -790,25 +925,25 @@ export const LandSalesGrid: React.FC = () => {
 
           {/* Add Element Button for Adjustments Section - in Elements column */}
           <div 
-            className={`sticky left-0 p-2 ${openElementDropdown === 'adjustments' ? 'z-[500]' : 'z-[60]'}`}
-            style={{ width: LABEL_COL_WIDTH, backgroundColor: '#ffffff' }}
+            className={`sticky left-0 p-2 bg-white dark:bg-slate-900 ${openElementDropdown === 'adjustments' ? 'z-[500]' : 'z-[60]'}`}
+            style={{ width: LABEL_COL_WIDTH }}
           >
             <AddElementButton section="adjustments" />
           </div>
           <div 
-            className="sticky left-[160px] z-[55] shadow-[4px_0_16px_rgba(0,0,0,0.05)]"
-            style={{ width: SUBJECT_COL_WIDTH, backgroundColor: '#f0f9ff' }}
+            className="sticky left-[160px] z-[55] shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none bg-sky-50 dark:bg-[#0f1f3a]"
+            style={{ width: SUBJECT_COL_WIDTH }}
           ></div>
           {comps.map(comp => (
             <div key={`add-adj-${comp.id}`} className="bg-white dark:bg-slate-800"></div>
           ))}
 
           {/* ========== QUALITATIVE ADJUSTMENTS SECTION ========== */}
-          <div className="col-span-full relative z-[50] mt-4 border-y border-emerald-200">
-            <div className="absolute left-0 right-0 h-full bg-emerald-50" style={{ opacity: 0.3 }}></div>
+          <div className="col-span-full relative z-[50] mt-4 border-y border-emerald-200 dark:border-emerald-800">
+            <div className="absolute left-0 right-0 h-full bg-emerald-50 dark:bg-emerald-900/20" style={{ opacity: 0.3 }}></div>
             <div 
-              className="sticky left-0 w-fit px-4 py-2 font-bold text-xs uppercase tracking-widest text-emerald-700 flex items-center gap-2"
-              style={{ zIndex: 51, backgroundColor: '#ecfdf5' }}
+              className="sticky left-0 w-fit px-4 py-2 font-bold text-xs uppercase tracking-widest text-emerald-700 dark:text-emerald-300 flex items-center gap-2 bg-emerald-50 dark:bg-slate-900"
+              style={{ zIndex: 51 }}
             >
               QUALITATIVE ADJUSTMENTS
             </div>
@@ -819,13 +954,13 @@ export const LandSalesGrid: React.FC = () => {
             <React.Fragment key={row.id}>
               {/* Label Column - Never scrolls horizontally */}
               <div 
-                className="sticky left-0 z-[60] border-r border-b border-slate-100 flex items-center justify-between px-2 py-1.5 group"
-                style={{ width: LABEL_COL_WIDTH, backgroundColor: '#ffffff', transform: 'translateZ(0)' }}
+                className="sticky left-0 z-[60] border-r border-b border-slate-100 dark:border-slate-700 flex items-center justify-between px-2 py-1.5 group bg-white dark:bg-slate-900"
+                style={{ width: LABEL_COL_WIDTH, transform: 'translateZ(0)' }}
               >
-                <span className="text-xs font-medium text-slate-600 truncate">{row.label}</span>
+                <span className="text-xs font-medium text-slate-600 dark:text-slate-400 truncate">{row.label}</span>
                 <button
                   onClick={() => handleDeleteRow(row.id, 'qualitative')}
-                  className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-red-100 text-slate-300 hover:text-red-500 transition-all"
+                  className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-red-100 dark:hover:bg-red-900/30 text-slate-300 hover:text-red-500 transition-all"
                   title={`Remove ${row.label}`}
                 >
                   <Trash2 className="w-3 h-3" />
@@ -834,8 +969,8 @@ export const LandSalesGrid: React.FC = () => {
               
               {/* Subject Column - Never scrolls horizontally */}
               <div 
-                className="sticky left-[160px] z-[55] border-r border-b border-slate-100 p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)]"
-                style={{ width: SUBJECT_COL_WIDTH, backgroundColor: '#f0f9ff', transform: 'translateZ(0)' }}
+                className="sticky left-[160px] z-[55] border-r border-b border-slate-100 dark:border-slate-700 p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none bg-sky-50 dark:bg-[#0f1f3a]"
+                style={{ width: SUBJECT_COL_WIDTH, transform: 'translateZ(0)' }}
               >
                 <span className="font-medium text-slate-700 dark:text-slate-200">{getSubjectQualitativeValue(row.id)}</span>
               </div>
@@ -854,14 +989,14 @@ export const LandSalesGrid: React.FC = () => {
 
           {/* Add Element Button for Qualitative Section - in Elements column */}
           <div 
-            className={`sticky left-0 p-2 ${openElementDropdown === 'qualitative' ? 'z-[500]' : 'z-[60]'}`}
-            style={{ width: LABEL_COL_WIDTH, backgroundColor: '#ffffff' }}
+            className={`sticky left-0 p-2 bg-white dark:bg-slate-900 ${openElementDropdown === 'qualitative' ? 'z-[500]' : 'z-[60]'}`}
+            style={{ width: LABEL_COL_WIDTH }}
           >
             <AddElementButton section="qualitative" />
           </div>
           <div 
-            className="sticky left-[160px] z-[55] shadow-[4px_0_16px_rgba(0,0,0,0.05)]"
-            style={{ width: SUBJECT_COL_WIDTH, backgroundColor: '#ffffff' }}
+            className="sticky left-[160px] z-[55] shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none bg-white dark:bg-slate-900"
+            style={{ width: SUBJECT_COL_WIDTH }}
           ></div>
           {comps.map(comp => (
             <div key={`add-qual-${comp.id}`} className="bg-white dark:bg-slate-800"></div>
@@ -872,7 +1007,7 @@ export const LandSalesGrid: React.FC = () => {
           
           {/* Label Column - Never scrolls horizontally */}
           <div 
-            className="sticky left-0 z-[60] bg-[#0da1c7] border-b border-[#0da1c7] p-3 flex items-center"
+            className="sticky left-0 z-[60] bg-accent-cyan border-b border-accent-cyan p-3 flex items-center"
             style={{ width: LABEL_COL_WIDTH, transform: 'translateZ(0)' }}
           >
             <span className="text-xs font-bold text-white uppercase tracking-wide">Overall Comparability</span>
@@ -880,7 +1015,7 @@ export const LandSalesGrid: React.FC = () => {
           
           {/* Subject Column - Never scrolls horizontally */}
           <div 
-            className="sticky left-[160px] z-[55] bg-[#0da1c7] border-b border-[#0da1c7] p-3 flex items-center justify-center shadow-[4px_0_16px_rgba(0,0,0,0.15)]"
+            className="sticky left-[160px] z-[55] bg-accent-cyan border-b border-accent-cyan p-3 flex items-center justify-center shadow-[4px_0_16px_rgba(0,0,0,0.15)]"
             style={{ width: SUBJECT_COL_WIDTH, transform: 'translateZ(0)' }}
           >
             <span className="text-xs font-bold text-white">N/A</span>
@@ -890,7 +1025,7 @@ export const LandSalesGrid: React.FC = () => {
           {comps.map(comp => (
             <div 
               key={`overall-${comp.id}`} 
-              className="bg-[#0da1c7] border-b border-[#0da1c7] p-2 flex items-center justify-center"
+              className="bg-accent-cyan border-b border-accent-cyan p-2 flex items-center justify-center"
             >
               <OverallChip comp={comp} />
             </div>
@@ -900,19 +1035,19 @@ export const LandSalesGrid: React.FC = () => {
 
           {/* ACTION COLUMN */}
           <div 
-            className="flex-shrink-0 bg-slate-50 flex flex-col items-center justify-start py-8 sticky top-0 self-start"
+            className="flex-shrink-0 bg-slate-50 dark:bg-slate-900 flex flex-col items-center justify-start py-8 sticky top-0 self-start"
             style={{ width: ACTION_COL_WIDTH, height: 'auto', minHeight: 400 }}
           >
             <div className="flex flex-col items-center justify-center h-80 py-4">
               {/* Add Comps */}
               <button 
-                className="flex flex-col items-center gap-2 p-4 rounded-xl hover:bg-white dark:hover:bg-slate-700 transition-colors group"
+                className="flex flex-col items-center gap-2 p-4 rounded-xl hover:bg-white dark:hover:bg-slate-800 transition-colors group"
                 title="Add a new comp manually"
               >
-                <div className="w-12 h-12 rounded-full bg-[#0da1c7]/20 flex items-center justify-center group-hover:bg-[#0da1c7]/30 transition-colors">
-                  <Plus className="w-6 h-6 text-[#0da1c7]" />
+                <div className="w-12 h-12 rounded-full bg-accent-cyan/20 dark:bg-accent-cyan/10 flex items-center justify-center group-hover:bg-accent-cyan/30 dark:group-hover:bg-accent-cyan/20 transition-colors">
+                  <Plus className="w-6 h-6 text-accent-cyan" />
                 </div>
-                <span className="text-xs font-semibold text-[#0da1c7]">Add Comps</span>
+                <span className="text-xs font-semibold text-accent-cyan">Add Comps</span>
               </button>
             </div>
           </div>
@@ -920,31 +1055,31 @@ export const LandSalesGrid: React.FC = () => {
 
         {/* VALUE INDICATION FOOTER - Stays centered, doesn't scroll horizontally */}
         <div 
-          className="sticky left-0 bg-slate-50 border-t-2 border-slate-300 p-8 pt-10"
+          className="sticky left-0 bg-slate-50 dark:bg-slate-900 border-t-2 border-slate-300 dark:border-slate-700 p-8 pt-10"
           style={{ width: '100vw', maxWidth: '100%' }}
         >
           <div className="max-w-4xl mx-auto flex flex-col gap-6">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <div className="w-2 h-8 bg-[#0da1c7] rounded-full"></div>
+                <div className="w-2 h-8 bg-accent-cyan rounded-full"></div>
                 <h2 className="text-xl font-bold text-slate-800 dark:text-white uppercase tracking-wider">Land Value Indication</h2>
               </div>
             </div>
             <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
               <div className="grid grid-cols-3 gap-6">
                 <div className="text-center">
-                  <div className="text-sm text-slate-500 font-medium mb-2">Subject Land Size</div>
+                  <div className="text-sm text-slate-500 dark:text-slate-400 font-medium mb-2">Subject Land Size</div>
                   <div className="text-2xl font-bold text-slate-800 dark:text-white">{formatNumber(SUBJECT_PROPERTY.landAcres, 3)} Acres</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-sm text-slate-500 font-medium mb-2">Average Adjusted $/Acre</div>
-                  <div className="text-2xl font-bold text-[#0da1c7]">
+                  <div className="text-sm text-slate-500 dark:text-slate-400 font-medium mb-2">Average Adjusted $/Acre</div>
+                  <div className="text-2xl font-bold text-accent-cyan">
                     {formatCurrency(comps.reduce((acc, c) => acc + getAdjustedPricePerAcre(c), 0) / comps.length)}
                   </div>
                 </div>
                 <div className="text-center">
-                  <div className="text-sm text-slate-500 font-medium mb-2">Indicated Land Value</div>
-                  <div className="text-2xl font-bold text-emerald-600">
+                  <div className="text-sm text-slate-500 dark:text-slate-400 font-medium mb-2">Indicated Land Value</div>
+                  <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
                     {formatCurrency((comps.reduce((acc, c) => acc + getAdjustedPricePerAcre(c), 0) / comps.length) * SUBJECT_PROPERTY.landAcres)}
                   </div>
                 </div>

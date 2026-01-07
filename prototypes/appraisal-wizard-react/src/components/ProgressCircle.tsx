@@ -46,7 +46,7 @@ export function ProgressCircle({
       return 'bg-green-500 border-green-500 text-white';
     }
     if (isActive) {
-      return 'bg-[#0da1c7] border-[#0da1c7] text-white shadow-md shadow-cyan-500/20';
+      return 'bg-harken-blue border-harken-blue text-white shadow-md shadow-cyan-500/20';
     }
     // Visited but not complete -> Slight emphasis
     if (completion > 0 && !isCompleted) {
@@ -59,7 +59,7 @@ export function ProgressCircle({
   return (
     <button
       type="button"
-      className={`relative rounded-full flex items-center justify-center transition-all duration-300 outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#0da1c7] dark:focus:ring-offset-slate-900 ${isActive ? 'ring-2 ring-offset-2 ring-[#0da1c7] dark:ring-offset-slate-900 scale-110' : 'hover:border-gray-300 dark:hover:border-slate-500'
+      className={`relative rounded-full flex items-center justify-center transition-all duration-300 outline-none focus:ring-2 focus:ring-offset-2 focus:ring-harken-blue dark:focus:ring-offset-slate-900 ${isActive ? 'ring-2 ring-offset-2 ring-harken-blue dark:ring-offset-slate-900 scale-110' : 'hover:border-gray-300 dark:hover:border-slate-500'
         } ${justCompleted ? 'scale-125' : ''}`}
       onClick={onClick}
       style={{ width: size, height: size }}

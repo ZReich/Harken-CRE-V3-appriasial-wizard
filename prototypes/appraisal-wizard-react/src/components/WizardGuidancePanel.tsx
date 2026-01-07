@@ -67,7 +67,7 @@ function CollapsibleSection({
 
 export default function WizardGuidancePanel({
   guidance,
-  themeColor = '#0da1c7',
+  themeColor = 'var(--harken-blue)',
 }: WizardGuidancePanelProps) {
   const [uspapModalOpen, setUspapModalOpen] = useState(false);
 

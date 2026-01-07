@@ -181,11 +181,11 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                   const isRecommended = row.age === closestRow.age;
                   return (
                     <tr key={row.age} className={`transition-colors border-b border-slate-50 dark:border-slate-700 ${isRecommended ? 'bg-blue-50/50 dark:bg-blue-900/20' : 'hover:bg-slate-50 dark:hover:bg-slate-700/50'}`}>
-                      <td className={`py-2 px-2 font-bold ${isRecommended ? 'text-[#0da1c7]' : 'text-slate-900 dark:text-white'}`}>{row.age} Yrs</td>
+                      <td className={`py-2 px-2 font-bold ${isRecommended ? 'text-harken-blue' : 'text-slate-900 dark:text-white'}`}>{row.age} Yrs</td>
                       <td className="p-1.5">
                         <button
                           onClick={() => { updateForm('depreciationPhysical', row.frame / 100); setShowDepreciationTable(false); }}
-                          className={`w-full py-1.5 rounded transition-all border border-transparent ${isRecommended ? 'bg-white dark:bg-slate-700 shadow-sm text-[#0da1c7] font-bold border-[#0da1c7]/20' : 'hover:bg-white dark:hover:bg-slate-700 hover:shadow-sm hover:text-[#0da1c7] hover:border-slate-200 dark:hover:border-slate-600'}`}
+                          className={`w-full py-1.5 rounded transition-all border border-transparent ${isRecommended ? 'bg-white dark:bg-slate-700 shadow-sm text-harken-blue font-bold border-harken-blue/20' : 'hover:bg-white dark:hover:bg-slate-700 hover:shadow-sm hover:text-harken-blue hover:border-slate-200 dark:hover:border-slate-600'}`}
                         >
                           {row.frame}%
                         </button>
@@ -193,7 +193,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                       <td className="p-1.5">
                         <button
                           onClick={() => { updateForm('depreciationPhysical', row.masonryWood / 100); setShowDepreciationTable(false); }}
-                          className={`w-full py-1.5 rounded transition-all border border-transparent ${isRecommended ? 'bg-white dark:bg-slate-700 shadow-sm text-[#0da1c7] font-bold border-[#0da1c7]/20' : 'hover:bg-white dark:hover:bg-slate-700 hover:shadow-sm hover:text-[#0da1c7] hover:border-slate-200 dark:hover:border-slate-600'}`}
+                          className={`w-full py-1.5 rounded transition-all border border-transparent ${isRecommended ? 'bg-white dark:bg-slate-700 shadow-sm text-harken-blue font-bold border-harken-blue/20' : 'hover:bg-white dark:hover:bg-slate-700 hover:shadow-sm hover:text-harken-blue hover:border-slate-200 dark:hover:border-slate-600'}`}
                         >
                           {row.masonryWood}%
                         </button>
@@ -201,7 +201,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                       <td className="p-1.5">
                         <button
                           onClick={() => { updateForm('depreciationPhysical', row.masonrySteel / 100); setShowDepreciationTable(false); }}
-                          className={`w-full py-1.5 rounded transition-all border border-transparent ${isRecommended ? 'bg-white dark:bg-slate-700 shadow-sm text-[#0da1c7] font-bold border-[#0da1c7]/20' : 'hover:bg-white dark:hover:bg-slate-700 hover:shadow-sm hover:text-[#0da1c7] hover:border-slate-200 dark:hover:border-slate-600'}`}
+                          className={`w-full py-1.5 rounded transition-all border border-transparent ${isRecommended ? 'bg-white dark:bg-slate-700 shadow-sm text-harken-blue font-bold border-harken-blue/20' : 'hover:bg-white dark:hover:bg-slate-700 hover:shadow-sm hover:text-harken-blue hover:border-slate-200 dark:hover:border-slate-600'}`}
                         >
                           {row.masonrySteel}%
                         </button>
@@ -282,7 +282,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
           <div className="p-6 space-y-6 overflow-y-auto">
             {isLoading ? (
               <div className="bg-slate-50 dark:bg-slate-900 rounded-lg p-8 border border-slate-100 dark:border-slate-700 flex flex-col items-center justify-center text-center space-y-3">
-                <Loader2 size={24} className="animate-spin text-[#0da1c7]" />
+                <Loader2 size={24} className="animate-spin text-harken-blue" />
                 <div className="text-sm font-medium text-slate-600 dark:text-slate-300">Querying CoreLogic M&S API...</div>
                 <div className="text-xs text-slate-400">Authenticating & retrieving Section 14 data</div>
               </div>
@@ -309,21 +309,21 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                   <span className="text-sm text-slate-700 dark:text-slate-200">Fire Sprinklers</span>
                   <div className="flex items-center gap-3">
                     <span className="text-xs font-mono text-slate-500 dark:text-slate-400">+$3.50</span>
-                    <input type="checkbox" checked={additives.sprinklers} onChange={e => setAdditives({ ...additives, sprinklers: e.target.checked })} className="rounded text-[#0da1c7] focus:ring-[#0da1c7]" />
+                    <input type="checkbox" checked={additives.sprinklers} onChange={e => setAdditives({ ...additives, sprinklers: e.target.checked })} className="rounded text-harken-blue focus:ring-harken-blue" />
                   </div>
                 </label>
                 <label className="flex items-center justify-between p-3 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 cursor-pointer transition-colors">
                   <span className="text-sm text-slate-700 dark:text-slate-200">Complete HVAC</span>
                   <div className="flex items-center gap-3">
                     <span className="text-xs font-mono text-slate-500 dark:text-slate-400">+$4.25</span>
-                    <input type="checkbox" checked={additives.hvac} onChange={e => setAdditives({ ...additives, hvac: e.target.checked })} className="rounded text-[#0da1c7] focus:ring-[#0da1c7]" />
+                    <input type="checkbox" checked={additives.hvac} onChange={e => setAdditives({ ...additives, hvac: e.target.checked })} className="rounded text-harken-blue focus:ring-harken-blue" />
                   </div>
                 </label>
                 <label className="flex items-center justify-between p-3 border border-slate-200 dark:border-slate-700 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-700/50 cursor-pointer transition-colors">
                   <span className="text-sm text-slate-700 dark:text-slate-200">Elevators</span>
                   <div className="flex items-center gap-3">
                     <span className="text-xs font-mono text-slate-500 dark:text-slate-400">+$8.00</span>
-                    <input type="checkbox" checked={additives.elevators} onChange={e => setAdditives({ ...additives, elevators: e.target.checked })} className="rounded text-[#0da1c7] focus:ring-[#0da1c7]" />
+                    <input type="checkbox" checked={additives.elevators} onChange={e => setAdditives({ ...additives, elevators: e.target.checked })} className="rounded text-harken-blue focus:ring-harken-blue" />
                   </div>
                 </label>
               </div>
@@ -335,7 +335,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                 type="number"
                 value={manualAdj}
                 onChange={e => setManualAdj(+e.target.value)}
-                className="w-full bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded px-3 py-2 text-sm text-slate-900 dark:text-white focus:ring-1 focus:ring-[#0da1c7] focus:border-[#0da1c7] outline-none"
+                className="w-full bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded px-3 py-2 text-sm text-slate-900 dark:text-white focus:ring-1 focus:ring-harken-blue focus:border-harken-blue outline-none"
                 placeholder="0.00"
               />
             </div>
@@ -351,7 +351,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
             <button
               onClick={() => { updateForm('baseCostPsf', totalRate); setShowCostEstimator(false); }}
               disabled={isLoading}
-              className={`font-medium text-sm px-6 py-2.5 rounded shadow-sm transition-colors flex items-center gap-2 ${isLoading ? 'bg-slate-300 text-white cursor-not-allowed' : 'bg-[#0da1c7] hover:bg-[#0b8fb0] text-white'}`}
+              className={`font-medium text-sm px-6 py-2.5 rounded shadow-sm transition-colors flex items-center gap-2 ${isLoading ? 'bg-slate-300 text-white cursor-not-allowed' : 'bg-harken-blue hover:bg-harken-blue/90 text-white'}`}
             >
               <Check size={16} /> Apply
             </button>
@@ -367,7 +367,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
       <div className="space-y-6">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-            <Calculator size={20} className="text-[#0da1c7]" />
+            <Calculator size={20} className="text-harken-blue" />
             MVS Cost Analysis
           </h2>
         </div>
@@ -391,7 +391,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
               <h3 className="text-sm font-bold text-slate-900">Site Improvements</h3>
               <button
                 onClick={() => setShowSiteBreakdown(!showSiteBreakdown)}
-                className="text-xs text-[#0da1c7] hover:underline"
+                className="text-xs text-harken-blue hover:underline"
               >
                 {showSiteBreakdown ? 'Hide Details' : 'Show Details'}
               </button>
@@ -448,7 +448,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
             </button>
             <button
               onClick={handleSave}
-              className="bg-[#0da1c7] hover:bg-[#0b8fb0] text-white font-medium text-sm px-4 py-2 rounded-md shadow-sm flex items-center gap-2 transition-colors"
+              className="bg-harken-blue hover:bg-harken-blue/90 text-white font-medium text-sm px-4 py-2 rounded-md shadow-sm flex items-center gap-2 transition-colors"
             >
               <Check size={16} /> Save Changes
             </button>
@@ -468,7 +468,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                   type="text"
                   value={formData.name}
                   onChange={e => updateForm('name', e.target.value)}
-                  className="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-md px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-[#0da1c7] focus:ring-1 focus:ring-[#0da1c7] outline-none transition-all"
+                  className="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-md px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-harken-blue focus:ring-1 focus:ring-harken-blue outline-none transition-all"
                 />
               </div>
 
@@ -478,7 +478,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                   <select
                     value={formData.yearBuilt}
                     onChange={e => updateForm('yearBuilt', +e.target.value)}
-                    className="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-md px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-[#0da1c7] focus:ring-1 focus:ring-[#0da1c7] outline-none transition-all"
+                    className="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-md px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-harken-blue focus:ring-1 focus:ring-harken-blue outline-none transition-all"
                   >
                     {Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - i).map(year => (
                       <option key={year} value={year}>{year}</option>
@@ -490,7 +490,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                   <select
                     value={formData.occupancy}
                     onChange={e => updateForm('occupancy', e.target.value)}
-                    className="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-md px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-[#0da1c7] focus:ring-1 focus:ring-[#0da1c7] outline-none transition-all"
+                    className="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-md px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-harken-blue focus:ring-1 focus:ring-harken-blue outline-none transition-all"
                   >
                     {OCCUPANCY_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
                   </select>
@@ -503,7 +503,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                   <select
                     value={formData.class}
                     onChange={e => updateForm('class', e.target.value)}
-                    className="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-md px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-[#0da1c7] focus:ring-1 focus:ring-[#0da1c7] outline-none transition-all"
+                    className="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-md px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-harken-blue focus:ring-1 focus:ring-harken-blue outline-none transition-all"
                   >
                     {CLASS_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
                   </select>
@@ -513,7 +513,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                   <select
                     value={formData.quality}
                     onChange={e => updateForm('quality', e.target.value)}
-                    className="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-md px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-[#0da1c7] focus:ring-1 focus:ring-[#0da1c7] outline-none transition-all"
+                    className="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-md px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-harken-blue focus:ring-1 focus:ring-harken-blue outline-none transition-all"
                   >
                     {QUALITY_OPTIONS.map(opt => <option key={opt} value={opt}>{opt}</option>)}
                   </select>
@@ -530,14 +530,14 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                     placeholder="Source (e.g. MVS Sec 12)"
                     value={formData.sourceName || ''}
                     onChange={e => updateForm('sourceName', e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded px-2 py-1.5 text-xs text-slate-700 focus:border-[#0da1c7] outline-none"
+                    className="w-full bg-slate-50 border border-slate-200 rounded px-2 py-1.5 text-xs text-slate-700 focus:border-harken-blue outline-none"
                   />
                   <input
                     type="text"
                     placeholder="Eff. Date (e.g. Jan 2024)"
                     value={formData.sourceDate || ''}
                     onChange={e => updateForm('sourceDate', e.target.value)}
-                    className="w-full bg-slate-50 border border-slate-200 rounded px-2 py-1.5 text-xs text-slate-700 focus:border-[#0da1c7] outline-none"
+                    className="w-full bg-slate-50 border border-slate-200 rounded px-2 py-1.5 text-xs text-slate-700 focus:border-harken-blue outline-none"
                   />
                 </div>
               </div>
@@ -568,11 +568,11 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                       type="number"
                       value={formData.baseCostPsf}
                       onChange={e => updateForm('baseCostPsf', +e.target.value)}
-                      className="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-md pl-3 pr-8 py-2 text-sm font-semibold text-slate-900 dark:text-slate-100 focus:border-[#0da1c7] focus:ring-1 focus:ring-[#0da1c7] outline-none transition-all"
+                      className="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-md pl-3 pr-8 py-2 text-sm font-semibold text-slate-900 dark:text-slate-100 focus:border-harken-blue focus:ring-1 focus:ring-harken-blue outline-none transition-all"
                     />
                     <button
                       onClick={() => setShowCostEstimator(true)}
-                      className="absolute right-1 top-1.5 text-[#0da1c7] hover:text-[#0b8fb0] hover:bg-[#0da1c7]/10 p-1 rounded transition-all"
+                      className="absolute right-1 top-1.5 text-harken-blue hover:text-harken-blue/80 hover:bg-harken-blue/10 p-1 rounded transition-all"
                       title="Open Base Cost Estimator"
                     >
                       <Calculator size={16} />
@@ -588,7 +588,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                     type="number"
                     value={formData.multipliers.current}
                     onChange={e => updateMultiplier('current', +e.target.value)}
-                    className="w-20 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-right text-sm text-slate-700 dark:text-slate-200 focus:border-[#0da1c7] outline-none"
+                    className="w-20 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-right text-sm text-slate-700 dark:text-slate-200 focus:border-harken-blue outline-none"
                   />
                 </div>
                 <div className="flex items-center justify-between">
@@ -597,7 +597,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                     type="number"
                     value={formData.multipliers.local}
                     onChange={e => updateMultiplier('local', +e.target.value)}
-                    className="w-20 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-right text-sm text-slate-700 dark:text-slate-200 focus:border-[#0da1c7] outline-none"
+                    className="w-20 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-right text-sm text-slate-700 dark:text-slate-200 focus:border-harken-blue outline-none"
                   />
                 </div>
                 <div className="flex items-center justify-between">
@@ -606,19 +606,19 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                     type="number"
                     value={formData.multipliers.perimeter}
                     onChange={e => updateMultiplier('perimeter', +e.target.value)}
-                    className="w-20 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-right text-sm text-slate-700 dark:text-slate-200 focus:border-[#0da1c7] outline-none"
+                    className="w-20 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-right text-sm text-slate-700 dark:text-slate-200 focus:border-harken-blue outline-none"
                   />
                 </div>
                 <div className="flex items-center justify-between pt-2 border-t border-slate-100 dark:border-slate-700">
-                  <label className="text-sm font-medium text-[#0da1c7]">Entr. Incentive</label>
+                  <label className="text-sm font-medium text-harken-blue">Entr. Incentive</label>
                   <div className="flex items-center gap-2">
                     <input
                       type="number"
                       value={((formData.entrepreneurialIncentive || 0) * 100).toFixed(1)}
                       onChange={e => updateForm('entrepreneurialIncentive', +e.target.value / 100)}
-                      className="w-20 bg-[#0da1c7]/10 dark:bg-[#0da1c7]/20 border border-[#0da1c7]/20 dark:border-[#0da1c7]/30 rounded px-2 py-1 text-right text-sm text-[#0da1c7] dark:text-[#0da1c7] font-bold focus:border-[#0da1c7] outline-none"
+                      className="w-20 bg-harken-blue/10 dark:bg-harken-blue/20 border border-harken-blue/20 dark:border-harken-blue/30 rounded px-2 py-1 text-right text-sm text-harken-blue dark:text-harken-blue font-bold focus:border-harken-blue outline-none"
                     />
-                    <span className="text-xs text-[#0da1c7]/60 w-3">%</span>
+                    <span className="text-xs text-harken-blue/60 w-3">%</span>
                   </div>
                 </div>
               </div>
@@ -648,7 +648,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                     type="number"
                     value={formData.effectiveAge}
                     onChange={e => updateForm('effectiveAge', +e.target.value)}
-                    className="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-md px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-[#0da1c7] focus:ring-1 focus:ring-[#0da1c7] outline-none transition-all"
+                    className="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-md px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-harken-blue focus:ring-1 focus:ring-harken-blue outline-none transition-all"
                   />
                 </div>
                 <div>
@@ -657,7 +657,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                     type="number"
                     value={formData.economicLife}
                     onChange={e => updateForm('economicLife', +e.target.value)}
-                    className="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-md px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-[#0da1c7] focus:ring-1 focus:ring-[#0da1c7] outline-none transition-all"
+                    className="w-full bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-md px-3 py-2 text-sm text-slate-900 dark:text-slate-100 focus:border-harken-blue focus:ring-1 focus:ring-harken-blue outline-none transition-all"
                   />
                 </div>
               </div>
@@ -677,11 +677,11 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                         type="number"
                         value={(formData.depreciationPhysical * 100).toFixed(1)}
                         onChange={e => updateForm('depreciationPhysical', +e.target.value / 100)}
-                        className="w-24 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-right text-sm text-slate-700 dark:text-slate-200 focus:border-[#0da1c7] outline-none pr-8"
+                        className="w-24 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-right text-sm text-slate-700 dark:text-slate-200 focus:border-harken-blue outline-none pr-8"
                       />
                       <button
                         onClick={() => setShowDepreciationTable(true)}
-                        className="absolute right-1 top-1 bottom-1 px-1 text-slate-400 hover:text-[#0da1c7] hover:bg-slate-100 dark:hover:bg-slate-600 rounded transition-colors"
+                        className="absolute right-1 top-1 bottom-1 px-1 text-slate-400 hover:text-harken-blue hover:bg-slate-100 dark:hover:bg-slate-600 rounded transition-colors"
                         title="Open Depreciation Guide"
                       >
                         <Table2 size={14} />
@@ -697,7 +697,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                       type="number"
                       value={(formData.depreciationFunctional * 100).toFixed(1)}
                       onChange={e => updateForm('depreciationFunctional', +e.target.value / 100)}
-                      className="w-20 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-right text-sm text-slate-700 dark:text-slate-200 focus:border-[#0da1c7] outline-none"
+                      className="w-20 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-right text-sm text-slate-700 dark:text-slate-200 focus:border-harken-blue outline-none"
                     />
                     <span className="text-xs text-slate-400 w-3">%</span>
                   </div>
@@ -709,15 +709,15 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                       type="number"
                       value={(formData.depreciationExternal * 100).toFixed(1)}
                       onChange={e => updateForm('depreciationExternal', +e.target.value / 100)}
-                      className="w-20 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-right text-sm text-slate-700 dark:text-slate-200 focus:border-[#0da1c7] outline-none"
+                      className="w-20 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded px-2 py-1 text-right text-sm text-slate-700 dark:text-slate-200 focus:border-harken-blue outline-none"
                     />
                     <span className="text-xs text-slate-400 w-3">%</span>
                   </div>
                 </div>
               </div>
 
-              <div className="bg-[#0da1c7]/10 dark:bg-[#0da1c7]/20 p-4 rounded-lg border border-[#0da1c7]/20 dark:border-[#0da1c7]/30 flex items-center justify-between mt-4">
-                <span className="text-xs font-bold text-[#0da1c7] uppercase tracking-wider">Depreciated Value</span>
+              <div className="bg-harken-blue/10 dark:bg-harken-blue/20 p-4 rounded-lg border border-harken-blue/20 dark:border-harken-blue/30 flex items-center justify-between mt-4">
+                <span className="text-xs font-bold text-harken-blue uppercase tracking-wider">Depreciated Value</span>
                 <span className="text-xl font-bold text-slate-900 dark:text-white">{formatCurrency(depreciatedCost)}</span>
               </div>
             </div>
@@ -756,14 +756,14 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
 
       <div className="flex items-center justify-between">
         <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">
-          <Calculator size={20} className="text-[#0da1c7]" />
+          <Calculator size={20} className="text-harken-blue" />
           MVS Cost Analysis
         </h2>
         <div className="flex items-center gap-3">
           <span className="text-xs text-slate-500 dark:text-slate-400">
             {improvements.length} building{improvements.length !== 1 ? 's' : ''} selected
           </span>
-          <a href="#" className="flex items-center gap-1 text-xs font-medium text-[#0da1c7] hover:text-[#0b8fb0] transition-colors">
+          <a href="#" className="flex items-center gap-1 text-xs font-medium text-harken-blue hover:text-harken-blue/80 transition-colors">
             <ExternalLink size={12} /> Open MVS Online
           </a>
           <div className="text-[10px] font-medium text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700 px-3 py-1.5 rounded-full border border-slate-200 dark:border-slate-600">
@@ -806,7 +806,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                   {imp.areaSf.toLocaleString()}
                 </div>
 
-                <div className="col-span-1 text-right text-xs font-bold text-[#0da1c7] bg-[#0da1c7]/10 rounded py-1 px-1.5 w-fit ml-auto">
+                <div className="col-span-1 text-right text-xs font-bold text-harken-blue bg-harken-blue/10 rounded py-1 px-1.5 w-fit ml-auto">
                   +{(profitPct * 100).toFixed(0)}%
                 </div>
 
@@ -821,7 +821,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                 <div className="col-span-2 flex items-center justify-end gap-4 relative">
                   <span className="text-sm font-bold text-slate-900">{formatCurrency(depreciatedCost)}</span>
                   <div className="flex items-center gap-2 opacity-0 group-hover:opacity-100 transition-opacity absolute -right-4 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm px-1 rounded-l-md border border-r-0 border-slate-200 dark:border-slate-700 shadow-sm transform translate-x-full group-hover:-translate-x-full duration-200">
-                    <button onClick={() => handleEdit(imp)} className="p-1.5 text-slate-400 hover:text-[#0da1c7] dark:hover:text-[#0da1c7] transition-colors" title="Edit cost data">
+                    <button onClick={() => handleEdit(imp)} className="p-1.5 text-slate-400 hover:text-harken-blue dark:hover:text-harken-blue transition-colors" title="Edit cost data">
                       <Edit2 size={14} />
                     </button>
                     {hasOverride && (
@@ -843,7 +843,7 @@ export const ImprovementValuation: React.FC<ImprovementValuationProps> = ({
                 {siteImprovementsBreakdown.length > 0 && (
                   <button
                     onClick={() => setShowSiteBreakdown(!showSiteBreakdown)}
-                    className="text-[10px] text-[#0da1c7] hover:underline"
+                    className="text-[10px] text-harken-blue hover:underline"
                   >
                     {showSiteBreakdown ? 'Hide' : 'Details'}
                   </button>

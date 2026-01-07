@@ -383,10 +383,10 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
   const AddButton = ({ label, onClick }: { label: string, onClick: () => void }) => (
     <button
       onClick={onClick}
-      className="w-full mt-2 py-4 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl flex items-center justify-center gap-2 text-slate-500 dark:text-slate-400 font-bold hover:border-[#0da1c7] hover:text-[#0da1c7] hover:bg-[#0da1c7]/5 transition-all duration-300 group"
+      className="w-full mt-2 py-4 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-xl flex items-center justify-center gap-2 text-slate-500 dark:text-slate-400 font-bold hover:border-harken-blue hover:text-harken-blue hover:bg-harken-blue/5 transition-all duration-300 group"
     >
-      <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 group-hover:bg-[#0da1c7]/10 flex items-center justify-center transition-colors">
-        <Plus size={18} className="text-slate-400 dark:text-slate-300 group-hover:text-[#0da1c7]" />
+      <div className="w-8 h-8 rounded-full bg-slate-100 dark:bg-slate-700 group-hover:bg-harken-blue/10 flex items-center justify-center transition-colors">
+        <Plus size={18} className="text-slate-400 dark:text-slate-300 group-hover:text-harken-blue" />
       </div>
       {label}
     </button>
@@ -425,14 +425,14 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                   <button
                     onClick={() => setActiveSubTab(tab.id)}
                     className={`flex items-center gap-3 px-4 py-2 rounded-xl transition-all ${isActive
-                      ? 'bg-[#0da1c7]/10 text-[#0da1c7]'
+                      ? 'bg-harken-blue/10 text-harken-blue'
                       : isCompleted || isPast
                         ? 'text-emerald-600 dark:text-emerald-400 hover:bg-emerald-50 dark:hover:bg-emerald-900/30'
                         : 'text-slate-400 hover:text-slate-600 dark:hover:text-slate-300 hover:bg-slate-50 dark:hover:bg-slate-700'
                       }`}
                   >
                     <div className={`w-8 h-8 rounded-full flex items-center justify-center transition-all ${isActive
-                      ? 'bg-[#0da1c7] text-white'
+                      ? 'bg-harken-blue text-white'
                       : isCompleted || isPast
                         ? 'bg-emerald-500 text-white'
                         : 'bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400'
@@ -444,7 +444,7 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                       )}
                     </div>
                     <div className="text-left hidden md:block">
-                      <div className={`text-xs font-bold uppercase tracking-wide ${isActive ? 'text-[#0da1c7]' : isCompleted || isPast ? 'text-emerald-600' : 'text-slate-400'
+                      <div className={`text-xs font-bold uppercase tracking-wide ${isActive ? 'text-harken-blue' : isCompleted || isPast ? 'text-emerald-600' : 'text-slate-400'
                         }`}>
                         Step {index + 1}
                       </div>
@@ -491,7 +491,7 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                 <div className="flex justify-end mt-4">
                   <button
                     onClick={goToNextSubTab}
-                    className="px-6 py-3 bg-[#0da1c7] text-white font-bold rounded-xl hover:bg-[#0b8eb0] transition-colors shadow-md"
+                    className="px-6 py-3 bg-harken-blue text-white font-bold rounded-xl hover:bg-harken-blue/90 transition-colors shadow-md"
                   >
                     Continue to Expense Comps
                   </button>
@@ -511,7 +511,7 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                 <div className="flex justify-end mt-4">
                   <button
                     onClick={goToNextSubTab}
-                    className="px-6 py-3 bg-[#0da1c7] text-white font-bold rounded-xl hover:bg-[#0b8eb0] transition-colors shadow-md"
+                    className="px-6 py-3 bg-harken-blue text-white font-bold rounded-xl hover:bg-harken-blue/90 transition-colors shadow-md"
                   >
                     Continue to Pro Forma
                   </button>
@@ -527,7 +527,7 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
 
                   {/* Left: Property Type Badge - Read-only from WizardContext */}
                   <div className="flex items-center gap-4 w-full lg:w-auto">
-                    <div className="p-3 bg-[#0da1c7]/10 rounded-xl text-[#0da1c7]">
+                    <div className="p-3 bg-harken-blue/10 rounded-xl text-harken-blue">
                       {propertyMeta.type === 'office' && <LayoutGrid size={24} />}
                       {propertyMeta.type === 'retail' && <Store size={24} />}
                       {propertyMeta.type === 'multifamily' && <Home size={24} />}
@@ -550,7 +550,7 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                       <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-1">
                         Building SqFt
                         {state.improvementsInventory?.parcels?.some(p => p.buildings?.length > 0) && (
-                          <span className="text-[#0da1c7] ml-1">(from Subject Data)</span>
+                          <span className="text-harken-blue ml-1">(from Subject Data)</span>
                         )}
                       </label>
                       <div className="flex items-center gap-2 group">
@@ -558,9 +558,9 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                           type="number"
                           value={localPropertyMeta.sqFt}
                           onChange={(e) => setLocalPropertyMeta(prev => ({ ...prev, sqFt: parseFloat(e.target.value) || 0 }))}
-                          className="bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 font-bold text-slate-700 dark:text-slate-200 w-32 focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent outline-none transition-all"
+                          className="bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 font-bold text-slate-700 dark:text-slate-200 w-32 focus:ring-2 focus:ring-harken-blue focus:border-transparent outline-none transition-all"
                         />
-                        <span className="text-xs font-bold text-slate-400 group-hover:text-[#0da1c7] transition-colors">SF</span>
+                        <span className="text-xs font-bold text-slate-400 group-hover:text-harken-blue transition-colors">SF</span>
                       </div>
                     </div>
                     <div>
@@ -570,9 +570,9 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                           type="number"
                           value={localPropertyMeta.unitCount}
                           onChange={(e) => setLocalPropertyMeta(prev => ({ ...prev, unitCount: parseFloat(e.target.value) || 0 }))}
-                          className="bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 font-bold text-slate-700 dark:text-slate-200 w-24 focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent outline-none transition-all"
+                          className="bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-1.5 font-bold text-slate-700 dark:text-slate-200 w-24 focus:ring-2 focus:ring-harken-blue focus:border-transparent outline-none transition-all"
                         />
-                        <span className="text-xs font-bold text-slate-400 group-hover:text-[#0da1c7] transition-colors">Units</span>
+                        <span className="text-xs font-bold text-slate-400 group-hover:text-harken-blue transition-colors">Units</span>
                       </div>
                     </div>
                   </div>
@@ -582,7 +582,7 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col justify-between">
                     <div className="text-xs font-bold text-slate-400 uppercase">Indicated Value</div>
-                    <div className="text-2xl font-black text-[#0da1c7]">${directCapValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</div>
+                    <div className="text-2xl font-black text-harken-blue">${directCapValue.toLocaleString(undefined, { maximumFractionDigits: 0 })}</div>
                   </div>
                   <div className="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-slate-100 dark:border-slate-700 flex flex-col justify-between">
                     <div className="text-xs font-bold text-slate-400 uppercase">Price / SF</div>
@@ -609,7 +609,7 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                       className="w-full flex items-center justify-between text-left"
                     >
                       <h3 className="font-bold text-slate-800 dark:text-white flex items-center gap-2">
-                        <PieChart className="text-[#0da1c7]" size={18} />
+                        <PieChart className="text-harken-blue" size={18} />
                         Income Waterfall
                       </h3>
                       {showChart ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
@@ -850,10 +850,10 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                               <label className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Going-In Cap Rate</label>
                               <button
                                 onClick={() => setShowCapRateCalculator(true)}
-                                className="p-1.5 bg-[#0da1c7]/10 hover:bg-[#0da1c7]/20 rounded-lg transition-colors group"
+                                className="p-1.5 bg-harken-blue/10 hover:bg-harken-blue/20 rounded-lg transition-colors group"
                                 title="Open Cap Rate Calculator"
                               >
-                                <Calculator className="w-4 h-4 text-[#0da1c7] group-hover:scale-110 transition-transform" />
+                                <Calculator className="w-4 h-4 text-harken-blue group-hover:scale-110 transition-transform" />
                               </button>
                             </div>
                             <span className="text-xl font-black text-emerald-600 bg-emerald-50 px-3 py-1 rounded-lg border border-emerald-100">
@@ -935,7 +935,7 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                             min="4" max="15" step="0.25"
                             value={valuationData.discountRate}
                             onChange={(e) => setValuationData({ ...valuationData, discountRate: parseFloat(e.target.value) })}
-                            className="w-full h-2 bg-slate-100 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-[#0da1c7]"
+                            className="w-full h-2 bg-slate-100 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-harken-blue"
                           />
                         </div>
 
@@ -949,7 +949,7 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                             min="3" max="12" step="0.25"
                             value={valuationData.terminalCapRate}
                             onChange={(e) => setValuationData({ ...valuationData, terminalCapRate: parseFloat(e.target.value) })}
-                            className="w-full h-2 bg-slate-100 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-[#0da1c7]"
+                            className="w-full h-2 bg-slate-100 dark:bg-slate-700 rounded-lg appearance-none cursor-pointer accent-harken-blue"
                           />
                           <div className="mt-1 flex items-center gap-2 text-[10px] font-medium text-slate-400">
                             <ArrowRightLeft size={10} />
@@ -974,9 +974,9 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                         {/* Toggle for Detailed DCF Table */}
                         <button
                           onClick={() => setShowDetailedDCF(!showDetailedDCF)}
-                          className="w-full py-3 border-2 border-dashed border-slate-300 rounded-xl flex items-center justify-center gap-2 text-slate-500 font-semibold hover:border-[#0da1c7] hover:text-[#0da1c7] hover:bg-[#0da1c7]/5 transition-all duration-300 group text-sm"
+                          className="w-full py-3 border-2 border-dashed border-slate-300 rounded-xl flex items-center justify-center gap-2 text-slate-500 font-semibold hover:border-harken-blue hover:text-harken-blue hover:bg-harken-blue/5 transition-all duration-300 group text-sm"
                         >
-                          <Table2 size={16} className="text-slate-400 group-hover:text-[#0da1c7]" />
+                          <Table2 size={16} className="text-slate-400 group-hover:text-harken-blue" />
                           {showDetailedDCF ? 'Hide' : 'Show'} Year-by-Year Projection
                           {showDetailedDCF ? <ChevronUp size={16} /> : <ChevronDown size={16} />}
                         </button>
@@ -1036,7 +1036,7 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                         </div>
                         <button
                           onClick={() => setIsRiskModalOpen(true)}
-                          className="w-full lg:w-auto flex items-center justify-center gap-2 bg-[#0da1c7] text-white px-8 py-4 rounded-xl font-bold hover:bg-[#0b8eb0] transition-all shadow-lg hover:shadow-xl active:scale-95 group"
+                          className="w-full lg:w-auto flex items-center justify-center gap-2 bg-harken-blue text-white px-8 py-4 rounded-xl font-bold hover:bg-harken-blue/90 transition-all shadow-lg hover:shadow-xl active:scale-95 group"
                         >
                           <Activity size={20} className="text-white group-hover:scale-110 transition-transform" />
                           <span>Run Risk Scan</span>

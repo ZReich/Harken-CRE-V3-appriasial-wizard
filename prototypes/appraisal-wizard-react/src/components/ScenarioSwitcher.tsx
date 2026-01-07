@@ -16,13 +16,13 @@ const SCENARIO_COLORS: Record<string, {
   dot: string;
 }> = {
   'As Is': {
-    accent: '#0da1c7',
-    activeBg: 'bg-[#0da1c7]/10 dark:bg-[#0da1c7]/20',
-    activeBorder: 'border-[#0da1c7] dark:border-[#0da1c7]',
-    activeText: 'text-[#0da1c7] dark:text-[#0da1c7]',
+    accent: 'var(--harken-blue)',
+    activeBg: 'bg-harken-blue/10 dark:bg-harken-blue/20',
+    activeBorder: 'border-harken-blue dark:border-harken-blue',
+    activeText: 'text-harken-blue dark:text-harken-blue',
     inactiveBg: 'bg-slate-50 dark:bg-slate-800',
     inactiveText: 'text-slate-600 dark:text-slate-400',
-    dot: 'bg-[#0da1c7]',
+    dot: 'bg-harken-blue',
   },
   'As Completed': {
     accent: '#10b981',

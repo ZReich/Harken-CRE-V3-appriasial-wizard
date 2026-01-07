@@ -67,8 +67,8 @@ const ButtonSelector: FC<ButtonSelectorProps> = ({
               type="button"
               onClick={() => onChange(opt.value)}
               className={`flex items-center gap-2 ${sizeClasses[size]} rounded-lg border-2 font-medium transition-all ${isSelected
-                ? 'border-[#0da1c7] bg-[#0da1c7]/10 text-[#0da1c7] dark:bg-cyan-500/10 dark:text-cyan-400 dark:border-cyan-500'
-                : 'border-gray-200 bg-white text-gray-700 hover:border-[#0da1c7]/50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300 dark:hover:border-cyan-400/50'
+                ? 'border-harken-blue bg-harken-blue/10 text-harken-blue dark:bg-cyan-500/10 dark:text-cyan-400 dark:border-cyan-500'
+                : 'border-gray-200 bg-white text-gray-700 hover:border-harken-blue/50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300 dark:hover:border-cyan-400/50'
                 }`}
             >
               {opt.icon && (

@@ -145,7 +145,7 @@ export function EconomicIndicatorsPanel({
     return (
       <div className={`bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6 ${className}`}>
         <div className="flex items-center justify-center gap-3 py-8">
-          <Loader2 className="w-5 h-5 text-[#0da1c7] animate-spin" />
+          <Loader2 className="w-5 h-5 text-harken-blue animate-spin" />
           <span className="text-slate-600">Loading economic indicators...</span>
         </div>
       </div>
@@ -185,8 +185,8 @@ export function EconomicIndicatorsPanel({
       <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-[#0da1c7]/10 rounded-lg">
-              <BarChart3 className="w-5 h-5 text-[#0da1c7]" />
+            <div className="p-2 bg-harken-blue/10 rounded-lg">
+              <BarChart3 className="w-5 h-5 text-harken-blue" />
             </div>
             <div>
               <h3 className="font-bold text-slate-800 dark:text-white">Economic Indicators</h3>
@@ -225,7 +225,7 @@ export function EconomicIndicatorsPanel({
           icon={<Percent className="w-4 h-4" />}
           series={data.federalFundsRate}
           chartStyle={chartStyle}
-          color="#0da1c7"
+          color="var(--harken-blue)"
         />
         <IndicatorCard
           title="10-Year Treasury"

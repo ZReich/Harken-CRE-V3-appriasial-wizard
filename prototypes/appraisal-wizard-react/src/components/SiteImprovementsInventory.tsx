@@ -372,9 +372,9 @@ export default function SiteImprovementsInventory({
       <div className="p-4 border-b border-gray-100">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <Warehouse className="w-5 h-5 text-[#0da1c7]" />
+            <Warehouse className="w-5 h-5 text-harken-blue" />
             <div>
-              <h3 className="text-lg font-bold text-[#1c3643] dark:text-white">Site Improvements</h3>
+              <h3 className="text-lg font-bold text-harken-dark dark:text-white">Site Improvements</h3>
               <p className="text-xs text-gray-500 dark:text-slate-400">
                 M&S Section 66 - Itemized with age-life depreciation
               </p>
@@ -399,8 +399,8 @@ export default function SiteImprovementsInventory({
                   setShowCustomForm(false);
                 }}
                 className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all ${selectedCategory === cat.id
-                  ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
-                  : 'bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-300 border-gray-200 dark:border-slate-600 hover:border-[#0da1c7] dark:hover:border-[#0da1c7] hover:text-[#0da1c7] dark:hover:text-[#0da1c7]'
+                  ? 'bg-harken-blue text-white border-harken-blue'
+                  : 'bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-300 border-gray-200 dark:border-slate-600 hover:border-harken-blue dark:hover:border-harken-blue hover:text-harken-blue dark:hover:text-harken-blue'
                   }`}
               >
                 {cat.label}
@@ -417,8 +417,8 @@ export default function SiteImprovementsInventory({
                   setShowCustomForm(false);
                 }}
                 className={`hidden xl:block px-3 py-1.5 text-sm font-medium rounded-lg border transition-all ${selectedCategory === cat.id
-                  ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
-                  : 'bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-300 border-gray-200 dark:border-slate-600 hover:border-[#0da1c7] dark:hover:border-[#0da1c7] hover:text-[#0da1c7] dark:hover:text-[#0da1c7]'
+                  ? 'bg-harken-blue text-white border-harken-blue'
+                  : 'bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-300 border-gray-200 dark:border-slate-600 hover:border-harken-blue dark:hover:border-harken-blue hover:text-harken-blue dark:hover:text-harken-blue'
                   }`}
               >
                 {cat.label}
@@ -431,8 +431,8 @@ export default function SiteImprovementsInventory({
                 <button
                   onClick={() => setShowMoreCategories(!showMoreCategories)}
                   className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all flex items-center gap-1 ${ALL_CATEGORIES.slice(VISIBLE_ON_SMALL).some(c => c.id === selectedCategory)
-                    ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
-                    : 'bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-300 border-gray-200 dark:border-slate-600 hover:border-[#0da1c7] dark:hover:border-[#0da1c7] hover:text-[#0da1c7] dark:hover:text-[#0da1c7]'
+                    ? 'bg-harken-blue text-white border-harken-blue'
+                    : 'bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-300 border-gray-200 dark:border-slate-600 hover:border-harken-blue dark:hover:border-harken-blue hover:text-harken-blue dark:hover:text-harken-blue'
                     }`}
                 >
                   +{ALL_CATEGORIES.length - VISIBLE_ON_SMALL}
@@ -449,7 +449,7 @@ export default function SiteImprovementsInventory({
                           setShowMoreCategories(false);
                           setShowCustomForm(false);
                         }}
-                        className={`w-full px-3 py-2 text-sm text-left hover:bg-gray-50 dark:hover:bg-slate-700 ${selectedCategory === cat.id ? 'text-[#0da1c7] font-medium' : 'text-gray-700 dark:text-slate-300'
+                        className={`w-full px-3 py-2 text-sm text-left hover:bg-gray-50 dark:hover:bg-slate-700 ${selectedCategory === cat.id ? 'text-harken-blue font-medium' : 'text-gray-700 dark:text-slate-300'
                           }`}
                       >
                         {cat.label}
@@ -484,8 +484,8 @@ export default function SiteImprovementsInventory({
                           setShowCustomForm(false);
                         }}
                         className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all flex items-center gap-1 ${selectedTypeId === type.id && !showCustomForm
-                          ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
-                          : 'bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-300 border-gray-200 dark:border-slate-600 hover:border-[#0da1c7] dark:hover:border-[#0da1c7] hover:text-[#0da1c7] dark:hover:text-[#0da1c7]'
+                          ? 'bg-harken-blue text-white border-harken-blue'
+                          : 'bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-300 border-gray-200 dark:border-slate-600 hover:border-harken-blue dark:hover:border-harken-blue hover:text-harken-blue dark:hover:text-harken-blue'
                           }`}
                       >
                         {isCustom && <Star size={12} className="text-amber-400" />}
@@ -520,8 +520,8 @@ export default function SiteImprovementsInventory({
                             setShowCustomForm(false);
                           }}
                           className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all flex items-center gap-1 ${selectedTypeId === type.id && !showCustomForm
-                            ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
-                            : 'bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-300 border-gray-200 dark:border-slate-600 hover:border-[#0da1c7] dark:hover:border-[#0da1c7] hover:text-[#0da1c7] dark:hover:text-[#0da1c7]'
+                            ? 'bg-harken-blue text-white border-harken-blue'
+                            : 'bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-300 border-gray-200 dark:border-slate-600 hover:border-harken-blue dark:hover:border-harken-blue hover:text-harken-blue dark:hover:text-harken-blue'
                             }`}
                         >
                           {isCustom && <Star size={12} className="text-amber-400" />}
@@ -547,8 +547,8 @@ export default function SiteImprovementsInventory({
                         setShowCustomForm(false);
                       }}
                       className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all flex items-center gap-1 ${selectedTypeId === type.id && !showCustomForm
-                        ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
-                        : 'bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-300 border-gray-200 dark:border-slate-600 hover:border-[#0da1c7] dark:hover:border-[#0da1c7] hover:text-[#0da1c7] dark:hover:text-[#0da1c7]'
+                        ? 'bg-harken-blue text-white border-harken-blue'
+                        : 'bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-300 border-gray-200 dark:border-slate-600 hover:border-harken-blue dark:hover:border-harken-blue hover:text-harken-blue dark:hover:text-harken-blue'
                         }`}
                     >
                       {isCustom && <Star size={12} className="text-amber-400" />}
@@ -570,8 +570,8 @@ export default function SiteImprovementsInventory({
                 setSaveForFuture(false);
               }}
               className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all flex items-center gap-1 ${showCustomForm
-                ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
-                : 'bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-300 border-gray-200 dark:border-slate-600 hover:border-[#0da1c7] dark:hover:border-[#0da1c7] hover:text-[#0da1c7] dark:hover:text-[#0da1c7]'
+                ? 'bg-harken-blue text-white border-harken-blue'
+                : 'bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-300 border-gray-200 dark:border-slate-600 hover:border-harken-blue dark:hover:border-harken-blue hover:text-harken-blue dark:hover:text-harken-blue'
                 }`}
             >
               <Plus size={12} />
@@ -582,9 +582,9 @@ export default function SiteImprovementsInventory({
 
         {/* Custom Type Form (shown when Custom button is clicked within a category) */}
         {showCustomForm && selectedCategory && (
-          <div className="mb-4 p-3 bg-white dark:bg-slate-800 rounded-lg border border-[#0da1c7]/30 border-dashed">
+          <div className="mb-4 p-3 bg-white dark:bg-slate-800 rounded-lg border border-harken-blue/30 border-dashed">
             <div className="flex items-center gap-2 mb-3 text-sm text-gray-600 dark:text-slate-400">
-              <Plus size={14} className="text-[#0da1c7]" />
+              <Plus size={14} className="text-harken-blue" />
               <span>Add custom type to <strong>{ALL_CATEGORIES.find(c => c.id === selectedCategory)?.label}</strong></span>
             </div>
             <div className="grid grid-cols-2 gap-3 mb-3">
@@ -596,7 +596,7 @@ export default function SiteImprovementsInventory({
                   type="text"
                   value={customName}
                   onChange={(e) => setCustomName(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-lg focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-lg focus:ring-2 focus:ring-harken-blue focus:border-transparent"
                   placeholder="e.g., Loading Ramp, Flag Pole"
                 />
               </div>
@@ -614,7 +614,7 @@ export default function SiteImprovementsInventory({
                   type="number"
                   value={customEconomicLife}
                   onChange={(e) => setCustomEconomicLife(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-lg focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-lg focus:ring-2 focus:ring-harken-blue focus:border-transparent"
                   min="1"
                   max="100"
                 />
@@ -624,7 +624,7 @@ export default function SiteImprovementsInventory({
             {/* Economic Life Calculator / Reference Guide */}
             <div className="mb-3 p-2 bg-slate-50 dark:bg-slate-700/50 rounded-lg border border-slate-200 dark:border-slate-600">
               <div className="flex items-start gap-2">
-                <Calculator size={14} className="text-[#0da1c7] mt-0.5 flex-shrink-0" />
+                <Calculator size={14} className="text-harken-blue mt-0.5 flex-shrink-0" />
                 <div className="text-xs text-gray-600 dark:text-slate-400">
                   <div className="font-medium text-gray-700 dark:text-slate-300 mb-1">
                     Economic Life Guide for {ALL_CATEGORIES.find(c => c.id === selectedCategory)?.label}
@@ -639,7 +639,7 @@ export default function SiteImprovementsInventory({
                   <button
                     type="button"
                     onClick={() => setCustomEconomicLife(String(ECONOMIC_LIFE_GUIDE[selectedCategory as keyof typeof ECONOMIC_LIFE_GUIDE]?.typical || 20))}
-                    className="mt-1.5 text-[#0da1c7] hover:text-[#0da1c7]/80 font-medium underline"
+                    className="mt-1.5 text-harken-blue hover:text-harken-blue/80 font-medium underline"
                   >
                     Use typical ({ECONOMIC_LIFE_GUIDE[selectedCategory as keyof typeof ECONOMIC_LIFE_GUIDE]?.typical || 20} yrs)
                   </button>
@@ -652,7 +652,7 @@ export default function SiteImprovementsInventory({
                 type="checkbox"
                 checked={saveForFuture}
                 onChange={(e) => setSaveForFuture(e.target.checked)}
-                className="rounded border-gray-300 text-[#0da1c7] focus:ring-[#0da1c7]"
+                className="rounded border-gray-300 text-harken-blue focus:ring-harken-blue"
               />
               <Star size={14} className="text-amber-400" />
               Save to My Improvement Types (for future appraisals)
@@ -670,7 +670,7 @@ export default function SiteImprovementsInventory({
                   type="number"
                   value={quantity}
                   onChange={(e) => setQuantity(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-lg focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-lg focus:ring-2 focus:ring-harken-blue focus:border-transparent"
                   placeholder="0"
                 />
               </div>
@@ -683,7 +683,7 @@ export default function SiteImprovementsInventory({
                       onClick={() => setUnit(opt.value)}
                       title={opt.fullName}
                       className={`flex-1 px-2 py-2 text-xs font-medium rounded border transition-all ${unit === opt.value
-                        ? 'bg-[#0da1c7] text-white border-[#0da1c7]'
+                        ? 'bg-harken-blue text-white border-harken-blue'
                         : 'bg-white dark:bg-slate-700 text-gray-600 dark:text-slate-300 border-gray-200 dark:border-slate-600 hover:border-gray-300'
                         }`}
                     >
@@ -700,7 +700,7 @@ export default function SiteImprovementsInventory({
                 <select
                   value={yearInstalled}
                   onChange={(e) => setYearInstalled(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-lg focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-slate-600 dark:bg-slate-700 dark:text-white rounded-lg focus:ring-2 focus:ring-harken-blue focus:border-transparent"
                 >
                   <option value="">Select year...</option>
                   {generateYearOptions(new Date().getFullYear()).map((year) => (
@@ -715,7 +715,7 @@ export default function SiteImprovementsInventory({
                   onClick={addToInventory}
                   disabled={!canAdd}
                   className={`w-full flex items-center justify-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${canAdd
-                    ? 'bg-[#0da1c7] text-white hover:bg-[#0da1c7]/90'
+                    ? 'bg-harken-blue text-white hover:bg-harken-blue/90'
                     : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                     }`}
                 >
@@ -782,7 +782,7 @@ export default function SiteImprovementsInventory({
                   {/* Expand/Collapse Button */}
                   <button
                     onClick={() => toggleExpanded(improvement.id)}
-                    className={`p-1 rounded transition-colors flex-shrink-0 ${hasNotes ? 'text-[#0da1c7] hover:bg-[#0da1c7]/10' : 'text-gray-400 hover:bg-gray-100'
+                    className={`p-1 rounded transition-colors flex-shrink-0 ${hasNotes ? 'text-harken-blue hover:bg-harken-blue/10' : 'text-gray-400 hover:bg-gray-100'
                       }`}
                     title={isExpanded ? 'Collapse notes' : 'Add/view notes'}
                   >
@@ -798,7 +798,7 @@ export default function SiteImprovementsInventory({
                       </span>
                       {hasNotes && !isExpanded && (
                         <span title="Has notes">
-                          <FileText size={12} className="text-[#0da1c7] flex-shrink-0" />
+                          <FileText size={12} className="text-harken-blue flex-shrink-0" />
                         </span>
                       )}
                     </div>
@@ -851,7 +851,7 @@ export default function SiteImprovementsInventory({
                 {/* Expanded Details Section */}
                 {isExpanded && (
                   <div className="px-3 pb-3 pt-0">
-                    <div className="ml-7 border-l-2 border-[#0da1c7]/20 pl-3 space-y-4">
+                    <div className="ml-7 border-l-2 border-harken-blue/20 pl-3 space-y-4">
                       {/* Depreciation Override */}
                       <div className="space-y-2">
                         <div className="flex items-center gap-3">

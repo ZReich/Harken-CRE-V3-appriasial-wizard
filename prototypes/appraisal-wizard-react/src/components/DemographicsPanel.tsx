@@ -174,7 +174,7 @@ export function DemographicsPanel({
       <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
         <div className="px-4 py-3 border-b border-slate-200 bg-slate-50">
           <h3 className="text-sm font-semibold text-slate-800 dark:text-white flex items-center gap-2">
-            <Building2 className="w-4 h-4 text-[#0da1c7]" />
+            <Building2 className="w-4 h-4 text-harken-blue" />
             Demographics Map
           </h3>
         </div>
@@ -192,7 +192,7 @@ export function DemographicsPanel({
       <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
         <div className="px-4 py-3 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
           <h3 className="text-sm font-semibold text-slate-800 dark:text-white flex items-center gap-2">
-            <Users className="w-4 h-4 text-[#0da1c7]" />
+            <Users className="w-4 h-4 text-harken-blue" />
             Radius Demographics
           </h3>
           <div className="flex items-center gap-2">
@@ -376,7 +376,7 @@ export function DemographicsPanel({
         <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
           <div className="px-4 py-3 border-b border-slate-200 bg-slate-50">
             <h3 className="text-sm font-semibold text-slate-800 dark:text-white flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-[#0da1c7]" />
+              <TrendingUp className="w-4 h-4 text-harken-blue" />
               Employment by Industry (1-Mile Radius)
             </h3>
           </div>
@@ -391,7 +391,7 @@ export function DemographicsPanel({
                     </div>
                     <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
                       <div 
-                        className="h-full bg-[#0da1c7] rounded-full transition-all"
+                        className="h-full bg-harken-blue rounded-full transition-all"
                         style={{ 
                           width: `${Math.min(item.percentage * 4, 100)}%`,
                           opacity: 1 - (index * 0.05)

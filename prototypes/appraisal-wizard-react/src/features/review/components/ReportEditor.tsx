@@ -1,3 +1,40 @@
+/**
+ * ReportEditor - WYSIWYG Report Builder
+ * =====================================
+ * 
+ * This is the main report editor component (~3,500 lines) for building and customizing
+ * appraisal reports. It's intentionally large as a page-level orchestrator that
+ * coordinates many sub-components and features.
+ * 
+ * ## Key Features
+ * - Drag-and-drop section reordering (dnd-kit)
+ * - Inline text editing with WYSIWYG controls
+ * - Photo editing and cropping
+ * - Live PDF preview integration
+ * - Auto-save with undo/redo support
+ * - Multiple page layout templates
+ * 
+ * ## Architecture
+ * This file follows the "Orchestrator Pattern" where complex UI coordination
+ * logic is co-located for easier reasoning about state and data flow.
+ * 
+ * ## Section Navigation (search for `// ===`)
+ * - TYPES: Local type definitions
+ * - SECTION TREE COMPONENT: Drag-drop reordering
+ * - COVER PAGE RENDERER: Cover page generation
+ * - TEXT BLOCK COMPONENT: Editable text blocks
+ * - MAIN EDITOR: Core editing canvas
+ * - PDF EXPORT: Export functionality
+ * 
+ * ## Key Dependencies
+ * - useReportState: Report structure management
+ * - useAutoSave: Auto-persistence
+ * - useUndoRedo: History management
+ * - @dnd-kit: Drag-and-drop
+ * 
+ * @see DEVELOPER_GUIDE.md for architecture decisions
+ */
+
 import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import { useWizard } from '../../../context/WizardContext';
 import { BASE_REPORT_SECTIONS, APPROACH_REPORT_SECTIONS, CLOSING_REPORT_SECTIONS } from '../constants';
@@ -15,6 +52,26 @@ import { DemographicsPage } from '../../report-preview/components/pages/Demograp
 import { EconomicContextPage } from '../../report-preview/components/pages/EconomicContextPage';
 import { SWOTPage } from '../../report-preview/components/pages/SWOTPage';
 import { AddendaPage } from './AddendaPage';
+// Drag-drop reordering
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+// Animation styles
+import './reportEditorAnimations.css';
 
 // =================================================================
 // TYPES
@@ -41,7 +98,7 @@ interface ElementContent {
 }
 
 // =================================================================
-// SECTION TREE COMPONENT
+// SECTION TREE COMPONENT WITH DRAG-DROP REORDERING
 // =================================================================
 
 interface SectionTreeProps {
@@ -50,7 +107,149 @@ interface SectionTreeProps {
   onToggleField: (sectionId: string, fieldId: string) => void;
   onToggleExpand: (sectionId: string) => void;
   onScrollToSection: (sectionId: string) => void;
+  onReorderSections: (oldIndex: number, newIndex: number) => void;
   activeSectionId: string | null;
+}
+
+// Sortable Section Item Component
+interface SortableSectionItemProps {
+  section: ReportSection;
+  onToggleSection: (sectionId: string) => void;
+  onToggleField: (sectionId: string, fieldId: string) => void;
+  onToggleExpand: (sectionId: string) => void;
+  onScrollToSection: (sectionId: string) => void;
+  activeSectionId: string | null;
+}
+
+function SortableSectionItem({
+  section,
+  onToggleSection,
+  onToggleField,
+  onToggleExpand,
+  onScrollToSection,
+  activeSectionId,
+}: SortableSectionItemProps) {
+  const {
+    attributes,
+    listeners,
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+  } = useSortable({ id: section.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.5 : 1,
+    zIndex: isDragging ? 1000 : undefined,
+  };
+
+  return (
+    <div ref={setNodeRef} style={style}>
+      {/* Section Row - Pill Style */}
+      <div
+        className={`flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer transition-all ${section.enabled
+          ? activeSectionId === section.id
+            ? 'bg-accent-cyan/15 border-l-4 border-accent-cyan'
+            : 'bg-accent-cyan/10 border-l-4 border-accent-cyan/50 hover:bg-accent-cyan/15'
+          : 'bg-gray-50 dark:bg-slate-800/50 border-l-4 border-transparent opacity-60 hover:opacity-80'
+          }`}
+      >
+        {/* Drag Handle */}
+        <button
+          {...attributes}
+          {...listeners}
+          className={`p-1 rounded cursor-grab active:cursor-grabbing transition-all ${
+            section.enabled
+              ? 'text-accent-cyan/50 hover:text-accent-cyan hover:bg-accent-cyan/10'
+              : 'text-gray-400 hover:bg-gray-200 dark:hover:bg-slate-700'
+          }`}
+          title="Drag to reorder"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
+          </svg>
+        </button>
+
+        {/* Expand/Collapse Arrow */}
+        {section.fields.length > 0 && (
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              onToggleExpand(section.id);
+            }}
+            className={`p-0.5 rounded transition-all ${section.enabled
+              ? 'text-accent-cyan hover:bg-accent-cyan/20'
+              : 'text-gray-400 hover:bg-gray-200 dark:hover:bg-slate-700'
+              } ${section.expanded ? 'rotate-90' : ''}`}
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+          </button>
+        )}
+        {section.fields.length === 0 && <div className="w-5" />}
+
+        {/* Section Label */}
+        <span
+          onClick={(e) => {
+            e.stopPropagation();
+            if (section.enabled) {
+              onScrollToSection(section.id);
+            }
+          }}
+          className={`flex-1 text-sm transition-colors ${section.enabled
+            ? activeSectionId === section.id
+              ? 'text-accent-cyan font-semibold'
+              : 'text-gray-800 dark:text-gray-200 font-medium'
+            : 'text-gray-400'
+            }`}
+        >
+          {section.label}
+        </span>
+
+        {/* Enable/Disable toggle */}
+        <button
+          onClick={(e) => {
+            e.stopPropagation();
+            onToggleSection(section.id);
+          }}
+          className={`w-2 h-2 rounded-full flex-shrink-0 transition-colors ${section.enabled ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-300 hover:bg-gray-400'}`}
+          title={section.enabled ? 'Click to disable section' : 'Click to enable section'}
+        />
+      </div>
+
+      {/* Fields - Dot Indicator Style */}
+      {section.expanded && section.fields.length > 0 && (
+        <div className="ml-12 mt-1 space-y-0.5 pb-2">
+          {section.fields.map((field) => (
+            <div
+              key={field.id}
+              onClick={() => onToggleField(section.id, field.id)}
+              className={`flex items-center gap-2.5 px-3 py-1.5 rounded-md cursor-pointer transition-all ${field.enabled
+                ? 'bg-accent-cyan/5 hover:bg-accent-cyan/10'
+                : 'bg-transparent hover:bg-gray-50 dark:hover:bg-slate-700/50'
+                }`}
+            >
+              {/* Dot Indicator */}
+              <span
+                className={`w-2 h-2 rounded-full flex-shrink-0 transition-colors ${field.enabled ? 'bg-accent-cyan' : 'bg-gray-300'
+                  }`}
+              />
+              {/* Field Label */}
+              <span
+                className={`text-xs transition-colors ${field.enabled ? 'text-gray-700 dark:text-gray-300' : 'text-gray-400'
+                  }`}
+              >
+                {field.label}
+              </span>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
 }
 
 function SectionTree({
@@ -59,94 +258,51 @@ function SectionTree({
   onToggleField,
   onToggleExpand,
   onScrollToSection,
+  onReorderSections,
   activeSectionId,
 }: SectionTreeProps) {
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        distance: 8,
+      },
+    }),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    })
+  );
+
+  const handleDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (over && active.id !== over.id) {
+      const oldIndex = sections.findIndex((s) => s.id === active.id);
+      const newIndex = sections.findIndex((s) => s.id === over.id);
+      onReorderSections(oldIndex, newIndex);
+    }
+  };
+
   return (
-    <div className="space-y-1.5">
-      {sections.map((section) => (
-        <div key={section.id}>
-          {/* Section Row - Pill Style */}
-          <div
-            onClick={() => onToggleSection(section.id)}
-            className={`flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer transition-all ${section.enabled
-              ? activeSectionId === section.id
-                ? 'bg-[#0da1c7]/15 border-l-4 border-[#0da1c7]'
-                : 'bg-[#0da1c7]/10 border-l-4 border-[#0da1c7]/50 hover:bg-[#0da1c7]/15'
-              : 'bg-gray-50 dark:bg-slate-800/50 border-l-4 border-transparent opacity-60 hover:opacity-80'
-              }`}
-          >
-            {/* Expand/Collapse Arrow */}
-            {section.fields.length > 0 && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onToggleExpand(section.id);
-                }}
-                className={`p-0.5 rounded transition-all ${section.enabled
-                  ? 'text-[#0da1c7] hover:bg-[#0da1c7]/20'
-                  : 'text-gray-400 hover:bg-gray-200 dark:hover:bg-slate-700'
-                  } ${section.expanded ? 'rotate-90' : ''}`}
-              >
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-            )}
-            {section.fields.length === 0 && <div className="w-5" />}
-
-            {/* Section Label */}
-            <span
-              onClick={(e) => {
-                e.stopPropagation();
-                if (section.enabled) {
-                  onScrollToSection(section.id);
-                }
-              }}
-              className={`flex-1 text-sm transition-colors ${section.enabled
-                ? activeSectionId === section.id
-                  ? 'text-[#0da1c7] font-semibold'
-                  : 'text-gray-800 dark:text-gray-200 font-medium'
-                : 'text-gray-400'
-                }`}
-            >
-              {section.label}
-            </span>
-
-            {/* Enable/Disable indicator */}
-            <span className={`w-2 h-2 rounded-full flex-shrink-0 ${section.enabled ? 'bg-green-500' : 'bg-gray-300'}`} />
-          </div>
-
-          {/* Fields - Dot Indicator Style */}
-          {section.expanded && section.fields.length > 0 && (
-            <div className="ml-8 mt-1 space-y-0.5 pb-2">
-              {section.fields.map((field) => (
-                <div
-                  key={field.id}
-                  onClick={() => onToggleField(section.id, field.id)}
-                  className={`flex items-center gap-2.5 px-3 py-1.5 rounded-md cursor-pointer transition-all ${field.enabled
-                    ? 'bg-[#0da1c7]/5 hover:bg-[#0da1c7]/10'
-                    : 'bg-transparent hover:bg-gray-50 dark:hover:bg-slate-700/50'
-                    }`}
-                >
-                  {/* Dot Indicator */}
-                  <span
-                    className={`w-2 h-2 rounded-full flex-shrink-0 transition-colors ${field.enabled ? 'bg-[#0da1c7]' : 'bg-gray-300'
-                      }`}
-                  />
-                  {/* Field Label */}
-                  <span
-                    className={`text-xs transition-colors ${field.enabled ? 'text-gray-700 dark:text-gray-300' : 'text-gray-400'
-                      }`}
-                  >
-                    {field.label}
-                  </span>
-                </div>
-              ))}
-            </div>
-          )}
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragEnd={handleDragEnd}
+    >
+      <SortableContext items={sections.map(s => s.id)} strategy={verticalListSortingStrategy}>
+        <div className="space-y-1.5">
+          {sections.map((section) => (
+            <SortableSectionItem
+              key={section.id}
+              section={section}
+              onToggleSection={onToggleSection}
+              onToggleField={onToggleField}
+              onToggleExpand={onToggleExpand}
+              onScrollToSection={onScrollToSection}
+              activeSectionId={activeSectionId}
+            />
+          ))}
         </div>
-      ))}
-    </div>
+      </SortableContext>
+    </DndContext>
   );
 }
 
@@ -189,7 +345,7 @@ function PhotoSlot({ photo, placeholder, aspectRatio = 'auto', className = '', o
   if (photo?.url) {
     return (
       <div
-        className={`relative overflow-hidden rounded-lg cursor-pointer group ${aspectClasses[aspectRatio]} ${className} ${selected ? 'ring-2 ring-[#0da1c7]' : ''}`}
+        className={`relative overflow-hidden rounded-lg cursor-pointer group ${aspectClasses[aspectRatio]} ${className} ${selected ? 'ring-2 ring-accent-cyan' : ''}`}
         onClick={onSelect}
         onDoubleClick={onDoubleClick}
       >
@@ -214,7 +370,7 @@ function PhotoSlot({ photo, placeholder, aspectRatio = 'auto', className = '', o
 
   return (
     <div
-      className={`bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center rounded-lg cursor-pointer ${aspectClasses[aspectRatio]} ${className} ${selected ? 'ring-2 ring-[#0da1c7]' : ''}`}
+      className={`bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center rounded-lg cursor-pointer ${aspectClasses[aspectRatio]} ${className} ${selected ? 'ring-2 ring-accent-cyan' : ''}`}
       onClick={onSelect}
       onDoubleClick={onDoubleClick}
     >
@@ -314,7 +470,7 @@ function CoverPageReal({
         <div className="p-8 pb-4 flex justify-between items-start">
           <div
             onClick={() => onSelectElement('cover_logo')}
-            className={`cursor-pointer transition-all ${selectedElement === 'cover_logo' ? 'ring-2 ring-[#0da1c7] rounded' : ''}`}
+            className={`cursor-pointer transition-all ${selectedElement === 'cover_logo' ? 'ring-2 ring-accent-cyan rounded' : ''}`}
           >
             <div className="text-2xl font-bold text-emerald-700 tracking-tight">ROVE</div>
             <div className="text-sm text-gray-500">VALUATIONS</div>
@@ -358,7 +514,7 @@ function CoverPageReal({
             className="flex-1 mx-8 mb-4"
             onClick={() => onSelectElement('cover_photo')}
           >
-            <div className={`h-full rounded-lg overflow-hidden ${selectedElement === 'cover_photo' ? 'ring-2 ring-[#0da1c7]' : ''}`}>
+            <div className={`h-full rounded-lg overflow-hidden ${selectedElement === 'cover_photo' ? 'ring-2 ring-accent-cyan' : ''}`}>
               {coverPhoto ? (
                 <img
                   src={coverPhoto.url}
@@ -600,7 +756,7 @@ function ExecutiveSummaryPage({ selectedElement, onSelectElement, subjectData, i
         {isVisible('exec_property') && (
           <div
             onClick={() => onSelectElement('summary_property')}
-            className={`mb-8 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'summary_property' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
+            className={`mb-8 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'summary_property' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-gray-50'}`}
           >
             <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Property Identification</h3>
             <table className="w-full text-sm">
@@ -620,7 +776,7 @@ function ExecutiveSummaryPage({ selectedElement, onSelectElement, subjectData, i
         {isVisible('exec_values') && (
           <div
             onClick={() => onSelectElement('summary_values')}
-            className={`p-4 -m-4 rounded cursor-pointer ${selectedElement === 'summary_values' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
+            className={`p-4 -m-4 rounded cursor-pointer ${selectedElement === 'summary_values' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-gray-50'}`}
           >
             <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Value Conclusions</h3>
             <table className="w-full text-sm">
@@ -711,7 +867,7 @@ function PropertyDescriptionPage({ selectedElement, onSelectElement, onContentCh
         {(areaDescription || neighborhoodCharacteristics) && (
           <div
             onClick={() => onSelectElement('property_area')}
-            className={`mb-6 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'property_area' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
+            className={`mb-6 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'property_area' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-gray-50'}`}
           >
             <h3 className="text-lg font-semibold text-gray-800 mb-3">Area & Neighborhood</h3>
             {areaDescription && (
@@ -760,7 +916,7 @@ function PropertyDescriptionPage({ selectedElement, onSelectElement, onContentCh
         {isVisible('prop_site') && (
           <div
             onClick={() => onSelectElement('property_site')}
-            className={`mb-6 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'property_site' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
+            className={`mb-6 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'property_site' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-gray-50'}`}
           >
             <h3 className="text-lg font-semibold text-gray-800 mb-3">Site Description</h3>
             <div className="grid grid-cols-2 gap-4 text-sm mb-4">
@@ -805,7 +961,7 @@ function PropertyDescriptionPage({ selectedElement, onSelectElement, onContentCh
         {isVisible('prop_improvements') && (
           <div
             onClick={() => onSelectElement('property_improvements')}
-            className={`p-4 -m-4 rounded cursor-pointer ${selectedElement === 'property_improvements' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
+            className={`p-4 -m-4 rounded cursor-pointer ${selectedElement === 'property_improvements' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-gray-50'}`}
           >
             <h3 className="text-lg font-semibold text-gray-800 mb-3">Improvements</h3>
             <div className="grid grid-cols-2 gap-4 text-sm">
@@ -1130,7 +1286,7 @@ function SalesComparisonPage({ selectedElement, onSelectElement, onContentChange
         {/* Comparison Grid */}
         <div
           onClick={() => onSelectElement('sales_grid')}
-          className={`rounded cursor-pointer ${selectedElement === 'sales_grid' ? 'ring-2 ring-[#0da1c7]' : ''}`}
+          className={`rounded cursor-pointer ${selectedElement === 'sales_grid' ? 'ring-2 ring-accent-cyan' : ''}`}
         >
           <table className="w-full text-xs border-collapse">
             <thead>
@@ -1317,7 +1473,7 @@ function IncomeApproachPage({ selectedElement, onSelectElement, onContentChange,
 
         <div
           onClick={() => onSelectElement('income_analysis')}
-          className={`p-4 -m-4 rounded cursor-pointer ${selectedElement === 'income_analysis' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
+          className={`p-4 -m-4 rounded cursor-pointer ${selectedElement === 'income_analysis' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-gray-50'}`}
         >
           <table className="w-full text-sm">
             <tbody>
@@ -1451,7 +1607,7 @@ The land value of $${data.costApproach.landValue.toLocaleString()} was derived f
           <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Cost Summary</h3>
           <div
             onClick={() => onSelectElement('cost_table')}
-            className={`p-4 bg-white rounded-lg border border-gray-200 cursor-pointer ${selectedElement === 'cost_table' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
+            className={`p-4 bg-white rounded-lg border border-gray-200 cursor-pointer ${selectedElement === 'cost_table' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-gray-50'}`}
           >
             <table className="w-full text-sm">
               <tbody>
@@ -1550,7 +1706,7 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
         {/* Value Indications Grid */}
         <div
           onClick={() => onSelectElement('recon_approaches')}
-          className={`mb-6 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'recon_approaches' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
+          className={`mb-6 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'recon_approaches' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-gray-50'}`}
         >
           <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Value Indications</h3>
           <div className="grid grid-cols-3 gap-4">
@@ -1579,7 +1735,7 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
           {/* Value Range Summary */}
           <div
             onClick={() => onSelectElement('recon_range')}
-            className={`mb-4 p-4 bg-slate-50 rounded-lg border-l-4 border-slate-400 cursor-pointer ${selectedElement === 'recon_range' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-slate-100'}`}
+            className={`mb-4 p-4 bg-slate-50 rounded-lg border-l-4 border-slate-400 cursor-pointer ${selectedElement === 'recon_range' ? 'ring-2 ring-accent-cyan' : 'hover:bg-slate-100'}`}
           >
             <h4 className="text-sm font-semibold text-slate-700 mb-2">Value Range & Correlation</h4>
             <ul className="text-sm text-slate-600 space-y-1">
@@ -1606,7 +1762,7 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
           {/* Sales Comparison Approach */}
           <div
             onClick={() => onSelectElement('recon_sales')}
-            className={`mb-4 p-4 bg-emerald-50 rounded-lg border-l-4 border-emerald-500 cursor-pointer ${selectedElement === 'recon_sales' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-emerald-100'}`}
+            className={`mb-4 p-4 bg-emerald-50 rounded-lg border-l-4 border-emerald-500 cursor-pointer ${selectedElement === 'recon_sales' ? 'ring-2 ring-accent-cyan' : 'hover:bg-emerald-100'}`}
           >
             <h4 className="text-sm font-semibold text-emerald-800 mb-2">
               Sales Comparison Approach
@@ -1629,7 +1785,7 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
           {/* Income Approach */}
           <div
             onClick={() => onSelectElement('recon_income')}
-            className={`mb-4 p-4 bg-blue-50 rounded-lg border-l-4 border-blue-400 cursor-pointer ${selectedElement === 'recon_income' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-blue-100'}`}
+            className={`mb-4 p-4 bg-blue-50 rounded-lg border-l-4 border-blue-400 cursor-pointer ${selectedElement === 'recon_income' ? 'ring-2 ring-accent-cyan' : 'hover:bg-blue-100'}`}
           >
             <h4 className="text-sm font-semibold text-blue-800 mb-2">
               Income Approach
@@ -1652,7 +1808,7 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
           {/* Cost Approach */}
           <div
             onClick={() => onSelectElement('recon_cost')}
-            className={`mb-4 p-4 bg-amber-50 rounded-lg border-l-4 border-amber-400 cursor-pointer ${selectedElement === 'recon_cost' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-amber-100'}`}
+            className={`mb-4 p-4 bg-amber-50 rounded-lg border-l-4 border-amber-400 cursor-pointer ${selectedElement === 'recon_cost' ? 'ring-2 ring-accent-cyan' : 'hover:bg-amber-100'}`}
           >
             <h4 className="text-sm font-semibold text-amber-800 mb-2">
               Cost Approach
@@ -1676,7 +1832,7 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
           {reconciliationNarrative && (
             <div
               onClick={() => onSelectElement('recon_narrative')}
-              className={`mb-4 p-4 bg-purple-50 rounded-lg border-l-4 border-purple-400 cursor-pointer ${selectedElement === 'recon_narrative' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-purple-100'}`}
+              className={`mb-4 p-4 bg-purple-50 rounded-lg border-l-4 border-purple-400 cursor-pointer ${selectedElement === 'recon_narrative' ? 'ring-2 ring-accent-cyan' : 'hover:bg-purple-100'}`}
             >
               <h4 className="text-sm font-semibold text-purple-800 mb-2">Reconciliation Analysis</h4>
               <EditableElement
@@ -1695,7 +1851,7 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
           {/* Final Conclusion */}
           <div
             onClick={() => onSelectElement('recon_conclusion')}
-            className={`p-4 bg-gray-100 rounded-lg border-l-4 border-gray-500 cursor-pointer ${selectedElement === 'recon_conclusion' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-gray-200'}`}
+            className={`p-4 bg-gray-100 rounded-lg border-l-4 border-gray-500 cursor-pointer ${selectedElement === 'recon_conclusion' ? 'ring-2 ring-accent-cyan' : 'hover:bg-gray-200'}`}
           >
             <h4 className="text-sm font-semibold text-gray-700 mb-2">Conclusion</h4>
             <EditableElement
@@ -1714,7 +1870,7 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
           {exposureRationale && (
             <div
               onClick={() => onSelectElement('exposure_rationale')}
-              className={`mt-4 p-4 bg-slate-50 rounded-lg border-l-4 border-slate-400 cursor-pointer ${selectedElement === 'exposure_rationale' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-slate-100'}`}
+              className={`mt-4 p-4 bg-slate-50 rounded-lg border-l-4 border-slate-400 cursor-pointer ${selectedElement === 'exposure_rationale' ? 'ring-2 ring-accent-cyan' : 'hover:bg-slate-100'}`}
             >
               <h4 className="text-sm font-semibold text-slate-700 mb-2">Exposure & Marketing Time</h4>
               <EditableElement
@@ -1826,7 +1982,7 @@ function TOCPage({
 
         <div
           onClick={() => onSelectElement('toc_entries')}
-          className={`space-y-0 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'toc_entries' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
+          className={`space-y-0 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'toc_entries' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-gray-50'}`}
         >
           {tocEntries.map((entry, idx) => (
             <div
@@ -1884,7 +2040,7 @@ function AssumptionsPage({ selectedElement, onSelectElement }: {
         {/* Assumptions */}
         <div
           onClick={() => onSelectElement('assumptions_list')}
-          className={`mb-8 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'assumptions_list' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
+          className={`mb-8 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'assumptions_list' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-gray-50'}`}
         >
           <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">General Assumptions</h3>
           <ol className="list-decimal list-outside ml-5 space-y-3 text-sm text-gray-700 leading-relaxed">
@@ -1897,7 +2053,7 @@ function AssumptionsPage({ selectedElement, onSelectElement }: {
         {/* Limiting Conditions */}
         <div
           onClick={() => onSelectElement('limiting_conditions')}
-          className={`p-4 -m-4 rounded cursor-pointer ${selectedElement === 'limiting_conditions' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
+          className={`p-4 -m-4 rounded cursor-pointer ${selectedElement === 'limiting_conditions' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-gray-50'}`}
         >
           <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Limiting Conditions</h3>
           <ol className="list-decimal list-outside ml-5 space-y-3 text-sm text-gray-700 leading-relaxed">
@@ -1938,7 +2094,7 @@ function CertificationPage({ selectedElement, onSelectElement, subjectData }: {
 
         <div
           onClick={() => onSelectElement('certification_intro')}
-          className={`mb-6 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'certification_intro' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
+          className={`mb-6 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'certification_intro' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-gray-50'}`}
         >
           <p className="text-sm text-gray-700 leading-relaxed">
             I certify that, to the best of my knowledge and belief:
@@ -1948,7 +2104,7 @@ function CertificationPage({ selectedElement, onSelectElement, subjectData }: {
         {/* Certifications List */}
         <div
           onClick={() => onSelectElement('certifications_list')}
-          className={`mb-8 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'certifications_list' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
+          className={`mb-8 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'certifications_list' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-gray-50'}`}
         >
           <ol className="list-decimal list-outside ml-5 space-y-3 text-sm text-gray-700 leading-relaxed">
             {fallbackData.certifications.map((cert, idx) => (
@@ -1960,7 +2116,7 @@ function CertificationPage({ selectedElement, onSelectElement, subjectData }: {
         {/* Signature Block */}
         <div
           onClick={() => onSelectElement('signature_block')}
-          className={`mt-12 p-6 border-2 border-gray-200 rounded-lg ${selectedElement === 'signature_block' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-gray-50'}`}
+          className={`mt-12 p-6 border-2 border-gray-200 rounded-lg ${selectedElement === 'signature_block' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-gray-50'}`}
         >
           <div className="grid grid-cols-2 gap-8">
             <div>
@@ -2060,7 +2216,7 @@ function EditableElement({
         onChange={(e) => setLocalContent(e.target.value)}
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
-        className={`w-full border-2 border-[#0da1c7] rounded px-2 py-1 resize-none focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/50 ${className}`}
+        className={`w-full border-2 border-accent-cyan rounded px-2 py-1 resize-none focus:outline-none focus:ring-2 focus:ring-accent-cyan/50 ${className}`}
         style={{
           ...mergedStyle,
           minHeight: '2em',
@@ -2076,7 +2232,7 @@ function EditableElement({
       onClick={() => onSelectElement(elementId)}
       onDoubleClick={handleDoubleClick}
       className={`cursor-pointer transition-all rounded px-1 -mx-1 ${isSelected
-        ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5'
+        ? 'ring-2 ring-accent-cyan bg-accent-cyan/5'
         : 'hover:bg-gray-50'
         } ${className}`}
       style={mergedStyle}
@@ -2153,7 +2309,7 @@ function PropertiesPanel({ selectedElement, elementStyles, elementContent, onSty
         {isDirty && onSave && (
           <button
             onClick={onSave}
-            className="mt-3 w-full py-2 bg-[#0da1c7] text-white rounded-lg text-sm font-medium hover:bg-[#0890a8] transition-colors flex items-center justify-center gap-2"
+            className="mt-3 w-full py-2 bg-accent-cyan text-white rounded-lg text-sm font-medium hover:bg-accent-cyan-hover transition-colors flex items-center justify-center gap-2"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
@@ -2170,7 +2326,7 @@ function PropertiesPanel({ selectedElement, elementStyles, elementContent, onSty
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${activeTab === tab.id
-              ? 'text-[#0da1c7] border-b-2 border-[#0da1c7]'
+              ? 'text-accent-cyan border-b-2 border-accent-cyan'
               : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
               }`}
           >
@@ -2192,7 +2348,7 @@ function PropertiesPanel({ selectedElement, elementStyles, elementContent, onSty
                   <select
                     value={elementStyles.fontFamily || 'Montserrat'}
                     onChange={(e) => onStyleChange({ fontFamily: e.target.value })}
-                    className="w-full border border-gray-300 dark:border-slate-600 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100"
+                    className="w-full border border-gray-300 dark:border-slate-600 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100"
                   >
                     <option value="Montserrat">Montserrat</option>
                     <option value="Georgia">Georgia</option>
@@ -2206,7 +2362,7 @@ function PropertiesPanel({ selectedElement, elementStyles, elementContent, onSty
                     type="number"
                     value={elementStyles.fontSize || 14}
                     onChange={(e) => onStyleChange({ fontSize: parseInt(e.target.value) })}
-                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent"
                   />
                 </div>
                 <div>
@@ -2214,7 +2370,7 @@ function PropertiesPanel({ selectedElement, elementStyles, elementContent, onSty
                   <select
                     value={elementStyles.fontWeight || 'normal'}
                     onChange={(e) => onStyleChange({ fontWeight: e.target.value })}
-                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent"
                   >
                     <option value="normal">Normal</option>
                     <option value="500">Medium</option>
@@ -2241,7 +2397,7 @@ function PropertiesPanel({ selectedElement, elementStyles, elementContent, onSty
                     type="text"
                     value={elementStyles.color || '#1c3643'}
                     onChange={(e) => onStyleChange({ color: e.target.value })}
-                    className="flex-1 border border-gray-300 dark:border-slate-600 rounded px-3 py-2 text-sm font-mono focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100"
+                    className="flex-1 border border-gray-300 dark:border-slate-600 rounded px-3 py-2 text-sm font-mono focus:ring-2 focus:ring-accent-cyan focus:border-transparent bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100"
                   />
                 </div>
               </div>
@@ -2256,7 +2412,7 @@ function PropertiesPanel({ selectedElement, elementStyles, elementContent, onSty
                     key={align}
                     onClick={() => onStyleChange({ textAlign: align })}
                     className={`flex-1 py-2 border rounded text-sm capitalize transition-all ${elementStyles.textAlign === align
-                      ? 'border-[#0da1c7] bg-[#0da1c7]/10 text-[#0da1c7]'
+                      ? 'border-accent-cyan bg-accent-cyan/10 text-accent-cyan'
                       : 'border-gray-300 dark:border-slate-600 hover:border-gray-400 dark:hover:border-slate-500'
                       }`}
                   >
@@ -2276,11 +2432,11 @@ function PropertiesPanel({ selectedElement, elementStyles, elementContent, onSty
               onChange={(e) => setLocalContent(e.target.value)}
               onBlur={() => selectedElement && onContentChange(selectedElement, localContent)}
               placeholder="Edit the content of this element..."
-              className="w-full border border-gray-300 rounded px-3 py-2 text-sm min-h-[200px] focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+              className="w-full border border-gray-300 rounded px-3 py-2 text-sm min-h-[200px] focus:ring-2 focus:ring-accent-cyan focus:border-transparent"
             />
             <button
               onClick={() => selectedElement && onContentChange(selectedElement, localContent)}
-              className="mt-3 w-full py-2 bg-[#0da1c7] text-white rounded text-sm font-medium hover:bg-[#0890a8] transition-colors"
+              className="mt-3 w-full py-2 bg-accent-cyan text-white rounded text-sm font-medium hover:bg-accent-cyan-hover transition-colors"
             >
               Apply Changes
             </button>
@@ -2298,7 +2454,7 @@ function PropertiesPanel({ selectedElement, elementStyles, elementContent, onSty
                     type="number"
                     value={elementStyles.marginTop || 0}
                     onChange={(e) => onStyleChange({ marginTop: parseInt(e.target.value) })}
-                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent"
                   />
                 </div>
                 <div>
@@ -2307,7 +2463,7 @@ function PropertiesPanel({ selectedElement, elementStyles, elementContent, onSty
                     type="number"
                     value={elementStyles.marginBottom || 0}
                     onChange={(e) => onStyleChange({ marginBottom: parseInt(e.target.value) })}
-                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent"
                   />
                 </div>
               </div>
@@ -2496,7 +2652,7 @@ function DraggableTextBlock({ block, selected, onSelect, onUpdate, onDelete }: D
 
     return (
       <div
-        className="absolute w-3 h-3 bg-[#0da1c7] border-2 border-white rounded-sm shadow-sm hover:bg-[#0890a8] z-10"
+        className="absolute w-3 h-3 bg-accent-cyan border-2 border-white rounded-sm shadow-sm hover:bg-accent-cyan-hover z-10"
         style={{ ...positionStyles[position], cursor }}
         onMouseDown={(e) => handleResizeStart(e, position)}
       />
@@ -2506,7 +2662,7 @@ function DraggableTextBlock({ block, selected, onSelect, onUpdate, onDelete }: D
   return (
     <div
       ref={blockRef}
-      className={`absolute ${isEditing ? '' : 'cursor-move'} ${selected ? 'ring-2 ring-[#0da1c7] ring-offset-1' : ''}`}
+      className={`absolute z-50 ${isEditing ? '' : 'cursor-move'} ${selected ? 'ring-2 ring-accent-cyan ring-offset-1' : ''}`}
       style={{
         left: block.x,
         top: block.y,
@@ -2527,7 +2683,7 @@ function DraggableTextBlock({ block, selected, onSelect, onUpdate, onDelete }: D
           onChange={(e) => onUpdate({ content: e.target.value })}
           onBlur={handleBlur}
           placeholder="Enter your text here..."
-          className="w-full h-full p-2 border-2 border-[#0da1c7] rounded bg-white resize-none focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/30"
+          className="w-full h-full p-2 border-2 border-accent-cyan rounded bg-white resize-none focus:outline-none focus:ring-2 focus:ring-accent-cyan/30"
           style={{
             fontSize: block.fontSize,
             fontWeight: block.fontWeight,
@@ -2857,25 +3013,65 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
     setActiveSectionId(sectionId);
   }, []);
 
+  // Handle section reordering from drag-drop
+  const handleReorderSections = useCallback((oldIndex: number, newIndex: number) => {
+    setReportSections((prev) => {
+      const reordered = arrayMove(prev, oldIndex, newIndex);
+      // Persist the new order to report state
+      reportActions.reorderSections(reordered.map(s => s.id));
+      return reordered;
+    });
+  }, [reportActions]);
+
   // Track which page is currently visible in the scroll area using Intersection Observer
   useEffect(() => {
     const previewContainer = previewRef.current;
     if (!previewContainer) return;
 
     const enabledSections = reportSections.filter(s => s.enabled);
+    
+    // Use scroll-based detection for more accurate tracking
+    // This triggers when the section's top enters the top 15% of the viewport
     const observerOptions: IntersectionObserverInit = {
       root: previewContainer,
-      rootMargin: '-20% 0px -60% 0px', // Trigger when section enters the top third of the viewport
+      rootMargin: '0px 0px -85% 0px', // Section becomes active when its top enters the top 15% of container
       threshold: 0,
     };
 
+    // Track all currently intersecting sections to find the topmost one
+    const intersectingSections = new Map<string, number>();
+
     const observerCallback: IntersectionObserverCallback = (entries) => {
-      // Find the entry that is most visible (intersecting and closest to top)
-      for (const entry of entries) {
+      const containerRect = previewContainer.getBoundingClientRect();
+      
+      entries.forEach((entry) => {
+        const sectionId = entry.target.id.replace('page_', '');
+        
         if (entry.isIntersecting) {
-          const sectionId = entry.target.id.replace('page_', '');
-          setActiveSectionId(sectionId);
-          break;
+          // Store the distance from the section's top to the container's top
+          const distanceFromTop = entry.boundingClientRect.top - containerRect.top;
+          intersectingSections.set(sectionId, distanceFromTop);
+        } else {
+          intersectingSections.delete(sectionId);
+        }
+      });
+
+      // Find the section closest to the top of the viewport (smallest positive distance, or least negative)
+      if (intersectingSections.size > 0) {
+        let closestSection = '';
+        let closestDistance = Infinity;
+        
+        intersectingSections.forEach((distance, sectionId) => {
+          // Prefer sections whose top is at or above the viewport top (negative or small positive distance)
+          // but still visible in the detection zone
+          if (distance < closestDistance) {
+            closestDistance = distance;
+            closestSection = sectionId;
+          }
+        });
+        
+        if (closestSection) {
+          setActiveSectionId(closestSection);
         }
       }
     };
@@ -2975,7 +3171,7 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
       height: 80,
       fontSize: 14,
       fontWeight: 'normal',
-      color: '#1c3643',
+      color: 'var(--harken-dark)',
       pageId: targetPageId,
     };
     setTextBlocks((prev) => [...prev, newBlock]);
@@ -3200,6 +3396,7 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
             onToggleField={handleToggleField}
             onToggleExpand={handleToggleExpand}
             onScrollToSection={handleScrollToSection}
+            onReorderSections={handleReorderSections}
             activeSectionId={activeSectionId}
           />
         </div>
@@ -3219,9 +3416,9 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
                 onClick={() => setUseSimplifiedPanel(!useSimplifiedPanel)}
                 className="px-3 py-1.5 text-xs font-medium rounded-lg border transition-all"
                 style={{
-                  backgroundColor: useSimplifiedPanel ? '#0da1c7' : 'transparent',
-                  borderColor: useSimplifiedPanel ? '#0da1c7' : '#cbd5e1',
-                  color: useSimplifiedPanel ? 'white' : '#64748b'
+                  backgroundColor: useSimplifiedPanel ? 'var(--accent-cyan)' : 'transparent',
+                  borderColor: useSimplifiedPanel ? 'var(--accent-cyan)' : 'var(--border-default)',
+                  color: useSimplifiedPanel ? 'white' : 'var(--text-muted)'
                 }}
                 title="Toggle between simplified and 3-tab panel design"
               >
@@ -3270,7 +3467,7 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
             )}
             <button
               onClick={handleAddTextBlock}
-              className="px-4 py-2 bg-gradient-to-r from-[#0da1c7] to-[#0890a8] text-white text-sm font-semibold rounded-lg flex items-center gap-2 hover:shadow-md transition-shadow"
+              className="px-4 py-2 bg-gradient-to-r from-accent-cyan to-accent-cyan-hover text-white text-sm font-semibold rounded-lg flex items-center gap-2 hover:shadow-md transition-shadow"
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />

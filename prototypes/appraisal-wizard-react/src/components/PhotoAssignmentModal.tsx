@@ -124,11 +124,11 @@ export default function PhotoAssignmentModal({
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-slate-700">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-full bg-[#0da1c7]/20 flex items-center justify-center">
-              <Sparkles className="w-5 h-5 text-[#0da1c7]" />
+            <div className="w-10 h-10 rounded-full bg-harken-blue/20 flex items-center justify-center">
+              <Sparkles className="w-5 h-5 text-harken-blue" />
             </div>
             <div>
-              <h2 className="text-xl font-bold text-[#1c3643] dark:text-white">Review Photo Assignments</h2>
+              <h2 className="text-xl font-bold text-harken-dark dark:text-white">Review Photo Assignments</h2>
               <p className="text-sm text-gray-500 dark:text-slate-400">
                 {stagingPhotos.length} photos analyzed - review and confirm assignments
               </p>
@@ -151,7 +151,7 @@ export default function PhotoAssignmentModal({
             </p>
             <button
               onClick={handleAcceptAllSuggestions}
-              className="flex items-center gap-2 px-4 py-2 bg-[#0da1c7] hover:bg-[#0b8ba8] text-white text-sm font-medium rounded-lg transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-harken-blue hover:bg-harken-blue/90 text-white text-sm font-medium rounded-lg transition-colors"
             >
               <CheckCircle className="w-4 h-4" />
               Accept All AI Suggestions
@@ -225,7 +225,7 @@ export default function PhotoAssignmentModal({
                       onChange={(e) => handleSlotChange(photo.id, e.target.value)}
                       className={`
                         w-full px-3 py-2 pr-10 border rounded-lg text-sm appearance-none cursor-pointer
-                        focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent
+                        focus:ring-2 focus:ring-harken-blue focus:border-transparent
                         ${isConflict ? 'border-red-300 bg-white' : 'border-gray-300 bg-white'}
                       `}
                     >
@@ -297,7 +297,7 @@ export default function PhotoAssignmentModal({
                 flex items-center gap-2 px-6 py-2 rounded-lg font-medium transition-colors
                 ${hasConflicts || Object.keys(assignments).length === 0
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-[#0da1c7] hover:bg-[#0b8ba8] text-white'
+                  : 'bg-harken-blue hover:bg-harken-blue/90 text-white'
                 }
               `}
             >

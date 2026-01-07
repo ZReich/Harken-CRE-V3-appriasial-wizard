@@ -7,21 +7,220 @@
 @variant dark (&:where(.dark, .dark *));
 
 /* ============================================
+   TAILWIND V4 THEME EXTENSION
+   Map CSS variables to Tailwind utility classes
+   Usage: bg-harken-accent, text-chart-primary, etc.
+   ============================================ */
+@theme {
+  /* =============================================
+     HARKEN OFFICIAL BRAND COLORS
+     Reference: Harken Brand Color Palette Spec
+     ============================================= */
+
+  /* Primary Brand Colors */
+  --color-harken-dark: var(--harken-dark);           /* #1c3643 - Body text */
+  --color-harken-blue: var(--harken-blue);           /* #0da1c7 - Headers, links, CTAs */
+  --color-harken-gray: var(--harken-gray);           /* #687f8b - Subtitles */
+  --color-harken-accent: var(--harken-accent);
+  --color-harken-accent-dark: var(--harken-accent-dark);
+  --color-harken-accent-light: var(--harken-accent-light);
+
+  /* Secondary Brand Colors (Official Grays) */
+  --color-harken-gray-med: var(--harken-gray-med);       /* #b1bac0 */
+  --color-harken-gray-med-lt: var(--harken-gray-med-lt); /* #d3d7d7 */
+  --color-harken-gray-light: var(--harken-gray-light);   /* #f1f3f4 */
+  --color-harken-error: var(--harken-error);             /* #c11b49 - Official error red */
+
+  /* Accent Set 1: Quality (Teal Mint, Soft Indigo) */
+  --color-accent-teal-mint: var(--accent-teal-mint);
+  --color-accent-teal-mint-hover: var(--accent-teal-mint-hover);
+  --color-accent-teal-mint-light: var(--accent-teal-mint-light);
+  --color-accent-indigo: var(--accent-indigo);
+  --color-accent-indigo-hover: var(--accent-indigo-hover);
+  --color-accent-indigo-light: var(--accent-indigo-light);
+
+  /* Accent Set 2: Attention (Amber Gold, Warm Slate) */
+  --color-accent-amber-gold: var(--accent-amber-gold);
+  --color-accent-amber-gold-hover: var(--accent-amber-gold-hover);
+  --color-accent-amber-gold-light: var(--accent-amber-gold-light);
+  --color-accent-warm-slate: var(--accent-warm-slate);
+  --color-accent-warm-slate-hover: var(--accent-warm-slate-hover);
+  --color-accent-warm-slate-light: var(--accent-warm-slate-light);
+
+  /* Accent Set 3: Gamified (Electric Violet) */
+  --color-accent-violet: var(--accent-violet);
+  --color-accent-violet-hover: var(--accent-violet-hover);
+  --color-accent-violet-light: var(--accent-violet-light);
+
+  /* Legacy Accent Cyan (maps to harken-blue) */
+  --color-accent-cyan: var(--accent-cyan);
+  --color-accent-cyan-hover: var(--accent-cyan-hover);
+  --color-accent-cyan-active: var(--accent-cyan-active);
+  --color-accent-cyan-light: var(--accent-cyan-light);
+  --color-accent-cyan-bg: var(--accent-cyan-bg);
+
+  /* Legacy Accent Green (use teal-mint for quality indicators) */
+  --color-accent-green: var(--accent-green);
+  --color-accent-green-hover: var(--accent-green-hover);
+  --color-accent-green-light: var(--accent-green-light);
+
+  /* Legacy Accent Purple (use violet for achievements) */
+  --color-accent-purple: var(--accent-purple);
+  --color-accent-purple-hover: var(--accent-purple-hover);
+  --color-accent-purple-light: var(--accent-purple-light);
+
+  /* Legacy Accent Red (use harken-error for errors) */
+  --color-accent-red: var(--accent-red);
+  --color-accent-red-hover: var(--accent-red-hover);
+  --color-accent-red-light: var(--accent-red-light);
+
+  /* Legacy Accent Amber (use amber-gold for warnings) */
+  --color-accent-amber: var(--accent-amber);
+  --color-accent-amber-hover: var(--accent-amber-hover);
+  --color-accent-amber-light: var(--accent-amber-light);
+
+  /* Legacy Accent Rose */
+  --color-accent-rose: var(--accent-rose);
+  --color-accent-rose-hover: var(--accent-rose-hover);
+  --color-accent-rose-light: var(--accent-rose-light);
+
+  /* Chart Colors */
+  --color-chart-primary: var(--chart-primary);
+  --color-chart-secondary: var(--chart-secondary);
+  --color-chart-tertiary: var(--chart-tertiary);
+  --color-chart-quaternary: var(--chart-quaternary);
+  --color-chart-positive: var(--chart-positive);
+  --color-chart-negative: var(--chart-negative);
+  --color-chart-neutral: var(--chart-neutral);
+  --color-chart-income: var(--chart-income);
+  --color-chart-expense: var(--chart-expense);
+  --color-chart-loss: var(--chart-loss);
+  --color-chart-net: var(--chart-net);
+
+  /* Status Colors (mapped to official brand) */
+  --color-status-success: var(--status-success);
+  --color-status-warning: var(--status-warning);
+  --color-status-error: var(--status-error);
+  --color-status-info: var(--status-info);
+  --color-status-ai: var(--status-ai);
+  --color-status-locked: var(--status-locked);
+
+  /* Surface Colors */
+  --color-bg-primary: var(--bg-primary);
+  --color-bg-secondary: var(--bg-secondary);
+  --color-bg-elevated: var(--bg-elevated);
+  --color-bg-card: var(--bg-card);
+  --color-bg-hover: var(--bg-hover);
+
+  /* Text Colors */
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --color-text-muted: var(--text-muted);
+  --color-text-inverse: var(--text-inverse);
+
+  /* Border Colors */
+  --color-border-subtle: var(--border-subtle);
+  --color-border-default: var(--border-default);
+  --color-border-accent: var(--border-accent);
+
+  /* Gradient Tokens */
+  --color-gradient-action-from: var(--gradient-action-from);
+  --color-gradient-action-to: var(--gradient-action-to);
+  --color-gradient-action-hover-from: var(--gradient-action-hover-from);
+  --color-gradient-action-hover-to: var(--gradient-action-hover-to);
+  --color-gradient-light-from: var(--gradient-light-from);
+  --color-gradient-light-to: var(--gradient-light-to);
+  --color-gradient-light-hover-from: var(--gradient-light-hover-from);
+  --color-gradient-light-hover-to: var(--gradient-light-hover-to);
+  --color-gradient-icon-from: var(--gradient-icon-from);
+  --color-gradient-icon-to: var(--gradient-icon-to);
+  --color-gradient-brand-from: var(--gradient-brand-from);
+  --color-gradient-brand-to: var(--gradient-brand-to);
+}
+
+/* ============================================
    HARKEN DARK MODE - Theme Variables
    ============================================ */
 
 /* Light Theme (Default) */
 :root {
-  /* Brand Colors */
-  --harken-dark: #1c3643;
+  /* =============================================
+     HARKEN OFFICIAL PRIMARY COLORS
+     ============================================= */
+  --harken-dark: #1c3643;      /* Dark Blue - Body text */
+  --harken-blue: #0da1c7;      /* Blue - Headers, links, CTAs */
+  --harken-gray: #687f8b;      /* Blue/Gray - Subtitles */
+  --harken-white: #ffffff;     /* White */
+  
+  /* Legacy aliases */
   --harken-accent: #4db8d1;
   --harken-accent-dark: #0da1c7;
   --harken-accent-light: #7fcce0;
   --harken-accent-soft: rgba(77, 184, 209, 0.12);
-  --harken-success: #4ade80;
-  --harken-success-dark: #22c55e;
   --harken-text: #687f8b;
   --harken-border: #e8eaed;
+
+  /* =============================================
+     GRADIENT TOKENS (Semantic UI Patterns)
+     ============================================= */
+  /* Pattern 1: Primary Action Gradients - Strong CTAs */
+  --gradient-action-from: #0da1c7;      /* harken-blue */
+  --gradient-action-to: #0890a8;        /* darker cyan */
+  --gradient-action-hover-from: #0b8fb0;
+  --gradient-action-hover-to: #0780a0;
+  
+  /* Pattern 2: Light Action Gradients - Secondary/AI actions */
+  --gradient-light-from: #4db8d1;       /* harken-accent */
+  --gradient-light-to: #7fcce0;         /* harken-accent-light */
+  --gradient-light-hover-from: #3da8c1;
+  --gradient-light-hover-to: #6fc0d4;
+  
+  /* Pattern 3: Icon/Badge Gradients - Micro-interactions */
+  --gradient-icon-from: #0da1c7;        /* harken-blue */
+  --gradient-icon-to: #4db8d1;          /* harken-accent */
+  
+  /* Pattern 4: Brand Header Gradient - Hero sections */
+  --gradient-brand-from: #0da1c7;       /* harken-blue */
+  --gradient-brand-to: #1c3643;         /* harken-dark */
+
+  /* =============================================
+     HARKEN OFFICIAL SECONDARY COLORS
+     ============================================= */
+  --harken-gray-med: #b1bac0;      /* Med Gray */
+  --harken-gray-med-lt: #d3d7d7;   /* Med Gray LT */
+  --harken-gray-light: #f1f3f4;    /* Light Gray */
+  --harken-error: #c11b49;         /* Error Red - Official brand */
+
+  /* =============================================
+     HARKEN ACCENT SET 1: QUALITY
+     ============================================= */
+  --accent-teal-mint: #2fc4b2;           /* Success, Quality badges, Score rings */
+  --accent-teal-mint-hover: #28b3a2;
+  --accent-teal-mint-light: rgba(47, 196, 178, 0.12);
+  --accent-indigo: #5b6ee1;              /* AI-assisted, Insight icons, Enhanced labels */
+  --accent-indigo-hover: #4f61d4;
+  --accent-indigo-light: rgba(91, 110, 225, 0.12);
+
+  /* =============================================
+     HARKEN ACCENT SET 2: ATTENTION
+     ============================================= */
+  --accent-amber-gold: #f2b705;          /* Pending Review, Flagged Comps, Warnings */
+  --accent-amber-gold-hover: #daa504;
+  --accent-amber-gold-light: rgba(242, 183, 5, 0.12);
+  --accent-warm-slate: #8c9aa6;          /* Locked states, Secondary badges, Placeholders */
+  --accent-warm-slate-hover: #7d8b97;
+  --accent-warm-slate-light: rgba(140, 154, 166, 0.12);
+
+  /* =============================================
+     HARKEN ACCENT SET 3: GAMIFIED
+     ============================================= */
+  --accent-violet: #8b5cf6;              /* Achievements, Power user, Special recognition */
+  --accent-violet-hover: #7c4fdf;
+  --accent-violet-light: rgba(139, 92, 246, 0.12);
+
+  /* Legacy success colors (prefer teal-mint for quality) */
+  --harken-success: #2fc4b2;
+  --harken-success-dark: #28b3a2;
 
   /* Surfaces */
   --bg-primary: #f9fafb;
@@ -44,29 +243,70 @@
   --border-default: #d1d5db;
   --border-accent: #0da1c7;
 
-  /* Accent Colors */
-  --accent-cyan: #0da1c7;
-  --accent-cyan-hover: #0bb8e3;
+  /* =============================================
+     LEGACY ACCENT COLORS (for backwards compatibility)
+     Prefer official Harken accent sets above
+     ============================================= */
+  --accent-cyan: #0da1c7;        /* Maps to harken-blue */
+  --accent-cyan-hover: #0b8fb0;
+  --accent-cyan-active: #0890a8;
   --accent-cyan-light: #e0f7fc;
   --accent-cyan-bg: rgba(13, 161, 199, 0.08);
 
-  --accent-green: #16a34a;
-  --accent-green-hover: #22c55e;
+  --accent-green: #2fc4b2;       /* Updated to teal-mint */
+  --accent-green-hover: #28b3a2;
   --accent-green-light: #dcfce7;
-  --accent-green-bg: rgba(22, 163, 74, 0.08);
+  --accent-green-bg: rgba(47, 196, 178, 0.08);
 
-  --accent-purple: #9333ea;
-  --accent-purple-hover: #a855f7;
+  --accent-purple: #8b5cf6;      /* Maps to electric violet */
+  --accent-purple-hover: #7c4fdf;
   --accent-purple-light: #f3e8ff;
-  --accent-purple-bg: rgba(147, 51, 234, 0.08);
+  --accent-purple-bg: rgba(139, 92, 246, 0.08);
 
-  --accent-red: #dc2626;
-  --accent-red-hover: #ef4444;
+  --accent-red: #c11b49;         /* Updated to harken-error */
+  --accent-red-hover: #a91840;
   --accent-red-light: #fef2f2;
-  --accent-red-bg: rgba(220, 38, 38, 0.08);
+  --accent-red-bg: rgba(193, 27, 73, 0.08);
 
-  --accent-amber: #f59e0b;
+  --accent-amber: #f2b705;       /* Updated to amber-gold */
+  --accent-amber-hover: #daa504;
   --accent-amber-light: #fef3c7;
+  --accent-amber-bg: rgba(242, 183, 5, 0.08);
+
+  --accent-rose: #f43f5e;
+  --accent-rose-hover: #e11d48;
+  --accent-rose-light: #ffe4e6;
+
+  --accent-pink: #ec4899;
+  --accent-pink-hover: #db2777;
+  --accent-pink-light: #fce7f3;
+
+  /* Chart Colors - Using official Harken brand palette */
+  --chart-primary: #0da1c7;      /* Harken Blue */
+  --chart-secondary: #2fc4b2;    /* Teal Mint */
+  --chart-tertiary: #8b5cf6;     /* Electric Violet */
+  --chart-quaternary: #f2b705;   /* Amber Gold */
+  --chart-positive: #2fc4b2;     /* Teal Mint - Quality/Success */
+  --chart-negative: #c11b49;     /* Harken Error Red */
+  --chart-neutral: #8c9aa6;      /* Warm Slate */
+  --chart-income: #0da1c7;       /* Harken Blue */
+  --chart-expense: #f2b705;      /* Amber Gold */
+  --chart-loss: #c11b49;         /* Harken Error Red */
+  --chart-net: #2fc4b2;          /* Teal Mint */
+  --chart-grid: #e2e8f0;
+  --chart-axis: #687f8b;         /* Harken Gray */
+
+  /* Status Colors - Official Harken Brand */
+  --status-success: #2fc4b2;     /* Teal Mint - Quality/Success */
+  --status-warning: #f2b705;     /* Amber Gold - Attention/Flagged */
+  --status-error: #c11b49;       /* Harken Error Red */
+  --status-info: #0da1c7;        /* Harken Blue */
+  --status-ai: #5b6ee1;          /* Soft Indigo - AI-assisted features */
+  --status-locked: #8c9aa6;      /* Warm Slate - Locked/Unavailable */
+
+  /* Selection & Focus States */
+  --ring-focus: #0da1c7;
+  --ring-focus-bg: rgba(13, 161, 199, 0.1);
 
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
@@ -77,16 +317,84 @@
 
 /* Dark Theme */
 html.dark {
-  /* Brand Colors - Luminous for dark */
-  --harken-dark: #0d1a22;
+  /* =============================================
+     HARKEN OFFICIAL PRIMARY COLORS (Dark Mode)
+     Luminous variants for dark backgrounds
+     ============================================= */
+  --harken-dark: #0d1a22;        /* Deepened for dark mode */
+  --harken-blue: #00d4ff;        /* Luminous Blue */
+  --harken-gray: #94a3b8;        /* Lightened for visibility */
+  --harken-white: #ffffff;
+  
+  /* Legacy aliases */
   --harken-accent: #00d4ff;
   --harken-accent-dark: #0da1c7;
   --harken-accent-light: #33ddff;
   --harken-accent-soft: rgba(0, 212, 255, 0.15);
-  --harken-success: #4ade80;
-  --harken-success-dark: #22c55e;
   --harken-text: #94a3b8;
   --harken-border: #334155;
+
+  /* =============================================
+     GRADIENT TOKENS (Dark Mode - Luminous)
+     ============================================= */
+  /* Pattern 1: Primary Action Gradients */
+  --gradient-action-from: #00d4ff;
+  --gradient-action-to: #0da1c7;
+  --gradient-action-hover-from: #22d6f8;
+  --gradient-action-hover-to: #0fb8d4;
+  
+  /* Pattern 2: Light Action Gradients */
+  --gradient-light-from: #00d4ff;
+  --gradient-light-to: #33ddff;
+  --gradient-light-hover-from: #0dc7e8;
+  --gradient-light-hover-to: #4de3ff;
+  
+  /* Pattern 3: Icon/Badge Gradients */
+  --gradient-icon-from: #00d4ff;
+  --gradient-icon-to: #0da1c7;
+  
+  /* Pattern 4: Brand Header Gradient */
+  --gradient-brand-from: #00d4ff;
+  --gradient-brand-to: #0d1a22;
+
+  /* =============================================
+     HARKEN OFFICIAL SECONDARY COLORS (Dark Mode)
+     ============================================= */
+  --harken-gray-med: #64748b;        /* Inverted luminosity */
+  --harken-gray-med-lt: #475569;
+  --harken-gray-light: #1e293b;
+  --harken-error: #f87171;           /* Brighter for dark visibility */
+
+  /* =============================================
+     HARKEN ACCENT SET 1: QUALITY (Dark Mode)
+     ============================================= */
+  --accent-teal-mint: #4fd9c7;       /* Luminous Teal Mint */
+  --accent-teal-mint-hover: #5fe5d3;
+  --accent-teal-mint-light: rgba(79, 217, 199, 0.15);
+  --accent-indigo: #818cf8;          /* Luminous Soft Indigo */
+  --accent-indigo-hover: #a5b4fc;
+  --accent-indigo-light: rgba(129, 140, 248, 0.15);
+
+  /* =============================================
+     HARKEN ACCENT SET 2: ATTENTION (Dark Mode)
+     ============================================= */
+  --accent-amber-gold: #fcd34d;      /* Luminous Amber Gold */
+  --accent-amber-gold-hover: #fde68a;
+  --accent-amber-gold-light: rgba(252, 211, 77, 0.15);
+  --accent-warm-slate: #a8b5c4;      /* Lightened Warm Slate */
+  --accent-warm-slate-hover: #b8c4d1;
+  --accent-warm-slate-light: rgba(168, 181, 196, 0.15);
+
+  /* =============================================
+     HARKEN ACCENT SET 3: GAMIFIED (Dark Mode)
+     ============================================= */
+  --accent-violet: #a78bfa;          /* Luminous Electric Violet */
+  --accent-violet-hover: #c4b5fd;
+  --accent-violet-light: rgba(167, 139, 250, 0.15);
+
+  /* Legacy success colors */
+  --harken-success: #4fd9c7;
+  --harken-success-dark: #4fd9c7;
 
   /* Surfaces */
   --bg-primary: #0f172a;
@@ -109,29 +417,69 @@ html.dark {
   --border-default: #475569;
   --border-accent: #00d4ff;
 
-  /* Accent Colors - Luminous */
-  --accent-cyan: #00d4ff;
+  /* =============================================
+     LEGACY ACCENT COLORS (Dark Mode)
+     ============================================= */
+  --accent-cyan: #00d4ff;        /* Maps to harken-blue */
   --accent-cyan-hover: #33ddff;
+  --accent-cyan-active: #66e5ff;
   --accent-cyan-light: #0c4a5e;
   --accent-cyan-bg: rgba(0, 212, 255, 0.12);
 
-  --accent-green: #22c55e;
-  --accent-green-hover: #4ade80;
+  --accent-green: #4fd9c7;       /* Updated to luminous teal-mint */
+  --accent-green-hover: #5fe5d3;
   --accent-green-light: #14532d;
-  --accent-green-bg: rgba(34, 197, 94, 0.12);
+  --accent-green-bg: rgba(79, 217, 199, 0.12);
 
-  --accent-purple: #a855f7;
-  --accent-purple-hover: #c084fc;
+  --accent-purple: #a78bfa;      /* Maps to luminous violet */
+  --accent-purple-hover: #c4b5fd;
   --accent-purple-light: #3b0764;
-  --accent-purple-bg: rgba(168, 85, 247, 0.12);
+  --accent-purple-bg: rgba(167, 139, 250, 0.12);
 
-  --accent-red: #ef4444;
-  --accent-red-hover: #f87171;
+  --accent-red: #f87171;         /* Luminous error red */
+  --accent-red-hover: #fca5a5;
   --accent-red-light: #450a0a;
-  --accent-red-bg: rgba(239, 68, 68, 0.12);
+  --accent-red-bg: rgba(248, 113, 113, 0.12);
 
-  --accent-amber: #fbbf24;
+  --accent-amber: #fcd34d;       /* Luminous amber-gold */
+  --accent-amber-hover: #fde68a;
   --accent-amber-light: #451a03;
+  --accent-amber-bg: rgba(252, 211, 77, 0.12);
+
+  --accent-rose: #fb7185;
+  --accent-rose-hover: #fda4af;
+  --accent-rose-light: #4c0519;
+
+  --accent-pink: #f472b6;
+  --accent-pink-hover: #f9a8d4;
+  --accent-pink-light: #500724;
+
+  /* Chart Colors - Official Harken Brand (Dark Mode) */
+  --chart-primary: #00d4ff;      /* Luminous Harken Blue */
+  --chart-secondary: #4fd9c7;    /* Luminous Teal Mint */
+  --chart-tertiary: #a78bfa;     /* Luminous Electric Violet */
+  --chart-quaternary: #fcd34d;   /* Luminous Amber Gold */
+  --chart-positive: #4fd9c7;     /* Luminous Teal Mint */
+  --chart-negative: #f87171;     /* Luminous Error Red */
+  --chart-neutral: #a8b5c4;      /* Luminous Warm Slate */
+  --chart-income: #00d4ff;       /* Luminous Harken Blue */
+  --chart-expense: #fcd34d;      /* Luminous Amber Gold */
+  --chart-loss: #f87171;         /* Luminous Error Red */
+  --chart-net: #4fd9c7;          /* Luminous Teal Mint */
+  --chart-grid: #334155;
+  --chart-axis: #94a3b8;
+
+  /* Status Colors - Official Harken Brand (Dark Mode) */
+  --status-success: #4fd9c7;     /* Luminous Teal Mint */
+  --status-warning: #fcd34d;     /* Luminous Amber Gold */
+  --status-error: #f87171;       /* Luminous Error Red */
+  --status-info: #00d4ff;        /* Luminous Harken Blue */
+  --status-ai: #818cf8;          /* Luminous Soft Indigo */
+  --status-locked: #a8b5c4;      /* Luminous Warm Slate */
+
+  /* Selection & Focus States */
+  --ring-focus: #00d4ff;
+  --ring-focus-bg: rgba(0, 212, 255, 0.15);
 
   /* Shadows - Softer for dark */
   --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);

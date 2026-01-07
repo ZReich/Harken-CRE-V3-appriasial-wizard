@@ -151,8 +151,8 @@ export function PropertyLookupModal({
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-[#0da1c7]/10 rounded-lg">
-              <Search className="w-5 h-5 text-[#0da1c7]" />
+            <div className="p-2 bg-harken-blue/10 rounded-lg">
+              <Search className="w-5 h-5 text-harken-blue" />
             </div>
             <div>
               <h2 className="text-lg font-semibold text-slate-800 dark:text-white">Property Lookup</h2>
@@ -215,7 +215,7 @@ export function PropertyLookupModal({
             <select
               value={state}
               onChange={(e) => setState(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-harken-blue focus:border-transparent"
             >
               {US_STATES.map((s) => (
                 <option key={s} value={s}>{s}</option>
@@ -235,7 +235,7 @@ export function PropertyLookupModal({
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   placeholder="123 Main Street"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-harken-blue focus:border-transparent"
                 />
               </div>
               <div>
@@ -247,7 +247,7 @@ export function PropertyLookupModal({
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
                   placeholder="Billings"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-harken-blue focus:border-transparent"
                 />
               </div>
             </div>
@@ -265,7 +265,7 @@ export function PropertyLookupModal({
                   value={latitude}
                   onChange={(e) => setLatitude(e.target.value)}
                   placeholder="45.7833"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-harken-blue focus:border-transparent"
                 />
               </div>
               <div>
@@ -277,7 +277,7 @@ export function PropertyLookupModal({
                   value={longitude}
                   onChange={(e) => setLongitude(e.target.value)}
                   placeholder="-108.5007"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-harken-blue focus:border-transparent"
                 />
               </div>
             </div>
@@ -294,7 +294,7 @@ export function PropertyLookupModal({
                 value={parcelId}
                 onChange={(e) => setParcelId(e.target.value)}
                 placeholder="56-0001234-00"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-harken-blue focus:border-transparent"
               />
             </div>
           )}
@@ -391,7 +391,7 @@ export function PropertyLookupModal({
             <button
               onClick={handleSearch}
               disabled={!canSearch() || isLoading}
-              className="px-6 py-2 bg-[#0da1c7] text-white rounded-lg hover:bg-[#0b8fb3] transition-colors font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-6 py-2 bg-harken-blue text-white rounded-lg hover:bg-harken-blue/90 transition-colors font-medium flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {isLoading ? (
                 <>

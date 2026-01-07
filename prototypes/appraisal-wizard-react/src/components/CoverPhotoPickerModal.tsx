@@ -161,10 +161,10 @@ export default function CoverPhotoPickerModal({
       {/* Modal */}
       <div className="relative w-full max-w-4xl max-h-[85vh] bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-in fade-in zoom-in-95">
         {/* Header */}
-        <div className="flex-shrink-0 px-6 py-4 border-b border-slate-200 bg-gradient-to-r from-[#0da1c7]/10 to-cyan-100/30">
+        <div className="flex-shrink-0 px-6 py-4 border-b border-slate-200 bg-gradient-to-r from-harken-blue/10 to-cyan-100/30">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#0da1c7] to-cyan-600 flex items-center justify-center text-white shadow-lg">
+              <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-harken-blue to-cyan-600 flex items-center justify-center text-white shadow-lg">
                 <Star className="w-5 h-5" />
               </div>
               <div>
@@ -198,7 +198,7 @@ export default function CoverPhotoPickerModal({
                     flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-medium whitespace-nowrap
                     transition-all duration-200
                     ${isActive 
-                      ? 'bg-[#0da1c7] text-white shadow-lg shadow-[#0da1c7]/30' 
+                      ? 'bg-harken-blue text-white shadow-lg shadow-harken-blue/30' 
                       : count > 0 || cat.id === 'all'
                         ? 'text-slate-600 hover:bg-slate-100'
                         : 'text-slate-300 cursor-not-allowed'
@@ -242,8 +242,8 @@ export default function CoverPhotoPickerModal({
                       relative group rounded-xl overflow-hidden border-2 transition-all duration-200
                       animate-in fade-in slide-in-from-bottom-2
                       ${isSelected 
-                        ? 'border-[#0da1c7] ring-2 ring-[#0da1c7]/30 scale-[1.02]' 
-                        : 'border-slate-200 hover:border-[#0da1c7]/50 hover:shadow-lg'
+                        ? 'border-harken-blue ring-2 ring-harken-blue/30 scale-[1.02]' 
+                        : 'border-slate-200 hover:border-harken-blue/50 hover:shadow-lg'
                       }
                     `}
                     style={{ animationDelay: `${index * 30}ms` }}
@@ -272,14 +272,14 @@ export default function CoverPhotoPickerModal({
 
                     {/* Selected checkmark */}
                     {isSelected && (
-                      <div className="absolute top-2 right-2 w-7 h-7 rounded-full bg-[#0da1c7] flex items-center justify-center shadow-lg">
+                      <div className="absolute top-2 right-2 w-7 h-7 rounded-full bg-harken-blue flex items-center justify-center shadow-lg">
                         <Check className="w-4 h-4 text-white" />
                       </div>
                     )}
 
                     {/* Hover overlay */}
                     <div className={`
-                      absolute inset-0 bg-[#0da1c7]/10 transition-opacity
+                      absolute inset-0 bg-harken-blue/10 transition-opacity
                       ${isSelected ? 'opacity-100' : 'opacity-0 group-hover:opacity-100'}
                     `} />
                   </button>
@@ -310,7 +310,7 @@ export default function CoverPhotoPickerModal({
               className={`
                 flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold transition-all
                 ${selectedSlotId
-                  ? 'bg-[#0da1c7] hover:bg-[#0b8fb3] text-white shadow-lg shadow-[#0da1c7]/30'
+                  ? 'bg-harken-blue hover:bg-harken-blue/90 text-white shadow-lg shadow-harken-blue/30'
                   : 'bg-slate-200 text-slate-400 cursor-not-allowed'
                 }
               `}

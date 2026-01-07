@@ -260,7 +260,7 @@ export function RiskRatingPanel({
         <div className="flex flex-col items-center justify-center gap-4 py-12">
           <div className="relative">
             <div className="w-16 h-16 border-4 border-slate-200 rounded-full" />
-            <div className="absolute inset-0 w-16 h-16 border-4 border-[#0da1c7] border-t-transparent rounded-full animate-spin" />
+            <div className="absolute inset-0 w-16 h-16 border-4 border-harken-blue border-t-transparent rounded-full animate-spin" />
           </div>
           <div className="text-center">
             <p className="font-medium text-slate-700 dark:text-slate-300">Calculating Investment Risk Rating</p>
@@ -317,7 +317,7 @@ export function RiskRatingPanel({
         <div className="px-6 py-4 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="p-2.5 bg-gradient-to-br from-[#0da1c7] to-[#0d8fb5] rounded-xl shadow-sm">
+              <div className="p-2.5 bg-gradient-to-br from-gradient-action-start to-gradient-action-end rounded-xl shadow-sm">
                 <Shield className="w-6 h-6 text-white" />
               </div>
               <div>
@@ -328,7 +328,7 @@ export function RiskRatingPanel({
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setShowMethodology(!showMethodology)}
-                className="text-xs text-[#0da1c7] hover:text-[#0d8fb5] flex items-center gap-1 px-3 py-1.5 rounded-lg hover:bg-[#0da1c7]/5 transition-colors"
+                className="text-xs text-harken-blue hover:text-harken-blue/80 flex items-center gap-1 px-3 py-1.5 rounded-lg hover:bg-harken-blue/5 transition-colors"
               >
                 <Info className="w-3.5 h-3.5" />
                 Methodology
@@ -339,9 +339,9 @@ export function RiskRatingPanel({
 
         {/* Methodology Explainer */}
         {showMethodology && (
-          <div className="px-6 py-4 bg-gradient-to-r from-[#0da1c7]/5 to-transparent border-b border-slate-200">
+          <div className="px-6 py-4 bg-gradient-to-r from-harken-blue/5 to-transparent border-b border-slate-200">
             <h4 className="font-semibold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
-              <Scale className="w-4 h-4 text-[#0da1c7]" />
+              <Scale className="w-4 h-4 text-harken-blue" />
               Risk Assessment Framework
             </h4>
             <p className="text-sm text-slate-600 leading-relaxed mb-4">
@@ -352,8 +352,8 @@ export function RiskRatingPanel({
             </p>
             <div className="grid grid-cols-2 gap-3 text-xs">
               <div className="flex items-start gap-2">
-                <div className="w-5 h-5 rounded-full bg-[#0da1c7]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-[#0da1c7] font-bold">1</span>
+                <div className="w-5 h-5 rounded-full bg-harken-blue/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-harken-blue font-bold">1</span>
                 </div>
                 <div>
                   <span className="font-medium text-slate-700 dark:text-slate-300">Multi-Source Data Integration</span>
@@ -361,8 +361,8 @@ export function RiskRatingPanel({
                 </div>
               </div>
               <div className="flex items-start gap-2">
-                <div className="w-5 h-5 rounded-full bg-[#0da1c7]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-[#0da1c7] font-bold">2</span>
+                <div className="w-5 h-5 rounded-full bg-harken-blue/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-harken-blue font-bold">2</span>
                 </div>
                 <div>
                   <span className="font-medium text-slate-700 dark:text-slate-300">Dynamic Weight Calibration</span>
@@ -370,8 +370,8 @@ export function RiskRatingPanel({
                 </div>
               </div>
               <div className="flex items-start gap-2">
-                <div className="w-5 h-5 rounded-full bg-[#0da1c7]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-[#0da1c7] font-bold">3</span>
+                <div className="w-5 h-5 rounded-full bg-harken-blue/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-harken-blue font-bold">3</span>
                 </div>
                 <div>
                   <span className="font-medium text-slate-700 dark:text-slate-300">Z-Score Normalization</span>
@@ -379,8 +379,8 @@ export function RiskRatingPanel({
                 </div>
               </div>
               <div className="flex items-start gap-2">
-                <div className="w-5 h-5 rounded-full bg-[#0da1c7]/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-[#0da1c7] font-bold">4</span>
+                <div className="w-5 h-5 rounded-full bg-harken-blue/10 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-harken-blue font-bold">4</span>
                 </div>
                 <div>
                   <span className="font-medium text-slate-700 dark:text-slate-300">Composite Scoring</span>

@@ -92,7 +92,7 @@ function PhotoThumbnail({
         
         {/* Analysis indicator */}
         {hasAnalysis && (
-          <div className="absolute top-1 right-1 w-4 h-4 bg-[#0da1c7] rounded-full flex items-center justify-center">
+          <div className="absolute top-1 right-1 w-4 h-4 bg-harken-blue rounded-full flex items-center justify-center">
             <Sparkles className="w-2.5 h-2.5 text-white" />
           </div>
         )}
@@ -112,7 +112,7 @@ function PhotoThumbnail({
             e.stopPropagation();
             onAnalyze();
           }}
-          className="absolute top-1 right-1 p-1 bg-[#0da1c7] rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
+          className="absolute top-1 right-1 p-1 bg-harken-blue rounded-full opacity-0 group-hover:opacity-100 transition-opacity shadow-lg"
           title="Analyze with AI"
         >
           <Cpu className="w-2.5 h-2.5 text-white" />
@@ -177,7 +177,7 @@ function MaterialChip({
         <div className="flex items-center gap-1">
           <button
             onClick={onApply}
-            className="p-1.5 rounded-md bg-[#0da1c7]/10 text-[#0da1c7] hover:bg-[#0da1c7]/20 transition-colors"
+            className="p-1.5 rounded-md bg-harken-blue/10 text-harken-blue hover:bg-harken-blue/20 transition-colors"
             title="Apply this material"
           >
             <Check className="w-3 h-3" />
@@ -352,7 +352,7 @@ export function PhotoReferencePanel({
       {/* Main Panel */}
       <div className={`fixed right-4 top-1/4 w-80 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden z-50 max-h-[70vh] flex flex-col ${className}`}>
         {/* Header with context indicator */}
-        <div className="px-4 py-3 bg-gradient-to-r from-[#0da1c7] to-[#0b8dad] flex items-center justify-between shrink-0">
+        <div className="px-4 py-3 bg-gradient-to-r from-gradient-action-start to-gradient-action-end flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2 text-white">
             <Camera className="w-4 h-4" />
             <span className="font-semibold text-sm">Reference Photos</span>
@@ -366,10 +366,10 @@ export function PhotoReferencePanel({
         </div>
         
         {/* Auto-context indicator */}
-        <div className="px-3 py-2 bg-[#0da1c7]/10 border-b border-[#0da1c7]/20 flex items-center justify-between shrink-0">
+        <div className="px-3 py-2 bg-harken-blue/10 border-b border-harken-blue/20 flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2">
-            <Sparkles className="w-3.5 h-3.5 text-[#0da1c7]" />
-            <span className="text-xs font-medium text-[#0da1c7]">
+            <Sparkles className="w-3.5 h-3.5 text-harken-blue" />
+            <span className="text-xs font-medium text-harken-blue">
               {formatSectionName(activeSection)}
             </span>
           </div>
@@ -379,7 +379,7 @@ export function PhotoReferencePanel({
             <button
               onClick={handleAnalyzeAll}
               disabled={isAnalyzingAny}
-              className="flex items-center gap-1 px-2 py-1 text-[10px] font-medium bg-[#0da1c7] text-white rounded-md hover:bg-[#0b8dad] transition-colors disabled:opacity-50"
+              className="flex items-center gap-1 px-2 py-1 text-[10px] font-medium bg-harken-blue text-white rounded-md hover:bg-harken-blue/90 transition-colors disabled:opacity-50"
             >
               {isAnalyzingAny ? (
                 <>
@@ -427,7 +427,7 @@ export function PhotoReferencePanel({
               {onUploadPhotos && (
                 <button 
                   onClick={onUploadPhotos}
-                  className="inline-flex items-center gap-1.5 text-xs text-[#0da1c7] font-medium hover:underline"
+                  className="inline-flex items-center gap-1.5 text-xs text-harken-blue font-medium hover:underline"
                 >
                   <Upload className="w-3.5 h-3.5" />
                   Upload Photos
@@ -441,7 +441,7 @@ export function PhotoReferencePanel({
             <div className="border-t border-slate-100">
               <button
                 onClick={() => setShowAISuggestions(!showAISuggestions)}
-                className="w-full px-3 py-2 flex items-center justify-between text-xs font-medium text-[#0da1c7] bg-[#0da1c7]/5 hover:bg-[#0da1c7]/10 transition-colors"
+                className="w-full px-3 py-2 flex items-center justify-between text-xs font-medium text-harken-blue bg-harken-blue/5 hover:bg-harken-blue/10 transition-colors"
               >
                 <div className="flex items-center gap-1.5">
                   <Sparkles className="w-3.5 h-3.5" />
@@ -529,7 +529,7 @@ export function PhotoReferencePanel({
                   <div className="text-sm text-white/70">{photos[expandedPreview]!.caption}</div>
                 )}
                 {analysisResults[expandedPreview] && (
-                  <div className="text-xs text-[#0da1c7] mt-1">
+                  <div className="text-xs text-harken-blue mt-1">
                     {analysisResults[expandedPreview].generalDescription}
                   </div>
                 )}
