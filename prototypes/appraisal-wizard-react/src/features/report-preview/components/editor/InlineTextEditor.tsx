@@ -203,14 +203,14 @@ export const InlineTextEditor: React.FC<InlineTextEditorProps> = ({
         />
 
         {/* Bottom bar */}
-        <div className="flex items-center justify-between px-3 py-2 bg-slate-50 border-t border-slate-200">
+        <div className="flex items-center justify-between px-3 py-2 bg-surface-2 dark:bg-elevation-2 border-t border-light-border dark:border-dark-border">
           <span className="text-xs text-slate-400">
             Ctrl+Enter to save • Esc to cancel
           </span>
           <div className="flex items-center gap-2">
             <button
               onClick={onCancel}
-              className="px-3 py-1 text-xs text-slate-600 hover:bg-slate-200 rounded"
+              className="px-3 py-1 text-xs text-slate-600 dark:text-slate-400 hover:bg-surface-4 dark:hover:bg-elevation-muted rounded"
             >
               Cancel
             </button>

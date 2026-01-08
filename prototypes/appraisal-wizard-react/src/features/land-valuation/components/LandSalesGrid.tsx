@@ -416,7 +416,7 @@ export const LandSalesGrid: React.FC = () => {
     return (
       <span 
         onClick={handleClick} 
-        className={`${baseClass} bg-slate-50 dark:bg-elevation-1 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-harken-gray hover:bg-slate-100 dark:hover:bg-harken-gray hover:border-slate-300 dark:hover:border-harken-gray`}
+        className={`${baseClass} bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1 text-slate-500 dark:text-slate-400 border-light-border dark:border-dark-border dark:border-harken-gray hover:bg-surface-3 dark:hover:bg-elevation-subtle hover:border-border-muted dark:hover:border-dark-border-muted`}
         title="Click to change"
       >
         <Minus className="w-3 h-3" /> SIM
@@ -458,7 +458,7 @@ export const LandSalesGrid: React.FC = () => {
     return (
       <span 
         onClick={handleClick} 
-        className={`${baseClass} bg-slate-50 dark:bg-elevation-1 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-harken-gray hover:bg-slate-100 dark:hover:bg-harken-gray hover:border-slate-300 dark:hover:border-harken-gray`}
+        className={`${baseClass} bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1 text-slate-500 dark:text-slate-400 border-light-border dark:border-dark-border dark:border-harken-gray hover:bg-surface-3 dark:hover:bg-elevation-subtle hover:border-border-muted dark:hover:border-dark-border-muted`}
         title="Click to change"
       >
         <Minus className="w-3 h-3" /> SIM
@@ -530,7 +530,7 @@ export const LandSalesGrid: React.FC = () => {
           className={`${baseClass} ${
             isSup ? 'bg-accent-teal-mint-light text-accent-teal-mint border-accent-teal-mint hover:bg-accent-teal-mint-light' :
             isInf ? 'bg-accent-red-light text-harken-error border-harken-error/30 hover:bg-accent-red-light' :
-            'bg-slate-50 dark:bg-elevation-1 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-harken-gray hover:bg-slate-100 dark:hover:bg-harken-gray'
+            'bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1 text-slate-500 dark:text-slate-400 border-light-border dark:border-dark-border dark:border-harken-gray hover:bg-surface-3 dark:hover:bg-elevation-subtle'
           }`}
         >
           {isSup && <ArrowUpRight className="w-3 h-3" />}
@@ -541,9 +541,9 @@ export const LandSalesGrid: React.FC = () => {
         </span>
         
         {isOpen && (
-          <div className="absolute top-full left-0 mt-2 w-48 bg-surface-1 dark:bg-elevation-1 rounded-xl shadow-2xl border border-slate-200 dark:border-dark-border z-[200] overflow-hidden">
+          <div className="absolute top-full left-0 mt-2 w-48 bg-surface-1 dark:bg-elevation-1 rounded-xl shadow-2xl border border-light-border dark:border-dark-border dark:border-dark-border z-[200] overflow-hidden">
             {/* Header */}
-            <div className="flex items-center justify-between px-3 py-2 border-b border-slate-100 dark:border-dark-border bg-slate-50 dark:bg-elevation-1">
+            <div className="flex items-center justify-between px-3 py-2 border-b border-light-border dark:border-dark-border dark:border-dark-border bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1">
               <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
                 Adjustment
               </span>
@@ -555,7 +555,7 @@ export const LandSalesGrid: React.FC = () => {
                 <button
                   type="button"
                   key={option.value}
-                  className={`w-full px-3 py-2 text-left text-sm hover:bg-slate-50 dark:hover:bg-elevation-3/50 flex items-center justify-between transition-colors ${
+                  className={`w-full px-3 py-2 text-left text-sm hover:bg-surface-2 dark:bg-elevation-2 dark:hover:bg-elevation-3/50 flex items-center justify-between transition-colors ${
                     value === option.value ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300' : 'text-slate-700 dark:text-slate-200'
                   }`}
                   onClick={() => {
@@ -567,7 +567,7 @@ export const LandSalesGrid: React.FC = () => {
                   <span className={`text-[10px] uppercase font-bold px-1.5 py-0.5 rounded ${
                     option.value > 0 ? 'text-harken-error bg-accent-red-light dark:bg-accent-red-light' :
                     option.value < 0 ? 'text-accent-teal-mint bg-accent-teal-mint-light dark:bg-accent-teal-mint/10' :
-                    'text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-elevation-1'
+                    'text-slate-500 dark:text-slate-400 bg-surface-3 dark:bg-elevation-subtle'
                   }`}>
                     {getStatusLabel(option.value)}
                   </span>
@@ -576,14 +576,14 @@ export const LandSalesGrid: React.FC = () => {
             </div>
             
             {/* Custom Input */}
-            <div className="border-t border-slate-100 dark:border-dark-border px-3 py-2.5 bg-slate-50 dark:bg-elevation-1">
+            <div className="border-t border-light-border dark:border-dark-border dark:border-dark-border px-3 py-2.5 bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1">
               <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
                 Custom %
               </label>
               <div className="flex gap-2 mt-1.5">
                 <input
                   type="text"
-                  className="flex-1 border border-slate-200 dark:border-harken-gray rounded-md px-2 py-1.5 text-sm bg-surface-1 dark:bg-elevation-1 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-accent-cyan focus:border-transparent"
+                  className="flex-1 border border-light-border dark:border-dark-border dark:border-harken-gray rounded-md px-2 py-1.5 text-sm bg-surface-1 dark:bg-elevation-1 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-accent-cyan focus:border-transparent"
                   value={customInputValue}
                   placeholder="e.g. 12.5"
                   onChange={(e) => {
@@ -633,7 +633,7 @@ export const LandSalesGrid: React.FC = () => {
       <div className={`element-dropdown relative ${isOpen ? 'z-[500]' : ''}`}>
         <button 
           onClick={() => setOpenElementDropdown(isOpen ? null : section)}
-          className="w-full py-2 px-3 border-2 border-dashed border-slate-300 dark:border-harken-gray rounded-lg flex items-center justify-between gap-2 text-slate-500 dark:text-slate-400 font-semibold hover:border-accent-cyan hover:text-accent-cyan hover:bg-accent-cyan/5 transition-all duration-300 group text-xs bg-surface-1 dark:bg-elevation-1"
+          className="w-full py-2 px-3 border-2 border-dashed border-border-muted dark:border-dark-border-muted rounded-lg flex items-center justify-between gap-2 text-slate-500 dark:text-slate-400 font-semibold hover:border-accent-cyan hover:text-accent-cyan hover:bg-accent-cyan/5 transition-all duration-300 group text-xs bg-surface-1 dark:bg-elevation-1"
         >
           <div className="flex items-center gap-2">
             <Plus size={12} className="text-slate-400 group-hover:text-accent-cyan" />
@@ -643,8 +643,8 @@ export const LandSalesGrid: React.FC = () => {
         </button>
         
         {isOpen && (
-          <div className="absolute top-full left-0 mt-1 w-64 bg-surface-1 dark:bg-elevation-1 rounded-xl shadow-2xl border border-slate-200 dark:border-dark-border z-[500] overflow-hidden">
-            <div className="px-3 py-2 bg-slate-50 dark:bg-elevation-1 border-b border-slate-200 dark:border-dark-border">
+          <div className="absolute top-full left-0 mt-1 w-64 bg-surface-1 dark:bg-elevation-1 rounded-xl shadow-2xl border border-light-border dark:border-dark-border dark:border-dark-border z-[500] overflow-hidden">
+            <div className="px-3 py-2 bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1 border-b border-light-border dark:border-dark-border dark:border-dark-border">
               <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Available Elements</span>
             </div>
             <div className="max-h-48 overflow-y-auto">
@@ -653,7 +653,7 @@ export const LandSalesGrid: React.FC = () => {
                   <button
                     key={element.id}
                     onClick={() => handleAddElement(section, element)}
-                    className="w-full text-left px-3 py-2 text-xs hover:bg-accent-cyan/5 dark:hover:bg-accent-cyan/10 transition-colors border-b border-slate-100 dark:border-dark-border last:border-b-0 group"
+                    className="w-full text-left px-3 py-2 text-xs hover:bg-accent-cyan/5 dark:hover:bg-accent-cyan/10 transition-colors border-b border-light-border dark:border-dark-border dark:border-dark-border last:border-b-0 group"
                   >
                     <div className="font-medium text-slate-700 dark:text-slate-200 group-hover:text-accent-cyan">{element.label}</div>
                     {element.description && (
@@ -667,7 +667,7 @@ export const LandSalesGrid: React.FC = () => {
                 </div>
               )}
             </div>
-            <div className="border-t border-slate-200 dark:border-dark-border">
+            <div className="border-t border-light-border dark:border-dark-border dark:border-dark-border">
               <button
                 onClick={() => handleAddCustomElement(section)}
                 className="w-full text-left px-3 py-2.5 text-xs hover:bg-accent-cyan/5 dark:hover:bg-accent-cyan/10 transition-colors flex items-center gap-2 text-accent-cyan font-medium"
@@ -690,15 +690,15 @@ export const LandSalesGrid: React.FC = () => {
   const [isMapCollapsed, setIsMapCollapsed] = useState(false);
 
   return (
-    <div className="flex flex-col h-full bg-slate-50 dark:bg-elevation-1 relative overflow-hidden">
+    <div className="flex flex-col h-full bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1 relative overflow-hidden">
       
       {/* LAND SALES MAP SECTION */}
       {hasSubjectCoords && (
-        <div className="flex-shrink-0 border-b border-slate-200 bg-surface-1 dark:bg-elevation-1">
+        <div className="flex-shrink-0 border-b border-light-border dark:border-dark-border bg-surface-1 dark:bg-elevation-1">
           {/* Map Header - Always visible */}
           <button
             onClick={() => setIsMapCollapsed(!isMapCollapsed)}
-            className="w-full flex items-center justify-between px-4 py-2 hover:bg-slate-50 dark:hover:bg-elevation-3 transition-colors"
+            className="w-full flex items-center justify-between px-4 py-2 hover:bg-surface-2 dark:bg-elevation-2 dark:hover:bg-elevation-3 transition-colors"
           >
             <div className="flex items-center gap-2">
               <MapIcon className="w-4 h-4 text-orange-600" />
@@ -765,7 +765,7 @@ export const LandSalesGrid: React.FC = () => {
           
           {/* ========== HEADER ROW ========== */}
           <div 
-            className="sticky top-0 left-0 z-[120] bg-surface-1 dark:bg-elevation-1 border-b border-slate-200 dark:border-dark-border flex items-end" 
+            className="sticky top-0 left-0 z-[120] bg-surface-1 dark:bg-elevation-1 border-b border-light-border dark:border-dark-border dark:border-dark-border flex items-end" 
             style={{ width: LABEL_COL_WIDTH, height: 120, transform: 'translateZ(0)', willChange: 'transform' }}
           >
             <div className="p-2 pl-3">
@@ -790,7 +790,7 @@ export const LandSalesGrid: React.FC = () => {
               </div>
             </div>
             {/* Subject Info - solid light blue background */}
-            <div className="p-2 flex-1 flex flex-col gap-0.5 bg-sky-50 dark:bg-[#0f1f3a] border-r border-slate-200 dark:border-dark-border">
+            <div className="p-2 flex-1 flex flex-col gap-0.5 bg-sky-50 dark:bg-[#0f1f3a] border-r border-light-border dark:border-dark-border dark:border-dark-border">
               <h3 className="font-bold text-slate-800 dark:text-white text-xs leading-tight line-clamp-1" title={SUBJECT_PROPERTY.address}>
                 {SUBJECT_PROPERTY.address.split(',')[0]}
               </h3>
@@ -805,7 +805,7 @@ export const LandSalesGrid: React.FC = () => {
           {comps.map((comp, idx) => (
             <div 
               key={comp.id} 
-              className="sticky top-0 z-[100] border-b border-slate-200 dark:border-dark-border flex flex-col bg-surface-1 dark:bg-elevation-1"
+              className="sticky top-0 z-[100] border-b border-light-border dark:border-dark-border dark:border-dark-border flex flex-col bg-surface-1 dark:bg-elevation-1"
               style={{ height: 120, transform: 'translateZ(0)', willChange: 'transform' }}
             >
               {/* Comp Photo */}
@@ -828,7 +828,7 @@ export const LandSalesGrid: React.FC = () => {
                 </button>
               </div>
               {/* Comp Info */}
-              <div className="p-2 flex-1 flex flex-col gap-0.5 border-r border-slate-200 dark:border-dark-border">
+              <div className="p-2 flex-1 flex flex-col gap-0.5 border-r border-light-border dark:border-dark-border dark:border-dark-border">
                 <h3 className="font-bold text-slate-800 dark:text-white text-xs leading-tight line-clamp-1" title={comp.address}>
                   Sale {idx + 1}
                 </h3>
@@ -846,10 +846,10 @@ export const LandSalesGrid: React.FC = () => {
 
 
           {/* ========== TRANSACTION DATA SECTION ========== */}
-          <div className="col-span-full relative z-[50] mt-4 border-y border-slate-200 dark:border-dark-border">
-            <div className="absolute left-0 right-0 h-full bg-slate-100 dark:bg-elevation-1" style={{ opacity: 0.3 }}></div>
+          <div className="col-span-full relative z-[50] mt-4 border-y border-light-border dark:border-dark-border dark:border-dark-border">
+            <div className="absolute left-0 right-0 h-full bg-surface-3 dark:bg-elevation-subtle" style={{ opacity: 0.3 }}></div>
             <div 
-              className="sticky left-0 w-fit px-4 py-2 font-bold text-xs uppercase tracking-widest text-slate-700 dark:text-slate-200 flex items-center gap-2 bg-slate-50 dark:bg-elevation-1"
+              className="sticky left-0 w-fit px-4 py-2 font-bold text-xs uppercase tracking-widest text-slate-700 dark:text-slate-200 flex items-center gap-2 bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1"
               style={{ zIndex: 51 }}
             >
               TRANSACTION DATA
@@ -861,7 +861,7 @@ export const LandSalesGrid: React.FC = () => {
             <React.Fragment key={row.id}>
               {/* Label Column - Never scrolls horizontally */}
               <div 
-                className="sticky left-0 z-[60] border-r border-b border-slate-100 dark:border-dark-border flex items-center justify-between px-2 py-1.5 group bg-surface-1 dark:bg-elevation-1"
+                className="sticky left-0 z-[60] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border flex items-center justify-between px-2 py-1.5 group bg-surface-1 dark:bg-elevation-1"
                 style={{ width: LABEL_COL_WIDTH, transform: 'translateZ(0)' }}
               >
                 <span className="text-xs font-medium text-slate-600 dark:text-slate-400 truncate">{row.label}</span>
@@ -876,7 +876,7 @@ export const LandSalesGrid: React.FC = () => {
               
               {/* Subject Column - Never scrolls horizontally */}
               <div 
-                className="sticky left-[160px] z-[55] border-r border-b border-slate-100 dark:border-dark-border p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none bg-sky-50 dark:bg-[#0f1f3a]"
+                className="sticky left-[160px] z-[55] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none bg-sky-50 dark:bg-[#0f1f3a]"
                 style={{ width: SUBJECT_COL_WIDTH, transform: 'translateZ(0)' }}
               >
                 <span className="font-medium text-slate-700 dark:text-slate-200">{getSubjectTransactionValue(row.id)}</span>
@@ -886,7 +886,7 @@ export const LandSalesGrid: React.FC = () => {
               {comps.map(comp => (
                 <div 
                   key={`${row.id}-${comp.id}`} 
-                  className="border-r border-b border-slate-100 dark:border-dark-border p-2 flex items-center justify-center text-xs bg-surface-1 dark:bg-elevation-1"
+                  className="border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs bg-surface-1 dark:bg-elevation-1"
                 >
                   <span className="font-medium text-slate-600 dark:text-slate-200">{getTransactionValue(comp, row.id)}</span>
                 </div>
@@ -925,8 +925,8 @@ export const LandSalesGrid: React.FC = () => {
             <React.Fragment key={row.id}>
               {/* Label Column - Never scrolls horizontally */}
               <div 
-                className={`sticky left-0 z-[60] border-r border-b border-slate-100 dark:border-dark-border flex items-center justify-between px-2 py-1.5 group ${
-                  row.id === 'adjPriceAcre' ? 'border-t-2 border-t-slate-800 dark:border-t-slate-600 bg-slate-50 dark:bg-elevation-1' : 'bg-surface-1 dark:bg-elevation-1'
+                className={`sticky left-0 z-[60] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border flex items-center justify-between px-2 py-1.5 group ${
+                  row.id === 'adjPriceAcre' ? 'border-t-2 border-t-slate-800 dark:border-t-slate-600 bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1' : 'bg-surface-1 dark:bg-elevation-1'
                 }`}
                 style={{ width: LABEL_COL_WIDTH, transform: 'translateZ(0)' }}
               >
@@ -944,7 +944,7 @@ export const LandSalesGrid: React.FC = () => {
               
               {/* Subject Column - Never scrolls horizontally */}
               <div 
-                className={`sticky left-[160px] z-[55] border-r border-b border-slate-100 dark:border-dark-border p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none ${
+                className={`sticky left-[160px] z-[55] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none ${
                   row.id === 'adjPriceAcre' ? 'border-t-2 border-t-slate-800 dark:border-t-slate-600 bg-blue-100 dark:bg-blue-900/30' : 'bg-sky-50 dark:bg-[#0f1f3a]'
                 }`}
                 style={{ width: SUBJECT_COL_WIDTH, transform: 'translateZ(0)' }}
@@ -956,8 +956,8 @@ export const LandSalesGrid: React.FC = () => {
               {comps.map(comp => (
                 <div 
                   key={`${row.id}-${comp.id}`} 
-                  className={`border-r border-b border-slate-100 dark:border-dark-border p-2 flex items-center justify-center text-xs bg-surface-1 dark:bg-elevation-1 ${
-                    row.id === 'adjPriceAcre' ? 'border-t-2 border-t-slate-800 bg-slate-50' : ''
+                  className={`border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs bg-surface-1 dark:bg-elevation-1 ${
+                    row.id === 'adjPriceAcre' ? 'border-t-2 border-t-slate-800 bg-surface-2 dark:bg-elevation-2' : ''
                   }`}
                 >
                   {row.id === 'marketCond' ? (
@@ -1058,7 +1058,7 @@ export const LandSalesGrid: React.FC = () => {
             <React.Fragment key={row.id}>
               {/* Label Column - Never scrolls horizontally */}
               <div 
-                className="sticky left-0 z-[60] border-r border-b border-slate-100 dark:border-dark-border flex items-center justify-between px-2 py-1.5 group bg-surface-1 dark:bg-elevation-1"
+                className="sticky left-0 z-[60] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border flex items-center justify-between px-2 py-1.5 group bg-surface-1 dark:bg-elevation-1"
                 style={{ width: LABEL_COL_WIDTH, transform: 'translateZ(0)' }}
               >
                 <span className="text-xs font-medium text-slate-600 dark:text-slate-400 truncate">{row.label}</span>
@@ -1073,7 +1073,7 @@ export const LandSalesGrid: React.FC = () => {
               
               {/* Subject Column - Never scrolls horizontally */}
               <div 
-                className="sticky left-[160px] z-[55] border-r border-b border-slate-100 dark:border-dark-border p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none bg-sky-50 dark:bg-[#0f1f3a]"
+                className="sticky left-[160px] z-[55] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none bg-sky-50 dark:bg-[#0f1f3a]"
                 style={{ width: SUBJECT_COL_WIDTH, transform: 'translateZ(0)' }}
               >
                 <span className="font-medium text-slate-700 dark:text-slate-200">{getSubjectQualitativeValue(row.id)}</span>
@@ -1083,7 +1083,7 @@ export const LandSalesGrid: React.FC = () => {
               {comps.map(comp => (
                 <div 
                   key={`${row.id}-${comp.id}`} 
-                  className="border-r border-b border-slate-100 dark:border-dark-border p-2 flex items-center justify-center text-xs bg-surface-1 dark:bg-elevation-1"
+                  className="border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs bg-surface-1 dark:bg-elevation-1"
                 >
                   <AdjustmentChip compId={comp.id} rowId={row.field || row.id} />
                 </div>
@@ -1139,7 +1139,7 @@ export const LandSalesGrid: React.FC = () => {
 
           {/* ACTION COLUMN */}
           <div 
-            className="flex-shrink-0 bg-slate-50 dark:bg-elevation-1 flex flex-col items-center justify-start py-8 sticky top-0 self-start"
+            className="flex-shrink-0 bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1 flex flex-col items-center justify-start py-8 sticky top-0 self-start"
             style={{ width: ACTION_COL_WIDTH, height: 'auto', minHeight: 400 }}
           >
             <div className="flex flex-col items-center justify-center h-80 py-4">
@@ -1159,7 +1159,7 @@ export const LandSalesGrid: React.FC = () => {
 
         {/* VALUE INDICATION FOOTER - Stays centered, doesn't scroll horizontally */}
         <div 
-          className="sticky left-0 bg-slate-50 dark:bg-elevation-1 border-t-2 border-slate-300 dark:border-dark-border p-8 pt-10"
+          className="sticky left-0 bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1 border-t-2 border-border-muted dark:border-dark-border-muted p-8 pt-10"
           style={{ width: '100vw', maxWidth: '100%' }}
         >
           <div className="max-w-4xl mx-auto flex flex-col gap-6">
@@ -1169,7 +1169,7 @@ export const LandSalesGrid: React.FC = () => {
                 <h2 className="text-xl font-bold text-slate-800 dark:text-white uppercase tracking-wider">Land Value Indication</h2>
               </div>
             </div>
-            <div className="bg-surface-1 dark:bg-elevation-1 rounded-2xl border border-slate-200 dark:border-dark-border p-6 shadow-sm">
+            <div className="bg-surface-1 dark:bg-elevation-1 rounded-2xl border border-light-border dark:border-dark-border dark:border-dark-border p-6 shadow-sm">
               <div className="grid grid-cols-3 gap-6">
                 <div className="text-center">
                   <div className="text-sm text-slate-500 dark:text-slate-400 font-medium mb-2">Subject Land Size</div>

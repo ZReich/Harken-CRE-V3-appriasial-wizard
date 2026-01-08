@@ -157,7 +157,7 @@ export const OverridePopover: React.FC<OverridePopoverProps> = ({
   return (
     <div 
       ref={popoverRef}
-      className={`override-popover absolute top-full mt-2 ${positionClass} w-72 bg-surface-1 dark:bg-elevation-1 rounded-xl shadow-2xl border border-slate-200 dark:border-dark-border z-[300] overflow-hidden`}
+      className={`override-popover absolute top-full mt-2 ${positionClass} w-72 bg-surface-1 dark:bg-elevation-1 rounded-xl shadow-2xl border border-light-border dark:border-dark-border dark:border-dark-border z-[300] overflow-hidden`}
     >
       {/* Header */}
       <div className="bg-accent-amber-gold-light dark:bg-amber-900/30 px-4 py-3 border-b border-accent-amber-gold dark:border-amber-800">
@@ -173,7 +173,7 @@ export const OverridePopover: React.FC<OverridePopoverProps> = ({
       </div>
 
       {/* Calculated Value Display */}
-      <div className="px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-100 dark:border-dark-border">
+      <div className="px-4 py-3 bg-surface-2 dark:bg-elevation-2 dark:bg-slate-800/50 border-b border-light-border dark:border-dark-border dark:border-dark-border">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Calculator className="w-3.5 h-3.5 text-slate-400" />
@@ -257,7 +257,7 @@ export const OverridePopover: React.FC<OverridePopoverProps> = ({
       </div>
 
       {/* Actions */}
-      <div className="px-4 py-3 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-100 dark:border-dark-border flex items-center gap-2">
+      <div className="px-4 py-3 bg-surface-2 dark:bg-elevation-2 dark:bg-slate-800/50 border-t border-light-border dark:border-dark-border dark:border-dark-border flex items-center gap-2">
         {currentOverride && (
           <button
             type="button"

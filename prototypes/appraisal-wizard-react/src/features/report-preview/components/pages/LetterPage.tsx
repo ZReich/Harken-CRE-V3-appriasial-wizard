@@ -41,7 +41,7 @@ export const LetterPage: React.FC<LetterPageProps> = ({
   return (
     <div className="w-full h-full bg-surface-1 p-16 flex flex-col">
       {/* Letterhead */}
-      <div className="border-b-2 border-slate-200 pb-6 mb-8">
+      <div className="border-b-2 border-light-border dark:border-dark-border pb-6 mb-8">
         <div className="flex justify-between items-start">
           <div>
             <h2 className="text-2xl font-bold text-slate-800">ROVE EVALUATIONS</h2>
@@ -79,7 +79,7 @@ export const LetterPage: React.FC<LetterPageProps> = ({
       {/* Body */}
       <div 
         className={`flex-1 space-y-4 text-slate-700 leading-relaxed ${
-          isEditing ? 'cursor-pointer hover:bg-slate-50 rounded p-2 -m-2' : ''
+          isEditing ? 'cursor-pointer hover:bg-surface-2 dark:bg-elevation-2 rounded p-2 -m-2' : ''
         }`}
         onClick={() => isEditing && onContentClick?.('letter-body')}
       >
@@ -127,7 +127,7 @@ export const LetterPage: React.FC<LetterPageProps> = ({
       </div>
 
       {/* Signature */}
-      <div className="mt-8 pt-8 border-t border-slate-200">
+      <div className="mt-8 pt-8 border-t border-light-border dark:border-dark-border">
         <p className="text-slate-600">Respectfully submitted,</p>
         <div className="mt-12">
           <div className="w-48 border-b border-slate-400" />

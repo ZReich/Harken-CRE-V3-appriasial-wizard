@@ -45,7 +45,7 @@ const SYSTEM_COLORS: Record<BuildingSystem, string> = {
   'electrical': 'bg-accent-amber-gold-light text-accent-amber-gold border-accent-amber-gold',
   'escalators-elevators': 'bg-purple-100 text-purple-600 border-purple-200',
   'fire-protection': 'bg-accent-red-light text-harken-error border-harken-error',
-  'security': 'bg-slate-100 text-slate-600 border-slate-200',
+  'security': 'bg-surface-3 dark:bg-elevation-subtle text-slate-600 border-light-border dark:border-dark-border',
   'gas-distribution': 'bg-cyan-100 text-cyan-600 border-cyan-200',
   'structural': 'bg-stone-100 text-stone-600 border-stone-200',
   'other': 'bg-harken-gray-light text-harken-gray border-light-border',
@@ -63,9 +63,9 @@ export const BuildingSystems: React.FC<BuildingSystemsProps> = ({
   const totalBuildingCost = analysis.totalBuildingCost;
 
   return (
-    <div className={`bg-surface-1 rounded-xl border border-slate-200 shadow-sm overflow-hidden ${className}`}>
+    <div className={`bg-surface-1 rounded-xl border border-light-border dark:border-dark-border shadow-sm overflow-hidden ${className}`}>
       {/* Header */}
-      <div className="px-6 py-4 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white">
+      <div className="px-6 py-4 border-b border-light-border dark:border-dark-border bg-gradient-to-r from-slate-50 to-white">
         <div className="flex items-center justify-between">
           <div>
             <h3 className="font-bold text-slate-900 text-lg">Building Systems Valuation</h3>
@@ -104,10 +104,10 @@ export const BuildingSystems: React.FC<BuildingSystemsProps> = ({
       {/* Table View */}
       <div className="px-6 pb-6">
         <h4 className="text-sm font-semibold text-slate-700 mb-3">Detailed Breakdown</h4>
-        <div className="border border-slate-200 rounded-lg overflow-hidden">
+        <div className="border border-light-border dark:border-dark-border rounded-lg overflow-hidden">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-200">
+              <tr className="bg-surface-2 dark:bg-elevation-2 border-b border-light-border dark:border-dark-border">
                 <th className="text-left px-4 py-2.5 font-semibold text-slate-700">System</th>
                 <th className="text-right px-4 py-2.5 font-semibold text-slate-700">Depreciable Cost</th>
                 <th className="text-right px-4 py-2.5 font-semibold text-slate-700">Replacement Cost</th>
@@ -119,7 +119,7 @@ export const BuildingSystems: React.FC<BuildingSystemsProps> = ({
               {sortedSystems.map((system, index) => (
                 <tr 
                   key={system.system}
-                  className={`border-b border-slate-100 ${index % 2 === 1 ? 'bg-slate-50/30' : ''}`}
+                  className={`border-b border-light-border dark:border-dark-border ${index % 2 === 1 ? 'bg-surface-2 dark:bg-elevation-2/30' : ''}`}
                 >
                   <td className="px-4 py-3">
                     <div className="flex items-center gap-3">
@@ -136,7 +136,7 @@ export const BuildingSystems: React.FC<BuildingSystemsProps> = ({
                     {formatCostSegCurrency(system.replacementCost)}
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <span className="px-2 py-1 bg-slate-100 text-slate-700 rounded-full text-xs font-medium">
+                    <span className="px-2 py-1 bg-surface-3 dark:bg-elevation-subtle text-slate-700 rounded-full text-xs font-medium">
                       {formatCostSegPercent(system.percentOfBuilding)}
                     </span>
                   </td>
@@ -146,7 +146,7 @@ export const BuildingSystems: React.FC<BuildingSystemsProps> = ({
                 </tr>
               ))}
               {/* Total Row */}
-              <tr className="bg-slate-100 font-semibold">
+              <tr className="bg-surface-3 dark:bg-elevation-subtle font-semibold">
                 <td className="px-4 py-3 text-slate-900">Total</td>
                 <td className="px-4 py-3 text-right text-slate-900">
                   {formatCostSegCurrency(sortedSystems.reduce((sum, s) => sum + s.depreciableCost, 0))}
@@ -190,7 +190,7 @@ const SystemCard: React.FC<SystemCardProps> = ({ system, totalCost }) => {
   const percentOfTotal = totalCost > 0 ? (system.depreciableCost / totalCost) * 100 : 0;
   
   return (
-    <div className="bg-surface-1 border border-slate-200 rounded-xl p-4 hover:shadow-md transition-shadow">
+    <div className="bg-surface-1 border border-light-border dark:border-dark-border rounded-xl p-4 hover:shadow-md transition-shadow">
       <div className="flex items-start justify-between mb-3">
         <div className={`w-10 h-10 rounded-xl flex items-center justify-center border ${SYSTEM_COLORS[system.system]}`}>
           {SYSTEM_ICONS[system.system]}
@@ -207,7 +207,7 @@ const SystemCard: React.FC<SystemCardProps> = ({ system, totalCost }) => {
       </div>
       
       {/* Progress Bar */}
-      <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden mb-2">
+      <div className="w-full h-2 bg-surface-3 dark:bg-elevation-subtle rounded-full overflow-hidden mb-2">
         <div 
           className="h-full bg-[#0da1c7] rounded-full transition-all duration-300"
           style={{ width: `${Math.min(percentOfTotal, 100)}%` }}

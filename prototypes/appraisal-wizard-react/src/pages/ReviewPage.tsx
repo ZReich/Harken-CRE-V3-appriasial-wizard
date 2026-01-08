@@ -1119,7 +1119,7 @@ We considered alternative uses including renovation, conversion to alternative u
             </div>
 
             {/* Market Analysis Content - Single scrollable area with consistent background */}
-            <div className="flex-1 min-h-0 overflow-auto bg-slate-50 dark:bg-elevation-1">
+            <div className="flex-1 min-h-0 overflow-auto bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1">
               <MarketAnalysisGrid 
                 rentCompData={{
                   avgRent: 26.75,
@@ -1134,7 +1134,7 @@ We considered alternative uses including renovation, conversion to alternative u
               />
               
               {/* Economic Indicators Panel - FRED Data */}
-              <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl border border-slate-200 dark:border-dark-border shadow-sm mx-6 mb-6 -mt-3">
+              <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl border border-light-border dark:border-dark-border dark:border-dark-border shadow-sm mx-6 mb-6 -mt-3">
                 <EconomicIndicatorsPanel 
                   onDataLoaded={(data, asOfDate) => {
                     // Save economic data to wizard state for report generation

@@ -45,8 +45,8 @@ export const CostConclusion: React.FC<CostConclusionProps> = ({
   };
 
   return (
-    <div className="bg-surface-1 dark:bg-elevation-1 border border-slate-200 dark:border-dark-border rounded-xl shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-700">
-      <div className="px-6 py-4 border-b border-slate-200 dark:border-dark-border bg-slate-50 dark:bg-elevation-1/50 flex items-center justify-between">
+    <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border dark:border-dark-border rounded-xl shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-700">
+      <div className="px-6 py-4 border-b border-light-border dark:border-dark-border dark:border-dark-border bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1/50 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wide flex items-center gap-2">
             <Calculator size={16} className="text-[#0da1c7]" />
@@ -58,7 +58,7 @@ export const CostConclusion: React.FC<CostConclusionProps> = ({
             </span>
           )}
         </div>
-        <div className="text-xs text-slate-500 dark:text-slate-400 font-medium bg-slate-200/50 dark:bg-elevation-1/50 px-2 py-1 rounded">
+        <div className="text-xs text-slate-500 dark:text-slate-400 font-medium bg-surface-4/50 dark:bg-elevation-muted/50 px-2 py-1 rounded">
           Cost Approach Module
         </div>
       </div>
@@ -92,7 +92,7 @@ export const CostConclusion: React.FC<CostConclusionProps> = ({
             </div>
           )}
 
-          <div className="border-t border-slate-200 dark:border-dark-border my-2 pt-3 flex justify-between items-center bg-slate-50 dark:bg-elevation-1/50 p-3 rounded-lg border border-slate-100 dark:border-dark-border/50">
+          <div className="border-t border-light-border dark:border-dark-border dark:border-dark-border my-2 pt-3 flex justify-between items-center bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1/50 p-3 rounded-lg border border-light-border dark:border-dark-border dark:border-dark-border/50">
             <div className="flex flex-col">
               <span className="text-slate-500 dark:text-slate-400 font-bold text-[10px] uppercase tracking-wide">Exact Mathematical Total</span>
               {scenario !== 'As Is' && <span className="text-[9px] text-[#0da1c7] font-medium mt-0.5">Prospective Valuation Logic Applied</span>}
@@ -116,7 +116,7 @@ export const CostConclusion: React.FC<CostConclusionProps> = ({
                   type="number"
                   value={finalValue}
                   onChange={(e) => handleManualChange(+e.target.value)}
-                  className="w-full pl-8 pr-4 py-3 text-2xl font-bold text-slate-900 dark:text-white bg-surface-1 dark:bg-elevation-1 border border-slate-300 dark:border-harken-gray rounded-lg shadow-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-[#0da1c7] outline-none transition-all"
+                  className="w-full pl-8 pr-4 py-3 text-2xl font-bold text-slate-900 dark:text-white bg-surface-1 dark:bg-elevation-1 border border-border-muted dark:border-dark-border-muted rounded-lg shadow-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-[#0da1c7] outline-none transition-all"
                 />
                 {isManualOverride && (
                   <div className="absolute right-4 top-4 text-accent-teal-mint animate-in zoom-in duration-300">
@@ -141,13 +141,13 @@ export const CostConclusion: React.FC<CostConclusionProps> = ({
             <div className="grid grid-cols-2 gap-3 mt-auto">
               <button
                 onClick={() => handleRound(1000)}
-                className="flex items-center justify-center gap-2 px-4 py-2 bg-surface-1 dark:bg-elevation-1 border border-slate-200 dark:border-harken-gray shadow-sm text-slate-700 dark:text-slate-200 text-[10px] font-bold uppercase tracking-wide rounded hover:bg-slate-50 dark:hover:bg-harken-gray hover:text-[#0da1c7] transition-colors"
+                className="flex items-center justify-center gap-2 px-4 py-2 bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border dark:border-harken-gray shadow-sm text-slate-700 dark:text-slate-200 text-[10px] font-bold uppercase tracking-wide rounded hover:bg-surface-2 dark:bg-elevation-2 dark:hover:bg-harken-gray hover:text-[#0da1c7] transition-colors"
               >
                 <Wand2 size={12} /> Round to $1k
               </button>
               <button
                 onClick={() => handleRound(5000)}
-                className="flex items-center justify-center gap-2 px-4 py-2 bg-surface-1 dark:bg-elevation-1 border border-slate-200 dark:border-harken-gray shadow-sm text-slate-700 dark:text-slate-200 text-[10px] font-bold uppercase tracking-wide rounded hover:bg-slate-50 dark:hover:bg-harken-gray hover:text-[#0da1c7] transition-colors"
+                className="flex items-center justify-center gap-2 px-4 py-2 bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border dark:border-harken-gray shadow-sm text-slate-700 dark:text-slate-200 text-[10px] font-bold uppercase tracking-wide rounded hover:bg-surface-2 dark:bg-elevation-2 dark:hover:bg-harken-gray hover:text-[#0da1c7] transition-colors"
               >
                 <Wand2 size={12} /> Round to $5k
               </button>

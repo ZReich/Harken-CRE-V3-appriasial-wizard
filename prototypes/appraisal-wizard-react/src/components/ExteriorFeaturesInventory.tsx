@@ -499,7 +499,7 @@ export default function ExteriorFeaturesInventory({
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
               showPhotoPanel
                 ? 'bg-harken-blue text-white'
-                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                : 'bg-surface-3 dark:bg-elevation-subtle text-slate-600 hover:bg-surface-4 dark:hover:bg-elevation-muted'
             }`}
           >
             <Camera className="w-3.5 h-3.5" />
@@ -516,7 +516,7 @@ export default function ExteriorFeaturesInventory({
       </div>
 
       {/* Add Form Section */}
-      <div className="p-4 bg-slate-50/50 border-b border-harken-gray-light">
+      <div className="p-4 bg-surface-2 dark:bg-elevation-2/50 border-b border-harken-gray-light">
         {/* Category Selector */}
         <div className="mb-4">
           <label className="block text-xs font-medium text-harken-gray mb-2">Category</label>
@@ -680,7 +680,7 @@ export default function ExteriorFeaturesInventory({
             </div>
             
             {/* Economic Life Guide */}
-            <div className="mb-3 p-2 bg-slate-50 rounded-lg border border-slate-200">
+            <div className="mb-3 p-2 bg-surface-2 dark:bg-elevation-2 rounded-lg border border-light-border dark:border-dark-border">
               <div className="flex items-start gap-2">
                 <Calculator size={14} className="text-harken-blue mt-0.5 flex-shrink-0" />
                 <div className="text-xs text-harken-gray dark:text-slate-400">
@@ -831,7 +831,7 @@ export default function ExteriorFeaturesInventory({
                   return (
                     <div
                       key={component.id}
-                      className="bg-slate-50 rounded-lg border border-slate-100 hover:border-slate-200 transition-colors overflow-hidden"
+                      className="bg-surface-2 dark:bg-elevation-2 rounded-lg border border-light-border dark:border-dark-border hover:border-light-border dark:border-dark-border transition-colors overflow-hidden"
                     >
                       {/* Main Row */}
                       <div className="flex items-center gap-3 p-3">
@@ -941,7 +941,7 @@ export default function ExteriorFeaturesInventory({
                                   className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-medium transition-all ${
                                     component.depreciationOverride !== undefined
                                       ? 'border-accent-amber-gold/30 bg-accent-amber-gold-light text-accent-amber-gold'
-                                      : 'border-slate-200 text-slate-400 hover:border-slate-300 hover:text-slate-500'
+                                      : 'border-light-border dark:border-dark-border text-slate-400 hover:border-border-muted dark:hover:border-dark-border-muted hover:text-slate-500'
                                   }`}
                                 >
                                   <PenLine className="w-3 h-3" />

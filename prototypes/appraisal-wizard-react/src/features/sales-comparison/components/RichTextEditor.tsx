@@ -137,7 +137,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       </div>
       
       {/* Footer / Status bar */}
-      <div className="px-3 py-1 bg-slate-50 border-t border-slate-100 text-[10px] text-slate-400 flex justify-end">
+      <div className="px-3 py-1 bg-surface-2 dark:bg-elevation-2 border-t border-light-border dark:border-dark-border text-[10px] text-slate-400 flex justify-end">
          Rich Text Mode
       </div>
     </div>

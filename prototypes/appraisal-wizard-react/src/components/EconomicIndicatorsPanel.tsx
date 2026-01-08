@@ -44,10 +44,10 @@ function IndicatorCard({ title, icon, series, chartStyle, color, unit = '%' }: I
   const change = previousValue ? series.current - previousValue : 0;
 
   return (
-    <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl border border-slate-200 dark:border-dark-border overflow-hidden">
-      <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
+    <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl border border-light-border dark:border-dark-border dark:border-dark-border overflow-hidden">
+      <div className="px-4 py-3 border-b border-light-border dark:border-dark-border flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <div className="p-1.5 rounded-lg bg-slate-100" style={{ color }}>
+          <div className="p-1.5 rounded-lg bg-surface-3 dark:bg-elevation-subtle" style={{ color }}>
             {icon}
           </div>
           <span className="font-medium text-slate-700 text-sm">{title}</span>
@@ -82,7 +82,7 @@ function IndicatorCard({ title, icon, series, chartStyle, color, unit = '%' }: I
           showAxis={chartStyle !== 'glass'}
         />
       </div>
-      <div className="px-4 py-2 bg-slate-50 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+      <div className="px-4 py-2 bg-surface-2 dark:bg-elevation-2 border-t border-light-border dark:border-dark-border flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
         <span>
           Trend: {' '}
           <span className={`font-medium ${
@@ -143,7 +143,7 @@ export function EconomicIndicatorsPanel({
   // Loading state
   if (isLoading) {
     return (
-      <div className={`bg-surface-1 dark:bg-elevation-1 rounded-xl border border-slate-200 dark:border-dark-border p-6 ${className}`}>
+      <div className={`bg-surface-1 dark:bg-elevation-1 rounded-xl border border-light-border dark:border-dark-border dark:border-dark-border p-6 ${className}`}>
         <div className="flex items-center justify-center gap-3 py-8">
           <Loader2 className="w-5 h-5 text-harken-blue animate-spin" />
           <span className="text-slate-600">Loading economic indicators...</span>
@@ -155,14 +155,14 @@ export function EconomicIndicatorsPanel({
   // Error state
   if (error) {
     return (
-      <div className={`bg-surface-1 dark:bg-elevation-1 rounded-xl border border-slate-200 dark:border-dark-border p-6 ${className}`}>
+      <div className={`bg-surface-1 dark:bg-elevation-1 rounded-xl border border-light-border dark:border-dark-border dark:border-dark-border p-6 ${className}`}>
         <div className="flex items-center gap-3 text-harken-error mb-4">
           <AlertCircle className="w-5 h-5" />
           <span>{error}</span>
         </div>
         <button
           onClick={fetchData}
-          className="flex items-center gap-2 px-4 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors"
+          className="flex items-center gap-2 px-4 py-2 bg-surface-3 dark:bg-elevation-subtle text-slate-700 rounded-lg hover:bg-surface-4 dark:hover:bg-elevation-muted transition-colors"
         >
           <RefreshCw className="w-4 h-4" />
           Retry
@@ -173,7 +173,7 @@ export function EconomicIndicatorsPanel({
 
   if (!data) {
     return (
-      <div className={`bg-surface-1 dark:bg-elevation-1 rounded-xl border border-slate-200 dark:border-dark-border p-6 ${className}`}>
+      <div className={`bg-surface-1 dark:bg-elevation-1 rounded-xl border border-light-border dark:border-dark-border dark:border-dark-border p-6 ${className}`}>
         <p className="text-slate-500 dark:text-slate-400">No economic data available.</p>
       </div>
     );
@@ -182,7 +182,7 @@ export function EconomicIndicatorsPanel({
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Header with Chart Style Selector */}
-      <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl border border-slate-200 dark:border-dark-border p-4">
+      <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl border border-light-border dark:border-dark-border dark:border-dark-border p-4">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-harken-blue/10 rounded-lg">
@@ -199,7 +199,7 @@ export function EconomicIndicatorsPanel({
             <button
               onClick={fetchData}
               disabled={isLoading}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-lg transition-colors disabled:opacity-50"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-slate-600 bg-surface-3 dark:bg-elevation-subtle hover:bg-surface-4 dark:hover:bg-elevation-muted rounded-lg transition-colors disabled:opacity-50"
               title="Refresh data from FRED"
             >
               <RefreshCw className={`w-3.5 h-3.5 ${isLoading ? 'animate-spin' : ''}`} />
@@ -251,7 +251,7 @@ export function EconomicIndicatorsPanel({
       </div>
 
       {/* Summary Card */}
-      <div className="bg-slate-50 rounded-xl border border-slate-200 p-4">
+      <div className="bg-surface-2 dark:bg-elevation-2 rounded-xl border border-light-border dark:border-dark-border p-4">
         <h4 className="font-medium text-slate-700 mb-2">Economic Context Summary</h4>
         <p className="text-sm text-slate-600 leading-relaxed">
           Current economic conditions show the Federal Funds Rate at {formatRate(data.federalFundsRate.current)}, 

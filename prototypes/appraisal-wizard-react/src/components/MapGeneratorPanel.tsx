@@ -189,7 +189,7 @@ export function MapGeneratorPanel({
   // No coordinates state
   if (!hasCoordinates) {
     return (
-      <div className={`bg-slate-50 border border-slate-200 dark:bg-elevation-1 dark:border-dark-border rounded-xl p-6 ${className}`}>
+      <div className={`bg-surface-2 dark:bg-elevation-2 border border-light-border dark:border-dark-border dark:bg-elevation-1 dark:border-dark-border rounded-xl p-6 ${className}`}>
         <div className="text-center text-slate-400 dark:text-slate-500">
           <Map className="w-12 h-12 mx-auto mb-3 opacity-50" />
           <p className="font-medium text-slate-600">Property Location Required</p>
@@ -202,11 +202,11 @@ export function MapGeneratorPanel({
   }
 
   return (
-    <div className={`bg-surface-1 dark:bg-elevation-1 rounded-xl border border-slate-200 dark:border-dark-border overflow-hidden ${className}`}>
+    <div className={`bg-surface-1 dark:bg-elevation-1 rounded-xl border border-light-border dark:border-dark-border dark:border-dark-border overflow-hidden ${className}`}>
       {/* Header */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between px-4 py-3 bg-slate-50 dark:bg-elevation-1/50 hover:bg-slate-100 dark:hover:bg-elevation-3 transition-colors border-b border-slate-200 dark:border-dark-border"
+        className="w-full flex items-center justify-between px-4 py-3 bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1/50 hover:bg-surface-3 dark:hover:bg-elevation-3 transition-colors border-b border-light-border dark:border-dark-border dark:border-dark-border"
       >
         <div className="flex items-center gap-2">
           <Map className="w-5 h-5 text-harken-blue" />
@@ -268,8 +268,8 @@ export function MapGeneratorPanel({
                     ${generated
                       ? 'border-green-300 bg-green-50'
                       : disabled
-                        ? 'border-slate-200 bg-slate-50 opacity-60 cursor-not-allowed'
-                        : 'border-slate-200 hover:border-harken-blue hover:bg-harken-blue/5 cursor-pointer'
+                        ? 'border-light-border dark:border-dark-border bg-surface-2 dark:bg-elevation-2 opacity-60 cursor-not-allowed'
+                        : 'border-light-border dark:border-dark-border hover:border-harken-blue hover:bg-harken-blue/5 cursor-pointer'
                     }
                   `}
                   title={!config.implemented ? 'Coming soon' : config.description}
@@ -303,7 +303,7 @@ export function MapGeneratorPanel({
 
           {/* Generated Maps Gallery */}
           {generatedMaps.length > 0 && (
-            <div className="border-t border-slate-200 pt-4">
+            <div className="border-t border-light-border dark:border-dark-border pt-4">
               <h4 className="text-sm font-semibold text-slate-700 mb-3">
                 Generated Maps ({generatedMaps.length})
               </h4>
@@ -315,7 +315,7 @@ export function MapGeneratorPanel({
                       relative group rounded-lg overflow-hidden border-2 cursor-pointer transition-all
                       ${previewMap?.id === map.id
                         ? 'border-harken-blue ring-2 ring-harken-blue/20'
-                        : 'border-slate-200 dark:border-dark-border hover:border-slate-300 dark:hover:border-harken-gray'
+                        : 'border-light-border dark:border-dark-border dark:border-dark-border hover:border-border-muted dark:hover:border-dark-border-muted'
                       }
                     `}
                     onClick={() => setPreviewMap(previewMap?.id === map.id ? null : map)}
@@ -328,7 +328,7 @@ export function MapGeneratorPanel({
                         className="w-full h-20 object-cover"
                       />
                     ) : (
-                      <div className="w-full h-20 bg-slate-100 flex items-center justify-center">
+                      <div className="w-full h-20 bg-surface-3 dark:bg-elevation-subtle flex items-center justify-center">
                         <Map className="w-6 h-6 text-slate-300" />
                       </div>
                     )}
@@ -371,7 +371,7 @@ export function MapGeneratorPanel({
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
               <div className="bg-surface-1 rounded-xl shadow-2xl max-w-3xl w-full mx-4 overflow-hidden">
                 {/* Preview Header */}
-                <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 bg-slate-50">
+                <div className="flex items-center justify-between px-4 py-3 border-b border-light-border dark:border-dark-border bg-surface-2 dark:bg-elevation-2">
                   <div className="flex items-center gap-2">
                     <Map className="w-5 h-5 text-harken-blue" />
                     <span className="font-semibold text-slate-700 dark:text-slate-200">{previewMap.title}</span>
@@ -382,7 +382,7 @@ export function MapGeneratorPanel({
                         href={previewMap.imageUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="flex items-center gap-1.5 px-2 py-1 text-xs text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded transition-colors"
+                        className="flex items-center gap-1.5 px-2 py-1 text-xs text-slate-600 hover:text-slate-800 hover:bg-surface-3 dark:hover:bg-elevation-subtle rounded transition-colors"
                       >
                         <Download className="w-3.5 h-3.5" />
                         Open
@@ -390,7 +390,7 @@ export function MapGeneratorPanel({
                     )}
                     <button
                       onClick={() => setPreviewMap(null)}
-                      className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded transition-colors"
+                      className="p-1.5 text-slate-400 hover:text-slate-600 hover:bg-surface-3 dark:hover:bg-elevation-subtle rounded transition-colors"
                     >
                       <X className="w-5 h-5" />
                     </button>
@@ -403,17 +403,17 @@ export function MapGeneratorPanel({
                     <img
                       src={previewMap.imageUrl}
                       alt={previewMap.title}
-                      className="w-full h-full object-contain bg-slate-100"
+                      className="w-full h-full object-contain bg-surface-3 dark:bg-elevation-subtle"
                     />
                   ) : (
-                    <div className="w-full h-full bg-slate-100 flex items-center justify-center">
+                    <div className="w-full h-full bg-surface-3 dark:bg-elevation-subtle flex items-center justify-center">
                       <Map className="w-16 h-16 text-slate-300" />
                     </div>
                   )}
                 </div>
 
                 {/* Preview Footer */}
-                <div className="px-4 py-3 border-t border-slate-200 bg-slate-50 text-sm text-slate-500 dark:text-slate-400">
+                <div className="px-4 py-3 border-t border-light-border dark:border-dark-border bg-surface-2 dark:bg-elevation-2 text-sm text-slate-500 dark:text-slate-400">
                   <div className="flex items-center justify-between">
                     <span>
                       Center: {previewMap.center.lat.toFixed(6)}, {previewMap.center.lng.toFixed(6)}

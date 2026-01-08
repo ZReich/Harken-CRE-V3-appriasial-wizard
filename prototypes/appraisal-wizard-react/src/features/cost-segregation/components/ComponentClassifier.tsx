@@ -88,22 +88,22 @@ export const ComponentClassifier: React.FC<ComponentClassifierProps> = ({
       case '7-year': return 'bg-accent-teal-mint-light text-green-800 border-green-200';
       case '15-year': return 'bg-blue-100 text-blue-800 border-blue-200';
       case '27.5-year': return 'bg-purple-100 text-purple-800 border-purple-200';
-      case '39-year': return 'bg-slate-100 text-slate-700 border-slate-200';
+      case '39-year': return 'bg-surface-3 dark:bg-elevation-subtle text-slate-700 border-light-border dark:border-dark-border';
       default: return 'bg-harken-gray-light text-harken-dark border-light-border';
     }
   };
 
   return (
-    <div className={`bg-surface-1 rounded-xl border border-slate-200 shadow-sm overflow-hidden ${className}`}>
+    <div className={`bg-surface-1 rounded-xl border border-light-border dark:border-dark-border shadow-sm overflow-hidden ${className}`}>
       {/* Header */}
-      <div className="px-6 py-4 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white">
+      <div className="px-6 py-4 border-b border-light-border dark:border-dark-border bg-gradient-to-r from-slate-50 to-white">
         <div className="flex items-center justify-between mb-4">
           <h3 className="font-bold text-slate-900 text-lg">Component Classification</h3>
           <div className="flex items-center gap-2">
             {onResetAll && analysis.hasManualOverrides && (
               <button
                 onClick={onResetAll}
-                className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors"
+                className="flex items-center gap-1.5 px-3 py-1.5 text-sm text-slate-600 hover:text-slate-900 hover:bg-surface-3 dark:hover:bg-elevation-subtle rounded-lg transition-colors"
               >
                 <RotateCcw className="w-4 h-4" />
                 Reset Overrides
@@ -130,7 +130,7 @@ export const ComponentClassifier: React.FC<ComponentClassifierProps> = ({
               placeholder="Search components..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-4 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/20 focus:border-[#0da1c7]"
+              className="w-full pl-9 pr-4 py-2 border border-light-border dark:border-dark-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/20 focus:border-[#0da1c7]"
             />
           </div>
           <div className="relative">
@@ -138,7 +138,7 @@ export const ComponentClassifier: React.FC<ComponentClassifierProps> = ({
             <select
               value={filterCategory}
               onChange={(e) => setFilterCategory(e.target.value as FilterCategory)}
-              className="pl-9 pr-8 py-2 border border-slate-200 rounded-lg text-sm bg-surface-1 focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/20 focus:border-[#0da1c7] appearance-none cursor-pointer"
+              className="pl-9 pr-8 py-2 border border-light-border dark:border-dark-border rounded-lg text-sm bg-surface-1 focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/20 focus:border-[#0da1c7] appearance-none cursor-pointer"
             >
               <option value="all">All Categories</option>
               <option value="building-structure">Building Structure</option>
@@ -155,7 +155,7 @@ export const ComponentClassifier: React.FC<ComponentClassifierProps> = ({
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="bg-slate-50 border-b border-slate-200">
+            <tr className="bg-surface-2 dark:bg-elevation-2 border-b border-light-border dark:border-dark-border">
               <th className="text-left px-4 py-3 font-semibold text-slate-700">Component</th>
               <th className="text-left px-4 py-3 font-semibold text-slate-700">Category</th>
               <th className="text-right px-4 py-3 font-semibold text-slate-700">Cost</th>
@@ -180,8 +180,8 @@ export const ComponentClassifier: React.FC<ComponentClassifierProps> = ({
                 return (
                   <React.Fragment key={component.id}>
                     <tr 
-                      className={`border-b border-slate-100 hover:bg-slate-50/50 cursor-pointer ${
-                        expandedComponent === component.id ? 'bg-slate-50' : ''
+                      className={`border-b border-light-border dark:border-dark-border hover:bg-surface-2 dark:bg-elevation-2/50 cursor-pointer ${
+                        expandedComponent === component.id ? 'bg-surface-2 dark:bg-elevation-2' : ''
                       }`}
                       onClick={() => setExpandedComponent(
                         expandedComponent === component.id ? null : component.id
@@ -192,7 +192,7 @@ export const ComponentClassifier: React.FC<ComponentClassifierProps> = ({
                         <div className="text-xs text-slate-500">{component.componentId}</div>
                       </td>
                       <td className="px-4 py-3">
-                        <span className="px-2 py-1 bg-slate-100 text-slate-600 text-xs rounded-full capitalize">
+                        <span className="px-2 py-1 bg-surface-3 dark:bg-elevation-subtle text-slate-600 text-xs rounded-full capitalize">
                           {component.category.replace(/-/g, ' ')}
                         </span>
                       </td>
@@ -218,7 +218,7 @@ export const ComponentClassifier: React.FC<ComponentClassifierProps> = ({
                           className={`px-2 py-1 text-xs font-medium rounded-lg border cursor-pointer ${
                             isOverridden 
                               ? 'bg-accent-amber-gold-light border-accent-amber-gold-light text-accent-amber-gold' 
-                              : 'bg-surface-1 border-slate-200 text-slate-700'
+                              : 'bg-surface-1 border-light-border dark:border-dark-border text-slate-700'
                           }`}
                         >
                           {DEPRECIATION_CLASSES.map(dc => (
@@ -242,7 +242,7 @@ export const ComponentClassifier: React.FC<ComponentClassifierProps> = ({
                     </tr>
                     {/* Expanded Details */}
                     {expandedComponent === component.id && (
-                      <tr className="bg-slate-50/80">
+                      <tr className="bg-surface-2 dark:bg-elevation-2/80">
                         <td colSpan={6} className="px-4 py-4">
                           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                             <div>
@@ -282,7 +282,7 @@ export const ComponentClassifier: React.FC<ComponentClassifierProps> = ({
       </div>
 
       {/* Summary Footer */}
-      <div className="px-6 py-4 bg-slate-50 border-t border-slate-200">
+      <div className="px-6 py-4 bg-surface-2 dark:bg-elevation-2 border-t border-light-border dark:border-dark-border">
         <div className="flex flex-wrap items-center justify-between gap-4 text-sm">
           <div className="flex items-center gap-4">
             <span className="text-slate-600">

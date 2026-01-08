@@ -323,7 +323,7 @@ export const RentComparableGrid: React.FC<RentComparableGridProps> = ({
       <div className={`element-dropdown relative ${isOpen ? 'z-[500]' : ''}`}>
         <button 
           onClick={() => setOpenElementDropdown(isOpen ? null : section)}
-          className="w-full py-2 px-3 border-2 border-dashed border-slate-300 dark:border-harken-gray rounded-lg flex items-center justify-between gap-2 text-slate-500 dark:text-slate-400 font-semibold hover:border-harken-blue hover:text-harken-blue hover:bg-harken-blue/5 transition-all duration-300 group text-xs bg-surface-1 dark:bg-elevation-1"
+          className="w-full py-2 px-3 border-2 border-dashed border-border-muted dark:border-dark-border-muted rounded-lg flex items-center justify-between gap-2 text-slate-500 dark:text-slate-400 font-semibold hover:border-harken-blue hover:text-harken-blue hover:bg-harken-blue/5 transition-all duration-300 group text-xs bg-surface-1 dark:bg-elevation-1"
         >
           <div className="flex items-center gap-2">
             <Plus size={12} className="text-slate-400 group-hover:text-harken-blue" />
@@ -333,8 +333,8 @@ export const RentComparableGrid: React.FC<RentComparableGridProps> = ({
         </button>
         
         {isOpen && (
-          <div className="absolute top-full left-0 mt-1 w-64 bg-surface-1 dark:bg-elevation-1 rounded-xl shadow-2xl border border-slate-200 dark:border-dark-border z-[500] overflow-hidden">
-            <div className="px-3 py-2 bg-slate-50 dark:bg-elevation-1 border-b border-slate-200 dark:border-dark-border">
+          <div className="absolute top-full left-0 mt-1 w-64 bg-surface-1 dark:bg-elevation-1 rounded-xl shadow-2xl border border-light-border dark:border-dark-border dark:border-dark-border z-[500] overflow-hidden">
+            <div className="px-3 py-2 bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1 border-b border-light-border dark:border-dark-border dark:border-dark-border">
               <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Available Elements</span>
             </div>
             <div className="max-h-48 overflow-y-auto">
@@ -343,7 +343,7 @@ export const RentComparableGrid: React.FC<RentComparableGridProps> = ({
                   <button
                     key={element.id}
                     onClick={() => handleAddElement(section, element)}
-                    className="w-full text-left px-3 py-2 text-xs hover:bg-harken-blue/5 dark:hover:bg-harken-blue/10 transition-colors border-b border-slate-100 dark:border-dark-border last:border-b-0 group"
+                    className="w-full text-left px-3 py-2 text-xs hover:bg-harken-blue/5 dark:hover:bg-harken-blue/10 transition-colors border-b border-light-border dark:border-dark-border dark:border-dark-border last:border-b-0 group"
                   >
                     <div className="font-medium text-slate-700 dark:text-slate-200 group-hover:text-harken-blue">{element.label}</div>
                     {element.description && (
@@ -357,7 +357,7 @@ export const RentComparableGrid: React.FC<RentComparableGridProps> = ({
                 </div>
               )}
             </div>
-            <div className="border-t border-slate-200 dark:border-dark-border">
+            <div className="border-t border-light-border dark:border-dark-border dark:border-dark-border">
               <button
                 onClick={() => handleAddCustomElement(section)}
                 className="w-full text-left px-3 py-2.5 text-xs hover:bg-harken-blue/5 dark:hover:bg-harken-blue/10 transition-colors flex items-center gap-2 text-harken-blue font-medium"
@@ -390,15 +390,15 @@ export const RentComparableGrid: React.FC<RentComparableGridProps> = ({
   const [isMapCollapsed, setIsMapCollapsed] = useState(false);
 
   return (
-    <div className="flex flex-col h-full bg-slate-50 dark:bg-elevation-1 relative overflow-hidden">
+    <div className="flex flex-col h-full bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1 relative overflow-hidden">
       
       {/* RENTAL COMPARABLES MAP SECTION */}
       {hasSubjectCoords && (
-        <div className="flex-shrink-0 border-b border-slate-200 dark:border-dark-border bg-surface-1 dark:bg-elevation-1">
+        <div className="flex-shrink-0 border-b border-light-border dark:border-dark-border dark:border-dark-border bg-surface-1 dark:bg-elevation-1">
           {/* Map Header - Always visible */}
           <button
             onClick={() => setIsMapCollapsed(!isMapCollapsed)}
-            className="w-full flex items-center justify-between px-4 py-2 hover:bg-slate-50 dark:hover:bg-elevation-3 transition-colors"
+            className="w-full flex items-center justify-between px-4 py-2 hover:bg-surface-2 dark:bg-elevation-2 dark:hover:bg-elevation-3 transition-colors"
           >
             <div className="flex items-center gap-2">
               <MapIcon className="w-4 h-4 text-accent-teal-mint" />
@@ -460,7 +460,7 @@ export const RentComparableGrid: React.FC<RentComparableGridProps> = ({
           
           {/* ========== HEADER ROW ========== */}
           <div 
-            className="sticky top-0 left-0 z-[120] bg-surface-1 dark:bg-elevation-1 border-b border-slate-200 dark:border-dark-border flex items-end" 
+            className="sticky top-0 left-0 z-[120] bg-surface-1 dark:bg-elevation-1 border-b border-light-border dark:border-dark-border dark:border-dark-border flex items-end" 
             style={{ width: LABEL_COL_WIDTH, height: 120, transform: 'translateZ(0)', willChange: 'transform' }}
           >
             <div className="p-2 pl-3">
@@ -483,7 +483,7 @@ export const RentComparableGrid: React.FC<RentComparableGridProps> = ({
                 SUBJECT
               </div>
             </div>
-            <div className="p-2 flex-1 flex flex-col gap-0.5 bg-sky-50 dark:bg-[#0f1f3a] border-r border-slate-200 dark:border-dark-border">
+            <div className="p-2 flex-1 flex flex-col gap-0.5 bg-sky-50 dark:bg-[#0f1f3a] border-r border-light-border dark:border-dark-border dark:border-dark-border">
               <h3 className="font-bold text-slate-800 dark:text-white text-xs leading-tight line-clamp-1" title={SUBJECT_RENT_PROPERTY.address}>
                 {SUBJECT_RENT_PROPERTY.address.split(',')[0]}
               </h3>
@@ -498,7 +498,7 @@ export const RentComparableGrid: React.FC<RentComparableGridProps> = ({
           {comps.map((comp, idx) => (
             <div 
               key={comp.id} 
-              className="sticky top-0 z-[100] border-b border-slate-200 dark:border-dark-border flex flex-col bg-surface-1 dark:bg-elevation-1"
+              className="sticky top-0 z-[100] border-b border-light-border dark:border-dark-border dark:border-dark-border flex flex-col bg-surface-1 dark:bg-elevation-1"
               style={{ height: 120, transform: 'translateZ(0)', willChange: 'transform' }}
             >
               <div className="relative h-16 w-full overflow-hidden group">
@@ -519,7 +519,7 @@ export const RentComparableGrid: React.FC<RentComparableGridProps> = ({
                   <Trash2 className="w-3 h-3" />
                 </button>
               </div>
-              <div className="p-2 flex-1 flex flex-col gap-0.5 border-r border-slate-200 dark:border-dark-border">
+              <div className="p-2 flex-1 flex flex-col gap-0.5 border-r border-light-border dark:border-dark-border dark:border-dark-border">
                 <h3 className="font-bold text-slate-800 dark:text-white text-xs leading-tight line-clamp-1" title={comp.address}>
                   Rental {idx + 1}
                 </h3>
@@ -536,10 +536,10 @@ export const RentComparableGrid: React.FC<RentComparableGridProps> = ({
           ))}
 
           {/* ========== TRANSACTION DATA SECTION ========== */}
-          <div className="col-span-full relative z-[50] mt-4 border-y border-slate-200 dark:border-dark-border">
-            <div className="absolute left-0 right-0 h-full opacity-30 bg-slate-100 dark:bg-elevation-1"></div>
+          <div className="col-span-full relative z-[50] mt-4 border-y border-light-border dark:border-dark-border dark:border-dark-border">
+            <div className="absolute left-0 right-0 h-full opacity-30 bg-surface-3 dark:bg-elevation-subtle"></div>
             <div 
-              className="sticky left-0 w-fit px-4 py-2 font-bold text-xs uppercase tracking-widest bg-slate-50 dark:bg-elevation-1 text-slate-700 dark:text-slate-200 flex items-center gap-2"
+              className="sticky left-0 w-fit px-4 py-2 font-bold text-xs uppercase tracking-widest bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1 text-slate-700 dark:text-slate-200 flex items-center gap-2"
               style={{ zIndex: 51 }}
             >
               TRANSACTION DATA
@@ -550,7 +550,7 @@ export const RentComparableGrid: React.FC<RentComparableGridProps> = ({
           {transactionRows.map(row => (
             <React.Fragment key={row.id}>
               <div 
-                className="sticky left-0 z-[60] border-r border-b border-slate-100 dark:border-dark-border flex items-center justify-between px-2 py-1.5 group bg-surface-1 dark:bg-elevation-1"
+                className="sticky left-0 z-[60] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border flex items-center justify-between px-2 py-1.5 group bg-surface-1 dark:bg-elevation-1"
                 style={{ width: LABEL_COL_WIDTH, transform: 'translateZ(0)' }}
               >
                 <span className="text-xs font-medium text-slate-600 dark:text-slate-400 truncate">{row.label}</span>
@@ -566,7 +566,7 @@ export const RentComparableGrid: React.FC<RentComparableGridProps> = ({
               </div>
               
               <div 
-                className="sticky left-[160px] z-[55] border-r border-b border-slate-100 dark:border-dark-border p-2 flex items-center justify-center text-xs bg-sky-50 dark:bg-[#0f1f3a] shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none"
+                className="sticky left-[160px] z-[55] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs bg-sky-50 dark:bg-[#0f1f3a] shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none"
                 style={{ width: SUBJECT_COL_WIDTH }}
               >
                 <span className="font-medium text-slate-700 dark:text-slate-200">{getSubjectTransactionValue(row.id)}</span>
@@ -575,7 +575,7 @@ export const RentComparableGrid: React.FC<RentComparableGridProps> = ({
               {comps.map(comp => (
                 <div 
                   key={`${row.id}-${comp.id}`} 
-                  className="border-r border-b border-slate-100 dark:border-dark-border p-2 flex items-center justify-center text-xs bg-surface-1 dark:bg-elevation-1"
+                  className="border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs bg-surface-1 dark:bg-elevation-1"
                 >
                   <span className="font-medium text-slate-600 dark:text-slate-200">{getTransactionValue(comp, row.id)}</span>
                 </div>
@@ -613,7 +613,7 @@ export const RentComparableGrid: React.FC<RentComparableGridProps> = ({
           {qualitativeRows.map(row => (
             <React.Fragment key={row.id}>
               <div 
-                className="sticky left-0 z-[60] border-r border-b border-slate-100 dark:border-dark-border flex items-center justify-between px-2 py-1.5 group bg-surface-1 dark:bg-elevation-1"
+                className="sticky left-0 z-[60] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border flex items-center justify-between px-2 py-1.5 group bg-surface-1 dark:bg-elevation-1"
                 style={{ width: LABEL_COL_WIDTH, transform: 'translateZ(0)' }}
               >
                 <span className="text-xs font-medium text-slate-600 dark:text-slate-400 truncate">{row.label}</span>
@@ -627,7 +627,7 @@ export const RentComparableGrid: React.FC<RentComparableGridProps> = ({
               </div>
               
               <div 
-                className="sticky left-[160px] z-[55] border-r border-b border-slate-100 dark:border-dark-border p-2 flex items-center justify-center text-xs bg-sky-50 dark:bg-[#0f1f3a] shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none"
+                className="sticky left-[160px] z-[55] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs bg-sky-50 dark:bg-[#0f1f3a] shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none"
                 style={{ width: SUBJECT_COL_WIDTH }}
               >
                 <span className="font-medium text-slate-700 dark:text-slate-200">{getSubjectQualitativeValue(row.id)}</span>
@@ -636,7 +636,7 @@ export const RentComparableGrid: React.FC<RentComparableGridProps> = ({
               {comps.map(comp => (
                 <div 
                   key={`${row.id}-${comp.id}`} 
-                  className="border-r border-b border-slate-100 dark:border-dark-border p-2 flex items-center justify-center text-xs bg-surface-1 dark:bg-elevation-1"
+                  className="border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs bg-surface-1 dark:bg-elevation-1"
                 >
                   <AdjustmentChip compId={comp.id} rowId={row.field || row.id} />
                 </div>
@@ -689,7 +689,7 @@ export const RentComparableGrid: React.FC<RentComparableGridProps> = ({
 
         {/* RENT INDICATION FOOTER - Stays centered, doesn't scroll horizontally */}
         <div 
-          className="sticky left-0 bg-slate-50 dark:bg-elevation-1 border-t-2 border-slate-300 dark:border-dark-border p-8 pt-10"
+          className="sticky left-0 bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1 border-t-2 border-border-muted dark:border-dark-border-muted p-8 pt-10"
           style={{ width: '100vw', maxWidth: '100%' }}
         >
           <div className="max-w-4xl mx-auto flex flex-col gap-6">
@@ -699,7 +699,7 @@ export const RentComparableGrid: React.FC<RentComparableGridProps> = ({
                 <h2 className="text-xl font-bold text-slate-800 dark:text-white uppercase tracking-wider">Rent Indication</h2>
               </div>
             </div>
-            <div className="bg-surface-1 dark:bg-elevation-1 rounded-2xl border border-slate-200 dark:border-dark-border p-6 shadow-sm">
+            <div className="bg-surface-1 dark:bg-elevation-1 rounded-2xl border border-light-border dark:border-dark-border dark:border-dark-border p-6 shadow-sm">
               <div className="grid grid-cols-3 gap-6">
                 <div className="text-center">
                   <div className="text-sm text-slate-500 font-medium mb-2">Subject Size</div>

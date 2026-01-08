@@ -82,8 +82,8 @@ export const SummaryPage: React.FC<SummaryPageProps> = ({
           {rows.map((row, index) => (
             <tr 
               key={index} 
-              className={`border-b border-slate-100 ${
-                isEditing ? 'cursor-pointer hover:bg-slate-50' : ''
+              className={`border-b border-light-border dark:border-dark-border ${
+                isEditing ? 'cursor-pointer hover:bg-surface-2 dark:bg-elevation-2' : ''
               }`}
               onClick={() => isEditing && onContentClick?.(`summary-${row.label}`)}
             >
@@ -105,7 +105,7 @@ export const SummaryPage: React.FC<SummaryPageProps> = ({
   return (
     <div className="w-full h-full bg-surface-1 flex flex-col">
       {/* Page header */}
-      <div className="px-16 pt-12 pb-4 border-b border-slate-200">
+      <div className="px-16 pt-12 pb-4 border-b border-light-border dark:border-dark-border">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold text-slate-800">
             {title || 'Summary of Appraisal'}
@@ -130,7 +130,7 @@ export const SummaryPage: React.FC<SummaryPageProps> = ({
             </h4>
             <div className="space-y-3">
               {summaryData.scenarios.map((scenario, index) => (
-                <div key={index} className="bg-slate-50 rounded-lg p-4">
+                <div key={index} className="bg-surface-2 dark:bg-elevation-2 rounded-lg p-4">
                   <div className="font-medium text-slate-800 mb-2">{scenario.name}</div>
                   <div className="flex flex-wrap gap-2">
                     {scenario.approaches.map((approach, i) => {

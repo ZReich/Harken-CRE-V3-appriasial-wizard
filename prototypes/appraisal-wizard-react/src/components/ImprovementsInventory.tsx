@@ -1078,7 +1078,7 @@ function AreaCard({ area, canRemove, effectivePropertyType, onUpdate, onRemove }
   const hasMeasuredSF = area.hasMeasuredSF !== false;
 
   return (
-    <div className="bg-harken-gray-light dark:bg-elevation-1 border-2 border-transparent hover:border-slate-200 dark:hover:border-harken-dark transition-all rounded-xl p-4 space-y-4">
+    <div className="bg-harken-gray-light dark:bg-elevation-1 border-2 border-transparent hover:border-light-border dark:border-dark-border dark:hover:border-harken-dark transition-all rounded-xl p-4 space-y-4">
       <div className="flex items-center gap-3 flex-wrap">
         <select value={area.type} onChange={(e) => onUpdate({ type: e.target.value as ImprovementArea['type'] })} className="flex-1 min-w-[140px] px-3 py-2 bg-surface-1 dark:bg-elevation-1 dark:text-white border border-light-border dark:border-harken-gray rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent">
           {filteredAreaTypes.map((t: AreaTypeConfig) => (<option key={t.id} value={t.id}>{t.label}{t.isPrimary ? ' ★' : ''}</option>))}

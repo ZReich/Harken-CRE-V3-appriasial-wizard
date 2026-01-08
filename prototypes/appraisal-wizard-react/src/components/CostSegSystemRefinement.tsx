@@ -154,7 +154,7 @@ export const CostSegSystemRefinement: React.FC<CostSegSystemRefinementProps> = (
     <div className="border border-light-border rounded-xl overflow-hidden bg-surface-1 shadow-sm">
       {/* Header */}
       <div
-        className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-white border-b border-light-border cursor-pointer hover:bg-slate-50 transition-colors"
+        className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-white border-b border-light-border cursor-pointer hover:bg-surface-2 dark:bg-elevation-2 transition-colors"
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <div className="flex items-center gap-3 flex-1">

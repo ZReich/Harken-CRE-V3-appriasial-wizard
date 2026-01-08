@@ -19,7 +19,7 @@ export const PriceChart: React.FC<PriceChartProps> = ({ properties, values }) =>
   const avgPrice = data.reduce((acc, curr) => acc + curr.price, 0) / data.length;
 
   return (
-    <div className="bg-surface-1 p-4 rounded-xl border border-slate-200 shadow-sm h-full flex flex-col">
+    <div className="bg-surface-1 p-4 rounded-xl border border-light-border dark:border-dark-border shadow-sm h-full flex flex-col">
       <h4 className="text-sm font-bold text-slate-700 mb-4 flex items-center gap-2">
         <span className="p-1 rounded bg-purple-100 text-purple-600">
            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" /></svg>

@@ -291,7 +291,7 @@ export function RadiusRingMap({
   if (error) {
     return (
       <div 
-        className={`bg-slate-100 rounded-xl flex items-center justify-center ${className}`}
+        className={`bg-surface-3 dark:bg-elevation-subtle rounded-xl flex items-center justify-center ${className}`}
         style={{ height }}
       >
         <div className="text-center text-slate-500 p-4">
@@ -306,11 +306,11 @@ export function RadiusRingMap({
   if (!isLoaded) {
     return (
       <div 
-        className={`bg-slate-100 rounded-xl flex items-center justify-center ${className}`}
+        className={`bg-surface-3 dark:bg-elevation-subtle rounded-xl flex items-center justify-center ${className}`}
         style={{ height }}
       >
         <div className="text-center text-slate-500 dark:text-slate-400">
-          <div className="w-8 h-8 border-2 border-slate-300 border-t-[#0da1c7] rounded-full animate-spin mx-auto mb-2" />
+          <div className="w-8 h-8 border-2 border-border-muted dark:border-dark-border-muted border-t-[#0da1c7] rounded-full animate-spin mx-auto mb-2" />
           <p className="text-sm">Loading map...</p>
         </div>
       </div>
@@ -328,13 +328,13 @@ export function RadiusRingMap({
 
       {/* Map Type Toggle */}
       {showToggle && (
-        <div className="absolute top-3 left-3 flex bg-surface-1 rounded-lg shadow-md overflow-hidden border border-slate-200">
+        <div className="absolute top-3 left-3 flex bg-surface-1 rounded-lg shadow-md overflow-hidden border border-light-border dark:border-dark-border">
           <button
             onClick={() => handleMapTypeChange('satellite')}
             className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors ${
               mapType === 'satellite'
                 ? 'bg-[#0da1c7] text-white'
-                : 'bg-surface-1 text-slate-600 hover:bg-slate-50'
+                : 'bg-surface-1 text-slate-600 hover:bg-surface-2 dark:bg-elevation-2'
             }`}
           >
             <Satellite className="w-3.5 h-3.5" />
@@ -345,7 +345,7 @@ export function RadiusRingMap({
             className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors ${
               mapType === 'roadmap'
                 ? 'bg-[#0da1c7] text-white'
-                : 'bg-surface-1 text-slate-600 hover:bg-slate-50'
+                : 'bg-surface-1 text-slate-600 hover:bg-surface-2 dark:bg-elevation-2'
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
@@ -356,7 +356,7 @@ export function RadiusRingMap({
 
       {/* Legend */}
       {showLegend && (
-        <div className="absolute bottom-3 left-3 bg-surface-1/95 backdrop-blur-sm rounded-lg shadow-md px-3 py-2 border border-slate-200">
+        <div className="absolute bottom-3 left-3 bg-surface-1/95 backdrop-blur-sm rounded-lg shadow-md px-3 py-2 border border-light-border dark:border-dark-border">
           <div className="flex items-center gap-4 text-xs">
             {radii.sort((a, b) => a - b).map((radius) => {
               const style = RING_STYLES.find(s => s.radiusMiles === radius);

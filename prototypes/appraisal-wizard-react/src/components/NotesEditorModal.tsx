@@ -68,46 +68,46 @@ export const NotesEditorModal: React.FC<NotesEditorModalProps> = ({
                 </div>
 
                 {/* Formatting Toolbar */}
-                <div className="px-5 py-3 border-b border-slate-200 dark:border-dark-border bg-surface-1 dark:bg-elevation-1 flex items-center gap-1 flex-shrink-0">
+                <div className="px-5 py-3 border-b border-light-border dark:border-dark-border dark:border-dark-border bg-surface-1 dark:bg-elevation-1 flex items-center gap-1 flex-shrink-0">
                     <button
                         onClick={() => applyFormatting('bold')}
-                        className="p-2 rounded hover:bg-slate-100 dark:hover:bg-elevation-3 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors"
+                        className="p-2 rounded hover:bg-surface-3 dark:hover:bg-elevation-3 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors"
                         title="Bold"
                     >
                         <Bold className="w-4 h-4" />
                     </button>
                     <button
                         onClick={() => applyFormatting('italic')}
-                        className="p-2 rounded hover:bg-slate-100 dark:hover:bg-elevation-3 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors"
+                        className="p-2 rounded hover:bg-surface-3 dark:hover:bg-elevation-3 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors"
                         title="Italic"
                     >
                         <Italic className="w-4 h-4" />
                     </button>
                     <button
                         onClick={() => applyFormatting('underline')}
-                        className="p-2 rounded hover:bg-slate-100 dark:hover:bg-elevation-3 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors"
+                        className="p-2 rounded hover:bg-surface-3 dark:hover:bg-elevation-3 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors"
                         title="Underline"
                     >
                         <Underline className="w-4 h-4" />
                     </button>
-                    <div className="w-px h-5 bg-slate-200 dark:bg-dark-input mx-1"></div>
+                    <div className="w-px h-5 bg-surface-4 dark:bg-elevation-muted mx-1"></div>
                     <button
                         onClick={() => applyFormatting('justifyLeft')}
-                        className="p-2 rounded hover:bg-slate-100 dark:hover:bg-elevation-3 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors"
+                        className="p-2 rounded hover:bg-surface-3 dark:hover:bg-elevation-3 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors"
                         title="Align Left"
                     >
                         <AlignLeft className="w-4 h-4" />
                     </button>
                     <button
                         onClick={() => applyFormatting('justifyCenter')}
-                        className="p-2 rounded hover:bg-slate-100 dark:hover:bg-elevation-3 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors"
+                        className="p-2 rounded hover:bg-surface-3 dark:hover:bg-elevation-3 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors"
                         title="Align Center"
                     >
                         <AlignCenter className="w-4 h-4" />
                     </button>
                     <button
                         onClick={() => applyFormatting('insertUnorderedList')}
-                        className="p-2 rounded hover:bg-slate-100 dark:hover:bg-elevation-3 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors"
+                        className="p-2 rounded hover:bg-surface-3 dark:hover:bg-elevation-3 text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white transition-colors"
                         title="Bullet List"
                     >
                         <List className="w-4 h-4" />
@@ -121,16 +121,16 @@ export const NotesEditorModal: React.FC<NotesEditorModalProps> = ({
                         contentEditable
                         onInput={(e) => onInput(e.currentTarget.innerHTML)}
                         dangerouslySetInnerHTML={{ __html: content }}
-                        className={`w-full px-4 py-3 border border-slate-200 dark:border-harken-gray rounded-lg text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-harken-blue/30 focus:border-harken-blue overflow-y-auto transition-all empty:before:content-['Type_your_analysis_and_assumptions_here...'] empty:before:text-slate-400 dark:bg-elevation-1/50 ${isFullscreen ? 'flex-1 text-base leading-relaxed p-6' : 'min-h-[192px]'}`}
+                        className={`w-full px-4 py-3 border border-light-border dark:border-dark-border dark:border-harken-gray rounded-lg text-sm text-slate-700 dark:text-slate-200 focus:outline-none focus:ring-2 focus:ring-harken-blue/30 focus:border-harken-blue overflow-y-auto transition-all empty:before:content-['Type_your_analysis_and_assumptions_here...'] empty:before:text-slate-400 dark:bg-elevation-1/50 ${isFullscreen ? 'flex-1 text-base leading-relaxed p-6' : 'min-h-[192px]'}`}
                         style={isFullscreen ? {} : { minHeight: '192px' }}
                     />
                 </div>
 
                 {/* Actions */}
-                <div className="px-5 py-4 bg-slate-50 dark:bg-elevation-1 border-t border-slate-200 dark:border-dark-border flex items-center justify-end gap-3 flex-shrink-0">
+                <div className="px-5 py-4 bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1 border-t border-light-border dark:border-dark-border dark:border-dark-border flex items-center justify-end gap-3 flex-shrink-0">
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 text-slate-600 dark:text-slate-400 font-bold hover:bg-slate-200 dark:hover:bg-elevation-3 rounded-lg transition-colors"
+                        className="px-4 py-2 text-slate-600 dark:text-slate-400 font-bold hover:bg-surface-4 dark:hover:bg-elevation-muted rounded-lg transition-colors"
                     >
                         Cancel
                     </button>

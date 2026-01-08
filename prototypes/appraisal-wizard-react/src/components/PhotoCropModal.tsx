@@ -193,7 +193,7 @@ export function PhotoCropModal({
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 dark:border-dark-border bg-gradient-to-r from-slate-50 to-white dark:from-elevation-1 dark:to-elevation-1">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-light-border dark:border-dark-border dark:border-dark-border bg-gradient-to-r from-slate-50 to-white dark:from-elevation-1 dark:to-elevation-1">
           <div>
             <h2 className="text-lg font-bold text-slate-800 dark:text-white">{title}</h2>
             <p className="text-sm text-slate-500 dark:text-slate-400">
@@ -202,7 +202,7 @@ export function PhotoCropModal({
           </div>
           <button
             onClick={onCancel}
-            className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-lg hover:bg-slate-100 dark:hover:bg-elevation-3 transition-colors"
+            className="p-2 text-slate-400 hover:text-slate-600 dark:hover:text-white rounded-lg hover:bg-surface-3 dark:hover:bg-elevation-3 transition-colors"
           >
             <X className="w-5 h-5" />
           </button>
@@ -210,7 +210,7 @@ export function PhotoCropModal({
 
         {/* Aspect Ratio Selector */}
         {showAspectRatioSelector && (
-          <div className="px-6 py-3 border-b border-slate-100 dark:border-dark-border bg-slate-50 dark:bg-elevation-1/50">
+          <div className="px-6 py-3 border-b border-light-border dark:border-dark-border dark:border-dark-border bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1/50">
             <div className="flex items-center gap-2 flex-wrap">
               <span className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wider mr-2">
                 Aspect Ratio:
@@ -222,7 +222,7 @@ export function PhotoCropModal({
                   className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
                     aspectRatio === ratio.value || (ratio.value === undefined && aspectRatio === undefined)
                       ? 'bg-harken-blue text-white shadow-sm'
-                      : 'bg-white dark:bg-elevation-1 text-slate-600 dark:text-slate-300 border border-slate-200 dark:border-harken-gray hover:bg-slate-100 dark:hover:bg-harken-gray'
+                      : 'bg-white dark:bg-elevation-1 text-slate-600 dark:text-slate-300 border border-light-border dark:border-dark-border dark:border-harken-gray hover:bg-surface-3 dark:hover:bg-elevation-subtle'
                   }`}
                   title={ratio.description}
                 >
@@ -251,7 +251,7 @@ export function PhotoCropModal({
         )}
 
         {/* Crop Area */}
-        <div className="flex-1 overflow-auto p-6 bg-slate-100 dark:bg-[#0a0a0a] flex items-center justify-center">
+        <div className="flex-1 overflow-auto p-6 bg-surface-3 dark:bg-elevation-subtle flex items-center justify-center">
           <ReactCrop
             crop={crop}
             onChange={(_, percentCrop) => setCrop(percentCrop)}
@@ -271,7 +271,7 @@ export function PhotoCropModal({
         </div>
 
         {/* Footer Actions */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-slate-200 dark:border-dark-border bg-slate-50 dark:bg-elevation-1/50">
+        <div className="flex items-center justify-between px-6 py-4 border-t border-light-border dark:border-dark-border dark:border-dark-border bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1/50">
           <div className="text-xs text-slate-500 dark:text-slate-400">
             {completedCrop && (
               <span>
@@ -282,7 +282,7 @@ export function PhotoCropModal({
           <div className="flex items-center gap-3">
             <button
               onClick={onCancel}
-              className="px-5 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 bg-white dark:bg-elevation-1 border border-slate-200 dark:border-harken-gray rounded-lg hover:bg-slate-50 dark:hover:bg-harken-gray transition-colors"
+              className="px-5 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-300 bg-white dark:bg-elevation-1 border border-light-border dark:border-dark-border dark:border-harken-gray rounded-lg hover:bg-surface-2 dark:bg-elevation-2 dark:hover:bg-harken-gray transition-colors"
             >
               Cancel
             </button>

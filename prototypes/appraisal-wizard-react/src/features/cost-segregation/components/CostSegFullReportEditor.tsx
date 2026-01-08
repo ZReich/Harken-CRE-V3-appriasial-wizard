@@ -463,7 +463,7 @@ const MethodologySection: React.FC = () => (
     </div>
 
     {/* Legal References */}
-    <div className="bg-slate-50 border border-slate-200 rounded-lg p-4">
+    <div className="bg-surface-2 dark:bg-elevation-2 border border-light-border dark:border-dark-border rounded-lg p-4">
       <h4 className="font-semibold text-harken-dark mb-3">Regulatory References</h4>
       <ul className="space-y-1 text-sm text-harken-gray">
         <li>• {IRS_REFERENCES.auditTechniquesGuide}</li>
@@ -475,7 +475,7 @@ const MethodologySection: React.FC = () => (
     </div>
 
     {/* Court Cases */}
-    <div className="bg-slate-50 border border-slate-200 rounded-lg p-4">
+    <div className="bg-surface-2 dark:bg-elevation-2 border border-light-border dark:border-dark-border rounded-lg p-4">
       <h4 className="font-semibold text-harken-dark mb-3">Landmark Court Cases</h4>
       <div className="space-y-3">
         {COURT_CASE_REFERENCES.map((c, idx) => (

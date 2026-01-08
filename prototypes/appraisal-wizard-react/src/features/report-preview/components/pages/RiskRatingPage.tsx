@@ -235,7 +235,7 @@ export const RiskRatingPage: React.FC<RiskRatingPageProps> = ({ data, pageNumber
       </div>
 
       {/* Rating Scale Visualization */}
-      <div className="mb-6 p-3 bg-slate-50 rounded-lg">
+      <div className="mb-6 p-3 bg-surface-2 dark:bg-elevation-2 rounded-lg">
         <div className="flex items-center justify-between text-xs text-slate-500 mb-1.5">
           <span>Lower Risk</span>
           <span className="font-medium text-slate-700">Rating Scale Position</span>
@@ -262,40 +262,40 @@ export const RiskRatingPage: React.FC<RiskRatingPageProps> = ({ data, pageNumber
       </div>
 
       {/* Four-Dimension Analysis */}
-      <h2 className="text-sm font-bold text-slate-800 uppercase tracking-wide border-b border-slate-300 pb-1 mb-3">
+      <h2 className="text-sm font-bold text-slate-800 uppercase tracking-wide border-b border-border-muted dark:border-dark-border-muted pb-1 mb-3">
         Risk Dimension Analysis
       </h2>
       
       <table className="w-full text-xs border-collapse mb-4">
         <thead>
-          <tr className="bg-slate-100">
-            <th className="text-left py-2 px-2 font-semibold text-slate-700 border border-slate-200">
+          <tr className="bg-surface-3 dark:bg-elevation-subtle">
+            <th className="text-left py-2 px-2 font-semibold text-slate-700 border border-light-border dark:border-dark-border">
               Dimension
             </th>
-            <th className="text-center py-2 px-2 font-semibold text-slate-700 border border-slate-200 w-16">
+            <th className="text-center py-2 px-2 font-semibold text-slate-700 border border-light-border dark:border-dark-border w-16">
               Score
             </th>
-            <th className="text-center py-2 px-2 font-semibold text-slate-700 border border-slate-200 w-16">
+            <th className="text-center py-2 px-2 font-semibold text-slate-700 border border-light-border dark:border-dark-border w-16">
               Weight
             </th>
-            <th className="text-center py-2 px-2 font-semibold text-slate-700 border border-slate-200 w-20">
+            <th className="text-center py-2 px-2 font-semibold text-slate-700 border border-light-border dark:border-dark-border w-20">
               Contribution
             </th>
-            <th className="text-left py-2 px-2 font-semibold text-slate-700 border border-slate-200">
+            <th className="text-left py-2 px-2 font-semibold text-slate-700 border border-light-border dark:border-dark-border">
               Assessment
             </th>
           </tr>
         </thead>
         <tbody>
           {weightedContributions.map((dim, idx) => (
-            <tr key={dim.key} className={idx % 2 === 0 ? 'bg-surface-1' : 'bg-slate-50'}>
-              <td className="py-2 px-2 border border-slate-200">
+            <tr key={dim.key} className={idx % 2 === 0 ? 'bg-surface-1' : 'bg-surface-2 dark:bg-elevation-2'}>
+              <td className="py-2 px-2 border border-light-border dark:border-dark-border">
                 <div className="font-medium text-slate-800">{dim.fullName}</div>
                 <div className="text-slate-500 mt-0.5">{dim.description}</div>
               </td>
-              <td className="py-2 px-2 text-center border border-slate-200">
+              <td className="py-2 px-2 text-center border border-light-border dark:border-dark-border">
                 <div className="font-bold text-slate-800 text-sm">{dim.score}</div>
-                <div className="w-full bg-slate-200 rounded-full h-1.5 mt-1">
+                <div className="w-full bg-surface-4 dark:bg-elevation-muted rounded-full h-1.5 mt-1">
                   <div 
                     className={`h-1.5 rounded-full ${
                       dim.score >= 80 ? 'bg-accent-teal-mint' :
@@ -306,14 +306,14 @@ export const RiskRatingPage: React.FC<RiskRatingPageProps> = ({ data, pageNumber
                   />
                 </div>
               </td>
-              <td className="py-2 px-2 text-center font-medium text-slate-700 border border-slate-200">
+              <td className="py-2 px-2 text-center font-medium text-slate-700 border border-light-border dark:border-dark-border">
                 {(dim.weight * 100).toFixed(0)}%
               </td>
-              <td className="py-2 px-2 text-center border border-slate-200">
+              <td className="py-2 px-2 text-center border border-light-border dark:border-dark-border">
                 <span className="font-medium text-slate-800">{dim.contribution}</span>
                 <span className="text-slate-400 ml-1">pts</span>
               </td>
-              <td className="py-2 px-2 border border-slate-200">
+              <td className="py-2 px-2 border border-light-border dark:border-dark-border">
                 <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
                   dim.score >= 80 ? 'bg-accent-teal-mint-light text-accent-teal-mint' :
                   dim.score >= 60 ? 'bg-cyan-100 text-cyan-700' :
@@ -328,20 +328,20 @@ export const RiskRatingPage: React.FC<RiskRatingPageProps> = ({ data, pageNumber
           ))}
         </tbody>
         <tfoot>
-          <tr className="bg-slate-100 font-semibold">
-            <td className="py-2 px-2 border border-slate-200 text-slate-800">
+          <tr className="bg-surface-3 dark:bg-elevation-subtle font-semibold">
+            <td className="py-2 px-2 border border-light-border dark:border-dark-border text-slate-800">
               Composite Score
             </td>
-            <td className="py-2 px-2 text-center border border-slate-200 text-slate-800 text-sm">
+            <td className="py-2 px-2 text-center border border-light-border dark:border-dark-border text-slate-800 text-sm">
               {overallScore}
             </td>
-            <td className="py-2 px-2 text-center border border-slate-200 text-slate-700">
+            <td className="py-2 px-2 text-center border border-light-border dark:border-dark-border text-slate-700">
               100%
             </td>
-            <td className="py-2 px-2 text-center border border-slate-200 text-slate-800">
+            <td className="py-2 px-2 text-center border border-light-border dark:border-dark-border text-slate-800">
               {overallScore} pts
             </td>
-            <td className="py-2 px-2 border border-slate-200">
+            <td className="py-2 px-2 border border-light-border dark:border-dark-border">
               <span className={`inline-block px-2 py-0.5 rounded text-xs font-bold ${gradeConfig.bg} ${gradeConfig.text}`}>
                 {overallGrade} Rating
               </span>
@@ -363,7 +363,7 @@ export const RiskRatingPage: React.FC<RiskRatingPageProps> = ({ data, pageNumber
       )}
 
       {/* Methodology Summary */}
-      <h2 className="text-sm font-bold text-slate-800 uppercase tracking-wide border-b border-slate-300 pb-1 mb-2 mt-4">
+      <h2 className="text-sm font-bold text-slate-800 uppercase tracking-wide border-b border-border-muted dark:border-dark-border-muted pb-1 mb-2 mt-4">
         Analytical Methodology
       </h2>
       <p className="text-xs text-slate-600 leading-relaxed mb-4 whitespace-pre-line">
@@ -371,7 +371,7 @@ export const RiskRatingPage: React.FC<RiskRatingPageProps> = ({ data, pageNumber
       </p>
 
       {/* USPAP Disclosure */}
-      <div className="border border-slate-300 rounded-lg p-3 text-xs text-slate-600 leading-relaxed">
+      <div className="border border-border-muted dark:border-dark-border-muted rounded-lg p-3 text-xs text-slate-600 leading-relaxed">
         <h3 className="font-bold text-slate-700 mb-2">Professional Standards Compliance</h3>
         {USPAP_DISCLOSURE.split('\n\n').map((paragraph, idx) => (
           <p key={idx} className={idx > 0 ? 'mt-2' : ''}>

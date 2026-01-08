@@ -139,7 +139,7 @@ export const HorizontalScrollIndicator: React.FC<HorizontalScrollIndicatorProps>
 
   return (
     <div
-      className={`sticky z-[85] bg-slate-50/80 dark:bg-elevation-1/80 backdrop-blur-sm ${className}`}
+      className={`sticky z-[85] bg-surface-2 dark:bg-elevation-2/80 dark:bg-elevation-1/80 backdrop-blur-sm ${className}`}
       style={{
         top: stickyTop,
         left: 0,
@@ -150,11 +150,11 @@ export const HorizontalScrollIndicator: React.FC<HorizontalScrollIndicatorProps>
       <div
         ref={trackRef}
         onClick={handleTrackClick}
-        className="h-2 mx-4 my-1 bg-slate-200/60 dark:bg-elevation-1/60 rounded-full cursor-pointer transition-colors hover:bg-slate-200 dark:hover:bg-harken-gray"
+        className="h-2 mx-4 my-1 bg-surface-4/60 dark:bg-elevation-muted/60 rounded-full cursor-pointer transition-colors hover:bg-surface-4 dark:hover:bg-elevation-muted"
       >
         <div
           onMouseDown={handleThumbMouseDown}
-          className="h-full bg-slate-400 dark:bg-slate-500 rounded-full cursor-grab active:cursor-grabbing transition-colors hover:bg-slate-500 dark:hover:bg-slate-400"
+          className="h-full bg-slate-400 dark:bg-surface-2 dark:bg-elevation-20 rounded-full cursor-grab active:cursor-grabbing transition-colors hover:bg-surface-2 dark:bg-elevation-20 dark:hover:bg-slate-400"
           style={{
             width: `${thumbWidth}%`,
             marginLeft: `${thumbPosition}%`,

@@ -99,7 +99,7 @@ export const AddContentMenu: React.FC<AddContentMenuProps> = ({
 
   return (
     <div
-      className="fixed z-50 bg-surface-1 border border-slate-200 rounded-xl shadow-xl p-4 w-[320px] animate-fade-in"
+      className="fixed z-50 bg-surface-1 border border-light-border dark:border-dark-border rounded-xl shadow-xl p-4 w-[320px] animate-fade-in"
       style={{
         left: position.x,
         top: position.y,
@@ -111,7 +111,7 @@ export const AddContentMenu: React.FC<AddContentMenuProps> = ({
         <h4 className="font-semibold text-slate-800">Add Content</h4>
         <button
           onClick={onClose}
-          className="p-1 hover:bg-slate-100 rounded"
+          className="p-1 hover:bg-surface-3 dark:hover:bg-elevation-subtle rounded"
         >
           <X size={16} className="text-slate-400" />
         </button>
@@ -123,7 +123,7 @@ export const AddContentMenu: React.FC<AddContentMenuProps> = ({
           <button
             key={option.id}
             onClick={() => handleOptionClick(option.id)}
-            className="flex flex-col items-center gap-2 p-3 rounded-lg border border-slate-200 hover:border-sky-300 hover:bg-sky-50 transition-colors"
+            className="flex flex-col items-center gap-2 p-3 rounded-lg border border-light-border dark:border-dark-border hover:border-sky-300 hover:bg-sky-50 transition-colors"
             title={option.description}
           >
             <div className="text-slate-500">{option.icon}</div>

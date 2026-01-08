@@ -384,7 +384,7 @@ export default function SiteImprovementsInventory({
       </div>
 
       {/* Add Form Section */}
-      <div className="p-4 bg-slate-50/50 dark:bg-elevation-1/50 border-b border-harken-gray-light dark:border-dark-border">
+      <div className="p-4 bg-surface-2 dark:bg-elevation-2/50 dark:bg-elevation-1/50 border-b border-harken-gray-light dark:border-dark-border">
         {/* Category Selector */}
         <div className="mb-4">
           <label className="block text-xs font-medium text-harken-gray dark:text-slate-400 mb-2">Category</label>
@@ -622,7 +622,7 @@ export default function SiteImprovementsInventory({
             </div>
 
             {/* Economic Life Calculator / Reference Guide */}
-            <div className="mb-3 p-2 bg-slate-50 dark:bg-elevation-1/50 rounded-lg border border-slate-200 dark:border-harken-gray">
+            <div className="mb-3 p-2 bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1/50 rounded-lg border border-light-border dark:border-dark-border dark:border-harken-gray">
               <div className="flex items-start gap-2">
                 <Calculator size={14} className="text-harken-blue mt-0.5 flex-shrink-0" />
                 <div className="text-xs text-harken-gray dark:text-slate-400">
@@ -775,7 +775,7 @@ export default function SiteImprovementsInventory({
             return (
               <div
                 key={improvement.id}
-                className="bg-slate-50 dark:bg-elevation-1/50 rounded-lg border border-slate-100 dark:border-dark-border hover:border-slate-200 dark:hover:border-harken-gray transition-colors overflow-hidden"
+                className="bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1/50 rounded-lg border border-light-border dark:border-dark-border dark:border-dark-border hover:border-light-border dark:border-dark-border dark:hover:border-harken-gray transition-colors overflow-hidden"
               >
                 {/* Main Row */}
                 <div className="flex items-center gap-3 p-3">
@@ -884,7 +884,7 @@ export default function SiteImprovementsInventory({
                             }}
                             className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-medium transition-all ${improvement.depreciationOverride !== undefined
                               ? 'border-accent-amber-gold/30 bg-accent-amber-gold-light text-accent-amber-gold'
-                              : 'border-slate-200 text-slate-400 hover:border-slate-300 hover:text-slate-500'
+                              : 'border-light-border dark:border-dark-border text-slate-400 hover:border-border-muted dark:hover:border-dark-border-muted hover:text-slate-500'
                               }`}
                           >
                             <PenLine className="w-3 h-3" />

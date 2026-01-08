@@ -132,8 +132,8 @@ export const PhotoLivePreview: React.FC<PhotoLivePreviewProps> = ({
                 key={id}
                 className={`rounded overflow-hidden flex flex-col ${
                   photo 
-                    ? 'bg-slate-100' 
-                    : 'bg-slate-50 border border-dashed border-slate-200'
+                    ? 'bg-surface-3 dark:bg-elevation-subtle' 
+                    : 'bg-surface-2 dark:bg-elevation-2 border border-dashed border-light-border dark:border-dark-border'
                 }`}
               >
                 <div className="flex-1 min-h-0 relative">
@@ -161,7 +161,7 @@ export const PhotoLivePreview: React.FC<PhotoLivePreviewProps> = ({
 
         {/* Attribution Footer */}
         {(attribution.takenBy || attribution.date) && (
-          <div className="px-3 py-1.5 border-t border-slate-100 flex-shrink-0">
+          <div className="px-3 py-1.5 border-t border-light-border dark:border-dark-border flex-shrink-0">
             <p className="text-[9px] text-slate-500 text-center truncate">
               {attribution.takenBy && `Taken By: ${attribution.takenBy}`}
               {attribution.takenBy && attribution.date && ', '}

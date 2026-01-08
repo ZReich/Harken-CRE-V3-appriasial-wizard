@@ -74,7 +74,7 @@ export const CostSegSummaryPage: React.FC<CostSegSummaryPageProps> = ({
         <h3 className="text-lg font-semibold text-[#1c3643] mb-4">Cost Allocation Summary</h3>
         <table className="w-full text-sm border-collapse">
           <thead>
-            <tr className="border-b-2 border-slate-300">
+            <tr className="border-b-2 border-border-muted dark:border-dark-border-muted">
               <th className="text-left py-3 font-semibold text-harken-gray">Depreciation Class</th>
               <th className="text-right py-3 font-semibold text-harken-gray">Amount</th>
               <th className="text-right py-3 font-semibold text-harken-gray">Percentage</th>

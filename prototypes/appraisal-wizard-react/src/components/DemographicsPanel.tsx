@@ -139,7 +139,7 @@ export function DemographicsPanel({
   // Loading state
   if (isLoading) {
     return (
-      <div className={`bg-surface-1 dark:bg-elevation-1 rounded-xl border border-slate-200 dark:border-dark-border p-8 ${className}`}>
+      <div className={`bg-surface-1 dark:bg-elevation-1 rounded-xl border border-light-border dark:border-dark-border dark:border-dark-border p-8 ${className}`}>
         <div className="flex items-center justify-center gap-3 text-slate-500 dark:text-slate-400">
           <RefreshCw className="w-5 h-5 animate-spin" />
           <span>Loading demographics data...</span>
@@ -151,7 +151,7 @@ export function DemographicsPanel({
   // Error state
   if (error) {
     return (
-      <div className={`bg-surface-1 dark:bg-elevation-1 rounded-xl border border-slate-200 dark:border-dark-border p-8 ${className}`}>
+      <div className={`bg-surface-1 dark:bg-elevation-1 rounded-xl border border-light-border dark:border-dark-border dark:border-dark-border p-8 ${className}`}>
         <div className="flex items-center justify-center gap-3 text-harken-error">
           <AlertCircle className="w-5 h-5" />
           <span>{error}</span>
@@ -171,8 +171,8 @@ export function DemographicsPanel({
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Map Section */}
-      <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl border border-slate-200 dark:border-dark-border overflow-hidden">
-        <div className="px-4 py-3 border-b border-slate-200 bg-slate-50">
+      <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl border border-light-border dark:border-dark-border dark:border-dark-border overflow-hidden">
+        <div className="px-4 py-3 border-b border-light-border dark:border-dark-border bg-surface-2 dark:bg-elevation-2">
           <h3 className="text-sm font-semibold text-slate-800 dark:text-white flex items-center gap-2">
             <Building2 className="w-4 h-4 text-harken-blue" />
             Demographics Map
@@ -189,8 +189,8 @@ export function DemographicsPanel({
       </div>
 
       {/* Data Table */}
-      <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl border border-slate-200 dark:border-dark-border overflow-hidden">
-        <div className="px-4 py-3 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
+      <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl border border-light-border dark:border-dark-border dark:border-dark-border overflow-hidden">
+        <div className="px-4 py-3 border-b border-light-border dark:border-dark-border bg-surface-2 dark:bg-elevation-2 flex items-center justify-between">
           <h3 className="text-sm font-semibold text-slate-800 dark:text-white flex items-center gap-2">
             <Users className="w-4 h-4 text-harken-blue" />
             Radius Demographics
@@ -209,7 +209,7 @@ export function DemographicsPanel({
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>
-              <tr className="bg-slate-50 border-b border-slate-200">
+              <tr className="bg-surface-2 dark:bg-elevation-2 border-b border-light-border dark:border-dark-border">
                 <th className="text-left px-4 py-3 font-semibold text-slate-600 dark:text-slate-400">Metric</th>
                 {normalizedRadii.map(radius => (
                   <th key={radius} className="text-right px-4 py-3 font-semibold text-slate-600 dark:text-slate-400">
@@ -218,9 +218,9 @@ export function DemographicsPanel({
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100">
+            <tbody className="divide-y divide-light-border dark:divide-dark-border">
               {/* Population Section */}
-              <tr className="bg-slate-50/50">
+              <tr className="bg-surface-2 dark:bg-elevation-2/50">
                 <td colSpan={normalizedRadii.length + 1} className="px-4 py-2">
                   <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide flex items-center gap-1.5">
                     <Users className="w-3.5 h-3.5" />
@@ -256,7 +256,7 @@ export function DemographicsPanel({
               </tr>
 
               {/* Households Section */}
-              <tr className="bg-slate-50/50">
+              <tr className="bg-surface-2 dark:bg-elevation-2/50">
                 <td colSpan={normalizedRadii.length + 1} className="px-4 py-2">
                   <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide flex items-center gap-1.5">
                     <Home className="w-3.5 h-3.5" />
@@ -282,7 +282,7 @@ export function DemographicsPanel({
               </tr>
 
               {/* Income Section */}
-              <tr className="bg-slate-50/50">
+              <tr className="bg-surface-2 dark:bg-elevation-2/50">
                 <td colSpan={normalizedRadii.length + 1} className="px-4 py-2">
                   <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide flex items-center gap-1.5">
                     <DollarSign className="w-3.5 h-3.5" />
@@ -316,7 +316,7 @@ export function DemographicsPanel({
               </tr>
 
               {/* Education Section */}
-              <tr className="bg-slate-50/50">
+              <tr className="bg-surface-2 dark:bg-elevation-2/50">
                 <td colSpan={normalizedRadii.length + 1} className="px-4 py-2">
                   <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide flex items-center gap-1.5">
                     <GraduationCap className="w-3.5 h-3.5" />
@@ -342,7 +342,7 @@ export function DemographicsPanel({
               </tr>
 
               {/* Employment Section */}
-              <tr className="bg-slate-50/50">
+              <tr className="bg-surface-2 dark:bg-elevation-2/50">
                 <td colSpan={normalizedRadii.length + 1} className="px-4 py-2">
                   <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide flex items-center gap-1.5">
                     <Briefcase className="w-3.5 h-3.5" />
@@ -373,8 +373,8 @@ export function DemographicsPanel({
 
       {/* Employment by Industry */}
       {data[0]?.employmentByIndustry && data[0].employmentByIndustry.length > 0 && (
-        <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl border border-slate-200 dark:border-dark-border overflow-hidden">
-          <div className="px-4 py-3 border-b border-slate-200 bg-slate-50">
+        <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl border border-light-border dark:border-dark-border dark:border-dark-border overflow-hidden">
+          <div className="px-4 py-3 border-b border-light-border dark:border-dark-border bg-surface-2 dark:bg-elevation-2">
             <h3 className="text-sm font-semibold text-slate-800 dark:text-white flex items-center gap-2">
               <TrendingUp className="w-4 h-4 text-harken-blue" />
               Employment by Industry (1-Mile Radius)
@@ -389,7 +389,7 @@ export function DemographicsPanel({
                       <span className="text-xs text-slate-600 truncate pr-2">{item.industry}</span>
                       <span className="text-xs font-medium text-slate-800 dark:text-white">{formatPercent(item.percentage)}</span>
                     </div>
-                    <div className="h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                    <div className="h-1.5 bg-surface-3 dark:bg-elevation-subtle rounded-full overflow-hidden">
                       <div 
                         className="h-full bg-harken-blue rounded-full transition-all"
                         style={{ 

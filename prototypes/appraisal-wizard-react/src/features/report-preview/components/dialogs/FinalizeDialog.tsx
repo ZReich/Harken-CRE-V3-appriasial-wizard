@@ -109,7 +109,7 @@ export const FinalizeDialog: React.FC<FinalizeDialogProps> = ({
           </p>
         </div>
 
-        <div className="bg-slate-50 rounded-lg p-4 mb-6">
+        <div className="bg-surface-2 dark:bg-elevation-2 rounded-lg p-4 mb-6">
           <h4 className="font-medium text-slate-700 mb-3">This will:</h4>
           <ul className="space-y-2 text-sm text-harken-gray">
             <li className="flex items-center gap-2">
@@ -136,10 +136,10 @@ export const FinalizeDialog: React.FC<FinalizeDialogProps> = ({
         </p>
       </div>
 
-      <div className="flex justify-end gap-3 px-6 py-4 border-t border-slate-200 bg-slate-50">
+      <div className="flex justify-end gap-3 px-6 py-4 border-t border-light-border dark:border-dark-border bg-surface-2 dark:bg-elevation-2">
         <button
           onClick={handleClose}
-          className="px-4 py-2 text-slate-600 hover:bg-slate-200 rounded-lg transition-colors"
+          className="px-4 py-2 text-slate-600 hover:bg-surface-4 dark:hover:bg-elevation-muted rounded-lg transition-colors"
         >
           Cancel
         </button>
@@ -164,7 +164,7 @@ export const FinalizeDialog: React.FC<FinalizeDialogProps> = ({
       <p className="text-slate-600 mb-6">Please wait while we create your PDF...</p>
       
       <div className="max-w-md mx-auto">
-        <div className="h-2 bg-slate-200 rounded-full overflow-hidden mb-2">
+        <div className="h-2 bg-surface-4 dark:bg-elevation-muted rounded-full overflow-hidden mb-2">
           <div
             className="h-full bg-sky-500 rounded-full transition-all duration-300"
             style={{ width: `${progress}%` }}
@@ -216,16 +216,16 @@ export const FinalizeDialog: React.FC<FinalizeDialogProps> = ({
         
         <button
           onClick={handleFinalize}
-          className="px-6 py-3 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 transition-colors font-medium flex items-center justify-center gap-2 mx-auto"
+          className="px-6 py-3 bg-surface-3 dark:bg-elevation-subtle text-slate-700 rounded-lg hover:bg-surface-4 dark:hover:bg-elevation-muted transition-colors font-medium flex items-center justify-center gap-2 mx-auto"
         >
           Generate Another Copy
         </button>
       </div>
 
-      <div className="flex justify-center px-6 py-4 border-t border-slate-200 bg-slate-50">
+      <div className="flex justify-center px-6 py-4 border-t border-light-border dark:border-dark-border bg-surface-2 dark:bg-elevation-2">
         <button
           onClick={handleClose}
-          className="px-4 py-2 text-slate-600 hover:bg-slate-200 rounded-lg transition-colors"
+          className="px-4 py-2 text-slate-600 hover:bg-surface-4 dark:hover:bg-elevation-muted rounded-lg transition-colors"
         >
           Close
         </button>
@@ -250,10 +250,10 @@ export const FinalizeDialog: React.FC<FinalizeDialogProps> = ({
         </div>
       </div>
 
-      <div className="flex justify-end gap-3 px-6 py-4 border-t border-slate-200 bg-slate-50">
+      <div className="flex justify-end gap-3 px-6 py-4 border-t border-light-border dark:border-dark-border bg-surface-2 dark:bg-elevation-2">
         <button
           onClick={handleClose}
-          className="px-4 py-2 text-slate-600 hover:bg-slate-200 rounded-lg transition-colors"
+          className="px-4 py-2 text-slate-600 hover:bg-surface-4 dark:hover:bg-elevation-muted rounded-lg transition-colors"
         >
           Cancel
         </button>
@@ -271,7 +271,7 @@ export const FinalizeDialog: React.FC<FinalizeDialogProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-light-border dark:border-dark-border">
           <h2 className="text-lg font-semibold text-slate-800 dark:text-white">
             {step === 'confirm' && 'Finalize Report'}
             {step === 'processing' && 'Generating...'}
@@ -281,7 +281,7 @@ export const FinalizeDialog: React.FC<FinalizeDialogProps> = ({
           {step !== 'processing' && (
             <button
               onClick={handleClose}
-              className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+              className="p-2 hover:bg-surface-3 dark:hover:bg-elevation-subtle rounded-lg transition-colors"
             >
               <X size={20} className="text-slate-400" />
             </button>

@@ -191,7 +191,7 @@ export const ContextualMarketData: React.FC<ContextualMarketDataProps> = ({
       case 'Land Valuation':
         return { bg: 'bg-lime-50', border: 'border-lime-200', accent: 'text-lime-700' };
       default:
-        return { bg: 'bg-slate-50', border: 'border-slate-200', accent: 'text-slate-700' };
+        return { bg: 'bg-surface-2 dark:bg-elevation-2', border: 'border-light-border dark:border-dark-border', accent: 'text-slate-700' };
     }
   };
 
@@ -212,7 +212,7 @@ export const ContextualMarketData: React.FC<ContextualMarketDataProps> = ({
   };
 
   return (
-    <div className={`bg-surface-1 dark:bg-elevation-1 border border-slate-200 dark:border-dark-border rounded-xl overflow-hidden ${className}`}>
+    <div className={`bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border dark:border-dark-border rounded-xl overflow-hidden ${className}`}>
       {/* Header */}
       <div className={`px-4 py-3 ${theme.bg} border-b ${theme.border}`}>
         <h4 className={`text-xs font-bold uppercase tracking-widest ${theme.accent}`}>
@@ -231,7 +231,7 @@ export const ContextualMarketData: React.FC<ContextualMarketDataProps> = ({
           return (
             <div 
               key={index}
-              className="flex items-start gap-3 p-2 rounded-lg hover:bg-slate-50 transition-colors"
+              className="flex items-start gap-3 p-2 rounded-lg hover:bg-surface-2 dark:bg-elevation-2 transition-colors"
             >
               <div className={`p-1.5 rounded-lg ${theme.bg}`}>
                 <Icon size={14} className={theme.accent} />
@@ -259,7 +259,7 @@ export const ContextualMarketData: React.FC<ContextualMarketDataProps> = ({
       </div>
 
       {/* Data source note */}
-      <div className="px-4 py-2 bg-slate-50 border-t border-slate-100">
+      <div className="px-4 py-2 bg-surface-2 dark:bg-elevation-2 border-t border-light-border dark:border-dark-border">
         <p className="text-[10px] text-harken-gray-med italic">
           Data sourced from Market Analysis inputs
         </p>

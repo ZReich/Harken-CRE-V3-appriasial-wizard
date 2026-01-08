@@ -51,7 +51,7 @@ export const InputRow: React.FC<InputRowProps> = ({
   const labelClass = "block text-[10px] font-bold text-harken-gray-med dark:text-slate-500 uppercase tracking-wide px-3 pt-1.5 leading-none";
 
   return (
-    <div className="group relative flex flex-col sm:flex-row items-start sm:items-center gap-3 py-3 border-b border-slate-100 dark:border-dark-border last:border-0 hover:bg-surface-1/50 dark:hover:bg-elevation-3/50 transition-colors p-2 rounded-xl z-0 hover:z-10">
+    <div className="group relative flex flex-col sm:flex-row items-start sm:items-center gap-3 py-3 border-b border-light-border dark:border-dark-border dark:border-dark-border last:border-0 hover:bg-surface-1/50 dark:hover:bg-elevation-3/50 transition-colors p-2 rounded-xl z-0 hover:z-10">
 
       {/* 1. NAME COLUMN */}
       <div className="flex-grow w-full sm:w-auto min-w-[150px]">
@@ -205,7 +205,7 @@ export const InputRow: React.FC<InputRowProps> = ({
           onClick={() => onEditNotes && onEditNotes(item)}
           className={`p-2 rounded-lg transition-all group/notes ${item.comments
             ? 'bg-[#0da1c7]/10 text-[#0da1c7] hover:bg-[#0da1c7]/20 border border-[#0da1c7]/20'
-            : 'text-slate-300 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-elevation-3 hover:text-slate-500 dark:hover:text-harken-gray-med'
+            : 'text-slate-300 dark:text-slate-500 hover:bg-surface-3 dark:hover:bg-elevation-3 hover:text-slate-500 dark:hover:text-harken-gray-med'
             }`}
           title={item.comments ? "Edit Notes" : "Add Notes"}
         >

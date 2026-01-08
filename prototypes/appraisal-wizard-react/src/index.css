@@ -135,9 +135,12 @@
      ============================================= */
   --color-surface-base: #f4f7f9;           /* Layer 0: App background */
   --color-surface-1: #ffffff;              /* Layer 1: Cards/Panels */
-  --color-surface-2: #f8fafc;              /* Layer 2: Nested elements */
+  --color-surface-2: #f8fafc;              /* Layer 2: Nested elements / section headers */
+  --color-surface-3: #f1f5f9;              /* Layer 3: Subtle backgrounds - slate-100 equivalent */
+  --color-surface-4: #e2e8f0;              /* Layer 4: Progress bars, sliders - slate-200 equivalent */
   --color-surface-hover: rgba(0,0,0,0.03); /* Hover states - subtle dim */
   --color-light-border: #d5dce3;           /* Default borders */
+  --color-border-muted: #cbd5e1;           /* Muted/dashed borders - slate-300 equivalent */
   --color-light-input: #ffffff;            /* Input fields background */
   --color-light-input-border: #d1d5db;     /* Input field borders (gray-300) */
 
@@ -149,11 +152,14 @@
      the entire dark mode palette globally.
      ============================================= */
   --color-elevation-base: #0d1a22;         /* Layer 0: App background (harken-dark) */
-  --color-elevation-1: #1a1f24;            /* Layer 1: Cards/Panels - neutral warm */
-  --color-elevation-2: #242a30;            /* Layer 2: Elevated/nested elements */
-  --color-elevation-3: rgba(255,255,255,0.06);  /* Layer 3: Hover states - subtle lift */
+  --color-elevation-1: #1f2529;            /* Layer 1: Cards/Panels - lifted, warmer */
+  --color-elevation-2: #2a3138;            /* Layer 2: Elevated/nested elements */
+  --color-elevation-3: rgba(255,255,255,0.08);  /* Layer 3: Hover states - more visible */
+  --color-elevation-subtle: #252b32;       /* Subtle dark backgrounds (slate-100 dark equivalent) */
+  --color-elevation-muted: #2d353d;        /* Muted dark backgrounds (slate-200 dark equivalent) */
   --color-dark-border: #2d353d;            /* Visible borders - subtle separation */
-  --color-dark-input: #1a1f24;             /* Input fields background */
+  --color-dark-border-muted: #3a4550;      /* Muted/dashed dark borders (slate-300 dark equivalent) */
+  --color-dark-input: #1f2529;             /* Input fields background - matches elevation-1 */
   --color-dark-input-border: #3a4550;      /* Input field borders */
 
   /* Border Colors */
@@ -427,7 +433,7 @@ html.dark {
   --harken-gray-med: #64748b;        /* Inverted luminosity */
   --harken-gray-med-lt: #475569;
   --harken-gray-light: #1e293b;
-  --harken-error: #f87171;           /* Brighter for dark visibility */
+  --harken-error: #e8857e;           /* Softened coral - less harsh on dark */
 
   /* =============================================
      HARKEN ACCENT SET 1: QUALITY (Dark Mode)
@@ -500,10 +506,10 @@ html.dark {
   --accent-purple-light: #3b0764;
   --accent-purple-bg: rgba(167, 139, 250, 0.12);
 
-  --accent-red: #f87171;         /* Luminous error red */
-  --accent-red-hover: #fca5a5;
+  --accent-red: #e8857e;         /* Softened coral - less harsh on dark */
+  --accent-red-hover: #f0a099;
   --accent-red-light: #450a0a;
-  --accent-red-bg: rgba(248, 113, 113, 0.12);
+  --accent-red-bg: rgba(232, 133, 126, 0.12);
 
   --accent-amber: #fcd34d;       /* Luminous amber-gold */
   --accent-amber-hover: #fde68a;

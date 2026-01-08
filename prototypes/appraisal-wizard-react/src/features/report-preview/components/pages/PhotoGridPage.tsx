@@ -107,7 +107,7 @@ export const PhotoGridPage: React.FC<PhotoGridPageProps> = ({
     <div className="w-full h-full bg-surface-1 flex flex-col">
       {/* Page header */}
       {title && (
-        <div className="px-16 pt-8 pb-4 border-b border-slate-200">
+        <div className="px-16 pt-8 pb-4 border-b border-light-border dark:border-dark-border">
           <div className="flex items-center justify-between">
             <h3 className="text-lg font-semibold text-slate-800">{title}</h3>
             {pageNumber && (
@@ -128,7 +128,7 @@ export const PhotoGridPage: React.FC<PhotoGridPageProps> = ({
               }`}
               onClick={() => isEditing && onPhotoClick?.(photo.id)}
             >
-              <div className="relative flex-1 min-h-0 bg-slate-100 rounded-lg overflow-hidden">
+              <div className="relative flex-1 min-h-0 bg-surface-3 dark:bg-elevation-subtle rounded-lg overflow-hidden">
                 <img
                   src={photo.url}
                   alt={photo.caption || `Photo ${index + 1}`}
@@ -156,7 +156,7 @@ export const PhotoGridPage: React.FC<PhotoGridPageProps> = ({
                 key={`empty-${i}`}
                 className="flex flex-col"
               >
-                <div className="flex-1 min-h-0 bg-slate-50 rounded-lg border-2 border-dashed border-slate-200 flex items-center justify-center">
+                <div className="flex-1 min-h-0 bg-surface-2 dark:bg-elevation-2 rounded-lg border-2 border-dashed border-light-border dark:border-dark-border flex items-center justify-center">
                   <span className="text-sm text-slate-400">Empty slot</span>
                 </div>
               </div>
@@ -167,7 +167,7 @@ export const PhotoGridPage: React.FC<PhotoGridPageProps> = ({
 
       {/* Attribution footer */}
       {showAttribution && (takenBy || takenDate) && (
-        <div className="px-16 py-4 border-t border-slate-200 text-center">
+        <div className="px-16 py-4 border-t border-light-border dark:border-dark-border text-center">
           <p className="text-xs text-slate-500">
             {takenBy && `Photos by ${takenBy}`}
             {takenBy && takenDate && ' • '}

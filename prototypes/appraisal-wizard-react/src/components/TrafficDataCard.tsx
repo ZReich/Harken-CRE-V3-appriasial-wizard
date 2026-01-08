@@ -82,10 +82,10 @@ function TrafficRow({ entry, onEdit }: { entry: TrafficDataEntry; onEdit?: () =>
   const roadClassColor = ROAD_CLASS_COLORS[entry.roadClass.toLowerCase()] || 'bg-harken-gray-light text-harken-dark border-light-border';
 
   return (
-    <div className="border border-slate-200 rounded-lg overflow-hidden">
+    <div className="border border-light-border dark:border-dark-border rounded-lg overflow-hidden">
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full px-3 py-2 flex items-center gap-3 hover:bg-slate-50 transition-colors"
+        className="w-full px-3 py-2 flex items-center gap-3 hover:bg-surface-2 dark:bg-elevation-2 transition-colors"
       >
         {isExpanded ? (
           <ChevronDown className="w-4 h-4 text-slate-400 shrink-0" />
@@ -114,7 +114,7 @@ function TrafficRow({ entry, onEdit }: { entry: TrafficDataEntry; onEdit?: () =>
       </button>
 
       {isExpanded && (
-        <div className="px-4 py-3 bg-slate-50 border-t border-slate-100 dark:bg-elevation-1/50 dark:border-dark-border">
+        <div className="px-4 py-3 bg-surface-2 dark:bg-elevation-2 border-t border-light-border dark:border-dark-border dark:bg-elevation-1/50 dark:border-dark-border">
           <div className="grid grid-cols-2 gap-3 text-xs">
             {entry.truckPercentage !== undefined && (
               <div>
@@ -221,7 +221,7 @@ export function TrafficDataCard({
               <button
                 onClick={onRefresh}
                 disabled={isRefreshing}
-                className="p-1.5 rounded-lg text-slate-400 hover:text-[#0da1c7] hover:bg-slate-100 transition-colors disabled:opacity-50"
+                className="p-1.5 rounded-lg text-slate-400 hover:text-[#0da1c7] hover:bg-surface-3 dark:hover:bg-elevation-subtle transition-colors disabled:opacity-50"
                 title="Refresh traffic data"
               >
                 <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
@@ -232,7 +232,7 @@ export function TrafficDataCard({
       </div>
 
       {/* Road Class Filter */}
-      <div className="p-4 bg-slate-50/50 border-b border-harken-gray-light dark:bg-elevation-1/50 dark:border-dark-border">
+      <div className="p-4 bg-surface-2 dark:bg-elevation-2/50 border-b border-harken-gray-light dark:bg-elevation-1/50 dark:border-dark-border">
         <ButtonSelector
           label="Road Classification"
           options={ROAD_CLASS_OPTIONS}
@@ -290,7 +290,7 @@ export function TrafficDataCard({
 
       {/* Last Updated Footer */}
       {lastUpdated && (
-        <div className="px-4 py-2 bg-slate-50 border-t border-slate-100 text-[10px] text-slate-400 flex items-center gap-1">
+        <div className="px-4 py-2 bg-surface-2 dark:bg-elevation-2 border-t border-light-border dark:border-dark-border text-[10px] text-slate-400 flex items-center gap-1">
           <AlertCircle className="w-3 h-3" />
           Data last updated: {lastUpdated}
         </div>

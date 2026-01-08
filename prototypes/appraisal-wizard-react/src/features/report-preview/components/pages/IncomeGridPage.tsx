@@ -83,9 +83,9 @@ export const IncomeGridPage: React.FC<IncomeGridPageProps> = ({
       {/* Map Section - Display rental comparables map if provided */}
       {mapData && mapData.imageUrl && (
         <div className="px-12 pt-4 pb-2">
-          <div className="border border-slate-200 rounded-lg overflow-hidden bg-surface-1">
+          <div className="border border-light-border dark:border-dark-border rounded-lg overflow-hidden bg-surface-1">
             {/* Map Header */}
-            <div className="flex items-center justify-between px-4 py-2 bg-slate-50 border-b border-slate-200">
+            <div className="flex items-center justify-between px-4 py-2 bg-surface-2 dark:bg-elevation-2 border-b border-light-border dark:border-dark-border">
               <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-accent-teal-mint" />
                 <span className="font-semibold text-sm text-slate-700">{mapData.title}</span>
@@ -127,31 +127,31 @@ export const IncomeGridPage: React.FC<IncomeGridPageProps> = ({
           <div>
             <h3 className="text-lg font-semibold text-slate-800 mb-4">Operating Statement</h3>
             
-            <div className="border border-slate-200 rounded-lg overflow-hidden">
+            <div className="border border-light-border dark:border-dark-border rounded-lg overflow-hidden">
               <table className="w-full text-sm">
                 <tbody>
                   {/* Income Section */}
-                  <tr className="bg-slate-100">
+                  <tr className="bg-surface-3 dark:bg-elevation-subtle">
                     <td colSpan={2} className="px-4 py-2 font-semibold text-slate-600 uppercase text-xs tracking-wider">
                       Income
                     </td>
                   </tr>
-                  <tr className="border-b border-slate-100">
+                  <tr className="border-b border-light-border dark:border-dark-border">
                     <td className="px-4 py-2 text-slate-700">Potential Gross Income</td>
                     <td 
-                      className={`px-4 py-2 text-right font-medium ${isEditing ? 'cursor-pointer hover:bg-slate-50' : ''}`}
+                      className={`px-4 py-2 text-right font-medium ${isEditing ? 'cursor-pointer hover:bg-surface-2 dark:bg-elevation-2' : ''}`}
                       onClick={() => isEditing && onCellClick?.('pgi', 'value')}
                     >
                       {formatCurrency(data.pgi)}
                     </td>
                   </tr>
-                  <tr className="border-b border-slate-100">
+                  <tr className="border-b border-light-border dark:border-dark-border">
                     <td className="px-4 py-2 text-slate-700">Less: Vacancy & Collection Loss</td>
                     <td className="px-4 py-2 text-right font-medium text-harken-error">
                       ({formatCurrency(data.vacancy)})
                     </td>
                   </tr>
-                  <tr className="border-b border-slate-200 bg-slate-50">
+                  <tr className="border-b border-light-border dark:border-dark-border bg-surface-2 dark:bg-elevation-2">
                     <td className="px-4 py-2 font-semibold text-slate-800">Effective Gross Income</td>
                     <td className="px-4 py-2 text-right font-bold text-slate-800">
                       {formatCurrency(data.egi)}
@@ -159,13 +159,13 @@ export const IncomeGridPage: React.FC<IncomeGridPageProps> = ({
                   </tr>
 
                   {/* Expenses Section */}
-                  <tr className="bg-slate-100">
+                  <tr className="bg-surface-3 dark:bg-elevation-subtle">
                     <td colSpan={2} className="px-4 py-2 font-semibold text-slate-600 uppercase text-xs tracking-wider">
                       Operating Expenses
                     </td>
                   </tr>
                   {data.expenses && Object.entries(data.expenses).map(([key, value]) => (
-                    <tr key={key} className="border-b border-slate-100">
+                    <tr key={key} className="border-b border-light-border dark:border-dark-border">
                       <td className="px-4 py-2 text-slate-700 capitalize">
                         {key.replace(/([A-Z])/g, ' $1').trim()}
                       </td>
@@ -174,7 +174,7 @@ export const IncomeGridPage: React.FC<IncomeGridPageProps> = ({
                       </td>
                     </tr>
                   ))}
-                  <tr className="border-b border-slate-200 bg-harken-gray-light">
+                  <tr className="border-b border-light-border dark:border-dark-border bg-harken-gray-light">
                     <td className="px-4 py-2 font-semibold text-slate-800">Total Expenses</td>
                     <td className="px-4 py-2 text-right font-bold text-harken-error">
                       ({formatCurrency(data.totalExpenses)})
@@ -223,28 +223,28 @@ export const IncomeGridPage: React.FC<IncomeGridPageProps> = ({
             {/* Cap Rate Support */}
             <div className="mt-6">
               <h4 className="font-semibold text-slate-800 mb-3">Capitalization Rate Support</h4>
-              <div className="border border-slate-200 rounded-lg overflow-hidden">
+              <div className="border border-light-border dark:border-dark-border rounded-lg overflow-hidden">
                 <table className="w-full text-sm">
-                  <thead className="bg-slate-100">
+                  <thead className="bg-surface-3 dark:bg-elevation-subtle">
                     <tr>
                       <th className="px-3 py-2 text-left text-xs font-semibold text-slate-600">Source</th>
                       <th className="px-3 py-2 text-center text-xs font-semibold text-slate-600">Range</th>
                     </tr>
                   </thead>
                   <tbody>
-                    <tr className="border-b border-slate-100">
+                    <tr className="border-b border-light-border dark:border-dark-border">
                       <td className="px-3 py-2 text-slate-700">Comparable Sales</td>
                       <td className="px-3 py-2 text-center text-slate-600">7.5% - 9.0%</td>
                     </tr>
-                    <tr className="border-b border-slate-100">
+                    <tr className="border-b border-light-border dark:border-dark-border">
                       <td className="px-3 py-2 text-slate-700">Investor Surveys</td>
                       <td className="px-3 py-2 text-center text-slate-600">8.0% - 9.5%</td>
                     </tr>
-                    <tr className="border-b border-slate-100">
+                    <tr className="border-b border-light-border dark:border-dark-border">
                       <td className="px-3 py-2 text-slate-700">Band of Investment</td>
                       <td className="px-3 py-2 text-center text-slate-600">8.25%</td>
                     </tr>
-                    <tr className="bg-slate-50">
+                    <tr className="bg-surface-2 dark:bg-elevation-2">
                       <td className="px-3 py-2 font-semibold text-slate-800">Selected Rate</td>
                       <td className="px-3 py-2 text-center font-bold text-sky-600">{formatPercent(data.capRate)}</td>
                     </tr>

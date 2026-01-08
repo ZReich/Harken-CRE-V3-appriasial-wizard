@@ -311,7 +311,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
       </span>
     );
     return (
-      <span onClick={handleClick} className={`${baseClass} bg-slate-50 dark:bg-elevation-1 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-harken-gray hover:bg-slate-100 dark:hover:bg-harken-gray hover:border-slate-300 dark:hover:border-harken-gray`} title="Click to change">
+      <span onClick={handleClick} className={`${baseClass} bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1 text-slate-500 dark:text-slate-400 border-light-border dark:border-dark-border dark:border-harken-gray hover:bg-surface-3 dark:hover:bg-elevation-subtle hover:border-border-muted dark:hover:border-dark-border-muted`} title="Click to change">
         <Minus className="w-3 h-3" /> SIM
       </span>
     );
@@ -356,7 +356,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
       <div className={`element-dropdown relative ${isOpen ? 'z-[500]' : ''}`}>
         <button 
           onClick={() => setOpenElementDropdown(isOpen ? null : section)}
-          className="w-full py-2 px-3 border-2 border-dashed border-slate-300 dark:border-harken-gray rounded-lg flex items-center justify-between gap-2 text-slate-500 dark:text-slate-400 font-semibold hover:border-accent-cyan hover:text-accent-cyan hover:bg-accent-cyan/5 transition-all duration-300 group text-xs bg-surface-1 dark:bg-elevation-1"
+          className="w-full py-2 px-3 border-2 border-dashed border-border-muted dark:border-dark-border-muted rounded-lg flex items-center justify-between gap-2 text-slate-500 dark:text-slate-400 font-semibold hover:border-accent-cyan hover:text-accent-cyan hover:bg-accent-cyan/5 transition-all duration-300 group text-xs bg-surface-1 dark:bg-elevation-1"
         >
           <div className="flex items-center gap-2">
             <Plus size={12} className="text-slate-400 group-hover:text-accent-cyan" />
@@ -366,8 +366,8 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
         </button>
         
         {isOpen && (
-          <div className="absolute top-full left-0 mt-1 w-64 bg-surface-1 dark:bg-elevation-1 rounded-xl shadow-2xl border border-slate-200 dark:border-dark-border z-[500] overflow-hidden">
-            <div className="px-3 py-2 bg-slate-50 dark:bg-elevation-1 border-b border-slate-200 dark:border-dark-border">
+          <div className="absolute top-full left-0 mt-1 w-64 bg-surface-1 dark:bg-elevation-1 rounded-xl shadow-2xl border border-light-border dark:border-dark-border dark:border-dark-border z-[500] overflow-hidden">
+            <div className="px-3 py-2 bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1 border-b border-light-border dark:border-dark-border dark:border-dark-border">
               <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Available Elements</span>
             </div>
             <div className="max-h-48 overflow-y-auto">
@@ -376,7 +376,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
                   <button
                     key={element.id}
                     onClick={() => handleAddElement(section, element)}
-                    className="w-full text-left px-3 py-2 text-xs hover:bg-accent-cyan/5 dark:hover:bg-accent-cyan/10 transition-colors border-b border-slate-100 dark:border-dark-border last:border-b-0 group"
+                    className="w-full text-left px-3 py-2 text-xs hover:bg-accent-cyan/5 dark:hover:bg-accent-cyan/10 transition-colors border-b border-light-border dark:border-dark-border dark:border-dark-border last:border-b-0 group"
                   >
                     <div className="font-medium text-slate-700 dark:text-slate-200 group-hover:text-accent-cyan">{element.label}</div>
                     {element.description && (
@@ -390,7 +390,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
                 </div>
               )}
             </div>
-            <div className="border-t border-slate-200 dark:border-dark-border">
+            <div className="border-t border-light-border dark:border-dark-border dark:border-dark-border">
               <button
                 onClick={() => handleAddCustomElement(section)}
                 className="w-full text-left px-3 py-2.5 text-xs hover:bg-accent-cyan/5 dark:hover:bg-accent-cyan/10 transition-colors flex items-center gap-2 text-accent-cyan font-medium"
@@ -455,7 +455,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
           className={`${baseClass} ${
             isSup ? 'bg-accent-teal-mint-light text-accent-teal-mint border-accent-teal-mint hover:bg-accent-teal-mint-light' :
             isInf ? 'bg-accent-red-light text-harken-error border-harken-error/20 hover:bg-accent-red-light' :
-            'bg-slate-50 dark:bg-elevation-1 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-harken-gray hover:bg-slate-100 dark:hover:bg-harken-gray'
+            'bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1 text-slate-500 dark:text-slate-400 border-light-border dark:border-dark-border dark:border-harken-gray hover:bg-surface-3 dark:hover:bg-elevation-subtle'
           }`}
         >
           {isSup && <ArrowUpRight className="w-3 h-3" />}
@@ -466,9 +466,9 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
         </span>
         
         {isOpen && (
-          <div className="adjustment-popover absolute top-full left-0 mt-2 w-48 bg-surface-1 dark:bg-elevation-1 rounded-xl shadow-2xl border border-slate-200 dark:border-dark-border z-[200] overflow-hidden">
+          <div className="adjustment-popover absolute top-full left-0 mt-2 w-48 bg-surface-1 dark:bg-elevation-1 rounded-xl shadow-2xl border border-light-border dark:border-dark-border dark:border-dark-border z-[200] overflow-hidden">
             {/* Mode Toggle Header */}
-            <div className="flex items-center justify-between px-3 py-2 border-b border-slate-100 dark:border-dark-border bg-slate-50 dark:bg-elevation-1">
+            <div className="flex items-center justify-between px-3 py-2 border-b border-light-border dark:border-dark-border dark:border-dark-border bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1">
               <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
                 Adjustment
               </span>
@@ -477,7 +477,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
                   type="button"
                   className={`px-2.5 py-1 text-xs font-bold rounded-md transition-all ${adjustmentMode === 'Percent'
                     ? 'bg-accent-cyan text-white shadow-sm'
-                    : 'bg-surface-1 dark:bg-elevation-1 text-slate-500 dark:text-slate-200 border border-slate-200 dark:border-harken-gray hover:bg-slate-50 dark:hover:bg-harken-gray'
+                    : 'bg-surface-1 dark:bg-elevation-1 text-slate-500 dark:text-slate-200 border border-light-border dark:border-dark-border dark:border-harken-gray hover:bg-surface-2 dark:bg-elevation-2 dark:hover:bg-harken-gray'
                   }`}
                   onClick={() => setAdjustmentMode('Percent')}
                 >
@@ -492,7 +492,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
                 <button
                   type="button"
                   key={option.value}
-                  className={`w-full px-3 py-2 text-left text-sm hover:bg-slate-50 dark:hover:bg-elevation-3/50 flex items-center justify-between transition-colors ${
+                  className={`w-full px-3 py-2 text-left text-sm hover:bg-surface-2 dark:bg-elevation-2 dark:hover:bg-elevation-3/50 flex items-center justify-between transition-colors ${
                     value === option.value ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300' : 'text-slate-700 dark:text-slate-200'
                   }`}
                   onClick={() => {
@@ -504,7 +504,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
                   <span className={`text-[10px] uppercase font-bold px-1.5 py-0.5 rounded ${
                     option.value > 0 ? 'text-harken-error bg-accent-red-light dark:bg-accent-red-light' :
                     option.value < 0 ? 'text-accent-teal-mint bg-accent-teal-mint-light dark:bg-accent-teal-mint/10' :
-                    'text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-elevation-1'
+                    'text-slate-500 dark:text-slate-400 bg-surface-3 dark:bg-elevation-subtle'
                   }`}>
                     {getStatusLabel(option.value)}
                   </span>
@@ -513,14 +513,14 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
             </div>
             
             {/* Custom Input */}
-            <div className="border-t border-slate-100 dark:border-dark-border px-3 py-2.5 bg-slate-50 dark:bg-elevation-1">
+            <div className="border-t border-light-border dark:border-dark-border dark:border-dark-border px-3 py-2.5 bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1">
               <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
                 Custom %
               </label>
               <div className="flex gap-2 mt-1.5">
                 <input
                   type="text"
-                  className="flex-1 border border-slate-200 dark:border-harken-gray rounded-md px-2 py-1.5 text-sm bg-surface-1 dark:bg-elevation-1 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-accent-cyan focus:border-transparent"
+                  className="flex-1 border border-light-border dark:border-dark-border dark:border-harken-gray rounded-md px-2 py-1.5 text-sm bg-surface-1 dark:bg-elevation-1 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-accent-cyan focus:border-transparent"
                   value={customInputValue}
                   placeholder="e.g. 12.5"
                   onChange={(e) => {
@@ -602,14 +602,14 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
   };
 
   return (
-    <div className="flex flex-col h-full bg-slate-50 dark:bg-elevation-1 relative overflow-hidden">
+    <div className="flex flex-col h-full bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1 relative overflow-hidden">
       
       {/* CALCULATION METHOD TOGGLE */}
-      <div className="flex-shrink-0 px-4 py-3 bg-surface-1 dark:bg-elevation-1 border-b border-slate-200 dark:border-dark-border">
+      <div className="flex-shrink-0 px-4 py-3 bg-surface-1 dark:bg-elevation-1 border-b border-light-border dark:border-dark-border dark:border-dark-border">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <span className="text-sm font-semibold text-slate-700 dark:text-slate-200">Display Unit:</span>
-            <div className="flex gap-1 bg-slate-100 dark:bg-elevation-1 p-1 rounded-lg">
+            <div className="flex gap-1 bg-surface-3 dark:bg-elevation-subtle p-1 rounded-lg">
               {[
                 { value: 'per_unit' as MultiFamilyCalculationMethod, label: 'Per Unit', icon: Home },
                 { value: 'per_room' as MultiFamilyCalculationMethod, label: 'Per Room', icon: Building2 },
@@ -621,7 +621,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
                   className={`flex items-center gap-1.5 px-3 py-1.5 rounded-md text-xs font-medium transition-all ${
                     calculationMethod === value
                       ? 'bg-harken-blue text-white shadow-sm'
-                      : 'text-slate-600 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-harken-gray'
+                      : 'text-slate-600 dark:text-slate-200 hover:bg-surface-4 dark:hover:bg-elevation-muted'
                   }`}
                 >
                   <Icon className="w-3.5 h-3.5" />
@@ -641,7 +641,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
               <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
                 <span>Mix:</span>
                 {subjectData.unitMix.filter(u => u.count > 0).map(u => (
-                  <span key={u.unitType} className="bg-slate-100 dark:bg-elevation-1 px-1.5 py-0.5 rounded">
+                  <span key={u.unitType} className="bg-surface-3 dark:bg-elevation-subtle px-1.5 py-0.5 rounded">
                     {u.count}x {u.unitType === 'studio' ? 'Studio' : `${u.bedrooms}BR`}
                   </span>
                 ))}
@@ -676,7 +676,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
           
           {/* ========== HEADER ROW ========== */}
           <div 
-            className="sticky top-0 left-0 z-[120] bg-surface-1 dark:bg-elevation-1 border-b border-slate-200 dark:border-dark-border flex items-end" 
+            className="sticky top-0 left-0 z-[120] bg-surface-1 dark:bg-elevation-1 border-b border-light-border dark:border-dark-border dark:border-dark-border flex items-end" 
             style={{ width: LABEL_COL_WIDTH, height: 120, transform: 'translateZ(0)', willChange: 'transform' }}
           >
             <div className="p-2 pl-3">
@@ -695,7 +695,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
                 SUBJECT
               </div>
             </div>
-            <div className="p-2 flex-1 flex flex-col gap-0.5 bg-sky-50 dark:bg-[#0f1f3a] border-r border-slate-200 dark:border-dark-border">
+            <div className="p-2 flex-1 flex flex-col gap-0.5 bg-sky-50 dark:bg-[#0f1f3a] border-r border-light-border dark:border-dark-border dark:border-dark-border">
               <h3 className="font-bold text-slate-800 dark:text-white text-xs leading-tight line-clamp-1" title={subjectProperty.address}>
                 {subjectProperty.address}
               </h3>
@@ -710,7 +710,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
           {comps.map((comp, idx) => (
             <div 
               key={comp.id} 
-              className="sticky top-0 z-[100] border-b border-slate-200 dark:border-dark-border flex flex-col bg-surface-1 dark:bg-elevation-1"
+              className="sticky top-0 z-[100] border-b border-light-border dark:border-dark-border dark:border-dark-border flex flex-col bg-surface-1 dark:bg-elevation-1"
               style={{ height: 120, transform: 'translateZ(0)', willChange: 'transform' }}
             >
               <div className="relative h-16 w-full overflow-hidden group">
@@ -726,7 +726,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
                   <Trash2 className="w-3 h-3" />
                 </button>
               </div>
-              <div className="p-2 flex-1 flex flex-col gap-0.5 border-r border-slate-200 dark:border-dark-border">
+              <div className="p-2 flex-1 flex flex-col gap-0.5 border-r border-light-border dark:border-dark-border dark:border-dark-border">
                 <h3 className="font-bold text-slate-800 dark:text-white text-xs leading-tight line-clamp-1" title={comp.address}>
                   Rental {idx + 1}
                 </h3>
@@ -743,16 +743,16 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
           ))}
 
           {/* ========== TRANSACTION DATA SECTION ========== */}
-          <div className="col-span-full relative z-[50] mt-4 border-y border-slate-200 dark:border-dark-border">
-            <div className="absolute left-0 right-0 h-full bg-slate-100 dark:bg-elevation-1" style={{ opacity: 0.3 }}></div>
-            <div className="sticky left-0 w-fit px-4 py-2 font-bold text-xs uppercase tracking-widest text-slate-700 dark:text-slate-200 flex items-center gap-2 bg-slate-50 dark:bg-elevation-1" style={{ zIndex: 51 }}>
+          <div className="col-span-full relative z-[50] mt-4 border-y border-light-border dark:border-dark-border dark:border-dark-border">
+            <div className="absolute left-0 right-0 h-full bg-surface-3 dark:bg-elevation-subtle" style={{ opacity: 0.3 }}></div>
+            <div className="sticky left-0 w-fit px-4 py-2 font-bold text-xs uppercase tracking-widest text-slate-700 dark:text-slate-200 flex items-center gap-2 bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1" style={{ zIndex: 51 }}>
               TRANSACTION DATA
             </div>
           </div>
 
           {transactionRows.map(row => (
             <React.Fragment key={row.id}>
-              <div className="sticky left-0 z-[60] border-r border-b border-slate-100 dark:border-dark-border flex items-center justify-between px-2 py-1.5 group bg-surface-1 dark:bg-elevation-1" style={{ width: LABEL_COL_WIDTH, transform: 'translateZ(0)' }}>
+              <div className="sticky left-0 z-[60] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border flex items-center justify-between px-2 py-1.5 group bg-surface-1 dark:bg-elevation-1" style={{ width: LABEL_COL_WIDTH, transform: 'translateZ(0)' }}>
                 <span className="text-xs font-medium text-slate-600 dark:text-slate-400 truncate">{row.label}</span>
                 {row.removable && (
                   <button onClick={() => handleDeleteRow(row.id, 'transaction')} className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-accent-red-light dark:hover:bg-accent-red-light text-slate-300 hover:text-harken-error transition-all">
@@ -760,11 +760,11 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
                   </button>
                 )}
               </div>
-              <div className="sticky left-[160px] z-[55] border-r border-b border-slate-100 dark:border-dark-border p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none bg-sky-50 dark:bg-[#0f1f3a]" style={{ width: SUBJECT_COL_WIDTH, transform: 'translateZ(0)' }}>
+              <div className="sticky left-[160px] z-[55] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none bg-sky-50 dark:bg-[#0f1f3a]" style={{ width: SUBJECT_COL_WIDTH, transform: 'translateZ(0)' }}>
                 <span className="font-medium text-slate-700 dark:text-slate-200">{getSubjectTransactionValue(row.id)}</span>
               </div>
               {comps.map(comp => (
-                <div key={`${row.id}-${comp.id}`} className="border-r border-b border-slate-100 dark:border-dark-border p-2 flex items-center justify-center text-xs bg-surface-1 dark:bg-elevation-1">
+                <div key={`${row.id}-${comp.id}`} className="border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs bg-surface-1 dark:bg-elevation-1">
                   <span className="font-medium text-slate-600 dark:text-slate-200">{getTransactionValue(comp, row.id)}</span>
                 </div>
               ))}
@@ -788,7 +788,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
 
           {quantitativeRows.map(row => (
             <React.Fragment key={row.id}>
-              <div className="sticky left-0 z-[60] border-r border-b border-slate-100 dark:border-dark-border flex items-center justify-between px-2 py-1.5 group bg-surface-1 dark:bg-elevation-1" style={{ width: LABEL_COL_WIDTH, transform: 'translateZ(0)' }}>
+              <div className="sticky left-0 z-[60] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border flex items-center justify-between px-2 py-1.5 group bg-surface-1 dark:bg-elevation-1" style={{ width: LABEL_COL_WIDTH, transform: 'translateZ(0)' }}>
                 <span className="text-xs font-medium text-slate-600 dark:text-slate-400 truncate">{row.label}</span>
                 {row.removable && (
                   <button onClick={() => handleDeleteRow(row.id, 'quantitative')} className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-accent-red-light dark:hover:bg-accent-red-light text-slate-300 hover:text-harken-error transition-all">
@@ -796,11 +796,11 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
                   </button>
                 )}
               </div>
-              <div className="sticky left-[160px] z-[55] border-r border-b border-slate-100 dark:border-dark-border p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none bg-sky-50 dark:bg-[#0f1f3a]" style={{ width: SUBJECT_COL_WIDTH, transform: 'translateZ(0)' }}>
+              <div className="sticky left-[160px] z-[55] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none bg-sky-50 dark:bg-[#0f1f3a]" style={{ width: SUBJECT_COL_WIDTH, transform: 'translateZ(0)' }}>
                 <span className="font-medium text-slate-700 dark:text-slate-200">-</span>
               </div>
               {comps.map(comp => (
-                <div key={`${row.id}-${comp.id}`} className="border-r border-b border-slate-100 dark:border-dark-border p-2 flex items-center justify-center text-xs bg-surface-1 dark:bg-elevation-1">
+                <div key={`${row.id}-${comp.id}`} className="border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs bg-surface-1 dark:bg-elevation-1">
                   {renderQuantitativeCell(comp, row.field || row.id)}
                 </div>
               ))}
@@ -824,7 +824,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
 
           {qualitativeRows.map(row => (
             <React.Fragment key={row.id}>
-              <div className="sticky left-0 z-[60] border-r border-b border-slate-100 dark:border-dark-border flex items-center justify-between px-2 py-1.5 group bg-surface-1 dark:bg-elevation-1" style={{ width: LABEL_COL_WIDTH, transform: 'translateZ(0)' }}>
+              <div className="sticky left-0 z-[60] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border flex items-center justify-between px-2 py-1.5 group bg-surface-1 dark:bg-elevation-1" style={{ width: LABEL_COL_WIDTH, transform: 'translateZ(0)' }}>
                 <span className="text-xs font-medium text-slate-600 dark:text-slate-400 truncate">{row.label}</span>
                 {row.removable && (
                   <button onClick={() => handleDeleteRow(row.id, 'qualitative')} className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-accent-red-light dark:hover:bg-accent-red-light text-slate-300 hover:text-harken-error transition-all">
@@ -832,11 +832,11 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
                   </button>
                 )}
               </div>
-              <div className="sticky left-[160px] z-[55] border-r border-b border-slate-100 dark:border-dark-border p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none bg-sky-50 dark:bg-[#0f1f3a]" style={{ width: SUBJECT_COL_WIDTH, transform: 'translateZ(0)' }}>
+              <div className="sticky left-[160px] z-[55] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none bg-sky-50 dark:bg-[#0f1f3a]" style={{ width: SUBJECT_COL_WIDTH, transform: 'translateZ(0)' }}>
                 <span className="font-medium text-slate-700 dark:text-slate-200">{getSubjectQualitativeValue(row.id)}</span>
               </div>
               {comps.map(comp => (
-                <div key={`${row.id}-${comp.id}`} className="border-r border-b border-slate-100 dark:border-dark-border p-2 flex items-center justify-center text-xs bg-surface-1 dark:bg-elevation-1">
+                <div key={`${row.id}-${comp.id}`} className="border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs bg-surface-1 dark:bg-elevation-1">
                   <AdjustmentChip compId={comp.id} rowId={row.field || row.id} />
                 </div>
               ))}
@@ -851,25 +851,25 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
           {comps.map(comp => <div key={`add-qual-${comp.id}`} className="bg-surface-1 dark:bg-elevation-1"></div>)}
 
           {/* ========== SUMMARY SECTION ========== */}
-          <div className="col-span-full relative z-[50] mt-4 border-y border-slate-300 dark:border-harken-gray">
-            <div className="absolute left-0 right-0 h-full bg-slate-100 dark:bg-elevation-1" style={{ opacity: 0.3 }}></div>
-            <div className="sticky left-0 w-fit px-4 py-2 font-bold text-xs uppercase tracking-widest text-slate-700 dark:text-slate-200 flex items-center gap-2 bg-slate-50 dark:bg-elevation-1" style={{ zIndex: 51 }}>
+          <div className="col-span-full relative z-[50] mt-4 border-y border-border-muted dark:border-dark-border-muted">
+            <div className="absolute left-0 right-0 h-full bg-surface-3 dark:bg-elevation-subtle" style={{ opacity: 0.3 }}></div>
+            <div className="sticky left-0 w-fit px-4 py-2 font-bold text-xs uppercase tracking-widest text-slate-700 dark:text-slate-200 flex items-center gap-2 bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1" style={{ zIndex: 51 }}>
               SUMMARY
             </div>
           </div>
 
           {/* Overall Adjustment Row */}
           <React.Fragment>
-            <div className="sticky left-0 z-[60] border-r border-b border-slate-100 dark:border-dark-border flex items-center px-2 py-1.5 bg-surface-1 dark:bg-elevation-1" style={{ width: LABEL_COL_WIDTH, transform: 'translateZ(0)' }}>
+            <div className="sticky left-0 z-[60] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border flex items-center px-2 py-1.5 bg-surface-1 dark:bg-elevation-1" style={{ width: LABEL_COL_WIDTH, transform: 'translateZ(0)' }}>
               <span className="text-xs font-semibold text-slate-800 dark:text-white italic">Overall Adjustment:</span>
             </div>
-            <div className="sticky left-[160px] z-[55] border-r border-b border-slate-100 dark:border-dark-border p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none bg-sky-50 dark:bg-[#0f1f3a]" style={{ width: SUBJECT_COL_WIDTH, transform: 'translateZ(0)' }}>
+            <div className="sticky left-[160px] z-[55] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none bg-sky-50 dark:bg-[#0f1f3a]" style={{ width: SUBJECT_COL_WIDTH, transform: 'translateZ(0)' }}>
               <span className="font-medium text-slate-700 dark:text-slate-200">-</span>
             </div>
             {comps.map(comp => {
               const totalAdj = comp.parkingAdj + comp.qualityConditionAdj + comp.yearBuiltAdj;
               return (
-                <div key={`overall-adj-${comp.id}`} className="border-r border-b border-slate-100 dark:border-dark-border p-2 flex items-center justify-center text-xs bg-surface-1 dark:bg-elevation-1">
+                <div key={`overall-adj-${comp.id}`} className="border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs bg-surface-1 dark:bg-elevation-1">
                   <span className={`font-bold ${totalAdj !== 0 ? (totalAdj > 0 ? 'text-harken-error' : 'text-accent-teal-mint') : 'text-slate-500 dark:text-slate-400'}`}>
                     {formatPercent(totalAdj)}
                   </span>
@@ -880,14 +880,14 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
 
           {/* Adjusted Rental Rates Row */}
           <React.Fragment>
-            <div className="sticky left-0 z-[60] border-r border-b border-slate-100 dark:border-dark-border flex items-center px-2 py-1.5 bg-surface-1 dark:bg-elevation-1" style={{ width: LABEL_COL_WIDTH, transform: 'translateZ(0)' }}>
+            <div className="sticky left-0 z-[60] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border flex items-center px-2 py-1.5 bg-surface-1 dark:bg-elevation-1" style={{ width: LABEL_COL_WIDTH, transform: 'translateZ(0)' }}>
               <span className="text-xs font-semibold text-slate-800 dark:text-white">Adjusted Rental Rates $...</span>
             </div>
-            <div className="sticky left-[160px] z-[55] border-r border-b border-slate-100 dark:border-dark-border p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none bg-sky-50 dark:bg-[#0f1f3a]" style={{ width: SUBJECT_COL_WIDTH, transform: 'translateZ(0)' }}>
+            <div className="sticky left-[160px] z-[55] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none bg-sky-50 dark:bg-[#0f1f3a]" style={{ width: SUBJECT_COL_WIDTH, transform: 'translateZ(0)' }}>
               <span className="font-medium text-slate-700 dark:text-slate-200">-</span>
             </div>
             {comps.map(comp => (
-              <div key={`adj-rate-${comp.id}`} className="border-r border-b border-slate-100 dark:border-dark-border p-2 flex items-center justify-center text-xs bg-surface-1 dark:bg-elevation-1">
+              <div key={`adj-rate-${comp.id}`} className="border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs bg-surface-1 dark:bg-elevation-1">
                 {(() => {
                       const { value, isOverridden, calculatedValue } = getAdjustedRate(comp);
                       const isPopoverOpen = activeOverridePopover?.compId === comp.id;
@@ -942,16 +942,16 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
 
           {/* Adjusted Comp Range Row */}
           <React.Fragment>
-            <div className="sticky left-0 z-[60] border-r border-b border-slate-100 dark:border-dark-border border-t-2 border-t-slate-800 dark:border-t-slate-600 flex items-center px-2 py-1.5 bg-slate-100 dark:bg-elevation-1" style={{ width: LABEL_COL_WIDTH, transform: 'translateZ(0)' }}>
+            <div className="sticky left-0 z-[60] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border border-t-2 border-t-slate-800 dark:border-t-slate-600 flex items-center px-2 py-1.5 bg-surface-3 dark:bg-elevation-subtle" style={{ width: LABEL_COL_WIDTH, transform: 'translateZ(0)' }}>
               <span className="text-xs font-black text-slate-900 dark:text-white uppercase">Adjusted Comp Range:</span>
             </div>
-            <div className="sticky left-[160px] z-[55] border-r border-b border-slate-100 dark:border-dark-border border-t-2 border-t-slate-800 dark:border-t-slate-600 p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none bg-blue-100 dark:bg-blue-900/30" style={{ width: SUBJECT_COL_WIDTH, transform: 'translateZ(0)' }}>
+            <div className="sticky left-[160px] z-[55] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border border-t-2 border-t-slate-800 dark:border-t-slate-600 p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none bg-blue-100 dark:bg-blue-900/30" style={{ width: SUBJECT_COL_WIDTH, transform: 'translateZ(0)' }}>
               <span className="font-bold text-slate-800 dark:text-white">
                 {comps.length > 0 ? `${formatCurrency(Math.min(...comps.map(c => getAdjustedRate(c).value)))} - ${formatCurrency(Math.max(...comps.map(c => getAdjustedRate(c).value)))}` : '-'}
               </span>
             </div>
             {comps.map(comp => (
-              <div key={`range-${comp.id}`} className="border-r border-b border-slate-100 dark:border-dark-border border-t-2 border-t-slate-800 dark:border-t-slate-600 p-2 flex items-center justify-center text-xs bg-slate-100 dark:bg-elevation-1"></div>
+              <div key={`range-${comp.id}`} className="border-r border-b border-light-border dark:border-dark-border dark:border-dark-border border-t-2 border-t-slate-800 dark:border-t-slate-600 p-2 flex items-center justify-center text-xs bg-surface-3 dark:bg-elevation-subtle"></div>
             ))}
           </React.Fragment>
 
@@ -973,7 +973,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
           </div>
 
           {/* ACTION COLUMN */}
-          <div className="flex-shrink-0 bg-slate-50 dark:bg-elevation-1 flex flex-col items-center justify-start py-8 sticky top-0 self-start" style={{ width: ACTION_COL_WIDTH, height: 'auto', minHeight: 400 }}>
+          <div className="flex-shrink-0 bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1 flex flex-col items-center justify-start py-8 sticky top-0 self-start" style={{ width: ACTION_COL_WIDTH, height: 'auto', minHeight: 400 }}>
             <div className="flex flex-col items-center justify-center h-80 py-4">
               <button className="flex flex-col items-center gap-2 p-4 rounded-xl hover:bg-surface-1 dark:hover:bg-elevation-3 transition-colors group" title="Add a new comp">
                 <div className="w-12 h-12 rounded-full bg-accent-cyan/20 dark:bg-accent-cyan/10 flex items-center justify-center group-hover:bg-accent-cyan/30 dark:group-hover:bg-accent-cyan/20 transition-colors">
@@ -987,7 +987,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
 
         {/* RENTAL INDICATION FOOTER - Stays centered, doesn't scroll horizontally */}
         <div 
-          className="sticky left-0 bg-slate-50 dark:bg-elevation-1 border-t-2 border-slate-300 dark:border-dark-border p-8 pt-10"
+          className="sticky left-0 bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1 border-t-2 border-border-muted dark:border-dark-border-muted p-8 pt-10"
           style={{ width: '100vw', maxWidth: '100%' }}
         >
           <div className="max-w-4xl mx-auto flex flex-col gap-6">
@@ -995,7 +995,7 @@ export const MultiFamilyGrid: React.FC<MultiFamilyGridProps> = ({ scenarioId }) 
               <div className="w-2 h-8 bg-accent-cyan rounded-full"></div>
               <h2 className="text-xl font-bold text-slate-800 dark:text-white uppercase tracking-wider">Multi-Family Rental Indication</h2>
             </div>
-            <div className="bg-surface-1 dark:bg-elevation-1 rounded-2xl border border-slate-200 dark:border-dark-border p-6 shadow-sm">
+            <div className="bg-surface-1 dark:bg-elevation-1 rounded-2xl border border-light-border dark:border-dark-border dark:border-dark-border p-6 shadow-sm">
               <div className="grid grid-cols-3 gap-6">
                 <div className="text-center">
                   <div className="text-sm text-slate-500 dark:text-slate-400 font-medium mb-2">Subject Unit Count</div>

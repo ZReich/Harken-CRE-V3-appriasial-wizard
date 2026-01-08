@@ -232,10 +232,10 @@ const CLASSIFICATION_DETAILS: ClassificationDetail[] = [
       recapture: 'Section 1250 - Straight-line recapture',
     },
     color: {
-      bg: 'bg-slate-50',
-      border: 'border-slate-200',
+      bg: 'bg-surface-2 dark:bg-elevation-2',
+      border: 'border-light-border dark:border-dark-border',
       text: 'text-slate-700',
-      accent: 'bg-slate-500',
+      accent: 'bg-surface-2 dark:bg-elevation-20',
     },
   },
 ];
@@ -256,7 +256,7 @@ export const ClassificationGuidance: React.FC<ClassificationGuidanceProps> = ({
     if (!detail) return null;
 
     return (
-      <div className={`bg-surface-1 rounded-lg shadow-lg border border-slate-200 p-4 max-w-sm ${className}`}>
+      <div className={`bg-surface-1 rounded-lg shadow-lg border border-light-border dark:border-dark-border p-4 max-w-sm ${className}`}>
         <div className="flex items-center gap-2 mb-2">
           <div className={`w-3 h-3 rounded ${detail.color.accent}`} />
           <span className="font-semibold text-slate-900">{detail.title}</span>
@@ -272,8 +272,8 @@ export const ClassificationGuidance: React.FC<ClassificationGuidanceProps> = ({
   // Popup variant (simpler, fewer details)
   if (variant === 'popup') {
     return (
-      <div className={`bg-surface-1 rounded-xl border border-slate-200 shadow-lg overflow-hidden max-w-2xl ${className}`}>
-        <div className="px-4 py-3 bg-slate-50 border-b border-slate-200">
+      <div className={`bg-surface-1 rounded-xl border border-light-border dark:border-dark-border shadow-lg overflow-hidden max-w-2xl ${className}`}>
+        <div className="px-4 py-3 bg-surface-2 dark:bg-elevation-2 border-b border-light-border dark:border-dark-border">
           <h3 className="font-semibold text-slate-900 flex items-center gap-2">
             <Scale className="w-4 h-4 text-[#0da1c7]" />
             IRS Depreciation Classes
@@ -303,9 +303,9 @@ export const ClassificationGuidance: React.FC<ClassificationGuidanceProps> = ({
 
   // Full variant (default)
   return (
-    <div className={`bg-surface-1 rounded-xl border border-slate-200 shadow-sm overflow-hidden ${className}`}>
+    <div className={`bg-surface-1 rounded-xl border border-light-border dark:border-dark-border shadow-sm overflow-hidden ${className}`}>
       {/* Header */}
-      <div className="px-6 py-4 bg-gradient-to-r from-slate-50 to-white border-b border-slate-200">
+      <div className="px-6 py-4 bg-gradient-to-r from-slate-50 to-white border-b border-light-border dark:border-dark-border">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 bg-[#0da1c7]/10 rounded-xl flex items-center justify-center">
             <BookOpen className="w-5 h-5 text-[#0da1c7]" />
@@ -348,14 +348,14 @@ export const ClassificationGuidance: React.FC<ClassificationGuidanceProps> = ({
             <div
               key={detail.depClass}
               className={`border rounded-xl overflow-hidden transition-all ${
-                isExpanded ? detail.color.border : 'border-slate-200'
+                isExpanded ? detail.color.border : 'border-light-border dark:border-dark-border'
               } ${highlightClass === detail.depClass ? 'ring-2 ring-offset-2 ring-[#0da1c7]' : ''}`}
             >
               {/* Class Header */}
               <button
                 onClick={() => setExpandedClass(isExpanded ? null : detail.depClass)}
                 className={`w-full px-4 py-3 flex items-center justify-between text-left transition-colors ${
-                  isExpanded ? detail.color.bg : 'bg-surface-1 hover:bg-slate-50'
+                  isExpanded ? detail.color.bg : 'bg-surface-1 hover:bg-surface-2 dark:bg-elevation-2'
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -438,7 +438,7 @@ export const ClassificationGuidance: React.FC<ClassificationGuidanceProps> = ({
                   )}
 
                   {/* Tax Treatment */}
-                  <div className="bg-surface-1 rounded-lg border border-slate-200 p-3">
+                  <div className="bg-surface-1 rounded-lg border border-light-border dark:border-dark-border p-3">
                     <h5 className="text-xs font-semibold text-slate-700 uppercase tracking-wide mb-2 flex items-center gap-1">
                       <FileText className="w-3.5 h-3.5" />
                       Tax Treatment
@@ -461,7 +461,7 @@ export const ClassificationGuidance: React.FC<ClassificationGuidanceProps> = ({
 
                   {/* Component List from Constants */}
                   {showExamples && components.length > 0 && (
-                    <div className="mt-4 pt-4 border-t border-slate-200">
+                    <div className="mt-4 pt-4 border-t border-light-border dark:border-dark-border">
                       <h5 className="text-xs font-semibold text-slate-700 uppercase tracking-wide mb-2">
                         Classified Components ({components.length})
                       </h5>
@@ -489,7 +489,7 @@ export const ClassificationGuidance: React.FC<ClassificationGuidanceProps> = ({
       </div>
 
       {/* Footer */}
-      <div className="px-6 py-4 bg-slate-50 border-t border-slate-200">
+      <div className="px-6 py-4 bg-surface-2 dark:bg-elevation-2 border-t border-light-border dark:border-dark-border">
         <div className="flex items-start gap-2 text-xs text-slate-500">
           <HelpCircle className="w-4 h-4 text-slate-400 mt-0.5 flex-shrink-0" />
           <p>

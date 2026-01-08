@@ -190,13 +190,13 @@ export const ReconciliationSummary: React.FC<ReconciliationSummaryProps> = ({
       case 'Multi-Family Approach': 
         return { bg: 'bg-[#4db8d1]/10', border: 'border-[#4db8d1]', text: 'text-[#0da1c7]' };
       default: 
-        return { bg: 'bg-slate-50', border: 'border-slate-300', text: 'text-slate-600' };
+        return { bg: 'bg-surface-2 dark:bg-elevation-2', border: 'border-border-muted dark:border-dark-border-muted', text: 'text-slate-600' };
     }
   };
 
   if (approachValues.length === 0) {
     return (
-      <div className={`bg-surface-1 dark:bg-elevation-1 border border-slate-200 dark:border-dark-border rounded-xl p-4 ${className}`}>
+      <div className={`bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border dark:border-dark-border rounded-xl p-4 ${className}`}>
         <h4 className="text-xs font-bold text-harken-gray-med uppercase tracking-widest mb-3">
           Reconciliation Summary
         </h4>
@@ -208,16 +208,16 @@ export const ReconciliationSummary: React.FC<ReconciliationSummaryProps> = ({
   }
 
   return (
-    <div className={`bg-surface-1 dark:bg-elevation-1 border border-slate-200 dark:border-dark-border rounded-xl overflow-hidden ${className}`}>
+    <div className={`bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border dark:border-dark-border rounded-xl overflow-hidden ${className}`}>
       {/* Header */}
-      <div className="px-4 py-3 bg-slate-50 border-b border-slate-200">
+      <div className="px-4 py-3 bg-surface-2 dark:bg-elevation-2 border-b border-light-border dark:border-dark-border">
         <h4 className="text-xs font-bold text-harken-gray-med uppercase tracking-widest">
           Reconciliation Summary
         </h4>
       </div>
 
       {/* Approach rows */}
-      <div className="divide-y divide-slate-100">
+      <div className="divide-y divide-light-border dark:divide-dark-border">
         {approachValues.map(av => {
           const colors = getApproachColor(av.approach);
           const weight = weights[av.approach] || 0;
@@ -264,7 +264,7 @@ export const ReconciliationSummary: React.FC<ReconciliationSummaryProps> = ({
                   step="5"
                   value={weight}
                   onChange={(e) => updateWeight(av.approach, parseInt(e.target.value))}
-                  className="w-full h-2 bg-slate-200 dark:bg-elevation-1 rounded-lg appearance-none cursor-pointer accent-[#0da1c7]"
+                  className="w-full h-2 bg-surface-4 dark:bg-elevation-muted rounded-lg appearance-none cursor-pointer accent-[#0da1c7]"
                 />
               </div>
             </div>

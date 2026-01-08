@@ -451,7 +451,7 @@ export const RiskAnalysisModal: React.FC<Props> = ({
           </div>
           <button onClick={onClose} className="p-1 hover:bg-surface-1/10 rounded-lg transition-colors"><X size={20} /></button>
         </div>
-        <div className="p-6 border-b border-slate-100 bg-slate-50 flex items-center justify-between flex-shrink-0">
+        <div className="p-6 border-b border-light-border dark:border-dark-border bg-surface-2 dark:bg-elevation-2 flex items-center justify-between flex-shrink-0">
           <div>
             <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Confidence Score</div>
             <div className="text-3xl font-black text-slate-800 dark:text-white">{analysis.score}/100</div>
@@ -475,8 +475,8 @@ export const RiskAnalysisModal: React.FC<Props> = ({
             </div>
           ))}
         </div>
-        <div className="p-4 border-t border-slate-100 bg-slate-50 text-center flex-shrink-0">
-          <button onClick={onClose} className="text-sm font-semibold text-slate-600 dark:text-slate-200 hover:text-harken-blue transition-colors w-full py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-elevation-3">Return to Editor</button>
+        <div className="p-4 border-t border-light-border dark:border-dark-border bg-surface-2 dark:bg-elevation-2 text-center flex-shrink-0">
+          <button onClick={onClose} className="text-sm font-semibold text-slate-600 dark:text-slate-200 hover:text-harken-blue transition-colors w-full py-2 rounded-lg hover:bg-surface-3 dark:hover:bg-elevation-3">Return to Editor</button>
         </div>
       </div>
     </div>

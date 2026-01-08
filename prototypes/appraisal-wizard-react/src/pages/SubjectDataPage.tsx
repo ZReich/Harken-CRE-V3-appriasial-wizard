@@ -3144,7 +3144,7 @@ function ExhibitsContent(_props: ExhibitsProps) {
                   className="flex items-center gap-4 p-4 bg-surface-1 dark:bg-elevation-1/50 rounded-xl border border-light-border dark:border-dark-border hover:border-harken-blue/30 dark:hover:border-harken-blue/40 transition-all group"
                 >
                   {/* Icon */}
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-50 to-slate-100 dark:from-harken-dark dark:to-harken-dark flex items-center justify-center flex-shrink-0 border border-slate-200 dark:border-harken-gray">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-50 to-slate-100 dark:from-harken-dark dark:to-harken-dark flex items-center justify-center flex-shrink-0 border border-light-border dark:border-dark-border dark:border-harken-gray">
                     <typeInfo.Icon className="w-5 h-5 text-slate-600 dark:text-slate-400" />
                   </div>
 
@@ -3214,7 +3214,7 @@ function ExhibitsContent(_props: ExhibitsProps) {
                 className="flex items-center gap-4 p-4 bg-surface-1 dark:bg-elevation-1/50 rounded-xl border border-light-border dark:border-dark-border hover:border-harken-blue/30 dark:hover:border-harken-blue/40 transition-all group"
               >
                 {/* Icon */}
-                <div className="w-10 h-10 rounded-xl overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100 dark:from-harken-dark dark:to-harken-dark flex items-center justify-center flex-shrink-0 border border-slate-200 dark:border-harken-gray">
+                <div className="w-10 h-10 rounded-xl overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100 dark:from-harken-dark dark:to-harken-dark flex items-center justify-center flex-shrink-0 border border-light-border dark:border-dark-border dark:border-harken-gray">
                   {exhibit.preview ? (
                     <img src={exhibit.preview} alt="" className="w-full h-full object-cover" />
                   ) : (

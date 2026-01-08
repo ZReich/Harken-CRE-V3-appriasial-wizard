@@ -89,7 +89,7 @@ export const CostSegMethodologyPage: React.FC<CostSegMethodologyPageProps> = ({
         <h3 className="text-lg font-semibold text-[#1c3643] mb-3">Classification Criteria</h3>
         <table className="w-full text-sm border-collapse">
           <thead>
-            <tr className="border-b-2 border-slate-300 bg-harken-gray-light">
+            <tr className="border-b-2 border-border-muted dark:border-dark-border-muted bg-harken-gray-light">
               <th className="text-left py-3 px-4 font-semibold text-harken-gray">Class</th>
               <th className="text-left py-3 px-4 font-semibold text-harken-gray">Description</th>
               <th className="text-left py-3 px-4 font-semibold text-harken-gray">Key Criteria</th>

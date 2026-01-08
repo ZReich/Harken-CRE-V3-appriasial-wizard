@@ -56,9 +56,9 @@ const PhotoSlotGroup: React.FC<PhotoSlotGroupProps> = ({
   const canAddMore = photoCount < slot.maxCount;
 
   return (
-    <div className="border border-slate-200 dark:border-dark-border rounded-lg overflow-hidden bg-surface-1 dark:bg-elevation-1">
+    <div className="border border-light-border dark:border-dark-border dark:border-dark-border rounded-lg overflow-hidden bg-surface-1 dark:bg-elevation-1">
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-3 bg-slate-50 border-b border-slate-200">
+      <div className="flex items-center justify-between px-4 py-3 bg-surface-2 dark:bg-elevation-2 border-b border-light-border dark:border-dark-border">
         <div className="flex items-center gap-3">
           <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
             isComplete ? 'bg-accent-teal-mint-light text-accent-teal-mint' : 'bg-accent-amber-gold-light text-accent-amber-gold'
@@ -105,7 +105,7 @@ const PhotoSlotGroup: React.FC<PhotoSlotGroupProps> = ({
           className={`p-8 border-2 border-dashed m-4 rounded-lg transition-colors cursor-pointer ${
             isDragOver
               ? 'border-sky-400 bg-sky-50'
-              : 'border-slate-200 hover:border-slate-300'
+              : 'border-light-border dark:border-dark-border hover:border-border-muted dark:hover:border-dark-border-muted'
           }`}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
@@ -128,7 +128,7 @@ const PhotoSlotGroup: React.FC<PhotoSlotGroupProps> = ({
             {photos.map((photo, index) => (
               <div
                 key={photo.id}
-                className="relative group aspect-[4/3] bg-slate-100 rounded-lg overflow-hidden"
+                className="relative group aspect-[4/3] bg-surface-3 dark:bg-elevation-subtle rounded-lg overflow-hidden"
               >
                 <img
                   src={photo.url}
@@ -179,7 +179,7 @@ const PhotoSlotGroup: React.FC<PhotoSlotGroupProps> = ({
             {canAddMore && photos.length > 0 && (
               <button
                 onClick={() => inputRef.current?.click()}
-                className="aspect-[4/3] border-2 border-dashed border-slate-200 rounded-lg hover:border-sky-400 hover:bg-sky-50 transition-colors flex flex-col items-center justify-center text-slate-400 hover:text-sky-500"
+                className="aspect-[4/3] border-2 border-dashed border-light-border dark:border-dark-border rounded-lg hover:border-sky-400 hover:bg-sky-50 transition-colors flex flex-col items-center justify-center text-slate-400 hover:text-sky-500"
               >
                 <ImagePlus size={24} className="mb-1" />
                 <span className="text-xs">Add More</span>

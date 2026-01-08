@@ -78,10 +78,10 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-full bg-slate-50 dark:bg-elevation-1 overflow-hidden font-sans">
+    <div className="flex flex-col h-full bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1 overflow-hidden font-sans">
 
       {/* Scrollable Content */}
-      <div className="flex-1 overflow-y-auto bg-slate-50/50 dark:bg-elevation-1/50 scroll-smooth">
+      <div className="flex-1 overflow-y-auto bg-surface-2 dark:bg-elevation-2/50 dark:bg-elevation-1/50 scroll-smooth">
         <div className="w-full min-h-full pb-20">
           <div className="p-6 space-y-8">
 
@@ -89,7 +89,7 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
             <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="flex items-center gap-2 mb-3 px-2">
                 <span className="text-sm font-bold text-slate-900 uppercase tracking-wider">Land Value</span>
-                <div className="h-px bg-slate-200 dark:bg-elevation-1 flex-1"></div>
+                <div className="h-px bg-surface-4 dark:bg-elevation-muted flex-1"></div>
               </div>
 
               <div className={`rounded-xl border-2 p-6 ${hasLandValue
@@ -183,7 +183,7 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
             </section>
 
             {/* Building Selector Section */}
-            <section className="bg-surface-1 dark:bg-elevation-1 rounded-xl shadow-sm border border-slate-200 dark:border-dark-border p-6 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-50">
+            <section className="bg-surface-1 dark:bg-elevation-1 rounded-xl shadow-sm border border-light-border dark:border-dark-border dark:border-dark-border p-6 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-50">
               <BuildingSelector
                 scenarioId={currentScenarioId}
                 selectedBuildingIds={selectedBuildingIds}
@@ -192,7 +192,7 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
             </section>
 
             {/* Improvement Valuation Section */}
-            <section className="bg-surface-1 dark:bg-elevation-1 rounded-xl shadow-sm border border-slate-200 dark:border-dark-border p-8 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75">
+            <section className="bg-surface-1 dark:bg-elevation-1 rounded-xl shadow-sm border border-light-border dark:border-dark-border dark:border-dark-border p-8 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75">
               <ImprovementValuation
                 onValueChange={setImprovementsValue}
                 scenario={scenario}

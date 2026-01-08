@@ -438,7 +438,7 @@ export function PhotoReferencePanel({
           
           {/* AI Detected Materials Section */}
           {detectedMaterials.length > 0 && (
-            <div className="border-t border-slate-100">
+            <div className="border-t border-light-border dark:border-dark-border">
               <button
                 onClick={() => setShowAISuggestions(!showAISuggestions)}
                 className="w-full px-3 py-2 flex items-center justify-between text-xs font-medium text-harken-blue bg-harken-blue/5 hover:bg-harken-blue/10 transition-colors"

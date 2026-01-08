@@ -121,7 +121,7 @@ export const CostSegTab: React.FC<CostSegTabProps> = ({ className = '', onOpenFu
               ? 'Cost Segregation is not enabled for this appraisal. Enable it in the Setup page under "Optional Add-on Reports".'
               : 'Cost Segregation requires the Cost Approach. Please select Cost Approach in at least one scenario.'}
           </p>
-          <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 text-left">
+          <div className="bg-surface-2 dark:bg-elevation-2 border border-light-border dark:border-dark-border rounded-xl p-4 text-left">
             <h4 className="font-medium text-slate-900 mb-2 flex items-center gap-2">
               <CheckCircle2 className="w-4 h-4 text-slate-400" />
               Requirements:
@@ -164,7 +164,7 @@ export const CostSegTab: React.FC<CostSegTabProps> = ({ className = '', onOpenFu
           </div>
           <button
             onClick={handleSkip}
-            className="flex items-center gap-2 px-4 py-2 text-slate-600 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-elevation-3 rounded-lg transition-colors text-sm"
+            className="flex items-center gap-2 px-4 py-2 text-slate-600 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white hover:bg-surface-3 dark:hover:bg-elevation-3 rounded-lg transition-colors text-sm"
           >
             <SkipForward className="w-4 h-4" />
             Skip this step
@@ -187,7 +187,7 @@ export const CostSegTab: React.FC<CostSegTabProps> = ({ className = '', onOpenFu
             </p>
             
             {/* What to expect */}
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 text-left mb-6">
+            <div className="bg-surface-2 dark:bg-elevation-2 border border-light-border dark:border-dark-border rounded-xl p-4 text-left mb-6">
               <h4 className="font-medium text-slate-900 mb-3 flex items-center gap-2">
                 <FileText className="w-4 h-4 text-harken-gray-med dark:text-slate-400" />
                 What Cost Segregation Provides:
@@ -226,11 +226,11 @@ export const CostSegTab: React.FC<CostSegTabProps> = ({ className = '', onOpenFu
         {showGuidance && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
             <div className="bg-surface-1 dark:bg-elevation-1 rounded-2xl max-w-4xl max-h-[90vh] overflow-y-auto">
-              <div className="sticky top-0 bg-surface-1 dark:bg-elevation-1 px-6 py-4 border-b border-slate-200 dark:border-dark-border flex items-center justify-between">
+              <div className="sticky top-0 bg-surface-1 dark:bg-elevation-1 px-6 py-4 border-b border-light-border dark:border-dark-border dark:border-dark-border flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-slate-900">Cost Segregation Guide</h3>
                 <button
                   onClick={() => setShowGuidance(false)}
-                  className="p-2 hover:bg-slate-100 dark:hover:bg-elevation-3 rounded-lg transition-colors"
+                  className="p-2 hover:bg-surface-3 dark:hover:bg-elevation-3 rounded-lg transition-colors"
                 >
                   <span className="sr-only">Close</span>
                   ×
@@ -251,7 +251,7 @@ export const CostSegTab: React.FC<CostSegTabProps> = ({ className = '', onOpenFu
   return (
     <div className={`flex flex-col h-full ${className}`}>
       {/* Header */}
-      <div className="px-6 py-4 border-b border-slate-200 dark:border-dark-border bg-surface-1 dark:bg-elevation-1">
+      <div className="px-6 py-4 border-b border-light-border dark:border-dark-border dark:border-dark-border bg-surface-1 dark:bg-elevation-1">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <div className="w-10 h-10 bg-accent-teal-mint-light rounded-xl flex items-center justify-center">
@@ -267,14 +267,14 @@ export const CostSegTab: React.FC<CostSegTabProps> = ({ className = '', onOpenFu
           <div className="flex items-center gap-3">
             <button
               onClick={() => setShowGuidance(true)}
-              className="flex items-center gap-2 px-3 py-2 text-slate-600 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-elevation-3 rounded-lg transition-colors text-sm"
+              className="flex items-center gap-2 px-3 py-2 text-slate-600 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white hover:bg-surface-3 dark:hover:bg-elevation-3 rounded-lg transition-colors text-sm"
             >
               <HelpCircle className="w-4 h-4" />
               Guidance
             </button>
             <button
               onClick={handleSkip}
-              className="flex items-center gap-2 px-3 py-2 text-slate-600 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-elevation-3 rounded-lg transition-colors text-sm"
+              className="flex items-center gap-2 px-3 py-2 text-slate-600 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white hover:bg-surface-3 dark:hover:bg-elevation-3 rounded-lg transition-colors text-sm"
             >
               <SkipForward className="w-4 h-4" />
               Skip
@@ -284,7 +284,7 @@ export const CostSegTab: React.FC<CostSegTabProps> = ({ className = '', onOpenFu
 
         {/* Sub-navigation */}
         {analysis && (
-          <div className="flex items-center gap-1 mt-4 -mb-4 border-b border-slate-200">
+          <div className="flex items-center gap-1 mt-4 -mb-4 border-b border-light-border dark:border-dark-border">
             {[
               { id: 'overview' as const, label: 'Overview', icon: FileText },
               { id: 'components' as const, label: 'Components', icon: Zap },
@@ -298,7 +298,7 @@ export const CostSegTab: React.FC<CostSegTabProps> = ({ className = '', onOpenFu
                 className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 -mb-px transition-colors ${
                   activeView === tab.id
                     ? 'border-[#0da1c7] text-[#0da1c7]'
-                    : 'border-transparent text-slate-600 hover:text-slate-900 hover:border-slate-300'
+                    : 'border-transparent text-slate-600 hover:text-slate-900 hover:border-border-muted dark:hover:border-dark-border-muted'
                 }`}
               >
                 <tab.icon className="w-4 h-4" />
@@ -345,7 +345,7 @@ export const CostSegTab: React.FC<CostSegTabProps> = ({ className = '', onOpenFu
             )}
 
             {/* Generate Card */}
-            <div className="bg-surface-1 dark:bg-elevation-1 rounded-2xl border border-slate-200 dark:border-dark-border shadow-sm overflow-hidden">
+            <div className="bg-surface-1 dark:bg-elevation-1 rounded-2xl border border-light-border dark:border-dark-border dark:border-dark-border shadow-sm overflow-hidden">
               <div className="p-8 text-center">
                 <div className="w-20 h-20 bg-gradient-to-br from-accent-teal-mint-light to-accent-teal-mint rounded-2xl flex items-center justify-center mx-auto mb-6">
                   <TrendingUp className="w-10 h-10 text-accent-teal-mint" />
@@ -456,11 +456,11 @@ export const CostSegTab: React.FC<CostSegTabProps> = ({ className = '', onOpenFu
       {showGuidance && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
           <div className="bg-surface-1 dark:bg-elevation-1 rounded-2xl max-w-4xl max-h-[90vh] overflow-y-auto w-full">
-            <div className="sticky top-0 bg-surface-1 dark:bg-elevation-1 px-6 py-4 border-b border-slate-200 dark:border-dark-border flex items-center justify-between z-10">
+            <div className="sticky top-0 bg-surface-1 dark:bg-elevation-1 px-6 py-4 border-b border-light-border dark:border-dark-border dark:border-dark-border flex items-center justify-between z-10">
               <h3 className="text-lg font-semibold text-slate-900">Cost Segregation Guide</h3>
               <button
                 onClick={() => setShowGuidance(false)}
-                className="p-2 hover:bg-slate-100 dark:hover:bg-elevation-3 rounded-lg transition-colors text-xl"
+                className="p-2 hover:bg-surface-3 dark:hover:bg-elevation-3 rounded-lg transition-colors text-xl"
               >
                 ×
               </button>

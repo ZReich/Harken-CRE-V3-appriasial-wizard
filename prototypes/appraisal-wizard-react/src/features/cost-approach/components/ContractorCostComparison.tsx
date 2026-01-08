@@ -53,11 +53,11 @@ export const ContractorCostComparison: React.FC<ContractorCostComparisonProps> =
   ];
 
   return (
-    <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl border border-slate-200 dark:border-dark-border overflow-hidden">
+    <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl border border-light-border dark:border-dark-border dark:border-dark-border overflow-hidden">
       {/* Header */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full px-4 py-3 bg-slate-50 dark:bg-elevation-1 border-b border-slate-200 dark:border-harken-gray flex items-center justify-between hover:bg-slate-100 dark:hover:bg-harken-gray transition-colors"
+        className="w-full px-4 py-3 bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1 border-b border-light-border dark:border-dark-border dark:border-harken-gray flex items-center justify-between hover:bg-surface-3 dark:hover:bg-elevation-subtle transition-colors"
       >
         <div className="flex items-center gap-2">
           <Scale className="w-4 h-4 text-[#0da1c7]" />
@@ -80,7 +80,7 @@ export const ContractorCostComparison: React.FC<ContractorCostComparisonProps> =
       {isExpanded && (
         <div className="p-4 space-y-4">
           {/* Comparison rows */}
-          <div className="divide-y divide-slate-100">
+          <div className="divide-y divide-light-border dark:divide-dark-border">
             <div className="flex items-center justify-between py-3">
               <div className="flex items-center gap-2">
                 <BookOpen className="w-4 h-4 text-slate-400" />

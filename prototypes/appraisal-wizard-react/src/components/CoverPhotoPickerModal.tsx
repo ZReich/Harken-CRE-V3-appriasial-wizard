@@ -161,7 +161,7 @@ export default function CoverPhotoPickerModal({
       {/* Modal */}
       <div className="relative w-full max-w-4xl max-h-[85vh] bg-surface-1 rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-in fade-in zoom-in-95">
         {/* Header */}
-        <div className="flex-shrink-0 px-6 py-4 border-b border-slate-200 bg-gradient-to-r from-harken-blue/10 to-cyan-100/30">
+        <div className="flex-shrink-0 px-6 py-4 border-b border-light-border dark:border-dark-border bg-gradient-to-r from-harken-blue/10 to-cyan-100/30">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-harken-blue to-cyan-600 flex items-center justify-center text-white shadow-lg">
@@ -174,7 +174,7 @@ export default function CoverPhotoPickerModal({
             </div>
             <button
               onClick={onClose}
-              className="p-2 rounded-lg hover:bg-slate-100 text-slate-400 hover:text-slate-600 transition-colors"
+              className="p-2 rounded-lg hover:bg-surface-3 dark:bg-elevation-subtle text-slate-400 hover:text-slate-600 transition-colors"
             >
               <X className="w-5 h-5" />
             </button>
@@ -182,7 +182,7 @@ export default function CoverPhotoPickerModal({
         </div>
 
         {/* Category Tabs */}
-        <div className="flex-shrink-0 px-6 py-3 border-b border-slate-100 bg-slate-50/50">
+        <div className="flex-shrink-0 px-6 py-3 border-b border-light-border dark:border-dark-border bg-surface-2 dark:bg-elevation-2/50">
           <div className="flex gap-2 overflow-x-auto">
             {CATEGORIES.map((cat) => {
               const count = categoryCounts[cat.id] || 0;
@@ -200,7 +200,7 @@ export default function CoverPhotoPickerModal({
                     ${isActive 
                       ? 'bg-harken-blue text-white shadow-lg shadow-harken-blue/30' 
                       : count > 0 || cat.id === 'all'
-                        ? 'text-slate-600 hover:bg-slate-100'
+                        ? 'text-slate-600 hover:bg-surface-3 dark:hover:bg-elevation-subtle'
                         : 'text-slate-300 cursor-not-allowed'
                     }
                   `}
@@ -210,7 +210,7 @@ export default function CoverPhotoPickerModal({
                   {count > 0 && (
                     <span className={`
                       px-1.5 py-0.5 rounded-full text-xs font-bold
-                      ${isActive ? 'bg-surface-1/20 text-white' : 'bg-slate-200 text-slate-600'}
+                      ${isActive ? 'bg-surface-1/20 text-white' : 'bg-surface-4 dark:bg-elevation-muted text-slate-600'}
                     `}>
                       {count}
                     </span>
@@ -243,13 +243,13 @@ export default function CoverPhotoPickerModal({
                       animate-in fade-in slide-in-from-bottom-2
                       ${isSelected 
                         ? 'border-harken-blue ring-2 ring-harken-blue/30 scale-[1.02]' 
-                        : 'border-slate-200 hover:border-harken-blue/50 hover:shadow-lg'
+                        : 'border-light-border dark:border-dark-border hover:border-harken-blue/50 hover:shadow-lg'
                       }
                     `}
                     style={{ animationDelay: `${index * 30}ms` }}
                   >
                     {/* Photo */}
-                    <div className="aspect-[4/3] bg-slate-100">
+                    <div className="aspect-[4/3] bg-surface-3 dark:bg-elevation-subtle">
                       <img
                         src={item.photo.preview}
                         alt={item.label}
@@ -290,7 +290,7 @@ export default function CoverPhotoPickerModal({
         </div>
 
         {/* Footer */}
-        <div className="flex-shrink-0 px-6 py-4 border-t border-slate-200 bg-slate-50 flex items-center justify-between">
+        <div className="flex-shrink-0 px-6 py-4 border-t border-light-border dark:border-dark-border bg-surface-2 dark:bg-elevation-2 flex items-center justify-between">
           <p className="text-sm text-slate-500 dark:text-slate-400">
             {selectedSlotId 
               ? `Selected: ${photos.find(p => p.slotId === selectedSlotId)?.label}`
@@ -311,7 +311,7 @@ export default function CoverPhotoPickerModal({
                 flex items-center gap-2 px-5 py-2 rounded-xl text-sm font-bold transition-all
                 ${selectedSlotId
                   ? 'bg-harken-blue hover:bg-harken-blue/90 text-white shadow-lg shadow-harken-blue/30'
-                  : 'bg-slate-200 text-slate-400 cursor-not-allowed'
+                  : 'bg-surface-4 dark:bg-elevation-muted text-slate-400 cursor-not-allowed'
                 }
               `}
             >

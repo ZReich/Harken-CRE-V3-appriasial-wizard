@@ -128,7 +128,7 @@ function SWOTQuadrant({
               {!readOnly && (
                 <button
                   onClick={() => onRemove(index)}
-                  className="opacity-0 group-hover:opacity-100 p-1 hover:bg-slate-200 rounded transition-all"
+                  className="opacity-0 group-hover:opacity-100 p-1 hover:bg-surface-4 dark:hover:bg-elevation-muted rounded transition-all"
                 >
                   <X className="w-3 h-3 text-harken-gray-med" />
                 </button>
@@ -140,7 +140,7 @@ function SWOTQuadrant({
 
       {/* Add Input */}
       {!readOnly && (
-        <div className="p-3 border-t border-slate-200/50 dark:border-dark-border/50">
+        <div className="p-3 border-t border-light-border dark:border-dark-border/50 dark:border-dark-border/50">
           <div className="flex gap-2">
             <input
               type="text"
@@ -148,12 +148,12 @@ function SWOTQuadrant({
               onChange={(e) => setInputValue(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder={placeholder}
-              className="flex-1 px-3 py-2 text-sm bg-surface-1 dark:bg-elevation-1 dark:text-white border border-slate-200 dark:border-harken-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-transparent"
+              className="flex-1 px-3 py-2 text-sm bg-surface-1 dark:bg-elevation-1 dark:text-white border border-light-border dark:border-dark-border dark:border-harken-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-transparent"
             />
             <button
               onClick={handleAdd}
               disabled={!inputValue.trim()}
-              className="p-2 bg-surface-1 dark:bg-elevation-1 border border-slate-200 dark:border-harken-gray rounded-lg hover:bg-slate-50 dark:hover:bg-harken-gray disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="p-2 bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border dark:border-harken-gray rounded-lg hover:bg-surface-2 dark:bg-elevation-2 dark:hover:bg-harken-gray disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <Plus className="w-4 h-4 text-slate-600 dark:text-slate-400" />
             </button>
@@ -174,7 +174,7 @@ function ImpactScoreGauge({ score }: { score: number }) {
   const isNegative = score < -10;
 
   return (
-    <div className="flex items-center gap-3 bg-slate-50 rounded-lg px-3 py-2">
+    <div className="flex items-center gap-3 bg-surface-2 dark:bg-elevation-2 rounded-lg px-3 py-2">
       <div className="flex items-center gap-1.5">
         {isPositive ? (
           <TrendingUp className="w-4 h-4 text-accent-teal-mint" />
@@ -185,7 +185,7 @@ function ImpactScoreGauge({ score }: { score: number }) {
         )}
             <span className="text-sm font-medium text-harken-gray dark:text-slate-400">Impact Score</span>
       </div>
-      <div className="flex-1 h-2 bg-slate-200 rounded-full overflow-hidden">
+      <div className="flex-1 h-2 bg-surface-4 dark:bg-elevation-muted rounded-full overflow-hidden">
         <div
           className={`h-full transition-all duration-500 ${isPositive ? 'bg-accent-teal-mint' : isNegative ? 'bg-harken-error' : 'bg-slate-400'
             }`}
@@ -347,7 +347,7 @@ export function SWOTAnalysis({
 
       {/* AI Analysis Stats Bar */}
       {(dataCompleteness !== null || impactScore !== null || totalAiItems > 0) && (
-        <div className="bg-gradient-to-r from-slate-50 to-slate-100 rounded-xl border border-slate-200 p-4 space-y-3">
+        <div className="bg-gradient-to-r from-slate-50 to-slate-100 rounded-xl border border-light-border dark:border-dark-border p-4 space-y-3">
           <div className="flex items-center justify-between flex-wrap gap-3">
             {/* Data Completeness */}
             {dataCompleteness !== null && (
@@ -469,7 +469,7 @@ export function SWOTAnalysis({
           aiInstructions="Write a comprehensive SWOT analysis summary in the voice of a 30-year veteran commercial real estate appraiser. Synthesize all identified strengths, weaknesses, opportunities, and threats into a cohesive 2-3 paragraph narrative. Assess the subject property's overall competitive position in the market. Discuss how the strengths can be leveraged, how weaknesses might be mitigated, what opportunities exist for value enhancement, and what threats require monitoring. Conclude with an overall assessment of the property's market positioning and investment outlook. Use professional appraisal terminology and maintain an objective, analytical tone appropriate for a formal appraisal report."
         />
       ) : (
-        <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl border border-slate-200 dark:border-dark-border p-4">
+        <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl border border-light-border dark:border-dark-border dark:border-dark-border p-4">
           <label className="block text-sm font-medium text-slate-700 mb-2">
             Summary / Analysis Notes
           </label>

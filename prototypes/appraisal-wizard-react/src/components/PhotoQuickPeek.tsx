@@ -122,7 +122,7 @@ export const PhotoQuickPeek: React.FC<PhotoQuickPeekProps> = ({
           <div className="grid grid-cols-2 gap-2">
             {/* Featured photo (larger) */}
             <div className="col-span-1 row-span-2">
-              <div className="relative h-32 bg-slate-100 rounded-lg overflow-hidden border-2 border-harken-blue">
+              <div className="relative h-32 bg-surface-3 dark:bg-elevation-subtle rounded-lg overflow-hidden border-2 border-harken-blue">
                 <img
                   src={photo.preview}
                   alt={photo.caption || slotLabel}
@@ -138,7 +138,7 @@ export const PhotoQuickPeek: React.FC<PhotoQuickPeekProps> = ({
 
             {/* Empty placeholder slots */}
             {[1, 2, 3].map((i) => (
-              <div key={i} className="h-[60px] bg-slate-50 rounded-lg border border-dashed border-slate-200 flex items-center justify-center">
+              <div key={i} className="h-[60px] bg-surface-2 dark:bg-elevation-2 rounded-lg border border-dashed border-light-border dark:border-dark-border flex items-center justify-center">
                 <span className="text-[9px] text-slate-300">Empty</span>
               </div>
             ))}
@@ -146,7 +146,7 @@ export const PhotoQuickPeek: React.FC<PhotoQuickPeekProps> = ({
 
           {/* Attribution */}
           {(photo.takenBy || formattedDate) && (
-            <div className="mt-3 pt-2 border-t border-slate-100 text-center">
+            <div className="mt-3 pt-2 border-t border-light-border dark:border-dark-border text-center">
               <p className="text-[10px] text-slate-500 dark:text-slate-400">
                 {photo.takenBy && `Taken By: ${photo.takenBy}`}
                 {photo.takenBy && formattedDate && ', '}

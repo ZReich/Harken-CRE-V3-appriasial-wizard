@@ -99,7 +99,7 @@ export const SWOTPage: React.FC<SWOTPageProps> = ({ data, pageNumber }) => {
         {/* Stats Bar */}
         {totalItems > 0 && (
           <div className="mt-4 flex items-center gap-4 text-xs">
-            <div className="flex items-center gap-1.5 px-2 py-1 bg-slate-100 rounded">
+            <div className="flex items-center gap-1.5 px-2 py-1 bg-surface-3 dark:bg-elevation-subtle rounded">
               <span className="text-slate-500">Total Factors:</span>
               <span className="font-semibold text-slate-700">{totalItems}</span>
             </div>
@@ -173,7 +173,7 @@ export const SWOTPage: React.FC<SWOTPageProps> = ({ data, pageNumber }) => {
       </div>
 
       {/* Matrix Legend */}
-      <div className="bg-slate-50 rounded-lg p-3 mb-6 border border-slate-200">
+      <div className="bg-surface-2 dark:bg-elevation-2 rounded-lg p-3 mb-6 border border-light-border dark:border-dark-border">
         <div className="grid grid-cols-2 gap-4 text-xs text-slate-600">
           <div>
             <span className="font-semibold text-slate-700">Internal Factors:</span>{' '}

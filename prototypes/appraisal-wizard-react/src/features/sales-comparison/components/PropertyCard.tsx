@@ -14,7 +14,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property, isSubject,
       className="flex flex-col h-full bg-surface-1 dark:bg-elevation-1"
     >
       {/* Photo section */}
-      <div className="relative h-16 w-full overflow-hidden group bg-slate-100 dark:bg-elevation-1">
+      <div className="relative h-16 w-full overflow-hidden group bg-surface-3 dark:bg-elevation-subtle">
         <img
           src={property.image}
           alt={property.name}
@@ -44,7 +44,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property, isSubject,
 
       {/* Info section - sky-50 background for subject, white for comps */}
       <div
-        className={`p-2 flex-1 flex flex-col gap-0.5 border-r border-slate-200 dark:border-dark-border ${isSubject ? 'bg-sky-50 dark:bg-[#0f1f3a]' : 'bg-surface-1 dark:bg-elevation-1'}`}
+        className={`p-2 flex-1 flex flex-col gap-0.5 border-r border-light-border dark:border-dark-border dark:border-dark-border ${isSubject ? 'bg-sky-50 dark:bg-[#0f1f3a]' : 'bg-surface-1 dark:bg-elevation-1'}`}
       >
         <h3 className="font-bold text-slate-800 dark:text-white text-xs leading-tight line-clamp-1" title={property.name}>
           {property.name}

@@ -64,7 +64,7 @@ function DirectionIndicator({
       onClick={onClick}
       className={`p-1.5 rounded-full transition-all ${isActive
           ? 'bg-[#0da1c7] text-white'
-          : 'bg-slate-100 text-slate-400 hover:bg-slate-200'
+          : 'bg-surface-3 dark:bg-elevation-subtle text-slate-400 hover:bg-surface-4 dark:hover:bg-elevation-muted'
         }`}
       title={`Edit ${direction} boundary`}
     >
@@ -166,7 +166,7 @@ export function BoundaryFieldsCard({
             <button
               onClick={onRefreshBoundaries}
               disabled={isRefreshing}
-              className="p-1.5 rounded-lg text-slate-400 hover:text-[#0da1c7] hover:bg-slate-100 transition-colors disabled:opacity-50"
+              className="p-1.5 rounded-lg text-slate-400 hover:text-[#0da1c7] hover:bg-surface-3 dark:hover:bg-elevation-subtle transition-colors disabled:opacity-50"
               title="Refresh boundary data"
             >
               <RefreshCw className={`w-4 h-4 ${isRefreshing ? 'animate-spin' : ''}`} />
@@ -179,7 +179,7 @@ export function BoundaryFieldsCard({
               onClick={() => setShowMapPreview(!showMapPreview)}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${showMapPreview
                   ? 'bg-[#0da1c7] text-white'
-                  : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  : 'bg-surface-3 dark:bg-elevation-subtle text-slate-600 hover:bg-surface-4 dark:hover:bg-elevation-muted'
                 }`}
             >
               <Maximize2 className="w-3.5 h-3.5" />
@@ -248,7 +248,7 @@ export function BoundaryFieldsCard({
       </div>
 
       {/* Quick summary of all boundaries */}
-      <div className="grid grid-cols-2 gap-2 p-3 bg-slate-50 dark:bg-elevation-1/50 rounded-lg text-xs">
+      <div className="grid grid-cols-2 gap-2 p-3 bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1/50 rounded-lg text-xs">
         <div className={`flex items-center gap-1.5 ${northBoundary ? 'text-slate-700 dark:text-slate-200' : 'text-slate-400 dark:text-slate-500'}`}>
           <ArrowUp className="w-3 h-3" />
           <span className="truncate">{northBoundary || 'North: Not defined'}</span>
@@ -269,8 +269,8 @@ export function BoundaryFieldsCard({
 
       {/* Map Preview */}
       {showMapPreview && hasCoordinates && (
-        <div className="mt-4 rounded-lg overflow-hidden border border-slate-200">
-          <div className="bg-slate-100 h-48 flex items-center justify-center relative">
+        <div className="mt-4 rounded-lg overflow-hidden border border-light-border dark:border-dark-border">
+          <div className="bg-surface-3 dark:bg-elevation-subtle h-48 flex items-center justify-center relative">
             {/* Static map placeholder - in production, use actual map API */}
             <img
               src={`https://api.mapbox.com/styles/v1/mapbox/satellite-streets-v12/static/${longitude},${latitude},16,0/400x200@2x?access_token=pk.placeholder`}
@@ -282,7 +282,7 @@ export function BoundaryFieldsCard({
               }}
             />
             {/* Fallback placeholder */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-slate-100/90">
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-surface-3/90 dark:bg-elevation-subtle/90">
               <Map className="w-12 h-12 text-slate-300 mb-2" />
               <p className="text-xs text-slate-400">Map Preview</p>
               <p className="text-[10px] text-slate-400 mt-1">
@@ -290,7 +290,7 @@ export function BoundaryFieldsCard({
               </p>
             </div>
           </div>
-          <div className="px-3 py-2 bg-slate-50 text-[10px] text-slate-500 flex items-center gap-1">
+          <div className="px-3 py-2 bg-surface-2 dark:bg-elevation-2 text-[10px] text-slate-500 flex items-center gap-1">
             {dataSource === 'cadastral' && parcelId ? (
               <>
                 <div className="w-2 h-2 rounded-full bg-accent-teal-mint-light0" />

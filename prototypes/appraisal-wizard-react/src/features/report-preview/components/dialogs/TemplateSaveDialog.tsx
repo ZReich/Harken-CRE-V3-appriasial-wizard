@@ -112,7 +112,7 @@ export const TemplateSaveDialog: React.FC<TemplateSaveDialogProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl shadow-2xl w-full max-w-xl max-h-[90vh] overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-light-border dark:border-dark-border">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-accent-amber-gold-light rounded-lg flex items-center justify-center">
               <Star className="text-accent-amber-gold" size={20} />
@@ -121,7 +121,7 @@ export const TemplateSaveDialog: React.FC<TemplateSaveDialogProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-surface-3 dark:hover:bg-elevation-subtle rounded-lg transition-colors"
           >
             <X size={20} className="text-slate-400" />
           </button>
@@ -141,7 +141,7 @@ export const TemplateSaveDialog: React.FC<TemplateSaveDialogProps> = ({
                 onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
                 placeholder="Industrial Shop/Office Appraisal"
                 className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 ${
-                  errors.name ? 'border-harken-error/20' : 'border-slate-200'
+                  errors.name ? 'border-harken-error/20' : 'border-light-border dark:border-dark-border'
                 }`}
               />
               {errors.name && (
@@ -159,7 +159,7 @@ export const TemplateSaveDialog: React.FC<TemplateSaveDialogProps> = ({
                 onChange={e => setFormData(prev => ({ ...prev, description: e.target.value }))}
                 placeholder="Template for light industrial properties with shop and office components..."
                 rows={3}
-                className="w-full px-4 py-2.5 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 resize-none"
+                className="w-full px-4 py-2.5 border border-light-border dark:border-dark-border rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 resize-none"
               />
             </div>
 
@@ -172,7 +172,7 @@ export const TemplateSaveDialog: React.FC<TemplateSaveDialogProps> = ({
                 value={formData.useCase}
                 onChange={e => setFormData(prev => ({ ...prev, useCase: e.target.value }))}
                 className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 ${
-                  errors.useCase ? 'border-harken-error/20' : 'border-slate-200'
+                  errors.useCase ? 'border-harken-error/20' : 'border-light-border dark:border-dark-border'
                 }`}
               >
                 <option value="">Select a use case...</option>
@@ -199,7 +199,7 @@ export const TemplateSaveDialog: React.FC<TemplateSaveDialogProps> = ({
                     className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                       formData.propertyTypes.includes(type)
                         ? 'bg-sky-500 text-white'
-                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                        : 'bg-surface-3 dark:bg-elevation-subtle text-slate-600 hover:bg-surface-4 dark:hover:bg-elevation-muted'
                     }`}
                   >
                     {formData.propertyTypes.includes(type) && (
@@ -223,12 +223,12 @@ export const TemplateSaveDialog: React.FC<TemplateSaveDialogProps> = ({
                   onChange={e => setTagInput(e.target.value)}
                   onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), handleAddTag())}
                   placeholder="industrial, shop, bank loan"
-                  className="flex-1 px-4 py-2 border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
+                  className="flex-1 px-4 py-2 border border-light-border dark:border-dark-border rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500"
                 />
                 <button
                   type="button"
                   onClick={handleAddTag}
-                  className="px-4 py-2 bg-slate-100 text-slate-600 rounded-lg hover:bg-slate-200"
+                  className="px-4 py-2 bg-surface-3 dark:bg-elevation-subtle text-slate-600 rounded-lg hover:bg-surface-4 dark:hover:bg-elevation-muted"
                 >
                   Add
                 </button>
@@ -238,7 +238,7 @@ export const TemplateSaveDialog: React.FC<TemplateSaveDialogProps> = ({
                   {formData.tags.map(tag => (
                     <span
                       key={tag}
-                      className="inline-flex items-center gap-1 px-2 py-1 bg-slate-100 text-slate-600 text-sm rounded"
+                      className="inline-flex items-center gap-1 px-2 py-1 bg-surface-3 dark:bg-elevation-subtle text-slate-600 text-sm rounded"
                     >
                       {tag}
                       <button
@@ -255,7 +255,7 @@ export const TemplateSaveDialog: React.FC<TemplateSaveDialogProps> = ({
             </div>
 
             {/* What gets saved info */}
-            <div className="bg-slate-50 rounded-lg p-4 border border-slate-200">
+            <div className="bg-surface-2 dark:bg-elevation-2 rounded-lg p-4 border border-light-border dark:border-dark-border">
               <h4 className="text-sm font-medium text-slate-700 mb-3 flex items-center gap-2">
                 <Info size={16} className="text-slate-400" />
                 What gets saved in the template:
@@ -286,7 +286,7 @@ export const TemplateSaveDialog: React.FC<TemplateSaveDialogProps> = ({
                   Content templates
                 </div>
               </div>
-              <div className="mt-3 pt-3 border-t border-slate-200">
+              <div className="mt-3 pt-3 border-t border-light-border dark:border-dark-border">
                 <div className="grid grid-cols-2 gap-2 text-sm text-slate-400">
                   <div className="flex items-center gap-2">
                     <X size={14} />
@@ -330,11 +330,11 @@ export const TemplateSaveDialog: React.FC<TemplateSaveDialogProps> = ({
         </form>
 
         {/* Footer */}
-        <div className="flex justify-end gap-3 px-6 py-4 border-t border-slate-200 bg-slate-50">
+        <div className="flex justify-end gap-3 px-6 py-4 border-t border-light-border dark:border-dark-border bg-surface-2 dark:bg-elevation-2">
           <button
             type="button"
             onClick={onClose}
-            className="px-4 py-2 text-slate-600 hover:bg-slate-200 rounded-lg transition-colors"
+            className="px-4 py-2 text-slate-600 hover:bg-surface-4 dark:hover:bg-elevation-muted rounded-lg transition-colors"
           >
             Cancel
           </button>

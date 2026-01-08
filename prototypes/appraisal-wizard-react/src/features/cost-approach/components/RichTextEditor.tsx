@@ -35,7 +35,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   return (
     <>
       {isFullScreen && (
-        <div className="h-64 border-2 border-dashed border-slate-200 rounded-lg bg-slate-50 flex flex-col items-center justify-center text-slate-400 gap-2 animate-pulse">
+        <div className="h-64 border-2 border-dashed border-light-border dark:border-dark-border rounded-lg bg-surface-2 dark:bg-elevation-2 flex flex-col items-center justify-center text-slate-400 gap-2 animate-pulse">
           <Maximize2 size={24} className="opacity-50" />
           <span className="text-sm font-medium">Editing in full screen mode...</span>
           <button onClick={() => setIsFullScreen(false)} className="text-xs text-[#0da1c7] hover:underline">Return to normal view</button>
@@ -44,7 +44,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
       <div 
         className={`
-          bg-surface-1 dark:bg-elevation-1 border-slate-200 dark:border-dark-border shadow-sm overflow-hidden transition-all duration-300 ease-in-out
+          bg-surface-1 dark:bg-elevation-1 border-light-border dark:border-dark-border dark:border-dark-border shadow-sm overflow-hidden transition-all duration-300 ease-in-out
           ${isFullScreen 
             ? 'fixed inset-0 z-[100] border-0 rounded-none h-screen w-screen flex flex-col' 
             : 'border rounded-lg relative'
@@ -52,21 +52,21 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         `}
       >
         <div className={`
-          border-b border-slate-200 bg-slate-50 flex items-center justify-between flex-shrink-0
+          border-b border-light-border dark:border-dark-border bg-surface-2 dark:bg-elevation-2 flex items-center justify-between flex-shrink-0
           ${isFullScreen ? 'px-6 py-4 shadow-sm z-10' : 'p-3'}
         `}>
           <div className="flex items-center gap-2">
-            <div className="flex items-center gap-1 pr-3 border-r border-slate-300">
+            <div className="flex items-center gap-1 pr-3 border-r border-border-muted dark:border-dark-border-muted">
               <button className="p-1.5 rounded hover:bg-harken-gray-light dark:hover:bg-elevation-3 text-harken-gray dark:text-slate-200 transition-colors"><Bold size={16} /></button>
               <button className="p-1.5 rounded hover:bg-harken-gray-light dark:hover:bg-elevation-3 text-harken-gray dark:text-slate-200 transition-colors"><Italic size={16} /></button>
               <button className="p-1.5 rounded hover:bg-harken-gray-light dark:hover:bg-elevation-3 text-harken-gray dark:text-slate-200 transition-colors"><Underline size={16} /></button>
             </div>
-            <div className="flex items-center gap-1 px-3 border-r border-slate-300 hidden sm:flex">
-              <div className="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-200 bg-surface-1 dark:bg-elevation-1 border border-slate-300 dark:border-harken-gray rounded px-2 py-1 cursor-pointer hover:border-slate-400 dark:hover:border-harken-gray transition-colors">
+            <div className="flex items-center gap-1 px-3 border-r border-border-muted dark:border-dark-border-muted hidden sm:flex">
+              <div className="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-200 bg-surface-1 dark:bg-elevation-1 border border-border-muted dark:border-dark-border-muted rounded px-2 py-1 cursor-pointer hover:border-slate-400 dark:hover:border-harken-gray transition-colors">
                 <Type size={12} />
                 <span>Sans Serif</span>
               </div>
-              <div className="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-200 bg-surface-1 dark:bg-elevation-1 border border-slate-300 dark:border-harken-gray rounded px-2 py-1 cursor-pointer hover:border-slate-400 dark:hover:border-harken-gray transition-colors">
+              <div className="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-200 bg-surface-1 dark:bg-elevation-1 border border-border-muted dark:border-dark-border-muted rounded px-2 py-1 cursor-pointer hover:border-slate-400 dark:hover:border-harken-gray transition-colors">
                 <span>Normal</span>
               </div>
             </div>
@@ -79,7 +79,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
           <div className="flex items-center gap-3">
             <div className="hidden sm:flex gap-2">
               <button className="text-xs font-medium text-[#0da1c7] border border-[#0da1c7]/20 bg-[#0da1c7]/10 px-3 py-1.5 rounded hover:bg-[#0da1c7]/20 transition">Merge Field</button>
-              <button className="text-xs font-medium text-slate-600 dark:text-slate-200 border border-slate-200 dark:border-harken-gray bg-surface-1 dark:bg-elevation-1 px-3 py-1.5 rounded hover:bg-slate-50 dark:hover:bg-harken-gray transition">Snippet Data</button>
+              <button className="text-xs font-medium text-slate-600 dark:text-slate-200 border border-light-border dark:border-dark-border dark:border-harken-gray bg-surface-1 dark:bg-elevation-1 px-3 py-1.5 rounded hover:bg-surface-2 dark:bg-elevation-2 dark:hover:bg-harken-gray transition">Snippet Data</button>
             </div>
             
             <div className="w-px h-5 bg-slate-300 mx-1 hidden sm:block"></div>
@@ -90,7 +90,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
                 p-2 rounded-md transition-all duration-200 flex items-center gap-2 text-xs font-medium
                 ${isFullScreen 
                   ? 'bg-[#0da1c7] text-white hover:bg-[#0b8fb0] shadow-sm' 
-                  : 'text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-elevation-3 hover:text-slate-900 dark:hover:text-white'
+                  : 'text-slate-500 dark:text-slate-400 hover:bg-surface-4 dark:hover:bg-elevation-muted hover:text-slate-900 dark:hover:text-white'
                 }
               `}
               title={isFullScreen ? "Exit Full Screen (Esc)" : "Full Screen"}

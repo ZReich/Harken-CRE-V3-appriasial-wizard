@@ -114,14 +114,14 @@ export const CostSegReportEditor: React.FC<CostSegReportEditorProps> = ({
   };
 
   return (
-    <div className={`fixed inset-0 bg-slate-100 flex flex-col z-50 ${className}`}>
+    <div className={`fixed inset-0 bg-surface-3 dark:bg-elevation-subtle flex flex-col z-50 ${className}`}>
       {/* Header */}
-      <header className="bg-surface-1 border-b border-slate-200 px-6 py-4">
+      <header className="bg-surface-1 border-b border-light-border dark:border-dark-border px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button
               onClick={onBack}
-              className="flex items-center gap-2 px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors"
+              className="flex items-center gap-2 px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-surface-3 dark:hover:bg-elevation-subtle rounded-lg transition-colors"
             >
               <ArrowLeft className="w-4 h-4" />
               Back
@@ -145,8 +145,8 @@ export const CostSegReportEditor: React.FC<CostSegReportEditorProps> = ({
               onClick={() => setShowSettings(!showSettings)}
               className={`flex items-center gap-2 px-3 py-2 rounded-lg transition-colors ${
                 showSettings 
-                  ? 'bg-slate-200 text-slate-900' 
-                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                  ? 'bg-surface-4 dark:bg-elevation-muted text-slate-900 dark:text-slate-100' 
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-surface-3 dark:hover:bg-elevation-subtle'
               }`}
             >
               <Settings className="w-4 h-4" />
@@ -154,7 +154,7 @@ export const CostSegReportEditor: React.FC<CostSegReportEditorProps> = ({
             </button>
             <button
               onClick={handlePrint}
-              className="flex items-center gap-2 px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-slate-100 rounded-lg transition-colors"
+              className="flex items-center gap-2 px-3 py-2 text-slate-600 hover:text-slate-900 hover:bg-surface-3 dark:hover:bg-elevation-subtle rounded-lg transition-colors"
             >
               <Printer className="w-4 h-4" />
               Print
@@ -191,7 +191,7 @@ export const CostSegReportEditor: React.FC<CostSegReportEditorProps> = ({
       {/* Main Content */}
       <div className="flex-1 flex overflow-hidden">
         {/* Sidebar */}
-        <aside className="w-72 bg-surface-1 border-r border-slate-200 flex flex-col">
+        <aside className="w-72 bg-surface-1 border-r border-light-border dark:border-dark-border flex flex-col">
           {/* Sections List */}
           <div className="flex-1 overflow-y-auto p-4">
             <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
@@ -205,7 +205,7 @@ export const CostSegReportEditor: React.FC<CostSegReportEditorProps> = ({
                     activeSection === section.id
                       ? 'bg-[#0da1c7]/10 text-[#0da1c7]'
                       : section.isVisible
-                      ? 'hover:bg-slate-50 text-slate-700'
+                      ? 'hover:bg-surface-2 dark:bg-elevation-2 text-slate-700'
                       : 'text-slate-400'
                   }`}
                   onClick={() => section.isVisible && setActiveSection(section.id)}
@@ -225,8 +225,8 @@ export const CostSegReportEditor: React.FC<CostSegReportEditorProps> = ({
                       section.isRequired
                         ? 'text-slate-300 cursor-not-allowed'
                         : section.isVisible
-                        ? 'text-slate-400 hover:text-slate-600 hover:bg-slate-100'
-                        : 'text-slate-300 hover:text-slate-500 hover:bg-slate-100'
+                        ? 'text-slate-400 hover:text-slate-600 hover:bg-surface-3 dark:hover:bg-elevation-subtle'
+                        : 'text-slate-300 hover:text-slate-500 hover:bg-surface-3 dark:hover:bg-elevation-subtle'
                     }`}
                     title={section.isRequired ? 'Required section' : section.isVisible ? 'Hide section' : 'Show section'}
                   >
@@ -243,7 +243,7 @@ export const CostSegReportEditor: React.FC<CostSegReportEditorProps> = ({
 
           {/* Settings Panel */}
           {showSettings && (
-            <div className="border-t border-slate-200 p-4 bg-slate-50">
+            <div className="border-t border-light-border dark:border-dark-border p-4 bg-surface-2 dark:bg-elevation-2">
               <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
                 Report Settings
               </h3>
@@ -256,7 +256,7 @@ export const CostSegReportEditor: React.FC<CostSegReportEditorProps> = ({
                     type="text"
                     value={settings.firmName}
                     onChange={(e) => updateSettings({ firmName: e.target.value })}
-                    className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/20 focus:border-[#0da1c7]"
+                    className="w-full px-3 py-2 text-sm border border-light-border dark:border-dark-border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/20 focus:border-[#0da1c7]"
                   />
                 </div>
                 <div>
@@ -267,7 +267,7 @@ export const CostSegReportEditor: React.FC<CostSegReportEditorProps> = ({
                     type="text"
                     value={settings.preparerName}
                     onChange={(e) => updateSettings({ preparerName: e.target.value })}
-                    className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/20 focus:border-[#0da1c7]"
+                    className="w-full px-3 py-2 text-sm border border-light-border dark:border-dark-border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/20 focus:border-[#0da1c7]"
                   />
                 </div>
                 <div>
@@ -279,7 +279,7 @@ export const CostSegReportEditor: React.FC<CostSegReportEditorProps> = ({
                     value={settings.preparerCredentials}
                     onChange={(e) => updateSettings({ preparerCredentials: e.target.value })}
                     placeholder="e.g., MAI, SRA, CPA"
-                    className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/20 focus:border-[#0da1c7]"
+                    className="w-full px-3 py-2 text-sm border border-light-border dark:border-dark-border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/20 focus:border-[#0da1c7]"
                   />
                 </div>
                 <div>
@@ -289,7 +289,7 @@ export const CostSegReportEditor: React.FC<CostSegReportEditorProps> = ({
                   <select
                     value={settings.scheduleMaxYears}
                     onChange={(e) => updateSettings({ scheduleMaxYears: parseInt(e.target.value) })}
-                    className="w-full px-3 py-2 text-sm border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/20 focus:border-[#0da1c7]"
+                    className="w-full px-3 py-2 text-sm border border-light-border dark:border-dark-border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/20 focus:border-[#0da1c7]"
                   >
                     <option value={10}>10 Years</option>
                     <option value={15}>15 Years</option>
@@ -303,7 +303,7 @@ export const CostSegReportEditor: React.FC<CostSegReportEditorProps> = ({
         </aside>
 
         {/* Preview Area */}
-        <main className="flex-1 overflow-y-auto bg-slate-200 p-8">
+        <main className="flex-1 overflow-y-auto bg-surface-4 dark:bg-elevation-muted p-8">
           <div className="max-w-[8.5in] mx-auto">
             {/* Navigation */}
             <div className="flex items-center gap-2 text-sm text-slate-500 mb-4">

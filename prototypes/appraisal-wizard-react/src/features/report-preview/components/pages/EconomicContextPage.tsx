@@ -107,29 +107,29 @@ export const EconomicContextPage: React.FC<EconomicContextPageProps> = ({
       {/* Economic Indicators Table */}
       <table className="w-full text-sm border-collapse mb-8">
         <thead>
-          <tr className="bg-slate-100">
-            <th className="text-left py-3 px-4 font-semibold text-slate-700 border border-slate-200">
+          <tr className="bg-surface-3 dark:bg-elevation-subtle">
+            <th className="text-left py-3 px-4 font-semibold text-slate-700 border border-light-border dark:border-dark-border">
               Indicator
             </th>
-            <th className="text-center py-3 px-4 font-semibold text-slate-700 border border-slate-200 w-32">
+            <th className="text-center py-3 px-4 font-semibold text-slate-700 border border-light-border dark:border-dark-border w-32">
               Current Rate
             </th>
-            <th className="text-center py-3 px-4 font-semibold text-slate-700 border border-slate-200 w-24">
+            <th className="text-center py-3 px-4 font-semibold text-slate-700 border border-light-border dark:border-dark-border w-24">
               Trend
             </th>
           </tr>
         </thead>
         <tbody>
           {indicators.map((indicator, idx) => (
-            <tr key={idx} className={idx % 2 === 0 ? 'bg-surface-1' : 'bg-slate-50'}>
-              <td className="py-3 px-4 border border-slate-200">
+            <tr key={idx} className={idx % 2 === 0 ? 'bg-surface-1' : 'bg-surface-2 dark:bg-elevation-2'}>
+              <td className="py-3 px-4 border border-light-border dark:border-dark-border">
                 <span className="font-medium text-slate-800">{indicator.name}</span>
                 <p className="text-xs text-slate-500 mt-1">{indicator.description}</p>
               </td>
-              <td className="py-3 px-4 text-center font-semibold text-slate-800 border border-slate-200">
+              <td className="py-3 px-4 text-center font-semibold text-slate-800 border border-light-border dark:border-dark-border">
                 {formatRate(indicator.current)}
               </td>
-              <td className="py-3 px-4 text-center border border-slate-200">
+              <td className="py-3 px-4 text-center border border-light-border dark:border-dark-border">
                 <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
                   indicator.trend === 'Rising' ? 'bg-accent-teal-mint-light text-accent-teal-mint' :
                   indicator.trend === 'Falling' ? 'bg-accent-red-light text-harken-error' :
@@ -146,12 +146,12 @@ export const EconomicContextPage: React.FC<EconomicContextPageProps> = ({
       {/* Economic Indicators Charts - Only show if history data is available */}
       {(data.federalFundsRate.history || data.treasury10Y.history || data.inflation.history || data.gdpGrowth.history) && (
         <>
-          <h2 className="text-lg font-semibold text-slate-800 border-b border-slate-300 pb-2 mb-4 mt-8">
+          <h2 className="text-lg font-semibold text-slate-800 border-b border-border-muted dark:border-dark-border-muted pb-2 mb-4 mt-8">
             Historical Trends
           </h2>
           <div className="grid grid-cols-2 gap-4 mb-8">
             {data.federalFundsRate.history && (
-              <div className="bg-slate-50 rounded-lg p-4">
+              <div className="bg-surface-2 dark:bg-elevation-2 rounded-lg p-4">
                 <h3 className="text-sm font-semibold text-slate-700 mb-3">Federal Funds Rate</h3>
                 <EconomicChart
                   data={data.federalFundsRate.history}
@@ -165,7 +165,7 @@ export const EconomicContextPage: React.FC<EconomicContextPageProps> = ({
               </div>
             )}
             {data.treasury10Y.history && (
-              <div className="bg-slate-50 rounded-lg p-4">
+              <div className="bg-surface-2 dark:bg-elevation-2 rounded-lg p-4">
                 <h3 className="text-sm font-semibold text-slate-700 mb-3">10-Year Treasury Yield</h3>
                 <EconomicChart
                   data={data.treasury10Y.history}
@@ -179,7 +179,7 @@ export const EconomicContextPage: React.FC<EconomicContextPageProps> = ({
               </div>
             )}
             {data.inflation.history && (
-              <div className="bg-slate-50 rounded-lg p-4">
+              <div className="bg-surface-2 dark:bg-elevation-2 rounded-lg p-4">
                 <h3 className="text-sm font-semibold text-slate-700 mb-3">Inflation (CPI)</h3>
                 <EconomicChart
                   data={data.inflation.history}
@@ -193,7 +193,7 @@ export const EconomicContextPage: React.FC<EconomicContextPageProps> = ({
               </div>
             )}
             {data.gdpGrowth.history && (
-              <div className="bg-slate-50 rounded-lg p-4">
+              <div className="bg-surface-2 dark:bg-elevation-2 rounded-lg p-4">
                 <h3 className="text-sm font-semibold text-slate-700 mb-3">GDP Growth</h3>
                 <EconomicChart
                   data={data.gdpGrowth.history}
@@ -211,7 +211,7 @@ export const EconomicContextPage: React.FC<EconomicContextPageProps> = ({
       )}
 
       {/* Analysis Section */}
-      <h2 className="text-lg font-semibold text-slate-800 border-b border-slate-300 pb-2 mb-4">
+      <h2 className="text-lg font-semibold text-slate-800 border-b border-border-muted dark:border-dark-border-muted pb-2 mb-4">
         Market Implications
       </h2>
       <div className="text-sm text-slate-700 leading-relaxed space-y-4">

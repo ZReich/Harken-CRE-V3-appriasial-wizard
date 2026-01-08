@@ -22,7 +22,7 @@ export const PostSaveDialog: React.FC<PostSaveDialogProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl shadow-2xl w-full max-w-lg overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-light-border dark:border-dark-border">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-accent-teal-mint-light rounded-lg flex items-center justify-center">
               <CheckCircle className="text-accent-teal-mint" size={20} />
@@ -31,7 +31,7 @@ export const PostSaveDialog: React.FC<PostSaveDialogProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-surface-3 dark:hover:bg-elevation-subtle rounded-lg transition-colors"
           >
             <X size={20} className="text-slate-400" />
           </button>
@@ -52,7 +52,7 @@ export const PostSaveDialog: React.FC<PostSaveDialogProps> = ({
           <div className="space-y-3">
             <button
               onClick={onSaveAsTemplate}
-              className="w-full flex items-start gap-4 p-4 border border-slate-200 rounded-lg hover:border-accent-amber-gold hover:bg-accent-amber-gold-light transition-colors text-left"
+              className="w-full flex items-start gap-4 p-4 border border-light-border dark:border-dark-border rounded-lg hover:border-accent-amber-gold hover:bg-accent-amber-gold-light transition-colors text-left"
             >
               <div className="w-10 h-10 bg-accent-amber-gold-light rounded-lg flex items-center justify-center flex-shrink-0">
                 <Star className="text-accent-amber-gold" size={20} />
@@ -82,9 +82,9 @@ export const PostSaveDialog: React.FC<PostSaveDialogProps> = ({
 
             <button
               onClick={onContinueEditing}
-              className="w-full flex items-start gap-4 p-4 border border-slate-200 rounded-lg hover:border-slate-300 hover:bg-slate-50 transition-colors text-left"
+              className="w-full flex items-start gap-4 p-4 border border-light-border dark:border-dark-border rounded-lg hover:border-border-muted dark:hover:border-dark-border-muted hover:bg-surface-2 dark:bg-elevation-2 transition-colors text-left"
             >
-              <div className="w-10 h-10 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0">
+              <div className="w-10 h-10 bg-surface-3 dark:bg-elevation-subtle rounded-lg flex items-center justify-center flex-shrink-0">
                 <ArrowLeft className="text-slate-600" size={20} />
               </div>
               <div>

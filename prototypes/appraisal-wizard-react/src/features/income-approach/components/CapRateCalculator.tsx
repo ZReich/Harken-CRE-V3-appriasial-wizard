@@ -296,7 +296,7 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
       <div className="bg-surface-1 dark:bg-elevation-1 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between p-5 border-b border-slate-200 bg-gradient-to-r from-[#0da1c7]/10 to-white">
+        <div className="flex items-center justify-between p-5 border-b border-light-border dark:border-dark-border bg-gradient-to-r from-[#0da1c7]/10 to-white">
           <div className="flex items-center gap-3">
             <div className="p-2.5 bg-[#0da1c7]/10 rounded-xl">
               <Calculator className="w-5 h-5 text-[#0da1c7]" />
@@ -308,14 +308,14 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-slate-100 dark:hover:bg-elevation-3 rounded-lg transition-colors"
+            className="p-2 hover:bg-surface-3 dark:hover:bg-elevation-3 rounded-lg transition-colors"
           >
             <X className="w-5 h-5 text-slate-500 dark:text-slate-400" />
           </button>
         </div>
 
         {/* Tab Navigation */}
-        <div className="flex border-b border-slate-200 bg-slate-50 px-4">
+        <div className="flex border-b border-light-border dark:border-dark-border bg-surface-2 dark:bg-elevation-2 px-4">
           {TABS.map(tab => (
             <button
               key={tab.id}
@@ -323,7 +323,7 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
               className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
                 activeMethod === tab.id
                   ? 'text-[#0da1c7] border-[#0da1c7] bg-surface-1 dark:bg-elevation-1'
-                  : 'text-slate-500 dark:text-slate-400 border-transparent hover:text-slate-700 dark:hover:text-harken-gray-light hover:bg-slate-100 dark:hover:bg-elevation-3'
+                  : 'text-slate-500 dark:text-slate-400 border-transparent hover:text-slate-700 dark:hover:text-harken-gray-light hover:bg-surface-3 dark:hover:bg-elevation-3'
               }`}
             >
               {tab.icon}
@@ -335,7 +335,7 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
         {/* Content Area */}
         <div className="flex-1 overflow-y-auto p-5 space-y-5">
           {/* Method Description */}
-          <div className="flex items-start gap-2 p-3 bg-slate-50 rounded-lg">
+          <div className="flex items-start gap-2 p-3 bg-surface-2 dark:bg-elevation-2 rounded-lg">
             <Info className="w-4 h-4 text-slate-400 mt-0.5 flex-shrink-0" />
             <p className="text-xs text-slate-600 dark:text-slate-400">
               {TABS.find(t => t.id === activeMethod)?.description}
@@ -358,7 +358,7 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
                   return (
                     <div
                       key={comp.id}
-                      className="flex items-center gap-3 p-3 bg-slate-50 rounded-lg border border-slate-200"
+                      className="flex items-center gap-3 p-3 bg-surface-2 dark:bg-elevation-2 rounded-lg border border-light-border dark:border-dark-border"
                     >
                       <div className="w-8 h-8 bg-[#0da1c7]/10 rounded-lg flex items-center justify-center text-[#0da1c7] text-sm font-bold">
                         {idx + 1}
@@ -376,7 +376,7 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
                               value={comp.salePrice || ''}
                               onChange={e => updateComparable(comp.id, 'salePrice', parseFloat(e.target.value) || 0)}
                               placeholder="0"
-                              className="w-full pl-7 pr-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent outline-none"
+                              className="w-full pl-7 pr-3 py-2 border border-light-border dark:border-dark-border rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent outline-none"
                             />
                           </div>
                         </div>
@@ -392,7 +392,7 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
                               value={comp.noi || ''}
                               onChange={e => updateComparable(comp.id, 'noi', parseFloat(e.target.value) || 0)}
                               placeholder="0"
-                              className="w-full pl-7 pr-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent outline-none"
+                              className="w-full pl-7 pr-3 py-2 border border-light-border dark:border-dark-border rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent outline-none"
                             />
                           </div>
                         </div>
@@ -425,7 +425,7 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
 
               <button
                 onClick={addComparable}
-                className="w-full py-3 border-2 border-dashed border-slate-300 rounded-xl text-slate-500 text-sm font-medium hover:border-[#0da1c7] hover:text-[#0da1c7] hover:bg-[#0da1c7]/5 transition-all flex items-center justify-center gap-2"
+                className="w-full py-3 border-2 border-dashed border-border-muted dark:border-dark-border-muted rounded-xl text-slate-500 text-sm font-medium hover:border-[#0da1c7] hover:text-[#0da1c7] hover:bg-[#0da1c7]/5 transition-all flex items-center justify-center gap-2"
               >
                 <Plus className="w-4 h-4" />
                 Add Comparable
@@ -476,7 +476,7 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
                       step="0.01"
                       value={(bandInputs.loanToValue * 100).toFixed(1)}
                       onChange={e => setBandInputs({ ...bandInputs, loanToValue: parseFloat(e.target.value) / 100 || 0 })}
-                      className="w-full px-3 py-2 pr-8 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent outline-none"
+                      className="w-full px-3 py-2 pr-8 border border-light-border dark:border-dark-border rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent outline-none"
                     />
                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">%</span>
                   </div>
@@ -492,7 +492,7 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
                       step="0.125"
                       value={(bandInputs.interestRate * 100).toFixed(3)}
                       onChange={e => setBandInputs({ ...bandInputs, interestRate: parseFloat(e.target.value) / 100 || 0 })}
-                      className="w-full px-3 py-2 pr-8 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent outline-none"
+                      className="w-full px-3 py-2 pr-8 border border-light-border dark:border-dark-border rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent outline-none"
                     />
                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">%</span>
                   </div>
@@ -507,14 +507,14 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
                       type="number"
                       value={bandInputs.loanTerm}
                       onChange={e => setBandInputs({ ...bandInputs, loanTerm: parseInt(e.target.value) || 0 })}
-                      className="w-full px-3 py-2 pr-10 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent outline-none"
+                      className="w-full px-3 py-2 pr-10 border border-light-border dark:border-dark-border rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent outline-none"
                     />
                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">yrs</span>
                   </div>
                 </div>
               </div>
 
-              <div className="p-3 bg-slate-50 rounded-lg">
+              <div className="p-3 bg-surface-2 dark:bg-elevation-2 rounded-lg">
                 <div className="flex justify-between items-center">
                   <span className="text-xs text-slate-500 dark:text-slate-400">Calculated Mortgage Constant</span>
                   <span className="font-bold text-slate-700 dark:text-slate-200">{formatPercent(bandResult.mortgageConstant)}</span>
@@ -535,7 +535,7 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
                     step="0.25"
                     value={(bandInputs.equityDividendRate * 100).toFixed(2)}
                     onChange={e => setBandInputs({ ...bandInputs, equityDividendRate: parseFloat(e.target.value) / 100 || 0 })}
-                    className="w-full px-3 py-2 pr-8 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent outline-none"
+                    className="w-full px-3 py-2 pr-8 border border-light-border dark:border-dark-border rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent outline-none"
                   />
                   <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">%</span>
                 </div>
@@ -546,7 +546,7 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
                 <div className="text-xs font-bold text-slate-600 uppercase tracking-widest">
                   Band of Investment Formula
                 </div>
-                <div className="font-mono text-sm text-slate-700 dark:text-slate-200 bg-surface-1 dark:bg-elevation-1 p-3 rounded-lg border border-slate-200 dark:border-harken-gray">
+                <div className="font-mono text-sm text-slate-700 dark:text-slate-200 bg-surface-1 dark:bg-elevation-1 p-3 rounded-lg border border-light-border dark:border-dark-border dark:border-harken-gray">
                   Cap Rate = (LTV x MC) + ((1 - LTV) x EDR)
                 </div>
                 <div className="grid grid-cols-2 gap-4 pt-2">
@@ -584,7 +584,7 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
                     step="0.05"
                     value={dcrInputs.debtCoverageRatio}
                     onChange={e => setDcrInputs({ ...dcrInputs, debtCoverageRatio: parseFloat(e.target.value) || 0 })}
-                    className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent outline-none"
+                    className="w-full px-3 py-2 border border-light-border dark:border-dark-border rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent outline-none"
                   />
                   <p className="text-[10px] text-slate-400 mt-1">Typical: 1.20 - 1.35</p>
                 </div>
@@ -599,7 +599,7 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
                       step="0.25"
                       value={(dcrInputs.loanConstant * 100).toFixed(2)}
                       onChange={e => setDcrInputs({ ...dcrInputs, loanConstant: parseFloat(e.target.value) / 100 || 0 })}
-                      className="w-full px-3 py-2 pr-8 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent outline-none"
+                      className="w-full px-3 py-2 pr-8 border border-light-border dark:border-dark-border rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent outline-none"
                     />
                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">%</span>
                   </div>
@@ -616,7 +616,7 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
                       step="1"
                       value={(dcrInputs.loanToValue * 100).toFixed(1)}
                       onChange={e => setDcrInputs({ ...dcrInputs, loanToValue: parseFloat(e.target.value) / 100 || 0 })}
-                      className="w-full px-3 py-2 pr-8 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent outline-none"
+                      className="w-full px-3 py-2 pr-8 border border-light-border dark:border-dark-border rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent outline-none"
                     />
                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">%</span>
                   </div>
@@ -628,7 +628,7 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
                 <div className="text-xs font-bold text-slate-600 uppercase tracking-widest">
                   DCR Formula
                 </div>
-                <div className="font-mono text-sm text-slate-700 dark:text-slate-200 bg-surface-1 dark:bg-elevation-1 p-3 rounded-lg border border-slate-200 dark:border-harken-gray">
+                <div className="font-mono text-sm text-slate-700 dark:text-slate-200 bg-surface-1 dark:bg-elevation-1 p-3 rounded-lg border border-light-border dark:border-dark-border dark:border-harken-gray">
                   Cap Rate = DCR x Loan Constant x LTV
                 </div>
                 <div className="pt-2">
@@ -659,7 +659,7 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
                       step="0.25"
                       value={(marketInputs.capRate * 100).toFixed(2)}
                       onChange={e => setMarketInputs({ ...marketInputs, capRate: parseFloat(e.target.value) / 100 || 0 })}
-                      className="w-full px-3 py-2 pr-8 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent outline-none"
+                      className="w-full px-3 py-2 pr-8 border border-light-border dark:border-dark-border rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent outline-none"
                     />
                     <span className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 text-sm">%</span>
                   </div>
@@ -674,7 +674,7 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
                     value={marketInputs.source}
                     onChange={e => setMarketInputs({ ...marketInputs, source: e.target.value })}
                     placeholder="e.g., CoStar, RealtyRates, Broker Survey"
-                    className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent outline-none"
+                    className="w-full px-3 py-2 border border-light-border dark:border-dark-border rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent outline-none"
                   />
                 </div>
               </div>
@@ -688,13 +688,13 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
                   onChange={e => setMarketInputs({ ...marketInputs, notes: e.target.value })}
                   placeholder="Additional context or source details..."
                   rows={3}
-                  className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent outline-none resize-none"
+                  className="w-full px-3 py-2 border border-light-border dark:border-dark-border rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent outline-none resize-none"
                 />
               </div>
 
               {/* Implied Value Preview */}
               {currentNOI > 0 && marketInputs.capRate > 0 && (
-                <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
+                <div className="bg-surface-2 dark:bg-elevation-2 rounded-xl p-4 border border-light-border dark:border-dark-border">
                   <div className="text-xs font-bold text-slate-500 uppercase tracking-widest mb-3">
                     Implied Value at This Cap Rate
                   </div>
@@ -738,7 +738,7 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="p-5 border-t border-slate-200 bg-slate-50">
+        <div className="p-5 border-t border-light-border dark:border-dark-border bg-surface-2 dark:bg-elevation-2">
           <div className="flex items-center justify-between">
             {/* Result Preview */}
             <div className="flex items-center gap-4">
@@ -749,7 +749,7 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
                 </p>
               </div>
               {calculatedCapRate !== null && currentNOI > 0 && (
-                <div className="pl-4 border-l border-slate-200">
+                <div className="pl-4 border-l border-light-border dark:border-dark-border">
                   <p className="text-xs text-slate-500 uppercase">Implied Value</p>
                   <p className="text-lg font-bold text-slate-700 dark:text-slate-200">
                     {formatCurrency(currentNOI / calculatedCapRate)}
@@ -762,7 +762,7 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
             <div className="flex items-center gap-3">
               <button
                 onClick={onClose}
-                className="px-5 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-elevation-3 rounded-lg transition-colors"
+                className="px-5 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-surface-3 dark:hover:bg-elevation-3 rounded-lg transition-colors"
               >
                 Cancel
               </button>

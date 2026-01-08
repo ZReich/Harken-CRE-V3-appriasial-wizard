@@ -171,7 +171,7 @@ export const BonusDepreciationGuidance: React.FC<BonusDepreciationGuidanceProps>
 
   // Full variant (default)
   return (
-    <div className={`bg-surface-1 rounded-xl border border-slate-200 shadow-sm overflow-hidden ${className}`}>
+    <div className={`bg-surface-1 rounded-xl border border-light-border dark:border-dark-border shadow-sm overflow-hidden ${className}`}>
       {/* Header */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
@@ -212,7 +212,7 @@ export const BonusDepreciationGuidance: React.FC<BonusDepreciationGuidanceProps>
       </button>
 
       {isExpanded && (
-        <div className="divide-y divide-slate-100">
+        <div className="divide-y divide-light-border dark:divide-dark-border">
           {/* Current Year Summary */}
           <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -277,7 +277,7 @@ export const BonusDepreciationGuidance: React.FC<BonusDepreciationGuidanceProps>
 
             {/* Bonus Amount Calculation */}
             {bonusAmount !== null && eligibleAmount && (
-              <div className="mt-4 bg-slate-50 rounded-xl p-4 border border-slate-200">
+              <div className="mt-4 bg-surface-2 dark:bg-elevation-2 rounded-xl p-4 border border-light-border dark:border-dark-border">
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
                     <DollarSign className="w-5 h-5 text-slate-500" />
@@ -318,8 +318,8 @@ export const BonusDepreciationGuidance: React.FC<BonusDepreciationGuidanceProps>
                     item.status === 'current'
                       ? 'bg-accent-amber-gold-light border-accent-amber-gold-light ring-2 ring-accent-amber-gold'
                       : item.status === 'expired'
-                      ? 'bg-slate-100 border-slate-200 opacity-60'
-                      : 'bg-slate-50 border-slate-200'
+                      ? 'bg-surface-3 dark:bg-elevation-subtle border-light-border dark:border-dark-border opacity-60'
+                      : 'bg-surface-2 dark:bg-elevation-2 border-light-border dark:border-dark-border'
                   }`}
                 >
                   <div className={`text-xs font-medium ${
@@ -364,12 +364,12 @@ export const BonusDepreciationGuidance: React.FC<BonusDepreciationGuidanceProps>
 
             <div className="space-y-3">
               {ELIGIBILITY_CRITERIA.map((criterion) => (
-                <div key={criterion.id} className="border border-slate-200 rounded-lg overflow-hidden">
+                <div key={criterion.id} className="border border-light-border dark:border-dark-border rounded-lg overflow-hidden">
                   <button
                     onClick={() => setActiveSection(
                       activeSection === criterion.id ? null : criterion.id
                     )}
-                    className="w-full px-4 py-3 flex items-center justify-between bg-slate-50 hover:bg-slate-100 transition-colors text-left"
+                    className="w-full px-4 py-3 flex items-center justify-between bg-surface-2 dark:bg-elevation-2 hover:bg-surface-3 dark:hover:bg-elevation-subtle transition-colors text-left"
                   >
                     <span className="font-medium text-slate-900">{criterion.title}</span>
                     {activeSection === criterion.id ? (
@@ -380,7 +380,7 @@ export const BonusDepreciationGuidance: React.FC<BonusDepreciationGuidanceProps>
                   </button>
                   
                   {activeSection === criterion.id && (
-                    <div className="px-4 py-3 border-t border-slate-200">
+                    <div className="px-4 py-3 border-t border-light-border dark:border-dark-border">
                       {criterion.eligible && (
                         <div className="mb-3">
                           <div className="text-xs font-semibold text-accent-teal-mint uppercase tracking-wide mb-2">
@@ -450,10 +450,10 @@ export const BonusDepreciationGuidance: React.FC<BonusDepreciationGuidanceProps>
 
             <div className="space-y-2">
               {FAQ_ITEMS.map((faq, idx) => (
-                <div key={idx} className="border border-slate-200 rounded-lg overflow-hidden">
+                <div key={idx} className="border border-light-border dark:border-dark-border rounded-lg overflow-hidden">
                   <button
                     onClick={() => setExpandedFaq(expandedFaq === idx ? null : idx)}
-                    className="w-full px-4 py-3 flex items-start gap-3 hover:bg-slate-50 transition-colors text-left"
+                    className="w-full px-4 py-3 flex items-start gap-3 hover:bg-surface-2 dark:bg-elevation-2 transition-colors text-left"
                   >
                     <HelpCircle className="w-4 h-4 text-[#0da1c7] mt-0.5 flex-shrink-0" />
                     <span className="font-medium text-slate-900 flex-1">{faq.question}</span>
@@ -465,7 +465,7 @@ export const BonusDepreciationGuidance: React.FC<BonusDepreciationGuidanceProps>
                   </button>
                   
                   {expandedFaq === idx && (
-                    <div className="px-4 py-3 border-t border-slate-200 bg-slate-50">
+                    <div className="px-4 py-3 border-t border-light-border dark:border-dark-border bg-surface-2 dark:bg-elevation-2">
                       <p className="text-sm text-slate-600 leading-relaxed pl-7">
                         {faq.answer}
                       </p>
@@ -477,7 +477,7 @@ export const BonusDepreciationGuidance: React.FC<BonusDepreciationGuidanceProps>
           </div>
 
           {/* Disclaimer */}
-          <div className="px-6 py-4 bg-slate-50 border-t border-slate-200">
+          <div className="px-6 py-4 bg-surface-2 dark:bg-elevation-2 border-t border-light-border dark:border-dark-border">
             <div className="flex items-start gap-2 text-xs text-slate-500">
               <AlertCircle className="w-4 h-4 text-slate-400 mt-0.5 flex-shrink-0" />
               <p>

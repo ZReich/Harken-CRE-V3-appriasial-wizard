@@ -75,7 +75,7 @@ export const CostSegBuildingSystemsPage: React.FC<CostSegBuildingSystemsPageProp
         
         <table className="w-full text-sm border-collapse">
           <thead>
-            <tr className="border-b-2 border-slate-300 bg-harken-gray-light">
+            <tr className="border-b-2 border-border-muted dark:border-dark-border-muted bg-harken-gray-light">
               <th className="text-left py-3 px-4 font-semibold text-harken-gray">System</th>
               <th className="text-right py-3 px-4 font-semibold text-harken-gray">Depreciable Cost</th>
               <th className="text-right py-3 px-4 font-semibold text-harken-gray">Replacement Cost</th>
@@ -113,7 +113,7 @@ export const CostSegBuildingSystemsPage: React.FC<CostSegBuildingSystemsPageProp
             ))}
           </tbody>
           <tfoot>
-            <tr className="bg-harken-gray-light font-semibold border-t border-slate-300">
+            <tr className="bg-harken-gray-light font-semibold border-t border-border-muted dark:border-dark-border-muted">
               <td className="py-3 px-4 text-slate-900">Total - All Systems</td>
               <td className="py-3 px-4 text-right text-slate-900">
                 {formatCostSegCurrency(totalSystemsCost)}

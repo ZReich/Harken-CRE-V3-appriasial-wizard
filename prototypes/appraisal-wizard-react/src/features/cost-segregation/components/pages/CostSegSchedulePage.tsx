@@ -99,7 +99,7 @@ export const CostSegSchedulePage: React.FC<CostSegSchedulePageProps> = ({
               return (
                 <tr 
                   key={year.year}
-                  className={`border-b border-slate-100 ${
+                  className={`border-b border-light-border dark:border-dark-border ${
                     isFirstYear ? 'bg-accent-teal-mint-light/50' : idx % 2 === 1 ? 'bg-harken-gray-light/50' : ''
                   }`}
                 >

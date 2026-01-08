@@ -1060,7 +1060,7 @@ export default function SetupPage() {
               disabled={!isAddressComplete || autoLookupStatus === 'loading'}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${isAddressComplete && autoLookupStatus !== 'loading'
                 ? 'bg-harken-blue text-white hover:bg-harken-blue/90 shadow-sm'
-                : 'bg-slate-100 text-slate-400 cursor-not-allowed dark:bg-elevation-1 dark:text-slate-500'
+                : 'bg-surface-3 dark:bg-elevation-subtle text-slate-400 cursor-not-allowed dark:bg-elevation-1 dark:text-slate-500'
                 }`}
             >
               {autoLookupStatus === 'loading' ? (
@@ -1105,7 +1105,7 @@ export default function SetupPage() {
 
         {/* Address Details - Progressive Disclosure (show when street has value) */}
         {address.street && address.street.length > 3 && (
-          <div className="mt-5 pt-4 border-t border-slate-100 animate-fade-in">
+          <div className="mt-5 pt-4 border-t border-light-border dark:border-dark-border animate-fade-in">
             <p className="text-xs font-medium text-slate-500 dark:text-slate-200 uppercase tracking-wide mb-3">
               Address Details
             </p>
@@ -1215,7 +1215,7 @@ export default function SetupPage() {
 
         {/* Selection Breadcrumb */}
         {(context.propertyCategory || context.propertyType || context.msOccupancyCode) && (
-          <div className="mb-4 p-3 bg-slate-50 dark:bg-elevation-1/50 rounded-lg border border-slate-200 dark:border-harken-gray">
+          <div className="mb-4 p-3 bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1/50 rounded-lg border border-light-border dark:border-dark-border dark:border-harken-gray">
             <div className="flex items-center gap-2 text-sm">
               <span className="text-harken-gray-med dark:text-slate-400">Selected:</span>
               <span className="font-medium text-harken-dark dark:text-white">
@@ -1443,7 +1443,7 @@ export default function SetupPage() {
           {/* Unit Mix Table */}
           <div className="border border-light-border dark:border-harken-gray rounded-lg overflow-hidden">
             <table className="w-full text-sm">
-              <thead className="bg-slate-50 dark:bg-elevation-1">
+              <thead className="bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1">
                 <tr>
                   <th className="px-4 py-2 text-left font-semibold text-harken-gray dark:text-slate-200">Type</th>
                   <th className="px-4 py-2 text-center font-semibold text-harken-gray dark:text-slate-200">Count</th>
@@ -1496,7 +1496,7 @@ export default function SetupPage() {
                   </tr>
                 ))}
               </tbody>
-              <tfoot className="bg-slate-50 dark:bg-elevation-1">
+              <tfoot className="bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1">
                 <tr>
                   <td className="px-4 py-2 font-bold text-harken-gray dark:text-slate-200">Total</td>
                   <td className="px-4 py-2 text-center font-bold text-harken-blue">

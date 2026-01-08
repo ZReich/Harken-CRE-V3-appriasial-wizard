@@ -26,14 +26,14 @@ export const TOCPage: React.FC<TOCPageProps> = ({
       <React.Fragment key={entry.id}>
         <div 
           className={`flex items-baseline group ${
-            isEditing ? 'cursor-pointer hover:bg-slate-50 rounded px-2 -mx-2' : ''
+            isEditing ? 'cursor-pointer hover:bg-surface-2 dark:bg-elevation-2 rounded px-2 -mx-2' : ''
           } ${indentClass}`}
           onClick={() => onEntryClick?.(entry.id, entry.pageNumber)}
         >
           <span className={`text-sm ${textClass} flex-shrink-0`}>
             {entry.title}
           </span>
-          <span className="flex-1 mx-3 border-b border-dotted border-slate-300 min-w-[20px]" />
+          <span className="flex-1 mx-3 border-b border-dotted border-border-muted dark:border-dark-border-muted min-w-[20px]" />
           <span className="text-sm text-slate-500 flex-shrink-0 tabular-nums">
             {entry.pageNumber}
           </span>
@@ -73,7 +73,7 @@ export const TOCPage: React.FC<TOCPageProps> = ({
   return (
     <div className="w-full h-full bg-surface-1 flex flex-col">
       {/* Page header */}
-      <div className="px-16 pt-12 pb-8 border-b border-slate-200">
+      <div className="px-16 pt-12 pb-8 border-b border-light-border dark:border-dark-border">
         <div className="flex items-center justify-between">
           <h2 className="text-2xl font-bold text-slate-800">{title}</h2>
           {pageNumber && (
@@ -102,7 +102,7 @@ export const TOCPage: React.FC<TOCPageProps> = ({
 
       {/* Decorative line at bottom */}
       <div className="px-16 pb-8">
-        <div className="border-t-2 border-slate-200" />
+        <div className="border-t-2 border-light-border dark:border-dark-border" />
       </div>
     </div>
   );

@@ -257,7 +257,7 @@ export const CostSegOverview: React.FC<CostSegOverviewProps> = ({
                     {formatCostSegPercent(analysis.summary.fiveYear.percent)}
                   </td>
                 </tr>
-                <tr className="border-b border-slate-100 bg-blue-50/50">
+                <tr className="border-b border-light-border dark:border-dark-border bg-blue-50/50">
                   <td className="px-4 py-3 text-blue-800 flex items-center gap-2">
                     <CheckCircle2 className="w-4 h-4 text-blue-500" />
                     15-Year Land Improvements

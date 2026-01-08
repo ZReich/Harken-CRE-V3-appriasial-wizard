@@ -20,7 +20,7 @@ const SCENARIO_COLORS: Record<string, {
     activeBg: 'bg-harken-blue/10 dark:bg-harken-blue/20',
     activeBorder: 'border-harken-blue dark:border-harken-blue',
     activeText: 'text-harken-blue dark:text-harken-blue',
-    inactiveBg: 'bg-slate-50 dark:bg-elevation-1',
+    inactiveBg: 'bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1',
     inactiveText: 'text-slate-600 dark:text-slate-400',
     dot: 'bg-harken-blue',
   },
@@ -29,7 +29,7 @@ const SCENARIO_COLORS: Record<string, {
     activeBg: 'bg-accent-teal-mint-light dark:bg-accent-teal-mint/10',
     activeBorder: 'border-accent-teal-mint dark:border-accent-teal-mint',
     activeText: 'text-accent-teal-mint dark:text-accent-teal-mint',
-    inactiveBg: 'bg-slate-50 dark:bg-elevation-1',
+    inactiveBg: 'bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1',
     inactiveText: 'text-slate-600 dark:text-slate-400',
     dot: 'bg-accent-teal-mint',
   },
@@ -38,7 +38,7 @@ const SCENARIO_COLORS: Record<string, {
     activeBg: 'bg-violet-50 dark:bg-violet-900/20',
     activeBorder: 'border-violet-500 dark:border-violet-500',
     activeText: 'text-violet-700 dark:text-violet-400',
-    inactiveBg: 'bg-slate-50 dark:bg-elevation-1',
+    inactiveBg: 'bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1',
     inactiveText: 'text-slate-600 dark:text-slate-400',
     dot: 'bg-violet-500',
   },
@@ -47,12 +47,12 @@ const SCENARIO_COLORS: Record<string, {
 // Default colors for custom scenarios
 const DEFAULT_COLORS = {
   accent: '#64748b',
-  activeBg: 'bg-slate-100 dark:bg-elevation-1',
+  activeBg: 'bg-surface-3 dark:bg-elevation-subtle',
   activeBorder: 'border-slate-500 dark:border-slate-400',
   activeText: 'text-slate-700 dark:text-slate-200',
-  inactiveBg: 'bg-slate-50 dark:bg-elevation-1',
+  inactiveBg: 'bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1',
   inactiveText: 'text-slate-600 dark:text-slate-400',
-  dot: 'bg-slate-500',
+  dot: 'bg-surface-2 dark:bg-elevation-20',
 };
 
 export function getScenarioColors(scenarioName: string) {
@@ -93,7 +93,7 @@ export default function ScenarioSwitcher({ className = '' }: ScenarioSwitcherPro
       <span className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide mr-2">
         Scenario:
       </span>
-      <div className="flex items-center gap-1.5 bg-slate-100/80 dark:bg-elevation-1/80 rounded-lg p-1 border border-slate-200 dark:border-dark-border">
+      <div className="flex items-center gap-1.5 bg-surface-3/80 dark:bg-elevation-subtle/80 rounded-lg p-1 border border-light-border dark:border-dark-border dark:border-dark-border">
         {scenarios.map((scenario) => {
           const isActive = scenario.id === activeScenarioId;
           const colors = getScenarioColors(scenario.name);
@@ -107,7 +107,7 @@ export default function ScenarioSwitcher({ className = '' }: ScenarioSwitcherPro
                 flex items-center gap-2 min-w-[100px] justify-center
                 ${isActive
                   ? `${colors.activeBg} ${colors.activeText} border ${colors.activeBorder} shadow-sm`
-                  : `${colors.inactiveBg} ${colors.inactiveText} border border-transparent hover:bg-slate-100`
+                  : `${colors.inactiveBg} ${colors.inactiveText} border border-transparent hover:bg-surface-3 dark:hover:bg-elevation-subtle`
                 }
               `}
             >

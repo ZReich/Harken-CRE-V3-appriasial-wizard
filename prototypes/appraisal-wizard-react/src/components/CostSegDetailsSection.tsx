@@ -331,7 +331,7 @@ export default function CostSegDetailsSection({
             </div>
 
             {/* Building Cost Info */}
-            <div className="bg-slate-50 border border-slate-200 rounded-xl p-3">
+            <div className="bg-surface-2 dark:bg-elevation-2 border border-light-border dark:border-dark-border rounded-xl p-3">
               <div className="text-xs font-medium text-slate-600 mb-2">Building Information</div>
               <div className="flex items-center justify-between text-sm">
                 <span className="text-slate-700">Estimated Total Cost:</span>
@@ -407,7 +407,7 @@ export default function CostSegDetailsSection({
                     <div className="text-xs text-accent-amber-gold mb-1">15-Year Land Improvements</div>
                     <div className="text-lg font-bold text-accent-amber-gold">{allocationTotals.fifteenYear.toFixed(1)}%</div>
                   </div>
-                  <div className="bg-slate-50 border border-slate-200 rounded-lg p-3">
+                  <div className="bg-surface-2 dark:bg-elevation-2 border border-light-border dark:border-dark-border rounded-lg p-3">
                     <div className="text-xs text-slate-700 mb-1">39-Year Real Property</div>
                     <div className="text-lg font-bold text-slate-900">{allocationTotals.thirtyNineYear.toFixed(1)}%</div>
                   </div>

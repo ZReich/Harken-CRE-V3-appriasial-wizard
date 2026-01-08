@@ -371,7 +371,7 @@ export function BoundaryDrawingTool({
   if (!hasValidCenter) {
     return (
       <div
-        className={`bg-slate-50 dark:bg-elevation-1 rounded-xl border border-slate-200 dark:border-dark-border flex items-center justify-center ${className}`}
+        className={`bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1 rounded-xl border border-light-border dark:border-dark-border dark:border-dark-border flex items-center justify-center ${className}`}
         style={{ height }}
       >
         <div className="text-center text-slate-400 dark:text-slate-500 p-6">
@@ -389,7 +389,7 @@ export function BoundaryDrawingTool({
   if (error) {
     return (
       <div
-        className={`bg-slate-100 rounded-xl flex items-center justify-center ${className}`}
+        className={`bg-surface-3 dark:bg-elevation-subtle rounded-xl flex items-center justify-center ${className}`}
         style={{ height }}
       >
         <div className="text-center text-slate-500 p-4">
@@ -404,11 +404,11 @@ export function BoundaryDrawingTool({
   if (!isLoaded) {
     return (
       <div
-        className={`bg-slate-100 rounded-xl flex items-center justify-center ${className}`}
+        className={`bg-surface-3 dark:bg-elevation-subtle rounded-xl flex items-center justify-center ${className}`}
         style={{ height }}
       >
         <div className="text-center text-slate-500 dark:text-slate-400">
-          <div className="w-8 h-8 border-2 border-slate-300 border-t-[#0da1c7] rounded-full animate-spin mx-auto mb-2" />
+          <div className="w-8 h-8 border-2 border-border-muted dark:border-dark-border-muted border-t-[#0da1c7] rounded-full animate-spin mx-auto mb-2" />
           <p className="text-sm">Loading drawing tools...</p>
         </div>
       </div>
@@ -416,9 +416,9 @@ export function BoundaryDrawingTool({
   }
 
   return (
-    <div className={`bg-surface-1 dark:bg-elevation-1 rounded-xl border border-slate-200 dark:border-dark-border overflow-hidden ${className}`}>
+    <div className={`bg-surface-1 dark:bg-elevation-1 rounded-xl border border-light-border dark:border-dark-border dark:border-dark-border overflow-hidden ${className}`}>
       {/* Header */}
-      <div className="flex items-center justify-between px-4 py-2 bg-slate-50 dark:bg-elevation-1/50 border-b border-slate-200 dark:border-dark-border">
+      <div className="flex items-center justify-between px-4 py-2 bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1/50 border-b border-light-border dark:border-dark-border dark:border-dark-border">
         <div className="flex items-center gap-2">
           <PenTool className="w-4 h-4 text-[#0da1c7]" />
           <span className="font-semibold text-sm text-slate-700 dark:text-slate-200">Property Boundary</span>
@@ -431,12 +431,12 @@ export function BoundaryDrawingTool({
         </div>
 
         {/* Map Type Toggle */}
-        <div className="flex bg-surface-1 rounded-lg border border-slate-200 overflow-hidden">
+        <div className="flex bg-surface-1 rounded-lg border border-light-border dark:border-dark-border overflow-hidden">
           <button
             onClick={() => setMapType('satellite')}
             className={`flex items-center gap-1 px-2 py-1 text-xs font-medium transition-colors ${mapType === 'satellite'
                 ? 'bg-[#0da1c7] text-white'
-                : 'bg-surface-1 text-slate-600 hover:bg-slate-50'
+                : 'bg-surface-1 text-slate-600 hover:bg-surface-2 dark:bg-elevation-2'
               }`}
           >
             <Satellite className="w-3 h-3" />
@@ -446,7 +446,7 @@ export function BoundaryDrawingTool({
             onClick={() => setMapType('roadmap')}
             className={`flex items-center gap-1 px-2 py-1 text-xs font-medium transition-colors ${mapType === 'roadmap'
                 ? 'bg-[#0da1c7] text-white'
-                : 'bg-surface-1 dark:bg-elevation-1 text-slate-600 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-harken-gray'
+                : 'bg-surface-1 dark:bg-elevation-1 text-slate-600 dark:text-slate-200 hover:bg-surface-2 dark:bg-elevation-2 dark:hover:bg-harken-gray'
               }`}
           >
             <Layers className="w-3 h-3" />
@@ -465,7 +465,7 @@ export function BoundaryDrawingTool({
           {!isDrawing ? (
             <button
               onClick={handleStartDrawing}
-              className="flex items-center gap-2 px-3 py-2 bg-surface-1 rounded-lg shadow-md border border-slate-200 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+              className="flex items-center gap-2 px-3 py-2 bg-surface-1 rounded-lg shadow-md border border-light-border dark:border-dark-border text-sm font-medium text-slate-700 hover:bg-surface-2 dark:bg-elevation-2 transition-colors"
             >
               <PenTool className="w-4 h-4 text-[#0da1c7]" />
               {hasBoundary ? 'Redraw' : 'Draw Boundary'}
@@ -484,7 +484,7 @@ export function BoundaryDrawingTool({
           {parcelData?.geometry && (
             <button
               onClick={handleImportFromParcel}
-              className="flex items-center gap-2 px-3 py-2 bg-surface-1 rounded-lg shadow-md border border-slate-200 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+              className="flex items-center gap-2 px-3 py-2 bg-surface-1 rounded-lg shadow-md border border-light-border dark:border-dark-border text-sm font-medium text-slate-700 hover:bg-surface-2 dark:bg-elevation-2 transition-colors"
             >
               <Upload className="w-4 h-4 text-purple-600" />
               Import from Parcel
@@ -498,14 +498,14 @@ export function BoundaryDrawingTool({
             <button
               onClick={handleUndo}
               disabled={boundaryHistory.length === 0}
-              className="flex items-center gap-2 px-3 py-2 bg-surface-1 rounded-lg shadow-md border border-slate-200 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center gap-2 px-3 py-2 bg-surface-1 rounded-lg shadow-md border border-light-border dark:border-dark-border text-sm font-medium text-slate-700 hover:bg-surface-2 dark:bg-elevation-2 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
               title="Undo"
             >
               <Undo2 className="w-4 h-4" />
             </button>
             <button
               onClick={handleExportBoundary}
-              className="flex items-center gap-2 px-3 py-2 bg-surface-1 rounded-lg shadow-md border border-slate-200 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+              className="flex items-center gap-2 px-3 py-2 bg-surface-1 rounded-lg shadow-md border border-light-border dark:border-dark-border text-sm font-medium text-slate-700 hover:bg-surface-2 dark:bg-elevation-2 transition-colors"
               title="Export coordinates"
             >
               <Download className="w-4 h-4" />
@@ -532,7 +532,7 @@ export function BoundaryDrawingTool({
       </div>
 
       {/* Footer */}
-      <div className="px-4 py-2 bg-slate-50 dark:bg-elevation-1/50 border-t border-slate-200 dark:border-dark-border">
+      <div className="px-4 py-2 bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1/50 border-t border-light-border dark:border-dark-border dark:border-dark-border">
         <p className="text-xs text-slate-500 dark:text-slate-400">
           {hasBoundary
             ? 'Drag corners to adjust. Click polygon to edit vertices.'

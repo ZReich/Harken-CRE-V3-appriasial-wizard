@@ -173,8 +173,8 @@ export const AnalysisGridPage: React.FC<AnalysisGridPageProps> = ({
             <tr 
               key={row.id}
               className={`
-                border-b border-slate-200 
-                ${row.isTotal ? 'bg-slate-100 font-semibold' : 'hover:bg-slate-50'}
+                border-b border-light-border dark:border-dark-border 
+                ${row.isTotal ? 'bg-surface-3 dark:bg-elevation-subtle font-semibold' : 'hover:bg-surface-2 dark:bg-elevation-2'}
                 ${isEditing ? 'cursor-pointer' : ''}
               `}
             >
@@ -200,11 +200,11 @@ export const AnalysisGridPage: React.FC<AnalysisGridPageProps> = ({
     <div className="w-full h-full bg-surface-1 flex flex-col">
       {/* Page header */}
       {title && (
-        <div className="px-12 pt-10 pb-4 border-b border-slate-200">
+        <div className="px-12 pt-10 pb-4 border-b border-light-border dark:border-dark-border">
           <div className="flex items-center justify-between">
             <h2 
               className={`text-xl font-bold text-slate-800 ${
-                isEditing ? 'cursor-pointer hover:bg-slate-50 rounded px-2 -mx-2' : ''
+                isEditing ? 'cursor-pointer hover:bg-surface-2 dark:bg-elevation-2 rounded px-2 -mx-2' : ''
               }`}
               onClick={() => isEditing && onContentClick?.(`${sectionId}-title`)}
             >
@@ -226,7 +226,7 @@ export const AnalysisGridPage: React.FC<AnalysisGridPageProps> = ({
               <div 
                 key={block.id}
                 className={`text-sm text-slate-700 leading-relaxed mb-4 ${
-                  isEditing ? 'cursor-pointer hover:bg-slate-50 rounded p-1 -m-1' : ''
+                  isEditing ? 'cursor-pointer hover:bg-surface-2 dark:bg-elevation-2 rounded p-1 -m-1' : ''
                 }`}
                 onClick={() => isEditing && onContentClick?.(block.id)}
               >
@@ -238,7 +238,7 @@ export const AnalysisGridPage: React.FC<AnalysisGridPageProps> = ({
 
         {/* Comparison Grid */}
         <div 
-          className={`rounded-lg border border-slate-200 overflow-hidden ${
+          className={`rounded-lg border border-light-border dark:border-dark-border overflow-hidden ${
             isEditing ? 'ring-2 ring-transparent hover:ring-sky-200' : ''
           }`}
           onClick={() => isEditing && gridBlock && onContentClick?.(gridBlock.id)}

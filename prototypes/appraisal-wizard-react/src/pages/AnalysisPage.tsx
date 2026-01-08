@@ -31,7 +31,7 @@ import { Loader2 } from 'lucide-react';
 // Loading fallback for lazy-loaded feature grids
 function GridLoader() {
   return (
-    <div className="flex-1 flex items-center justify-center bg-slate-50/50 dark:bg-elevation-1/50">
+    <div className="flex-1 flex items-center justify-center bg-surface-2 dark:bg-elevation-2/50 dark:bg-elevation-1/50">
       <div className="flex flex-col items-center gap-3">
         <Loader2 className="w-8 h-8 text-[#0da1c7] animate-spin" />
         <p className="text-sm text-slate-500 dark:text-slate-400">Loading analysis...</p>
@@ -303,7 +303,7 @@ export default function AnalysisPage() {
       </div>
 
       {/* Key Assumptions */}
-      <div className="bg-slate-50 dark:bg-elevation-1 border border-slate-200 dark:border-dark-border rounded-xl p-4">
+      <div className="bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1 border border-light-border dark:border-dark-border dark:border-dark-border rounded-xl p-4">
         <div className="flex items-center gap-2 mb-3">
           <CheckCircle2 className="text-accent-teal-mint dark:text-green-400" size={16} />
           <h4 className="text-sm font-semibold text-slate-800 dark:text-white">Key Assumptions</h4>
@@ -430,7 +430,7 @@ export default function AnalysisPage() {
         </div>
       )}
 
-      <div className="bg-slate-100 dark:bg-elevation-1 border border-slate-200 dark:border-dark-border rounded-lg p-3 text-xs text-slate-600 dark:text-slate-400">
+      <div className="bg-surface-3 dark:bg-elevation-subtle border border-light-border dark:border-dark-border dark:border-dark-border rounded-lg p-3 text-xs text-slate-600 dark:text-slate-400">
         Hover over approach values to adjust weights. Values update automatically as you make changes.
       </div>
     </div>
@@ -455,19 +455,19 @@ export default function AnalysisPage() {
       {activeTab === 'sales' ? (
         <div className="absolute inset-0 flex flex-col">
           {/* Sales Comparison Header Bar */}
-          <div className="flex-shrink-0 bg-surface-1 dark:bg-elevation-1 border-b border-slate-200 dark:border-dark-border px-6 py-3 flex items-center justify-between z-40 shadow-sm">
+          <div className="flex-shrink-0 bg-surface-1 dark:bg-elevation-1 border-b border-light-border dark:border-dark-border dark:border-dark-border px-6 py-3 flex items-center justify-between z-40 shadow-sm">
             <div className="flex items-center gap-4">
               <h2 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
                 <span style={{ color: APPROACH_CONFIG.sales.color }}><ChartIcon className="w-5 h-5" /></span>
                 Sales Comparison Grid
               </h2>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-elevation-1 text-slate-600 dark:text-slate-200">
+              <span className="text-xs px-2 py-0.5 rounded-full bg-surface-3 dark:bg-elevation-subtle text-slate-600 dark:text-slate-200">
                 {activeScenario?.name}
               </span>
             </div>
             <div className="flex items-center gap-4">
               {/* Analysis Mode Toggle */}
-              <div className="flex items-center bg-slate-100 dark:bg-elevation-1 rounded-lg p-1 border border-slate-200 dark:border-harken-gray">
+              <div className="flex items-center bg-surface-3 dark:bg-elevation-subtle rounded-lg p-1 border border-light-border dark:border-dark-border dark:border-harken-gray">
                 <button
                   onClick={() => setAnalysisMode('standard')}
                   className={`px-3 py-1.5 text-xs font-semibold rounded-md flex items-center gap-2 transition-all ${analysisMode === 'standard'
@@ -508,13 +508,13 @@ export default function AnalysisPage() {
       ) : activeTab === 'income' ? (
         <div className="absolute inset-0 flex flex-col">
           {/* Income Approach Header Bar */}
-          <div className="flex-shrink-0 bg-surface-1 dark:bg-elevation-1 border-b border-slate-200 dark:border-dark-border px-6 py-3 flex items-center justify-between z-40 shadow-sm">
+          <div className="flex-shrink-0 bg-surface-1 dark:bg-elevation-1 border-b border-light-border dark:border-dark-border dark:border-dark-border px-6 py-3 flex items-center justify-between z-40 shadow-sm">
             <div className="flex items-center gap-4">
               <h2 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
                 <Wallet className="w-5 h-5" style={{ color: APPROACH_CONFIG.income.color }} />
                 Income Approach Analysis
               </h2>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-elevation-1 text-slate-600 dark:text-slate-200">
+              <span className="text-xs px-2 py-0.5 rounded-full bg-surface-3 dark:bg-elevation-subtle text-slate-600 dark:text-slate-200">
                 {activeScenario?.name}
               </span>
             </div>
@@ -539,13 +539,13 @@ export default function AnalysisPage() {
       ) : activeTab === 'cost' ? (
         <div className="absolute inset-0 flex flex-col">
           {/* Cost Approach Header Bar */}
-          <div className="flex-shrink-0 bg-surface-1 dark:bg-elevation-1 border-b border-slate-200 dark:border-dark-border px-6 py-3 flex items-center justify-between z-40 shadow-sm">
+          <div className="flex-shrink-0 bg-surface-1 dark:bg-elevation-1 border-b border-light-border dark:border-dark-border dark:border-dark-border px-6 py-3 flex items-center justify-between z-40 shadow-sm">
             <div className="flex items-center gap-4">
               <h2 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
                 <HardHat className="w-5 h-5" style={{ color: APPROACH_CONFIG.cost.color }} />
                 Cost Approach Analysis
               </h2>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-elevation-1 text-slate-600 dark:text-slate-200">
+              <span className="text-xs px-2 py-0.5 rounded-full bg-surface-3 dark:bg-elevation-subtle text-slate-600 dark:text-slate-200">
                 {activeScenario?.name}
               </span>
             </div>
@@ -561,13 +561,13 @@ export default function AnalysisPage() {
       ) : activeTab === 'land' ? (
         <div className="absolute inset-0 flex flex-col">
           {/* Land Valuation Header Bar */}
-          <div className="flex-shrink-0 bg-surface-1 dark:bg-elevation-1 border-b border-slate-200 dark:border-dark-border px-6 py-3 flex items-center justify-between z-40 shadow-sm">
+          <div className="flex-shrink-0 bg-surface-1 dark:bg-elevation-1 border-b border-light-border dark:border-dark-border dark:border-dark-border px-6 py-3 flex items-center justify-between z-40 shadow-sm">
             <div className="flex items-center gap-4">
               <h2 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
                 <span style={{ color: APPROACH_CONFIG.land.color }}><LandIcon className="w-5 h-5" /></span>
                 Land Valuation - Sales Comparison
               </h2>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-elevation-1 text-slate-600 dark:text-slate-200">
+              <span className="text-xs px-2 py-0.5 rounded-full bg-surface-3 dark:bg-elevation-subtle text-slate-600 dark:text-slate-200">
                 {activeScenario?.name}
               </span>
             </div>
@@ -583,13 +583,13 @@ export default function AnalysisPage() {
       ) : activeTab === 'multifamily' ? (
         <div className="absolute inset-0 flex flex-col">
           {/* Multi-Family Header Bar */}
-          <div className="flex-shrink-0 bg-surface-1 dark:bg-elevation-1 border-b border-slate-200 dark:border-dark-border px-6 py-3 flex items-center justify-between z-40 shadow-sm">
+          <div className="flex-shrink-0 bg-surface-1 dark:bg-elevation-1 border-b border-light-border dark:border-dark-border dark:border-dark-border px-6 py-3 flex items-center justify-between z-40 shadow-sm">
             <div className="flex items-center gap-4">
               <h2 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
                 <span style={{ color: APPROACH_CONFIG.multifamily.color }}><ResidentialIcon className="w-5 h-5" /></span>
                 Multi-Family Rental Analysis
               </h2>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-elevation-1 text-slate-600 dark:text-slate-200">
+              <span className="text-xs px-2 py-0.5 rounded-full bg-surface-3 dark:bg-elevation-subtle text-slate-600 dark:text-slate-200">
                 {activeScenario?.name}
               </span>
             </div>
@@ -635,7 +635,7 @@ function PlaceholderContent({ title, scenarioName }: { title: string; scenarioNa
         <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-light-border dark:border-harken-gray pb-3">
           {title}
         </h3>
-        <span className="text-xs px-2 py-0.5 rounded-full bg-slate-100 dark:bg-elevation-1 text-slate-600 dark:text-slate-200">
+        <span className="text-xs px-2 py-0.5 rounded-full bg-surface-3 dark:bg-elevation-subtle text-slate-600 dark:text-slate-200">
           {scenarioName}
         </span>
       </div>

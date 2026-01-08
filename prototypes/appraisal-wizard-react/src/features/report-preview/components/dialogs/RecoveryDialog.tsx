@@ -56,7 +56,7 @@ export const RecoveryDialog: React.FC<RecoveryDialogProps> = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
       <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl shadow-2xl w-full max-w-lg max-h-[80vh] overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-accent-amber-gold-light">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-light-border dark:border-dark-border bg-accent-amber-gold-light">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-accent-amber-gold-light rounded-lg flex items-center justify-center">
               <AlertTriangle className="text-accent-amber-gold" size={20} />
@@ -88,12 +88,12 @@ export const RecoveryDialog: React.FC<RecoveryDialogProps> = ({
                 className={`border rounded-lg p-4 transition-colors ${
                   index === 0
                     ? 'border-accent-amber-gold bg-accent-amber-gold-light'
-                    : 'border-slate-200 hover:border-slate-300'
+                    : 'border-light-border dark:border-dark-border hover:border-border-muted dark:hover:border-dark-border-muted'
                 }`}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 bg-slate-100 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <div className="w-8 h-8 bg-surface-3 dark:bg-elevation-subtle rounded-lg flex items-center justify-center flex-shrink-0">
                       <Clock size={16} className="text-slate-500" />
                     </div>
                     <div>
@@ -135,7 +135,7 @@ export const RecoveryDialog: React.FC<RecoveryDialogProps> = ({
         </div>
 
         {/* Footer */}
-        <div className="flex justify-between items-center px-6 py-4 border-t border-slate-200 bg-slate-50">
+        <div className="flex justify-between items-center px-6 py-4 border-t border-light-border dark:border-dark-border bg-surface-2 dark:bg-elevation-2">
           <button
             onClick={onDismiss}
             className="text-sm text-slate-500 hover:text-slate-700"
@@ -144,7 +144,7 @@ export const RecoveryDialog: React.FC<RecoveryDialogProps> = ({
           </button>
           <button
             onClick={onClose}
-            className="px-4 py-2 text-slate-600 hover:bg-slate-200 rounded-lg transition-colors"
+            className="px-4 py-2 text-slate-600 hover:bg-surface-4 dark:hover:bg-elevation-muted rounded-lg transition-colors"
           >
             Start Fresh
           </button>
