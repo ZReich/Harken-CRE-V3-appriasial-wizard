@@ -50,16 +50,16 @@ export function ProgressCircle({
     }
     // Visited but not complete -> Slight emphasis
     if (completion > 0 && !isCompleted) {
-      return 'bg-white dark:bg-slate-900 border-green-400 dark:border-green-500/50 text-gray-700 dark:text-gray-200';
+      return 'bg-surface-1 dark:bg-elevation-1 border-green-400 dark:border-green-500/50 text-harken-gray dark:text-white';
     }
     // Pending
-    return 'bg-white dark:bg-slate-900 border-gray-200 dark:border-slate-700 text-gray-400 dark:text-slate-500';
+    return 'bg-surface-1 dark:bg-elevation-1 border-light-border dark:border-dark-border text-harken-gray-med dark:text-slate-500';
   };
 
   return (
     <button
       type="button"
-      className={`relative rounded-full flex items-center justify-center transition-all duration-300 outline-none focus:ring-2 focus:ring-offset-2 focus:ring-harken-blue dark:focus:ring-offset-slate-900 ${isActive ? 'ring-2 ring-offset-2 ring-harken-blue dark:ring-offset-slate-900 scale-110' : 'hover:border-gray-300 dark:hover:border-slate-500'
+      className={`relative rounded-full flex items-center justify-center transition-all duration-300 outline-none focus:ring-2 focus:ring-offset-2 focus:ring-harken-blue dark:focus:ring-offset-slate-900 ${isActive ? 'ring-2 ring-offset-2 ring-harken-blue dark:ring-offset-harken-dark scale-110' : 'hover:border-light-border dark:hover:border-harken-gray'
         } ${justCompleted ? 'scale-125' : ''}`}
       onClick={onClick}
       style={{ width: size, height: size }}
@@ -82,7 +82,7 @@ export function ProgressCircle({
       )}
 
       {/* Content */}
-      <div className={`relative z-10 flex items-center justify-center font-bold text-sm transition-colors duration-300 ${isCompleted || isActive ? 'text-white' : 'text-gray-400 dark:text-slate-300'}`}>
+      <div className={`relative z-10 flex items-center justify-center font-bold text-sm transition-colors duration-300 ${isCompleted || isActive ? 'text-white' : 'text-harken-gray-med dark:text-slate-200'}`}>
         {isCompleted ? (
           <svg
             className={`w-4 h-4 ${justCompleted ? 'animate-bounce-once' : ''}`}

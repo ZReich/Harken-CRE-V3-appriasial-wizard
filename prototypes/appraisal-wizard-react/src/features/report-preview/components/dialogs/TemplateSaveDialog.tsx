@@ -110,12 +110,12 @@ export const TemplateSaveDialog: React.FC<TemplateSaveDialogProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-xl max-h-[90vh] overflow-hidden">
+      <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl shadow-2xl w-full max-w-xl max-h-[90vh] overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
-              <Star className="text-amber-600" size={20} />
+            <div className="w-10 h-10 bg-accent-amber-gold-light rounded-lg flex items-center justify-center">
+              <Star className="text-accent-amber-gold" size={20} />
             </div>
             <h2 className="text-lg font-semibold text-slate-800 dark:text-white">Save as Template</h2>
           </div>
@@ -133,7 +133,7 @@ export const TemplateSaveDialog: React.FC<TemplateSaveDialogProps> = ({
             {/* Template Name */}
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                Template Name <span className="text-red-500">*</span>
+                Template Name <span className="text-harken-error">*</span>
               </label>
               <input
                 type="text"
@@ -141,11 +141,11 @@ export const TemplateSaveDialog: React.FC<TemplateSaveDialogProps> = ({
                 onChange={e => setFormData(prev => ({ ...prev, name: e.target.value }))}
                 placeholder="Industrial Shop/Office Appraisal"
                 className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 ${
-                  errors.name ? 'border-red-300' : 'border-slate-200'
+                  errors.name ? 'border-harken-error/20' : 'border-slate-200'
                 }`}
               />
               {errors.name && (
-                <p className="text-sm text-red-500 mt-1">{errors.name}</p>
+                <p className="text-sm text-harken-error mt-1">{errors.name}</p>
               )}
             </div>
 
@@ -166,13 +166,13 @@ export const TemplateSaveDialog: React.FC<TemplateSaveDialogProps> = ({
             {/* Use Case */}
             <div>
               <label className="block text-sm font-medium text-slate-700 mb-1.5">
-                Use Case <span className="text-red-500">*</span>
+                Use Case <span className="text-harken-error">*</span>
               </label>
               <select
                 value={formData.useCase}
                 onChange={e => setFormData(prev => ({ ...prev, useCase: e.target.value }))}
                 className={`w-full px-4 py-2.5 border rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-500 ${
-                  errors.useCase ? 'border-red-300' : 'border-slate-200'
+                  errors.useCase ? 'border-harken-error/20' : 'border-slate-200'
                 }`}
               >
                 <option value="">Select a use case...</option>
@@ -181,7 +181,7 @@ export const TemplateSaveDialog: React.FC<TemplateSaveDialogProps> = ({
                 ))}
               </select>
               {errors.useCase && (
-                <p className="text-sm text-red-500 mt-1">{errors.useCase}</p>
+                <p className="text-sm text-harken-error mt-1">{errors.useCase}</p>
               )}
             </div>
 
@@ -244,7 +244,7 @@ export const TemplateSaveDialog: React.FC<TemplateSaveDialogProps> = ({
                       <button
                         type="button"
                         onClick={() => handleRemoveTag(tag)}
-                        className="hover:text-red-500"
+                        className="hover:text-harken-error"
                       >
                         <X size={12} />
                       </button>
@@ -261,27 +261,27 @@ export const TemplateSaveDialog: React.FC<TemplateSaveDialogProps> = ({
                 What gets saved in the template:
               </h4>
               <div className="grid grid-cols-2 gap-2 text-sm">
-                <div className="flex items-center gap-2 text-green-600">
+                <div className="flex items-center gap-2 text-accent-teal-mint">
                   <Check size={14} />
                   Scenario structure
                 </div>
-                <div className="flex items-center gap-2 text-green-600">
+                <div className="flex items-center gap-2 text-accent-teal-mint">
                   <Check size={14} />
                   Selected approaches
                 </div>
-                <div className="flex items-center gap-2 text-green-600">
+                <div className="flex items-center gap-2 text-accent-teal-mint">
                   <Check size={14} />
                   Section visibility
                 </div>
-                <div className="flex items-center gap-2 text-green-600">
+                <div className="flex items-center gap-2 text-accent-teal-mint">
                   <Check size={14} />
                   {savedItemsSummary?.customFields || 0} custom fields
                 </div>
-                <div className="flex items-center gap-2 text-green-600">
+                <div className="flex items-center gap-2 text-accent-teal-mint">
                   <Check size={14} />
                   Report styling
                 </div>
-                <div className="flex items-center gap-2 text-green-600">
+                <div className="flex items-center gap-2 text-accent-teal-mint">
                   <Check size={14} />
                   Content templates
                 </div>

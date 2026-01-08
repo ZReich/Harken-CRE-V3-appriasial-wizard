@@ -34,7 +34,7 @@ export function SidebarTab({
       return `${base} bg-opacity-10 font-medium`;
     }
 
-    return `${base} text-gray-600 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-800`;
+    return `${base} text-harken-gray dark:text-slate-200 hover:bg-harken-gray-light dark:hover:bg-elevation-3`;
   }, [isActive]);
 
   const containerStyle = useMemo(() => {
@@ -72,7 +72,7 @@ export function SidebarTab({
             {showProgress && (
               <span
                 className={`text-xs tabular-nums flex-shrink-0 ${isComplete ? 'text-green-600 dark:text-green-400 font-medium' :
-                    hasProgress ? 'text-gray-500 dark:text-slate-300' : 'text-gray-400 dark:text-slate-400'
+                    hasProgress ? 'text-harken-gray-med dark:text-slate-200' : 'text-harken-gray-med dark:text-slate-400'
                   }`}
               >
                 {completion}%
@@ -82,7 +82,7 @@ export function SidebarTab({
 
           {/* Progress bar */}
           {showProgress && (
-            <div className="h-1 bg-gray-200 dark:bg-slate-700 rounded-full mt-1.5 overflow-hidden">
+            <div className="h-1 bg-harken-gray-med-lt dark:bg-elevation-1 rounded-full mt-1.5 overflow-hidden">
               <div
                 className={`h-full rounded-full transition-all duration-500 ease-out ${isComplete ? 'bg-green-500' : ''
                   }`}

@@ -60,28 +60,28 @@ const GRADE_CONFIG: Record<string, {
   investorProfile: string;
 }> = {
   'AAA': { 
-    bg: 'bg-emerald-100', 
-    text: 'text-emerald-800', 
-    border: 'border-emerald-400', 
-    lightBg: 'bg-emerald-50',
+    bg: 'bg-accent-teal-mint-light', 
+    text: 'text-accent-teal-mint', 
+    border: 'border-accent-teal-mint', 
+    lightBg: 'bg-accent-teal-mint-light',
     icon: ShieldCheck, 
     description: 'Institutional Grade - Exceptional',
     investorProfile: 'Suitable for institutional investors, pension funds, and REITs seeking core assets with minimal risk exposure.'
   },
   'AA': { 
-    bg: 'bg-emerald-100', 
-    text: 'text-emerald-700', 
-    border: 'border-emerald-400', 
-    lightBg: 'bg-emerald-50',
+    bg: 'bg-accent-teal-mint-light', 
+    text: 'text-accent-teal-mint', 
+    border: 'border-accent-teal-mint', 
+    lightBg: 'bg-accent-teal-mint-light',
     icon: ShieldCheck, 
     description: 'High Quality - Very Low Risk',
     investorProfile: 'Appropriate for conservative investors and institutions seeking stable, predictable returns with limited downside.'
   },
   'A': { 
-    bg: 'bg-emerald-50', 
-    text: 'text-emerald-700', 
-    border: 'border-emerald-300', 
-    lightBg: 'bg-emerald-50/50',
+    bg: 'bg-accent-teal-mint-light', 
+    text: 'text-accent-teal-mint', 
+    border: 'border-accent-teal-mint', 
+    lightBg: 'bg-accent-teal-mint-light/50',
     icon: ShieldCheck, 
     description: 'Upper Medium Grade',
     investorProfile: 'Well-suited for core-plus strategies balancing stability with modest value-add potential.'
@@ -96,46 +96,46 @@ const GRADE_CONFIG: Record<string, {
     investorProfile: 'Suitable for value-add investors willing to accept moderate risk for enhanced returns.'
   },
   'BB': { 
-    bg: 'bg-amber-100', 
-    text: 'text-amber-800', 
-    border: 'border-amber-400', 
-    lightBg: 'bg-amber-50',
+    bg: 'bg-accent-amber-gold-light', 
+    text: 'text-accent-amber-gold', 
+    border: 'border-accent-amber-gold', 
+    lightBg: 'bg-accent-amber-gold-light',
     icon: ShieldAlert, 
     description: 'Speculative - Below Investment Grade',
     investorProfile: 'Appropriate for opportunistic investors with higher risk tolerance and active management capabilities.'
   },
   'B': { 
-    bg: 'bg-amber-100', 
-    text: 'text-amber-700', 
-    border: 'border-amber-400', 
-    lightBg: 'bg-amber-50',
+    bg: 'bg-accent-amber-gold-light', 
+    text: 'text-accent-amber-gold', 
+    border: 'border-accent-amber-gold', 
+    lightBg: 'bg-accent-amber-gold-light',
     icon: ShieldAlert, 
     description: 'Highly Speculative',
     investorProfile: 'Requires experienced investors comfortable with significant risk and hands-on asset management.'
   },
   'CCC': { 
-    bg: 'bg-red-100', 
-    text: 'text-red-800', 
-    border: 'border-red-400', 
-    lightBg: 'bg-red-50',
+    bg: 'bg-accent-red-light', 
+    text: 'text-harken-error', 
+    border: 'border-harken-error', 
+    lightBg: 'bg-harken-error/10',
     icon: ShieldX, 
     description: 'Substantial Risk',
     investorProfile: 'Distressed asset specialists or turnaround investors with extensive rehabilitation experience.'
   },
   'CC': { 
-    bg: 'bg-red-100', 
-    text: 'text-red-700', 
-    border: 'border-red-400', 
-    lightBg: 'bg-red-50',
+    bg: 'bg-accent-red-light', 
+    text: 'text-harken-error', 
+    border: 'border-harken-error', 
+    lightBg: 'bg-harken-error/10',
     icon: ShieldX, 
     description: 'Extremely Speculative',
     investorProfile: 'High-risk tolerance required. Material probability of loss; deep discount pricing essential.'
   },
   'C': { 
-    bg: 'bg-red-50', 
-    text: 'text-red-700', 
-    border: 'border-red-300', 
-    lightBg: 'bg-red-50/50',
+    bg: 'bg-harken-error/10', 
+    text: 'text-harken-error', 
+    border: 'border-harken-error/30', 
+    lightBg: 'bg-harken-error/5',
     icon: ShieldX, 
     description: 'Near Default Risk',
     investorProfile: 'Distressed debt investors only. Significant capital required for stabilization.'
@@ -256,14 +256,14 @@ export function RiskRatingPanel({
   // Loading state
   if (isLoading) {
     return (
-      <div className={`bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6 ${className}`}>
+      <div className={`bg-surface-1 dark:bg-elevation-1 rounded-xl border border-slate-200 dark:border-dark-border p-6 ${className}`}>
         <div className="flex flex-col items-center justify-center gap-4 py-12">
           <div className="relative">
             <div className="w-16 h-16 border-4 border-slate-200 rounded-full" />
             <div className="absolute inset-0 w-16 h-16 border-4 border-harken-blue border-t-transparent rounded-full animate-spin" />
           </div>
           <div className="text-center">
-            <p className="font-medium text-slate-700 dark:text-slate-300">Calculating Investment Risk Rating</p>
+            <p className="font-medium text-slate-700 dark:text-slate-200">Calculating Investment Risk Rating</p>
             <p className="text-sm text-slate-500 mt-1">Analyzing market data, property characteristics, and economic indicators...</p>
           </div>
         </div>
@@ -274,8 +274,8 @@ export function RiskRatingPanel({
   // Error state
   if (error) {
     return (
-      <div className={`bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6 ${className}`}>
-        <div className="flex items-center gap-3 text-red-600 mb-4">
+      <div className={`bg-surface-1 dark:bg-elevation-1 rounded-xl border border-slate-200 dark:border-dark-border p-6 ${className}`}>
+        <div className="flex items-center gap-3 text-harken-error mb-4">
           <AlertCircle className="w-5 h-5" />
           <span>{error}</span>
         </div>
@@ -293,8 +293,8 @@ export function RiskRatingPanel({
   // No data / incomplete inputs
   if (!data) {
     return (
-      <div className={`bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6 ${className}`}>
-        <div className="flex items-center gap-3 text-amber-600 mb-2">
+      <div className={`bg-surface-1 dark:bg-elevation-1 rounded-xl border border-slate-200 dark:border-dark-border p-6 ${className}`}>
+        <div className="flex items-center gap-3 text-accent-amber-gold mb-2">
           <Info className="w-5 h-5" />
           <span className="font-medium">Property Data Required</span>
         </div>
@@ -312,7 +312,7 @@ export function RiskRatingPanel({
   return (
     <div className={`space-y-4 ${className}`}>
       {/* Main Rating Card */}
-      <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+      <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl border border-slate-200 dark:border-dark-border overflow-hidden">
         {/* Header */}
         <div className="px-6 py-4 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white">
           <div className="flex items-center justify-between">
@@ -356,7 +356,7 @@ export function RiskRatingPanel({
                   <span className="text-harken-blue font-bold">1</span>
                 </div>
                 <div>
-                  <span className="font-medium text-slate-700 dark:text-slate-300">Multi-Source Data Integration</span>
+                  <span className="font-medium text-slate-700 dark:text-slate-200">Multi-Source Data Integration</span>
                   <p className="text-slate-500 dark:text-slate-400">Federal economic data, market statistics, and property-specific metrics</p>
                 </div>
               </div>
@@ -365,7 +365,7 @@ export function RiskRatingPanel({
                   <span className="text-harken-blue font-bold">2</span>
                 </div>
                 <div>
-                  <span className="font-medium text-slate-700 dark:text-slate-300">Dynamic Weight Calibration</span>
+                  <span className="font-medium text-slate-700 dark:text-slate-200">Dynamic Weight Calibration</span>
                   <p className="text-slate-500 dark:text-slate-400">Weights adjusted based on property type and market conditions</p>
                 </div>
               </div>
@@ -374,7 +374,7 @@ export function RiskRatingPanel({
                   <span className="text-harken-blue font-bold">3</span>
                 </div>
                 <div>
-                  <span className="font-medium text-slate-700 dark:text-slate-300">Z-Score Normalization</span>
+                  <span className="font-medium text-slate-700 dark:text-slate-200">Z-Score Normalization</span>
                   <p className="text-slate-500 dark:text-slate-400">Scores normalized relative to MSA-level benchmarks</p>
                 </div>
               </div>
@@ -383,7 +383,7 @@ export function RiskRatingPanel({
                   <span className="text-harken-blue font-bold">4</span>
                 </div>
                 <div>
-                  <span className="font-medium text-slate-700 dark:text-slate-300">Composite Scoring</span>
+                  <span className="font-medium text-slate-700 dark:text-slate-200">Composite Scoring</span>
                   <p className="text-slate-500 dark:text-slate-400">Weighted aggregation into AAA-C rating scale</p>
                 </div>
               </div>
@@ -438,7 +438,7 @@ export function RiskRatingPanel({
               </div>
               <div className="text-center mt-3">
                 <span className="text-xs text-slate-500 dark:text-slate-400">
-                  This property ranks in the <span className="font-semibold text-slate-700 dark:text-slate-300">
+                  This property ranks in the <span className="font-semibold text-slate-700 dark:text-slate-200">
                     {gradeIndex <= 2 ? 'top tier' : gradeIndex <= 4 ? 'middle tier' : 'speculative tier'}
                   </span> of investment-grade properties
                 </span>
@@ -480,9 +480,9 @@ export function RiskRatingPanel({
                   >
                     <div className="flex items-center gap-3">
                       <div className={`p-2 rounded-lg ${
-                        score >= 80 ? 'bg-emerald-100 text-emerald-600' :
+                        score >= 80 ? 'bg-accent-teal-mint-light text-accent-teal-mint' :
                         score >= 60 ? 'bg-cyan-100 text-cyan-600' :
-                        score >= 40 ? 'bg-amber-100 text-amber-600' : 'bg-red-100 text-red-600'
+                        score >= 40 ? 'bg-accent-amber-gold-light text-accent-amber-gold-hover' : 'bg-accent-red-light text-harken-error'
                       }`}>
                         <Icon className="w-5 h-5" />
                       </div>
@@ -492,9 +492,9 @@ export function RiskRatingPanel({
                           <span>Weight: {(weight * 100).toFixed(0)}%</span>
                           <span>•</span>
                           <span className={`font-medium ${
-                            score >= 80 ? 'text-emerald-600' :
+                            score >= 80 ? 'text-accent-teal-mint' :
                             score >= 60 ? 'text-cyan-600' :
-                            score >= 40 ? 'text-amber-600' : 'text-red-600'
+                            score >= 40 ? 'text-accent-amber-gold-hover' : 'text-harken-error'
                           }`}>
                             {score >= 80 ? 'Strong' : score >= 60 ? 'Adequate' : score >= 40 ? 'Moderate Risk' : 'Elevated Risk'}
                           </span>
@@ -510,9 +510,9 @@ export function RiskRatingPanel({
                         <div className="w-full bg-slate-200 rounded-full h-2">
                           <div 
                             className={`h-2 rounded-full transition-all duration-500 ${
-                              score >= 80 ? 'bg-emerald-500' :
+                              score >= 80 ? 'bg-accent-teal-mint-light0' :
                               score >= 60 ? 'bg-cyan-500' :
-                              score >= 40 ? 'bg-amber-500' : 'bg-red-500'
+                              score >= 40 ? 'bg-accent-amber-gold' : 'bg-harken-error'
                             }`}
                             style={{ width: `${score}%` }}
                           />
@@ -536,7 +536,7 @@ export function RiskRatingPanel({
                         {config.factors.map((factor, idx) => {
                           const FactorIcon = factor.icon;
                           return (
-                            <div key={idx} className="bg-white dark:bg-slate-700 rounded-lg p-3 border border-slate-200 dark:border-slate-600">
+                            <div key={idx} className="bg-surface-1 dark:bg-elevation-1 rounded-lg p-3 border border-slate-200 dark:border-harken-gray">
                               <FactorIcon className="w-4 h-4 text-slate-400 mb-1" />
                               <span className="text-xs text-slate-600">{factor.label}</span>
                             </div>
@@ -564,14 +564,14 @@ export function RiskRatingPanel({
       </div>
 
       {/* Disclosure Toggle */}
-      <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+      <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl border border-slate-200 dark:border-dark-border overflow-hidden">
         <button
           onClick={() => setShowDisclosure(!showDisclosure)}
           className="w-full px-6 py-4 flex items-center justify-between hover:bg-slate-50 transition-colors"
         >
           <div className="flex items-center gap-3">
             <Info className="w-5 h-5 text-slate-400" />
-            <span className="font-medium text-slate-700 dark:text-slate-300">USPAP Compliance Disclosure</span>
+            <span className="font-medium text-slate-700 dark:text-slate-200">USPAP Compliance Disclosure</span>
           </div>
           {showDisclosure ? (
             <ChevronUp className="w-5 h-5 text-slate-400" />

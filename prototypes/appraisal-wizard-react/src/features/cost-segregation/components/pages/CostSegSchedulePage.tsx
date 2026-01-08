@@ -26,12 +26,12 @@ export const CostSegSchedulePage: React.FC<CostSegSchedulePageProps> = ({
   );
 
   return (
-    <div className={`bg-white p-12 ${className}`}>
+    <div className={`bg-surface-1 p-12 ${className}`}>
       <h2 className="text-2xl font-bold text-[#1c3643] mb-6 pb-4 border-b-2 border-[#0da1c7]">
         Depreciation Schedule
       </h2>
 
-      <p className="text-sm text-slate-600 mb-6">
+      <p className="text-sm text-harken-gray mb-6">
         The following schedule shows year-by-year depreciation by asset class using Modified 
         Accelerated Cost Recovery System (MACRS) rates per IRS Publication 946. Depreciation 
         amounts shown are based on the half-year convention for personal property and land 
@@ -40,19 +40,19 @@ export const CostSegSchedulePage: React.FC<CostSegSchedulePageProps> = ({
 
       {/* Summary Stats */}
       <div className="grid grid-cols-4 gap-4 mb-6">
-        <div className="bg-slate-50 rounded-lg p-4 border border-slate-200 text-center">
-          <div className="text-xs text-slate-500 uppercase tracking-wide mb-1">
+        <div className="bg-harken-gray-light rounded-lg p-4 border border-light-border text-center">
+          <div className="text-xs text-harken-gray-med uppercase tracking-wide mb-1">
             Total Depreciable Basis
           </div>
           <div className="text-lg font-bold text-slate-900">
             {formatCostSegCurrency(analysis.totalImprovementCost)}
           </div>
         </div>
-        <div className="bg-emerald-50 rounded-lg p-4 border border-emerald-200 text-center">
-          <div className="text-xs text-emerald-600 uppercase tracking-wide mb-1">
+        <div className="bg-accent-teal-mint-light rounded-lg p-4 border border-accent-teal-mint text-center">
+          <div className="text-xs text-accent-teal-mint uppercase tracking-wide mb-1">
             Year 1 Depreciation
           </div>
-          <div className="text-lg font-bold text-emerald-700">
+          <div className="text-lg font-bold text-accent-teal-mint">
             {formatCostSegCurrency(analysis.firstYearDepreciation)}
           </div>
         </div>
@@ -64,8 +64,8 @@ export const CostSegSchedulePage: React.FC<CostSegSchedulePageProps> = ({
             +{formatCostSegCurrency(analysis.acceleratedBenefit)}
           </div>
         </div>
-        <div className="bg-slate-50 rounded-lg p-4 border border-slate-200 text-center">
-          <div className="text-xs text-slate-500 uppercase tracking-wide mb-1">
+        <div className="bg-harken-gray-light rounded-lg p-4 border border-light-border text-center">
+          <div className="text-xs text-harken-gray-med uppercase tracking-wide mb-1">
             Recovery Period
           </div>
           <div className="text-lg font-bold text-slate-900">
@@ -75,22 +75,22 @@ export const CostSegSchedulePage: React.FC<CostSegSchedulePageProps> = ({
       </div>
 
       {/* Schedule Table */}
-      <div className="border border-slate-200 rounded-lg overflow-hidden">
+      <div className="border border-light-border rounded-lg overflow-hidden">
         <table className="w-full text-sm">
           <thead>
-            <tr className="bg-slate-100 border-b border-slate-200">
-              <th className="text-left py-3 px-4 font-semibold text-slate-700">Year</th>
-              <th className="text-right py-3 px-4 font-semibold text-emerald-700">5-Year</th>
+            <tr className="bg-harken-gray-light border-b border-light-border">
+              <th className="text-left py-3 px-4 font-semibold text-harken-gray">Year</th>
+              <th className="text-right py-3 px-4 font-semibold text-accent-teal-mint">5-Year</th>
               {analysis.summary.sevenYear.total > 0 && (
-                <th className="text-right py-3 px-4 font-semibold text-green-700">7-Year</th>
+                <th className="text-right py-3 px-4 font-semibold text-accent-teal-mint">7-Year</th>
               )}
               <th className="text-right py-3 px-4 font-semibold text-blue-700">15-Year</th>
-              <th className="text-right py-3 px-4 font-semibold text-slate-600">
+              <th className="text-right py-3 px-4 font-semibold text-harken-gray">
                 {analysis.isResidential ? '27.5-Year' : '39-Year'}
               </th>
               <th className="text-right py-3 px-4 font-semibold text-slate-900">Total</th>
-              <th className="text-right py-3 px-4 font-semibold text-slate-700">Cumulative</th>
-              <th className="text-right py-3 px-4 font-semibold text-slate-700">Remaining</th>
+              <th className="text-right py-3 px-4 font-semibold text-harken-gray">Cumulative</th>
+              <th className="text-right py-3 px-4 font-semibold text-harken-gray">Remaining</th>
             </tr>
           </thead>
           <tbody>
@@ -100,38 +100,38 @@ export const CostSegSchedulePage: React.FC<CostSegSchedulePageProps> = ({
                 <tr 
                   key={year.year}
                   className={`border-b border-slate-100 ${
-                    isFirstYear ? 'bg-emerald-50/50' : idx % 2 === 1 ? 'bg-slate-50/50' : ''
+                    isFirstYear ? 'bg-accent-teal-mint-light/50' : idx % 2 === 1 ? 'bg-harken-gray-light/50' : ''
                   }`}
                 >
-                  <td className={`py-2.5 px-4 font-medium ${isFirstYear ? 'text-emerald-800' : 'text-slate-900'}`}>
+                  <td className={`py-2.5 px-4 font-medium ${isFirstYear ? 'text-accent-teal-mint' : 'text-slate-900'}`}>
                     Year {year.year}
-                    {isFirstYear && <span className="ml-2 text-xs text-emerald-600">(1st Year)</span>}
+                    {isFirstYear && <span className="ml-2 text-xs text-accent-teal-mint">(1st Year)</span>}
                   </td>
-                  <td className="py-2.5 px-4 text-right text-emerald-700">
+                  <td className="py-2.5 px-4 text-right text-accent-teal-mint">
                     {formatCostSegCurrency(year.fiveYearDepreciation)}
                   </td>
                   {analysis.summary.sevenYear.total > 0 && (
-                    <td className="py-2.5 px-4 text-right text-green-700">
+                    <td className="py-2.5 px-4 text-right text-accent-teal-mint">
                       {formatCostSegCurrency(year.sevenYearDepreciation)}
                     </td>
                   )}
                   <td className="py-2.5 px-4 text-right text-blue-700">
                     {formatCostSegCurrency(year.fifteenYearDepreciation)}
                   </td>
-                  <td className="py-2.5 px-4 text-right text-slate-600">
+                  <td className="py-2.5 px-4 text-right text-harken-gray">
                     {formatCostSegCurrency(
                       analysis.isResidential 
                         ? year.twentySevenFiveYearDepreciation 
                         : year.thirtyNineYearDepreciation
                     )}
                   </td>
-                  <td className={`py-2.5 px-4 text-right font-semibold ${isFirstYear ? 'text-emerald-800' : 'text-slate-900'}`}>
+                  <td className={`py-2.5 px-4 text-right font-semibold ${isFirstYear ? 'text-accent-teal-mint' : 'text-slate-900'}`}>
                     {formatCostSegCurrency(year.totalDepreciation)}
                   </td>
-                  <td className="py-2.5 px-4 text-right text-slate-600">
+                  <td className="py-2.5 px-4 text-right text-harken-gray">
                     {formatCostSegCurrency(year.cumulativeDepreciation)}
                   </td>
-                  <td className="py-2.5 px-4 text-right text-slate-600">
+                  <td className="py-2.5 px-4 text-right text-harken-gray">
                     {formatCostSegCurrency(year.remainingBasis)}
                   </td>
                 </tr>
@@ -140,8 +140,8 @@ export const CostSegSchedulePage: React.FC<CostSegSchedulePageProps> = ({
           </tbody>
           {schedule.length < analysis.depreciationSchedule.length && (
             <tfoot>
-              <tr className="bg-slate-50 border-t border-slate-200">
-                <td colSpan={analysis.summary.sevenYear.total > 0 ? 8 : 7} className="py-3 px-4 text-center text-sm text-slate-500">
+              <tr className="bg-harken-gray-light border-t border-light-border">
+                <td colSpan={analysis.summary.sevenYear.total > 0 ? 8 : 7} className="py-3 px-4 text-center text-sm text-harken-gray-med">
                   Showing first {schedule.length} years of {analysis.depreciationSchedule.length}-year recovery period
                 </td>
               </tr>

@@ -20,25 +20,25 @@ const SCENARIO_COLORS: Record<string, {
     activeBg: 'bg-harken-blue/10 dark:bg-harken-blue/20',
     activeBorder: 'border-harken-blue dark:border-harken-blue',
     activeText: 'text-harken-blue dark:text-harken-blue',
-    inactiveBg: 'bg-slate-50 dark:bg-slate-800',
+    inactiveBg: 'bg-slate-50 dark:bg-elevation-1',
     inactiveText: 'text-slate-600 dark:text-slate-400',
     dot: 'bg-harken-blue',
   },
   'As Completed': {
-    accent: '#10b981',
-    activeBg: 'bg-emerald-50 dark:bg-emerald-900/20',
-    activeBorder: 'border-emerald-500 dark:border-emerald-500',
-    activeText: 'text-emerald-700 dark:text-emerald-400',
-    inactiveBg: 'bg-slate-50 dark:bg-slate-800',
+    accent: '#2fc4b2',
+    activeBg: 'bg-accent-teal-mint-light dark:bg-accent-teal-mint/10',
+    activeBorder: 'border-accent-teal-mint dark:border-accent-teal-mint',
+    activeText: 'text-accent-teal-mint dark:text-accent-teal-mint',
+    inactiveBg: 'bg-slate-50 dark:bg-elevation-1',
     inactiveText: 'text-slate-600 dark:text-slate-400',
-    dot: 'bg-emerald-500',
+    dot: 'bg-accent-teal-mint',
   },
   'As Stabilized': {
     accent: '#8b5cf6',
     activeBg: 'bg-violet-50 dark:bg-violet-900/20',
     activeBorder: 'border-violet-500 dark:border-violet-500',
     activeText: 'text-violet-700 dark:text-violet-400',
-    inactiveBg: 'bg-slate-50 dark:bg-slate-800',
+    inactiveBg: 'bg-slate-50 dark:bg-elevation-1',
     inactiveText: 'text-slate-600 dark:text-slate-400',
     dot: 'bg-violet-500',
   },
@@ -47,10 +47,10 @@ const SCENARIO_COLORS: Record<string, {
 // Default colors for custom scenarios
 const DEFAULT_COLORS = {
   accent: '#64748b',
-  activeBg: 'bg-slate-100 dark:bg-slate-800',
+  activeBg: 'bg-slate-100 dark:bg-elevation-1',
   activeBorder: 'border-slate-500 dark:border-slate-400',
   activeText: 'text-slate-700 dark:text-slate-200',
-  inactiveBg: 'bg-slate-50 dark:bg-slate-800',
+  inactiveBg: 'bg-slate-50 dark:bg-elevation-1',
   inactiveText: 'text-slate-600 dark:text-slate-400',
   dot: 'bg-slate-500',
 };
@@ -93,7 +93,7 @@ export default function ScenarioSwitcher({ className = '' }: ScenarioSwitcherPro
       <span className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide mr-2">
         Scenario:
       </span>
-      <div className="flex items-center gap-1.5 bg-slate-100/80 dark:bg-slate-800/80 rounded-lg p-1 border border-slate-200 dark:border-slate-700">
+      <div className="flex items-center gap-1.5 bg-slate-100/80 dark:bg-elevation-1/80 rounded-lg p-1 border border-slate-200 dark:border-dark-border">
         {scenarios.map((scenario) => {
           const isActive = scenario.id === activeScenarioId;
           const colors = getScenarioColors(scenario.name);
@@ -125,7 +125,7 @@ export default function ScenarioSwitcher({ className = '' }: ScenarioSwitcherPro
 
               {/* Required indicator */}
               {scenario.isRequired && (
-                <span className={`absolute -top-1 -right-1 w-2 h-2 rounded-full bg-amber-400 border border-white`}
+                <span className={`absolute -top-1 -right-1 w-2 h-2 rounded-full bg-accent-amber-gold-hover border border-white`}
                   title="Required scenario" />
               )}
             </button>

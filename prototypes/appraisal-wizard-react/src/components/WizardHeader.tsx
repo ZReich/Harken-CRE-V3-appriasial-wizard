@@ -1,4 +1,6 @@
 import { ReactNode } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { FileText } from 'lucide-react';
 import { ThemeToggle } from './ThemeToggle';
 
 interface WizardHeaderProps {
@@ -23,6 +25,8 @@ interface WizardHeaderProps {
   themeAccent?: string;
   // Show preview mode toggle
   showPreviewMode?: boolean;
+  // Show report preview button in header
+  showReportPreview?: boolean;
 }
 
 export default function WizardHeader({
@@ -44,7 +48,17 @@ export default function WizardHeader({
   scenarioSwitcher,
   themeAccent,
   showPreviewMode = false,
+  showReportPreview = true,
 }: WizardHeaderProps) {
+  const navigate = useNavigate();
+  const location = useLocation();
+  
+  // Don't show report preview button if already on the review page
+  const isOnReviewPage = location.pathname.includes('/review');
+  
+  const handleReportPreview = () => {
+    navigate('/review?preview=true');
+  };
   // Compute dynamic styles based on theme accent
   const accentColor = themeAccent || '#0da1c7';
   const continueButtonStyle = {
@@ -54,13 +68,13 @@ export default function WizardHeader({
 
   return (
     <div
-      className={`bg-gray-50 dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 ${isFullscreen ? 'py-2 px-6' : 'py-3 px-8'
+      className={`bg-harken-gray-light dark:bg-elevation-1 border-b border-light-border dark:border-dark-border ${isFullscreen ? 'py-2 px-6' : 'py-3 px-8'
         }`}
       style={themeAccent ? { borderBottomColor: `${themeAccent}20` } : undefined}
     >
       {/* Scenario Switcher Row (if provided) */}
       {scenarioSwitcher && !isFullscreen && (
-        <div className="mb-3 pb-3 border-b border-gray-200/50">
+        <div className="mb-3 pb-3 border-b border-light-border/50">
           {scenarioSwitcher}
         </div>
       )}
@@ -72,7 +86,7 @@ export default function WizardHeader({
             {hasSections && (
               <button
                 onClick={onToggleSections}
-                className="p-2 text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white border border-gray-300 dark:border-slate-600 rounded-lg bg-white dark:bg-slate-800"
+                className="p-2 text-harken-gray dark:text-slate-400 hover:text-harken-dark dark:hover:text-white border border-light-border dark:border-harken-gray rounded-lg bg-surface-1 dark:bg-elevation-1"
                 title={isSectionsCollapsed ? 'Show sections' : 'Hide sections'}
               >
                 <svg
@@ -91,7 +105,7 @@ export default function WizardHeader({
               </button>
             )}
             <h1
-              className={`font-bold text-gray-900 dark:text-white ${isFullscreen ? 'text-lg' : 'text-2xl'
+              className={`font-bold text-harken-dark dark:text-white ${isFullscreen ? 'text-lg' : 'text-2xl'
                 }`}
             >
               {title}
@@ -108,7 +122,7 @@ export default function WizardHeader({
             </span>
           </div>
           {!isFullscreen && (
-            <p className="text-sm text-gray-600 dark:text-slate-400">{subtitle}</p>
+            <p className="text-sm text-harken-gray dark:text-slate-400">{subtitle}</p>
           )}
         </div>
 
@@ -116,11 +130,11 @@ export default function WizardHeader({
         <div className="flex items-center gap-3">
           {/* Guidance/Values/Preview Toggle */}
           {hasGuidance && (
-            <div className="flex items-center bg-gray-100 dark:bg-slate-700/50 rounded-lg p-1 border border-gray-200 dark:border-slate-600 shadow-inner">
+            <div className="flex items-center bg-harken-gray-light dark:bg-elevation-1/50 rounded-lg p-1 border border-light-border dark:border-harken-gray shadow-inner">
               <button
                 className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200 ${guidanceMode === 'guidance'
-                  ? 'bg-white dark:bg-[#1c3643] text-[#0da1c7] dark:text-cyan-400 shadow-md ring-1 ring-black/5'
-                  : 'text-gray-600 dark:text-slate-400 hover:text-gray-800 dark:hover:text-slate-200'
+                  ? 'bg-surface-1 dark:bg-[#1c3643] text-[#0da1c7] dark:text-cyan-400 shadow-md ring-1 ring-black/5'
+                  : 'text-harken-gray dark:text-slate-400 hover:text-harken-dark dark:hover:text-white'
                   }`}
                 onClick={() => onGuidanceModeChange?.('guidance')}
               >
@@ -128,8 +142,8 @@ export default function WizardHeader({
               </button>
               <button
                 className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200 ${guidanceMode === 'values'
-                  ? 'bg-white dark:bg-[#1c3643] text-[#0da1c7] dark:text-cyan-400 shadow-md ring-1 ring-black/5'
-                  : 'text-gray-600 dark:text-slate-400 hover:text-gray-800 dark:hover:text-slate-200'
+                  ? 'bg-surface-1 dark:bg-[#1c3643] text-[#0da1c7] dark:text-cyan-400 shadow-md ring-1 ring-black/5'
+                  : 'text-harken-gray dark:text-slate-400 hover:text-harken-dark dark:hover:text-white'
                   }`}
                 onClick={() => onGuidanceModeChange?.('values')}
               >
@@ -138,8 +152,8 @@ export default function WizardHeader({
               {showPreviewMode && (
                 <button
                   className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200 flex items-center gap-1.5 ${guidanceMode === 'preview'
-                    ? 'bg-white dark:bg-[#1c3643] text-[#0da1c7] dark:text-cyan-400 shadow-md ring-1 ring-black/5'
-                    : 'text-gray-600 dark:text-slate-400 hover:text-gray-800 dark:hover:text-slate-200'
+                    ? 'bg-surface-1 dark:bg-[#1c3643] text-[#0da1c7] dark:text-cyan-400 shadow-md ring-1 ring-black/5'
+                    : 'text-harken-gray dark:text-slate-400 hover:text-harken-dark dark:hover:text-white'
                     }`}
                   onClick={() => onGuidanceModeChange?.('preview')}
                   title="Live preview of how photos will appear in the report"
@@ -152,7 +166,7 @@ export default function WizardHeader({
                 </button>
               )}
               <button
-                className="ml-2 px-2.5 py-1 text-xs font-semibold text-gray-500 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white uppercase tracking-wider"
+                className="ml-2 px-2.5 py-1 text-xs font-semibold text-harken-gray-med dark:text-slate-400 hover:text-harken-dark dark:hover:text-white uppercase tracking-wider"
                 onClick={onToggleGuidance}
                 title={isGuidanceVisible ? 'Hide panel' : 'Show panel'}
               >
@@ -164,7 +178,7 @@ export default function WizardHeader({
           {/* Fullscreen Toggle */}
           <button
             onClick={onToggleFullscreen}
-            className="p-2 text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white border border-gray-300 dark:border-slate-600 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700"
+            className="p-2 text-harken-gray dark:text-slate-400 hover:text-harken-dark dark:hover:text-white border border-light-border dark:border-harken-gray rounded-lg hover:bg-harken-gray-light dark:hover:bg-elevation-3"
             title={isFullscreen ? 'Exit Full Screen' : 'Enter Full Screen'}
           >
             {isFullscreen ? (
@@ -181,16 +195,28 @@ export default function WizardHeader({
 
         {/* Right Actions */}
         <div className="flex items-center gap-3">
+          {/* Report Preview Button - accessible from any page */}
+          {showReportPreview && !isOnReviewPage && (
+            <button
+              onClick={handleReportPreview}
+              className="px-4 py-2 text-sm font-medium text-slate-600 dark:text-slate-300 bg-gradient-to-r from-violet-50 to-indigo-50 dark:from-violet-900/30 dark:to-indigo-900/30 border border-violet-200 dark:border-violet-700/50 rounded-lg hover:from-violet-100 hover:to-indigo-100 dark:hover:from-violet-900/50 dark:hover:to-indigo-900/50 hover:border-violet-300 dark:hover:border-violet-600 transition-all flex items-center gap-2 shadow-sm"
+              title="Jump to Report Preview"
+            >
+              <FileText className="w-4 h-4 text-violet-600 dark:text-violet-400" />
+              <span className="hidden lg:inline">Preview Report</span>
+            </button>
+          )}
+          
           {/* Theme Toggle */}
           <ThemeToggle size="sm" />
 
-          <button className="px-4 py-2 text-sm font-medium text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 transition-colors flex items-center gap-2">
+          <button className="px-4 py-2 text-sm font-medium text-harken-gray-med hover:text-harken-error dark:text-slate-400 dark:hover:text-harken-error transition-colors flex items-center gap-2">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
             Exit
           </button>
-          <button className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-slate-200 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg hover:bg-gray-50 dark:hover:bg-slate-600 hover:border-gray-400 dark:hover:border-slate-500 transition-all shadow-sm flex items-center gap-2">
+          <button className="px-4 py-2 text-sm font-medium text-harken-gray dark:text-slate-200 bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-harken-gray rounded-lg hover:bg-harken-gray-light dark:hover:bg-harken-gray hover:border-light-border dark:hover:border-harken-gray transition-all shadow-sm flex items-center gap-2">
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
             </svg>

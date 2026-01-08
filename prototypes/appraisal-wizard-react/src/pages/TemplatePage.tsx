@@ -60,7 +60,7 @@ const savedTemplates: ReportTemplate[] = [
     description: 'Restricted use appraisal report for internal decision making or monitoring.',
     tags: [
       { label: 'RESTRICTED', color: 'bg-orange-100 text-orange-700 border-orange-200' },
-      { label: 'internal', color: 'bg-gray-100 text-gray-700 border-gray-200' },
+      { label: 'internal', color: 'bg-harken-gray-light text-harken-dark border-light-border' },
     ],
     sections: 12,
     approaches: ['Sales', 'Income'],
@@ -220,8 +220,8 @@ export default function TemplatePage() {
       <div className="max-w-7xl mx-auto space-y-8">
 
         {/* REPORT TYPE SELECTION */}
-        <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-          <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+        <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
+          <h3 className="text-lg font-bold text-[#1c3643] dark:text-white border-b-2 border-light-border dark:border-harken-gray pb-3 mb-4">
             What are we creating today?
           </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -230,16 +230,16 @@ export default function TemplatePage() {
               onClick={() => handleReportTypeSelect('appraisal')}
               className={`relative p-5 border-2 rounded-xl text-left transition-all hover:border-[#0da1c7]/50 dark:hover:border-cyan-400/50 flex items-start gap-4 ${reportType === 'appraisal'
                 ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-cyan-500/10'
-                : 'border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700/50'
+                : 'border-light-border dark:border-harken-gray bg-harken-gray-light dark:bg-elevation-1/50'
                 }`}
             >
-              <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${reportType === 'appraisal' ? 'bg-[#0da1c7] text-white' : 'bg-gray-200 dark:bg-slate-600 text-gray-500 dark:text-slate-400'
+              <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${reportType === 'appraisal' ? 'bg-[#0da1c7] text-white' : 'bg-harken-gray-med-lt dark:bg-dark-input text-harken-gray-med dark:text-slate-400'
                 }`}>
                 <ScaleIcon className="w-6 h-6" />
               </div>
               <div className="flex-1">
-                <h4 className="font-bold text-lg text-gray-900 dark:text-white mb-1">Appraisal</h4>
-                <p className="text-sm text-gray-600 dark:text-slate-400">
+                <h4 className="font-bold text-lg text-harken-dark dark:text-white mb-1">Appraisal</h4>
+                <p className="text-sm text-harken-gray dark:text-slate-400">
                   Full USPAP-compliant opinion of value. Includes extensive data analysis, highest and best use, and all applicable approaches to value.
                 </p>
               </div>
@@ -255,16 +255,16 @@ export default function TemplatePage() {
               onClick={() => handleReportTypeSelect('evaluation')}
               className={`relative p-5 border-2 rounded-xl text-left transition-all hover:border-[#0da1c7]/50 dark:hover:border-cyan-400/50 flex items-start gap-4 ${reportType === 'evaluation'
                 ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-cyan-500/10'
-                : 'border-gray-200 dark:border-slate-600 bg-gray-50 dark:bg-slate-700/50'
+                : 'border-light-border dark:border-harken-gray bg-harken-gray-light dark:bg-elevation-1/50'
                 }`}
             >
-              <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${reportType === 'evaluation' ? 'bg-[#0da1c7] text-white' : 'bg-gray-200 dark:bg-slate-600 text-gray-500 dark:text-slate-400'
+              <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${reportType === 'evaluation' ? 'bg-[#0da1c7] text-white' : 'bg-harken-gray-med-lt dark:bg-dark-input text-harken-gray-med dark:text-slate-400'
                 }`}>
                 <ClipboardCheckIcon className="w-6 h-6" />
               </div>
               <div className="flex-1">
-                <h4 className="font-bold text-lg text-gray-900 dark:text-white mb-1">Evaluation</h4>
-                <p className="text-sm text-gray-600 dark:text-slate-400">
+                <h4 className="font-bold text-lg text-harken-dark dark:text-white mb-1">Evaluation</h4>
+                <p className="text-sm text-harken-gray dark:text-slate-400">
                   Restricted scope valuation for lower-risk transactions. Focuses on market value with streamlined analysis and reporting.
                 </p>
               </div>
@@ -287,17 +287,17 @@ export default function TemplatePage() {
                 <h3 className="text-lg font-bold text-[#1c3643] dark:text-white">
                   Select {reportType === 'appraisal' ? 'Appraisal' : 'Evaluation'} Template
                 </h3>
-                <p className="text-sm text-gray-500 dark:text-slate-400">
+                <p className="text-sm text-harken-gray-med dark:text-slate-400">
                   Choose a template to pre-configure your report structure.
                 </p>
               </div>
 
-              <div className="flex items-center gap-1 bg-gray-200 dark:bg-slate-700 rounded-lg p-1 self-start">
+              <div className="flex items-center gap-1 bg-harken-gray-med-lt dark:bg-elevation-1 rounded-lg p-1 self-start">
                 <button
                   onClick={() => setActiveTab('system')}
                   className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === 'system'
-                    ? 'bg-white dark:bg-slate-600 text-[#1c3643] dark:text-white shadow-sm'
-                    : 'text-gray-600 dark:text-slate-400 hover:text-gray-800 dark:hover:text-slate-200'
+                    ? 'bg-surface-1 dark:bg-dark-input text-[#1c3643] dark:text-white shadow-sm'
+                    : 'text-harken-gray dark:text-slate-400 hover:text-harken-dark dark:hover:text-white'
                     }`}
                 >
                   System Templates
@@ -305,8 +305,8 @@ export default function TemplatePage() {
                 <button
                   onClick={() => setActiveTab('custom')}
                   className={`px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${activeTab === 'custom'
-                    ? 'bg-white dark:bg-slate-600 text-[#1c3643] dark:text-white shadow-sm'
-                    : 'text-gray-600 dark:text-slate-400 hover:text-gray-800 dark:hover:text-slate-200'
+                    ? 'bg-surface-1 dark:bg-dark-input text-[#1c3643] dark:text-white shadow-sm'
+                    : 'text-harken-gray dark:text-slate-400 hover:text-harken-dark dark:hover:text-white'
                     }`}
                 >
                   <Star className="w-4 h-4" />
@@ -327,15 +327,15 @@ export default function TemplatePage() {
                   <div
                     key={template.id}
                     onClick={() => handleSelect(template.id)}
-                    className={`bg-white dark:bg-slate-800 rounded-xl p-5 cursor-pointer transition-all duration-200 border-2 ${selected === template.id
+                    className={`bg-surface-1 dark:bg-elevation-1 rounded-xl p-5 cursor-pointer transition-all duration-200 border-2 ${selected === template.id
                       ? 'border-[#0da1c7] shadow-lg shadow-[#0da1c7]/20 relative overflow-hidden'
-                      : 'border-gray-200 dark:border-slate-700 hover:border-[#0da1c7]/50 hover:shadow-md'
+                      : 'border-light-border dark:border-dark-border hover:border-[#0da1c7]/50 hover:shadow-md'
                       }`}
                   >
                     <div className="flex items-start justify-between mb-3">
                       <h3 className="text-lg font-bold text-[#1c3643] dark:text-white">{template.name}</h3>
                       {template.isSystem && (
-                        <span className="text-[10px] font-semibold px-2 py-0.5 bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-slate-400 rounded border border-gray-200 dark:border-slate-600">
+                        <span className="text-[10px] font-semibold px-2 py-0.5 bg-harken-gray-light dark:bg-elevation-1 text-harken-gray-med dark:text-slate-400 rounded border border-light-border dark:border-harken-gray">
                           SYSTEM
                         </span>
                       )}
@@ -353,10 +353,10 @@ export default function TemplatePage() {
                       ))}
                     </div>
 
-                    <p className="text-sm text-gray-600 dark:text-slate-400 mb-4">{template.description}</p>
+                    <p className="text-sm text-harken-gray dark:text-slate-400 mb-4">{template.description}</p>
 
                     {/* Metadata */}
-                    <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-slate-400">
+                    <div className="flex items-center gap-4 text-xs text-harken-gray-med dark:text-slate-400">
                       <span className="flex items-center gap-1">
                         <FileText className="w-3.5 h-3.5" />
                         {template.sections} sections
@@ -390,10 +390,10 @@ export default function TemplatePage() {
             {activeTab === 'custom' && (
               <div className="mb-10">
                 {filteredCustomTemplates.length === 0 ? (
-                  <div className="bg-white dark:bg-slate-800 rounded-xl p-12 text-center border-2 border-dashed border-gray-300 dark:border-slate-600">
-                    <Star className="w-12 h-12 text-gray-400 mx-auto mb-4" />
-                    <h3 className="text-lg font-semibold text-gray-600 dark:text-slate-300 mb-2">No Custom Templates</h3>
-                    <p className="text-gray-500 dark:text-slate-400 mb-4">
+                  <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl p-12 text-center border-2 border-dashed border-light-border dark:border-harken-gray">
+                    <Star className="w-12 h-12 text-harken-gray-med mx-auto mb-4" />
+                    <h3 className="text-lg font-semibold text-harken-gray dark:text-slate-200 mb-2">No Custom Templates</h3>
+                    <p className="text-harken-gray-med dark:text-slate-400 mb-4">
                       You don't have any custom {reportType} templates yet.
                     </p>
                   </div>
@@ -403,9 +403,9 @@ export default function TemplatePage() {
                       <div
                         key={template.id}
                         onClick={() => handleSelect(template.id)}
-                        className={`bg-white dark:bg-slate-800 rounded-xl p-5 cursor-pointer transition-all duration-200 border-2 relative ${selected === template.id
+                        className={`bg-surface-1 dark:bg-elevation-1 rounded-xl p-5 cursor-pointer transition-all duration-200 border-2 relative ${selected === template.id
                           ? 'border-[#0da1c7] shadow-lg shadow-[#0da1c7]/20 relative overflow-hidden'
-                          : 'border-gray-200 dark:border-slate-700 hover:border-[#0da1c7]/50 hover:shadow-md'
+                          : 'border-light-border dark:border-dark-border hover:border-[#0da1c7]/50 hover:shadow-md'
                           }`}
                       >
                         {/* Action Menu Button */}
@@ -415,20 +415,20 @@ export default function TemplatePage() {
                               e.stopPropagation();
                               setMenuOpen(menuOpen === template.id ? null : template.id);
                             }}
-                            className="p-1.5 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
+                            className="p-1.5 hover:bg-harken-gray-light dark:hover:bg-elevation-3 rounded-lg transition-colors"
                           >
-                            <MoreVertical className="w-4 h-4 text-gray-400" />
+                            <MoreVertical className="w-4 h-4 text-harken-gray-med" />
                           </button>
 
                           {/* Dropdown Menu */}
                           {menuOpen === template.id && (
-                            <div className="absolute right-0 top-8 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-lg shadow-lg py-1 z-20 min-w-[140px]">
+                            <div className="absolute right-0 top-8 bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-lg shadow-lg py-1 z-20 min-w-[140px]">
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   handleEditTemplate(template.id);
                                 }}
-                                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700"
+                                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-harken-dark dark:text-slate-200 hover:bg-harken-gray-light dark:hover:bg-elevation-3"
                               >
                                 <Edit2 className="w-3.5 h-3.5" />
                                 Edit
@@ -438,18 +438,18 @@ export default function TemplatePage() {
                                   e.stopPropagation();
                                   handleDuplicateTemplate(template.id);
                                 }}
-                                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700"
+                                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-harken-dark dark:text-slate-200 hover:bg-harken-gray-light dark:hover:bg-elevation-3"
                               >
                                 <Copy className="w-3.5 h-3.5" />
                                 Duplicate
                               </button>
-                              <hr className="my-1 border-gray-100 dark:border-slate-700" />
+                              <hr className="my-1 border-harken-gray-light dark:border-dark-border" />
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
                                   handleDeleteTemplate(template.id);
                                 }}
-                                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-red-600 hover:bg-red-50 dark:hover:bg-red-900/10"
+                                className="w-full flex items-center gap-2 px-3 py-2 text-sm text-harken-error hover:bg-accent-red-light dark:hover:bg-accent-red-light"
                               >
                                 <Trash2 className="w-3.5 h-3.5" />
                                 Delete
@@ -464,7 +464,7 @@ export default function TemplatePage() {
                           </div>
                           <div className="flex-1 pr-8">
                             <h3 className="text-lg font-bold text-[#1c3643] dark:text-white">{template.name}</h3>
-                            <p className="text-xs text-gray-500 dark:text-slate-400">{template.useCase}</p>
+                            <p className="text-xs text-harken-gray-med dark:text-slate-400">{template.useCase}</p>
                           </div>
                         </div>
 
@@ -483,13 +483,13 @@ export default function TemplatePage() {
                               TEAM
                             </span>
                           ) : (
-                            <span className="text-[10px] font-semibold px-2 py-0.5 rounded border bg-gray-50 dark:bg-gray-800 text-gray-500 dark:text-gray-400 border-gray-200 dark:border-gray-700">
+                            <span className="text-[10px] font-semibold px-2 py-0.5 rounded border bg-harken-gray-light dark:bg-elevation-1 text-harken-gray-med dark:text-slate-400 border-light-border dark:border-harken-gray">
                               PRIVATE
                             </span>
                           )}
                         </div>
 
-                        <p className="text-sm text-gray-600 dark:text-slate-400 mb-4">{template.description}</p>
+                        <p className="text-sm text-harken-gray dark:text-slate-400 mb-4">{template.description}</p>
 
                         {/* User tags */}
                         {template.tags.length > 0 && (
@@ -497,7 +497,7 @@ export default function TemplatePage() {
                             {template.tags.map((tag, idx) => (
                               <span
                                 key={idx}
-                                className="text-[10px] px-2 py-0.5 rounded bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-400"
+                                className="text-[10px] px-2 py-0.5 rounded bg-harken-gray-light dark:bg-elevation-1 text-harken-gray dark:text-slate-400"
                               >
                                 #{tag}
                               </span>
@@ -506,7 +506,7 @@ export default function TemplatePage() {
                         )}
 
                         {/* Metadata */}
-                        <div className="flex items-center gap-4 text-xs text-gray-500 dark:text-slate-500 border-t border-gray-100 dark:border-slate-700 pt-3">
+                        <div className="flex items-center gap-4 text-xs text-harken-gray-med dark:text-slate-500 border-t border-harken-gray-light dark:border-dark-border pt-3">
                           <span className="flex items-center gap-1">
                             <User className="w-3.5 h-3.5" />
                             {template.createdBy}
@@ -554,7 +554,7 @@ export default function TemplatePage() {
                 disabled={!selected}
                 className={`px-8 py-3 rounded-lg font-semibold flex items-center gap-2 mx-auto transition-all ${selected
                   ? 'bg-[#0da1c7] text-white hover:bg-[#0b8fb0]'
-                  : 'bg-gray-300 dark:bg-slate-700 text-gray-500 dark:text-slate-500 cursor-not-allowed'
+                  : 'bg-harken-gray-med-lt dark:bg-elevation-1 text-harken-gray-med dark:text-slate-500 cursor-not-allowed'
                   }`}
               >
                 Continue to Document Intake
@@ -563,7 +563,7 @@ export default function TemplatePage() {
                 </svg>
               </button>
               {!selected && (
-                <p className="text-sm text-gray-500 mt-2">Please select a template to continue</p>
+                <p className="text-sm text-harken-gray-med mt-2">Please select a template to continue</p>
               )}
             </div>
 

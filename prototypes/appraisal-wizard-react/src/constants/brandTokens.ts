@@ -56,23 +56,25 @@
  */
 export const uiTokens = {
   // Typography
+  // Note: Dark mode uses Tailwind slate classes for proper contrast
+  // See index.css "DARK MODE TEXT COLOR STRATEGY" for rationale
   header: 'text-harken-blue dark:text-cyan-400',
   headerAlt: 'text-harken-dark dark:text-white',
   bodyText: 'text-harken-dark dark:text-slate-100',
-  subtitle: 'text-harken-gray dark:text-slate-400',
-  muted: 'text-harken-gray-med dark:text-slate-500',
+  subtitle: 'text-harken-gray dark:text-slate-300',
+  muted: 'text-harken-gray-med dark:text-slate-400',
   link: 'text-harken-blue hover:text-harken-blue/80 dark:text-cyan-400',
   
   // Interactive Elements
   button: {
     primary: 'bg-harken-blue hover:bg-harken-blue/90 text-white',
-    secondary: 'bg-harken-gray-light hover:bg-harken-gray-med-lt text-harken-dark dark:bg-slate-700 dark:text-white',
+    secondary: 'bg-harken-gray-light hover:bg-harken-gray-med-lt text-harken-dark dark:bg-slate-800 dark:text-white',
     danger: 'bg-harken-error hover:bg-harken-error/90 text-white',
   },
   
   // Input States
   input: {
-    default: 'border-harken-gray-med-lt focus:border-harken-blue focus:ring-harken-blue',
+    default: 'border-light-border focus:border-harken-blue focus:ring-harken-blue',
     error: 'border-harken-error focus:border-harken-error focus:ring-harken-error',
   },
 } as const;

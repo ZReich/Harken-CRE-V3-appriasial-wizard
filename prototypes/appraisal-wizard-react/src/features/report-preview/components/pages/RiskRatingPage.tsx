@@ -27,29 +27,29 @@ const GRADE_CONFIG: Record<string, {
   riskLevel: string;
 }> = {
   'AAA': { 
-    bg: 'bg-emerald-100', 
-    text: 'text-emerald-800', 
-    border: 'border-emerald-400',
-    lightBg: 'bg-emerald-50',
-    barColor: 'bg-emerald-500',
+    bg: 'bg-accent-teal-mint-light', 
+    text: 'text-accent-teal-mint', 
+    border: 'border-accent-teal-mint',
+    lightBg: 'bg-accent-teal-mint-light',
+    barColor: 'bg-accent-teal-mint',
     description: 'Institutional Grade - Exceptional',
     riskLevel: 'Minimal Risk'
   },
   'AA': { 
-    bg: 'bg-emerald-100', 
-    text: 'text-emerald-800', 
-    border: 'border-emerald-400',
-    lightBg: 'bg-emerald-50',
-    barColor: 'bg-emerald-500',
+    bg: 'bg-accent-teal-mint-light', 
+    text: 'text-accent-teal-mint', 
+    border: 'border-accent-teal-mint',
+    lightBg: 'bg-accent-teal-mint-light',
+    barColor: 'bg-accent-teal-mint',
     description: 'High Quality - Very Low Risk',
     riskLevel: 'Very Low Risk'
   },
   'A': { 
-    bg: 'bg-emerald-100', 
-    text: 'text-emerald-700', 
-    border: 'border-emerald-400',
-    lightBg: 'bg-emerald-50',
-    barColor: 'bg-emerald-500',
+    bg: 'bg-accent-teal-mint-light', 
+    text: 'text-accent-teal-mint', 
+    border: 'border-accent-teal-mint',
+    lightBg: 'bg-accent-teal-mint-light',
+    barColor: 'bg-accent-teal-mint',
     description: 'Upper Medium Grade',
     riskLevel: 'Low Risk'
   },
@@ -63,47 +63,47 @@ const GRADE_CONFIG: Record<string, {
     riskLevel: 'Moderate Risk'
   },
   'BB': { 
-    bg: 'bg-amber-100', 
-    text: 'text-amber-800', 
-    border: 'border-amber-400',
-    lightBg: 'bg-amber-50',
-    barColor: 'bg-amber-500',
+    bg: 'bg-accent-amber-gold-light', 
+    text: 'text-accent-amber-gold', 
+    border: 'border-accent-amber-gold',
+    lightBg: 'bg-accent-amber-gold-light',
+    barColor: 'bg-accent-amber-gold',
     description: 'Speculative - Below Investment Grade',
     riskLevel: 'Elevated Risk'
   },
   'B': { 
-    bg: 'bg-amber-100', 
-    text: 'text-amber-800', 
-    border: 'border-amber-400',
-    lightBg: 'bg-amber-50',
-    barColor: 'bg-amber-500',
+    bg: 'bg-accent-amber-gold-light', 
+    text: 'text-accent-amber-gold', 
+    border: 'border-accent-amber-gold',
+    lightBg: 'bg-accent-amber-gold-light',
+    barColor: 'bg-accent-amber-gold',
     description: 'Highly Speculative',
     riskLevel: 'High Risk'
   },
   'CCC': { 
-    bg: 'bg-red-100', 
-    text: 'text-red-800', 
-    border: 'border-red-400',
-    lightBg: 'bg-red-50',
-    barColor: 'bg-red-500',
+    bg: 'bg-accent-red-light', 
+    text: 'text-harken-error', 
+    border: 'border-harken-error/20',
+    lightBg: 'bg-accent-red-light',
+    barColor: 'bg-harken-error',
     description: 'Substantial Risk',
     riskLevel: 'Substantial Risk'
   },
   'CC': { 
-    bg: 'bg-red-100', 
-    text: 'text-red-800', 
-    border: 'border-red-400',
-    lightBg: 'bg-red-50',
-    barColor: 'bg-red-500',
+    bg: 'bg-accent-red-light', 
+    text: 'text-harken-error', 
+    border: 'border-harken-error/20',
+    lightBg: 'bg-accent-red-light',
+    barColor: 'bg-harken-error',
     description: 'Extremely Speculative',
     riskLevel: 'Very High Risk'
   },
   'C': { 
-    bg: 'bg-red-100', 
-    text: 'text-red-800', 
-    border: 'border-red-400',
-    lightBg: 'bg-red-50',
-    barColor: 'bg-red-500',
+    bg: 'bg-accent-red-light', 
+    text: 'text-harken-error', 
+    border: 'border-harken-error/20',
+    lightBg: 'bg-accent-red-light',
+    barColor: 'bg-harken-error',
     description: 'Near Default Risk',
     riskLevel: 'Extreme Risk'
   },
@@ -169,7 +169,7 @@ The appraiser certifies that the use of this analytical tool complies with the U
 export const RiskRatingPage: React.FC<RiskRatingPageProps> = ({ data, pageNumber }) => {
   if (!data) {
     return (
-      <div className="bg-white w-[8.5in] min-h-[11in] p-[1in] shadow-lg mx-auto">
+      <div className="bg-surface-1 w-[8.5in] min-h-[11in] p-[1in] shadow-lg mx-auto">
         <h1 className="text-xl font-bold text-slate-800 border-b-2 border-[#0da1c7] pb-2 mb-6">
           INVESTMENT RISK ANALYSIS
         </h1>
@@ -198,7 +198,7 @@ export const RiskRatingPage: React.FC<RiskRatingPageProps> = ({ data, pageNumber
   }));
 
   return (
-    <div className="bg-white w-[8.5in] min-h-[11in] p-[1in] shadow-lg mx-auto relative">
+    <div className="bg-surface-1 w-[8.5in] min-h-[11in] p-[1in] shadow-lg mx-auto relative">
       {/* Header */}
       <h1 className="text-xl font-bold text-slate-800 border-b-2 border-[#0da1c7] pb-2 mb-4">
         INVESTMENT RISK ANALYSIS
@@ -288,7 +288,7 @@ export const RiskRatingPage: React.FC<RiskRatingPageProps> = ({ data, pageNumber
         </thead>
         <tbody>
           {weightedContributions.map((dim, idx) => (
-            <tr key={dim.key} className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
+            <tr key={dim.key} className={idx % 2 === 0 ? 'bg-surface-1' : 'bg-slate-50'}>
               <td className="py-2 px-2 border border-slate-200">
                 <div className="font-medium text-slate-800">{dim.fullName}</div>
                 <div className="text-slate-500 mt-0.5">{dim.description}</div>
@@ -298,9 +298,9 @@ export const RiskRatingPage: React.FC<RiskRatingPageProps> = ({ data, pageNumber
                 <div className="w-full bg-slate-200 rounded-full h-1.5 mt-1">
                   <div 
                     className={`h-1.5 rounded-full ${
-                      dim.score >= 80 ? 'bg-emerald-500' :
+                      dim.score >= 80 ? 'bg-accent-teal-mint' :
                       dim.score >= 60 ? 'bg-cyan-500' :
-                      dim.score >= 40 ? 'bg-amber-500' : 'bg-red-500'
+                      dim.score >= 40 ? 'bg-accent-amber-gold' : 'bg-harken-error'
                     }`}
                     style={{ width: `${dim.score}%` }}
                   />
@@ -315,9 +315,9 @@ export const RiskRatingPage: React.FC<RiskRatingPageProps> = ({ data, pageNumber
               </td>
               <td className="py-2 px-2 border border-slate-200">
                 <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
-                  dim.score >= 80 ? 'bg-emerald-100 text-emerald-700' :
+                  dim.score >= 80 ? 'bg-accent-teal-mint-light text-accent-teal-mint' :
                   dim.score >= 60 ? 'bg-cyan-100 text-cyan-700' :
-                  dim.score >= 40 ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'
+                  dim.score >= 40 ? 'bg-accent-amber-gold-light text-accent-amber-gold' : 'bg-accent-red-light text-harken-error'
                 }`}>
                   {dim.score >= 80 ? 'Strong' :
                    dim.score >= 60 ? 'Adequate' :
@@ -352,11 +352,11 @@ export const RiskRatingPage: React.FC<RiskRatingPageProps> = ({ data, pageNumber
 
       {/* Weight Rationale */}
       {weightingRationale && (
-        <div className="bg-slate-50 rounded-lg p-3 mb-4">
-          <h3 className="font-semibold text-slate-700 text-xs uppercase tracking-wide mb-1">
+        <div className="bg-harken-gray-light rounded-lg p-3 mb-4">
+          <h3 className="font-semibold text-harken-gray text-xs uppercase tracking-wide mb-1">
             Dynamic Weight Calibration
           </h3>
-          <p className="text-xs text-slate-600 leading-relaxed">
+          <p className="text-xs text-harken-gray leading-relaxed">
             {weightingRationale}
           </p>
         </div>

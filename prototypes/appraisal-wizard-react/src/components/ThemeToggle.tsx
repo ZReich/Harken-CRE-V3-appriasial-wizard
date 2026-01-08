@@ -61,7 +61,7 @@ export function ThemeToggle({
     return (
       <Sun
         size={iconSize}
-        className="text-amber-500 transition-transform hover:rotate-12"
+        className="text-accent-amber-gold transition-transform hover:rotate-12"
       />
     );
   };
@@ -72,9 +72,9 @@ export function ThemeToggle({
       className={`
         ${buttonSize}
         rounded-lg
-        bg-gray-100 dark:bg-slate-700
-        border border-gray-200 dark:border-slate-600
-        hover:bg-gray-200 dark:hover:bg-slate-600
+        bg-harken-gray-light dark:bg-elevation-1
+        border border-light-border dark:border-harken-gray
+        hover:bg-harken-gray-med-lt dark:hover:bg-harken-gray
         hover:border-[var(--harken-accent)] dark:hover:border-cyan-400
         hover:shadow-md dark:hover:shadow-cyan-500/20
         transition-all duration-200

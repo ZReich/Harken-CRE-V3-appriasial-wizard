@@ -46,12 +46,12 @@ export const InputRow: React.FC<InputRowProps> = ({
   const costPerSf = totalPropertySqFt > 0 ? item.amount / totalPropertySqFt : 0;
 
   // Helper styles for big inputs - matches SetupPage input patterns
-  const inputContainerClass = "relative bg-white dark:bg-slate-800 rounded-lg border border-gray-300 dark:border-slate-600 focus-within:ring-2 focus-within:ring-[#0da1c7] focus-within:border-transparent transition-all duration-200";
-  const inputBaseClass = "w-full bg-transparent border-none outline-none text-slate-700 dark:text-slate-200 font-semibold px-3 py-2.5 text-sm placeholder:text-slate-400";
-  const labelClass = "block text-[10px] font-bold text-slate-400 dark:text-slate-500 uppercase tracking-wide px-3 pt-1.5 leading-none";
+  const inputContainerClass = "relative bg-surface-1 dark:bg-elevation-1 rounded-lg border border-light-border dark:border-harken-gray focus-within:ring-2 focus-within:ring-[#0da1c7] focus-within:border-transparent transition-all duration-200";
+  const inputBaseClass = "w-full bg-transparent border-none outline-none text-harken-gray dark:text-slate-200 font-semibold px-3 py-2.5 text-sm placeholder:text-harken-gray-med";
+  const labelClass = "block text-[10px] font-bold text-harken-gray-med dark:text-slate-500 uppercase tracking-wide px-3 pt-1.5 leading-none";
 
   return (
-    <div className="group relative flex flex-col sm:flex-row items-start sm:items-center gap-3 py-3 border-b border-slate-100 dark:border-slate-700 last:border-0 hover:bg-white/50 dark:hover:bg-slate-800/50 transition-colors p-2 rounded-xl z-0 hover:z-10">
+    <div className="group relative flex flex-col sm:flex-row items-start sm:items-center gap-3 py-3 border-b border-slate-100 dark:border-dark-border last:border-0 hover:bg-surface-1/50 dark:hover:bg-elevation-3/50 transition-colors p-2 rounded-xl z-0 hover:z-10">
 
       {/* 1. NAME COLUMN */}
       <div className="flex-grow w-full sm:w-auto min-w-[150px]">
@@ -134,7 +134,7 @@ export const InputRow: React.FC<InputRowProps> = ({
           </div>
 
           {/* Annual Income */}
-          <div className={`w-40 flex-shrink-0 ${inputContainerClass} bg-white dark:bg-slate-800 ring-1 ring-slate-200 dark:ring-slate-700`}>
+          <div className={`w-40 flex-shrink-0 ${inputContainerClass} bg-surface-1 dark:bg-elevation-1 ring-1 ring-slate-200 dark:ring-harken-dark`}>
             <label className={labelClass}>Annual Rent</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
@@ -152,7 +152,7 @@ export const InputRow: React.FC<InputRowProps> = ({
 
       {/* 3. STANDARD / OTHER / REIMBURSEMENT */}
       {(variant === 'other' || variant === 'reimbursement') && (
-        <div className={`w-48 flex-shrink-0 ${inputContainerClass} bg-white dark:bg-slate-800 ring-1 ring-slate-200 dark:ring-slate-700`}>
+        <div className={`w-48 flex-shrink-0 ${inputContainerClass} bg-surface-1 dark:bg-elevation-1 ring-1 ring-slate-200 dark:ring-harken-dark`}>
           <label className={labelClass}>Annual Amount</label>
           <div className="relative">
             <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
@@ -171,7 +171,7 @@ export const InputRow: React.FC<InputRowProps> = ({
       {(variant === 'expense' || variant === 'reserve') && (
         <div className="flex gap-3 items-center w-full sm:w-auto">
           {/* ANNUAL AMOUNT */}
-          <div className={`w-48 flex-shrink-0 ${inputContainerClass} bg-white dark:bg-slate-800 ring-1 ring-slate-200 dark:ring-slate-700`}>
+          <div className={`w-48 flex-shrink-0 ${inputContainerClass} bg-surface-1 dark:bg-elevation-1 ring-1 ring-slate-200 dark:ring-harken-dark`}>
             <label className={labelClass}>Annual Cost</label>
             <div className="relative">
               <span className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 font-bold">$</span>
@@ -189,11 +189,11 @@ export const InputRow: React.FC<InputRowProps> = ({
           <div className="flex flex-col gap-1 w-24">
             <div className="flex justify-between text-xs">
               <span className="text-slate-400 dark:text-slate-500 font-medium">% EGI</span>
-              <span className="font-bold text-slate-600 dark:text-slate-300">{percentEgi.toFixed(1)}%</span>
+              <span className="font-bold text-slate-600 dark:text-slate-200">{percentEgi.toFixed(1)}%</span>
             </div>
             <div className="flex justify-between text-xs">
               <span className="text-slate-400 dark:text-slate-500 font-medium">$/SF</span>
-              <span className="font-bold text-slate-600 dark:text-slate-300">${costPerSf.toFixed(2)}</span>
+              <span className="font-bold text-slate-600 dark:text-slate-200">${costPerSf.toFixed(2)}</span>
             </div>
           </div>
         </div>
@@ -205,7 +205,7 @@ export const InputRow: React.FC<InputRowProps> = ({
           onClick={() => onEditNotes && onEditNotes(item)}
           className={`p-2 rounded-lg transition-all group/notes ${item.comments
             ? 'bg-[#0da1c7]/10 text-[#0da1c7] hover:bg-[#0da1c7]/20 border border-[#0da1c7]/20'
-            : 'text-slate-300 dark:text-slate-600 hover:bg-slate-100 dark:hover:bg-slate-700 hover:text-slate-500 dark:hover:text-slate-400'
+            : 'text-slate-300 dark:text-slate-500 hover:bg-slate-100 dark:hover:bg-elevation-3 hover:text-slate-500 dark:hover:text-harken-gray-med'
             }`}
           title={item.comments ? "Edit Notes" : "Add Notes"}
         >
@@ -213,18 +213,18 @@ export const InputRow: React.FC<InputRowProps> = ({
         </button>
 
         {/* Tooltip on hover */}
-        <div className="absolute bottom-full right-0 mb-2 w-64 p-3 bg-slate-900 dark:bg-slate-800 text-white text-xs rounded-xl shadow-xl opacity-0 invisible group-hover/notes:opacity-100 group-hover/notes:visible transition-all z-50 pointer-events-none">
+        <div className="absolute bottom-full right-0 mb-2 w-64 p-3 bg-slate-900 dark:bg-elevation-1 text-white text-xs rounded-xl shadow-xl opacity-0 invisible group-hover/notes:opacity-100 group-hover/notes:visible transition-all z-50 pointer-events-none">
           <div className="font-bold text-slate-400 uppercase text-[10px] mb-1">Notes</div>
           <p className="line-clamp-3 leading-relaxed">
             {item.comments ? item.comments.replace(/<[^>]*>/g, '') : "Click to add analysis notes..."}
           </p>
-          <div className="absolute bottom-[-6px] right-4 w-3 h-3 bg-slate-900 dark:bg-slate-800 rotate-45"></div>
+          <div className="absolute bottom-[-6px] right-4 w-3 h-3 bg-slate-900 dark:bg-elevation-1 rotate-45"></div>
         </div>
       </div>
 
       <button
         onClick={() => onDelete(item.id)}
-        className="absolute -right-2 top-0 sm:relative sm:right-auto sm:top-auto p-2 text-slate-300 dark:text-slate-600 hover:text-rose-500 rounded-full hover:bg-rose-50 dark:hover:bg-rose-900/30 transition-all opacity-0 group-hover:opacity-100"
+        className="absolute -right-2 top-0 sm:relative sm:right-auto sm:top-auto p-2 text-slate-300 dark:text-slate-500 hover:text-rose-500 rounded-full hover:bg-rose-50 dark:hover:bg-rose-900/30 transition-all opacity-0 group-hover:opacity-100"
       >
         <Trash2 size={18} />
       </button>

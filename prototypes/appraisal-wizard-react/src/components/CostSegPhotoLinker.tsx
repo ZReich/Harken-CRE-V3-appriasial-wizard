@@ -112,7 +112,7 @@ export const CostSegPhotoLinker: React.FC<CostSegPhotoLinkerProps> = ({
     <div className="space-y-3">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <label className="text-sm font-medium text-gray-700">{label}</label>
+        <label className="text-sm font-medium text-harken-gray">{label}</label>
         {canAddMore && (
           <button
             onClick={() => setIsSelectingPhoto(!isSelectingPhoto)}
@@ -144,7 +144,7 @@ export const CostSegPhotoLinker: React.FC<CostSegPhotoLinkerProps> = ({
             {aiSuggestions.slice(0, 3).map(({ photo, match }) => (
               <div
                 key={photo.id}
-                className="flex items-center gap-3 bg-white border border-purple-200 rounded-lg p-2 hover:border-purple-300 transition-colors"
+                className="flex items-center gap-3 bg-surface-1 border border-purple-200 rounded-lg p-2 hover:border-purple-300 transition-colors"
               >
                 <img
                   src={photo.url}
@@ -152,12 +152,12 @@ export const CostSegPhotoLinker: React.FC<CostSegPhotoLinkerProps> = ({
                   className="w-12 h-12 object-cover rounded flex-shrink-0"
                 />
                 <div className="flex-1 min-w-0">
-                  <div className="text-xs font-medium text-gray-900 dark:text-white truncate">
+                  <div className="text-xs font-medium text-harken-dark dark:text-white truncate">
                     {photo.caption || `Photo ${photo.id.slice(0, 8)}`}
                   </div>
-                  <div className="text-xs text-gray-600 truncate">{match.reason}</div>
+                  <div className="text-xs text-harken-gray truncate">{match.reason}</div>
                   <div className="flex items-center gap-1 mt-1">
-                    <div className="h-1.5 flex-1 bg-gray-200 rounded-full overflow-hidden max-w-[60px]">
+                    <div className="h-1.5 flex-1 bg-harken-gray-med-lt rounded-full overflow-hidden max-w-[60px]">
                       <div
                         className="h-full bg-purple-500 rounded-full"
                         style={{ width: `${match.matchScore}%` }}
@@ -187,11 +187,11 @@ export const CostSegPhotoLinker: React.FC<CostSegPhotoLinkerProps> = ({
               <img
                 src={photo.url}
                 alt={photo.caption || 'Linked photo'}
-                className="w-full h-24 object-cover rounded-lg border border-gray-200"
+                className="w-full h-24 object-cover rounded-lg border border-light-border"
               />
               <button
                 onClick={() => handleRemovePhoto(photo.id)}
-                className="absolute top-1 right-1 p-1 bg-red-600 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
+                className="absolute top-1 right-1 p-1 bg-harken-error text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity"
                 title="Remove photo"
               >
                 <X className="w-3 h-3" />
@@ -208,28 +208,28 @@ export const CostSegPhotoLinker: React.FC<CostSegPhotoLinkerProps> = ({
 
       {/* No photos linked */}
       {linkedPhotos.length === 0 && !isSelectingPhoto && (
-        <div className="text-center py-4 text-sm text-gray-500 bg-gray-50 border border-gray-200 border-dashed rounded-lg">
-          <Image className="w-6 h-6 mx-auto mb-1 text-gray-400" />
+        <div className="text-center py-4 text-sm text-harken-gray-med bg-harken-gray-light border border-light-border border-dashed rounded-lg">
+          <Image className="w-6 h-6 mx-auto mb-1 text-harken-gray-med" />
           No photos linked yet
         </div>
       )}
 
       {/* Photo Selection Grid */}
       {isSelectingPhoto && (
-        <div className="border border-gray-300 dark:border-slate-600 rounded-lg p-3 bg-gray-50 dark:bg-slate-700">
+        <div className="border border-light-border dark:border-harken-gray rounded-lg p-3 bg-harken-gray-light dark:bg-elevation-1">
           <div className="flex items-center justify-between mb-3">
-            <h4 className="text-sm font-semibold text-gray-900 dark:text-white">Select Photo</h4>
+            <h4 className="text-sm font-semibold text-harken-dark dark:text-white">Select Photo</h4>
             <button
               onClick={() => setIsSelectingPhoto(false)}
-              className="text-gray-400 hover:text-gray-600 dark:hover:text-slate-300"
+              className="text-harken-gray-med hover:text-harken-gray dark:hover:text-harken-gray-light"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
 
           {availableUnlinkedPhotos.length === 0 ? (
-            <div className="text-center py-6 text-sm text-gray-500 dark:text-slate-400">
-              <AlertCircle className="w-6 h-6 mx-auto mb-2 text-gray-400" />
+            <div className="text-center py-6 text-sm text-harken-gray-med dark:text-slate-400">
+              <AlertCircle className="w-6 h-6 mx-auto mb-2 text-harken-gray-med" />
               No photos available to link
             </div>
           ) : (
@@ -243,7 +243,7 @@ export const CostSegPhotoLinker: React.FC<CostSegPhotoLinkerProps> = ({
                   <img
                     src={photo.url}
                     alt={photo.caption || 'Available photo'}
-                    className="w-full h-20 object-cover rounded border border-gray-300 hover:border-blue-500"
+                    className="w-full h-20 object-cover rounded border border-light-border hover:border-blue-500"
                   />
                   {photo.caption && (
                     <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-60 text-white text-xs p-0.5 rounded-b truncate">
@@ -259,7 +259,7 @@ export const CostSegPhotoLinker: React.FC<CostSegPhotoLinkerProps> = ({
 
       {/* Max photos reached */}
       {linkedPhotoIds.length >= maxPhotos && (
-        <div className="text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded px-2 py-1">
+        <div className="text-xs text-accent-amber-gold bg-accent-amber-gold-light border border-accent-amber-gold rounded px-2 py-1">
           Maximum of {maxPhotos} photos reached
         </div>
       )}

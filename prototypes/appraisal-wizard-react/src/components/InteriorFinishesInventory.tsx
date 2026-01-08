@@ -45,11 +45,11 @@ import type { DetectedMaterial } from '../services/aiService';
 // =================================================================
 
 const CONDITION_OPTIONS: { value: ComponentCondition; label: string; abbrev: string; color: string }[] = [
-  { value: 'excellent', label: 'Excellent', abbrev: 'Excl', color: 'bg-green-100 text-green-700 border-green-300' },
+  { value: 'excellent', label: 'Excellent', abbrev: 'Excl', color: 'bg-accent-teal-mint-light text-accent-teal-mint border-accent-teal-mint' },
   { value: 'good', label: 'Good', abbrev: 'Good', color: 'bg-lime-100 text-lime-700 border-lime-300' },
-  { value: 'average', label: 'Average', abbrev: 'Avg', color: 'bg-gray-100 text-gray-700 border-gray-300' },
-  { value: 'fair', label: 'Fair', abbrev: 'Fair', color: 'bg-amber-100 text-amber-700 border-amber-300' },
-  { value: 'poor', label: 'Poor', abbrev: 'Poor', color: 'bg-red-100 text-red-700 border-red-300' },
+  { value: 'average', label: 'Average', abbrev: 'Avg', color: 'bg-harken-gray-light text-harken-gray border-light-border' },
+  { value: 'fair', label: 'Fair', abbrev: 'Fair', color: 'bg-accent-amber-gold-light text-accent-amber-gold border-accent-amber-gold' },
+  { value: 'poor', label: 'Poor', abbrev: 'Poor', color: 'bg-accent-red-light text-harken-error border-harken-error/20' },
 ];
 
 // Map category id to details key - interior walls use 'walls' category but 'wallDetails' key
@@ -465,18 +465,18 @@ export default function InteriorFinishesInventory({
   }, [features, onChange]);
 
   return (
-    <div className={`bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl shadow-sm overflow-hidden ${compact ? 'text-sm' : ''}`}>
+    <div className={`bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl shadow-sm overflow-hidden ${compact ? 'text-sm' : ''}`}>
       {/* Header */}
-      <div className={`${compact ? 'p-3' : 'p-4'} border-b border-gray-100`}>
+      <div className={`${compact ? 'p-3' : 'p-4'} border-b border-harken-gray-light`}>
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Layers className={`${compact ? 'w-4 h-4' : 'w-5 h-5'} text-harken-blue`} />
             <div>
               <h3 className={`${compact ? 'text-base' : 'text-lg'} font-bold text-[#1c3643]`}>
-                Interior Finishes {areaName && <span className="font-normal text-gray-500 dark:text-slate-400">({areaName})</span>}
+                Interior Finishes {areaName && <span className="font-normal text-harken-gray-med dark:text-slate-400">({areaName})</span>}
               </h3>
               {!compact && (
-                <p className="text-xs text-gray-500 dark:text-slate-400">
+                <p className="text-xs text-harken-gray-med dark:text-slate-400">
                   Track ceilings, flooring, and wall finishes
                 </p>
               )}
@@ -496,7 +496,7 @@ export default function InteriorFinishesInventory({
             {showPhotoPanel ? 'Hide Photos' : 'View Photos'}
             {contextPhotoCount > 0 && (
               <span className={`ml-1 px-1.5 py-0.5 rounded-full text-[10px] ${
-                showPhotoPanel ? 'bg-white/20' : 'bg-harken-blue text-white'
+                showPhotoPanel ? 'bg-surface-1/20' : 'bg-harken-blue text-white'
               }`}>
                 {contextPhotoCount}
               </span>
@@ -506,10 +506,10 @@ export default function InteriorFinishesInventory({
       </div>
 
       {/* Add Form Section */}
-      <div className={`${compact ? 'p-3' : 'p-4'} bg-slate-50/50 border-b border-gray-100`}>
+      <div className={`${compact ? 'p-3' : 'p-4'} bg-slate-50/50 border-b border-harken-gray-light`}>
         {/* Category Selector */}
         <div className="mb-3">
-          <label className="block text-xs font-medium text-gray-600 mb-2">Category</label>
+          <label className="block text-xs font-medium text-harken-gray mb-2">Category</label>
           <div className="flex flex-wrap gap-2">
             {INTERIOR_CATEGORIES.map(cat => (
               <button
@@ -524,7 +524,7 @@ export default function InteriorFinishesInventory({
                 className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all ${
                   selectedCategory === cat.id
                     ? 'bg-harken-blue text-white border-harken-blue'
-                    : 'bg-white text-gray-700 border-gray-200 hover:border-harken-blue hover:text-harken-blue'
+                    : 'bg-surface-1 text-harken-gray border-light-border hover:border-harken-blue hover:text-harken-blue'
                 }`}
               >
                 {cat.label}
@@ -539,7 +539,7 @@ export default function InteriorFinishesInventory({
             {/* Recommended Types */}
             {recommendedTypes.length > 0 && (
               <>
-                <label className="block text-xs font-medium text-gray-600 mb-2">
+                <label className="block text-xs font-medium text-harken-gray mb-2">
                   Recommended for {areaTypeId ? areaTypeLabel : INTERIOR_CATEGORIES.find(c => c.id === selectedCategory)?.label}
                 </label>
                 <div className="flex flex-wrap gap-2 mb-3">
@@ -550,7 +550,7 @@ export default function InteriorFinishesInventory({
                       className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all flex items-center gap-1 ${
                         selectedTypeId === type.id && !showCustomForm
                           ? 'bg-harken-blue text-white border-harken-blue'
-                          : 'bg-white text-gray-700 border-gray-200 hover:border-harken-blue hover:text-harken-blue'
+                          : 'bg-surface-1 text-harken-gray border-light-border hover:border-harken-blue hover:text-harken-blue'
                       }`}
                     >
                       {type.isPrimary && <CheckCircle2 size={12} className="text-green-500" />}
@@ -566,14 +566,14 @@ export default function InteriorFinishesInventory({
               <div>
                 <button
                   onClick={() => setShowOtherOptions(!showOtherOptions)}
-                  className="flex items-center gap-1.5 text-xs font-medium text-gray-500 hover:text-gray-700 mb-2"
+                  className="flex items-center gap-1.5 text-xs font-medium text-harken-gray-med hover:text-harken-gray mb-2"
                 >
                   {showOtherOptions ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
                   Other Options ({otherTypes.length})
                 </button>
                 
                 {showOtherOptions && (
-                  <div className="flex flex-wrap gap-2 mb-3 pl-2 border-l-2 border-gray-200 dark:border-slate-700">
+                  <div className="flex flex-wrap gap-2 mb-3 pl-2 border-l-2 border-light-border dark:border-dark-border">
                     {otherTypes.map(type => {
                       const isCustom = type.id.startsWith('custom-');
                       return (
@@ -583,10 +583,10 @@ export default function InteriorFinishesInventory({
                           className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all flex items-center gap-1 ${
                             selectedTypeId === type.id && !showCustomForm
                               ? 'bg-harken-blue text-white border-harken-blue'
-                              : 'bg-white text-gray-700 border-gray-200 hover:border-harken-blue hover:text-harken-blue'
+                              : 'bg-surface-1 text-harken-gray border-light-border hover:border-harken-blue hover:text-harken-blue'
                           }`}
                         >
-                          {isCustom && <Star size={12} className="text-amber-400" />}
+                          {isCustom && <Star size={12} className="text-accent-amber-gold" />}
                           {type.label}
                         </button>
                       );
@@ -599,7 +599,7 @@ export default function InteriorFinishesInventory({
             {/* Fallback if no recommended types - show all */}
             {recommendedTypes.length === 0 && (
               <>
-                <label className="block text-xs font-medium text-gray-600 mb-2">
+                <label className="block text-xs font-medium text-harken-gray mb-2">
                   Type ({INTERIOR_CATEGORIES.find(c => c.id === selectedCategory)?.label})
                 </label>
                 <div className="flex flex-wrap gap-2 mb-3">
@@ -612,10 +612,10 @@ export default function InteriorFinishesInventory({
                         className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all flex items-center gap-1 ${
                           selectedTypeId === type.id && !showCustomForm
                             ? 'bg-harken-blue text-white border-harken-blue'
-                            : 'bg-white text-gray-700 border-gray-200 hover:border-harken-blue hover:text-harken-blue'
+                            : 'bg-surface-1 text-harken-gray border-light-border hover:border-harken-blue hover:text-harken-blue'
                         }`}
                       >
-                        {isCustom && <Star size={12} className="text-amber-400" />}
+                        {isCustom && <Star size={12} className="text-accent-amber-gold" />}
                         {type.label}
                       </button>
                     );
@@ -637,7 +637,7 @@ export default function InteriorFinishesInventory({
               className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all flex items-center gap-1 ${
                 showCustomForm
                   ? 'bg-harken-blue text-white border-harken-blue'
-                  : 'bg-white text-gray-700 border-gray-200 hover:border-harken-blue hover:text-harken-blue'
+                  : 'bg-surface-1 text-harken-gray border-light-border hover:border-harken-blue hover:text-harken-blue'
               }`}
             >
               <Plus size={12} />
@@ -648,39 +648,39 @@ export default function InteriorFinishesInventory({
 
         {/* Custom Type Form */}
         {showCustomForm && selectedCategory && (
-          <div className="mb-3 p-3 bg-white rounded-lg border border-harken-blue/30 border-dashed">
-            <div className="flex items-center gap-2 mb-3 text-sm text-gray-600 dark:text-slate-400">
+          <div className="mb-3 p-3 bg-surface-1 rounded-lg border border-harken-blue/30 border-dashed">
+            <div className="flex items-center gap-2 mb-3 text-sm text-harken-gray dark:text-slate-400">
               <Plus size={14} className="text-harken-blue" />
               <span>Add custom type to <strong>{INTERIOR_CATEGORIES.find(c => c.id === selectedCategory)?.label}</strong></span>
             </div>
             <div className="grid grid-cols-2 gap-3 mb-3">
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">
+                <label className="block text-xs font-medium text-harken-gray mb-1">
                   Custom Finish Name
                 </label>
                 <input
                   type="text"
                   value={customName}
                   onChange={(e) => setCustomName(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-harken-blue focus:border-transparent"
+                  className="w-full px-3 py-2 text-sm border border-light-border rounded-lg focus:ring-2 focus:ring-harken-blue focus:border-transparent"
                   placeholder="e.g., Luxury Vinyl Plank"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1 flex items-center gap-1">
+                <label className="block text-xs font-medium text-harken-gray mb-1 flex items-center gap-1">
                   Economic Life (yrs)
                   <span 
                     className="inline-flex items-center cursor-help"
                     title={`Typical range: ${ECONOMIC_LIFE_GUIDE.interior[selectedCategory]?.range || '10-40 yrs'}`}
                   >
-                    <HelpCircle size={12} className="text-gray-400" />
+                    <HelpCircle size={12} className="text-harken-gray-med" />
                   </span>
                 </label>
                 <input
                   type="number"
                   value={customDefaultLife}
                   onChange={(e) => setCustomDefaultLife(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-harken-blue focus:border-transparent"
+                  className="w-full px-3 py-2 text-sm border border-light-border rounded-lg focus:ring-2 focus:ring-harken-blue focus:border-transparent"
                   min="1"
                   max="100"
                 />
@@ -692,15 +692,15 @@ export default function InteriorFinishesInventory({
               <div className="mb-3 p-2 bg-slate-50 rounded-lg border border-slate-200">
                 <div className="flex items-start gap-2">
                   <Calculator size={14} className="text-harken-blue mt-0.5 flex-shrink-0" />
-                  <div className="text-xs text-gray-600 dark:text-slate-400">
-                    <div className="font-medium text-gray-700 mb-1">
+                  <div className="text-xs text-harken-gray dark:text-slate-400">
+                    <div className="font-medium text-harken-gray mb-1">
                       Economic Life Guide for {INTERIOR_CATEGORIES.find(c => c.id === selectedCategory)?.label}
                     </div>
                     <div className="flex flex-wrap gap-x-4 gap-y-1">
                       <span><strong>Range:</strong> {ECONOMIC_LIFE_GUIDE.interior[selectedCategory]?.range || '10-40 yrs'}</span>
                       <span><strong>Typical:</strong> {ECONOMIC_LIFE_GUIDE.interior[selectedCategory]?.typical || 15} yrs</span>
                     </div>
-                    <div className="mt-1 text-gray-500 italic">
+                    <div className="mt-1 text-harken-gray-med italic">
                       {ECONOMIC_LIFE_GUIDE.interior[selectedCategory]?.examples || 'Varies by type'}
                     </div>
                     <button
@@ -715,14 +715,14 @@ export default function InteriorFinishesInventory({
               </div>
             )}
             
-            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+            <label className="flex items-center gap-2 text-sm text-harken-gray cursor-pointer">
               <input
                 type="checkbox"
                 checked={saveForFuture}
                 onChange={(e) => setSaveForFuture(e.target.checked)}
-                className="rounded border-gray-300 text-harken-blue focus:ring-harken-blue"
+                className="rounded border-light-border text-harken-blue focus:ring-harken-blue"
               />
-              <Star size={14} className="text-amber-400" />
+              <Star size={14} className="text-accent-amber-gold" />
               Save to My Finish Types (for future appraisals)
             </label>
           </div>
@@ -730,17 +730,17 @@ export default function InteriorFinishesInventory({
 
         {/* Quick Add Form */}
         {(selectedTypeId || showCustomForm) && (
-          <div className="p-3 bg-white rounded-lg border border-gray-200 dark:border-slate-700">
+          <div className="p-3 bg-surface-1 rounded-lg border border-light-border dark:border-dark-border">
             <div className="grid grid-cols-3 gap-3 mb-3">
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1 flex items-center gap-1">
+                <label className="block text-xs font-medium text-harken-gray mb-1 flex items-center gap-1">
                   <Calendar size={12} />
                   Year Installed
                 </label>
                 <select
                   value={yearInstalled}
                   onChange={(e) => setYearInstalled(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-white dark:bg-slate-700 dark:text-white"
+                  className="w-full px-3 py-2 text-sm border border-light-border dark:border-harken-gray rounded-lg focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white"
                 >
                   <option value="">Select year...</option>
                   {generateYearOptions(buildingYearBuilt).map((year) => (
@@ -752,14 +752,14 @@ export default function InteriorFinishesInventory({
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">
+                <label className="block text-xs font-medium text-harken-gray mb-1">
                   Economic Life (yrs)
                 </label>
                 <input
                   type="number"
                   value={customEconomicLife}
                   onChange={(e) => setCustomEconomicLife(e.target.value)}
-                  className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-harken-blue focus:border-transparent"
+                  className="w-full px-3 py-2 text-sm border border-light-border rounded-lg focus:ring-2 focus:ring-harken-blue focus:border-transparent"
                   placeholder={selectedType?.defaultEconomicLife?.toString() || '15'}
                   min="1"
                   max="100"
@@ -772,7 +772,7 @@ export default function InteriorFinishesInventory({
                   className={`w-full flex items-center justify-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${
                     canAdd
                       ? 'bg-harken-blue text-white hover:bg-harken-blue/90'
-                      : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                      : 'bg-harken-gray-light text-harken-gray-med cursor-not-allowed'
                   }`}
                 >
                   <Plus size={14} />
@@ -783,7 +783,7 @@ export default function InteriorFinishesInventory({
             
             {/* Condition Selector */}
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1.5">Condition</label>
+              <label className="block text-xs font-medium text-harken-gray mb-1.5">Condition</label>
               <div className="flex gap-2">
                 {CONDITION_OPTIONS.map(opt => (
                   <button
@@ -792,7 +792,7 @@ export default function InteriorFinishesInventory({
                     className={`flex-1 px-2 py-1.5 text-xs font-medium rounded-lg border transition-all ${
                       condition === opt.value
                         ? opt.color
-                        : 'bg-white text-gray-500 border-gray-200 hover:border-gray-300'
+                        : 'bg-surface-1 text-harken-gray-med border-light-border hover:border-light-border'
                     }`}
                   >
                     {opt.abbrev}
@@ -808,10 +808,10 @@ export default function InteriorFinishesInventory({
       <div className={`${compact ? 'p-3' : 'p-4'}`}>
         {/* Inventory Header */}
         {allComponents.length > 0 && (
-          <div className="flex items-center justify-between mb-3 pb-2 border-b border-gray-100">
+          <div className="flex items-center justify-between mb-3 pb-2 border-b border-harken-gray-light">
             <div className="flex items-center gap-2 text-sm">
-              <Calculator size={14} className="text-gray-400" />
-              <span className="font-medium text-gray-700">Finishes ({totals.count} items)</span>
+              <Calculator size={14} className="text-harken-gray-med" />
+              <span className="font-medium text-harken-gray">Finishes ({totals.count} items)</span>
             </div>
           </div>
         )}
@@ -825,7 +825,7 @@ export default function InteriorFinishesInventory({
           
           return (
             <div key={category.id} className="mb-4">
-              <div className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+              <div className="text-xs font-semibold text-harken-gray-med uppercase tracking-wider mb-2">
                 {category.label}
               </div>
               <div className="space-y-2">
@@ -849,7 +849,7 @@ export default function InteriorFinishesInventory({
                         <button
                           onClick={() => toggleExpanded(component.id)}
                           className={`p-1 rounded transition-colors flex-shrink-0 ${
-                            hasNotes ? 'text-harken-blue hover:bg-harken-blue/10' : 'text-gray-400 hover:bg-gray-100'
+                            hasNotes ? 'text-harken-blue hover:bg-harken-blue/10' : 'text-harken-gray-med hover:bg-harken-gray-light'
                           }`}
                           title={isExpanded ? 'Collapse notes' : 'Add/view notes'}
                         >
@@ -859,8 +859,8 @@ export default function InteriorFinishesInventory({
                         {/* Type Name */}
                         <div className="flex-1 min-w-0">
                           <div className="flex items-center gap-2">
-                            {isCustom && <Star size={12} className="text-amber-400 flex-shrink-0" />}
-                            <span className="font-medium text-sm text-gray-900 dark:text-white truncate">
+                            {isCustom && <Star size={12} className="text-accent-amber-gold flex-shrink-0" />}
+                            <span className="font-medium text-sm text-harken-dark dark:text-white truncate">
                               {component.type}
                             </span>
                             {hasNotes && !isExpanded && (
@@ -872,18 +872,18 @@ export default function InteriorFinishesInventory({
                         </div>
 
                         {/* Year */}
-                        <div className="text-sm text-gray-500 whitespace-nowrap w-12 text-center">
+                        <div className="text-sm text-harken-gray-med whitespace-nowrap w-12 text-center">
                           {component.yearInstalled || '—'}
                         </div>
 
                         {/* Economic Life */}
-                        <div className="text-xs text-gray-500 whitespace-nowrap">
+                        <div className="text-xs text-harken-gray-med whitespace-nowrap">
                           {component.economicLife || 15}yr
                         </div>
 
                         {/* Condition Badge */}
                         <div className={`px-2 py-0.5 text-xs font-medium rounded ${
-                          CONDITION_OPTIONS.find(c => c.value === component.condition)?.color || 'bg-gray-100 text-gray-600'
+                          CONDITION_OPTIONS.find(c => c.value === component.condition)?.color || 'bg-harken-gray-light text-harken-gray'
                         }`}>
                           {CONDITION_OPTIONS.find(c => c.value === component.condition)?.abbrev || 'Avg'}
                         </div>
@@ -891,10 +891,10 @@ export default function InteriorFinishesInventory({
                         {/* Depreciation */}
                         <div 
                           className={`px-2 py-0.5 text-xs font-medium rounded whitespace-nowrap cursor-help ${
-                            depreciationPct >= 75 ? 'bg-red-100 text-red-700' :
-                            depreciationPct >= 50 ? 'bg-amber-100 text-amber-700' :
+                            depreciationPct >= 75 ? 'bg-accent-red-light text-harken-error' :
+                            depreciationPct >= 50 ? 'bg-accent-amber-gold-light text-accent-amber-gold' :
                             depreciationPct > 0 ? 'bg-lime-100 text-lime-700' :
-                            'bg-gray-100 text-gray-500'
+                            'bg-harken-gray-light text-harken-gray-med'
                           }`}
                           title={`Depreciation: ${depreciationPct}% | Economic Life: ${component.economicLife || 15} yrs | Effective Age: ${component.effectiveAge || 0} yrs`}
                         >
@@ -911,7 +911,7 @@ export default function InteriorFinishesInventory({
                         {/* Delete Button */}
                         <button
                           onClick={() => removeComponent(component.id, category.id as InteriorCategory)}
-                          className="p-1 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors flex-shrink-0"
+                          className="p-1 text-harken-gray-med hover:text-harken-error hover:bg-accent-red-light rounded transition-colors flex-shrink-0"
                         >
                           <Trash2 size={14} />
                         </button>
@@ -926,11 +926,11 @@ export default function InteriorFinishesInventory({
                               <div className="flex items-center gap-3">
                                 <div className="text-sm">
                                   <span className="text-slate-500 dark:text-slate-400">Depreciation:</span>
-                                  <span className={`ml-2 font-semibold ${component.depreciationOverride !== undefined ? 'text-amber-600' : 'text-slate-700'}`}>
+                                  <span className={`ml-2 font-semibold ${component.depreciationOverride !== undefined ? 'text-accent-amber-gold' : 'text-slate-700'}`}>
                                     {component.depreciationOverride !== undefined ? component.depreciationOverride : depreciationPct}%
                                   </span>
                                   {component.depreciationOverride !== undefined && (
-                                    <span className="ml-1 text-xs text-amber-500">(override)</span>
+                                    <span className="ml-1 text-xs text-accent-amber-gold">(override)</span>
                                   )}
                                 </div>
                                 
@@ -950,7 +950,7 @@ export default function InteriorFinishesInventory({
                                   }}
                                   className={`flex items-center gap-1.5 px-2.5 py-1 rounded-lg border text-xs font-medium transition-all ${
                                     component.depreciationOverride !== undefined
-                                      ? 'border-amber-400 bg-amber-50 text-amber-700'
+                                      ? 'border-accent-amber-gold/30 bg-accent-amber-gold-light text-accent-amber-gold'
                                       : 'border-slate-200 text-slate-400 hover:border-slate-300 hover:text-slate-500'
                                   }`}
                                 >
@@ -960,20 +960,20 @@ export default function InteriorFinishesInventory({
                               </div>
                               
                               {component.depreciationOverride !== undefined && (
-                                <div className="p-3 bg-amber-50 rounded-lg border border-amber-200 space-y-3">
+                                <div className="p-3 bg-accent-amber-gold-light rounded-lg border border-accent-amber-gold space-y-3">
                                   <div className="flex items-center gap-2">
-                                    <label className="text-xs font-medium text-amber-700">Override %</label>
+                                    <label className="text-xs font-medium text-accent-amber-gold">Override %</label>
                                     <input
                                       type="number"
                                       min="0"
                                       max="100"
-                                      className="w-20 px-3 py-1.5 border border-amber-300 rounded-lg text-sm focus:ring-2 focus:ring-amber-400 focus:border-transparent"
+                                      className="w-20 px-3 py-1.5 border border-accent-amber-gold-light rounded-lg text-sm focus:ring-2 focus:ring-amber-400 focus:border-transparent"
                                       value={component.depreciationOverride}
                                       onChange={(e) => updateComponent(component.id, category.id as InteriorCategory, { 
                                         depreciationOverride: e.target.value ? Number(e.target.value) : 0 
                                       })}
                                     />
-                                    <span className="text-xs text-amber-600">
+                                    <span className="text-xs text-accent-amber-gold">
                                       (calculated: {depreciationPct}%)
                                     </span>
                                   </div>
@@ -1011,7 +1011,7 @@ export default function InteriorFinishesInventory({
 
         {/* Empty State */}
         {allComponents.length === 0 && !selectedCategory && (
-          <div className="text-center py-4 text-gray-500 dark:text-slate-400">
+          <div className="text-center py-4 text-harken-gray-med dark:text-slate-400">
             <p className="text-sm">Select a category above to add interior finishes</p>
           </div>
         )}

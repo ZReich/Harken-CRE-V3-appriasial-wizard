@@ -82,16 +82,16 @@ export const FinalizeDialog: React.FC<FinalizeDialogProps> = ({
     <>
       <div className="p-6">
         {hasUnsavedChanges && (
-          <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6 flex items-start gap-3">
-            <AlertCircle className="text-amber-500 flex-shrink-0 mt-0.5" size={20} />
+          <div className="bg-accent-amber-gold-light border border-accent-amber-gold rounded-lg p-4 mb-6 flex items-start gap-3">
+            <AlertCircle className="text-accent-amber-gold flex-shrink-0 mt-0.5" size={20} />
             <div>
-              <h4 className="font-medium text-amber-800">Unsaved Changes</h4>
-              <p className="text-sm text-amber-700 mt-1">
+              <h4 className="font-medium text-accent-amber-gold">Unsaved Changes</h4>
+              <p className="text-sm text-accent-amber-gold mt-1">
                 You have unsaved changes. Would you like to save them before creating the final report?
               </p>
               <button
                 onClick={onSaveFirst}
-                className="mt-2 px-3 py-1.5 bg-amber-500 text-white rounded text-sm font-medium hover:bg-amber-600"
+                className="mt-2 px-3 py-1.5 bg-accent-amber-gold text-white rounded text-sm font-medium hover:bg-accent-amber-gold/90"
               >
                 Save Changes First
               </button>
@@ -111,21 +111,21 @@ export const FinalizeDialog: React.FC<FinalizeDialogProps> = ({
 
         <div className="bg-slate-50 rounded-lg p-4 mb-6">
           <h4 className="font-medium text-slate-700 mb-3">This will:</h4>
-          <ul className="space-y-2 text-sm text-slate-600">
+          <ul className="space-y-2 text-sm text-harken-gray">
             <li className="flex items-center gap-2">
-              <CheckCircle size={16} className="text-green-500" />
+              <CheckCircle size={16} className="text-accent-teal-mint" />
               Generate a professional PDF report
             </li>
             <li className="flex items-center gap-2">
-              <CheckCircle size={16} className="text-green-500" />
+              <CheckCircle size={16} className="text-accent-teal-mint" />
               Lock in all current data and formatting
             </li>
             <li className="flex items-center gap-2">
-              <CheckCircle size={16} className="text-green-500" />
+              <CheckCircle size={16} className="text-accent-teal-mint" />
               Create a downloadable file for delivery
             </li>
             <li className="flex items-center gap-2">
-              <CheckCircle size={16} className="text-green-500" />
+              <CheckCircle size={16} className="text-accent-teal-mint" />
               Save this version to your report history
             </li>
           </ul>
@@ -178,8 +178,8 @@ export const FinalizeDialog: React.FC<FinalizeDialogProps> = ({
   const renderCompleteStep = () => (
     <>
       <div className="p-8 text-center">
-        <div className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <CheckCircle className="text-green-600" size={40} />
+        <div className="w-20 h-20 bg-accent-teal-mint-light rounded-full flex items-center justify-center mx-auto mb-6">
+          <CheckCircle className="text-accent-teal-mint" size={40} />
         </div>
         
         <h3 className="text-xl font-semibold text-slate-800 dark:text-white mb-2">Report Generated!</h3>
@@ -189,8 +189,8 @@ export const FinalizeDialog: React.FC<FinalizeDialogProps> = ({
             <p className="text-slate-600 mb-6">
               Your PDF has been downloaded to your device. Check your downloads folder for the file.
             </p>
-            <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-4 text-left">
-              <p className="text-sm text-green-700 flex items-center gap-2">
+            <div className="bg-accent-teal-mint-light border border-accent-teal-mint rounded-lg p-4 mb-4 text-left">
+              <p className="text-sm text-accent-teal-mint flex items-center gap-2">
                 <CheckCircle size={16} />
                 PDF saved to your Downloads folder
               </p>
@@ -201,8 +201,8 @@ export const FinalizeDialog: React.FC<FinalizeDialogProps> = ({
             <p className="text-slate-600 mb-6">
               The print dialog was opened to save your report. If you cancelled the dialog, you can try again.
             </p>
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-4 text-left">
-              <p className="text-sm text-amber-700 flex items-center gap-2">
+            <div className="bg-accent-amber-gold-light border border-accent-amber-gold rounded-lg p-4 mb-4 text-left">
+              <p className="text-sm text-accent-amber-gold flex items-center gap-2">
                 <Printer size={16} />
                 Use "Save as PDF" in the print dialog to download
               </p>
@@ -236,8 +236,8 @@ export const FinalizeDialog: React.FC<FinalizeDialogProps> = ({
   const renderErrorStep = () => (
     <>
       <div className="p-8 text-center">
-        <div className="w-20 h-20 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-6">
-          <AlertCircle className="text-red-600" size={40} />
+        <div className="w-20 h-20 bg-accent-red-light rounded-full flex items-center justify-center mx-auto mb-6">
+          <AlertCircle className="text-harken-error" size={40} />
         </div>
         
         <h3 className="text-xl font-semibold text-slate-800 dark:text-white mb-2">Generation Failed</h3>
@@ -245,8 +245,8 @@ export const FinalizeDialog: React.FC<FinalizeDialogProps> = ({
           We encountered an error while creating your report.
         </p>
         
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4 mb-6 text-left">
-          <p className="text-sm text-red-700">{error}</p>
+        <div className="bg-accent-red-light border border-harken-error/20 rounded-lg p-4 mb-6 text-left">
+          <p className="text-sm text-harken-error">{error}</p>
         </div>
       </div>
 
@@ -269,7 +269,7 @@ export const FinalizeDialog: React.FC<FinalizeDialogProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
+      <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl shadow-2xl w-full max-w-md overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
           <h2 className="text-lg font-semibold text-slate-800 dark:text-white">

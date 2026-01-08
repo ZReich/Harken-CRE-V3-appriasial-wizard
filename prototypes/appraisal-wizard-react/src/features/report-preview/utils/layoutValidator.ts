@@ -285,8 +285,8 @@ export function getIssueIndicator(issue: LayoutIssue): {
   position: { x: number; y: number };
 } {
   const colors: Record<LayoutIssueSeverity, string> = {
-    error: '#ef4444',
-    warning: '#f59e0b',
+    error: '#c11b49',
+    warning: '#f2b705',
     info: '#3b82f6',
   };
   

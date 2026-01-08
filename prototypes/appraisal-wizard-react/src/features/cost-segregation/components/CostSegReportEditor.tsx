@@ -116,7 +116,7 @@ export const CostSegReportEditor: React.FC<CostSegReportEditorProps> = ({
   return (
     <div className={`fixed inset-0 bg-slate-100 flex flex-col z-50 ${className}`}>
       {/* Header */}
-      <header className="bg-white border-b border-slate-200 px-6 py-4">
+      <header className="bg-surface-1 border-b border-slate-200 px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button
@@ -135,7 +135,7 @@ export const CostSegReportEditor: React.FC<CostSegReportEditorProps> = ({
               </div>
             </div>
             {isDirty && (
-              <span className="px-2 py-0.5 bg-amber-100 text-amber-700 text-xs font-medium rounded">
+              <span className="px-2 py-0.5 bg-accent-amber-gold-light text-accent-amber-gold text-xs font-medium rounded">
                 Unsaved Changes
               </span>
             )}
@@ -181,7 +181,7 @@ export const CostSegReportEditor: React.FC<CostSegReportEditorProps> = ({
 
         {/* Export Error */}
         {exportError && (
-          <div className="mt-3 px-4 py-2 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-sm text-red-700">
+          <div className="mt-3 px-4 py-2 bg-harken-error/10 border border-harken-error/30 rounded-lg flex items-center gap-2 text-sm text-harken-error">
             <AlertCircle className="w-4 h-4 flex-shrink-0" />
             {exportError}
           </div>
@@ -191,7 +191,7 @@ export const CostSegReportEditor: React.FC<CostSegReportEditorProps> = ({
       {/* Main Content */}
       <div className="flex-1 flex overflow-hidden">
         {/* Sidebar */}
-        <aside className="w-72 bg-white border-r border-slate-200 flex flex-col">
+        <aside className="w-72 bg-surface-1 border-r border-slate-200 flex flex-col">
           {/* Sections List */}
           <div className="flex-1 overflow-y-auto p-4">
             <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">
@@ -325,7 +325,7 @@ export const CostSegReportEditor: React.FC<CostSegReportEditorProps> = ({
             {/* Report Page Preview */}
             <div 
               ref={reportRef}
-              className="bg-white shadow-xl rounded-lg overflow-hidden"
+              className="bg-surface-1 shadow-xl rounded-lg overflow-hidden"
               style={{ minHeight: '11in' }}
             >
               {renderPageComponent(activeSection)}
@@ -341,7 +341,7 @@ export const CostSegReportEditor: React.FC<CostSegReportEditorProps> = ({
                   }
                 }}
                 disabled={visibleSections.findIndex(s => s.id === activeSection) === 0}
-                className="flex items-center gap-2 px-4 py-2 text-slate-600 hover:text-slate-900 hover:bg-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-2 px-4 py-2 text-slate-600 hover:text-slate-900 hover:bg-surface-1 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ArrowLeft className="w-4 h-4" />
                 Previous
@@ -359,7 +359,7 @@ export const CostSegReportEditor: React.FC<CostSegReportEditorProps> = ({
                   }
                 }}
                 disabled={visibleSections.findIndex(s => s.id === activeSection) === visibleSections.length - 1}
-                className="flex items-center gap-2 px-4 py-2 text-slate-600 hover:text-slate-900 hover:bg-white rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="flex items-center gap-2 px-4 py-2 text-slate-600 hover:text-slate-900 hover:bg-surface-1 rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Next
                 <ChevronRight className="w-4 h-4" />

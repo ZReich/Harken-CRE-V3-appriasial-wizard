@@ -757,9 +757,9 @@ export function getConfidenceColorClasses(confidence: number): string {
     case 'high':
       return 'text-green-600 bg-green-50 border-green-200';
     case 'medium':
-      return 'text-amber-600 bg-amber-50 border-amber-200';
+      return 'text-accent-amber-gold bg-accent-amber-gold-light border-accent-amber-gold';
     case 'low':
-      return 'text-red-600 bg-red-50 border-red-200';
+      return 'text-harken-error bg-accent-red-light border-harken-error/20';
   }
 }
 

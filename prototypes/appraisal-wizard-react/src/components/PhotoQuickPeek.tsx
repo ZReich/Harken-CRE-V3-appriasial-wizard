@@ -107,7 +107,7 @@ export const PhotoQuickPeek: React.FC<PhotoQuickPeekProps> = ({
     >
       {/* Preview Card */}
       <div 
-        className="w-[400px] bg-white rounded-xl shadow-2xl border border-gray-200 overflow-hidden"
+        className="w-[400px] bg-surface-1 rounded-xl shadow-2xl border border-light-border overflow-hidden"
         style={{
           boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
         }}
@@ -118,7 +118,7 @@ export const PhotoQuickPeek: React.FC<PhotoQuickPeekProps> = ({
         </div>
 
         {/* Photo Grid Preview */}
-        <div className="p-4 bg-white dark:bg-slate-800">
+        <div className="p-4 bg-surface-1 dark:bg-elevation-1">
           <div className="grid grid-cols-2 gap-2">
             {/* Featured photo (larger) */}
             <div className="col-span-1 row-span-2">

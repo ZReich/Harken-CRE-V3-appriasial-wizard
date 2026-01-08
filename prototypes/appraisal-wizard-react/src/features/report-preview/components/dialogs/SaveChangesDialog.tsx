@@ -27,12 +27,12 @@ export const SaveChangesDialog: React.FC<SaveChangesDialogProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-lg overflow-hidden">
+      <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl shadow-2xl w-full max-w-lg overflow-hidden">
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
-              <AlertCircle className="text-amber-600" size={20} />
+            <div className="w-10 h-10 bg-accent-amber-gold-light rounded-lg flex items-center justify-center">
+              <AlertCircle className="text-accent-amber-gold" size={20} />
             </div>
             <h2 className="text-lg font-semibold text-slate-800 dark:text-white">Save Changes</h2>
           </div>
@@ -103,10 +103,10 @@ export const SaveChangesDialog: React.FC<SaveChangesDialogProps> = ({
 
             <button
               onClick={onDiscard}
-              className="w-full flex items-start gap-4 p-4 border border-slate-200 rounded-lg hover:border-red-200 hover:bg-red-50 transition-colors text-left"
+              className="w-full flex items-start gap-4 p-4 border border-slate-200 rounded-lg hover:border-harken-error/20 hover:bg-accent-red-light transition-colors text-left"
             >
-              <div className="w-10 h-10 bg-red-100 rounded-lg flex items-center justify-center flex-shrink-0">
-                <RotateCcw className="text-red-600" size={20} />
+              <div className="w-10 h-10 bg-accent-red-light rounded-lg flex items-center justify-center flex-shrink-0">
+                <RotateCcw className="text-harken-error" size={20} />
               </div>
               <div>
                 <h4 className="font-medium text-slate-800 dark:text-white">Discard Changes</h4>

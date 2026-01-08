@@ -74,7 +74,7 @@ export default function ExpandableNote({
             <button
               type="button"
               onClick={() => setIsExpanded(false)}
-              className="flex items-center gap-1 text-xs font-medium text-gray-500 hover:text-gray-700 transition-colors"
+              className="flex items-center gap-1 text-xs font-medium text-harken-gray-med hover:text-harken-gray transition-colors"
             >
               <ChevronUp className="w-3.5 h-3.5" />
               Collapse Notes
@@ -98,20 +98,20 @@ export default function ExpandableNote({
           type="button"
           onClick={() => setIsExpanded(true)}
           className={`w-full group flex items-center justify-between px-4 py-3 rounded-xl border-2 border-dashed transition-all ${hasContent
-              ? 'border-gray-200 bg-gray-50/50 dark:border-slate-700 dark:bg-slate-800/50 hover:border-[#0da1c7]/50 hover:bg-[#0da1c7]/5'
-              : 'border-gray-300 dark:border-slate-600 hover:border-[#0da1c7] hover:bg-[#0da1c7]/5 dark:hover:border-[#0da1c7]/50'
+              ? 'border-light-border bg-harken-gray-light dark:border-dark-border dark:bg-elevation-1/50 hover:border-[#0da1c7]/50 hover:bg-[#0da1c7]/5'
+              : 'border-light-border dark:border-harken-gray hover:border-[#0da1c7] hover:bg-[#0da1c7]/5 dark:hover:border-[#0da1c7]/50'
             }`}
         >
           <div className="flex items-center gap-2 flex-1 min-w-0">
             {hasContent ? (
               <>
-                <ChevronDown className="w-4 h-4 text-gray-400 group-hover:text-[#0da1c7] flex-shrink-0" />
-                <span className="text-sm text-gray-600 dark:text-slate-300 truncate">{preview}</span>
+                <ChevronDown className="w-4 h-4 text-harken-gray-med group-hover:text-[#0da1c7] flex-shrink-0" />
+                <span className="text-sm text-harken-gray dark:text-slate-200 truncate">{preview}</span>
               </>
             ) : (
               <>
-                <Plus className="w-4 h-4 text-gray-400 group-hover:text-[#0da1c7]" />
-                <span className="text-sm text-gray-500 dark:text-slate-400 group-hover:text-[#0da1c7]">
+                <Plus className="w-4 h-4 text-harken-gray-med group-hover:text-[#0da1c7]" />
+                <span className="text-sm text-harken-gray-med dark:text-slate-400 group-hover:text-[#0da1c7]">
                   {placeholder}
                 </span>
               </>

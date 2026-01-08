@@ -72,16 +72,16 @@ const PERMIT_TYPE_LABELS: Record<string, { label: string; color: string }> = {
   addition: { label: 'Addition', color: 'bg-blue-100 text-blue-700 border-blue-300' },
   alteration: { label: 'Alteration', color: 'bg-purple-100 text-purple-700 border-purple-300' },
   repair: { label: 'Repair', color: 'bg-yellow-100 text-yellow-700 border-yellow-300' },
-  demolition: { label: 'Demo', color: 'bg-red-100 text-red-700 border-red-300' },
-  other: { label: 'Other', color: 'bg-gray-100 text-gray-700 border-gray-300' },
+  demolition: { label: 'Demo', color: 'bg-accent-red-light text-harken-error border-harken-error/30' },
+  other: { label: 'Other', color: 'bg-harken-gray-light text-harken-gray border-light-border' },
 };
 
 const STATUS_LABELS: Record<string, { label: string; color: string }> = {
   issued: { label: 'Issued', color: 'text-blue-600' },
-  active: { label: 'Active', color: 'text-green-600' },
+  active: { label: 'Active', color: 'text-accent-teal-mint' },
   completed: { label: 'Completed', color: 'text-slate-600' },
-  expired: { label: 'Expired', color: 'text-amber-600' },
-  cancelled: { label: 'Cancelled', color: 'text-red-600' },
+  expired: { label: 'Expired', color: 'text-accent-amber-gold' },
+  cancelled: { label: 'Cancelled', color: 'text-harken-error' },
 };
 
 function formatDate(dateStr: string): string {
@@ -152,7 +152,7 @@ function PermitRow({ permit }: { permit: BuildingPermit }) {
       </button>
 
       {isExpanded && (
-        <div className="px-4 py-3 bg-slate-50 border-t border-slate-100 dark:bg-slate-800/50 dark:border-slate-700">
+        <div className="px-4 py-3 bg-slate-50 border-t border-slate-100 dark:bg-elevation-1/50 dark:border-dark-border">
           <div className="grid grid-cols-2 gap-3 text-xs">
             <div>
               <span className="text-slate-500 dark:text-slate-400">Issued:</span>
@@ -226,8 +226,8 @@ export function BuildingPermitsCard({
     const badges: Record<string, { label: string; color: string }> = {
       county: { label: 'County Records', color: 'bg-blue-100 text-blue-700' },
       cotality: { label: 'Cotality', color: 'bg-purple-100 text-purple-700' },
-      manual: { label: 'Manual', color: 'bg-gray-100 text-gray-600' },
-      mock: { label: 'Estimated', color: 'bg-amber-100 text-amber-700' },
+      manual: { label: 'Manual', color: 'bg-harken-gray-light text-harken-gray' },
+      mock: { label: 'Estimated', color: 'bg-accent-amber-gold-light text-accent-amber-gold' },
     };
 
     const badge = badges[dataSource];
@@ -239,15 +239,15 @@ export function BuildingPermitsCard({
   };
 
   return (
-    <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl shadow-sm overflow-hidden">
+    <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl shadow-sm overflow-hidden">
       {/* Header */}
-      <div className="p-4 border-b border-gray-100">
+      <div className="p-4 border-b border-harken-gray-light">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <ClipboardList className="w-5 h-5 text-[#0da1c7]" />
             <div>
               <h3 className="text-lg font-bold text-[#1c3643] dark:text-white">Building Permits</h3>
-              <p className="text-xs text-gray-500 dark:text-slate-400">
+              <p className="text-xs text-harken-gray-med dark:text-slate-400">
                 Permit history and construction activity
               </p>
             </div>
@@ -270,7 +270,7 @@ export function BuildingPermitsCard({
       </div>
 
       {/* Permit Type Filter */}
-      <div className="p-4 bg-slate-50/50 border-b border-gray-100 dark:bg-slate-800/50 dark:border-slate-700">
+      <div className="p-4 bg-slate-50/50 border-b border-harken-gray-light dark:bg-elevation-1/50 dark:border-dark-border">
         <ButtonSelector
           label="Permit Type"
           options={PERMIT_TYPE_OPTIONS}
@@ -281,17 +281,17 @@ export function BuildingPermitsCard({
 
       {/* Summary Stats */}
       {filteredPermits.length > 0 && (
-        <div className="grid grid-cols-3 divide-x divide-gray-100 border-b border-gray-100">
+        <div className="grid grid-cols-3 divide-x divide-harken-gray-light border-b border-harken-gray-light">
           <div className="p-3 text-center">
             <div className="text-xl font-bold text-[#0da1c7]">{filteredPermits.length}</div>
             <div className="text-[10px] text-slate-500 dark:text-slate-400">Total Permits</div>
           </div>
           <div className="p-3 text-center">
-            <div className="text-xl font-bold text-green-600">{activeCount}</div>
+            <div className="text-xl font-bold text-accent-teal-mint">{activeCount}</div>
             <div className="text-[10px] text-slate-500 dark:text-slate-400">Active</div>
           </div>
           <div className="p-3 text-center">
-            <div className="text-xl font-bold text-slate-700 dark:text-slate-300">{formatCurrency(totalValue)}</div>
+            <div className="text-xl font-bold text-slate-700 dark:text-slate-200">{formatCurrency(totalValue)}</div>
             <div className="text-[10px] text-slate-500 dark:text-slate-400">Total Value</div>
           </div>
         </div>

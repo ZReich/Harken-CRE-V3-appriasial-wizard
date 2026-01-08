@@ -59,7 +59,7 @@ export const PhotoGridPage: React.FC<PhotoGridPageProps> = ({
   if (layout === 'single' && displayPhotos.length > 0) {
     const photo = displayPhotos[0];
     return (
-      <div className="w-full h-full bg-white flex flex-col">
+      <div className="w-full h-full bg-surface-1 flex flex-col">
         {/* Title */}
         {title && (
           <div className="px-16 pt-8 pb-4">
@@ -104,7 +104,7 @@ export const PhotoGridPage: React.FC<PhotoGridPageProps> = ({
   }
 
   return (
-    <div className="w-full h-full bg-white flex flex-col">
+    <div className="w-full h-full bg-surface-1 flex flex-col">
       {/* Page header */}
       {title && (
         <div className="px-16 pt-8 pb-4 border-b border-slate-200">

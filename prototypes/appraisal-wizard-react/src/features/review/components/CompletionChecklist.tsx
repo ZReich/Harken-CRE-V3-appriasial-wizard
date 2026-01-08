@@ -116,7 +116,7 @@ export function CompletionChecklist() {
           {concludedValues.map((item) => (
             <div
               key={item.name}
-              className="bg-white/20 backdrop-blur rounded-lg p-4 text-center"
+              className="bg-surface-1/20 backdrop-blur rounded-lg p-4 text-center"
             >
               <div className="text-sm opacity-90 mb-1">{item.name}</div>
               <div className="text-2xl font-bold">{formatCurrency(item.value)}</div>
@@ -126,10 +126,10 @@ export function CompletionChecklist() {
       </div>
 
       {/* Completion Checklist */}
-      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <div className="flex items-center justify-between border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+      <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
+        <div className="flex items-center justify-between border-b-2 border-light-border dark:border-harken-gray pb-3 mb-4">
           <h3 className="text-lg font-bold text-slate-800 dark:text-white">Completion Checklist</h3>
-          <span className="text-sm text-gray-500 dark:text-slate-400">
+          <span className="text-sm text-harken-gray-med dark:text-slate-400">
             {completedCount} of {totalCount} complete
           </span>
         </div>
@@ -138,15 +138,15 @@ export function CompletionChecklist() {
             <div
               key={item.label}
               className={`flex items-center gap-3 p-3 rounded-lg ${
-                item.done ? 'bg-green-50 dark:bg-green-900/30' : 'bg-amber-50 dark:bg-amber-900/30'
+                item.done ? 'bg-accent-teal-mint-light dark:bg-accent-teal-mint/30' : 'bg-accent-amber-gold-light dark:bg-accent-amber-gold/30'
               }`}
             >
               {item.done ? (
-                <svg className="w-5 h-5 text-green-600 dark:text-green-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-accent-teal-mint dark:text-accent-teal-mint flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                 </svg>
               ) : (
-                <svg className="w-5 h-5 text-amber-600 dark:text-amber-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-accent-amber-gold dark:text-accent-amber-gold flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <circle cx="12" cy="12" r="10" strokeWidth={2} />
                 </svg>
               )}
@@ -155,7 +155,7 @@ export function CompletionChecklist() {
                   {item.label}
                 </span>
                 {item.description && (
-                  <p className={`text-xs mt-0.5 ${item.done ? 'text-green-600 dark:text-green-300' : 'text-amber-600 dark:text-amber-300'}`}>
+                  <p className={`text-xs mt-0.5 ${item.done ? 'text-green-600 dark:text-green-300' : 'text-accent-amber-gold dark:text-amber-300'}`}>
                     {item.description}
                   </p>
                 )}
@@ -166,10 +166,10 @@ export function CompletionChecklist() {
       </div>
 
       {/* Finalize Section */}
-      <div className={`border-2 rounded-xl p-6 ${isReadyToFinalize ? 'bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-700' : 'bg-amber-50 dark:bg-amber-900/30 border-amber-200 dark:border-amber-700'}`}>
+      <div className={`border-2 rounded-xl p-6 ${isReadyToFinalize ? 'bg-green-50 dark:bg-green-900/30 border-green-200 dark:border-green-700' : 'bg-accent-amber-gold-light dark:bg-amber-900/30 border-accent-amber-gold dark:border-amber-700'}`}>
         <div className="flex items-center gap-4">
           <svg
-            className={`w-12 h-12 ${isReadyToFinalize ? 'text-green-600 dark:text-green-400' : 'text-amber-600 dark:text-amber-400'}`}
+            className={`w-12 h-12 ${isReadyToFinalize ? 'text-green-600 dark:text-green-400' : 'text-accent-amber-gold dark:text-amber-400'}`}
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"

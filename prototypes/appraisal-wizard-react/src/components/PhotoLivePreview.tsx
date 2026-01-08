@@ -110,13 +110,13 @@ export const PhotoLivePreview: React.FC<PhotoLivePreviewProps> = ({
         </div>
         <div>
           <h3 className="text-sm font-bold text-[#1c3643] dark:text-white">Live Preview</h3>
-          <p className="text-xs text-gray-500 dark:text-slate-400">{uploadedCount} photos uploaded</p>
+          <p className="text-xs text-harken-gray-med dark:text-slate-400">{uploadedCount} photos uploaded</p>
         </div>
       </div>
 
       {/* Mini Report Page */}
       <div 
-        className="flex-1 bg-white rounded-xl border border-gray-200 overflow-hidden flex flex-col"
+        className="flex-1 bg-surface-1 rounded-xl border border-light-border overflow-hidden flex flex-col"
         style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}
       >
         {/* Rove Header Bar */}
@@ -182,15 +182,15 @@ export const PhotoLivePreview: React.FC<PhotoLivePreviewProps> = ({
           disabled={currentPage === 0}
           className={`p-1.5 rounded-lg transition-colors ${
             currentPage === 0
-              ? 'text-gray-300 cursor-not-allowed'
-              : 'text-gray-600 hover:bg-gray-100'
+              ? 'text-harken-gray-med cursor-not-allowed'
+              : 'text-harken-gray hover:bg-harken-gray-light'
           }`}
         >
           <ChevronLeft className="w-4 h-4" />
         </button>
         
         <div className="flex items-center gap-2">
-          <span className="text-xs text-gray-600">
+          <span className="text-xs text-harken-gray">
             Page {activePage.pageNumber}
           </span>
           <div className="flex gap-1">
@@ -201,7 +201,7 @@ export const PhotoLivePreview: React.FC<PhotoLivePreviewProps> = ({
                 className={`w-2 h-2 rounded-full transition-colors ${
                   idx === currentPage
                     ? 'bg-[#0da1c7]'
-                    : 'bg-gray-200 hover:bg-gray-300'
+                    : 'bg-harken-gray-med-lt hover:bg-harken-gray-med-lt'
                 }`}
               />
             ))}
@@ -213,8 +213,8 @@ export const PhotoLivePreview: React.FC<PhotoLivePreviewProps> = ({
           disabled={currentPage === pages.length - 1}
           className={`p-1.5 rounded-lg transition-colors ${
             currentPage === pages.length - 1
-              ? 'text-gray-300 cursor-not-allowed'
-              : 'text-gray-600 hover:bg-gray-100'
+              ? 'text-harken-gray-med cursor-not-allowed'
+              : 'text-harken-gray hover:bg-harken-gray-light'
           }`}
         >
           <ChevronRight className="w-4 h-4" />

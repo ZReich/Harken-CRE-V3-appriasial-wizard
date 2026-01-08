@@ -64,24 +64,24 @@ export default function GooglePlacesAutocomplete({
   };
 
   /* Dark mode styling fixes */
-  const baseInputClass = `w-full pl-10 pr-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent transition-all ${className} text-gray-900 dark:text-gray-100 placeholder:text-gray-400 dark:placeholder:text-gray-500`;
+  const baseInputClass = `w-full pl-10 pr-3 py-2 border rounded-lg text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent transition-all ${className} text-harken-gray dark:text-white placeholder:text-harken-gray-med dark:placeholder:text-harken-gray`;
 
   const inputClass = disabled
-    ? `${baseInputClass} bg-gray-100 border-gray-200 cursor-not-allowed dark:bg-slate-800 dark:border-slate-700 dark:text-slate-500`
+    ? `${baseInputClass} bg-harken-gray-light border-light-border cursor-not-allowed dark:bg-elevation-1 dark:border-dark-border dark:text-slate-500`
     : error
-      ? `${baseInputClass} border-amber-300 bg-amber-50 dark:bg-amber-900/10 dark:border-amber-500/50`
-      : `${baseInputClass} border-gray-300 bg-white dark:bg-slate-700 dark:border-slate-600`;
+      ? `${baseInputClass} border-accent-amber-gold bg-accent-amber-gold-light dark:bg-accent-amber-gold/10 dark:border-accent-amber-gold/30`
+      : `${baseInputClass} border-light-border bg-surface-1 dark:bg-elevation-1 dark:border-harken-gray`;
 
   return (
     <div className="relative">
       {/* Input with icon */}
       <div className="relative">
-        <div className={`absolute left-3 top-1/2 -translate-y-1/2 transition-colors ${isFocused ? 'text-[#0da1c7]' : 'text-gray-400 dark:text-slate-500'
+        <div className={`absolute left-3 top-1/2 -translate-y-1/2 transition-colors ${isFocused ? 'text-[#0da1c7]' : 'text-harken-gray-med dark:text-slate-500'
           }`}>
           {isLoading ? (
             <Loader2 className="w-4 h-4 animate-spin" />
           ) : error ? (
-            <AlertCircle className="w-4 h-4 text-amber-500" />
+            <AlertCircle className="w-4 h-4 text-accent-amber-gold" />
           ) : (
             <MapPin className="w-4 h-4" />
           )}
@@ -106,7 +106,7 @@ export default function GooglePlacesAutocomplete({
       {/* Status indicator */}
       {isLoaded && !error && (
         <div className="absolute right-3 top-1/2 -translate-y-1/2">
-          <span className="text-[10px] font-medium text-emerald-600 bg-emerald-50 px-1.5 py-0.5 rounded dark:bg-emerald-900/30 dark:text-emerald-400">
+          <span className="text-[10px] font-medium text-accent-teal-mint bg-accent-teal-mint-light px-1.5 py-0.5 rounded dark:bg-accent-teal-mint/10 dark:text-accent-teal-mint">
             Autocomplete
           </span>
         </div>
@@ -114,7 +114,7 @@ export default function GooglePlacesAutocomplete({
 
       {/* Error message */}
       {error && (
-        <p className="text-xs text-amber-600 mt-1 flex items-center gap-1">
+        <p className="text-xs text-accent-amber-gold mt-1 flex items-center gap-1">
           <AlertCircle className="w-3 h-3" />
           {error.includes('API key')
             ? 'Address autocomplete unavailable - you can still type manually'

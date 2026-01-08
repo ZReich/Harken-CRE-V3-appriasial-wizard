@@ -149,7 +149,7 @@ export const NarrativePage: React.FC<NarrativePageProps> = ({
   };
 
   return (
-    <div className="w-full h-full bg-white flex flex-col">
+    <div className="w-full h-full bg-surface-1 flex flex-col">
       {/* Page header */}
       {title && (
         <div className="px-16 pt-12 pb-4 border-b border-slate-200">

@@ -1,5 +1,15 @@
 // Multi-Family Approach Types
 
+/**
+ * Override data for calculated fields
+ */
+export interface OverrideData {
+  overrideValue: number | string;
+  note: string;
+  originalCalculated?: number | string | null;
+  overriddenAt?: string;
+}
+
 export interface MultiFamilyComp {
   id: string;
   address: string;
@@ -32,6 +42,9 @@ export interface MultiFamilyComp {
   
   // Overall
   overallComparability: 'Superior' | 'Similar' | 'Inferior';
+  
+  // Override for adjusted rental rate (calculated field)
+  adjustedRateOverride?: OverrideData;
 }
 
 export interface MultiFamilySubject {

@@ -35,12 +35,12 @@ export default function ProgressStepper({ currentPhase, pages }: ProgressStepper
   }, [pages, getSectionCompletion]);
 
   return (
-    <div className="w-full bg-white dark:bg-slate-900 border-b border-gray-200 dark:border-slate-800 transition-colors duration-300">
+      <div className="w-full bg-surface-1 dark:bg-elevation-1 border-b border-light-border dark:border-slate-800 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex items-center justify-between relative">
 
           {/* Progress Bar Background Line (Absolute) - for continuous connection look */}
-          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-[2px] bg-gray-100 dark:bg-slate-800 -z-10 hidden sm:block" />
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 w-full h-[2px] bg-harken-gray-light dark:bg-elevation-1 -z-10 hidden sm:block" />
 
           {sectionData.map((section, idx) => {
             const { phaseNum, trackProgress, completion, path, label } = section;
@@ -59,7 +59,7 @@ export default function ProgressStepper({ currentPhase, pages }: ProgressStepper
                 className={`flex items-center ${idx < pages.length - 1 ? 'flex-1' : ''} group`}
               >
                 {/* Step Item */}
-                <div className="flex items-center gap-3 relative bg-white dark:bg-slate-900 pr-2">
+                <div className="flex items-center gap-3 relative bg-surface-1 dark:bg-elevation-1 pr-2">
                   <ProgressCircle
                     phaseNum={phaseNum}
                     completion={completion}
@@ -73,15 +73,15 @@ export default function ProgressStepper({ currentPhase, pages }: ProgressStepper
                   <div className="hidden md:flex flex-col cursor-pointer" onClick={() => handleNavigate(path)}>
                     <span className={`text-xs font-bold uppercase tracking-wider transition-colors duration-200 ${isActive ? 'text-harken-blue dark:text-[#22d3ee]' :
                       isCompleted ? 'text-green-600 dark:text-green-500' :
-                        hasVisited ? 'text-gray-600 dark:text-slate-400' :
-                          'text-gray-400 dark:text-slate-600 group-hover:text-gray-500 dark:group-hover:text-slate-500'
+                        hasVisited ? 'text-harken-gray dark:text-slate-400' :
+                          'text-harken-gray-med dark:text-slate-500 group-hover:text-harken-gray-med dark:group-hover:text-slate-500'
                       }`}>
                       Step {phaseNum}
                     </span>
-                    <span className={`text-sm font-semibold transition-colors duration-200 whitespace-nowrap ${isActive ? 'text-gray-900 dark:text-white' :
-                      isCompleted ? 'text-gray-800 dark:text-gray-200' :
-                        hasVisited ? 'text-gray-600 dark:text-slate-400' :
-                          'text-gray-400 dark:text-slate-600'
+                    <span className={`text-sm font-semibold transition-colors duration-200 whitespace-nowrap ${isActive ? 'text-harken-dark dark:text-white' :
+                      isCompleted ? 'text-harken-dark dark:text-white' :
+                        hasVisited ? 'text-harken-gray dark:text-slate-400' :
+                          'text-harken-gray-med dark:text-slate-500'
                       }`}>
                       {label}
                     </span>
@@ -90,13 +90,13 @@ export default function ProgressStepper({ currentPhase, pages }: ProgressStepper
 
                 {/* Connector Line (Dynamic) */}
                 {idx < pages.length - 1 && (
-                  <div className="flex-1 h-[2px] mx-4 rounded-full relative overflow-hidden bg-gray-100 dark:bg-slate-800">
+                  <div className="flex-1 h-[2px] mx-4 rounded-full relative overflow-hidden bg-harken-gray-light dark:bg-elevation-1">
                     <div
                       className={`absolute inset-0 transition-all duration-500 ease-out ${isCompleted
                         ? 'bg-green-500 dark:bg-green-600 translate-x-0'
                         : isActive
-                          ? 'bg-gradient-to-r from-harken-blue to-gray-200 dark:from-harken-blue dark:to-slate-800 opacity-50'
-                          : '-translate-x-full bg-gray-200 dark:bg-slate-700'
+                          ? 'bg-gradient-to-r from-harken-blue to-harken-gray-med-lt dark:from-harken-blue dark:to-harken-dark opacity-50'
+                          : '-translate-x-full bg-harken-gray-med-lt dark:bg-elevation-1'
                         }`}
                     />
                   </div>

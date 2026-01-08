@@ -96,7 +96,7 @@ export const CostSegMeasurementCalculator: React.FC<MeasurementCalculatorProps> 
           <select
             value={unit}
             onChange={(e) => setUnit(e.target.value)}
-            className="w-full px-3 py-2 bg-white border border-blue-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 bg-surface-1 border border-blue-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
           >
             {UNIT_OPTIONS.map(opt => (
               <option key={opt.value} value={opt.value}>
@@ -120,7 +120,7 @@ export const CostSegMeasurementCalculator: React.FC<MeasurementCalculatorProps> 
             onChange={(e) => setCostPerUnit(parseFloat(e.target.value) || 0)}
             placeholder="0.00"
             step="0.01"
-            className="w-full px-3 py-2 bg-white border border-blue-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+            className="w-full px-3 py-2 bg-surface-1 border border-blue-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
           />
         </div>
       </div>
@@ -146,7 +146,7 @@ export const CostSegMeasurementCalculator: React.FC<MeasurementCalculatorProps> 
                 value={measurement.description}
                 onChange={(e) => handleUpdateMeasurement(measurement.id, { description: e.target.value })}
                 placeholder={`Line ${index + 1} description`}
-                className="flex-1 px-3 py-2 bg-white border border-blue-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
+                className="flex-1 px-3 py-2 bg-surface-1 border border-blue-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500"
               />
               <input
                 type="number"
@@ -154,7 +154,7 @@ export const CostSegMeasurementCalculator: React.FC<MeasurementCalculatorProps> 
                 onChange={(e) => handleUpdateMeasurement(measurement.id, { quantity: parseFloat(e.target.value) || 0 })}
                 placeholder="0"
                 step="0.01"
-                className="w-28 px-3 py-2 bg-white border border-blue-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 text-right"
+                className="w-28 px-3 py-2 bg-surface-1 border border-blue-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 text-right"
               />
               <span className="flex items-center px-2 text-sm font-medium text-blue-700">
                 {unit}
@@ -162,7 +162,7 @@ export const CostSegMeasurementCalculator: React.FC<MeasurementCalculatorProps> 
               {measurements.length > 1 && (
                 <button
                   onClick={() => handleRemoveMeasurement(measurement.id)}
-                  className="p-2 text-blue-400 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                  className="p-2 text-blue-400 hover:text-harken-error hover:bg-accent-red-light rounded transition-colors"
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
@@ -173,7 +173,7 @@ export const CostSegMeasurementCalculator: React.FC<MeasurementCalculatorProps> 
       </div>
 
       {/* Calculation Summary */}
-      <div className="bg-white border-2 border-blue-300 rounded-lg p-3 space-y-2">
+      <div className="bg-surface-1 border-2 border-blue-300 rounded-lg p-3 space-y-2">
         <div className="flex justify-between text-sm">
           <span className="text-blue-700">Total Quantity:</span>
           <span className="font-bold text-blue-900">
@@ -202,7 +202,7 @@ export const CostSegMeasurementCalculator: React.FC<MeasurementCalculatorProps> 
       <button
         onClick={handleApply}
         disabled={totalCost === 0}
-        className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-300 disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors"
+        className="flex items-center justify-center gap-2 w-full px-4 py-2.5 bg-blue-600 hover:bg-blue-700 disabled:bg-harken-gray-med-lt disabled:cursor-not-allowed text-white font-medium rounded-lg transition-colors"
       >
         <Check className="w-4 h-4" />
         Apply to Refinement

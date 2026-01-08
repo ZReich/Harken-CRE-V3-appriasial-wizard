@@ -64,18 +64,18 @@ export const IncomeGridPage: React.FC<IncomeGridPageProps> = ({
   };
 
   return (
-    <div className="w-full h-full bg-white flex flex-col">
+    <div className="w-full h-full bg-surface-1 flex flex-col">
       {/* Page header */}
-      <div className="px-12 pt-8 pb-4 border-b border-slate-200">
+      <div className="px-12 pt-8 pb-4 border-b border-light-border">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-xl font-bold text-slate-800">{title}</h2>
             {scenarioName && (
-              <p className="text-sm text-slate-500 mt-1">{scenarioName}</p>
+              <p className="text-sm text-harken-gray-med mt-1">{scenarioName}</p>
             )}
           </div>
           {pageNumber && (
-            <span className="text-sm text-slate-400">Page {pageNumber}</span>
+            <span className="text-sm text-harken-gray-med">Page {pageNumber}</span>
           )}
         </div>
       </div>
@@ -83,11 +83,11 @@ export const IncomeGridPage: React.FC<IncomeGridPageProps> = ({
       {/* Map Section - Display rental comparables map if provided */}
       {mapData && mapData.imageUrl && (
         <div className="px-12 pt-4 pb-2">
-          <div className="border border-slate-200 rounded-lg overflow-hidden bg-white">
+          <div className="border border-slate-200 rounded-lg overflow-hidden bg-surface-1">
             {/* Map Header */}
             <div className="flex items-center justify-between px-4 py-2 bg-slate-50 border-b border-slate-200">
               <div className="flex items-center gap-2">
-                <MapPin className="w-4 h-4 text-green-600" />
+                <MapPin className="w-4 h-4 text-accent-teal-mint" />
                 <span className="font-semibold text-sm text-slate-700">{mapData.title}</span>
               </div>
               {/* Legend */}
@@ -147,7 +147,7 @@ export const IncomeGridPage: React.FC<IncomeGridPageProps> = ({
                   </tr>
                   <tr className="border-b border-slate-100">
                     <td className="px-4 py-2 text-slate-700">Less: Vacancy & Collection Loss</td>
-                    <td className="px-4 py-2 text-right font-medium text-red-600">
+                    <td className="px-4 py-2 text-right font-medium text-harken-error">
                       ({formatCurrency(data.vacancy)})
                     </td>
                   </tr>
@@ -174,9 +174,9 @@ export const IncomeGridPage: React.FC<IncomeGridPageProps> = ({
                       </td>
                     </tr>
                   ))}
-                  <tr className="border-b border-slate-200 bg-slate-50">
+                  <tr className="border-b border-slate-200 bg-harken-gray-light">
                     <td className="px-4 py-2 font-semibold text-slate-800">Total Expenses</td>
-                    <td className="px-4 py-2 text-right font-bold text-red-600">
+                    <td className="px-4 py-2 text-right font-bold text-harken-error">
                       ({formatCurrency(data.totalExpenses)})
                     </td>
                   </tr>
@@ -197,21 +197,21 @@ export const IncomeGridPage: React.FC<IncomeGridPageProps> = ({
           <div>
             <h3 className="text-lg font-semibold text-slate-800 mb-4">Direct Capitalization</h3>
             
-            <div className="border border-slate-200 rounded-lg p-6 bg-slate-50">
+            <div className="border border-light-border rounded-lg p-6 bg-harken-gray-light">
               <div className="space-y-4">
-                <div className="flex justify-between items-center pb-4 border-b border-slate-200">
-                  <span className="text-slate-700">Net Operating Income</span>
+                <div className="flex justify-between items-center pb-4 border-b border-light-border">
+                  <span className="text-harken-gray">Net Operating Income</span>
                   <span className="font-semibold text-slate-800">{formatCurrency(data.noi)}</span>
                 </div>
                 
-                <div className="flex justify-between items-center pb-4 border-b border-slate-200">
-                  <span className="text-slate-700">Capitalization Rate</span>
+                <div className="flex justify-between items-center pb-4 border-b border-light-border">
+                  <span className="text-harken-gray">Capitalization Rate</span>
                   <span className="font-semibold text-slate-800">{formatPercent(data.capRate)}</span>
                 </div>
                 
                 <div className="pt-4">
                   <div className="text-center">
-                    <div className="text-sm text-slate-500 mb-2">Value = NOI ÷ Cap Rate</div>
+                    <div className="text-sm text-harken-gray-med mb-2">Value = NOI ÷ Cap Rate</div>
                     <div className="text-3xl font-bold text-sky-600">
                       {formatCurrency(data.indicatedValue)}
                     </div>

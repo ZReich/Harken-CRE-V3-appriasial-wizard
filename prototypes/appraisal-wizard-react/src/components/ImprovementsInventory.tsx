@@ -292,15 +292,15 @@ export default function ImprovementsInventory() {
       {(validation.errors.length > 0 || validation.warnings.length > 0) && (
         <div className="space-y-2">
           {validation.errors.map((err) => (
-            <div key={err.code + err.path} className="flex items-start gap-3 bg-red-50 border border-red-200 rounded-xl p-4">
-              <AlertTriangle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
-              <span className="text-sm font-medium text-red-800">{err.message}</span>
+            <div key={err.code + err.path} className="flex items-start gap-3 bg-accent-red-light border border-harken-error/30 rounded-xl p-4">
+              <AlertTriangle className="w-5 h-5 text-harken-error flex-shrink-0 mt-0.5" />
+              <span className="text-sm font-medium text-harken-error">{err.message}</span>
             </div>
           ))}
           {validation.warnings.map((warn) => (
-            <div key={warn.code + warn.path} className="flex items-start gap-3 bg-amber-50 border border-amber-200 rounded-xl p-4">
-              <AlertTriangle className="w-5 h-5 text-amber-500 flex-shrink-0 mt-0.5" />
-              <span className="text-sm font-medium text-amber-800">{warn.message}</span>
+            <div key={warn.code + warn.path} className="flex items-start gap-3 bg-accent-amber-gold-light border border-accent-amber-gold rounded-xl p-4">
+              <AlertTriangle className="w-5 h-5 text-accent-amber-gold flex-shrink-0 mt-0.5" />
+              <span className="text-sm font-medium text-accent-amber-gold">{warn.message}</span>
             </div>
           ))}
         </div>
@@ -346,7 +346,7 @@ export default function ImprovementsInventory() {
       {/* Add Parcel Button */}
       <button
         onClick={addParcel}
-        className="w-full py-4 border-2 border-dashed border-gray-300 rounded-2xl text-gray-500 hover:border-accent-cyan hover:text-accent-cyan hover:bg-accent-cyan/5 transition-all flex items-center justify-center gap-2 group"
+        className="w-full py-4 border-2 border-dashed border-light-border rounded-2xl text-harken-gray-med hover:border-accent-cyan hover:text-accent-cyan hover:bg-accent-cyan/5 transition-all flex items-center justify-center gap-2 group"
       >
         <Plus className="w-5 h-5 group-hover:scale-110 transition-transform" />
         <span className="font-medium">Add Another Parcel</span>
@@ -417,13 +417,13 @@ function ParcelCard({
   const isAddressSynced = isFirstParcel && addressString && parcel.address === addressString;
 
   return (
-    <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-2xl overflow-hidden shadow-sm">
+    <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-2xl overflow-hidden shadow-sm">
       <div
-        className="px-6 py-4 flex items-center justify-between cursor-pointer hover:bg-gray-50 transition-colors border-l-4 border-accent-cyan"
+        className="px-6 py-4 flex items-center justify-between cursor-pointer hover:bg-harken-gray-light transition-colors border-l-4 border-accent-cyan"
         onClick={onToggle}
       >
         <div className="flex items-center gap-4">
-          {isExpanded ? <ChevronDown className="w-5 h-5 text-gray-400" /> : <ChevronRight className="w-5 h-5 text-gray-400" />}
+          {isExpanded ? <ChevronDown className="w-5 h-5 text-harken-gray-med" /> : <ChevronRight className="w-5 h-5 text-harken-gray-med" />}
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-xl bg-accent-cyan/10 flex items-center justify-center">
               <MapPin className="w-5 h-5 text-accent-cyan" />
@@ -431,9 +431,9 @@ function ParcelCard({
             <div>
               <div className="font-bold text-harken-dark dark:text-white">
                 Parcel {index + 1}
-                {parcel.parcelNumber && <span className="text-gray-500 font-normal ml-2 text-sm">#{parcel.parcelNumber}</span>}
+                {parcel.parcelNumber && <span className="text-harken-gray-med font-normal ml-2 text-sm">#{parcel.parcelNumber}</span>}
               </div>
-              <div className="text-xs text-gray-500 dark:text-slate-400">
+              <div className="text-xs text-harken-gray-med dark:text-slate-400">
                 {parcel.buildings.length} Building{parcel.buildings.length !== 1 ? 's' : ''} | {parcelSF.toLocaleString()} SF
               </div>
             </div>
@@ -442,12 +442,12 @@ function ParcelCard({
         <div className="flex items-center gap-4">
           <div className="text-right">
             <span className="text-lg font-bold text-accent-cyan">{parcelSF.toLocaleString()}</span>
-            <span className="text-sm text-gray-500 ml-1">SF</span>
+            <span className="text-sm text-harken-gray-med ml-1">SF</span>
           </div>
           {canRemove && (
             <button
               onClick={(e) => { e.stopPropagation(); onRemove(); }}
-              className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+              className="p-2 text-harken-gray-med hover:text-harken-error hover:bg-accent-red-light rounded-lg transition-colors"
             >
               <Trash2 className="w-5 h-5" />
             </button>
@@ -456,10 +456,10 @@ function ParcelCard({
       </div>
 
       {isExpanded && (
-        <div className="px-6 py-5 border-t border-gray-100 space-y-6">
+        <div className="px-6 py-5 border-t border-harken-gray-light space-y-6">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1.5 flex items-center gap-2">
+              <label className="block text-xs font-medium text-harken-gray mb-1.5 flex items-center gap-2">
                 Tax ID / Parcel Number
                 {isTaxIdSynced && (
                   <span className="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-normal">From Setup</span>
@@ -470,12 +470,12 @@ function ParcelCard({
                 value={parcel.parcelNumber}
                 onChange={(e) => onUpdate({ parcelNumber: e.target.value })}
                 placeholder="e.g., 12-345-678"
-                className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent ${isTaxIdSynced ? 'border-blue-200 bg-blue-50' : 'border-gray-200'
+                className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent ${isTaxIdSynced ? 'border-blue-200 bg-blue-50' : 'border-light-border'
                   }`}
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1.5 flex items-center gap-2">
+              <label className="block text-xs font-medium text-harken-gray mb-1.5 flex items-center gap-2">
                 Situs Address
                 {isAddressSynced && (
                   <span className="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-normal">From Setup</span>
@@ -486,14 +486,14 @@ function ParcelCard({
                 value={parcel.address || ''}
                 onChange={(e) => onUpdate({ address: e.target.value })}
                 placeholder="Street address"
-                className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent ${isAddressSynced ? 'border-blue-200 bg-blue-50' : 'border-gray-200'
+                className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent ${isAddressSynced ? 'border-blue-200 bg-blue-50' : 'border-light-border'
                   }`}
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-gray-600 dark:text-slate-400 mb-1.5 flex items-center gap-2">
+            <label className="block text-xs font-medium text-harken-gray dark:text-slate-400 mb-1.5 flex items-center gap-2">
               Legal Description
               {isLegalDescSynced && (
                 <span className="text-[10px] bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 px-1.5 py-0.5 rounded font-normal">From Setup</span>
@@ -504,7 +504,7 @@ function ParcelCard({
               value={parcel.legalDescription || ''}
               onChange={(e) => onUpdate({ legalDescription: e.target.value })}
               placeholder="e.g., Lot 1, Block 2, Canyon Creek Industrial Park"
-              className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent bg-white dark:bg-slate-700 dark:text-white ${isLegalDescSynced ? 'border-blue-200 bg-blue-50 dark:border-blue-700 dark:bg-blue-900/20' : 'border-gray-200 dark:border-slate-600'
+              className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white ${isLegalDescSynced ? 'border-blue-200 bg-blue-50 dark:border-blue-700 dark:bg-blue-900/20' : 'border-light-border dark:border-harken-gray'
                 }`}
             />
           </div>
@@ -640,16 +640,16 @@ function BuildingCard({
   };
 
   return (
-    <div className="bg-gray-50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 rounded-xl overflow-hidden">
-      <div className="px-4 py-3 flex items-center justify-between cursor-pointer hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors" onClick={onToggle}>
+    <div className="bg-harken-gray-light dark:bg-elevation-1/50 border border-light-border dark:border-dark-border rounded-xl overflow-hidden">
+      <div className="px-4 py-3 flex items-center justify-between cursor-pointer hover:bg-harken-gray-light dark:hover:bg-elevation-3 transition-colors" onClick={onToggle}>
         <div className="flex items-center gap-3">
-          {isExpanded ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronRight className="w-4 h-4 text-gray-400" />}
-          <div className="w-8 h-8 rounded-lg bg-harken-dark/10 dark:bg-slate-700 flex items-center justify-center">
+          {isExpanded ? <ChevronDown className="w-4 h-4 text-harken-gray-med" /> : <ChevronRight className="w-4 h-4 text-harken-gray-med" />}
+          <div className="w-8 h-8 rounded-lg bg-harken-dark/10 dark:bg-elevation-1 flex items-center justify-center">
             <Building2 className="w-4 h-4 text-harken-dark dark:text-white" />
           </div>
           <div>
             <span className="font-semibold text-sm text-harken-dark dark:text-white">{building.name || `Building ${index + 1}`}</span>
-            <span className="text-xs text-gray-500 dark:text-slate-400 ml-2">({building.areas.length} area{building.areas.length !== 1 ? 's' : ''})</span>
+            <span className="text-xs text-harken-gray-med dark:text-slate-400 ml-2">({building.areas.length} area{building.areas.length !== 1 ? 's' : ''})</span>
           </div>
         </div>
         <div className="flex items-center gap-3">
@@ -666,11 +666,11 @@ function BuildingCard({
             />
           </div>
           {building.yearBuilt && (
-            <span className="px-2 py-0.5 text-xs font-medium bg-white dark:bg-slate-700 rounded border dark:border-slate-600 text-gray-600 dark:text-slate-400">Built {building.yearBuilt}</span>
+            <span className="px-2 py-0.5 text-xs font-medium bg-surface-1 dark:bg-elevation-1 rounded border dark:border-harken-gray text-harken-gray dark:text-slate-400">Built {building.yearBuilt}</span>
           )}
           <span className="text-sm font-bold text-accent-cyan">{buildingSF.toLocaleString()} SF</span>
           {canRemove && (
-            <button onClick={(e) => { e.stopPropagation(); onRemove(); }} className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors">
+            <button onClick={(e) => { e.stopPropagation(); onRemove(); }} className="p-1.5 text-harken-gray-med hover:text-harken-error hover:bg-accent-red-light rounded-lg transition-colors">
               <Trash2 className="w-4 h-4" />
             </button>
           )}
@@ -678,17 +678,17 @@ function BuildingCard({
       </div>
 
       {isExpanded && (
-        <div className="px-4 py-4 bg-white dark:bg-slate-800 border-t border-gray-200 dark:border-slate-700 space-y-4">
+        <div className="px-4 py-4 bg-surface-1 dark:bg-elevation-1 border-t border-light-border dark:border-dark-border space-y-4">
           {/* Basic Information */}
           <CollapsibleSection title="Basic Information" icon={<Building2 className="w-4 h-4" />} isExpanded={expandedSections.has('basic')} onToggle={() => toggleSection('basic')}>
             <div className="grid grid-cols-4 gap-3 items-end">
               <div>
-                <label className="block text-xs font-medium text-gray-600 dark:text-slate-400 mb-1.5">Building Name</label>
-                <input type="text" value={building.name} onChange={(e) => onUpdate({ name: e.target.value })} placeholder="e.g., Building A" className="w-full px-3 py-2.5 border border-gray-200 dark:border-slate-600 rounded-xl text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent bg-white dark:bg-slate-700 dark:text-white" />
+                <label className="block text-xs font-medium text-harken-gray dark:text-slate-400 mb-1.5">Building Name</label>
+                <input type="text" value={building.name} onChange={(e) => onUpdate({ name: e.target.value })} placeholder="e.g., Building A" className="w-full px-3 py-2.5 border border-light-border dark:border-harken-gray rounded-xl text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white" />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-600 dark:text-slate-400 mb-1.5">Address Override</label>
-                <input type="text" value={building.addressOverride || ''} onChange={(e) => onUpdate({ addressOverride: e.target.value })} placeholder="If different from parcel" className="w-full px-3 py-2.5 border border-gray-200 dark:border-slate-600 rounded-xl text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent bg-white dark:bg-slate-700 dark:text-white" />
+                <label className="block text-xs font-medium text-harken-gray dark:text-slate-400 mb-1.5">Address Override</label>
+                <input type="text" value={building.addressOverride || ''} onChange={(e) => onUpdate({ addressOverride: e.target.value })} placeholder="If different from parcel" className="w-full px-3 py-2.5 border border-light-border dark:border-harken-gray rounded-xl text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white" />
               </div>
               <YearSelector id={`year-built-${building.id}`} label="Year Built" value={building.yearBuilt} onChange={(v) => onUpdate({ yearBuilt: v })} required />
               <YearSelector id={`year-remodeled-${building.id}`} label="Year Remodeled" value={building.yearRemodeled ? parseInt(building.yearRemodeled) : null} onChange={(v) => onUpdate({ yearRemodeled: v?.toString() || '' })} includeNA />
@@ -705,7 +705,7 @@ function BuildingCard({
             <div className="space-y-4">
               {/* M&S Construction Class - ButtonSelector with icons */}
               <div className="space-y-2">
-                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300">
+                <label className="block text-sm font-medium text-harken-gray dark:text-slate-200">
                   M&S Construction Class
                 </label>
                 <div className="flex flex-wrap gap-2">
@@ -719,7 +719,7 @@ function BuildingCard({
                         onClick={() => onUpdate({ constructionClass: cls.value })}
                         className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 text-sm font-medium transition-all ${isSelected
                           ? 'border-accent-cyan bg-accent-cyan/10 text-accent-cyan'
-                          : 'border-gray-200 bg-white text-gray-600 hover:border-gray-300'
+                          : 'border-light-border bg-surface-1 text-harken-gray hover:border-light-border'
                           }`}
                       >
                         <IconComponent className="w-4 h-4" />
@@ -742,48 +742,48 @@ function BuildingCard({
               </div>
 
               {/* Building Heights */}
-              <div className="bg-gray-50 rounded-xl p-4 space-y-4">
+              <div className="bg-harken-gray-light rounded-xl p-4 space-y-4">
                 <div className="flex items-center justify-between">
-                  <h5 className="text-sm font-semibold text-gray-800 flex items-center gap-2">
+                  <h5 className="text-sm font-semibold text-harken-dark flex items-center gap-2">
                     <Ruler className="w-4 h-4 text-accent-cyan" />
                     Building Heights
                   </h5>
-                  <span className="text-xs text-gray-500 dark:text-slate-400">Clear height is interior usable height</span>
+                  <span className="text-xs text-harken-gray-med dark:text-slate-400">Clear height is interior usable height</span>
                 </div>
 
                 <div className="grid grid-cols-3 gap-3">
                   <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1.5">Eave Height</label>
+                    <label className="block text-xs font-medium text-harken-gray mb-1.5">Eave Height</label>
                     <div className="flex items-center gap-2">
-                      <input type="text" inputMode="decimal" value={building.eaveHeight ?? ''} onChange={(e) => { const val = e.target.value.replace(/[^0-9.]/g, ''); onUpdate({ eaveHeight: val ? Number(val) : null }); }} placeholder="24" className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan dark:focus:ring-cyan-400 focus:border-transparent bg-white dark:bg-slate-700 dark:text-white" />
-                      <span className="text-xs font-medium text-gray-500 dark:text-slate-400">ft</span>
+                      <input type="text" inputMode="decimal" value={building.eaveHeight ?? ''} onChange={(e) => { const val = e.target.value.replace(/[^0-9.]/g, ''); onUpdate({ eaveHeight: val ? Number(val) : null }); }} placeholder="24" className="w-full px-3 py-2 border border-light-border dark:border-harken-gray rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan dark:focus:ring-cyan-400 focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white" />
+                      <span className="text-xs font-medium text-harken-gray-med dark:text-slate-400">ft</span>
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1.5">Clear Height *</label>
+                    <label className="block text-xs font-medium text-harken-gray mb-1.5">Clear Height *</label>
                     <div className="flex items-center gap-2">
-                      <input type="text" inputMode="decimal" value={building.clearHeight ?? ''} onChange={(e) => { const val = e.target.value.replace(/[^0-9.]/g, ''); onUpdate({ clearHeight: val ? Number(val) : null }); }} placeholder="22" className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan dark:focus:ring-cyan-400 focus:border-transparent bg-white dark:bg-slate-700 dark:text-white" />
-                      <span className="text-xs font-medium text-gray-500 dark:text-slate-400">ft</span>
+                      <input type="text" inputMode="decimal" value={building.clearHeight ?? ''} onChange={(e) => { const val = e.target.value.replace(/[^0-9.]/g, ''); onUpdate({ clearHeight: val ? Number(val) : null }); }} placeholder="22" className="w-full px-3 py-2 border border-light-border dark:border-harken-gray rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan dark:focus:ring-cyan-400 focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white" />
+                      <span className="text-xs font-medium text-harken-gray-med dark:text-slate-400">ft</span>
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-gray-600 mb-1.5">Ridge Height</label>
+                    <label className="block text-xs font-medium text-harken-gray mb-1.5">Ridge Height</label>
                     <div className="flex items-center gap-2">
-                      <input type="text" inputMode="decimal" value={building.ridgeHeight ?? ''} onChange={(e) => { const val = e.target.value.replace(/[^0-9.]/g, ''); onUpdate({ ridgeHeight: val ? Number(val) : null }); }} placeholder="32" className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan dark:focus:ring-cyan-400 focus:border-transparent bg-white dark:bg-slate-700 dark:text-white" />
-                      <span className="text-xs font-medium text-gray-500 dark:text-slate-400">ft</span>
+                      <input type="text" inputMode="decimal" value={building.ridgeHeight ?? ''} onChange={(e) => { const val = e.target.value.replace(/[^0-9.]/g, ''); onUpdate({ ridgeHeight: val ? Number(val) : null }); }} placeholder="32" className="w-full px-3 py-2 border border-light-border dark:border-harken-gray rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan dark:focus:ring-cyan-400 focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white" />
+                      <span className="text-xs font-medium text-harken-gray-med dark:text-slate-400">ft</span>
                     </div>
                   </div>
                 </div>
 
                 {/* Building Configuration */}
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-2">Building Configuration</label>
+                  <label className="block text-xs font-medium text-harken-gray mb-2">Building Configuration</label>
                   <div className="flex flex-wrap gap-2">
                     {BUILDING_CONFIGS.map((config) => {
                       const Icon = config.Icon;
                       const isSelected = building.buildingConfiguration === config.value;
                       return (
-                        <button key={config.value} type="button" onClick={() => onUpdate({ buildingConfiguration: config.value as ImprovementBuilding['buildingConfiguration'] })} className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 text-sm font-medium transition-all ${isSelected ? 'border-accent-cyan bg-accent-cyan/10 text-accent-cyan' : 'border-gray-200 bg-white text-gray-700 hover:border-accent-cyan/50'}`}>
+                        <button key={config.value} type="button" onClick={() => onUpdate({ buildingConfiguration: config.value as ImprovementBuilding['buildingConfiguration'] })} className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 text-sm font-medium transition-all ${isSelected ? 'border-accent-cyan bg-accent-cyan/10 text-accent-cyan' : 'border-light-border bg-surface-1 text-harken-gray hover:border-accent-cyan/50'}`}>
                           <Icon className="w-4 h-4" />
                           {config.label}
                         </button>
@@ -794,21 +794,21 @@ function BuildingCard({
 
                 {/* Variable Height Zones */}
                 {building.buildingConfiguration === 'variable' && (
-                  <div className="bg-white border border-gray-200 rounded-xl p-4">
+                  <div className="bg-surface-1 border border-light-border rounded-xl p-4">
                     <div className="flex items-center justify-between mb-3">
                       <div>
-                        <div className="text-sm font-semibold text-gray-800 dark:text-white">Height Zones</div>
-                        <div className="text-xs text-gray-500 mt-0.5">Use zones when clear height differs across bays/areas.</div>
+                        <div className="text-sm font-semibold text-harken-dark dark:text-white">Height Zones</div>
+                        <div className="text-xs text-harken-gray-med mt-0.5">Use zones when clear height differs across bays/areas.</div>
                       </div>
-                      <button type="button" onClick={() => { const zones = building.heightZones || []; const newZone = { id: `zone-${Date.now()}`, label: `Zone ${zones.length + 1}`, clearHeight: null, eaveHeight: null, ridgeHeight: null }; onUpdate({ heightZones: [...zones, newZone] }); }} className="px-3 py-1.5 rounded-lg bg-white border border-gray-200 text-xs font-semibold text-gray-700 hover:bg-gray-50 transition-all">
+                      <button type="button" onClick={() => { const zones = building.heightZones || []; const newZone = { id: `zone-${Date.now()}`, label: `Zone ${zones.length + 1}`, clearHeight: null, eaveHeight: null, ridgeHeight: null }; onUpdate({ heightZones: [...zones, newZone] }); }} className="px-3 py-1.5 rounded-lg bg-surface-1 border border-light-border text-xs font-semibold text-harken-gray hover:bg-harken-gray-light transition-all">
                         + Add Zone
                       </button>
                     </div>
 
-                    <div className="overflow-x-auto border border-gray-200 rounded-lg">
+                    <div className="overflow-x-auto border border-light-border rounded-lg">
                       <table className="min-w-full text-sm">
-                        <thead className="bg-gray-50 dark:bg-slate-700 border-b border-gray-200 dark:border-slate-600">
-                          <tr className="text-left text-xs font-semibold text-gray-600 dark:text-slate-400">
+                        <thead className="bg-harken-gray-light dark:bg-elevation-1 border-b border-light-border dark:border-harken-gray">
+                          <tr className="text-left text-xs font-semibold text-harken-gray dark:text-slate-400">
                             <th className="px-4 py-3 w-48">Zone</th>
                             <th className="px-4 py-3 w-32">Clear (ft) *</th>
                             <th className="px-4 py-3 w-32">Eave (ft)</th>
@@ -816,17 +816,17 @@ function BuildingCard({
                             <th className="px-4 py-3 w-16"></th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-gray-100">
+                        <tbody className="divide-y divide-harken-gray-light">
                           {(building.heightZones || []).length === 0 ? (
-                            <tr><td colSpan={5} className="px-4 py-6 text-center text-gray-400 text-sm">No zones added. Click &quot;+ Add Zone&quot; to create height zones.</td></tr>
+                            <tr><td colSpan={5} className="px-4 py-6 text-center text-harken-gray-med text-sm">No zones added. Click &quot;+ Add Zone&quot; to create height zones.</td></tr>
                           ) : (
                             (building.heightZones || []).map((zone, zoneIndex) => (
-                              <tr key={zone.id} onClick={() => setActiveZoneIndex(zoneIndex)} className={`cursor-pointer transition-all ${activeZoneIndex === zoneIndex ? 'bg-accent-cyan/5 ring-2 ring-inset ring-accent-cyan' : 'hover:bg-gray-50'}`}>
-                                <td className="px-4 py-2"><input type="text" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent" placeholder="e.g., Warehouse" value={zone.label} onFocus={() => setActiveZoneIndex(zoneIndex)} onChange={(e) => { const zones = [...(building.heightZones || [])]; zones[zoneIndex] = { ...zones[zoneIndex], label: e.target.value }; onUpdate({ heightZones: zones }); }} /></td>
-                                <td className="px-4 py-2"><input type="text" inputMode="decimal" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent" placeholder="22" value={zone.clearHeight ?? ''} onFocus={() => setActiveZoneIndex(zoneIndex)} onChange={(e) => { const zones = [...(building.heightZones || [])]; const val = e.target.value.replace(/[^0-9.]/g, ''); zones[zoneIndex] = { ...zones[zoneIndex], clearHeight: val ? parseFloat(val) : null }; onUpdate({ heightZones: zones }); }} /></td>
-                                <td className="px-4 py-2"><input type="text" inputMode="decimal" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent" placeholder="24" value={zone.eaveHeight ?? ''} onFocus={() => setActiveZoneIndex(zoneIndex)} onChange={(e) => { const zones = [...(building.heightZones || [])]; const val = e.target.value.replace(/[^0-9.]/g, ''); zones[zoneIndex] = { ...zones[zoneIndex], eaveHeight: val ? parseFloat(val) : null }; onUpdate({ heightZones: zones }); }} /></td>
-                                <td className="px-4 py-2"><input type="text" inputMode="decimal" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent" placeholder="32" value={zone.ridgeHeight ?? ''} onFocus={() => setActiveZoneIndex(zoneIndex)} onChange={(e) => { const zones = [...(building.heightZones || [])]; const val = e.target.value.replace(/[^0-9.]/g, ''); zones[zoneIndex] = { ...zones[zoneIndex], ridgeHeight: val ? parseFloat(val) : null }; onUpdate({ heightZones: zones }); }} /></td>
-                                <td className="px-4 py-2 text-right"><button type="button" onClick={(e) => { e.stopPropagation(); const zones = (building.heightZones || []).filter((_, i) => i !== zoneIndex); onUpdate({ heightZones: zones }); if (activeZoneIndex === zoneIndex) setActiveZoneIndex(null); }} className="p-2 rounded-lg border border-gray-200 bg-white text-gray-500 hover:bg-red-50 hover:border-red-200 hover:text-red-600 transition-all"><Trash2 className="w-4 h-4" /></button></td>
+                              <tr key={zone.id} onClick={() => setActiveZoneIndex(zoneIndex)} className={`cursor-pointer transition-all ${activeZoneIndex === zoneIndex ? 'bg-accent-cyan/5 ring-2 ring-inset ring-accent-cyan' : 'hover:bg-harken-gray-light'}`}>
+                                <td className="px-4 py-2"><input type="text" className="w-full px-3 py-2 border border-light-border rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent" placeholder="e.g., Warehouse" value={zone.label} onFocus={() => setActiveZoneIndex(zoneIndex)} onChange={(e) => { const zones = [...(building.heightZones || [])]; zones[zoneIndex] = { ...zones[zoneIndex], label: e.target.value }; onUpdate({ heightZones: zones }); }} /></td>
+                                <td className="px-4 py-2"><input type="text" inputMode="decimal" className="w-full px-3 py-2 border border-light-border rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent" placeholder="22" value={zone.clearHeight ?? ''} onFocus={() => setActiveZoneIndex(zoneIndex)} onChange={(e) => { const zones = [...(building.heightZones || [])]; const val = e.target.value.replace(/[^0-9.]/g, ''); zones[zoneIndex] = { ...zones[zoneIndex], clearHeight: val ? parseFloat(val) : null }; onUpdate({ heightZones: zones }); }} /></td>
+                                <td className="px-4 py-2"><input type="text" inputMode="decimal" className="w-full px-3 py-2 border border-light-border rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent" placeholder="24" value={zone.eaveHeight ?? ''} onFocus={() => setActiveZoneIndex(zoneIndex)} onChange={(e) => { const zones = [...(building.heightZones || [])]; const val = e.target.value.replace(/[^0-9.]/g, ''); zones[zoneIndex] = { ...zones[zoneIndex], eaveHeight: val ? parseFloat(val) : null }; onUpdate({ heightZones: zones }); }} /></td>
+                                <td className="px-4 py-2"><input type="text" inputMode="decimal" className="w-full px-3 py-2 border border-light-border rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent" placeholder="32" value={zone.ridgeHeight ?? ''} onFocus={() => setActiveZoneIndex(zoneIndex)} onChange={(e) => { const zones = [...(building.heightZones || [])]; const val = e.target.value.replace(/[^0-9.]/g, ''); zones[zoneIndex] = { ...zones[zoneIndex], ridgeHeight: val ? parseFloat(val) : null }; onUpdate({ heightZones: zones }); }} /></td>
+                                <td className="px-4 py-2 text-right"><button type="button" onClick={(e) => { e.stopPropagation(); const zones = (building.heightZones || []).filter((_, i) => i !== zoneIndex); onUpdate({ heightZones: zones }); if (activeZoneIndex === zoneIndex) setActiveZoneIndex(null); }} className="p-2 rounded-lg border border-light-border bg-surface-1 text-harken-gray-med hover:bg-accent-red-light hover:border-harken-error/30 hover:text-harken-error transition-all"><Trash2 className="w-4 h-4" /></button></td>
                               </tr>
                             ))
                           )}
@@ -839,14 +839,14 @@ function BuildingCard({
                 {/* Quick Presets */}
                 <div>
                   <div className="flex items-center justify-between mb-2">
-                    <label className="block text-xs font-medium text-gray-600 dark:text-slate-400">Quick Presets</label>
+                    <label className="block text-xs font-medium text-harken-gray dark:text-slate-400">Quick Presets</label>
                     {building.buildingConfiguration === 'variable' && (
-                      <span className="text-xs text-gray-500 dark:text-slate-400">{activeZoneIndex !== null ? `Applying to: ${(building.heightZones || [])[activeZoneIndex]?.label || 'Zone'}` : 'Click a zone row to select it first'}</span>
+                      <span className="text-xs text-harken-gray-med dark:text-slate-400">{activeZoneIndex !== null ? `Applying to: ${(building.heightZones || [])[activeZoneIndex]?.label || 'Zone'}` : 'Click a zone row to select it first'}</span>
                     )}
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {HEIGHT_PRESETS.map((preset) => (
-                      <button key={preset.label} type="button" onClick={() => applyHeightPreset(preset)} disabled={building.buildingConfiguration === 'variable' && activeZoneIndex === null} className={`px-3 py-1.5 rounded-full bg-white border text-xs font-medium transition-all ${building.buildingConfiguration === 'variable' && activeZoneIndex === null ? 'border-gray-200 text-gray-400 cursor-not-allowed' : 'border-gray-200 text-gray-600 hover:bg-accent-cyan/5 hover:border-accent-cyan/30 hover:text-accent-cyan'}`}>
+                      <button key={preset.label} type="button" onClick={() => applyHeightPreset(preset)} disabled={building.buildingConfiguration === 'variable' && activeZoneIndex === null} className={`px-3 py-1.5 rounded-full bg-surface-1 border text-xs font-medium transition-all ${building.buildingConfiguration === 'variable' && activeZoneIndex === null ? 'border-light-border text-harken-gray-med cursor-not-allowed' : 'border-light-border text-harken-gray hover:bg-accent-cyan/5 hover:border-accent-cyan/30 hover:text-accent-cyan'}`}>
                         {preset.label} ({preset.eave}&apos;/{preset.clear}&apos;/{preset.ridge}&apos;)
                       </button>
                     ))}
@@ -897,7 +897,7 @@ function BuildingCard({
           {isCostSegEnabled && (
             <CollapsibleSection
               title="Cost Segregation Details"
-              icon={<CostSegIcon className="w-4 h-4 text-emerald-600" />}
+              icon={<CostSegIcon className="w-4 h-4 text-accent-teal-mint" />}
               isExpanded={expandedSections.has('costseg')}
               onToggle={() => toggleSection('costseg')}
             >
@@ -936,16 +936,16 @@ interface CollapsibleSectionProps {
 
 function CollapsibleSection({ title, icon, isExpanded, onToggle, children, action }: CollapsibleSectionProps) {
   return (
-    <div className="border border-gray-200 dark:border-slate-700 rounded-xl overflow-hidden">
-      <button type="button" onClick={onToggle} className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 dark:bg-slate-800 hover:bg-gray-100 dark:hover:bg-slate-700 transition-colors">
+    <div className="border border-light-border dark:border-dark-border rounded-xl overflow-hidden">
+      <button type="button" onClick={onToggle} className="w-full flex items-center justify-between px-4 py-3 bg-harken-gray-light dark:bg-elevation-1 hover:bg-harken-gray-light dark:hover:bg-elevation-3 transition-colors">
         <div className="flex items-center gap-2">
-          {isExpanded ? <ChevronDown className="w-4 h-4 text-gray-400" /> : <ChevronRight className="w-4 h-4 text-gray-400" />}
+          {isExpanded ? <ChevronDown className="w-4 h-4 text-harken-gray-med" /> : <ChevronRight className="w-4 h-4 text-harken-gray-med" />}
           <span className="text-harken-dark dark:text-white">{icon}</span>
-          <span className="text-sm font-semibold text-gray-800 dark:text-white">{title}</span>
+          <span className="text-sm font-semibold text-harken-dark dark:text-white">{title}</span>
         </div>
         {action && <div onClick={(e) => e.stopPropagation()}>{action}</div>}
       </button>
-      {isExpanded && <div className="p-4 bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-slate-700">{children}</div>}
+      {isExpanded && <div className="p-4 bg-surface-1 dark:bg-elevation-1 border-t border-light-border dark:border-dark-border">{children}</div>}
     </div>
   );
 }
@@ -977,16 +977,16 @@ function AgeEconomicLifeSection({ building, actualAge, remainingLife, depreciati
   const conditionOptions = [
     { value: 'excellent', label: 'Excellent', adjustment: -0.3, color: 'text-green-600' },
     { value: 'good', label: 'Good', adjustment: -0.15, color: 'text-green-600' },
-    { value: 'average', label: 'Average', adjustment: 0, color: 'text-gray-500' },
-    { value: 'fair', label: 'Fair', adjustment: 0.15, color: 'text-amber-600' },
-    { value: 'poor', label: 'Poor', adjustment: 0.3, color: 'text-red-600' },
+    { value: 'average', label: 'Average', adjustment: 0, color: 'text-harken-gray-med' },
+    { value: 'fair', label: 'Fair', adjustment: 0.15, color: 'text-accent-amber-gold' },
+    { value: 'poor', label: 'Poor', adjustment: 0.3, color: 'text-harken-error' },
   ];
 
   const remodelOptions = [
     { value: 'major', label: 'Major', adjustment: -0.4, color: 'text-green-600' },
     { value: 'moderate', label: 'Moderate', adjustment: -0.2, color: 'text-green-600' },
     { value: 'minor', label: 'Minor', adjustment: -0.1, color: 'text-green-600' },
-    { value: 'none', label: 'None', adjustment: 0, color: 'text-gray-500' },
+    { value: 'none', label: 'None', adjustment: 0, color: 'text-harken-gray-med' },
   ];
 
   const calcEconomicLife = qualityOptions.find(q => q.value === calcQuality)?.life ?? null;
@@ -1012,34 +1012,34 @@ function AgeEconomicLifeSection({ building, actualAge, remainingLife, depreciati
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-4 gap-3">
-        <div><label className="block text-xs font-medium text-gray-600 mb-1.5">Actual Age</label><div className="flex items-center gap-2"><input type="text" value={actualAge !== null ? actualAge : ''} readOnly placeholder="Auto" className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg text-sm bg-gray-50 dark:bg-slate-700 text-gray-700 dark:text-slate-300" /><span className="text-xs text-gray-500 dark:text-slate-400">yrs</span></div></div>
-        <div><label className="block text-xs font-medium text-gray-600 mb-1.5">Effective Age</label><div className="flex items-center gap-2"><input type="number" value={building.effectiveAge ?? ''} onChange={(e) => onUpdate({ effectiveAge: e.target.value ? Number(e.target.value) : undefined })} placeholder={actualAge !== null ? `Suggest: ${actualAge}` : 'Enter'} min="0" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent" /><span className="text-xs text-gray-500 dark:text-slate-400">yrs</span></div></div>
-        <div><label className="block text-xs font-medium text-gray-600 mb-1.5">Total Economic Life</label><div className="flex items-center gap-2"><input type="number" value={building.totalEconomicLife ?? 50} onChange={(e) => onUpdate({ totalEconomicLife: e.target.value ? Number(e.target.value) : 50 })} min="1" className="w-full px-3 py-2 border border-gray-200 rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent" /><span className="text-xs text-gray-500 dark:text-slate-400">yrs</span></div></div>
-        <div><label className="block text-xs font-medium text-gray-600 mb-1.5">Remaining Life</label><div className="flex items-center gap-2"><input type="text" value={remainingLife !== null ? remainingLife : ''} readOnly placeholder="Auto" className="w-full px-3 py-2 border border-gray-200 dark:border-slate-600 rounded-lg text-sm bg-gray-50 dark:bg-slate-700 text-gray-700 dark:text-slate-300" /><span className="text-xs text-gray-500 dark:text-slate-400">yrs</span></div></div>
+        <div><label className="block text-xs font-medium text-harken-gray mb-1.5">Actual Age</label><div className="flex items-center gap-2"><input type="text" value={actualAge !== null ? actualAge : ''} readOnly placeholder="Auto" className="w-full px-3 py-2 border border-light-border dark:border-harken-gray rounded-lg text-sm bg-harken-gray-light dark:bg-elevation-1 text-harken-gray dark:text-slate-200" /><span className="text-xs text-harken-gray-med dark:text-slate-400">yrs</span></div></div>
+        <div><label className="block text-xs font-medium text-harken-gray mb-1.5">Effective Age</label><div className="flex items-center gap-2"><input type="number" value={building.effectiveAge ?? ''} onChange={(e) => onUpdate({ effectiveAge: e.target.value ? Number(e.target.value) : undefined })} placeholder={actualAge !== null ? `Suggest: ${actualAge}` : 'Enter'} min="0" className="w-full px-3 py-2 border border-light-border rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent" /><span className="text-xs text-harken-gray-med dark:text-slate-400">yrs</span></div></div>
+        <div><label className="block text-xs font-medium text-harken-gray mb-1.5">Total Economic Life</label><div className="flex items-center gap-2"><input type="number" value={building.totalEconomicLife ?? 50} onChange={(e) => onUpdate({ totalEconomicLife: e.target.value ? Number(e.target.value) : 50 })} min="1" className="w-full px-3 py-2 border border-light-border rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent" /><span className="text-xs text-harken-gray-med dark:text-slate-400">yrs</span></div></div>
+        <div><label className="block text-xs font-medium text-harken-gray mb-1.5">Remaining Life</label><div className="flex items-center gap-2"><input type="text" value={remainingLife !== null ? remainingLife : ''} readOnly placeholder="Auto" className="w-full px-3 py-2 border border-light-border dark:border-harken-gray rounded-lg text-sm bg-harken-gray-light dark:bg-elevation-1 text-harken-gray dark:text-slate-200" /><span className="text-xs text-harken-gray-med dark:text-slate-400">yrs</span></div></div>
       </div>
 
-      <div className="p-4 bg-white dark:bg-slate-800 border-2 border-accent-cyan/20 rounded-xl">
+      <div className="p-4 bg-surface-1 dark:bg-elevation-1 border-2 border-accent-cyan/20 rounded-xl">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-accent-cyan/10 flex items-center justify-center"><Calculator className="w-5 h-5 text-accent-cyan" /></div>
-            <div><p className="font-semibold text-gray-800 dark:text-white">Physical Depreciation (Age-Life Method)</p><p className="text-xs text-gray-500 dark:text-slate-400">Effective Age / Total Economic Life</p></div>
+            <div><p className="font-semibold text-harken-dark dark:text-white">Physical Depreciation (Age-Life Method)</p><p className="text-xs text-harken-gray-med dark:text-slate-400">Effective Age / Total Economic Life</p></div>
           </div>
           <span className="text-2xl font-bold text-accent-cyan">{depreciation !== null ? `${depreciation}%` : '--'}</span>
         </div>
       </div>
 
-      <button type="button" onClick={() => setShowCalculator(!showCalculator)} className="w-full flex items-center justify-between p-3 bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 transition-colors">
-        <div className="flex items-center gap-2"><Calculator className="w-5 h-5 text-accent-cyan" /><span className="font-medium text-gray-700 dark:text-slate-300">Need help? Use the Effective Age Calculator</span></div>
-        <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${showCalculator ? 'rotate-180' : ''}`} />
+      <button type="button" onClick={() => setShowCalculator(!showCalculator)} className="w-full flex items-center justify-between p-3 bg-harken-gray-light hover:bg-harken-gray-light rounded-xl border border-light-border transition-colors">
+        <div className="flex items-center gap-2"><Calculator className="w-5 h-5 text-accent-cyan" /><span className="font-medium text-harken-gray dark:text-slate-200">Need help? Use the Effective Age Calculator</span></div>
+        <ChevronDown className={`w-5 h-5 text-harken-gray-med transition-transform ${showCalculator ? 'rotate-180' : ''}`} />
       </button>
 
       {showCalculator && (
-        <div className="mt-3 p-5 bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl shadow-sm space-y-5">
-          <div><label className="block text-sm font-semibold text-gray-800 mb-2">1. Construction Quality - Sets Economic Life</label><div className="grid grid-cols-3 gap-3">{qualityOptions.map((opt) => (<button key={opt.value} type="button" onClick={() => setCalcQuality(opt.value)} className={`p-3 rounded-lg border-2 text-center transition-all ${calcQuality === opt.value ? 'border-accent-cyan bg-accent-cyan/10' : 'border-gray-200 hover:border-gray-300'}`}><span className="block font-medium text-gray-800 dark:text-white">{opt.label}</span><span className="block text-xs text-gray-500 dark:text-slate-400">{opt.desc}</span></button>))}</div></div>
-          <div><label className="block text-sm font-semibold text-gray-800 mb-2">2. Current Condition - Adjusts Effective Age</label><div className="grid grid-cols-5 gap-2">{conditionOptions.map((opt) => (<button key={opt.value} type="button" onClick={() => setCalcCondition(opt.value)} className={`p-2 rounded-lg border-2 text-center transition-all ${calcCondition === opt.value ? 'border-accent-cyan bg-accent-cyan/10' : 'border-gray-200 hover:border-gray-300'}`}><span className="block font-medium text-sm text-gray-800 dark:text-white">{opt.label}</span><span className={`block text-xs ${opt.color}`}>{formatAdjustment(opt.adjustment)}</span></button>))}</div></div>
-          <div><label className="block text-sm font-semibold text-gray-800 mb-2">3. Remodeling Impact - Further Adjustment</label><div className="grid grid-cols-4 gap-2">{remodelOptions.map((opt) => (<button key={opt.value} type="button" onClick={() => setCalcRemodel(opt.value)} className={`p-2 rounded-lg border-2 text-center transition-all ${calcRemodel === opt.value ? 'border-accent-cyan bg-accent-cyan/10' : 'border-gray-200 hover:border-gray-300'}`}><span className="block font-medium text-sm text-gray-800 dark:text-white">{opt.label}</span><span className={`block text-xs ${opt.color}`}>{formatAdjustment(opt.adjustment)}</span></button>))}</div></div>
+        <div className="mt-3 p-5 bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl shadow-sm space-y-5">
+          <div><label className="block text-sm font-semibold text-harken-dark mb-2">1. Construction Quality - Sets Economic Life</label><div className="grid grid-cols-3 gap-3">{qualityOptions.map((opt) => (<button key={opt.value} type="button" onClick={() => setCalcQuality(opt.value)} className={`p-3 rounded-lg border-2 text-center transition-all ${calcQuality === opt.value ? 'border-accent-cyan bg-accent-cyan/10' : 'border-light-border hover:border-light-border'}`}><span className="block font-medium text-harken-dark dark:text-white">{opt.label}</span><span className="block text-xs text-harken-gray-med dark:text-slate-400">{opt.desc}</span></button>))}</div></div>
+          <div><label className="block text-sm font-semibold text-harken-dark mb-2">2. Current Condition - Adjusts Effective Age</label><div className="grid grid-cols-5 gap-2">{conditionOptions.map((opt) => (<button key={opt.value} type="button" onClick={() => setCalcCondition(opt.value)} className={`p-2 rounded-lg border-2 text-center transition-all ${calcCondition === opt.value ? 'border-accent-cyan bg-accent-cyan/10' : 'border-light-border hover:border-light-border'}`}><span className="block font-medium text-sm text-harken-dark dark:text-white">{opt.label}</span><span className={`block text-xs ${opt.color}`}>{formatAdjustment(opt.adjustment)}</span></button>))}</div></div>
+          <div><label className="block text-sm font-semibold text-harken-dark mb-2">3. Remodeling Impact - Further Adjustment</label><div className="grid grid-cols-4 gap-2">{remodelOptions.map((opt) => (<button key={opt.value} type="button" onClick={() => setCalcRemodel(opt.value)} className={`p-2 rounded-lg border-2 text-center transition-all ${calcRemodel === opt.value ? 'border-accent-cyan bg-accent-cyan/10' : 'border-light-border hover:border-light-border'}`}><span className="block font-medium text-sm text-harken-dark dark:text-white">{opt.label}</span><span className={`block text-xs ${opt.color}`}>{formatAdjustment(opt.adjustment)}</span></button>))}</div></div>
           <div className="bg-accent-cyan/5 rounded-xl p-4 border border-accent-cyan/20">
-            <div className="grid grid-cols-3 gap-4 text-center"><div><p className="text-xs text-gray-500 uppercase mb-1">Economic Life</p><p className="text-xl font-bold text-gray-800 dark:text-white">{calcEconomicLife !== null ? calcEconomicLife : '--'}</p><p className="text-xs text-gray-400">years</p></div><div><p className="text-xs text-gray-500 uppercase mb-1">Effective Age</p><p className="text-xl font-bold text-accent-cyan">{calcEffectiveAge !== null ? calcEffectiveAge : '--'}</p><p className="text-xs text-gray-400">years</p></div><div><p className="text-xs text-gray-500 uppercase mb-1">Depreciation</p><p className="text-xl font-bold text-gray-800 dark:text-white">{calcDepreciation !== null ? `${calcDepreciation}%` : '--%'}</p></div></div>
+            <div className="grid grid-cols-3 gap-4 text-center"><div><p className="text-xs text-harken-gray-med uppercase mb-1">Economic Life</p><p className="text-xl font-bold text-harken-dark dark:text-white">{calcEconomicLife !== null ? calcEconomicLife : '--'}</p><p className="text-xs text-harken-gray-med">years</p></div><div><p className="text-xs text-harken-gray-med uppercase mb-1">Effective Age</p><p className="text-xl font-bold text-accent-cyan">{calcEffectiveAge !== null ? calcEffectiveAge : '--'}</p><p className="text-xs text-harken-gray-med">years</p></div><div><p className="text-xs text-harken-gray-med uppercase mb-1">Depreciation</p><p className="text-xl font-bold text-harken-dark dark:text-white">{calcDepreciation !== null ? `${calcDepreciation}%` : '--%'}</p></div></div>
             <button type="button" onClick={applyCalculatedValues} disabled={calcEconomicLife === null || calcEffectiveAge === null} className="mt-4 w-full py-2.5 bg-accent-cyan text-white rounded-lg font-medium hover:bg-accent-cyan-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Apply These Values</button>
           </div>
         </div>
@@ -1078,12 +1078,12 @@ function AreaCard({ area, canRemove, effectivePropertyType, onUpdate, onRemove }
   const hasMeasuredSF = area.hasMeasuredSF !== false;
 
   return (
-    <div className="bg-gray-50 dark:bg-slate-800 border-2 border-transparent hover:border-slate-200 dark:hover:border-slate-700 transition-all rounded-xl p-4 space-y-4">
+    <div className="bg-harken-gray-light dark:bg-elevation-1 border-2 border-transparent hover:border-slate-200 dark:hover:border-harken-dark transition-all rounded-xl p-4 space-y-4">
       <div className="flex items-center gap-3 flex-wrap">
-        <select value={area.type} onChange={(e) => onUpdate({ type: e.target.value as ImprovementArea['type'] })} className="flex-1 min-w-[140px] px-3 py-2 bg-white dark:bg-slate-700 dark:text-white border border-gray-200 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent">
+        <select value={area.type} onChange={(e) => onUpdate({ type: e.target.value as ImprovementArea['type'] })} className="flex-1 min-w-[140px] px-3 py-2 bg-surface-1 dark:bg-elevation-1 dark:text-white border border-light-border dark:border-harken-gray rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent">
           {filteredAreaTypes.map((t: AreaTypeConfig) => (<option key={t.id} value={t.id}>{t.label}{t.isPrimary ? ' ★' : ''}</option>))}
         </select>
-        {area.type === 'other' && (<input type="text" value={area.customType || ''} onChange={(e) => onUpdate({ customType: e.target.value })} placeholder="Specify type" className="w-28 px-3 py-2 bg-white dark:bg-slate-700 dark:text-white border border-gray-200 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent" />)}
+        {area.type === 'other' && (<input type="text" value={area.customType || ''} onChange={(e) => onUpdate({ customType: e.target.value })} placeholder="Specify type" className="w-28 px-3 py-2 bg-surface-1 dark:bg-elevation-1 dark:text-white border border-light-border dark:border-harken-gray rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent" />)}
 
         {/* SF Measurement Toggle - Styled pill buttons per design system */}
         <div className="flex items-center gap-1">
@@ -1092,7 +1092,7 @@ function AreaCard({ area, canRemove, effectivePropertyType, onUpdate, onRemove }
             onClick={() => onUpdate({ hasMeasuredSF: true })}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 text-xs font-medium transition-all ${hasMeasuredSF
               ? 'border-accent-cyan bg-accent-cyan/10 text-accent-cyan'
-              : 'border-gray-200 bg-white text-gray-500 hover:border-gray-300'
+              : 'border-light-border bg-surface-1 text-harken-gray-med hover:border-light-border'
               }`}
           >
             <Ruler className="w-3.5 h-3.5" />
@@ -1102,8 +1102,8 @@ function AreaCard({ area, canRemove, effectivePropertyType, onUpdate, onRemove }
             type="button"
             onClick={() => onUpdate({ hasMeasuredSF: false, squareFootage: null })}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 text-xs font-medium transition-all ${!hasMeasuredSF
-              ? 'border-amber-500 bg-amber-50 text-amber-700'
-              : 'border-gray-200 bg-white text-gray-500 hover:border-gray-300'
+              ? 'border-accent-amber-gold bg-accent-amber-gold-light text-accent-amber-gold'
+              : 'border-light-border bg-surface-1 text-harken-gray-med hover:border-light-border'
               }`}
           >
             <EyeOff className="w-3.5 h-3.5" />
@@ -1114,22 +1114,22 @@ function AreaCard({ area, canRemove, effectivePropertyType, onUpdate, onRemove }
         {/* SF Input - Only shown when measured */}
         {hasMeasuredSF ? (
           <div className="flex items-center gap-1.5">
-            <input type="number" value={area.squareFootage || ''} onChange={(e) => onUpdate({ squareFootage: e.target.value ? Number(e.target.value) : null })} placeholder="SF" className="w-24 px-3 py-2 bg-white dark:bg-slate-700 dark:text-white border border-gray-200 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent" />
-            <select value={area.sfType} onChange={(e) => onUpdate({ sfType: e.target.value as ImprovementArea['sfType'] })} className="w-20 px-2 py-2 bg-white dark:bg-slate-700 dark:text-white border border-gray-200 dark:border-slate-600 rounded-lg text-xs font-medium focus:ring-2 focus:ring-accent-cyan focus:border-transparent">
+            <input type="number" value={area.squareFootage || ''} onChange={(e) => onUpdate({ squareFootage: e.target.value ? Number(e.target.value) : null })} placeholder="SF" className="w-24 px-3 py-2 bg-surface-1 dark:bg-elevation-1 dark:text-white border border-light-border dark:border-harken-gray rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent" />
+            <select value={area.sfType} onChange={(e) => onUpdate({ sfType: e.target.value as ImprovementArea['sfType'] })} className="w-20 px-2 py-2 bg-surface-1 dark:bg-elevation-1 dark:text-white border border-light-border dark:border-harken-gray rounded-lg text-xs font-medium focus:ring-2 focus:ring-accent-cyan focus:border-transparent">
               {SF_TYPES.map((t) => (<option key={t.value} value={t.value}>{t.value}</option>))}
             </select>
           </div>
         ) : (
-          <span className="px-3 py-1.5 bg-amber-100 text-amber-700 text-xs font-medium rounded-lg">
+          <span className="px-3 py-1.5 bg-accent-amber-gold-light text-accent-amber-gold text-xs font-medium rounded-lg">
             Features Only
           </span>
         )}
 
-        <select value={area.condition || ''} onChange={(e) => onUpdate({ condition: e.target.value })} className="w-28 px-3 py-2 bg-white dark:bg-slate-700 dark:text-white border border-gray-200 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent">
+        <select value={area.condition || ''} onChange={(e) => onUpdate({ condition: e.target.value })} className="w-28 px-3 py-2 bg-surface-1 dark:bg-elevation-1 dark:text-white border border-light-border dark:border-harken-gray rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent">
           <option value="">Condition</option>
           {CONDITIONS.map((c) => (<option key={c} value={c}>{c}</option>))}
         </select>
-        {canRemove && (<button onClick={onRemove} className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"><Trash2 className="w-4 h-4" /></button>)}
+        {canRemove && (<button onClick={onRemove} className="p-2 text-harken-gray-med hover:text-harken-error hover:bg-accent-red-light rounded-lg transition-colors"><Trash2 className="w-4 h-4" /></button>)}
       </div>
 
       <button type="button" onClick={() => setShowInterior(!showInterior)} className="flex items-center gap-2 text-xs font-medium text-accent-cyan hover:underline">

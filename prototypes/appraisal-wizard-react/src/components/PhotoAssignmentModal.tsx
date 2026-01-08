@@ -19,15 +19,15 @@ interface PhotoAssignmentModalProps {
 }
 
 function getConfidenceColor(confidence: number): string {
-  if (confidence >= 80) return 'text-green-600';
-  if (confidence >= 50) return 'text-amber-600';
-  return 'text-red-600';
+  if (confidence >= 80) return 'text-accent-teal-mint';
+  if (confidence >= 50) return 'text-accent-amber-gold';
+  return 'text-harken-error';
 }
 
 function getConfidenceBg(confidence: number): string {
-  if (confidence >= 80) return 'bg-green-100';
-  if (confidence >= 50) return 'bg-amber-100';
-  return 'bg-red-100';
+  if (confidence >= 80) return 'bg-accent-teal-mint-light';
+  if (confidence >= 50) return 'bg-accent-amber-gold-light';
+  return 'bg-accent-red-light';
 }
 
 export default function PhotoAssignmentModal({
@@ -120,25 +120,25 @@ export default function PhotoAssignmentModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-      <div className="bg-white rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden">
+      <div className="bg-surface-1 rounded-2xl shadow-2xl max-w-4xl w-full max-h-[90vh] flex flex-col overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 dark:border-slate-700">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-light-border dark:border-dark-border">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 rounded-full bg-harken-blue/20 flex items-center justify-center">
               <Sparkles className="w-5 h-5 text-harken-blue" />
             </div>
             <div>
               <h2 className="text-xl font-bold text-harken-dark dark:text-white">Review Photo Assignments</h2>
-              <p className="text-sm text-gray-500 dark:text-slate-400">
+              <p className="text-sm text-harken-gray-med dark:text-slate-400">
                 {stagingPhotos.length} photos analyzed - review and confirm assignments
               </p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-harken-gray-light rounded-lg transition-colors"
           >
-            <X className="w-5 h-5 text-gray-500 dark:text-slate-400" />
+            <X className="w-5 h-5 text-harken-gray-med dark:text-slate-400" />
           </button>
         </div>
 
@@ -146,7 +146,7 @@ export default function PhotoAssignmentModal({
         <div className="flex-1 overflow-y-auto p-6">
           {/* Quick Actions */}
           <div className="flex items-center justify-between mb-4">
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-harken-gray">
               AI has suggested assignments based on photo content analysis
             </p>
             <button
@@ -160,13 +160,13 @@ export default function PhotoAssignmentModal({
 
           {/* Conflict Warning */}
           {hasConflicts && (
-            <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-red-500 flex-shrink-0 mt-0.5" />
+            <div className="mb-4 p-4 bg-accent-red-light border border-light-border rounded-lg flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-harken-error flex-shrink-0 mt-0.5" />
               <div>
-                <p className="text-sm font-medium text-red-800">
+                <p className="text-sm font-medium text-harken-error">
                   Slot conflicts detected
                 </p>
-                <p className="text-sm text-red-600">
+                <p className="text-sm text-harken-error">
                   Multiple photos are assigned to the same slot. Please resolve before applying.
                 </p>
               </div>
@@ -185,16 +185,16 @@ export default function PhotoAssignmentModal({
                   key={photo.id}
                   className={`
                     flex items-center gap-4 p-3 rounded-lg border transition-colors
-                    ${isConflict ? 'border-red-300 bg-red-50' : 'border-gray-200 bg-gray-50'}
+                    ${isConflict ? 'border-harken-error bg-accent-red-light' : 'border-light-border bg-harken-gray-light'}
                   `}
                 >
                   {/* Drag Handle */}
-                  <div className="text-gray-400">
+                  <div className="text-harken-gray-med">
                     <GripVertical className="w-5 h-5" />
                   </div>
 
                   {/* Thumbnail */}
-                  <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-200 flex-shrink-0">
+                  <div className="w-16 h-16 rounded-lg overflow-hidden bg-harken-gray-med-lt flex-shrink-0">
                     <img
                       src={photo.preview}
                       alt={photo.filename}
@@ -204,10 +204,10 @@ export default function PhotoAssignmentModal({
 
                   {/* Photo Info */}
                   <div className="flex-1 min-w-0">
-                    <p className="font-medium text-gray-800 truncate">{photo.filename}</p>
+                    <p className="font-medium text-harken-dark truncate">{photo.filename}</p>
                     {topSuggestion && (
                       <div className="flex items-center gap-2 mt-1">
-                        <span className="text-xs text-gray-500 dark:text-slate-400">AI Suggestion:</span>
+                        <span className="text-xs text-harken-gray-med dark:text-slate-400">AI Suggestion:</span>
                         <span className={`text-xs font-medium ${getConfidenceColor(topSuggestion.confidence)}`}>
                           {topSuggestion.slotLabel}
                         </span>
@@ -226,7 +226,7 @@ export default function PhotoAssignmentModal({
                       className={`
                         w-full px-3 py-2 pr-10 border rounded-lg text-sm appearance-none cursor-pointer
                         focus:ring-2 focus:ring-harken-blue focus:border-transparent
-                        ${isConflict ? 'border-red-300 bg-white' : 'border-gray-300 bg-white'}
+                        ${isConflict ? 'border-harken-error bg-surface-1' : 'border-light-border bg-surface-1'}
                       `}
                     >
                       <option value="">Select slot...</option>
@@ -247,12 +247,12 @@ export default function PhotoAssignmentModal({
                         </optgroup>
                       ))}
                     </select>
-                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
+                    <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-harken-gray-med pointer-events-none" />
                   </div>
 
                   {/* Match Indicator */}
                   {currentSlot && topSuggestion && currentSlot === topSuggestion.slotId && (
-                    <div className="flex items-center gap-1 text-xs text-green-600">
+                    <div className="flex items-center gap-1 text-xs text-accent-teal-mint">
                       <Check className="w-4 h-4" />
                       <span>Matched</span>
                     </div>
@@ -261,10 +261,10 @@ export default function PhotoAssignmentModal({
                   {/* Remove Button */}
                   <button
                     onClick={() => handleRemoveAssignment(photo.id)}
-                    className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
+                    className="p-2 hover:bg-harken-gray-med-lt rounded-lg transition-colors"
                     title="Skip this photo"
                   >
-                    <X className="w-4 h-4 text-gray-500 dark:text-slate-400" />
+                    <X className="w-4 h-4 text-harken-gray-med dark:text-slate-400" />
                   </button>
                 </div>
               );
@@ -272,21 +272,21 @@ export default function PhotoAssignmentModal({
           </div>
 
           {stagingPhotos.length === 0 && (
-            <div className="text-center py-12 text-gray-500 dark:text-slate-400">
+            <div className="text-center py-12 text-harken-gray-med dark:text-slate-400">
               <p>No photos waiting for assignment</p>
             </div>
           )}
         </div>
 
         {/* Footer */}
-        <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-700">
-          <div className="text-sm text-gray-500 dark:text-slate-400">
+        <div className="flex items-center justify-between px-6 py-4 border-t border-light-border dark:border-dark-border bg-harken-gray-light dark:bg-elevation-1">
+          <div className="text-sm text-harken-gray-med dark:text-slate-400">
             {Object.keys(assignments).length} of {stagingPhotos.length} photos will be assigned
           </div>
           <div className="flex items-center gap-3">
             <button
               onClick={onClose}
-              className="px-4 py-2 text-gray-600 hover:bg-gray-200 rounded-lg transition-colors"
+              className="px-4 py-2 text-harken-gray hover:bg-harken-gray-med-lt rounded-lg transition-colors"
             >
               Cancel
             </button>
@@ -296,7 +296,7 @@ export default function PhotoAssignmentModal({
               className={`
                 flex items-center gap-2 px-6 py-2 rounded-lg font-medium transition-colors
                 ${hasConflicts || Object.keys(assignments).length === 0
-                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  ? 'bg-harken-gray-med-lt text-harken-gray-med cursor-not-allowed'
                   : 'bg-harken-blue hover:bg-harken-blue/90 text-white'
                 }
               `}

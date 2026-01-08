@@ -346,11 +346,11 @@ export function ValueReconciliation() {
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <div className="bg-white/10 rounded-lg p-3 backdrop-blur-sm">
+          <div className="bg-surface-1/10 rounded-lg p-3 backdrop-blur-sm">
             <div className="text-xs opacity-75 mb-1">Property Type</div>
             <div className="font-semibold">{state.propertyType || 'Commercial'}</div>
           </div>
-          <div className="bg-white/10 rounded-lg p-3 backdrop-blur-sm">
+          <div className="bg-surface-1/10 rounded-lg p-3 backdrop-blur-sm">
             <div className="text-xs opacity-75 mb-1">Valuation Scenarios</div>
             <div className="font-semibold">{scenarios.length} scenario{scenarios.length !== 1 ? 's' : ''}</div>
           </div>
@@ -358,19 +358,19 @@ export function ValueReconciliation() {
       </div>
 
       {/* Value Conclusions Summary Table */}
-      <div className="bg-white dark:bg-slate-800 p-6 rounded-lg border border-gray-200 dark:border-slate-700 shadow-sm">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 pb-3 border-b border-gray-200 dark:border-slate-600">
+      <div className="bg-surface-1 dark:bg-elevation-1 p-6 rounded-lg border border-light-border dark:border-dark-border shadow-sm">
+        <h3 className="text-lg font-semibold text-harken-dark dark:text-white mb-4 pb-3 border-b border-light-border dark:border-harken-gray">
           Value Conclusions Summary
         </h3>
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="bg-gradient-to-r from-gray-50 to-gray-100 dark:from-slate-700 dark:to-slate-600">
-                <th className="text-left px-4 py-3 font-semibold text-gray-700 dark:text-slate-300 border-b-2 border-gray-200 dark:border-slate-600"></th>
+              <tr className="bg-gradient-to-r from-harken-gray-light to-harken-gray-light dark:from-harken-dark dark:to-harken-gray">
+                <th className="text-left px-4 py-3 font-semibold text-harken-gray dark:text-slate-200 border-b-2 border-light-border dark:border-harken-gray"></th>
                 {scenarios.map((s, idx) => (
                   <th
                     key={s.id}
-                    className="text-center px-4 py-3 font-semibold text-gray-900 dark:text-white border-b-2 border-gray-200 dark:border-slate-600"
+                    className="text-center px-4 py-3 font-semibold text-harken-dark dark:text-white border-b-2 border-light-border dark:border-harken-gray"
                   >
                     <span className={idx === 0 ? 'text-blue-600' : idx === 1 ? 'text-green-600' : 'text-purple-600'}>
                       {s.name}
@@ -381,10 +381,10 @@ export function ValueReconciliation() {
             </thead>
             <tbody>
               {/* Effective Date Row */}
-              <tr className="border-b border-gray-100 dark:border-slate-700 bg-gray-50 dark:bg-slate-700/50">
-                <td className="px-4 py-3 font-medium text-gray-700 dark:text-slate-300">Effective Date</td>
+              <tr className="border-b border-harken-gray-light dark:border-dark-border bg-harken-gray-light dark:bg-elevation-1/50">
+                <td className="px-4 py-3 font-medium text-harken-gray dark:text-slate-200">Effective Date</td>
                 {scenarios.map((s) => (
-                  <td key={s.id} className="px-4 py-3 text-center text-sm text-gray-600 dark:text-slate-400">
+                  <td key={s.id} className="px-4 py-3 text-center text-sm text-harken-gray dark:text-slate-400">
                     {s.effectiveDate || 'TBD'}
                   </td>
                 ))}
@@ -392,20 +392,20 @@ export function ValueReconciliation() {
 
               {/* Approach Rows - Only show approaches that are used */}
               {Array.from(new Set(scenarios.flatMap(s => s.approaches))).map((approach) => {
-                const colors = APPROACH_COLORS[approach] || { text: 'text-gray-600' };
+                const colors = APPROACH_COLORS[approach] || { text: 'text-harken-gray' };
                 const isIncomeApproach = approach === 'Income Approach';
 
                 return (
                   <React.Fragment key={approach}>
-                    <tr className="border-b border-gray-100 dark:border-slate-700 hover:bg-gray-50 dark:hover:bg-slate-700">
-                      <td className="px-4 py-3 font-medium text-gray-700 dark:text-slate-300">
+                    <tr className="border-b border-harken-gray-light dark:border-dark-border hover:bg-harken-gray-light dark:hover:bg-elevation-3">
+                      <td className="px-4 py-3 font-medium text-harken-gray dark:text-slate-200">
                         <div className="flex items-center gap-2">
                           <span className={colors.text}>{getApproachIcon(approach)}</span>
                           <span>{approach}</span>
                           {isIncomeApproach && (
                             <button
                               onClick={() => setIncomeExpanded(!incomeExpanded)}
-                              className="ml-2 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-slate-300 hover:bg-gray-100 dark:hover:bg-slate-600 rounded transition-colors"
+                              className="ml-2 p-1 text-harken-gray-med hover:text-harken-gray dark:hover:text-harken-gray-light hover:bg-harken-gray-light dark:hover:bg-harken-gray rounded transition-colors"
                               title={incomeExpanded ? 'Hide sub-methods' : 'Show Direct Cap & DCF breakdown'}
                             >
                               {incomeExpanded ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
@@ -423,13 +423,13 @@ export function ValueReconciliation() {
                           <td key={s.id} className="px-4 py-3 text-center">
                             {isApplicable ? (
                               <div>
-                                <span className="font-semibold text-gray-900 dark:text-white">{formatCurrency(value)}</span>
+                                <span className="font-semibold text-harken-dark dark:text-white">{formatCurrency(value)}</span>
                                 {weight > 0 && (
-                                  <span className="ml-2 text-xs text-gray-500">({weight}%)</span>
+                                  <span className="ml-2 text-xs text-harken-gray-med">({weight}%)</span>
                                 )}
                               </div>
                             ) : (
-                              <span className="text-gray-400 italic">N/A</span>
+                              <span className="text-harken-gray-med italic">N/A</span>
                             )}
                           </td>
                         );
@@ -439,34 +439,34 @@ export function ValueReconciliation() {
                     {/* Income Sub-Methods - Render immediately after Income Approach row */}
                     {isIncomeApproach && incomeExpanded && (
                       <>
-                        <tr className="border-b border-gray-100 dark:border-slate-700 bg-green-50/50 dark:bg-green-900/20">
-                          <td className="px-4 py-2 pl-10 text-sm text-gray-600 dark:text-slate-400">
+                        <tr className="border-b border-harken-gray-light dark:border-dark-border bg-green-50/50 dark:bg-green-900/20">
+                          <td className="px-4 py-2 pl-10 text-sm text-harken-gray dark:text-slate-400">
                             <span className="flex items-center gap-2">
                               <span className="w-2 h-2 bg-green-400 rounded-full"></span>
                               Direct Capitalization
                             </span>
                           </td>
                           {scenarios.map((s) => (
-                            <td key={s.id} className="px-4 py-2 text-center text-sm text-gray-600 dark:text-slate-400">
+                            <td key={s.id} className="px-4 py-2 text-center text-sm text-harken-gray dark:text-slate-400">
                               {s.approaches.includes('Income Approach')
                                 ? formatCurrency(incomeSubMethods.directCapValue)
-                                : <span className="text-gray-400">—</span>
+                                : <span className="text-harken-gray-med">—</span>
                               }
                             </td>
                           ))}
                         </tr>
-                        <tr className="border-b border-gray-100 dark:border-slate-700 bg-green-50/50 dark:bg-green-900/20">
-                          <td className="px-4 py-2 pl-10 text-sm text-gray-600 dark:text-slate-400">
+                        <tr className="border-b border-harken-gray-light dark:border-dark-border bg-green-50/50 dark:bg-green-900/20">
+                          <td className="px-4 py-2 pl-10 text-sm text-harken-gray dark:text-slate-400">
                             <span className="flex items-center gap-2">
                               <span className="w-2 h-2 bg-green-400 rounded-full"></span>
                               DCF / Yield Capitalization
                             </span>
                           </td>
                           {scenarios.map((s) => (
-                            <td key={s.id} className="px-4 py-2 text-center text-sm text-gray-600 dark:text-slate-400">
+                            <td key={s.id} className="px-4 py-2 text-center text-sm text-harken-gray dark:text-slate-400">
                               {s.approaches.includes('Income Approach')
                                 ? formatCurrency(incomeSubMethods.dcfValue)
-                                : <span className="text-gray-400">—</span>
+                                : <span className="text-harken-gray-med">—</span>
                               }
                             </td>
                           ))}
@@ -478,8 +478,8 @@ export function ValueReconciliation() {
               })}
 
               {/* Concluded Value Row */}
-              <tr className="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/30 dark:to-teal-900/30">
-                <td className="px-4 py-4 font-bold text-gray-900 dark:text-white uppercase text-sm">Concluded Value</td>
+              <tr className="bg-gradient-to-r from-accent-teal-mint-light to-accent-teal-mint-light dark:from-accent-teal-mint/10 dark:to-accent-teal-mint/10">
+                <td className="px-4 py-4 font-bold text-harken-dark dark:text-white uppercase text-sm">Concluded Value</td>
                 {scenarios.map((s, idx) => (
                   <td key={s.id} className="px-4 py-4 text-center">
                     <span
@@ -497,9 +497,9 @@ export function ValueReconciliation() {
       </div>
 
       {/* Reconciliation by Scenario */}
-      <div className="bg-white dark:bg-slate-800 p-6 rounded-lg border border-gray-200 dark:border-slate-700 shadow-sm">
-        <div className="flex items-center justify-between mb-4 pb-3 border-b border-gray-200 dark:border-slate-600">
-          <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
+      <div className="bg-surface-1 dark:bg-elevation-1 p-6 rounded-lg border border-light-border dark:border-dark-border shadow-sm">
+        <div className="flex items-center justify-between mb-4 pb-3 border-b border-light-border dark:border-harken-gray">
+          <h3 className="text-lg font-semibold text-harken-dark dark:text-white">
             Reconciliation by Scenario
           </h3>
           <button
@@ -529,7 +529,7 @@ export function ValueReconciliation() {
                 </button>
                 <button
                   onClick={() => setShowAiExplanation(false)}
-                  className="px-3 py-1.5 text-sm font-medium text-gray-600 dark:text-slate-300 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-md hover:bg-gray-50 dark:hover:bg-slate-600"
+                  className="px-3 py-1.5 text-sm font-medium text-harken-gray dark:text-slate-200 bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-harken-gray rounded-md hover:bg-harken-gray-light dark:hover:bg-harken-gray"
                 >
                   Dismiss
                 </button>
@@ -539,12 +539,12 @@ export function ValueReconciliation() {
               {Object.entries(aiWeightResult.weights).map(([approach, weight]) => {
                 const explanation = aiWeightResult.explanations[approach];
                 return (
-                  <div key={approach} className="bg-white dark:bg-slate-700 p-3 rounded-lg border border-blue-100 dark:border-slate-600">
+                  <div key={approach} className="bg-surface-1 dark:bg-elevation-1 p-3 rounded-lg border border-blue-100 dark:border-harken-gray">
                     <div className="flex items-center justify-between mb-2">
-                      <span className="font-medium text-gray-900 dark:text-white">{approach}</span>
+                      <span className="font-medium text-harken-dark dark:text-white">{approach}</span>
                       <span className="text-lg font-bold text-blue-600">{weight}%</span>
                     </div>
-                    <div className="text-xs text-gray-600 dark:text-slate-400 space-y-1">
+                    <div className="text-xs text-harken-gray dark:text-slate-400 space-y-1">
                       <div>Base Weight: {explanation?.baseWeight}% • Quality Score: {explanation?.qualityScore}/100</div>
                       <div>Scenario: {explanation?.scenarioReason}</div>
                       <div className="inline-block px-2 py-0.5 bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-blue-200 rounded-full capitalize">
@@ -559,14 +559,14 @@ export function ValueReconciliation() {
         )}
 
         {/* Scenario Tabs */}
-        <div className="flex gap-2 mb-6 border-b border-gray-200 dark:border-slate-600">
+        <div className="flex gap-2 mb-6 border-b border-light-border dark:border-harken-gray">
           {scenarios.map((s, idx) => (
             <button
               key={s.id}
               onClick={() => setActiveScenarioIndex(idx)}
               className={`px-4 py-2 text-sm font-medium -mb-px transition-colors ${idx === activeScenarioIndex
                   ? 'text-blue-600 dark:text-cyan-400 border-b-2 border-blue-600 dark:border-cyan-400 font-semibold'
-                  : 'text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-slate-300'
+                  : 'text-harken-gray-med dark:text-slate-400 hover:text-harken-gray dark:hover:text-harken-gray-light'
                 }`}
             >
               {s.name}
@@ -584,19 +584,19 @@ export function ValueReconciliation() {
             >
               {activeScenario.approaches.map((approach) => {
                 const value = getApproachValue(activeScenario.id, approach);
-                const colors = APPROACH_COLORS[approach] || { bg: 'bg-gray-50', text: 'text-gray-600', border: 'border-gray-200' };
+                const colors = APPROACH_COLORS[approach] || { bg: 'bg-harken-gray-light', text: 'text-harken-gray', border: 'border-light-border' };
 
                 return (
                   <div
                     key={approach}
-                    className={`rounded-xl p-5 text-center border-2 ${colors.bg} dark:bg-slate-800 ${colors.border} dark:border-slate-600`}
+                    className={`rounded-xl p-5 text-center border-2 ${colors.bg} dark:bg-elevation-1 ${colors.border} dark:border-harken-gray`}
                   >
-                    <div className="text-xs text-gray-500 dark:text-slate-400 uppercase mb-2 font-medium">{approach}</div>
+                    <div className="text-xs text-harken-gray-med dark:text-slate-400 uppercase mb-2 font-medium">{approach}</div>
                     <div className={`text-xl font-bold mb-3 ${colors.text}`}>
                       {formatCurrency(value)}
                     </div>
                     <div>
-                      <label className="block text-xs font-medium text-gray-700 dark:text-slate-300 mb-1">Weight (%)</label>
+                      <label className="block text-xs font-medium text-harken-gray dark:text-slate-200 mb-1">Weight (%)</label>
                       <input
                         type="number"
                         min="0"
@@ -604,7 +604,7 @@ export function ValueReconciliation() {
                         value={activeReconciliation.weights[approach] || ''}
                         onChange={(e) => handleWeightChange(activeScenario.id, approach, e.target.value)}
                         placeholder="0"
-                        className="w-full bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-lg px-3 py-2 text-center text-sm text-gray-900 dark:text-white focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-[#0da1c7]"
+                        className="w-full bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-harken-gray rounded-lg px-3 py-2 text-center text-sm text-harken-dark dark:text-white focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-[#0da1c7]"
                       />
                     </div>
                   </div>
@@ -616,18 +616,18 @@ export function ValueReconciliation() {
             <div className={`flex items-center justify-between p-4 rounded-lg ${weightTotal === 100
                 ? 'bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700'
                 : weightTotal > 0
-                  ? 'bg-amber-50 dark:bg-amber-900/30 border border-amber-200 dark:border-amber-700'
-                  : 'bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600'
+                  ? 'bg-accent-amber-gold-light dark:bg-amber-900/30 border border-accent-amber-gold dark:border-amber-700'
+                  : 'bg-harken-gray-light dark:bg-elevation-1 border border-light-border dark:border-harken-gray'
               }`}>
               <div className="flex items-center gap-2">
                 {weightTotal === 100 ? (
                   <CheckCircle2 className="w-5 h-5 text-green-600 dark:text-green-400" />
                 ) : weightTotal > 0 ? (
-                  <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                  <AlertTriangle className="w-5 h-5 text-accent-amber-gold dark:text-amber-400" />
                 ) : (
-                  <Info className="w-5 h-5 text-gray-400" />
+                  <Info className="w-5 h-5 text-harken-gray-med" />
                 )}
-                <span className={`font-medium ${weightTotal === 100 ? 'text-green-800 dark:text-green-200' : weightTotal > 0 ? 'text-amber-800 dark:text-amber-200' : 'text-gray-600 dark:text-slate-400'
+                <span className={`font-medium ${weightTotal === 100 ? 'text-green-800 dark:text-green-200' : weightTotal > 0 ? 'text-accent-amber-gold dark:text-amber-200' : 'text-harken-gray dark:text-slate-400'
                   }`}>
                   Weight Total: {weightTotal}%
                   {weightTotal !== 100 && weightTotal > 0 && ' — Weights should sum to 100%'}
@@ -636,10 +636,10 @@ export function ValueReconciliation() {
               </div>
               {weightTotal > 0 && (
                 <div className="text-right">
-                  <div className="text-sm font-semibold text-gray-900 dark:text-white">
+                  <div className="text-sm font-semibold text-harken-dark dark:text-white">
                     Concluded Value: {formatCurrency(concludedValue)}
                   </div>
-                  <div className="text-xs text-gray-500 dark:text-slate-400">
+                  <div className="text-xs text-harken-gray-med dark:text-slate-400">
                     {getValueBreakdown(activeScenario.id)}
                   </div>
                 </div>
@@ -663,8 +663,8 @@ export function ValueReconciliation() {
       </div>
 
       {/* Exposure & Marketing Time - Enhanced with ranges and tooltips */}
-      <div className="bg-white dark:bg-slate-800 p-6 rounded-lg border border-gray-200 dark:border-slate-700 shadow-sm">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 pb-3 border-b border-gray-200 dark:border-slate-600">
+      <div className="bg-surface-1 dark:bg-elevation-1 p-6 rounded-lg border border-light-border dark:border-dark-border shadow-sm">
+        <h3 className="text-lg font-semibold text-harken-dark dark:text-white mb-4 pb-3 border-b border-light-border dark:border-harken-gray">
           Exposure & Marketing Time
         </h3>
 
@@ -683,11 +683,11 @@ export function ValueReconciliation() {
         <div className="grid grid-cols-2 gap-6 mb-4">
           {/* Exposure Period Range */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1 flex items-center gap-2">
-              Estimated Exposure Period (Months) <span className="text-red-500">*</span>
+            <label className="block text-sm font-medium text-harken-gray dark:text-slate-200 mb-1 flex items-center gap-2">
+              Estimated Exposure Period (Months) <span className="text-harken-error">*</span>
               <div className="group relative">
-                <Info className="w-4 h-4 text-gray-400 cursor-help" />
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                <Info className="w-4 h-4 text-harken-gray-med cursor-help" />
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-harken-dark text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
                   Retrospective: Time on market prior to effective date
                 </div>
               </div>
@@ -698,27 +698,27 @@ export function ValueReconciliation() {
                 placeholder={typicalRanges.exposureMin.toString()}
                 value={exposureMin}
                 onChange={(e) => setExposureMin(e.target.value)}
-                className="flex-1 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-[#0da1c7]"
+                className="flex-1 border border-light-border dark:border-harken-gray bg-surface-1 dark:bg-elevation-1 text-harken-dark dark:text-white rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-[#0da1c7]"
               />
-              <span className="text-gray-500 dark:text-slate-400">to</span>
+              <span className="text-harken-gray-med dark:text-slate-400">to</span>
               <input
                 type="number"
                 placeholder={typicalRanges.exposureMax.toString()}
                 value={exposureMax}
                 onChange={(e) => setExposureMax(e.target.value)}
-                className="flex-1 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-[#0da1c7]"
+                className="flex-1 border border-light-border dark:border-harken-gray bg-surface-1 dark:bg-elevation-1 text-harken-dark dark:text-white rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-[#0da1c7]"
               />
-              <span className="text-gray-500 dark:text-slate-400 text-sm">months</span>
+              <span className="text-harken-gray-med dark:text-slate-400 text-sm">months</span>
             </div>
           </div>
 
           {/* Marketing Time Range */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1 flex items-center gap-2">
+            <label className="block text-sm font-medium text-harken-gray dark:text-slate-200 mb-1 flex items-center gap-2">
               Estimated Marketing Time (Months)
               <div className="group relative">
-                <Info className="w-4 h-4 text-gray-400 cursor-help" />
-                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-gray-900 text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
+                <Info className="w-4 h-4 text-harken-gray-med cursor-help" />
+                <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-harken-dark text-white text-xs rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10">
                   Prospective: Time to sell from effective date forward
                 </div>
               </div>
@@ -729,17 +729,17 @@ export function ValueReconciliation() {
                 placeholder={typicalRanges.marketingMin.toString()}
                 value={marketingMin}
                 onChange={(e) => setMarketingMin(e.target.value)}
-                className="flex-1 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-[#0da1c7]"
+                className="flex-1 border border-light-border dark:border-harken-gray bg-surface-1 dark:bg-elevation-1 text-harken-dark dark:text-white rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-[#0da1c7]"
               />
-              <span className="text-gray-500 dark:text-slate-400">to</span>
+              <span className="text-harken-gray-med dark:text-slate-400">to</span>
               <input
                 type="number"
                 placeholder={typicalRanges.marketingMax.toString()}
                 value={marketingMax}
                 onChange={(e) => setMarketingMax(e.target.value)}
-                className="flex-1 border border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-[#0da1c7]"
+                className="flex-1 border border-light-border dark:border-harken-gray bg-surface-1 dark:bg-elevation-1 text-harken-dark dark:text-white rounded-lg px-3 py-2 focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-[#0da1c7]"
               />
-              <span className="text-gray-500 dark:text-slate-400 text-sm">months</span>
+              <span className="text-harken-gray-med dark:text-slate-400 text-sm">months</span>
             </div>
           </div>
         </div>
@@ -758,11 +758,11 @@ export function ValueReconciliation() {
       </div>
 
       {/* Final Certifications */}
-      <div className="bg-white dark:bg-slate-800 p-6 rounded-lg border border-gray-200 dark:border-slate-700 shadow-sm">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4 pb-3 border-b border-gray-200 dark:border-slate-600">
+      <div className="bg-surface-1 dark:bg-elevation-1 p-6 rounded-lg border border-light-border dark:border-dark-border shadow-sm">
+        <h3 className="text-lg font-semibold text-harken-dark dark:text-white mb-4 pb-3 border-b border-light-border dark:border-harken-gray">
           Final Certifications
         </h3>
-        <p className="text-sm text-gray-500 dark:text-slate-400 mb-4">
+        <p className="text-sm text-harken-gray-med dark:text-slate-400 mb-4">
           Click each certification to confirm your compliance with USPAP requirements.
         </p>
         <div className="space-y-3">
@@ -774,12 +774,12 @@ export function ValueReconciliation() {
                 onClick={() => toggleCertification(cert.id)}
                 className={`w-full text-left p-4 border-2 rounded-lg cursor-pointer transition-all ${isSelected
                     ? 'border-[#0da1c7] dark:border-cyan-400 bg-[#0da1c7]/5 dark:bg-cyan-400/10'
-                    : 'border-gray-200 dark:border-slate-600 hover:border-[#0da1c7]/50 dark:hover:border-cyan-400/50 hover:bg-[#0da1c7]/5 dark:hover:bg-cyan-400/10'
+                    : 'border-light-border dark:border-harken-gray hover:border-[#0da1c7]/50 dark:hover:border-cyan-400/50 hover:bg-[#0da1c7]/5 dark:hover:bg-cyan-400/10'
                   }`}
               >
                 <div className="flex items-start gap-3">
                   <div
-                    className={`w-6 h-6 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-all ${isSelected ? 'bg-[#0da1c7] dark:bg-cyan-400 border-[#0da1c7] dark:border-cyan-400' : 'border-gray-300 dark:border-slate-500'
+                    className={`w-6 h-6 rounded-full border-2 flex-shrink-0 flex items-center justify-center transition-all ${isSelected ? 'bg-[#0da1c7] dark:bg-cyan-400 border-[#0da1c7] dark:border-cyan-400' : 'border-light-border dark:border-harken-gray'
                       }`}
                   >
                     {isSelected && (
@@ -788,7 +788,7 @@ export function ValueReconciliation() {
                       </svg>
                     )}
                   </div>
-                  <span className="text-sm text-gray-700 dark:text-slate-300">{cert.text}</span>
+                  <span className="text-sm text-harken-gray dark:text-slate-200">{cert.text}</span>
                 </div>
               </button>
             );

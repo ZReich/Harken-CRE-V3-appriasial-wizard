@@ -31,22 +31,22 @@ interface PhotoStagingTrayProps {
 // Confidence color coding
 function getConfidenceColor(confidence: number): { bg: string; text: string; border: string; glow: string } {
   if (confidence >= 80) return {
-    bg: 'bg-gradient-to-br from-green-100 to-emerald-100',
-    text: 'text-green-700',
-    border: 'border-green-300',
-    glow: 'shadow-green-200'
+    bg: 'bg-gradient-to-br from-accent-teal-mint-light to-accent-teal-mint-light',
+    text: 'text-accent-teal-mint',
+    border: 'border-accent-teal-mint',
+    glow: 'shadow-accent-teal-mint-light'
   };
   if (confidence >= 50) return {
-    bg: 'bg-gradient-to-br from-amber-100 to-yellow-100',
-    text: 'text-amber-700',
-    border: 'border-amber-300',
-    glow: 'shadow-amber-200'
+    bg: 'bg-gradient-to-br from-accent-amber-gold-light to-accent-amber-gold-light',
+    text: 'text-accent-amber-gold',
+    border: 'border-accent-amber-gold',
+    glow: 'shadow-accent-amber-gold-light'
   };
   return {
-    bg: 'bg-gradient-to-br from-red-100 to-orange-100',
-    text: 'text-red-700',
-    border: 'border-red-300',
-    glow: 'shadow-red-200'
+    bg: 'bg-gradient-to-br from-accent-red-light to-accent-red-light',
+    text: 'text-harken-error',
+    border: 'border-harken-error',
+    glow: 'shadow-accent-red-light'
   };
 }
 
@@ -100,15 +100,15 @@ function StagingPhotoCard({
       onDragStart={handleDragStart}
       onDragEnd={handleDragEnd}
       className={`
-        relative bg-white dark:bg-slate-800 border-2 rounded-xl overflow-hidden
+        relative bg-surface-1 dark:bg-elevation-1 border-2 rounded-xl overflow-hidden
         transition-all duration-200 cursor-grab active:cursor-grabbing
         ${isDragging ? 'opacity-50 scale-95' : 'hover:shadow-lg hover:scale-[1.02]'}
-        ${photo.status === 'error' ? 'border-red-300' : 'border-gray-200 dark:border-slate-700'}
+        ${photo.status === 'error' ? 'border-harken-error' : 'border-light-border dark:border-dark-border'}
         ${confidenceColors ? `shadow-md ${confidenceColors.glow}` : 'shadow-sm'}
       `}
     >
       {/* Thumbnail */}
-      <div className="relative aspect-square bg-gray-100 overflow-hidden">
+      <div className="relative aspect-square bg-harken-gray-light overflow-hidden">
         <img
           src={photo.preview}
           alt={photo.filename}
@@ -136,7 +136,7 @@ function StagingPhotoCard({
         {/* Remove Button */}
         <button
           onClick={onRemove}
-          className="absolute top-1.5 right-1.5 p-1.5 bg-black/40 backdrop-blur-sm hover:bg-red-500 rounded-lg text-white transition-colors"
+          className="absolute top-1.5 right-1.5 p-1.5 bg-black/40 backdrop-blur-sm hover:bg-harken-error rounded-lg text-white transition-colors"
         >
           <X className="w-3.5 h-3.5" />
         </button>
@@ -147,10 +147,10 @@ function StagingPhotoCard({
             absolute bottom-1.5 left-1.5 right-1.5 px-2 py-1 rounded-lg
             backdrop-blur-sm flex items-center justify-between
             ${topSuggestion.confidence >= 80
-              ? 'bg-green-500/90 text-white'
+              ? 'bg-accent-teal-mint/90 text-white'
               : topSuggestion.confidence >= 50
-                ? 'bg-amber-500/90 text-white'
-                : 'bg-gray-800/80 text-white'
+                ? 'bg-accent-amber-gold/90 text-white'
+                : 'bg-harken-dark/80 text-white'
             }
           `}>
             <span className="text-[10px] font-bold truncate">{topSuggestion.slotLabel}</span>
@@ -162,7 +162,7 @@ function StagingPhotoCard({
       {/* Info & Actions */}
       <div className="p-2.5 space-y-2">
         {/* Filename */}
-        <p className="text-xs font-medium text-gray-700 dark:text-slate-300 truncate" title={photo.filename}>
+        <p className="text-xs font-medium text-harken-gray dark:text-slate-200 truncate" title={photo.filename}>
           {photo.filename}
         </p>
 
@@ -176,7 +176,7 @@ function StagingPhotoCard({
 
         {photo.status === 'error' && (
           <>
-            <div className="flex items-center gap-1.5 text-xs text-red-600 mb-2">
+            <div className="flex items-center gap-1.5 text-xs text-harken-error mb-2">
               <AlertCircle className="w-3.5 h-3.5" />
               <span>Classification failed</span>
             </div>
@@ -218,7 +218,7 @@ function StagingPhotoCard({
             )}
 
             {!isSlotAvailable && topSuggestion && (
-              <p className="text-[10px] text-amber-600 text-center bg-amber-50 rounded-lg px-2 py-1">
+              <p className="text-[10px] text-accent-amber-gold text-center bg-accent-amber-gold-light rounded-lg px-2 py-1">
                 Suggested slot in use - select another
               </p>
             )}
@@ -328,8 +328,8 @@ export default function PhotoStagingTray({
     <div className={`
       relative overflow-hidden rounded-2xl
       bg-gradient-to-br from-cyan-50 via-teal-50 to-blue-50
-      dark:from-slate-800 dark:via-slate-800/80 dark:to-slate-900
-      border-2 border-cyan-200/50 dark:border-slate-700
+      dark:from-harken-dark dark:via-slate-800/80 dark:to-slate-900
+      border-2 border-cyan-200/50 dark:border-dark-border
       shadow-xl shadow-cyan-200/20 dark:shadow-black/20
       ${className}
     `}>
@@ -342,7 +342,7 @@ export default function PhotoStagingTray({
       {/* Header */}
       <div
         onClick={() => setIsCollapsed(!isCollapsed)}
-        className="relative flex items-center justify-between px-5 py-4 cursor-pointer hover:bg-white/30 dark:hover:bg-slate-700/30 transition-colors"
+        className="relative flex items-center justify-between px-5 py-4 cursor-pointer hover:bg-surface-1/30 dark:hover:bg-elevation-3/30 transition-colors"
       >
         <div className="flex items-center gap-4">
           {/* Count Badge */}
@@ -400,7 +400,7 @@ export default function PhotoStagingTray({
                   e.stopPropagation();
                   clearStagingPhotos();
                 }}
-                className="flex items-center gap-2 px-4 py-2.5 bg-white/80 dark:bg-slate-700/80 hover:bg-white dark:hover:bg-slate-700 text-gray-600 dark:text-slate-300 text-sm font-medium rounded-xl border border-gray-200 dark:border-slate-600 transition-all hover:shadow-md"
+                className="flex items-center gap-2 px-4 py-2.5 bg-surface-1/80 dark:bg-elevation-1/80 hover:bg-surface-1 dark:hover:bg-elevation-3 text-harken-gray dark:text-slate-200 text-sm font-medium rounded-xl border border-light-border dark:border-harken-gray transition-all hover:shadow-md"
               >
                 <Trash2 className="w-4 h-4" />
                 Clear All
@@ -410,7 +410,7 @@ export default function PhotoStagingTray({
 
           {/* Collapse Toggle */}
           <div className={`
-            p-2 rounded-lg bg-white/50 dark:bg-slate-700/50 transition-transform duration-300
+            p-2 rounded-lg bg-surface-1/50 dark:bg-elevation-1/50 transition-transform duration-300
             ${isCollapsed ? '' : 'rotate-180'}
           `}>
             <ChevronDown className="w-5 h-5 text-cyan-700 dark:text-cyan-400" />
@@ -422,7 +422,7 @@ export default function PhotoStagingTray({
       {!isCollapsed && (
         <div className="relative px-5 pb-5">
           {/* Helper Text - At top for visibility */}
-          <div className="mb-4 p-3 bg-white/60 dark:bg-slate-700/40 backdrop-blur-sm rounded-xl border border-cyan-200/50 dark:border-slate-600/50">
+          <div className="mb-4 p-3 bg-surface-1/60 dark:bg-elevation-1/40 backdrop-blur-sm rounded-xl border border-cyan-200/50 dark:border-harken-gray/50">
             <div className="flex items-start gap-3">
               <div className="flex-shrink-0 w-8 h-8 rounded-lg bg-gradient-to-br from-cyan-400 to-teal-600 flex items-center justify-center">
                 <Sparkles className="w-4 h-4 text-white" />

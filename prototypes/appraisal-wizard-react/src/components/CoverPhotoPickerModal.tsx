@@ -159,7 +159,7 @@ export default function CoverPhotoPickerModal({
       />
 
       {/* Modal */}
-      <div className="relative w-full max-w-4xl max-h-[85vh] bg-white rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-in fade-in zoom-in-95">
+      <div className="relative w-full max-w-4xl max-h-[85vh] bg-surface-1 rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-in fade-in zoom-in-95">
         {/* Header */}
         <div className="flex-shrink-0 px-6 py-4 border-b border-slate-200 bg-gradient-to-r from-harken-blue/10 to-cyan-100/30">
           <div className="flex items-center justify-between">
@@ -210,7 +210,7 @@ export default function CoverPhotoPickerModal({
                   {count > 0 && (
                     <span className={`
                       px-1.5 py-0.5 rounded-full text-xs font-bold
-                      ${isActive ? 'bg-white/20 text-white' : 'bg-slate-200 text-slate-600'}
+                      ${isActive ? 'bg-surface-1/20 text-white' : 'bg-slate-200 text-slate-600'}
                     `}>
                       {count}
                     </span>
@@ -264,7 +264,7 @@ export default function CoverPhotoPickerModal({
 
                     {/* Recommended badge */}
                     {item.isRecommended && (
-                      <div className="absolute top-2 left-2 flex items-center gap-1 px-2 py-1 bg-amber-500 text-white text-xs font-bold rounded-full shadow-lg">
+                      <div className="absolute top-2 left-2 flex items-center gap-1 px-2 py-1 bg-accent-amber-gold text-white text-xs font-bold rounded-full shadow-lg">
                         <Star className="w-3 h-3" />
                         Recommended
                       </div>

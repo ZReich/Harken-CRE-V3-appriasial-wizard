@@ -42,7 +42,7 @@ const MILES_TO_METERS = 1609.344;
 const RING_STYLES = [
   { 
     radiusMiles: 1, 
-    fillColor: '#10b981', // Emerald green
+    fillColor: '#2fc4b2', // Teal Mint
     strokeColor: '#059669',
     fillOpacity: 0.25, 
     strokeWeight: 2.5 
@@ -328,13 +328,13 @@ export function RadiusRingMap({
 
       {/* Map Type Toggle */}
       {showToggle && (
-        <div className="absolute top-3 left-3 flex bg-white rounded-lg shadow-md overflow-hidden border border-slate-200">
+        <div className="absolute top-3 left-3 flex bg-surface-1 rounded-lg shadow-md overflow-hidden border border-slate-200">
           <button
             onClick={() => handleMapTypeChange('satellite')}
             className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors ${
               mapType === 'satellite'
                 ? 'bg-[#0da1c7] text-white'
-                : 'bg-white text-slate-600 hover:bg-slate-50'
+                : 'bg-surface-1 text-slate-600 hover:bg-slate-50'
             }`}
           >
             <Satellite className="w-3.5 h-3.5" />
@@ -345,7 +345,7 @@ export function RadiusRingMap({
             className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors ${
               mapType === 'roadmap'
                 ? 'bg-[#0da1c7] text-white'
-                : 'bg-white text-slate-600 hover:bg-slate-50'
+                : 'bg-surface-1 text-slate-600 hover:bg-slate-50'
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
@@ -356,7 +356,7 @@ export function RadiusRingMap({
 
       {/* Legend */}
       {showLegend && (
-        <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-sm rounded-lg shadow-md px-3 py-2 border border-slate-200">
+        <div className="absolute bottom-3 left-3 bg-surface-1/95 backdrop-blur-sm rounded-lg shadow-md px-3 py-2 border border-slate-200">
           <div className="flex items-center gap-4 text-xs">
             {radii.sort((a, b) => a - b).map((radius) => {
               const style = RING_STYLES.find(s => s.radiusMiles === radius);

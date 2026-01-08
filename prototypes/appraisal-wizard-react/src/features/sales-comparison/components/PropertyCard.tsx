@@ -11,10 +11,10 @@ interface PropertyCardProps {
 export const PropertyCard: React.FC<PropertyCardProps> = ({ property, isSubject, onDelete }) => {
   return (
     <div
-      className="flex flex-col h-full bg-white dark:bg-slate-800"
+      className="flex flex-col h-full bg-surface-1 dark:bg-elevation-1"
     >
       {/* Photo section */}
-      <div className="relative h-16 w-full overflow-hidden group bg-slate-100 dark:bg-slate-700">
+      <div className="relative h-16 w-full overflow-hidden group bg-slate-100 dark:bg-elevation-1">
         <img
           src={property.image}
           alt={property.name}
@@ -34,7 +34,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property, isSubject,
         {!isSubject && onDelete && (
           <button
             onClick={() => onDelete(property.id)}
-            className="absolute top-1.5 left-1.5 p-1 rounded bg-white/80 dark:bg-slate-800/80 hover:bg-red-100 dark:hover:bg-red-900/30 text-slate-400 hover:text-red-500 transition-all opacity-0 group-hover:opacity-100"
+            className="absolute top-1.5 left-1.5 p-1 rounded bg-surface-1/80 dark:bg-elevation-1/80 hover:bg-accent-red-light dark:hover:bg-accent-red-light text-slate-400 hover:text-harken-error transition-all opacity-0 group-hover:opacity-100"
             title="Remove this comparable"
           >
             <Trash2 className="w-3 h-3" />
@@ -44,9 +44,9 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property, isSubject,
 
       {/* Info section - sky-50 background for subject, white for comps */}
       <div
-        className={`p-2 flex-1 flex flex-col gap-0.5 border-r border-slate-200 dark:border-slate-700 ${isSubject ? 'bg-sky-50 dark:bg-[#0f1f3a]' : 'bg-white dark:bg-slate-800'}`}
+        className={`p-2 flex-1 flex flex-col gap-0.5 border-r border-slate-200 dark:border-dark-border ${isSubject ? 'bg-sky-50 dark:bg-[#0f1f3a]' : 'bg-surface-1 dark:bg-elevation-1'}`}
       >
-        <h3 className="font-bold text-slate-800 dark:text-slate-100 text-xs leading-tight line-clamp-1" title={property.name}>
+        <h3 className="font-bold text-slate-800 dark:text-white text-xs leading-tight line-clamp-1" title={property.name}>
           {property.name}
         </h3>
 
@@ -57,7 +57,7 @@ export const PropertyCard: React.FC<PropertyCardProps> = ({ property, isSubject,
 
         {!isSubject && property.distance && (
           <div className="flex items-center gap-1 text-[10px] text-slate-400 mt-auto">
-            <Activity className="w-3 h-3 text-emerald-500" />
+            <Activity className="w-3 h-3 text-accent-teal-mint" />
             <span>{property.distance} away</span>
           </div>
         )}

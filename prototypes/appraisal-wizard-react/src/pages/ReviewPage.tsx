@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import WizardLayout from '../components/WizardLayout';
 import {
   ClipboardCheckIcon,
@@ -38,7 +38,7 @@ import { SaveChangesDialog, PostSaveDialog, TemplateSaveDialog, FinalizeDialog }
 // =================================================================
 
 function triggerCelebration() {
-  const colors = ['#0da1c7', '#10b981', '#f59e0b', '#8b5cf6', '#ef4444'];
+  const colors = ['#0da1c7', '#2fc4b2', '#f2b705', '#8b5cf6', '#c11b49'];
   for (let i = 0; i < 50; i++) {
     setTimeout(() => {
       const confetti = document.createElement('div');
@@ -79,12 +79,12 @@ function SuccessScreen({ onCreateAnother, onViewReport }: { onCreateAnother: () 
     <div className="flex items-center justify-center h-full">
       <div className="text-center animate-fade-in">
         <div className="mb-6">
-          <svg className="w-32 h-32 mx-auto text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-32 h-32 mx-auto text-accent-teal-mint" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
-        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-3">Report Finalized!</h2>
-        <p className="text-lg text-gray-600 dark:text-slate-400 mb-8">Your appraisal report has been successfully generated.</p>
+        <h2 className="text-3xl font-bold text-harken-dark dark:text-white mb-3">Report Finalized!</h2>
+        <p className="text-lg text-harken-gray dark:text-slate-400 mb-8">Your appraisal report has been successfully generated.</p>
         <div className="flex gap-4 justify-center">
           <button
             onClick={onViewReport}
@@ -94,7 +94,7 @@ function SuccessScreen({ onCreateAnother, onViewReport }: { onCreateAnother: () 
           </button>
           <button
             onClick={onCreateAnother}
-            className="px-6 py-3 border-2 border-gray-300 dark:border-slate-600 text-gray-700 dark:text-slate-300 font-semibold rounded-lg hover:bg-gray-50 dark:hover:bg-slate-700"
+            className="px-6 py-3 border-2 border-light-border dark:border-harken-gray text-harken-gray dark:text-slate-200 font-semibold rounded-lg hover:bg-harken-gray-light dark:hover:bg-elevation-3"
           >
             Create Another
           </button>
@@ -120,19 +120,19 @@ function ReadyToPreviewScreen({
       <div className="text-center animate-fade-in max-w-lg">
         {/* Animated Checkmark */}
         <div className="mb-8 relative">
-          <div className="w-32 h-32 mx-auto bg-gradient-to-br from-green-400 to-emerald-600 rounded-full flex items-center justify-center shadow-xl shadow-green-200">
+          <div className="w-32 h-32 mx-auto bg-gradient-to-br from-accent-teal-mint to-accent-teal-mint-hover rounded-full flex items-center justify-center shadow-xl shadow-green-200">
             <CheckCircle className="w-16 h-16 text-white" strokeWidth={2.5} />
           </div>
-          <div className="absolute -top-2 -right-2 w-12 h-12 bg-amber-400 rounded-full flex items-center justify-center shadow-lg animate-bounce">
+          <div className="absolute -top-2 -right-2 w-12 h-12 bg-accent-amber-gold rounded-full flex items-center justify-center shadow-lg animate-bounce">
             <Sparkles className="w-6 h-6 text-white" />
           </div>
         </div>
 
         {/* Message */}
-        <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-3">
+        <h2 className="text-3xl font-bold text-harken-dark dark:text-white mb-3">
           Appraisal Analysis Complete!
         </h2>
-        <p className="text-lg text-gray-600 dark:text-slate-400 mb-8">
+        <p className="text-lg text-harken-gray dark:text-slate-400 mb-8">
           All sections have been reviewed and validated. Your report data is ready for preview and final generation.
         </p>
 
@@ -149,7 +149,7 @@ function ReadyToPreviewScreen({
           </button>
           <button
             onClick={onBack}
-            className="px-6 py-2 text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-slate-300 font-medium transition-colors"
+            className="px-6 py-2 text-harken-gray-med dark:text-slate-400 hover:text-harken-gray dark:hover:text-harken-gray-light font-medium transition-colors"
           >
             ← Back to Completion Checklist
           </button>
@@ -189,13 +189,13 @@ function ReportPreviewMode({
   isDirty?: boolean;
 }) {
   return (
-    <div className="fixed inset-0 bg-gray-100 dark:bg-slate-900 z-50 flex flex-col overflow-hidden">
+    <div className="fixed inset-0 bg-harken-gray-light dark:bg-elevation-1 z-50 flex flex-col overflow-hidden">
       {/* Custom Header */}
-      <header className="h-16 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 flex items-center justify-between px-8 flex-shrink-0 shadow-sm z-10">
+      <header className="h-16 bg-surface-1 dark:bg-elevation-1 border-b border-light-border dark:border-dark-border flex items-center justify-between px-8 flex-shrink-0 shadow-sm z-10">
         {/* Left: Back Button */}
         <button
           onClick={onBack}
-          className="flex items-center gap-2 px-4 py-2 text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg transition-colors font-medium"
+          className="flex items-center gap-2 px-4 py-2 text-harken-gray dark:text-slate-400 hover:text-harken-dark dark:hover:text-white hover:bg-harken-gray-light dark:hover:bg-elevation-3 rounded-lg transition-colors font-medium"
         >
           <ArrowLeft size={18} />
           Back to Review
@@ -204,15 +204,15 @@ function ReportPreviewMode({
         {/* Center: Title with dirty indicator */}
         <div className="text-center">
           <div className="flex items-center justify-center gap-2">
-            <h1 className="text-lg font-bold text-gray-800 dark:text-white">Report Preview</h1>
+            <h1 className="text-lg font-bold text-harken-dark dark:text-white">Report Preview</h1>
             {isDirty && (
-              <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-amber-100 text-amber-700 text-xs rounded-full">
-                <span className="w-1.5 h-1.5 bg-amber-500 rounded-full animate-pulse" />
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 bg-accent-amber-gold-light text-accent-amber-gold text-xs rounded-full">
+                <span className="w-1.5 h-1.5 bg-accent-amber-gold rounded-full animate-pulse" />
                 Unsaved changes
               </span>
             )}
           </div>
-          <p className="text-xs text-gray-500 dark:text-slate-400">Edit and customize before generating</p>
+          <p className="text-xs text-harken-gray-med dark:text-slate-400">Edit and customize before generating</p>
         </div>
 
         {/* Right: Actions */}
@@ -220,7 +220,7 @@ function ReportPreviewMode({
           <button
             onClick={onSaveDraft}
             disabled={isSaving || !isDirty}
-            className="flex items-center gap-2 px-4 py-2 border border-gray-300 dark:border-slate-600 text-gray-700 dark:text-slate-300 hover:bg-gray-50 dark:hover:bg-slate-700 rounded-lg transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
+            className="flex items-center gap-2 px-4 py-2 border border-light-border dark:border-harken-gray text-harken-gray dark:text-slate-200 hover:bg-harken-gray-light dark:hover:bg-elevation-3 rounded-lg transition-colors font-medium disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {isSaving ? (
               <Loader2 size={16} className="animate-spin" />
@@ -238,7 +238,7 @@ function ReportPreviewMode({
           </button>
           <button
             onClick={onFinalize}
-            className="flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-green-500 to-emerald-600 text-white rounded-lg hover:shadow-lg transition-all font-semibold"
+            className="flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-accent-teal-mint to-accent-teal-mint-hover text-white rounded-lg hover:shadow-lg transition-all font-semibold"
           >
             <FileCheck size={16} />
             Generate Final PDF
@@ -263,11 +263,21 @@ function ReportPreviewMode({
 
 export default function ReviewPage() {
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const toast = useToast();
   const [activeTab, setActiveTab] = useState<ReviewTabId>('hbu');
   const [isFinalized, setIsFinalized] = useState(false);
   const [showReadyToPreview, setShowReadyToPreview] = useState(false);
   const [showPreviewMode, setShowPreviewMode] = useState(false);
+  
+  // Handle ?preview=true query parameter from WizardHeader button
+  useEffect(() => {
+    if (searchParams.get('preview') === 'true') {
+      setShowPreviewMode(true);
+      // Clear the query param to avoid re-triggering on navigation
+      setSearchParams({}, { replace: true });
+    }
+  }, [searchParams, setSearchParams]);
   const [, setHasCelebrated] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   
@@ -701,8 +711,8 @@ We considered alternative uses including renovation, conversion to alternative u
   // Sidebar with functional tab buttons
   const sidebar = (
     <div>
-      <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-1">Review & Finalize</h2>
-      <p className="text-sm text-gray-500 mb-6">Final Checks</p>
+      <h2 className="text-lg font-bold text-harken-dark dark:text-white mb-1">Review & Finalize</h2>
+      <p className="text-sm text-harken-gray-med mb-6">Final Checks</p>
       <nav className="space-y-1">
         {tabs.map((tab) => (
           <SidebarTab
@@ -724,7 +734,7 @@ We considered alternative uses including renovation, conversion to alternative u
   // Help sidebar content based on active tab
   const helpSidebar = (
     <div>
-      <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-3">
+      <h3 className="text-lg font-bold text-harken-dark dark:text-white mb-3">
         {activeTab === 'hbu' && 'Highest & Best Use'}
         {activeTab === 'market-analysis' && 'Market Analysis'}
         {activeTab === 'swot' && 'SWOT Analysis'}
@@ -733,7 +743,7 @@ We considered alternative uses including renovation, conversion to alternative u
         {activeTab === 'checklist' && 'Finalization'}
         {activeTab === 'reconciliation' && 'Value Reconciliation'}
       </h3>
-      <p className="text-sm text-gray-600 dark:text-slate-400 mb-4">
+      <p className="text-sm text-harken-gray dark:text-slate-400 mb-4">
         {activeTab === 'hbu' &&
           'Complete the four tests of highest and best use to determine the most profitable legal use of the subject property.'}
         {activeTab === 'market-analysis' &&
@@ -765,9 +775,9 @@ We considered alternative uses including renovation, conversion to alternative u
             </p>
           </div>
           {hasImprovements && (
-            <div className="bg-amber-50 dark:bg-amber-900/30 border-l-4 border-amber-400 p-4 rounded">
-              <h4 className="font-semibold text-sm text-amber-900 dark:text-amber-200 mb-1">As Improved Analysis</h4>
-              <p className="text-xs text-amber-800 dark:text-amber-300">
+            <div className="bg-accent-amber-gold-light dark:bg-accent-amber-gold/10 border-l-4 border-accent-amber-gold p-4 rounded">
+              <h4 className="font-semibold text-sm text-accent-amber-gold dark:text-accent-amber-gold-hover mb-1">As Improved Analysis</h4>
+              <p className="text-xs text-accent-amber-gold dark:text-accent-amber-gold-hover">
                 For improved properties, analyze whether the current improvements represent the highest and best use or if demolition/conversion should be considered.
               </p>
             </div>
@@ -777,9 +787,9 @@ We considered alternative uses including renovation, conversion to alternative u
 
       {activeTab === 'market-analysis' && (
         <>
-          <div className="bg-amber-50 dark:bg-amber-900/30 border-l-4 border-amber-400 p-4 rounded mb-4">
-            <h4 className="font-semibold text-sm text-amber-900 dark:text-amber-200 mb-1">Market Conditions</h4>
-            <p className="text-xs text-amber-800 dark:text-amber-300">
+          <div className="bg-accent-amber-gold-light dark:bg-accent-amber-gold/10 border-l-4 border-accent-amber-gold p-4 rounded mb-4">
+            <h4 className="font-semibold text-sm text-accent-amber-gold dark:text-accent-amber-gold-hover mb-1">Market Conditions</h4>
+            <p className="text-xs text-accent-amber-gold dark:text-accent-amber-gold-hover">
               Review market cycle stage, supply & demand balance, and key trends affecting property values in the subject area.
             </p>
           </div>
@@ -789,9 +799,9 @@ We considered alternative uses including renovation, conversion to alternative u
               Analyze interest rates, economic growth, employment trends, and their impact on the real estate market.
             </p>
           </div>
-          <div className="bg-emerald-50 dark:bg-emerald-900/30 border-l-4 border-emerald-400 p-4 rounded">
-            <h4 className="font-semibold text-sm text-emerald-900 dark:text-emerald-200 mb-1">Market Data</h4>
-            <p className="text-xs text-emerald-800 dark:text-emerald-300">
+          <div className="bg-accent-teal-mint-light dark:bg-accent-teal-mint/10 border-l-4 border-accent-teal-mint p-4 rounded">
+            <h4 className="font-semibold text-sm text-accent-teal-mint dark:text-accent-teal-mint mb-1">Market Data</h4>
+            <p className="text-xs text-accent-teal-mint dark:text-accent-teal-mint">
               Reference comparable sales and rental data to understand market conditions and pricing trends.
             </p>
           </div>
@@ -817,9 +827,9 @@ We considered alternative uses including renovation, conversion to alternative u
 
       {activeTab === 'swot' && (
         <>
-          <div className="bg-emerald-50 dark:bg-emerald-900/30 border-l-4 border-emerald-400 p-4 rounded mb-4">
-            <h4 className="font-semibold text-sm text-emerald-900 dark:text-emerald-200 mb-1">Strategic Analysis</h4>
-            <p className="text-xs text-emerald-800 dark:text-emerald-300">
+          <div className="bg-accent-teal-mint-light dark:bg-accent-teal-mint/10 border-l-4 border-accent-teal-mint p-4 rounded mb-4">
+            <h4 className="font-semibold text-sm text-accent-teal-mint dark:text-accent-teal-mint mb-1">Strategic Analysis</h4>
+            <p className="text-xs text-accent-teal-mint dark:text-accent-teal-mint">
               SWOT analysis provides a framework for evaluating the subject property's competitive position in the market.
             </p>
           </div>
@@ -849,9 +859,9 @@ We considered alternative uses including renovation, conversion to alternative u
               <strong>Asset Quality:</strong> Physical + location factors
             </p>
           </div>
-          <div className="bg-amber-50 dark:bg-amber-900/30 border-l-4 border-amber-400 p-4 rounded">
-            <h4 className="font-semibold text-sm text-amber-900 dark:text-amber-200 mb-1">Dynamic Weighting</h4>
-            <p className="text-xs text-amber-800 dark:text-amber-300">
+          <div className="bg-accent-amber-gold-light dark:bg-accent-amber-gold/10 border-l-4 border-accent-amber-gold p-4 rounded">
+            <h4 className="font-semibold text-sm text-accent-amber-gold dark:text-accent-amber-gold-hover mb-1">Dynamic Weighting</h4>
+            <p className="text-xs text-accent-amber-gold dark:text-accent-amber-gold-hover">
               Weights are calculated based on property type, data completeness, and market conditions - not fixed defaults.
             </p>
           </div>
@@ -860,9 +870,9 @@ We considered alternative uses including renovation, conversion to alternative u
 
       {activeTab === 'cost-seg' && (
         <>
-          <div className="bg-emerald-50 dark:bg-emerald-900/30 border-l-4 border-emerald-400 p-4 rounded mb-4">
-            <h4 className="font-semibold text-sm text-emerald-900 dark:text-emerald-200 mb-1">Depreciation Classes</h4>
-            <p className="text-xs text-emerald-800 dark:text-emerald-300">
+          <div className="bg-accent-teal-mint-light dark:bg-accent-teal-mint/10 border-l-4 border-accent-teal-mint p-4 rounded mb-4">
+            <h4 className="font-semibold text-sm text-accent-teal-mint dark:text-accent-teal-mint mb-1">Depreciation Classes</h4>
+            <p className="text-xs text-accent-teal-mint dark:text-accent-teal-mint">
               <strong>5-Year:</strong> Personal property (carpet, fixtures, equipment)<br/>
               <strong>15-Year:</strong> Land improvements (parking, landscaping, sidewalks)<br/>
               <strong>39-Year:</strong> Building structure (foundation, walls, roof)
@@ -875,9 +885,9 @@ We considered alternative uses including renovation, conversion to alternative u
               improving cash flow in the early years of ownership.
             </p>
           </div>
-          <div className="bg-amber-50 dark:bg-amber-900/30 border-l-4 border-amber-400 p-4 rounded">
-            <h4 className="font-semibold text-sm text-amber-900 dark:text-amber-200 mb-1">IRS Compliance</h4>
-            <p className="text-xs text-amber-800 dark:text-amber-300">
+          <div className="bg-accent-amber-gold-light dark:bg-accent-amber-gold/10 border-l-4 border-accent-amber-gold p-4 rounded">
+            <h4 className="font-semibold text-sm text-accent-amber-gold dark:text-accent-amber-gold-hover mb-1">IRS Compliance</h4>
+            <p className="text-xs text-accent-amber-gold dark:text-accent-amber-gold-hover">
               Analysis follows IRS Cost Segregation Audit Techniques Guide methodology and 
               MACRS depreciation rules per Publication 946.
             </p>
@@ -893,9 +903,9 @@ We considered alternative uses including renovation, conversion to alternative u
               Weights should reflect the reliability and applicability of each approach for this property type.
             </p>
           </div>
-          <div className="bg-amber-50 dark:bg-amber-900/30 border-l-4 border-amber-400 p-4 rounded">
-            <h4 className="font-semibold text-sm text-amber-900 dark:text-amber-200 mb-1">Reconciliation Comments</h4>
-            <p className="text-xs text-amber-800 dark:text-amber-300">
+          <div className="bg-accent-amber-gold-light dark:bg-accent-amber-gold/10 border-l-4 border-accent-amber-gold p-4 rounded">
+            <h4 className="font-semibold text-sm text-accent-amber-gold dark:text-accent-amber-gold-hover mb-1">Reconciliation Comments</h4>
+            <p className="text-xs text-accent-amber-gold dark:text-accent-amber-gold-hover">
               Provide clear reasoning for your weight assignments and how you arrived at the final value.
             </p>
           </div>
@@ -1014,8 +1024,8 @@ We considered alternative uses including renovation, conversion to alternative u
             </div>
 
             {/* HBU As Vacant */}
-            <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-              <div className="flex items-center justify-between border-b-2 border-gray-200 pb-3 mb-4">
+            <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
+              <div className="flex items-center justify-between border-b-2 border-light-border pb-3 mb-4">
                 <h3 className="text-lg font-bold text-slate-800 dark:text-white">
                   Highest & Best Use - As Vacant
                 </h3>
@@ -1075,8 +1085,8 @@ We considered alternative uses including renovation, conversion to alternative u
 
             {/* HBU As Improved (only if property has improvements) */}
             {hasImprovements && (
-              <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-                <h3 className="text-lg font-bold text-slate-800 dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+              <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
+                <h3 className="text-lg font-bold text-slate-800 dark:text-white border-b-2 border-light-border dark:border-harken-gray pb-3 mb-4">
                   Highest & Best Use - As Improved
                 </h3>
                 <EnhancedTextArea
@@ -1096,20 +1106,20 @@ We considered alternative uses including renovation, conversion to alternative u
         return (
           <div className="absolute inset-0 flex flex-col animate-fade-in">
             {/* Market Analysis Header Banner */}
-            <div className="bg-amber-50 dark:bg-amber-900/30 border-b border-amber-200 dark:border-amber-800 px-6 py-4 flex items-start gap-3">
-              <Info className="text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" size={18} />
+            <div className="bg-accent-amber-gold-light dark:bg-accent-amber-gold/10 border-b border-accent-amber-gold-light dark:border-accent-amber-gold/30 px-6 py-4 flex items-start gap-3">
+              <Info className="text-accent-amber-gold dark:text-accent-amber-gold-hover shrink-0 mt-0.5" size={18} />
               <div>
-                <p className="text-sm font-semibold text-amber-900 dark:text-amber-200">
+                <p className="text-sm font-semibold text-accent-amber-gold dark:text-accent-amber-gold-hover">
                   Market Analysis
                 </p>
-                <p className="text-xs text-amber-800 dark:text-amber-300 mt-1">
+                <p className="text-xs text-accent-amber-gold dark:text-accent-amber-gold-hover mt-1">
                   Review market conditions, supply & demand dynamics, and economic trends affecting property values.
                 </p>
               </div>
             </div>
 
             {/* Market Analysis Content - Single scrollable area with consistent background */}
-            <div className="flex-1 min-h-0 overflow-auto bg-slate-50 dark:bg-slate-900">
+            <div className="flex-1 min-h-0 overflow-auto bg-slate-50 dark:bg-elevation-1">
               <MarketAnalysisGrid 
                 rentCompData={{
                   avgRent: 26.75,
@@ -1124,7 +1134,7 @@ We considered alternative uses including renovation, conversion to alternative u
               />
               
               {/* Economic Indicators Panel - FRED Data */}
-              <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 shadow-sm mx-6 mb-6 -mt-3">
+              <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl border border-slate-200 dark:border-dark-border shadow-sm mx-6 mb-6 -mt-3">
                 <EconomicIndicatorsPanel 
                   onDataLoaded={(data, asOfDate) => {
                     // Save economic data to wizard state for report generation
@@ -1181,7 +1191,7 @@ We considered alternative uses including renovation, conversion to alternative u
               {/* Market Outlook & Analysis Narrative - At the very bottom */}
               <div className="mx-6 mb-6 space-y-3">
                 <div className="flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-slate-700 dark:text-slate-300" />
+                  <FileText className="w-5 h-5 text-slate-700 dark:text-slate-200" />
                   <h2 className="text-lg font-bold text-slate-800 dark:text-white">Market Outlook & Analysis</h2>
                 </div>
                 <EnhancedTextArea
@@ -1298,13 +1308,13 @@ We considered alternative uses including renovation, conversion to alternative u
         return (
           <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
             {/* Info Banner */}
-            <div className="bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 rounded-xl p-4 flex items-start gap-3">
-              <Info className="text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" size={18} />
+            <div className="bg-accent-teal-mint-light dark:bg-accent-teal-mint/10 border border-accent-teal-mint-light dark:border-accent-teal-mint rounded-xl p-4 flex items-start gap-3">
+              <Info className="text-accent-teal-mint dark:text-accent-teal-mint shrink-0 mt-0.5" size={18} />
               <div>
-                <p className="text-sm font-semibold text-emerald-900 dark:text-emerald-200">
+                <p className="text-sm font-semibold text-accent-teal-mint dark:text-accent-teal-mint">
                   Cost Segregation Analysis
                 </p>
-                <p className="text-xs text-emerald-800 dark:text-emerald-300 mt-1">
+                <p className="text-xs text-accent-teal-mint dark:text-accent-teal-mint mt-1">
                   Accelerate depreciation deductions by reclassifying building components into 
                   shorter recovery periods (5, 15, and 39 years) per IRS guidelines.
                 </p>

@@ -63,7 +63,7 @@ export const CoverPage: React.FC<CoverPageProps> = ({
             
             <h1 
               className={`text-4xl md:text-5xl font-bold leading-tight ${
-                isEditing ? 'cursor-pointer hover:bg-white/10 rounded px-2 -mx-2' : ''
+                isEditing ? 'cursor-pointer hover:bg-surface-1/10 rounded px-2 -mx-2' : ''
               }`}
               onClick={() => isEditing && onContentClick?.('cover-title')}
             >
@@ -72,7 +72,7 @@ export const CoverPage: React.FC<CoverPageProps> = ({
             
             <p 
               className={`text-xl text-white/80 ${
-                isEditing ? 'cursor-pointer hover:bg-white/10 rounded px-2 -mx-2' : ''
+                isEditing ? 'cursor-pointer hover:bg-surface-1/10 rounded px-2 -mx-2' : ''
               }`}
               onClick={() => isEditing && onContentClick?.('cover-address')}
             >

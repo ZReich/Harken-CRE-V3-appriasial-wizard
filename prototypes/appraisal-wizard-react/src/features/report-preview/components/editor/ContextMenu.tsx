@@ -210,7 +210,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
         className={`
           relative flex items-center gap-3 px-3 py-2 cursor-pointer
           ${item.disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-slate-100'}
-          ${item.destructive ? 'text-red-600 hover:bg-red-50' : 'text-slate-700'}
+          ${item.destructive ? 'text-harken-error hover:bg-accent-red-light' : 'text-slate-700'}
         `}
         onClick={() => handleItemClick(item)}
         onMouseEnter={(e) => handleSubmenuHover(item, e)}
@@ -227,7 +227,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
         {/* Submenu */}
         {item.type === 'submenu' && activeSubmenu === item.id && item.submenu && (
           <div
-            className="absolute left-full top-0 ml-1 min-w-[160px] bg-white border border-slate-200 rounded-lg shadow-lg py-1"
+            className="absolute left-full top-0 ml-1 min-w-[160px] bg-surface-1 border border-slate-200 rounded-lg shadow-lg py-1"
           >
             {item.submenu.map((subItem) => renderMenuItem(subItem))}
           </div>
@@ -239,7 +239,7 @@ export const ContextMenu: React.FC<ContextMenuProps> = ({
   return (
     <div
       ref={menuRef}
-      className="fixed z-50 min-w-[200px] bg-white border border-slate-200 rounded-lg shadow-xl py-1 animate-fade-in"
+      className="fixed z-50 min-w-[200px] bg-surface-1 border border-slate-200 rounded-lg shadow-xl py-1 animate-fade-in"
       style={{
         left: position.x,
         top: position.y,

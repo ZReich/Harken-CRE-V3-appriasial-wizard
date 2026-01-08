@@ -95,9 +95,9 @@ export default function FloatingDropPanel({
       <div className="absolute inset-0 bg-gradient-to-l from-black/20 to-transparent pointer-events-none" />
 
       {/* Panel */}
-      <div className="absolute inset-y-0 right-0 w-[280px] bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl border-l border-gray-200 dark:border-slate-700 shadow-2xl shadow-black/20 flex flex-col">
+      <div className="absolute inset-y-0 right-0 w-[280px] bg-surface-1/95 dark:bg-elevation-1/95 backdrop-blur-xl border-l border-light-border dark:border-dark-border shadow-2xl shadow-black/20 flex flex-col">
         {/* Header */}
-        <div className="flex-shrink-0 px-4 py-4 border-b border-gray-200 dark:border-slate-700 bg-gradient-to-br from-[#0da1c7]/15 via-[#4db8d1]/10 to-white dark:from-[#0da1c7]/10 dark:to-slate-800">
+        <div className="flex-shrink-0 px-4 py-4 border-b border-light-border dark:border-dark-border bg-gradient-to-br from-[#0da1c7]/15 via-[#4db8d1]/10 to-white dark:from-[#0da1c7]/10 dark:to-harken-dark">
           <div className="flex items-center gap-3">
             <div className="relative">
               <div className="absolute inset-0 rounded-xl bg-[#0da1c7] animate-ping opacity-20" />
@@ -106,21 +106,21 @@ export default function FloatingDropPanel({
               </div>
             </div>
             <div>
-              <h3 className="font-bold text-gray-800 dark:text-white flex items-center gap-2">
+              <h3 className="font-bold text-harken-dark dark:text-white flex items-center gap-2">
                 Drop Photo Here
                 <span className="inline-flex h-2 w-2 rounded-full bg-[#0da1c7] animate-pulse" />
               </h3>
-              <p className="text-xs text-gray-500 dark:text-slate-400">Drag to any slot below</p>
+              <p className="text-xs text-harken-gray-med dark:text-slate-400">Drag to any slot below</p>
             </div>
           </div>
 
           {/* Preview of dragged photo */}
           {draggedPhotoPreview && (
-            <div className="mt-3 flex items-center gap-2 p-2 bg-white dark:bg-slate-700/50 rounded-lg shadow-sm border border-gray-100 dark:border-slate-600/50">
+            <div className="mt-3 flex items-center gap-2 p-2 bg-surface-1 dark:bg-elevation-1/50 rounded-lg shadow-sm border border-harken-gray-light dark:border-harken-gray/50">
               <div className="w-10 h-10 rounded-md overflow-hidden flex-shrink-0">
                 <img src={draggedPhotoPreview} alt="Dragging" className="w-full h-full object-cover" />
               </div>
-              <p className="text-xs text-gray-600 dark:text-slate-300 truncate">Dragging photo...</p>
+              <p className="text-xs text-harken-gray dark:text-slate-200 truncate">Dragging photo...</p>
             </div>
           )}
         </div>
@@ -137,17 +137,17 @@ export default function FloatingDropPanel({
             return (
               <div
                 key={category.id}
-                className="border-b border-gray-100 last:border-b-0"
+                className="border-b border-harken-gray-light last:border-b-0"
                 style={{ animationDelay: `${catIndex * 50}ms` }}
               >
                 {/* Category Header */}
                 <div className={`
                   sticky top-0 px-4 py-2 flex items-center gap-2
-                  bg-gradient-to-r from-${category.color}-50 to-white dark:from-${category.color}-900/30 dark:to-slate-800
+                  bg-gradient-to-r from-${category.color}-50 to-white dark:from-${category.color}-900/30 dark:to-harken-dark
                   border-b border-${category.color}-100/50 dark:border-${category.color}-700/50
                 `}>
                   <CatIcon className={`w-4 h-4 text-${category.color}-500 dark:text-${category.color}-400`} />
-                  <span className="text-xs font-bold text-gray-700 dark:text-slate-300 uppercase tracking-wide">
+                  <span className="text-xs font-bold text-harken-gray dark:text-slate-200 uppercase tracking-wide">
                     {category.label}
                   </span>
                   <span className={`ml-auto px-1.5 py-0.5 text-[10px] font-bold rounded-full bg-${category.color}-100 dark:bg-${category.color}-900/40 text-${category.color}-600 dark:text-${category.color}-300`}>
@@ -174,7 +174,7 @@ export default function FloatingDropPanel({
                           transition-all duration-200 border-2 animate-slot-reveal
                           ${isHovered
                             ? 'border-[#0da1c7] bg-[#0da1c7]/10 scale-[1.02] shadow-lg shadow-[#0da1c7]/20 animate-glow-pulse'
-                            : 'border-transparent bg-gray-50 dark:bg-slate-700/40 hover:bg-gray-100 dark:hover:bg-slate-700/60'
+                            : 'border-transparent bg-harken-gray-light dark:bg-elevation-1/40 hover:bg-harken-gray-light dark:hover:bg-elevation-3/60'
                           }
                         `}
                         style={{
@@ -187,22 +187,22 @@ export default function FloatingDropPanel({
                           transition-all duration-200
                           ${isHovered
                             ? 'bg-[#0da1c7] shadow-lg'
-                            : 'bg-white dark:bg-slate-700 border border-gray-200 dark:border-slate-600'
+                            : 'bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-harken-gray'
                           }
                         `}>
                           {isHovered ? (
                             <Check className="w-5 h-5 text-white" />
                           ) : (
-                            <ImageIcon className="w-4 h-4 text-gray-400" />
+                            <ImageIcon className="w-4 h-4 text-harken-gray-med" />
                           )}
                         </div>
 
                         {/* Slot Info */}
                         <div className="flex-1 min-w-0">
-                          <p className={`text-sm font-medium truncate ${isHovered ? 'text-[#0da1c7] dark:text-[#4db8d1]' : 'text-gray-700 dark:text-slate-200'}`}>
+                          <p className={`text-sm font-medium truncate ${isHovered ? 'text-[#0da1c7] dark:text-[#4db8d1]' : 'text-harken-gray dark:text-slate-200'}`}>
                             {slot.label}
                           </p>
-                          <p className="text-[10px] text-gray-400 dark:text-slate-400 truncate">
+                          <p className="text-[10px] text-harken-gray-med dark:text-slate-400 truncate">
                             {slot.description}
                           </p>
                         </div>
@@ -221,8 +221,8 @@ export default function FloatingDropPanel({
         </div>
 
         {/* Footer hint */}
-        <div className="flex-shrink-0 px-4 py-3 border-t border-gray-200 dark:border-slate-700 bg-gray-50/80 dark:bg-slate-800/80">
-          <p className="text-[10px] text-gray-400 dark:text-slate-400 text-center">
+        <div className="flex-shrink-0 px-4 py-3 border-t border-light-border dark:border-dark-border bg-harken-gray-light/80 dark:bg-elevation-1/80">
+          <p className="text-[10px] text-harken-gray-med dark:text-slate-400 text-center">
             Release to drop photo into the highlighted slot
           </p>
         </div>

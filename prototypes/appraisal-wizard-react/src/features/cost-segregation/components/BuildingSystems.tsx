@@ -42,13 +42,13 @@ const SYSTEM_ICONS: Record<BuildingSystem, React.ReactNode> = {
 const SYSTEM_COLORS: Record<BuildingSystem, string> = {
   'hvac': 'bg-orange-100 text-orange-600 border-orange-200',
   'plumbing': 'bg-blue-100 text-blue-600 border-blue-200',
-  'electrical': 'bg-yellow-100 text-yellow-600 border-yellow-200',
+  'electrical': 'bg-accent-amber-gold-light text-accent-amber-gold border-accent-amber-gold',
   'escalators-elevators': 'bg-purple-100 text-purple-600 border-purple-200',
-  'fire-protection': 'bg-red-100 text-red-600 border-red-200',
+  'fire-protection': 'bg-accent-red-light text-harken-error border-harken-error',
   'security': 'bg-slate-100 text-slate-600 border-slate-200',
   'gas-distribution': 'bg-cyan-100 text-cyan-600 border-cyan-200',
   'structural': 'bg-stone-100 text-stone-600 border-stone-200',
-  'other': 'bg-gray-100 text-gray-600 border-gray-200',
+  'other': 'bg-harken-gray-light text-harken-gray border-light-border',
 };
 
 export const BuildingSystems: React.FC<BuildingSystemsProps> = ({
@@ -63,7 +63,7 @@ export const BuildingSystems: React.FC<BuildingSystemsProps> = ({
   const totalBuildingCost = analysis.totalBuildingCost;
 
   return (
-    <div className={`bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden ${className}`}>
+    <div className={`bg-surface-1 rounded-xl border border-slate-200 shadow-sm overflow-hidden ${className}`}>
       {/* Header */}
       <div className="px-6 py-4 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white">
         <div className="flex items-center justify-between">
@@ -190,7 +190,7 @@ const SystemCard: React.FC<SystemCardProps> = ({ system, totalCost }) => {
   const percentOfTotal = totalCost > 0 ? (system.depreciableCost / totalCost) * 100 : 0;
   
   return (
-    <div className="bg-white border border-slate-200 rounded-xl p-4 hover:shadow-md transition-shadow">
+    <div className="bg-surface-1 border border-slate-200 rounded-xl p-4 hover:shadow-md transition-shadow">
       <div className="flex items-start justify-between mb-3">
         <div className={`w-10 h-10 rounded-xl flex items-center justify-center border ${SYSTEM_COLORS[system.system]}`}>
           {SYSTEM_ICONS[system.system]}

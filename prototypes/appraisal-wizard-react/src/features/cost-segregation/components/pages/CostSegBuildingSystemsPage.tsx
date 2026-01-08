@@ -38,7 +38,7 @@ export const CostSegBuildingSystemsPage: React.FC<CostSegBuildingSystemsPageProp
   const totalSystemsCost = systems.reduce((sum, s) => sum + s.depreciableCost, 0);
 
   return (
-    <div className={`bg-white p-12 ${className}`}>
+    <div className={`bg-surface-1 p-12 ${className}`}>
       <h2 className="text-2xl font-bold text-[#1c3643] mb-6 pb-4 border-b-2 border-[#0da1c7]">
         Building Systems Analysis
       </h2>
@@ -54,9 +54,9 @@ export const CostSegBuildingSystemsPage: React.FC<CostSegBuildingSystemsPageProp
       </div>
 
       {/* IRS TD 9636 Reference */}
-      <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 mb-6">
+      <div className="bg-harken-gray-light border border-light-border rounded-lg p-4 mb-6">
         <h4 className="font-medium text-slate-800 mb-2">IRS Building Systems (TD 9636)</h4>
-        <div className="grid grid-cols-3 gap-2 text-sm text-slate-600">
+        <div className="grid grid-cols-3 gap-2 text-sm text-harken-gray">
           <div>1. HVAC Systems</div>
           <div>2. Plumbing Systems</div>
           <div>3. Electrical Systems</div>
@@ -75,45 +75,45 @@ export const CostSegBuildingSystemsPage: React.FC<CostSegBuildingSystemsPageProp
         
         <table className="w-full text-sm border-collapse">
           <thead>
-            <tr className="border-b-2 border-slate-300 bg-slate-50">
-              <th className="text-left py-3 px-4 font-semibold text-slate-700">System</th>
-              <th className="text-right py-3 px-4 font-semibold text-slate-700">Depreciable Cost</th>
-              <th className="text-right py-3 px-4 font-semibold text-slate-700">Replacement Cost</th>
-              <th className="text-right py-3 px-4 font-semibold text-slate-700">% of Building</th>
-              <th className="text-center py-3 px-4 font-semibold text-slate-700">Components</th>
+            <tr className="border-b-2 border-slate-300 bg-harken-gray-light">
+              <th className="text-left py-3 px-4 font-semibold text-harken-gray">System</th>
+              <th className="text-right py-3 px-4 font-semibold text-harken-gray">Depreciable Cost</th>
+              <th className="text-right py-3 px-4 font-semibold text-harken-gray">Replacement Cost</th>
+              <th className="text-right py-3 px-4 font-semibold text-harken-gray">% of Building</th>
+              <th className="text-center py-3 px-4 font-semibold text-harken-gray">Components</th>
             </tr>
           </thead>
           <tbody>
             {systems.map((system, idx) => (
               <tr 
                 key={system.system}
-                className={`border-b border-slate-200 ${idx % 2 === 1 ? 'bg-slate-50/50' : ''}`}
+                className={`border-b border-light-border ${idx % 2 === 1 ? 'bg-harken-gray-light/50' : ''}`}
               >
                 <td className="py-3 px-4">
                   <div className="font-medium text-slate-900">{system.systemLabel}</div>
-                  <div className="text-xs text-slate-500 mt-0.5">
+                  <div className="text-xs text-harken-gray-med mt-0.5">
                     {SYSTEM_DESCRIPTIONS[system.system]}
                   </div>
                 </td>
                 <td className="py-3 px-4 text-right font-medium text-slate-900">
                   {formatCostSegCurrency(system.depreciableCost)}
                 </td>
-                <td className="py-3 px-4 text-right text-slate-600">
+                <td className="py-3 px-4 text-right text-harken-gray">
                   {formatCostSegCurrency(system.replacementCost)}
                 </td>
                 <td className="py-3 px-4 text-right">
-                  <span className="inline-flex px-2 py-0.5 bg-slate-100 text-slate-700 rounded-full text-xs font-medium">
+                  <span className="inline-flex px-2 py-0.5 bg-harken-gray-light text-harken-gray rounded-full text-xs font-medium">
                     {formatCostSegPercent(system.percentOfBuilding)}
                   </span>
                 </td>
-                <td className="py-3 px-4 text-center text-slate-600">
+                <td className="py-3 px-4 text-center text-harken-gray">
                   {system.components.length}
                 </td>
               </tr>
             ))}
           </tbody>
           <tfoot>
-            <tr className="bg-slate-100 font-semibold border-t border-slate-300">
+            <tr className="bg-harken-gray-light font-semibold border-t border-slate-300">
               <td className="py-3 px-4 text-slate-900">Total - All Systems</td>
               <td className="py-3 px-4 text-right text-slate-900">
                 {formatCostSegCurrency(totalSystemsCost)}
@@ -148,12 +148,12 @@ export const CostSegBuildingSystemsPage: React.FC<CostSegBuildingSystemsPageProp
             return (
               <div key={system.system}>
                 <div className="flex items-center justify-between text-sm mb-1">
-                  <span className="text-slate-700">{system.systemLabel}</span>
-                  <span className="text-slate-600 font-medium">
+                  <span className="text-harken-gray">{system.systemLabel}</span>
+                  <span className="text-harken-gray font-medium">
                     {formatCostSegCurrency(system.depreciableCost)}
                   </span>
                 </div>
-                <div className="h-4 bg-slate-100 rounded-full overflow-hidden">
+                <div className="h-4 bg-harken-gray-light rounded-full overflow-hidden">
                   <div 
                     className="h-full bg-gradient-to-r from-[#0da1c7] to-[#0b8eb1] rounded-full transition-all duration-300"
                     style={{ width: `${Math.min(percent, 100)}%` }}

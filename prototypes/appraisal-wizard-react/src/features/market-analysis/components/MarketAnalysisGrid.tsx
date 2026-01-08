@@ -88,9 +88,9 @@ export const MarketAnalysisGrid: React.FC<MarketAnalysisGridProps> = ({
     const isPositive = change > 0;
     const isNeutral = change === 0;
     return (
-      <span className={`inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded ${isPositive ? 'bg-emerald-100 text-emerald-700' :
+      <span className={`inline-flex items-center gap-0.5 text-[10px] font-bold px-1.5 py-0.5 rounded ${isPositive ? 'bg-accent-teal-mint-light text-accent-teal-mint' :
           isNeutral ? 'bg-slate-100 text-slate-500' :
-            'bg-red-100 text-red-700'
+            'bg-accent-red-light text-harken-error'
         }`}>
         {isPositive ? <ArrowUpRight className="w-3 h-3" /> :
           isNeutral ? <Minus className="w-3 h-3" /> :
@@ -119,13 +119,13 @@ export const MarketAnalysisGrid: React.FC<MarketAnalysisGridProps> = ({
     className?: string;
     valueClassName?: string;
   }) => (
-    <div className={`bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 shadow-sm hover:shadow-md transition-shadow ${className}`}>
+    <div className={`bg-surface-1 dark:bg-elevation-1 rounded-2xl border border-slate-200 dark:border-dark-border p-4 shadow-sm hover:shadow-md transition-shadow ${className}`}>
       <div className="flex items-start justify-between mb-3">
-        <div className="p-2 bg-slate-100 dark:bg-slate-700 rounded-lg">
-          <Icon className="w-4 h-4 text-slate-600 dark:text-slate-300" />
+        <div className="p-2 bg-slate-100 dark:bg-elevation-1 rounded-lg">
+          <Icon className="w-4 h-4 text-slate-600 dark:text-slate-200" />
         </div>
         {source && (
-          <span className="text-[9px] font-medium text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-900 px-1.5 py-0.5 rounded">{source}</span>
+          <span className="text-[9px] font-medium text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-elevation-1 px-1.5 py-0.5 rounded">{source}</span>
         )}
       </div>
       <div className="text-xs text-slate-500 dark:text-slate-400 font-medium mb-1">{label}</div>
@@ -140,7 +140,7 @@ export const MarketAnalysisGrid: React.FC<MarketAnalysisGridProps> = ({
   );
 
   return (
-    <div className="flex flex-col bg-slate-50 dark:bg-slate-900 p-6 space-y-6">
+    <div className="flex flex-col bg-slate-50 dark:bg-elevation-1 p-6 space-y-6">
 
       {/* Header */}
       <div className="flex items-center justify-between">
@@ -155,7 +155,7 @@ export const MarketAnalysisGrid: React.FC<MarketAnalysisGridProps> = ({
         </div>
         <div className="flex items-center gap-2">
           {rentCompData && (
-            <span className="px-3 py-1.5 bg-emerald-50 text-emerald-700 rounded-full text-xs font-bold flex items-center gap-1.5">
+            <span className="px-3 py-1.5 bg-accent-teal-mint-light text-accent-teal-mint rounded-full text-xs font-bold flex items-center gap-1.5">
               <Home className="w-3.5 h-3.5" />
               {rentCompData.compCount} Rent Comps
             </span>
@@ -184,7 +184,7 @@ export const MarketAnalysisGrid: React.FC<MarketAnalysisGridProps> = ({
       {/* Supply & Demand Section */}
       <div className="space-y-3">
         <div className="flex items-center gap-2">
-          <Building2 className="w-5 h-5 text-slate-700 dark:text-slate-300" />
+          <Building2 className="w-5 h-5 text-slate-700 dark:text-slate-200" />
           <h2 className="text-lg font-bold text-slate-800 dark:text-white">Supply & Demand</h2>
         </div>
         <div className="grid grid-cols-4 gap-4">
@@ -194,7 +194,7 @@ export const MarketAnalysisGrid: React.FC<MarketAnalysisGridProps> = ({
             value={formatPercent(marketData.supplyDemand.vacancyRate)}
             change={marketData.supplyDemand.vacancyChange}
             changeLabel="YoY"
-            valueClassName={marketData.supplyDemand.vacancyRate < 6 ? 'text-emerald-600' : 'text-amber-600'}
+            valueClassName={marketData.supplyDemand.vacancyRate < 6 ? 'text-accent-teal-mint' : 'text-accent-amber-gold'}
           />
           <MetricCard
             icon={TrendingUp}
@@ -221,7 +221,7 @@ export const MarketAnalysisGrid: React.FC<MarketAnalysisGridProps> = ({
       {/* Rent Trends Section */}
       <div className="space-y-3">
         <div className="flex items-center gap-2">
-          <Home className="w-5 h-5 text-slate-700 dark:text-slate-300" />
+          <Home className="w-5 h-5 text-slate-700 dark:text-slate-200" />
           <h2 className="text-lg font-bold text-slate-800 dark:text-white">Rent Trends</h2>
         </div>
         <div className="grid grid-cols-4 gap-4">
@@ -239,17 +239,17 @@ export const MarketAnalysisGrid: React.FC<MarketAnalysisGridProps> = ({
             value={formatPercent(marketData.rentTrends.rentGrowth5Year)}
             source="CAGR"
           />
-          <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-4 shadow-sm col-span-2">
+          <div className="bg-surface-1 dark:bg-elevation-1 rounded-2xl border border-slate-200 dark:border-dark-border p-4 shadow-sm col-span-2">
             <div className="flex items-start justify-between mb-3">
-              <div className="p-2 bg-slate-100 dark:bg-slate-700 rounded-lg">
-                <BarChart3 className="w-4 h-4 text-slate-600 dark:text-slate-300" />
+              <div className="p-2 bg-slate-100 dark:bg-elevation-1 rounded-lg">
+                <BarChart3 className="w-4 h-4 text-slate-600 dark:text-slate-200" />
               </div>
-              <span className="text-[9px] font-medium text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-slate-900 px-1.5 py-0.5 rounded">Market Range</span>
+              <span className="text-[9px] font-medium text-slate-400 dark:text-slate-500 bg-slate-50 dark:bg-elevation-1 px-1.5 py-0.5 rounded">Market Range</span>
             </div>
             <div className="text-xs text-slate-500 dark:text-slate-400 font-medium mb-2">Submarket Rent Range</div>
             <div className="flex items-center gap-3">
-              <div className="text-lg font-bold text-slate-600 dark:text-slate-300">{formatCurrency(marketData.rentTrends.rentRangeLow)}</div>
-              <div className="flex-1 h-2 bg-gradient-to-r from-slate-200 via-[#0da1c7] to-slate-200 dark:from-slate-700 dark:to-slate-700 rounded-full relative">
+              <div className="text-lg font-bold text-slate-600 dark:text-slate-200">{formatCurrency(marketData.rentTrends.rentRangeLow)}</div>
+              <div className="flex-1 h-2 bg-gradient-to-r from-slate-200 via-[#0da1c7] to-slate-200 dark:from-harken-dark dark:to-slate-700 rounded-full relative">
                 <div
                   className="absolute top-1/2 -translate-y-1/2 w-3 h-3 bg-harken-blue rounded-full border-2 border-white dark:border-slate-800 shadow-md"
                   style={{
@@ -258,7 +258,7 @@ export const MarketAnalysisGrid: React.FC<MarketAnalysisGridProps> = ({
                   }}
                 />
               </div>
-              <div className="text-lg font-bold text-slate-600 dark:text-slate-300">{formatCurrency(marketData.rentTrends.rentRangeHigh)}</div>
+              <div className="text-lg font-bold text-slate-600 dark:text-slate-200">{formatCurrency(marketData.rentTrends.rentRangeHigh)}</div>
             </div>
             <div className="text-center text-[10px] text-slate-400 dark:text-slate-500 mt-2">
               Subject Market Position: <span className="font-bold text-harken-blue">{formatCurrency(marketData.rentTrends.currentAskingRent)}/SF</span>
@@ -270,7 +270,7 @@ export const MarketAnalysisGrid: React.FC<MarketAnalysisGridProps> = ({
       {/* Sale Trends Section */}
       <div className="space-y-3">
         <div className="flex items-center gap-2">
-          <DollarSign className="w-5 h-5 text-slate-700 dark:text-slate-300" />
+          <DollarSign className="w-5 h-5 text-slate-700 dark:text-slate-200" />
           <h2 className="text-lg font-bold text-slate-800 dark:text-white">Sale Trends</h2>
         </div>
         <div className="grid grid-cols-4 gap-4">
@@ -280,7 +280,7 @@ export const MarketAnalysisGrid: React.FC<MarketAnalysisGridProps> = ({
             value={`$${marketData.saleTrends.avgPricePsf}`}
             change={marketData.saleTrends.priceChange}
             changeLabel="YoY"
-            valueClassName="text-emerald-600"
+            valueClassName="text-accent-teal-mint"
           />
           <MetricCard
             icon={Percent}
@@ -304,7 +304,7 @@ export const MarketAnalysisGrid: React.FC<MarketAnalysisGridProps> = ({
       </div>
 
       {/* Cap Rate Comparison Chart */}
-      <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
+      <div className="bg-surface-1 dark:bg-elevation-1 rounded-2xl border border-slate-200 dark:border-dark-border p-6 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-sm font-bold text-slate-800 dark:text-white flex items-center gap-2">
             <Percent className="w-4 h-4 text-harken-blue" />
@@ -313,11 +313,11 @@ export const MarketAnalysisGrid: React.FC<MarketAnalysisGridProps> = ({
           <span className="text-[10px] text-slate-400 dark:text-slate-500">From Sales Comparables</span>
         </div>
         <div className="grid grid-cols-5 gap-4">
-          <div className="text-center p-3 bg-slate-50 dark:bg-slate-900 rounded-xl">
+          <div className="text-center p-3 bg-slate-50 dark:bg-elevation-1 rounded-xl">
             <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase mb-1">Min</div>
             <div className="text-xl font-bold text-slate-700 dark:text-slate-200">5.64%</div>
           </div>
-          <div className="text-center p-3 bg-slate-50 dark:bg-slate-900 rounded-xl">
+          <div className="text-center p-3 bg-slate-50 dark:bg-elevation-1 rounded-xl">
             <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase mb-1">25th %ile</div>
             <div className="text-xl font-bold text-slate-700 dark:text-slate-200">6.12%</div>
           </div>
@@ -325,11 +325,11 @@ export const MarketAnalysisGrid: React.FC<MarketAnalysisGridProps> = ({
             <div className="text-[10px] text-harken-blue uppercase mb-1 font-bold">Median</div>
             <div className="text-xl font-black text-harken-blue">6.50%</div>
           </div>
-          <div className="text-center p-3 bg-slate-50 dark:bg-slate-900 rounded-xl">
+          <div className="text-center p-3 bg-slate-50 dark:bg-elevation-1 rounded-xl">
             <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase mb-1">75th %ile</div>
             <div className="text-xl font-bold text-slate-700 dark:text-slate-200">7.20%</div>
           </div>
-          <div className="text-center p-3 bg-slate-50 dark:bg-slate-900 rounded-xl">
+          <div className="text-center p-3 bg-slate-50 dark:bg-elevation-1 rounded-xl">
             <div className="text-[10px] text-slate-500 dark:text-slate-400 uppercase mb-1">Max</div>
             <div className="text-xl font-bold text-slate-700 dark:text-slate-200">7.80%</div>
           </div>

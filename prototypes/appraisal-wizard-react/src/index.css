@@ -118,6 +118,44 @@
   --color-text-muted: var(--text-muted);
   --color-text-inverse: var(--text-inverse);
 
+  /* Dark Mode Text Helpers
+     These provide explicit dark-mode-safe text colors
+     that maintain proper contrast on dark backgrounds */
+  --color-dm-text-primary: #f1f5f9;    /* slate-100 - Primary text on dark */
+  --color-dm-text-secondary: #cbd5e1;  /* slate-300 - Secondary text on dark */
+  --color-dm-text-muted: #94a3b8;      /* slate-400 - Muted text on dark */
+  --color-dm-text-dim: #64748b;        /* slate-500 - Very muted text on dark */
+
+  /* =============================================
+     LIGHT MODE SURFACE SYSTEM
+     Creates visual depth through layered backgrounds
+     
+     CONFIGURABLE: Change these values to update
+     the entire light mode palette globally.
+     ============================================= */
+  --color-surface-base: #f4f7f9;           /* Layer 0: App background */
+  --color-surface-1: #ffffff;              /* Layer 1: Cards/Panels */
+  --color-surface-2: #f8fafc;              /* Layer 2: Nested elements */
+  --color-surface-hover: rgba(0,0,0,0.03); /* Hover states - subtle dim */
+  --color-light-border: #d5dce3;           /* Default borders */
+  --color-light-input: #ffffff;            /* Input fields background */
+  --color-light-input-border: #d1d5db;     /* Input field borders (gray-300) */
+
+  /* =============================================
+     DARK MODE ELEVATION SYSTEM
+     Creates visual depth through layered backgrounds
+     
+     CONFIGURABLE: Change these values to update
+     the entire dark mode palette globally.
+     ============================================= */
+  --color-elevation-base: #0d1a22;         /* Layer 0: App background (harken-dark) */
+  --color-elevation-1: #1a1f24;            /* Layer 1: Cards/Panels - neutral warm */
+  --color-elevation-2: #242a30;            /* Layer 2: Elevated/nested elements */
+  --color-elevation-3: rgba(255,255,255,0.06);  /* Layer 3: Hover states - subtle lift */
+  --color-dark-border: #2d353d;            /* Visible borders - subtle separation */
+  --color-dark-input: #1a1f24;             /* Input fields background */
+  --color-dark-input-border: #3a4550;      /* Input field borders */
+
   /* Border Colors */
   --color-border-subtle: var(--border-subtle);
   --color-border-default: var(--border-default);
@@ -140,6 +178,32 @@
 
 /* ============================================
    HARKEN DARK MODE - Theme Variables
+   ============================================ */
+
+/* ============================================
+   DARK MODE TEXT COLOR STRATEGY
+   ============================================
+   
+   CRITICAL: The harken-gray-* tokens use INVERTED 
+   LUMINOSITY in dark mode (designed for backgrounds).
+   
+   For TEXT in dark mode, use Tailwind slate classes:
+   
+   | Light Mode          | Dark Mode           |
+   |---------------------|---------------------|
+   | text-harken-dark    | dark:text-white     |
+   | text-harken-gray    | dark:text-slate-300 |
+   | text-harken-gray-med| dark:text-slate-400 |
+   
+   NEVER USE for dark mode text:
+   - dark:text-harken-gray-light (contrast 1.04:1 - INVISIBLE)
+   - dark:text-harken-gray-med-lt (contrast 2.2:1 - FAILS AA)
+   - dark:text-harken-gray-med (contrast 3.2:1 - FAILS AA)
+   
+   Why? In dark mode these tokens resolve to:
+   - harken-gray-light: #1e293b (nearly same as background)
+   - harken-gray-med-lt: #475569 (too dark)
+   - harken-gray-med: #64748b (below WCAG AA 4.5:1)
    ============================================ */
 
 /* Light Theme (Default) */

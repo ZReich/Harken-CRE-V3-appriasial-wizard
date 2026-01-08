@@ -91,10 +91,10 @@ const CLASSIFICATION_DETAILS: ClassificationDetail[] = [
       recapture: 'Section 1245 - Ordinary income recapture',
     },
     color: {
-      bg: 'bg-emerald-50',
-      border: 'border-emerald-200',
-      text: 'text-emerald-800',
-      accent: 'bg-emerald-500',
+      bg: 'bg-accent-teal-mint-light',
+      border: 'border-accent-teal-mint-light',
+      text: 'text-accent-teal-mint',
+      accent: 'bg-accent-teal-mint',
     },
   },
   {
@@ -256,7 +256,7 @@ export const ClassificationGuidance: React.FC<ClassificationGuidanceProps> = ({
     if (!detail) return null;
 
     return (
-      <div className={`bg-white rounded-lg shadow-lg border border-slate-200 p-4 max-w-sm ${className}`}>
+      <div className={`bg-surface-1 rounded-lg shadow-lg border border-slate-200 p-4 max-w-sm ${className}`}>
         <div className="flex items-center gap-2 mb-2">
           <div className={`w-3 h-3 rounded ${detail.color.accent}`} />
           <span className="font-semibold text-slate-900">{detail.title}</span>
@@ -272,7 +272,7 @@ export const ClassificationGuidance: React.FC<ClassificationGuidanceProps> = ({
   // Popup variant (simpler, fewer details)
   if (variant === 'popup') {
     return (
-      <div className={`bg-white rounded-xl border border-slate-200 shadow-lg overflow-hidden max-w-2xl ${className}`}>
+      <div className={`bg-surface-1 rounded-xl border border-slate-200 shadow-lg overflow-hidden max-w-2xl ${className}`}>
         <div className="px-4 py-3 bg-slate-50 border-b border-slate-200">
           <h3 className="font-semibold text-slate-900 flex items-center gap-2">
             <Scale className="w-4 h-4 text-[#0da1c7]" />
@@ -303,7 +303,7 @@ export const ClassificationGuidance: React.FC<ClassificationGuidanceProps> = ({
 
   // Full variant (default)
   return (
-    <div className={`bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden ${className}`}>
+    <div className={`bg-surface-1 rounded-xl border border-slate-200 shadow-sm overflow-hidden ${className}`}>
       {/* Header */}
       <div className="px-6 py-4 bg-gradient-to-r from-slate-50 to-white border-b border-slate-200">
         <div className="flex items-center gap-3">
@@ -355,7 +355,7 @@ export const ClassificationGuidance: React.FC<ClassificationGuidanceProps> = ({
               <button
                 onClick={() => setExpandedClass(isExpanded ? null : detail.depClass)}
                 className={`w-full px-4 py-3 flex items-center justify-between text-left transition-colors ${
-                  isExpanded ? detail.color.bg : 'bg-white hover:bg-slate-50'
+                  isExpanded ? detail.color.bg : 'bg-surface-1 hover:bg-slate-50'
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -395,7 +395,7 @@ export const ClassificationGuidance: React.FC<ClassificationGuidanceProps> = ({
                     <ul className="grid grid-cols-1 md:grid-cols-2 gap-1.5">
                       {detail.keyCharacteristics.map((char, idx) => (
                         <li key={idx} className="flex items-start gap-2 text-sm text-slate-600">
-                          <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+                          <CheckCircle2 className="w-4 h-4 text-accent-teal-mint mt-0.5 flex-shrink-0" />
                           {char}
                         </li>
                       ))}
@@ -411,7 +411,7 @@ export const ClassificationGuidance: React.FC<ClassificationGuidanceProps> = ({
                       {detail.commonExamples.map((example, idx) => (
                         <span
                           key={idx}
-                          className={`px-2.5 py-1 text-xs rounded-full bg-white ${detail.color.text} border ${detail.color.border}`}
+                          className={`px-2.5 py-1 text-xs rounded-full bg-surface-1 ${detail.color.text} border ${detail.color.border}`}
                         >
                           {example}
                         </span>
@@ -422,15 +422,15 @@ export const ClassificationGuidance: React.FC<ClassificationGuidanceProps> = ({
                   {/* Borderline Items */}
                   {detail.borderlineItems.length > 0 && (
                     <div className="mb-4">
-                      <h5 className="text-xs font-semibold text-amber-700 uppercase tracking-wide mb-2 flex items-center gap-1">
+                      <h5 className="text-xs font-semibold text-accent-amber-gold uppercase tracking-wide mb-2 flex items-center gap-1">
                         <AlertTriangle className="w-3.5 h-3.5" />
                         Borderline Items (Require Analysis)
                       </h5>
                       <div className="space-y-2">
                         {detail.borderlineItems.map((item, idx) => (
-                          <div key={idx} className="bg-amber-50 border border-amber-200 rounded-lg p-2.5">
-                            <div className="font-medium text-sm text-amber-800">{item.item}</div>
-                            <div className="text-xs text-amber-700">{item.note}</div>
+                          <div key={idx} className="bg-accent-amber-gold-light border border-accent-amber-gold-light rounded-lg p-2.5">
+                            <div className="font-medium text-sm text-accent-amber-gold">{item.item}</div>
+                            <div className="text-xs text-accent-amber-gold">{item.note}</div>
                           </div>
                         ))}
                       </div>
@@ -438,7 +438,7 @@ export const ClassificationGuidance: React.FC<ClassificationGuidanceProps> = ({
                   )}
 
                   {/* Tax Treatment */}
-                  <div className="bg-white rounded-lg border border-slate-200 p-3">
+                  <div className="bg-surface-1 rounded-lg border border-slate-200 p-3">
                     <h5 className="text-xs font-semibold text-slate-700 uppercase tracking-wide mb-2 flex items-center gap-1">
                       <FileText className="w-3.5 h-3.5" />
                       Tax Treatment

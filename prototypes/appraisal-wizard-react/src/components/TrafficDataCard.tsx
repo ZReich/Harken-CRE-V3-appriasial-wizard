@@ -63,7 +63,7 @@ const ROAD_CLASS_OPTIONS = [
 ];
 
 const ROAD_CLASS_COLORS: Record<string, string> = {
-  highway: 'bg-red-100 text-red-700 border-red-300',
+  highway: 'bg-accent-red-light text-harken-error border-harken-error/30',
   arterial: 'bg-orange-100 text-orange-700 border-orange-300',
   collector: 'bg-yellow-100 text-yellow-700 border-yellow-300',
   local: 'bg-green-100 text-green-700 border-green-300',
@@ -79,7 +79,7 @@ function formatNumber(num: number): string {
 function TrafficRow({ entry, onEdit }: { entry: TrafficDataEntry; onEdit?: () => void }) {
   const [isExpanded, setIsExpanded] = useState(false);
 
-  const roadClassColor = ROAD_CLASS_COLORS[entry.roadClass.toLowerCase()] || 'bg-gray-100 text-gray-700 border-gray-300';
+  const roadClassColor = ROAD_CLASS_COLORS[entry.roadClass.toLowerCase()] || 'bg-harken-gray-light text-harken-dark border-light-border';
 
   return (
     <div className="border border-slate-200 rounded-lg overflow-hidden">
@@ -114,7 +114,7 @@ function TrafficRow({ entry, onEdit }: { entry: TrafficDataEntry; onEdit?: () =>
       </button>
 
       {isExpanded && (
-        <div className="px-4 py-3 bg-slate-50 border-t border-slate-100 dark:bg-slate-800/50 dark:border-slate-700">
+        <div className="px-4 py-3 bg-slate-50 border-t border-slate-100 dark:bg-elevation-1/50 dark:border-dark-border">
           <div className="grid grid-cols-2 gap-3 text-xs">
             {entry.truckPercentage !== undefined && (
               <div>
@@ -188,8 +188,8 @@ export function TrafficDataCard({
     const badges: Record<string, { label: string; color: string }> = {
       mdot: { label: 'MDOT Data', color: 'bg-blue-100 text-blue-700' },
       cotality: { label: 'Cotality', color: 'bg-purple-100 text-purple-700' },
-      manual: { label: 'Manual', color: 'bg-gray-100 text-gray-600' },
-      mock: { label: 'Estimated', color: 'bg-amber-100 text-amber-700' },
+      manual: { label: 'Manual', color: 'bg-harken-gray-light text-harken-gray' },
+      mock: { label: 'Estimated', color: 'bg-accent-amber-gold-light text-accent-amber-gold' },
     };
 
     const badge = badges[dataSource];
@@ -201,15 +201,15 @@ export function TrafficDataCard({
   };
 
   return (
-    <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl shadow-sm overflow-hidden">
+    <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl shadow-sm overflow-hidden">
       {/* Header */}
-      <div className="p-4 border-b border-gray-100">
+      <div className="p-4 border-b border-harken-gray-light">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Car className="w-5 h-5 text-[#0da1c7]" />
             <div>
               <h3 className="text-lg font-bold text-[#1c3643] dark:text-white">Traffic Data</h3>
-              <p className="text-xs text-gray-500 dark:text-slate-400">
+              <p className="text-xs text-harken-gray-med dark:text-slate-400">
                 Annual Average Daily Traffic (AADT)
               </p>
             </div>
@@ -232,7 +232,7 @@ export function TrafficDataCard({
       </div>
 
       {/* Road Class Filter */}
-      <div className="p-4 bg-slate-50/50 border-b border-gray-100 dark:bg-slate-800/50 dark:border-slate-700">
+      <div className="p-4 bg-slate-50/50 border-b border-harken-gray-light dark:bg-elevation-1/50 dark:border-dark-border">
         <ButtonSelector
           label="Road Classification"
           options={ROAD_CLASS_OPTIONS}
@@ -243,7 +243,7 @@ export function TrafficDataCard({
 
       {/* Summary Stats */}
       {filteredData.length > 0 && (
-        <div className="grid grid-cols-2 divide-x divide-gray-100 border-b border-gray-100">
+        <div className="grid grid-cols-2 divide-x divide-harken-gray-light border-b border-harken-gray-light">
           <div className="p-4 text-center">
             <div className="text-2xl font-bold text-[#0da1c7]">{formatNumber(avgAADT)}</div>
             <div className="text-xs text-slate-500 dark:text-slate-400">Average AADT</div>

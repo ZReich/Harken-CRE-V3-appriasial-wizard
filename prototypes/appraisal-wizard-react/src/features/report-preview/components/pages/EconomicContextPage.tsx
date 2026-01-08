@@ -53,7 +53,7 @@ export const EconomicContextPage: React.FC<EconomicContextPageProps> = ({
 }) => {
   if (!data) {
     return (
-      <div className="bg-white w-[8.5in] min-h-[11in] p-[1in] shadow-lg mx-auto">
+      <div className="bg-surface-1 w-[8.5in] min-h-[11in] p-[1in] shadow-lg mx-auto">
         <h1 className="text-xl font-bold text-slate-800 border-b-2 border-[#0da1c7] pb-2 mb-6">
           ECONOMIC CONTEXT
         </h1>
@@ -92,7 +92,7 @@ export const EconomicContextPage: React.FC<EconomicContextPageProps> = ({
   ];
 
   return (
-    <div className="bg-white w-[8.5in] min-h-[11in] p-[1in] shadow-lg mx-auto relative">
+    <div className="bg-surface-1 w-[8.5in] min-h-[11in] p-[1in] shadow-lg mx-auto relative">
       {/* Header */}
       <h1 className="text-xl font-bold text-slate-800 border-b-2 border-[#0da1c7] pb-2 mb-6">
         ECONOMIC CONTEXT
@@ -121,7 +121,7 @@ export const EconomicContextPage: React.FC<EconomicContextPageProps> = ({
         </thead>
         <tbody>
           {indicators.map((indicator, idx) => (
-            <tr key={idx} className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
+            <tr key={idx} className={idx % 2 === 0 ? 'bg-surface-1' : 'bg-slate-50'}>
               <td className="py-3 px-4 border border-slate-200">
                 <span className="font-medium text-slate-800">{indicator.name}</span>
                 <p className="text-xs text-slate-500 mt-1">{indicator.description}</p>
@@ -131,9 +131,9 @@ export const EconomicContextPage: React.FC<EconomicContextPageProps> = ({
               </td>
               <td className="py-3 px-4 text-center border border-slate-200">
                 <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
-                  indicator.trend === 'Rising' ? 'bg-emerald-100 text-emerald-700' :
-                  indicator.trend === 'Falling' ? 'bg-red-100 text-red-700' :
-                  'bg-slate-100 text-slate-600'
+                  indicator.trend === 'Rising' ? 'bg-accent-teal-mint-light text-accent-teal-mint' :
+                  indicator.trend === 'Falling' ? 'bg-accent-red-light text-harken-error' :
+                  'bg-harken-gray-light text-harken-gray'
                 }`}>
                   {indicator.trend}
                 </span>
@@ -171,7 +171,7 @@ export const EconomicContextPage: React.FC<EconomicContextPageProps> = ({
                   data={data.treasury10Y.history}
                   chartStyle={chartStyle}
                   title="10-Year Treasury"
-                  color="#10b981"
+                  color="#2fc4b2"
                   height={180}
                   unit="%"
                   showAxis={true}
@@ -185,7 +185,7 @@ export const EconomicContextPage: React.FC<EconomicContextPageProps> = ({
                   data={data.inflation.history}
                   chartStyle={chartStyle}
                   title="Inflation"
-                  color="#f59e0b"
+                  color="#f2b705"
                   height={180}
                   unit="%"
                   showAxis={true}

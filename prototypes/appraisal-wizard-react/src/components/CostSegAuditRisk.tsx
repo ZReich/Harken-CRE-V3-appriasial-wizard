@@ -110,9 +110,9 @@ export const CostSegAuditRiskPanel: React.FC<CostSegAuditRiskProps> = ({
   }, [totalCost, fiveYearTotal, fifteenYearTotal, thirtyNineYearTotal, hasPhotos, hasMeasurements]);
 
   const riskColor = {
-    low: { bg: 'bg-emerald-50', border: 'border-emerald-200', text: 'text-emerald-700', icon: 'text-emerald-500' },
-    moderate: { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700', icon: 'text-amber-500' },
-    high: { bg: 'bg-red-50', border: 'border-red-200', text: 'text-red-700', icon: 'text-red-500' },
+    low: { bg: 'bg-accent-teal-mint-light', border: 'border-accent-teal-mint', text: 'text-accent-teal-mint', icon: 'text-accent-teal-mint' },
+    moderate: { bg: 'bg-accent-amber-gold-light', border: 'border-accent-amber-gold', text: 'text-accent-amber-gold', icon: 'text-accent-amber-gold' },
+    high: { bg: 'bg-accent-red-light', border: 'border-harken-error/20', text: 'text-harken-error', icon: 'text-harken-error' },
   }[riskAssessment.overallRisk];
 
   return (
@@ -122,20 +122,20 @@ export const CostSegAuditRiskPanel: React.FC<CostSegAuditRiskProps> = ({
           <Shield className={`w-5 h-5 ${riskColor.icon}`} />
           <h3 className={`text-lg font-bold ${riskColor.text}`}>Audit Risk Assessment</h3>
         </div>
-        <div className={`px-3 py-1 rounded-full font-bold text-sm ${riskColor.text} bg-white border ${riskColor.border}`}>
+        <div className={`px-3 py-1 rounded-full font-bold text-sm ${riskColor.text} bg-surface-1 border ${riskColor.border}`}>
           {riskAssessment.overallRisk.toUpperCase()}
         </div>
       </div>
 
       {/* Score */}
-      <div className="bg-white rounded-lg p-3">
+      <div className="bg-surface-1 rounded-lg p-3">
         <div className="flex justify-between items-center mb-2">
-          <span className="text-sm font-medium text-gray-600">Risk Score</span>
+          <span className="text-sm font-medium text-harken-gray">Risk Score</span>
           <span className={`text-lg font-bold ${riskColor.text}`}>{riskAssessment.score}/100</span>
         </div>
-        <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+        <div className="h-2 bg-harken-gray-med-lt rounded-full overflow-hidden">
           <div
-            className={`h-full ${riskAssessment.overallRisk === 'low' ? 'bg-emerald-500' : riskAssessment.overallRisk === 'moderate' ? 'bg-amber-500' : 'bg-red-500'}`}
+            className={`h-full ${riskAssessment.overallRisk === 'low' ? 'bg-accent-teal-mint' : riskAssessment.overallRisk === 'moderate' ? 'bg-accent-amber-gold' : 'bg-harken-error'}`}
             style={{ width: `${riskAssessment.score}%` }}
           />
         </div>
@@ -148,25 +148,25 @@ export const CostSegAuditRiskPanel: React.FC<CostSegAuditRiskProps> = ({
             key={idx}
             className={`flex items-start gap-2 p-2 rounded-lg ${
               flag.type === 'warning'
-                ? 'bg-amber-100'
+                ? 'bg-accent-amber-gold-light'
                 : flag.type === 'success'
-                ? 'bg-emerald-100'
+                ? 'bg-accent-teal-mint-light'
                 : 'bg-blue-100'
             }`}
           >
             {flag.type === 'warning' ? (
-              <AlertTriangle className="w-4 h-4 text-amber-600 mt-0.5 flex-shrink-0" />
+              <AlertTriangle className="w-4 h-4 text-accent-amber-gold mt-0.5 flex-shrink-0" />
             ) : flag.type === 'success' ? (
-              <CheckCircle2 className="w-4 h-4 text-emerald-600 mt-0.5 flex-shrink-0" />
+              <CheckCircle2 className="w-4 h-4 text-accent-teal-mint mt-0.5 flex-shrink-0" />
             ) : (
               <Info className="w-4 h-4 text-blue-600 mt-0.5 flex-shrink-0" />
             )}
             <div className="text-xs flex-1">
-              <p className={`font-medium ${flag.type === 'warning' ? 'text-amber-900' : flag.type === 'success' ? 'text-emerald-900' : 'text-blue-900'}`}>
+              <p className={`font-medium ${flag.type === 'warning' ? 'text-accent-amber-gold' : flag.type === 'success' ? 'text-accent-teal-mint' : 'text-blue-900'}`}>
                 {flag.message}
               </p>
               {flag.recommendation && (
-                <p className={`mt-1 ${flag.type === 'warning' ? 'text-amber-700' : 'text-blue-700'}`}>
+                <p className={`mt-1 ${flag.type === 'warning' ? 'text-accent-amber-gold' : 'text-blue-700'}`}>
                   → {flag.recommendation}
                 </p>
               )}

@@ -314,7 +314,7 @@ export function IncomeTextEditor({
 
       <div
         className={`relative ${isFullscreen
-          ? 'fixed inset-8 z-50 bg-white dark:bg-slate-800 rounded-2xl shadow-2xl p-8 flex flex-col max-w-6xl mx-auto'
+          ? 'fixed inset-8 z-50 bg-surface-1 dark:bg-elevation-1 rounded-2xl shadow-2xl p-8 flex flex-col max-w-6xl mx-auto'
           : 'mt-6'
           }`}
         style={isFullscreen ? { minHeight: '80vh', maxHeight: '90vh' } : undefined}
@@ -330,29 +330,29 @@ export function IncomeTextEditor({
         </div>
 
         {/* Toolbar */}
-        <div className={`flex flex-wrap items-center gap-1 bg-gray-50 dark:bg-slate-700 border border-gray-200 dark:border-slate-600 rounded-t-xl ${isFullscreen ? 'p-4 gap-2' : 'p-2'}`}>
+        <div className={`flex flex-wrap items-center gap-1 bg-harken-gray-light dark:bg-elevation-1 border border-light-border dark:border-harken-gray rounded-t-xl ${isFullscreen ? 'p-4 gap-2' : 'p-2'}`}>
           {/* History */}
-          <div className="flex items-center gap-0.5 pr-2 border-r border-gray-300 dark:border-slate-600">
+          <div className="flex items-center gap-0.5 pr-2 border-r border-light-border dark:border-harken-gray">
             <ToolbarButton icon={<Undo className="w-4 h-4" />} onClick={() => execCommand('undo')} title="Undo" />
             <ToolbarButton icon={<Redo className="w-4 h-4" />} onClick={() => execCommand('redo')} title="Redo" />
           </div>
 
           {/* Text Formatting */}
-          <div className="flex items-center gap-0.5 px-2 border-r border-gray-300 dark:border-slate-600">
+          <div className="flex items-center gap-0.5 px-2 border-r border-light-border dark:border-harken-gray">
             <ToolbarButton icon={<Bold className="w-4 h-4" />} onClick={() => execCommand('bold')} title="Bold (Ctrl+B)" />
             <ToolbarButton icon={<Italic className="w-4 h-4" />} onClick={() => execCommand('italic')} title="Italic (Ctrl+I)" />
             <ToolbarButton icon={<Underline className="w-4 h-4" />} onClick={() => execCommand('underline')} title="Underline (Ctrl+U)" />
           </div>
 
           {/* Alignment */}
-          <div className="flex items-center gap-0.5 px-2 border-r border-gray-300 dark:border-slate-600">
+          <div className="flex items-center gap-0.5 px-2 border-r border-light-border dark:border-harken-gray">
             <ToolbarButton icon={<AlignLeft className="w-4 h-4" />} onClick={() => execCommand('justifyLeft')} title="Align Left" />
             <ToolbarButton icon={<AlignCenter className="w-4 h-4" />} onClick={() => execCommand('justifyCenter')} title="Align Center" />
             <ToolbarButton icon={<AlignRight className="w-4 h-4" />} onClick={() => execCommand('justifyRight')} title="Align Right" />
           </div>
 
           {/* Lists */}
-          <div className="flex items-center gap-0.5 px-2 border-r border-gray-300 dark:border-slate-600">
+          <div className="flex items-center gap-0.5 px-2 border-r border-light-border dark:border-harken-gray">
             <ToolbarButton icon={<List className="w-4 h-4" />} onClick={() => execCommand('insertUnorderedList')} title="Bullet List" />
             <ToolbarButton icon={<ListOrdered className="w-4 h-4" />} onClick={() => execCommand('insertOrderedList')} title="Numbered List" />
           </div>
@@ -400,8 +400,8 @@ export function IncomeTextEditor({
           onBlur={() => setIsFocused(false)}
           data-placeholder={placeholder}
           className={`
-            w-full border border-gray-200 dark:border-slate-600 border-t-0 rounded-b-xl bg-white dark:bg-slate-800
-            text-gray-700 dark:text-slate-200 leading-relaxed
+            w-full border border-light-border dark:border-harken-gray border-t-0 rounded-b-xl bg-surface-1 dark:bg-elevation-1
+            text-harken-gray dark:text-slate-200 leading-relaxed
             focus:outline-none focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent
             overflow-y-auto
             ${isFullscreen ? 'flex-1 p-8 text-lg leading-loose' : 'p-4 text-sm'}
@@ -412,41 +412,41 @@ export function IncomeTextEditor({
 
         {/* Footer: Word Count & Helper Text */}
         <div className="flex items-center justify-between mt-2">
-          <p className="text-xs text-gray-500 flex items-center gap-1">
-            <Info className="w-3.5 h-3.5 text-gray-400" />
+          <p className="text-xs text-harken-gray-med flex items-center gap-1">
+            <Info className="w-3.5 h-3.5 text-harken-gray-med" />
             {helperText || defaultHelperText[sectionType]}
           </p>
-          <p className="text-xs text-gray-400 ml-auto">
+          <p className="text-xs text-harken-gray-med ml-auto">
             {wordCount} words, {charCount} characters
           </p>
         </div>
 
         {/* AI Preview */}
         {aiPreview.isVisible && (
-          <div className="mt-3 p-4 bg-emerald-50 border border-emerald-300 rounded-xl animate-fade-in">
+          <div className="mt-3 p-4 bg-accent-teal-mint-light border border-accent-teal-mint rounded-xl animate-fade-in">
             <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-semibold text-emerald-800 flex items-center gap-1.5">
+              <span className="text-xs font-semibold text-accent-teal-mint flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5" />
                 AI Generated Draft
               </span>
               <div className="flex gap-2">
                 <button
                   onClick={acceptAI}
-                  className="px-3 py-1 text-xs font-medium text-white bg-emerald-600 rounded-md hover:bg-emerald-700 flex items-center gap-1 transition-colors"
+                  className="px-3 py-1 text-xs font-medium text-white bg-accent-teal-mint rounded-md hover:bg-accent-teal-mint flex items-center gap-1 transition-colors"
                 >
                   <Check className="w-3 h-3" />
                   Accept
                 </button>
                 <button
                   onClick={rejectAI}
-                  className="px-3 py-1 text-xs font-medium text-gray-600 dark:text-slate-300 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-md hover:bg-gray-50 dark:hover:bg-slate-600 flex items-center gap-1 transition-colors"
+                  className="px-3 py-1 text-xs font-medium text-harken-gray dark:text-slate-200 bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-harken-gray rounded-md hover:bg-harken-gray-light dark:hover:bg-harken-gray flex items-center gap-1 transition-colors"
                 >
                   <X className="w-3 h-3" />
                   Reject
                 </button>
               </div>
             </div>
-            <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+            <div className="text-sm text-harken-gray leading-relaxed whitespace-pre-wrap">
               {aiPreview.content.split('\n\n').map((paragraph, idx) => (
                 <p key={idx} className="mb-3 last:mb-0">
                   {paragraph.split('**').map((part, i) =>
@@ -505,7 +505,7 @@ function ToolbarButton({
         w-8 h-8 flex items-center justify-center rounded-md transition-colors
         ${active
           ? 'bg-[#0da1c7] text-white'
-          : 'text-gray-500 dark:text-slate-400 hover:text-gray-700 dark:hover:text-slate-200 hover:bg-gray-200 dark:hover:bg-slate-600'
+          : 'text-harken-gray-med dark:text-slate-400 hover:text-harken-gray dark:hover:text-white hover:bg-harken-gray-light dark:hover:bg-harken-gray'
         }
       `}
     >

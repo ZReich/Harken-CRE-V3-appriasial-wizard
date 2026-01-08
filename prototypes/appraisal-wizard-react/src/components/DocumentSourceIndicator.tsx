@@ -44,24 +44,24 @@ function getConfidenceColors(confidence: number): {
   switch (level) {
     case 'high':
       return {
-        bg: 'bg-emerald-50',
-        text: 'text-emerald-700',
-        border: 'border-emerald-200',
-        icon: 'text-emerald-500',
+        bg: 'bg-accent-teal-mint-light',
+        text: 'text-accent-teal-mint',
+        border: 'border-accent-teal-mint',
+        icon: 'text-accent-teal-mint',
       };
     case 'medium':
       return {
-        bg: 'bg-amber-50',
-        text: 'text-amber-700',
-        border: 'border-amber-200',
-        icon: 'text-amber-500',
+        bg: 'bg-accent-amber-gold-light',
+        text: 'text-accent-amber-gold',
+        border: 'border-accent-amber-gold-light',
+        icon: 'text-accent-amber-gold',
       };
     case 'low':
       return {
-        bg: 'bg-red-50',
-        text: 'text-red-700',
-        border: 'border-red-200',
-        icon: 'text-red-500',
+        bg: 'bg-accent-red-light',
+        text: 'text-harken-error',
+        border: 'border-harken-error/30',
+        icon: 'text-harken-error',
       };
   }
 }
@@ -158,7 +158,7 @@ export function DocumentSourceIndicator({
   const popover = isOpen && (
     <div
       ref={popoverRef}
-      className="absolute z-50 mt-1 w-64 bg-white rounded-lg shadow-lg border border-gray-200 overflow-hidden"
+      className="absolute z-50 mt-1 w-64 bg-surface-1 rounded-lg shadow-lg border border-light-border overflow-hidden"
       style={{ top: '100%', left: 0 }}
     >
       {/* Header */}
@@ -178,9 +178,9 @@ export function DocumentSourceIndicator({
       <div className="p-3 space-y-2">
         {/* Filename */}
         <div>
-          <div className="text-xs text-gray-500 mb-0.5">File</div>
-          <div className="text-sm text-gray-900 dark:text-white font-medium flex items-center gap-1.5">
-            <FileText className="w-4 h-4 text-gray-400 flex-shrink-0" />
+          <div className="text-xs text-harken-gray mb-0.5">File</div>
+          <div className="text-sm text-harken-dark dark:text-white font-medium flex items-center gap-1.5">
+            <FileText className="w-4 h-4 text-harken-gray-med flex-shrink-0" />
             <span className="truncate" title={source.sourceFilename}>
               {source.sourceFilename}
             </span>
@@ -189,42 +189,42 @@ export function DocumentSourceIndicator({
 
         {/* Document Type */}
         <div>
-          <div className="text-xs text-gray-500 mb-0.5">Document Type</div>
-          <div className="text-sm text-gray-900 dark:text-white">
+          <div className="text-xs text-harken-gray mb-0.5">Document Type</div>
+          <div className="text-sm text-harken-dark dark:text-white">
             {formatDocumentType(source.sourceDocumentType)}
           </div>
         </div>
 
         {/* Extracted Value */}
         <div>
-          <div className="text-xs text-gray-500 mb-0.5">Extracted Value</div>
-          <div className="text-sm text-gray-900 dark:text-white bg-gray-50 dark:bg-slate-700 px-2 py-1 rounded border border-gray-100 dark:border-slate-600 break-words">
+          <div className="text-xs text-harken-gray mb-0.5">Extracted Value</div>
+          <div className="text-sm text-harken-dark dark:text-white bg-harken-gray-light dark:bg-elevation-1 px-2 py-1 rounded border border-harken-gray-light dark:border-harken-gray break-words">
             {source.value}
           </div>
         </div>
 
         {/* Confidence Bar */}
         <div>
-          <div className="text-xs text-gray-500 mb-1">Confidence</div>
+          <div className="text-xs text-harken-gray mb-1">Confidence</div>
           <div className="flex items-center gap-2">
-            <div className="flex-1 h-2 bg-gray-100 rounded-full overflow-hidden">
+            <div className="flex-1 h-2 bg-harken-gray-light rounded-full overflow-hidden">
               <div
                 className={`h-full rounded-full transition-all ${
                   source.confidence >= 0.85
-                    ? 'bg-emerald-500'
+                    ? 'bg-accent-teal-mint-light0'
                     : source.confidence >= 0.65
-                    ? 'bg-amber-500'
-                    : 'bg-red-500'
+                    ? 'bg-accent-amber-gold-light0'
+                    : 'bg-accent-red-light0'
                 }`}
                 style={{ width: `${confidencePercent}%` }}
               />
             </div>
-            <span className="text-xs text-gray-600 w-8">{confidencePercent}%</span>
+            <span className="text-xs text-harken-gray w-8">{confidencePercent}%</span>
           </div>
         </div>
 
         {/* Timestamp */}
-        <div className="text-xs text-gray-400 pt-1 border-t border-gray-100">
+        <div className="text-xs text-harken-gray-med pt-1 border-t border-harken-gray-light">
           Extracted {new Date(source.extractedAt).toLocaleString()}
         </div>
       </div>
@@ -252,7 +252,7 @@ export function useHasDocumentSource(fieldPath: string): boolean {
  */
 export function getDocumentSourceInputClasses(hasSource: boolean): string {
   if (!hasSource) return '';
-  return 'border-emerald-200 bg-emerald-50/30 focus:border-emerald-300 focus:ring-emerald-200';
+  return 'border-accent-teal-mint bg-accent-teal-mint-light/30 focus:border-accent-teal-mint focus:ring-accent-teal-mint/30';
 }
 
 export default DocumentSourceIndicator;

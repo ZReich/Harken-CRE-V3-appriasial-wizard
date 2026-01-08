@@ -1,3 +1,13 @@
+/**
+ * Override data for calculated fields
+ */
+export interface OverrideData {
+  overrideValue: number | string;
+  note: string;
+  originalCalculated?: number | string | null;
+  overriddenAt?: string;
+}
+
 export interface LandComp {
   id: string;
   address: string;
@@ -34,6 +44,8 @@ export interface LandComp {
   zoningAdj: 'Superior' | 'Similar' | 'Inferior' | '-';
   // Overall
   overallComparability: 'Superior' | 'Similar' | 'Inferior';
+  // Override for adjusted $/acre (calculated field)
+  adjPricePerAcreOverride?: OverrideData;
 }
 
 export interface SubjectProperty {

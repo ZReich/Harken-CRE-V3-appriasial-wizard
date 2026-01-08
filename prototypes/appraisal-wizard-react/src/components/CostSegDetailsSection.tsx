@@ -63,19 +63,19 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
   children,
 }) => {
   return (
-    <div className="border border-gray-200 dark:border-slate-700 rounded-xl overflow-hidden bg-white dark:bg-slate-800">
+    <div className="border border-light-border dark:border-dark-border rounded-xl overflow-hidden bg-surface-1 dark:bg-elevation-1">
       <button
         onClick={onToggle}
-        className="w-full flex items-center justify-between p-4 bg-gray-50 hover:bg-gray-100 transition-colors"
+        className="w-full flex items-center justify-between p-4 bg-harken-gray-light hover:bg-harken-gray-light transition-colors"
       >
         <div className="flex items-center gap-2">
           {icon}
-          <h4 className="font-semibold text-gray-900 dark:text-white">{title}</h4>
+          <h4 className="font-semibold text-harken-dark dark:text-white">{title}</h4>
         </div>
         {isExpanded ? (
-          <ChevronDown className="w-5 h-5 text-gray-400" />
+          <ChevronDown className="w-5 h-5 text-harken-gray-med" />
         ) : (
-          <ChevronRight className="w-5 h-5 text-gray-400" />
+          <ChevronRight className="w-5 h-5 text-harken-gray-med" />
         )}
       </button>
       {isExpanded && <div className="p-4">{children}</div>}
@@ -289,14 +289,14 @@ export default function CostSegDetailsSection({
   return (
     <CollapsibleSection
       title="Cost Segregation Details"
-      icon={<DollarSign className="w-4 h-4 text-emerald-600" />}
+      icon={<DollarSign className="w-4 h-4 text-accent-teal-mint" />}
       isExpanded={isExpanded}
       onToggle={() => setIsExpanded(!isExpanded)}
     >
       <div className="space-y-4">
         {/* Enable Toggle */}
         <div className="flex items-center justify-between">
-          <label htmlFor={`cost-seg-enabled-${building.id}`} className="flex items-center gap-2 text-sm font-medium text-gray-900 dark:text-white cursor-pointer">
+          <label htmlFor={`cost-seg-enabled-${building.id}`} className="flex items-center gap-2 text-sm font-medium text-harken-dark dark:text-white cursor-pointer">
             <input
               type="checkbox"
               id={`cost-seg-enabled-${building.id}`}
@@ -345,11 +345,11 @@ export default function CostSegDetailsSection({
             {/* System Refinements */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
-                <h4 className="text-sm font-semibold text-gray-900 dark:text-white">System Refinements</h4>
+                <h4 className="text-sm font-semibold text-harken-dark dark:text-white">System Refinements</h4>
                 <div className="flex gap-2">
                   <button
                     onClick={() => handleAddSystemRefinement('electrical')}
-                    className="px-2 py-1 text-xs font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded transition-colors"
+                    className="px-2 py-1 text-xs font-medium text-accent-teal-mint bg-accent-teal-mint-light hover:bg-accent-teal-mint-light rounded transition-colors"
                   >
                     + Electrical
                   </button>
@@ -369,7 +369,7 @@ export default function CostSegDetailsSection({
               </div>
 
               {details.systemRefinements.length === 0 && (
-                <div className="text-center py-6 text-sm text-gray-500 dark:text-slate-400">
+                <div className="text-center py-6 text-sm text-harken-gray-med dark:text-slate-400">
                   No system refinements added yet. Click buttons above to add.
                 </div>
               )}
@@ -396,23 +396,23 @@ export default function CostSegDetailsSection({
 
             {/* Allocation Summary */}
             {allocationTotals.total > 0 && (
-              <div className="border-t border-gray-200 pt-4 space-y-3">
-                <h4 className="text-sm font-semibold text-gray-900 dark:text-white">Allocation Summary</h4>
+              <div className="border-t border-light-border pt-4 space-y-3">
+                <h4 className="text-sm font-semibold text-harken-dark dark:text-white">Allocation Summary</h4>
                 <div className="grid grid-cols-3 gap-3">
-                  <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-3">
-                    <div className="text-xs text-emerald-700 mb-1">5-Year Personal Property</div>
-                    <div className="text-lg font-bold text-emerald-900">{allocationTotals.fiveYear.toFixed(1)}%</div>
+                  <div className="bg-accent-teal-mint-light border border-accent-teal-mint rounded-lg p-3">
+                    <div className="text-xs text-accent-teal-mint mb-1">5-Year Personal Property</div>
+                    <div className="text-lg font-bold text-accent-teal-mint-hover">{allocationTotals.fiveYear.toFixed(1)}%</div>
                   </div>
-                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-                    <div className="text-xs text-amber-700 mb-1">15-Year Land Improvements</div>
-                    <div className="text-lg font-bold text-amber-900">{allocationTotals.fifteenYear.toFixed(1)}%</div>
+                  <div className="bg-accent-amber-gold-light border border-accent-amber-gold-light rounded-lg p-3">
+                    <div className="text-xs text-accent-amber-gold mb-1">15-Year Land Improvements</div>
+                    <div className="text-lg font-bold text-accent-amber-gold">{allocationTotals.fifteenYear.toFixed(1)}%</div>
                   </div>
                   <div className="bg-slate-50 border border-slate-200 rounded-lg p-3">
                     <div className="text-xs text-slate-700 mb-1">39-Year Real Property</div>
                     <div className="text-lg font-bold text-slate-900">{allocationTotals.thirtyNineYear.toFixed(1)}%</div>
                   </div>
                 </div>
-                <div className="text-sm text-center text-gray-600 dark:text-slate-400">
+                <div className="text-sm text-center text-harken-gray dark:text-slate-400">
                   Total Allocated: {formatCurrency(allocationTotals.total)}
                 </div>
               </div>

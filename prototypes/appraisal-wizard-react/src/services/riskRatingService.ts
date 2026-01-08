@@ -27,15 +27,15 @@ export async function calculateRiskRating(
  * Risk grade color mapping for UI display
  */
 export const GRADE_COLORS: Record<string, { bg: string; text: string; border: string }> = {
-  AAA: { bg: 'bg-emerald-100', text: 'text-emerald-700', border: 'border-emerald-500' },
-  AA:  { bg: 'bg-emerald-50', text: 'text-emerald-600', border: 'border-emerald-400' },
+  AAA: { bg: 'bg-accent-teal-mint-light', text: 'text-accent-teal-mint', border: 'border-accent-teal-mint' },
+  AA:  { bg: 'bg-accent-teal-mint-light', text: 'text-accent-teal-mint', border: 'border-accent-teal-mint' },
   A:   { bg: 'bg-green-50', text: 'text-green-600', border: 'border-green-400' },
   BBB: { bg: 'bg-cyan-50', text: 'text-cyan-600', border: 'border-cyan-400' },
-  BB:  { bg: 'bg-amber-50', text: 'text-amber-600', border: 'border-amber-400' },
+  BB:  { bg: 'bg-accent-amber-gold-light', text: 'text-accent-amber-gold', border: 'border-accent-amber-gold' },
   B:   { bg: 'bg-orange-50', text: 'text-orange-600', border: 'border-orange-400' },
-  CCC: { bg: 'bg-red-50', text: 'text-red-600', border: 'border-red-400' },
-  CC:  { bg: 'bg-red-100', text: 'text-red-700', border: 'border-red-500' },
-  C:   { bg: 'bg-red-200', text: 'text-red-800', border: 'border-red-600' },
+  CCC: { bg: 'bg-accent-red-light', text: 'text-harken-error', border: 'border-harken-error/20' },
+  CC:  { bg: 'bg-accent-red-light', text: 'text-harken-error', border: 'border-harken-error' },
+  C:   { bg: 'bg-harken-error/10', text: 'text-harken-error', border: 'border-harken-error' },
 };
 
 /**

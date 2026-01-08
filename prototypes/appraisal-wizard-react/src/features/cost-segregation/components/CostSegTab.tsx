@@ -83,8 +83,8 @@ export const CostSegTab: React.FC<CostSegTabProps> = ({ className = '', onOpenFu
     return (
       <div className={`flex flex-col items-center justify-center h-full p-8 ${className}`}>
         <div className="max-w-lg text-center">
-          <div className="w-16 h-16 bg-slate-100 dark:bg-slate-700 rounded-2xl flex items-center justify-center mx-auto mb-6">
-            <SkipForward className="w-8 h-8 text-slate-400" />
+          <div className="w-16 h-16 bg-harken-gray-light dark:bg-elevation-1 rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <SkipForward className="w-8 h-8 text-harken-gray-med" />
           </div>
           <h2 className="text-2xl font-bold text-slate-900 mb-2">
             Cost Segregation Skipped
@@ -110,8 +110,8 @@ export const CostSegTab: React.FC<CostSegTabProps> = ({ className = '', onOpenFu
     return (
       <div className={`flex flex-col items-center justify-center h-full p-8 ${className}`}>
         <div className="max-w-lg text-center">
-          <div className="w-16 h-16 bg-amber-100 rounded-2xl flex items-center justify-center mx-auto mb-6">
-            <AlertTriangle className="w-8 h-8 text-amber-500" />
+          <div className="w-16 h-16 bg-accent-amber-gold-light rounded-2xl flex items-center justify-center mx-auto mb-6">
+            <AlertTriangle className="w-8 h-8 text-accent-amber-gold" />
           </div>
           <h2 className="text-2xl font-bold text-slate-900 mb-2">
             Cost Segregation Not Available
@@ -126,23 +126,23 @@ export const CostSegTab: React.FC<CostSegTabProps> = ({ className = '', onOpenFu
               <CheckCircle2 className="w-4 h-4 text-slate-400" />
               Requirements:
             </h4>
-            <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-300">
+            <ul className="space-y-2 text-sm text-harken-gray dark:text-slate-200">
               <li className="flex items-center gap-2">
                 {isCostSegEnabled 
-                  ? <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                  : <AlertCircle className="w-4 h-4 text-amber-500" />}
+                  ? <CheckCircle2 className="w-4 h-4 text-accent-teal-mint" />
+                  : <AlertCircle className="w-4 h-4 text-accent-amber-gold" />}
                 Cost Segregation enabled in Setup
               </li>
               <li className="flex items-center gap-2">
                 {hasCostApproach 
-                  ? <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                  : <AlertCircle className="w-4 h-4 text-amber-500" />}
+                  ? <CheckCircle2 className="w-4 h-4 text-accent-teal-mint" />
+                  : <AlertCircle className="w-4 h-4 text-accent-amber-gold" />}
                 Cost Approach selected in scenario
               </li>
               <li className="flex items-center gap-2">
                 {isCostApproachComplete 
-                  ? <CheckCircle2 className="w-4 h-4 text-emerald-500" />
-                  : <AlertCircle className="w-4 h-4 text-amber-500" />}
+                  ? <CheckCircle2 className="w-4 h-4 text-accent-teal-mint" />
+                  : <AlertCircle className="w-4 h-4 text-accent-amber-gold" />}
                 Cost Approach analysis completed
               </li>
             </ul>
@@ -160,11 +160,11 @@ export const CostSegTab: React.FC<CostSegTabProps> = ({ className = '', onOpenFu
         <div className="flex items-center justify-between mb-6">
           <div>
             <h2 className="text-2xl font-bold text-slate-900">Cost Segregation</h2>
-            <p className="text-slate-600 dark:text-slate-300">Generate IRS-compliant depreciation analysis</p>
+            <p className="text-slate-600 dark:text-slate-200">Generate IRS-compliant depreciation analysis</p>
           </div>
           <button
             onClick={handleSkip}
-            className="flex items-center gap-2 px-4 py-2 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors text-sm"
+            className="flex items-center gap-2 px-4 py-2 text-slate-600 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-elevation-3 rounded-lg transition-colors text-sm"
           >
             <SkipForward className="w-4 h-4" />
             Skip this step
@@ -189,24 +189,24 @@ export const CostSegTab: React.FC<CostSegTabProps> = ({ className = '', onOpenFu
             {/* What to expect */}
             <div className="bg-slate-50 border border-slate-200 rounded-xl p-4 text-left mb-6">
               <h4 className="font-medium text-slate-900 mb-3 flex items-center gap-2">
-                <FileText className="w-4 h-4 text-slate-500 dark:text-slate-400" />
+                <FileText className="w-4 h-4 text-harken-gray-med dark:text-slate-400" />
                 What Cost Segregation Provides:
               </h4>
-              <ul className="space-y-2 text-sm text-slate-600 dark:text-slate-300">
+              <ul className="space-y-2 text-sm text-harken-gray dark:text-slate-200">
                 <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-accent-teal-mint mt-0.5 flex-shrink-0" />
                   <span>Component allocation to 5-year, 15-year, and 39-year depreciation classes</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-accent-teal-mint mt-0.5 flex-shrink-0" />
                   <span>Year-by-year MACRS depreciation schedule</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-accent-teal-mint mt-0.5 flex-shrink-0" />
                   <span>Bonus depreciation calculations for {currentYear} ({formatCostSegPercent(bonusRate)} rate)</span>
                 </li>
                 <li className="flex items-start gap-2">
-                  <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+                  <CheckCircle2 className="w-4 h-4 text-accent-teal-mint mt-0.5 flex-shrink-0" />
                   <span>Professional PDF report for tax advisor use</span>
                 </li>
               </ul>
@@ -225,12 +225,12 @@ export const CostSegTab: React.FC<CostSegTabProps> = ({ className = '', onOpenFu
         {/* Guidance Modal */}
         {showGuidance && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <div className="bg-white dark:bg-slate-800 rounded-2xl max-w-4xl max-h-[90vh] overflow-y-auto">
-              <div className="sticky top-0 bg-white dark:bg-slate-800 px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+            <div className="bg-surface-1 dark:bg-elevation-1 rounded-2xl max-w-4xl max-h-[90vh] overflow-y-auto">
+              <div className="sticky top-0 bg-surface-1 dark:bg-elevation-1 px-6 py-4 border-b border-slate-200 dark:border-dark-border flex items-center justify-between">
                 <h3 className="text-lg font-semibold text-slate-900">Cost Segregation Guide</h3>
                 <button
                   onClick={() => setShowGuidance(false)}
-                  className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
+                  className="p-2 hover:bg-slate-100 dark:hover:bg-elevation-3 rounded-lg transition-colors"
                 >
                   <span className="sr-only">Close</span>
                   ×
@@ -251,15 +251,15 @@ export const CostSegTab: React.FC<CostSegTabProps> = ({ className = '', onOpenFu
   return (
     <div className={`flex flex-col h-full ${className}`}>
       {/* Header */}
-      <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+      <div className="px-6 py-4 border-b border-slate-200 dark:border-dark-border bg-surface-1 dark:bg-elevation-1">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center">
-              <Calculator className="w-5 h-5 text-emerald-600" />
+            <div className="w-10 h-10 bg-accent-teal-mint-light rounded-xl flex items-center justify-center">
+              <Calculator className="w-5 h-5 text-accent-teal-mint" />
             </div>
             <div>
               <h2 className="text-xl font-bold text-slate-900">Cost Segregation</h2>
-              <p className="text-sm text-slate-600 dark:text-slate-300">
+              <p className="text-sm text-slate-600 dark:text-slate-200">
                 IRS-compliant depreciation analysis • {currentYear} Tax Year
               </p>
             </div>
@@ -267,14 +267,14 @@ export const CostSegTab: React.FC<CostSegTabProps> = ({ className = '', onOpenFu
           <div className="flex items-center gap-3">
             <button
               onClick={() => setShowGuidance(true)}
-              className="flex items-center gap-2 px-3 py-2 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors text-sm"
+              className="flex items-center gap-2 px-3 py-2 text-slate-600 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-elevation-3 rounded-lg transition-colors text-sm"
             >
               <HelpCircle className="w-4 h-4" />
               Guidance
             </button>
             <button
               onClick={handleSkip}
-              className="flex items-center gap-2 px-3 py-2 text-slate-600 dark:text-slate-300 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors text-sm"
+              className="flex items-center gap-2 px-3 py-2 text-slate-600 dark:text-slate-200 hover:text-slate-900 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-elevation-3 rounded-lg transition-colors text-sm"
             >
               <SkipForward className="w-4 h-4" />
               Skip
@@ -317,27 +317,27 @@ export const CostSegTab: React.FC<CostSegTabProps> = ({ className = '', onOpenFu
             {/* Quick Stats Preview */}
             {summary && (
               <div className="grid grid-cols-3 gap-4 mb-6">
-                <div className="bg-slate-50 rounded-xl p-4 border border-slate-200">
-                  <div className="text-xs text-slate-500 uppercase tracking-wide mb-1">
+                <div className="bg-harken-gray-light rounded-xl p-4 border border-light-border">
+                  <div className="text-xs text-harken-gray-med uppercase tracking-wide mb-1">
                     Total Cost
                   </div>
                   <div className="text-lg font-bold text-slate-900">
                     {formatCostSegCurrency(summary.totalProjectCost)}
                   </div>
                 </div>
-                <div className="bg-emerald-50 rounded-xl p-4 border border-emerald-200">
-                  <div className="text-xs text-emerald-600 uppercase tracking-wide mb-1">
+                <div className="bg-accent-teal-mint-light rounded-xl p-4 border border-accent-teal-mint">
+                  <div className="text-xs text-accent-teal-mint uppercase tracking-wide mb-1">
                     Est. Accelerated
                   </div>
-                  <div className="text-lg font-bold text-emerald-700">
+                  <div className="text-lg font-bold text-accent-teal-mint">
                     ~{formatCostSegPercent(0.15)}
                   </div>
                 </div>
-                <div className="bg-amber-50 rounded-xl p-4 border border-amber-200">
-                  <div className="text-xs text-amber-600 uppercase tracking-wide mb-1">
+                <div className="bg-accent-amber-gold-light rounded-xl p-4 border border-accent-amber-gold">
+                  <div className="text-xs text-accent-amber-gold uppercase tracking-wide mb-1">
                     Bonus Rate
                   </div>
-                  <div className="text-lg font-bold text-amber-700">
+                  <div className="text-lg font-bold text-accent-amber-gold">
                     {formatCostSegPercent(bonusRate)}
                   </div>
                 </div>
@@ -345,10 +345,10 @@ export const CostSegTab: React.FC<CostSegTabProps> = ({ className = '', onOpenFu
             )}
 
             {/* Generate Card */}
-            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 shadow-sm overflow-hidden">
+            <div className="bg-surface-1 dark:bg-elevation-1 rounded-2xl border border-slate-200 dark:border-dark-border shadow-sm overflow-hidden">
               <div className="p-8 text-center">
-                <div className="w-20 h-20 bg-gradient-to-br from-emerald-100 to-emerald-200 rounded-2xl flex items-center justify-center mx-auto mb-6">
-                  <TrendingUp className="w-10 h-10 text-emerald-600" />
+                <div className="w-20 h-20 bg-gradient-to-br from-accent-teal-mint-light to-accent-teal-mint rounded-2xl flex items-center justify-center mx-auto mb-6">
+                  <TrendingUp className="w-10 h-10 text-accent-teal-mint" />
                 </div>
                 <h3 className="text-2xl font-bold text-slate-900 mb-2">
                   Generate Cost Segregation Analysis
@@ -359,19 +359,19 @@ export const CostSegTab: React.FC<CostSegTabProps> = ({ className = '', onOpenFu
                 </p>
 
                 {error && (
-                  <div className="bg-red-50 border border-red-200 rounded-lg p-3 mb-6 text-sm text-red-700 flex items-start gap-2">
+                  <div className="bg-accent-red-light border border-harken-error/20 rounded-lg p-3 mb-6 text-sm text-harken-error flex items-start gap-2">
                     <AlertTriangle className="w-4 h-4 mt-0.5 flex-shrink-0" />
                     {error}
                   </div>
                 )}
 
                 {missingData.length > 0 && (
-                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mb-6 text-left">
-                    <div className="font-medium text-amber-800 mb-2 flex items-center gap-2">
+                  <div className="bg-accent-amber-gold-light border border-accent-amber-gold rounded-lg p-4 mb-6 text-left">
+                    <div className="font-medium text-accent-amber-gold mb-2 flex items-center gap-2">
                       <AlertCircle className="w-4 h-4" />
                       Missing Data
                     </div>
-                    <ul className="text-sm text-amber-700 space-y-1">
+                    <ul className="text-sm text-accent-amber-gold space-y-1">
                       {missingData.map((item, idx) => (
                         <li key={idx}>• {item}</li>
                       ))}
@@ -384,8 +384,8 @@ export const CostSegTab: React.FC<CostSegTabProps> = ({ className = '', onOpenFu
                   disabled={!canGenerate || isGenerating}
                   className={`inline-flex items-center gap-2 px-8 py-4 rounded-xl font-semibold text-lg transition-all ${
                     canGenerate && !isGenerating
-                      ? 'bg-emerald-500 text-white hover:bg-emerald-600 shadow-lg shadow-emerald-500/25'
-                      : 'bg-slate-200 dark:bg-slate-700 text-slate-500 dark:text-slate-400 cursor-not-allowed'
+                      ? 'bg-accent-teal-mint text-white hover:bg-accent-teal-mint shadow-lg shadow-accent-teal-mint/25'
+                      : 'bg-harken-gray-light dark:bg-elevation-1 text-harken-gray-med dark:text-slate-400 cursor-not-allowed'
                   }`}
                 >
                   {isGenerating ? (
@@ -403,12 +403,12 @@ export const CostSegTab: React.FC<CostSegTabProps> = ({ className = '', onOpenFu
               </div>
 
               {/* Bonus Depreciation Note */}
-              <div className="px-8 py-4 bg-amber-50 border-t border-amber-200">
+              <div className="px-8 py-4 bg-accent-amber-gold-light border-t border-accent-amber-gold">
                 <div className="flex items-center gap-3">
-                  <DollarSign className="w-5 h-5 text-amber-600 flex-shrink-0" />
-                  <div className="text-sm text-amber-700">
+                  <DollarSign className="w-5 h-5 text-accent-amber-gold flex-shrink-0" />
+                  <div className="text-sm text-accent-amber-gold">
                     <strong>{currentYear} Bonus Depreciation: {formatCostSegPercent(bonusRate)}</strong>
-                    <span className="text-amber-600"> — Eligible 5-year, 7-year, and 15-year property qualifies for first-year bonus.</span>
+                    <span className="text-accent-amber-gold"> — Eligible 5-year, 7-year, and 15-year property qualifies for first-year bonus.</span>
                   </div>
                 </div>
               </div>
@@ -455,12 +455,12 @@ export const CostSegTab: React.FC<CostSegTabProps> = ({ className = '', onOpenFu
       {/* Guidance Modal */}
       {showGuidance && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-white dark:bg-slate-800 rounded-2xl max-w-4xl max-h-[90vh] overflow-y-auto w-full">
-            <div className="sticky top-0 bg-white dark:bg-slate-800 px-6 py-4 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between z-10">
+          <div className="bg-surface-1 dark:bg-elevation-1 rounded-2xl max-w-4xl max-h-[90vh] overflow-y-auto w-full">
+            <div className="sticky top-0 bg-surface-1 dark:bg-elevation-1 px-6 py-4 border-b border-slate-200 dark:border-dark-border flex items-center justify-between z-10">
               <h3 className="text-lg font-semibold text-slate-900">Cost Segregation Guide</h3>
               <button
                 onClick={() => setShowGuidance(false)}
-                className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors text-xl"
+                className="p-2 hover:bg-slate-100 dark:hover:bg-elevation-3 rounded-lg transition-colors text-xl"
               >
                 ×
               </button>

@@ -135,38 +135,38 @@ function MaterialChip({
   onDismiss: () => void;
 }) {
   const conditionColors: Record<string, string> = {
-    excellent: 'text-green-600',
+    excellent: 'text-accent-teal-mint',
     good: 'text-lime-600',
-    average: 'text-gray-600',
-    fair: 'text-amber-600',
-    poor: 'text-red-600',
+    average: 'text-harken-gray',
+    fair: 'text-accent-amber-gold',
+    poor: 'text-harken-error',
   };
   
   return (
-    <div className="bg-white border border-slate-200 rounded-lg p-2 shadow-sm">
+    <div className="bg-surface-1 border border-light-border rounded-lg p-2 shadow-sm">
       <div className="flex items-start gap-2">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-1.5">
-            <span className="text-xs font-semibold text-slate-800 truncate">{material.name}</span>
+            <span className="text-xs font-semibold text-harken-dark truncate">{material.name}</span>
             <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-medium ${
               material.confidence >= 85 
-                ? 'bg-green-100 text-green-700' 
+                ? 'bg-accent-teal-mint-light text-accent-teal-mint' 
                 : material.confidence >= 70 
-                  ? 'bg-amber-100 text-amber-700'
-                  : 'bg-gray-100 text-gray-600'
+                  ? 'bg-accent-amber-gold-light text-accent-amber-gold'
+                  : 'bg-harken-gray-light text-harken-gray'
             }`}>
               {material.confidence}%
             </span>
           </div>
           {material.details && (
-            <p className="text-[10px] text-slate-500 truncate mt-0.5">{material.details}</p>
+            <p className="text-[10px] text-harken-gray-med truncate mt-0.5">{material.details}</p>
           )}
-          <div className="flex items-center gap-2 mt-1 text-[10px] text-slate-500 dark:text-slate-400">
+          <div className="flex items-center gap-2 mt-1 text-[10px] text-harken-gray-med dark:text-slate-400">
             {material.suggestedAge !== undefined && (
               <span>Age: ~{material.suggestedAge} yrs</span>
             )}
             {material.suggestedCondition && (
-              <span className={conditionColors[material.suggestedCondition] || 'text-gray-600'}>
+              <span className={conditionColors[material.suggestedCondition] || 'text-harken-gray'}>
                 {material.suggestedCondition.charAt(0).toUpperCase() + material.suggestedCondition.slice(1)}
               </span>
             )}
@@ -182,9 +182,9 @@ function MaterialChip({
           >
             <Check className="w-3 h-3" />
           </button>
-          <button
+            <button
             onClick={onDismiss}
-            className="p-1.5 rounded-md bg-slate-100 text-slate-400 hover:bg-slate-200 hover:text-slate-600 transition-colors"
+            className="p-1.5 rounded-md bg-harken-gray-light text-harken-gray-med hover:bg-harken-gray-med-lt hover:text-harken-gray transition-colors"
             title="Dismiss"
           >
             <X className="w-3 h-3" />
@@ -350,7 +350,7 @@ export function PhotoReferencePanel({
   return (
     <>
       {/* Main Panel */}
-      <div className={`fixed right-4 top-1/4 w-80 bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden z-50 max-h-[70vh] flex flex-col ${className}`}>
+      <div className={`fixed right-4 top-1/4 w-80 bg-surface-1 rounded-2xl shadow-2xl border border-light-border overflow-hidden z-50 max-h-[70vh] flex flex-col ${className}`}>
         {/* Header with context indicator */}
         <div className="px-4 py-3 bg-gradient-to-r from-gradient-action-start to-gradient-action-end flex items-center justify-between shrink-0">
           <div className="flex items-center gap-2 text-white">
@@ -422,8 +422,8 @@ export function PhotoReferencePanel({
           ) : (
             /* Empty state */
             <div className="p-6 text-center">
-              <ImageOff className="w-8 h-8 text-slate-300 mx-auto mb-2" />
-              <p className="text-xs text-slate-500 mb-2">No photos uploaded for this section</p>
+              <ImageOff className="w-8 h-8 text-harken-gray-med mx-auto mb-2" />
+              <p className="text-xs text-harken-gray-med mb-2">No photos uploaded for this section</p>
               {onUploadPhotos && (
                 <button 
                   onClick={onUploadPhotos}
@@ -476,10 +476,10 @@ export function PhotoReferencePanel({
           
           {/* Other photos - collapsed by default */}
           {otherPhotos.length > 0 && (
-            <div className="border-t border-slate-100">
+            <div className="border-t border-harken-gray-light">
               <button
                 onClick={() => setShowOtherPhotos(!showOtherPhotos)}
-                className="w-full px-3 py-2 text-xs text-slate-500 cursor-pointer hover:bg-slate-50 flex items-center gap-1 transition-colors"
+                className="w-full px-3 py-2 text-xs text-harken-gray-med cursor-pointer hover:bg-harken-gray-light flex items-center gap-1 transition-colors"
               >
                 {showOtherPhotos ? (
                   <ChevronDown className="w-3 h-3" />
@@ -536,7 +536,7 @@ export function PhotoReferencePanel({
               </div>
               <button 
                 onClick={() => setExpandedPreview(null)}
-                className="p-2 hover:bg-white/10 rounded-lg transition-colors"
+                className="p-2 hover:bg-surface-1/10 rounded-lg transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>

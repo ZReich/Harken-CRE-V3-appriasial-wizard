@@ -70,7 +70,7 @@ export function CelebrationOverlay() {
     >
       {/* Main celebration card */}
       <div 
-        className={`bg-white rounded-2xl shadow-2xl ${config.size} w-full mx-4 ${config.padding} transform animate-scale-bounce`}
+        className={`bg-surface-1 rounded-2xl shadow-2xl ${config.size} w-full mx-4 ${config.padding} transform animate-scale-bounce`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* Animation area */}
@@ -80,18 +80,18 @@ export function CelebrationOverlay() {
 
         {/* Text content */}
         <div className="text-center">
-          <h2 className={`font-bold text-gray-900 mb-2 ${
+          <h2 className={`font-bold text-harken-gray mb-2 ${
             level === 'grand' || level === 'finale' ? 'text-3xl' : 
             level === 'large' ? 'text-2xl' : 'text-xl'
           }`}>
             {title}
           </h2>
-          <p className="text-gray-600">{subtitle}</p>
+          <p className="text-harken-gray">{subtitle}</p>
         </div>
 
         {/* Progress indicator / timer */}
         <div className="mt-6">
-          <div className="h-1 bg-gray-200 rounded-full overflow-hidden">
+          <div className="h-1 bg-harken-gray-light rounded-full overflow-hidden">
             <div 
               className="h-full bg-gradient-to-r from-[#0da1c7] to-green-500 rounded-full"
               style={{
@@ -102,7 +102,7 @@ export function CelebrationOverlay() {
         </div>
 
         {/* Dismiss hint */}
-        <p className="text-center text-xs text-gray-400 mt-4">
+        <p className="text-center text-xs text-harken-gray-med mt-4">
           Click anywhere or press Esc to continue
         </p>
       </div>

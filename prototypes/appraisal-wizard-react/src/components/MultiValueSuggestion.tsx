@@ -52,10 +52,10 @@ function formatConfidence(confidence: number): string {
  * Get confidence color class based on score
  */
 function getConfidenceColor(confidence: number): string {
-  if (confidence >= 0.9) return 'text-green-600 bg-green-50 dark:text-green-400 dark:bg-green-900/30';
-  if (confidence >= 0.7) return 'text-blue-600 bg-blue-50 dark:text-blue-400 dark:bg-blue-900/30';
-  if (confidence >= 0.5) return 'text-amber-600 bg-amber-50 dark:text-amber-400 dark:bg-amber-900/30';
-  return 'text-red-600 bg-red-50 dark:text-red-400 dark:bg-red-900/30';
+  if (confidence >= 0.9) return 'text-accent-teal-mint bg-accent-teal-mint-light dark:text-accent-teal-mint dark:bg-green-900/30';
+  if (confidence >= 0.7) return 'text-harken-blue bg-blue-50 dark:text-blue-400 dark:bg-blue-900/30';
+  if (confidence >= 0.5) return 'text-accent-amber-gold bg-accent-amber-gold-light dark:text-accent-amber-gold dark:bg-accent-amber-gold/10';
+  return 'text-harken-error bg-accent-red-light dark:text-harken-error dark:bg-accent-red-light';
 }
 
 export function MultiValueSuggestion({
@@ -136,27 +136,27 @@ export function MultiValueSuggestion({
 
   return (
     <div
-      className={`mt-2 border border-blue-200 dark:border-blue-800 rounded-lg bg-gradient-to-r from-blue-50 to-white dark:from-slate-800 dark:to-slate-800 overflow-hidden transition-all duration-200 ${className}`}
+      className={`mt-2 border border-blue-200 dark:border-blue-800 rounded-lg bg-gradient-to-r from-blue-50 to-white dark:from-harken-dark dark:to-harken-dark overflow-hidden transition-all duration-200 ${className}`}
     >
       {/* Header */}
       <div
-        className="flex items-center justify-between px-3 py-2 cursor-pointer hover:bg-blue-50/50 dark:hover:bg-slate-700/50"
+        className="flex items-center justify-between px-3 py-2 cursor-pointer hover:bg-blue-50/50 dark:hover:bg-elevation-3/50"
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <div className="flex items-center gap-2 text-sm">
           <FileText className="w-4 h-4 text-blue-500 dark:text-blue-400" />
-          <span className="text-gray-600 dark:text-slate-300">
+          <span className="text-harken-gray dark:text-slate-200">
             {hasMultipleSuggestions ? (
               <>
                 <span className="font-medium text-blue-600 dark:text-blue-400">
                   {pendingSuggestions.length} values found
                 </span>
-                {fieldLabel && <span className="text-gray-400 dark:text-slate-500"> for {fieldLabel}</span>}
+                {fieldLabel && <span className="text-harken-gray-med dark:text-slate-500"> for {fieldLabel}</span>}
               </>
             ) : (
               <>
                 Suggested from:{' '}
-                <span className="font-medium text-gray-800 dark:text-white">
+                <span className="font-medium text-harken-dark dark:text-white">
                   {pendingSuggestions[0]?.sourceFilename || 'Document'}
                 </span>
               </>
@@ -170,16 +170,16 @@ export function MultiValueSuggestion({
             </span>
           )}
           {isExpanded ? (
-            <ChevronUp className="w-4 h-4 text-gray-400" />
+            <ChevronUp className="w-4 h-4 text-harken-gray-med" />
           ) : (
-            <ChevronDown className="w-4 h-4 text-gray-400" />
+            <ChevronDown className="w-4 h-4 text-harken-gray-med" />
           )}
         </div>
       </div>
 
       {/* Expanded Content */}
       {isExpanded && (
-        <div className="px-3 pb-3 border-t border-blue-100 dark:border-slate-700">
+        <div className="px-3 pb-3 border-t border-blue-100 dark:border-dark-border">
           {hasMultipleSuggestions ? (
             // Side-by-side comparison for multiple values
             <>
@@ -187,11 +187,11 @@ export function MultiValueSuggestion({
                 {pendingSuggestions.map((suggestion) => (
                   <div
                     key={suggestion.id}
-                    className="p-3 bg-white dark:bg-slate-700 rounded-lg border border-gray-200 dark:border-slate-600 flex flex-col"
+                    className="p-3 bg-surface-1 dark:bg-elevation-1 rounded-lg border border-light-border dark:border-harken-gray flex flex-col"
                   >
                     {/* Source Info */}
                     <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-1.5 text-xs text-gray-500 dark:text-slate-400">
+                      <div className="flex items-center gap-1.5 text-xs text-harken-gray-med dark:text-slate-400">
                         <FileText className="w-3 h-3" />
                         <span className="font-medium truncate max-w-[120px]" title={suggestion.sourceFilename}>
                           {suggestion.sourceFilename || 'Document'}
@@ -204,13 +204,13 @@ export function MultiValueSuggestion({
                     
                     {/* Document Type */}
                     {suggestion.sourceDocumentType && (
-                      <div className="text-xs text-gray-400 dark:text-slate-500 mb-2">
+                      <div className="text-xs text-harken-gray-med dark:text-slate-500 mb-2">
                         ({formatDocumentType(suggestion.sourceDocumentType)})
                       </div>
                     )}
                     
                     {/* Value */}
-                    <div className="flex-1 p-2 bg-gray-50 dark:bg-slate-600 rounded text-sm text-gray-800 dark:text-white font-medium mb-3">
+                    <div className="flex-1 p-2 bg-harken-gray-light dark:bg-dark-input rounded text-sm text-harken-dark dark:text-white font-medium mb-3">
                       "{suggestion.value}"
                     </div>
                     
@@ -233,12 +233,12 @@ export function MultiValueSuggestion({
               </div>
               
               {/* Reject All Button */}
-              <div className="mt-3 pt-3 border-t border-gray-200 dark:border-slate-600">
+              <div className="mt-3 pt-3 border-t border-light-border dark:border-harken-gray">
                 <button
                   type="button"
                   onClick={handleRejectAll}
                   disabled={!!processingId || isRejectingAll}
-                  className="w-full flex items-center justify-center gap-1.5 px-3 py-2 text-sm font-medium text-gray-600 dark:text-slate-300 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-md hover:bg-gray-50 dark:hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="w-full flex items-center justify-center gap-1.5 px-3 py-2 text-sm font-medium text-harken-gray dark:text-slate-200 bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-harken-gray rounded-md hover:bg-harken-gray-light dark:hover:bg-harken-gray disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {isRejectingAll ? (
                     <>
@@ -257,13 +257,13 @@ export function MultiValueSuggestion({
           ) : (
             // Single suggestion display
             <>
-              <div className="mt-3 p-3 bg-white dark:bg-slate-700 rounded-md border border-gray-200 dark:border-slate-600">
+              <div className="mt-3 p-3 bg-surface-1 dark:bg-elevation-1 rounded-md border border-light-border dark:border-harken-gray">
                 {pendingSuggestions[0]?.sourceDocumentType && (
-                  <div className="text-xs text-gray-400 dark:text-slate-500 mb-1">
+                  <div className="text-xs text-harken-gray-med dark:text-slate-500 mb-1">
                     {formatDocumentType(pendingSuggestions[0].sourceDocumentType)}
                   </div>
                 )}
-                <p className="text-sm text-gray-800 dark:text-white font-medium leading-relaxed">
+                <p className="text-sm text-harken-dark dark:text-white font-medium leading-relaxed">
                   "{pendingSuggestions[0]?.value}"
                 </p>
               </div>
@@ -273,7 +273,7 @@ export function MultiValueSuggestion({
                   type="button"
                   onClick={handleRejectAll}
                   disabled={!!processingId || isRejectingAll}
-                  className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 dark:text-slate-300 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-md hover:bg-gray-50 dark:hover:bg-slate-600 hover:text-gray-700 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                  className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-harken-gray dark:text-slate-200 bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-harken-gray rounded-md hover:bg-harken-gray-light dark:hover:bg-harken-gray hover:text-harken-gray dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
                 >
                   {isRejectingAll ? (
                     <>

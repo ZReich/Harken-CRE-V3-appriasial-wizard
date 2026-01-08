@@ -65,7 +65,7 @@ const Quadrant: React.FC<QuadrantProps> = ({
 export const SWOTPage: React.FC<SWOTPageProps> = ({ data, pageNumber }) => {
   if (!data) {
     return (
-      <div className="bg-white w-[8.5in] min-h-[11in] p-[1in] shadow-lg mx-auto">
+      <div className="bg-surface-1 w-[8.5in] min-h-[11in] p-[1in] shadow-lg mx-auto">
         <h1 className="text-xl font-bold text-slate-800 border-b-2 border-[#0da1c7] pb-2 mb-6">
           SWOT ANALYSIS
         </h1>
@@ -82,7 +82,7 @@ export const SWOTPage: React.FC<SWOTPageProps> = ({ data, pageNumber }) => {
   const negativeItems = weaknesses.length + threats.length;
 
   return (
-    <div className="bg-white w-[8.5in] min-h-[11in] p-[1in] shadow-lg mx-auto relative">
+    <div className="bg-surface-1 w-[8.5in] min-h-[11in] p-[1in] shadow-lg mx-auto relative">
       {/* Header */}
       <h1 className="text-xl font-bold text-slate-800 border-b-2 border-[#0da1c7] pb-2 mb-6">
         SWOT ANALYSIS
@@ -103,13 +103,13 @@ export const SWOTPage: React.FC<SWOTPageProps> = ({ data, pageNumber }) => {
               <span className="text-slate-500">Total Factors:</span>
               <span className="font-semibold text-slate-700">{totalItems}</span>
             </div>
-            <div className="flex items-center gap-1.5 px-2 py-1 bg-emerald-50 rounded">
-              <span className="text-emerald-600">Positive:</span>
-              <span className="font-semibold text-emerald-700">{positiveItems}</span>
+            <div className="flex items-center gap-1.5 px-2 py-1 bg-accent-teal-mint-light rounded">
+              <span className="text-accent-teal-mint">Positive:</span>
+              <span className="font-semibold text-accent-teal-mint">{positiveItems}</span>
             </div>
-            <div className="flex items-center gap-1.5 px-2 py-1 bg-red-50 rounded">
-              <span className="text-red-600">Negative:</span>
-              <span className="font-semibold text-red-700">{negativeItems}</span>
+            <div className="flex items-center gap-1.5 px-2 py-1 bg-accent-red-light rounded">
+              <span className="text-harken-error">Negative:</span>
+              <span className="font-semibold text-harken-error">{negativeItems}</span>
             </div>
           </div>
         )}
@@ -126,10 +126,10 @@ export const SWOTPage: React.FC<SWOTPageProps> = ({ data, pageNumber }) => {
         <Quadrant
           title="STRENGTHS"
           items={strengths}
-          bgColor="bg-emerald-50"
-          borderColor="border-emerald-200"
-          headerColor="bg-emerald-600"
-          bulletColor="bg-emerald-500"
+          bgColor="bg-accent-teal-mint-light"
+          borderColor="border-accent-teal-mint"
+          headerColor="bg-accent-teal-mint"
+          bulletColor="bg-accent-teal-mint"
           iconSymbol="+"
         />
 
@@ -137,10 +137,10 @@ export const SWOTPage: React.FC<SWOTPageProps> = ({ data, pageNumber }) => {
         <Quadrant
           title="WEAKNESSES"
           items={weaknesses}
-          bgColor="bg-red-50"
-          borderColor="border-red-200"
-          headerColor="bg-red-600"
-          bulletColor="bg-red-500"
+          bgColor="bg-accent-red-light"
+          borderColor="border-harken-error/20"
+          headerColor="bg-harken-error"
+          bulletColor="bg-harken-error"
           iconSymbol="−"
         />
 
@@ -164,10 +164,10 @@ export const SWOTPage: React.FC<SWOTPageProps> = ({ data, pageNumber }) => {
         <Quadrant
           title="THREATS"
           items={threats}
-          bgColor="bg-amber-50"
-          borderColor="border-amber-200"
-          headerColor="bg-amber-600"
-          bulletColor="bg-amber-500"
+          bgColor="bg-accent-amber-gold-light"
+          borderColor="border-accent-amber-gold"
+          headerColor="bg-accent-amber-gold"
+          bulletColor="bg-accent-amber-gold"
           iconSymbol="⚠"
         />
       </div>

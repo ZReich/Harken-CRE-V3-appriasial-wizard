@@ -979,16 +979,16 @@ export default function SetupPage() {
   const renderBasicsTab = () => (
     <div className="space-y-6">
       {/* Property Address - Clean, Progressive Disclosure Design */}
-      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+      <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-light-border dark:border-harken-gray pb-3 mb-4">
           Property Address
         </h3>
 
         {/* Street Address - Primary Input */}
         <div className="space-y-3">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1.5">
-              Street Address <span className="text-red-500">*</span>
+            <label className="block text-sm font-medium text-harken-gray dark:text-slate-200 mb-1.5">
+              Street Address <span className="text-harken-error">*</span>
             </label>
             <GooglePlacesAutocomplete
               value={address.street}
@@ -1060,7 +1060,7 @@ export default function SetupPage() {
               disabled={!isAddressComplete || autoLookupStatus === 'loading'}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all ${isAddressComplete && autoLookupStatus !== 'loading'
                 ? 'bg-harken-blue text-white hover:bg-harken-blue/90 shadow-sm'
-                : 'bg-slate-100 text-slate-400 cursor-not-allowed dark:bg-slate-700 dark:text-slate-500'
+                : 'bg-slate-100 text-slate-400 cursor-not-allowed dark:bg-elevation-1 dark:text-slate-500'
                 }`}
             >
               {autoLookupStatus === 'loading' ? (
@@ -1078,7 +1078,7 @@ export default function SetupPage() {
 
             {/* Status feedback - inline */}
             {autoLookupStatus === 'success' && (
-              <span className="flex items-center gap-1.5 text-xs text-emerald-600 animate-fade-in">
+              <span className="flex items-center gap-1.5 text-xs text-accent-teal-mint animate-fade-in">
                 <CheckCircle size={14} />
                 {autoLookupMessage || 'Property data found'}
               </span>
@@ -1094,7 +1094,7 @@ export default function SetupPage() {
             {isAddressComplete && autoLookupStatus === 'idle' && (
               <span className="text-xs text-slate-400">
                 {lookupCostInfo.isFree ? (
-                  <span className="text-emerald-600">Montana Cadastral • Free</span>
+                  <span className="text-accent-teal-mint">Montana Cadastral • Free</span>
                 ) : (
                   'Cotality'
                 )}
@@ -1111,48 +1111,48 @@ export default function SetupPage() {
             </p>
             <div className="grid grid-cols-4 gap-3">
               <div>
-                <label className="block text-xs font-medium text-gray-500 mb-1">City</label>
+                <label className="block text-xs font-medium text-harken-gray-med mb-1">City</label>
                 <input
                   type="text"
                   value={address.city}
                   onChange={(e) => setAddress({ ...address, city: e.target.value })}
-                  className="w-full px-2.5 py-1.5 border border-gray-200 rounded-md text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:placeholder-slate-400"
+                  className="w-full px-2.5 py-1.5 border border-light-border rounded-md text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent dark:bg-elevation-1 dark:border-harken-gray dark:text-white dark:placeholder-harken-gray-med"
                   placeholder="City"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-500 mb-1">State</label>
+                <label className="block text-xs font-medium text-harken-gray-med mb-1">State</label>
                 <input
                   type="text"
                   value={address.state}
                   onChange={(e) => setAddress({ ...address, state: e.target.value.toUpperCase() })}
-                  className="w-full px-2.5 py-1.5 border border-gray-200 rounded-md text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:placeholder-slate-400"
+                  className="w-full px-2.5 py-1.5 border border-light-border rounded-md text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent dark:bg-elevation-1 dark:border-harken-gray dark:text-white dark:placeholder-harken-gray-med"
                   placeholder="MT"
                   maxLength={2}
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-500 mb-1">ZIP</label>
+                <label className="block text-xs font-medium text-harken-gray-med mb-1">ZIP</label>
                 <input
                   type="text"
                   value={address.zip}
                   onChange={(e) => setAddress({ ...address, zip: e.target.value })}
-                  className="w-full px-2.5 py-1.5 border border-gray-200 rounded-md text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:placeholder-slate-400"
+                  className="w-full px-2.5 py-1.5 border border-light-border rounded-md text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent dark:bg-elevation-1 dark:border-harken-gray dark:text-white dark:placeholder-harken-gray-med"
                   placeholder="59102"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-gray-500 mb-1">County</label>
+                <label className="block text-xs font-medium text-harken-gray-med mb-1">County</label>
                 <input
                   type="text"
                   value={address.county}
                   onChange={(e) => setAddress({ ...address, county: e.target.value })}
-                  className="w-full px-2.5 py-1.5 border border-gray-200 rounded-md text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent dark:bg-slate-700 dark:border-slate-600 dark:text-white dark:placeholder-slate-400"
+                  className="w-full px-2.5 py-1.5 border border-light-border rounded-md text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent dark:bg-elevation-1 dark:border-harken-gray dark:text-white dark:placeholder-harken-gray-med"
                   placeholder="County"
                 />
               </div>
             </div>
-            <p className="text-xs text-gray-400 mt-3">
+            <p className="text-xs text-harken-gray-med mt-3">
               For multi-parcel properties, additional addresses can be entered in Subject Data &gt; Improvements.
             </p>
           </div>
@@ -1160,46 +1160,46 @@ export default function SetupPage() {
       </div>
 
       {/* Key Dates */}
-      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+      <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-light-border dark:border-harken-gray pb-3 mb-4">
           Key Dates
         </h3>
         <div className="grid grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
-              Date of Report <span className="text-red-500">*</span>
+            <label className="block text-sm font-medium text-harken-gray dark:text-slate-200 mb-1">
+              Date of Report <span className="text-harken-error">*</span>
             </label>
             <input
               type="date"
               value={dates.reportDate}
               onChange={(e) => setDates({ ...dates, reportDate: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-500 rounded-lg text-sm bg-white dark:bg-slate-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent dark:[color-scheme:dark]"
+              className="w-full px-3 py-2 border border-light-border dark:border-harken-gray rounded-lg text-sm bg-surface-1 dark:bg-dark-input text-harken-dark dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent dark:[color-scheme:dark]"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
-              Date of Inspection <span className="text-red-500">*</span>
+            <label className="block text-sm font-medium text-harken-gray dark:text-slate-200 mb-1">
+              Date of Inspection <span className="text-harken-error">*</span>
             </label>
             <input
               type="date"
               value={dates.inspectionDate}
               onChange={(e) => setDates({ ...dates, inspectionDate: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-500 rounded-lg text-sm bg-white dark:bg-slate-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent dark:[color-scheme:dark]"
+              className="w-full px-3 py-2 border border-light-border dark:border-harken-gray rounded-lg text-sm bg-surface-1 dark:bg-dark-input text-harken-dark dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent dark:[color-scheme:dark]"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
-              Effective Date of Appraisal <span className="text-red-500">*</span>
+            <label className="block text-sm font-medium text-harken-gray dark:text-slate-200 mb-1">
+              Effective Date of Appraisal <span className="text-harken-error">*</span>
             </label>
             <input
               type="date"
               value={dates.effectiveDate}
               onChange={(e) => setDates({ ...dates, effectiveDate: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-500 rounded-lg text-sm bg-white dark:bg-slate-600 text-gray-900 dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent dark:[color-scheme:dark]"
+              className="w-full px-3 py-2 border border-light-border dark:border-harken-gray rounded-lg text-sm bg-surface-1 dark:bg-dark-input text-harken-dark dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent dark:[color-scheme:dark]"
             />
           </div>
         </div>
-        <p className="text-xs text-gray-500 mt-3 flex items-center gap-1">
+        <p className="text-xs text-harken-gray-med mt-3 flex items-center gap-1">
           <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
@@ -1208,16 +1208,16 @@ export default function SetupPage() {
       </div>
 
       {/* Property Classification - 3-Tier M&S Hierarchy */}
-      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+      <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-light-border dark:border-harken-gray pb-3 mb-4">
           Property Classification
         </h3>
 
         {/* Selection Breadcrumb */}
         {(context.propertyCategory || context.propertyType || context.msOccupancyCode) && (
-          <div className="mb-4 p-3 bg-slate-50 dark:bg-slate-700/50 rounded-lg border border-slate-200 dark:border-slate-600">
+          <div className="mb-4 p-3 bg-slate-50 dark:bg-elevation-1/50 rounded-lg border border-slate-200 dark:border-harken-gray">
             <div className="flex items-center gap-2 text-sm">
-              <span className="text-gray-500 dark:text-slate-400">Selected:</span>
+              <span className="text-harken-gray-med dark:text-slate-400">Selected:</span>
               <span className="font-medium text-harken-dark dark:text-white">
                 {getPropertyHierarchyLabel(
                   context.propertyCategory || 'commercial',
@@ -1231,8 +1231,8 @@ export default function SetupPage() {
 
         {/* Tier 1: Property Category */}
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-3">
-            Property Category <span className="text-red-500">*</span>
+          <label className="block text-sm font-medium text-harken-gray dark:text-slate-200 mb-3">
+            Property Category <span className="text-harken-error">*</span>
           </label>
           <div className="grid grid-cols-3 gap-4">
             {PROPERTY_CATEGORIES.map((category) => {
@@ -1252,7 +1252,7 @@ export default function SetupPage() {
                   }}
                   className={`relative p-6 border-2 rounded-lg text-center transition-all hover:border-harken-blue hover:shadow-md ${isSelected
                     ? 'border-harken-blue bg-harken-blue/5 dark:bg-cyan-500/10'
-                    : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700'
+                    : 'border-light-border dark:border-harken-gray bg-surface-1 dark:bg-elevation-1'
                     }`}
                 >
                   {isSelected && (
@@ -1262,9 +1262,9 @@ export default function SetupPage() {
                       </svg>
                     </div>
                   )}
-                  <Icon className={`w-10 h-10 mx-auto mb-3 ${isSelected ? 'text-harken-blue dark:text-cyan-400' : 'text-gray-400 dark:text-slate-500'}`} />
-                  <span className={`block text-base font-semibold ${isSelected ? 'text-harken-blue dark:text-cyan-400' : 'text-gray-700 dark:text-slate-300'}`}>{category.label}</span>
-                  <span className="block text-xs text-gray-500 mt-1">{category.description}</span>
+                  <Icon className={`w-10 h-10 mx-auto mb-3 ${isSelected ? 'text-harken-blue dark:text-cyan-400' : 'text-harken-gray-med dark:text-slate-500'}`} />
+                  <span className={`block text-base font-semibold ${isSelected ? 'text-harken-blue dark:text-cyan-400' : 'text-harken-gray dark:text-slate-200'}`}>{category.label}</span>
+                  <span className="block text-xs text-harken-gray-med mt-1">{category.description}</span>
                 </button>
               );
             })}
@@ -1274,10 +1274,10 @@ export default function SetupPage() {
 
       {/* Tier 2: Property Type (conditional) */}
       {context.propertyCategory && (
-        <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm animate-fade-in">
-          <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4 flex items-center gap-2">
+        <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm animate-fade-in">
+          <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-light-border dark:border-harken-gray pb-3 mb-4 flex items-center gap-2">
             Property Type
-            <span className="text-xs font-normal text-gray-500 bg-gray-100 dark:bg-slate-700 dark:text-slate-300 px-2 py-0.5 rounded">
+            <span className="text-xs font-normal text-harken-gray-med bg-harken-gray-light dark:bg-elevation-1 dark:text-slate-200 px-2 py-0.5 rounded">
               M&S Section Reference
             </span>
           </h3>
@@ -1297,7 +1297,7 @@ export default function SetupPage() {
                   }}
                   className={`relative p-4 border-2 rounded-lg text-left transition-all hover:border-harken-blue ${isSelected
                     ? 'border-harken-blue bg-harken-blue/5 dark:bg-cyan-500/10'
-                    : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700'
+                    : 'border-light-border dark:border-harken-gray bg-surface-1 dark:bg-elevation-1'
                     }`}
                 >
                   {isSelected && (
@@ -1307,12 +1307,12 @@ export default function SetupPage() {
                       </svg>
                     </div>
                   )}
-                  <span className={`block font-semibold text-sm ${isSelected ? 'text-harken-blue dark:text-cyan-400' : 'text-gray-700 dark:text-slate-300'}`}>
+                  <span className={`block font-semibold text-sm ${isSelected ? 'text-harken-blue dark:text-cyan-400' : 'text-harken-gray dark:text-slate-200'}`}>
                     {propType.label}
                   </span>
-                  <span className="block text-xs text-gray-500 mt-1">{propType.description}</span>
+                  <span className="block text-xs text-harken-gray-med mt-1">{propType.description}</span>
                   {propType.msSection && (
-                    <span className="inline-block mt-2 text-[10px] font-medium text-gray-400 bg-gray-100 dark:bg-slate-700 dark:text-slate-300 px-1.5 py-0.5 rounded">
+                    <span className="inline-block mt-2 text-[10px] font-medium text-harken-gray-med bg-harken-gray-light dark:bg-elevation-1 dark:text-slate-200 px-1.5 py-0.5 rounded">
                       {propType.msSection}
                     </span>
                   )}
@@ -1325,14 +1325,14 @@ export default function SetupPage() {
 
       {/* Tier 3: M&S Occupancy Code (conditional) */}
       {context.propertyType && getOccupancyCodesByPropertyType(context.propertyType).length > 0 && (
-        <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm animate-fade-in">
-          <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4 flex items-center gap-2">
+        <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm animate-fade-in">
+          <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-light-border dark:border-harken-gray pb-3 mb-4 flex items-center gap-2">
             M&S Occupancy Code
-            <span className="text-xs font-normal text-gray-500 bg-gray-100 dark:bg-slate-700 dark:text-slate-300 px-2 py-0.5 rounded">
+            <span className="text-xs font-normal text-harken-gray-med bg-harken-gray-light dark:bg-elevation-1 dark:text-slate-200 px-2 py-0.5 rounded">
               Specific Building Type
             </span>
           </h3>
-          <p className="text-sm text-gray-600 dark:text-slate-400 mb-4">
+          <p className="text-sm text-harken-gray dark:text-slate-400 mb-4">
             Select the specific occupancy type for accurate cost calculations. This determines base costs, applicable construction classes, and economic life.
           </p>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
@@ -1349,7 +1349,7 @@ export default function SetupPage() {
                   }}
                   className={`relative p-3 border-2 rounded-lg text-left transition-all hover:border-harken-blue ${isSelected
                     ? 'border-harken-blue bg-harken-blue/5 dark:bg-cyan-500/10'
-                    : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700'
+                    : 'border-light-border dark:border-harken-gray bg-surface-1 dark:bg-elevation-1'
                     }`}
                 >
                   {isSelected && (
@@ -1359,15 +1359,15 @@ export default function SetupPage() {
                       </svg>
                     </div>
                   )}
-                  <span className={`block font-medium text-xs ${isSelected ? 'text-harken-blue dark:text-cyan-400' : 'text-gray-700 dark:text-slate-300'}`}>
+                  <span className={`block font-medium text-xs ${isSelected ? 'text-harken-blue dark:text-cyan-400' : 'text-harken-gray dark:text-slate-200'}`}>
                     {occCode.label}
                   </span>
-                  <span className="block text-[10px] text-gray-500 mt-0.5 line-clamp-2">{occCode.description}</span>
+                  <span className="block text-[10px] text-harken-gray-med mt-0.5 line-clamp-2">{occCode.description}</span>
                   <div className="flex items-center gap-2 mt-2">
-                    <span className="text-[9px] font-medium text-gray-400 bg-gray-100 dark:bg-slate-700 dark:text-slate-300 px-1 py-0.5 rounded">
+                    <span className="text-[9px] font-medium text-harken-gray-med bg-harken-gray-light dark:bg-elevation-1 dark:text-slate-200 px-1 py-0.5 rounded">
                       {occCode.msSection} {occCode.msPage || ''}
                     </span>
-                    <span className="text-[9px] text-gray-400 dark:text-slate-400">
+                    <span className="text-[9px] text-harken-gray-med dark:text-slate-400">
                       {occCode.defaultEconomicLife}yr life
                     </span>
                   </div>
@@ -1380,32 +1380,32 @@ export default function SetupPage() {
 
       {/* Unit Configuration - Multi-Family Properties Only */}
       {isMultiFamilyProperty && (
-        <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm animate-fade-in">
-          <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4 flex items-center gap-2">
+        <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm animate-fade-in">
+          <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-light-border dark:border-harken-gray pb-3 mb-4 flex items-center gap-2">
             Unit Configuration
-            <span className="text-xs font-normal text-gray-500 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 px-2 py-0.5 rounded">
+            <span className="text-xs font-normal text-harken-gray-med bg-accent-teal-mint-light dark:bg-accent-teal-mint/10 text-accent-teal-mint dark:text-accent-teal-mint px-2 py-0.5 rounded">
               Multi-Family
             </span>
           </h3>
-          <p className="text-sm text-gray-600 dark:text-slate-400 mb-4">
+          <p className="text-sm text-harken-gray dark:text-slate-400 mb-4">
             Configure the unit count and mix for accurate price-per-unit calculations in the Sales Comparison grid.
           </p>
 
           {/* Total Units and Calculation Method */}
           <div className="grid grid-cols-2 gap-6 mb-6">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-                Total Units <span className="text-red-500">*</span>
+              <label className="block text-sm font-medium text-harken-gray dark:text-slate-200 mb-2">
+                Total Units <span className="text-harken-error">*</span>
               </label>
               <input
                 type="number"
                 value={totalUnitCount || ''}
                 onChange={(e) => setTotalUnitCount(parseInt(e.target.value) || 0)}
                 placeholder="e.g., 45"
-                className={`w-full px-4 py-2.5 border rounded-lg text-lg font-semibold bg-white dark:bg-slate-700 text-harken-dark dark:text-white focus:ring-2 focus:ring-harken-blue focus:border-transparent ${
+                className={`w-full px-4 py-2.5 border rounded-lg text-lg font-semibold bg-surface-1 dark:bg-elevation-1 text-harken-dark dark:text-white focus:ring-2 focus:ring-harken-blue focus:border-transparent ${
                   totalUnitCount > 0 && totalUnitCount !== unitMix.reduce((acc, u) => acc + u.count, 0)
                     ? 'border-amber-500 bg-amber-50 dark:bg-amber-900/20'
-                    : 'border-gray-300 dark:border-slate-600'
+                    : 'border-light-border dark:border-harken-gray'
                 }`}
               />
               {/* Validation warning when total doesn't match sum */}
@@ -1419,7 +1419,7 @@ export default function SetupPage() {
               )}
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+              <label className="block text-sm font-medium text-harken-gray dark:text-slate-200 mb-2">
                 Primary Calculation Method
               </label>
               <div className="flex gap-2">
@@ -1430,7 +1430,7 @@ export default function SetupPage() {
                     className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
                       calculationMethod === method
                         ? 'bg-harken-blue text-white'
-                        : 'bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300 hover:bg-gray-200 dark:hover:bg-slate-600'
+                        : 'bg-harken-gray-light dark:bg-elevation-1 text-harken-gray dark:text-slate-200 hover:bg-harken-gray-med-lt dark:hover:bg-harken-gray'
                     }`}
                   >
                     {method === 'per_unit' ? '$/Unit' : method === 'per_sf' ? '$/SF' : '$/Room'}
@@ -1441,21 +1441,21 @@ export default function SetupPage() {
           </div>
 
           {/* Unit Mix Table */}
-          <div className="border border-gray-200 dark:border-slate-600 rounded-lg overflow-hidden">
+          <div className="border border-light-border dark:border-harken-gray rounded-lg overflow-hidden">
             <table className="w-full text-sm">
-              <thead className="bg-slate-50 dark:bg-slate-700">
+              <thead className="bg-slate-50 dark:bg-elevation-1">
                 <tr>
-                  <th className="px-4 py-2 text-left font-semibold text-gray-700 dark:text-slate-200">Type</th>
-                  <th className="px-4 py-2 text-center font-semibold text-gray-700 dark:text-slate-200">Count</th>
-                  <th className="px-4 py-2 text-center font-semibold text-gray-700 dark:text-slate-200">Avg SF</th>
-                  <th className="px-4 py-2 text-center font-semibold text-gray-700 dark:text-slate-200">Beds</th>
-                  <th className="px-4 py-2 text-center font-semibold text-gray-700 dark:text-slate-200">Baths</th>
+                  <th className="px-4 py-2 text-left font-semibold text-harken-gray dark:text-slate-200">Type</th>
+                  <th className="px-4 py-2 text-center font-semibold text-harken-gray dark:text-slate-200">Count</th>
+                  <th className="px-4 py-2 text-center font-semibold text-harken-gray dark:text-slate-200">Avg SF</th>
+                  <th className="px-4 py-2 text-center font-semibold text-harken-gray dark:text-slate-200">Beds</th>
+                  <th className="px-4 py-2 text-center font-semibold text-harken-gray dark:text-slate-200">Baths</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-200 dark:divide-slate-600">
+              <tbody className="divide-y divide-harken-gray-med-lt dark:divide-harken-gray">
                 {unitMix.map((unit, idx) => (
-                  <tr key={unit.unitType} className="bg-white dark:bg-slate-800">
-                    <td className="px-4 py-2 font-medium text-gray-700 dark:text-slate-200">
+                  <tr key={unit.unitType} className="bg-surface-1 dark:bg-elevation-1">
+                    <td className="px-4 py-2 font-medium text-harken-gray dark:text-slate-200">
                       {unit.unitType === 'studio' ? 'Studio' : 
                        unit.unitType === '1br' ? '1-Bedroom' :
                        unit.unitType === '2br' ? '2-Bedroom' :
@@ -1472,7 +1472,7 @@ export default function SetupPage() {
                           // Auto-update total
                           setTotalUnitCount(newMix.reduce((acc, u) => acc + u.count, 0));
                         }}
-                        className="w-20 px-2 py-1 text-center border border-gray-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-harken-dark dark:text-white"
+                        className="w-20 px-2 py-1 text-center border border-light-border dark:border-harken-gray rounded bg-surface-1 dark:bg-elevation-1 text-harken-dark dark:text-white"
                       />
                     </td>
                     <td className="px-4 py-2">
@@ -1484,25 +1484,25 @@ export default function SetupPage() {
                           newMix[idx] = { ...newMix[idx], avgSF: parseInt(e.target.value) || 0 };
                           setUnitMix(newMix);
                         }}
-                        className="w-20 px-2 py-1 text-center border border-gray-300 dark:border-slate-600 rounded bg-white dark:bg-slate-700 text-harken-dark dark:text-white"
+                        className="w-20 px-2 py-1 text-center border border-light-border dark:border-harken-gray rounded bg-surface-1 dark:bg-elevation-1 text-harken-dark dark:text-white"
                       />
                     </td>
-                    <td className="px-4 py-2 text-center text-gray-500 dark:text-slate-400">
+                    <td className="px-4 py-2 text-center text-harken-gray-med dark:text-slate-400">
                       {unit.bedrooms}
                     </td>
-                    <td className="px-4 py-2 text-center text-gray-500 dark:text-slate-400">
+                    <td className="px-4 py-2 text-center text-harken-gray-med dark:text-slate-400">
                       {unit.bathrooms}
                     </td>
                   </tr>
                 ))}
               </tbody>
-              <tfoot className="bg-slate-50 dark:bg-slate-700">
+              <tfoot className="bg-slate-50 dark:bg-elevation-1">
                 <tr>
-                  <td className="px-4 py-2 font-bold text-gray-700 dark:text-slate-200">Total</td>
+                  <td className="px-4 py-2 font-bold text-harken-gray dark:text-slate-200">Total</td>
                   <td className="px-4 py-2 text-center font-bold text-harken-blue">
                     {unitMix.reduce((acc, u) => acc + u.count, 0)} units
                   </td>
-                  <td className="px-4 py-2 text-center font-medium text-gray-600 dark:text-slate-300">
+                  <td className="px-4 py-2 text-center font-medium text-harken-gray dark:text-slate-200">
                     {unitMix.reduce((acc, u) => acc + (u.count * u.avgSF), 0).toLocaleString()} SF
                   </td>
                   <td colSpan={2}></td>
@@ -1511,7 +1511,7 @@ export default function SetupPage() {
             </table>
           </div>
 
-          <p className="mt-4 text-xs text-gray-500 dark:text-slate-400 flex items-center gap-2">
+          <p className="mt-4 text-xs text-harken-gray-med dark:text-slate-400 flex items-center gap-2">
             <svg className="w-4 h-4 text-harken-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
@@ -1521,16 +1521,16 @@ export default function SetupPage() {
       )}
 
       {/* Property Status */}
-      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+      <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-light-border dark:border-harken-gray pb-3 mb-4">
           Property Status
         </h3>
-        <p className="text-sm text-gray-600 dark:text-slate-400 mb-4">These questions determine which valuation scenarios are required for your appraisal.</p>
+        <p className="text-sm text-harken-gray dark:text-slate-400 mb-4">These questions determine which valuation scenarios are required for your appraisal.</p>
 
         {/* Property Status Selection */}
         <div className="mb-6">
-          <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-3">
-            What is the current status of the property? <span className="text-red-500">*</span>
+          <label className="block text-sm font-medium text-harken-gray dark:text-slate-200 mb-3">
+            What is the current status of the property? <span className="text-harken-error">*</span>
           </label>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
             {propertyStatusOptions.map((opt) => {
@@ -1539,7 +1539,7 @@ export default function SetupPage() {
                 <button
                   key={opt.value}
                   onClick={() => updateContext('propertyStatus', opt.value)}
-                  className={`relative p-4 border-2 rounded-lg text-left transition-all hover:border-harken-blue/50 dark:hover:border-cyan-400/50 ${isSelected ? 'border-harken-blue bg-harken-blue/5 dark:bg-cyan-500/10' : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700'
+                  className={`relative p-4 border-2 rounded-lg text-left transition-all hover:border-harken-blue/50 dark:hover:border-cyan-400/50 ${isSelected ? 'border-harken-blue bg-harken-blue/5 dark:bg-cyan-500/10' : 'border-light-border dark:border-harken-gray bg-surface-1 dark:bg-elevation-1'
                     }`}
                 >
                   {isSelected && (
@@ -1549,14 +1549,14 @@ export default function SetupPage() {
                       </svg>
                     </div>
                   )}
-                  <h4 className="font-semibold text-sm text-gray-900 dark:text-white">{opt.label}</h4>
-                  <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">{opt.description}</p>
+                  <h4 className="font-semibold text-sm text-harken-dark dark:text-white">{opt.label}</h4>
+                  <p className="text-xs text-harken-gray-med dark:text-slate-400 mt-1">{opt.description}</p>
                 </button>
               );
             })}
           </div>
           {context.propertyStatus && (
-            <div className="mt-4 p-3 bg-green-50 dark:bg-green-900/30 border border-green-200 dark:border-green-700 rounded-lg text-sm text-green-700 dark:text-green-400 animate-pulse">
+            <div className="mt-4 p-3 bg-accent-teal-mint-light dark:bg-green-900/30 border border-accent-teal-mint dark:border-green-700 rounded-lg text-sm text-accent-teal-mint dark:text-green-400 animate-pulse">
               <strong>Auto-configured:</strong> Based on your selection, required valuation scenarios and approaches have been pre-selected below.
             </div>
           )}
@@ -1565,7 +1565,7 @@ export default function SetupPage() {
         {/* Planned Changes (conditional) */}
         {(context.propertyStatus === 'existing' || context.propertyStatus === 'recently_completed') && (
           <div className="mb-6 animate-fade-in">
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-3">
+            <label className="block text-sm font-medium text-harken-gray dark:text-slate-200 mb-3">
               Are there any planned improvements or renovations?
             </label>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
@@ -1575,7 +1575,7 @@ export default function SetupPage() {
                   <button
                     key={opt.value}
                     onClick={() => updateContext('plannedChanges', opt.value)}
-                    className={`relative p-3 border-2 rounded-lg text-left transition-all hover:border-harken-blue/50 dark:hover:border-cyan-400/50 ${isSelected ? 'border-harken-blue bg-harken-blue/5 dark:bg-cyan-500/10' : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700'
+                    className={`relative p-3 border-2 rounded-lg text-left transition-all hover:border-harken-blue/50 dark:hover:border-cyan-400/50 ${isSelected ? 'border-harken-blue bg-harken-blue/5 dark:bg-cyan-500/10' : 'border-light-border dark:border-harken-gray bg-surface-1 dark:bg-elevation-1'
                       }`}
                   >
                     {isSelected && (
@@ -1585,8 +1585,8 @@ export default function SetupPage() {
                         </svg>
                       </div>
                     )}
-                    <h4 className="font-semibold text-sm text-gray-900 dark:text-white">{opt.label}</h4>
-                    <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">{opt.description}</p>
+                    <h4 className="font-semibold text-sm text-harken-dark dark:text-white">{opt.label}</h4>
+                    <p className="text-xs text-harken-gray-med dark:text-slate-400 mt-1">{opt.description}</p>
                   </button>
                 );
               })}
@@ -1597,7 +1597,7 @@ export default function SetupPage() {
         {/* Occupancy Status (conditional) */}
         {shouldShowOccupancyQuestion() && (
           <div className="mb-6 animate-fade-in">
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-3">
+            <label className="block text-sm font-medium text-harken-gray dark:text-slate-200 mb-3">
               What is the current occupancy status?
             </label>
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
@@ -1607,7 +1607,7 @@ export default function SetupPage() {
                   <button
                     key={opt.value}
                     onClick={() => updateContext('occupancyStatus', opt.value)}
-                    className={`relative p-4 pr-8 border-2 rounded-lg text-left transition-all hover:border-harken-blue/50 dark:hover:border-cyan-400/50 min-h-[72px] ${isSelected ? 'border-harken-blue bg-harken-blue/5 dark:bg-cyan-500/10' : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700'
+                    className={`relative p-4 pr-8 border-2 rounded-lg text-left transition-all hover:border-harken-blue/50 dark:hover:border-cyan-400/50 min-h-[72px] ${isSelected ? 'border-harken-blue bg-harken-blue/5 dark:bg-cyan-500/10' : 'border-light-border dark:border-harken-gray bg-surface-1 dark:bg-elevation-1'
                       }`}
                   >
                     {isSelected && (
@@ -1617,8 +1617,8 @@ export default function SetupPage() {
                         </svg>
                       </div>
                     )}
-                    <h4 className="font-semibold text-sm text-gray-900 dark:text-white pr-2">{opt.label}</h4>
-                    <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">{opt.description}</p>
+                    <h4 className="font-semibold text-sm text-harken-dark dark:text-white pr-2">{opt.label}</h4>
+                    <p className="text-xs text-harken-gray-med dark:text-slate-400 mt-1">{opt.description}</p>
                   </button>
                 );
               })}
@@ -1628,7 +1628,7 @@ export default function SetupPage() {
 
         {/* Loan Purpose */}
         <div className="mb-4">
-          <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-3">
+          <label className="block text-sm font-medium text-harken-gray dark:text-slate-200 mb-3">
             What is the intended use of this appraisal?
           </label>
           <div className="grid grid-cols-2 lg:grid-cols-5 gap-3">
@@ -1638,7 +1638,7 @@ export default function SetupPage() {
                 <button
                   key={opt.value}
                   onClick={() => updateContext('loanPurpose', opt.value)}
-                  className={`relative p-3 border-2 rounded-lg text-left transition-all hover:border-harken-blue/50 dark:hover:border-cyan-400/50 ${isSelected ? 'border-harken-blue bg-harken-blue/5 dark:bg-cyan-500/10' : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700'
+                  className={`relative p-3 border-2 rounded-lg text-left transition-all hover:border-harken-blue/50 dark:hover:border-cyan-400/50 ${isSelected ? 'border-harken-blue bg-harken-blue/5 dark:bg-cyan-500/10' : 'border-light-border dark:border-harken-gray bg-surface-1 dark:bg-elevation-1'
                     }`}
                 >
                   {isSelected && (
@@ -1648,8 +1648,8 @@ export default function SetupPage() {
                       </svg>
                     </div>
                   )}
-                  <h4 className="font-semibold text-sm text-gray-900 dark:text-white">{opt.label}</h4>
-                  <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">{opt.description}</p>
+                  <h4 className="font-semibold text-sm text-harken-dark dark:text-white">{opt.label}</h4>
+                  <p className="text-xs text-harken-gray-med dark:text-slate-400 mt-1">{opt.description}</p>
                 </button>
               );
             })}
@@ -1658,13 +1658,13 @@ export default function SetupPage() {
       </div>
 
       {/* Valuation Scenarios */}
-      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
+      <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
         <div className="flex items-center justify-between mb-4">
-          <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 flex-1">
+          <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-light-border dark:border-harken-gray pb-3 flex-1">
             Valuation Scenarios
           </h3>
           {context.propertyStatus && (
-            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 dark:bg-green-900/40 text-green-800 dark:text-green-400">
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-accent-teal-mint-light dark:bg-green-900/40 text-accent-teal-mint dark:text-green-400">
               <svg className="w-3 h-3 mr-1" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
               </svg>
@@ -1672,7 +1672,7 @@ export default function SetupPage() {
             </span>
           )}
         </div>
-        <p className="text-sm text-gray-600 dark:text-slate-400 mb-4">
+        <p className="text-sm text-harken-gray dark:text-slate-400 mb-4">
           Based on your selections above, these scenarios are recommended. You can customize approaches for each or add additional scenarios.
         </p>
 
@@ -1681,22 +1681,22 @@ export default function SetupPage() {
           {scenarios.map((scenario) => (
             <div
               key={scenario.id}
-              className={`border rounded-xl p-5 transition-all hover:shadow-md bg-white dark:bg-slate-700/50 ${scenario.isRequired
-                ? 'border-l-4 border-l-red-400 border-gray-200 dark:border-slate-600'
+              className={`border rounded-xl p-5 transition-all hover:shadow-md bg-surface-1 dark:bg-elevation-1/50 ${scenario.isRequired
+                ? 'border-l-4 border-l-red-400 border-light-border dark:border-harken-gray'
                 : scenario.isRequired === false
-                  ? 'border-l-4 border-l-blue-400 border-gray-200 dark:border-slate-600'
-                  : 'border-gray-200 dark:border-slate-600'
+                  ? 'border-l-4 border-l-blue-400 border-light-border dark:border-harken-gray'
+                  : 'border-light-border dark:border-harken-gray'
                 }`}
             >
               {/* Scenario Header */}
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-3">
-                  <span className="text-xl font-bold text-gray-900 dark:text-white">
+                  <span className="text-xl font-bold text-harken-dark dark:text-white">
                     {scenario.name || 'New Scenario'}
                   </span>
                   {scenario.isRequired !== undefined && (
                     scenario.isRequired ? (
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 dark:bg-red-900/40 text-red-800 dark:text-red-400">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent-red-light dark:bg-accent-red-light text-harken-error dark:text-harken-error">
                         Required
                       </span>
                     ) : (
@@ -1711,8 +1711,8 @@ export default function SetupPage() {
                   onClick={() => removeScenario(scenario.id)}
                   disabled={scenario.isRequired || scenarios.length <= 1}
                   className={`p-2 transition-colors rounded-full ${scenario.isRequired || scenarios.length <= 1
-                    ? 'text-gray-300 cursor-not-allowed'
-                    : 'text-red-500 hover:text-red-700 hover:bg-red-50'
+                    ? 'text-harken-gray-med-lt cursor-not-allowed'
+                    : 'text-harken-error hover:text-harken-error hover:bg-accent-red-light'
                     }`}
                   title={scenario.isRequired ? 'Cannot remove required scenario' : 'Remove scenario'}
                 >
@@ -1725,7 +1725,7 @@ export default function SetupPage() {
               {/* Requirement Source */}
               {scenario.requirementSource && (
                 <div className={`mb-4 px-3 py-2 rounded text-xs ${scenario.isRequired
-                  ? 'bg-red-50 border border-red-200 dark:bg-red-900/20 dark:border-red-800 dark:text-red-200'
+                  ? 'bg-accent-red-light border border-harken-error/20 dark:bg-accent-red-light dark:border-harken-error dark:text-harken-error'
                   : 'bg-blue-50 border border-blue-200 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-200'
                   }`}>
                   <span className="font-medium">{scenario.isRequired ? 'Why required:' : 'Why recommended:'}</span> {scenario.requirementSource}
@@ -1735,18 +1735,18 @@ export default function SetupPage() {
               {/* Effective Date and Scenario Type Row */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
-                    Effective Date for {scenario.name || 'Scenario'} <span className="text-red-500">*</span>
+                  <label className="block text-sm font-medium text-harken-gray dark:text-slate-200 mb-2">
+                    Effective Date for {scenario.name || 'Scenario'} <span className="text-harken-error">*</span>
                   </label>
                   <input
                     type="date"
                     value={scenario.effectiveDate || ''}
                     onChange={(e) => updateScenarioDate(scenario.id, e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-harken-gray-light dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent dark:[color-scheme:dark]"
+                    className="w-full px-3 py-2 border border-light-border dark:border-harken-gray rounded-lg text-sm bg-harken-gray-light dark:bg-elevation-1 text-harken-dark dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent dark:[color-scheme:dark]"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">Change Scenario Type</label>
+                  <label className="block text-sm font-medium text-harken-gray dark:text-slate-200 mb-2">Change Scenario Type</label>
                   <div className="flex flex-wrap gap-2">
                     {scenarioNameOptions.filter(opt => opt.value !== 'Type my own').map((opt) => (
                       <button
@@ -1754,7 +1754,7 @@ export default function SetupPage() {
                         onClick={() => updateScenarioName(scenario.id, 'pill', opt.value)}
                         className={`px-3 py-1.5 border rounded-full text-xs font-medium transition-all ${scenario.nameSelect === opt.value || scenario.name === opt.value
                           ? 'border-harken-blue bg-harken-blue text-white'
-                          : 'border-gray-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-700 dark:text-slate-300 hover:border-harken-blue'
+                          : 'border-light-border dark:border-harken-gray bg-surface-1 dark:bg-elevation-1 text-harken-gray dark:text-slate-200 hover:border-harken-blue'
                           }`}
                       >
                         {opt.label}
@@ -1768,7 +1768,7 @@ export default function SetupPage() {
               {(scenario.nameSelect === 'Type my own' ||
                 (!scenarioNameOptions.some(opt => opt.value === scenario.name) && scenario.name)) && (
                   <div className="mb-4">
-                    <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+                    <label className="block text-sm font-medium text-harken-gray dark:text-slate-200 mb-2">
                       Custom Scenario Name
                     </label>
                     <input
@@ -1776,13 +1776,13 @@ export default function SetupPage() {
                       placeholder="Enter custom scenario name..."
                       value={scenario.customName || scenario.name}
                       onChange={(e) => updateScenarioName(scenario.id, 'custom', e.target.value)}
-                      className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent"
+                      className="w-full px-3 py-2 border border-light-border dark:border-harken-gray rounded-lg text-sm bg-surface-1 dark:bg-elevation-1 text-harken-dark dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent"
                     />
                   </div>
                 )}
 
               {/* Approach Selection */}
-              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+              <label className="block text-sm font-medium text-harken-gray dark:text-slate-200 mb-2">
                 Select Approaches for this Scenario
               </label>
               <div className="grid grid-cols-3 gap-3">
@@ -1795,7 +1795,7 @@ export default function SetupPage() {
                       onClick={() => toggleScenarioApproach(scenario.id, app.key)}
                       className={`relative flex flex-col items-center justify-center p-4 border-2 rounded-lg transition-all ${isSelected
                         ? 'border-harken-blue bg-harken-blue/5 dark:bg-cyan-500/10'
-                        : 'border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-harken-blue'
+                        : 'border-light-border dark:border-dark-border bg-surface-1 dark:bg-elevation-1 hover:border-harken-blue'
                         }`}
                     >
                       {isSelected && (
@@ -1805,8 +1805,8 @@ export default function SetupPage() {
                           </svg>
                         </div>
                       )}
-                      <Icon className={`w-8 h-8 mb-2 ${isSelected ? 'text-harken-blue dark:text-cyan-400' : 'text-gray-400 dark:text-slate-500'}`} />
-                      <span className={`text-sm font-medium ${isSelected ? 'text-harken-blue dark:text-cyan-400' : 'text-gray-700 dark:text-slate-300'}`}>
+                      <Icon className={`w-8 h-8 mb-2 ${isSelected ? 'text-harken-blue dark:text-cyan-400' : 'text-harken-gray-med dark:text-slate-500'}`} />
+                      <span className={`text-sm font-medium ${isSelected ? 'text-harken-blue dark:text-cyan-400' : 'text-harken-gray dark:text-slate-200'}`}>
                         {app.label}
                       </span>
                     </button>
@@ -1816,17 +1816,17 @@ export default function SetupPage() {
 
               {/* Cost Segregation Toggle - Only shows when Cost Approach is selected */}
               {scenario.approaches.includes('Cost Approach') && (
-                <div className="mt-4 p-4 bg-emerald-50 border border-emerald-200 rounded-lg">
+                <div className="mt-4 p-4 bg-accent-teal-mint-light border border-accent-teal-mint-light rounded-lg">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 bg-emerald-100 rounded-lg flex items-center justify-center">
-                        <svg className="w-5 h-5 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <div className="w-10 h-10 bg-accent-teal-mint-light rounded-lg flex items-center justify-center">
+                        <svg className="w-5 h-5 text-accent-teal-mint" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z" />
                         </svg>
                       </div>
                       <div>
-                        <h4 className="font-semibold text-emerald-900">Cost Segregation Analysis</h4>
-                        <p className="text-xs text-emerald-700">
+                        <h4 className="font-semibold text-accent-teal-mint-hover">Cost Segregation Analysis</h4>
+                        <p className="text-xs text-accent-teal-mint">
                           Generate IRS-compliant depreciation breakdown (5/15/39-year classes)
                         </p>
                       </div>
@@ -1843,11 +1843,11 @@ export default function SetupPage() {
                         }}
                         className="sr-only peer"
                       />
-                      <div className="w-11 h-6 bg-gray-200 dark:bg-slate-600 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-emerald-300 dark:peer-focus:ring-emerald-700 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white dark:after:bg-slate-300 after:border-gray-300 dark:after:border-slate-500 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600 dark:peer-checked:bg-emerald-500"></div>
+                      <div className="w-11 h-6 bg-harken-gray-med-lt dark:bg-dark-input peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-accent-teal-mint/30 dark:peer-focus:ring-accent-teal-mint/30 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-surface-1 dark:after:bg-slate-300 after:border-light-border dark:after:border-slate-500 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-accent-teal-mint dark:peer-checked:bg-accent-teal-mint"></div>
                     </label>
                   </div>
                   {wizardState.subjectData?.costSegregationEnabled && (
-                    <div className="mt-3 pt-3 border-t border-emerald-200 text-xs text-emerald-700">
+                    <div className="mt-3 pt-3 border-t border-accent-teal-mint-light text-xs text-accent-teal-mint">
                       <p>
                         Cost Segregation will be available in the Analysis section after completing the Cost Approach.
                         This analysis helps accelerate depreciation for tax benefits.
@@ -1862,7 +1862,7 @@ export default function SetupPage() {
           {/* Add Scenario Button */}
           <button
             onClick={addScenario}
-            className="w-full py-3 border-2 border-dashed border-gray-300 dark:border-slate-600 rounded-lg text-gray-600 dark:text-slate-400 font-medium hover:border-gray-400 dark:hover:border-slate-500 hover:bg-gray-50 dark:hover:bg-slate-700 transition-all flex items-center justify-center gap-2"
+            className="w-full py-3 border-2 border-dashed border-light-border dark:border-harken-gray rounded-lg text-harken-gray dark:text-slate-400 font-medium hover:border-harken-gray-med dark:hover:border-harken-gray hover:bg-harken-gray-light dark:hover:bg-elevation-3 transition-all flex items-center justify-center gap-2"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
@@ -1877,8 +1877,8 @@ export default function SetupPage() {
   const renderPurposeTab = () => (
     <div className="space-y-6">
       {/* Purpose of Appraisal */}
-      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+      <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-light-border dark:border-harken-gray pb-3 mb-4">
           What type of value are you estimating?
         </h3>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
@@ -1890,7 +1890,7 @@ export default function SetupPage() {
                 onClick={() => updateContext('appraisalPurpose', opt.value)}
                 className={`relative p-4 border-2 rounded-lg text-left transition-all hover:border-harken-blue/50 dark:hover:border-cyan-400/50 ${isSelected
                   ? 'border-harken-blue bg-harken-blue/5 dark:bg-cyan-500/10'
-                  : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700'
+                  : 'border-light-border dark:border-harken-gray bg-surface-1 dark:bg-elevation-1'
                   }`}
               >
                 {isSelected && (
@@ -1900,8 +1900,8 @@ export default function SetupPage() {
                     </svg>
                   </div>
                 )}
-                <h4 className="font-semibold text-sm text-gray-900 dark:text-white">{opt.label}</h4>
-                <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">{opt.description}</p>
+                <h4 className="font-semibold text-sm text-harken-dark dark:text-white">{opt.label}</h4>
+                <p className="text-xs text-harken-gray-med dark:text-slate-400 mt-1">{opt.description}</p>
               </button>
             );
           })}
@@ -1909,8 +1909,8 @@ export default function SetupPage() {
       </div>
 
       {/* Property Interest */}
-      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+      <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-light-border dark:border-harken-gray pb-3 mb-4">
           What property interest is being appraised?
         </h3>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3">
@@ -1922,7 +1922,7 @@ export default function SetupPage() {
                 onClick={() => updateContext('propertyInterest', opt.value)}
                 className={`relative p-4 border-2 rounded-lg text-left transition-all hover:border-harken-blue/50 dark:hover:border-cyan-400/50 ${isSelected
                   ? 'border-harken-blue bg-harken-blue/5 dark:bg-cyan-500/10'
-                  : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700'
+                  : 'border-light-border dark:border-harken-gray bg-surface-1 dark:bg-elevation-1'
                   }`}
               >
                 {isSelected && (
@@ -1932,8 +1932,8 @@ export default function SetupPage() {
                     </svg>
                   </div>
                 )}
-                <h4 className="font-semibold text-sm text-gray-900 dark:text-white">{opt.label}</h4>
-                <p className="text-xs text-gray-500 dark:text-slate-400 mt-1">{opt.description}</p>
+                <h4 className="font-semibold text-sm text-harken-dark dark:text-white">{opt.label}</h4>
+                <p className="text-xs text-harken-gray-med dark:text-slate-400 mt-1">{opt.description}</p>
               </button>
             );
           })}
@@ -1941,18 +1941,18 @@ export default function SetupPage() {
       </div>
 
       {/* Intended Users */}
-      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="flex items-center gap-2 text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+      <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
+        <h3 className="flex items-center gap-2 text-lg font-bold text-harken-dark dark:text-white border-b-2 border-light-border dark:border-harken-gray pb-3 mb-4">
           Intended Users
           <DocumentSourceIndicator fieldPath="subjectData.intendedUsers" inline />
         </h3>
-        <p className="text-sm text-gray-600 dark:text-slate-400 mb-4">
+        <p className="text-sm text-harken-gray dark:text-slate-400 mb-4">
           Per USPAP, you must identify the intended user(s) of the appraisal report.
         </p>
         <textarea
           value={context.intendedUsers}
           onChange={(e) => updateContext('intendedUsers', e.target.value)}
-          className={`w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent dark:bg-slate-700 dark:border-slate-600 dark:text-white ${getDocumentSourceInputClasses(hasFieldSource('subjectData.intendedUsers'))
+          className={`w-full px-3 py-2 border border-light-border rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent dark:bg-elevation-1 dark:border-harken-gray dark:text-white ${getDocumentSourceInputClasses(hasFieldSource('subjectData.intendedUsers'))
             }`}
           rows={3}
           placeholder="e.g., ABC Bank, for lending purposes; John Smith, for estate planning..."
@@ -1963,18 +1963,18 @@ export default function SetupPage() {
 
   const renderPropertyIdTab = () => (
     <div className="space-y-6">
-      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+      <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-light-border dark:border-harken-gray pb-3 mb-4">
           Property Identification Details
         </h3>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Property Name (e.g. Canyon Creek Apts)</label>
+            <label className="block text-sm font-medium text-harken-gray dark:text-slate-200 mb-1">Property Name (e.g. Canyon Creek Apts)</label>
             <input
               type="text"
               value={propertyName}
               onChange={(e) => setPropertyName(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent"
+              className="w-full px-3 py-2 border border-light-border dark:border-harken-gray rounded-lg text-sm bg-surface-1 dark:bg-elevation-1 text-harken-dark dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent"
               placeholder="Enter property name..."
             />
           </div>
@@ -2004,8 +2004,8 @@ export default function SetupPage() {
       </div>
 
       {/* Ownership Section - Multiple Owners */}
-      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <div className="flex items-center justify-between border-b-2 border-gray-200 pb-3 mb-4">
+      <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
+        <div className="flex items-center justify-between border-b-2 border-light-border pb-3 mb-4">
           <h3 className="text-lg font-bold text-harken-dark dark:text-white">Property Ownership</h3>
           <button
             onClick={addOwner}
@@ -2018,13 +2018,13 @@ export default function SetupPage() {
 
         <div className="space-y-4">
           {wizardState.owners.map((owner, index) => (
-            <div key={owner.id} className="p-4 border border-gray-200 dark:border-slate-600 rounded-lg bg-gray-50 dark:bg-slate-700/50">
+            <div key={owner.id} className="p-4 border border-light-border dark:border-harken-gray rounded-lg bg-harken-gray-light dark:bg-elevation-1/50">
               <div className="flex items-start justify-between mb-3">
-                <span className="text-sm font-medium text-gray-700 dark:text-slate-300">Owner {index + 1}</span>
+                <span className="text-sm font-medium text-harken-gray dark:text-slate-200">Owner {index + 1}</span>
                 {wizardState.owners.length > 1 && (
                   <button
                     onClick={() => removeOwner(owner.id)}
-                    className="text-gray-400 hover:text-red-500 transition-colors"
+                    className="text-harken-gray-med hover:text-harken-error transition-colors"
                     title="Remove Owner"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -2033,8 +2033,8 @@ export default function SetupPage() {
               </div>
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
-                    Owner Name <span className="text-red-500">*</span>
+                  <label className="block text-sm font-medium text-harken-gray dark:text-slate-200 mb-1">
+                    Owner Name <span className="text-harken-error">*</span>
                     {lockedFields['owner'] && index === 0 && (
                       <button
                         onClick={() => setLockedFields(prev => ({ ...prev, owner: false }))}
@@ -2050,7 +2050,7 @@ export default function SetupPage() {
                     value={owner.name}
                     onChange={(e) => updateOwner(owner.id, { name: e.target.value })}
                     disabled={lockedFields['owner'] && index === 0}
-                    className={`w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent dark:bg-slate-700 dark:border-slate-600 dark:text-white ${lockedFields['owner'] && index === 0 ? 'bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800' : ''
+                    className={`w-full px-3 py-2 border border-light-border rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent dark:bg-elevation-1 dark:border-harken-gray dark:text-white ${lockedFields['owner'] && index === 0 ? 'bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800' : ''
                       }`}
                     placeholder="Full legal name as shown on title"
                   />
@@ -2065,11 +2065,11 @@ export default function SetupPage() {
                   )}
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Ownership Type</label>
+                  <label className="block text-sm font-medium text-harken-gray dark:text-slate-200 mb-1">Ownership Type</label>
                   <select
                     value={owner.ownershipType}
                     onChange={(e) => updateOwner(owner.id, { ownershipType: e.target.value as any })}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-white dark:bg-slate-700 dark:text-white"
+                    className="w-full px-3 py-2 border border-light-border dark:border-harken-gray rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white"
                   >
                     <option value="individual">Individual</option>
                     <option value="corporation">Corporation</option>
@@ -2083,7 +2083,7 @@ export default function SetupPage() {
               </div>
               {wizardState.owners.length > 1 && (
                 <div className="mt-3">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Ownership Percentage</label>
+                  <label className="block text-sm font-medium text-harken-gray dark:text-slate-200 mb-1">Ownership Percentage</label>
                   <div className="flex items-center gap-2">
                     <input
                       type="number"
@@ -2092,9 +2092,9 @@ export default function SetupPage() {
                       min="0"
                       max="100"
                       step="0.01"
-                      className="w-24 px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent dark:bg-slate-700 dark:border-slate-600 dark:text-white"
+                      className="w-24 px-3 py-2 border border-light-border rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent dark:bg-elevation-1 dark:border-harken-gray dark:text-white"
                     />
-                    <span className="text-gray-500 dark:text-slate-400">%</span>
+                    <span className="text-harken-gray-med dark:text-slate-400">%</span>
                   </div>
                 </div>
               )}
@@ -2104,13 +2104,13 @@ export default function SetupPage() {
       </div>
 
       {/* Tax Identification Section */}
-      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+      <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-light-border dark:border-harken-gray pb-3 mb-4">
           Tax Identification
         </h3>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
+            <label className="flex items-center gap-2 text-sm font-medium text-harken-gray dark:text-slate-200 mb-1">
               Tax ID / Parcel #
               <DocumentSourceIndicator fieldPath="subjectData.taxId" inline />
               {lockedFields['taxId'] && (
@@ -2128,7 +2128,7 @@ export default function SetupPage() {
               value={taxId}
               onChange={(e) => setTaxId(e.target.value)}
               disabled={lockedFields['taxId']}
-              className={`w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent dark:bg-slate-700 dark:border-slate-600 dark:text-white ${lockedFields['taxId'] ? 'bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800' : ''
+              className={`w-full px-3 py-2 border border-light-border rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent dark:bg-elevation-1 dark:border-harken-gray dark:text-white ${lockedFields['taxId'] ? 'bg-blue-50 border-blue-200 dark:bg-blue-900/20 dark:border-blue-800' : ''
                 } ${getDocumentSourceInputClasses(hasFieldSource('subjectData.taxId'))}`}
               placeholder="Enter tax ID..."
             />
@@ -2141,12 +2141,12 @@ export default function SetupPage() {
                 }}
               />
             )}
-            <p className="text-xs text-gray-400 mt-1">
+            <p className="text-xs text-harken-gray-med mt-1">
               This is the primary parcel. Additional parcels can be added in Subject Data &gt; Improvements.
             </p>
           </div>
         </div>
-        <p className="text-xs text-gray-500 mt-3 flex items-center gap-1">
+        <p className="text-xs text-harken-gray-med mt-3 flex items-center gap-1">
           <svg className="w-4 h-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
@@ -2158,17 +2158,17 @@ export default function SetupPage() {
 
   const renderInspectionTab = () => (
     <div className="space-y-6">
-      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+      <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-light-border dark:border-harken-gray pb-3 mb-4">
           Subject Property Inspection
         </h3>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Inspection Type</label>
+            <label className="block text-sm font-medium text-harken-gray dark:text-slate-200 mb-1">Inspection Type</label>
             <select
               value={inspectionType}
               onChange={(e) => setInspectionType(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent"
+              className="w-full px-3 py-2 border border-light-border dark:border-harken-gray rounded-lg text-sm bg-surface-1 dark:bg-elevation-1 text-harken-dark dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent"
             >
               <option value="interior_exterior">Interior & Exterior Inspection</option>
               <option value="exterior_only">Exterior Only Inspection</option>
@@ -2176,22 +2176,22 @@ export default function SetupPage() {
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
+            <label className="block text-sm font-medium text-harken-gray dark:text-slate-200 mb-1">
               Date of Inspection
-              <span className="text-xs text-gray-500 dark:text-slate-400 font-normal ml-2">(from Key Dates)</span>
+              <span className="text-xs text-harken-gray-med dark:text-slate-400 font-normal ml-2">(from Key Dates)</span>
             </label>
             <input
               type="date"
               value={dates.inspectionDate}
               onChange={(e) => setDates({ ...dates, inspectionDate: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-blue-50 border-blue-200 dark:bg-slate-800 dark:border-slate-600 dark:text-slate-400"
+              className="w-full px-3 py-2 border border-light-border rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-blue-50 border-blue-200 dark:bg-elevation-1 dark:border-harken-gray dark:text-slate-400"
             />
             <p className="text-xs text-blue-600 mt-1">Synced with Assignment Basics &gt; Key Dates</p>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">Did you personally inspect the property?</label>
+            <label className="block text-sm font-medium text-harken-gray dark:text-slate-200 mb-2">Did you personally inspect the property?</label>
             <div className="flex gap-4">
-              <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 dark:border-slate-600 flex-1">
+              <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-harken-gray-light dark:hover:bg-elevation-3 dark:border-harken-gray flex-1">
                 <input
                   type="radio"
                   name="personal_inspection"
@@ -2201,7 +2201,7 @@ export default function SetupPage() {
                 />
                 <span>Yes, I inspected it personally</span>
               </label>
-              <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 dark:border-slate-600 flex-1">
+              <label className="flex items-center p-3 border rounded-lg cursor-pointer hover:bg-harken-gray-light dark:hover:bg-elevation-3 dark:border-harken-gray flex-1">
                 <input
                   type="radio"
                   name="personal_inspection"
@@ -2214,25 +2214,25 @@ export default function SetupPage() {
             </div>
           </div>
           {!personalInspection && (
-            <div className="p-4 bg-gray-50 dark:bg-slate-700 rounded-lg border border-gray-200 dark:border-slate-600 animate-fade-in">
-              <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Contract Appraiser / Inspector Details</h4>
+            <div className="p-4 bg-harken-gray-light dark:bg-elevation-1 rounded-lg border border-light-border dark:border-harken-gray animate-fade-in">
+              <h4 className="text-sm font-semibold text-harken-dark dark:text-white mb-3">Contract Appraiser / Inspector Details</h4>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Inspector Name</label>
+                  <label className="block text-sm font-medium text-harken-gray dark:text-slate-200 mb-1">Inspector Name</label>
                   <input
                     type="text"
                     value={inspectorName}
                     onChange={(e) => setInspectorName(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-light-border dark:border-harken-gray rounded-lg text-sm bg-surface-1 dark:bg-elevation-1 text-harken-dark dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">License Number</label>
+                  <label className="block text-sm font-medium text-harken-gray dark:text-slate-200 mb-1">License Number</label>
                   <input
                     type="text"
                     value={inspectorLicense}
                     onChange={(e) => setInspectorLicense(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-light-border dark:border-harken-gray rounded-lg text-sm bg-surface-1 dark:bg-elevation-1 text-harken-dark dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent"
                   />
                 </div>
               </div>
@@ -2241,17 +2241,17 @@ export default function SetupPage() {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+      <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-light-border dark:border-harken-gray pb-3 mb-4">
           USPAP Certification & Assistance
         </h3>
-        <p className="text-sm text-gray-500 dark:text-slate-400 mb-4">
+        <p className="text-sm text-harken-gray-med dark:text-slate-400 mb-4">
           Identify any significant professional assistance provided by others.
         </p>
         <textarea
           value={appraisalAssistance}
           onChange={(e) => setAppraisalAssistance(e.target.value)}
-          className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent"
+          className="w-full px-3 py-2 border border-light-border dark:border-harken-gray rounded-lg text-sm bg-surface-1 dark:bg-elevation-1 text-harken-dark dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent"
           rows={3}
           placeholder="Name and description of assistance (e.g. John Doe provided market research...)"
         />
@@ -2261,8 +2261,8 @@ export default function SetupPage() {
 
   const renderCertificationsTab = () => (
     <div className="space-y-6">
-      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+      <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-light-border dark:border-harken-gray pb-3 mb-4">
           USPAP Certifications
         </h3>
         <div className="bg-blue-50 dark:bg-blue-900/20 border-l-4 border-blue-500 dark:border-blue-500/50 p-4 rounded mb-4">
@@ -2272,7 +2272,7 @@ export default function SetupPage() {
           </p>
         </div>
         <div className="space-y-3">
-          <label className="flex items-start gap-3 p-4 border rounded-lg cursor-pointer hover:bg-gray-50 dark:hover:bg-slate-700 dark:border-slate-600">
+          <label className="flex items-start gap-3 p-4 border rounded-lg cursor-pointer hover:bg-harken-gray-light dark:hover:bg-elevation-3 dark:border-harken-gray">
             <input
               type="checkbox"
               checked={certificationAcknowledged}
@@ -2280,8 +2280,8 @@ export default function SetupPage() {
               className="mt-1 text-harken-blue focus:ring-harken-blue"
             />
             <div>
-              <span className="font-medium text-gray-900 dark:text-white">I acknowledge the USPAP certification requirements</span>
-              <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">
+              <span className="font-medium text-harken-dark dark:text-white">I acknowledge the USPAP certification requirements</span>
+              <p className="text-sm text-harken-gray-med dark:text-slate-400 mt-1">
                 I certify that my analyses, opinions, and conclusions were developed, and this report was prepared,
                 in conformity with the Uniform Standards of Professional Appraisal Practice.
               </p>
@@ -2289,49 +2289,49 @@ export default function SetupPage() {
           </label>
         </div>
         <div className="mt-4">
-          <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Additional Certifications (if any)</label>
+          <label className="block text-sm font-medium text-harken-gray dark:text-slate-200 mb-1">Additional Certifications (if any)</label>
           <textarea
             value={additionalCertifications}
             onChange={(e) => setAdditionalCertifications(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent"
+            className="w-full px-3 py-2 border border-light-border dark:border-harken-gray rounded-lg text-sm bg-surface-1 dark:bg-elevation-1 text-harken-dark dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent"
             rows={4}
             placeholder="Add any additional certifications required for this assignment..."
           />
         </div>
       </div>
 
-      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+      <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-light-border dark:border-harken-gray pb-3 mb-4">
           Licenses & Certifications
         </h3>
         <div className="grid grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">License Number</label>
+            <label className="block text-sm font-medium text-harken-gray dark:text-slate-200 mb-1">License Number</label>
             <input
               type="text"
               value={licenseNumber}
               onChange={(e) => setLicenseNumber(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent"
+              className="w-full px-3 py-2 border border-light-border dark:border-harken-gray rounded-lg text-sm bg-surface-1 dark:bg-elevation-1 text-harken-dark dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent"
               placeholder="Enter license number..."
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">License State</label>
+            <label className="block text-sm font-medium text-harken-gray dark:text-slate-200 mb-1">License State</label>
             <input
               type="text"
               value={licenseState}
               onChange={(e) => setLicenseState(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent"
+              className="w-full px-3 py-2 border border-light-border dark:border-harken-gray rounded-lg text-sm bg-surface-1 dark:bg-elevation-1 text-harken-dark dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent"
               placeholder="e.g., Montana"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Expiration Date</label>
+            <label className="block text-sm font-medium text-harken-gray dark:text-slate-200 mb-1">Expiration Date</label>
             <input
               type="date"
               value={licenseExpiration}
               onChange={(e) => setLicenseExpiration(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm bg-white dark:bg-slate-700 text-gray-900 dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent"
+              className="w-full px-3 py-2 border border-light-border dark:border-harken-gray rounded-lg text-sm bg-surface-1 dark:bg-elevation-1 text-harken-dark dark:text-white focus:ring-2 focus:ring-harken-blue dark:focus:ring-cyan-400 focus:border-transparent"
             />
           </div>
         </div>
@@ -2394,8 +2394,8 @@ export default function SetupPage() {
   // ==========================================
   const sidebar = (
     <div>
-      <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-1">Appraisal Setup</h2>
-      <p className="text-sm text-gray-500 mb-6">
+      <h2 className="text-lg font-bold text-harken-dark dark:text-white mb-1">Appraisal Setup</h2>
+      <p className="text-sm text-harken-gray-med mb-6">
         {context.propertyType ? `${context.propertyType.charAt(0).toUpperCase() + context.propertyType.slice(1)}${context.subType ? ` • ${context.subType}` : ''}` : 'Configure Assignment'}
       </p>
       <nav className="space-y-1">

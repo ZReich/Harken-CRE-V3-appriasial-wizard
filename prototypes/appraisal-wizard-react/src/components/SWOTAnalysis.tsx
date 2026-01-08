@@ -101,7 +101,7 @@ function SWOTQuadrant({
           {icon}
         </div>
         <span className="font-semibold text-slate-800 dark:text-white">{title}</span>
-        <span className="ml-auto text-sm text-slate-500 flex items-center gap-1.5">
+        <span className="ml-auto text-sm text-harken-gray-med flex items-center gap-1.5">
           {aiSuggestedCount > 0 && (
             <span className="flex items-center gap-1 text-xs text-[#0da1c7] bg-[#0da1c7]/10 px-1.5 py-0.5 rounded">
               <Sparkles className="w-3 h-3" />
@@ -115,14 +115,14 @@ function SWOTQuadrant({
       {/* Items List */}
       <div className="flex-1 p-3 space-y-2 max-h-48 overflow-y-auto">
         {items.length === 0 ? (
-          <p className="text-sm text-slate-400 italic py-4 text-center">
+          <p className="text-sm text-harken-gray-med italic py-4 text-center">
             No items added yet
           </p>
         ) : (
           items.map((item, index) => (
             <div
               key={index}
-              className="flex items-start gap-2 bg-white/60 dark:bg-slate-700/60 rounded-lg px-3 py-2 group"
+              className="flex items-start gap-2 bg-surface-1/60 dark:bg-elevation-1/60 rounded-lg px-3 py-2 group"
             >
               <span className="text-sm text-slate-700 dark:text-slate-200 flex-1">{item}</span>
               {!readOnly && (
@@ -130,7 +130,7 @@ function SWOTQuadrant({
                   onClick={() => onRemove(index)}
                   className="opacity-0 group-hover:opacity-100 p-1 hover:bg-slate-200 rounded transition-all"
                 >
-                  <X className="w-3 h-3 text-slate-400" />
+                  <X className="w-3 h-3 text-harken-gray-med" />
                 </button>
               )}
             </div>
@@ -140,7 +140,7 @@ function SWOTQuadrant({
 
       {/* Add Input */}
       {!readOnly && (
-        <div className="p-3 border-t border-slate-200/50 dark:border-slate-700/50">
+        <div className="p-3 border-t border-slate-200/50 dark:border-dark-border/50">
           <div className="flex gap-2">
             <input
               type="text"
@@ -148,12 +148,12 @@ function SWOTQuadrant({
               onChange={(e) => setInputValue(e.target.value)}
               onKeyPress={handleKeyPress}
               placeholder={placeholder}
-              className="flex-1 px-3 py-2 text-sm bg-white dark:bg-slate-700 dark:text-white border border-slate-200 dark:border-slate-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-transparent"
+              className="flex-1 px-3 py-2 text-sm bg-surface-1 dark:bg-elevation-1 dark:text-white border border-slate-200 dark:border-harken-gray rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0da1c7] dark:focus:ring-cyan-400 focus:border-transparent"
             />
             <button
               onClick={handleAdd}
               disabled={!inputValue.trim()}
-              className="p-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded-lg hover:bg-slate-50 dark:hover:bg-slate-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="p-2 bg-surface-1 dark:bg-elevation-1 border border-slate-200 dark:border-harken-gray rounded-lg hover:bg-slate-50 dark:hover:bg-harken-gray disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               <Plus className="w-4 h-4 text-slate-600 dark:text-slate-400" />
             </button>
@@ -177,22 +177,22 @@ function ImpactScoreGauge({ score }: { score: number }) {
     <div className="flex items-center gap-3 bg-slate-50 rounded-lg px-3 py-2">
       <div className="flex items-center gap-1.5">
         {isPositive ? (
-          <TrendingUp className="w-4 h-4 text-emerald-500" />
+          <TrendingUp className="w-4 h-4 text-accent-teal-mint" />
         ) : isNegative ? (
-          <TrendingDown className="w-4 h-4 text-red-500" />
+          <TrendingDown className="w-4 h-4 text-harken-error" />
         ) : (
           <Minus className="w-4 h-4 text-slate-400" />
         )}
-        <span className="text-sm font-medium text-slate-600 dark:text-slate-400">Impact Score</span>
+            <span className="text-sm font-medium text-harken-gray dark:text-slate-400">Impact Score</span>
       </div>
       <div className="flex-1 h-2 bg-slate-200 rounded-full overflow-hidden">
         <div
-          className={`h-full transition-all duration-500 ${isPositive ? 'bg-emerald-500' : isNegative ? 'bg-red-500' : 'bg-slate-400'
+          className={`h-full transition-all duration-500 ${isPositive ? 'bg-accent-teal-mint' : isNegative ? 'bg-harken-error' : 'bg-slate-400'
             }`}
           style={{ width: `${normalizedScore}%` }}
         />
       </div>
-      <span className={`text-sm font-bold ${isPositive ? 'text-emerald-600' : isNegative ? 'text-red-600' : 'text-slate-600'
+      <span className={`text-sm font-bold ${isPositive ? 'text-accent-teal-mint' : isNegative ? 'text-harken-error' : 'text-slate-600'
         }`}>
         {score > 0 ? '+' : ''}{score}
       </span>
@@ -212,16 +212,16 @@ function DataCompletenessIndicator({ completeness }: { completeness: number }) {
   };
 
   const getColor = () => {
-    if (completeness >= 80) return 'text-emerald-600 bg-emerald-50';
+    if (completeness >= 80) return 'text-accent-teal-mint bg-accent-teal-mint-light';
     if (completeness >= 60) return 'text-blue-600 bg-blue-50';
-    if (completeness >= 40) return 'text-amber-600 bg-amber-50';
-    return 'text-slate-600 bg-slate-100';
+    if (completeness >= 40) return 'text-accent-amber-gold bg-accent-amber-gold-light';
+    return 'text-harken-gray bg-harken-gray-light';
   };
 
   return (
     <div className="flex items-center gap-2 text-sm">
       <Database className="w-4 h-4 text-slate-400" />
-      <span className="text-slate-500 dark:text-slate-400">Data Completeness:</span>
+      <span className="text-harken-gray-med dark:text-slate-400">Data Completeness:</span>
       <span className={`px-2 py-0.5 rounded font-medium ${getColor()}`}>
         {completeness}% ({getLabel()})
       </span>
@@ -358,7 +358,7 @@ export function SWOTAnalysis({
             {totalAiItems > 0 && (
               <div className="flex items-center gap-2 text-sm">
                 <Sparkles className="w-4 h-4 text-[#0da1c7]" />
-                <span className="text-slate-500 dark:text-slate-400">AI-generated:</span>
+                <span className="text-harken-gray-med dark:text-slate-400">AI-generated:</span>
                 <span className="text-[#0da1c7] font-medium">
                   {totalAiItems} of {totalItems} items
                 </span>
@@ -394,9 +394,9 @@ export function SWOTAnalysis({
           title="Strengths"
           items={data.strengths}
           aiSuggestedCount={aiSuggestedCounts.strengths}
-          color="bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-400"
-          bgColor="bg-emerald-50/50 dark:bg-emerald-900/10"
-          borderColor="border-emerald-200 dark:border-emerald-800"
+          color="bg-accent-teal-mint-light dark:bg-accent-teal-mint/10 text-accent-teal-mint dark:text-accent-teal-mint"
+          bgColor="bg-accent-teal-mint-light/50 dark:bg-accent-teal-mint/10"
+          borderColor="border-accent-teal-mint-light dark:border-accent-teal-mint"
           icon={<CheckCircle2 className="w-4 h-4" />}
           placeholder="Add a strength..."
           onAdd={addItem('strengths')}
@@ -409,9 +409,9 @@ export function SWOTAnalysis({
           title="Weaknesses"
           items={data.weaknesses}
           aiSuggestedCount={aiSuggestedCounts.weaknesses}
-          color="bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400"
-          bgColor="bg-red-50/50 dark:bg-red-900/10"
-          borderColor="border-red-200 dark:border-red-800"
+          color="bg-accent-red-light dark:bg-accent-red-light text-harken-error dark:text-harken-error"
+          bgColor="bg-harken-error/5 dark:bg-harken-error/10"
+          borderColor="border-harken-error/30 dark:border-harken-error"
           icon={<AlertTriangle className="w-4 h-4" />}
           placeholder="Add a weakness..."
           onAdd={addItem('weaknesses')}
@@ -439,9 +439,9 @@ export function SWOTAnalysis({
           title="Threats"
           items={data.threats}
           aiSuggestedCount={aiSuggestedCounts.threats}
-          color="bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400"
-          bgColor="bg-amber-50/50 dark:bg-amber-900/10"
-          borderColor="border-amber-200 dark:border-amber-800"
+          color="bg-accent-amber-gold-light dark:bg-accent-amber-gold/10 text-accent-amber-gold dark:text-accent-amber-gold-hover"
+          bgColor="bg-accent-amber-gold-light/50 dark:bg-accent-amber-gold/10"
+          borderColor="border-accent-amber-gold-light dark:border-accent-amber-gold/30"
           icon={<ShieldAlert className="w-4 h-4" />}
           placeholder="Add a threat..."
           onAdd={addItem('threats')}
@@ -469,11 +469,11 @@ export function SWOTAnalysis({
           aiInstructions="Write a comprehensive SWOT analysis summary in the voice of a 30-year veteran commercial real estate appraiser. Synthesize all identified strengths, weaknesses, opportunities, and threats into a cohesive 2-3 paragraph narrative. Assess the subject property's overall competitive position in the market. Discuss how the strengths can be leveraged, how weaknesses might be mitigated, what opportunities exist for value enhancement, and what threats require monitoring. Conclude with an overall assessment of the property's market positioning and investment outlook. Use professional appraisal terminology and maintain an objective, analytical tone appropriate for a formal appraisal report."
         />
       ) : (
-        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4">
+        <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl border border-slate-200 dark:border-dark-border p-4">
           <label className="block text-sm font-medium text-slate-700 mb-2">
             Summary / Analysis Notes
           </label>
-          <p className="text-sm text-slate-600 dark:text-slate-400">
+          <p className="text-sm text-harken-gray dark:text-slate-400">
             {data.summary || 'No summary provided.'}
           </p>
         </div>

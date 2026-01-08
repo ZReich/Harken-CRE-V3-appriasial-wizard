@@ -147,23 +147,23 @@ export function PropertyLookupModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden max-h-[90vh] flex flex-col">
+      <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden max-h-[90vh] flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-light-border">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-harken-blue/10 rounded-lg">
               <Search className="w-5 h-5 text-harken-blue" />
             </div>
             <div>
-              <h2 className="text-lg font-semibold text-slate-800 dark:text-white">Property Lookup</h2>
-              <p className="text-sm text-slate-500 dark:text-slate-400">Search for property data to auto-fill fields</p>
+              <h2 className="text-lg font-semibold text-harken-dark dark:text-white">Property Lookup</h2>
+              <p className="text-sm text-harken-gray-med dark:text-slate-400">Search for property data to auto-fill fields</p>
             </div>
           </div>
           <button
             onClick={handleClose}
-            className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-harken-gray-light rounded-lg transition-colors"
           >
-            <X size={20} className="text-slate-400" />
+            <X size={20} className="text-harken-gray-med" />
           </button>
         </div>
 
@@ -172,25 +172,25 @@ export function PropertyLookupModal({
           {/* Cost indicator */}
           <div className={`mb-6 p-3 rounded-lg flex items-center gap-3 ${
             costInfo.isFree 
-              ? 'bg-emerald-50 border border-emerald-200' 
-              : 'bg-amber-50 border border-amber-200'
+              ? 'bg-accent-teal-mint-light border border-light-border' 
+              : 'bg-accent-amber-gold-light border border-light-border'
           }`}>
             <div className={`p-2 rounded-full ${
-              costInfo.isFree ? 'bg-emerald-100' : 'bg-amber-100'
+              costInfo.isFree ? 'bg-accent-teal-mint-light' : 'bg-accent-amber-gold-light'
             }`}>
               {costInfo.isFree 
-                ? <CheckCircle className="w-4 h-4 text-emerald-600" />
-                : <DollarSign className="w-4 h-4 text-amber-600" />
+                ? <CheckCircle className="w-4 h-4 text-accent-teal-mint" />
+                : <DollarSign className="w-4 h-4 text-accent-amber-gold" />
               }
             </div>
             <div className="flex-1">
               <p className={`text-sm font-medium ${
-                costInfo.isFree ? 'text-emerald-700' : 'text-amber-700'
+                costInfo.isFree ? 'text-accent-teal-mint' : 'text-accent-amber-gold'
               }`}>
                 {costInfo.provider}
               </p>
               <p className={`text-xs ${
-                costInfo.isFree ? 'text-emerald-600' : 'text-amber-600'
+                costInfo.isFree ? 'text-accent-teal-mint' : 'text-accent-amber-gold'
               }`}>
                 {costInfo.note}
               </p>
@@ -209,13 +209,13 @@ export function PropertyLookupModal({
 
           {/* State Selector - Always visible */}
           <div className="mb-4">
-            <label className="block text-sm font-medium text-gray-700 mb-2">
-              State <span className="text-red-500">*</span>
+            <label className="block text-sm font-medium text-harken-gray mb-2">
+              State <span className="text-harken-error">*</span>
             </label>
             <select
               value={state}
               onChange={(e) => setState(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-harken-blue focus:border-transparent"
+              className="w-full px-3 py-2 border border-light-border rounded-lg focus:outline-none focus:ring-2 focus:ring-harken-blue focus:border-transparent"
             >
               {US_STATES.map((s) => (
                 <option key={s} value={s}>{s}</option>
@@ -227,27 +227,27 @@ export function PropertyLookupModal({
           {lookupMethod === 'address' && (
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Street Address <span className="text-red-500">*</span>
+                <label className="block text-sm font-medium text-harken-gray mb-2">
+                  Street Address <span className="text-harken-error">*</span>
                 </label>
                 <input
                   type="text"
                   value={address}
                   onChange={(e) => setAddress(e.target.value)}
                   placeholder="123 Main Street"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-harken-blue focus:border-transparent"
+                  className="w-full px-3 py-2 border border-light-border rounded-lg focus:outline-none focus:ring-2 focus:ring-harken-blue focus:border-transparent"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  City <span className="text-red-500">*</span>
+                <label className="block text-sm font-medium text-harken-gray mb-2">
+                  City <span className="text-harken-error">*</span>
                 </label>
                 <input
                   type="text"
                   value={city}
                   onChange={(e) => setCity(e.target.value)}
                   placeholder="Billings"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-harken-blue focus:border-transparent"
+                  className="w-full px-3 py-2 border border-light-border rounded-lg focus:outline-none focus:ring-2 focus:ring-harken-blue focus:border-transparent"
                 />
               </div>
             </div>
@@ -257,27 +257,27 @@ export function PropertyLookupModal({
           {lookupMethod === 'coordinates' && (
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Latitude <span className="text-red-500">*</span>
+                <label className="block text-sm font-medium text-harken-gray mb-2">
+                  Latitude <span className="text-harken-error">*</span>
                 </label>
                 <input
                   type="text"
                   value={latitude}
                   onChange={(e) => setLatitude(e.target.value)}
                   placeholder="45.7833"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-harken-blue focus:border-transparent"
+                  className="w-full px-3 py-2 border border-light-border rounded-lg focus:outline-none focus:ring-2 focus:ring-harken-blue focus:border-transparent"
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Longitude <span className="text-red-500">*</span>
+                <label className="block text-sm font-medium text-harken-gray mb-2">
+                  Longitude <span className="text-harken-error">*</span>
                 </label>
                 <input
                   type="text"
                   value={longitude}
                   onChange={(e) => setLongitude(e.target.value)}
                   placeholder="-108.5007"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-harken-blue focus:border-transparent"
+                  className="w-full px-3 py-2 border border-light-border rounded-lg focus:outline-none focus:ring-2 focus:ring-harken-blue focus:border-transparent"
                 />
               </div>
             </div>
@@ -286,15 +286,15 @@ export function PropertyLookupModal({
           {/* Parcel ID Field */}
           {lookupMethod === 'parcelId' && (
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                Parcel ID / Tax ID <span className="text-red-500">*</span>
+              <label className="block text-sm font-medium text-harken-gray mb-2">
+                Parcel ID / Tax ID <span className="text-harken-error">*</span>
               </label>
               <input
                 type="text"
                 value={parcelId}
                 onChange={(e) => setParcelId(e.target.value)}
                 placeholder="56-0001234-00"
-                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-harken-blue focus:border-transparent"
+                className="w-full px-3 py-2 border border-light-border rounded-lg focus:outline-none focus:ring-2 focus:ring-harken-blue focus:border-transparent"
               />
             </div>
           )}
@@ -303,57 +303,57 @@ export function PropertyLookupModal({
           {result && (
             <div className={`mt-6 p-4 rounded-lg border ${
               result.success 
-                ? 'bg-emerald-50 border-emerald-200' 
-                : 'bg-red-50 border-red-200'
+                ? 'bg-accent-teal-mint-light border-light-border' 
+                : 'bg-accent-red-light border-light-border'
             }`}>
               {result.success && result.data ? (
                 <div>
                   <div className="flex items-center gap-2 mb-3">
-                    <CheckCircle className="w-5 h-5 text-emerald-600" />
-                    <span className="font-medium text-emerald-700">Property Found</span>
-                    <span className="text-xs bg-emerald-100 text-emerald-700 px-2 py-0.5 rounded">
+                    <CheckCircle className="w-5 h-5 text-accent-teal-mint" />
+                    <span className="font-medium text-accent-teal-mint">Property Found</span>
+                    <span className="text-xs bg-accent-teal-mint-light text-accent-teal-mint px-2 py-0.5 rounded">
                       {result.source}
                     </span>
                   </div>
                   <div className="grid grid-cols-2 gap-3 text-sm">
                     <div>
-                      <span className="text-slate-500 dark:text-slate-400">Address:</span>
-                      <p className="font-medium text-slate-800 dark:text-white">{result.data.situsAddress}</p>
+                      <span className="text-harken-gray-med dark:text-slate-400">Address:</span>
+                      <p className="font-medium text-harken-dark dark:text-white">{result.data.situsAddress}</p>
                     </div>
                     <div>
-                      <span className="text-slate-500 dark:text-slate-400">Parcel ID:</span>
-                      <p className="font-medium text-slate-800 dark:text-white">{result.data.parcelId}</p>
+                      <span className="text-harken-gray-med dark:text-slate-400">Parcel ID:</span>
+                      <p className="font-medium text-harken-dark dark:text-white">{result.data.parcelId}</p>
                     </div>
                     <div>
-                      <span className="text-slate-500 dark:text-slate-400">County:</span>
-                      <p className="font-medium text-slate-800 dark:text-white">{result.data.county}</p>
+                      <span className="text-harken-gray-med dark:text-slate-400">County:</span>
+                      <p className="font-medium text-harken-dark dark:text-white">{result.data.county}</p>
                     </div>
                     <div>
-                      <span className="text-slate-500 dark:text-slate-400">Size:</span>
-                      <p className="font-medium text-slate-800 dark:text-white">
+                      <span className="text-harken-gray-med dark:text-slate-400">Size:</span>
+                      <p className="font-medium text-harken-dark dark:text-white">
                         {result.data.acres > 0 
                           ? `${result.data.acres.toFixed(2)} acres` 
                           : `${result.data.sqft.toLocaleString()} SF`}
                       </p>
                     </div>
                     <div>
-                      <span className="text-slate-500 dark:text-slate-400">Owner:</span>
-                      <p className="font-medium text-slate-800 dark:text-white">{result.data.ownerName}</p>
+                      <span className="text-harken-gray-med dark:text-slate-400">Owner:</span>
+                      <p className="font-medium text-harken-dark dark:text-white">{result.data.ownerName}</p>
                     </div>
                     <div>
-                      <span className="text-slate-500 dark:text-slate-400">Assessed Value:</span>
-                      <p className="font-medium text-slate-800 dark:text-white">{formatCurrency(result.data.totalAssessedValue)}</p>
+                      <span className="text-harken-gray-med dark:text-slate-400">Assessed Value:</span>
+                      <p className="font-medium text-harken-dark dark:text-white">{formatCurrency(result.data.totalAssessedValue)}</p>
                     </div>
                     <div className="col-span-2">
-                      <span className="text-slate-500 dark:text-slate-400">Legal Description:</span>
-                      <p className="font-medium text-slate-800 dark:text-white text-xs">{result.data.legalDescription}</p>
+                      <span className="text-harken-gray-med dark:text-slate-400">Legal Description:</span>
+                      <p className="font-medium text-harken-dark dark:text-white text-xs">{result.data.legalDescription}</p>
                     </div>
                   </div>
                 </div>
               ) : (
                 <div className="flex items-center gap-2">
-                  <AlertCircle className="w-5 h-5 text-red-600" />
-                  <span className="text-red-700">{result.error || 'Property not found'}</span>
+                  <AlertCircle className="w-5 h-5 text-harken-error" />
+                  <span className="text-harken-error">{result.error || 'Property not found'}</span>
                 </div>
               )}
             </div>
@@ -361,9 +361,9 @@ export function PropertyLookupModal({
 
           {/* Info about mock data */}
           {!costInfo.isFree && (
-            <div className="mt-4 p-3 bg-slate-50 rounded-lg flex items-start gap-2">
-              <Info className="w-4 h-4 text-slate-400 mt-0.5 flex-shrink-0" />
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+            <div className="mt-4 p-3 bg-harken-gray-light rounded-lg flex items-start gap-2">
+              <Info className="w-4 h-4 text-harken-gray-med mt-0.5 flex-shrink-0" />
+              <p className="text-xs text-harken-gray-med dark:text-slate-400">
                 Out-of-state lookups currently use simulated data. Full Cotality API integration 
                 will be available when the enterprise API key is activated.
               </p>
@@ -372,17 +372,17 @@ export function PropertyLookupModal({
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end gap-3 px-6 py-4 border-t border-slate-200 bg-slate-50">
+        <div className="flex justify-end gap-3 px-6 py-4 border-t border-light-border bg-harken-gray-light">
           <button
             onClick={handleClose}
-            className="px-4 py-2 text-slate-600 hover:bg-slate-200 rounded-lg transition-colors"
+            className="px-4 py-2 text-harken-gray hover:bg-harken-gray-med-lt rounded-lg transition-colors"
           >
             Cancel
           </button>
           {result?.success && result.data ? (
             <button
               onClick={handleImport}
-              className="px-6 py-2 bg-emerald-500 text-white rounded-lg hover:bg-emerald-600 transition-colors font-medium flex items-center gap-2"
+              className="px-6 py-2 bg-accent-teal-mint text-white rounded-lg hover:bg-accent-teal-mint/90 transition-colors font-medium flex items-center gap-2"
             >
               <CheckCircle size={18} />
               Import Data

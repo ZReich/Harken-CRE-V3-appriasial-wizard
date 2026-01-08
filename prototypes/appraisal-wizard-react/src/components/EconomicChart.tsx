@@ -56,8 +56,8 @@ const CustomTooltip = ({ active, payload, label, unit }: {
 }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-white dark:bg-slate-800 px-3 py-2 rounded-lg shadow-lg border border-slate-200 dark:border-slate-700">
-        <p className="text-xs text-slate-500 dark:text-slate-400">{formatDate(label || '')}</p>
+      <div className="bg-surface-1 dark:bg-elevation-1 px-3 py-2 rounded-lg shadow-lg border border-light-border dark:border-dark-border">
+        <p className="text-xs text-harken-gray-med dark:text-slate-400">{formatDate(label || '')}</p>
         <p className="text-sm font-semibold text-slate-800 dark:text-white">
           {payload[0].value.toFixed(2)}{unit || '%'}
         </p>
@@ -161,10 +161,10 @@ export function EconomicChart({
   if (chartStyle === 'glass') {
     const sparklineData = data.slice(-12); // Last 12 data points for sparkline
     return (
-      <div className="backdrop-blur-md bg-white/70 dark:bg-slate-800/70 rounded-xl border border-white/50 dark:border-slate-700/50 shadow-lg p-4">
+      <div className="backdrop-blur-md bg-surface-1/70 dark:bg-elevation-1/70 rounded-xl border border-white/50 dark:border-dark-border/50 shadow-lg p-4">
         <div className="flex items-start justify-between mb-3">
           <div>
-            <p className="text-xs text-slate-500 uppercase tracking-wide">{title}</p>
+            <p className="text-xs text-harken-gray-med uppercase tracking-wide">{title}</p>
             <p className="text-3xl font-bold text-slate-800 dark:text-white">{currentValue?.toFixed(2)}{unit}</p>
           </div>
           <div className="w-24 h-12">
@@ -181,14 +181,14 @@ export function EconomicChart({
             </ResponsiveContainer>
           </div>
         </div>
-        <div className="flex gap-4 text-xs text-slate-500 dark:text-slate-400">
+        <div className="flex gap-4 text-xs text-harken-gray-med dark:text-slate-400">
           <div>
-            <span className="text-slate-400">Low: </span>
-            <span className="font-medium text-slate-600 dark:text-slate-400">{minValue.toFixed(2)}{unit}</span>
+            <span className="text-harken-gray-med">Low: </span>
+            <span className="font-medium text-harken-gray dark:text-slate-400">{minValue.toFixed(2)}{unit}</span>
           </div>
           <div>
-            <span className="text-slate-400">High: </span>
-            <span className="font-medium text-slate-600 dark:text-slate-400">{maxValue.toFixed(2)}{unit}</span>
+            <span className="text-harken-gray-med">High: </span>
+            <span className="font-medium text-harken-gray dark:text-slate-400">{maxValue.toFixed(2)}{unit}</span>
           </div>
         </div>
       </div>

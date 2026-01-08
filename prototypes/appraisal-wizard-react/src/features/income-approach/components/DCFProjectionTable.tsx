@@ -133,7 +133,7 @@ export const DCFProjectionTable: React.FC<DCFProjectionTableProps> = ({
   // Simplified view
   if (simplified && !isExpanded) {
     return (
-      <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden">
+      <div className="bg-surface-1 dark:bg-elevation-1 border border-slate-200 dark:border-dark-border rounded-xl overflow-hidden">
         <button
           onClick={() => setIsExpanded(true)}
           className="w-full px-4 py-3 flex items-center justify-between hover:bg-slate-50 transition-colors"
@@ -160,21 +160,21 @@ export const DCFProjectionTable: React.FC<DCFProjectionTableProps> = ({
   }
 
   return (
-    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden shadow-sm">
+    <div className="bg-surface-1 dark:bg-elevation-1 border border-slate-200 dark:border-dark-border rounded-xl overflow-hidden shadow-sm">
       {/* Header */}
-      <div className="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700 flex items-center justify-between">
+      <div className="px-6 py-4 bg-slate-50 dark:bg-elevation-1/50 border-b border-slate-200 dark:border-dark-border flex items-center justify-between">
         <div className="flex items-center gap-3">
           <TrendingUp className="w-5 h-5 text-[#0da1c7]" />
           <h3 className="font-bold text-lg text-slate-800 dark:text-white">Year-by-Year DCF Projection</h3>
         </div>
         <div className="flex items-center gap-3">
-          <button className="p-2 rounded-lg bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors text-slate-600 dark:text-slate-300" title="Export to Excel">
+          <button className="p-2 rounded-lg bg-slate-200 dark:bg-elevation-1 hover:bg-slate-300 dark:hover:bg-harken-gray transition-colors text-slate-600 dark:text-slate-200" title="Export to Excel">
             <Download className="w-4 h-4" />
           </button>
           {simplified && (
             <button
               onClick={() => setIsExpanded(false)}
-              className="p-2 rounded-lg bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors text-slate-600 dark:text-slate-300"
+              className="p-2 rounded-lg bg-slate-200 dark:bg-elevation-1 hover:bg-slate-300 dark:hover:bg-harken-gray transition-colors text-slate-600 dark:text-slate-200"
             >
               <ChevronUp className="w-4 h-4" />
             </button>
@@ -183,7 +183,7 @@ export const DCFProjectionTable: React.FC<DCFProjectionTableProps> = ({
       </div>
 
       {/* Input Summary Bar */}
-      <div className="px-6 py-3 bg-slate-100 dark:bg-slate-700 border-b border-slate-200 dark:border-slate-600 flex items-center gap-6 text-xs overflow-x-auto">
+      <div className="px-6 py-3 bg-slate-100 dark:bg-elevation-1 border-b border-slate-200 dark:border-harken-gray flex items-center gap-6 text-xs overflow-x-auto">
         <div className="flex items-center gap-2">
           <span className="text-slate-500 dark:text-slate-400">Discount Rate:</span>
           <span className="font-semibold text-slate-700 dark:text-slate-200">{formatPercent(inputs.discountRate)}</span>
@@ -206,8 +206,8 @@ export const DCFProjectionTable: React.FC<DCFProjectionTableProps> = ({
       <div className="overflow-x-auto">
         <table className="w-full text-xs">
           <thead>
-            <tr className="bg-slate-50 dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700">
-              <th className="sticky left-0 z-10 bg-slate-50 dark:bg-slate-800 px-4 py-3 text-left font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
+            <tr className="bg-slate-50 dark:bg-elevation-1 border-b border-slate-200 dark:border-dark-border">
+              <th className="sticky left-0 z-10 bg-slate-50 dark:bg-elevation-1 px-4 py-3 text-left font-bold text-slate-600 dark:text-slate-400 uppercase tracking-wider">
                 <div className="flex items-center gap-2">
                   <Calendar className="w-3.5 h-3.5" />
                   Year
@@ -226,26 +226,26 @@ export const DCFProjectionTable: React.FC<DCFProjectionTableProps> = ({
             {yearData.map((data, idx) => (
               <tr
                 key={data.year}
-                className={`border-b border-slate-100 dark:border-slate-700 transition-colors ${idx === 0 ? 'bg-[#0da1c7]/5 dark:bg-[#0da1c7]/10' : 'hover:bg-slate-50 dark:hover:bg-slate-700/50'
+                className={`border-b border-slate-100 dark:border-dark-border transition-colors ${idx === 0 ? 'bg-[#0da1c7]/5 dark:bg-[#0da1c7]/10' : 'hover:bg-slate-50 dark:hover:bg-elevation-3/50'
                   }`}
               >
-                <td className="sticky left-0 z-10 bg-white dark:bg-slate-800 px-4 py-2.5 font-semibold text-slate-700 dark:text-slate-200">
+                <td className="sticky left-0 z-10 bg-surface-1 dark:bg-elevation-1 px-4 py-2.5 font-semibold text-slate-700 dark:text-slate-200">
                   {idx === 0 && <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-[#0da1c7]/10 text-[#0da1c7] text-[10px] font-bold mr-1">CURRENT</span>}
                   Year {data.year}
                 </td>
-                <td className="px-4 py-2.5 text-right text-slate-600 dark:text-slate-300">{formatCurrency(data.pgi)}</td>
-                <td className="px-4 py-2.5 text-right text-red-500 dark:text-red-400">({formatCurrency(data.vacancy)})</td>
-                <td className="px-4 py-2.5 text-right text-slate-600 dark:text-slate-300">{formatCurrency(data.egi)}</td>
-                <td className="px-4 py-2.5 text-right text-red-500 dark:text-red-400">({formatCurrency(data.expenses)})</td>
+                <td className="px-4 py-2.5 text-right text-slate-600 dark:text-slate-200">{formatCurrency(data.pgi)}</td>
+                <td className="px-4 py-2.5 text-right text-harken-error dark:text-harken-error">({formatCurrency(data.vacancy)})</td>
+                <td className="px-4 py-2.5 text-right text-harken-gray dark:text-slate-200">{formatCurrency(data.egi)}</td>
+                <td className="px-4 py-2.5 text-right text-harken-error dark:text-harken-error">({formatCurrency(data.expenses)})</td>
                 <td className="px-4 py-2.5 text-right font-semibold text-slate-800 dark:text-white">{formatCurrency(data.noi)}</td>
-                <td className="px-4 py-2.5 text-right text-slate-500 dark:text-slate-400">{data.pvFactor.toFixed(4)}</td>
-                <td className="px-4 py-2.5 text-right font-semibold text-emerald-600 dark:text-emerald-400">{formatCurrency(data.pvNoi)}</td>
+                <td className="px-4 py-2.5 text-right text-harken-gray-med dark:text-slate-400">{data.pvFactor.toFixed(4)}</td>
+                <td className="px-4 py-2.5 text-right font-semibold text-accent-teal-mint dark:text-accent-teal-mint">{formatCurrency(data.pvNoi)}</td>
               </tr>
             ))}
 
             {/* Reversion Row */}
-            <tr className="border-t-2 border-slate-800 dark:border-slate-600 bg-slate-50 dark:bg-slate-800/50">
-              <td className="sticky left-0 z-10 bg-slate-50 dark:bg-slate-800 px-4 py-3 font-bold text-slate-700 dark:text-slate-200 uppercase">
+            <tr className="border-t-2 border-slate-800 dark:border-harken-gray bg-slate-50 dark:bg-elevation-1/50">
+              <td className="sticky left-0 z-10 bg-slate-50 dark:bg-elevation-1 px-4 py-3 font-bold text-slate-700 dark:text-slate-200 uppercase">
                 Reversion (Year {inputs.holdingPeriod + 1})
               </td>
               <td className="px-4 py-3 text-right text-slate-400 dark:text-slate-500">—</td>
@@ -253,11 +253,11 @@ export const DCFProjectionTable: React.FC<DCFProjectionTableProps> = ({
               <td className="px-4 py-3 text-right text-slate-400 dark:text-slate-500">—</td>
               <td className="px-4 py-3 text-right text-slate-400 dark:text-slate-500">—</td>
               <td className="px-4 py-3 text-right">
-                <div className="text-slate-600 dark:text-slate-300">{formatCurrency(calculations.netReversion)}</div>
+                <div className="text-slate-600 dark:text-slate-200">{formatCurrency(calculations.netReversion)}</div>
                 <div className="text-[10px] text-slate-400 dark:text-slate-500">Net of {formatPercent(inputs.sellingCosts)} costs</div>
               </td>
               <td className="px-4 py-3 text-right text-slate-500 dark:text-slate-400">{calculations.reversionPvFactor.toFixed(4)}</td>
-              <td className="px-4 py-3 text-right font-bold text-emerald-600 dark:text-emerald-400">{formatCurrency(calculations.pvReversion)}</td>
+              <td className="px-4 py-3 text-right font-bold text-accent-teal-mint dark:text-accent-teal-mint">{formatCurrency(calculations.pvReversion)}</td>
             </tr>
 
             {/* Total Row */}
@@ -273,7 +273,7 @@ export const DCFProjectionTable: React.FC<DCFProjectionTableProps> = ({
       </div>
 
       {/* Summary Footer */}
-      <div className="px-6 py-4 bg-slate-50 dark:bg-slate-800/50 border-t border-slate-200 dark:border-slate-700">
+      <div className="px-6 py-4 bg-slate-50 dark:bg-elevation-1/50 border-t border-slate-200 dark:border-dark-border">
         <div className="grid grid-cols-4 gap-6">
           <div className="text-center">
             <div className="text-[10px] text-slate-500 uppercase tracking-wide mb-1">PV of Cash Flows</div>

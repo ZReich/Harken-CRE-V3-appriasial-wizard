@@ -39,7 +39,7 @@ export const LetterPage: React.FC<LetterPageProps> = ({
   };
 
   return (
-    <div className="w-full h-full bg-white p-16 flex flex-col">
+    <div className="w-full h-full bg-surface-1 p-16 flex flex-col">
       {/* Letterhead */}
       <div className="border-b-2 border-slate-200 pb-6 mb-8">
         <div className="flex justify-between items-start">

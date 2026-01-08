@@ -11,7 +11,7 @@ export function FireworksAnimation() {
   const explosions = [
     { x: 30, y: 40, delay: 0, color: '#0da1c7' },
     { x: 70, y: 30, delay: 300, color: '#22c55e' },
-    { x: 50, y: 50, delay: 600, color: '#f59e0b' },
+    { x: 50, y: 50, delay: 600, color: '#f2b705' },
     { x: 25, y: 60, delay: 900, color: '#ec4899' },
     { x: 75, y: 55, delay: 1200, color: '#8b5cf6' },
   ];
@@ -89,7 +89,7 @@ export function FireworksAnimation() {
 
       {/* Falling stars/confetti effect */}
       {[...Array(30)].map((_, i) => {
-        const colors = ['#0da1c7', '#22c55e', '#f59e0b', '#ec4899', '#8b5cf6'];
+        const colors = ['#0da1c7', '#22c55e', '#f2b705', '#ec4899', '#8b5cf6'];
         return (
           <div
             key={`confetti-${i}`}

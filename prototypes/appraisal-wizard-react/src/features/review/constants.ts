@@ -146,6 +146,14 @@ export const BASE_REPORT_SECTIONS: ReportSection[] = [
       { id: 'prop_improvements', label: 'Improvements', enabled: true },
       { id: 'prop_photos', label: 'Property Photos', enabled: true },
     ],
+    // Inline photo placement - allow photos within the property description
+    allowInlinePhotos: true,
+    photoSlots: [
+      { id: 'prop_exterior_main', position: 'header', aspectRatio: '16/9', label: 'Primary Exterior', categoryFilter: 'exterior' },
+      { id: 'prop_exterior_secondary', position: 'inline', aspectRatio: '4/3', label: 'Secondary Exterior', categoryFilter: 'exterior' },
+      { id: 'prop_interior_1', position: 'inline', aspectRatio: '4/3', label: 'Interior Photo 1', categoryFilter: 'interior' },
+      { id: 'prop_interior_2', position: 'inline', aspectRatio: '4/3', label: 'Interior Photo 2', categoryFilter: 'interior' },
+    ],
   },
   {
     id: 'demographics',
@@ -196,6 +204,11 @@ export const BASE_REPORT_SECTIONS: ReportSection[] = [
       { id: 'hbu_vacant', label: 'As Vacant Analysis', enabled: true },
       { id: 'hbu_improved', label: 'As Improved Analysis', enabled: true },
     ],
+    // Optional inline photo for HBU context
+    allowInlinePhotos: true,
+    photoSlots: [
+      { id: 'hbu_context_photo', position: 'footer', aspectRatio: '16/9', label: 'Context Photo' },
+    ],
   },
   {
     id: 'swot',
@@ -229,8 +242,15 @@ export const APPROACH_REPORT_SECTIONS: Record<string, ReportSection> = {
     fields: [
       { id: 'sales_methodology', label: 'Methodology', enabled: true },
       { id: 'sales_grid', label: 'Comparison Grid', enabled: true },
-      { id: 'sales_photos', label: 'Comparable Photos', enabled: true },
+      { id: 'sales_photos', label: 'Comparable Photos', enabled: true, allowPhoto: true },
       { id: 'sales_conclusion', label: 'Value Conclusion', enabled: true },
+    ],
+    // Inline photos for comparable properties
+    allowInlinePhotos: true,
+    photoSlots: [
+      { id: 'sales_comp_1', position: 'inline', aspectRatio: '4/3', label: 'Comparable 1' },
+      { id: 'sales_comp_2', position: 'inline', aspectRatio: '4/3', label: 'Comparable 2' },
+      { id: 'sales_comp_3', position: 'inline', aspectRatio: '4/3', label: 'Comparable 3' },
     ],
   },
   [APPROACH_NAMES.INCOME]: {

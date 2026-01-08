@@ -110,7 +110,7 @@ export default function CoverPhotoSection({
   ].filter(Boolean).join(', ') || 'Address Not Specified';
 
   return (
-    <div className="relative overflow-hidden rounded-2xl border-2 border-[#0da1c7]/30 bg-gradient-to-br from-slate-50 via-white to-[#0da1c7]/5 dark:from-slate-800 dark:via-slate-800 dark:to-slate-900">
+    <div className="relative overflow-hidden rounded-2xl border-2 border-[#0da1c7]/30 bg-gradient-to-br from-slate-50 via-white to-[#0da1c7]/5 dark:from-harken-dark dark:via-slate-800 dark:to-slate-900">
       {/* Decorative background elements */}
       <div className="absolute inset-0 opacity-20 pointer-events-none">
         <div className="absolute -top-20 -right-20 w-40 h-40 bg-gradient-to-br from-[#0da1c7] to-cyan-400 rounded-full blur-3xl" />
@@ -128,8 +128,8 @@ export default function CoverPhotoSection({
             <p className="text-sm text-slate-500 dark:text-slate-400">The hero image on your report's title page</p>
           </div>
         </div>
-        <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-slate-700 rounded-full">
-          <span className="text-xs font-medium text-slate-600 dark:text-slate-300">Page 1</span>
+        <div className="flex items-center gap-2 px-3 py-1.5 bg-slate-100 dark:bg-elevation-1 rounded-full">
+          <span className="text-xs font-medium text-slate-600 dark:text-slate-200">Page 1</span>
         </div>
       </div>
 
@@ -140,7 +140,7 @@ export default function CoverPhotoSection({
           <div className="flex-shrink-0 w-56">
             <div className="text-xs font-medium text-slate-500 mb-2 text-center">Report Preview</div>
             <div
-              className="relative w-full aspect-[8.5/11] rounded-lg overflow-hidden shadow-xl border border-slate-200 dark:border-slate-700"
+              className="relative w-full aspect-[8.5/11] rounded-lg overflow-hidden shadow-xl border border-slate-200 dark:border-dark-border"
               style={{
                 background: coverPhoto
                   ? `linear-gradient(to top, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.5) 50%, rgba(15, 23, 42, 0.3)), url(${coverPhoto.preview}) center/cover`
@@ -220,7 +220,7 @@ export default function CoverPhotoSection({
                   ) : (
                     /* Fallback for broken image */
                     <div className="absolute inset-0 flex flex-col items-center justify-center text-slate-400 dark:text-slate-500">
-                      <div className="w-12 h-12 mb-2 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center">
+                      <div className="w-12 h-12 mb-2 rounded-full bg-slate-100 dark:bg-elevation-1 flex items-center justify-center">
                         <FileImage className="w-6 h-6 opacity-50" />
                       </div>
                       <span className="text-xs font-medium">Image preview unavailable</span>
@@ -232,14 +232,14 @@ export default function CoverPhotoSection({
                     <div className="flex gap-2">
                       <button
                         onClick={handleUploadClick}
-                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-white/90 hover:bg-white dark:bg-slate-800/90 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-100 text-sm font-medium rounded-lg transition-all shadow-lg"
+                        className="flex-1 flex items-center justify-center gap-2 px-4 py-2.5 bg-surface-1/90 hover:bg-surface-1 dark:bg-elevation-1/90 dark:hover:bg-elevation-3 text-slate-700 dark:text-white text-sm font-medium rounded-lg transition-all shadow-lg"
                       >
                         <RefreshCw className="w-4 h-4" />
                         {imageError ? 'Try Another Photo' : 'Change Photo'}
                       </button>
                       <button
                         onClick={onRemoveCoverPhoto}
-                        className="flex items-center justify-center px-3 py-2.5 bg-red-500/90 hover:bg-red-500 text-white rounded-lg transition-all shadow-lg"
+                        className="flex items-center justify-center px-3 py-2.5 bg-harken-error/90 hover:bg-harken-error text-white rounded-lg transition-all shadow-lg"
                       >
                         <X className="w-4 h-4" />
                       </button>
@@ -276,7 +276,7 @@ export default function CoverPhotoSection({
                     transition-all duration-200
                     ${isDragOver
                       ? 'border-[#0da1c7] bg-[#0da1c7]/10 scale-[1.02]'
-                      : 'border-slate-300 dark:border-slate-600 hover:border-[#0da1c7] hover:bg-[#0da1c7]/5 dark:hover:bg-[#0da1c7]/10'
+                      : 'border-slate-300 dark:border-harken-gray hover:border-[#0da1c7] hover:bg-[#0da1c7]/5 dark:hover:bg-[#0da1c7]/10'
                     }
                   `}
                 >
@@ -285,7 +285,7 @@ export default function CoverPhotoSection({
                     transition-all duration-200
                     ${isDragOver
                       ? 'bg-[#0da1c7] text-white scale-110'
-                      : 'bg-slate-100 dark:bg-slate-700 text-slate-400 dark:text-slate-300'
+                      : 'bg-slate-100 dark:bg-elevation-1 text-slate-400 dark:text-slate-200'
                     }
                   `}>
                     <Upload className="w-7 h-7" />
@@ -302,9 +302,9 @@ export default function CoverPhotoSection({
 
                 {/* Divider */}
                 <div className="flex items-center gap-3">
-                  <div className="flex-1 h-px bg-slate-200 dark:bg-slate-700" />
+                  <div className="flex-1 h-px bg-slate-200 dark:bg-elevation-1" />
                   <span className="text-xs font-medium text-slate-400 dark:text-slate-500">or</span>
-                  <div className="flex-1 h-px bg-slate-200 dark:bg-slate-700" />
+                  <div className="flex-1 h-px bg-slate-200 dark:bg-elevation-1" />
                 </div>
 
                 {/* Select from uploads button */}
@@ -315,8 +315,8 @@ export default function CoverPhotoSection({
                     flex items-center justify-center gap-2 px-4 py-3 rounded-xl
                     font-medium transition-all
                     ${availablePhotosCount > 0
-                      ? 'bg-slate-100 hover:bg-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 text-slate-700 dark:text-slate-200'
-                      : 'bg-slate-50 dark:bg-slate-800/50 text-slate-400 dark:text-slate-600 cursor-not-allowed'
+                      ? 'bg-slate-100 hover:bg-slate-200 dark:bg-elevation-1 dark:hover:bg-harken-gray text-slate-700 dark:text-slate-200'
+                      : 'bg-slate-50 dark:bg-elevation-1/50 text-slate-400 dark:text-slate-500 cursor-not-allowed'
                     }
                   `}
                 >

@@ -67,8 +67,8 @@ import {
 } from '../components/icons';
 import {
   Upload, X, FileText, CheckCircle, Image, MapPin, Building2, FileCheck, Camera, Eye, ChevronDown,
-  Home, Sofa, Trees, Route, Landmark, FileSignature, Handshake, File, BarChart3, Map, Receipt, Wallet, Folder,
-  Sparkles, Loader2, Info, Droplets, Zap, AlertTriangle, Check
+  Home, Sofa, Trees, Route, Landmark, FileSignature, Handshake, File as FileIcon, BarChart3, Map, Receipt, Wallet, Folder,
+  Sparkles, Loader2, Info, Droplets, Zap, AlertTriangle, Check, Crop
 } from 'lucide-react';
 import ButtonSelector from '../components/ButtonSelector';
 import ExpandableNote from '../components/ExpandableNote';
@@ -79,6 +79,8 @@ import PhotoAssignmentModal from '../components/PhotoAssignmentModal';
 import FloatingDropPanel from '../components/FloatingDropPanel';
 import CoverPhotoSection from '../components/CoverPhotoSection';
 import CoverPhotoPickerModal from '../components/CoverPhotoPickerModal';
+import PhotoCropModal from '../components/PhotoCropModal';
+import { autoCropImage, detectCategoryFromFilename, type SmartCropResult } from '../services/smartCropService';
 import { SidebarTab } from '../components/SidebarTab';
 import { SectionProgressSummary } from '../components/SectionProgressSummary';
 import { useCompletion } from '../hooks/useCompletion';
@@ -649,8 +651,8 @@ export default function SubjectDataPage() {
 
   const sidebar = (
     <div>
-      <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-1">Subject Property</h2>
-      <p className="text-sm text-gray-500 dark:text-slate-400 mb-6">
+      <h2 className="text-lg font-bold text-harken-dark dark:text-white mb-1">Subject Property</h2>
+      <p className="text-sm text-harken-gray dark:text-slate-400 mb-6">
         {wizardState.propertyType ? `${wizardState.propertyType} • ${wizardState.propertySubtype || 'General'}` : 'Commercial • Industrial'}
       </p>
       <nav className="space-y-1">
@@ -938,7 +940,7 @@ function LocationContent({
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-xl font-bold text-harken-dark dark:text-white">Location & Area Analysis</h2>
-          <p className="text-sm text-gray-500 mt-1">Describe the regional, neighborhood, and specific location context</p>
+          <p className="text-sm text-harken-gray mt-1">Describe the regional, neighborhood, and specific location context</p>
         </div>
         <button
           onClick={onDraftAll}
@@ -960,23 +962,23 @@ function LocationContent({
       </div>
 
       {/* General Area Analysis */}
-      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+      <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-light-border dark:border-harken-gray pb-3 mb-4">
           General Area Analysis
         </h3>
         <div className="space-y-4">
           {/* City/County - Auto-populated from Setup */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
-              City/County <span className="text-red-500">*</span>
+            <label className="block text-sm font-medium text-harken-dark dark:text-slate-200 mb-1">
+              City/County <span className="text-harken-error">*</span>
             </label>
             {cityCounty ? (
               <div className="flex items-center gap-2">
-                <div className="flex-1 px-3 py-2 bg-emerald-50 border border-emerald-200 rounded-lg text-sm text-emerald-800 font-medium flex items-center gap-2">
-                  <MapPin className="w-4 h-4 text-emerald-600" />
+                <div className="flex-1 px-3 py-2 bg-accent-teal-mint-light border border-accent-teal-mint-light rounded-lg text-sm text-accent-teal-mint font-medium flex items-center gap-2">
+                  <MapPin className="w-4 h-4 text-accent-teal-mint" />
                   {cityCounty}
                 </div>
-                <div className="flex items-center gap-1 text-xs text-emerald-600 bg-emerald-50 px-2 py-1 rounded-md">
+                <div className="flex items-center gap-1 text-xs text-accent-teal-mint bg-accent-teal-mint-light px-2 py-1 rounded-md">
                   <Info className="w-3 h-3" />
                   <span>Auto-filled from Setup</span>
                 </div>
@@ -987,7 +989,7 @@ function LocationContent({
                 value={cityCounty}
                 onChange={(e) => setCityCounty(e.target.value)}
                 placeholder="Enter city and county (e.g., Billings, Yellowstone County)"
-                className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-white dark:bg-slate-700 dark:text-white"
+                className="w-full px-3 py-2 border border-light-border dark:border-harken-gray rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white"
               />
             )}
           </div>
@@ -1006,8 +1008,8 @@ function LocationContent({
       </div>
 
       {/* Neighborhood Analysis */}
-      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+      <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-light-border dark:border-harken-gray pb-3 mb-4">
           Neighborhood Analysis
         </h3>
         <div className="space-y-4">
@@ -1037,8 +1039,8 @@ function LocationContent({
       </div>
 
       {/* Location Description */}
-      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+      <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-light-border dark:border-harken-gray pb-3 mb-4">
           Location Description
         </h3>
         <EnhancedTextArea
@@ -1510,14 +1512,14 @@ Overall, the site is well-suited for its current use and presents no significant
   return (
     <div className="space-y-6">
       {/* Site Size & Shape */}
-      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+      <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-light-border dark:border-harken-gray pb-3 mb-4">
           Site Size & Shape
         </h3>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
-              Total Acres <span className="text-red-500">*</span>
+            <label className="flex items-center gap-2 text-sm font-medium text-harken-dark dark:text-slate-200 mb-1">
+              Total Acres <span className="text-harken-error">*</span>
               <DocumentSourceIndicator fieldPath="subjectData.siteArea" inline />
             </label>
             <input
@@ -1525,7 +1527,7 @@ Overall, the site is well-suited for its current use and presents no significant
               value={acres}
               onChange={(e) => handleAcresChange(e.target.value)}
               step="0.001"
-              className={`w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-white dark:bg-slate-700 dark:text-white dark:placeholder-slate-400 ${getDocumentSourceInputClasses(hasFieldSource('subjectData.siteArea'))
+              className={`w-full px-3 py-2 border border-light-border dark:border-harken-gray rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white dark:placeholder-harken-gray-med ${getDocumentSourceInputClasses(hasFieldSource('subjectData.siteArea'))
                 }`}
               placeholder="0.000"
             />
@@ -1543,14 +1545,14 @@ Overall, the site is well-suited for its current use and presents no significant
             )}
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
-              Total Square Feet <span className="text-gray-400 text-xs">(or enter to calculate acres)</span>
+            <label className="block text-sm font-medium text-harken-dark dark:text-slate-200 mb-1">
+              Total Square Feet <span className="text-harken-gray-med text-xs">(or enter to calculate acres)</span>
             </label>
             <input
               type="text"
               value={squareFeet ? parseInt(squareFeet).toLocaleString() : ''}
               onChange={(e) => handleSquareFeetChange(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-white dark:bg-slate-700 dark:text-white dark:placeholder-slate-400"
+              className="w-full px-3 py-2 border border-light-border dark:border-harken-gray rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white dark:placeholder-harken-gray-med"
               placeholder="0"
             />
           </div>
@@ -1566,12 +1568,12 @@ Overall, the site is well-suited for its current use and presents no significant
         </div>
 
         <div className="mt-4">
-          <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Frontage</label>
+          <label className="block text-sm font-medium text-harken-dark dark:text-slate-200 mb-1">Frontage</label>
           <input
             type="text"
             value={frontage}
             onChange={(e) => setFrontage(e.target.value)}
-            className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-white dark:bg-slate-700 dark:text-white dark:placeholder-slate-400"
+            className="w-full px-3 py-2 border border-light-border dark:border-harken-gray rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white dark:placeholder-harken-gray-med"
             placeholder="e.g., 475' along South 30th Street West"
           />
         </div>
@@ -1651,21 +1653,21 @@ Overall, the site is well-suited for its current use and presents no significant
       </div>
 
       {/* Zoning & Land Use */}
-      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+      <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-light-border dark:border-harken-gray pb-3 mb-4">
           Zoning & Land Use
         </h3>
         <div className="space-y-4">
           <div>
-            <label className="flex items-center gap-2 text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">
-              Zoning Classification <span className="text-red-500">*</span>
+            <label className="flex items-center gap-2 text-sm font-medium text-harken-dark dark:text-slate-200 mb-1">
+              Zoning Classification <span className="text-harken-error">*</span>
               <DocumentSourceIndicator fieldPath="subjectData.zoningClass" inline />
             </label>
             <input
               type="text"
               value={zoningClass}
               onChange={(e) => setZoningClass(e.target.value)}
-              className={`w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-white dark:bg-slate-700 dark:text-white dark:placeholder-slate-400 ${getDocumentSourceInputClasses(hasFieldSource('subjectData.zoningClass'))
+              className={`w-full px-3 py-2 border border-light-border dark:border-harken-gray rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white dark:placeholder-harken-gray-med ${getDocumentSourceInputClasses(hasFieldSource('subjectData.zoningClass'))
                 }`}
               placeholder="e.g., I1 - Light Industrial"
             />
@@ -1701,8 +1703,8 @@ Overall, the site is well-suited for its current use and presents no significant
       </div>
 
       {/* Utilities & Services - Expanded */}
-      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4 flex items-center gap-2">
+      <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-light-border dark:border-harken-gray pb-3 mb-4 flex items-center gap-2">
           <Zap className="w-5 h-5 text-harken-blue" />
           Utilities & Services
         </h3>
@@ -1719,12 +1721,12 @@ Overall, the site is well-suited for its current use and presents no significant
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Water Provider</label>
+                <label className="block text-sm font-medium text-harken-dark dark:text-slate-200 mb-1">Water Provider</label>
                 <input
                   type="text"
                   value={waterProvider}
                   onChange={(e) => setWaterProvider(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-white dark:bg-slate-700 dark:text-white dark:placeholder-slate-400"
+                  className="w-full px-3 py-2 border border-light-border dark:border-harken-gray rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white dark:placeholder-harken-gray-med"
                   placeholder="e.g., City of Bozeman Water"
                 />
               </div>
@@ -1761,12 +1763,12 @@ Overall, the site is well-suited for its current use and presents no significant
           <div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Electric Provider</label>
+                <label className="block text-sm font-medium text-harken-dark dark:text-slate-200 mb-1">Electric Provider</label>
                 <input
                   type="text"
                   value={electricProvider}
                   onChange={(e) => setElectricProvider(e.target.value)}
-                  className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-white dark:bg-slate-700 dark:text-white dark:placeholder-slate-400"
+                  className="w-full px-3 py-2 border border-light-border dark:border-harken-gray rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white dark:placeholder-harken-gray-med"
                   placeholder="e.g., NorthWestern Energy"
                 />
               </div>
@@ -1864,8 +1866,8 @@ Overall, the site is well-suited for its current use and presents no significant
       />
 
       {/* Additional Site Characteristics */}
-      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+      <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-light-border dark:border-harken-gray pb-3 mb-4">
           Additional Site Characteristics
         </h3>
         <div className="space-y-4">
@@ -1907,8 +1909,8 @@ Overall, the site is well-suited for its current use and presents no significant
       </div>
 
       {/* Flood Zone - Enhanced */}
-      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <div className="flex items-center justify-between border-b-2 border-gray-200 pb-3 mb-4">
+      <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
+        <div className="flex items-center justify-between border-b-2 border-light-border pb-3 mb-4">
           <h3 className="text-lg font-bold text-harken-dark dark:text-white flex items-center gap-2">
             <Droplets className="w-5 h-5 text-harken-blue" />
             Flood Zone
@@ -1934,7 +1936,7 @@ Overall, the site is well-suited for its current use and presents no significant
 
         {/* Error message */}
         {floodZoneLookupError && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg flex items-center gap-2 text-red-700 text-sm">
+          <div className="mb-4 p-3 bg-harken-error/10 border border-harken-error/30 rounded-lg flex items-center gap-2 text-harken-error text-sm">
             <AlertTriangle className="w-4 h-4" />
             {floodZoneLookupError}
           </div>
@@ -1958,22 +1960,22 @@ Overall, the site is well-suited for its current use and presents no significant
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Map Panel Number</label>
+              <label className="block text-sm font-medium text-harken-dark dark:text-slate-200 mb-1">Map Panel Number</label>
               <input
                 type="text"
                 value={femaMapPanel}
                 onChange={(e) => setFemaMapPanel(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-white dark:bg-slate-700 dark:text-white dark:placeholder-slate-400"
+                className="w-full px-3 py-2 border border-light-border dark:border-harken-gray rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white dark:placeholder-harken-gray-med"
                 placeholder="e.g., 30111C2175E"
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Map Effective Date</label>
+              <label className="block text-sm font-medium text-harken-dark dark:text-slate-200 mb-1">Map Effective Date</label>
               <input
                 type="date"
                 value={femaMapDate}
                 onChange={(e) => setFemaMapDate(e.target.value)}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-white dark:bg-slate-700 dark:text-white dark:[color-scheme:dark]"
+                className="w-full px-3 py-2 border border-light-border dark:border-harken-gray rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white dark:[color-scheme:dark]"
               />
             </div>
           </div>
@@ -1997,8 +1999,8 @@ Overall, the site is well-suited for its current use and presents no significant
       </div>
 
       {/* Site Description Narrative - New Card */}
-      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <div className="flex items-center justify-between border-b-2 border-gray-200 pb-3 mb-4">
+      <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
+        <div className="flex items-center justify-between border-b-2 border-light-border pb-3 mb-4">
           <h3 className="text-lg font-bold text-harken-dark dark:text-white">
             Site Description Narrative
           </h3>
@@ -2020,7 +2022,7 @@ Overall, the site is well-suited for its current use and presents no significant
             )}
           </button>
         </div>
-        <p className="text-sm text-gray-500 mb-4">
+        <p className="text-sm text-harken-gray mb-4">
           Generate a professional site description narrative from all the data entered above.
         </p>
         <EnhancedTextArea
@@ -2088,76 +2090,76 @@ function TaxContent({
     <div className="space-y-6">
       {/* Auto-fill indicator */}
       {isAutoFilled && (
-        <div className="flex items-center gap-2 px-3 py-2 bg-emerald-50 border border-emerald-200 rounded-lg text-sm text-emerald-700">
+        <div className="flex items-center gap-2 px-3 py-2 bg-accent-teal-mint-light border border-accent-teal-mint-light rounded-lg text-sm text-accent-teal-mint">
           <CheckCircle className="w-4 h-4" />
           <span>Tax assessment data auto-filled from property records</span>
         </div>
       )}
 
       {/* Property Tax Information */}
-      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+      <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-light-border dark:border-harken-gray pb-3 mb-4">
           Property Tax Information
         </h3>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Tax Year</label>
+            <label className="block text-sm font-medium text-harken-dark dark:text-slate-200 mb-1">Tax Year</label>
             <select
               value={taxYear}
               onChange={(e) => setTaxYear(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 dark:border-slate-600 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-white dark:bg-slate-700 dark:text-white"
+              className="w-full px-3 py-2 border border-light-border dark:border-harken-gray rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white"
             >
               {yearOptions.map(y => <option key={y} value={y}>{y}</option>)}
             </select>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Current Year Tax Amount</label>
+            <label className="block text-sm font-medium text-harken-dark dark:text-slate-200 mb-1">Current Year Tax Amount</label>
             <input
               type="text"
               value={taxAmount}
               onChange={(e) => setTaxAmount(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent"
+              className="w-full px-3 py-2 border border-light-border rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent"
               placeholder="$0.00"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Assessed Value - Land</label>
+            <label className="block text-sm font-medium text-harken-dark dark:text-slate-200 mb-1">Assessed Value - Land</label>
             <input
               type="text"
               value={assessedLand}
               onChange={(e) => setAssessedLand(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent"
+              className="w-full px-3 py-2 border border-light-border rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent"
               placeholder="$0.00"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Assessed Value - Improvements</label>
+            <label className="block text-sm font-medium text-harken-dark dark:text-slate-200 mb-1">Assessed Value - Improvements</label>
             <input
               type="text"
               value={assessedImprovements}
               onChange={(e) => setAssessedImprovements(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent"
+              className="w-full px-3 py-2 border border-light-border rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent"
               placeholder="$0.00"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Total Assessed Value</label>
+            <label className="block text-sm font-medium text-harken-dark dark:text-slate-200 mb-1">Total Assessed Value</label>
             <input
               type="text"
               value={totalAssessed}
               onChange={(e) => setTotalAssessed(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent"
+              className="w-full px-3 py-2 border border-light-border rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent"
               placeholder="$0.00"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Mill Levy / Tax Rate</label>
+            <label className="block text-sm font-medium text-harken-dark dark:text-slate-200 mb-1">Mill Levy / Tax Rate</label>
             <input
               type="number"
               value={millLevy}
               onChange={(e) => setMillLevy(e.target.value)}
               step="0.001"
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent"
+              className="w-full px-3 py-2 border border-light-border rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent"
               placeholder="0.000"
             />
           </div>
@@ -2165,47 +2167,47 @@ function TaxContent({
       </div>
 
       {/* Sale & Ownership History */}
-      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+      <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-light-border dark:border-harken-gray pb-3 mb-4">
           Sale & Ownership History
         </h3>
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Date of Last Sale</label>
+            <label className="block text-sm font-medium text-harken-dark dark:text-slate-200 mb-1">Date of Last Sale</label>
             <input
               type="date"
               value={lastSaleDate}
               onChange={(e) => setLastSaleDate(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent"
+              className="w-full px-3 py-2 border border-light-border rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Last Sale Price</label>
+            <label className="block text-sm font-medium text-harken-dark dark:text-slate-200 mb-1">Last Sale Price</label>
             <input
               type="text"
               value={lastSalePrice}
               onChange={(e) => setLastSalePrice(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent"
+              className="w-full px-3 py-2 border border-light-border rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent"
               placeholder="$0.00"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Grantor (Seller)</label>
+            <label className="block text-sm font-medium text-harken-dark dark:text-slate-200 mb-1">Grantor (Seller)</label>
             <input
               type="text"
               value={grantor}
               onChange={(e) => setGrantor(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent"
+              className="w-full px-3 py-2 border border-light-border rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent"
               placeholder="Name of seller"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-1">Grantee (Buyer)</label>
+            <label className="block text-sm font-medium text-harken-dark dark:text-slate-200 mb-1">Grantee (Buyer)</label>
             <input
               type="text"
               value={grantee}
               onChange={(e) => setGrantee(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent"
+              className="w-full px-3 py-2 border border-light-border rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent"
               placeholder="Name of buyer"
             />
           </div>
@@ -2247,6 +2249,8 @@ interface PhotosProps {
   defaultTakenBy: string;
   defaultTakenDate: string;
   onPreviewPhoto?: (slotId: string, photo: PhotoData) => void;
+  /** Enable crop-before-upload workflow */
+  enableCropOnUpload?: boolean;
 }
 
 function PhotosContent({
@@ -2257,6 +2261,7 @@ function PhotosContent({
   defaultTakenBy,
   defaultTakenDate,
   onPreviewPhoto,
+  enableCropOnUpload = true,
 }: PhotosProps) {
   const {
     state: wizardState,
@@ -2283,6 +2288,103 @@ function PhotosContent({
   const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const photoSlotRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
+  
+  // Crop modal state
+  const [cropModalOpen, setCropModalOpen] = useState(false);
+  const [cropImageUrl, setCropImageUrl] = useState<string | null>(null);
+  const [cropTargetSlotId, setCropTargetSlotId] = useState<string | null>(null);
+  const [pendingOriginalFile, setPendingOriginalFile] = useState<File | null>(null);
+  
+  // Handle opening crop modal for existing photo
+  const handleOpenCropModal = useCallback((slotId: string, photo: PhotoData) => {
+    setCropImageUrl(photo.preview);
+    setCropTargetSlotId(slotId);
+    setPendingOriginalFile(photo.file || null);
+    setCropModalOpen(true);
+  }, []);
+  
+  // Handle crop completion - accepts both blob and crop data
+  const handleCropComplete = useCallback((croppedBlob: Blob, cropData?: { x: number; y: number; width: number; height: number }) => {
+    if (!cropTargetSlotId) return;
+    
+    // Create a new file from the cropped blob
+    const fileName = pendingOriginalFile?.name || `cropped-${Date.now()}.jpg`;
+    const croppedFile = new File([croppedBlob], fileName, { type: 'image/jpeg' });
+    
+    // Upload the cropped file
+    onUpload(cropTargetSlotId, croppedFile);
+    
+    // Store crop data for potential re-cropping (could be saved to wizard state)
+    if (cropData) {
+      console.log('Photo cropped with data:', cropData);
+    }
+    
+    // Clean up
+    setCropModalOpen(false);
+    setCropImageUrl(null);
+    setCropTargetSlotId(null);
+    setPendingOriginalFile(null);
+  }, [cropTargetSlotId, pendingOriginalFile, onUpload]);
+  
+  // Handle crop cancel
+  const handleCropCancel = useCallback(() => {
+    // If there was a pending file for new upload, discard it
+    setCropModalOpen(false);
+    setCropImageUrl(null);
+    setCropTargetSlotId(null);
+    setPendingOriginalFile(null);
+  }, []);
+  
+  // State for auto-crop processing
+  const [isAutoCropping, setIsAutoCropping] = useState(false);
+  
+  // Handle file upload with AI auto-crop
+  const handleFileUploadWithCrop = useCallback(async (slotId: string, file: File) => {
+    if (enableCropOnUpload) {
+      try {
+        setIsAutoCropping(true);
+        setCropTargetSlotId(slotId);
+        
+        // Detect category from slot ID for smarter cropping
+        const category = slotId.includes('exterior') ? 'exterior' as const
+          : slotId.includes('interior') ? 'interior' as const
+          : slotId.includes('aerial') ? 'aerial' as const
+          : slotId.includes('street') ? 'street' as const
+          : detectCategoryFromFilename(file.name);
+        
+        // Auto-crop the image using AI-driven smart crop
+        const { croppedFile, cropData, originalFile } = await autoCropImage(file, {
+          category,
+          targetAspectRatio: 16 / 9, // Default to landscape for real estate
+        });
+        
+        // Upload the auto-cropped file immediately
+        onUpload(slotId, croppedFile);
+        
+        // Store original for manual re-crop if user wants to adjust
+        setPendingOriginalFile(originalFile);
+        
+        // Log the auto-crop for debugging
+        console.log(`Auto-cropped ${file.name} with ${Math.round(cropData.confidence * 100)}% confidence (${cropData.aspectRatioLabel})`);
+        
+        setIsAutoCropping(false);
+        setCropTargetSlotId(null);
+      } catch (error) {
+        console.error('Auto-crop failed, falling back to manual crop:', error);
+        setIsAutoCropping(false);
+        
+        // Fallback to manual crop modal
+        const previewUrl = URL.createObjectURL(file);
+        setCropImageUrl(previewUrl);
+        setCropTargetSlotId(slotId);
+        setPendingOriginalFile(file);
+        setCropModalOpen(true);
+      }
+    } else {
+      // Direct upload without cropping
+      onUpload(slotId, file);
+    }
+  }, [enableCropOnUpload, onUpload]);
 
   // Get all slots in a flat array for keyboard navigation
   const allSlots = useMemo(() => {
@@ -2307,11 +2409,11 @@ function PhotosContent({
     return assignments;
   }, [photos]);
 
-  const handleFileChange = (slotId: string, e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = useCallback((slotId: string, e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files?.[0]) {
-      onUpload(slotId, e.target.files[0]);
+      handleFileUploadWithCrop(slotId, e.target.files[0]);
     }
-  };
+  }, [handleFileUploadWithCrop]);
 
   const toggleCategory = (categoryId: string) => {
     setExpandedCategories(prev => ({ ...prev, [categoryId]: !prev[categoryId] }));
@@ -2570,7 +2672,7 @@ function PhotosContent({
             </div>
             <div>
               <p className="font-semibold text-harken-dark dark:text-white">Subject Property Photos</p>
-              <p className="text-sm text-gray-600 dark:text-slate-400">
+              <p className="text-sm text-harken-gray dark:text-slate-400">
                 {Object.values(photos).filter(Boolean).length} of{' '}
                 {photoCategories.reduce((sum, c) => sum + c.slots.length, 0)} photos uploaded
               </p>
@@ -2584,7 +2686,7 @@ function PhotosContent({
                   key={cat.id}
                   className={`px-2 py-1 rounded-full flex items-center gap-1 ${getUploadedCount(cat) > 0
                     ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                    : 'bg-gray-100 text-gray-500 dark:bg-slate-700 dark:text-slate-400'
+                    : 'bg-harken-gray-light text-harken-gray dark:bg-elevation-1 dark:text-slate-400'
                     }`}
                 >
                   <CatIcon className="w-3 h-3" />
@@ -2608,12 +2710,12 @@ function PhotosContent({
       {photoCategories.map((category) => (
         <div
           key={category.id}
-          className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl shadow-sm overflow-hidden"
+          className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl shadow-sm overflow-hidden"
         >
           {/* Category Header */}
           <button
             onClick={() => toggleCategory(category.id)}
-            className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-slate-700/50 transition-colors"
+            className="w-full px-6 py-4 flex items-center justify-between hover:bg-harken-gray-light dark:hover:bg-elevation-3/50 transition-colors"
           >
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-lg bg-harken-blue/10 flex items-center justify-center">
@@ -2621,29 +2723,29 @@ function PhotosContent({
               </div>
               <div className="text-left">
                 <h3 className="font-bold text-harken-dark dark:text-white">{category.label}</h3>
-                <p className="text-sm text-gray-500 dark:text-slate-400">{category.description}</p>
+                <p className="text-sm text-harken-gray dark:text-slate-400">{category.description}</p>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getUploadedCount(category) > 0
                 ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
-                : 'bg-gray-100 text-gray-500 dark:bg-slate-700 dark:text-slate-400'
+                : 'bg-harken-gray-light text-harken-gray dark:bg-elevation-1 dark:text-slate-400'
                 }`}>
                 {getUploadedCount(category)}/{category.slots.length}
               </span>
               {category.reportPages && (
-                <span className="text-xs text-gray-400 dark:text-slate-500">
+                <span className="text-xs text-harken-gray-med dark:text-slate-500">
                   {category.reportPages}
                 </span>
               )}
-              <ChevronDown className={`w-5 h-5 text-gray-400 transition-transform ${expandedCategories[category.id] ? 'rotate-180' : ''
+              <ChevronDown className={`w-5 h-5 text-harken-gray-med transition-transform ${expandedCategories[category.id] ? 'rotate-180' : ''
                 }`} />
             </div>
           </button>
 
           {/* Category Content */}
           {expandedCategories[category.id] && (
-            <div className="border-t border-gray-100 dark:border-slate-700 p-6">
+            <div className="border-t border-harken-gray-light dark:border-dark-border p-6">
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {category.slots.map((slot) => {
                   const photo = photos[slot.id];
@@ -2657,7 +2759,7 @@ function PhotosContent({
                       ref={(el) => { photoSlotRefs.current[slot.id] = el; }}
                       tabIndex={0}
                       className={`border-2 rounded-xl p-4 transition-all outline-none ${isFocused
-                        ? 'ring-2 ring-harken-blue ring-offset-2 dark:ring-offset-slate-900'
+                        ? 'ring-2 ring-harken-blue ring-offset-2 dark:ring-offset-harken-dark'
                         : ''
                         } ${isDragOver && !photo
                           ? 'border-harken-blue bg-harken-blue/10 dark:bg-harken-blue/20 scale-[1.02]'
@@ -2665,7 +2767,7 @@ function PhotosContent({
                             ? 'border-green-200 dark:border-green-900/50 bg-green-50/30 dark:bg-green-900/10'
                             : slot.recommended
                               ? 'border-harken-blue/30 dark:border-harken-blue/50 bg-harken-blue/5 dark:bg-harken-blue/10'
-                              : 'border-gray-200 dark:border-slate-700 hover:border-harken-blue/40'
+                              : 'border-light-border dark:border-dark-border hover:border-harken-blue/40'
                         }`}
                       onMouseEnter={() => handleMouseEnter(slot.id)}
                       onMouseLeave={handleMouseLeave}
@@ -2678,7 +2780,7 @@ function PhotosContent({
                       <div className="flex items-start justify-between gap-2 mb-3">
                         <div className="flex-1">
                           <div className="flex items-center gap-2 mb-1">
-                            <p className="text-sm font-medium text-gray-800 dark:text-white">{slot.label}</p>
+                            <p className="text-sm font-medium text-harken-dark dark:text-white">{slot.label}</p>
                             {slot.recommended && !photo && (
                               <span className="px-1.5 py-0.5 bg-amber-100 text-amber-700 text-[10px] font-medium rounded">
                                 Recommended
@@ -2686,13 +2788,13 @@ function PhotosContent({
                             )}
                           </div>
                           {slot.description && (
-                            <p className="text-xs text-gray-500 dark:text-slate-400">{slot.description}</p>
+                            <p className="text-xs text-harken-gray dark:text-slate-400">{slot.description}</p>
                           )}
                         </div>
                         {photo && (
                           <button
                             onClick={() => onRemove(slot.id)}
-                            className="p-1 text-gray-400 hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded transition-colors"
+                            className="p-1 text-harken-gray-med hover:text-harken-error hover:bg-accent-red-light dark:hover:bg-accent-red-light rounded transition-colors"
                             title="Remove photo"
                           >
                             <X className="w-4 h-4" />
@@ -2709,19 +2811,31 @@ function PhotosContent({
                               alt={slot.label}
                               className="w-full h-32 object-cover rounded-lg"
                             />
-                            {/* Preview button overlay */}
-                            {onPreviewPhoto && (
-                              <button
-                                onClick={() => onPreviewPhoto(slot.id, photo)}
-                                className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg"
-                                title="Preview in report"
-                              >
-                                <div className="flex items-center gap-2 px-3 py-1.5 bg-white/90 rounded-full text-sm font-medium text-gray-800 dark:text-white">
+                            {/* Overlay with Preview and Crop buttons */}
+                            <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg">
+                              {/* Crop button */}
+                              {enableCropOnUpload && (
+                                <button
+                                  onClick={() => handleOpenCropModal(slot.id, photo)}
+                                  className="flex items-center gap-1.5 px-3 py-1.5 bg-surface-1/90 rounded-full text-sm font-medium text-harken-dark dark:text-white hover:bg-surface-1 transition-colors"
+                                  title="Crop photo"
+                                >
+                                  <Crop className="w-4 h-4" />
+                                  Crop
+                                </button>
+                              )}
+                              {/* Preview button */}
+                              {onPreviewPhoto && (
+                                <button
+                                  onClick={() => onPreviewPhoto(slot.id, photo)}
+                                  className="flex items-center gap-1.5 px-3 py-1.5 bg-surface-1/90 rounded-full text-sm font-medium text-harken-dark dark:text-white hover:bg-surface-1 transition-colors"
+                                  title="Preview in report"
+                                >
                                   <Eye className="w-4 h-4" />
                                   Preview
-                                </div>
-                              </button>
-                            )}
+                                </button>
+                              )}
+                            </div>
                           </div>
 
                           {/* Photo Metadata Fields */}
@@ -2732,7 +2846,7 @@ function PhotosContent({
                               placeholder="Photo caption (e.g., South Elevation)"
                               value={photo.caption || ''}
                               onChange={(e) => onUpdateMetadata(slot.id, { caption: e.target.value })}
-                              className="w-full px-3 py-2 text-sm border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-harken-blue/40"
+                              className="w-full px-3 py-2 text-sm border border-light-border dark:border-harken-gray bg-surface-1 dark:bg-elevation-1 text-harken-dark dark:text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-harken-blue/40"
                             />
 
                             {/* Taken By & Date (collapsed row) */}
@@ -2742,23 +2856,34 @@ function PhotosContent({
                                 placeholder="Taken by"
                                 value={photo.takenBy || defaultTakenBy}
                                 onChange={(e) => onUpdateMetadata(slot.id, { takenBy: e.target.value })}
-                                className="flex-1 px-2 py-1.5 text-xs border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white rounded focus:outline-none focus:ring-1 focus:ring-harken-blue/40"
+                                className="flex-1 px-2 py-1.5 text-xs border border-light-border dark:border-harken-gray bg-surface-1 dark:bg-elevation-1 text-harken-dark dark:text-white rounded focus:outline-none focus:ring-1 focus:ring-harken-blue/40"
                               />
                               <input
                                 type="date"
                                 value={photo.takenDate || defaultTakenDate}
                                 onChange={(e) => onUpdateMetadata(slot.id, { takenDate: e.target.value })}
-                                className="w-32 px-2 py-1.5 text-xs border border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-700 text-gray-900 dark:text-white dark:[color-scheme:dark] rounded focus:outline-none focus:ring-1 focus:ring-harken-blue/40"
+                                className="w-32 px-2 py-1.5 text-xs border border-light-border dark:border-harken-gray bg-surface-1 dark:bg-elevation-1 text-harken-dark dark:text-white dark:[color-scheme:dark] rounded focus:outline-none focus:ring-1 focus:ring-harken-blue/40"
                               />
                             </div>
                           </div>
+                        </div>
+                      ) : isAutoCropping && cropTargetSlotId === slot.id ? (
+                        // Auto-cropping loading state
+                        <div className="border-2 border-dashed border-harken-blue rounded-lg p-6 text-center bg-harken-blue/10 dark:bg-harken-blue/20">
+                          <Loader2 className="w-8 h-8 mx-auto mb-2 text-harken-blue animate-spin" />
+                          <p className="text-xs text-harken-blue font-medium">
+                            Auto-cropping...
+                          </p>
+                          <p className="text-[10px] text-harken-gray mt-1">
+                            Optimizing for real estate
+                          </p>
                         </div>
                       ) : (
                         <label className={`block border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-all ${isDragOver
                           ? 'border-harken-blue bg-harken-blue/10 dark:bg-harken-blue/20'
                           : isFocused
                             ? 'border-harken-blue bg-harken-blue/5 dark:bg-harken-blue/10'
-                            : 'border-gray-300 dark:border-slate-700 hover:border-harken-blue hover:bg-harken-blue/5 dark:hover:bg-harken-blue/10'
+                            : 'border-light-border dark:border-dark-border hover:border-harken-blue hover:bg-harken-blue/5 dark:hover:bg-harken-blue/10'
                           }`}>
                           <input
                             ref={(el) => { fileInputRefs.current[slot.id] = el; }}
@@ -2767,8 +2892,8 @@ function PhotosContent({
                             className="hidden"
                             onChange={(e) => handleFileChange(slot.id, e)}
                           />
-                          <Image className={`w-8 h-8 mx-auto mb-2 ${isDragOver || isFocused ? 'text-harken-blue' : 'text-gray-400'}`} />
-                          <p className={`text-xs ${isDragOver || isFocused ? 'text-harken-blue font-medium' : 'text-gray-500'}`}>
+                          <Image className={`w-8 h-8 mx-auto mb-2 ${isDragOver || isFocused ? 'text-harken-blue' : 'text-harken-gray-med'}`} />
+                          <p className={`text-xs ${isDragOver || isFocused ? 'text-harken-blue font-medium' : 'text-harken-gray'}`}>
                             {isDragOver ? 'Drop here' : isFocused ? 'Press Enter to upload' : 'Click or drag to upload'}
                           </p>
                         </label>
@@ -2783,12 +2908,12 @@ function PhotosContent({
       ))}
 
       {/* Auto-Generate Maps */}
-      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4 flex items-center gap-2">
+      <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-light-border dark:border-harken-gray pb-3 mb-4 flex items-center gap-2">
           <MapPin className="w-5 h-5 text-harken-blue" />
           Maps
         </h3>
-        <p className="text-sm text-gray-600 mb-4">
+        <p className="text-sm text-harken-gray mb-4">
           Generate maps automatically from the property address.
         </p>
         <div className="flex flex-wrap gap-3">
@@ -2831,6 +2956,18 @@ function PhotosContent({
           />
         );
       })()}
+      
+      {/* Photo Crop Modal */}
+      {cropModalOpen && cropImageUrl && (
+        <PhotoCropModal
+          image={cropImageUrl}
+          initialAspectRatio={16 / 9}
+          onCrop={handleCropComplete}
+          onCancel={handleCropCancel}
+          title="Crop Photo"
+          showAspectRatioSelector={true}
+        />
+      )}
     </div>
   );
 }
@@ -2844,7 +2981,7 @@ const DOCUMENT_TYPE_INFO: Record<string, { label: string; Icon: React.FC<{ class
   cadastral: { label: 'Cadastral / County Records', Icon: Landmark, color: 'blue' },
   engagement: { label: 'Engagement Letter', Icon: FileSignature, color: 'purple' },
   sale: { label: 'Buy/Sale Agreement', Icon: Handshake, color: 'green' },
-  lease: { label: 'Lease Agreement', Icon: File, color: 'orange' },
+  lease: { label: 'Lease Agreement', Icon: FileIcon, color: 'orange' },
   rentroll: { label: 'Rent Roll', Icon: BarChart3, color: 'teal' },
   survey: { label: 'Survey / Plat Map', Icon: Map, color: 'indigo' },
   tax_return: { label: 'Tax Return', Icon: Receipt, color: 'red' },
@@ -2977,8 +3114,8 @@ function ExhibitsContent(_props: ExhibitsProps) {
   const getFileIcon = (file: File) => {
     if (file.type.startsWith('image/')) return <Image className="w-5 h-5 text-violet-500" />;
     if (file.type === 'application/pdf') return <FileText className="w-5 h-5 text-harken-blue" />;
-    if (file.type.includes('spreadsheet') || file.type.includes('excel')) return <BarChart3 className="w-5 h-5 text-emerald-500" />;
-    if (file.type.includes('document') || file.type.includes('word')) return <File className="w-5 h-5 text-blue-500" />;
+    if (file.type.includes('spreadsheet') || file.type.includes('excel')) return <BarChart3 className="w-5 h-5 text-accent-teal-mint" />;
+    if (file.type.includes('document') || file.type.includes('word')) return <FileIcon className="w-5 h-5 text-blue-500" />;
     return <Folder className="w-5 h-5 text-slate-500" />;
   };
 
@@ -2986,7 +3123,7 @@ function ExhibitsContent(_props: ExhibitsProps) {
     <div className="space-y-6">
       {/* Documents from Intake - styled like Document Intake page */}
       {hasIntakeDocuments && (
-        <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
+        <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-lg font-bold text-harken-dark dark:text-white flex items-center gap-2">
               <FileText className="w-5 h-5 text-harken-blue" />
@@ -3004,17 +3141,17 @@ function ExhibitsContent(_props: ExhibitsProps) {
               return (
                 <div
                   key={doc.id}
-                  className="flex items-center gap-4 p-4 bg-white dark:bg-slate-800/50 rounded-xl border border-gray-200 dark:border-slate-700 hover:border-harken-blue/30 dark:hover:border-harken-blue/40 transition-all group"
+                  className="flex items-center gap-4 p-4 bg-surface-1 dark:bg-elevation-1/50 rounded-xl border border-light-border dark:border-dark-border hover:border-harken-blue/30 dark:hover:border-harken-blue/40 transition-all group"
                 >
                   {/* Icon */}
-                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-700 dark:to-slate-800 flex items-center justify-center flex-shrink-0 border border-slate-200 dark:border-slate-600">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-slate-50 to-slate-100 dark:from-harken-dark dark:to-harken-dark flex items-center justify-center flex-shrink-0 border border-slate-200 dark:border-harken-gray">
                     <typeInfo.Icon className="w-5 h-5 text-slate-600 dark:text-slate-400" />
                   </div>
 
                   {/* Name and size */}
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">{doc.name}</p>
-                    <p className="text-xs text-gray-500 dark:text-slate-400">{formatFileSize(doc.size)}</p>
+                    <p className="text-sm font-semibold text-harken-dark dark:text-white truncate">{doc.name}</p>
+                    <p className="text-xs text-harken-gray dark:text-slate-400">{formatFileSize(doc.size)}</p>
                   </div>
 
                   {/* Classification badge */}
@@ -3038,24 +3175,24 @@ function ExhibitsContent(_props: ExhibitsProps) {
 
       {/* Empty State if no documents */}
       {!hasIntakeDocuments && (
-        <div className="bg-gray-50 dark:bg-slate-800/50 border border-gray-200 dark:border-slate-700 rounded-xl p-8 text-center">
-          <FileText className="w-12 h-12 text-gray-300 dark:text-slate-600 mx-auto mb-3" />
-          <h3 className="text-lg font-medium text-gray-700 dark:text-slate-200 mb-2">No Documents Uploaded</h3>
-          <p className="text-sm text-gray-500 dark:text-slate-400 mb-4">
+        <div className="bg-harken-gray-light dark:bg-elevation-1/50 border border-light-border dark:border-dark-border rounded-xl p-8 text-center">
+          <FileText className="w-12 h-12 text-harken-gray-med-lt dark:text-slate-500 mx-auto mb-3" />
+          <h3 className="text-lg font-medium text-harken-dark dark:text-slate-200 mb-2">No Documents Uploaded</h3>
+          <p className="text-sm text-harken-gray dark:text-slate-400 mb-4">
             Documents uploaded during the Document Intake phase will appear here.
           </p>
-          <p className="text-xs text-gray-400 dark:text-slate-500">
+          <p className="text-xs text-harken-gray-med dark:text-slate-500">
             You can add additional exhibits below.
           </p>
         </div>
       )}
 
       {/* Additional Exhibits */}
-      <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-gray-200 dark:border-slate-600 pb-3 mb-4">
+      <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-light-border dark:border-harken-gray pb-3 mb-4">
           Additional Exhibits
         </h3>
-        <p className="text-sm text-gray-600 dark:text-slate-400 mb-4">
+        <p className="text-sm text-harken-gray dark:text-slate-400 mb-4">
           Upload additional documents to include in the report addenda.
         </p>
 
@@ -3063,7 +3200,7 @@ function ExhibitsContent(_props: ExhibitsProps) {
         {customExhibits.length > 0 && (
           <div className="space-y-3 mb-4">
             <div className="flex items-center justify-between">
-              <p className="text-sm font-medium text-gray-700 dark:text-slate-300">
+              <p className="text-sm font-medium text-harken-dark dark:text-slate-200">
                 Uploaded Exhibits ({customExhibits.length})
               </p>
               <p className="text-xs text-green-600 flex items-center gap-1">
@@ -3074,10 +3211,10 @@ function ExhibitsContent(_props: ExhibitsProps) {
             {customExhibits.map((exhibit) => (
               <div
                 key={exhibit.id}
-                className="flex items-center gap-4 p-4 bg-white dark:bg-slate-800/50 rounded-xl border border-gray-200 dark:border-slate-700 hover:border-harken-blue/30 dark:hover:border-harken-blue/40 transition-all group"
+                className="flex items-center gap-4 p-4 bg-surface-1 dark:bg-elevation-1/50 rounded-xl border border-light-border dark:border-dark-border hover:border-harken-blue/30 dark:hover:border-harken-blue/40 transition-all group"
               >
                 {/* Icon */}
-                <div className="w-10 h-10 rounded-xl overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-700 dark:to-slate-800 flex items-center justify-center flex-shrink-0 border border-slate-200 dark:border-slate-600">
+                <div className="w-10 h-10 rounded-xl overflow-hidden bg-gradient-to-br from-slate-50 to-slate-100 dark:from-harken-dark dark:to-harken-dark flex items-center justify-center flex-shrink-0 border border-slate-200 dark:border-harken-gray">
                   {exhibit.preview ? (
                     <img src={exhibit.preview} alt="" className="w-full h-full object-cover" />
                   ) : (
@@ -3098,7 +3235,7 @@ function ExhibitsContent(_props: ExhibitsProps) {
                           if (e.key === 'Escape') { setEditingId(null); setEditName(''); }
                         }}
                         autoFocus
-                        className="flex-1 px-3 py-1.5 text-sm border border-harken-blue rounded-lg focus:outline-none focus:ring-2 focus:ring-harken-blue/30 bg-white dark:bg-slate-700 dark:text-white"
+                        className="flex-1 px-3 py-1.5 text-sm border border-harken-blue rounded-lg focus:outline-none focus:ring-2 focus:ring-harken-blue/30 bg-surface-1 dark:bg-elevation-1 dark:text-white"
                       />
                       <button
                         onClick={() => handleSaveName(exhibit.id)}
@@ -3108,17 +3245,17 @@ function ExhibitsContent(_props: ExhibitsProps) {
                       </button>
                       <button
                         onClick={() => { setEditingId(null); setEditName(''); }}
-                        className="p-1.5 text-gray-400 hover:bg-gray-100 dark:hover:bg-slate-700 rounded-lg"
+                        className="p-1.5 text-harken-gray-med hover:bg-harken-gray-light dark:hover:bg-elevation-3 rounded-lg"
                       >
                         <X className="w-4 h-4" />
                       </button>
                     </div>
                   ) : (
                     <>
-                      <p className="text-sm font-semibold text-gray-900 dark:text-white truncate">
+                      <p className="text-sm font-semibold text-harken-dark dark:text-white truncate">
                         {exhibit.name}
                       </p>
-                      <p className="text-xs text-gray-500">{formatFileSize(exhibit.file.size)}</p>
+                      <p className="text-xs text-harken-gray">{formatFileSize(exhibit.file.size)}</p>
                     </>
                   )}
                 </div>
@@ -3132,7 +3269,7 @@ function ExhibitsContent(_props: ExhibitsProps) {
                 {editingId !== exhibit.id && (
                   <button
                     onClick={() => handleStartEdit(exhibit)}
-                    className="text-xs text-gray-400 hover:text-harken-blue transition-colors"
+                    className="text-xs text-harken-gray-med hover:text-harken-blue transition-colors"
                   >
                     Change
                   </button>
@@ -3141,7 +3278,7 @@ function ExhibitsContent(_props: ExhibitsProps) {
                 {/* Remove button */}
                 <button
                   onClick={() => handleRemoveExhibit(exhibit.id)}
-                  className="p-1.5 text-gray-300 hover:text-gray-500 transition-colors"
+                  className="p-1.5 text-harken-gray-med-lt hover:text-harken-gray transition-colors"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -3161,21 +3298,21 @@ function ExhibitsContent(_props: ExhibitsProps) {
             transition-all duration-200 flex flex-col items-center gap-2
             ${isDragOver
               ? 'border-harken-blue bg-harken-blue/10 dark:bg-harken-blue/20 scale-[1.01]'
-              : 'border-gray-300 dark:border-slate-700 hover:border-harken-blue dark:hover:border-harken-blue hover:bg-harken-blue/5 dark:hover:bg-harken-blue/10'
+              : 'border-light-border dark:border-dark-border hover:border-harken-blue dark:hover:border-harken-blue hover:bg-harken-blue/5 dark:hover:bg-harken-blue/10'
             }
           `}
         >
           <div className={`
             w-12 h-12 rounded-xl flex items-center justify-center transition-all
-            ${isDragOver ? 'bg-harken-blue text-white scale-110' : 'bg-gray-100 dark:bg-slate-700 text-gray-400 dark:text-slate-500'}
+            ${isDragOver ? 'bg-harken-blue text-white scale-110' : 'bg-harken-gray-light dark:bg-elevation-1 text-harken-gray-med dark:text-slate-500'}
           `}>
             <Upload className="w-6 h-6" />
           </div>
           <div className="text-center">
-            <p className={`font-medium ${isDragOver ? 'text-harken-blue' : 'text-gray-700 dark:text-slate-300'}`}>
+            <p className={`font-medium ${isDragOver ? 'text-harken-blue' : 'text-harken-dark dark:text-slate-200'}`}>
               {isDragOver ? 'Drop files here' : 'Drop files here or click to browse'}
             </p>
-            <p className="text-sm text-gray-500 dark:text-slate-400 mt-1">
+            <p className="text-sm text-harken-gray dark:text-slate-400 mt-1">
               PDF, Word, Excel, Images, and more
             </p>
           </div>
@@ -3192,7 +3329,7 @@ function ExhibitsContent(_props: ExhibitsProps) {
         />
 
         {/* Helper text */}
-        <p className="text-xs text-gray-500 dark:text-slate-400 mt-3 flex items-center gap-1.5">
+        <p className="text-xs text-harken-gray dark:text-slate-400 mt-3 flex items-center gap-1.5">
           <Sparkles className="w-3.5 h-3.5 text-amber-500" />
           Document names are auto-detected. Click any name to edit it.
         </p>

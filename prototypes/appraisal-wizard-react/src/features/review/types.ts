@@ -41,6 +41,32 @@ export interface ApproachValue {
 // REPORT EDITOR TYPES
 // =================================================================
 
+// =================================================================
+// INLINE PHOTO PLACEMENT TYPES
+// =================================================================
+
+export type PhotoPosition = 'header' | 'inline' | 'footer';
+export type PhotoAspectRatio = '16/9' | '4/3' | 'square' | '3/2';
+
+export interface PhotoSlotConfig {
+  id: string;
+  position: PhotoPosition;
+  aspectRatio: PhotoAspectRatio;
+  label?: string;
+  categoryFilter?: string; // Filter photos by category (e.g., 'interior', 'exterior')
+}
+
+export interface InlinePhotoPlacement {
+  slotId: string;
+  photoId: string;
+  cropData?: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
+}
+
 export interface ReportSection {
   id: string;
   label: string;
@@ -51,12 +77,18 @@ export interface ReportSection {
   fields: ReportField[];
   // Dynamic: only show if approach is selected
   requiresApproach?: string;
+  // Inline photo placement configuration
+  allowInlinePhotos?: boolean;
+  photoSlots?: PhotoSlotConfig[];
 }
 
 export interface ReportField {
   id: string;
   label: string;
   enabled: boolean;
+  // Field-level inline photo support
+  allowPhoto?: boolean;
+  photoPosition?: 'before' | 'after' | 'right';
 }
 
 export interface EditableElement {

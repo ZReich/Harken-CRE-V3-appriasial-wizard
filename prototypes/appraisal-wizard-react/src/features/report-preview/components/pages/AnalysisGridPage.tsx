@@ -197,7 +197,7 @@ export const AnalysisGridPage: React.FC<AnalysisGridPageProps> = ({
   );
 
   return (
-    <div className="w-full h-full bg-white flex flex-col">
+    <div className="w-full h-full bg-surface-1 flex flex-col">
       {/* Page header */}
       {title && (
         <div className="px-12 pt-10 pb-4 border-b border-slate-200">

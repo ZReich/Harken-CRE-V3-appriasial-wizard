@@ -129,38 +129,38 @@ export const CostSegFullReportEditor: React.FC<CostSegFullReportEditorProps> = (
       case 'disclaimer':
         return <DisclaimerSection />;
       default:
-        return <div className="p-8 text-center text-gray-500">Section content not implemented</div>;
+        return <div className="p-8 text-center text-harken-gray-med">Section content not implemented</div>;
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-gray-100 z-50 flex flex-col">
+    <div className="fixed inset-0 bg-harken-gray-light z-50 flex flex-col">
       {/* Header */}
-      <header className="bg-white border-b border-gray-200 px-6 py-4">
+      <header className="bg-surface-1 border-b border-light-border px-6 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-4">
             <button
               onClick={onBack}
-              className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+              className="flex items-center gap-2 text-harken-gray hover:text-slate-900 transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
               <span className="font-medium">Back</span>
             </button>
-            <div className="h-6 w-px bg-gray-300" />
+            <div className="h-6 w-px bg-harken-gray-med-lt" />
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-emerald-100 rounded-xl flex items-center justify-center">
-                <Calculator className="w-5 h-5 text-emerald-600" />
+              <div className="w-10 h-10 bg-accent-teal-mint-light rounded-xl flex items-center justify-center">
+                <Calculator className="w-5 h-5 text-accent-teal-mint" />
               </div>
               <div>
-                <h1 className="text-lg font-bold text-gray-900 dark:text-white">Cost Segregation Report</h1>
-                <p className="text-sm text-gray-500">{analysis.propertyName}</p>
+                <h1 className="text-lg font-bold text-slate-900 dark:text-white">Cost Segregation Report</h1>
+                <p className="text-sm text-harken-gray-med">{analysis.propertyName}</p>
               </div>
             </div>
           </div>
           <div className="flex items-center gap-3">
             <button
               onClick={() => window.print()}
-              className="flex items-center gap-2 px-4 py-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+              className="flex items-center gap-2 px-4 py-2 text-harken-gray hover:text-slate-900 hover:bg-harken-gray-light rounded-lg transition-colors"
             >
               <Printer className="w-4 h-4" />
               Print
@@ -168,7 +168,7 @@ export const CostSegFullReportEditor: React.FC<CostSegFullReportEditorProps> = (
             {onExportPdf && (
               <button
                 onClick={onExportPdf}
-                className="flex items-center gap-2 px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 transition-colors font-medium"
+                className="flex items-center gap-2 px-4 py-2 bg-accent-teal-mint text-white rounded-lg hover:bg-accent-teal-mint transition-colors font-medium"
               >
                 <Download className="w-4 h-4" />
                 Export PDF
@@ -181,12 +181,12 @@ export const CostSegFullReportEditor: React.FC<CostSegFullReportEditorProps> = (
       {/* Main Content */}
       <div className="flex-1 flex overflow-hidden">
         {/* Sidebar - Section List */}
-        <aside className="w-72 bg-white border-r border-gray-200 overflow-y-auto">
-          <div className="p-4 border-b border-gray-200">
-            <h2 className="text-sm font-semibold text-gray-900 uppercase tracking-wide">
+        <aside className="w-72 bg-surface-1 border-r border-light-border overflow-y-auto">
+          <div className="p-4 border-b border-light-border">
+            <h2 className="text-sm font-semibold text-slate-900 uppercase tracking-wide">
               Report Sections
             </h2>
-            <p className="text-xs text-gray-500 mt-1">
+            <p className="text-xs text-harken-gray-med mt-1">
               Toggle sections to include in report
             </p>
           </div>
@@ -199,8 +199,8 @@ export const CostSegFullReportEditor: React.FC<CostSegFullReportEditorProps> = (
                   key={section.id}
                   className={`group flex items-center gap-3 p-3 rounded-lg cursor-pointer transition-colors ${
                     isActive
-                      ? 'bg-emerald-50 border border-emerald-200'
-                      : 'hover:bg-gray-50'
+                      ? 'bg-accent-teal-mint-light border border-accent-teal-mint'
+                      : 'hover:bg-harken-gray-light'
                   } ${!section.isEnabled ? 'opacity-50' : ''}`}
                   onClick={() => section.isEnabled && setActiveSection(section.id)}
                 >
@@ -211,18 +211,18 @@ export const CostSegFullReportEditor: React.FC<CostSegFullReportEditorProps> = (
                     }}
                     className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
                       section.isEnabled
-                        ? 'bg-emerald-500 border-emerald-500 text-white'
-                        : 'border-gray-300 hover:border-gray-400'
+                        ? 'bg-accent-teal-mint border-accent-teal-mint text-white'
+                        : 'border-light-border hover:border-harken-gray-med'
                     }`}
                   >
                     {section.isEnabled && <CheckCircle2 className="w-3 h-3" />}
                   </button>
-                  <Icon className={`w-4 h-4 ${isActive ? 'text-emerald-600' : 'text-gray-400'}`} />
+                  <Icon className={`w-4 h-4 ${isActive ? 'text-accent-teal-mint' : 'text-harken-gray-med'}`} />
                   <div className="flex-1 min-w-0">
-                    <div className={`text-sm font-medium ${isActive ? 'text-emerald-900' : 'text-gray-700'}`}>
+                    <div className={`text-sm font-medium ${isActive ? 'text-accent-teal-mint' : 'text-harken-gray'}`}>
                       {section.title}
                     </div>
-                    <div className="text-xs text-gray-500 truncate">
+                    <div className="text-xs text-harken-gray-med truncate">
                       {section.description}
                     </div>
                   </div>
@@ -233,13 +233,13 @@ export const CostSegFullReportEditor: React.FC<CostSegFullReportEditorProps> = (
         </aside>
 
         {/* Preview Area */}
-        <main className="flex-1 overflow-y-auto bg-gray-100 p-6">
+        <main className="flex-1 overflow-y-auto bg-harken-gray-light p-6">
           <div className="max-w-4xl mx-auto">
             {/* Paper-like container */}
-            <div className="bg-white shadow-lg rounded-lg overflow-hidden">
+            <div className="bg-surface-1 shadow-lg rounded-lg overflow-hidden">
               {/* Section Header */}
-              <div className="bg-gray-50 dark:bg-slate-800 px-8 py-4 border-b border-gray-200 dark:border-slate-700">
-                <h2 className="text-lg font-bold text-gray-900 dark:text-white">
+              <div className="bg-harken-gray-light dark:bg-elevation-1 px-8 py-4 border-b border-light-border dark:border-dark-border">
+                <h2 className="text-lg font-bold text-slate-900 dark:text-white">
                   {sections.find(s => s.id === activeSection)?.title}
                 </h2>
               </div>
@@ -270,7 +270,7 @@ const CoverLetterSection: React.FC<{ analysis: CostSegAnalysis; reportDate: stri
   reportDate,
 }) => (
   <div className="space-y-6 font-serif">
-    <div className="text-right text-sm text-gray-600">
+    <div className="text-right text-sm text-harken-gray">
       {reportDate}
     </div>
     
@@ -295,34 +295,34 @@ const CoverLetterSection: React.FC<{ analysis: CostSegAnalysis; reportDate: stri
     </div>
 
     {/* Summary Table */}
-    <div className="border border-gray-300 rounded overflow-hidden">
+    <div className="border border-light-border rounded overflow-hidden">
       <table className="w-full text-sm">
-        <thead className="bg-gray-100">
-          <tr className="border-b border-gray-300">
+        <thead className="bg-harken-gray-light">
+          <tr className="border-b border-light-border">
             <th className="text-left px-4 py-2 font-semibold">Recovery Period</th>
             <th className="text-right px-4 py-2 font-semibold">Amount</th>
           </tr>
         </thead>
         <tbody>
-          <tr className="border-b border-gray-200">
+          <tr className="border-b border-light-border">
             <td className="px-4 py-2">5-Year Personal Property</td>
             <td className="px-4 py-2 text-right font-medium">
               {formatCostSegCurrency(analysis.summary.fiveYear.total)}
             </td>
           </tr>
-          <tr className="border-b border-gray-200">
+          <tr className="border-b border-light-border">
             <td className="px-4 py-2">15-Year Real Property</td>
             <td className="px-4 py-2 text-right font-medium">
               {formatCostSegCurrency(analysis.summary.fifteenYear.total)}
             </td>
           </tr>
-          <tr className="border-b border-gray-200">
+          <tr className="border-b border-light-border">
             <td className="px-4 py-2">39-Year Real Property</td>
             <td className="px-4 py-2 text-right font-medium">
               {formatCostSegCurrency(analysis.summary.thirtyNineYear.total)}
             </td>
           </tr>
-          <tr className="bg-gray-50 font-bold">
+          <tr className="bg-harken-gray-light font-bold">
             <td className="px-4 py-2">TOTAL PROJECT COST REVIEWED</td>
             <td className="px-4 py-2 text-right">
               {formatCostSegCurrency(analysis.totalProjectCost)}
@@ -332,7 +332,7 @@ const CoverLetterSection: React.FC<{ analysis: CostSegAnalysis; reportDate: stri
       </table>
     </div>
 
-    <p className="text-sm text-gray-600 leading-relaxed">
+    <p className="text-sm text-harken-gray leading-relaxed">
       This study has been prepared in accordance with the IRS Cost Segregation Audit 
       Techniques Guide and applicable Treasury Regulations. The taxpayer and their tax 
       advisor are responsible for determining the appropriate application of the study results.
@@ -342,7 +342,7 @@ const CoverLetterSection: React.FC<{ analysis: CostSegAnalysis; reportDate: stri
       <p>Sincerely,</p>
       <div className="mt-12">
         <p className="font-medium">[Preparer Name]</p>
-        <p className="text-sm text-gray-600">[Title / Credentials]</p>
+        <p className="text-sm text-harken-gray">[Title / Credentials]</p>
       </div>
     </div>
   </div>
@@ -351,7 +351,7 @@ const CoverLetterSection: React.FC<{ analysis: CostSegAnalysis; reportDate: stri
 // Executive Summary Section
 const ExecutiveSummarySection: React.FC<AnalysisProps> = ({ analysis }) => (
   <div className="space-y-6">
-    <h3 className="text-xl font-bold text-gray-900 border-b-2 border-emerald-500 pb-2">
+    <h3 className="text-xl font-bold text-slate-900 border-b-2 border-accent-teal-mint pb-2">
       EXECUTIVE SUMMARY
     </h3>
     
@@ -363,29 +363,29 @@ const ExecutiveSummarySection: React.FC<AnalysisProps> = ({ analysis }) => (
     </div>
 
     {/* Summary Table */}
-    <div className="border-2 border-gray-800 rounded overflow-hidden">
-      <div className="bg-emerald-600 text-white px-4 py-2 font-bold text-center">
+    <div className="border-2 border-slate-900 rounded overflow-hidden">
+      <div className="bg-accent-teal-mint text-white px-4 py-2 font-bold text-center">
         SUMMARY OF FINDINGS
       </div>
       <table className="w-full">
-        <thead className="bg-gray-100">
-          <tr className="border-b border-gray-300">
+        <thead className="bg-harken-gray-light">
+          <tr className="border-b border-light-border">
             <th className="text-left px-4 py-3 font-semibold">Recovery Period</th>
             <th className="text-right px-4 py-3 font-semibold">Amount</th>
             <th className="text-right px-4 py-3 font-semibold">% of Total</th>
           </tr>
         </thead>
         <tbody>
-          <tr className="border-b border-gray-200 bg-emerald-50">
+          <tr className="border-b border-light-border bg-accent-teal-mint-light">
             <td className="px-4 py-3">5-Year Personal Property</td>
             <td className="px-4 py-3 text-right font-medium">
               {formatCostSegCurrency(analysis.summary.fiveYear.total)}
             </td>
-            <td className="px-4 py-3 text-right text-emerald-700 font-medium">
+            <td className="px-4 py-3 text-right text-accent-teal-mint font-medium">
               {formatCostSegPercent(analysis.summary.fiveYear.percent)}
             </td>
           </tr>
-          <tr className="border-b border-gray-200 bg-blue-50">
+          <tr className="border-b border-light-border bg-blue-50">
             <td className="px-4 py-3">15-Year Land Improvements</td>
             <td className="px-4 py-3 text-right font-medium">
               {formatCostSegCurrency(analysis.summary.fifteenYear.total)}
@@ -394,7 +394,7 @@ const ExecutiveSummarySection: React.FC<AnalysisProps> = ({ analysis }) => (
               {formatCostSegPercent(analysis.summary.fifteenYear.percent)}
             </td>
           </tr>
-          <tr className="border-b border-gray-300">
+          <tr className="border-b border-light-border">
             <td className="px-4 py-3">39-Year Real Property</td>
             <td className="px-4 py-3 text-right font-medium">
               {formatCostSegCurrency(analysis.summary.thirtyNineYear.total)}
@@ -403,7 +403,7 @@ const ExecutiveSummarySection: React.FC<AnalysisProps> = ({ analysis }) => (
               {formatCostSegPercent(analysis.summary.thirtyNineYear.percent)}
             </td>
           </tr>
-          <tr className="bg-gray-100 font-bold">
+          <tr className="bg-harken-gray-light font-bold">
             <td className="px-4 py-3">TOTAL PROJECT COST</td>
             <td className="px-4 py-3 text-right">
               {formatCostSegCurrency(analysis.totalProjectCost)}
@@ -416,11 +416,11 @@ const ExecutiveSummarySection: React.FC<AnalysisProps> = ({ analysis }) => (
 
     {/* Key Benefits */}
     <div className="grid grid-cols-3 gap-4">
-      <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 text-center">
-        <div className="text-xs text-emerald-600 uppercase tracking-wide mb-1">
+      <div className="bg-accent-teal-mint-light border border-accent-teal-mint rounded-lg p-4 text-center">
+        <div className="text-xs text-accent-teal-mint uppercase tracking-wide mb-1">
           First Year Depreciation
         </div>
-        <div className="text-2xl font-bold text-emerald-700">
+        <div className="text-2xl font-bold text-accent-teal-mint">
           {formatCostSegCurrency(analysis.firstYearDepreciation)}
         </div>
       </div>
@@ -432,11 +432,11 @@ const ExecutiveSummarySection: React.FC<AnalysisProps> = ({ analysis }) => (
           {formatCostSegCurrency(analysis.acceleratedBenefit)}
         </div>
       </div>
-      <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 text-center">
-        <div className="text-xs text-gray-600 uppercase tracking-wide mb-1">
+      <div className="bg-harken-gray-light border border-light-border rounded-lg p-4 text-center">
+        <div className="text-xs text-harken-gray uppercase tracking-wide mb-1">
           Land Value (Excluded)
         </div>
-        <div className="text-2xl font-bold text-gray-700">
+        <div className="text-2xl font-bold text-harken-gray">
           {formatCostSegCurrency(analysis.landValue)}
         </div>
       </div>
@@ -447,25 +447,25 @@ const ExecutiveSummarySection: React.FC<AnalysisProps> = ({ analysis }) => (
 // Methodology Section
 const MethodologySection: React.FC = () => (
   <div className="space-y-6">
-    <h3 className="text-xl font-bold text-gray-900 border-b-2 border-emerald-500 pb-2">
+    <h3 className="text-xl font-bold text-harken-dark border-b-2 border-accent-teal-mint pb-2">
       THE STUDY - METHODOLOGY
     </h3>
 
     <div className="prose max-w-none space-y-4">
-      <h4 className="text-lg font-semibold text-gray-800">Overview</h4>
-      <p className="leading-relaxed text-gray-700">{METHODOLOGY_TEXT.overview}</p>
+      <h4 className="text-lg font-semibold text-harken-dark">Overview</h4>
+      <p className="leading-relaxed text-harken-gray">{METHODOLOGY_TEXT.overview}</p>
 
-      <h4 className="text-lg font-semibold text-gray-800">Engineering Approach</h4>
-      <p className="leading-relaxed text-gray-700">{METHODOLOGY_TEXT.engineeringApproach}</p>
+      <h4 className="text-lg font-semibold text-harken-dark">Engineering Approach</h4>
+      <p className="leading-relaxed text-harken-gray">{METHODOLOGY_TEXT.engineeringApproach}</p>
 
-      <h4 className="text-lg font-semibold text-gray-800">IRS Compliance</h4>
-      <p className="leading-relaxed text-gray-700">{METHODOLOGY_TEXT.irsCompliance}</p>
+      <h4 className="text-lg font-semibold text-harken-dark">IRS Compliance</h4>
+      <p className="leading-relaxed text-harken-gray">{METHODOLOGY_TEXT.irsCompliance}</p>
     </div>
 
     {/* Legal References */}
     <div className="bg-slate-50 border border-slate-200 rounded-lg p-4">
-      <h4 className="font-semibold text-gray-900 mb-3">Regulatory References</h4>
-      <ul className="space-y-1 text-sm text-gray-600">
+      <h4 className="font-semibold text-harken-dark mb-3">Regulatory References</h4>
+      <ul className="space-y-1 text-sm text-harken-gray">
         <li>• {IRS_REFERENCES.auditTechniquesGuide}</li>
         <li>• {IRS_REFERENCES.revenueProc8756}</li>
         <li>• {IRS_REFERENCES.section1245}</li>
@@ -476,13 +476,13 @@ const MethodologySection: React.FC = () => (
 
     {/* Court Cases */}
     <div className="bg-slate-50 border border-slate-200 rounded-lg p-4">
-      <h4 className="font-semibold text-gray-900 mb-3">Landmark Court Cases</h4>
+      <h4 className="font-semibold text-harken-dark mb-3">Landmark Court Cases</h4>
       <div className="space-y-3">
         {COURT_CASE_REFERENCES.map((c, idx) => (
           <div key={idx} className="text-sm">
-            <span className="font-medium text-gray-800">{c.name}</span>
-            <span className="text-gray-500 ml-2">({c.citation})</span>
-            <p className="text-gray-600 text-xs mt-0.5">{c.note}</p>
+            <span className="font-medium text-harken-dark">{c.name}</span>
+            <span className="text-harken-gray-med ml-2">({c.citation})</span>
+            <p className="text-harken-gray text-xs mt-0.5">{c.note}</p>
           </div>
         ))}
       </div>
@@ -496,49 +496,49 @@ const PropertyDescriptionSection: React.FC<{ analysis: CostSegAnalysis; state: a
   state,
 }) => (
   <div className="space-y-6">
-    <h3 className="text-xl font-bold text-gray-900 border-b-2 border-emerald-500 pb-2">
+    <h3 className="text-xl font-bold text-harken-dark border-b-2 border-accent-teal-mint pb-2">
       PROPERTY DESCRIPTION
     </h3>
 
     <div className="grid grid-cols-2 gap-6">
       <div>
-        <h4 className="font-semibold text-gray-900 mb-2">Property Address</h4>
-        <p className="text-gray-700">{analysis.propertyAddress}</p>
+        <h4 className="font-semibold text-harken-dark mb-2">Property Address</h4>
+        <p className="text-harken-gray">{analysis.propertyAddress}</p>
       </div>
       <div>
-        <h4 className="font-semibold text-gray-900 mb-2">Property Type</h4>
-        <p className="text-gray-700">{analysis.occupancyCode || 'Commercial'}</p>
+        <h4 className="font-semibold text-harken-dark mb-2">Property Type</h4>
+        <p className="text-harken-gray">{analysis.occupancyCode || 'Commercial'}</p>
       </div>
       <div>
-        <h4 className="font-semibold text-gray-900 mb-2">Total Project Cost</h4>
-        <p className="text-gray-700 font-medium">{formatCostSegCurrency(analysis.totalProjectCost)}</p>
+        <h4 className="font-semibold text-harken-dark mb-2">Total Project Cost</h4>
+        <p className="text-harken-gray font-medium">{formatCostSegCurrency(analysis.totalProjectCost)}</p>
       </div>
       <div>
-        <h4 className="font-semibold text-gray-900 mb-2">Analysis Date</h4>
-        <p className="text-gray-700">{analysis.analysisDate.split('T')[0]}</p>
+        <h4 className="font-semibold text-harken-dark mb-2">Analysis Date</h4>
+        <p className="text-harken-gray">{analysis.analysisDate.split('T')[0]}</p>
       </div>
     </div>
 
     {/* Buildings Analyzed */}
-    <div className="border border-gray-200 rounded-lg overflow-hidden">
-      <div className="bg-gray-50 px-4 py-2 font-semibold text-gray-900 border-b border-gray-200">
+    <div className="border border-light-border rounded-lg overflow-hidden">
+      <div className="bg-harken-gray-light px-4 py-2 font-semibold text-harken-dark border-b border-light-border">
         Buildings Analyzed
       </div>
       <table className="w-full text-sm">
         <thead>
-          <tr className="border-b border-gray-200 bg-gray-50">
+          <tr className="border-b border-light-border bg-harken-gray-light">
             <th className="text-left px-4 py-2">Building</th>
             <th className="text-right px-4 py-2">Cost</th>
           </tr>
         </thead>
         <tbody>
-          <tr className="border-b border-gray-100">
+          <tr className="border-b border-harken-gray-light">
             <td className="px-4 py-2">Main Building</td>
             <td className="px-4 py-2 text-right font-medium">
               {formatCostSegCurrency(analysis.totalBuildingCost)}
             </td>
           </tr>
-          <tr className="bg-gray-50 font-semibold">
+          <tr className="bg-harken-gray-light font-semibold">
             <td className="px-4 py-2">Total Building Cost</td>
             <td className="px-4 py-2 text-right">
               {formatCostSegCurrency(analysis.totalBuildingCost)}
@@ -553,12 +553,12 @@ const PropertyDescriptionSection: React.FC<{ analysis: CostSegAnalysis; state: a
 // Cost Summary Section
 const CostSummarySection: React.FC<AnalysisProps> = ({ analysis }) => (
   <div className="space-y-6">
-    <h3 className="text-xl font-bold text-gray-900 border-b-2 border-emerald-500 pb-2">
+    <h3 className="text-xl font-bold text-harken-dark border-b-2 border-accent-teal-mint pb-2">
       COST SUMMARY BY DEPRECIATION CLASS
     </h3>
 
-    <table className="w-full border-2 border-gray-800">
-      <thead className="bg-emerald-600 text-white">
+    <table className="w-full border-2 border-harken-dark">
+      <thead className="bg-accent-teal-mint text-white">
         <tr>
           <th className="text-left px-4 py-3 font-semibold">Property Category</th>
           <th className="text-right px-4 py-3 font-semibold">Cost</th>
@@ -568,38 +568,38 @@ const CostSummarySection: React.FC<AnalysisProps> = ({ analysis }) => (
         </tr>
       </thead>
       <tbody>
-        <tr className="border-b border-gray-300 bg-emerald-50">
+        <tr className="border-b border-light-border bg-accent-teal-mint-light">
           <td className="px-4 py-3 font-medium">5-Year Personal Property</td>
           <td className="px-4 py-3 text-right">{formatCostSegCurrency(analysis.summary.fiveYear.total)}</td>
           <td className="px-4 py-3 text-right font-bold">{formatCostSegCurrency(analysis.summary.fiveYear.total)}</td>
           <td className="px-4 py-3 text-right">-</td>
           <td className="px-4 py-3 text-right">-</td>
         </tr>
-        <tr className="border-b border-gray-300 bg-blue-50">
+        <tr className="border-b border-light-border bg-blue-50">
           <td className="px-4 py-3 font-medium">15-Year Land Improvements</td>
           <td className="px-4 py-3 text-right">{formatCostSegCurrency(analysis.summary.fifteenYear.total)}</td>
           <td className="px-4 py-3 text-right">-</td>
           <td className="px-4 py-3 text-right font-bold">{formatCostSegCurrency(analysis.summary.fifteenYear.total)}</td>
           <td className="px-4 py-3 text-right">-</td>
         </tr>
-        <tr className="border-b border-gray-300">
+        <tr className="border-b border-light-border">
           <td className="px-4 py-3 font-medium">39-Year Real Property</td>
           <td className="px-4 py-3 text-right">{formatCostSegCurrency(analysis.summary.thirtyNineYear.total)}</td>
           <td className="px-4 py-3 text-right">-</td>
           <td className="px-4 py-3 text-right">-</td>
           <td className="px-4 py-3 text-right font-bold">{formatCostSegCurrency(analysis.summary.thirtyNineYear.total)}</td>
         </tr>
-        <tr className="bg-gray-100 font-bold border-t-2 border-gray-800">
+        <tr className="bg-harken-gray-light font-bold border-t-2 border-harken-dark">
           <td className="px-4 py-3">TOTAL PROJECT COST</td>
           <td className="px-4 py-3 text-right">{formatCostSegCurrency(analysis.totalImprovementCost)}</td>
           <td className="px-4 py-3 text-right">{formatCostSegCurrency(analysis.summary.fiveYear.total)}</td>
           <td className="px-4 py-3 text-right">{formatCostSegCurrency(analysis.summary.fifteenYear.total)}</td>
           <td className="px-4 py-3 text-right">{formatCostSegCurrency(analysis.summary.thirtyNineYear.total)}</td>
         </tr>
-        <tr className="bg-gray-50">
+        <tr className="bg-harken-gray-light">
           <td className="px-4 py-2 text-sm">% of Building Cost</td>
           <td className="px-4 py-2 text-right">100%</td>
-          <td className="px-4 py-2 text-right text-emerald-700">{formatCostSegPercent(analysis.summary.fiveYear.percent)}</td>
+          <td className="px-4 py-2 text-right text-accent-teal-mint">{formatCostSegPercent(analysis.summary.fiveYear.percent)}</td>
           <td className="px-4 py-2 text-right text-blue-700">{formatCostSegPercent(analysis.summary.fifteenYear.percent)}</td>
           <td className="px-4 py-2 text-right">{formatCostSegPercent(analysis.summary.thirtyNineYear.percent)}</td>
         </tr>
@@ -611,23 +611,23 @@ const CostSummarySection: React.FC<AnalysisProps> = ({ analysis }) => (
 // Cost Detail Section
 const CostDetailSection: React.FC<AnalysisProps> = ({ analysis }) => (
   <div className="space-y-6">
-    <h3 className="text-xl font-bold text-gray-900 border-b-2 border-emerald-500 pb-2">
+    <h3 className="text-xl font-bold text-harken-dark border-b-2 border-accent-teal-mint pb-2">
       COST DETAIL BY BUILDING
     </h3>
 
-    <p className="text-gray-600 text-sm">
+    <p className="text-harken-gray text-sm">
       The following tables detail the component allocations for each building analyzed. 
       Components are classified according to IRS guidelines and MACRS recovery periods.
     </p>
 
     {/* Component List */}
-    <div className="border border-gray-200 rounded-lg overflow-hidden">
-      <div className="bg-emerald-600 text-white px-4 py-2 font-semibold">
+    <div className="border border-light-border rounded-lg overflow-hidden">
+      <div className="bg-accent-teal-mint text-white px-4 py-2 font-semibold">
         {analysis.propertyName} - Building Components
       </div>
       <table className="w-full text-sm">
-        <thead className="bg-gray-50">
-          <tr className="border-b border-gray-200">
+        <thead className="bg-harken-gray-light">
+          <tr className="border-b border-light-border">
             <th className="text-left px-4 py-2 font-semibold">Component</th>
             <th className="text-right px-4 py-2 font-semibold">Cost</th>
             <th className="text-right px-4 py-2 font-semibold">5 Year</th>
@@ -636,7 +636,7 @@ const CostDetailSection: React.FC<AnalysisProps> = ({ analysis }) => (
         </thead>
         <tbody>
           {analysis.components.slice(0, 15).map((comp, idx) => (
-            <tr key={idx} className="border-b border-gray-100">
+            <tr key={idx} className="border-b border-harken-gray-light">
               <td className="px-4 py-2">{comp.label}</td>
               <td className="px-4 py-2 text-right">{formatCostSegCurrency(comp.cost)}</td>
               <td className="px-4 py-2 text-right">
@@ -656,19 +656,19 @@ const CostDetailSection: React.FC<AnalysisProps> = ({ analysis }) => (
 // Building Systems Section
 const BuildingSystemsSection: React.FC<AnalysisProps> = ({ analysis }) => (
   <div className="space-y-6">
-    <h3 className="text-xl font-bold text-gray-900 border-b-2 border-emerald-500 pb-2">
+    <h3 className="text-xl font-bold text-harken-dark border-b-2 border-accent-teal-mint pb-2">
       BUILDING SYSTEMS
     </h3>
 
-    <p className="text-gray-600 text-sm">
+    <p className="text-harken-gray text-sm">
       Per Treasury Decision 9636, building systems are separately stated for tangible property 
       regulations compliance. The following table summarizes building system valuations.
     </p>
 
-    <div className="border border-gray-200 rounded-lg overflow-hidden">
+    <div className="border border-light-border rounded-lg overflow-hidden">
       <table className="w-full text-sm">
-        <thead className="bg-gray-50">
-          <tr className="border-b border-gray-200">
+        <thead className="bg-harken-gray-light">
+          <tr className="border-b border-light-border">
             <th className="text-left px-4 py-3 font-semibold">Building Components</th>
             <th className="text-right px-4 py-3 font-semibold">Depreciable Cost</th>
             <th className="text-right px-4 py-3 font-semibold">Replacement Cost</th>
@@ -676,7 +676,7 @@ const BuildingSystemsSection: React.FC<AnalysisProps> = ({ analysis }) => (
         </thead>
         <tbody>
           {(analysis.buildingSystems || []).map((system, idx) => (
-            <tr key={idx} className="border-b border-gray-100">
+            <tr key={idx} className="border-b border-harken-gray-light">
               <td className="px-4 py-2">{system.systemLabel}</td>
               <td className="px-4 py-2 text-right">{formatCostSegCurrency(system.depreciableCost)}</td>
               <td className="px-4 py-2 text-right">{formatCostSegCurrency(system.replacementCost)}</td>
@@ -684,7 +684,7 @@ const BuildingSystemsSection: React.FC<AnalysisProps> = ({ analysis }) => (
           ))}
         </tbody>
         <tfoot>
-          <tr className="bg-gray-50 font-bold">
+          <tr className="bg-harken-gray-light font-bold">
             <td className="px-4 py-3">TOTAL BUILDING COST</td>
             <td className="px-4 py-3 text-right">{formatCostSegCurrency(analysis.totalBuildingCost)}</td>
             <td className="px-4 py-3 text-right">{formatCostSegCurrency(analysis.totalBuildingCost)}</td>
@@ -698,19 +698,19 @@ const BuildingSystemsSection: React.FC<AnalysisProps> = ({ analysis }) => (
 // Depreciation Schedule Section
 const DepreciationScheduleSection: React.FC<AnalysisProps> = ({ analysis }) => (
   <div className="space-y-6">
-    <h3 className="text-xl font-bold text-gray-900 border-b-2 border-emerald-500 pb-2">
+    <h3 className="text-xl font-bold text-harken-dark border-b-2 border-accent-teal-mint pb-2">
       DEPRECIATION SCHEDULE
     </h3>
 
-    <p className="text-gray-600 text-sm">
+    <p className="text-harken-gray text-sm">
       Year-by-year depreciation projections under MACRS. Includes applicable bonus 
       depreciation for eligible property classes.
     </p>
 
-    <div className="border border-gray-200 rounded-lg overflow-hidden">
+    <div className="border border-light-border rounded-lg overflow-hidden">
       <table className="w-full text-sm">
-        <thead className="bg-gray-50">
-          <tr className="border-b border-gray-200">
+        <thead className="bg-harken-gray-light">
+          <tr className="border-b border-light-border">
             <th className="text-left px-4 py-2 font-semibold">Year</th>
             <th className="text-right px-4 py-2 font-semibold">5-Year</th>
             <th className="text-right px-4 py-2 font-semibold">15-Year</th>
@@ -721,7 +721,7 @@ const DepreciationScheduleSection: React.FC<AnalysisProps> = ({ analysis }) => (
         </thead>
         <tbody>
           {(analysis.depreciationSchedule || []).slice(0, 10).map((year, idx) => (
-            <tr key={idx} className={`border-b border-gray-100 ${idx === 0 ? 'bg-emerald-50' : ''}`}>
+            <tr key={idx} className={`border-b border-harken-gray-light ${idx === 0 ? 'bg-accent-teal-mint-light' : ''}`}>
               <td className="px-4 py-2 font-medium">{year.year}</td>
               <td className="px-4 py-2 text-right">{formatCostSegCurrency(year.fiveYearDepreciation)}</td>
               <td className="px-4 py-2 text-right">{formatCostSegCurrency(year.fifteenYearDepreciation)}</td>
@@ -742,11 +742,11 @@ const CertificationSection: React.FC<{ analysis: CostSegAnalysis; reportDate: st
   reportDate,
 }) => (
   <div className="space-y-6">
-    <h3 className="text-xl font-bold text-gray-900 border-b-2 border-emerald-500 pb-2">
+    <h3 className="text-xl font-bold text-harken-dark border-b-2 border-accent-teal-mint pb-2">
       INVESTIGATION AND EVALUATION CERTIFICATE
     </h3>
 
-    <div className="prose max-w-none space-y-4 text-gray-700">
+    <div className="prose max-w-none space-y-4 text-harken-gray">
       <p className="leading-relaxed">
         I certify that the cost segregation study for the property located at{' '}
         <strong>{analysis.propertyAddress}</strong> was conducted in accordance with 
@@ -764,12 +764,12 @@ const CertificationSection: React.FC<{ analysis: CostSegAnalysis; reportDate: st
       </p>
     </div>
 
-    <div className="border-t border-gray-300 pt-8 mt-8">
+    <div className="border-t border-light-border pt-8 mt-8">
       <div className="w-64">
-        <div className="border-b border-gray-800 mb-2 h-16" />
+        <div className="border-b border-harken-dark mb-2 h-16" />
         <p className="font-medium">[Preparer Signature]</p>
-        <p className="text-sm text-gray-600">[Name and Credentials]</p>
-        <p className="text-sm text-gray-600">{reportDate}</p>
+        <p className="text-sm text-harken-gray">[Name and Credentials]</p>
+        <p className="text-sm text-harken-gray">{reportDate}</p>
       </div>
     </div>
   </div>
@@ -778,12 +778,12 @@ const CertificationSection: React.FC<{ analysis: CostSegAnalysis; reportDate: st
 // Photos Section
 const PhotosSection: React.FC = () => (
   <div className="space-y-6">
-    <h3 className="text-xl font-bold text-gray-900 border-b-2 border-emerald-500 pb-2">
+    <h3 className="text-xl font-bold text-harken-dark border-b-2 border-accent-teal-mint pb-2">
       SITE PHOTOS
     </h3>
 
-    <div className="text-center py-12 text-gray-500">
-      <Camera className="w-12 h-12 mx-auto mb-4 text-gray-300" />
+    <div className="text-center py-12 text-harken-gray-med">
+      <Camera className="w-12 h-12 mx-auto mb-4 text-harken-gray-med-lt" />
       <p>No site photos attached</p>
       <p className="text-sm mt-2">Photos can be added from the Improvements Inventory or uploaded here.</p>
     </div>
@@ -793,11 +793,11 @@ const PhotosSection: React.FC = () => (
 // Disclaimer Section
 const DisclaimerSection: React.FC = () => (
   <div className="space-y-6">
-    <h3 className="text-xl font-bold text-gray-900 border-b-2 border-emerald-500 pb-2">
+    <h3 className="text-xl font-bold text-harken-dark border-b-2 border-accent-teal-mint pb-2">
       DISCLAIMER
     </h3>
 
-    <div className="prose max-w-none text-sm text-gray-600 space-y-4">
+    <div className="prose max-w-none text-sm text-harken-gray space-y-4">
       <p className="leading-relaxed">{METHODOLOGY_TEXT.disclaimer}</p>
 
       <p className="leading-relaxed">

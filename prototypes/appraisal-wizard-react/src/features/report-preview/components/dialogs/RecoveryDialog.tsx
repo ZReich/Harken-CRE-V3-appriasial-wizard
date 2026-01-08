@@ -54,12 +54,12 @@ export const RecoveryDialog: React.FC<RecoveryDialogProps> = ({
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-      <div className="bg-white dark:bg-slate-800 rounded-xl shadow-2xl w-full max-w-lg max-h-[80vh] overflow-hidden">
+      <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl shadow-2xl w-full max-w-lg max-h-[80vh] overflow-hidden">
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-amber-50">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-accent-amber-gold-light">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-amber-100 rounded-lg flex items-center justify-center">
-              <AlertTriangle className="text-amber-600" size={20} />
+            <div className="w-10 h-10 bg-accent-amber-gold-light rounded-lg flex items-center justify-center">
+              <AlertTriangle className="text-accent-amber-gold" size={20} />
             </div>
             <div>
               <h2 className="text-lg font-semibold text-slate-800 dark:text-white">Unsaved Work Found</h2>
@@ -68,7 +68,7 @@ export const RecoveryDialog: React.FC<RecoveryDialogProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-amber-100 rounded-lg transition-colors"
+            className="p-2 hover:bg-accent-amber-gold-light rounded-lg transition-colors"
           >
             <X size={20} className="text-slate-400" />
           </button>
@@ -87,7 +87,7 @@ export const RecoveryDialog: React.FC<RecoveryDialogProps> = ({
                 key={version.id}
                 className={`border rounded-lg p-4 transition-colors ${
                   index === 0
-                    ? 'border-amber-300 bg-amber-50'
+                    ? 'border-accent-amber-gold bg-accent-amber-gold-light'
                     : 'border-slate-200 hover:border-slate-300'
                 }`}
               >
@@ -102,7 +102,7 @@ export const RecoveryDialog: React.FC<RecoveryDialogProps> = ({
                           {formatDate(version.timestamp)}
                         </span>
                         {index === 0 && (
-                          <span className="text-[10px] px-2 py-0.5 bg-amber-200 text-amber-800 rounded-full font-medium">
+                          <span className="text-[10px] px-2 py-0.5 bg-accent-amber-gold-light text-accent-amber-gold rounded-full font-medium">
                             LATEST
                           </span>
                         )}
@@ -122,7 +122,7 @@ export const RecoveryDialog: React.FC<RecoveryDialogProps> = ({
                     </button>
                     <button
                       onClick={() => onDelete(version.id)}
-                      className="p-1.5 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                      className="p-1.5 text-slate-400 hover:text-harken-error hover:bg-accent-red-light rounded-lg transition-colors"
                       title="Delete this version"
                     >
                       <Trash2 size={14} />

@@ -13,17 +13,16 @@ import {
   ZoomOut,
   Move
 } from 'lucide-react';
+import PhotoCropModal from '../../../components/PhotoCropModal';
+import type { ReportPhotoData } from '../../../types';
 
 // =================================================================
 // TYPES
 // =================================================================
 
-export interface PhotoData {
-  id: string;
-  url: string;
-  caption: string;
-  category?: string;
-}
+// Re-export ReportPhotoData as PhotoData for backwards compatibility
+// This is the photo data type used in report editing contexts
+export type PhotoData = ReportPhotoData;
 
 export interface PhotoEdits {
   rotation: number; // 0, 90, 180, 270
@@ -125,25 +124,25 @@ function Lightbox({
       <div className="absolute top-4 right-4 flex items-center gap-2 z-10">
         <button
           onClick={(e) => { e.stopPropagation(); setZoom(prev => Math.min(3, prev + 0.25)); }}
-          className="p-2 bg-white/10 hover:bg-white/20 rounded-lg text-white transition-colors"
+          className="p-2 bg-surface-1/10 hover:bg-surface-1/20 rounded-lg text-white transition-colors"
         >
           <ZoomIn size={20} />
         </button>
         <button
           onClick={(e) => { e.stopPropagation(); setZoom(prev => Math.max(0.5, prev - 0.25)); }}
-          className="p-2 bg-white/10 hover:bg-white/20 rounded-lg text-white transition-colors"
+          className="p-2 bg-surface-1/10 hover:bg-surface-1/20 rounded-lg text-white transition-colors"
         >
           <ZoomOut size={20} />
         </button>
         <button
           onClick={(e) => { e.stopPropagation(); setZoom(1); setPosition({ x: 0, y: 0 }); }}
-          className="p-2 bg-white/10 hover:bg-white/20 rounded-lg text-white transition-colors"
+          className="p-2 bg-surface-1/10 hover:bg-surface-1/20 rounded-lg text-white transition-colors"
         >
           <Move size={20} />
         </button>
         <button
           onClick={onClose}
-          className="p-2 bg-white/10 hover:bg-white/20 rounded-lg text-white transition-colors"
+          className="p-2 bg-surface-1/10 hover:bg-surface-1/20 rounded-lg text-white transition-colors"
         >
           <X size={20} />
         </button>
@@ -185,7 +184,7 @@ function PhotoGallery({
   currentPhotoId: string;
 }) {
   return (
-    <div className="grid grid-cols-4 gap-2 max-h-48 overflow-y-auto p-2 bg-gray-50 rounded-lg">
+    <div className="grid grid-cols-4 gap-2 max-h-48 overflow-y-auto p-2 bg-harken-gray-light rounded-lg">
       {photos.map((photo) => (
         <button
           key={photo.id}
@@ -193,7 +192,7 @@ function PhotoGallery({
           className={`relative aspect-square rounded-lg overflow-hidden border-2 transition-all ${
             photo.id === currentPhotoId 
               ? 'border-[#0da1c7] ring-2 ring-[#0da1c7]/30' 
-              : 'border-transparent hover:border-gray-300'
+              : 'border-transparent hover:border-light-border'
           }`}
         >
           <img
@@ -233,6 +232,7 @@ export function PhotoEditorDialog({
   });
   const [showLightbox, setShowLightbox] = useState(false);
   const [showGallery, setShowGallery] = useState(false);
+  const [showCropModal, setShowCropModal] = useState(false);
   const [selectedPhotoUrl, setSelectedPhotoUrl] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -286,6 +286,15 @@ export function PhotoEditorDialog({
     setShowGallery(false);
   }, []);
 
+  // Handle crop completion
+  const handleCropComplete = useCallback((croppedBlob: Blob, cropData: { x: number; y: number; width: number; height: number }) => {
+    // Create a URL from the cropped blob
+    const croppedUrl = URL.createObjectURL(croppedBlob);
+    setSelectedPhotoUrl(croppedUrl);
+    setEdits(prev => ({ ...prev, cropData }));
+    setShowCropModal(false);
+  }, []);
+
   const handleSave = useCallback(() => {
     if (!photo) return;
     const newUrl = selectedPhotoUrl !== photo.url ? selectedPhotoUrl : undefined;
@@ -311,15 +320,15 @@ export function PhotoEditorDialog({
   return (
     <>
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-        <div className="bg-white rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden">
+        <div className="bg-surface-1 rounded-xl shadow-2xl w-full max-w-2xl overflow-hidden">
           {/* Header */}
-          <div className="flex items-center justify-between px-6 py-4 border-b border-gray-200 bg-gray-50">
-            <h2 className="text-lg font-semibold text-gray-800">Edit Photo</h2>
+          <div className="flex items-center justify-between px-6 py-4 border-b border-light-border bg-harken-gray-light">
+            <h2 className="text-lg font-semibold text-harken-dark">Edit Photo</h2>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-gray-200 rounded-lg transition-colors"
+              className="p-2 hover:bg-harken-gray-med-lt rounded-lg transition-colors"
             >
-              <X size={20} className="text-gray-500" />
+              <X size={20} className="text-harken-gray-med" />
             </button>
           </div>
 
@@ -327,7 +336,7 @@ export function PhotoEditorDialog({
           <div className="p-6">
             {/* Photo Preview */}
             <div className="mb-6">
-              <div className="relative bg-gray-100 rounded-lg overflow-hidden flex items-center justify-center" style={{ height: '280px' }}>
+              <div className="relative bg-harken-gray-light rounded-lg overflow-hidden flex items-center justify-center" style={{ height: '280px' }}>
                 <img
                   src={selectedPhotoUrl}
                   alt={edits.caption || 'Photo preview'}
@@ -347,7 +356,7 @@ export function PhotoEditorDialog({
 
             {/* Caption Input */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="block text-sm font-medium text-harken-gray mb-2">
                 Caption
               </label>
               <input
@@ -355,19 +364,19 @@ export function PhotoEditorDialog({
                 value={edits.caption}
                 onChange={handleCaptionChange}
                 placeholder="Enter photo caption..."
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
+                className="w-full px-4 py-2 border border-light-border rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
               />
             </div>
 
             {/* Edit Tools */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-3">
+              <label className="block text-sm font-medium text-harken-gray mb-3">
                 Transform
               </label>
               <div className="flex items-center gap-2">
                 <button
                   onClick={handleRotate}
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 bg-harken-gray-light hover:bg-harken-gray-med-lt rounded-lg text-harken-gray transition-colors"
                   title="Rotate 90°"
                 >
                   <RotateCw size={18} />
@@ -376,7 +385,7 @@ export function PhotoEditorDialog({
                 <button
                   onClick={handleFlipH}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                    edits.flipH ? 'bg-[#0da1c7] text-white' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                    edits.flipH ? 'bg-[#0da1c7] text-white' : 'bg-harken-gray-light hover:bg-harken-gray-med-lt text-harken-gray'
                   }`}
                   title="Flip Horizontal"
                 >
@@ -386,7 +395,7 @@ export function PhotoEditorDialog({
                 <button
                   onClick={handleFlipV}
                   className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                    edits.flipV ? 'bg-[#0da1c7] text-white' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                    edits.flipV ? 'bg-[#0da1c7] text-white' : 'bg-harken-gray-light hover:bg-harken-gray-med-lt text-harken-gray'
                   }`}
                   title="Flip Vertical"
                 >
@@ -394,10 +403,11 @@ export function PhotoEditorDialog({
                   <span className="text-sm">Flip V</span>
                 </button>
                 <button
-                  onClick={() => {}}
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-400 cursor-not-allowed"
-                  title="Crop (Coming Soon)"
-                  disabled
+                  onClick={() => setShowCropModal(true)}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
+                    edits.cropData ? 'bg-[#0da1c7] text-white' : 'bg-harken-gray-light hover:bg-harken-gray-med-lt text-harken-gray'
+                  }`}
+                  title="Crop Image"
                 >
                   <Crop size={18} />
                   <span className="text-sm">Crop</span>
@@ -407,13 +417,13 @@ export function PhotoEditorDialog({
 
             {/* Replace Photo */}
             <div className="mb-6">
-              <label className="block text-sm font-medium text-gray-700 mb-3">
+              <label className="block text-sm font-medium text-harken-gray mb-3">
                 Replace Photo
               </label>
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => fileInputRef.current?.click()}
-                  className="flex items-center gap-2 px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 bg-harken-gray-light hover:bg-harken-gray-med-lt rounded-lg text-harken-gray transition-colors"
                 >
                   <Upload size={18} />
                   <span className="text-sm">Upload New</span>
@@ -422,7 +432,7 @@ export function PhotoEditorDialog({
                   <button
                     onClick={() => setShowGallery(!showGallery)}
                     className={`flex items-center gap-2 px-4 py-2 rounded-lg transition-colors ${
-                      showGallery ? 'bg-[#0da1c7] text-white' : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
+                      showGallery ? 'bg-[#0da1c7] text-white' : 'bg-harken-gray-light hover:bg-harken-gray-med-lt text-harken-gray'
                     }`}
                   >
                     <span className="text-sm">Choose from Gallery</span>
@@ -451,12 +461,12 @@ export function PhotoEditorDialog({
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-between px-6 py-4 border-t border-gray-200 bg-gray-50">
+          <div className="flex items-center justify-between px-6 py-4 border-t border-light-border bg-harken-gray-light">
             <div>
               {onDelete && (
                 <button
                   onClick={handleDelete}
-                  className="flex items-center gap-2 px-4 py-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 text-harken-error hover:bg-harken-error/10 rounded-lg transition-colors"
                 >
                   <Trash2 size={18} />
                   <span className="text-sm font-medium">Remove</span>
@@ -466,7 +476,7 @@ export function PhotoEditorDialog({
             <div className="flex items-center gap-3">
               <button
                 onClick={onClose}
-                className="px-4 py-2 text-gray-600 hover:bg-gray-200 rounded-lg transition-colors"
+                className="px-4 py-2 text-harken-gray hover:bg-harken-gray-med-lt rounded-lg transition-colors"
               >
                 Cancel
               </button>
@@ -488,6 +498,18 @@ export function PhotoEditorDialog({
           photo={{ ...photo, url: selectedPhotoUrl }}
           edits={edits}
           onClose={() => setShowLightbox(false)}
+        />
+      )}
+
+      {/* Crop Modal */}
+      {showCropModal && (
+        <PhotoCropModal
+          image={selectedPhotoUrl}
+          initialAspectRatio={4 / 3}
+          onCrop={handleCropComplete}
+          onCancel={() => setShowCropModal(false)}
+          title="Crop Photo"
+          showAspectRatioSelector={true}
         />
       )}
     </>

@@ -44,7 +44,7 @@ function IndicatorCard({ title, icon, series, chartStyle, color, unit = '%' }: I
   const change = previousValue ? series.current - previousValue : 0;
 
   return (
-    <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+    <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl border border-slate-200 dark:border-dark-border overflow-hidden">
       <div className="px-4 py-3 border-b border-slate-100 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="p-1.5 rounded-lg bg-slate-100" style={{ color }}>
@@ -58,7 +58,7 @@ function IndicatorCard({ title, icon, series, chartStyle, color, unit = '%' }: I
           </span>
           {change !== 0 && (
             <span className={`flex items-center gap-0.5 text-xs ${
-              change > 0 ? 'text-emerald-600' : 'text-red-600'
+              change > 0 ? 'text-accent-teal-mint' : 'text-harken-error'
             }`}>
               {change > 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
               {Math.abs(change).toFixed(2)}
@@ -86,8 +86,8 @@ function IndicatorCard({ title, icon, series, chartStyle, color, unit = '%' }: I
         <span>
           Trend: {' '}
           <span className={`font-medium ${
-            trend === 'rising' ? 'text-emerald-600' : 
-            trend === 'falling' ? 'text-red-600' : 'text-slate-600'
+            trend === 'rising' ? 'text-accent-teal-mint' : 
+            trend === 'falling' ? 'text-harken-error' : 'text-slate-600'
           }`}>
             {trend.charAt(0).toUpperCase() + trend.slice(1)}
           </span>
@@ -143,7 +143,7 @@ export function EconomicIndicatorsPanel({
   // Loading state
   if (isLoading) {
     return (
-      <div className={`bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6 ${className}`}>
+      <div className={`bg-surface-1 dark:bg-elevation-1 rounded-xl border border-slate-200 dark:border-dark-border p-6 ${className}`}>
         <div className="flex items-center justify-center gap-3 py-8">
           <Loader2 className="w-5 h-5 text-harken-blue animate-spin" />
           <span className="text-slate-600">Loading economic indicators...</span>
@@ -155,8 +155,8 @@ export function EconomicIndicatorsPanel({
   // Error state
   if (error) {
     return (
-      <div className={`bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6 ${className}`}>
-        <div className="flex items-center gap-3 text-red-600 mb-4">
+      <div className={`bg-surface-1 dark:bg-elevation-1 rounded-xl border border-slate-200 dark:border-dark-border p-6 ${className}`}>
+        <div className="flex items-center gap-3 text-harken-error mb-4">
           <AlertCircle className="w-5 h-5" />
           <span>{error}</span>
         </div>
@@ -173,7 +173,7 @@ export function EconomicIndicatorsPanel({
 
   if (!data) {
     return (
-      <div className={`bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6 ${className}`}>
+      <div className={`bg-surface-1 dark:bg-elevation-1 rounded-xl border border-slate-200 dark:border-dark-border p-6 ${className}`}>
         <p className="text-slate-500 dark:text-slate-400">No economic data available.</p>
       </div>
     );
@@ -182,7 +182,7 @@ export function EconomicIndicatorsPanel({
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Header with Chart Style Selector */}
-      <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-4">
+      <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl border border-slate-200 dark:border-dark-border p-4">
         <div className="flex items-center justify-between flex-wrap gap-4">
           <div className="flex items-center gap-3">
             <div className="p-2 bg-harken-blue/10 rounded-lg">
@@ -232,14 +232,14 @@ export function EconomicIndicatorsPanel({
           icon={<DollarSign className="w-4 h-4" />}
           series={data.treasury10Y}
           chartStyle={chartStyle}
-          color="#10b981"
+          color="#2fc4b2"
         />
         <IndicatorCard
           title="Inflation (CPI)"
           icon={<TrendingUp className="w-4 h-4" />}
           series={data.inflation}
           chartStyle={chartStyle}
-          color="#f59e0b"
+          color="#f2b705"
         />
         <IndicatorCard
           title="GDP Growth"

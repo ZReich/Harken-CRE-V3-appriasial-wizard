@@ -114,6 +114,25 @@ export interface PhotoData {
 }
 
 /**
+ * Report Photo Data - simplified photo reference for report sections
+ * Used in report preview, inline photo placement, and PDF generation.
+ * This is a lighter interface than PhotoData for display purposes.
+ */
+export interface ReportPhotoData {
+  id: string;            // Unique identifier
+  url: string;           // Display URL (preview URL or blob URL)
+  caption: string;       // Photo caption for display
+  category?: string;     // Category for filtering (exterior, interior, aerial, etc.)
+  slotId?: string;       // Original slot assignment if applicable
+  cropData?: {           // Crop data if the photo has been cropped
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+  };
+}
+
+/**
  * Exterior Features with optional detailed component tracking.
  * Maintains backwards compatibility with string[] format while adding detailed tracking.
  */

@@ -53,9 +53,9 @@ const ButtonSelector: FC<ButtonSelectorProps> = ({
   return (
     <div className={className}>
       {label && (
-        <label className="block text-sm font-medium text-gray-700 dark:text-slate-300 mb-2">
+        <label className="block text-sm font-medium text-harken-gray dark:text-slate-200 mb-2">
           {label}
-          {required && <span className="text-red-500 ml-1">*</span>}
+          {required && <span className="text-harken-error ml-1">*</span>}
         </label>
       )}
       <div className="flex flex-wrap gap-2">
@@ -68,7 +68,7 @@ const ButtonSelector: FC<ButtonSelectorProps> = ({
               onClick={() => onChange(opt.value)}
               className={`flex items-center gap-2 ${sizeClasses[size]} rounded-lg border-2 font-medium transition-all ${isSelected
                 ? 'border-harken-blue bg-harken-blue/10 text-harken-blue dark:bg-cyan-500/10 dark:text-cyan-400 dark:border-cyan-500'
-                : 'border-gray-200 bg-white text-gray-700 hover:border-harken-blue/50 dark:border-slate-600 dark:bg-slate-700 dark:text-slate-300 dark:hover:border-cyan-400/50'
+                : 'border-light-border bg-surface-1 text-harken-gray hover:border-harken-blue/50 dark:border-harken-gray dark:bg-elevation-1 dark:text-slate-200 dark:hover:border-cyan-400/50'
                 }`}
             >
               {opt.icon && (

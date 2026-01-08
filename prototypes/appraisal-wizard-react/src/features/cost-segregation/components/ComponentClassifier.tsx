@@ -84,17 +84,17 @@ export const ComponentClassifier: React.FC<ComponentClassifierProps> = ({
 
   const getClassColor = (depClass: DepreciationClass) => {
     switch (depClass) {
-      case '5-year': return 'bg-emerald-100 text-emerald-800 border-emerald-200';
-      case '7-year': return 'bg-green-100 text-green-800 border-green-200';
+      case '5-year': return 'bg-accent-teal-mint-light text-accent-teal-mint border-accent-teal-mint-light';
+      case '7-year': return 'bg-accent-teal-mint-light text-green-800 border-green-200';
       case '15-year': return 'bg-blue-100 text-blue-800 border-blue-200';
       case '27.5-year': return 'bg-purple-100 text-purple-800 border-purple-200';
       case '39-year': return 'bg-slate-100 text-slate-700 border-slate-200';
-      default: return 'bg-gray-100 text-gray-700 border-gray-200';
+      default: return 'bg-harken-gray-light text-harken-dark border-light-border';
     }
   };
 
   return (
-    <div className={`bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden ${className}`}>
+    <div className={`bg-surface-1 rounded-xl border border-slate-200 shadow-sm overflow-hidden ${className}`}>
       {/* Header */}
       <div className="px-6 py-4 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-white">
         <div className="flex items-center justify-between mb-4">
@@ -138,7 +138,7 @@ export const ComponentClassifier: React.FC<ComponentClassifierProps> = ({
             <select
               value={filterCategory}
               onChange={(e) => setFilterCategory(e.target.value as FilterCategory)}
-              className="pl-9 pr-8 py-2 border border-slate-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/20 focus:border-[#0da1c7] appearance-none cursor-pointer"
+              className="pl-9 pr-8 py-2 border border-slate-200 rounded-lg text-sm bg-surface-1 focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/20 focus:border-[#0da1c7] appearance-none cursor-pointer"
             >
               <option value="all">All Categories</option>
               <option value="building-structure">Building Structure</option>
@@ -217,8 +217,8 @@ export const ComponentClassifier: React.FC<ComponentClassifierProps> = ({
                           onClick={(e) => e.stopPropagation()}
                           className={`px-2 py-1 text-xs font-medium rounded-lg border cursor-pointer ${
                             isOverridden 
-                              ? 'bg-amber-50 border-amber-300 text-amber-800' 
-                              : 'bg-white border-slate-200 text-slate-700'
+                              ? 'bg-accent-amber-gold-light border-accent-amber-gold-light text-accent-amber-gold' 
+                              : 'bg-surface-1 border-slate-200 text-slate-700'
                           }`}
                         >
                           {DEPRECIATION_CLASSES.map(dc => (
@@ -231,11 +231,11 @@ export const ComponentClassifier: React.FC<ComponentClassifierProps> = ({
                       <td className="px-4 py-3 text-center">
                         {isOverridden ? (
                           <div className="flex items-center justify-center">
-                            <span title="Manually overridden"><AlertTriangle className="w-4 h-4 text-amber-500" /></span>
+                            <span title="Manually overridden"><AlertTriangle className="w-4 h-4 text-accent-amber-gold" /></span>
                           </div>
                         ) : (
                           <div className="flex items-center justify-center">
-                            <span title="Auto-classified"><CheckCircle2 className="w-4 h-4 text-emerald-500" /></span>
+                            <span title="Auto-classified"><CheckCircle2 className="w-4 h-4 text-accent-teal-mint" /></span>
                           </div>
                         )}
                       </td>
@@ -265,8 +265,8 @@ export const ComponentClassifier: React.FC<ComponentClassifierProps> = ({
                             )}
                             {component.overrideReason && (
                               <div className="md:col-span-3">
-                                <div className="text-xs text-amber-600 uppercase tracking-wide mb-1">Override Reason</div>
-                                <div className="text-amber-800">{component.overrideReason}</div>
+                                <div className="text-xs text-accent-amber-gold uppercase tracking-wide mb-1">Override Reason</div>
+                                <div className="text-accent-amber-gold">{component.overrideReason}</div>
                               </div>
                             )}
                           </div>

@@ -34,8 +34,8 @@ interface VisualSlotPickerProps {
 const CATEGORIES = [
   { id: 'exterior', label: 'Exterior', Icon: Home, color: 'from-blue-500 to-cyan-500' },
   { id: 'interior', label: 'Interior', Icon: Sofa, color: 'from-purple-500 to-pink-500' },
-  { id: 'site', label: 'Site', Icon: Trees, color: 'from-green-500 to-emerald-500' },
-  { id: 'street', label: 'Street', Icon: Route, color: 'from-amber-500 to-orange-500' },
+  { id: 'site', label: 'Site', Icon: Trees, color: 'from-accent-teal-mint to-accent-teal-mint-hover' },
+  { id: 'street', label: 'Street', Icon: Route, color: 'from-accent-amber-gold to-orange-500' },
 ];
 
 // Group slots by category
@@ -140,10 +140,10 @@ export default function VisualSlotPicker({
         onClick={() => setIsOpen(!isOpen)}
         className={`
           relative w-full flex items-center justify-between gap-2 px-3 py-2.5 
-          bg-white dark:bg-slate-800 border-2 rounded-xl text-left transition-all duration-200
+          bg-surface-1 dark:bg-elevation-1 border-2 rounded-xl text-left transition-all duration-200
           ${isOpen
             ? 'border-[#0da1c7] ring-4 ring-[#0da1c7]/20'
-            : 'border-gray-200 dark:border-slate-600 hover:border-[#0da1c7]/50'
+            : 'border-light-border dark:border-harken-gray hover:border-[#0da1c7]/50'
           }
           ${className}
         `}
@@ -154,14 +154,14 @@ export default function VisualSlotPicker({
               <Check className="w-3.5 h-3.5 text-white" />
             </div>
             <div>
-              <p className="text-sm font-medium text-gray-800 dark:text-white">{selectedSlot.label}</p>
-              <p className="text-[10px] text-gray-500 dark:text-slate-400">{selectedSlot.categoryLabel}</p>
+              <p className="text-sm font-medium text-harken-gray dark:text-white">{selectedSlot.label}</p>
+              <p className="text-[10px] text-harken-gray-med dark:text-slate-400">{selectedSlot.categoryLabel}</p>
             </div>
           </div>
         ) : (
-          <span className="text-sm text-gray-500 dark:text-slate-400">Choose where this photo goes...</span>
+          <span className="text-sm text-harken-gray-med dark:text-slate-400">Choose where this photo goes...</span>
         )}
-        <ChevronDown className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
+        <ChevronDown className={`w-4 h-4 text-harken-gray-med transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`} />
 
         {/* Subtle glow effect */}
         <div className="absolute inset-0 rounded-xl bg-gradient-to-r from-[#0da1c7]/0 via-[#0da1c7]/5 to-[#0da1c7]/0 opacity-0 hover:opacity-100 transition-opacity pointer-events-none" />
@@ -179,9 +179,9 @@ export default function VisualSlotPicker({
           }}
         >
           {/* Frosted glass panel */}
-          <div className="bg-white/95 dark:bg-slate-800/95 backdrop-blur-xl border border-gray-200 dark:border-slate-700 rounded-2xl shadow-2xl shadow-black/20 overflow-hidden">
+          <div className="bg-surface-1/95 dark:bg-elevation-1/95 backdrop-blur-xl border border-light-border dark:border-dark-border rounded-2xl shadow-2xl shadow-black/20 overflow-hidden">
             {/* Header with photo preview */}
-            <div className="relative px-4 py-3 border-b border-gray-100 dark:border-slate-700 bg-gradient-to-r from-gray-50 to-white dark:from-slate-700 dark:to-slate-800">
+            <div className="relative px-4 py-3 border-b border-harken-gray-light dark:border-dark-border bg-gradient-to-r from-gray-50 to-white dark:from-harken-dark dark:to-harken-dark">
               <div className="flex items-center gap-3">
                 {photoPreview && (
                   <div className="w-12 h-12 rounded-lg overflow-hidden shadow-md flex-shrink-0">
@@ -189,14 +189,14 @@ export default function VisualSlotPicker({
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-gray-800 dark:text-white">Select a slot for this photo</p>
-                  <p className="text-xs text-gray-500 dark:text-slate-400">Choose from available slots below</p>
+              <p className="text-sm font-semibold text-harken-gray dark:text-white">Select a slot for this photo</p>
+              <p className="text-xs text-harken-gray-med dark:text-slate-400">Choose from available slots below</p>
                 </div>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="p-1.5 hover:bg-gray-100 dark:hover:bg-slate-600 rounded-lg transition-colors"
+                  className="p-1.5 hover:bg-harken-gray-light dark:hover:bg-harken-gray rounded-lg transition-colors"
                 >
-                  <X className="w-4 h-4 text-gray-400 dark:text-slate-400" />
+                  <X className="w-4 h-4 text-harken-gray-med dark:text-slate-400" />
                 </button>
               </div>
             </div>
@@ -217,7 +217,7 @@ export default function VisualSlotPicker({
                       transition-all duration-200 flex-shrink-0 animate-slot-reveal
                       ${isActive
                         ? `bg-gradient-to-r ${cat.color} text-white shadow-lg shadow-${cat.id === 'exterior' ? 'blue' : cat.id === 'interior' ? 'purple' : cat.id === 'site' ? 'green' : 'amber'}-500/25 animate-tab-spring`
-                        : 'text-gray-600 dark:text-slate-400 hover:bg-gray-100 dark:hover:bg-slate-700 hover:scale-105'
+                        : 'text-harken-gray dark:text-slate-400 hover:bg-harken-gray-light dark:hover:bg-elevation-3 hover:scale-105'
                       }
                     `}
                     style={{
@@ -228,7 +228,7 @@ export default function VisualSlotPicker({
                     <span>{cat.label}</span>
                     <span className={`
                       px-1.5 py-0.5 rounded-full text-[10px] font-bold
-                      ${isActive ? 'bg-white/30' : 'bg-gray-200 dark:bg-slate-600 text-gray-500 dark:text-slate-400'}
+                      ${isActive ? 'bg-surface-1/30' : 'bg-harken-gray-med-lt dark:bg-dark-input text-harken-gray dark:text-slate-400'}
                     `}>
                       {availableCount}
                     </span>
@@ -256,12 +256,12 @@ export default function VisualSlotPicker({
                       className={`
                         relative p-3 rounded-xl border-2 transition-all duration-200 animate-slot-reveal
                         ${isUsed
-                          ? 'border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-700/50 opacity-50 cursor-not-allowed'
+                          ? 'border-light-border dark:border-dark-border bg-harken-gray-light dark:bg-elevation-1/50 opacity-50 cursor-not-allowed'
                           : isSelected
                             ? 'border-[#0da1c7] bg-[#0da1c7]/10 dark:bg-[#0da1c7]/20 shadow-lg shadow-[#0da1c7]/20 animate-success-pulse'
                             : isSuggested
                               ? 'border-[#0da1c7]/50 bg-[#0da1c7]/5 dark:bg-[#0da1c7]/10 hover:border-[#0da1c7] hover:bg-[#0da1c7]/10 animate-glow-pulse'
-                              : 'border-gray-200 dark:border-slate-700 bg-white dark:bg-slate-800 hover:border-[#0da1c7]/50 hover:bg-gray-50 dark:hover:bg-slate-700'
+                              : 'border-light-border dark:border-dark-border bg-surface-1 dark:bg-elevation-1 hover:border-[#0da1c7]/50 hover:bg-harken-gray-light dark:hover:bg-elevation-3'
                         }
                         ${isHovered && !isUsed ? 'scale-105 shadow-lg' : ''}
                       `}
@@ -273,23 +273,23 @@ export default function VisualSlotPicker({
                       <div className={`
                         aspect-[4/3] rounded-lg mb-2 flex items-center justify-center
                         ${isUsed
-                          ? 'bg-gray-200 dark:bg-slate-600'
+                          ? 'bg-harken-gray-med-lt dark:bg-dark-input'
                           : isSelected
                             ? 'bg-[#0da1c7]/20'
-                            : 'bg-gradient-to-br from-gray-100 to-gray-50 dark:from-slate-700 dark:to-slate-800 border-2 border-dashed border-gray-300 dark:border-slate-600'
+                            : 'bg-gradient-to-br from-harken-gray-light to-harken-gray-light dark:from-harken-dark dark:to-harken-dark border-2 border-dashed border-light-border dark:border-harken-gray'
                         }
                       `}>
                         {isSelected ? (
                           <Check className="w-6 h-6 text-[#0da1c7]" />
                         ) : isUsed ? (
-                          <span className="text-[10px] text-gray-400 font-medium">IN USE</span>
+                          <span className="text-[10px] text-harken-gray-med font-medium">IN USE</span>
                         ) : (
-                          <Plus className={`w-5 h-5 ${isHovered ? 'text-[#0da1c7]' : 'text-gray-400'}`} />
+                          <Plus className={`w-5 h-5 ${isHovered ? 'text-[#0da1c7]' : 'text-harken-gray-med'}`} />
                         )}
                       </div>
 
                       {/* Slot Label */}
-                      <p className={`text-xs font-medium text-center truncate ${isUsed ? 'text-gray-400 dark:text-slate-500' : 'text-gray-700 dark:text-slate-300'}`}>
+                      <p className={`text-xs font-medium text-center truncate ${isUsed ? 'text-harken-gray-med dark:text-slate-500' : 'text-harken-gray dark:text-slate-200'}`}>
                         {slot.label}
                       </p>
 
@@ -312,7 +312,7 @@ export default function VisualSlotPicker({
 
               {/* Empty State */}
               {(slotsByCategory[activeCategory] || []).filter(s => !usedSlots.has(s.id)).length === 0 && (
-                <div className="text-center py-8 text-gray-500 dark:text-slate-400">
+                <div className="text-center py-8 text-harken-gray-med dark:text-slate-400">
                   <p className="text-sm">All {getCategoryInfo(activeCategory).label} slots are filled</p>
                   <p className="text-xs mt-1">Try another category</p>
                 </div>
@@ -320,9 +320,9 @@ export default function VisualSlotPicker({
             </div>
 
             {/* Footer with keyboard hint */}
-            <div className="px-4 py-2 border-t border-gray-100 dark:border-slate-700 bg-gray-50/50 dark:bg-slate-700/50">
-              <p className="text-[10px] text-gray-400 dark:text-slate-400 text-center">
-                Click to select • Press <kbd className="px-1 py-0.5 bg-gray-200 dark:bg-slate-600 rounded text-gray-600 dark:text-slate-300 font-mono">Esc</kbd> to close
+            <div className="px-4 py-2 border-t border-harken-gray-light dark:border-dark-border bg-harken-gray-light/50 dark:bg-elevation-1/50">
+              <p className="text-[10px] text-harken-gray-med dark:text-slate-400 text-center">
+                Click to select • Press <kbd className="px-1 py-0.5 bg-harken-gray-light dark:bg-dark-input rounded text-harken-gray dark:text-slate-200 font-mono">Esc</kbd> to close
               </p>
             </div>
           </div>

@@ -78,10 +78,10 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
   };
 
   return (
-    <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-900 overflow-hidden font-sans">
+    <div className="flex flex-col h-full bg-slate-50 dark:bg-elevation-1 overflow-hidden font-sans">
 
       {/* Scrollable Content */}
-      <div className="flex-1 overflow-y-auto bg-slate-50/50 dark:bg-slate-900/50 scroll-smooth">
+      <div className="flex-1 overflow-y-auto bg-slate-50/50 dark:bg-elevation-1/50 scroll-smooth">
         <div className="w-full min-h-full pb-20">
           <div className="p-6 space-y-8">
 
@@ -89,16 +89,16 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
             <section className="animate-in fade-in slide-in-from-bottom-4 duration-500">
               <div className="flex items-center gap-2 mb-3 px-2">
                 <span className="text-sm font-bold text-slate-900 uppercase tracking-wider">Land Value</span>
-                <div className="h-px bg-slate-200 dark:bg-slate-700 flex-1"></div>
+                <div className="h-px bg-slate-200 dark:bg-elevation-1 flex-1"></div>
               </div>
 
               <div className={`rounded-xl border-2 p-6 ${hasLandValue
-                ? 'bg-gradient-to-br from-lime-50 to-white dark:from-lime-900/20 dark:to-slate-800 border-lime-200 dark:border-lime-800'
-                : 'bg-gradient-to-br from-amber-50 to-white dark:from-amber-900/20 dark:to-slate-800 border-amber-200 dark:border-amber-800'
+                ? 'bg-gradient-to-br from-lime-50 to-white dark:from-lime-900/20 dark:to-harken-dark border-lime-200 dark:border-lime-800'
+                : 'bg-gradient-to-br from-amber-50 to-white dark:from-amber-900/20 dark:to-harken-dark border-accent-amber-gold-light dark:border-accent-amber-gold/30'
                 }`}>
                 <div className="flex items-start justify-between">
                   <div className="flex items-start gap-4">
-                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${hasLandValue ? 'bg-lime-100 dark:bg-lime-900/50 text-lime-600 dark:text-lime-400' : 'bg-amber-100 dark:bg-amber-900/50 text-amber-600 dark:text-amber-400'
+                    <div className={`w-12 h-12 rounded-xl flex items-center justify-center ${hasLandValue ? 'bg-lime-100 dark:bg-lime-900/50 text-lime-600 dark:text-lime-400' : 'bg-accent-amber-gold-light dark:bg-accent-amber-gold/10 text-accent-amber-gold dark:text-accent-amber-gold-hover'
                       }`}>
                       <ArrowUpRight size={24} />
                     </div>
@@ -110,13 +110,13 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
                             <CheckCircle2 size={12} />
                             Completed
                           </span>
-                        ) : <span className="flex items-center gap-1 text-xs font-medium text-amber-700 dark:text-amber-300 bg-amber-100 dark:bg-amber-900/50 px-2 py-0.5 rounded-full">
+                        ) : <span className="flex items-center gap-1 text-xs font-medium text-accent-amber-gold dark:text-accent-amber-gold-hover bg-accent-amber-gold-light dark:bg-accent-amber-gold/10 px-2 py-0.5 rounded-full">
                           <AlertCircle size={12} />
                           Incomplete
                         </span>
                         }
                       </div>
-                      <p className="text-sm text-slate-600 dark:text-slate-300 max-w-md">
+                      <p className="text-sm text-slate-600 dark:text-slate-200 max-w-md">
                         {hasLandValue
                           ? 'Land value concluded via Sales Comparison Approach in the Land Valuation section.'
                           : 'Complete the Land Valuation section to provide a land value for the Cost Approach.'}
@@ -137,7 +137,7 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
                     ) : (
                       <button
                         onClick={onNavigateToLand}
-                        className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2"
+                        className="px-4 py-2 bg-accent-amber-gold hover:bg-accent-amber-gold-hover text-white text-sm font-medium rounded-lg transition-colors flex items-center gap-2"
                       >
                         Complete Land Valuation
                         <ExternalLink size={14} />
@@ -183,7 +183,7 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
             </section>
 
             {/* Building Selector Section */}
-            <section className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-6 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-50">
+            <section className="bg-surface-1 dark:bg-elevation-1 rounded-xl shadow-sm border border-slate-200 dark:border-dark-border p-6 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-50">
               <BuildingSelector
                 scenarioId={currentScenarioId}
                 selectedBuildingIds={selectedBuildingIds}
@@ -192,7 +192,7 @@ export const CostApproachGrid: React.FC<CostApproachGridProps> = ({
             </section>
 
             {/* Improvement Valuation Section */}
-            <section className="bg-white dark:bg-slate-800 rounded-xl shadow-sm border border-slate-200 dark:border-slate-700 p-8 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75">
+            <section className="bg-surface-1 dark:bg-elevation-1 rounded-xl shadow-sm border border-slate-200 dark:border-dark-border p-8 animate-in fade-in slide-in-from-bottom-4 duration-500 delay-75">
               <ImprovementValuation
                 onValueChange={setImprovementsValue}
                 scenario={scenario}

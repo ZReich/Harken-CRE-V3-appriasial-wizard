@@ -139,7 +139,7 @@ export function DemographicsPanel({
   // Loading state
   if (isLoading) {
     return (
-      <div className={`bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-8 ${className}`}>
+      <div className={`bg-surface-1 dark:bg-elevation-1 rounded-xl border border-slate-200 dark:border-dark-border p-8 ${className}`}>
         <div className="flex items-center justify-center gap-3 text-slate-500 dark:text-slate-400">
           <RefreshCw className="w-5 h-5 animate-spin" />
           <span>Loading demographics data...</span>
@@ -151,13 +151,13 @@ export function DemographicsPanel({
   // Error state
   if (error) {
     return (
-      <div className={`bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-8 ${className}`}>
-        <div className="flex items-center justify-center gap-3 text-red-500">
+      <div className={`bg-surface-1 dark:bg-elevation-1 rounded-xl border border-slate-200 dark:border-dark-border p-8 ${className}`}>
+        <div className="flex items-center justify-center gap-3 text-harken-error">
           <AlertCircle className="w-5 h-5" />
           <span>{error}</span>
           <button
             onClick={fetchData}
-            className="ml-4 px-3 py-1 text-sm bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
+            className="ml-4 px-3 py-1 text-sm bg-accent-red-light hover:bg-accent-red-light rounded-lg transition-colors"
           >
             Retry
           </button>
@@ -171,7 +171,7 @@ export function DemographicsPanel({
   return (
     <div className={`space-y-6 ${className}`}>
       {/* Map Section */}
-      <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+      <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl border border-slate-200 dark:border-dark-border overflow-hidden">
         <div className="px-4 py-3 border-b border-slate-200 bg-slate-50">
           <h3 className="text-sm font-semibold text-slate-800 dark:text-white flex items-center gap-2">
             <Building2 className="w-4 h-4 text-harken-blue" />
@@ -189,7 +189,7 @@ export function DemographicsPanel({
       </div>
 
       {/* Data Table */}
-      <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+      <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl border border-slate-200 dark:border-dark-border overflow-hidden">
         <div className="px-4 py-3 border-b border-slate-200 bg-slate-50 flex items-center justify-between">
           <h3 className="text-sm font-semibold text-slate-800 dark:text-white flex items-center gap-2">
             <Users className="w-4 h-4 text-harken-blue" />
@@ -198,8 +198,8 @@ export function DemographicsPanel({
           <div className="flex items-center gap-2">
             <span className={`text-xs px-2 py-0.5 rounded-full ${
               source === 'esri' 
-                ? 'bg-emerald-100 text-emerald-700' 
-                : 'bg-amber-100 text-amber-700'
+                ? 'bg-accent-teal-mint-light text-accent-teal-mint' 
+                : 'bg-accent-amber-gold-light text-accent-amber-gold'
             }`}>
               {source === 'esri' ? 'ESRI (Precise)' : 'Census (Approx.)'}
             </span>
@@ -229,7 +229,7 @@ export function DemographicsPanel({
                 </td>
               </tr>
               <tr>
-                <td className="px-4 py-2.5 text-slate-700 dark:text-slate-300">Current Population</td>
+                <td className="px-4 py-2.5 text-slate-700 dark:text-slate-200">Current Population</td>
                 {data.map(d => (
                   <td key={d.radius} className="text-right px-4 py-2.5 font-medium text-slate-800 dark:text-white">
                     {formatNumber(d.population.current)}
@@ -237,7 +237,7 @@ export function DemographicsPanel({
                 ))}
               </tr>
               <tr>
-                <td className="px-4 py-2.5 text-slate-700 dark:text-slate-300">5-Year Projection</td>
+                <td className="px-4 py-2.5 text-slate-700 dark:text-slate-200">5-Year Projection</td>
                 {data.map(d => (
                   <td key={d.radius} className="text-right px-4 py-2.5 text-slate-600 dark:text-slate-400">
                     {formatNumber(d.population.projected5Year)}
@@ -245,10 +245,10 @@ export function DemographicsPanel({
                 ))}
               </tr>
               <tr>
-                <td className="px-4 py-2.5 text-slate-700 dark:text-slate-300">Annual Growth Rate</td>
+                <td className="px-4 py-2.5 text-slate-700 dark:text-slate-200">Annual Growth Rate</td>
                 {data.map(d => (
                   <td key={d.radius} className="text-right px-4 py-2.5 text-slate-600 dark:text-slate-400">
-                    <span className={d.population.annualGrowthRate >= 0 ? 'text-emerald-600' : 'text-red-600'}>
+                    <span className={d.population.annualGrowthRate >= 0 ? 'text-accent-teal-mint' : 'text-harken-error'}>
                       {d.population.annualGrowthRate >= 0 ? '+' : ''}{formatPercent(d.population.annualGrowthRate)}
                     </span>
                   </td>
@@ -265,7 +265,7 @@ export function DemographicsPanel({
                 </td>
               </tr>
               <tr>
-                <td className="px-4 py-2.5 text-slate-700 dark:text-slate-300">Total Households</td>
+                <td className="px-4 py-2.5 text-slate-700 dark:text-slate-200">Total Households</td>
                 {data.map(d => (
                   <td key={d.radius} className="text-right px-4 py-2.5 font-medium text-slate-800 dark:text-white">
                     {formatNumber(d.households.current)}
@@ -273,7 +273,7 @@ export function DemographicsPanel({
                 ))}
               </tr>
               <tr>
-                <td className="px-4 py-2.5 text-slate-700 dark:text-slate-300">Average Household Size</td>
+                <td className="px-4 py-2.5 text-slate-700 dark:text-slate-200">Average Household Size</td>
                 {data.map(d => (
                   <td key={d.radius} className="text-right px-4 py-2.5 text-slate-600 dark:text-slate-400">
                     {d.households.averageSize.toFixed(2)}
@@ -291,7 +291,7 @@ export function DemographicsPanel({
                 </td>
               </tr>
               <tr>
-                <td className="px-4 py-2.5 text-slate-700 dark:text-slate-300">Median Household Income</td>
+                <td className="px-4 py-2.5 text-slate-700 dark:text-slate-200">Median Household Income</td>
                 {data.map(d => (
                   <td key={d.radius} className="text-right px-4 py-2.5 font-medium text-slate-800 dark:text-white">
                     {formatCurrency(d.income.medianHousehold)}
@@ -299,7 +299,7 @@ export function DemographicsPanel({
                 ))}
               </tr>
               <tr>
-                <td className="px-4 py-2.5 text-slate-700 dark:text-slate-300">Average Household Income</td>
+                <td className="px-4 py-2.5 text-slate-700 dark:text-slate-200">Average Household Income</td>
                 {data.map(d => (
                   <td key={d.radius} className="text-right px-4 py-2.5 text-slate-600 dark:text-slate-400">
                     {formatCurrency(d.income.averageHousehold)}
@@ -307,7 +307,7 @@ export function DemographicsPanel({
                 ))}
               </tr>
               <tr>
-                <td className="px-4 py-2.5 text-slate-700 dark:text-slate-300">Per Capita Income</td>
+                <td className="px-4 py-2.5 text-slate-700 dark:text-slate-200">Per Capita Income</td>
                 {data.map(d => (
                   <td key={d.radius} className="text-right px-4 py-2.5 text-slate-600 dark:text-slate-400">
                     {formatCurrency(d.income.perCapita)}
@@ -325,7 +325,7 @@ export function DemographicsPanel({
                 </td>
               </tr>
               <tr>
-                <td className="px-4 py-2.5 text-slate-700 dark:text-slate-300">College Graduates (Bachelor's+)</td>
+                <td className="px-4 py-2.5 text-slate-700 dark:text-slate-200">College Graduates (Bachelor's+)</td>
                 {data.map(d => (
                   <td key={d.radius} className="text-right px-4 py-2.5 font-medium text-slate-800 dark:text-white">
                     {formatPercent(d.education.percentCollegeGraduates)}
@@ -333,7 +333,7 @@ export function DemographicsPanel({
                 ))}
               </tr>
               <tr>
-                <td className="px-4 py-2.5 text-slate-700 dark:text-slate-300">Graduate Degree</td>
+                <td className="px-4 py-2.5 text-slate-700 dark:text-slate-200">Graduate Degree</td>
                 {data.map(d => (
                   <td key={d.radius} className="text-right px-4 py-2.5 text-slate-600 dark:text-slate-400">
                     {formatPercent(d.education.percentGraduateDegree)}
@@ -351,7 +351,7 @@ export function DemographicsPanel({
                 </td>
               </tr>
               <tr>
-                <td className="px-4 py-2.5 text-slate-700 dark:text-slate-300">Labor Force</td>
+                <td className="px-4 py-2.5 text-slate-700 dark:text-slate-200">Labor Force</td>
                 {data.map(d => (
                   <td key={d.radius} className="text-right px-4 py-2.5 font-medium text-slate-800 dark:text-white">
                     {formatNumber(d.employment?.laborForce || 0)}
@@ -359,7 +359,7 @@ export function DemographicsPanel({
                 ))}
               </tr>
               <tr>
-                <td className="px-4 py-2.5 text-slate-700 dark:text-slate-300">Unemployment Rate</td>
+                <td className="px-4 py-2.5 text-slate-700 dark:text-slate-200">Unemployment Rate</td>
                 {data.map(d => (
                   <td key={d.radius} className="text-right px-4 py-2.5 text-slate-600 dark:text-slate-400">
                     {formatPercent(d.employment?.unemploymentRate || 0)}
@@ -373,7 +373,7 @@ export function DemographicsPanel({
 
       {/* Employment by Industry */}
       {data[0]?.employmentByIndustry && data[0].employmentByIndustry.length > 0 && (
-        <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+        <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl border border-slate-200 dark:border-dark-border overflow-hidden">
           <div className="px-4 py-3 border-b border-slate-200 bg-slate-50">
             <h3 className="text-sm font-semibold text-slate-800 dark:text-white flex items-center gap-2">
               <TrendingUp className="w-4 h-4 text-harken-blue" />

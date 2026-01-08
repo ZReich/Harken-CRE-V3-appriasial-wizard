@@ -159,10 +159,10 @@ function generateReportHtml(
       .text-center { text-align: center; }
       .font-bold { font-weight: 700; }
       .font-medium { font-weight: 500; }
-      .text-emerald { color: #059669; }
+      .text-emerald { color: #14b8a6; }
       .text-blue { color: #2563eb; }
       .text-slate { color: #475569; }
-      .bg-emerald { background: #ecfdf5; }
+      .bg-emerald { background: #e6f7f5; }
       .bg-blue { background: #eff6ff; }
       .bg-slate { background: #f8fafc; }
       .metric-box {

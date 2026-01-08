@@ -21,7 +21,7 @@ export const CostSegSummaryPage: React.FC<CostSegSummaryPageProps> = ({
   const acceleratedPercent = analysis.summary.fiveYear.percent + analysis.summary.fifteenYear.percent;
 
   return (
-    <div className={`bg-white p-12 ${className}`}>
+    <div className={`bg-surface-1 p-12 ${className}`}>
       <h2 className="text-2xl font-bold text-[#1c3643] mb-6 pb-4 border-b-2 border-[#0da1c7]">
         Executive Summary
       </h2>
@@ -36,32 +36,32 @@ export const CostSegSummaryPage: React.FC<CostSegSummaryPageProps> = ({
       </div>
 
       {/* Key Findings */}
-      <div className="bg-slate-50 rounded-xl p-6 mb-8">
+      <div className="bg-harken-gray-light rounded-xl p-6 mb-8">
         <h3 className="text-lg font-semibold text-[#1c3643] mb-4">Key Findings</h3>
         <div className="grid grid-cols-2 gap-6">
           <div>
-            <div className="text-sm text-slate-500 mb-1">Total Project Cost</div>
+            <div className="text-sm text-harken-gray-med mb-1">Total Project Cost</div>
             <div className="text-2xl font-bold text-slate-900">
               {formatCostSegCurrency(analysis.totalProjectCost)}
             </div>
           </div>
           <div>
-            <div className="text-sm text-slate-500 mb-1">Depreciable Basis</div>
+            <div className="text-sm text-harken-gray-med mb-1">Depreciable Basis</div>
             <div className="text-2xl font-bold text-slate-900">
               {formatCostSegCurrency(analysis.totalImprovementCost)}
             </div>
           </div>
           <div>
-            <div className="text-sm text-slate-500 mb-1">Accelerated Recovery (5 & 15 Year)</div>
-            <div className="text-2xl font-bold text-emerald-600">
+            <div className="text-sm text-harken-gray-med mb-1">Accelerated Recovery (5 & 15 Year)</div>
+            <div className="text-2xl font-bold text-accent-teal-mint">
               {formatCostSegCurrency(acceleratedTotal)}
             </div>
-            <div className="text-sm text-emerald-600">
+            <div className="text-sm text-accent-teal-mint">
               {formatCostSegPercent(acceleratedPercent)} of improvements
             </div>
           </div>
           <div>
-            <div className="text-sm text-slate-500 mb-1">First Year Depreciation</div>
+            <div className="text-sm text-harken-gray-med mb-1">First Year Depreciation</div>
             <div className="text-2xl font-bold text-[#0da1c7]">
               {formatCostSegCurrency(analysis.firstYearDepreciation)}
             </div>
@@ -75,44 +75,44 @@ export const CostSegSummaryPage: React.FC<CostSegSummaryPageProps> = ({
         <table className="w-full text-sm border-collapse">
           <thead>
             <tr className="border-b-2 border-slate-300">
-              <th className="text-left py-3 font-semibold text-slate-700">Depreciation Class</th>
-              <th className="text-right py-3 font-semibold text-slate-700">Amount</th>
-              <th className="text-right py-3 font-semibold text-slate-700">Percentage</th>
-              <th className="text-center py-3 font-semibold text-slate-700">Recovery Method</th>
+              <th className="text-left py-3 font-semibold text-harken-gray">Depreciation Class</th>
+              <th className="text-right py-3 font-semibold text-harken-gray">Amount</th>
+              <th className="text-right py-3 font-semibold text-harken-gray">Percentage</th>
+              <th className="text-center py-3 font-semibold text-harken-gray">Recovery Method</th>
             </tr>
           </thead>
           <tbody>
-            <tr className="border-b border-slate-200">
-              <td className="py-3 text-slate-600">Land (Non-Depreciable)</td>
+            <tr className="border-b border-light-border">
+              <td className="py-3 text-harken-gray">Land (Non-Depreciable)</td>
               <td className="py-3 text-right font-medium text-slate-900">
                 {formatCostSegCurrency(analysis.landValue)}
               </td>
-              <td className="py-3 text-right text-slate-500">—</td>
-              <td className="py-3 text-center text-slate-500">N/A</td>
+              <td className="py-3 text-right text-harken-gray-med">—</td>
+              <td className="py-3 text-center text-harken-gray-med">N/A</td>
             </tr>
-            <tr className="border-b border-slate-200 bg-emerald-50/50">
-              <td className="py-3 text-emerald-800 font-medium">5-Year Personal Property</td>
-              <td className="py-3 text-right font-medium text-emerald-800">
+            <tr className="border-b border-light-border bg-accent-teal-mint-light/50">
+              <td className="py-3 text-accent-teal-mint font-medium">5-Year Personal Property</td>
+              <td className="py-3 text-right font-medium text-accent-teal-mint">
                 {formatCostSegCurrency(analysis.summary.fiveYear.total)}
               </td>
-              <td className="py-3 text-right text-emerald-600">
+              <td className="py-3 text-right text-accent-teal-mint">
                 {formatCostSegPercent(analysis.summary.fiveYear.percent)}
               </td>
-              <td className="py-3 text-center text-emerald-700">200% DB / HY</td>
+              <td className="py-3 text-center text-accent-teal-mint">200% DB / HY</td>
             </tr>
             {analysis.summary.sevenYear.total > 0 && (
-              <tr className="border-b border-slate-200 bg-green-50/50">
-                <td className="py-3 text-green-800 font-medium">7-Year Personal Property</td>
-                <td className="py-3 text-right font-medium text-green-800">
+              <tr className="border-b border-light-border bg-accent-teal-mint-light/50">
+                <td className="py-3 text-accent-teal-mint font-medium">7-Year Personal Property</td>
+                <td className="py-3 text-right font-medium text-accent-teal-mint">
                   {formatCostSegCurrency(analysis.summary.sevenYear.total)}
                 </td>
-                <td className="py-3 text-right text-green-600">
+                <td className="py-3 text-right text-accent-teal-mint">
                   {formatCostSegPercent(analysis.summary.sevenYear.percent)}
                 </td>
-                <td className="py-3 text-center text-green-700">200% DB / HY</td>
+                <td className="py-3 text-center text-accent-teal-mint">200% DB / HY</td>
               </tr>
             )}
-            <tr className="border-b border-slate-200 bg-blue-50/50">
+            <tr className="border-b border-light-border bg-blue-50/50">
               <td className="py-3 text-blue-800 font-medium">15-Year Land Improvements</td>
               <td className="py-3 text-right font-medium text-blue-800">
                 {formatCostSegCurrency(analysis.summary.fifteenYear.total)}
@@ -123,69 +123,69 @@ export const CostSegSummaryPage: React.FC<CostSegSummaryPageProps> = ({
               <td className="py-3 text-center text-blue-700">150% DB / HY</td>
             </tr>
             {analysis.isResidential ? (
-              <tr className="border-b border-slate-200">
-                <td className="py-3 text-slate-600">27.5-Year Residential Real Property</td>
+              <tr className="border-b border-light-border">
+                <td className="py-3 text-harken-gray">27.5-Year Residential Real Property</td>
                 <td className="py-3 text-right font-medium text-slate-900">
                   {formatCostSegCurrency(analysis.summary.twentySevenFiveYear.total)}
                 </td>
-                <td className="py-3 text-right text-slate-500">
+                <td className="py-3 text-right text-harken-gray-med">
                   {formatCostSegPercent(analysis.summary.twentySevenFiveYear.percent)}
                 </td>
-                <td className="py-3 text-center text-slate-500">SL / MM</td>
+                <td className="py-3 text-center text-harken-gray-med">SL / MM</td>
               </tr>
             ) : (
-              <tr className="border-b border-slate-200">
-                <td className="py-3 text-slate-600">39-Year Nonresidential Real Property</td>
+              <tr className="border-b border-light-border">
+                <td className="py-3 text-harken-gray">39-Year Nonresidential Real Property</td>
                 <td className="py-3 text-right font-medium text-slate-900">
                   {formatCostSegCurrency(analysis.summary.thirtyNineYear.total)}
                 </td>
-                <td className="py-3 text-right text-slate-500">
+                <td className="py-3 text-right text-harken-gray-med">
                   {formatCostSegPercent(analysis.summary.thirtyNineYear.percent)}
                 </td>
-                <td className="py-3 text-center text-slate-500">SL / MM</td>
+                <td className="py-3 text-center text-harken-gray-med">SL / MM</td>
               </tr>
             )}
-            <tr className="bg-slate-100 font-semibold">
+            <tr className="bg-harken-gray-light font-semibold">
               <td className="py-3 text-slate-900">Total Improvements</td>
               <td className="py-3 text-right text-slate-900">
                 {formatCostSegCurrency(analysis.totalImprovementCost)}
               </td>
-              <td className="py-3 text-right text-slate-700">100%</td>
-              <td className="py-3 text-center text-slate-500">—</td>
+              <td className="py-3 text-right text-harken-gray">100%</td>
+              <td className="py-3 text-center text-harken-gray-med">—</td>
             </tr>
           </tbody>
         </table>
-        <div className="text-xs text-slate-500 mt-2">
+        <div className="text-xs text-harken-gray-med mt-2">
           DB = Declining Balance, SL = Straight-Line, HY = Half-Year Convention, MM = Mid-Month Convention
         </div>
       </div>
 
       {/* Tax Benefit Highlight */}
-      <div className="bg-gradient-to-r from-emerald-50 to-emerald-100 rounded-xl p-6 border border-emerald-200">
-        <h3 className="text-lg font-semibold text-emerald-800 mb-2">Tax Benefit Highlight</h3>
-        <p className="text-sm text-emerald-700 mb-4">
+      <div className="bg-gradient-to-r from-accent-teal-mint-light to-accent-teal-mint-light rounded-xl p-6 border border-accent-teal-mint">
+        <h3 className="text-lg font-semibold text-accent-teal-mint mb-2">Tax Benefit Highlight</h3>
+        <p className="text-sm text-accent-teal-mint mb-4">
           By reclassifying {formatCostSegPercent(acceleratedPercent)} of the depreciable basis to 
           shorter-lived property classes, the property owner can accelerate depreciation deductions 
           significantly compared to straight-line depreciation over {analysis.isResidential ? '27.5' : '39'} years.
         </p>
         <div className="grid grid-cols-2 gap-4">
-          <div className="bg-white rounded-lg p-4 border border-emerald-200">
-            <div className="text-xs text-emerald-600 uppercase tracking-wide mb-1">
+          <div className="bg-surface-1 rounded-lg p-4 border border-accent-teal-mint">
+            <div className="text-xs text-accent-teal-mint uppercase tracking-wide mb-1">
               Accelerated Benefit (Year 1)
             </div>
-            <div className="text-xl font-bold text-emerald-700">
+            <div className="text-xl font-bold text-accent-teal-mint">
               +{formatCostSegCurrency(analysis.acceleratedBenefit)}
             </div>
-            <div className="text-xs text-emerald-600">vs. straight-line depreciation</div>
+            <div className="text-xs text-accent-teal-mint">vs. straight-line depreciation</div>
           </div>
-          <div className="bg-white rounded-lg p-4 border border-emerald-200">
-            <div className="text-xs text-emerald-600 uppercase tracking-wide mb-1">
+          <div className="bg-surface-1 rounded-lg p-4 border border-accent-teal-mint">
+            <div className="text-xs text-accent-teal-mint uppercase tracking-wide mb-1">
               Bonus Depreciation Eligible
             </div>
-            <div className="text-xl font-bold text-emerald-700">
+            <div className="text-xl font-bold text-accent-teal-mint">
               {formatCostSegCurrency(acceleratedTotal)}
             </div>
-            <div className="text-xs text-emerald-600">5, 7, and 15-year property</div>
+            <div className="text-xs text-accent-teal-mint">5, 7, and 15-year property</div>
           </div>
         </div>
       </div>

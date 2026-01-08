@@ -124,8 +124,8 @@ export function getStatusColor(status: BuildingPermitEntry['status']): string {
     active: 'bg-yellow-100 text-yellow-700',
     completed: 'bg-green-100 text-green-700',
     expired: 'bg-orange-100 text-orange-700',
-    cancelled: 'bg-red-100 text-red-700',
-    pending: 'bg-gray-100 text-gray-700',
+    cancelled: 'bg-accent-red-light text-harken-error',
+    pending: 'bg-harken-gray-light text-harken-gray',
   };
-  return colors[status] || 'bg-gray-100 text-gray-700';
+  return colors[status] || 'bg-harken-gray-light text-harken-gray';
 }

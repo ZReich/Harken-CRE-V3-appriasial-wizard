@@ -200,7 +200,7 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
       <div className={`element-dropdown relative ${isOpen ? 'z-[500]' : ''}`}>
         <button 
           onClick={() => setOpenElementDropdown(isOpen ? null : section)}
-          className="w-full py-2 px-3 border-2 border-dashed border-slate-300 rounded-lg flex items-center justify-between gap-2 text-slate-500 font-semibold hover:border-harken-blue hover:text-harken-blue hover:bg-harken-blue/5 transition-all duration-300 group text-xs bg-white dark:bg-slate-800"
+          className="w-full py-2 px-3 border-2 border-dashed border-slate-300 rounded-lg flex items-center justify-between gap-2 text-slate-500 font-semibold hover:border-harken-blue hover:text-harken-blue hover:bg-harken-blue/5 transition-all duration-300 group text-xs bg-surface-1 dark:bg-elevation-1"
         >
           <div className="flex items-center gap-2">
             <Plus size={12} className="text-slate-400 group-hover:text-harken-blue" />
@@ -210,7 +210,7 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
         </button>
         
         {isOpen && (
-          <div className="absolute top-full left-0 mt-1 w-64 bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 z-[500] overflow-hidden">
+          <div className="absolute top-full left-0 mt-1 w-64 bg-surface-1 dark:bg-elevation-1 rounded-xl shadow-2xl border border-slate-200 dark:border-dark-border z-[500] overflow-hidden">
             <div className="px-3 py-2 bg-slate-50 border-b border-slate-200">
               <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Available Elements</span>
             </div>
@@ -259,12 +259,12 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
     : 0;
 
   return (
-    <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-900 relative overflow-hidden">
+    <div className="flex flex-col h-full bg-slate-50 dark:bg-elevation-1 relative overflow-hidden">
       
       {/* SCROLLABLE AREA */}
       <div 
         ref={scrollContainerRef}
-        className="flex-1 overflow-auto custom-scrollbar relative bg-white dark:bg-slate-900" 
+        className="flex-1 overflow-auto custom-scrollbar relative bg-surface-1 dark:bg-elevation-1" 
         style={{ isolation: 'isolate' }}
       >
         {/* Horizontal Scroll Indicator - hidden but keeps scroll functionality */}
@@ -272,7 +272,7 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
         
         {/* GRID CONTAINER */}
         <div 
-          className="grid relative bg-white dark:bg-slate-900" 
+          className="grid relative bg-surface-1 dark:bg-elevation-1" 
           style={{ 
             gridTemplateColumns: `${LABEL_COL_WIDTH}px ${SUBJECT_COL_WIDTH}px repeat(${comps.length}, ${COMP_COL_WIDTH}px)`, 
             minWidth: `${totalGridWidth}px` 
@@ -281,7 +281,7 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
           
           {/* ========== HEADER ROW ========== */}
           <div 
-            className="sticky top-0 left-0 z-[120] bg-white dark:bg-slate-800 border-b border-slate-200 dark:border-slate-700 flex items-end" 
+            className="sticky top-0 left-0 z-[120] bg-surface-1 dark:bg-elevation-1 border-b border-slate-200 dark:border-dark-border flex items-end" 
             style={{ width: LABEL_COL_WIDTH, height: 120 }}
           >
             <div className="p-2 pl-3">
@@ -291,7 +291,7 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
           
           {/* Subject Header with Photo */}
           <div 
-            className="sticky top-0 left-[160px] z-[110] border-b-2 border-harken-blue bg-white dark:bg-slate-800 shadow-[4px_0_16px_rgba(0,0,0,0.08)] flex flex-col"
+            className="sticky top-0 left-[160px] z-[110] border-b-2 border-harken-blue bg-surface-1 dark:bg-elevation-1 shadow-[4px_0_16px_rgba(0,0,0,0.08)] flex flex-col"
             style={{ width: SUBJECT_COL_WIDTH, height: 120 }}
           >
             <div className="relative h-16 w-full overflow-hidden group">
@@ -304,7 +304,7 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
                 SUBJECT
               </div>
             </div>
-            <div className="p-2 flex-1 flex flex-col gap-0.5 bg-sky-50 dark:bg-[#0f1f3a] border-r border-slate-200 dark:border-slate-700">
+            <div className="p-2 flex-1 flex flex-col gap-0.5 bg-sky-50 dark:bg-[#0f1f3a] border-r border-slate-200 dark:border-dark-border">
               <h3 className="font-bold text-slate-800 dark:text-white text-xs leading-tight line-clamp-1" title={SUBJECT_EXPENSE_PROPERTY.address}>
                 {SUBJECT_EXPENSE_PROPERTY.address.split(',')[0]}
               </h3>
@@ -319,7 +319,7 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
           {comps.map((comp, idx) => (
             <div 
               key={comp.id} 
-              className="sticky top-0 z-[100] border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 flex flex-col"
+              className="sticky top-0 z-[100] border-b border-slate-200 dark:border-dark-border bg-surface-1 dark:bg-elevation-1 flex flex-col"
               style={{ height: 120 }}
             >
               <div className="relative h-16 w-full overflow-hidden group">
@@ -334,13 +334,13 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
                 </div>
                 <button
                   onClick={() => handleDeleteComp(comp.id)}
-                  className="absolute top-1.5 left-1.5 p-1 rounded bg-white/80 dark:bg-slate-700/80 hover:bg-red-100 dark:hover:bg-red-900/50 text-slate-400 hover:text-red-500 transition-all opacity-0 group-hover:opacity-100"
+                  className="absolute top-1.5 left-1.5 p-1 rounded bg-surface-1/80 dark:bg-elevation-1/80 hover:bg-accent-red-light dark:hover:bg-accent-red-light text-slate-400 hover:text-harken-error transition-all opacity-0 group-hover:opacity-100"
                   title="Remove this comparable"
                 >
                   <Trash2 className="w-3 h-3" />
                 </button>
               </div>
-              <div className="p-2 flex-1 flex flex-col gap-0.5 border-r border-slate-200 dark:border-slate-700">
+              <div className="p-2 flex-1 flex flex-col gap-0.5 border-r border-slate-200 dark:border-dark-border">
                 <h3 className="font-bold text-slate-800 dark:text-white text-xs leading-tight line-clamp-1" title={comp.address}>
                   Comp {idx + 1}
                 </h3>
@@ -353,8 +353,8 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
                     onClick={() => handleToggleSelected(comp.id)}
                     className={`flex items-center gap-1 px-1.5 py-0.5 rounded transition-all ${
                       comp.selected 
-                        ? 'bg-emerald-100 text-emerald-700' 
-                        : 'bg-slate-100 dark:bg-slate-700 text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-600'
+                        ? 'bg-accent-teal-mint-light text-accent-teal-mint' 
+                        : 'bg-harken-gray-light dark:bg-elevation-1 text-harken-gray-med hover:bg-harken-gray-light dark:hover:bg-harken-gray'
                     }`}
                   >
                     {comp.selected ? <CheckCircle2 className="w-3 h-3" /> : <Circle className="w-3 h-3" />}
@@ -366,10 +366,10 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
           ))}
 
           {/* ========== PROPERTY DATA SECTION ========== */}
-          <div className="col-span-full relative z-[50] mt-4 border-y border-slate-200 dark:border-slate-700">
-            <div className="absolute left-0 right-0 h-full opacity-30 bg-slate-100 dark:bg-slate-800"></div>
+          <div className="col-span-full relative z-[50] mt-4 border-y border-slate-200 dark:border-dark-border">
+            <div className="absolute left-0 right-0 h-full opacity-30 bg-slate-100 dark:bg-elevation-1"></div>
             <div 
-              className="sticky left-0 w-fit px-4 py-2 font-bold text-xs uppercase tracking-widest bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 flex items-center gap-2"
+              className="sticky left-0 w-fit px-4 py-2 font-bold text-xs uppercase tracking-widest bg-slate-50 dark:bg-elevation-1 text-slate-700 dark:text-slate-200 flex items-center gap-2"
               style={{ zIndex: 51 }}
             >
               PROPERTY DATA
@@ -380,14 +380,14 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
           {propertyRows.map(row => (
             <React.Fragment key={row.id}>
               <div 
-                className="sticky left-0 z-[60] border-r border-b border-slate-100 dark:border-slate-700 flex items-center justify-between px-2 py-1.5 group bg-white dark:bg-slate-900"
+                className="sticky left-0 z-[60] border-r border-b border-slate-100 dark:border-dark-border flex items-center justify-between px-2 py-1.5 group bg-surface-1 dark:bg-elevation-1"
                 style={{ width: LABEL_COL_WIDTH, transform: 'translateZ(0)' }}
               >
                 <span className="text-xs font-medium text-slate-600 dark:text-slate-400 truncate">{row.label}</span>
                 {row.removable && (
                   <button
                     onClick={() => handleDeleteRow(row.id, 'property')}
-                    className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-red-100 dark:hover:bg-red-900/30 text-slate-300 hover:text-red-500 transition-all"
+                    className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-accent-red-light dark:hover:bg-accent-red-light text-slate-300 hover:text-harken-error transition-all"
                   >
                     <Trash2 className="w-3 h-3" />
                   </button>
@@ -395,7 +395,7 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
               </div>
               
               <div 
-                className="sticky left-[160px] z-[55] border-r border-b border-slate-100 dark:border-slate-700 p-2 flex items-center justify-center text-xs bg-sky-50 dark:bg-[#0f1f3a] shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none"
+                className="sticky left-[160px] z-[55] border-r border-b border-slate-100 dark:border-dark-border p-2 flex items-center justify-center text-xs bg-sky-50 dark:bg-[#0f1f3a] shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none"
                 style={{ width: SUBJECT_COL_WIDTH }}
               >
                 <span className="font-medium text-slate-700 dark:text-slate-200">{getSubjectPropertyValue(row.id, row.format)}</span>
@@ -404,9 +404,9 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
               {comps.map(comp => (
                 <div 
                   key={`${row.id}-${comp.id}`} 
-                  className="border-r border-b border-slate-100 dark:border-slate-700 p-2 flex items-center justify-center text-xs bg-white dark:bg-slate-800"
+                  className="border-r border-b border-slate-100 dark:border-dark-border p-2 flex items-center justify-center text-xs bg-surface-1 dark:bg-elevation-1"
                 >
-                  <span className="font-medium text-slate-600 dark:text-slate-300">{getPropertyValue(comp, row.id, row.format)}</span>
+                  <span className="font-medium text-slate-600 dark:text-slate-200">{getPropertyValue(comp, row.id, row.format)}</span>
                 </div>
               ))}
             </React.Fragment>
@@ -414,24 +414,24 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
 
           {/* Add Element Button for Property Section */}
           <div 
-            className={`sticky left-0 bg-white dark:bg-slate-800 p-2 ${openElementDropdown === 'property' ? 'z-[500]' : 'z-[60]'}`}
+            className={`sticky left-0 bg-surface-1 dark:bg-elevation-1 p-2 ${openElementDropdown === 'property' ? 'z-[500]' : 'z-[60]'}`}
             style={{ width: LABEL_COL_WIDTH }}
           >
             <AddElementButton section="property" />
           </div>
           <div 
-            className="sticky left-[160px] z-[55] bg-white dark:bg-slate-800 shadow-[4px_0_16px_rgba(0,0,0,0.05)]"
+            className="sticky left-[160px] z-[55] bg-surface-1 dark:bg-elevation-1 shadow-[4px_0_16px_rgba(0,0,0,0.05)]"
             style={{ width: SUBJECT_COL_WIDTH }}
           ></div>
           {comps.map(comp => (
-            <div key={`add-prop-${comp.id}`} className="bg-white dark:bg-slate-800"></div>
+            <div key={`add-prop-${comp.id}`} className="bg-surface-1 dark:bg-elevation-1"></div>
           ))}
 
           {/* ========== EXPENSE CATEGORIES SECTION ========== */}
           <div className="col-span-full relative z-[50] mt-4 border-y border-blue-200 dark:border-blue-800">
             <div className="absolute left-0 right-0 h-full opacity-30 bg-blue-50 dark:bg-blue-900/20"></div>
             <div 
-              className="sticky left-0 w-fit px-4 py-2 font-bold text-xs uppercase tracking-widest bg-blue-50 dark:bg-slate-900 text-blue-700 dark:text-blue-300 flex items-center gap-2"
+              className="sticky left-0 w-fit px-4 py-2 font-bold text-xs uppercase tracking-widest bg-blue-50 dark:bg-elevation-1 text-blue-700 dark:text-blue-300 flex items-center gap-2"
               style={{ zIndex: 51 }}
             >
               EXPENSE CATEGORIES
@@ -442,8 +442,8 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
           {expenseRows.map(row => (
             <React.Fragment key={row.id}>
               <div 
-                className={`sticky left-0 z-[60] border-r border-b border-slate-100 dark:border-slate-700 flex items-center justify-between px-2 py-1.5 group ${
-                  row.id === 'totalExpensesPerSf' ? 'border-t-2 border-t-slate-800 dark:border-t-slate-600 bg-slate-50 dark:bg-slate-800' : 'bg-white dark:bg-slate-900'
+                className={`sticky left-0 z-[60] border-r border-b border-slate-100 dark:border-dark-border flex items-center justify-between px-2 py-1.5 group ${
+                  row.id === 'totalExpensesPerSf' ? 'border-t-2 border-t-slate-800 dark:border-t-slate-600 bg-slate-50 dark:bg-elevation-1' : 'bg-surface-1 dark:bg-elevation-1'
                 }`}
                 style={{ width: LABEL_COL_WIDTH, transform: 'translateZ(0)' }}
               >
@@ -453,7 +453,7 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
                 {row.removable !== false && (
                   <button
                     onClick={() => handleDeleteRow(row.id, 'expense')}
-                    className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-red-100 dark:hover:bg-red-900/30 text-slate-300 hover:text-red-500 transition-all"
+                    className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-accent-red-light dark:hover:bg-accent-red-light text-slate-300 hover:text-harken-error transition-all"
                   >
                     <Trash2 className="w-3 h-3" />
                   </button>
@@ -461,7 +461,7 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
               </div>
               
               <div 
-                className={`sticky left-[160px] z-[55] border-r border-b border-slate-100 dark:border-slate-700 p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none ${
+                className={`sticky left-[160px] z-[55] border-r border-b border-slate-100 dark:border-dark-border p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none ${
                   row.id === 'totalExpensesPerSf' ? 'border-t-2 border-t-slate-800 dark:border-t-slate-600 bg-blue-100 dark:bg-blue-900/30' : 'bg-sky-50 dark:bg-[#0f1f3a]'
                 }`}
                 style={{ width: SUBJECT_COL_WIDTH }}
@@ -474,12 +474,12 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
               {comps.map(comp => (
                 <div 
                   key={`${row.id}-${comp.id}`} 
-                  className={`border-r border-b border-slate-100 dark:border-slate-700 p-2 flex items-center justify-center text-xs bg-white dark:bg-slate-800 ${
-                    row.id === 'totalExpensesPerSf' ? 'border-t-2 border-t-slate-800 dark:border-t-slate-600 bg-slate-50 dark:bg-slate-700' : ''
+                  className={`border-r border-b border-slate-100 dark:border-dark-border p-2 flex items-center justify-center text-xs bg-surface-1 dark:bg-elevation-1 ${
+                    row.id === 'totalExpensesPerSf' ? 'border-t-2 border-t-slate-800 dark:border-t-slate-600 bg-slate-50 dark:bg-elevation-1' : ''
                   }`}
                 >
                   <span className={`font-medium ${
-                    row.id === 'totalExpensesPerSf' ? 'font-bold text-emerald-700 dark:text-emerald-400' : 'text-slate-600 dark:text-slate-300'
+                    row.id === 'totalExpensesPerSf' ? 'font-bold text-accent-teal-mint dark:text-accent-teal-mint' : 'text-harken-gray dark:text-slate-200'
                   }`}>
                     {getPropertyValue(comp, row.id, row.format)}
                   </span>
@@ -490,7 +490,7 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
 
           {/* Add Element Button for Expense Section */}
           <div 
-            className={`sticky left-0 bg-white dark:bg-slate-900 p-2 ${openElementDropdown === 'expense' ? 'z-[500]' : 'z-[60]'}`}
+            className={`sticky left-0 bg-surface-1 dark:bg-elevation-1 p-2 ${openElementDropdown === 'expense' ? 'z-[500]' : 'z-[60]'}`}
             style={{ width: LABEL_COL_WIDTH }}
           >
             <AddElementButton section="expense" />
@@ -500,14 +500,14 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
             style={{ width: SUBJECT_COL_WIDTH }}
           ></div>
           {comps.map(comp => (
-            <div key={`add-exp-${comp.id}`} className="bg-white dark:bg-slate-800"></div>
+            <div key={`add-exp-${comp.id}`} className="bg-surface-1 dark:bg-elevation-1"></div>
           ))}
 
           {/* ========== RATIOS SECTION ========== */}
-          <div className="col-span-full relative z-[50] mt-4 border-y border-emerald-200 dark:border-emerald-800">
-            <div className="absolute left-0 right-0 h-full opacity-30 bg-emerald-50 dark:bg-emerald-900/20"></div>
+          <div className="col-span-full relative z-[50] mt-4 border-y border-accent-teal-mint dark:border-accent-teal-mint">
+            <div className="absolute left-0 right-0 h-full opacity-30 bg-accent-teal-mint-light dark:bg-accent-teal-mint/20"></div>
             <div 
-              className="sticky left-0 w-fit px-4 py-2 font-bold text-xs uppercase tracking-widest bg-emerald-50 dark:bg-slate-900 text-emerald-700 dark:text-emerald-300 flex items-center gap-2"
+              className="sticky left-0 w-fit px-4 py-2 font-bold text-xs uppercase tracking-widest bg-accent-teal-mint-light dark:bg-elevation-1 text-accent-teal-mint dark:text-accent-teal-mint flex items-center gap-2"
               style={{ zIndex: 51 }}
             >
               EXPENSE RATIOS
@@ -518,14 +518,14 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
           {ratioRows.map(row => (
             <React.Fragment key={row.id}>
               <div 
-                className="sticky left-0 z-[60] border-r border-b border-slate-100 dark:border-slate-700 flex items-center px-2 py-1.5 bg-white dark:bg-slate-900"
+                className="sticky left-0 z-[60] border-r border-b border-slate-100 dark:border-dark-border flex items-center px-2 py-1.5 bg-surface-1 dark:bg-elevation-1"
                 style={{ width: LABEL_COL_WIDTH, transform: 'translateZ(0)' }}
               >
                 <span className="text-xs font-medium text-slate-600 dark:text-slate-400">{row.label}</span>
               </div>
               
               <div 
-                className="sticky left-[160px] z-[55] border-r border-b border-slate-100 dark:border-slate-700 p-2 flex items-center justify-center text-xs bg-sky-50 dark:bg-[#0f1f3a] shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none"
+                className="sticky left-[160px] z-[55] border-r border-b border-slate-100 dark:border-dark-border p-2 flex items-center justify-center text-xs bg-sky-50 dark:bg-[#0f1f3a] shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none"
                 style={{ width: SUBJECT_COL_WIDTH }}
               >
                 <span className="font-bold text-slate-700 dark:text-slate-200">{getSubjectPropertyValue(row.id, row.format)}</span>
@@ -534,11 +534,11 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
               {comps.map(comp => (
                 <div 
                   key={`${row.id}-${comp.id}`} 
-                  className={`border-r border-b border-slate-100 dark:border-slate-700 p-2 flex items-center justify-center text-xs ${
-                    comp.selected ? 'bg-emerald-50 dark:bg-emerald-900/30' : 'bg-white dark:bg-slate-800'
+                  className={`border-r border-b border-slate-100 dark:border-dark-border p-2 flex items-center justify-center text-xs ${
+                    comp.selected ? 'bg-accent-teal-mint-light dark:bg-accent-teal-mint/30' : 'bg-surface-1 dark:bg-elevation-1'
                   }`}
                 >
-                  <span className={`font-bold ${comp.selected ? 'text-emerald-700 dark:text-emerald-400' : 'text-slate-600 dark:text-slate-300'}`}>
+                  <span className={`font-bold ${comp.selected ? 'text-accent-teal-mint dark:text-accent-teal-mint' : 'text-harken-gray dark:text-slate-200'}`}>
                     {getPropertyValue(comp, row.id, row.format)}
                   </span>
                 </div>
@@ -567,7 +567,7 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
             <div 
               key={`benchmark-${comp.id}`} 
               className={`p-2 flex items-center justify-center ${
-                comp.selected ? 'bg-emerald-500' : 'bg-harken-blue'
+                comp.selected ? 'bg-accent-teal-mint' : 'bg-harken-blue'
               }`}
             >
               {comp.selected ? (
@@ -595,7 +595,7 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
                 Based on {selectedComps.length} selected comparable{selectedComps.length !== 1 ? 's' : ''}
               </div>
             </div>
-            <div className="bg-white dark:bg-slate-800 rounded-2xl border border-slate-200 dark:border-slate-700 p-6 shadow-sm">
+            <div className="bg-surface-1 dark:bg-elevation-1 rounded-2xl border border-slate-200 dark:border-dark-border p-6 shadow-sm">
               <div className="grid grid-cols-3 gap-6">
                 <div className="text-center">
                   <div className="text-sm text-slate-500 font-medium mb-2">Subject Expense Ratio</div>
@@ -610,8 +610,8 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
                   </div>
                 </div>
                 <div className="text-center">
-                  <div className="text-sm text-slate-500 font-medium mb-2">Market Avg $/SF</div>
-                  <div className="text-2xl font-bold text-emerald-600">
+                  <div className="text-sm text-harken-gray-med font-medium mb-2">Market Avg $/SF</div>
+                  <div className="text-2xl font-bold text-accent-teal-mint">
                     {formatCurrency(avgTotalExpPerSf)}
                   </div>
                 </div>

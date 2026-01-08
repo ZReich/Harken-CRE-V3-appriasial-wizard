@@ -203,22 +203,22 @@ export const ContextualMarketData: React.FC<ContextualMarketDataProps> = ({
     
     switch (trend) {
       case 'up':
-        return <TrendingUp size={12} className="text-emerald-500" />;
+        return <TrendingUp size={12} className="text-accent-teal-mint" />;
       case 'down':
-        return <TrendingDown size={12} className="text-red-500" />;
+        return <TrendingDown size={12} className="text-harken-error" />;
       case 'stable':
         return <Minus size={12} className="text-slate-400" />;
     }
   };
 
   return (
-    <div className={`bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl overflow-hidden ${className}`}>
+    <div className={`bg-surface-1 dark:bg-elevation-1 border border-slate-200 dark:border-dark-border rounded-xl overflow-hidden ${className}`}>
       {/* Header */}
       <div className={`px-4 py-3 ${theme.bg} border-b ${theme.border}`}>
         <h4 className={`text-xs font-bold uppercase tracking-widest ${theme.accent}`}>
           Market Context
         </h4>
-        <p className="text-xs text-slate-500 mt-0.5">
+        <p className="text-xs text-harken-gray-med mt-0.5">
           {activeApproach} metrics
         </p>
       </div>
@@ -239,7 +239,7 @@ export const ContextualMarketData: React.FC<ContextualMarketDataProps> = ({
               
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-1.5">
-                  <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
+                  <span className="text-xs font-medium text-harken-gray-med dark:text-slate-400">
                     {metric.label}
                   </span>
                   <TrendIcon trend={metric.trend} />
@@ -248,7 +248,7 @@ export const ContextualMarketData: React.FC<ContextualMarketDataProps> = ({
                   {metric.value}
                 </div>
                 {metric.subValue && (
-                  <div className="text-xs text-slate-400">
+                  <div className="text-xs text-harken-gray-med">
                     {metric.subValue}
                   </div>
                 )}
@@ -260,7 +260,7 @@ export const ContextualMarketData: React.FC<ContextualMarketDataProps> = ({
 
       {/* Data source note */}
       <div className="px-4 py-2 bg-slate-50 border-t border-slate-100">
-        <p className="text-[10px] text-slate-400 italic">
+        <p className="text-[10px] text-harken-gray-med italic">
           Data sourced from Market Analysis inputs
         </p>
       </div>

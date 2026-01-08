@@ -30,7 +30,7 @@ export const CostSegDisclaimerPage: React.FC<CostSegDisclaimerPageProps> = ({
   });
 
   return (
-    <div className={`bg-white p-12 ${className}`}>
+    <div className={`bg-surface-1 p-12 ${className}`}>
       <h2 className="text-2xl font-bold text-[#1c3643] mb-6 pb-4 border-b-2 border-[#0da1c7]">
         Limiting Conditions & Disclaimer
       </h2>
@@ -89,31 +89,31 @@ export const CostSegDisclaimerPage: React.FC<CostSegDisclaimerPageProps> = ({
       </div>
 
       {/* Assumptions */}
-      <div className="bg-slate-50 border border-slate-200 rounded-lg p-6 mb-8">
+      <div className="bg-harken-gray-light border border-light-border rounded-lg p-6 mb-8">
         <h3 className="font-semibold text-slate-900 mb-3">Assumptions & Limiting Conditions</h3>
-        <ul className="text-sm text-slate-600 space-y-2">
+        <ul className="text-sm text-harken-gray space-y-2">
           <li className="flex items-start gap-2">
-            <span className="text-slate-400">1.</span>
+            <span className="text-harken-gray-med">1.</span>
             <span>The property is held for use in a trade or business or for the production of income.</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="text-slate-400">2.</span>
+            <span className="text-harken-gray-med">2.</span>
             <span>The cost data provided represents the actual cost basis of the property for tax purposes.</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="text-slate-400">3.</span>
+            <span className="text-harken-gray-med">3.</span>
             <span>The property has been placed in service and is depreciable under MACRS.</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="text-slate-400">4.</span>
+            <span className="text-harken-gray-med">4.</span>
             <span>No elections have been made that would preclude the use of accelerated depreciation methods.</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="text-slate-400">5.</span>
+            <span className="text-harken-gray-med">5.</span>
             <span>The property type and use classification provided accurately reflects the actual use of the property.</span>
           </li>
           <li className="flex items-start gap-2">
-            <span className="text-slate-400">6.</span>
+            <span className="text-harken-gray-med">6.</span>
             <span>For residential rental property, 80% or more of gross rental income is from dwelling units.</span>
           </li>
         </ul>
@@ -154,11 +154,11 @@ export const CostSegDisclaimerPage: React.FC<CostSegDisclaimerPageProps> = ({
       </div>
 
       {/* Contact Information */}
-      <div className="text-center text-sm text-slate-500">
+      <div className="text-center text-sm text-harken-gray-med">
         <p className="mb-2">
           For questions regarding this study, please contact:
         </p>
-        <p className="font-medium text-slate-700">{firmName}</p>
+        <p className="font-medium text-harken-gray">{firmName}</p>
       </div>
     </div>
   );

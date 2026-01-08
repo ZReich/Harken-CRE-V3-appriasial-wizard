@@ -699,6 +699,6 @@ export const SECTIONS: Section[] = [
   { id: 'cap_rate_extraction', title: 'Cap Rate Extraction', color: 'bg-orange-50' },
   { id: 'adjustments', title: 'Transactional Adjustments', color: 'bg-yellow-50' },
   { id: 'quantitative', title: 'Quantitative Adjustments', color: 'bg-purple-50' },
-  { id: 'qualitative', title: 'Qualitative Characteristics', color: 'bg-emerald-50' },
-  { id: 'valuation', title: 'Valuation Analysis', color: 'bg-white' },
+  { id: 'qualitative', title: 'Qualitative Characteristics', color: 'bg-accent-teal-mint-light' },
+  { id: 'valuation', title: 'Valuation Analysis', color: 'bg-surface-1' },
 ];

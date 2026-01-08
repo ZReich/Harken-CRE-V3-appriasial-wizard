@@ -112,17 +112,17 @@ export const BuildingSelector: React.FC<BuildingSelectorProps> = ({
   // Empty state
   if (allBuildings.length === 0) {
     return (
-      <div className="p-6 bg-amber-50 dark:bg-amber-900/20 border-2 border-amber-200 dark:border-amber-800 rounded-xl">
+      <div className="p-6 bg-accent-amber-gold-light dark:bg-accent-amber-gold/10 border-2 border-accent-amber-gold-light dark:border-accent-amber-gold/30 rounded-xl">
         <div className="flex items-start gap-4">
-          <div className="w-12 h-12 bg-amber-100 dark:bg-amber-900/50 rounded-xl flex items-center justify-center flex-shrink-0">
-            <Building2 className="w-6 h-6 text-amber-600 dark:text-amber-400" />
+          <div className="w-12 h-12 bg-accent-amber-gold-light dark:bg-accent-amber-gold/10 rounded-xl flex items-center justify-center flex-shrink-0">
+            <Building2 className="w-6 h-6 text-accent-amber-gold dark:text-accent-amber-gold-hover" />
           </div>
           <div>
             <h3 className="text-lg font-bold text-slate-900 dark:text-white mb-1">No Buildings Defined</h3>
-            <p className="text-sm text-slate-600 dark:text-slate-300 mb-3">
+            <p className="text-sm text-slate-600 dark:text-slate-200 mb-3">
               Buildings must be defined in the Improvements tab before they can be costed in the Cost Approach.
             </p>
-            <p className="text-xs text-amber-700 dark:text-amber-400">
+            <p className="text-xs text-accent-amber-gold dark:text-accent-amber-gold-hover">
               Navigate to Subject Data &gt; Improvements to add buildings and use areas.
             </p>
           </div>
@@ -150,7 +150,7 @@ export const BuildingSelector: React.FC<BuildingSelectorProps> = ({
         {/* Select All Toggle */}
         <button
           onClick={toggleAll}
-          className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-slate-600 dark:text-slate-300 hover:text-[#0da1c7] hover:bg-[#0da1c7]/5 rounded-lg transition-colors"
+          className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium text-slate-600 dark:text-slate-200 hover:text-[#0da1c7] hover:bg-[#0da1c7]/5 rounded-lg transition-colors"
         >
           {allSelected ? (
             <>
@@ -190,13 +190,13 @@ export const BuildingSelector: React.FC<BuildingSelectorProps> = ({
               onClick={() => toggleBuilding(building.id)}
               className={`relative p-4 border-2 rounded-xl text-left transition-all hover:shadow-md ${isSelected
                   ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-[#0da1c7]/10'
-                  : 'border-gray-200 dark:border-slate-600 bg-white dark:bg-slate-800 hover:border-gray-300 dark:hover:border-slate-500'
+                  : 'border-light-border dark:border-harken-gray bg-surface-1 dark:bg-elevation-1 hover:border-light-border dark:hover:border-harken-gray'
                 }`}
             >
               {/* Checkbox Indicator */}
               <div className={`absolute top-3 right-3 w-5 h-5 rounded flex items-center justify-center transition-colors ${isSelected
                   ? 'bg-[#0da1c7] text-white'
-                  : 'border-2 border-gray-300 dark:border-slate-500'
+                  : 'border-2 border-light-border dark:border-harken-gray'
                 }`}>
                 {isSelected && (
                   <svg className="w-3 h-3" fill="none" stroke="currentColor" strokeWidth="3" viewBox="0 0 24 24">
@@ -207,9 +207,9 @@ export const BuildingSelector: React.FC<BuildingSelectorProps> = ({
 
               {/* Building Info */}
               <div className="flex items-start gap-3 pr-8">
-                <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${isSelected ? 'bg-[#0da1c7]/20' : 'bg-gray-100 dark:bg-slate-700'
+                <div className={`w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0 ${isSelected ? 'bg-[#0da1c7]/20' : 'bg-harken-gray-light dark:bg-elevation-1'
                   }`}>
-                  <Building2 className={`w-5 h-5 ${isSelected ? 'text-[#0da1c7]' : 'text-gray-400'}`} />
+                  <Building2 className={`w-5 h-5 ${isSelected ? 'text-[#0da1c7]' : 'text-harken-gray-med'}`} />
                 </div>
 
                 <div className="flex-1 min-w-0">
@@ -225,13 +225,13 @@ export const BuildingSelector: React.FC<BuildingSelectorProps> = ({
 
                   <div className="flex items-center gap-3 mt-2">
                     {info.totalSF > 0 && (
-                      <div className="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-300">
+                      <div className="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-200">
                         <Ruler size={10} />
                         <span>{info.totalSF.toLocaleString()} SF</span>
                       </div>
                     )}
                     {building.yearBuilt && (
-                      <div className="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-300">
+                      <div className="flex items-center gap-1 text-xs text-slate-600 dark:text-slate-200">
                         <Calendar size={10} />
                         <span>{building.yearBuilt}</span>
                       </div>
@@ -244,13 +244,13 @@ export const BuildingSelector: React.FC<BuildingSelectorProps> = ({
                       {building.areas.slice(0, 3).map((area, idx) => (
                         <span
                           key={idx}
-                          className="text-[10px] px-1.5 py-0.5 bg-gray-100 dark:bg-slate-700 text-gray-600 dark:text-slate-300 rounded"
+                          className="text-[10px] px-1.5 py-0.5 bg-harken-gray-light dark:bg-elevation-1 text-harken-gray dark:text-slate-200 rounded"
                         >
                           {area.type}: {(area.squareFootage || 0).toLocaleString()} SF
                         </span>
                       ))}
                       {building.areas.length > 3 && (
-                        <span className="text-[10px] px-1.5 py-0.5 bg-gray-100 dark:bg-slate-700 text-gray-500 dark:text-slate-400 rounded">
+                        <span className="text-[10px] px-1.5 py-0.5 bg-harken-gray-light dark:bg-elevation-1 text-harken-gray-med dark:text-slate-400 rounded">
                           +{building.areas.length - 3} more
                         </span>
                       )}

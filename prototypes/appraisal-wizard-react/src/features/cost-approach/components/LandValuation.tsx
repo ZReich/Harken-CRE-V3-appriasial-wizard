@@ -78,34 +78,34 @@ export const LandValuation: React.FC<LandValuationProps> = ({ onValueChange }) =
     return (
       <>
         <div className="fixed inset-0 z-40" onClick={() => setActivePopover(null)}></div>
-        <div className="fixed z-50 w-64 bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-slate-200 dark:border-slate-700 overflow-hidden animate-in fade-in zoom-in-95 duration-100" style={adjustedStyle}>
+        <div className="fixed z-50 w-64 bg-surface-1 dark:bg-elevation-1 rounded-lg shadow-xl border border-slate-200 dark:border-dark-border overflow-hidden animate-in fade-in zoom-in-95 duration-100" style={adjustedStyle}>
           <div className="px-4 py-2 bg-slate-50 border-b border-slate-100 text-xs font-bold text-slate-500 uppercase tracking-wide">Select Adjustment</div>
           <div className="p-1.5 space-y-1">
             <button onClick={() => handleAdjustmentChange(activePopover.compId, activePopover.rowId, 0)} className="flex items-center justify-between w-full px-3 py-2 text-sm text-slate-700 hover:bg-slate-50 rounded-md transition-colors border border-transparent hover:border-slate-200">
-              <span className="font-semibold text-slate-600 dark:text-slate-300">SIMILAR</span>
-              <span className="font-mono text-xs bg-slate-100 dark:bg-slate-700 text-slate-500 dark:text-slate-400 px-1.5 py-0.5 rounded">0%</span>
+              <span className="font-semibold text-slate-600 dark:text-slate-200">SIMILAR</span>
+              <span className="font-mono text-xs bg-slate-100 dark:bg-elevation-1 text-slate-500 dark:text-slate-400 px-1.5 py-0.5 rounded">0%</span>
             </button>
             
             <div className="border-t border-slate-100 my-1"></div>
             
-            <div className="px-2 pb-1 pt-1 text-[10px] font-bold text-emerald-600 uppercase tracking-wider flex items-center gap-1">
-              Inferior <span className="text-slate-400 font-normal normal-case">(Subject is better, so + Adj)</span>
+            <div className="px-2 pb-1 pt-1 text-[10px] font-bold text-accent-teal-mint uppercase tracking-wider flex items-center gap-1">
+              Inferior <span className="text-harken-gray-med font-normal normal-case">(Subject is better, so + Adj)</span>
             </div>
             <div className="grid grid-cols-3 gap-1">
-              <button onClick={() => handleAdjustmentChange(activePopover.compId, activePopover.rowId, 0.02)} className="px-2 py-1.5 text-xs text-center bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:text-emerald-800 rounded border border-emerald-100 transition-colors">+2.0%</button>
-              <button onClick={() => handleAdjustmentChange(activePopover.compId, activePopover.rowId, 0.05)} className="px-2 py-1.5 text-xs text-center bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:text-emerald-800 rounded border border-emerald-100 transition-colors">+5.0%</button>
-              <button onClick={() => handleAdjustmentChange(activePopover.compId, activePopover.rowId, 0.10)} className="px-2 py-1.5 text-xs text-center bg-emerald-50 text-emerald-700 hover:bg-emerald-100 hover:text-emerald-800 rounded border border-emerald-100 transition-colors">+10.0%</button>
+              <button onClick={() => handleAdjustmentChange(activePopover.compId, activePopover.rowId, 0.02)} className="px-2 py-1.5 text-xs text-center bg-accent-teal-mint-light text-accent-teal-mint hover:bg-accent-teal-mint-light hover:text-accent-teal-mint rounded border border-accent-teal-mint transition-colors">+2.0%</button>
+              <button onClick={() => handleAdjustmentChange(activePopover.compId, activePopover.rowId, 0.05)} className="px-2 py-1.5 text-xs text-center bg-accent-teal-mint-light text-accent-teal-mint hover:bg-accent-teal-mint-light hover:text-accent-teal-mint rounded border border-accent-teal-mint transition-colors">+5.0%</button>
+              <button onClick={() => handleAdjustmentChange(activePopover.compId, activePopover.rowId, 0.10)} className="px-2 py-1.5 text-xs text-center bg-accent-teal-mint-light text-accent-teal-mint hover:bg-accent-teal-mint-light hover:text-accent-teal-mint rounded border border-accent-teal-mint transition-colors">+10.0%</button>
             </div>
 
             <div className="border-t border-slate-100 my-1"></div>
 
-            <div className="px-2 pb-1 pt-1 text-[10px] font-bold text-red-600 uppercase tracking-wider flex items-center gap-1">
-              Superior <span className="text-slate-400 font-normal normal-case">(Subject is worse, so - Adj)</span>
+            <div className="px-2 pb-1 pt-1 text-[10px] font-bold text-harken-error uppercase tracking-wider flex items-center gap-1">
+              Superior <span className="text-harken-gray-med font-normal normal-case">(Subject is worse, so - Adj)</span>
             </div>
             <div className="grid grid-cols-3 gap-1">
-              <button onClick={() => handleAdjustmentChange(activePopover.compId, activePopover.rowId, -0.02)} className="px-2 py-1.5 text-xs text-center bg-red-50 text-red-700 hover:bg-red-100 hover:text-red-800 rounded border border-red-100 transition-colors">-2.0%</button>
-              <button onClick={() => handleAdjustmentChange(activePopover.compId, activePopover.rowId, -0.05)} className="px-2 py-1.5 text-xs text-center bg-red-50 text-red-700 hover:bg-red-100 hover:text-red-800 rounded border border-red-100 transition-colors">-5.0%</button>
-              <button onClick={() => handleAdjustmentChange(activePopover.compId, activePopover.rowId, -0.10)} className="px-2 py-1.5 text-xs text-center bg-red-50 text-red-700 hover:bg-red-100 hover:text-red-800 rounded border border-red-100 transition-colors">-10.0%</button>
+              <button onClick={() => handleAdjustmentChange(activePopover.compId, activePopover.rowId, -0.02)} className="px-2 py-1.5 text-xs text-center bg-accent-red-light text-harken-error hover:bg-accent-red-light hover:text-harken-error rounded border border-harken-error/20 transition-colors">-2.0%</button>
+              <button onClick={() => handleAdjustmentChange(activePopover.compId, activePopover.rowId, -0.05)} className="px-2 py-1.5 text-xs text-center bg-accent-red-light text-harken-error hover:bg-accent-red-light hover:text-harken-error rounded border border-harken-error/20 transition-colors">-5.0%</button>
+              <button onClick={() => handleAdjustmentChange(activePopover.compId, activePopover.rowId, -0.10)} className="px-2 py-1.5 text-xs text-center bg-accent-red-light text-harken-error hover:bg-accent-red-light hover:text-harken-error rounded border border-harken-error/20 transition-colors">-10.0%</button>
             </div>
 
             <div className="border-t border-slate-100 my-1"></div>
@@ -133,9 +133,9 @@ export const LandValuation: React.FC<LandValuationProps> = ({ onValueChange }) =
           }}
           className={`
             w-full h-9 flex items-center justify-between px-3 rounded text-[10px] font-bold uppercase tracking-wider transition-all border shadow-sm
-            ${isZero ? 'bg-white dark:bg-slate-800 border-slate-200 dark:border-slate-600 text-slate-500 dark:text-slate-400 hover:border-slate-300 dark:hover:border-slate-500 hover:bg-slate-50 dark:hover:bg-slate-700' : ''}
-            ${isPositive ? 'bg-emerald-50 border-emerald-200 text-emerald-700 hover:border-emerald-300 hover:bg-emerald-100' : ''}
-            ${isNegative ? 'bg-red-50 border-red-200 text-red-700 hover:border-red-300 hover:bg-red-100' : ''}
+            ${isZero ? 'bg-surface-1 dark:bg-elevation-1 border-slate-200 dark:border-harken-gray text-slate-500 dark:text-slate-400 hover:border-slate-300 dark:hover:border-harken-gray hover:bg-slate-50 dark:hover:bg-elevation-3' : ''}
+            ${isPositive ? 'bg-accent-teal-mint-light border-accent-teal-mint text-accent-teal-mint hover:border-accent-teal-mint hover:bg-accent-teal-mint-light' : ''}
+            ${isNegative ? 'bg-accent-red-light border-harken-error/20 text-harken-error hover:border-harken-error/30 hover:bg-accent-red-light' : ''}
           `}
         >
           <span className="truncate mr-2 font-bold">
@@ -153,54 +153,54 @@ export const LandValuation: React.FC<LandValuationProps> = ({ onValueChange }) =
   };
 
   return (
-    <div className="flex flex-col h-full bg-white dark:bg-slate-900 relative font-sans">
+    <div className="flex flex-col h-full bg-surface-1 dark:bg-elevation-1 relative font-sans">
       <AdjustmentPopover />
       
-      <div className="flex-1 overflow-auto custom-scrollbar bg-white dark:bg-slate-800">
+      <div className="flex-1 overflow-auto custom-scrollbar bg-surface-1 dark:bg-elevation-1">
         <div className="inline-flex min-w-full">
           
           {/* COLUMN 1: ELEMENTS (Sticky Left) */}
-          <div className="sticky left-0 z-30 w-52 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex flex-col flex-shrink-0 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
-            <div className="h-[280px] border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800 p-6 flex flex-col justify-end"></div>
+          <div className="sticky left-0 z-30 w-52 bg-surface-1 dark:bg-elevation-1 border-r border-slate-200 dark:border-dark-border flex flex-col flex-shrink-0 shadow-[4px_0_24px_rgba(0,0,0,0.02)]">
+            <div className="h-[280px] border-b border-slate-200 dark:border-dark-border bg-surface-1 dark:bg-elevation-1 p-6 flex flex-col justify-end"></div>
 
             {getSectionRows('transaction').map(row => (
-              <div key={row.id} className="h-14 flex items-center px-4 border-b border-slate-100 dark:border-slate-700 text-sm font-medium text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 group hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors relative">
+              <div key={row.id} className="h-14 flex items-center px-4 border-b border-slate-100 dark:border-dark-border text-sm font-medium text-slate-600 dark:text-slate-200 bg-surface-1 dark:bg-elevation-1 group hover:bg-slate-50/50 dark:hover:bg-elevation-3/50 transition-colors relative">
                 {row.label}
                 {row.removable && (
-                  <button onClick={() => handleDeleteRow(row.id)} className="absolute right-2 p-1.5 text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all"><Trash2 size={14}/></button>
+                  <button onClick={() => handleDeleteRow(row.id)} className="absolute right-2 p-1.5 text-slate-300 hover:text-harken-error opacity-0 group-hover:opacity-100 transition-all"><Trash2 size={14}/></button>
                 )}
               </div>
             ))}
 
-            <div className="h-14 px-4 flex items-center bg-slate-100 dark:bg-slate-700 border-b border-slate-200 dark:border-slate-600">
+            <div className="h-14 px-4 flex items-center bg-slate-100 dark:bg-elevation-1 border-b border-slate-200 dark:border-harken-gray">
               <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider leading-tight w-24">Quantitative Adjustments</span>
             </div>
             {getSectionRows('quantitative').map(row => (
-              <div key={row.id} className="h-14 flex items-center px-4 border-b border-slate-100 dark:border-slate-700 text-sm font-medium text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 group hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors relative">
+              <div key={row.id} className="h-14 flex items-center px-4 border-b border-slate-100 dark:border-dark-border text-sm font-medium text-slate-600 dark:text-slate-200 bg-surface-1 dark:bg-elevation-1 group hover:bg-slate-50/50 dark:hover:bg-elevation-3/50 transition-colors relative">
                 {row.label}
                 {row.removable && (
-                  <button onClick={() => handleDeleteRow(row.id)} className="absolute right-2 p-1.5 text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all"><Trash2 size={14}/></button>
+                  <button onClick={() => handleDeleteRow(row.id)} className="absolute right-2 p-1.5 text-slate-300 hover:text-harken-error opacity-0 group-hover:opacity-100 transition-all"><Trash2 size={14}/></button>
                 )}
               </div>
             ))}
             
-            <div className="h-14 px-4 flex items-center bg-slate-100 dark:bg-slate-700 border-b border-slate-200 dark:border-slate-600">
+            <div className="h-14 px-4 flex items-center bg-slate-100 dark:bg-elevation-1 border-b border-slate-200 dark:border-harken-gray">
               <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider leading-tight w-24">Qualitative Characteristics</span>
             </div>
             {getSectionRows('qualitative').map(row => (
-              <div key={row.id} className="h-14 flex items-center px-4 border-b border-slate-100 dark:border-slate-700 text-sm font-medium text-slate-600 dark:text-slate-300 bg-white dark:bg-slate-800 group hover:bg-slate-50/50 dark:hover:bg-slate-700/50 transition-colors relative">
+              <div key={row.id} className="h-14 flex items-center px-4 border-b border-slate-100 dark:border-dark-border text-sm font-medium text-slate-600 dark:text-slate-200 bg-surface-1 dark:bg-elevation-1 group hover:bg-slate-50/50 dark:hover:bg-elevation-3/50 transition-colors relative">
                 {row.label}
                 {row.removable && (
-                  <button onClick={() => handleDeleteRow(row.id)} className="absolute right-2 p-1.5 text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition-all"><Trash2 size={14}/></button>
+                  <button onClick={() => handleDeleteRow(row.id)} className="absolute right-2 p-1.5 text-slate-300 hover:text-harken-error opacity-0 group-hover:opacity-100 transition-all"><Trash2 size={14}/></button>
                 )}
               </div>
             ))}
-            <div className="h-[57px] border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800"></div>
+            <div className="h-[57px] border-b border-slate-200 dark:border-dark-border bg-surface-1 dark:bg-elevation-1"></div>
           </div>
 
           {/* COLUMN 2: SUBJECT (Sticky Left 2) */}
-          <div className="sticky left-52 z-30 w-72 bg-white dark:bg-slate-800 border-r border-slate-200 dark:border-slate-700 flex flex-col flex-shrink-0 shadow-[4px_0_24px_rgba(0,0,0,0.04)]">
-            <div className="h-[280px] border-b border-slate-200 dark:border-slate-700 p-4 relative group bg-white dark:bg-slate-800 flex flex-col">
+          <div className="sticky left-52 z-30 w-72 bg-surface-1 dark:bg-elevation-1 border-r border-slate-200 dark:border-dark-border flex flex-col flex-shrink-0 shadow-[4px_0_24px_rgba(0,0,0,0.04)]">
+            <div className="h-[280px] border-b border-slate-200 dark:border-dark-border p-4 relative group bg-surface-1 dark:bg-elevation-1 flex flex-col">
               <div className="flex items-center gap-2 mb-4">
                 <div className="p-1.5 bg-[#0da1c7]/10 rounded text-[#0da1c7]">
                   <ArrowRight size={14} className="-rotate-45"/>
@@ -229,7 +229,7 @@ export const LandValuation: React.FC<LandValuationProps> = ({ onValueChange }) =
                   <div className="flex flex-col items-end gap-1">
                     <button 
                       onClick={() => handleRound(1000)}
-                      className="px-2 py-1 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600 hover:border-[#0da1c7] hover:text-[#0da1c7] rounded text-[10px] font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1 transition-all"
+                      className="px-2 py-1 bg-surface-1 dark:bg-elevation-1 border border-slate-200 dark:border-harken-gray hover:bg-slate-50 dark:hover:bg-harken-gray hover:border-[#0da1c7] hover:text-[#0da1c7] rounded text-[10px] font-bold text-slate-500 dark:text-slate-400 flex items-center gap-1 transition-all"
                       title="Round to nearest $1,000"
                     >
                       <Wand2 size={10} /> $1k
@@ -245,27 +245,27 @@ export const LandValuation: React.FC<LandValuationProps> = ({ onValueChange }) =
             </div>
 
             {getSectionRows('transaction').map(row => (
-              <div key={`sub_${row.id}`} className="h-14 flex items-center px-4 border-b border-slate-100 dark:border-slate-700 text-sm text-slate-900 dark:text-white font-bold bg-white dark:bg-slate-800">
+              <div key={`sub_${row.id}`} className="h-14 flex items-center px-4 border-b border-slate-100 dark:border-dark-border text-sm text-slate-900 dark:text-white font-bold bg-surface-1 dark:bg-elevation-1">
                 {row.id === 'salePrice' ? 'N/A' : 
                  row.id === 'landSf' ? subjectLandSf.toLocaleString() :
                  row.id === 'zoning' ? 'CMU1' : 'N/A'}
               </div>
             ))}
             
-            <div className="h-14 bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700"></div>
+            <div className="h-14 bg-surface-1 dark:bg-elevation-1 border-b border-slate-100 dark:border-dark-border"></div>
             {getSectionRows('quantitative').map(row => (
-              <div key={`sub_${row.id}`} className="h-14 flex items-center px-4 border-b border-slate-100 dark:border-slate-700 text-sm text-slate-400 italic bg-white dark:bg-slate-800">
+              <div key={`sub_${row.id}`} className="h-14 flex items-center px-4 border-b border-slate-100 dark:border-dark-border text-sm text-slate-400 italic bg-surface-1 dark:bg-elevation-1">
                 Subject
               </div>
             ))}
 
-            <div className="h-14 bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700"></div>
+            <div className="h-14 bg-surface-1 dark:bg-elevation-1 border-b border-slate-100 dark:border-dark-border"></div>
             {getSectionRows('qualitative').map(row => (
-              <div key={`sub_${row.id}`} className="h-14 flex items-center px-4 border-b border-slate-100 dark:border-slate-700 text-sm text-slate-400 italic bg-white dark:bg-slate-800">
+              <div key={`sub_${row.id}`} className="h-14 flex items-center px-4 border-b border-slate-100 dark:border-dark-border text-sm text-slate-400 italic bg-surface-1 dark:bg-elevation-1">
                 Subject
               </div>
             ))}
-            <div className="p-3 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+            <div className="p-3 border-b border-slate-200 dark:border-dark-border bg-surface-1 dark:bg-elevation-1">
               <button onClick={() => handleAddRow('qualitative')} className="w-full py-2 bg-[#0da1c7]/10 text-[#0da1c7] border border-[#0da1c7]/20 rounded text-xs font-bold hover:bg-[#0da1c7]/20 transition-colors flex items-center justify-center gap-1 shadow-sm">
                 <Plus size={14}/> Add Characteristic
               </button>
@@ -275,9 +275,9 @@ export const LandValuation: React.FC<LandValuationProps> = ({ onValueChange }) =
           {/* COLUMNS 3+: COMPS */}
           {comps.map((comp) => {
             return (
-              <div key={comp.id} className="w-80 border-r border-slate-200 dark:border-slate-700 flex flex-col flex-shrink-0 bg-white dark:bg-slate-800">
+              <div key={comp.id} className="w-80 border-r border-slate-200 dark:border-dark-border flex flex-col flex-shrink-0 bg-surface-1 dark:bg-elevation-1">
                 <div className="h-[280px] border-b border-slate-200 p-4 relative group">
-                  <div className="h-40 w-full rounded-lg overflow-hidden bg-slate-100 dark:bg-slate-700 mb-3 relative shadow-sm border border-slate-200 dark:border-slate-600">
+                  <div className="h-40 w-full rounded-lg overflow-hidden bg-slate-100 dark:bg-elevation-1 mb-3 relative shadow-sm border border-slate-200 dark:border-harken-gray">
                     <img src={comp.imageUrl} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" alt="Comp" />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-60"></div>
                     
@@ -302,7 +302,7 @@ export const LandValuation: React.FC<LandValuationProps> = ({ onValueChange }) =
                   if (row.id === 'pricePsf') content = formatCurrency(comp.salePrice / comp.landSf);
                   
                   return (
-                    <div key={row.id} className="h-14 flex items-center px-4 border-b border-slate-100 dark:border-slate-700 text-sm text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-800">
+                    <div key={row.id} className="h-14 flex items-center px-4 border-b border-slate-100 dark:border-dark-border text-sm text-slate-700 dark:text-slate-200 bg-surface-1 dark:bg-elevation-1">
                       {row.id === 'pricePsf' ? (
                         <span className="px-2 py-0.5 rounded bg-[#0da1c7]/10 text-[#0da1c7] font-bold">{content}</span>
                       ) : (
@@ -312,28 +312,28 @@ export const LandValuation: React.FC<LandValuationProps> = ({ onValueChange }) =
                   );
                 })}
 
-                <div className="h-14 bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700"></div>
+                <div className="h-14 bg-surface-1 dark:bg-elevation-1 border-b border-slate-100 dark:border-dark-border"></div>
                 {getSectionRows('quantitative').map(row => (
-                  <div key={row.id} className="h-14 flex items-center border-b border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800">
+                  <div key={row.id} className="h-14 flex items-center border-b border-slate-100 dark:border-dark-border bg-surface-1 dark:bg-elevation-1">
                     <AdjustmentCell comp={comp} row={row} />
                   </div>
                 ))}
 
-                <div className="h-14 bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700"></div>
+                <div className="h-14 bg-surface-1 dark:bg-elevation-1 border-b border-slate-100 dark:border-dark-border"></div>
                 {getSectionRows('qualitative').map(row => (
-                  <div key={row.id} className="h-14 flex items-center border-b border-slate-100 dark:border-slate-700 bg-white dark:bg-slate-800">
+                  <div key={row.id} className="h-14 flex items-center border-b border-slate-100 dark:border-dark-border bg-surface-1 dark:bg-elevation-1">
                     <AdjustmentCell comp={comp} row={row} />
                   </div>
                 ))}
-                <div className="h-[57px] border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800"></div>
+                <div className="h-[57px] border-b border-slate-200 dark:border-dark-border bg-surface-1 dark:bg-elevation-1"></div>
               </div>
             );
           })}
 
           {/* Add Comp Button Column */}
-          <div className="w-48 flex-shrink-0 flex items-center justify-center p-4 bg-white dark:bg-slate-800 border-r border-dashed border-slate-200 dark:border-slate-600">
-            <button className="flex flex-col items-center gap-2 text-slate-300 dark:text-slate-600 hover:text-[#0da1c7] transition-all hover:scale-105 active:scale-95 group">
-              <div className="w-12 h-12 rounded-full border-2 border-dashed border-slate-200 dark:border-slate-600 group-hover:border-[#0da1c7] flex items-center justify-center bg-slate-50 dark:bg-slate-700 group-hover:bg-white dark:group-hover:bg-slate-600 shadow-sm transition-colors">
+          <div className="w-48 flex-shrink-0 flex items-center justify-center p-4 bg-surface-1 dark:bg-elevation-1 border-r border-dashed border-slate-200 dark:border-harken-gray">
+            <button className="flex flex-col items-center gap-2 text-slate-300 dark:text-slate-500 hover:text-[#0da1c7] transition-all hover:scale-105 active:scale-95 group">
+              <div className="w-12 h-12 rounded-full border-2 border-dashed border-slate-200 dark:border-harken-gray group-hover:border-[#0da1c7] flex items-center justify-center bg-slate-50 dark:bg-elevation-1 group-hover:bg-surface-1 dark:group-hover:bg-slate-600 shadow-sm transition-colors">
                 <Plus size={24} className="group-hover:rotate-90 transition-transform duration-300" />
               </div>
               <span className="text-xs font-bold text-center uppercase tracking-wide">Add Comp</span>

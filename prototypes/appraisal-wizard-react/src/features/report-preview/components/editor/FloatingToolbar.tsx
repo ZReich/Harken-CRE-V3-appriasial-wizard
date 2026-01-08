@@ -110,7 +110,7 @@ export const FloatingToolbar: React.FC<FloatingToolbarProps> = ({
               </button>
               
               {openDropdown === action.id && action.options && (
-                <div className="absolute top-full left-0 mt-1 bg-white border border-slate-200 rounded-lg shadow-lg overflow-hidden min-w-[100px]">
+                <div className="absolute top-full left-0 mt-1 bg-surface-1 border border-slate-200 rounded-lg shadow-lg overflow-hidden min-w-[100px]">
                   {action.options.map((option) => (
                     <button
                       key={option.value}

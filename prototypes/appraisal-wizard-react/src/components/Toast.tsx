@@ -21,22 +21,22 @@ const iconMap = {
 
 const styleMap = {
   success: {
-    container: 'bg-emerald-50 border-emerald-200',
-    icon: 'text-emerald-500',
-    title: 'text-emerald-800',
-    message: 'text-emerald-700',
+    container: 'bg-accent-teal-mint-light border-accent-teal-mint-light',
+    icon: 'text-accent-teal-mint',
+    title: 'text-accent-teal-mint',
+    message: 'text-accent-teal-mint',
   },
   error: {
-    container: 'bg-red-50 border-red-200',
-    icon: 'text-red-500',
-    title: 'text-red-800',
-    message: 'text-red-700',
+    container: 'bg-harken-error/10 border-harken-error/30',
+    icon: 'text-harken-error',
+    title: 'text-harken-error',
+    message: 'text-harken-error',
   },
   warning: {
-    container: 'bg-amber-50 border-amber-200',
-    icon: 'text-amber-500',
-    title: 'text-amber-800',
-    message: 'text-amber-700',
+    container: 'bg-accent-amber-gold-light border-accent-amber-gold-light',
+    icon: 'text-accent-amber-gold',
+    title: 'text-accent-amber-gold',
+    message: 'text-accent-amber-gold',
   },
   info: {
     container: 'bg-sky-50 border-sky-200',

@@ -388,15 +388,15 @@ export function ComparableMapPreview({
     <div className={`relative ${className}`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-2">
-        <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-300">
+        <h4 className="text-sm font-semibold text-slate-700 dark:text-slate-200">
           {TYPE_LABELS[type]} Map
-          <span className="ml-2 text-xs font-normal text-slate-400">
+          <span className="ml-2 text-xs font-normal text-harken-gray-med">
             ({validComparables.length} comparable{validComparables.length !== 1 ? 's' : ''})
           </span>
         </h4>
         <button
           onClick={handleRegenerate}
-          className="flex items-center gap-1.5 px-2 py-1 text-xs text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded transition-colors"
+          className="flex items-center gap-1.5 px-2 py-1 text-xs text-harken-gray hover:text-harken-gray hover:bg-harken-gray-light rounded transition-colors"
           title="Regenerate map"
         >
           <RefreshCw className="w-3.5 h-3.5" />
@@ -413,13 +413,13 @@ export function ComparableMapPreview({
 
       {/* Map Type Toggle */}
       {showToggle && (
-        <div className="absolute top-12 left-3 flex bg-white rounded-lg shadow-md overflow-hidden border border-slate-200">
+        <div className="absolute top-12 left-3 flex bg-surface-1 rounded-lg shadow-md overflow-hidden border border-slate-200">
           <button
             onClick={() => setMapType('satellite')}
             className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors ${
               mapType === 'satellite'
                 ? 'bg-[#0da1c7] text-white'
-                : 'bg-white text-slate-600 hover:bg-slate-50'
+                : 'bg-surface-1 text-slate-600 hover:bg-slate-50'
             }`}
           >
             <Satellite className="w-3.5 h-3.5" />
@@ -430,7 +430,7 @@ export function ComparableMapPreview({
             className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium transition-colors ${
               mapType === 'roadmap'
                 ? 'bg-[#0da1c7] text-white'
-                : 'bg-white text-slate-600 hover:bg-slate-50'
+                : 'bg-surface-1 text-slate-600 hover:bg-slate-50'
             }`}
           >
             <Layers className="w-3.5 h-3.5" />
@@ -441,7 +441,7 @@ export function ComparableMapPreview({
 
       {/* Legend */}
       {showLegend && (
-        <div className="absolute bottom-3 left-3 bg-white/95 backdrop-blur-sm rounded-lg shadow-md px-3 py-2 border border-slate-200">
+        <div className="absolute bottom-3 left-3 bg-surface-1/95 backdrop-blur-sm rounded-lg shadow-md px-3 py-2 border border-slate-200">
           <div className="flex items-center gap-4 text-xs">
             {/* Subject */}
             <div className="flex items-center gap-1.5">
@@ -451,7 +451,7 @@ export function ComparableMapPreview({
               >
                 S
               </div>
-              <span className="text-slate-600 font-medium">Subject</span>
+              <span className="text-harken-gray font-medium">Subject</span>
             </div>
             {/* Comparables */}
             <div className="flex items-center gap-1.5">
@@ -461,7 +461,7 @@ export function ComparableMapPreview({
               >
                 #
               </div>
-              <span className="text-slate-600 font-medium">{TYPE_LABELS[type]}</span>
+              <span className="text-harken-gray font-medium">{TYPE_LABELS[type]}</span>
             </div>
           </div>
         </div>

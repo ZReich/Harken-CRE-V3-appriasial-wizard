@@ -110,12 +110,12 @@ export const CostSegSupplementalItems: React.FC<CostSegSupplementalItemsProps> =
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Package className="w-5 h-5 text-purple-600" />
-          <h3 className="text-lg font-bold text-gray-900 dark:text-white">Supplemental Items</h3>
+          <h3 className="text-lg font-bold text-harken-dark dark:text-white">Supplemental Items</h3>
           <span className="px-2 py-0.5 text-xs font-medium bg-purple-100 text-purple-700 rounded-full">
             {items.length} item{items.length !== 1 ? 's' : ''}
           </span>
         </div>
-        <div className="text-sm font-semibold text-gray-900 dark:text-white">
+        <div className="text-sm font-semibold text-harken-dark dark:text-white">
           Total: {formatCurrency(totalCost)}
         </div>
       </div>
@@ -161,7 +161,7 @@ export const CostSegSupplementalItems: React.FC<CostSegSupplementalItemsProps> =
         {examples.length > 0 && (
           <button
             onClick={() => setShowExamples(!showExamples)}
-            className="flex items-center justify-center gap-2 w-full px-4 py-2 text-xs font-medium text-gray-600 hover:text-gray-700 hover:bg-gray-50 rounded-lg transition-colors"
+            className="flex items-center justify-center gap-2 w-full px-4 py-2 text-xs font-medium text-harken-gray hover:text-harken-gray hover:bg-harken-gray-light rounded-lg transition-colors"
           >
             {showExamples ? 'Hide' : 'Show'} Example Items for {propertyType}
           </button>
@@ -177,10 +177,10 @@ export const CostSegSupplementalItems: React.FC<CostSegSupplementalItemsProps> =
               <button
                 key={idx}
                 onClick={() => handleAddItem(example)}
-                className="w-full text-left p-2 bg-white border border-purple-200 hover:border-purple-300 rounded-lg transition-colors"
+                className="w-full text-left p-2 bg-surface-1 border border-purple-200 hover:border-purple-300 rounded-lg transition-colors"
               >
-                <div className="font-medium text-sm text-gray-900 dark:text-white">{example.description}</div>
-                <div className="flex items-center gap-2 text-xs text-gray-600 mt-1">
+                <div className="font-medium text-sm text-harken-dark dark:text-white">{example.description}</div>
+                <div className="flex items-center gap-2 text-xs text-harken-gray mt-1">
                   <span className="px-2 py-0.5 bg-purple-100 text-purple-700 rounded-full">{example.depreciationClass}</span>
                   <span>{example.typicalCost}</span>
                 </div>
@@ -231,13 +231,13 @@ const SupplementalItemCard: React.FC<SupplementalItemCardProps> = ({
       >
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
-            <span className="font-medium text-gray-900 dark:text-white">{item.description || 'Unnamed item'}</span>
+            <span className="font-medium text-harken-dark dark:text-white">{item.description || 'Unnamed item'}</span>
             <span className={`px-2 py-0.5 text-xs font-medium rounded-full bg-${depClassOption?.color}-100 text-${depClassOption?.color}-700`}>
               {item.depreciationClass}
             </span>
           </div>
-          <div className="flex items-center gap-4 text-xs text-gray-600 dark:text-slate-400">
-            <span className="font-semibold text-gray-900 dark:text-white">{formatCurrency(item.cost)}</span>
+          <div className="flex items-center gap-4 text-xs text-harken-gray dark:text-slate-400">
+            <span className="font-semibold text-harken-dark dark:text-white">{formatCurrency(item.cost)}</span>
             <span>• {categoryOption?.label}</span>
             {item.linkedPhotoIds && item.linkedPhotoIds.length > 0 && (
               <span className="flex items-center gap-1">
@@ -252,7 +252,7 @@ const SupplementalItemCard: React.FC<SupplementalItemCardProps> = ({
             e.stopPropagation();
             onDelete();
           }}
-          className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors"
+          className="p-1.5 text-harken-gray-med hover:text-harken-error hover:bg-accent-red-light rounded transition-colors"
         >
           <Trash2 className="w-4 h-4" />
         </button>
@@ -262,9 +262,9 @@ const SupplementalItemCard: React.FC<SupplementalItemCardProps> = ({
 
   // Edit mode
   return (
-    <div className="p-4 bg-white border-2 border-purple-200 rounded-lg space-y-3">
+    <div className="p-4 bg-surface-1 border-2 border-purple-200 rounded-lg space-y-3">
       <div className="flex items-center justify-between mb-2">
-        <h4 className="text-sm font-semibold text-gray-700">Item #{index + 1}</h4>
+        <h4 className="text-sm font-semibold text-harken-gray">Item #{index + 1}</h4>
         <button
           onClick={onSave}
           className="px-3 py-1 text-xs font-medium text-purple-700 bg-purple-50 hover:bg-purple-100 rounded transition-colors"
@@ -275,24 +275,24 @@ const SupplementalItemCard: React.FC<SupplementalItemCardProps> = ({
 
       {/* Description */}
       <div>
-        <label className="block text-xs font-medium text-gray-600 mb-1">Description</label>
+        <label className="block text-xs font-medium text-harken-gray mb-1">Description</label>
         <input
           type="text"
           value={item.description}
           onChange={(e) => onUpdate({ description: e.target.value })}
           placeholder="e.g., Commercial Kitchen Equipment Package"
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+          className="w-full px-3 py-2 border border-light-border rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
         />
       </div>
 
       {/* Category and Depreciation Class */}
       <div className="grid grid-cols-2 gap-3">
         <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1">Category</label>
+          <label className="block text-xs font-medium text-harken-gray mb-1">Category</label>
           <select
             value={item.category}
             onChange={(e) => onUpdate({ category: e.target.value as any })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-light-border rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
           >
             {CATEGORY_OPTIONS.map(opt => (
               <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -300,11 +300,11 @@ const SupplementalItemCard: React.FC<SupplementalItemCardProps> = ({
           </select>
         </div>
         <div>
-          <label className="block text-xs font-medium text-gray-600 mb-1">Depreciation Class</label>
+          <label className="block text-xs font-medium text-harken-gray mb-1">Depreciation Class</label>
           <select
             value={item.depreciationClass}
             onChange={(e) => onUpdate({ depreciationClass: e.target.value as DepreciationClass })}
-            className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+            className="w-full px-3 py-2 border border-light-border rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
           >
             {DEPRECIATION_CLASS_OPTIONS.map(opt => (
               <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -315,25 +315,25 @@ const SupplementalItemCard: React.FC<SupplementalItemCardProps> = ({
 
       {/* Cost */}
       <div>
-        <label className="block text-xs font-medium text-gray-600 mb-1">Cost</label>
+        <label className="block text-xs font-medium text-harken-gray mb-1">Cost</label>
         <input
           type="number"
           value={item.cost}
           onChange={(e) => onUpdate({ cost: parseFloat(e.target.value) || 0 })}
           placeholder="0"
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+          className="w-full px-3 py-2 border border-light-border rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent"
         />
       </div>
 
       {/* Notes */}
       <div>
-        <label className="block text-xs font-medium text-gray-600 mb-1">Notes</label>
+        <label className="block text-xs font-medium text-harken-gray mb-1">Notes</label>
         <textarea
           value={item.notes || ''}
           onChange={(e) => onUpdate({ notes: e.target.value })}
           placeholder="Optional notes, vendor info, etc..."
           rows={2}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+          className="w-full px-3 py-2 border border-light-border rounded-lg text-sm focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
         />
       </div>
 
@@ -341,13 +341,13 @@ const SupplementalItemCard: React.FC<SupplementalItemCardProps> = ({
       <div>
         <button
           onClick={() => setShowPhotoSelector(!showPhotoSelector)}
-          className="flex items-center gap-2 text-xs font-medium text-gray-700 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white"
+          className="flex items-center gap-2 text-xs font-medium text-harken-gray dark:text-slate-400 hover:text-harken-dark dark:hover:text-white"
         >
           <Camera className="w-4 h-4" />
           Link Photos ({item.linkedPhotoIds?.length || 0})
         </button>
         {showPhotoSelector && availablePhotos.length > 0 && (
-          <div className="mt-2 p-2 border border-gray-200 rounded-lg max-h-40 overflow-y-auto">
+          <div className="mt-2 p-2 border border-light-border rounded-lg max-h-40 overflow-y-auto">
             <div className="grid grid-cols-4 gap-2">
               {availablePhotos.slice(0, 8).map(photo => (
                 <button
@@ -364,7 +364,7 @@ const SupplementalItemCard: React.FC<SupplementalItemCardProps> = ({
                   className={`relative aspect-square rounded overflow-hidden border-2 ${
                     item.linkedPhotoIds?.includes(photo.id)
                       ? 'border-purple-500'
-                      : 'border-gray-200 hover:border-gray-300'
+                      : 'border-light-border hover:border-light-border'
                   }`}
                 >
                   <img src={photo.url} alt={photo.caption || ''} className="w-full h-full object-cover" />

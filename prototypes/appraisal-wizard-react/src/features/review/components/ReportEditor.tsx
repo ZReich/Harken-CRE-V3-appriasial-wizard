@@ -39,8 +39,9 @@ import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import { useWizard } from '../../../context/WizardContext';
 import { BASE_REPORT_SECTIONS, APPROACH_REPORT_SECTIONS, CLOSING_REPORT_SECTIONS } from '../constants';
 import { sampleAppraisalData } from '../data/sampleAppraisalData';
-import type { ReportSection, PropertyTabId, ElementStyles } from '../types';
+import type { ReportSection, PropertyTabId, ElementStyles, InlinePhotoPlacement, PhotoSlotConfig } from '../types';
 import { useReportState, type ReportState, type ReportStateActions } from '../../report-preview/hooks/useReportState';
+import { InlinePhotoGrid } from './InlinePhotoSlot';
 import { useAutoSave, useAutoSaveRecovery } from '../../report-preview/hooks/useAutoSave';
 import { useUndoRedo } from '../../report-preview/hooks/useUndoRedo';
 import { RecoveryDialog } from '../../report-preview/components/dialogs';
@@ -153,7 +154,7 @@ function SortableSectionItem({
           ? activeSectionId === section.id
             ? 'bg-accent-cyan/15 border-l-4 border-accent-cyan'
             : 'bg-accent-cyan/10 border-l-4 border-accent-cyan/50 hover:bg-accent-cyan/15'
-          : 'bg-gray-50 dark:bg-slate-800/50 border-l-4 border-transparent opacity-60 hover:opacity-80'
+          : 'bg-harken-gray-light dark:bg-elevation-1/50 border-l-4 border-transparent opacity-60 hover:opacity-80'
           }`}
       >
         {/* Drag Handle */}
@@ -163,7 +164,7 @@ function SortableSectionItem({
           className={`p-1 rounded cursor-grab active:cursor-grabbing transition-all ${
             section.enabled
               ? 'text-accent-cyan/50 hover:text-accent-cyan hover:bg-accent-cyan/10'
-              : 'text-gray-400 hover:bg-gray-200 dark:hover:bg-slate-700'
+              : 'text-harken-gray-med hover:bg-harken-gray-med-lt dark:hover:bg-elevation-3'
           }`}
           title="Drag to reorder"
         >
@@ -181,7 +182,7 @@ function SortableSectionItem({
             }}
             className={`p-0.5 rounded transition-all ${section.enabled
               ? 'text-accent-cyan hover:bg-accent-cyan/20'
-              : 'text-gray-400 hover:bg-gray-200 dark:hover:bg-slate-700'
+              : 'text-harken-gray-med hover:bg-harken-gray-med-lt dark:hover:bg-elevation-3'
               } ${section.expanded ? 'rotate-90' : ''}`}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -202,8 +203,8 @@ function SortableSectionItem({
           className={`flex-1 text-sm transition-colors ${section.enabled
             ? activeSectionId === section.id
               ? 'text-accent-cyan font-semibold'
-              : 'text-gray-800 dark:text-gray-200 font-medium'
-            : 'text-gray-400'
+              : 'text-harken-dark dark:text-white font-medium'
+            : 'text-harken-gray-med'
             }`}
         >
           {section.label}
@@ -215,7 +216,7 @@ function SortableSectionItem({
             e.stopPropagation();
             onToggleSection(section.id);
           }}
-          className={`w-2 h-2 rounded-full flex-shrink-0 transition-colors ${section.enabled ? 'bg-green-500 hover:bg-green-600' : 'bg-gray-300 hover:bg-gray-400'}`}
+          className={`w-2 h-2 rounded-full flex-shrink-0 transition-colors ${section.enabled ? 'bg-accent-teal-mint hover:bg-accent-teal-mint-hover' : 'bg-harken-gray-med hover:bg-harken-gray-med'}`}
           title={section.enabled ? 'Click to disable section' : 'Click to enable section'}
         />
       </div>
@@ -229,17 +230,17 @@ function SortableSectionItem({
               onClick={() => onToggleField(section.id, field.id)}
               className={`flex items-center gap-2.5 px-3 py-1.5 rounded-md cursor-pointer transition-all ${field.enabled
                 ? 'bg-accent-cyan/5 hover:bg-accent-cyan/10'
-                : 'bg-transparent hover:bg-gray-50 dark:hover:bg-slate-700/50'
+                : 'bg-transparent hover:bg-harken-gray-light dark:hover:bg-elevation-3/50'
                 }`}
             >
               {/* Dot Indicator */}
               <span
-                className={`w-2 h-2 rounded-full flex-shrink-0 transition-colors ${field.enabled ? 'bg-accent-cyan' : 'bg-gray-300'
+                className={`w-2 h-2 rounded-full flex-shrink-0 transition-colors ${field.enabled ? 'bg-accent-cyan' : 'bg-harken-gray-med'
                   }`}
               />
               {/* Field Label */}
               <span
-                className={`text-xs transition-colors ${field.enabled ? 'text-gray-700 dark:text-gray-300' : 'text-gray-400'
+                className={`text-xs transition-colors ${field.enabled ? 'text-harken-gray dark:text-slate-300' : 'text-harken-gray-med'
                   }`}
               >
                 {field.label}
@@ -370,11 +371,11 @@ function PhotoSlot({ photo, placeholder, aspectRatio = 'auto', className = '', o
 
   return (
     <div
-      className={`bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center rounded-lg cursor-pointer ${aspectClasses[aspectRatio]} ${className} ${selected ? 'ring-2 ring-accent-cyan' : ''}`}
+      className={`bg-gradient-to-br from-harken-gray-light to-harken-gray-med-lt flex items-center justify-center rounded-lg cursor-pointer ${aspectClasses[aspectRatio]} ${className} ${selected ? 'ring-2 ring-accent-cyan' : ''}`}
       onClick={onSelect}
       onDoubleClick={onDoubleClick}
     >
-      <div className="text-center text-gray-400 p-4">
+      <div className="text-center text-harken-gray-med p-4">
         <svg className="w-10 h-10 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
         </svg>
@@ -397,10 +398,10 @@ interface ReportPageWrapperProps {
 
 function ReportPageWrapper({ section, pageNumber, children, sidebarLabel }: ReportPageWrapperProps) {
   return (
-    <div className="bg-white shadow-lg rounded-lg overflow-hidden" style={{ minHeight: '11in', width: '8.5in' }}>
+    <div className="bg-surface-1 shadow-lg rounded-lg overflow-hidden" style={{ minHeight: '11in', width: '8.5in' }}>
       <div className="grid grid-cols-[80px_1fr]" style={{ minHeight: '11in' }}>
         {/* Green Sidebar */}
-        <div className="bg-emerald-700 text-white flex items-center justify-center relative">
+        <div className="bg-accent-teal-mint text-white flex items-center justify-center relative">
           <span
             className="text-4xl font-bold tracking-widest"
             style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}
@@ -414,7 +415,7 @@ function ReportPageWrapper({ section, pageNumber, children, sidebarLabel }: Repo
           {children}
 
           {/* Page Footer */}
-          <div className="absolute bottom-4 right-8 text-xs text-gray-400 flex items-center gap-4">
+          <div className="absolute bottom-4 right-8 text-xs text-harken-gray-med flex items-center gap-4">
             <span>ROVE Valuations</span>
             <span>|</span>
             <span>Page {pageNumber}</span>
@@ -464,7 +465,7 @@ function CoverPageReal({
   const effectiveDate = subjectData?.effectiveDate || fallbackData.assignment.effectiveDate;
 
   return (
-    <div className="bg-white shadow-lg rounded-lg overflow-hidden" style={{ minHeight: '11in', width: '8.5in' }}>
+    <div className="bg-surface-1 shadow-lg rounded-lg overflow-hidden" style={{ minHeight: '11in', width: '8.5in' }}>
       <div className="flex flex-col h-full" style={{ minHeight: '11in' }}>
         {/* Header with logo */}
         <div className="p-8 pb-4 flex justify-between items-start">
@@ -472,10 +473,10 @@ function CoverPageReal({
             onClick={() => onSelectElement('cover_logo')}
             className={`cursor-pointer transition-all ${selectedElement === 'cover_logo' ? 'ring-2 ring-accent-cyan rounded' : ''}`}
           >
-            <div className="text-2xl font-bold text-emerald-700 tracking-tight">ROVE</div>
-            <div className="text-sm text-gray-500">VALUATIONS</div>
+            <div className="text-2xl font-bold text-accent-teal-mint tracking-tight">ROVE</div>
+            <div className="text-sm text-harken-gray-med">VALUATIONS</div>
           </div>
-          <div className="text-right text-sm text-gray-500">
+          <div className="text-right text-sm text-harken-gray-med">
             <div>Commercial Appraisal Report</div>
           </div>
         </div>
@@ -490,7 +491,7 @@ function CoverPageReal({
               onSelectElement={onSelectElement}
               onContentChange={handleContentChange}
               as="h1"
-              className="text-4xl font-light text-emerald-700 leading-tight mb-2"
+              className="text-4xl font-light text-accent-teal-mint leading-tight mb-2"
               appliedStyle={getStyle('cover_title')}
             />
           )}
@@ -502,7 +503,7 @@ function CoverPageReal({
               onSelectElement={onSelectElement}
               onContentChange={handleContentChange}
               as="p"
-              className="text-xl text-gray-600"
+              className="text-xl text-harken-gray"
               appliedStyle={getStyle('cover_address')}
             />
           )}
@@ -522,8 +523,8 @@ function CoverPageReal({
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="w-full h-full bg-gradient-to-br from-gray-200 to-gray-300 flex items-center justify-center">
-                  <div className="text-center text-gray-500">
+                <div className="w-full h-full bg-gradient-to-br from-harken-gray-med-lt to-harken-gray-med-lt flex items-center justify-center">
+                  <div className="text-center text-harken-gray-med">
                     <svg className="w-16 h-16 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
@@ -537,18 +538,18 @@ function CoverPageReal({
 
         {/* Footer Info - conditionally rendered */}
         {isVisible('cover_footer') && (
-          <div className="bg-emerald-700 text-white px-8 py-6">
+          <div className="bg-accent-teal-mint text-white px-8 py-6">
             <div className="grid grid-cols-3 gap-6 text-sm">
               <div>
-                <div className="text-emerald-200 text-xs uppercase mb-1">Property Type</div>
+                <div className="text-accent-teal-mint-light text-xs uppercase mb-1">Property Type</div>
                 <div className="font-medium">{fallbackData.property.propertySubtype}</div>
               </div>
               <div>
-                <div className="text-emerald-200 text-xs uppercase mb-1">Effective Date</div>
+                <div className="text-accent-teal-mint-light text-xs uppercase mb-1">Effective Date</div>
                 <div className="font-medium">{effectiveDate}</div>
               </div>
               <div>
-                <div className="text-emerald-200 text-xs uppercase mb-1">Final Value</div>
+                <div className="text-accent-teal-mint-light text-xs uppercase mb-1">Final Value</div>
                 <div className="font-medium text-lg">${fallbackData.valuation.asIsValue.toLocaleString()}</div>
               </div>
             </div>
@@ -588,7 +589,7 @@ function LetterPage({ selectedElement, onSelectElement, onContentChange, editedC
         {/* Client Information - conditionally rendered */}
         {isVisible('letter_client') && (
           <div className="mb-8">
-            <div className="text-sm text-gray-500 mb-6">{reportDate}</div>
+            <div className="text-sm text-harken-gray-med mb-6">{reportDate}</div>
 
             <div className="mb-6">
               <EditableElement
@@ -598,7 +599,7 @@ function LetterPage({ selectedElement, onSelectElement, onContentChange, editedC
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
                 as="div"
-                className="font-semibold text-gray-800"
+                className="font-semibold text-harken-dark"
                 appliedStyle={getStyle('letter_client')}
               />
               <EditableElement
@@ -608,12 +609,12 @@ function LetterPage({ selectedElement, onSelectElement, onContentChange, editedC
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
                 as="div"
-                className="text-sm text-gray-600"
+                className="text-sm text-harken-gray"
                 appliedStyle={getStyle('letter_client_address')}
               />
             </div>
 
-            <div className="text-sm text-gray-600 mb-6">
+            <div className="text-sm text-harken-gray mb-6">
               <span className="font-semibold">RE: </span>
               Appraisal of {propertyName}
             </div>
@@ -622,7 +623,7 @@ function LetterPage({ selectedElement, onSelectElement, onContentChange, editedC
 
         {/* Letter Body - conditionally rendered */}
         {isVisible('letter_body') && (
-          <div className="text-sm text-gray-700 leading-relaxed space-y-4">
+          <div className="text-sm text-harken-gray leading-relaxed space-y-4">
             <EditableElement
               elementId="letter_greeting"
               content={getContent('letter_greeting', 'Dear Client:')}
@@ -661,20 +662,20 @@ function LetterPage({ selectedElement, onSelectElement, onContentChange, editedC
 
         {/* Value Conclusion - conditionally rendered */}
         {isVisible('letter_value') && (
-          <div className="text-center py-6 bg-gray-50 rounded-lg my-6">
-            <div className="text-sm text-gray-500 uppercase mb-2">Market Value Conclusion</div>
-            <div className="text-4xl font-bold text-emerald-700">${fallbackData.valuation.asIsValue.toLocaleString()}</div>
+          <div className="text-center py-6 bg-harken-gray-light rounded-lg my-6">
+            <div className="text-sm text-harken-gray-med uppercase mb-2">Market Value Conclusion</div>
+            <div className="text-4xl font-bold text-accent-teal-mint">${fallbackData.valuation.asIsValue.toLocaleString()}</div>
           </div>
         )}
 
         {/* Signature - conditionally rendered */}
         {isVisible('letter_signature') && (
-          <div className="text-sm text-gray-700 leading-relaxed">
+          <div className="text-sm text-harken-gray leading-relaxed">
             <p>Respectfully submitted,</p>
             <div className="mt-8">
               <div className="font-semibold">{subjectData?.inspectorName || fallbackData.assignment.appraiser}</div>
-              <div className="text-gray-600">{subjectData?.inspectorLicense || fallbackData.assignment.appraiserLicense}</div>
-              <div className="text-gray-600">{fallbackData.assignment.appraiserCompany}</div>
+              <div className="text-harken-gray">{subjectData?.inspectorLicense || fallbackData.assignment.appraiserLicense}</div>
+              <div className="text-harken-gray">{fallbackData.assignment.appraiserCompany}</div>
             </div>
           </div>
         )}
@@ -746,25 +747,25 @@ function ExecutiveSummaryPage({ selectedElement, onSelectElement, subjectData, i
     <ReportPageWrapper section={{ id: 'summary', label: 'Executive Summary', enabled: true, expanded: false, fields: [], type: 'summary-table' }} pageNumber={2} sidebarLabel="01">
       <div className="p-10">
         {/* Section Badge */}
-        <div className="absolute top-6 right-8 bg-emerald-700 text-white px-4 py-2 rounded text-xs font-semibold">
+        <div className="absolute top-6 right-8 bg-accent-teal-mint text-white px-4 py-2 rounded text-xs font-semibold">
           SECTION 1 • SUMMARY
         </div>
 
-        <h2 className="text-2xl font-light text-gray-800 mb-8 mt-8">Executive Summary</h2>
+        <h2 className="text-2xl font-light text-harken-dark mb-8 mt-8">Executive Summary</h2>
 
         {/* Property Summary Table - conditionally rendered */}
         {isVisible('exec_property') && (
           <div
             onClick={() => onSelectElement('summary_property')}
-            className={`mb-8 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'summary_property' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-gray-50'}`}
+            className={`mb-8 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'summary_property' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-harken-gray-light'}`}
           >
-            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Property Identification</h3>
+            <h3 className="text-sm font-semibold text-harken-gray-med uppercase tracking-wider mb-4">Property Identification</h3>
             <table className="w-full text-sm">
               <tbody>
                 {summaryRows.map((row, idx) => (
-                  <tr key={idx} className="border-b border-gray-100">
-                    <td className="py-2 pr-4 text-gray-600 w-1/3">{row.label}</td>
-                    <td className="py-2 text-gray-800 font-medium">{row.value}</td>
+                  <tr key={idx} className="border-b border-harken-gray-light">
+                    <td className="py-2 pr-4 text-harken-gray w-1/3">{row.label}</td>
+                    <td className="py-2 text-harken-dark font-medium">{row.value}</td>
                   </tr>
                 ))}
               </tbody>
@@ -776,15 +777,15 @@ function ExecutiveSummaryPage({ selectedElement, onSelectElement, subjectData, i
         {isVisible('exec_values') && (
           <div
             onClick={() => onSelectElement('summary_values')}
-            className={`p-4 -m-4 rounded cursor-pointer ${selectedElement === 'summary_values' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-gray-50'}`}
+            className={`p-4 -m-4 rounded cursor-pointer ${selectedElement === 'summary_values' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-harken-gray-light'}`}
           >
-            <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Value Conclusions</h3>
+            <h3 className="text-sm font-semibold text-harken-gray-med uppercase tracking-wider mb-4">Value Conclusions</h3>
             <table className="w-full text-sm">
               <tbody>
                 {valueRows.map((row, idx) => (
-                  <tr key={idx} className={`border-b border-gray-100 ${row.emphasized ? 'bg-emerald-50' : ''}`}>
-                    <td className={`py-2 pr-4 w-1/2 ${row.emphasized ? 'font-semibold text-emerald-800' : 'text-gray-600'}`}>{row.label}</td>
-                    <td className={`py-2 text-right ${row.emphasized ? 'font-bold text-emerald-700 text-xl' : 'text-gray-800 font-medium'}`}>{row.value}</td>
+                  <tr key={idx} className={`border-b border-harken-gray-light ${row.emphasized ? 'bg-accent-teal-mint-light' : ''}`}>
+                    <td className={`py-2 pr-4 w-1/2 ${row.emphasized ? 'font-semibold text-accent-teal-mint' : 'text-harken-gray'}`}>{row.label}</td>
+                    <td className={`py-2 text-right ${row.emphasized ? 'font-bold text-accent-teal-mint text-xl' : 'text-harken-dark font-medium'}`}>{row.value}</td>
                   </tr>
                 ))}
               </tbody>
@@ -794,7 +795,7 @@ function ExecutiveSummaryPage({ selectedElement, onSelectElement, subjectData, i
 
         {/* Key Dates - conditionally rendered */}
         {isVisible('exec_dates') && (
-          <div className="mt-6 text-sm text-gray-500">
+          <div className="mt-6 text-sm text-harken-gray-med">
             <span>Effective Date: {effectiveDate}</span>
             <span className="mx-2">|</span>
             <span>Inspection: {inspectionDate}</span>
@@ -806,7 +807,24 @@ function ExecutiveSummaryPage({ selectedElement, onSelectElement, subjectData, i
 }
 
 // Property Description Page with Photos
-function PropertyDescriptionPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, subjectData, improvementsInventory, fieldVisibility }: {
+function PropertyDescriptionPage({ 
+  selectedElement, 
+  onSelectElement, 
+  onContentChange, 
+  editedContent, 
+  getAppliedStyle, 
+  subjectData, 
+  improvementsInventory, 
+  fieldVisibility,
+  // Inline photo placement props
+  photoSlots,
+  photoPlacements,
+  availablePhotos,
+  onAssignPhoto,
+  onRemovePhoto,
+  onOpenPhotoEditor,
+  getPhotoEdits,
+}: {
   selectedElement: string | null;
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
@@ -815,9 +833,20 @@ function PropertyDescriptionPage({ selectedElement, onSelectElement, onContentCh
   subjectData?: import('../../../types').SubjectData;
   improvementsInventory?: import('../../../types').ImprovementsInventory;
   fieldVisibility?: Record<string, boolean>;
+  // Inline photo placement props
+  photoSlots?: PhotoSlotConfig[];
+  photoPlacements?: InlinePhotoPlacement[];
+  availablePhotos?: PhotoData[];
+  onAssignPhoto?: (slotId: string, photoId: string) => void;
+  onRemovePhoto?: (slotId: string) => void;
+  onOpenPhotoEditor?: (photo: PhotoData) => void;
+  getPhotoEdits?: (photoId: string) => PhotoEdits | undefined;
 }) {
   const fallbackData = sampleAppraisalData;
   const exteriorPhotos = fallbackData.photos.filter(p => p.category === 'exterior').slice(0, 3);
+  
+  // Check if we have inline photo configuration
+  const hasInlinePhotos = photoSlots && photoSlots.length > 0 && availablePhotos;
   const handleContentChange = onContentChange || (() => { });
   const getContent = (id: string, defaultVal: string) => editedContent?.[id] ?? defaultVal;
   const getStyle = (id: string) => getAppliedStyle?.(id) || {};
@@ -857,19 +886,19 @@ function PropertyDescriptionPage({ selectedElement, onSelectElement, onContentCh
   return (
     <ReportPageWrapper section={{ id: 'property', label: 'Property Description', enabled: true, expanded: false, fields: [], type: 'narrative' }} pageNumber={3} sidebarLabel="02">
       <div className="p-10">
-        <div className="absolute top-6 right-8 bg-emerald-700 text-white px-4 py-2 rounded text-xs font-semibold">
+        <div className="absolute top-6 right-8 bg-accent-teal-mint text-white px-4 py-2 rounded text-xs font-semibold">
           SECTION 2 • PROPERTY
         </div>
 
-        <h2 className="text-2xl font-light text-gray-800 mb-6 mt-8">Property Description</h2>
+        <h2 className="text-2xl font-light text-harken-dark mb-6 mt-8">Property Description</h2>
 
         {/* Area/Neighborhood Description */}
         {(areaDescription || neighborhoodCharacteristics) && (
           <div
             onClick={() => onSelectElement('property_area')}
-            className={`mb-6 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'property_area' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-gray-50'}`}
+            className={`mb-6 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'property_area' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-harken-gray-light'}`}
           >
-            <h3 className="text-lg font-semibold text-gray-800 mb-3">Area & Neighborhood</h3>
+            <h3 className="text-lg font-semibold text-harken-dark mb-3">Area & Neighborhood</h3>
             {areaDescription && (
               <EditableElement
                 elementId="property_area_description"
@@ -878,7 +907,7 @@ function PropertyDescriptionPage({ selectedElement, onSelectElement, onContentCh
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
                 as="p"
-                className="text-gray-700 text-sm leading-relaxed mb-3"
+                className="text-harken-gray text-sm leading-relaxed mb-3"
                 appliedStyle={getStyle('property_area_description')}
               />
             )}
@@ -890,15 +919,32 @@ function PropertyDescriptionPage({ selectedElement, onSelectElement, onContentCh
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
                 as="p"
-                className="text-gray-700 text-sm leading-relaxed"
+                className="text-harken-gray text-sm leading-relaxed"
                 appliedStyle={getStyle('property_neighborhood')}
               />
             )}
           </div>
         )}
 
-        {/* Photos Grid - conditionally rendered */}
-        {isVisible('prop_photos') && (
+        {/* Inline Photos - Header Position */}
+        {hasInlinePhotos && photoSlots && availablePhotos && (
+          <div className="mb-8">
+            <InlinePhotoGrid
+              slots={photoSlots}
+              placements={photoPlacements || []}
+              availablePhotos={availablePhotos}
+              onAssign={onAssignPhoto || (() => {})}
+              onRemove={onRemovePhoto || (() => {})}
+              onOpenEditor={onOpenPhotoEditor}
+              getPhotoEdits={getPhotoEdits}
+              position="header"
+              columns={2}
+            />
+          </div>
+        )}
+
+        {/* Legacy Photos Grid - conditionally rendered when no inline photo config */}
+        {!hasInlinePhotos && isVisible('prop_photos') && (
           <div className="grid grid-cols-3 gap-4 mb-8">
             {exteriorPhotos.map((photo) => (
               <PhotoSlot
@@ -916,29 +962,29 @@ function PropertyDescriptionPage({ selectedElement, onSelectElement, onContentCh
         {isVisible('prop_site') && (
           <div
             onClick={() => onSelectElement('property_site')}
-            className={`mb-6 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'property_site' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-gray-50'}`}
+            className={`mb-6 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'property_site' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-harken-gray-light'}`}
           >
-            <h3 className="text-lg font-semibold text-gray-800 mb-3">Site Description</h3>
+            <h3 className="text-lg font-semibold text-harken-dark mb-3">Site Description</h3>
             <div className="grid grid-cols-2 gap-4 text-sm mb-4">
               <div>
-                <span className="text-gray-500">Land Area:</span>
-                <span className="ml-2 text-gray-800">{siteArea} {siteAreaUnit}</span>
+                <span className="text-harken-gray-med">Land Area:</span>
+                <span className="ml-2 text-harken-dark">{siteArea} {siteAreaUnit}</span>
               </div>
               <div>
-                <span className="text-gray-500">Shape:</span>
-                <span className="ml-2 text-gray-800">{shape}</span>
+                <span className="text-harken-gray-med">Shape:</span>
+                <span className="ml-2 text-harken-dark">{shape}</span>
               </div>
               <div>
-                <span className="text-gray-500">Frontage:</span>
-                <span className="ml-2 text-gray-800">{frontage}</span>
+                <span className="text-harken-gray-med">Frontage:</span>
+                <span className="ml-2 text-harken-dark">{frontage}</span>
               </div>
               <div>
-                <span className="text-gray-500">Topography:</span>
-                <span className="ml-2 text-gray-800">{topography}</span>
+                <span className="text-harken-gray-med">Topography:</span>
+                <span className="ml-2 text-harken-dark">{topography}</span>
               </div>
               <div className="col-span-2">
-                <span className="text-gray-500">Utilities:</span>
-                <span className="ml-2 text-gray-800">{utilities}</span>
+                <span className="text-harken-gray-med">Utilities:</span>
+                <span className="ml-2 text-harken-dark">{utilities}</span>
               </div>
             </div>
             {/* Site Description Narrative */}
@@ -950,7 +996,7 @@ function PropertyDescriptionPage({ selectedElement, onSelectElement, onContentCh
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
                 as="p"
-                className="text-gray-700 text-sm leading-relaxed mt-4"
+                className="text-harken-gray text-sm leading-relaxed mt-4"
                 appliedStyle={getStyle('property_site_narrative')}
               />
             )}
@@ -961,17 +1007,35 @@ function PropertyDescriptionPage({ selectedElement, onSelectElement, onContentCh
         {isVisible('prop_improvements') && (
           <div
             onClick={() => onSelectElement('property_improvements')}
-            className={`p-4 -m-4 rounded cursor-pointer ${selectedElement === 'property_improvements' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-gray-50'}`}
+            className={`p-4 -m-4 rounded cursor-pointer ${selectedElement === 'property_improvements' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-harken-gray-light'}`}
           >
-            <h3 className="text-lg font-semibold text-gray-800 mb-3">Improvements</h3>
+            <h3 className="text-lg font-semibold text-harken-dark mb-3">Improvements</h3>
             <div className="grid grid-cols-2 gap-4 text-sm">
-              <div><span className="text-gray-500">Year Built:</span><span className="ml-2 text-gray-800">{yearBuilt}</span></div>
-              <div><span className="text-gray-500">Building Type:</span><span className="ml-2 text-gray-800">{buildingType}</span></div>
-              <div><span className="text-gray-500">Gross Building Area:</span><span className="ml-2 text-gray-800">{typeof grossBuildingArea === 'number' ? grossBuildingArea.toLocaleString() : grossBuildingArea} SF</span></div>
-              <div><span className="text-gray-500">Construction:</span><span className="ml-2 text-gray-800">{construction}</span></div>
-              <div><span className="text-gray-500">Condition:</span><span className="ml-2 text-gray-800">{condition}</span></div>
-              <div><span className="text-gray-500">Quality:</span><span className="ml-2 text-gray-800">{quality}</span></div>
+              <div><span className="text-harken-gray-med">Year Built:</span><span className="ml-2 text-harken-dark">{yearBuilt}</span></div>
+              <div><span className="text-harken-gray-med">Building Type:</span><span className="ml-2 text-harken-dark">{buildingType}</span></div>
+              <div><span className="text-harken-gray-med">Gross Building Area:</span><span className="ml-2 text-harken-dark">{typeof grossBuildingArea === 'number' ? grossBuildingArea.toLocaleString() : grossBuildingArea} SF</span></div>
+              <div><span className="text-harken-gray-med">Construction:</span><span className="ml-2 text-harken-dark">{construction}</span></div>
+              <div><span className="text-harken-gray-med">Condition:</span><span className="ml-2 text-harken-dark">{condition}</span></div>
+              <div><span className="text-harken-gray-med">Quality:</span><span className="ml-2 text-harken-dark">{quality}</span></div>
             </div>
+          </div>
+        )}
+
+        {/* Inline Photos - Interior/Detail Position */}
+        {hasInlinePhotos && photoSlots && availablePhotos && (
+          <div className="mt-8">
+            <h3 className="text-lg font-semibold text-harken-dark mb-4">Interior & Detail Photos</h3>
+            <InlinePhotoGrid
+              slots={photoSlots}
+              placements={photoPlacements || []}
+              availablePhotos={availablePhotos}
+              onAssign={onAssignPhoto || (() => {})}
+              onRemove={onRemovePhoto || (() => {})}
+              onOpenEditor={onOpenPhotoEditor}
+              getPhotoEdits={getPhotoEdits}
+              position="inline"
+              columns={2}
+            />
           </div>
         )}
       </div>
@@ -1014,17 +1078,17 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
   return (
     <ReportPageWrapper section={{ id: 'hbu', label: 'Highest & Best Use', enabled: true, expanded: false, fields: [], type: 'narrative' }} pageNumber={4} sidebarLabel="03">
       <div className="p-10">
-        <div className="absolute top-6 right-8 bg-emerald-700 text-white px-4 py-2 rounded text-xs font-semibold">
+        <div className="absolute top-6 right-8 bg-accent-teal-mint text-white px-4 py-2 rounded text-xs font-semibold">
           SECTION 3 • HBU
         </div>
 
-        <h2 className="text-2xl font-light text-gray-800 mb-6 mt-8">Highest and Best Use Analysis</h2>
+        <h2 className="text-2xl font-light text-harken-dark mb-6 mt-8">Highest and Best Use Analysis</h2>
 
         <div className="mb-8">
-          <h3 className="text-lg font-semibold text-emerald-700 mb-4">As Vacant</h3>
-          <div className="space-y-4 text-sm text-gray-700">
+          <h3 className="text-lg font-semibold text-accent-teal-mint mb-4">As Vacant</h3>
+          <div className="space-y-4 text-sm text-harken-gray">
             <div>
-              <h4 className="font-semibold text-gray-800 mb-1">Legally Permissible</h4>
+              <h4 className="font-semibold text-harken-dark mb-1">Legally Permissible</h4>
               <EditableElement
                 elementId="hbu_legally_permissible"
                 content={getContent('hbu_legally_permissible', asVacant.legallyPermissible)}
@@ -1032,12 +1096,12 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
                 as="p"
-                className="text-gray-700"
+                className="text-harken-gray"
                 appliedStyle={getStyle('hbu_legally_permissible')}
               />
             </div>
             <div>
-              <h4 className="font-semibold text-gray-800 mb-1">Physically Possible</h4>
+              <h4 className="font-semibold text-harken-dark mb-1">Physically Possible</h4>
               <EditableElement
                 elementId="hbu_physically_possible"
                 content={getContent('hbu_physically_possible', asVacant.physicallyPossible)}
@@ -1045,12 +1109,12 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
                 as="p"
-                className="text-gray-700"
+                className="text-harken-gray"
                 appliedStyle={getStyle('hbu_physically_possible')}
               />
             </div>
             <div>
-              <h4 className="font-semibold text-gray-800 mb-1">Financially Feasible</h4>
+              <h4 className="font-semibold text-harken-dark mb-1">Financially Feasible</h4>
               <EditableElement
                 elementId="hbu_financially_feasible"
                 content={getContent('hbu_financially_feasible', asVacant.financiallyFeasible)}
@@ -1058,12 +1122,12 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
                 as="p"
-                className="text-gray-700"
+                className="text-harken-gray"
                 appliedStyle={getStyle('hbu_financially_feasible')}
               />
             </div>
             <div>
-              <h4 className="font-semibold text-gray-800 mb-1">Maximally Productive</h4>
+              <h4 className="font-semibold text-harken-dark mb-1">Maximally Productive</h4>
               <EditableElement
                 elementId="hbu_maximally_productive"
                 content={getContent('hbu_maximally_productive', asVacant.maximallyProductive)}
@@ -1071,12 +1135,12 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
                 as="p"
-                className="text-gray-700"
+                className="text-harken-gray"
                 appliedStyle={getStyle('hbu_maximally_productive')}
               />
             </div>
-            <div className="bg-emerald-50 p-4 rounded-lg">
-              <h4 className="font-semibold text-emerald-800">Conclusion (As Vacant)</h4>
+            <div className="bg-accent-teal-mint-light p-4 rounded-lg">
+              <h4 className="font-semibold text-accent-teal-mint">Conclusion (As Vacant)</h4>
               <EditableElement
                 elementId="hbu_vacant_conclusion"
                 content={getContent('hbu_vacant_conclusion', asVacant.conclusion)}
@@ -1084,7 +1148,7 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
                 as="p"
-                className="text-emerald-700"
+                className="text-accent-teal-mint"
                 appliedStyle={getStyle('hbu_vacant_conclusion')}
               />
             </div>
@@ -1092,8 +1156,8 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
         </div>
 
         <div>
-          <h3 className="text-lg font-semibold text-emerald-700 mb-4">As Improved</h3>
-          <div className="space-y-4 text-sm text-gray-700">
+          <h3 className="text-lg font-semibold text-accent-teal-mint mb-4">As Improved</h3>
+          <div className="space-y-4 text-sm text-harken-gray">
             <EditableElement
               elementId="hbu_improved_analysis"
               content={getContent('hbu_improved_analysis', asImproved.analysis)}
@@ -1101,11 +1165,11 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
               onSelectElement={onSelectElement}
               onContentChange={handleContentChange}
               as="p"
-              className="text-gray-700"
+              className="text-harken-gray"
               appliedStyle={getStyle('hbu_improved_analysis')}
             />
-            <div className="bg-emerald-50 p-4 rounded-lg">
-              <h4 className="font-semibold text-emerald-800">Conclusion (As Improved)</h4>
+            <div className="bg-accent-teal-mint-light p-4 rounded-lg">
+              <h4 className="font-semibold text-accent-teal-mint">Conclusion (As Improved)</h4>
               <EditableElement
                 elementId="hbu_improved_conclusion"
                 content={getContent('hbu_improved_conclusion', asImproved.conclusion)}
@@ -1113,7 +1177,7 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
                 as="p"
-                className="text-emerald-700"
+                className="text-accent-teal-mint"
                 appliedStyle={getStyle('hbu_improved_conclusion')}
               />
             </div>
@@ -1156,15 +1220,15 @@ function MarketAnalysisPage({ selectedElement, onSelectElement, onContentChange,
   return (
     <ReportPageWrapper section={{ id: 'market-analysis', label: 'Market Analysis', enabled: true, expanded: false, fields: [], type: 'narrative' }} pageNumber={5} sidebarLabel="02C">
       <div className="p-10">
-        <div className="absolute top-6 right-8 bg-emerald-700 text-white px-4 py-2 rounded text-xs font-semibold">
+        <div className="absolute top-6 right-8 bg-accent-teal-mint text-white px-4 py-2 rounded text-xs font-semibold">
           SECTION 2C • MARKET
         </div>
 
-        <h2 className="text-2xl font-light text-gray-800 mb-6 mt-8">Market Analysis</h2>
+        <h2 className="text-2xl font-light text-harken-dark mb-6 mt-8">Market Analysis</h2>
 
-        <div className="space-y-6 text-sm text-gray-700">
+        <div className="space-y-6 text-sm text-harken-gray">
           <div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-3">Market Cycle Stage</h3>
+            <h3 className="text-lg font-semibold text-harken-dark mb-3">Market Cycle Stage</h3>
             <EditableElement
               elementId="market_cycle"
               content={getContent('market_cycle', defaultMarketCycle)}
@@ -1172,13 +1236,13 @@ function MarketAnalysisPage({ selectedElement, onSelectElement, onContentChange,
               onSelectElement={onSelectElement}
               onContentChange={handleContentChange}
               as="p"
-              className="text-gray-700"
+              className="text-harken-gray"
               appliedStyle={getStyle('market_cycle')}
             />
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-3">Supply & Demand</h3>
+            <h3 className="text-lg font-semibold text-harken-dark mb-3">Supply & Demand</h3>
             <EditableElement
               elementId="market_supply_demand"
               content={getContent('market_supply_demand', defaultSupplyDemand)}
@@ -1186,13 +1250,13 @@ function MarketAnalysisPage({ selectedElement, onSelectElement, onContentChange,
               onSelectElement={onSelectElement}
               onContentChange={handleContentChange}
               as="p"
-              className="text-gray-700"
+              className="text-harken-gray"
               appliedStyle={getStyle('market_supply_demand')}
             />
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold text-gray-800 mb-3">Market Trends</h3>
+            <h3 className="text-lg font-semibold text-harken-dark mb-3">Market Trends</h3>
             <EditableElement
               elementId="market_trends"
               content={getContent('market_trends', defaultMarketTrends)}
@@ -1200,7 +1264,7 @@ function MarketAnalysisPage({ selectedElement, onSelectElement, onContentChange,
               onSelectElement={onSelectElement}
               onContentChange={handleContentChange}
               as="p"
-              className="text-gray-700"
+              className="text-harken-gray"
               appliedStyle={getStyle('market_trends')}
             />
           </div>
@@ -1208,7 +1272,7 @@ function MarketAnalysisPage({ selectedElement, onSelectElement, onContentChange,
           {/* Market Narrative from Wizard */}
           {marketNarrative && (
             <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-3">Market Outlook & Analysis</h3>
+              <h3 className="text-lg font-semibold text-harken-dark mb-3">Market Outlook & Analysis</h3>
               <EditableElement
                 elementId="market_narrative"
                 content={getContent('market_narrative', marketNarrative)}
@@ -1216,33 +1280,33 @@ function MarketAnalysisPage({ selectedElement, onSelectElement, onContentChange,
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
                 as="p"
-                className="text-gray-700"
+                className="text-harken-gray"
                 appliedStyle={getStyle('market_narrative')}
               />
             </div>
           )}
 
           {/* Market Data Summary */}
-          <div className="mt-8 p-6 bg-gradient-to-r from-amber-50 to-amber-100 rounded-lg border border-amber-200">
+          <div className="mt-8 p-6 bg-gradient-to-r from-accent-amber-gold-light to-accent-amber-gold-light rounded-lg border border-accent-amber-gold">
             <h3 className="text-lg font-semibold text-amber-900 mb-4">Market Data Summary</h3>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <div className="text-amber-600 font-medium mb-1">Vacancy Rate</div>
+                <div className="text-accent-amber-gold font-medium mb-1">Vacancy Rate</div>
                 <div className="text-2xl font-bold text-amber-800">{vacancyRate.toFixed(1)}%</div>
               </div>
               <div>
-                <div className="text-amber-600 font-medium mb-1">Market Trend</div>
+                <div className="text-accent-amber-gold font-medium mb-1">Market Trend</div>
                 <div className="text-2xl font-bold text-amber-800">{marketTrendLabel}</div>
               </div>
               {avgRent > 0 && (
                 <div>
-                  <div className="text-amber-600 font-medium mb-1">Avg. Rent</div>
+                  <div className="text-accent-amber-gold font-medium mb-1">Avg. Rent</div>
                   <div className="text-2xl font-bold text-amber-800">${avgRent.toFixed(2)}/SF</div>
                 </div>
               )}
               {rentGrowth !== 0 && (
                 <div>
-                  <div className="text-amber-600 font-medium mb-1">Rent Growth</div>
+                  <div className="text-accent-amber-gold font-medium mb-1">Rent Growth</div>
                   <div className="text-2xl font-bold text-amber-800">{rentGrowth > 0 ? '+' : ''}{rentGrowth.toFixed(1)}%</div>
                 </div>
               )}
@@ -1275,13 +1339,13 @@ function SalesComparisonPage({ selectedElement, onSelectElement, onContentChange
   return (
     <ReportPageWrapper section={{ id: 'sales-comparison', label: 'Sales Comparison', enabled: true, expanded: false, fields: [], type: 'analysis-grid' }} pageNumber={5} sidebarLabel="04">
       <div className="p-8">
-        <div className="absolute top-6 right-8 bg-emerald-700 text-white px-4 py-2 rounded text-xs font-semibold">
+        <div className="absolute top-6 right-8 bg-accent-teal-mint text-white px-4 py-2 rounded text-xs font-semibold">
           SECTION 4 • SALES
         </div>
 
-        <h2 className="text-xl font-light text-gray-800 mb-4 mt-8">Sales Comparison Approach</h2>
+        <h2 className="text-xl font-light text-harken-dark mb-4 mt-8">Sales Comparison Approach</h2>
 
-        <p className="text-sm text-gray-600 mb-6">{data.salesComparison.methodology}</p>
+        <p className="text-sm text-harken-gray mb-6">{data.salesComparison.methodology}</p>
 
         {/* Comparison Grid */}
         <div
@@ -1300,8 +1364,8 @@ function SalesComparisonPage({ selectedElement, onSelectElement, onContentChange
             </thead>
             <tbody>
               {/* Photo Row */}
-              <tr className="border-b border-gray-200">
-                <td className="px-2 py-2 font-medium text-gray-700">Photo</td>
+              <tr className="border-b border-light-border">
+                <td className="px-2 py-2 font-medium text-harken-gray">Photo</td>
                 <td className="px-2 py-2 text-center bg-slate-50">
                   <div className="w-20 h-14 mx-auto rounded overflow-hidden">
                     <img src={data.photos[0]?.url} alt="Subject" className="w-full h-full object-cover" />
@@ -1317,43 +1381,43 @@ function SalesComparisonPage({ selectedElement, onSelectElement, onContentChange
               </tr>
 
               {/* Data Rows */}
-              <tr className="border-b border-gray-100">
-                <td className="px-2 py-1.5 font-medium text-gray-700">Address</td>
+              <tr className="border-b border-harken-gray-light">
+                <td className="px-2 py-1.5 font-medium text-harken-gray">Address</td>
                 <td className="px-2 py-1.5 text-center bg-slate-50 text-xs">{data.property.address}</td>
                 {data.comparables.map(comp => (
                   <td key={comp.id} className="px-2 py-1.5 text-center text-xs">{comp.address}</td>
                 ))}
               </tr>
-              <tr className="border-b border-gray-100">
-                <td className="px-2 py-1.5 font-medium text-gray-700">Sale Date</td>
+              <tr className="border-b border-harken-gray-light">
+                <td className="px-2 py-1.5 font-medium text-harken-gray">Sale Date</td>
                 <td className="px-2 py-1.5 text-center bg-slate-50">-</td>
                 {data.comparables.map(comp => (
                   <td key={comp.id} className="px-2 py-1.5 text-center">{comp.saleDate}</td>
                 ))}
               </tr>
-              <tr className="border-b border-gray-100">
-                <td className="px-2 py-1.5 font-medium text-gray-700">Sale Price</td>
+              <tr className="border-b border-harken-gray-light">
+                <td className="px-2 py-1.5 font-medium text-harken-gray">Sale Price</td>
                 <td className="px-2 py-1.5 text-center bg-slate-50">-</td>
                 {data.comparables.map(comp => (
                   <td key={comp.id} className="px-2 py-1.5 text-center">${comp.salePrice.toLocaleString()}</td>
                 ))}
               </tr>
-              <tr className="border-b border-gray-100">
-                <td className="px-2 py-1.5 font-medium text-gray-700">Building Size</td>
+              <tr className="border-b border-harken-gray-light">
+                <td className="px-2 py-1.5 font-medium text-harken-gray">Building Size</td>
                 <td className="px-2 py-1.5 text-center bg-slate-50">{data.improvements.grossBuildingArea.toLocaleString()} SF</td>
                 {data.comparables.map(comp => (
                   <td key={comp.id} className="px-2 py-1.5 text-center">{comp.buildingSize.toLocaleString()} SF</td>
                 ))}
               </tr>
-              <tr className="border-b border-gray-100">
-                <td className="px-2 py-1.5 font-medium text-gray-700">Price/SF</td>
+              <tr className="border-b border-harken-gray-light">
+                <td className="px-2 py-1.5 font-medium text-harken-gray">Price/SF</td>
                 <td className="px-2 py-1.5 text-center bg-slate-50">-</td>
                 {data.comparables.map(comp => (
                   <td key={comp.id} className="px-2 py-1.5 text-center">${comp.pricePerSF.toFixed(2)}</td>
                 ))}
               </tr>
-              <tr className="border-b border-gray-100">
-                <td className="px-2 py-1.5 font-medium text-gray-700">Year Built</td>
+              <tr className="border-b border-harken-gray-light">
+                <td className="px-2 py-1.5 font-medium text-harken-gray">Year Built</td>
                 <td className="px-2 py-1.5 text-center bg-slate-50">{data.improvements.yearBuilt}</td>
                 {data.comparables.map(comp => (
                   <td key={comp.id} className="px-2 py-1.5 text-center">{comp.yearBuilt}</td>
@@ -1365,15 +1429,15 @@ function SalesComparisonPage({ selectedElement, onSelectElement, onContentChange
                 <td colSpan={2 + data.comparables.length} className="px-2 py-1 font-semibold text-xs text-slate-600 uppercase">Adjustments</td>
               </tr>
               {['location', 'size', 'quality', 'age', 'condition'].map(adj => (
-                <tr key={adj} className="border-b border-gray-100">
-                  <td className="px-2 py-1.5 font-medium text-gray-700 capitalize">{adj}</td>
+                <tr key={adj} className="border-b border-harken-gray-light">
+                  <td className="px-2 py-1.5 font-medium text-harken-gray capitalize">{adj}</td>
                   <td className="px-2 py-1.5 text-center bg-slate-50">-</td>
                   {data.comparables.map(comp => {
                     const val = comp.adjustments[adj as keyof typeof comp.adjustments] || 0;
                     return (
                       <td key={comp.id} className="px-2 py-1.5 text-center">
                         {val === 0 ? '-' : (
-                          <span className={val > 0 ? 'text-green-600' : 'text-red-600'}>
+                          <span className={val > 0 ? 'text-green-600' : 'text-harken-error'}>
                             {val > 0 ? '+' : ''}{val}%
                           </span>
                         )}
@@ -1383,13 +1447,13 @@ function SalesComparisonPage({ selectedElement, onSelectElement, onContentChange
                 </tr>
               ))}
               <tr className="bg-slate-200 font-semibold">
-                <td className="px-2 py-1.5 text-gray-800">Net Adjustment</td>
+                <td className="px-2 py-1.5 text-harken-dark">Net Adjustment</td>
                 <td className="px-2 py-1.5 text-center bg-slate-100">-</td>
                 {data.comparables.map(comp => {
                   const total = comp.adjustments.total;
                   return (
                     <td key={comp.id} className="px-2 py-1.5 text-center">
-                      <span className={total > 0 ? 'text-green-600' : total < 0 ? 'text-red-600' : ''}>
+                      <span className={total > 0 ? 'text-green-600' : total < 0 ? 'text-harken-error' : ''}>
                         {total > 0 ? '+' : ''}{total}%
                       </span>
                     </td>
@@ -1410,7 +1474,7 @@ function SalesComparisonPage({ selectedElement, onSelectElement, onContentChange
         {/* Sales Comparison Reconciliation Narrative */}
         {reconciliationNarrative && (
           <div className="mt-6">
-            <h3 className="text-lg font-semibold text-gray-800 mb-3">Sales Comparison Analysis</h3>
+            <h3 className="text-lg font-semibold text-harken-dark mb-3">Sales Comparison Analysis</h3>
             <EditableElement
               elementId="sales_reconciliation_narrative"
               content={getContent('sales_reconciliation_narrative', reconciliationNarrative)}
@@ -1418,22 +1482,22 @@ function SalesComparisonPage({ selectedElement, onSelectElement, onContentChange
               onSelectElement={onSelectElement}
               onContentChange={handleContentChange}
               as="p"
-              className="text-gray-700 text-sm leading-relaxed"
+              className="text-harken-gray text-sm leading-relaxed"
               appliedStyle={getStyle('sales_reconciliation_narrative')}
             />
           </div>
         )}
 
         {/* Value Conclusion */}
-        <div className="mt-6 p-4 bg-gradient-to-r from-emerald-50 to-emerald-100 rounded-lg">
+        <div className="mt-6 p-4 bg-gradient-to-r from-accent-teal-mint-light to-accent-teal-mint-light rounded-lg">
           <div className="flex items-center justify-between">
             <div>
-              <h4 className="font-semibold text-emerald-800 mb-1">Sales Comparison Value Indication</h4>
-              <p className="text-sm text-emerald-700">Based on adjusted price range of ${Math.min(...data.comparables.map(c => c.adjustedPricePerSF)).toFixed(2)} - ${Math.max(...data.comparables.map(c => c.adjustedPricePerSF)).toFixed(2)}/SF</p>
+              <h4 className="font-semibold text-accent-teal-mint mb-1">Sales Comparison Value Indication</h4>
+              <p className="text-sm text-accent-teal-mint">Based on adjusted price range of ${Math.min(...data.comparables.map(c => c.adjustedPricePerSF)).toFixed(2)} - ${Math.max(...data.comparables.map(c => c.adjustedPricePerSF)).toFixed(2)}/SF</p>
             </div>
             <div className="text-right">
-              <div className="text-3xl font-bold text-emerald-700">${(concludedValue ?? data.valuation.salesComparisonValue).toLocaleString()}</div>
-              <div className="text-sm text-emerald-600">${((concludedValue ?? data.valuation.salesComparisonValue) / data.improvements.grossBuildingArea).toFixed(2)}/SF</div>
+              <div className="text-3xl font-bold text-accent-teal-mint">${(concludedValue ?? data.valuation.salesComparisonValue).toLocaleString()}</div>
+              <div className="text-sm text-accent-teal-mint">${((concludedValue ?? data.valuation.salesComparisonValue) / data.improvements.grossBuildingArea).toFixed(2)}/SF</div>
             </div>
           </div>
         </div>
@@ -1463,50 +1527,50 @@ function IncomeApproachPage({ selectedElement, onSelectElement, onContentChange,
   return (
     <ReportPageWrapper section={{ id: 'income', label: 'Income Approach', enabled: true, expanded: false, fields: [], type: 'analysis-grid' }} pageNumber={6} sidebarLabel="05">
       <div className="p-10">
-        <div className="absolute top-6 right-8 bg-emerald-700 text-white px-4 py-2 rounded text-xs font-semibold">
+        <div className="absolute top-6 right-8 bg-accent-teal-mint text-white px-4 py-2 rounded text-xs font-semibold">
           SECTION 5 • INCOME
         </div>
 
-        <h2 className="text-2xl font-light text-gray-800 mb-4 mt-8">Income Approach</h2>
+        <h2 className="text-2xl font-light text-harken-dark mb-4 mt-8">Income Approach</h2>
 
-        <p className="text-sm text-gray-600 mb-6">{data.incomeApproach.methodology}</p>
+        <p className="text-sm text-harken-gray mb-6">{data.incomeApproach.methodology}</p>
 
         <div
           onClick={() => onSelectElement('income_analysis')}
-          className={`p-4 -m-4 rounded cursor-pointer ${selectedElement === 'income_analysis' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-gray-50'}`}
+          className={`p-4 -m-4 rounded cursor-pointer ${selectedElement === 'income_analysis' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-harken-gray-light'}`}
         >
           <table className="w-full text-sm">
             <tbody>
-              <tr className="border-b border-gray-200">
-                <td className="py-2 text-gray-600">Building Area</td>
+              <tr className="border-b border-light-border">
+                <td className="py-2 text-harken-gray">Building Area</td>
                 <td className="py-2 text-right font-medium">{data.improvements.grossBuildingArea.toLocaleString()} SF</td>
               </tr>
-              <tr className="border-b border-gray-200">
-                <td className="py-2 text-gray-600">Market Rent (per SF)</td>
+              <tr className="border-b border-light-border">
+                <td className="py-2 text-harken-gray">Market Rent (per SF)</td>
                 <td className="py-2 text-right font-medium">${data.incomeApproach.marketRentPerSF.toFixed(2)}</td>
               </tr>
-              <tr className="border-b border-gray-200">
-                <td className="py-2 text-gray-600 font-semibold">Potential Gross Income</td>
+              <tr className="border-b border-light-border">
+                <td className="py-2 text-harken-gray font-semibold">Potential Gross Income</td>
                 <td className="py-2 text-right font-semibold">${data.incomeApproach.potentialGrossIncome.toLocaleString()}</td>
               </tr>
-              <tr className="border-b border-gray-200">
-                <td className="py-2 text-gray-600">Less: Vacancy & Collection Loss ({data.incomeApproach.vacancyRate}%)</td>
-                <td className="py-2 text-right font-medium text-red-600">-${(data.incomeApproach.potentialGrossIncome * data.incomeApproach.vacancyRate / 100).toLocaleString()}</td>
+              <tr className="border-b border-light-border">
+                <td className="py-2 text-harken-gray">Less: Vacancy & Collection Loss ({data.incomeApproach.vacancyRate}%)</td>
+                <td className="py-2 text-right font-medium text-harken-error">-${(data.incomeApproach.potentialGrossIncome * data.incomeApproach.vacancyRate / 100).toLocaleString()}</td>
               </tr>
-              <tr className="border-b border-gray-200 bg-gray-50">
-                <td className="py-2 text-gray-700 font-semibold">Effective Gross Income</td>
+              <tr className="border-b border-light-border bg-harken-gray-light">
+                <td className="py-2 text-harken-gray font-semibold">Effective Gross Income</td>
                 <td className="py-2 text-right font-semibold">${data.incomeApproach.effectiveGrossIncome.toLocaleString()}</td>
               </tr>
-              <tr className="border-b border-gray-200">
-                <td className="py-2 text-gray-600">Less: Operating Expenses ({data.incomeApproach.expenseRatio}%)</td>
-                <td className="py-2 text-right font-medium text-red-600">-${data.incomeApproach.operatingExpenses.toLocaleString()}</td>
+              <tr className="border-b border-light-border">
+                <td className="py-2 text-harken-gray">Less: Operating Expenses ({data.incomeApproach.expenseRatio}%)</td>
+                <td className="py-2 text-right font-medium text-harken-error">-${data.incomeApproach.operatingExpenses.toLocaleString()}</td>
               </tr>
-              <tr className="bg-emerald-50 border-b-2 border-emerald-300">
-                <td className="py-3 text-emerald-800 font-bold">Net Operating Income</td>
-                <td className="py-3 text-right font-bold text-emerald-700 text-lg">${data.incomeApproach.netOperatingIncome.toLocaleString()}</td>
+              <tr className="bg-accent-teal-mint-light border-b-2 border-accent-teal-mint">
+                <td className="py-3 text-accent-teal-mint font-bold">Net Operating Income</td>
+                <td className="py-3 text-right font-bold text-accent-teal-mint text-lg">${data.incomeApproach.netOperatingIncome.toLocaleString()}</td>
               </tr>
-              <tr className="border-b border-gray-200">
-                <td className="py-2 text-gray-600">Capitalization Rate</td>
+              <tr className="border-b border-light-border">
+                <td className="py-2 text-harken-gray">Capitalization Rate</td>
                 <td className="py-2 text-right font-medium">{data.incomeApproach.capRate.toFixed(1)}%</td>
               </tr>
             </tbody>
@@ -1515,7 +1579,7 @@ function IncomeApproachPage({ selectedElement, onSelectElement, onContentChange,
           {/* Rent Comparable Analysis Narrative */}
           {rentCompNotes && (
             <div className="mt-6">
-              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Rent Comparable Analysis</h3>
+              <h3 className="text-sm font-semibold text-harken-gray-med uppercase tracking-wider mb-2">Rent Comparable Analysis</h3>
               <EditableElement
                 elementId="income_rent_narrative"
                 content={getContent('income_rent_narrative', rentCompNotes)}
@@ -1523,7 +1587,7 @@ function IncomeApproachPage({ selectedElement, onSelectElement, onContentChange,
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
                 as="p"
-                className="text-gray-700 text-sm leading-relaxed"
+                className="text-harken-gray text-sm leading-relaxed"
                 appliedStyle={getStyle('income_rent_narrative')}
               />
             </div>
@@ -1532,7 +1596,7 @@ function IncomeApproachPage({ selectedElement, onSelectElement, onContentChange,
           {/* Expense Comparable Analysis Narrative */}
           {expenseCompNotes && (
             <div className="mt-4">
-              <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-2">Expense Analysis</h3>
+              <h3 className="text-sm font-semibold text-harken-gray-med uppercase tracking-wider mb-2">Expense Analysis</h3>
               <EditableElement
                 elementId="income_expense_narrative"
                 content={getContent('income_expense_narrative', expenseCompNotes)}
@@ -1540,15 +1604,15 @@ function IncomeApproachPage({ selectedElement, onSelectElement, onContentChange,
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
                 as="p"
-                className="text-gray-700 text-sm leading-relaxed"
+                className="text-harken-gray text-sm leading-relaxed"
                 appliedStyle={getStyle('income_expense_narrative')}
               />
             </div>
           )}
 
-          <div className="mt-6 p-4 bg-gradient-to-r from-emerald-50 to-emerald-100 rounded-lg text-center">
-            <div className="text-sm text-emerald-600 mb-1">Income Approach Value Indication</div>
-            <div className="text-3xl font-bold text-emerald-700">${data.incomeApproach.valueConclusion.toLocaleString()}</div>
+          <div className="mt-6 p-4 bg-gradient-to-r from-accent-teal-mint-light to-accent-teal-mint-light rounded-lg text-center">
+            <div className="text-sm text-accent-teal-mint mb-1">Income Approach Value Indication</div>
+            <div className="text-3xl font-bold text-accent-teal-mint">${data.incomeApproach.valueConclusion.toLocaleString()}</div>
           </div>
         </div>
       </div>
@@ -1581,15 +1645,15 @@ The land value of $${data.costApproach.landValue.toLocaleString()} was derived f
   return (
     <ReportPageWrapper section={{ id: 'cost', label: 'Cost Approach', enabled: true, expanded: false, fields: [], type: 'analysis-grid' }} pageNumber={7} sidebarLabel="06">
       <div className="p-10">
-        <div className="absolute top-6 right-8 bg-emerald-700 text-white px-4 py-2 rounded text-xs font-semibold">
+        <div className="absolute top-6 right-8 bg-accent-teal-mint text-white px-4 py-2 rounded text-xs font-semibold">
           SECTION 6 • COST
         </div>
 
-        <h2 className="text-2xl font-light text-gray-800 mb-6 mt-8">Cost Approach</h2>
+        <h2 className="text-2xl font-light text-harken-dark mb-6 mt-8">Cost Approach</h2>
 
         {/* Methodology Narrative */}
         <div className="mb-6">
-          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Methodology</h3>
+          <h3 className="text-sm font-semibold text-harken-gray-med uppercase tracking-wider mb-3">Methodology</h3>
           <EditableElement
             elementId="cost_methodology"
             content={getContent('cost_methodology', defaultCostMethodology)}
@@ -1597,54 +1661,54 @@ The land value of $${data.costApproach.landValue.toLocaleString()} was derived f
             onSelectElement={onSelectElement}
             onContentChange={handleContentChange}
             as="div"
-            className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap"
+            className="text-sm text-harken-gray leading-relaxed whitespace-pre-wrap"
             appliedStyle={getStyle('cost_methodology')}
           />
         </div>
 
         {/* Cost Breakdown Table */}
         <div className="mb-6">
-          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-3">Cost Summary</h3>
+          <h3 className="text-sm font-semibold text-harken-gray-med uppercase tracking-wider mb-3">Cost Summary</h3>
           <div
             onClick={() => onSelectElement('cost_table')}
-            className={`p-4 bg-white rounded-lg border border-gray-200 cursor-pointer ${selectedElement === 'cost_table' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-gray-50'}`}
+            className={`p-4 bg-surface-1 rounded-lg border border-light-border cursor-pointer ${selectedElement === 'cost_table' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-harken-gray-light'}`}
           >
             <table className="w-full text-sm">
               <tbody>
-                <tr className="border-b border-gray-200 bg-gray-50">
-                  <td className="py-2 px-3 text-gray-700 font-semibold">Land Value</td>
+                <tr className="border-b border-light-border bg-harken-gray-light">
+                  <td className="py-2 px-3 text-harken-gray font-semibold">Land Value</td>
                   <td className="py-2 px-3 text-right font-semibold">${data.costApproach.landValue.toLocaleString()}</td>
                 </tr>
-                <tr className="border-b border-gray-200">
-                  <td className="py-2 px-3 text-gray-600">Building Area</td>
+                <tr className="border-b border-light-border">
+                  <td className="py-2 px-3 text-harken-gray">Building Area</td>
                   <td className="py-2 px-3 text-right font-medium">{data.improvements.grossBuildingArea.toLocaleString()} SF</td>
                 </tr>
-                <tr className="border-b border-gray-200">
-                  <td className="py-2 px-3 text-gray-600">Replacement Cost New (per SF)</td>
+                <tr className="border-b border-light-border">
+                  <td className="py-2 px-3 text-harken-gray">Replacement Cost New (per SF)</td>
                   <td className="py-2 px-3 text-right font-medium">${data.costApproach.costPerSF.toFixed(2)}</td>
                 </tr>
-                <tr className="border-b border-gray-200 bg-gray-50">
-                  <td className="py-2 px-3 text-gray-700 font-semibold">Replacement Cost New</td>
+                <tr className="border-b border-light-border bg-harken-gray-light">
+                  <td className="py-2 px-3 text-harken-gray font-semibold">Replacement Cost New</td>
                   <td className="py-2 px-3 text-right font-semibold">${data.costApproach.replacementCostNew.toLocaleString()}</td>
                 </tr>
-                <tr className="border-b border-gray-200">
-                  <td className="py-2 px-3 text-gray-600">Less: Physical Depreciation</td>
-                  <td className="py-2 px-3 text-right font-medium text-red-600">-${data.costApproach.physicalDepreciation.toLocaleString()}</td>
+                <tr className="border-b border-light-border">
+                  <td className="py-2 px-3 text-harken-gray">Less: Physical Depreciation</td>
+                  <td className="py-2 px-3 text-right font-medium text-harken-error">-${data.costApproach.physicalDepreciation.toLocaleString()}</td>
                 </tr>
-                <tr className="border-b border-gray-200">
-                  <td className="py-2 px-3 text-gray-600">Less: Functional Obsolescence</td>
-                  <td className="py-2 px-3 text-right font-medium text-red-600">-${data.costApproach.functionalObsolescence.toLocaleString()}</td>
+                <tr className="border-b border-light-border">
+                  <td className="py-2 px-3 text-harken-gray">Less: Functional Obsolescence</td>
+                  <td className="py-2 px-3 text-right font-medium text-harken-error">-${data.costApproach.functionalObsolescence.toLocaleString()}</td>
                 </tr>
-                <tr className="border-b border-gray-200">
-                  <td className="py-2 px-3 text-gray-600">Less: External Obsolescence</td>
-                  <td className="py-2 px-3 text-right font-medium text-red-600">-${data.costApproach.externalObsolescence.toLocaleString()}</td>
+                <tr className="border-b border-light-border">
+                  <td className="py-2 px-3 text-harken-gray">Less: External Obsolescence</td>
+                  <td className="py-2 px-3 text-right font-medium text-harken-error">-${data.costApproach.externalObsolescence.toLocaleString()}</td>
                 </tr>
-                <tr className="border-b border-gray-200 bg-gray-50">
-                  <td className="py-2 px-3 text-gray-700 font-semibold">Depreciated Cost of Improvements</td>
+                <tr className="border-b border-light-border bg-harken-gray-light">
+                  <td className="py-2 px-3 text-harken-gray font-semibold">Depreciated Cost of Improvements</td>
                   <td className="py-2 px-3 text-right font-semibold">${data.costApproach.depreciatedCost.toLocaleString()}</td>
                 </tr>
-                <tr className="border-b border-gray-200">
-                  <td className="py-2 px-3 text-gray-600">Plus: Site Improvements</td>
+                <tr className="border-b border-light-border">
+                  <td className="py-2 px-3 text-harken-gray">Plus: Site Improvements</td>
                   <td className="py-2 px-3 text-right font-medium text-green-600">+${data.costApproach.siteImprovements.toLocaleString()}</td>
                 </tr>
               </tbody>
@@ -1653,15 +1717,15 @@ The land value of $${data.costApproach.landValue.toLocaleString()} was derived f
         </div>
 
         {/* Value Conclusion */}
-        <div className="p-5 bg-gradient-to-r from-emerald-50 to-emerald-100 rounded-lg border border-emerald-200">
+        <div className="p-5 bg-gradient-to-r from-accent-teal-mint-light to-accent-teal-mint-light rounded-lg border border-accent-teal-mint-light">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-sm text-emerald-600 font-medium mb-1">Cost Approach Value Indication</div>
-              <div className="text-3xl font-bold text-emerald-700">${data.costApproach.valueConclusion.toLocaleString()}</div>
+              <div className="text-sm text-accent-teal-mint font-medium mb-1">Cost Approach Value Indication</div>
+              <div className="text-3xl font-bold text-accent-teal-mint">${data.costApproach.valueConclusion.toLocaleString()}</div>
             </div>
             <div className="text-right">
-              <div className="text-xs text-emerald-600 uppercase">Rounded</div>
-              <div className="text-lg font-semibold text-emerald-700">${(Math.round(data.costApproach.valueConclusion / 5000) * 5000).toLocaleString()}</div>
+              <div className="text-xs text-accent-teal-mint uppercase">Rounded</div>
+              <div className="text-lg font-semibold text-accent-teal-mint">${(Math.round(data.costApproach.valueConclusion / 5000) * 5000).toLocaleString()}</div>
             </div>
           </div>
         </div>
@@ -1697,40 +1761,40 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
   return (
     <ReportPageWrapper section={{ id: 'reconciliation', label: 'Reconciliation', enabled: true, expanded: false, fields: [], type: 'narrative' }} pageNumber={8} sidebarLabel="07">
       <div className="p-10">
-        <div className="absolute top-6 right-8 bg-emerald-700 text-white px-4 py-2 rounded text-xs font-semibold">
+        <div className="absolute top-6 right-8 bg-accent-teal-mint text-white px-4 py-2 rounded text-xs font-semibold">
           SECTION 7 • VALUE
         </div>
 
-        <h2 className="text-2xl font-light text-gray-800 mb-6 mt-8">Reconciliation of Value</h2>
+        <h2 className="text-2xl font-light text-harken-dark mb-6 mt-8">Reconciliation of Value</h2>
 
         {/* Value Indications Grid */}
         <div
           onClick={() => onSelectElement('recon_approaches')}
-          className={`mb-6 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'recon_approaches' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-gray-50'}`}
+          className={`mb-6 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'recon_approaches' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-harken-gray-light'}`}
         >
-          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Value Indications</h3>
+          <h3 className="text-sm font-semibold text-harken-gray-med uppercase tracking-wider mb-4">Value Indications</h3>
           <div className="grid grid-cols-3 gap-4">
-            <div className="bg-gray-50 rounded-lg p-4 text-center">
-              <div className="text-xs text-gray-500 uppercase mb-1">Cost Approach</div>
-              <div className="text-xl font-bold text-gray-800">${data.valuation.costApproachValue.toLocaleString()}</div>
-              <div className="text-sm text-gray-500 mt-1">Weight: {data.reconciliation.costApproachWeight}%</div>
+            <div className="bg-harken-gray-light rounded-lg p-4 text-center">
+              <div className="text-xs text-harken-gray-med uppercase mb-1">Cost Approach</div>
+              <div className="text-xl font-bold text-harken-dark">${data.valuation.costApproachValue.toLocaleString()}</div>
+              <div className="text-sm text-harken-gray-med mt-1">Weight: {data.reconciliation.costApproachWeight}%</div>
             </div>
-            <div className="bg-emerald-50 rounded-lg p-4 text-center border-2 border-emerald-200">
-              <div className="text-xs text-emerald-600 uppercase mb-1">Sales Comparison</div>
-              <div className="text-xl font-bold text-emerald-700">${data.valuation.salesComparisonValue.toLocaleString()}</div>
-              <div className="text-sm text-emerald-600 mt-1">Weight: {data.reconciliation.salesComparisonWeight}%</div>
+            <div className="bg-accent-teal-mint-light rounded-lg p-4 text-center border-2 border-accent-teal-mint-light">
+              <div className="text-xs text-accent-teal-mint uppercase mb-1">Sales Comparison</div>
+              <div className="text-xl font-bold text-accent-teal-mint">${data.valuation.salesComparisonValue.toLocaleString()}</div>
+              <div className="text-sm text-accent-teal-mint mt-1">Weight: {data.reconciliation.salesComparisonWeight}%</div>
             </div>
-            <div className="bg-gray-50 rounded-lg p-4 text-center">
-              <div className="text-xs text-gray-500 uppercase mb-1">Income Approach</div>
-              <div className="text-xl font-bold text-gray-800">${data.valuation.incomeApproachValue.toLocaleString()}</div>
-              <div className="text-sm text-gray-500 mt-1">Weight: {data.reconciliation.incomeApproachWeight}%</div>
+            <div className="bg-harken-gray-light rounded-lg p-4 text-center">
+              <div className="text-xs text-harken-gray-med uppercase mb-1">Income Approach</div>
+              <div className="text-xl font-bold text-harken-dark">${data.valuation.incomeApproachValue.toLocaleString()}</div>
+              <div className="text-sm text-harken-gray-med mt-1">Weight: {data.reconciliation.incomeApproachWeight}%</div>
             </div>
           </div>
         </div>
 
         {/* Analysis Section - Restructured for readability */}
         <div className="mb-6">
-          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Analysis</h3>
+          <h3 className="text-sm font-semibold text-harken-gray-med uppercase tracking-wider mb-4">Analysis</h3>
 
           {/* Value Range Summary */}
           <div
@@ -1762,11 +1826,11 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
           {/* Sales Comparison Approach */}
           <div
             onClick={() => onSelectElement('recon_sales')}
-            className={`mb-4 p-4 bg-emerald-50 rounded-lg border-l-4 border-emerald-500 cursor-pointer ${selectedElement === 'recon_sales' ? 'ring-2 ring-accent-cyan' : 'hover:bg-emerald-100'}`}
+            className={`mb-4 p-4 bg-accent-teal-mint-light rounded-lg border-l-4 border-accent-teal-mint cursor-pointer ${selectedElement === 'recon_sales' ? 'ring-2 ring-accent-cyan' : 'hover:bg-accent-teal-mint-light'}`}
           >
-            <h4 className="text-sm font-semibold text-emerald-800 mb-2">
+            <h4 className="text-sm font-semibold text-accent-teal-mint mb-2">
               Sales Comparison Approach
-              <span className="ml-2 px-2 py-0.5 bg-emerald-200 text-emerald-700 rounded text-xs font-medium">
+              <span className="ml-2 px-2 py-0.5 bg-accent-teal-mint-light text-accent-teal-mint rounded text-xs font-medium">
                 {data.reconciliation.salesComparisonWeight}% Weight — Primary
               </span>
             </h4>
@@ -1777,7 +1841,7 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
               onSelectElement={onSelectElement}
               onContentChange={handleContentChange}
               as="p"
-              className="text-sm text-emerald-700 leading-relaxed"
+              className="text-sm text-accent-teal-mint leading-relaxed"
               appliedStyle={getStyle('recon_sales_text')}
             />
           </div>
@@ -1808,11 +1872,11 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
           {/* Cost Approach */}
           <div
             onClick={() => onSelectElement('recon_cost')}
-            className={`mb-4 p-4 bg-amber-50 rounded-lg border-l-4 border-amber-400 cursor-pointer ${selectedElement === 'recon_cost' ? 'ring-2 ring-accent-cyan' : 'hover:bg-amber-100'}`}
+            className={`mb-4 p-4 bg-accent-amber-gold-light rounded-lg border-l-4 border-amber-400 cursor-pointer ${selectedElement === 'recon_cost' ? 'ring-2 ring-accent-cyan' : 'hover:bg-amber-100'}`}
           >
             <h4 className="text-sm font-semibold text-amber-800 mb-2">
               Cost Approach
-              <span className="ml-2 px-2 py-0.5 bg-amber-200 text-amber-700 rounded text-xs font-medium">
+              <span className="ml-2 px-2 py-0.5 bg-amber-200 text-accent-amber-gold rounded text-xs font-medium">
                 {data.reconciliation.costApproachWeight}% Weight — Supporting
               </span>
             </h4>
@@ -1823,7 +1887,7 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
               onSelectElement={onSelectElement}
               onContentChange={handleContentChange}
               as="p"
-              className="text-sm text-amber-700 leading-relaxed"
+              className="text-sm text-accent-amber-gold leading-relaxed"
               appliedStyle={getStyle('recon_cost_text')}
             />
           </div>
@@ -1851,9 +1915,9 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
           {/* Final Conclusion */}
           <div
             onClick={() => onSelectElement('recon_conclusion')}
-            className={`p-4 bg-gray-100 rounded-lg border-l-4 border-gray-500 cursor-pointer ${selectedElement === 'recon_conclusion' ? 'ring-2 ring-accent-cyan' : 'hover:bg-gray-200'}`}
+            className={`p-4 bg-harken-gray-light rounded-lg border-l-4 border-harken-gray cursor-pointer ${selectedElement === 'recon_conclusion' ? 'ring-2 ring-accent-cyan' : 'hover:bg-harken-gray-med-lt'}`}
           >
-            <h4 className="text-sm font-semibold text-gray-700 mb-2">Conclusion</h4>
+            <h4 className="text-sm font-semibold text-harken-gray mb-2">Conclusion</h4>
             <EditableElement
               elementId="recon_final"
               content={getContent('recon_final', `Based on the foregoing analysis and reconciliation, it is my opinion that the market value of the subject property, as of the effective date of appraisal, is $${data.valuation.asIsValue.toLocaleString()}.`)}
@@ -1861,7 +1925,7 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
               onSelectElement={onSelectElement}
               onContentChange={handleContentChange}
               as="p"
-              className="text-sm text-gray-700 leading-relaxed font-medium"
+              className="text-sm text-harken-gray leading-relaxed font-medium"
               appliedStyle={getStyle('recon_final')}
             />
           </div>
@@ -1888,7 +1952,7 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
         </div>
 
         {/* Final Value Banner */}
-        <div className="p-6 bg-gradient-to-r from-emerald-600 to-emerald-700 rounded-lg text-center text-white">
+        <div className="p-6 bg-gradient-to-r from-accent-teal-mint to-accent-teal-mint-hover rounded-lg text-center text-white">
           <div className="text-sm uppercase tracking-wider mb-2 opacity-80">Final Market Value Conclusion</div>
           <div className="text-4xl font-bold mb-2">${data.valuation.asIsValue.toLocaleString()}</div>
           <div className="text-sm opacity-80">As of {data.assignment.effectiveDate}</div>
@@ -1919,11 +1983,11 @@ function PhotoExhibitsPage({
   return (
     <ReportPageWrapper section={{ id: 'exhibits', label: 'Photo Exhibits', enabled: true, expanded: false, fields: [], type: 'photo-grid' }} pageNumber={9} sidebarLabel="08">
       <div className="p-10">
-        <div className="absolute top-6 right-8 bg-emerald-700 text-white px-4 py-2 rounded text-xs font-semibold">
+        <div className="absolute top-6 right-8 bg-accent-teal-mint text-white px-4 py-2 rounded text-xs font-semibold">
           EXHIBITS
         </div>
 
-        <h2 className="text-2xl font-light text-gray-800 mb-6 mt-8">Subject Property Photos</h2>
+        <h2 className="text-2xl font-light text-harken-dark mb-6 mt-8">Subject Property Photos</h2>
 
         <div className="grid grid-cols-2 gap-4">
           {photos.map((photo) => (
@@ -1978,20 +2042,20 @@ function TOCPage({
   return (
     <ReportPageWrapper section={{ id: 'toc', label: 'Table of Contents', enabled: true, expanded: false, fields: [], type: 'toc' }} pageNumber={2} sidebarLabel="">
       <div className="p-12">
-        <h2 className="text-3xl font-light text-emerald-700 mb-12 mt-8">Table of Contents</h2>
+        <h2 className="text-3xl font-light text-accent-teal-mint mb-12 mt-8">Table of Contents</h2>
 
         <div
           onClick={() => onSelectElement('toc_entries')}
-          className={`space-y-0 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'toc_entries' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-gray-50'}`}
+          className={`space-y-0 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'toc_entries' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-harken-gray-light'}`}
         >
           {tocEntries.map((entry, idx) => (
             <div
               key={idx}
-              className="flex items-baseline border-b border-dotted border-gray-300 py-3 group"
+              className="flex items-baseline border-b border-dotted border-light-border py-3 group"
             >
-              <span className="text-gray-800 font-medium flex-shrink-0">{entry.title}</span>
-              <span className="flex-1 border-b border-dotted border-gray-300 mx-3" style={{ marginBottom: '0.3em' }}></span>
-              <span className="text-gray-600 font-mono text-sm flex-shrink-0">{entry.page}</span>
+              <span className="text-harken-dark font-medium flex-shrink-0">{entry.title}</span>
+              <span className="flex-1 border-b border-dotted border-light-border mx-3" style={{ marginBottom: '0.3em' }}></span>
+              <span className="text-harken-gray font-mono text-sm flex-shrink-0">{entry.page}</span>
             </div>
           ))}
         </div>
@@ -2031,19 +2095,19 @@ function AssumptionsPage({ selectedElement, onSelectElement }: {
   return (
     <ReportPageWrapper section={{ id: 'assumptions', label: 'Assumptions', enabled: true, expanded: false, fields: [], type: 'narrative' }} pageNumber={10} sidebarLabel="09">
       <div className="p-10">
-        <div className="absolute top-6 right-8 bg-emerald-700 text-white px-4 py-2 rounded text-xs font-semibold">
+        <div className="absolute top-6 right-8 bg-accent-teal-mint text-white px-4 py-2 rounded text-xs font-semibold">
           ASSUMPTIONS
         </div>
 
-        <h2 className="text-2xl font-light text-gray-800 mb-6 mt-8">Assumptions and Limiting Conditions</h2>
+        <h2 className="text-2xl font-light text-harken-dark mb-6 mt-8">Assumptions and Limiting Conditions</h2>
 
         {/* Assumptions */}
         <div
           onClick={() => onSelectElement('assumptions_list')}
-          className={`mb-8 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'assumptions_list' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-gray-50'}`}
+          className={`mb-8 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'assumptions_list' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-harken-gray-light'}`}
         >
-          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">General Assumptions</h3>
-          <ol className="list-decimal list-outside ml-5 space-y-3 text-sm text-gray-700 leading-relaxed">
+          <h3 className="text-sm font-semibold text-harken-gray-med uppercase tracking-wider mb-4">General Assumptions</h3>
+          <ol className="list-decimal list-outside ml-5 space-y-3 text-sm text-harken-gray leading-relaxed">
             {data.assumptions.map((assumption, idx) => (
               <li key={idx}>{assumption}</li>
             ))}
@@ -2053,10 +2117,10 @@ function AssumptionsPage({ selectedElement, onSelectElement }: {
         {/* Limiting Conditions */}
         <div
           onClick={() => onSelectElement('limiting_conditions')}
-          className={`p-4 -m-4 rounded cursor-pointer ${selectedElement === 'limiting_conditions' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-gray-50'}`}
+          className={`p-4 -m-4 rounded cursor-pointer ${selectedElement === 'limiting_conditions' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-harken-gray-light'}`}
         >
-          <h3 className="text-sm font-semibold text-gray-500 uppercase tracking-wider mb-4">Limiting Conditions</h3>
-          <ol className="list-decimal list-outside ml-5 space-y-3 text-sm text-gray-700 leading-relaxed">
+          <h3 className="text-sm font-semibold text-harken-gray-med uppercase tracking-wider mb-4">Limiting Conditions</h3>
+          <ol className="list-decimal list-outside ml-5 space-y-3 text-sm text-harken-gray leading-relaxed">
             {data.limitingConditions.map((condition, idx) => (
               <li key={idx}>{condition}</li>
             ))}
@@ -2086,17 +2150,17 @@ function CertificationPage({ selectedElement, onSelectElement, subjectData }: {
   return (
     <ReportPageWrapper section={{ id: 'certification', label: 'Certification', enabled: true, expanded: false, fields: [], type: 'narrative' }} pageNumber={11} sidebarLabel="10">
       <div className="p-10">
-        <div className="absolute top-6 right-8 bg-emerald-700 text-white px-4 py-2 rounded text-xs font-semibold">
+        <div className="absolute top-6 right-8 bg-accent-teal-mint text-white px-4 py-2 rounded text-xs font-semibold">
           CERTIFICATION
         </div>
 
-        <h2 className="text-2xl font-light text-gray-800 mb-6 mt-8">Appraiser's Certification</h2>
+        <h2 className="text-2xl font-light text-harken-dark mb-6 mt-8">Appraiser's Certification</h2>
 
         <div
           onClick={() => onSelectElement('certification_intro')}
-          className={`mb-6 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'certification_intro' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-gray-50'}`}
+          className={`mb-6 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'certification_intro' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-harken-gray-light'}`}
         >
-          <p className="text-sm text-gray-700 leading-relaxed">
+          <p className="text-sm text-harken-gray leading-relaxed">
             I certify that, to the best of my knowledge and belief:
           </p>
         </div>
@@ -2104,9 +2168,9 @@ function CertificationPage({ selectedElement, onSelectElement, subjectData }: {
         {/* Certifications List */}
         <div
           onClick={() => onSelectElement('certifications_list')}
-          className={`mb-8 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'certifications_list' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-gray-50'}`}
+          className={`mb-8 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'certifications_list' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-harken-gray-light'}`}
         >
-          <ol className="list-decimal list-outside ml-5 space-y-3 text-sm text-gray-700 leading-relaxed">
+          <ol className="list-decimal list-outside ml-5 space-y-3 text-sm text-harken-gray leading-relaxed">
             {fallbackData.certifications.map((cert, idx) => (
               <li key={idx}>{cert}</li>
             ))}
@@ -2116,21 +2180,21 @@ function CertificationPage({ selectedElement, onSelectElement, subjectData }: {
         {/* Signature Block */}
         <div
           onClick={() => onSelectElement('signature_block')}
-          className={`mt-12 p-6 border-2 border-gray-200 rounded-lg ${selectedElement === 'signature_block' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-gray-50'}`}
+          className={`mt-12 p-6 border-2 border-light-border rounded-lg ${selectedElement === 'signature_block' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-harken-gray-light'}`}
         >
           <div className="grid grid-cols-2 gap-8">
             <div>
-              <div className="border-b-2 border-gray-400 pb-2 mb-2 h-16"></div>
-              <div className="text-sm font-semibold text-gray-800">{appraiserName}</div>
-              <div className="text-xs text-gray-600">{appraiserLicense}</div>
-              <div className="text-xs text-gray-600 mt-2">Date: {reportDate}</div>
+              <div className="border-b-2 border-harken-gray-med pb-2 mb-2 h-16"></div>
+              <div className="text-sm font-semibold text-harken-dark">{appraiserName}</div>
+              <div className="text-xs text-harken-gray">{appraiserLicense}</div>
+              <div className="text-xs text-harken-gray mt-2">Date: {reportDate}</div>
             </div>
             <div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-emerald-700 mb-2">ROVE</div>
-                <div className="text-sm text-gray-600">{fallbackData.assignment.appraiserCompany}</div>
-                <div className="text-xs text-gray-500 mt-1">{fallbackData.assignment.appraiserAddress}</div>
-                <div className="text-xs text-gray-500">{fallbackData.assignment.appraiserPhone}</div>
+                <div className="text-2xl font-bold text-accent-teal-mint mb-2">ROVE</div>
+                <div className="text-sm text-harken-gray">{fallbackData.assignment.appraiserCompany}</div>
+                <div className="text-xs text-harken-gray-med mt-1">{fallbackData.assignment.appraiserAddress}</div>
+                <div className="text-xs text-harken-gray-med">{fallbackData.assignment.appraiserPhone}</div>
               </div>
             </div>
           </div>
@@ -2233,7 +2297,7 @@ function EditableElement({
       onDoubleClick={handleDoubleClick}
       className={`cursor-pointer transition-all rounded px-1 -mx-1 ${isSelected
         ? 'ring-2 ring-accent-cyan bg-accent-cyan/5'
-        : 'hover:bg-gray-50'
+        : 'hover:bg-harken-gray-light'
         } ${className}`}
       style={mergedStyle}
       title="Click to select, double-click to edit"
@@ -2279,7 +2343,7 @@ function PropertiesPanel({ selectedElement, elementStyles, elementContent, onSty
   if (!selectedElement) {
     return (
       <div className="h-full flex items-center justify-center text-center p-8">
-        <div className="text-gray-400 dark:text-gray-500">
+        <div className="text-harken-gray-med dark:text-slate-400">
           <svg className="w-12 h-12 mx-auto mb-3 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
           </svg>
@@ -2293,16 +2357,16 @@ function PropertiesPanel({ selectedElement, elementStyles, elementContent, onSty
   return (
     <div className="h-full flex flex-col">
       {/* Header with Save Status */}
-      <div className="p-4 border-b border-gray-200 dark:border-slate-700 bg-gray-50 dark:bg-slate-800">
+      <div className="p-4 border-b border-light-border dark:border-dark-border bg-harken-gray-light dark:bg-elevation-1">
         <div className="flex items-center justify-between">
           <div>
-            <div className="text-sm font-bold text-gray-800 dark:text-gray-100">Element Properties</div>
-            <div className="text-xs text-gray-500 mt-1 font-mono">{selectedElement}</div>
+            <div className="text-sm font-bold text-harken-dark dark:text-white">Element Properties</div>
+            <div className="text-xs text-harken-gray-med mt-1 font-mono">{selectedElement}</div>
           </div>
           {isDirty && (
             <div className="flex items-center gap-2">
-              <span className="text-xs text-amber-600 font-medium">Unsaved</span>
-              <div className="w-2 h-2 bg-amber-500 rounded-full animate-pulse" />
+              <span className="text-xs text-accent-amber-gold font-medium">Unsaved</span>
+              <div className="w-2 h-2 bg-accent-amber-gold-light0 rounded-full animate-pulse" />
             </div>
           )}
         </div>
@@ -2320,14 +2384,14 @@ function PropertiesPanel({ selectedElement, elementStyles, elementContent, onSty
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-gray-200 dark:border-slate-700">
+      <div className="flex border-b border-light-border dark:border-dark-border">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${activeTab === tab.id
               ? 'text-accent-cyan border-b-2 border-accent-cyan'
-              : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200'
+              : 'text-harken-gray-med dark:text-slate-400 hover:text-harken-gray dark:hover:text-white'
               }`}
           >
             {tab.label}
@@ -2341,14 +2405,14 @@ function PropertiesPanel({ selectedElement, elementStyles, elementContent, onSty
           <>
             {/* Typography */}
             <div>
-              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Typography</h4>
+              <h4 className="text-xs font-bold text-harken-gray-med uppercase tracking-wider mb-3">Typography</h4>
               <div className="space-y-3">
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 dark:text-gray-400 mb-1">Font Family</label>
+                  <label className="block text-xs font-medium text-harken-gray dark:text-slate-400 mb-1">Font Family</label>
                   <select
                     value={elementStyles.fontFamily || 'Montserrat'}
                     onChange={(e) => onStyleChange({ fontFamily: e.target.value })}
-                    className="w-full border border-gray-300 dark:border-slate-600 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100"
+                    className="w-full border border-light-border dark:border-harken-gray rounded px-3 py-2 text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent bg-surface-1 dark:bg-elevation-1 text-harken-dark dark:text-white"
                   >
                     <option value="Montserrat">Montserrat</option>
                     <option value="Georgia">Georgia</option>
@@ -2357,20 +2421,20 @@ function PropertiesPanel({ selectedElement, elementStyles, elementContent, onSty
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">Font Size (px)</label>
+                  <label className="block text-xs font-medium text-harken-gray mb-1">Font Size (px)</label>
                   <input
                     type="number"
                     value={elementStyles.fontSize || 14}
                     onChange={(e) => onStyleChange({ fontSize: parseInt(e.target.value) })}
-                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent"
+                    className="w-full border border-light-border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">Font Weight</label>
+                  <label className="block text-xs font-medium text-harken-gray mb-1">Font Weight</label>
                   <select
                     value={elementStyles.fontWeight || 'normal'}
                     onChange={(e) => onStyleChange({ fontWeight: e.target.value })}
-                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent"
+                    className="w-full border border-light-border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent"
                   >
                     <option value="normal">Normal</option>
                     <option value="500">Medium</option>
@@ -2383,21 +2447,21 @@ function PropertiesPanel({ selectedElement, elementStyles, elementContent, onSty
 
             {/* Colors */}
             <div>
-              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Colors</h4>
+              <h4 className="text-xs font-bold text-harken-gray-med uppercase tracking-wider mb-3">Colors</h4>
               <div>
-                <label className="block text-xs font-medium text-gray-600 mb-1">Text Color</label>
+                <label className="block text-xs font-medium text-harken-gray mb-1">Text Color</label>
                 <div className="flex gap-2">
                   <input
                     type="color"
                     value={elementStyles.color || '#1c3643'}
                     onChange={(e) => onStyleChange({ color: e.target.value })}
-                    className="w-10 h-10 border border-gray-300 rounded cursor-pointer"
+                    className="w-10 h-10 border border-light-border rounded cursor-pointer"
                   />
                   <input
                     type="text"
                     value={elementStyles.color || '#1c3643'}
                     onChange={(e) => onStyleChange({ color: e.target.value })}
-                    className="flex-1 border border-gray-300 dark:border-slate-600 rounded px-3 py-2 text-sm font-mono focus:ring-2 focus:ring-accent-cyan focus:border-transparent bg-white dark:bg-slate-700 text-gray-900 dark:text-gray-100"
+                    className="flex-1 border border-light-border dark:border-harken-gray rounded px-3 py-2 text-sm font-mono focus:ring-2 focus:ring-accent-cyan focus:border-transparent bg-surface-1 dark:bg-elevation-1 text-harken-dark dark:text-white"
                   />
                 </div>
               </div>
@@ -2405,7 +2469,7 @@ function PropertiesPanel({ selectedElement, elementStyles, elementContent, onSty
 
             {/* Alignment */}
             <div>
-              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Alignment</h4>
+              <h4 className="text-xs font-bold text-harken-gray-med uppercase tracking-wider mb-3">Alignment</h4>
               <div className="flex gap-2">
                 {(['left', 'center', 'right'] as const).map((align) => (
                   <button
@@ -2413,7 +2477,7 @@ function PropertiesPanel({ selectedElement, elementStyles, elementContent, onSty
                     onClick={() => onStyleChange({ textAlign: align })}
                     className={`flex-1 py-2 border rounded text-sm capitalize transition-all ${elementStyles.textAlign === align
                       ? 'border-accent-cyan bg-accent-cyan/10 text-accent-cyan'
-                      : 'border-gray-300 dark:border-slate-600 hover:border-gray-400 dark:hover:border-slate-500'
+                      : 'border-light-border dark:border-harken-gray hover:border-harken-gray-med dark:hover:border-harken-gray'
                       }`}
                   >
                     {align}
@@ -2426,13 +2490,13 @@ function PropertiesPanel({ selectedElement, elementStyles, elementContent, onSty
 
         {activeTab === 'content' && (
           <div>
-            <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Content</h4>
+            <h4 className="text-xs font-bold text-harken-gray-med uppercase tracking-wider mb-3">Content</h4>
             <textarea
               value={localContent}
               onChange={(e) => setLocalContent(e.target.value)}
               onBlur={() => selectedElement && onContentChange(selectedElement, localContent)}
               placeholder="Edit the content of this element..."
-              className="w-full border border-gray-300 rounded px-3 py-2 text-sm min-h-[200px] focus:ring-2 focus:ring-accent-cyan focus:border-transparent"
+              className="w-full border border-light-border rounded px-3 py-2 text-sm min-h-[200px] focus:ring-2 focus:ring-accent-cyan focus:border-transparent"
             />
             <button
               onClick={() => selectedElement && onContentChange(selectedElement, localContent)}
@@ -2446,34 +2510,34 @@ function PropertiesPanel({ selectedElement, elementStyles, elementContent, onSty
         {activeTab === 'advanced' && (
           <>
             <div>
-              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Spacing</h4>
+              <h4 className="text-xs font-bold text-harken-gray-med uppercase tracking-wider mb-3">Spacing</h4>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">Margin Top</label>
+                  <label className="block text-xs font-medium text-harken-gray mb-1">Margin Top</label>
                   <input
                     type="number"
                     value={elementStyles.marginTop || 0}
                     onChange={(e) => onStyleChange({ marginTop: parseInt(e.target.value) })}
-                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent"
+                    className="w-full border border-light-border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-gray-600 mb-1">Margin Bottom</label>
+                  <label className="block text-xs font-medium text-harken-gray mb-1">Margin Bottom</label>
                   <input
                     type="number"
                     value={elementStyles.marginBottom || 0}
                     onChange={(e) => onStyleChange({ marginBottom: parseInt(e.target.value) })}
-                    className="w-full border border-gray-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent"
+                    className="w-full border border-light-border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent"
                   />
                 </div>
               </div>
             </div>
 
             <div>
-              <h4 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-3">Actions</h4>
+              <h4 className="text-xs font-bold text-harken-gray-med uppercase tracking-wider mb-3">Actions</h4>
               <button
                 onClick={onDeleteElement}
-                className="w-full py-2 bg-red-600 text-white rounded text-sm font-medium hover:bg-red-700 transition-colors"
+                className="w-full py-2 bg-harken-error text-white rounded text-sm font-medium hover:bg-harken-error transition-colors"
               >
                 Delete Element
               </button>
@@ -2683,7 +2747,7 @@ function DraggableTextBlock({ block, selected, onSelect, onUpdate, onDelete }: D
           onChange={(e) => onUpdate({ content: e.target.value })}
           onBlur={handleBlur}
           placeholder="Enter your text here..."
-          className="w-full h-full p-2 border-2 border-accent-cyan rounded bg-white resize-none focus:outline-none focus:ring-2 focus:ring-accent-cyan/30"
+          className="w-full h-full p-2 border-2 border-accent-cyan rounded bg-surface-1 resize-none focus:outline-none focus:ring-2 focus:ring-accent-cyan/30"
           style={{
             fontSize: block.fontSize,
             fontWeight: block.fontWeight,
@@ -2693,7 +2757,7 @@ function DraggableTextBlock({ block, selected, onSelect, onUpdate, onDelete }: D
         />
       ) : (
         <div
-          className={`p-2 bg-white rounded border-2 h-full ${isDefaultText ? 'border-dashed border-gray-300 text-gray-400 italic' : 'border-solid border-gray-200'}`}
+          className={`p-2 bg-surface-1 rounded border-2 h-full ${isDefaultText ? 'border-dashed border-light-border text-harken-gray-med italic' : 'border-solid border-light-border'}`}
           style={{ minHeight: block.height - 16 }}
         >
           {block.content}
@@ -2704,7 +2768,7 @@ function DraggableTextBlock({ block, selected, onSelect, onUpdate, onDelete }: D
       {selected && !isEditing && (
         <button
           onClick={(e) => { e.stopPropagation(); onDelete(); }}
-          className="absolute -top-3 -right-3 w-6 h-6 bg-red-500 text-white rounded-full text-xs flex items-center justify-center hover:bg-red-600 shadow-md z-20"
+          className="absolute -top-3 -right-3 w-6 h-6 bg-harken-error text-white rounded-full text-xs flex items-center justify-center hover:bg-harken-error shadow-md z-20"
         >
           ×
         </button>
@@ -2782,6 +2846,64 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
   const [photoEditorOpen, setPhotoEditorOpen] = useState(false);
   const [editingPhoto, setEditingPhoto] = useState<PhotoData | null>(null);
   const [photoEdits, setPhotoEdits] = useState<Record<string, PhotoEdits>>({});
+
+  // Inline photo placement state - persisted via reportState.customContent
+  const inlinePhotoPlacements: Record<string, InlinePhotoPlacement[]> = useMemo(() => {
+    const placements: Record<string, InlinePhotoPlacement[]> = {};
+    // Load from customContent for each section
+    Object.keys(reportState.customContent || {}).forEach(key => {
+      if (key.startsWith('inlinePhotos.')) {
+        const sectionId = key.replace('inlinePhotos.', '');
+        placements[sectionId] = reportState.customContent[key] || [];
+      }
+    });
+    return placements;
+  }, [reportState.customContent]);
+
+  // Available photos - merge wizard state staging photos with sample data as fallback
+  const availablePhotos: PhotoData[] = useMemo(() => {
+    // Get photos from wizard state (staging photos that have been classified)
+    const stagingPhotos = state.stagingPhotos || [];
+    const wizardPhotos: PhotoData[] = stagingPhotos
+      .filter(p => p.preview && (p.status === 'classified' || p.status === 'pending'))
+      .map(p => ({
+        id: p.id,
+        url: p.preview,
+        caption: p.suggestions?.[0]?.slotLabel || p.assignedSlot || p.filename || 'Photo',
+        category: p.suggestions?.[0]?.category || 'general',
+      }));
+    
+    // If no wizard photos, fall back to sample data for demo purposes
+    if (wizardPhotos.length === 0) {
+      return sampleAppraisalData.photos.map(p => ({
+        id: p.id,
+        url: p.url,
+        caption: p.caption,
+        category: p.category,
+      }));
+    }
+    
+    return wizardPhotos;
+  }, [state.stagingPhotos]);
+
+  // Handlers for inline photo placement - persist to reportState.customContent
+  const handleAssignInlinePhoto = useCallback((sectionId: string, slotId: string, photoId: string) => {
+    const currentPlacements = inlinePhotoPlacements[sectionId] || [];
+    // Remove any existing placement for this slot
+    const filtered = currentPlacements.filter(p => p.slotId !== slotId);
+    const newPlacements = [...filtered, { slotId, photoId }];
+    
+    // Persist to reportState.customContent
+    reportActions.setCustomContent(`inlinePhotos.${sectionId}`, newPlacements);
+  }, [inlinePhotoPlacements, reportActions]);
+
+  const handleRemoveInlinePhoto = useCallback((sectionId: string, slotId: string) => {
+    const currentPlacements = inlinePhotoPlacements[sectionId] || [];
+    const newPlacements = currentPlacements.filter(p => p.slotId !== slotId);
+    
+    // Persist to reportState.customContent
+    reportActions.setCustomContent(`inlinePhotos.${sectionId}`, newPlacements);
+  }, [inlinePhotoPlacements, reportActions]);
 
   // Handle recovery - apply recovered data to report state
   const handleRecoverVersion = useCallback((versionId: string) => {
@@ -3314,7 +3436,23 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
       case 'executive-summary':
         return <ExecutiveSummaryPage {...commonProps} subjectData={state.subjectData} improvementsInventory={state.improvementsInventory} reconciliationData={state.reconciliationData} />;
       case 'property-description':
-        return <PropertyDescriptionPage {...commonProps} subjectData={state.subjectData} improvementsInventory={state.improvementsInventory} />;
+        // Get the section configuration for inline photos
+        const propDescSection = reportSections.find(s => s.id === 'property-description');
+        return (
+          <PropertyDescriptionPage 
+            {...commonProps} 
+            subjectData={state.subjectData} 
+            improvementsInventory={state.improvementsInventory}
+            // Inline photo placement props
+            photoSlots={propDescSection?.photoSlots}
+            photoPlacements={inlinePhotoPlacements['property-description']}
+            availablePhotos={availablePhotos}
+            onAssignPhoto={(slotId, photoId) => handleAssignInlinePhoto('property-description', slotId, photoId)}
+            onRemovePhoto={(slotId) => handleRemoveInlinePhoto('property-description', slotId)}
+            onOpenPhotoEditor={handleOpenPhotoEditor}
+            getPhotoEdits={getPhotoEdits}
+          />
+        );
       case 'hbu':
         return <HBUPage {...commonProps} hbuAnalysis={state.hbuAnalysis} />;
       case 'market-analysis':
@@ -3371,8 +3509,8 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
         return (
           <ReportPageWrapper section={section} pageNumber={pageIndex + 1}>
             <div className="p-10">
-              <h2 className="text-2xl font-light text-gray-800 mb-6 mt-8">{section.label}</h2>
-              <div className="text-gray-500 text-sm">
+              <h2 className="text-2xl font-light text-harken-dark mb-6 mt-8">{section.label}</h2>
+              <div className="text-harken-gray-med text-sm">
                 Content for {section.label} will be displayed here based on wizard data.
               </div>
             </div>
@@ -3382,12 +3520,12 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
   };
 
   return (
-    <div className="h-full flex bg-gray-100 dark:bg-slate-900">
+    <div className="h-full flex bg-harken-gray-light dark:bg-elevation-1">
       {/* Left Panel: Section Tree */}
-      <div className="w-80 bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700 flex flex-col flex-shrink-0">
-        <div className="px-6 py-4 border-b border-gray-200 dark:border-slate-700">
-          <h3 className="font-bold text-gray-800 dark:text-gray-100">Report Pages</h3>
-          <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Click to toggle • Arrow to expand</p>
+      <div className="w-80 bg-surface-1 dark:bg-elevation-1 border-r border-light-border dark:border-dark-border flex flex-col flex-shrink-0">
+        <div className="px-6 py-4 border-b border-light-border dark:border-dark-border">
+          <h3 className="font-bold text-harken-dark dark:text-white">Report Pages</h3>
+          <p className="text-xs text-harken-gray-med dark:text-slate-400 mt-1">Click to toggle • Arrow to expand</p>
         </div>
         <div className="flex-1 overflow-auto py-4 px-4">
           <SectionTree
@@ -3404,14 +3542,14 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
 
       {/* Center Panel: Preview */}
       <div className="flex-1 flex flex-col min-w-0">
-        <div className="p-4 bg-white dark:bg-slate-800 border-b border-gray-200 dark:border-slate-700 flex items-center justify-between">
+        <div className="p-4 bg-surface-1 dark:bg-elevation-1 border-b border-light-border dark:border-dark-border flex items-center justify-between">
           <div>
-            <div className="font-bold text-gray-800 dark:text-gray-100">Report Preview</div>
-            <div className="text-xs text-gray-500 dark:text-gray-400">{sampleAppraisalData.property.name}</div>
+            <div className="font-bold text-harken-dark dark:text-white">Report Preview</div>
+            <div className="text-xs text-harken-gray-med dark:text-slate-400">{sampleAppraisalData.property.name}</div>
           </div>
           <div className="flex items-center gap-4">
             {/* Panel Style Toggle */}
-            <div className="flex items-center gap-2 border-r border-gray-200 dark:border-slate-700 pr-4">
+            <div className="flex items-center gap-2 border-r border-light-border dark:border-dark-border pr-4">
               <button
                 onClick={() => setUseSimplifiedPanel(!useSimplifiedPanel)}
                 className="px-3 py-1.5 text-xs font-medium rounded-lg border transition-all"
@@ -3426,24 +3564,24 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
               </button>
             </div>
             {/* Undo/Redo buttons */}
-            <div className="flex items-center gap-1 border-r border-gray-200 dark:border-slate-700 pr-4">
+            <div className="flex items-center gap-1 border-r border-light-border dark:border-dark-border pr-4">
               <button
                 onClick={undoContent}
                 disabled={!canUndo}
-                className="p-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                className="p-2 rounded hover:bg-harken-gray-light dark:hover:bg-elevation-3 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                 title="Undo (Ctrl+Z)"
               >
-                <svg className="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-harken-gray dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
                 </svg>
               </button>
               <button
                 onClick={redoContent}
                 disabled={!canRedo}
-                className="p-2 rounded hover:bg-gray-100 dark:hover:bg-slate-700 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                className="p-2 rounded hover:bg-harken-gray-light dark:hover:bg-elevation-3 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                 title="Redo (Ctrl+Shift+Z)"
               >
-                <svg className="w-5 h-5 text-gray-600 dark:text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-harken-gray dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 10H11a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6" />
                 </svg>
               </button>
@@ -3451,7 +3589,7 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
 
             {/* Auto-save indicator */}
             {autoSaveState.isEnabled && (
-              <div className="flex items-center gap-2 text-xs text-gray-500 dark:text-gray-400">
+              <div className="flex items-center gap-2 text-xs text-harken-gray-med dark:text-slate-400">
                 {autoSaveState.isSaving ? (
                   <>
                     <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
@@ -3459,7 +3597,7 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
                   </>
                 ) : autoSaveState.lastSaved ? (
                   <>
-                    <div className="w-2 h-2 bg-green-500 rounded-full" />
+                    <div className="w-2 h-2 bg-accent-teal-mint rounded-full" />
                     Auto-saved {new Date(autoSaveState.lastSaved).toLocaleTimeString()}
                   </>
                 ) : null}
@@ -3476,7 +3614,7 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
             </button>
           </div>
         </div>
-        <div ref={previewRef} className="flex-1 overflow-auto p-8 bg-gray-400/30 dark:bg-slate-900/50 relative">
+        <div ref={previewRef} className="flex-1 overflow-auto p-8 bg-harken-gray-med/30 dark:bg-elevation-1/50 relative">
           <div className="report-preview-content space-y-8 flex flex-col items-center">
             {reportSections
               .filter((s) => s.enabled)
@@ -3503,7 +3641,7 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
       </div>
 
       {/* Right Panel: Properties */}
-      <div className="w-96 bg-white dark:bg-slate-800 border-l border-gray-200 dark:border-slate-700 flex-shrink-0">
+      <div className="w-96 bg-surface-1 dark:bg-elevation-1 border-l border-light-border dark:border-dark-border flex-shrink-0">
         {useSimplifiedPanel ? (
           <PropertiesPanelSimplified
             selectedElement={selectedElement}

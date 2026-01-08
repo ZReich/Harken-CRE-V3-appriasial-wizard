@@ -21,9 +21,11 @@ import {
   ChevronUp,
   Map as MapIcon,
   Star,
-  Link2
+  Link2,
+  Calculator
 } from 'lucide-react';
 import { NotesEditorModal } from '../../../components/NotesEditorModal';
+import { OverridePopover, OverrideBadge, type OverrideData } from '../../../components/OverridePopover';
 import { Property, GridRowData, PropertyValues, ComparisonValue, Section, GridRowCategory } from '../types';
 import { PropertyCard } from './PropertyCard';
 import { INITIAL_ROWS, SECTIONS } from '../constants';
@@ -71,10 +73,23 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
     salesComparisonData?.reconciliationText ?? ""
   );
   const [activePopover, setActivePopover] = useState<{ rowId: string, propId: string, field: 'value' | 'adjustment' } | null>(null);
+  const [activeOverridePopover, setActiveOverridePopover] = useState<{ rowKey: string, propId: string } | null>(null);
   const [hiddenSections, setHiddenSections] = useState<Set<string>>(new Set());
   const [confirmDelete, setConfirmDelete] = useState<{ isOpen: boolean; sectionId: string; sectionTitle: string } | null>(null);
   const [notesEditor, setNotesEditor] = useState<{ isOpen: boolean; propId: string; propName: string; rowKey: string } | null>(null);
   const [notesContent, setNotesContent] = useState<string>('');
+  
+  // List of calculated fields that can be overridden
+  const OVERRIDABLE_CALCULATED_FIELDS = [
+    'extracted_cap_rate',
+    'residual_value', 
+    'residual_price_sf',
+    'overall_adj',
+    'overall_comp',
+    'adj_price_sf',
+    'adj_price_sf_val',
+    'total_value'
+  ];
   const [openElementDropdown, setOpenElementDropdown] = useState<string | null>(null);
   const [addingCustomToSection, setAddingCustomToSection] = useState<string | null>(null);
   const [customElementName, setCustomElementName] = useState('');
@@ -557,18 +572,87 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
     }));
   };
 
+  // Apply an override to a calculated field
+  const applyOverride = (propId: string, rowKey: string, override: OverrideData) => {
+    setValues(prev => ({
+      ...prev,
+      [propId]: {
+        ...prev[propId],
+        [rowKey]: { 
+          ...prev[propId]?.[rowKey],
+          value: prev[propId]?.[rowKey]?.value ?? null,
+          override 
+        }
+      }
+    }));
+    setActiveOverridePopover(null);
+  };
+
+  // Clear an override from a calculated field
+  const clearOverride = (propId: string, rowKey: string) => {
+    setValues(prev => {
+      const updated = { ...prev };
+      if (updated[propId]?.[rowKey]) {
+        const { override: _, ...rest } = updated[propId][rowKey];
+        updated[propId] = {
+          ...updated[propId],
+          [rowKey]: rest
+        };
+      }
+      return updated;
+    });
+    setActiveOverridePopover(null);
+  };
+
+  // Get the display value for a field (considering overrides)
+  const getDisplayValue = (propId: string, rowKey: string, row: GridRowData): { 
+    value: number | string | null; 
+    isOverridden: boolean; 
+    override?: OverrideData;
+    calculatedValue: number | string | null;
+  } => {
+    const propValues = values[propId];
+    const compValue = propValues?.[rowKey];
+    const calculatedValue = row.isCalculated ? getCalculatedValue(propId, rowKey) : null;
+    
+    // Check if there's an override
+    if (compValue?.override) {
+      return {
+        value: compValue.override.overrideValue,
+        isOverridden: true,
+        override: compValue.override,
+        calculatedValue
+      };
+    }
+    
+    // Use calculated value if available, otherwise stored value
+    return {
+      value: calculatedValue ?? compValue?.value ?? null,
+      isOverridden: false,
+      calculatedValue
+    };
+  };
+
+  // Determine format type for override popover
+  const getOverrideFormat = (format?: string): 'currency' | 'percent' | 'number' | 'text' => {
+    if (format === 'currency' || format === 'currency_sf') return 'currency';
+    if (format === 'percent' || format === 'percent_adjustment') return 'percent';
+    if (format === 'number') return 'number';
+    return 'text';
+  };
+
   const AdjustmentBadge = ({ flag, value, onClick, showValue = true }: { flag?: string, value: number, onClick: () => void, showValue?: boolean }) => {
     const isSup = flag === 'superior' || flag === 'Superior';
     const isInf = flag === 'inferior' || flag === 'Inferior';
     const baseClass = `inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[10px] font-bold uppercase tracking-wide border shadow-sm transition-all cursor-pointer`;
 
-    if (isSup) return <span onClick={onClick} className={`${baseClass} bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100`}>
-      <ArrowUpRight className="w-3 h-3" /> SUP {showValue && value !== 0 && <span className="ml-1 border-l border-emerald-200 pl-1">{Math.abs(value * 100).toFixed(1)}%</span>}
+    if (isSup) return <span onClick={onClick} className={`${baseClass} bg-accent-teal-mint-light text-accent-teal-mint border-accent-teal-mint hover:bg-accent-teal-mint-light`}>
+      <ArrowUpRight className="w-3 h-3" /> SUP {showValue && value !== 0 && <span className="ml-1 border-l border-accent-teal-mint-light pl-1">{Math.abs(value * 100).toFixed(1)}%</span>}
     </span>;
-    if (isInf) return <span onClick={onClick} className={`${baseClass} bg-red-50 text-red-700 border-red-200 hover:bg-red-100`}>
-      <ArrowDownRight className="w-3 h-3" /> INF {showValue && value !== 0 && <span className="ml-1 border-l border-red-200 pl-1">{Math.abs(value * 100).toFixed(1)}%</span>}
+    if (isInf) return <span onClick={onClick} className={`${baseClass} bg-accent-red-light text-harken-error border-harken-error/20 hover:bg-accent-red-light`}>
+      <ArrowDownRight className="w-3 h-3" /> INF {showValue && value !== 0 && <span className="ml-1 border-l border-harken-error/30 pl-1">{Math.abs(value * 100).toFixed(1)}%</span>}
     </span>;
-    return <span onClick={onClick} className={`${baseClass} bg-slate-50 dark:bg-slate-700 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-600`}><Minus className="w-3 h-3" /> SIM</span>;
+    return <span onClick={onClick} className={`${baseClass} bg-slate-50 dark:bg-elevation-1 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-harken-gray hover:bg-slate-100 dark:hover:bg-harken-gray`}><Minus className="w-3 h-3" /> SIM</span>;
   };
 
   // Click-to-cycle function for qualitative adjustments
@@ -606,7 +690,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
     if (isSup) return (
       <span
         onClick={handleClick}
-        className={`${baseClass} bg-emerald-50 text-emerald-700 border-emerald-200 hover:bg-emerald-100 hover:border-emerald-300`}
+        className={`${baseClass} bg-accent-teal-mint-light text-accent-teal-mint border-accent-teal-mint hover:bg-accent-teal-mint-light hover:border-accent-teal-mint`}
         title="Click to change"
       >
         <ArrowUpRight className="w-3 h-3" /> SUP
@@ -615,7 +699,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
     if (isInf) return (
       <span
         onClick={handleClick}
-        className={`${baseClass} bg-red-50 text-red-700 border-red-200 hover:bg-red-100 hover:border-red-300`}
+        className={`${baseClass} bg-accent-red-light text-harken-error border-harken-error/20 hover:bg-accent-red-light hover:border-harken-error`}
         title="Click to change"
       >
         <ArrowDownRight className="w-3 h-3" /> INF
@@ -624,7 +708,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
     return (
       <span
         onClick={handleClick}
-        className={`${baseClass} bg-slate-50 dark:bg-slate-700 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-slate-600 hover:bg-slate-100 dark:hover:bg-slate-600 hover:border-slate-300 dark:hover:border-slate-500`}
+        className={`${baseClass} bg-slate-50 dark:bg-elevation-1 text-slate-500 dark:text-slate-400 border-slate-200 dark:border-harken-gray hover:bg-slate-100 dark:hover:bg-harken-gray hover:border-slate-300 dark:hover:border-harken-gray`}
         title="Click to change"
       >
         <Minus className="w-3 h-3" /> SIM
@@ -660,7 +744,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
         <button
           ref={buttonRef}
           onClick={toggleDropdown}
-          className="w-full py-2 px-3 border-2 border-dashed border-slate-300 dark:border-slate-600 rounded-lg flex items-center justify-between gap-2 text-slate-500 dark:text-slate-400 font-semibold hover:border-harken-blue hover:text-harken-blue hover:bg-harken-blue/5 transition-all duration-300 group text-xs bg-white dark:bg-slate-800"
+          className="w-full py-2 px-3 border-2 border-dashed border-slate-300 dark:border-harken-gray rounded-lg flex items-center justify-between gap-2 text-slate-500 dark:text-slate-400 font-semibold hover:border-harken-blue hover:text-harken-blue hover:bg-harken-blue/5 transition-all duration-300 group text-xs bg-surface-1 dark:bg-elevation-1"
         >
           <div className="flex items-center gap-2">
             <Plus size={12} className="text-slate-400 group-hover:text-harken-blue" />
@@ -670,15 +754,15 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
         </button>
 
         {isOpen && (
-          <div className={`absolute left-0 w-72 bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 z-[500] overflow-hidden flex flex-col transition-all duration-200 ${dropdownPlacement === 'top' ? 'bottom-full mb-1' : 'top-full mt-1'
+          <div className={`absolute left-0 w-72 bg-surface-1 dark:bg-elevation-1 rounded-xl shadow-2xl border border-slate-200 dark:border-dark-border z-[500] overflow-hidden flex flex-col transition-all duration-200 ${dropdownPlacement === 'top' ? 'bottom-full mb-1' : 'top-full mt-1'
             }`}>
             {isAddingCustom ? (
               <div className="p-3">
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">New Custom Element</span>
+                  <span className="text-xs font-bold text-slate-700 dark:text-slate-200 uppercase tracking-wider">New Custom Element</span>
                   <button
                     onClick={() => setAddingCustomToSection(null)}
-                    className="p-1 hover:bg-slate-100 dark:hover:bg-slate-700 rounded text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+                    className="p-1 hover:bg-slate-100 dark:hover:bg-elevation-3 rounded text-slate-400 hover:text-slate-600 dark:hover:text-harken-gray-light"
                   >
                     <X size={14} />
                   </button>
@@ -691,7 +775,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                     value={customElementName}
                     onChange={(e) => setCustomElementName(e.target.value)}
                     placeholder="e.g. Traffic Count"
-                    className="w-full px-2 py-1.5 text-xs border border-slate-300 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-white dark:bg-slate-700 dark:text-white"
+                    className="w-full px-2 py-1.5 text-xs border border-slate-300 dark:border-harken-gray rounded-lg focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white"
                     autoFocus
                     onKeyDown={(e) => e.key === 'Enter' && handleConfirmCustomElement()}
                   />
@@ -703,13 +787,13 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                     onClick={() => setSaveCustomForFuture(!saveCustomForFuture)}
                     className={`group w-full flex items-center justify-between p-3 rounded-xl border transition-all duration-300 ${saveCustomForFuture
                       ? 'bg-amber-50 border-amber-200 dark:bg-amber-900/20 dark:border-amber-700/50'
-                      : 'bg-slate-50 border-slate-200 dark:bg-slate-800/50 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
+                      : 'bg-slate-50 border-slate-200 dark:bg-elevation-1/50 dark:border-dark-border hover:border-slate-300 dark:hover:border-harken-gray'
                       }`}
                   >
                     <div className="flex items-center gap-3">
                       <div className={`p-2 rounded-lg transition-all duration-300 ${saveCustomForFuture
                         ? 'bg-amber-100 text-amber-500 scale-110 rotate-12 dark:bg-amber-900/40 dark:text-amber-400'
-                        : 'bg-white text-slate-400 dark:bg-slate-800/50 dark:text-slate-500 group-hover:bg-white group-hover:text-amber-400 dark:group-hover:bg-slate-900 dark:group-hover:text-amber-500/70'
+                        : 'bg-surface-1 text-slate-400 dark:bg-elevation-1/50 dark:text-slate-500 group-hover:bg-surface-1 group-hover:text-amber-400 dark:group-hover:bg-slate-900 dark:group-hover:text-amber-500/70'
                         }`}>
                         <Star className={`w-4 h-4 ${saveCustomForFuture ? 'fill-current' : ''}`} />
                       </div>
@@ -738,7 +822,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
               </div>
             ) : (
               <>
-                <div className="px-3 py-2 bg-slate-50 dark:bg-slate-800/50 border-b border-slate-200 dark:border-slate-700 flex justify-between items-center">
+                <div className="px-3 py-2 bg-slate-50 dark:bg-elevation-1/50 border-b border-slate-200 dark:border-dark-border flex justify-between items-center">
                   <span className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Available Elements</span>
                   <div className="flex items-center gap-2">
                     {/* Add Custom Button is now in the header too for quick access */}
@@ -756,9 +840,9 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                       <button
                         key={element.key}
                         onClick={() => handleAddElement(sectionId, element)}
-                        className="w-full text-left px-3 py-2 text-xs hover:bg-harken-blue/5 dark:hover:bg-harken-blue/10 transition-colors border-b border-slate-100 dark:border-slate-700 last:border-b-0 group"
+                        className="w-full text-left px-3 py-2 text-xs hover:bg-harken-blue/5 dark:hover:bg-harken-blue/10 transition-colors border-b border-slate-100 dark:border-dark-border last:border-b-0 group"
                       >
-                        <div className="font-medium text-slate-700 dark:text-slate-300 group-hover:text-harken-blue">{element.label}</div>
+                        <div className="font-medium text-slate-700 dark:text-slate-200 group-hover:text-harken-blue">{element.label}</div>
                         {element.description && (
                           <div className="text-[10px] text-slate-400 dark:text-slate-500 truncate">{element.description}</div>
                         )}
@@ -776,7 +860,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                     </div>
                   )}
                 </div>
-                <div className="border-t border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800/50">
+                <div className="border-t border-slate-200 dark:border-dark-border bg-slate-50 dark:bg-elevation-1/50">
                   <button
                     onClick={() => handleStartCustomElement(sectionId)}
                     className="w-full text-left px-3 py-2.5 text-xs hover:bg-harken-blue/5 transition-colors flex items-center gap-2 text-harken-blue font-medium"
@@ -835,9 +919,9 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
           }}
         />
         {isOpen && (
-          <div className="adjustment-popover absolute top-full left-0 mt-2 w-48 bg-white dark:bg-slate-800 rounded-xl shadow-2xl border border-slate-200 dark:border-slate-700 z-[200] overflow-hidden">
+          <div className="adjustment-popover absolute top-full left-0 mt-2 w-48 bg-surface-1 dark:bg-elevation-1 rounded-xl shadow-2xl border border-slate-200 dark:border-dark-border z-[200] overflow-hidden">
             {/* Mode Toggle Header */}
-            <div className="flex items-center justify-between px-3 py-2 border-b border-slate-100 dark:border-slate-700 bg-slate-50 dark:bg-slate-800">
+            <div className="flex items-center justify-between px-3 py-2 border-b border-slate-100 dark:border-dark-border bg-slate-50 dark:bg-elevation-1">
               <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500 dark:text-slate-400">
                 Adjustment Mode
               </span>
@@ -846,7 +930,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                   type="button"
                   className={`px-2.5 py-1 text-xs font-bold rounded-md transition-all ${adjustmentMode === 'Percent'
                     ? 'bg-harken-blue text-white shadow-sm'
-                    : 'bg-white dark:bg-slate-700 text-slate-500 dark:text-slate-300 border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600'
+                    : 'bg-surface-1 dark:bg-elevation-1 text-slate-500 dark:text-slate-200 border border-slate-200 dark:border-harken-gray hover:bg-slate-50 dark:hover:bg-harken-gray'
                     }`}
                   onClick={() => setAdjustmentMode('Percent')}
                 >
@@ -856,7 +940,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                   type="button"
                   className={`px-2.5 py-1 text-xs font-bold rounded-md transition-all ${adjustmentMode === 'Dollar'
                     ? 'bg-harken-blue text-white shadow-sm'
-                    : 'bg-white dark:bg-slate-700 text-slate-500 dark:text-slate-300 border border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-600'
+                    : 'bg-surface-1 dark:bg-elevation-1 text-slate-500 dark:text-slate-200 border border-slate-200 dark:border-harken-gray hover:bg-slate-50 dark:hover:bg-harken-gray'
                     }`}
                   onClick={() => setAdjustmentMode('Dollar')}
                 >
@@ -873,7 +957,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                     <button
                       type="button"
                       key={option.value}
-                      className={`w-full px-3 py-2 text-left text-sm hover:bg-slate-50 dark:hover:bg-slate-700/50 flex items-center justify-between transition-colors ${numericValue === option.value ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300' : 'text-slate-700 dark:text-slate-200'
+                      className={`w-full px-3 py-2 text-left text-sm hover:bg-slate-50 dark:hover:bg-elevation-3/50 flex items-center justify-between transition-colors ${numericValue === option.value ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300' : 'text-slate-700 dark:text-slate-200'
                         }`}
                       onClick={() => {
                         updateValue(propId, row.key, option.value, 'value');
@@ -882,10 +966,10 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                     >
                       <span className="font-medium">{option.label}</span>
                       <span className={`text-[10px] uppercase font-bold px-1.5 py-0.5 rounded ${option.value > 0
-                        ? 'text-red-600 bg-red-50'
+                        ? 'text-harken-error bg-accent-red-light'
                         : option.value < 0
-                          ? 'text-emerald-600 bg-emerald-50'
-                          : 'text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-700'
+                          ? 'text-accent-teal-mint bg-accent-teal-mint-light'
+                          : 'text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-elevation-1'
                         }`}>
                         {getStatusLabel(option.value)}
                       </span>
@@ -893,14 +977,14 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                   ))}
                 </div>
                 {/* Custom Input */}
-                <div className="border-t border-slate-100 dark:border-slate-700 px-3 py-2.5 bg-slate-50 dark:bg-slate-800">
+                <div className="border-t border-slate-100 dark:border-dark-border px-3 py-2.5 bg-slate-50 dark:bg-elevation-1">
                   <label className="text-[10px] font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wide">
                     Custom %
                   </label>
                   <div className="flex gap-2 mt-1.5">
                     <input
                       type="text"
-                      className="flex-1 border border-slate-200 dark:border-slate-600 rounded-md px-2 py-1.5 text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-harken-blue dark:focus:ring-harken-blue focus:border-transparent"
+                      className="flex-1 border border-slate-200 dark:border-harken-gray rounded-md px-2 py-1.5 text-sm bg-surface-1 dark:bg-elevation-1 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-harken-blue dark:focus:ring-harken-blue focus:border-transparent"
                       value={customInputValue}
                       placeholder="e.g. 12.5"
                       onChange={(e) => {
@@ -945,7 +1029,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                 <input
                   type="text"
                   autoFocus
-                  className="w-full border border-slate-200 dark:border-slate-600 rounded-md px-3 py-2 text-sm bg-white dark:bg-slate-900 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-harken-blue focus:border-transparent"
+                  className="w-full border border-slate-200 dark:border-harken-gray rounded-md px-3 py-2 text-sm bg-surface-1 dark:bg-elevation-1 text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-harken-blue focus:border-transparent"
                   placeholder="Enter amount"
                   value={customInputValue}
                   onChange={(e) => {
@@ -1054,15 +1138,15 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
   const [isMapCollapsed, setIsMapCollapsed] = useState(false);
 
   return (
-    <div className="flex flex-col h-full bg-slate-50 dark:bg-slate-900 relative overflow-hidden">
+    <div className="flex flex-col h-full bg-slate-50 dark:bg-elevation-1 relative overflow-hidden">
 
       {/* COMPARABLE MAP SECTION */}
       {hasSubjectCoords && (
-        <div className="flex-shrink-0 border-b border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-800">
+        <div className="flex-shrink-0 border-b border-slate-200 dark:border-dark-border bg-surface-1 dark:bg-elevation-1">
           {/* Map Header - Always visible */}
           <button
             onClick={() => setIsMapCollapsed(!isMapCollapsed)}
-            className="w-full flex items-center justify-between px-4 py-2 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
+            className="w-full flex items-center justify-between px-4 py-2 hover:bg-slate-50 dark:hover:bg-elevation-3 transition-colors"
           >
             <div className="flex items-center gap-2">
               <MapIcon className="w-4 h-4 text-harken-blue" />
@@ -1108,7 +1192,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
 
       {/* SCROLLABLE AREA - Contains grid and reconciliation */}
       {/* SCROLLABLE AREA - Contains grid and reconciliation */}
-      <div ref={scrollContainerRef} className="flex-1 overflow-auto custom-scrollbar relative bg-white dark:bg-slate-900" style={{ isolation: 'isolate' }}>
+      <div ref={scrollContainerRef} className="flex-1 overflow-auto custom-scrollbar relative bg-surface-1 dark:bg-elevation-1" style={{ isolation: 'isolate' }}>
         {/* Horizontal Scroll Indicator - logic kept for zone scrolling, visual hidden */}
         <HorizontalScrollIndicator scrollContainerRef={scrollContainerRef} stickyTop={120} rightOffset={ACTION_COL_WIDTH} hideIndicator={true} />
 
@@ -1119,7 +1203,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
         >
           {/* GRID CONTAINER */}
           <div
-            className="grid relative bg-white dark:bg-slate-800 flex-shrink-0"
+            className="grid relative bg-surface-1 dark:bg-elevation-1 flex-shrink-0"
             style={{
               gridTemplateColumns: `${LABEL_COL_WIDTH}px ${SUBJECT_COL_WIDTH}px repeat(${properties.length - 1}, ${COMP_COL_WIDTH}px)`,
               minWidth: `${totalGridWidth}px`,
@@ -1128,7 +1212,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
 
             {/* Header Row - Sticky to top with solid backgrounds */}
             <div
-              className="sticky top-0 left-0 z-[120] border-b border-slate-200 dark:border-slate-700 flex items-end bg-white dark:bg-slate-800"
+              className="sticky top-0 left-0 z-[120] border-b border-slate-200 dark:border-dark-border flex items-end bg-surface-1 dark:bg-elevation-1"
               style={{
                 width: LABEL_COL_WIDTH,
                 height: 120,
@@ -1143,9 +1227,9 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
             {properties.map((prop) => (
               <div
                 key={prop.id}
-                className={`sticky top-0 overflow-hidden flex flex-col bg-white dark:bg-slate-800 ${prop.type === 'subject'
+                className={`sticky top-0 overflow-hidden flex flex-col bg-surface-1 dark:bg-elevation-1 ${prop.type === 'subject'
                   ? 'z-[110] border-b-2 border-harken-blue shadow-[4px_0_16px_rgba(0,0,0,0.08)] dark:shadow-none'
-                  : 'z-[100] border-b border-slate-200 dark:border-slate-700'
+                  : 'z-[100] border-b border-slate-200 dark:border-dark-border'
                   }`}
                 style={{
                   height: 120,
@@ -1166,21 +1250,21 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                 <React.Fragment key={section.id}>
                   {/* Section Header - Full Width */}
                   <div
-                    className={`col-span-full relative z-[50] mt-4 border-y ${hasResidualRows ? 'border-purple-300 dark:border-purple-800' : 'border-slate-200 dark:border-slate-700'
-                      } ${hasResidualRows ? 'bg-purple-50 dark:bg-purple-900/20' : 'bg-slate-50 dark:bg-slate-900'}`}
+                    className={`col-span-full relative z-[50] mt-4 border-y ${hasResidualRows ? 'border-purple-300 dark:border-purple-800' : 'border-slate-200 dark:border-dark-border'
+                      } ${hasResidualRows ? 'bg-purple-50 dark:bg-purple-900/20' : 'bg-slate-50 dark:bg-elevation-1'}`}
                   >
                     <div
                       className={`sticky left-0 w-fit px-4 py-2 font-bold text-xs uppercase tracking-widest flex items-center gap-2 ${hasResidualRows
                         ? 'text-purple-700 dark:text-purple-300'
-                        : 'text-slate-700 dark:text-slate-300'
-                        } ${hasResidualRows ? 'bg-purple-50 dark:bg-purple-900/10' : 'bg-slate-50 dark:bg-slate-900'}`}
+                        : 'text-slate-700 dark:text-slate-200'
+                        } ${hasResidualRows ? 'bg-purple-50 dark:bg-purple-900/10' : 'bg-slate-50 dark:bg-elevation-1'}`}
                       style={{ zIndex: 51 }}
                     >
                       {section.title}
                       {canDeleteSection && (
                         <button
                           onClick={() => handleSectionDeleteClick(section.id, section.title)}
-                          className="ml-2 p-1 rounded hover:bg-red-100 text-slate-400 hover:text-red-500 transition-colors"
+                          className="ml-2 p-1 rounded hover:bg-accent-red-light text-slate-400 hover:text-harken-error transition-colors"
                           title={`Remove ${section.title} section`}
                         >
                           <Trash2 className="w-3.5 h-3.5" />
@@ -1196,11 +1280,11 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                       <React.Fragment key={row.id}>
                         {/* Label Column - Sticky Left, never scrolls horizontally */}
                         <div
-                          className={`sticky left-0 z-[60] border-r border-b border-slate-100 dark:border-slate-700/50 flex items-center justify-between px-2 py-1.5 group ${row.key === 'total_value'
-                            ? 'border-t-2 border-t-slate-800 dark:border-t-slate-600 bg-slate-50 dark:bg-slate-800'
+                          className={`sticky left-0 z-[60] border-r border-b border-slate-100 dark:border-dark-border/50 flex items-center justify-between px-2 py-1.5 group ${row.key === 'total_value'
+                            ? 'border-t-2 border-t-slate-800 dark:border-t-slate-600 bg-slate-50 dark:bg-elevation-1'
                             : isResidualRow
                               ? 'border-purple-200 dark:border-purple-800 bg-purple-50 dark:bg-[#1e1b2e]'
-                              : 'bg-white dark:bg-slate-900'
+                              : 'bg-surface-1 dark:bg-elevation-1'
                             }`}
                           style={{
                             width: LABEL_COL_WIDTH,
@@ -1215,7 +1299,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                             }`}>{row.label}</span>
                           <button
                             onClick={() => removeRow(row.id)}
-                            className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-red-100 text-slate-300 hover:text-red-500 transition-all"
+                            className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-accent-red-light text-slate-300 hover:text-harken-error transition-all"
                             title={`Remove ${row.label}`}
                           >
                             <Trash2 className="w-3 h-3" />
@@ -1233,16 +1317,16 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
 
                             // Determine background color based on row type and property type
                             const bgClass = (() => {
-                              if (row.key === 'total_value') return 'bg-slate-50 dark:bg-slate-700';
+                              if (row.key === 'total_value') return 'bg-slate-50 dark:bg-elevation-1';
                               if (prop.type === 'subject') return isResidualRow ? 'bg-purple-50 dark:bg-[#1e1b2e]' : 'bg-[#eff6ff] dark:bg-[#0f1f3a]';
                               if (isResidualRow) return 'bg-purple-50 dark:bg-purple-900/10';
-                              return 'bg-white dark:bg-slate-800';
+                              return 'bg-surface-1 dark:bg-elevation-1';
                             })();
 
                             return (
                               <div
                                 key={`${row.id}-${prop.id}`}
-                                className={`border-r border-b border-slate-100 dark:border-slate-700/50 p-2 flex items-center text-xs ${prop.type === 'subject'
+                                className={`border-r border-b border-slate-100 dark:border-dark-border/50 p-2 flex items-center text-xs ${prop.type === 'subject'
                                   ? 'z-[55] shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none'
                                   : ''
                                   } ${row.key === 'total_value'
@@ -1250,7 +1334,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                                     : isResidualRow
                                       ? 'border-purple-200 dark:border-purple-800'
                                       : ''
-                                  } ${bgClass} ${isNotesRow ? 'cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors' : ''}`}
+                                  } ${bgClass} ${isNotesRow ? 'cursor-pointer hover:bg-slate-50 dark:hover:bg-elevation-3/50 transition-colors' : ''}`}
                                 style={prop.type === 'subject'
                                   ? {
                                     left: LABEL_COL_WIDTH,
@@ -1276,14 +1360,21 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                                   : section.id === 'qualitative' && prop.type !== 'subject'
                                     ? <QualitativeChip propId={prop.id} rowKey={row.key} />
                                     : (() => {
-                                      // For calculated fields, always use the calculated value
-                                      const calculatedVal = row.isCalculated ? getCalculatedValue(prop.id, row.key) : null;
-                                      const displayValue = calculatedVal !== null
-                                        ? calculatedVal
-                                        : (values[prop.id]?.[row.key]?.value ?? getCalculatedValue(prop.id, row.key));
+                                      // Get display value considering overrides
+                                      const displayData = getDisplayValue(prop.id, row.key, row);
+                                      const { value: displayValue, isOverridden, override, calculatedValue } = displayData;
 
-                                      // Special styling for auto-calculated cap rate
-                                      const isAutoCalcCapRate = row.key === 'extracted_cap_rate' && calculatedVal !== null;
+                                      // Check if this field can be overridden
+                                      const canOverride = row.isCalculated && 
+                                        OVERRIDABLE_CALCULATED_FIELDS.includes(row.key) && 
+                                        prop.type !== 'subject' &&
+                                        calculatedValue !== null;
+                                      
+                                      const isOverridePopoverOpen = activeOverridePopover?.rowKey === row.key && 
+                                        activeOverridePopover?.propId === prop.id;
+
+                                      // Special styling for auto-calculated cap rate (not overridden)
+                                      const isAutoCalcCapRate = row.key === 'extracted_cap_rate' && !isOverridden && calculatedValue !== null;
                                       
                                       // Check if this is the subject land add-back linked from Land Valuation
                                       const isLinkedLandValue = row.key === 'subject_land_add_back' && 
@@ -1292,30 +1383,71 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                                         values[prop.id]?.[row.key]?.value === landValuationData.concludedLandValue;
 
                                       return (
-                                        <div className="flex items-center gap-1.5">
+                                        <div className="relative flex items-center gap-1.5 w-full">
                                           <span className={`${row.key === 'total_value'
-                                            ? 'font-bold text-emerald-700'
-                                            : isResidualRow
-                                              ? 'font-semibold text-purple-700'
-                                              : isAutoCalcCapRate || isLinkedLandValue
-                                                ? 'font-semibold text-harken-blue'
-                                                : 'font-medium'
+                                            ? 'font-bold text-accent-teal-mint'
+                                            : isOverridden
+                                              ? 'font-semibold text-amber-700 dark:text-amber-400'
+                                              : isResidualRow
+                                                ? 'font-semibold text-purple-700'
+                                                : isAutoCalcCapRate || isLinkedLandValue
+                                                  ? 'font-semibold text-harken-blue'
+                                                  : 'font-medium'
                                             }`}>
                                             {formatValue(displayValue, row.format)}
                                           </span>
-                                          {isAutoCalcCapRate && (
+                                          
+                                          {/* Override badge - shown when value is overridden */}
+                                          {isOverridden && override && (
+                                            <OverrideBadge 
+                                              override={override}
+                                              onClick={() => setActiveOverridePopover({ rowKey: row.key, propId: prop.id })}
+                                            />
+                                          )}
+                                          
+                                          {/* Auto-calc indicator for non-overridden calculated fields */}
+                                          {isAutoCalcCapRate && !isOverridden && (
                                             <span className="text-[9px] text-slate-400 font-normal" title="Auto-calculated from NOI ÷ Sale Price">
                                               (auto)
                                             </span>
                                           )}
+                                          
+                                          {/* Calculator icon for overridable fields (hover to show) */}
+                                          {canOverride && !isOverridden && (
+                                            <button
+                                              onClick={(e) => {
+                                                e.stopPropagation();
+                                                setActiveOverridePopover({ rowKey: row.key, propId: prop.id });
+                                              }}
+                                              className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-amber-100 dark:hover:bg-amber-900/30 text-slate-300 hover:text-amber-600 transition-all ml-auto"
+                                              title={`Override calculated ${row.label}`}
+                                            >
+                                              <Calculator className="w-3 h-3" />
+                                            </button>
+                                          )}
+                                          
                                           {isLinkedLandValue && (
                                             <span 
-                                              className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-emerald-50 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-400 rounded text-[9px] font-medium border border-emerald-200 dark:border-emerald-700/50" 
+                                              className="inline-flex items-center gap-0.5 px-1.5 py-0.5 bg-accent-teal-mint-light dark:bg-accent-teal-mint-light text-accent-teal-mint dark:text-accent-teal-mint rounded text-[9px] font-medium border border-accent-teal-mint dark:border-accent-teal-mint" 
                                               title="Linked from Land Valuation concluded value"
                                             >
                                               <Link2 className="w-2.5 h-2.5" />
                                               Land Val
                                             </span>
+                                          )}
+                                          
+                                          {/* Override Popover */}
+                                          {isOverridePopoverOpen && (
+                                            <OverridePopover
+                                              calculatedValue={calculatedValue}
+                                              currentOverride={override}
+                                              fieldLabel={row.label}
+                                              format={getOverrideFormat(row.format)}
+                                              onApply={(newOverride) => applyOverride(prop.id, row.key, newOverride)}
+                                              onClear={() => clearOverride(prop.id, row.key)}
+                                              onClose={() => setActiveOverridePopover(null)}
+                                              position="left"
+                                            />
                                           )}
                                         </div>
                                       );
@@ -1331,17 +1463,17 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
 
                   {/* Add Element Button Row for this section */}
                   <div
-                    className={`sticky left-0 p-2 bg-white dark:bg-slate-800 border-r border-slate-100 dark:border-slate-700/50 ${openElementDropdown === section.id ? 'z-[500]' : 'z-[60]'}`}
+                    className={`sticky left-0 p-2 bg-surface-1 dark:bg-elevation-1 border-r border-slate-100 dark:border-dark-border/50 ${openElementDropdown === section.id ? 'z-[500]' : 'z-[60]'}`}
                     style={{ width: LABEL_COL_WIDTH }}
                   >
                     <AddElementButton sectionId={section.id as GridRowCategory} />
                   </div>
                   <div
-                    className="sticky left-[160px] z-[55] shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none bg-white dark:bg-slate-800 border-r border-slate-100 dark:border-slate-700/50"
+                    className="sticky left-[160px] z-[55] shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none bg-surface-1 dark:bg-elevation-1 border-r border-slate-100 dark:border-dark-border/50"
                     style={{ width: SUBJECT_COL_WIDTH }}
                   ></div>
                   {properties.filter(p => p.type !== 'subject').map(prop => (
-                    <div key={`add-element-${section.id}-${prop.id}`} className="bg-white dark:bg-slate-800 border-r border-slate-100 dark:border-slate-700/50"></div>
+                    <div key={`add-element-${section.id}-${prop.id}`} className="bg-surface-1 dark:bg-elevation-1 border-r border-slate-100 dark:border-dark-border/50"></div>
                   ))}
                 </React.Fragment>
               );
@@ -1350,13 +1482,13 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
 
           {/* ACTION COLUMN */}
           <div
-            className="flex-shrink-0 bg-slate-50 dark:bg-slate-900 flex flex-col items-center justify-start py-8 sticky top-0 self-start"
+            className="flex-shrink-0 bg-slate-50 dark:bg-elevation-1 flex flex-col items-center justify-start py-8 sticky top-0 self-start"
             style={{ width: ACTION_COL_WIDTH, height: 'auto', minHeight: 400 }}
           >
             <div className="flex flex-col items-center justify-center h-80 py-4">
               {/* Add Comps */}
               <button
-                className="flex flex-col items-center gap-2 p-4 rounded-xl hover:bg-white dark:hover:bg-slate-700 transition-colors group"
+                className="flex flex-col items-center gap-2 p-4 rounded-xl hover:bg-surface-1 dark:hover:bg-elevation-3 transition-colors group"
                 title="Add a new comp manually"
               >
                 <div className="w-12 h-12 rounded-full bg-harken-blue/20 flex items-center justify-center group-hover:bg-harken-blue/30 transition-colors">
@@ -1370,21 +1502,21 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
 
         {/* RECONCILIATION SECTION - Stays centered, doesn't scroll horizontally */}
         <div
-          className="sticky left-0 bg-slate-50 dark:bg-slate-900 border-t-2 border-slate-300 dark:border-slate-700 p-8 pt-10"
+          className="sticky left-0 bg-slate-50 dark:bg-elevation-1 border-t-2 border-slate-300 dark:border-dark-border p-8 pt-10"
           style={{ width: '100vw', maxWidth: '100%' }}
         >
           <div className="max-w-4xl mx-auto flex flex-col gap-6">
             <div className="flex items-center gap-3">
-              <div className="w-2 h-8 bg-emerald-500 rounded-full"></div>
+              <div className="w-2 h-8 bg-accent-teal-mint rounded-full"></div>
               <h2 className="text-xl font-bold text-slate-800 dark:text-white uppercase tracking-wider">Value Reconciliation & Narrative</h2>
             </div>
 
             {/* Dual Metric Display - Shows both $/SF and $/Unit for multi-family */}
             {showDualMetrics && (
               <div className="grid grid-cols-2 gap-4">
-                <div className={`p-4 rounded-xl border-2 ${subjectData?.primaryValueDriver === 'price_per_sf' ? 'bg-harken-blue/5 border-harken-blue' : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700'}`}>
+                <div className={`p-4 rounded-xl border-2 ${subjectData?.primaryValueDriver === 'price_per_sf' ? 'bg-harken-blue/5 border-harken-blue' : 'bg-slate-50 dark:bg-elevation-1 border-slate-200 dark:border-dark-border'}`}>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">$/SF Building</span>
+                    <span className="text-sm font-semibold text-slate-600 dark:text-slate-200">$/SF Building</span>
                     {subjectData?.primaryValueDriver === 'price_per_sf' && (
                       <span className="px-2 py-0.5 bg-harken-blue text-white text-[10px] font-bold rounded">PRIMARY</span>
                     )}
@@ -1393,9 +1525,9 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                     {concludedValuePsf ? `$${concludedValuePsf.toLocaleString()}` : '-'}
                   </div>
                 </div>
-                <div className={`p-4 rounded-xl border-2 ${subjectData?.primaryValueDriver === 'price_per_unit' ? 'bg-harken-blue/5 border-harken-blue' : 'bg-slate-50 dark:bg-slate-800 border-slate-200 dark:border-slate-700'}`}>
+                <div className={`p-4 rounded-xl border-2 ${subjectData?.primaryValueDriver === 'price_per_unit' ? 'bg-harken-blue/5 border-harken-blue' : 'bg-slate-50 dark:bg-elevation-1 border-slate-200 dark:border-dark-border'}`}>
                   <div className="flex items-center justify-between mb-2">
-                    <span className="text-sm font-semibold text-slate-600 dark:text-slate-300">$/Unit</span>
+                    <span className="text-sm font-semibold text-slate-600 dark:text-slate-200">$/Unit</span>
                     {subjectData?.primaryValueDriver === 'price_per_unit' && (
                       <span className="px-2 py-0.5 bg-harken-blue text-white text-[10px] font-bold rounded">PRIMARY</span>
                     )}
@@ -1408,15 +1540,15 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
             )}
 
             {/* Concluded Value Summary */}
-            <div className="p-5 bg-emerald-50 dark:bg-emerald-900/20 rounded-xl border border-emerald-200 dark:border-emerald-700/50">
+            <div className="p-5 bg-accent-teal-mint-light dark:bg-accent-teal-mint-light rounded-xl border border-accent-teal-mint dark:border-accent-teal-mint">
               <div className="flex items-center justify-between">
-                <span className="text-sm font-semibold text-emerald-700 dark:text-emerald-300">Concluded Value Indication</span>
+                <span className="text-sm font-semibold text-accent-teal-mint dark:text-accent-teal-mint">Concluded Value Indication</span>
                 <div className="text-right">
-                  <div className="text-2xl font-bold text-emerald-700 dark:text-emerald-300">
+                  <div className="text-2xl font-bold text-accent-teal-mint dark:text-accent-teal-mint">
                     {concludedValue ? `$${concludedValue.toLocaleString()}` : 'Pending'}
                   </div>
                   {!showDualMetrics && concludedValuePsf && (
-                    <div className="text-sm text-emerald-600 dark:text-emerald-400">
+                    <div className="text-sm text-accent-teal-mint dark:text-accent-teal-mint">
                       ${concludedValuePsf.toLocaleString()} / SF
                     </div>
                   )}
@@ -1461,12 +1593,12 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
         confirmDelete?.isOpen && (
           <div className="fixed inset-0 z-[1100] bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
             <div
-              className="bg-white dark:bg-slate-800 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200"
+              className="bg-surface-1 dark:bg-elevation-1 w-full max-w-md rounded-2xl shadow-2xl overflow-hidden animate-in zoom-in-95 duration-200"
               onClick={(e) => e.stopPropagation()}
             >
               {/* Warning Header */}
               <div className="bg-gradient-to-r from-amber-500 to-orange-500 px-6 py-4 flex items-center gap-3">
-                <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
+                <div className="w-10 h-10 bg-surface-1/20 rounded-full flex items-center justify-center">
                   <AlertTriangle className="w-5 h-5 text-white" />
                 </div>
                 <div>
@@ -1490,10 +1622,10 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
               </div>
 
               {/* Actions */}
-              <div className="px-6 py-4 bg-slate-50 dark:bg-slate-800 border-t border-slate-200 dark:border-slate-700 flex items-center justify-end gap-3">
+              <div className="px-6 py-4 bg-slate-50 dark:bg-elevation-1 border-t border-slate-200 dark:border-dark-border flex items-center justify-end gap-3">
                 <button
                   onClick={cancelSectionDelete}
-                  className="px-5 py-2.5 rounded-lg text-sm font-semibold text-slate-600 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors"
+                  className="px-5 py-2.5 rounded-lg text-sm font-semibold text-slate-600 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-elevation-3 transition-colors"
                 >
                   No, Keep It
                 </button>

@@ -63,9 +63,9 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
   };
 
   return (
-    <div className={`flex flex-col border border-slate-200 rounded-xl bg-white overflow-hidden shadow-sm transition-all ${isFocused ? 'ring-2 ring-purple-100 border-purple-300' : ''} ${className}`}>
+    <div className={`flex flex-col border border-light-border rounded-xl bg-surface-1 overflow-hidden shadow-sm transition-all ${isFocused ? 'ring-2 ring-purple-100 border-purple-300' : ''} ${className}`}>
       {/* Toolbar */}
-      <div className="flex flex-wrap items-center gap-1 p-2 border-b border-slate-100 bg-slate-50 select-none">
+      <div className="flex flex-wrap items-center gap-1 p-2 border-b border-light-border bg-harken-gray-light select-none">
         
         {/* History */}
         <div className="flex items-center gap-0.5 mr-2">
@@ -76,7 +76,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
 
         {/* Text Style */}
         <select 
-            className="h-7 text-xs border border-slate-200 rounded bg-white px-1 text-slate-700 focus:outline-none focus:border-purple-300 mr-1"
+            className="h-7 text-xs border border-light-border rounded bg-surface-1 px-1 text-harken-gray focus:outline-none focus:border-purple-300 mr-1"
             onChange={(e) => exec('formatBlock', e.target.value)}
             defaultValue="p"
         >
@@ -87,7 +87,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
         </select>
         
         <select 
-            className="h-7 text-xs border border-slate-200 rounded bg-white px-1 text-slate-700 focus:outline-none focus:border-purple-300 mr-2"
+            className="h-7 text-xs border border-light-border rounded bg-surface-1 px-1 text-harken-gray focus:outline-none focus:border-purple-300 mr-2"
             onChange={(e) => exec('fontName', e.target.value)}
             defaultValue="Inter"
         >
@@ -118,7 +118,7 @@ export const RichTextEditor: React.FC<RichTextEditorProps> = ({
       </div>
       
       {/* Editor Area */}
-      <div className="flex-1 relative bg-white cursor-text">
+      <div className="flex-1 relative bg-surface-1 cursor-text">
         <div 
             ref={editorRef}
             contentEditable

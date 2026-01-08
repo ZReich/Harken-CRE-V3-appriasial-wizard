@@ -189,7 +189,7 @@ export function MapGeneratorPanel({
   // No coordinates state
   if (!hasCoordinates) {
     return (
-      <div className={`bg-slate-50 border border-slate-200 dark:bg-slate-800 dark:border-slate-700 rounded-xl p-6 ${className}`}>
+      <div className={`bg-slate-50 border border-slate-200 dark:bg-elevation-1 dark:border-dark-border rounded-xl p-6 ${className}`}>
         <div className="text-center text-slate-400 dark:text-slate-500">
           <Map className="w-12 h-12 mx-auto mb-3 opacity-50" />
           <p className="font-medium text-slate-600">Property Location Required</p>
@@ -202,15 +202,15 @@ export function MapGeneratorPanel({
   }
 
   return (
-    <div className={`bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden ${className}`}>
+    <div className={`bg-surface-1 dark:bg-elevation-1 rounded-xl border border-slate-200 dark:border-dark-border overflow-hidden ${className}`}>
       {/* Header */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between px-4 py-3 bg-slate-50 dark:bg-slate-800/50 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors border-b border-slate-200 dark:border-slate-700"
+        className="w-full flex items-center justify-between px-4 py-3 bg-slate-50 dark:bg-elevation-1/50 hover:bg-slate-100 dark:hover:bg-elevation-3 transition-colors border-b border-slate-200 dark:border-dark-border"
       >
         <div className="flex items-center gap-2">
           <Map className="w-5 h-5 text-harken-blue" />
-          <span className="font-semibold text-slate-700 dark:text-slate-300">Map Generator</span>
+          <span className="font-semibold text-slate-700 dark:text-slate-200">Map Generator</span>
           {generatedMaps.length > 0 && (
             <span className="px-2 py-0.5 bg-harken-blue text-white text-xs rounded-full">
               {generatedMaps.length} generated
@@ -290,7 +290,7 @@ export function MapGeneratorPanel({
                     className="w-6 h-6 mb-1.5"
                     style={{ color: generated ? '#16a34a' : config.color }}
                   />
-                  <span className="text-xs font-medium text-slate-700 dark:text-slate-300 text-center">
+                  <span className="text-xs font-medium text-slate-700 dark:text-slate-200 text-center">
                     {config.label}
                   </span>
                   {!config.implemented && (
@@ -315,7 +315,7 @@ export function MapGeneratorPanel({
                       relative group rounded-lg overflow-hidden border-2 cursor-pointer transition-all
                       ${previewMap?.id === map.id
                         ? 'border-harken-blue ring-2 ring-harken-blue/20'
-                        : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
+                        : 'border-slate-200 dark:border-dark-border hover:border-slate-300 dark:hover:border-harken-gray'
                       }
                     `}
                     onClick={() => setPreviewMap(previewMap?.id === map.id ? null : map)}
@@ -345,14 +345,14 @@ export function MapGeneratorPanel({
                               e.stopPropagation();
                               setPreviewMap(map);
                             }}
-                            className="p-1 bg-white/20 rounded hover:bg-white/40 transition-colors"
+                            className="p-1 bg-surface-1/20 rounded hover:bg-surface-1/40 transition-colors"
                             title="Preview"
                           >
                             <Eye className="w-3 h-3 text-white" />
                           </button>
                           <button
                             onClick={(e) => handleDeleteMap(map.id, e)}
-                            className="p-1 bg-red-500/80 rounded hover:bg-red-600 transition-colors"
+                            className="p-1 bg-harken-error/80 rounded hover:bg-harken-error transition-colors"
                             title="Delete"
                           >
                             <Trash2 className="w-3 h-3 text-white" />
@@ -369,12 +369,12 @@ export function MapGeneratorPanel({
           {/* Preview Modal */}
           {previewMap && (
             <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-              <div className="bg-white rounded-xl shadow-2xl max-w-3xl w-full mx-4 overflow-hidden">
+              <div className="bg-surface-1 rounded-xl shadow-2xl max-w-3xl w-full mx-4 overflow-hidden">
                 {/* Preview Header */}
                 <div className="flex items-center justify-between px-4 py-3 border-b border-slate-200 bg-slate-50">
                   <div className="flex items-center gap-2">
                     <Map className="w-5 h-5 text-harken-blue" />
-                    <span className="font-semibold text-slate-700 dark:text-slate-300">{previewMap.title}</span>
+                    <span className="font-semibold text-slate-700 dark:text-slate-200">{previewMap.title}</span>
                   </div>
                   <div className="flex items-center gap-2">
                     {previewMap.imageUrl && (

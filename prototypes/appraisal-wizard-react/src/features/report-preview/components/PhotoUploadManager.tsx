@@ -56,12 +56,12 @@ const PhotoSlotGroup: React.FC<PhotoSlotGroupProps> = ({
   const canAddMore = photoCount < slot.maxCount;
 
   return (
-    <div className="border border-slate-200 dark:border-slate-700 rounded-lg overflow-hidden bg-white dark:bg-slate-800">
+    <div className="border border-slate-200 dark:border-dark-border rounded-lg overflow-hidden bg-surface-1 dark:bg-elevation-1">
       {/* Header */}
       <div className="flex items-center justify-between px-4 py-3 bg-slate-50 border-b border-slate-200">
         <div className="flex items-center gap-3">
           <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-            isComplete ? 'bg-green-100 text-green-600' : 'bg-amber-100 text-amber-600'
+            isComplete ? 'bg-accent-teal-mint-light text-accent-teal-mint' : 'bg-accent-amber-gold-light text-accent-amber-gold'
           }`}>
             {isComplete ? <Check size={16} /> : <Camera size={16} />}
           </div>
@@ -69,9 +69,9 @@ const PhotoSlotGroup: React.FC<PhotoSlotGroupProps> = ({
             <h4 className="font-medium text-slate-800">{slot.label}</h4>
             <p className="text-xs text-slate-500">
               {photoCount} / {slot.maxCount} photos
-              {slot.required && <span className="ml-1 text-red-500">*</span>}
+              {slot.required && <span className="ml-1 text-harken-error">*</span>}
               {slot.minCount > 0 && !isComplete && (
-                <span className="ml-2 text-amber-600">
+                <span className="ml-2 text-accent-amber-gold">
                   (Need {slot.minCount - photoCount} more)
                 </span>
               )}
@@ -141,14 +141,14 @@ const PhotoSlotGroup: React.FC<PhotoSlotGroupProps> = ({
                   {/* Top actions */}
                   <div className="flex justify-between p-2">
                     <button
-                      className="p-1.5 bg-white/20 hover:bg-white/30 rounded text-white cursor-grab"
+                      className="p-1.5 bg-surface-1/20 hover:bg-surface-1/30 rounded text-white cursor-grab"
                       title="Drag to reorder"
                     >
                       <GripVertical size={14} />
                     </button>
                     <button
                       onClick={() => onRemove(photo.id)}
-                      className="p-1.5 bg-red-500/80 hover:bg-red-500 rounded text-white"
+                      className="p-1.5 bg-harken-error/80 hover:bg-harken-error rounded text-white"
                       title="Remove photo"
                     >
                       <X size={14} />
@@ -162,7 +162,7 @@ const PhotoSlotGroup: React.FC<PhotoSlotGroupProps> = ({
                       value={photo.caption}
                       onChange={(e) => onUpdateCaption(photo.id, e.target.value)}
                       placeholder="Add caption..."
-                      className="w-full px-2 py-1 text-xs bg-white/20 border border-white/30 rounded text-white placeholder-white/60 focus:outline-none focus:ring-1 focus:ring-white/50"
+                      className="w-full px-2 py-1 text-xs bg-surface-1/20 border border-white/30 rounded text-white placeholder-white/60 focus:outline-none focus:ring-1 focus:ring-white/50"
                       onClick={(e) => e.stopPropagation()}
                     />
                   </div>
@@ -289,8 +289,8 @@ export const PhotoUploadManager: React.FC<PhotoUploadManagerProps> = ({
         <div className="flex items-center gap-2">
           <div className={`px-3 py-1.5 rounded-full text-sm font-medium ${
             completedRequired 
-              ? 'bg-green-100 text-green-700'
-              : 'bg-amber-100 text-amber-700'
+              ? 'bg-accent-teal-mint-light text-accent-teal-mint'
+              : 'bg-accent-amber-gold-light text-accent-amber-gold'
           }`}>
             {completedSlots} / {PHOTO_SLOTS.length} categories
           </div>
@@ -299,12 +299,12 @@ export const PhotoUploadManager: React.FC<PhotoUploadManagerProps> = ({
 
       {/* Error messages */}
       {uploadErrors.length > 0 && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+        <div className="bg-accent-red-light border border-harken-error/20 rounded-lg p-4">
           <div className="flex items-start gap-3">
-            <AlertCircle className="text-red-500 flex-shrink-0 mt-0.5" size={18} />
+            <AlertCircle className="text-harken-error flex-shrink-0 mt-0.5" size={18} />
             <div className="space-y-1">
               {uploadErrors.map((error, i) => (
-                <p key={i} className="text-sm text-red-700">{error}</p>
+                <p key={i} className="text-sm text-harken-error">{error}</p>
               ))}
             </div>
           </div>

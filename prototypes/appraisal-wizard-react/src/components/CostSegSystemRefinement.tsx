@@ -151,17 +151,17 @@ export const CostSegSystemRefinement: React.FC<CostSegSystemRefinementProps> = (
   };
 
   return (
-    <div className="border border-gray-200 rounded-xl overflow-hidden bg-white shadow-sm">
+    <div className="border border-light-border rounded-xl overflow-hidden bg-surface-1 shadow-sm">
       {/* Header */}
       <div
-        className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-white border-b border-gray-200 cursor-pointer hover:bg-slate-50 transition-colors"
+        className="flex items-center justify-between p-4 bg-gradient-to-r from-slate-50 to-white border-b border-light-border cursor-pointer hover:bg-slate-50 transition-colors"
         onClick={() => setIsExpanded(!isExpanded)}
       >
         <div className="flex items-center gap-3 flex-1">
           <span className="text-2xl">{SYSTEM_ICONS[refinement.systemType] || '🔧'}</span>
           <div>
-            <h3 className="text-lg font-bold text-gray-900 dark:text-white">{refinement.systemLabel}</h3>
-            <p className="text-sm text-gray-500 dark:text-slate-400">
+            <h3 className="text-lg font-bold text-harken-dark dark:text-white">{refinement.systemLabel}</h3>
+            <p className="text-sm text-harken-gray-med dark:text-slate-400">
               Total: {formatCurrency(refinement.totalSystemCost)} • {refinement.refinements.length} refinement{refinement.refinements.length !== 1 ? 's' : ''}
             </p>
           </div>
@@ -170,24 +170,24 @@ export const CostSegSystemRefinement: React.FC<CostSegSystemRefinementProps> = (
         <div className="flex items-center gap-3">
           {/* Allocation Progress */}
           <div className="text-right mr-4">
-            <div className="text-xs font-medium text-gray-600 dark:text-slate-400">Allocated</div>
-            <div className={`text-sm font-bold ${allocationStatus.isComplete ? 'text-emerald-600' : allocationStatus.isOver ? 'text-red-600' : 'text-amber-600'}`}>
+            <div className="text-xs font-medium text-harken-gray dark:text-slate-400">Allocated</div>
+            <div className={`text-sm font-bold ${allocationStatus.isComplete ? 'text-accent-teal-mint' : allocationStatus.isOver ? 'text-harken-error' : 'text-accent-amber-gold'}`}>
               {formatCurrency(allocationStatus.allocated)} ({allocationStatus.percentAllocated.toFixed(1)}%)
             </div>
           </div>
           
           {allocationStatus.isComplete ? (
-            <CheckCircle2 className="w-5 h-5 text-emerald-500" />
+            <CheckCircle2 className="w-5 h-5 text-accent-teal-mint" />
           ) : allocationStatus.isOver ? (
-            <AlertCircle className="w-5 h-5 text-red-500" />
+            <AlertCircle className="w-5 h-5 text-harken-error" />
           ) : (
-            <AlertCircle className="w-5 h-5 text-amber-500" />
+            <AlertCircle className="w-5 h-5 text-accent-amber-gold" />
           )}
           
           {isExpanded ? (
-            <ChevronDown className="w-5 h-5 text-gray-400" />
+            <ChevronDown className="w-5 h-5 text-harken-gray-med" />
           ) : (
-            <ChevronRight className="w-5 h-5 text-gray-400" />
+            <ChevronRight className="w-5 h-5 text-harken-gray-med" />
           )}
         </div>
       </div>
@@ -197,18 +197,18 @@ export const CostSegSystemRefinement: React.FC<CostSegSystemRefinementProps> = (
         <div className="p-4 space-y-4">
           {/* Progress Bar */}
           <div className="space-y-2">
-            <div className="flex justify-between text-xs text-gray-600 dark:text-slate-400">
+            <div className="flex justify-between text-xs text-harken-gray dark:text-slate-400">
               <span>Allocation Progress</span>
               <span>{formatCurrency(allocationStatus.remaining)} remaining</span>
             </div>
-            <div className="h-2 bg-gray-100 rounded-full overflow-hidden">
+            <div className="h-2 bg-harken-gray-light rounded-full overflow-hidden">
               <div
                 className={`h-full transition-all ${
                   allocationStatus.isComplete
-                    ? 'bg-emerald-500'
+                    ? 'bg-accent-teal-mint'
                     : allocationStatus.isOver
-                    ? 'bg-red-500'
-                    : 'bg-amber-500'
+                    ? 'bg-harken-error'
+                    : 'bg-accent-amber-gold'
                 }`}
                 style={{ width: `${Math.min(allocationStatus.percentAllocated, 100)}%` }}
               />
@@ -218,16 +218,16 @@ export const CostSegSystemRefinement: React.FC<CostSegSystemRefinementProps> = (
           {/* Validation Message */}
           {!allocationStatus.isComplete && (
             <div className={`flex items-start gap-2 p-3 rounded-lg ${
-              allocationStatus.isOver ? 'bg-red-50 border border-red-200' : 'bg-amber-50 border border-amber-200'
+              allocationStatus.isOver ? 'bg-accent-red-light border border-harken-error/30' : 'bg-accent-amber-gold-light border border-accent-amber-gold-light'
             }`}>
-              <AlertCircle className={`w-4 h-4 mt-0.5 ${allocationStatus.isOver ? 'text-red-500' : 'text-amber-500'}`} />
+              <AlertCircle className={`w-4 h-4 mt-0.5 ${allocationStatus.isOver ? 'text-harken-error' : 'text-accent-amber-gold'}`} />
               <div className="text-sm">
                 {allocationStatus.isOver ? (
-                  <p className="text-red-800 font-medium">
+                  <p className="text-harken-error font-medium">
                     Over-allocated by {formatCurrency(Math.abs(allocationStatus.remaining))}. Please reduce refinement amounts.
                   </p>
                 ) : (
-                  <p className="text-amber-800">
+                  <p className="text-accent-amber-gold">
                     {formatCurrency(allocationStatus.remaining)} remaining to allocate. Total must equal system cost.
                   </p>
                 )}
@@ -256,7 +256,7 @@ export const CostSegSystemRefinement: React.FC<CostSegSystemRefinementProps> = (
           {/* Add Refinement Button */}
           <button
             onClick={handleAddRefinement}
-            className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-emerald-700 hover:text-emerald-800 bg-emerald-50 hover:bg-emerald-100 rounded-lg transition-colors w-full justify-center border-2 border-dashed border-emerald-200 hover:border-emerald-300"
+            className="flex items-center gap-2 px-4 py-2.5 text-sm font-medium text-accent-teal-mint hover:text-accent-teal-mint-hover bg-accent-teal-mint-light hover:bg-accent-teal-mint-light rounded-lg transition-colors w-full justify-center border-2 border-dashed border-accent-teal-mint-light hover:border-accent-teal-mint"
           >
             <Plus className="w-4 h-4" />
             Add Refinement
@@ -266,7 +266,7 @@ export const CostSegSystemRefinement: React.FC<CostSegSystemRefinementProps> = (
           {onDelete && (
             <button
               onClick={onDelete}
-              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-red-600 hover:text-red-700 hover:bg-red-50 rounded-lg transition-colors w-full justify-center"
+              className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-harken-error hover:text-harken-error hover:bg-accent-red-light rounded-lg transition-colors w-full justify-center"
             >
               <Trash2 className="w-4 h-4" />
               Remove This System
@@ -311,17 +311,17 @@ const RefinementLine: React.FC<RefinementLineProps> = ({
     return (
       <div
         onClick={onEdit}
-        className="flex items-center gap-3 p-3 bg-gray-50 hover:bg-gray-100 rounded-lg cursor-pointer transition-colors border border-gray-200"
+        className="flex items-center gap-3 p-3 bg-harken-gray-light hover:bg-harken-gray-light rounded-lg cursor-pointer transition-colors border border-light-border"
       >
         <div className="flex-1">
           <div className="flex items-center gap-2 mb-1">
-            <span className="font-medium text-gray-900 dark:text-white">{line.description || 'Unnamed refinement'}</span>
+            <span className="font-medium text-harken-dark dark:text-white">{line.description || 'Unnamed refinement'}</span>
             <span className={`px-2 py-0.5 text-xs font-medium rounded-full bg-${depClassOption?.color}-100 text-${depClassOption?.color}-700`}>
               {line.depreciationClass}
             </span>
           </div>
-          <div className="flex items-center gap-4 text-xs text-gray-600 dark:text-slate-400">
-            <span className="font-semibold text-gray-900 dark:text-white">{formatCurrency(line.amount)}</span>
+          <div className="flex items-center gap-4 text-xs text-harken-gray dark:text-slate-400">
+            <span className="font-semibold text-harken-dark dark:text-white">{formatCurrency(line.amount)}</span>
             <span>• {ALLOCATION_METHODS.find(m => m.value === line.allocationMethod)?.label}</span>
             {line.measurements && (
               <span>• {line.measurements.quantity} {line.measurements.unit}</span>
@@ -339,7 +339,7 @@ const RefinementLine: React.FC<RefinementLineProps> = ({
             e.stopPropagation();
             onDelete();
           }}
-          className="p-1.5 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded transition-colors"
+          className="p-1.5 text-harken-gray-med hover:text-harken-error hover:bg-accent-red-light rounded transition-colors"
         >
           <Trash2 className="w-4 h-4" />
         </button>
@@ -349,12 +349,12 @@ const RefinementLine: React.FC<RefinementLineProps> = ({
 
   // Edit mode
   return (
-    <div className="p-4 bg-white border-2 border-emerald-200 rounded-lg space-y-3">
+    <div className="p-4 bg-surface-1 border-2 border-accent-teal-mint-light rounded-lg space-y-3">
       <div className="flex items-center justify-between mb-2">
-        <h4 className="text-sm font-semibold text-gray-700">Refinement #{index + 1}</h4>
+        <h4 className="text-sm font-semibold text-harken-gray">Refinement #{index + 1}</h4>
         <button
           onClick={onSave}
-          className="px-3 py-1 text-xs font-medium text-emerald-700 bg-emerald-50 hover:bg-emerald-100 rounded transition-colors"
+          className="px-3 py-1 text-xs font-medium text-accent-teal-mint bg-accent-teal-mint-light hover:bg-accent-teal-mint-light rounded transition-colors"
         >
           Done
         </button>
@@ -362,23 +362,23 @@ const RefinementLine: React.FC<RefinementLineProps> = ({
 
       {/* Description */}
       <div>
-        <label className="block text-xs font-medium text-gray-600 mb-1">Description</label>
+        <label className="block text-xs font-medium text-harken-gray mb-1">Description</label>
         <input
           type="text"
           value={line.description}
           onChange={(e) => onUpdate({ description: e.target.value })}
           placeholder="e.g., Dedicated Equipment Circuits"
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+          className="w-full px-3 py-2 border border-light-border rounded-lg text-sm focus:ring-2 focus:ring-accent-teal-mint focus:border-transparent"
         />
       </div>
 
       {/* Depreciation Class */}
       <div>
-        <label className="block text-xs font-medium text-gray-600 mb-1">Depreciation Class</label>
+        <label className="block text-xs font-medium text-harken-gray mb-1">Depreciation Class</label>
         <select
           value={line.depreciationClass}
           onChange={(e) => onUpdate({ depreciationClass: e.target.value as DepreciationClass })}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+          className="w-full px-3 py-2 border border-light-border rounded-lg text-sm focus:ring-2 focus:ring-accent-teal-mint focus:border-transparent"
         >
           {DEPRECIATION_CLASS_OPTIONS.map(opt => (
             <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -388,11 +388,11 @@ const RefinementLine: React.FC<RefinementLineProps> = ({
 
       {/* Allocation Method */}
       <div>
-        <label className="block text-xs font-medium text-gray-600 mb-1">Allocation Method</label>
+        <label className="block text-xs font-medium text-harken-gray mb-1">Allocation Method</label>
         <select
           value={line.allocationMethod}
           onChange={(e) => onUpdate({ allocationMethod: e.target.value as CostSegRefinementLine['allocationMethod'] })}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+          className="w-full px-3 py-2 border border-light-border rounded-lg text-sm focus:ring-2 focus:ring-accent-teal-mint focus:border-transparent"
         >
           {ALLOCATION_METHODS.map(method => (
             <option key={method.value} value={method.value}>{method.label}</option>
@@ -402,13 +402,13 @@ const RefinementLine: React.FC<RefinementLineProps> = ({
 
       {/* Amount */}
       <div>
-        <label className="block text-xs font-medium text-gray-600 mb-1">Amount</label>
+        <label className="block text-xs font-medium text-harken-gray mb-1">Amount</label>
         <input
           type="number"
           value={line.amount}
           onChange={(e) => onUpdate({ amount: parseFloat(e.target.value) || 0 })}
           placeholder="0"
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+          className="w-full px-3 py-2 border border-light-border rounded-lg text-sm focus:ring-2 focus:ring-accent-teal-mint focus:border-transparent"
         />
       </div>
 
@@ -488,13 +488,13 @@ const RefinementLine: React.FC<RefinementLineProps> = ({
 
       {/* Notes */}
       <div>
-        <label className="block text-xs font-medium text-gray-600 mb-1">Notes / Justification</label>
+        <label className="block text-xs font-medium text-harken-gray mb-1">Notes / Justification</label>
         <textarea
           value={line.notes || ''}
           onChange={(e) => onUpdate({ notes: e.target.value })}
           placeholder="Optional: Add notes or IRS justification..."
           rows={2}
-          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent resize-none"
+          className="w-full px-3 py-2 border border-light-border rounded-lg text-sm focus:ring-2 focus:ring-accent-teal-mint focus:border-transparent resize-none"
         />
       </div>
 
@@ -502,13 +502,13 @@ const RefinementLine: React.FC<RefinementLineProps> = ({
       <div>
         <button
           onClick={() => setShowPhotoSelector(!showPhotoSelector)}
-          className="flex items-center gap-2 text-xs font-medium text-gray-700 dark:text-slate-400 hover:text-gray-900 dark:hover:text-white"
+          className="flex items-center gap-2 text-xs font-medium text-harken-gray dark:text-slate-400 hover:text-harken-dark dark:hover:text-white"
         >
           <Camera className="w-4 h-4" />
           Link Photos ({line.linkedPhotoIds?.length || 0})
         </button>
         {showPhotoSelector && availablePhotos.length > 0 && (
-          <div className="mt-2 p-2 border border-gray-200 rounded-lg max-h-40 overflow-y-auto">
+          <div className="mt-2 p-2 border border-light-border rounded-lg max-h-40 overflow-y-auto">
             <div className="grid grid-cols-4 gap-2">
               {availablePhotos.slice(0, 8).map(photo => (
                 <button
@@ -524,13 +524,13 @@ const RefinementLine: React.FC<RefinementLineProps> = ({
                   }}
                   className={`relative aspect-square rounded overflow-hidden border-2 ${
                     line.linkedPhotoIds?.includes(photo.id)
-                      ? 'border-emerald-500'
-                      : 'border-gray-200 hover:border-gray-300'
+                      ? 'border-accent-teal-mint'
+                      : 'border-light-border hover:border-light-border'
                   }`}
                 >
                   <img src={photo.url} alt={photo.caption || ''} className="w-full h-full object-cover" />
                   {line.linkedPhotoIds?.includes(photo.id) && (
-                    <div className="absolute inset-0 bg-emerald-500 bg-opacity-20 flex items-center justify-center">
+                    <div className="absolute inset-0 bg-accent-teal-mint bg-opacity-20 flex items-center justify-center">
                       <CheckCircle2 className="w-6 h-6 text-white" />
                     </div>
                   )}

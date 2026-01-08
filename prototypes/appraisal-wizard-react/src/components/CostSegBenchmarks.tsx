@@ -81,8 +81,8 @@ export const CostSegBenchmarksPanel: React.FC<CostSegBenchmarksProps> = ({
 
   if (!benchmark) {
     return (
-      <div className="bg-gray-50 border border-gray-200 rounded-xl p-4">
-        <p className="text-sm text-gray-600">No benchmark data available for {propertyType}</p>
+      <div className="bg-harken-gray-light border border-light-border rounded-xl p-4">
+        <p className="text-sm text-harken-gray">No benchmark data available for {propertyType}</p>
       </div>
     );
   }
@@ -92,7 +92,7 @@ export const CostSegBenchmarksPanel: React.FC<CostSegBenchmarksProps> = ({
   const thirtyNineYearStatus = getStatusColor(userAllocation.thirtyNineYear, benchmark.typicalRanges.thirtyNineYearMin, benchmark.typicalRanges.thirtyNineYearMax);
 
   return (
-    <div className="bg-white border-2 border-blue-200 rounded-xl p-4 space-y-4">
+    <div className="bg-surface-1 border-2 border-blue-200 rounded-xl p-4 space-y-4">
       <div className="flex items-center gap-2">
         <BarChart3 className="w-5 h-5 text-blue-600" />
         <h3 className="text-lg font-bold text-blue-900">Industry Benchmarks</h3>
@@ -146,23 +146,23 @@ interface AllocationBarProps {
 
 const AllocationBar: React.FC<AllocationBarProps> = ({ label, userValue, minRange, maxRange, status }) => {
   const statusColors = {
-    emerald: { bg: 'bg-emerald-500', text: 'text-emerald-700', border: 'border-emerald-300' },
-    amber: { bg: 'bg-amber-500', text: 'text-amber-700', border: 'border-amber-300' },
-    red: { bg: 'bg-red-500', text: 'text-red-700', border: 'border-red-300' },
-  }[status] || { bg: 'bg-gray-500', text: 'text-gray-700', border: 'border-gray-300' }; // Fallback
+    emerald: { bg: 'bg-accent-teal-mint', text: 'text-accent-teal-mint', border: 'border-accent-teal-mint' },
+    amber: { bg: 'bg-accent-amber-gold', text: 'text-accent-amber-gold', border: 'border-accent-amber-gold/30' },
+    red: { bg: 'bg-harken-error', text: 'text-harken-error', border: 'border-harken-error/30' },
+  }[status] || { bg: 'bg-harken-gray-light0', text: 'text-harken-gray', border: 'border-light-border' }; // Fallback
 
   return (
     <div>
       <div className="flex justify-between items-center mb-2">
-        <span className="text-sm font-medium text-gray-700 dark:text-slate-300">{label}</span>
+        <span className="text-sm font-medium text-harken-gray dark:text-slate-200">{label}</span>
         <div className="flex items-center gap-2">
           <span className={`text-sm font-bold ${statusColors.text}`}>{userValue.toFixed(1)}%</span>
-          <span className="text-xs text-gray-500 dark:text-slate-400">
+          <span className="text-xs text-harken-gray-med dark:text-slate-400">
             (typical: {minRange}-{maxRange}%)
           </span>
         </div>
       </div>
-      <div className="relative h-6 bg-gray-100 rounded-full overflow-hidden">
+      <div className="relative h-6 bg-harken-gray-light rounded-full overflow-hidden">
         {/* Typical range indicator */}
         <div
           className="absolute h-full bg-blue-100"
@@ -178,7 +178,7 @@ const AllocationBar: React.FC<AllocationBarProps> = ({ label, userValue, minRang
         />
         {/* Marker */}
         <div
-          className="absolute top-0 bottom-0 w-1 bg-gray-800"
+          className="absolute top-0 bottom-0 w-1 bg-harken-dark"
           style={{ left: `${userValue}%` }}
         />
       </div>

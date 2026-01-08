@@ -52,7 +52,7 @@ export const DemographicsPage: React.FC<DemographicsPageProps> = ({
 
   if (!data || data.length === 0) {
     return (
-      <div className="bg-white w-[8.5in] min-h-[11in] p-[1in] shadow-lg mx-auto">
+      <div className="bg-surface-1 w-[8.5in] min-h-[11in] p-[1in] shadow-lg mx-auto">
         <h1 className="text-xl font-bold text-slate-800 border-b-2 border-[#0da1c7] pb-2 mb-6">
           NEIGHBORHOOD DEMOGRAPHICS
         </h1>
@@ -62,7 +62,7 @@ export const DemographicsPage: React.FC<DemographicsPageProps> = ({
   }
 
   return (
-    <div className="bg-white w-[8.5in] min-h-[11in] p-[1in] shadow-lg mx-auto relative">
+    <div className="bg-surface-1 w-[8.5in] min-h-[11in] p-[1in] shadow-lg mx-auto relative">
       {/* Header */}
       <h1 className="text-xl font-bold text-slate-800 border-b-2 border-[#0da1c7] pb-2 mb-4">
         NEIGHBORHOOD DEMOGRAPHICS
@@ -86,7 +86,7 @@ export const DemographicsPage: React.FC<DemographicsPageProps> = ({
             )}
             
             {/* Map Legend Overlay */}
-            <div className="absolute bottom-2 left-2 bg-white/95 rounded px-3 py-1.5 text-xs shadow-sm border border-slate-200">
+            <div className="absolute bottom-2 left-2 bg-surface-1/95 rounded px-3 py-1.5 text-xs shadow-sm border border-slate-200">
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1">
                   <div className="w-3 h-3 rounded-full border-2 border-[#0da1c7]" 
@@ -104,7 +104,7 @@ export const DemographicsPage: React.FC<DemographicsPageProps> = ({
                   <span className="text-slate-600">5 Miles</span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <div className="w-3 h-3 rounded-full bg-red-500 border-2 border-white" />
+                  <div className="w-3 h-3 rounded-full bg-harken-error border-2 border-white" />
                   <span className="text-slate-600">Subject</span>
                 </div>
               </div>
@@ -157,7 +157,7 @@ export const DemographicsPage: React.FC<DemographicsPageProps> = ({
             <td className="py-1.5 px-3 text-slate-600 border border-slate-200 pl-6">Annual Growth Rate</td>
             {data.map((d) => (
               <td key={d.radius} className="py-1.5 px-3 text-center text-slate-700 border border-slate-200">
-                <span className={d.population.annualGrowthRate >= 0 ? 'text-emerald-600' : 'text-red-600'}>
+                <span className={d.population.annualGrowthRate >= 0 ? 'text-accent-teal-mint' : 'text-harken-error'}>
                   {d.population.annualGrowthRate >= 0 ? '+' : ''}{formatPercentage(d.population.annualGrowthRate)}
                 </span>
               </td>
@@ -304,7 +304,7 @@ export const DemographicsPage: React.FC<DemographicsPageProps> = ({
             Source: {sourceDisplay}{asOfDate && ` (as of ${new Date(asOfDate).toLocaleDateString()})`}
           </p>
           {data[0]?.isApproximate && (
-            <p className="text-amber-600 italic">
+            <p className="text-accent-amber-gold italic">
               * Radius data approximated from county-level statistics
             </p>
           )}

@@ -5,9 +5,9 @@
 export function ChartAnimation() {
   const bars = [
     { height: 60, delay: 0, color: '#0da1c7' },
-    { height: 80, delay: 100, color: '#22c55e' },
+    { height: 80, delay: 100, color: '#2fc4b2' },
     { height: 45, delay: 200, color: '#0da1c7' },
-    { height: 90, delay: 300, color: '#22c55e' },
+    { height: 90, delay: 300, color: '#2fc4b2' },
     { height: 70, delay: 400, color: '#0da1c7' },
   ];
 
@@ -27,7 +27,7 @@ export function ChartAnimation() {
         >
           {/* Value label */}
           <div 
-            className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-bold text-gray-700"
+            className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-bold text-harken-gray"
             style={{
               opacity: 0,
               animation: `fade-in 0.3s ease-out ${bar.delay + 400}ms forwards`,
@@ -38,7 +38,7 @@ export function ChartAnimation() {
           
           {/* Glow effect */}
           <div 
-            className="absolute inset-0 rounded-t-md bg-white/30"
+            className="absolute inset-0 rounded-t-md bg-surface-1/30"
             style={{
               opacity: 0,
               animation: `pulse-glow 0.5s ease-out ${bar.delay + 200}ms forwards`,
@@ -49,7 +49,7 @@ export function ChartAnimation() {
 
       {/* Baseline */}
       <div 
-        className="absolute bottom-4 left-4 right-4 h-0.5 bg-gray-300"
+        className="absolute bottom-4 left-4 right-4 h-0.5 bg-harken-gray-med-lt"
         style={{
           transformOrigin: 'left',
           transform: 'scaleX(0)',

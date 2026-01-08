@@ -45,20 +45,20 @@ export const CostConclusion: React.FC<CostConclusionProps> = ({
   };
 
   return (
-    <div className="bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-xl shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-700">
-      <div className="px-6 py-4 border-b border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-900/50 flex items-center justify-between">
+    <div className="bg-surface-1 dark:bg-elevation-1 border border-slate-200 dark:border-dark-border rounded-xl shadow-sm overflow-hidden animate-in fade-in slide-in-from-bottom-8 duration-700">
+      <div className="px-6 py-4 border-b border-slate-200 dark:border-dark-border bg-slate-50 dark:bg-elevation-1/50 flex items-center justify-between">
         <div className="flex items-center gap-3">
           <h3 className="text-sm font-bold text-slate-900 dark:text-white uppercase tracking-wide flex items-center gap-2">
             <Calculator size={16} className="text-[#0da1c7]" />
             {scenario} Value Conclusion
           </h3>
           {scenario === 'As Stabilized' && (
-            <span className="flex items-center gap-1 bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-400 px-2 py-0.5 rounded text-[10px] font-bold border border-emerald-200 dark:border-emerald-800">
+            <span className="flex items-center gap-1 bg-accent-teal-mint-light dark:bg-accent-teal-mint/30 text-accent-teal-mint dark:text-accent-teal-mint px-2 py-0.5 rounded text-[10px] font-bold border border-accent-teal-mint dark:border-accent-teal-mint">
               <TrendingUp size={10} /> OPTIMIZED SCENARIO
             </span>
           )}
         </div>
-        <div className="text-xs text-slate-500 dark:text-slate-400 font-medium bg-slate-200/50 dark:bg-slate-700/50 px-2 py-1 rounded">
+        <div className="text-xs text-slate-500 dark:text-slate-400 font-medium bg-slate-200/50 dark:bg-elevation-1/50 px-2 py-1 rounded">
           Cost Approach Module
         </div>
       </div>
@@ -83,7 +83,7 @@ export const CostConclusion: React.FC<CostConclusionProps> = ({
           </div>
 
           {scenario === 'As Stabilized' && (
-            <div className="flex justify-between items-center text-sm group text-emerald-700 bg-emerald-50/50 p-2 rounded -mx-2">
+            <div className="flex justify-between items-center text-sm group text-accent-teal-mint bg-accent-teal-mint-light p-2 rounded -mx-2">
               <span className="font-medium">Stabilization (Soft Costs/Lost Rent)</span>
               <div className="flex items-center gap-2">
                 <span className="text-xs opacity-70 font-normal">(+)</span>
@@ -92,40 +92,40 @@ export const CostConclusion: React.FC<CostConclusionProps> = ({
             </div>
           )}
 
-          <div className="border-t border-slate-200 dark:border-slate-700 my-2 pt-3 flex justify-between items-center bg-slate-50 dark:bg-slate-800/50 p-3 rounded-lg border border-slate-100 dark:border-slate-700/50">
+          <div className="border-t border-slate-200 dark:border-dark-border my-2 pt-3 flex justify-between items-center bg-slate-50 dark:bg-elevation-1/50 p-3 rounded-lg border border-slate-100 dark:border-dark-border/50">
             <div className="flex flex-col">
               <span className="text-slate-500 dark:text-slate-400 font-bold text-[10px] uppercase tracking-wide">Exact Mathematical Total</span>
               {scenario !== 'As Is' && <span className="text-[9px] text-[#0da1c7] font-medium mt-0.5">Prospective Valuation Logic Applied</span>}
             </div>
-            <span className="font-mono font-medium text-slate-600 dark:text-slate-300">{formatCurrency(exactTotal)}</span>
+            <span className="font-mono font-medium text-slate-600 dark:text-slate-200">{formatCurrency(exactTotal)}</span>
           </div>
         </div>
 
         {/* Right: The Indicated Value (Review) */}
         <div className="bg-[#0da1c7]/5 dark:bg-[#0da1c7]/10 rounded-xl border border-[#0da1c7]/20 dark:border-[#0da1c7]/30 p-6 relative h-full">
-          <div className="absolute -top-3 left-6 bg-white dark:bg-slate-800 px-2 text-xs font-bold text-[#0da1c7] uppercase tracking-wider border border-[#0da1c7]/20 rounded shadow-sm">
+          <div className="absolute -top-3 left-6 bg-surface-1 dark:bg-elevation-1 px-2 text-xs font-bold text-[#0da1c7] uppercase tracking-wider border border-[#0da1c7]/20 rounded shadow-sm">
             Final Conclusion
           </div>
 
           <div className="space-y-6 flex flex-col h-full">
             <div>
-              <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Reported {scenario} Value</label>
+              <label className="block text-sm font-medium text-slate-700 dark:text-slate-200 mb-2">Reported {scenario} Value</label>
               <div className="relative">
                 <span className="absolute left-4 top-3.5 text-slate-400 font-medium">$</span>
                 <input
                   type="number"
                   value={finalValue}
                   onChange={(e) => handleManualChange(+e.target.value)}
-                  className="w-full pl-8 pr-4 py-3 text-2xl font-bold text-slate-900 dark:text-white bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 rounded-lg shadow-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-[#0da1c7] outline-none transition-all"
+                  className="w-full pl-8 pr-4 py-3 text-2xl font-bold text-slate-900 dark:text-white bg-surface-1 dark:bg-elevation-1 border border-slate-300 dark:border-harken-gray rounded-lg shadow-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-[#0da1c7] outline-none transition-all"
                 />
                 {isManualOverride && (
-                  <div className="absolute right-4 top-4 text-emerald-600 animate-in zoom-in duration-300">
+                  <div className="absolute right-4 top-4 text-accent-teal-mint animate-in zoom-in duration-300">
                     <Check size={20} />
                   </div>
                 )}
               </div>
               {isManualOverride ? (
-                <div className="text-xs text-emerald-600 mt-2 font-medium flex items-center gap-1">
+                <div className="text-xs text-accent-teal-mint mt-2 font-medium flex items-center gap-1">
                   <Sparkles size={12} /> Conclusion refined to avoid false precision.
                 </div>
               ) : (
@@ -141,13 +141,13 @@ export const CostConclusion: React.FC<CostConclusionProps> = ({
             <div className="grid grid-cols-2 gap-3 mt-auto">
               <button
                 onClick={() => handleRound(1000)}
-                className="flex items-center justify-center gap-2 px-4 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 shadow-sm text-slate-700 dark:text-slate-200 text-[10px] font-bold uppercase tracking-wide rounded hover:bg-slate-50 dark:hover:bg-slate-600 hover:text-[#0da1c7] transition-colors"
+                className="flex items-center justify-center gap-2 px-4 py-2 bg-surface-1 dark:bg-elevation-1 border border-slate-200 dark:border-harken-gray shadow-sm text-slate-700 dark:text-slate-200 text-[10px] font-bold uppercase tracking-wide rounded hover:bg-slate-50 dark:hover:bg-harken-gray hover:text-[#0da1c7] transition-colors"
               >
                 <Wand2 size={12} /> Round to $1k
               </button>
               <button
                 onClick={() => handleRound(5000)}
-                className="flex items-center justify-center gap-2 px-4 py-2 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 shadow-sm text-slate-700 dark:text-slate-200 text-[10px] font-bold uppercase tracking-wide rounded hover:bg-slate-50 dark:hover:bg-slate-600 hover:text-[#0da1c7] transition-colors"
+                className="flex items-center justify-center gap-2 px-4 py-2 bg-surface-1 dark:bg-elevation-1 border border-slate-200 dark:border-harken-gray shadow-sm text-slate-700 dark:text-slate-200 text-[10px] font-bold uppercase tracking-wide rounded hover:bg-slate-50 dark:hover:bg-harken-gray hover:text-[#0da1c7] transition-colors"
               >
                 <Wand2 size={12} /> Round to $5k
               </button>

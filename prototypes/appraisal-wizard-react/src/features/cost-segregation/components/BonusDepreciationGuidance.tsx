@@ -133,23 +133,23 @@ export const BonusDepreciationGuidance: React.FC<BonusDepreciationGuidanceProps>
   // Compact variant for inline display
   if (variant === 'compact') {
     return (
-      <div className={`bg-amber-50 border border-amber-200 rounded-lg p-4 ${className}`}>
+      <div className={`bg-accent-amber-gold-light border border-accent-amber-gold-light rounded-lg p-4 ${className}`}>
         <div className="flex items-start gap-3">
-          <Info className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+          <Info className="w-5 h-5 text-accent-amber-gold-hover flex-shrink-0 mt-0.5" />
           <div className="flex-1">
-            <div className="font-medium text-amber-800 mb-1">
+            <div className="font-medium text-accent-amber-gold-hover mb-1">
               {taxYear} Bonus Depreciation: {formatCostSegPercent(currentRate)}
             </div>
-            <p className="text-sm text-amber-700">
+            <p className="text-sm text-accent-amber-gold-hover">
               Eligible 5-year, 7-year, and 15-year property qualifies for first-year bonus depreciation.
               {currentRate < 1.0 && currentRate > 0 && (
-                <span className="block mt-1 text-amber-600">
+                <span className="block mt-1 text-accent-amber-gold-hover">
                   Note: Bonus depreciation phases down each year through 2026.
                 </span>
               )}
             </p>
             {bonusAmount !== null && (
-              <div className="mt-2 text-sm font-semibold text-amber-800">
+              <div className="mt-2 text-sm font-semibold text-accent-amber-gold-hover">
                 Potential Bonus Deduction: {formatCostSegCurrency(bonusAmount)}
               </div>
             )}
@@ -162,7 +162,7 @@ export const BonusDepreciationGuidance: React.FC<BonusDepreciationGuidanceProps>
   // Inline variant for minimal display
   if (variant === 'inline') {
     return (
-      <span className={`inline-flex items-center gap-1.5 px-2 py-1 bg-amber-100 text-amber-800 rounded text-sm ${className}`}>
+      <span className={`inline-flex items-center gap-1.5 px-2 py-1 bg-accent-amber-gold-light text-accent-amber-gold-hover rounded text-sm ${className}`}>
         <Clock className="w-3.5 h-3.5" />
         {taxYear} Bonus: {formatCostSegPercent(currentRate)}
       </span>
@@ -171,14 +171,14 @@ export const BonusDepreciationGuidance: React.FC<BonusDepreciationGuidanceProps>
 
   // Full variant (default)
   return (
-    <div className={`bg-white rounded-xl border border-slate-200 shadow-sm overflow-hidden ${className}`}>
+    <div className={`bg-surface-1 rounded-xl border border-slate-200 shadow-sm overflow-hidden ${className}`}>
       {/* Header */}
       <button
         onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full px-6 py-4 flex items-center justify-between bg-gradient-to-r from-amber-50 to-amber-100/50 hover:from-amber-100/70 hover:to-amber-100 transition-colors text-left"
+        className="w-full px-6 py-4 flex items-center justify-between bg-gradient-to-r from-accent-amber-gold-light to-accent-amber-gold-light/50 hover:from-accent-amber-gold-light/70 hover:to-accent-amber-gold-light transition-colors text-left"
       >
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 bg-amber-500 rounded-xl flex items-center justify-center shadow-sm">
+          <div className="w-10 h-10 bg-accent-amber-gold rounded-xl flex items-center justify-center shadow-sm">
             <TrendingDown className="w-5 h-5 text-white" />
           </div>
           <div>
@@ -186,7 +186,7 @@ export const BonusDepreciationGuidance: React.FC<BonusDepreciationGuidanceProps>
               Bonus Depreciation Guidance
             </h3>
             <p className="text-sm text-slate-600 flex items-center gap-2">
-              <span className="font-medium text-amber-700">{taxYear}: {formatCostSegPercent(currentRate)} Bonus Rate</span>
+              <span className="font-medium text-accent-amber-gold-hover">{taxYear}: {formatCostSegPercent(currentRate)} Bonus Rate</span>
               <span className="text-slate-400">|</span>
               <span>Eligibility Rules & Phase-Down Schedule</span>
             </p>
@@ -194,12 +194,12 @@ export const BonusDepreciationGuidance: React.FC<BonusDepreciationGuidanceProps>
         </div>
         <div className="flex items-center gap-3">
           {currentRate === 0 && (
-            <span className="px-2.5 py-1 bg-red-100 text-red-700 text-xs font-medium rounded-full">
+            <span className="px-2.5 py-1 bg-accent-red-light text-harken-error text-xs font-medium rounded-full">
               Not Available
             </span>
           )}
           {currentRate > 0 && currentRate < 1.0 && (
-            <span className="px-2.5 py-1 bg-amber-100 text-amber-700 text-xs font-medium rounded-full">
+            <span className="px-2.5 py-1 bg-accent-amber-gold-light text-accent-amber-gold-hover text-xs font-medium rounded-full">
               Phased Down
             </span>
           )}
@@ -217,26 +217,26 @@ export const BonusDepreciationGuidance: React.FC<BonusDepreciationGuidanceProps>
           <div className="p-6">
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               {/* Current Rate */}
-              <div className="bg-gradient-to-br from-amber-50 to-amber-100/50 rounded-xl p-5 border border-amber-200">
+              <div className="bg-gradient-to-br from-accent-amber-gold-light to-accent-amber-gold-light rounded-xl p-5 border border-accent-amber-gold-light">
                 <div className="flex items-center gap-2 mb-2">
-                  <Calendar className="w-5 h-5 text-amber-600" />
-                  <span className="text-sm font-semibold text-amber-800">Tax Year {taxYear}</span>
+                  <Calendar className="w-5 h-5 text-accent-amber-gold-hover" />
+                  <span className="text-sm font-semibold text-accent-amber-gold-hover">Tax Year {taxYear}</span>
                 </div>
-                <div className="text-3xl font-bold text-amber-900 mb-1">
+                <div className="text-3xl font-bold text-accent-amber-gold-hover mb-1">
                   {formatCostSegPercent(currentRate)}
                 </div>
-                <div className="text-sm text-amber-700">
+                <div className="text-sm text-accent-amber-gold-hover">
                   Bonus Depreciation Rate
                 </div>
               </div>
 
               {/* Eligible Property */}
-              <div className="bg-gradient-to-br from-emerald-50 to-emerald-100/50 rounded-xl p-5 border border-emerald-200">
+              <div className="bg-gradient-to-br from-accent-teal-mint-light to-accent-teal-mint-light/50 rounded-xl p-5 border border-accent-teal-mint-light">
                 <div className="flex items-center gap-2 mb-2">
-                  <CheckCircle2 className="w-5 h-5 text-emerald-600" />
-                  <span className="text-sm font-semibold text-emerald-800">Eligible Property</span>
+                  <CheckCircle2 className="w-5 h-5 text-accent-teal-mint" />
+                  <span className="text-sm font-semibold text-accent-teal-mint">Eligible Property</span>
                 </div>
-                <div className="text-sm text-emerald-700 space-y-1">
+                <div className="text-sm text-accent-teal-mint space-y-1">
                   <div className="flex items-center gap-2">
                     <Clock className="w-3.5 h-3.5" />
                     <span>5-Year Personal Property</span>
@@ -253,12 +253,12 @@ export const BonusDepreciationGuidance: React.FC<BonusDepreciationGuidanceProps>
               </div>
 
               {/* Ineligible Property */}
-              <div className="bg-gradient-to-br from-red-50 to-red-100/50 rounded-xl p-5 border border-red-200">
+              <div className="bg-gradient-to-br from-harken-error/10 to-accent-red-light rounded-xl p-5 border border-harken-error/30">
                 <div className="flex items-center gap-2 mb-2">
-                  <XCircle className="w-5 h-5 text-red-600" />
-                  <span className="text-sm font-semibold text-red-800">Not Eligible</span>
+                  <XCircle className="w-5 h-5 text-harken-error" />
+                  <span className="text-sm font-semibold text-harken-error">Not Eligible</span>
                 </div>
-                <div className="text-sm text-red-700 space-y-1">
+                <div className="text-sm text-harken-error space-y-1">
                   <div className="flex items-center gap-2">
                     <Building2 className="w-3.5 h-3.5" />
                     <span>27.5-Year Residential</span>
@@ -291,7 +291,7 @@ export const BonusDepreciationGuidance: React.FC<BonusDepreciationGuidanceProps>
                     </div>
                   </div>
                   <div className="text-right">
-                    <div className="text-lg font-bold text-emerald-600">
+                    <div className="text-lg font-bold text-accent-teal-mint">
                       {formatCostSegCurrency(bonusAmount)}
                     </div>
                     <div className="text-xs text-slate-500">
@@ -316,28 +316,28 @@ export const BonusDepreciationGuidance: React.FC<BonusDepreciationGuidanceProps>
                   key={item.year}
                   className={`p-3 rounded-lg text-center border ${
                     item.status === 'current'
-                      ? 'bg-amber-100 border-amber-300 ring-2 ring-amber-400'
+                      ? 'bg-accent-amber-gold-light border-accent-amber-gold-light ring-2 ring-accent-amber-gold'
                       : item.status === 'expired'
                       ? 'bg-slate-100 border-slate-200 opacity-60'
                       : 'bg-slate-50 border-slate-200'
                   }`}
                 >
                   <div className={`text-xs font-medium ${
-                    item.status === 'current' ? 'text-amber-700' : 'text-slate-500'
+                    item.status === 'current' ? 'text-accent-amber-gold-hover' : 'text-slate-500'
                   }`}>
                     {item.year}
                   </div>
                   <div className={`text-lg font-bold ${
                     item.status === 'current' 
-                      ? 'text-amber-900' 
+                      ? 'text-accent-amber-gold-hover' 
                       : item.rate === 0 
-                      ? 'text-red-600'
+                      ? 'text-harken-error'
                       : 'text-slate-700'
                   }`}>
                     {item.label}
                   </div>
                   {item.status === 'current' && (
-                    <div className="text-xs text-amber-600 font-medium mt-1">
+                    <div className="text-xs text-accent-amber-gold-hover font-medium mt-1">
                       Current
                     </div>
                   )}
@@ -383,13 +383,13 @@ export const BonusDepreciationGuidance: React.FC<BonusDepreciationGuidanceProps>
                     <div className="px-4 py-3 border-t border-slate-200">
                       {criterion.eligible && (
                         <div className="mb-3">
-                          <div className="text-xs font-semibold text-emerald-700 uppercase tracking-wide mb-2">
+                          <div className="text-xs font-semibold text-accent-teal-mint uppercase tracking-wide mb-2">
                             Eligible
                           </div>
                           <ul className="space-y-1">
                             {criterion.eligible.map((item, idx) => (
                               <li key={idx} className="flex items-start gap-2 text-sm text-slate-600">
-                                <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 flex-shrink-0" />
+                                <CheckCircle2 className="w-4 h-4 text-accent-teal-mint mt-0.5 flex-shrink-0" />
                                 {item}
                               </li>
                             ))}
@@ -398,13 +398,13 @@ export const BonusDepreciationGuidance: React.FC<BonusDepreciationGuidanceProps>
                       )}
                       {criterion.ineligible && (
                         <div className="mb-3">
-                          <div className="text-xs font-semibold text-red-700 uppercase tracking-wide mb-2">
+                          <div className="text-xs font-semibold text-harken-error uppercase tracking-wide mb-2">
                             Not Eligible
                           </div>
                           <ul className="space-y-1">
                             {criterion.ineligible.map((item, idx) => (
                               <li key={idx} className="flex items-start gap-2 text-sm text-slate-600">
-                                <XCircle className="w-4 h-4 text-red-500 mt-0.5 flex-shrink-0" />
+                                <XCircle className="w-4 h-4 text-harken-error mt-0.5 flex-shrink-0" />
                                 {item}
                               </li>
                             ))}
@@ -425,7 +425,7 @@ export const BonusDepreciationGuidance: React.FC<BonusDepreciationGuidanceProps>
                         <ul className="space-y-1">
                           {criterion.items.map((item, idx) => (
                             <li key={idx} className="flex items-start gap-2 text-sm text-slate-600">
-                              <AlertTriangle className="w-4 h-4 text-amber-500 mt-0.5 flex-shrink-0" />
+                              <AlertTriangle className="w-4 h-4 text-accent-amber-gold mt-0.5 flex-shrink-0" />
                               {item}
                             </li>
                           ))}

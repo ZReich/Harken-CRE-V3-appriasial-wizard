@@ -25,7 +25,7 @@ export function CascadeAnimation() {
       {checkmarks.map((check, i) => (
         <div
           key={i}
-          className="absolute text-green-500"
+          className="absolute text-accent-teal-mint"
           style={{
             left: `${check.x}%`,
             top: '-40px',
@@ -102,17 +102,17 @@ export function CascadeAnimation() {
           animation: 'slide-up-fade 0.5s ease-out 2.8s forwards',
         }}
       >
-        <div className="text-2xl font-bold text-green-600 mb-1">
+        <div className="text-2xl font-bold text-accent-teal-mint mb-1">
           Report Complete!
         </div>
-        <div className="text-sm text-gray-600">
+        <div className="text-sm text-harken-gray">
           Excellent work on this appraisal
         </div>
       </div>
 
       {/* Confetti burst at the end */}
       {[...Array(40)].map((_, i) => {
-        const colors = ['#0da1c7', '#22c55e', '#f59e0b', '#ec4899', '#8b5cf6', '#ef4444'];
+        const colors = ['#0da1c7', '#2fc4b2', '#f2b705', '#ec4899', '#8b5cf6', '#c11b49'];
         return (
           <div
             key={`final-confetti-${i}`}

@@ -440,43 +440,43 @@ export const RiskAnalysisModal: React.FC<Props> = ({
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm transition-opacity" onClick={onClose}></div>
-      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-lg relative overflow-hidden animate-fade-in flex flex-col max-h-[90vh]">
+      <div className="bg-surface-1 dark:bg-elevation-1 rounded-2xl shadow-2xl w-full max-w-lg relative overflow-hidden animate-fade-in flex flex-col max-h-[90vh]">
         <div className="bg-gradient-to-r from-gradient-action-start to-gradient-action-end p-6 flex justify-between items-start text-white flex-shrink-0">
           <div>
             <div className="flex items-center gap-2 mb-1">
-              <FileCheck className={analysis.score > 80 ? "text-emerald-300" : "text-amber-300"} size={24} />
+              <FileCheck className={analysis.score > 80 ? "text-accent-teal-mint" : "text-accent-amber-gold"} size={24} />
               <h2 className="text-xl font-bold">Pre-Flight Check Report</h2>
             </div>
             <p className="text-white/70 text-sm">Comprehensive USPAP, Methodology & Data Validation</p>
           </div>
-          <button onClick={onClose} className="p-1 hover:bg-white/10 rounded-lg transition-colors"><X size={20} /></button>
+          <button onClick={onClose} className="p-1 hover:bg-surface-1/10 rounded-lg transition-colors"><X size={20} /></button>
         </div>
         <div className="p-6 border-b border-slate-100 bg-slate-50 flex items-center justify-between flex-shrink-0">
           <div>
             <div className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-1">Confidence Score</div>
             <div className="text-3xl font-black text-slate-800 dark:text-white">{analysis.score}/100</div>
           </div>
-          <div className="w-32 h-2 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden">
-            <div className={`h-full transition-all duration-1000 ease-out ${analysis.score > 80 ? 'bg-emerald-500' : analysis.score > 50 ? 'bg-amber-500' : 'bg-rose-500'}`} style={{ width: `${analysis.score}%` }}></div>
+          <div className="w-32 h-2 bg-harken-gray-light dark:bg-elevation-1 rounded-full overflow-hidden">
+            <div className={`h-full transition-all duration-1000 ease-out ${analysis.score > 80 ? 'bg-accent-teal-mint' : analysis.score > 50 ? 'bg-accent-amber-gold' : 'bg-harken-error'}`} style={{ width: `${analysis.score}%` }}></div>
           </div>
         </div>
         <div className="p-6 overflow-y-auto space-y-4">
           {analysis.checks.map(check => (
             <div key={check.id} className="flex gap-4 group">
               <div className="flex-shrink-0 mt-1">
-                {check.status === 'pass' && <CheckCircle className="text-emerald-500" size={20} />}
-                {check.status === 'warning' && <AlertTriangle className="text-amber-500" size={20} />}
-                {check.status === 'danger' && <AlertOctagon className="text-rose-500" size={20} />}
+                {check.status === 'pass' && <CheckCircle className="text-accent-teal-mint" size={20} />}
+                {check.status === 'warning' && <AlertTriangle className="text-accent-amber-gold" size={20} />}
+                {check.status === 'danger' && <AlertOctagon className="text-harken-error" size={20} />}
               </div>
               <div>
-                <h4 className={`text-sm font-bold ${check.status === 'pass' ? 'text-slate-700' : check.status === 'danger' ? 'text-rose-700' : 'text-amber-700'}`}>{check.title}</h4>
-                <p className="text-sm text-slate-600 leading-relaxed mt-1">{check.message}</p>
+                <h4 className={`text-sm font-bold ${check.status === 'pass' ? 'text-harken-gray' : check.status === 'danger' ? 'text-harken-error' : 'text-accent-amber-gold'}`}>{check.title}</h4>
+                <p className="text-sm text-harken-gray leading-relaxed mt-1">{check.message}</p>
               </div>
             </div>
           ))}
         </div>
         <div className="p-4 border-t border-slate-100 bg-slate-50 text-center flex-shrink-0">
-          <button onClick={onClose} className="text-sm font-semibold text-slate-600 dark:text-slate-300 hover:text-harken-blue transition-colors w-full py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700">Return to Editor</button>
+          <button onClick={onClose} className="text-sm font-semibold text-slate-600 dark:text-slate-200 hover:text-harken-blue transition-colors w-full py-2 rounded-lg hover:bg-slate-100 dark:hover:bg-elevation-3">Return to Editor</button>
         </div>
       </div>
     </div>

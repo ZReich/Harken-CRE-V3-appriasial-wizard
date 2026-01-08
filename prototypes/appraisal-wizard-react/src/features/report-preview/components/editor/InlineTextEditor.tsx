@@ -184,7 +184,7 @@ export const InlineTextEditor: React.FC<InlineTextEditorProps> = ({
 
       {/* Editor Container */}
       <div
-        className="fixed z-40 bg-white border-2 border-sky-500 rounded-lg shadow-xl overflow-hidden"
+        className="fixed z-40 bg-surface-1 border-2 border-sky-500 rounded-lg shadow-xl overflow-hidden"
         style={{
           left: position.x,
           top: position.y,

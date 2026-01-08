@@ -294,7 +294,7 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
 
   return (
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-slate-800 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
+      <div className="bg-surface-1 dark:bg-elevation-1 rounded-2xl shadow-2xl w-full max-w-2xl max-h-[90vh] overflow-hidden flex flex-col">
         {/* Header */}
         <div className="flex items-center justify-between p-5 border-b border-slate-200 bg-gradient-to-r from-[#0da1c7]/10 to-white">
           <div className="flex items-center gap-3">
@@ -308,7 +308,7 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
+            className="p-2 hover:bg-slate-100 dark:hover:bg-elevation-3 rounded-lg transition-colors"
           >
             <X className="w-5 h-5 text-slate-500 dark:text-slate-400" />
           </button>
@@ -322,8 +322,8 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
               onClick={() => setActiveMethod(tab.id)}
               className={`flex items-center gap-2 px-4 py-3 text-sm font-medium border-b-2 transition-colors ${
                 activeMethod === tab.id
-                  ? 'text-[#0da1c7] border-[#0da1c7] bg-white dark:bg-slate-700'
-                  : 'text-slate-500 dark:text-slate-400 border-transparent hover:text-slate-700 dark:hover:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700'
+                  ? 'text-[#0da1c7] border-[#0da1c7] bg-surface-1 dark:bg-elevation-1'
+                  : 'text-slate-500 dark:text-slate-400 border-transparent hover:text-slate-700 dark:hover:text-harken-gray-light hover:bg-slate-100 dark:hover:bg-elevation-3'
               }`}
             >
               {tab.icon}
@@ -403,8 +403,8 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
                           </label>
                           <div className={`px-3 py-2 rounded-lg text-sm font-bold ${
                             impliedRate !== null
-                              ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                              : 'bg-slate-100 dark:bg-slate-700 text-slate-400'
+                              ? 'bg-accent-teal-mint-light text-accent-teal-mint border border-accent-teal-mint'
+                              : 'bg-harken-gray-light dark:bg-elevation-1 text-harken-gray-med'
                           }`}>
                             {impliedRate !== null ? formatPercent(impliedRate) : '--'}
                           </div>
@@ -414,7 +414,7 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
                       <button
                         onClick={() => removeComparable(comp.id)}
                         disabled={comparables.length <= 1}
-                        className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
+                        className="p-2 text-slate-400 hover:text-harken-error hover:bg-harken-error/10 rounded-lg transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                       >
                         <Trash2 className="w-4 h-4" />
                       </button>
@@ -546,7 +546,7 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
                 <div className="text-xs font-bold text-slate-600 uppercase tracking-widest">
                   Band of Investment Formula
                 </div>
-                <div className="font-mono text-sm text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-700 p-3 rounded-lg border border-slate-200 dark:border-slate-600">
+                <div className="font-mono text-sm text-slate-700 dark:text-slate-200 bg-surface-1 dark:bg-elevation-1 p-3 rounded-lg border border-slate-200 dark:border-harken-gray">
                   Cap Rate = (LTV x MC) + ((1 - LTV) x EDR)
                 </div>
                 <div className="grid grid-cols-2 gap-4 pt-2">
@@ -628,7 +628,7 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
                 <div className="text-xs font-bold text-slate-600 uppercase tracking-widest">
                   DCR Formula
                 </div>
-                <div className="font-mono text-sm text-slate-700 dark:text-slate-200 bg-white dark:bg-slate-700 p-3 rounded-lg border border-slate-200 dark:border-slate-600">
+                <div className="font-mono text-sm text-slate-700 dark:text-slate-200 bg-surface-1 dark:bg-elevation-1 p-3 rounded-lg border border-slate-200 dark:border-harken-gray">
                   Cap Rate = DCR x Loan Constant x LTV
                 </div>
                 <div className="pt-2">
@@ -727,10 +727,10 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
               {warnings.map((warn, idx) => (
                 <div
                   key={idx}
-                  className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg"
+                  className="flex items-center gap-2 p-3 bg-accent-amber-gold-light border border-accent-amber-gold rounded-lg"
                 >
-                  <AlertTriangle className="w-4 h-4 text-amber-500 flex-shrink-0" />
-                  <span className="text-sm text-amber-700">{warn}</span>
+                  <AlertTriangle className="w-4 h-4 text-accent-amber-gold flex-shrink-0" />
+                  <span className="text-sm text-accent-amber-gold">{warn}</span>
                 </div>
               ))}
             </div>
@@ -762,7 +762,7 @@ export const CapRateCalculator: React.FC<CapRateCalculatorProps> = ({
             <div className="flex items-center gap-3">
               <button
                 onClick={onClose}
-                className="px-5 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-slate-700 rounded-lg transition-colors"
+                className="px-5 py-2.5 text-sm font-medium text-slate-600 dark:text-slate-400 hover:text-slate-800 dark:hover:text-white hover:bg-slate-100 dark:hover:bg-elevation-3 rounded-lg transition-colors"
               >
                 Cancel
               </button>

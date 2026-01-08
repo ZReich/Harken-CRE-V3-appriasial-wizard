@@ -27,11 +27,28 @@ export interface GridRowData {
   isCalculated?: boolean;
 }
 
+/**
+ * Override data for calculated fields
+ * When appraiser needs to override a calculated value
+ */
+export interface OverrideData {
+  /** The manually entered override value */
+  overrideValue: number | string;
+  /** Required explanation for the override */
+  note: string;
+  /** Original calculated value (for reference/display) */
+  originalCalculated?: number | string | null;
+  /** Timestamp when override was applied */
+  overriddenAt?: string;
+}
+
 export interface ComparisonValue {
   value: string | number | null;
   adjustment?: number;
   flag?: 'superior' | 'inferior' | 'similar';
   unit?: 'percent' | 'dollar';
+  /** Override data for calculated fields that have been manually adjusted */
+  override?: OverrideData;
 }
 
 export type PropertyValues = Record<string, Record<string, ComparisonValue>>;

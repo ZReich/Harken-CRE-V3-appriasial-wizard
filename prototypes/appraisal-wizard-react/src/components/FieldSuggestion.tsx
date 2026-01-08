@@ -60,10 +60,10 @@ function formatConfidence(confidence: number): string {
  * Get confidence color class based on score
  */
 function getConfidenceColor(confidence: number): string {
-  if (confidence >= 0.9) return 'text-green-600 bg-green-50';
-  if (confidence >= 0.7) return 'text-blue-600 bg-blue-50';
-  if (confidence >= 0.5) return 'text-amber-600 bg-amber-50';
-  return 'text-red-600 bg-red-50';
+  if (confidence >= 0.9) return 'text-accent-teal-mint bg-accent-teal-mint-light';
+  if (confidence >= 0.7) return 'text-harken-blue bg-blue-50';
+  if (confidence >= 0.5) return 'text-accent-amber-gold bg-accent-amber-gold-light';
+  return 'text-harken-error bg-accent-red-light';
 }
 
 export function FieldSuggestion({
@@ -149,14 +149,14 @@ export function FieldSuggestion({
       >
         <div className="flex items-center gap-2 text-sm">
           <FileText className="w-4 h-4 text-blue-500" />
-          <span className="text-gray-600">
+          <span className="text-harken-gray">
             Suggested from:{' '}
-            <span className="font-medium text-gray-800 dark:text-white">
+            <span className="font-medium text-harken-dark dark:text-white">
               {suggestion.sourceFilename || 'Document'}
             </span>
           </span>
           {suggestion.sourceDocumentType && (
-            <span className="text-xs text-gray-400">
+            <span className="text-xs text-harken-gray-med">
               ({formatDocumentType(suggestion.sourceDocumentType)})
             </span>
           )}
@@ -168,9 +168,9 @@ export function FieldSuggestion({
             {formatConfidence(suggestion.confidence)}
           </span>
           {isExpanded ? (
-            <ChevronUp className="w-4 h-4 text-gray-400" />
+            <ChevronUp className="w-4 h-4 text-harken-gray-med" />
           ) : (
-            <ChevronDown className="w-4 h-4 text-gray-400" />
+            <ChevronDown className="w-4 h-4 text-harken-gray-med" />
           )}
         </div>
       </div>
@@ -179,8 +179,8 @@ export function FieldSuggestion({
       {isExpanded && (
         <div className="px-3 pb-3 border-t border-blue-100">
           {/* Suggested Value */}
-          <div className="mt-3 p-3 bg-white dark:bg-slate-700 rounded-md border border-gray-200 dark:border-slate-600">
-            <p className="text-sm text-gray-800 font-medium leading-relaxed">
+          <div className="mt-3 p-3 bg-surface-1 dark:bg-elevation-1 rounded-md border border-light-border dark:border-harken-gray">
+            <p className="text-sm text-harken-dark font-medium leading-relaxed">
               "{suggestion.value}"
             </p>
           </div>
@@ -191,7 +191,7 @@ export function FieldSuggestion({
               type="button"
               onClick={handleReject}
               disabled={isProcessing}
-              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 dark:text-slate-300 bg-white dark:bg-slate-700 border border-gray-300 dark:border-slate-600 rounded-md hover:bg-gray-50 dark:hover:bg-slate-600 hover:text-gray-700 dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+              className="flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium text-harken-gray dark:text-slate-200 bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-harken-gray rounded-md hover:bg-harken-gray-light dark:hover:bg-harken-gray hover:text-harken-gray dark:hover:text-white disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
             >
               {isProcessing && fallbackStatus === 'fetching' ? (
                 <>

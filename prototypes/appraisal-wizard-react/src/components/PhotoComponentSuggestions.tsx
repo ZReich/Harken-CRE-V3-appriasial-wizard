@@ -72,11 +72,11 @@ const CATEGORY_CONFIG: Record<ComponentDetectionCategory, {
 };
 
 const CONDITION_COLORS: Record<string, string> = {
-  excellent: 'bg-green-100 text-green-700 border-green-300',
+  excellent: 'bg-accent-teal-mint-light text-accent-teal-mint border-accent-teal-mint',
   good: 'bg-lime-100 text-lime-700 border-lime-300',
-  average: 'bg-gray-100 text-gray-700 border-gray-300',
-  fair: 'bg-amber-100 text-amber-700 border-amber-300',
-  poor: 'bg-red-100 text-red-700 border-red-300',
+  average: 'bg-harken-gray-light text-harken-gray border-light-border',
+  fair: 'bg-accent-amber-gold-light text-accent-amber-gold border-accent-amber-gold-light',
+  poor: 'bg-accent-red-light text-harken-error border-harken-error/30',
 };
 
 // =================================================================
@@ -93,29 +93,29 @@ interface ComponentCardProps {
 
 function ComponentCard({ component, isAdded, onAccept, onReject, compact }: ComponentCardProps) {
   const confidenceColor = component.confidence >= 80
-    ? 'text-green-600'
+    ? 'text-accent-teal-mint'
     : component.confidence >= 60
-      ? 'text-amber-600'
-      : 'text-gray-500';
+      ? 'text-accent-amber-gold'
+      : 'text-harken-gray-med';
 
   return (
     <div className={`
-      bg-white rounded-lg border transition-all
+      bg-surface-1 rounded-lg border transition-all
       ${isAdded
-        ? 'border-green-300 bg-green-50'
-        : 'border-gray-200 hover:border-[#0da1c7] hover:shadow-sm'}
+        ? 'border-accent-teal-mint bg-green-50'
+        : 'border-light-border hover:border-[#0da1c7] hover:shadow-sm'}
       ${compact ? 'p-2' : 'p-3'}
     `}>
       <div className="flex items-start justify-between gap-2">
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
-            <span className={`font-medium ${compact ? 'text-sm' : 'text-base'} text-gray-900`}>
+            <span className={`font-medium ${compact ? 'text-sm' : 'text-base'} text-harken-dark`}>
               {component.componentLabel}
             </span>
             {component.suggestedCondition && (
               <span className={`
                 px-1.5 py-0.5 text-xs font-medium rounded border
-                ${CONDITION_COLORS[component.suggestedCondition] || 'bg-gray-100 text-gray-600'}
+                ${CONDITION_COLORS[component.suggestedCondition] || 'bg-harken-gray-light text-harken-gray'}
               `}>
                 {component.suggestedCondition}
               </span>
@@ -123,7 +123,7 @@ function ComponentCard({ component, isAdded, onAccept, onReject, compact }: Comp
           </div>
 
           {!compact && component.reasoning && (
-            <p className="text-xs text-gray-500 mt-1 line-clamp-2">
+            <p className="text-xs text-harken-gray-med mt-1 line-clamp-2">
               {component.reasoning}
             </p>
           )}
@@ -137,7 +137,7 @@ function ComponentCard({ component, isAdded, onAccept, onReject, compact }: Comp
 
         <div className="flex items-center gap-1.5 flex-shrink-0">
           {isAdded ? (
-            <span className="flex items-center gap-1 text-xs font-medium text-green-600">
+            <span className="flex items-center gap-1 text-xs font-medium text-accent-teal-mint">
               <CheckCircle2 size={14} />
               Added
             </span>
@@ -152,7 +152,7 @@ function ComponentCard({ component, isAdded, onAccept, onReject, compact }: Comp
               </button>
               <button
                 onClick={onReject}
-                className="p-1.5 rounded-lg text-gray-400 hover:text-red-500 hover:bg-red-50 transition-colors"
+                className="p-1.5 rounded-lg text-harken-gray-med hover:text-harken-error hover:bg-accent-red-light transition-colors"
                 title="Dismiss suggestion"
               >
                 <X size={14} />
@@ -249,10 +249,10 @@ export default function PhotoComponentSuggestions({
           onClick={() => toggleSection(sectionId)}
           className="flex items-center gap-2 w-full text-left mb-2"
         >
-          {isExpanded ? <ChevronDown size={14} className="text-gray-400" /> : <ChevronRight size={14} className="text-gray-400" />}
+          {isExpanded ? <ChevronDown size={14} className="text-harken-gray-med" /> : <ChevronRight size={14} className="text-harken-gray-med" />}
           {icon}
-          <span className="text-sm font-medium text-gray-700 dark:text-slate-300">{label}</span>
-          <span className="text-xs text-gray-400">({components.length})</span>
+          <span className="text-sm font-medium text-harken-gray dark:text-slate-200">{label}</span>
+          <span className="text-xs text-harken-gray-med">({components.length})</span>
         </button>
 
         {isExpanded && (
@@ -275,7 +275,7 @@ export default function PhotoComponentSuggestions({
 
   return (
     <div className={`
-      bg-cyan-50 dark:bg-slate-800/50 border border-cyan-200 dark:border-cyan-900/30 rounded-xl overflow-hidden
+      bg-cyan-50 dark:bg-elevation-1/50 border border-cyan-200 dark:border-cyan-900/30 rounded-xl overflow-hidden
       ${compact ? 'p-3' : 'p-4'}
     `}>
       {/* Header */}
@@ -300,9 +300,9 @@ export default function PhotoComponentSuggestions({
       </div>
 
       {/* Component Sections */}
-      {renderSection('exterior', 'Exterior Features', <Building2 size={14} className="text-gray-500 dark:text-slate-400" />)}
-      {renderSection('mechanical', 'Mechanical Systems', <Zap size={14} className="text-gray-500 dark:text-slate-400" />)}
-      {renderSection('interior', 'Interior Finishes', <Layers size={14} className="text-gray-500 dark:text-slate-400" />)}
+      {renderSection('exterior', 'Exterior Features', <Building2 size={14} className="text-harken-gray-med dark:text-slate-400" />)}
+      {renderSection('mechanical', 'Mechanical Systems', <Zap size={14} className="text-harken-gray-med dark:text-slate-400" />)}
+      {renderSection('interior', 'Interior Finishes', <Layers size={14} className="text-harken-gray-med dark:text-slate-400" />)}
 
       {/* Summary Footer */}
       <div className="mt-3 pt-3 border-t border-cyan-200 dark:border-cyan-900/30 flex items-center justify-between">

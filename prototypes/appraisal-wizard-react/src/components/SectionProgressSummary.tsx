@@ -21,12 +21,12 @@ export function SectionProgressSummary({
   }, [isComplete, accentColor]);
 
   return (
-    <div className="mt-6 pt-4 border-t border-gray-200 dark:border-slate-700">
+    <div className="mt-6 pt-4 border-t border-light-border dark:border-dark-border">
       <div className="flex items-center justify-between mb-2">
-        <span className="text-xs font-medium text-gray-600 dark:text-slate-400">{label}</span>
+        <span className="text-xs font-medium text-harken-gray dark:text-slate-400">{label}</span>
         {showPercentage && (
           <span
-            className={`text-xs font-semibold tabular-nums ${isComplete ? 'text-green-600 dark:text-green-400' : 'text-gray-700 dark:text-slate-300'
+            className={`text-xs font-semibold tabular-nums ${isComplete ? 'text-green-600 dark:text-green-400' : 'text-harken-gray dark:text-slate-200'
               }`}
           >
             {completion}%
@@ -35,7 +35,7 @@ export function SectionProgressSummary({
       </div>
 
       {/* Progress bar */}
-      <div className="h-2 bg-gray-200 dark:bg-slate-700 rounded-full overflow-hidden">
+      <div className="h-2 bg-harken-gray-med-lt dark:bg-elevation-1 rounded-full overflow-hidden">
         <div
           className="h-full rounded-full transition-all duration-700 ease-out"
           style={{

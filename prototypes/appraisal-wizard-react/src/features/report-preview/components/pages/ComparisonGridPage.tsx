@@ -163,13 +163,13 @@ export const ComparisonGridPage: React.FC<ComparisonGridPageProps> = ({
 
   const formatAdjustment = (value: number | undefined): React.ReactNode => {
     if (value === undefined || value === 0) {
-      return <span className="text-slate-400">-</span>;
+      return <span className="text-harken-gray-med">-</span>;
     }
     const formatted = Math.abs(value).toLocaleString();
     if (value > 0) {
-      return <span className="text-green-600">+${formatted}</span>;
+      return <span className="text-accent-teal-mint">+${formatted}</span>;
     }
-    return <span className="text-red-600">-${formatted}</span>;
+    return <span className="text-harken-error">-${formatted}</span>;
   };
 
   const calculateTotalAdjustment = (adjustments: Record<string, number> | undefined): number => {
@@ -193,20 +193,20 @@ export const ComparisonGridPage: React.FC<ComparisonGridPageProps> = ({
   const comparisonRows = ['location', 'siteSize', 'buildingSize', 'yearBuilt', 'condition'];
 
   return (
-    <div className="w-full h-full bg-white flex flex-col">
+    <div className="w-full h-full bg-surface-1 flex flex-col">
       {/* Page header */}
-      <div className="px-10 pt-8 pb-4 border-b border-slate-200">
+      <div className="px-10 pt-8 pb-4 border-b border-light-border">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-xl font-bold text-slate-800">
               {title || `${approachType === 'sales' ? 'Sales Comparison' : approachType === 'income' ? 'Income' : 'Cost'} Approach`}
             </h2>
             {scenarioName && (
-              <p className="text-sm text-slate-500 mt-1">{scenarioName}</p>
+              <p className="text-sm text-harken-gray-med mt-1">{scenarioName}</p>
             )}
           </div>
           {pageNumber && (
-            <span className="text-sm text-slate-400">Page {pageNumber}</span>
+            <span className="text-sm text-harken-gray-med">Page {pageNumber}</span>
           )}
         </div>
       </div>
@@ -214,7 +214,7 @@ export const ComparisonGridPage: React.FC<ComparisonGridPageProps> = ({
       {/* Map Section - Display above grid if mapData is provided */}
       {mapData && mapData.imageUrl && (
         <div className="px-10 pt-4 pb-2">
-          <div className="border border-slate-200 rounded-lg overflow-hidden bg-white">
+          <div className="border border-slate-200 rounded-lg overflow-hidden bg-surface-1">
             {/* Map Header */}
             <div className="flex items-center justify-between px-4 py-2 bg-slate-50 border-b border-slate-200">
               <div className="flex items-center gap-2">
@@ -253,7 +253,7 @@ export const ComparisonGridPage: React.FC<ComparisonGridPageProps> = ({
 
       {/* Grid content */}
       <div className="flex-1 px-10 py-6 overflow-auto">
-        <div className="border border-slate-200 rounded-lg overflow-hidden">
+        <div className="border border-light-border rounded-lg overflow-hidden">
           <table className="w-full text-xs">
             <thead>
               <tr className="bg-slate-800 text-white">
@@ -360,29 +360,29 @@ export const ComparisonGridPage: React.FC<ComparisonGridPageProps> = ({
         </div>
 
         {/* Conclusion section */}
-        <div className="mt-6 p-4 bg-slate-50 rounded-lg border border-slate-200">
+        <div className="mt-6 p-4 bg-harken-gray-light rounded-lg border border-light-border">
           <h4 className="font-semibold text-slate-800 mb-2">Value Indication</h4>
-          <p className="text-sm text-slate-600 mb-3">
+          <p className="text-sm text-harken-gray mb-3">
             Based on the analysis of the comparable sales and after making the appropriate adjustments, 
             the indicated value range is:
           </p>
           <div className="flex items-center gap-6">
             <div className="text-center">
-              <div className="text-xs text-slate-500 uppercase mb-1">Low</div>
+              <div className="text-xs text-harken-gray-med uppercase mb-1">Low</div>
               <div className="text-lg font-semibold text-slate-800">
                 $400,000
               </div>
             </div>
             <div className="flex-1 h-px bg-slate-300" />
             <div className="text-center">
-              <div className="text-xs text-slate-500 uppercase mb-1">Indicated Value</div>
+              <div className="text-xs text-harken-gray-med uppercase mb-1">Indicated Value</div>
               <div className="text-2xl font-bold text-sky-600">
                 $450,000
               </div>
             </div>
             <div className="flex-1 h-px bg-slate-300" />
             <div className="text-center">
-              <div className="text-xs text-slate-500 uppercase mb-1">High</div>
+              <div className="text-xs text-harken-gray-med uppercase mb-1">High</div>
               <div className="text-lg font-semibold text-slate-800">
                 $490,000
               </div>

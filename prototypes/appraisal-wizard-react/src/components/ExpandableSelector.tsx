@@ -19,10 +19,10 @@ interface ExpandableSelectorProps {
 }
 
 const categoryColors: Record<string, { bg: string; border: string; text: string }> = {
-  default: { bg: 'bg-gray-50', border: 'border-gray-200', text: 'text-gray-700' },
-  site: { bg: 'bg-emerald-50', border: 'border-emerald-200', text: 'text-emerald-700' },
+  default: { bg: 'bg-harken-gray-light', border: 'border-light-border', text: 'text-harken-gray' },
+  site: { bg: 'bg-accent-teal-mint-light', border: 'border-accent-teal-mint-light', text: 'text-accent-teal-mint' },
   structure: { bg: 'bg-blue-50', border: 'border-blue-200', text: 'text-blue-700' },
-  systems: { bg: 'bg-amber-50', border: 'border-amber-200', text: 'text-amber-700' },
+  systems: { bg: 'bg-accent-amber-gold-light', border: 'border-accent-amber-gold-light', text: 'text-accent-amber-gold' },
   interior: { bg: 'bg-purple-50', border: 'border-purple-200', text: 'text-purple-700' },
   market: { bg: 'bg-rose-50', border: 'border-rose-200', text: 'text-rose-700' },
 };
@@ -250,12 +250,12 @@ export default function ExpandableSelector({
       ref={dropdownRef}
       id={`options-${id}`}
       style={dropdownStyle}
-      className="bg-white rounded-xl border border-gray-200 shadow-2xl overflow-hidden animate-fade-in"
+      className="bg-surface-1 rounded-xl border border-light-border shadow-2xl overflow-hidden animate-fade-in"
     >
       {/* Selected items header (for multi-select) */}
       {multiple && selectedValues.length > 0 && (
-        <div className="border-b border-gray-200 px-3 py-2 bg-harken-blue/5">
-          <div className="text-xs font-medium text-gray-500 mb-1.5">Selected ({selectedValues.length})</div>
+        <div className="border-b border-light-border px-3 py-2 bg-harken-blue/5">
+          <div className="text-xs font-medium text-harken-gray-med mb-1.5">Selected ({selectedValues.length})</div>
           <div className="flex flex-wrap gap-1.5">
             {selectedValues.filter(v => v !== 'Type My Own').map((val) => (
               <span
@@ -286,7 +286,7 @@ export default function ExpandableSelector({
             className={`w-full flex items-center justify-between px-4 py-2.5 text-left text-sm transition-colors ${
               isSelected(option)
                 ? 'bg-harken-blue/10 text-harken-blue font-semibold'
-                : 'text-gray-700 hover:bg-gray-50'
+                : 'text-harken-gray hover:bg-harken-gray-light'
             }`}
             role="option"
             aria-selected={isSelected(option)}
@@ -301,7 +301,7 @@ export default function ExpandableSelector({
         {/* Custom options (previously saved) */}
         {allCustomOptions.length > 0 && (
           <>
-            <div className="px-4 py-1.5 text-xs font-semibold text-gray-400 uppercase tracking-wide bg-gray-50 border-t border-b border-gray-100">
+            <div className="px-4 py-1.5 text-xs font-semibold text-harken-gray-med uppercase tracking-wide bg-harken-gray-light border-t border-b border-harken-gray-light">
               Your Custom Options
             </div>
             {allCustomOptions.filter(o => !options.includes(o)).map((option) => (
@@ -312,13 +312,13 @@ export default function ExpandableSelector({
                 className={`w-full flex items-center justify-between px-4 py-2.5 text-left text-sm transition-colors ${
                   isSelected(option)
                     ? 'bg-harken-blue/10 text-harken-blue font-semibold'
-                    : 'text-gray-700 hover:bg-gray-50'
+                    : 'text-harken-gray hover:bg-harken-gray-light'
                 }`}
                 role="option"
                 aria-selected={isSelected(option)}
               >
                 <span className="flex items-center gap-2">
-                  <Star className="w-3 h-3 text-amber-400" />
+                  <Star className="w-3 h-3 text-accent-amber-gold" />
                   {option}
                 </span>
                 {isSelected(option) && (
@@ -331,8 +331,8 @@ export default function ExpandableSelector({
 
         {/* Add custom value */}
         {allowCustom && (
-          <div className="border-t border-gray-100 dark:border-slate-700 px-4 py-3 bg-gray-50 dark:bg-slate-700">
-            <div className="text-xs font-medium text-gray-500 mb-2">Add custom option (saved for future use)</div>
+          <div className="border-t border-harken-gray-light dark:border-dark-border px-4 py-3 bg-harken-gray-light dark:bg-elevation-1">
+            <div className="text-xs font-medium text-harken-gray-med mb-2">Add custom option (saved for future use)</div>
             <div className="flex items-center gap-2">
               <input
                 ref={inputRef}
@@ -341,7 +341,7 @@ export default function ExpandableSelector({
                 onChange={(e) => handleCustomChange(e.target.value)}
                 onKeyDown={handleCustomKeyDown}
                 placeholder={placeholder}
-                className="flex-1 px-3 py-2 text-sm border border-gray-200 dark:border-slate-600 rounded-lg focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-white dark:bg-slate-700 dark:text-white"
+                className="flex-1 px-3 py-2 text-sm border border-light-border dark:border-harken-gray rounded-lg focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white"
                 onClick={(e) => e.stopPropagation()}
               />
               <button
@@ -373,17 +373,17 @@ export default function ExpandableSelector({
           compact ? 'py-2' : 'py-2.5'
         } rounded-xl border ${
           isExpanded
-            ? 'border-harken-blue bg-white shadow-md ring-2 ring-harken-blue'
+            ? 'border-harken-blue bg-surface-1 shadow-md ring-2 ring-harken-blue'
             : hasSelection || hasCustomValue
             ? `${colors.border} ${colors.bg}`
-            : 'border-gray-200 bg-white hover:border-gray-300'
+            : 'border-light-border bg-surface-1 hover:border-light-border'
         } transition-all duration-200`}
         aria-expanded={isExpanded}
         aria-controls={`options-${id}`}
       >
-        <span className={`text-sm font-medium ${hasSelection || hasCustomValue ? colors.text : 'text-gray-600'}`}>
+        <span className={`text-sm font-medium ${hasSelection || hasCustomValue ? colors.text : 'text-harken-gray'}`}>
           {label}
-          {required && <span className="text-red-500 ml-0.5">*</span>}
+          {required && <span className="text-harken-error ml-0.5">*</span>}
         </span>
 
         <div className="flex items-center gap-2">
@@ -393,7 +393,7 @@ export default function ExpandableSelector({
             </span>
           )}
           <ChevronDown
-            className={`w-4 h-4 text-gray-400 transition-transform duration-200 ${
+            className={`w-4 h-4 text-harken-gray-med transition-transform duration-200 ${
               isExpanded ? 'rotate-180' : ''
             }`}
           />

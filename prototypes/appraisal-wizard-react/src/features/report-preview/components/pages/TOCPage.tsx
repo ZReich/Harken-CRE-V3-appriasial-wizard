@@ -71,7 +71,7 @@ export const TOCPage: React.FC<TOCPageProps> = ({
   }
 
   return (
-    <div className="w-full h-full bg-white flex flex-col">
+    <div className="w-full h-full bg-surface-1 flex flex-col">
       {/* Page header */}
       <div className="px-16 pt-12 pb-8 border-b border-slate-200">
         <div className="flex items-center justify-between">

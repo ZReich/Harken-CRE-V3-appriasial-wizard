@@ -99,7 +99,7 @@ export const AddContentMenu: React.FC<AddContentMenuProps> = ({
 
   return (
     <div
-      className="fixed z-50 bg-white border border-slate-200 rounded-xl shadow-xl p-4 w-[320px] animate-fade-in"
+      className="fixed z-50 bg-surface-1 border border-slate-200 rounded-xl shadow-xl p-4 w-[320px] animate-fade-in"
       style={{
         left: position.x,
         top: position.y,

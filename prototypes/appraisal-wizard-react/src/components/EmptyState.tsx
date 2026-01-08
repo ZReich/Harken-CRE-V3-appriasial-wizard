@@ -26,16 +26,16 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
 }) => {
   const variants = {
     default: {
-      container: 'bg-white border-2 border-dashed border-slate-300 dark:bg-slate-800 dark:border-slate-700',
-      iconBg: 'bg-slate-100 dark:bg-slate-700',
-      iconColor: 'text-slate-400 dark:text-slate-300',
+      container: 'bg-surface-1 border-2 border-dashed border-slate-300 dark:bg-elevation-1 dark:border-dark-border',
+      iconBg: 'bg-slate-100 dark:bg-elevation-1',
+      iconColor: 'text-slate-400 dark:text-slate-200',
       titleColor: 'text-slate-700 dark:text-white',
       messageColor: 'text-slate-500 dark:text-slate-400',
     },
     subtle: {
-      container: 'bg-slate-50 border border-slate-200 dark:bg-slate-800/50 dark:border-slate-700',
-      iconBg: 'bg-white dark:bg-slate-700',
-      iconColor: 'text-slate-400 dark:text-slate-300',
+      container: 'bg-slate-50 border border-slate-200 dark:bg-elevation-1/50 dark:border-dark-border',
+      iconBg: 'bg-surface-1 dark:bg-elevation-1',
+      iconColor: 'text-slate-400 dark:text-slate-200',
       titleColor: 'text-slate-600 dark:text-slate-200',
       messageColor: 'text-slate-400 dark:text-slate-400',
     },

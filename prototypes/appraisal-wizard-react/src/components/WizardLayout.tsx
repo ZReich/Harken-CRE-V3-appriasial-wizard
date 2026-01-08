@@ -131,7 +131,7 @@ export default function WizardLayout({
   };
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden bg-gray-50 dark:bg-slate-900">
+    <div className="h-screen flex flex-col overflow-hidden bg-harken-gray-light dark:bg-elevation-base">
       {/* Progress Stepper */}
       {!state.isFullscreen && (
         <ProgressStepper currentPhase={phase} pages={pages} />
@@ -164,7 +164,7 @@ export default function WizardLayout({
         {/* Left Sidebar */}
         {sidebar && (
           <aside
-            className={`bg-white dark:bg-slate-800 border-r border-gray-200 dark:border-slate-700 overflow-y-auto transition-all duration-300 ${
+            className={`bg-surface-1 dark:bg-elevation-1 border-r border-light-border dark:border-dark-border overflow-y-auto transition-all duration-300 ${
               leftCollapsed ? 'w-0 border-r-0' : 'w-[17rem]'
             }`}
           >
@@ -174,7 +174,7 @@ export default function WizardLayout({
 
         {/* Main Content */}
         <main 
-          className="flex-1 min-w-0 bg-white dark:bg-slate-900 relative"
+          className="flex-1 min-w-0 bg-surface-1 dark:bg-elevation-1/50 relative"
           style={themeAccent ? { background: getBackgroundTint() } : undefined}
         >
           <div className={noPadding ? 'absolute inset-0' : 'p-8 h-full overflow-auto'}>{children}</div>
@@ -183,7 +183,7 @@ export default function WizardLayout({
         {/* Right Sidebar (Guidance/Values Panel) */}
         {hasHelpSidebar && (
           <aside
-            className={`bg-white dark:bg-slate-800 border-l border-gray-200 dark:border-slate-700 overflow-y-auto transition-all duration-300 ${
+            className={`bg-surface-1 dark:bg-elevation-1 border-l border-light-border dark:border-dark-border overflow-y-auto transition-all duration-300 ${
               rightCollapsed ? 'w-0 border-l-0' : 'w-[20rem]'
             }`}
             style={!rightCollapsed ? getSidebarStyle() : undefined}

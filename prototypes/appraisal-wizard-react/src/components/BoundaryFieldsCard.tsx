@@ -132,7 +132,7 @@ export function BoundaryFieldsCard({
     const badges: Record<string, { label: string; color: string }> = {
       cadastral: { label: 'Cadastral Data', color: 'bg-purple-100 text-purple-700 dark:bg-purple-900/40 dark:text-purple-300' },
       cotality: { label: 'Cotality', color: 'bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300' },
-      manual: { label: 'Manual Entry', color: 'bg-gray-100 text-gray-600 dark:bg-slate-700 dark:text-slate-300' },
+      manual: { label: 'Manual Entry', color: 'bg-harken-gray-light text-harken-gray dark:bg-elevation-1 dark:text-slate-200' },
     };
 
     const badge = badges[dataSource];
@@ -147,7 +147,7 @@ export function BoundaryFieldsCard({
   const filledCount = [northBoundary, southBoundary, eastBoundary, westBoundary].filter(b => b.trim()).length;
 
   return (
-    <div className="bg-white dark:bg-slate-800 border border-gray-200 dark:border-slate-700 rounded-xl p-6 shadow-sm">
+    <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Map className="w-5 h-5 text-[#0da1c7]" />
@@ -248,20 +248,20 @@ export function BoundaryFieldsCard({
       </div>
 
       {/* Quick summary of all boundaries */}
-      <div className="grid grid-cols-2 gap-2 p-3 bg-slate-50 dark:bg-slate-800/50 rounded-lg text-xs">
-        <div className={`flex items-center gap-1.5 ${northBoundary ? 'text-slate-700 dark:text-slate-300' : 'text-slate-400 dark:text-slate-500'}`}>
+      <div className="grid grid-cols-2 gap-2 p-3 bg-slate-50 dark:bg-elevation-1/50 rounded-lg text-xs">
+        <div className={`flex items-center gap-1.5 ${northBoundary ? 'text-slate-700 dark:text-slate-200' : 'text-slate-400 dark:text-slate-500'}`}>
           <ArrowUp className="w-3 h-3" />
           <span className="truncate">{northBoundary || 'North: Not defined'}</span>
         </div>
-        <div className={`flex items-center gap-1.5 ${southBoundary ? 'text-slate-700 dark:text-slate-300' : 'text-slate-400 dark:text-slate-500'}`}>
+        <div className={`flex items-center gap-1.5 ${southBoundary ? 'text-slate-700 dark:text-slate-200' : 'text-slate-400 dark:text-slate-500'}`}>
           <ArrowDown className="w-3 h-3" />
           <span className="truncate">{southBoundary || 'South: Not defined'}</span>
         </div>
-        <div className={`flex items-center gap-1.5 ${eastBoundary ? 'text-slate-700 dark:text-slate-300' : 'text-slate-400 dark:text-slate-500'}`}>
+        <div className={`flex items-center gap-1.5 ${eastBoundary ? 'text-slate-700 dark:text-slate-200' : 'text-slate-400 dark:text-slate-500'}`}>
           <ArrowRight className="w-3 h-3" />
           <span className="truncate">{eastBoundary || 'East: Not defined'}</span>
         </div>
-        <div className={`flex items-center gap-1.5 ${westBoundary ? 'text-slate-700 dark:text-slate-300' : 'text-slate-400 dark:text-slate-500'}`}>
+        <div className={`flex items-center gap-1.5 ${westBoundary ? 'text-slate-700 dark:text-slate-200' : 'text-slate-400 dark:text-slate-500'}`}>
           <ArrowLeft className="w-3 h-3" />
           <span className="truncate">{westBoundary || 'West: Not defined'}</span>
         </div>
@@ -293,7 +293,7 @@ export function BoundaryFieldsCard({
           <div className="px-3 py-2 bg-slate-50 text-[10px] text-slate-500 flex items-center gap-1">
             {dataSource === 'cadastral' && parcelId ? (
               <>
-                <div className="w-2 h-2 rounded-full bg-green-500" />
+                <div className="w-2 h-2 rounded-full bg-accent-teal-mint-light0" />
                 <span className="text-green-700">Cadastral data connected</span>
                 <span className="text-slate-400 ml-1">• Parcel: {parcelId}</span>
               </>
