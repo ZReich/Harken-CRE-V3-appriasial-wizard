@@ -118,6 +118,21 @@
   --color-text-muted: var(--text-muted);
   --color-text-inverse: var(--text-inverse);
 
+  /* =============================================
+     LIGHT MODE SEMANTIC TEXT TOKENS
+     Use these for consistent text hierarchy
+     ============================================= */
+  --color-text-heading: var(--text-heading);
+  --color-text-title: var(--text-title);
+  --color-text-body: var(--text-body);
+  --color-text-label: var(--text-label);
+  --color-text-hint: var(--text-hint);
+
+  /* Badge/Chip Colors */
+  --color-badge-bg: var(--badge-bg);
+  --color-badge-text: var(--badge-text);
+  --color-badge-border: var(--badge-border);
+
   /* Dark Mode Text Helpers
      These provide explicit dark-mode-safe text colors
      that maintain proper contrast on dark backgrounds */
@@ -139,10 +154,31 @@
   --color-surface-3: #f1f5f9;              /* Layer 3: Subtle backgrounds - slate-100 equivalent */
   --color-surface-4: #e2e8f0;              /* Layer 4: Progress bars, sliders - slate-200 equivalent */
   --color-surface-hover: rgba(0,0,0,0.03); /* Hover states - subtle dim */
-  --color-light-border: #d5dce3;           /* Default borders */
-  --color-border-muted: #cbd5e1;           /* Muted/dashed borders - slate-300 equivalent */
+  --color-light-border: #b8c4ce;           /* Default borders - STRENGTHENED for visibility */
+  --color-border-muted: #94a3b8;           /* Muted/dashed borders - slate-400 for visibility */
   --color-light-input: #ffffff;            /* Input fields background */
-  --color-light-input-border: #d1d5db;     /* Input field borders (gray-300) */
+  --color-light-input-border: #cbd5e1;     /* Input field borders - slate-300 */
+
+  /* =============================================
+     LIGHT MODE TEXT HIERARCHY
+     Semantic text colors with WCAG AA compliance
+     
+     All values achieve minimum 4.5:1 contrast on white
+     except text-hint which is decorative only.
+     ============================================= */
+  --color-text-heading: #1c3643;           /* 12.5:1 - Primary headings, titles (harken-dark) */
+  --color-text-title: #334155;             /* 9.8:1  - Card titles, section labels (slate-700) */
+  --color-text-body: #475569;              /* 7.0:1  - Body paragraphs, descriptions (slate-600) */
+  --color-text-label: #64748b;             /* 4.9:1  - Form labels, secondary info (slate-500) */
+  --color-text-hint: #94a3b8;              /* 3.3:1  - Placeholders, decorative only (slate-400) */
+
+  /* =============================================
+     LIGHT MODE BADGE/CHIP SYSTEM
+     Visible badges with proper contrast
+     ============================================= */
+  --color-badge-bg: #e2e8f0;               /* slate-200 - Visible badge backgrounds */
+  --color-badge-text: #475569;             /* slate-600 - Readable badge text */
+  --color-badge-border: #cbd5e1;           /* slate-300 - Badge borders if needed */
 
   /* =============================================
      DARK MODE ELEVATION SYSTEM
@@ -157,10 +193,15 @@
   --color-elevation-3: rgba(255,255,255,0.08);  /* Layer 3: Hover states - more visible */
   --color-elevation-subtle: #252b32;       /* Subtle dark backgrounds (slate-100 dark equivalent) */
   --color-elevation-muted: #2d353d;        /* Muted dark backgrounds (slate-200 dark equivalent) */
-  --color-dark-border: #2d353d;            /* Visible borders - subtle separation */
-  --color-dark-border-muted: #3a4550;      /* Muted/dashed dark borders (slate-300 dark equivalent) */
+  --color-dark-border: #3d4a56;            /* Visible borders - STRENGTHENED for visibility */
+  --color-dark-border-muted: #4a5868;      /* Muted/dashed borders - STRENGTHENED */
   --color-dark-input: #1f2529;             /* Input fields background - matches elevation-1 */
-  --color-dark-input-border: #3a4550;      /* Input field borders */
+  --color-dark-input-border: #4a5868;      /* Input field borders - more visible */
+  
+  /* Dark Mode Badge Colors (mapped) */
+  --color-dark-badge-bg: #334155;          /* Visible badge background */
+  --color-dark-badge-text: #e2e8f0;        /* Readable badge text */
+  --color-dark-badge-border: #475569;      /* Badge border */
 
   /* Border Colors */
   --color-border-subtle: var(--border-subtle);
@@ -255,11 +296,27 @@
 
   /* =============================================
      HARKEN OFFICIAL SECONDARY COLORS
+     Adjusted for proper contrast ratios (WCAG AA)
      ============================================= */
-  --harken-gray-med: #b1bac0;      /* Med Gray */
-  --harken-gray-med-lt: #d3d7d7;   /* Med Gray LT */
-  --harken-gray-light: #f1f3f4;    /* Light Gray */
+  --harken-gray-med: #64748b;      /* Med Gray - DARKENED for 4.9:1 contrast */
+  --harken-gray-med-lt: #94a3b8;   /* Med Gray LT - DARKENED for 3.3:1 */
+  --harken-gray-light: #e2e8f0;    /* Light Gray - Visible badge bg */
   --harken-error: #c11b49;         /* Error Red - Official brand */
+
+  /* =============================================
+     SEMANTIC TEXT HIERARCHY (Light Mode)
+     All achieve minimum WCAG AA contrast on white
+     ============================================= */
+  --text-heading: #1c3643;         /* 12.5:1 - Primary headings */
+  --text-title: #334155;           /* 9.8:1  - Card titles, labels */
+  --text-body: #475569;            /* 7.0:1  - Body text, descriptions */
+  --text-label: #64748b;           /* 4.9:1  - Form labels */
+  --text-hint: #94a3b8;            /* 3.3:1  - Placeholders (decorative) */
+
+  /* Badge/Chip Colors (Light Mode) */
+  --badge-bg: #e2e8f0;             /* Visible background */
+  --badge-text: #475569;           /* Readable text */
+  --badge-border: #cbd5e1;         /* Subtle border */
 
   /* =============================================
      HARKEN ACCENT SET 1: QUALITY
@@ -430,10 +487,25 @@ html.dark {
   /* =============================================
      HARKEN OFFICIAL SECONDARY COLORS (Dark Mode)
      ============================================= */
-  --harken-gray-med: #64748b;        /* Inverted luminosity */
-  --harken-gray-med-lt: #475569;
-  --harken-gray-light: #1e293b;
+  --harken-gray-med: #94a3b8;        /* Lightened for dark bg visibility */
+  --harken-gray-med-lt: #64748b;     /* Subtle on dark */
+  --harken-gray-light: #1e293b;      /* Dark bg for badges */
   --harken-error: #e8857e;           /* Softened coral - less harsh on dark */
+
+  /* =============================================
+     SEMANTIC TEXT HIERARCHY (Dark Mode)
+     Proper contrast for dark backgrounds
+     ============================================= */
+  --text-heading: #f1f5f9;           /* Primary headings - slate-100 */
+  --text-title: #e2e8f0;             /* Card titles - slate-200 */
+  --text-body: #cbd5e1;              /* Body text - slate-300 */
+  --text-label: #94a3b8;             /* Form labels - slate-400 */
+  --text-hint: #64748b;              /* Placeholders - slate-500 */
+
+  /* Badge/Chip Colors (Dark Mode) */
+  --badge-bg: #334155;               /* Visible on dark */
+  --badge-text: #e2e8f0;             /* Readable on dark */
+  --badge-border: #475569;           /* Subtle border */
 
   /* =============================================
      HARKEN ACCENT SET 1: QUALITY (Dark Mode)

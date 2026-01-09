@@ -36,6 +36,8 @@ import PhotoStagingTray from '../components/PhotoStagingTray';
 import CoverPhotoSection from '../components/CoverPhotoSection';
 import CoverPhotoPickerModal from '../components/CoverPhotoPickerModal';
 import FloatingDropPanel from '../components/FloatingDropPanel';
+import { PhotoCropModal } from '../components/PhotoCropModal';
+import { autoCropImage, detectCategoryFromFilename } from '../services/smartCropService';
 import type { PhotoData } from '../types';
 
 // Map icon names to Lucide components
@@ -382,6 +384,13 @@ export default function DocumentIntakePage() {
   const [photos, setPhotos] = useState<Record<string, PhotoData | null>>({});
   const [showCoverPhotoPicker, setShowCoverPhotoPicker] = useState(false);
 
+  // Crop modal state
+  const [cropModalOpen, setCropModalOpen] = useState(false);
+  const [cropImageUrl, setCropImageUrl] = useState<string | null>(null);
+  const [cropTargetSlotId, setCropTargetSlotId] = useState<string | null>(null);
+  const [pendingOriginalFile, setPendingOriginalFile] = useState<File | null>(null);
+  const [isAutoCropping, setIsAutoCropping] = useState(false);
+
   // Default metadata values from appraiser info and inspection date
   const defaultTakenBy = useMemo(() => {
     const name = wizardState.subjectData?.inspectorName || '';
@@ -423,8 +432,8 @@ export default function DocumentIntakePage() {
     return used;
   }, [photos]);
 
-  // Handle photo upload to a slot
-  const handlePhotoUpload = useCallback((slotId: string, file: File) => {
+  // Direct photo upload (used after cropping or for already-cropped photos)
+  const handleDirectPhotoUpload = useCallback((slotId: string, file: File) => {
     const preview = URL.createObjectURL(file);
     setPhotos(prev => ({
       ...prev,
@@ -437,6 +446,80 @@ export default function DocumentIntakePage() {
       }
     }));
   }, [defaultTakenBy, defaultTakenDate]);
+
+  // Handle crop completion
+  const handleCropComplete = useCallback((croppedBlob: Blob, cropData?: { x: number; y: number; width: number; height: number }) => {
+    if (!cropTargetSlotId) return;
+    
+    const fileName = pendingOriginalFile?.name || `cropped-${Date.now()}.jpg`;
+    const croppedFile = new File([croppedBlob], fileName, { type: 'image/jpeg' });
+    
+    handleDirectPhotoUpload(cropTargetSlotId, croppedFile);
+    
+    if (cropData) {
+      console.log('Photo cropped with data:', cropData);
+    }
+    
+    setCropModalOpen(false);
+    setCropImageUrl(null);
+    setCropTargetSlotId(null);
+    setPendingOriginalFile(null);
+  }, [cropTargetSlotId, pendingOriginalFile, handleDirectPhotoUpload]);
+
+  // Handle crop cancel
+  const handleCropCancel = useCallback(() => {
+    setCropModalOpen(false);
+    setCropImageUrl(null);
+    setCropTargetSlotId(null);
+    setPendingOriginalFile(null);
+  }, []);
+
+  // Handle photo upload with auto-crop
+  const handlePhotoUpload = useCallback(async (slotId: string, file: File) => {
+    try {
+      setIsAutoCropping(true);
+      setCropTargetSlotId(slotId);
+      
+      // Detect category from slot ID for smarter cropping
+      const category = slotId.includes('exterior') ? 'exterior' as const
+        : slotId.includes('interior') ? 'interior' as const
+        : slotId.includes('aerial') ? 'aerial' as const
+        : slotId.includes('street') ? 'street' as const
+        : detectCategoryFromFilename(file.name);
+      
+      // Auto-crop the image using AI-driven smart crop
+      const { croppedFile, cropData, originalFile } = await autoCropImage(file, {
+        category,
+        targetAspectRatio: 16 / 9,
+      });
+      
+      handleDirectPhotoUpload(slotId, croppedFile);
+      setPendingOriginalFile(originalFile);
+      
+      console.log(`Auto-cropped ${file.name} with ${Math.round(cropData.confidence * 100)}% confidence`);
+      
+      setIsAutoCropping(false);
+      setCropTargetSlotId(null);
+    } catch (error) {
+      console.error('Auto-crop failed, falling back to manual crop:', error);
+      setIsAutoCropping(false);
+      
+      // Fallback to manual crop modal
+      const previewUrl = URL.createObjectURL(file);
+      setCropImageUrl(previewUrl);
+      setCropTargetSlotId(slotId);
+      setPendingOriginalFile(file);
+      setCropModalOpen(true);
+    }
+  }, [handleDirectPhotoUpload]);
+
+  // Handle re-cropping an existing photo
+  const handleReCropPhoto = useCallback((slotId: string, photo: PhotoData) => {
+    setCropImageUrl(photo.preview);
+    setCropTargetSlotId(slotId);
+    setPendingOriginalFile(photo.file || null);
+    setCropModalOpen(true);
+  }, []);
 
   // Handle assigning a staging photo
   const handleAssignStagingPhoto = (photo: { id: string; file: File }, slotId: string) => {
@@ -1226,6 +1309,28 @@ export default function DocumentIntakePage() {
           </div>
         </div>
       </ErrorBoundary>
+
+      {/* Photo Crop Modal */}
+      {cropModalOpen && cropImageUrl && (
+        <PhotoCropModal
+          image={cropImageUrl}
+          initialAspectRatio={16 / 9}
+          onCrop={handleCropComplete}
+          onCancel={handleCropCancel}
+          title="Crop Photo"
+          showAspectRatioSelector={true}
+        />
+      )}
+
+      {/* Auto-crop loading indicator */}
+      {isAutoCropping && (
+        <div className="fixed inset-0 z-[1050] bg-slate-900/50 backdrop-blur-sm flex items-center justify-center">
+          <div className="bg-surface-1 dark:bg-elevation-2 rounded-xl p-6 shadow-2xl flex items-center gap-4">
+            <Loader2 className="w-6 h-6 text-[#0da1c7] animate-spin" />
+            <span className="text-harken-dark dark:text-white font-medium">Auto-cropping photo...</span>
+          </div>
+        </div>
+      )}
     </WizardLayout >
   );
 }

@@ -1277,7 +1277,7 @@ export default function SetupPage() {
         <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm animate-fade-in">
           <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-light-border dark:border-harken-gray pb-3 mb-4 flex items-center gap-2">
             Property Type
-            <span className="text-xs font-normal text-harken-gray-med bg-harken-gray-light dark:bg-elevation-1 dark:text-slate-200 px-2 py-0.5 rounded">
+            <span className="text-xs font-normal text-badge-text bg-badge-bg dark:bg-elevation-2 dark:text-slate-200 px-2 py-0.5 rounded border border-badge-border dark:border-dark-border">
               M&S Section Reference
             </span>
           </h3>
@@ -1312,7 +1312,7 @@ export default function SetupPage() {
                   </span>
                   <span className="block text-xs text-harken-gray-med mt-1">{propType.description}</span>
                   {propType.msSection && (
-                    <span className="inline-block mt-2 text-[10px] font-medium text-harken-gray-med bg-harken-gray-light dark:bg-elevation-1 dark:text-slate-200 px-1.5 py-0.5 rounded">
+                    <span className="inline-block mt-2 text-[10px] font-medium text-badge-text bg-badge-bg dark:bg-elevation-2 dark:text-slate-200 px-1.5 py-0.5 rounded border border-badge-border dark:border-dark-border">
                       {propType.msSection}
                     </span>
                   )}
@@ -1328,7 +1328,7 @@ export default function SetupPage() {
         <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm animate-fade-in">
           <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-light-border dark:border-harken-gray pb-3 mb-4 flex items-center gap-2">
             M&S Occupancy Code
-            <span className="text-xs font-normal text-harken-gray-med bg-harken-gray-light dark:bg-elevation-1 dark:text-slate-200 px-2 py-0.5 rounded">
+            <span className="text-xs font-normal text-badge-text bg-badge-bg dark:bg-elevation-2 dark:text-slate-200 px-2 py-0.5 rounded border border-badge-border dark:border-dark-border">
               Specific Building Type
             </span>
           </h3>
@@ -1364,7 +1364,7 @@ export default function SetupPage() {
                   </span>
                   <span className="block text-[10px] text-harken-gray-med mt-0.5 line-clamp-2">{occCode.description}</span>
                   <div className="flex items-center gap-2 mt-2">
-                    <span className="text-[9px] font-medium text-harken-gray-med bg-harken-gray-light dark:bg-elevation-1 dark:text-slate-200 px-1 py-0.5 rounded">
+                    <span className="text-[9px] font-medium text-badge-text bg-badge-bg dark:bg-elevation-2 dark:text-slate-200 px-1 py-0.5 rounded border border-badge-border dark:border-dark-border">
                       {occCode.msSection} {occCode.msPage || ''}
                     </span>
                     <span className="text-[9px] text-harken-gray-med dark:text-slate-400">

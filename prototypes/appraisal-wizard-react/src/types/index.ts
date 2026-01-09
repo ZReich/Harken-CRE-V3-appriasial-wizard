@@ -1353,14 +1353,164 @@ export interface SalesGridConfiguration {
 /**
  * Multi-Family Unit Mix Configuration.
  * Captures the breakdown of unit types in a multi-family property.
+ * Updated to support unknown SF scenarios per Ben's 7-plex example.
  */
 export interface MultiFamilyUnitMix {
   unitType: 'studio' | '1br' | '2br' | '3br' | '4br+';
   count: number;
-  avgSF: number;
+  avgSF: number | null;                              // null = unknown SF
+  sfSource: 'measured' | 'estimated' | 'unknown';    // Track SF certainty
   bedrooms: number;
   bathrooms: number;
   avgRent?: number;  // Monthly rent for income analysis
+}
+
+// =================================================================
+// PROPERTY COMPONENT TYPES (Mixed-Use Architecture)
+// =================================================================
+
+/**
+ * Property Component for mixed-use properties.
+ * Allows multiple property types within a single appraisal.
+ * Examples: retail + apartments, greenhouse + excess land + mobile home pad
+ */
+export interface PropertyComponent {
+  id: string;
+  name: string;
+  category: 'residential' | 'commercial' | 'land';
+  propertyType: string;                              // e.g., 'retail', 'multifamily', 'vacant-land'
+  msOccupancyCode: string | null;                    // M&S classification
+  
+  // Size allocation
+  squareFootage: number | null;
+  sfSource: 'measured' | 'estimated' | 'unknown';    // Track SF certainty
+  
+  // Multi-family specific
+  unitCount?: number;
+  unitMix?: MultiFamilyUnitMix[];
+  
+  // Component classification (per resolved decision #3)
+  landClassification: 'standard' | 'excess' | 'surplus';
+  // - 'standard': Normal component (not land-specific)
+  // - 'excess': Can be sold separately → Land Sales Comparison valuation
+  // - 'surplus': Cannot be sold separately → Contributory value adjustment
+  isPrimary: boolean;
+  sortOrder: number;
+  
+  // Analysis configuration
+  analysisConfig: {
+    salesApproach: boolean;
+    incomeApproach: boolean;
+    costApproach: boolean;
+    analysisType: 'full' | 'contributory' | 'combined';
+    // - 'full': Separate approach tabs for this component
+    // - 'contributory': Income approach only, value added to total
+    // - 'combined': No separate instance; income lines added to primary grid
+  };
+}
+
+/**
+ * Income Line Item with rent comp linking.
+ * Supports the Pattern B income line → rent comp linking.
+ */
+export interface IncomeLineItem {
+  id: string;
+  componentId: string;                               // Links to PropertyComponent
+  description: string;
+  amount: number;
+  basis: 'sf_year' | 'sf_month' | 'unit_month' | 'flat_year';
+  linkedRentCompIds: string[];                       // Links to supporting rent comps
+}
+
+/**
+ * Income Approach Instance (per-component).
+ * Created for each component that has income analysis enabled.
+ */
+export interface IncomeApproachInstance {
+  id: string;
+  componentId: string;
+  componentName: string;
+  analysisType: 'full' | 'contributory';
+  
+  // Income data
+  incomeLineItems: IncomeLineItem[];
+  incomeData: import('../features/income-approach/types').IncomeData;
+  expenseData: import('../features/income-approach/types').ExpenseData;
+  valuationData: import('../features/income-approach/types').ValuationData;
+  
+  // Linked rent comparables
+  rentComparables: RentComp[];
+  rentCompMode: 'commercial' | 'residential';        // Determines field config
+  
+  // Concluded value
+  concludedValue: number | null;
+}
+
+/**
+ * Rent comparable for income approach.
+ * Used in RentComparableGrid with mode-specific fields.
+ */
+export interface RentComp {
+  id: string;
+  address: string;
+  
+  // Common fields
+  saleDate?: string;
+  distance?: number;
+  
+  // Commercial mode fields ($/SF/Year)
+  rentPerSF?: number;
+  buildingSF?: number;
+  leaseType?: 'NNN' | 'Gross' | 'Modified Gross';
+  tiAllowance?: number;
+  
+  // Residential mode fields ($/Month)
+  rentPerMonth?: number;
+  bedrooms?: number;
+  bathrooms?: number;
+  unitSF?: number;
+  amenities?: string[];
+  parking?: string;
+  utilities?: string;
+  
+  // Adjustments
+  adjustments: Record<string, number>;
+  adjustedRent?: number;
+  
+  // Linking
+  linkedIncomeLineIds?: string[];
+}
+
+/**
+ * Component reconciliation for value aggregation.
+ * Tracks concluded values per component for final reconciliation.
+ */
+export interface ComponentReconciliation {
+  componentId: string;
+  componentName: string;
+  reconciliationType: 'primary' | 'contributory' | 'excess_land' | 'surplus_land';
+  approachValues: {
+    approach: string;
+    value: number;
+    weight: number;
+  }[];
+  reconciledValue: number;
+}
+
+/**
+ * Scenario reconciliation summary with component breakdown.
+ * Displays combined and per-component values.
+ */
+export interface ScenarioReconciliationSummary {
+  scenarioId: number;
+  componentReconciliations: ComponentReconciliation[];
+  totalMarketValue: number;
+  valueBreakdown: {
+    componentId: string;
+    componentName: string;
+    value: number;
+    percentOfTotal: number;
+  }[];
 }
 
 /**
@@ -1533,6 +1683,17 @@ export interface WizardState {
   // M&S Classification (3-tier hierarchy)
   msOccupancyCode: string | null;
   
+  // Property Components (Mixed-Use Architecture)
+  // Replaces single propertyType with component-based model
+  propertyComponents: PropertyComponent[];
+  activeComponentId: string | null;
+  
+  // Multiple Income Approach Instances
+  incomeApproachInstances: IncomeApproachInstance[];
+  
+  // Reconciliation data per scenario (component-aware)
+  scenarioReconciliations: ScenarioReconciliationSummary[];
+  
   // Scenarios
   scenarios: AppraisalScenario[];
   activeScenarioId: number;
@@ -1695,6 +1856,22 @@ export type WizardAction =
   | { type: 'REMOVE_SUBJECT_MAP'; payload: string }
   | { type: 'SET_APPROACH_MAP'; payload: { approachType: string; map: MapData } }
   | { type: 'REMOVE_APPROACH_MAP'; payload: string }
+  // Property Component Actions (Mixed-Use Architecture)
+  | { type: 'ADD_PROPERTY_COMPONENT'; payload: PropertyComponent }
+  | { type: 'UPDATE_PROPERTY_COMPONENT'; payload: { id: string; updates: Partial<PropertyComponent> } }
+  | { type: 'REMOVE_PROPERTY_COMPONENT'; payload: string }
+  | { type: 'REORDER_PROPERTY_COMPONENTS'; payload: string[] }
+  | { type: 'SET_ACTIVE_COMPONENT'; payload: string | null }
+  // Income Instance Actions
+  | { type: 'ADD_INCOME_APPROACH_INSTANCE'; payload: IncomeApproachInstance }
+  | { type: 'UPDATE_INCOME_APPROACH_INSTANCE'; payload: { id: string; updates: Partial<IncomeApproachInstance> } }
+  | { type: 'REMOVE_INCOME_APPROACH_INSTANCE'; payload: string }
+  // Income Line to Rent Comp Linking
+  | { type: 'LINK_RENT_COMP_TO_INCOME_LINE'; payload: { instanceId: string; lineId: string; rentCompId: string } }
+  | { type: 'UNLINK_RENT_COMP_FROM_INCOME_LINE'; payload: { instanceId: string; lineId: string; rentCompId: string } }
+  // Component Reconciliation Actions
+  | { type: 'UPDATE_COMPONENT_RECONCILIATION'; payload: { scenarioId: number; reconciliation: ComponentReconciliation } }
+  | { type: 'RECALCULATE_SCENARIO_TOTALS'; payload: number }  // scenarioId
   | { type: 'RESET' };
 
 // =================================================================

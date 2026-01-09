@@ -2860,21 +2860,47 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
     return placements;
   }, [reportState.customContent]);
 
-  // Available photos - merge wizard state staging photos with sample data as fallback
+  // Available photos - merge wizard state photos from multiple sources
   const availablePhotos: PhotoData[] = useMemo(() => {
-    // Get photos from wizard state (staging photos that have been classified)
+    const allPhotos: PhotoData[] = [];
+    const seenIds = new Set<string>();
+
+    // 1. Get photos from reportPhotos.assignments (from DocumentIntakePage and SubjectDataPage)
+    const reportAssignments = state.reportPhotos?.assignments || [];
+    reportAssignments.forEach(assignment => {
+      if (assignment.url && !seenIds.has(assignment.id)) {
+        seenIds.add(assignment.id);
+        allPhotos.push({
+          id: assignment.id,
+          url: assignment.url,
+          caption: assignment.caption || assignment.slotId || 'Photo',
+          category: assignment.slotId?.includes('exterior') ? 'exterior'
+            : assignment.slotId?.includes('interior') ? 'interior'
+            : assignment.slotId?.includes('aerial') ? 'aerial'
+            : assignment.slotId?.includes('street') ? 'street'
+            : 'general',
+        });
+      }
+    });
+
+    // 2. Get photos from staging photos (from BulkPhotoDropZone)
     const stagingPhotos = state.stagingPhotos || [];
-    const wizardPhotos: PhotoData[] = stagingPhotos
+    stagingPhotos
       .filter(p => p.preview && (p.status === 'classified' || p.status === 'pending'))
-      .map(p => ({
-        id: p.id,
-        url: p.preview,
-        caption: p.suggestions?.[0]?.slotLabel || p.assignedSlot || p.filename || 'Photo',
-        category: p.suggestions?.[0]?.category || 'general',
-      }));
+      .forEach(p => {
+        if (!seenIds.has(p.id)) {
+          seenIds.add(p.id);
+          allPhotos.push({
+            id: p.id,
+            url: p.preview,
+            caption: p.suggestions?.[0]?.slotLabel || p.assignedSlot || p.filename || 'Photo',
+            category: p.suggestions?.[0]?.category || 'general',
+          });
+        }
+      });
     
-    // If no wizard photos, fall back to sample data for demo purposes
-    if (wizardPhotos.length === 0) {
+    // 3. If no wizard photos at all, fall back to sample data for demo purposes
+    if (allPhotos.length === 0) {
       return sampleAppraisalData.photos.map(p => ({
         id: p.id,
         url: p.url,
@@ -2883,8 +2909,8 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
       }));
     }
     
-    return wizardPhotos;
-  }, [state.stagingPhotos]);
+    return allPhotos;
+  }, [state.reportPhotos?.assignments, state.stagingPhotos]);
 
   // Handlers for inline photo placement - persist to reportState.customContent
   const handleAssignInlinePhoto = useCallback((sectionId: string, slotId: string, photoId: string) => {

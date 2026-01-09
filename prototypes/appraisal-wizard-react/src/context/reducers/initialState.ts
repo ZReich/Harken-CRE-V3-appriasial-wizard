@@ -14,6 +14,11 @@ export function createDefaultState(): WizardState {
     propertyType: null,
     propertySubtype: null,
     msOccupancyCode: null,
+    // Property Components (Mixed-Use Architecture)
+    propertyComponents: [],
+    activeComponentId: null,
+    incomeApproachInstances: [],
+    scenarioReconciliations: [],
     scenarios: [
       { id: 1, name: 'As Is', approaches: ['Sales Comparison'], effectiveDate: '', isRequired: true }
     ],
@@ -217,6 +222,11 @@ export function getInitialState(): WizardState {
         // Preserve field suggestions from storage
         fieldSuggestions: parsedState.fieldSuggestions || {},
         acceptedFields: parsedState.acceptedFields || {},
+        // Preserve property components from storage (Mixed-Use Architecture)
+        propertyComponents: parsedState.propertyComponents || [],
+        activeComponentId: parsedState.activeComponentId || null,
+        incomeApproachInstances: parsedState.incomeApproachInstances || [],
+        scenarioReconciliations: parsedState.scenarioReconciliations || [],
       };
     } catch (e) {
       console.warn('Failed to parse stored wizard state');
