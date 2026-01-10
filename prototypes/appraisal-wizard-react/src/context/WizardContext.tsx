@@ -132,6 +132,23 @@ interface WizardContextValue {
   setSwotAnalysis: (data: import('../types').SWOTAnalysisData) => void;
   setRiskRating: (data: import('../types/api').RiskRatingData) => void;
 
+  // Property Component helpers
+  addPropertyComponent: (component: Omit<import('../types').PropertyComponent, 'id' | 'sortOrder'>) => void;
+  updatePropertyComponent: (id: string, updates: Partial<import('../types').PropertyComponent>) => void;
+  removePropertyComponent: (id: string) => void;
+  setActiveComponent: (id: string | null) => void;
+  getPropertyComponents: () => import('../types').PropertyComponent[];
+  getPrimaryComponent: () => import('../types').PropertyComponent | undefined;
+  getIncomeEnabledComponents: () => import('../types').PropertyComponent[];
+  getExcessLandComponents: () => import('../types').PropertyComponent[];
+
+  // Income Approach Instance helpers
+  addIncomeApproachInstance: (instance: Omit<import('../types').IncomeApproachInstance, 'id'>) => void;
+  updateIncomeApproachInstance: (id: string, updates: Partial<import('../types').IncomeApproachInstance>) => void;
+  removeIncomeApproachInstance: (id: string) => void;
+  getIncomeApproachInstances: () => import('../types').IncomeApproachInstance[];
+  getIncomeInstanceForComponent: (componentId: string) => import('../types').IncomeApproachInstance | undefined;
+
   // Sales Comparison, Land Valuation, Photos, HBU, Market Analysis helpers
   setSalesComparisonData: (data: import('../types').SalesComparisonData) => void;
   getSalesComparisonData: () => import('../types').SalesComparisonData | undefined;
@@ -662,6 +679,62 @@ export function WizardProvider({ children }: { children: ReactNode }) {
     dispatch({ type: 'SET_RISK_RATING', payload: riskRating });
   }, []);
 
+  // Property Component helpers
+  const addPropertyComponent = useCallback((component: Omit<import('../types').PropertyComponent, 'id' | 'sortOrder'>) => {
+    dispatch({ type: 'ADD_PROPERTY_COMPONENT', payload: component });
+  }, []);
+
+  const updatePropertyComponent = useCallback((id: string, updates: Partial<import('../types').PropertyComponent>) => {
+    dispatch({ type: 'UPDATE_PROPERTY_COMPONENT', payload: { id, updates } });
+  }, []);
+
+  const removePropertyComponent = useCallback((id: string) => {
+    dispatch({ type: 'REMOVE_PROPERTY_COMPONENT', payload: id });
+  }, []);
+
+  const setActiveComponent = useCallback((id: string | null) => {
+    dispatch({ type: 'SET_ACTIVE_COMPONENT', payload: id });
+  }, []);
+
+  const getPropertyComponents = useCallback(() => {
+    return state.propertyComponents || [];
+  }, [state.propertyComponents]);
+
+  const getPrimaryComponent = useCallback(() => {
+    return (state.propertyComponents || []).find(c => c.isPrimary);
+  }, [state.propertyComponents]);
+
+  const getIncomeEnabledComponents = useCallback(() => {
+    return (state.propertyComponents || []).filter(c => c.analysisConfig.incomeApproach);
+  }, [state.propertyComponents]);
+
+  const getExcessLandComponents = useCallback(() => {
+    return (state.propertyComponents || []).filter(c => 
+      c.landClassification === 'excess' || c.landClassification === 'surplus'
+    );
+  }, [state.propertyComponents]);
+
+  // Income Approach Instance helpers
+  const addIncomeApproachInstance = useCallback((instance: Omit<import('../types').IncomeApproachInstance, 'id'>) => {
+    dispatch({ type: 'ADD_INCOME_APPROACH_INSTANCE', payload: instance });
+  }, []);
+
+  const updateIncomeApproachInstance = useCallback((id: string, updates: Partial<import('../types').IncomeApproachInstance>) => {
+    dispatch({ type: 'UPDATE_INCOME_APPROACH_INSTANCE', payload: { id, updates } });
+  }, []);
+
+  const removeIncomeApproachInstance = useCallback((id: string) => {
+    dispatch({ type: 'REMOVE_INCOME_APPROACH_INSTANCE', payload: id });
+  }, []);
+
+  const getIncomeApproachInstances = useCallback(() => {
+    return state.incomeApproachInstances || [];
+  }, [state.incomeApproachInstances]);
+
+  const getIncomeInstanceForComponent = useCallback((componentId: string) => {
+    return (state.incomeApproachInstances || []).find(i => i.componentId === componentId);
+  }, [state.incomeApproachInstances]);
+
   // Sales Comparison helpers
   const setSalesComparisonData = useCallback((data: import('../types').SalesComparisonData) => {
     dispatch({ type: 'SET_SALES_COMPARISON_DATA', payload: data });
@@ -884,6 +957,21 @@ export function WizardProvider({ children }: { children: ReactNode }) {
         setEconomicIndicators,
         setSwotAnalysis,
         setRiskRating,
+        // Property Component helpers
+        addPropertyComponent,
+        updatePropertyComponent,
+        removePropertyComponent,
+        setActiveComponent,
+        getPropertyComponents,
+        getPrimaryComponent,
+        getIncomeEnabledComponents,
+        getExcessLandComponents,
+        // Income Approach Instance helpers
+        addIncomeApproachInstance,
+        updateIncomeApproachInstance,
+        removeIncomeApproachInstance,
+        getIncomeApproachInstances,
+        getIncomeInstanceForComponent,
         // Sales Comparison, Land Valuation, Photos, HBU, Market Analysis
         setSalesComparisonData,
         getSalesComparisonData,

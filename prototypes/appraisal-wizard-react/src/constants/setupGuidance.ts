@@ -12,17 +12,21 @@ import { type SectionGuidance } from './wizardPhaseGuidance';
 export const SETUP_GUIDANCE: Record<string, SectionGuidance> = {
   basics: {
     title: 'Assignment Basics',
-    context: 'This section establishes the fundamental parameters of your appraisal assignment: property type, current status, and required valuation scenarios. Your selections here automatically configure the appropriate approaches and ensure compliance with USPAP and Interagency Guidelines.',
+    context: 'This section establishes the fundamental parameters of your appraisal assignment: property type, current status, and required valuation scenarios. For mixed-use properties, add Property Components to define distinct use types with tailored approaches for each. Your selections here automatically configure the appropriate approaches and ensure compliance with USPAP and Interagency Guidelines.',
     tips: [
       'Select property type before status - this determines available subtypes and default approaches',
       'Property status automatically triggers required scenarios (e.g., construction properties need As Is + As Completed + As Stabilized)',
+      'For mixed-use properties, add Property Components to analyze each use type separately with appropriate approaches',
       'Each scenario should have its own effective date that makes sense for that value premise',
+      'Component square footage should sum to total building area - use "Contributory" analysis for secondary components',
       'Review the auto-configured scenarios before adding custom ones',
     ],
     mistakes: [
       'Selecting wrong property type (e.g., choosing "Residential" for a 6-unit apartment)',
       'Missing required scenarios for construction/development loans',
+      'Not adding Property Components for mixed-use properties with distinct income streams',
       'Using the same effective date for all scenarios when prospective dates are needed',
+      'Overlapping or duplicating component square footage allocations',
       'Adding unnecessary scenarios that don\'t serve the assignment purpose',
     ],
     uspap: {
@@ -113,6 +117,31 @@ export const SETUP_GUIDANCE: Record<string, SectionGuidance> = {
       reference: 'SR 2-3',
       title: 'Certification Requirements',
       summary: 'Include all required certification elements in the report',
+    },
+  },
+  components: {
+    title: 'Property Components',
+    context: 'Property components define distinct use types within a mixed-use property. Each component can have its own valuation approaches, enabling accurate analysis of properties with multiple income streams or diverse physical characteristics (e.g., retail below, apartments above).',
+    tips: [
+      'Start with the primary income-generating use as your first component',
+      'Each component\'s square footage should sum to the total building area',
+      'Use "Contributory" analysis for secondary components that add value but don\'t warrant separate approach tabs',
+      'Land components classified as "Excess" are valued separately via land sales comparison',
+      'Commercial and residential components typically use different cap rates and market data',
+      'Consider how component values will be reconciled in your final value opinion',
+    ],
+    mistakes: [
+      'Creating overlapping components with duplicated square footage',
+      'Using "Full Analysis" for minor components that don\'t warrant separate tabs',
+      'Forgetting to enable Income Approach for rent-generating components',
+      'Misclassifying land as "Excess" when it cannot be legally subdivided',
+      'Not properly categorizing residential vs. commercial components',
+      'Selecting approaches that don\'t match the component\'s use type',
+    ],
+    uspap: {
+      reference: 'SR 1-4(b)',
+      title: 'Standards Rule 1-4(b) - Analysis Methods',
+      summary: 'Apply appropriate valuation methods for each property component',
     },
   },
 };

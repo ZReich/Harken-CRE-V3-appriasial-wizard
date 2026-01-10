@@ -47,7 +47,7 @@ import WizardGuidancePanel from '../components/WizardGuidancePanel';
 // PropertyLookupModal removed - lookup now triggered by inline button in Property Address section
 import GooglePlacesAutocomplete, { type PlaceDetails } from '../components/GooglePlacesAutocomplete';
 import { useWizard } from '../context/WizardContext';
-import { Trash2, Plus, Lock, Search, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
+import { Trash2, Plus, Lock, Search, Loader2, CheckCircle, AlertCircle, Layers, Building, Home, TreeDeciduous } from 'lucide-react';
 import { DocumentSourceIndicator, getDocumentSourceInputClasses } from '../components/DocumentSourceIndicator';
 import { MultiValueSuggestion } from '../components/MultiValueSuggestion';
 import type { CadastralData } from '../types/api';
@@ -76,10 +76,14 @@ import {
   getPropertyTypesByCategory,
   getOccupancyCodesByPropertyType,
   getPropertyHierarchyLabel,
+  getPropertyType,
   type PropertyCategory,
 } from '../constants/marshallSwift';
 import { determineGridConfiguration } from '../constants/gridConfigurations';
-import type { MultiFamilyUnitMix, MultiFamilyCalculationMethod } from '../types';
+import type { MultiFamilyUnitMix, MultiFamilyCalculationMethod, PropertyComponent } from '../types';
+import PropertyComponentCard from '../components/PropertyComponentCard';
+import PropertyComponentPanel from '../components/PropertyComponentPanel';
+import { UnitMixGrid, DEFAULT_UNIT_MIX } from '../components/UnitMixGrid';
 
 // ==========================================
 // SETUP TAB CONFIGURATION
@@ -165,12 +169,13 @@ const propertyInterestOptions = [
 // ==========================================
 // APPROACH OPTIONS
 // ==========================================
+// NOTE: Land Valuation is now a sub-tab within Sales Comparison (see SalesComparisonTabs)
+// Multi-Family fields are handled dynamically in the grid based on property type
+// These are no longer separate selectable approaches
 const approachOptions = [
   { key: 'Sales Comparison', label: 'Sales Comparison', Icon: ChartIcon },
   { key: 'Cost Approach', label: 'Cost Approach', Icon: ConstructionIcon },
   { key: 'Income Approach', label: 'Income Approach', Icon: CurrencyIcon },
-  { key: 'Land Valuation', label: 'Land Valuation', Icon: LandIcon },
-  { key: 'Multi-Family Approach', label: 'Multi-Family', Icon: ResidentialIcon },
 ];
 
 // ==========================================
@@ -208,59 +213,123 @@ interface AssignmentContext {
 // ==========================================
 // SCENARIO DETERMINATION LOGIC
 // ==========================================
+
+/**
+ * Get default approaches for a scenario based on property category and type.
+ * For component-based properties, use getDefaultApproachesForComponents instead.
+ */
 function getDefaultApproachesForScenario(scenarioName: string, propertyCategory: string | null, propertyType: string | null): string[] {
   const approaches: string[] = [];
 
   // Check if this is a multi-family property type
+  // NOTE: Multi-family fields are now handled dynamically in the Sales Comparison grid
+  // and Income Approach grid via rentCompMode - no separate "Multi-Family Approach"
   const isMultiFamily = propertyType === 'multifamily' || propertyType === 'duplex-fourplex' ||
     propertyType?.includes('multifamily') || propertyType?.includes('apartment');
 
-  // Multi-Family properties get Multi-Family Approach automatically
+  // NOTE: Land Valuation is now a sub-tab within Sales Comparison (see SalesComparisonTabs)
+  // It's automatically available when Sales Comparison is selected
+  
   if (isMultiFamily) {
-    approaches.push('Multi-Family Approach');
-    approaches.push('Income Approach'); // Also include standard income
-    approaches.push('Sales Comparison');
+    // Multi-family uses Income Approach (with residential rent comp mode) + Sales Comparison
+    approaches.push('Income Approach', 'Sales Comparison');
     if (scenarioName === 'As Completed' || scenarioName === 'As Proposed') {
-      approaches.push('Cost Approach', 'Land Valuation');
+      approaches.push('Cost Approach');
     }
   } else if (propertyCategory === 'commercial') {
     approaches.push('Sales Comparison', 'Income Approach');
     if (scenarioName === 'As Completed' || scenarioName === 'As Proposed') {
-      approaches.push('Cost Approach', 'Land Valuation'); // Cost Approach requires Land Valuation
+      approaches.push('Cost Approach');
     }
   } else if (propertyCategory === 'residential') {
     approaches.push('Sales Comparison');
     if (scenarioName === 'As Completed' || scenarioName === 'As Proposed') {
-      approaches.push('Cost Approach', 'Land Valuation'); // Cost Approach requires Land Valuation
+      approaches.push('Cost Approach');
     }
   } else if (propertyCategory === 'land') {
-    // Land properties use Land Valuation (not Sales Comparison for improved properties)
-    approaches.push('Land Valuation');
+    // Land properties use Sales Comparison with Land Sales sub-tab active
+    // The grid will show land-specific fields and the Land Sales sub-tab
+    approaches.push('Sales Comparison');
   } else {
     approaches.push('Sales Comparison');
   }
 
   if (scenarioName === 'As Stabilized') {
-    if (!approaches.includes('Income Approach') && (propertyType === 'commercial' || isMultiFamily)) {
+    if (!approaches.includes('Income Approach') && (propertyCategory === 'commercial' || isMultiFamily)) {
       approaches.unshift('Income Approach');
     }
-    // For multi-family, ensure Multi-Family Approach is included
-    if (isMultiFamily && !approaches.includes('Multi-Family Approach')) {
-      approaches.unshift('Multi-Family Approach');
-    }
-  }
-
-  // Ensure Cost Approach always has Land Valuation (for land value extraction)
-  if (approaches.includes('Cost Approach') && !approaches.includes('Land Valuation')) {
-    approaches.push('Land Valuation');
   }
 
   return approaches;
 }
 
-function determineRequiredScenarios(context: AssignmentContext): Scenario[] {
+/**
+ * Get default approaches for a scenario based on property components.
+ * This aggregates enabled approaches from all components.
+ */
+function getDefaultApproachesForComponents(
+  scenarioName: string,
+  components: PropertyComponent[]
+): string[] {
+  const approachSet = new Set<string>();
+
+  // NOTE: Land Valuation is now a sub-tab within Sales Comparison
+  // Multi-Family fields are handled dynamically in grids via rentCompMode
+  // These are no longer added as separate approaches
+
+  components.forEach((comp) => {
+    // Add approaches based on component configuration
+    if (comp.analysisConfig.salesApproach) {
+      approachSet.add('Sales Comparison');
+    }
+
+    if (comp.analysisConfig.incomeApproach) {
+      approachSet.add('Income Approach');
+      // Multi-family uses Income Approach with residential rent comp mode
+      // No separate "Multi-Family Approach" needed
+    }
+
+    if (comp.analysisConfig.costApproach) {
+      approachSet.add('Cost Approach');
+      // Land value for Cost Approach is obtained via Land Sales sub-tab
+      // within Sales Comparison (Improvement Analysis mode)
+      approachSet.add('Sales Comparison');
+    }
+
+    // Excess/surplus land and land category components need Sales Comparison
+    // The Land Sales sub-tab will be activated via component visibility
+    if (comp.landClassification === 'excess' || comp.landClassification === 'surplus' || comp.category === 'land') {
+      approachSet.add('Sales Comparison');
+    }
+  });
+
+  // NOTE: Removed aggressive scenario-specific additions
+  // The component's analysisConfig should drive which approaches are enabled
+  // Users can manually enable additional approaches as needed
+  // Cost Approach for As Completed/As Proposed and Income for As Stabilized
+  // are now suggestions in the UI, not forced defaults
+
+  return Array.from(approachSet);
+}
+
+/**
+ * Determines required scenarios based on assignment context and optional property components.
+ * If components are provided, uses component-based approach aggregation.
+ */
+function determineRequiredScenarios(
+  context: AssignmentContext,
+  components?: PropertyComponent[]
+): Scenario[] {
   const result: Scenario[] = [];
   const { propertyCategory, propertyType, propertyStatus, plannedChanges, occupancyStatus, loanPurpose } = context;
+
+  // Helper to get approaches - uses components if available, otherwise falls back to legacy
+  const getApproaches = (scenarioName: string): string[] => {
+    if (components && components.length > 0) {
+      return getDefaultApproachesForComponents(scenarioName, components);
+    }
+    return getDefaultApproachesForScenario(scenarioName, propertyCategory, propertyType);
+  };
 
   if (!propertyStatus) {
     return [{ id: 1, name: 'As Is', nameSelect: 'As Is', customName: '', approaches: [], isRequired: false, requirementSource: '' }];
@@ -268,49 +337,49 @@ function determineRequiredScenarios(context: AssignmentContext): Scenario[] {
 
   // RULE 1: Property Status Drives Primary Scenarios
   if (propertyStatus === 'proposed') {
-    result.push({ id: 1, name: 'As Proposed', nameSelect: 'As Proposed', customName: '', approaches: getDefaultApproachesForScenario('As Proposed', propertyCategory, propertyType), isRequired: true, requirementSource: 'Proposed development - no existing improvements' });
-    result.push({ id: 2, name: 'As Completed', nameSelect: 'As Completed', customName: '', approaches: getDefaultApproachesForScenario('As Completed', propertyCategory, propertyType), isRequired: true, requirementSource: 'Interagency Guidelines - construction/development' });
-    result.push({ id: 3, name: 'As Stabilized', nameSelect: 'As Stabilized', customName: '', approaches: getDefaultApproachesForScenario('As Stabilized', propertyCategory, propertyType), isRequired: true, requirementSource: 'Interagency Guidelines - income property stabilization' });
+    result.push({ id: 1, name: 'As Proposed', nameSelect: 'As Proposed', customName: '', approaches: getApproaches('As Proposed'), isRequired: true, requirementSource: 'Proposed development - no existing improvements' });
+    result.push({ id: 2, name: 'As Completed', nameSelect: 'As Completed', customName: '', approaches: getApproaches('As Completed'), isRequired: true, requirementSource: 'Interagency Guidelines - construction/development' });
+    result.push({ id: 3, name: 'As Stabilized', nameSelect: 'As Stabilized', customName: '', approaches: getApproaches('As Stabilized'), isRequired: true, requirementSource: 'Interagency Guidelines - income property stabilization' });
   } else if (propertyStatus === 'under_construction') {
-    result.push({ id: 1, name: 'As Is', nameSelect: 'As Is', customName: '', approaches: getDefaultApproachesForScenario('As Is', propertyCategory, propertyType), isRequired: true, requirementSource: 'Current value of partially-complete improvements' });
-    result.push({ id: 2, name: 'As Completed', nameSelect: 'As Completed', customName: '', approaches: getDefaultApproachesForScenario('As Completed', propertyCategory, propertyType), isRequired: true, requirementSource: 'Interagency Guidelines - construction loan' });
-    result.push({ id: 3, name: 'As Stabilized', nameSelect: 'As Stabilized', customName: '', approaches: getDefaultApproachesForScenario('As Stabilized', propertyCategory, propertyType), isRequired: true, requirementSource: 'Interagency Guidelines - post-construction lease-up' });
+    result.push({ id: 1, name: 'As Is', nameSelect: 'As Is', customName: '', approaches: getApproaches('As Is'), isRequired: true, requirementSource: 'Current value of partially-complete improvements' });
+    result.push({ id: 2, name: 'As Completed', nameSelect: 'As Completed', customName: '', approaches: getApproaches('As Completed'), isRequired: true, requirementSource: 'Interagency Guidelines - construction loan' });
+    result.push({ id: 3, name: 'As Stabilized', nameSelect: 'As Stabilized', customName: '', approaches: getApproaches('As Stabilized'), isRequired: true, requirementSource: 'Interagency Guidelines - post-construction lease-up' });
   } else if (propertyStatus === 'recently_completed') {
-    result.push({ id: 1, name: 'As Is', nameSelect: 'As Is', customName: '', approaches: getDefaultApproachesForScenario('As Is', propertyCategory, propertyType), isRequired: true, requirementSource: 'Current market value' });
+    result.push({ id: 1, name: 'As Is', nameSelect: 'As Is', customName: '', approaches: getApproaches('As Is'), isRequired: true, requirementSource: 'Current market value' });
     if (occupancyStatus === 'lease_up' || occupancyStatus === 'vacant') {
-      result.push({ id: 2, name: 'As Stabilized', nameSelect: 'As Stabilized', customName: '', approaches: getDefaultApproachesForScenario('As Stabilized', propertyCategory, propertyType), isRequired: true, requirementSource: 'Property not yet at stabilized occupancy' });
+      result.push({ id: 2, name: 'As Stabilized', nameSelect: 'As Stabilized', customName: '', approaches: getApproaches('As Stabilized'), isRequired: true, requirementSource: 'Property not yet at stabilized occupancy' });
     }
   } else {
-    result.push({ id: 1, name: 'As Is', nameSelect: 'As Is', customName: '', approaches: getDefaultApproachesForScenario('As Is', propertyCategory, propertyType), isRequired: true, requirementSource: 'Current market value' });
+    result.push({ id: 1, name: 'As Is', nameSelect: 'As Is', customName: '', approaches: getApproaches('As Is'), isRequired: true, requirementSource: 'Current market value' });
   }
 
   // RULE 2: Planned Changes Add Scenarios
   if (plannedChanges === 'major' || plannedChanges === 'change_of_use') {
     if (!result.some(s => s.name === 'As Completed')) {
-      result.push({ id: result.length + 1, name: 'As Completed', nameSelect: 'As Completed', customName: '', approaches: getDefaultApproachesForScenario('As Completed', propertyCategory, propertyType), isRequired: true, requirementSource: 'Major renovation/change of use planned' });
+      result.push({ id: result.length + 1, name: 'As Completed', nameSelect: 'As Completed', customName: '', approaches: getApproaches('As Completed'), isRequired: true, requirementSource: 'Major renovation/change of use planned' });
     }
     if (occupancyStatus && occupancyStatus !== 'not_applicable' && !result.some(s => s.name === 'As Stabilized')) {
-      result.push({ id: result.length + 1, name: 'As Stabilized', nameSelect: 'As Stabilized', customName: '', approaches: getDefaultApproachesForScenario('As Stabilized', propertyCategory, propertyType), isRequired: false, requirementSource: 'Recommended for income property after renovation' });
+      result.push({ id: result.length + 1, name: 'As Stabilized', nameSelect: 'As Stabilized', customName: '', approaches: getApproaches('As Stabilized'), isRequired: false, requirementSource: 'Recommended for income property after renovation' });
     }
   }
 
   // RULE 3: Occupancy Adjustments
   if (occupancyStatus === 'lease_up' && !result.some(s => s.name === 'As Stabilized')) {
-    result.push({ id: result.length + 1, name: 'As Stabilized', nameSelect: 'As Stabilized', customName: '', approaches: getDefaultApproachesForScenario('As Stabilized', propertyCategory, propertyType), isRequired: true, requirementSource: 'Property currently in lease-up phase' });
+    result.push({ id: result.length + 1, name: 'As Stabilized', nameSelect: 'As Stabilized', customName: '', approaches: getApproaches('As Stabilized'), isRequired: true, requirementSource: 'Property currently in lease-up phase' });
   }
 
   // RULE 4: Loan Purpose Overrides
   if (loanPurpose === 'construction') {
     if (!result.some(s => s.name === 'As Completed')) {
-      result.push({ id: result.length + 1, name: 'As Completed', nameSelect: 'As Completed', customName: '', approaches: getDefaultApproachesForScenario('As Completed', propertyCategory, propertyType), isRequired: true, requirementSource: 'Interagency Guidelines - construction loan requirement' });
+      result.push({ id: result.length + 1, name: 'As Completed', nameSelect: 'As Completed', customName: '', approaches: getApproaches('As Completed'), isRequired: true, requirementSource: 'Interagency Guidelines - construction loan requirement' });
     }
     if (!result.some(s => s.name === 'As Stabilized')) {
-      result.push({ id: result.length + 1, name: 'As Stabilized', nameSelect: 'As Stabilized', customName: '', approaches: getDefaultApproachesForScenario('As Stabilized', propertyCategory, propertyType), isRequired: true, requirementSource: 'Interagency Guidelines - construction loan requirement' });
+      result.push({ id: result.length + 1, name: 'As Stabilized', nameSelect: 'As Stabilized', customName: '', approaches: getApproaches('As Stabilized'), isRequired: true, requirementSource: 'Interagency Guidelines - construction loan requirement' });
     }
   }
 
   if (loanPurpose === 'bridge' && plannedChanges && plannedChanges !== 'none' && !result.some(s => s.name === 'As Completed')) {
-    result.push({ id: result.length + 1, name: 'As Completed', nameSelect: 'As Completed', customName: '', approaches: getDefaultApproachesForScenario('As Completed', propertyCategory, propertyType), isRequired: false, requirementSource: 'Recommended for bridge financing with planned improvements' });
+    result.push({ id: result.length + 1, name: 'As Completed', nameSelect: 'As Completed', customName: '', approaches: getApproaches('As Completed'), isRequired: false, requirementSource: 'Recommended for bridge financing with planned improvements' });
   }
 
   result.forEach((s, idx) => s.id = idx + 1);
@@ -329,7 +398,7 @@ const scenarioNameOptions = [
 // MAIN COMPONENT
 // ==========================================
 export default function SetupPage() {
-  const { state: wizardState, addOwner, updateOwner, removeOwner, setScenarios: syncScenariosToContext, setPropertyType: syncPropertyType, setSubjectData, hasFieldSource, hasPendingFieldSuggestion } = useWizard();
+  const { state: wizardState, dispatch, addOwner, updateOwner, removeOwner, setScenarios: syncScenariosToContext, setPropertyType: syncPropertyType, setSubjectData, hasFieldSource, hasPendingFieldSuggestion } = useWizard();
   const [activeTab, setActiveTab] = useState('basics');
 
   // Track which fields are locked (pre-filled from extraction)
@@ -373,13 +442,14 @@ export default function SetupPage() {
     wizardState.subjectData?.calculationMethod || 'per_unit'
   );
   const [unitMix, setUnitMix] = useState<MultiFamilyUnitMix[]>(() => 
-    wizardState.subjectData?.unitMix || [
-      { unitType: 'studio', count: 0, avgSF: 450, bedrooms: 0, bathrooms: 1 },
-      { unitType: '1br', count: 0, avgSF: 650, bedrooms: 1, bathrooms: 1 },
-      { unitType: '2br', count: 0, avgSF: 900, bedrooms: 2, bathrooms: 2 },
-      { unitType: '3br', count: 0, avgSF: 1200, bedrooms: 3, bathrooms: 2 },
-      { unitType: '4br+', count: 0, avgSF: 1500, bedrooms: 4, bathrooms: 2 },
-    ]
+    wizardState.subjectData?.unitMix || DEFAULT_UNIT_MIX
+  );
+  // Unknown SF support - when per-unit SF is unknown, use total building SF
+  const [perUnitSfUnknown, setPerUnitSfUnknown] = useState(() => 
+    wizardState.subjectData?.perUnitSfUnknown || false
+  );
+  const [totalBuildingSf, setTotalBuildingSf] = useState(() => 
+    wizardState.subjectData?.totalBuildingSf || 0
   );
   
   // Check if current property type is multi-family
@@ -389,6 +459,49 @@ export default function SetupPage() {
            context.propertyType?.includes('multifamily') || 
            context.propertyType?.includes('apartment');
   }, [context.propertyType]);
+
+  // Property Component Panel state (Mixed-Use Architecture)
+  const [isComponentPanelOpen, setIsComponentPanelOpen] = useState(false);
+  const [editingComponent, setEditingComponent] = useState<PropertyComponent | null>(null);
+  // Track which components are collapsed (empty = all expanded)
+  const [collapsedComponents, setCollapsedComponents] = useState<Set<string>>(new Set());
+
+  // Get property components from wizard state
+  const propertyComponents = wizardState.propertyComponents || [];
+
+  // Handle adding/updating a property component
+  const handleSaveComponent = useCallback((component: PropertyComponent) => {
+    if (editingComponent) {
+      dispatch({ type: 'UPDATE_PROPERTY_COMPONENT', payload: { id: component.id, updates: component } });
+    } else {
+      dispatch({ type: 'ADD_PROPERTY_COMPONENT', payload: component });
+    }
+    setEditingComponent(null);
+  }, [editingComponent, dispatch]);
+
+  // Handle removing a property component
+  const handleRemoveComponent = useCallback((componentId: string) => {
+    dispatch({ type: 'REMOVE_PROPERTY_COMPONENT', payload: componentId });
+  }, [dispatch]);
+
+  // Handle editing a component
+  const handleEditComponent = useCallback((component: PropertyComponent) => {
+    setEditingComponent(component);
+    setIsComponentPanelOpen(true);
+  }, []);
+
+  // Toggle component expansion (tracks collapsed state)
+  const toggleComponentExpand = useCallback((componentId: string) => {
+    setCollapsedComponents(prev => {
+      const next = new Set(prev);
+      if (next.has(componentId)) {
+        next.delete(componentId);
+      } else {
+        next.add(componentId);
+      }
+      return next;
+    });
+  }, []);
 
   // Property Lookup Modal state
   // Property lookup is now triggered by inline button, no modal needed
@@ -798,31 +911,47 @@ export default function SetupPage() {
     return [{ id: 1, name: 'As Is', nameSelect: 'As Is', customName: '', approaches: [] }];
   });
 
-  // Update scenarios when RELEVANT context properties change (not appraisalPurpose, intendedUsers, etc.)
-  // Only propertyStatus, plannedChanges, occupancyStatus should trigger scenario recalculation
+  // Update scenarios when RELEVANT context properties change
+  // Track the previous property category to detect category changes
+  const [prevPropertyCategory, setPrevPropertyCategory] = useState<string | null>(context.propertyCategory);
+  
   useEffect(() => {
     if (context.propertyStatus) {
-      const newScenarios = determineRequiredScenarios(context);
+      // Check if property category changed - if so, don't preserve old approaches
+      const categoryChanged = prevPropertyCategory !== null && prevPropertyCategory !== context.propertyCategory;
+      
+      // Pass property components if available for component-based approach determination
+      const newScenarios = determineRequiredScenarios(context, wizardState.propertyComponents);
       setScenarios(prevScenarios => {
-        // Preserve effectiveDate from existing scenarios when recreating
-        const preservedDates: Record<string, string> = {};
+        // Preserve effectiveDate from existing scenarios
+        // Only preserve approaches if category hasn't changed
+        const preservedData: Record<string, { effectiveDate?: string; approaches?: string[] }> = {};
         prevScenarios.forEach(s => {
-          if (s.effectiveDate) {
-            preservedDates[s.name] = s.effectiveDate;
-          }
+          preservedData[s.name] = {
+            effectiveDate: s.effectiveDate,
+            // Don't preserve approaches if category changed - use fresh defaults
+            approaches: categoryChanged ? undefined : (s.approaches?.length > 0 ? s.approaches : undefined),
+          };
         });
 
-        // Apply preserved dates to new scenarios
-        const scenariosWithDates = newScenarios.map(s => ({
+        // Apply preserved data to new scenarios
+        const scenariosWithPreservedData = newScenarios.map(s => ({
           ...s,
-          effectiveDate: preservedDates[s.name] || s.effectiveDate || '',
+          effectiveDate: preservedData[s.name]?.effectiveDate || s.effectiveDate || '',
+          // Use preserved approaches if available, otherwise use calculated defaults
+          approaches: preservedData[s.name]?.approaches || s.approaches || [],
         }));
 
         const customScenarios = prevScenarios.filter(s => !['As Is', 'As Completed', 'As Stabilized', 'As Proposed'].includes(s.name));
-        return [...scenariosWithDates, ...customScenarios];
+        return [...scenariosWithPreservedData, ...customScenarios];
       });
+      
+      // Update tracked category
+      if (categoryChanged) {
+        setPrevPropertyCategory(context.propertyCategory);
+      }
     }
-  }, [context.propertyStatus, context.plannedChanges, context.occupancyStatus, context.propertyType, context.subType]);
+  }, [context.propertyStatus, context.plannedChanges, context.occupancyStatus, context.propertyType, context.subType, context.propertyCategory, wizardState.propertyComponents, prevPropertyCategory]);
 
   // Sync local scenarios to WizardContext whenever they change
   useEffect(() => {
@@ -844,6 +973,64 @@ export default function SetupPage() {
       syncPropertyType(context.propertyCategory, context.propertyType || undefined);
     }
   }, [context.propertyCategory, context.propertyType, syncPropertyType]);
+
+  // AUTO-CREATE PRIMARY COMPONENT from Assignment Basics classification
+  // This ensures the property classification is always represented as the primary component
+  useEffect(() => {
+    if (!context.propertyCategory || !context.propertyType) return;
+    
+    // Get the property type label for a meaningful name
+    const propertyTypeInfo = getPropertyType(context.propertyType);
+    const componentName = propertyTypeInfo?.label || context.propertyType || 'Subject Property';
+    
+    // Check if primary component already exists
+    const existingPrimary = propertyComponents.find(c => c.isPrimary);
+    
+    if (existingPrimary) {
+      // Update existing primary if classification changed
+      const needsUpdate = 
+        existingPrimary.category !== context.propertyCategory ||
+        existingPrimary.propertyType !== context.propertyType ||
+        existingPrimary.msOccupancyCode !== context.msOccupancyCode;
+      
+      if (needsUpdate) {
+        dispatch({
+          type: 'UPDATE_PROPERTY_COMPONENT',
+          payload: {
+            id: existingPrimary.id,
+            updates: {
+              category: context.propertyCategory,
+              propertyType: context.propertyType,
+              msOccupancyCode: context.msOccupancyCode || null,
+              name: componentName,
+            },
+          },
+        });
+      }
+    } else {
+      // Create new primary component from classification
+      const primaryComponent: PropertyComponent = {
+        id: 'primary',
+        name: componentName,
+        category: context.propertyCategory,
+        propertyType: context.propertyType,
+        msOccupancyCode: context.msOccupancyCode || null,
+        squareFootage: null,
+        sfSource: 'estimated',
+        landClassification: 'standard',
+        isPrimary: true,
+        sortOrder: 0,
+        analysisConfig: {
+          salesApproach: true,
+          incomeApproach: context.propertyCategory === 'commercial' || isMultiFamilyProperty,
+          costApproach: false,
+          analysisType: 'full',
+        },
+      };
+      
+      dispatch({ type: 'ADD_PROPERTY_COMPONENT', payload: primaryComponent });
+    }
+  }, [context.propertyCategory, context.propertyType, context.msOccupancyCode, propertyComponents, dispatch, isMultiFamilyProperty]);
 
   // Determine and sync grid configuration when property type changes
   useEffect(() => {
@@ -875,31 +1062,30 @@ export default function SetupPage() {
         totalUnitCount,
         unitMix,
         calculationMethod,
+        perUnitSfUnknown,
+        totalBuildingSf: perUnitSfUnknown ? totalBuildingSf : undefined,
       });
     }
-  }, [isMultiFamilyProperty, totalUnitCount, unitMix, calculationMethod, setSubjectData]);
+  }, [isMultiFamilyProperty, totalUnitCount, unitMix, calculationMethod, perUnitSfUnknown, totalBuildingSf, setSubjectData]);
 
   // Auto-adjust approaches when property category changes to land
+  // NOTE: Land Valuation is now a sub-tab within Sales Comparison
+  // Land properties use Sales Comparison with the Land Sales sub-tab active
   useEffect(() => {
     if (context.propertyCategory === 'land') {
       setScenarios(prevScenarios => prevScenarios.map(s => {
         let newApproaches = [...s.approaches];
 
-        // Add Land Valuation if not present
-        if (!newApproaches.includes('Land Valuation')) {
-          newApproaches.push('Land Valuation');
-        }
-
-        // For land properties, Sales Comparison is typically not used (land uses Land Valuation)
-        // Remove Sales Comparison if Land Valuation is now the primary approach
-        if (newApproaches.includes('Land Valuation') && newApproaches.includes('Sales Comparison')) {
-          newApproaches = newApproaches.filter(a => a !== 'Sales Comparison');
+        // Ensure Sales Comparison is included for land properties
+        // The Land Sales sub-tab will be automatically shown based on property category
+        if (!newApproaches.includes('Sales Comparison')) {
+          newApproaches.push('Sales Comparison');
         }
 
         return { ...s, approaches: newApproaches };
       }));
     }
-  }, [context.propertyType]);
+  }, [context.propertyCategory]);
 
   // Helper to check if occupancy question should show
   const shouldShowOccupancyQuestion = () => {
@@ -948,17 +1134,17 @@ export default function SetupPage() {
 
       if (hasApproach) {
         // Removing an approach
-        let newApproaches = s.approaches.filter(a => a !== approach);
-        // If removing Cost Approach and no other approach needs Land Valuation, consider keeping it
-        // (user can manually remove Land Valuation if desired)
+        const newApproaches = s.approaches.filter(a => a !== approach);
         return { ...s, approaches: newApproaches };
       } else {
         // Adding an approach
-        let newApproaches = [...s.approaches, approach];
+        const newApproaches = [...s.approaches, approach];
 
-        // Auto-add Land Valuation when Cost Approach is selected (required for land value)
-        if (approach === 'Cost Approach' && !newApproaches.includes('Land Valuation')) {
-          newApproaches.push('Land Valuation');
+        // NOTE: Land Valuation is now a sub-tab within Sales Comparison
+        // Cost Approach gets land value from the Land Sales sub-tab via Improvement Analysis mode
+        // Auto-add Sales Comparison when Cost Approach is selected (for land value via Land Sales sub-tab)
+        if (approach === 'Cost Approach' && !newApproaches.includes('Sales Comparison')) {
+          newApproaches.push('Sales Comparison');
         }
 
         return { ...s, approaches: newApproaches };
@@ -1387,138 +1573,120 @@ export default function SetupPage() {
               Multi-Family
             </span>
           </h3>
-          <p className="text-sm text-harken-gray dark:text-slate-400 mb-4">
-            Configure the unit count and mix for accurate price-per-unit calculations in the Sales Comparison grid.
-          </p>
-
-          {/* Total Units and Calculation Method */}
-          <div className="grid grid-cols-2 gap-6 mb-6">
-            <div>
-              <label className="block text-sm font-medium text-harken-gray dark:text-slate-200 mb-2">
-                Total Units <span className="text-harken-error">*</span>
-              </label>
-              <input
-                type="number"
-                value={totalUnitCount || ''}
-                onChange={(e) => setTotalUnitCount(parseInt(e.target.value) || 0)}
-                placeholder="e.g., 45"
-                className={`w-full px-4 py-2.5 border rounded-lg text-lg font-semibold bg-surface-1 dark:bg-elevation-1 text-harken-dark dark:text-white focus:ring-2 focus:ring-harken-blue focus:border-transparent ${
-                  totalUnitCount > 0 && totalUnitCount !== unitMix.reduce((acc, u) => acc + u.count, 0)
-                    ? 'border-amber-500 bg-amber-50 dark:bg-amber-900/20'
-                    : 'border-light-border dark:border-harken-gray'
-                }`}
-              />
-              {/* Validation warning when total doesn't match sum */}
-              {totalUnitCount > 0 && totalUnitCount !== unitMix.reduce((acc, u) => acc + u.count, 0) && (
-                <p className="mt-1.5 text-xs text-amber-600 dark:text-amber-400 flex items-center gap-1">
-                  <svg className="w-3.5 h-3.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                  </svg>
-                  <span>Total ({totalUnitCount}) doesn't match unit mix sum ({unitMix.reduce((acc, u) => acc + u.count, 0)})</span>
-                </p>
-              )}
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-harken-gray dark:text-slate-200 mb-2">
-                Primary Calculation Method
-              </label>
-              <div className="flex gap-2">
-                {(['per_unit', 'per_sf', 'per_room'] as MultiFamilyCalculationMethod[]).map((method) => (
-                  <button
-                    key={method}
-                    onClick={() => setCalculationMethod(method)}
-                    className={`flex-1 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
-                      calculationMethod === method
-                        ? 'bg-harken-blue text-white'
-                        : 'bg-harken-gray-light dark:bg-elevation-1 text-harken-gray dark:text-slate-200 hover:bg-harken-gray-med-lt dark:hover:bg-harken-gray'
-                    }`}
-                  >
-                    {method === 'per_unit' ? '$/Unit' : method === 'per_sf' ? '$/SF' : '$/Room'}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* Unit Mix Table */}
-          <div className="border border-light-border dark:border-harken-gray rounded-lg overflow-hidden">
-            <table className="w-full text-sm">
-              <thead className="bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1">
-                <tr>
-                  <th className="px-4 py-2 text-left font-semibold text-harken-gray dark:text-slate-200">Type</th>
-                  <th className="px-4 py-2 text-center font-semibold text-harken-gray dark:text-slate-200">Count</th>
-                  <th className="px-4 py-2 text-center font-semibold text-harken-gray dark:text-slate-200">Avg SF</th>
-                  <th className="px-4 py-2 text-center font-semibold text-harken-gray dark:text-slate-200">Beds</th>
-                  <th className="px-4 py-2 text-center font-semibold text-harken-gray dark:text-slate-200">Baths</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-harken-gray-med-lt dark:divide-harken-gray">
-                {unitMix.map((unit, idx) => (
-                  <tr key={unit.unitType} className="bg-surface-1 dark:bg-elevation-1">
-                    <td className="px-4 py-2 font-medium text-harken-gray dark:text-slate-200">
-                      {unit.unitType === 'studio' ? 'Studio' : 
-                       unit.unitType === '1br' ? '1-Bedroom' :
-                       unit.unitType === '2br' ? '2-Bedroom' :
-                       unit.unitType === '3br' ? '3-Bedroom' : '4+ Bedroom'}
-                    </td>
-                    <td className="px-4 py-2">
-                      <input
-                        type="number"
-                        value={unit.count || ''}
-                        onChange={(e) => {
-                          const newMix = [...unitMix];
-                          newMix[idx] = { ...newMix[idx], count: parseInt(e.target.value) || 0 };
-                          setUnitMix(newMix);
-                          // Auto-update total
-                          setTotalUnitCount(newMix.reduce((acc, u) => acc + u.count, 0));
-                        }}
-                        className="w-20 px-2 py-1 text-center border border-light-border dark:border-harken-gray rounded bg-surface-1 dark:bg-elevation-1 text-harken-dark dark:text-white"
-                      />
-                    </td>
-                    <td className="px-4 py-2">
-                      <input
-                        type="number"
-                        value={unit.avgSF || ''}
-                        onChange={(e) => {
-                          const newMix = [...unitMix];
-                          newMix[idx] = { ...newMix[idx], avgSF: parseInt(e.target.value) || 0 };
-                          setUnitMix(newMix);
-                        }}
-                        className="w-20 px-2 py-1 text-center border border-light-border dark:border-harken-gray rounded bg-surface-1 dark:bg-elevation-1 text-harken-dark dark:text-white"
-                      />
-                    </td>
-                    <td className="px-4 py-2 text-center text-harken-gray-med dark:text-slate-400">
-                      {unit.bedrooms}
-                    </td>
-                    <td className="px-4 py-2 text-center text-harken-gray-med dark:text-slate-400">
-                      {unit.bathrooms}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-              <tfoot className="bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1">
-                <tr>
-                  <td className="px-4 py-2 font-bold text-harken-gray dark:text-slate-200">Total</td>
-                  <td className="px-4 py-2 text-center font-bold text-harken-blue">
-                    {unitMix.reduce((acc, u) => acc + u.count, 0)} units
-                  </td>
-                  <td className="px-4 py-2 text-center font-medium text-harken-gray dark:text-slate-200">
-                    {unitMix.reduce((acc, u) => acc + (u.count * u.avgSF), 0).toLocaleString()} SF
-                  </td>
-                  <td colSpan={2}></td>
-                </tr>
-              </tfoot>
-            </table>
-          </div>
-
-          <p className="mt-4 text-xs text-harken-gray-med dark:text-slate-400 flex items-center gap-2">
-            <svg className="w-4 h-4 text-harken-blue" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-            </svg>
-            <span>The Sales Comparison grid will display both $/Unit and $/SF. Your primary calculation method determines which is used for the concluded value.</span>
-          </p>
+          
+          <UnitMixGrid
+            value={unitMix}
+            onChange={setUnitMix}
+            totalUnitCount={totalUnitCount}
+            onTotalUnitCountChange={setTotalUnitCount}
+            calculationMethod={calculationMethod}
+            onCalculationMethodChange={setCalculationMethod}
+            perUnitSfUnknown={perUnitSfUnknown}
+            onPerUnitSfUnknownChange={setPerUnitSfUnknown}
+            totalBuildingSf={totalBuildingSf}
+            onTotalBuildingSfChange={setTotalBuildingSf}
+            mode="full"
+            showCalculationMethod={true}
+            showUnknownSfToggle={true}
+            description="Configure the unit count and mix for accurate price-per-unit calculations in the Sales Comparison grid."
+          />
         </div>
       )}
+
+      {/* Mixed-Use Property Components */}
+      {context.propertyType && (
+        <div className="relative overflow-hidden rounded-xl border border-light-border dark:border-dark-border shadow-sm animate-fade-in">
+          {/* Gradient accent bar */}
+          <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-harken-blue via-accent-teal-mint to-lime-500" />
+          
+          <div className="bg-surface-1 dark:bg-elevation-1 p-6">
+            {/* Header */}
+            <div className="flex items-center gap-3 mb-4">
+              <div className="flex items-center justify-center w-10 h-10 rounded-lg bg-gradient-to-br from-harken-blue/20 to-accent-teal-mint/20 dark:from-cyan-500/20 dark:to-teal-500/20">
+                <Layers className="w-5 h-5 text-harken-blue dark:text-cyan-400" />
+              </div>
+              <div>
+                <h3 className="text-lg font-bold text-harken-dark dark:text-white">
+                  Property Components
+                </h3>
+                <p className="text-xs text-harken-gray-med dark:text-slate-400">
+                  {propertyComponents.length > 0 
+                    ? 'Primary component auto-created from classification. Add additional components for mixed-use properties.'
+                    : 'Select a property type above to create the primary component'}
+                </p>
+              </div>
+              <span className="ml-auto px-3 py-1 text-xs font-semibold bg-gradient-to-r from-harken-blue/10 to-accent-teal-mint/10 dark:from-cyan-500/20 dark:to-teal-500/20 text-harken-blue dark:text-cyan-400 rounded-full border border-harken-blue/20 dark:border-cyan-500/30">
+                Mixed-Use
+              </span>
+            </div>
+
+            {/* Existing Components */}
+            {propertyComponents.length > 0 && (
+              <div className="space-y-3 mb-4">
+                {propertyComponents.map((comp) => (
+                  <PropertyComponentCard
+                    key={comp.id}
+                    component={comp}
+                    onEdit={handleEditComponent}
+                    onRemove={handleRemoveComponent}
+                    isExpanded={!collapsedComponents.has(comp.id)}
+                    onToggleExpand={() => toggleComponentExpand(comp.id)}
+                  />
+                ))}
+              </div>
+            )}
+
+            {/* Add Component Card */}
+            <button
+              onClick={() => {
+                setEditingComponent(null);
+                setIsComponentPanelOpen(true);
+              }}
+              className="group w-full p-4 rounded-xl border-2 border-dashed border-harken-gray-light/60 dark:border-harken-gray/40 hover:border-harken-blue dark:hover:border-cyan-400 bg-gradient-to-br from-slate-50/50 to-transparent dark:from-slate-800/20 dark:to-transparent hover:from-harken-blue/5 hover:to-accent-teal-mint/5 dark:hover:from-cyan-500/10 dark:hover:to-teal-500/10 transition-all duration-300"
+            >
+              <div className="flex items-center gap-4">
+                {/* Icon cluster */}
+                <div className="flex -space-x-2">
+                  <div className="w-10 h-10 rounded-lg bg-harken-blue/10 dark:bg-cyan-500/20 flex items-center justify-center border-2 border-white dark:border-elevation-1 group-hover:scale-105 transition-transform">
+                    <Building className="w-5 h-5 text-harken-blue dark:text-cyan-400" />
+                  </div>
+                  <div className="w-10 h-10 rounded-lg bg-accent-teal-mint/10 dark:bg-teal-500/20 flex items-center justify-center border-2 border-white dark:border-elevation-1 group-hover:scale-105 transition-transform delay-75">
+                    <Home className="w-5 h-5 text-accent-teal-mint dark:text-teal-400" />
+                  </div>
+                  <div className="w-10 h-10 rounded-lg bg-lime-100 dark:bg-lime-500/20 flex items-center justify-center border-2 border-white dark:border-elevation-1 group-hover:scale-105 transition-transform delay-100">
+                    <TreeDeciduous className="w-5 h-5 text-lime-600 dark:text-lime-400" />
+                  </div>
+                </div>
+                
+                <div className="flex-1 text-left">
+                  <span className="block text-sm font-semibold text-harken-gray dark:text-slate-200 group-hover:text-harken-blue dark:group-hover:text-cyan-400 transition-colors">
+                    {propertyComponents.length > 0 ? 'Add Additional Component' : 'Add Property Component'}
+                  </span>
+                  <span className="block text-xs text-harken-gray-med dark:text-slate-400">
+                    {propertyComponents.length > 0 ? 'Contributory uses, excess land, outbuildings' : 'Retail + apartments, excess land, outbuildings'}
+                  </span>
+                </div>
+                
+                <div className="flex items-center justify-center w-8 h-8 rounded-full bg-harken-blue/10 dark:bg-cyan-500/20 group-hover:bg-harken-blue dark:group-hover:bg-cyan-500 transition-colors">
+                  <Plus className="w-4 h-4 text-harken-blue dark:text-cyan-400 group-hover:text-white transition-colors" />
+                </div>
+              </div>
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Property Component Panel */}
+      <PropertyComponentPanel
+        isOpen={isComponentPanelOpen}
+        onClose={() => {
+          setIsComponentPanelOpen(false);
+          setEditingComponent(null);
+        }}
+        onSave={handleSaveComponent}
+        editingComponent={editingComponent}
+        existingComponentCount={propertyComponents.length}
+      />
 
       {/* Property Status */}
       <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
@@ -1682,7 +1850,7 @@ export default function SetupPage() {
             <div
               key={scenario.id}
               className={`border rounded-xl p-5 transition-all hover:shadow-md bg-surface-1 dark:bg-elevation-1/50 ${scenario.isRequired
-                ? 'border-l-4 border-l-red-400 border-light-border dark:border-harken-gray'
+                ? 'border-l-4 border-l-rose-400/70 dark:border-l-rose-400/50 border-light-border dark:border-harken-gray'
                 : scenario.isRequired === false
                   ? 'border-l-4 border-l-blue-400 border-light-border dark:border-harken-gray'
                   : 'border-light-border dark:border-harken-gray'
@@ -1696,7 +1864,7 @@ export default function SetupPage() {
                   </span>
                   {scenario.isRequired !== undefined && (
                     scenario.isRequired ? (
-                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-accent-red-light dark:bg-accent-red-light text-harken-error dark:text-harken-error">
+                      <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-rose-100 dark:bg-rose-900/30 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-700/50">
                         Required
                       </span>
                     ) : (
@@ -1724,8 +1892,8 @@ export default function SetupPage() {
 
               {/* Requirement Source */}
               {scenario.requirementSource && (
-                <div className={`mb-4 px-3 py-2 rounded text-xs ${scenario.isRequired
-                  ? 'bg-accent-red-light border border-harken-error/20 dark:bg-accent-red-light dark:border-harken-error dark:text-harken-error'
+                <div className={`mb-4 px-3 py-2 rounded-lg text-xs ${scenario.isRequired
+                  ? 'bg-rose-50 border border-rose-200/50 text-rose-800 dark:bg-rose-900/20 dark:border-rose-700/40 dark:text-rose-200'
                   : 'bg-blue-50 border border-blue-200 dark:bg-blue-900/20 dark:border-blue-800 dark:text-blue-200'
                   }`}>
                   <span className="font-medium">{scenario.isRequired ? 'Why required:' : 'Why recommended:'}</span> {scenario.requirementSource}

@@ -11,7 +11,10 @@ import {
   AvailableRentElement,
   formatCurrency, 
   formatNumber,
-  formatRentPerSf
+  formatRentPerSf,
+  RentCompMode,
+  getRowsForMode,
+  getAvailableElementsForMode,
 } from '../rentConstants';
 import { useWizard } from '../../../context/WizardContext';
 import { getAvailableElements as filterElements, normalizeSection } from '../../../utils/elementFilter';
@@ -33,6 +36,10 @@ interface RentComparableGridProps {
   onCompsChange?: (comps: RentComp[]) => void;
   /** Callback when notes change */
   onNotesChange?: (notes: string) => void;
+  /** Rent comp mode - determines field configuration (commercial: $/SF, residential: $/month) */
+  rentCompMode?: RentCompMode;
+  /** Component ID for linking to income approach instances */
+  componentId?: string;
 }
 
 export const RentComparableGrid: React.FC<RentComparableGridProps> = ({
@@ -40,17 +47,37 @@ export const RentComparableGrid: React.FC<RentComparableGridProps> = ({
   notes: initialNotes = '',
   onCompsChange,
   onNotesChange,
+  rentCompMode = 'commercial',
+  componentId,
 }) => {
   const { state: wizardState } = useWizard();
   const { propertyType, propertySubtype, scenarios, activeScenarioId } = wizardState;
   const currentScenario = scenarios.find(s => s.id === activeScenarioId)?.name;
   
+  // Get row configurations based on mode
+  const modeRows = getRowsForMode(rentCompMode);
+  const modeElements = getAvailableElementsForMode(rentCompMode);
+  
   // Initialize from props, fallback to mock data if no data provided (for demo purposes)
   const [comps, setComps] = useState<RentComp[]>(
     rentComparables && rentComparables.length > 0 ? rentComparables : MOCK_RENT_COMPS
   );
-  const [transactionRows, setTransactionRows] = useState(RENT_TRANSACTION_ROWS);
-  const [qualitativeRows, setQualitativeRows] = useState(RENT_QUALITATIVE_ROWS);
+  const [transactionRows, setTransactionRows] = useState(
+    rentCompMode === 'residential' ? modeRows.transaction : RENT_TRANSACTION_ROWS
+  );
+  const [qualitativeRows, setQualitativeRows] = useState(
+    rentCompMode === 'residential' ? modeRows.qualitative : RENT_QUALITATIVE_ROWS
+  );
+  
+  // Update rows when mode changes
+  React.useEffect(() => {
+    const rows = getRowsForMode(rentCompMode);
+    setTransactionRows(rows.transaction);
+    setQualitativeRows(rows.qualitative);
+  }, [rentCompMode]);
+  
+  // Reserved for future use with income line linking
+  void componentId;
   const [openElementDropdown, setOpenElementDropdown] = useState<'transaction' | 'qualitative' | null>(null);
   const [notesText, setNotesText] = useState(initialNotes);
   const _dropdownRef = useRef<HTMLDivElement>(null);

@@ -1124,6 +1124,9 @@ export interface SubjectData {
   unitMix?: MultiFamilyUnitMix[];
   calculationMethod?: MultiFamilyCalculationMethod;
   primaryValueDriver?: PrimaryValueDriver;
+  // Unknown SF support - when per-unit SF is unknown, use total building SF
+  perUnitSfUnknown?: boolean;
+  totalBuildingSf?: number;
   
   // Grid Configuration (determined by Setup page)
   gridConfiguration?: SalesGridConfiguration;
@@ -1388,6 +1391,8 @@ export interface PropertyComponent {
   // Multi-family specific
   unitCount?: number;
   unitMix?: MultiFamilyUnitMix[];
+  perUnitSfUnknown?: boolean;            // When true, use totalBuildingSf instead of per-unit avgSF
+  totalBuildingSf?: number;               // Total building SF when per-unit is unknown
   
   // Component classification (per resolved decision #3)
   landClassification: 'standard' | 'excess' | 'surplus';

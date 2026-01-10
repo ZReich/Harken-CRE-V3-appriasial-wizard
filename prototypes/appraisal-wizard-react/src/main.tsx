@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { WizardProvider } from './context/WizardContext'
 import { ToastProvider } from './context/ToastContext'
 import { ThemeProvider } from './context/ThemeContext'
+import { GuidanceProvider } from './components/guidance'
 import './index.css'
 
 import TemplatePage from './pages/TemplatePage'
@@ -17,15 +18,17 @@ createRoot(document.getElementById('root')!).render(
     <BrowserRouter>
       <ToastProvider>
         <WizardProvider>
-          <Routes>
-            <Route path="/" element={<Navigate to="/template" replace />} />
-            <Route path="/template" element={<TemplatePage />} />
-            <Route path="/document-intake" element={<DocumentIntakePage />} />
-            <Route path="/setup" element={<SetupPage />} />
-            <Route path="/subject-data" element={<SubjectDataPage />} />
-            <Route path="/analysis" element={<AnalysisPage />} />
-            <Route path="/review" element={<ReviewPage />} />
-          </Routes>
+          <GuidanceProvider>
+            <Routes>
+              <Route path="/" element={<Navigate to="/template" replace />} />
+              <Route path="/template" element={<TemplatePage />} />
+              <Route path="/document-intake" element={<DocumentIntakePage />} />
+              <Route path="/setup" element={<SetupPage />} />
+              <Route path="/subject-data" element={<SubjectDataPage />} />
+              <Route path="/analysis" element={<AnalysisPage />} />
+              <Route path="/review" element={<ReviewPage />} />
+            </Routes>
+          </GuidanceProvider>
         </WizardProvider>
       </ToastProvider>
     </BrowserRouter>

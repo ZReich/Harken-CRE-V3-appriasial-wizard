@@ -112,30 +112,40 @@ export const ReconciliationSummary: React.FC<ReconciliationSummaryProps> = ({
     });
   }, []);
 
-  // Sync weights to WizardContext
+  // Sync weights to WizardContext - only when weights change, not when reconciliationData changes
+  // Using a ref to track previous weights to avoid infinite loops
+  const prevWeightsRef = React.useRef<Record<string, number>>({});
+  
   React.useEffect(() => {
-    if (!reconciliationData) return;
+    // Only update if weights actually changed (not just a reference change)
+    const weightsChanged = JSON.stringify(weights) !== JSON.stringify(prevWeightsRef.current);
+    if (!weightsChanged) return;
     
-    const existingRecons = reconciliationData.scenarioReconciliations || [];
+    prevWeightsRef.current = weights;
+    
+    // Get current reconciliation data from state (not from dependency)
+    const currentReconData = reconciliationData || { scenarioReconciliations: [] };
+    const existingRecons = currentReconData.scenarioReconciliations || [];
     const existingIndex = existingRecons.findIndex(r => r.scenarioId === scenarioId);
     
     if (existingIndex >= 0) {
       const updated = [...existingRecons];
       updated[existingIndex] = { ...updated[existingIndex], weights };
       setReconciliationData({
-        ...reconciliationData,
+        ...currentReconData,
         scenarioReconciliations: updated,
       });
     } else {
       setReconciliationData({
-        ...reconciliationData,
+        ...currentReconData,
         scenarioReconciliations: [
           ...existingRecons,
           { scenarioId, weights, comments: '' },
         ],
       });
     }
-  }, [weights, scenarioId, reconciliationData, setReconciliationData]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [weights, scenarioId, setReconciliationData]);
 
   // Calculate weighted total
   const weightedTotal = useMemo(() => {

@@ -2,28 +2,28 @@ import { useState, useMemo, useEffect, useCallback, lazy, Suspense } from 'react
 import WizardLayout from '../components/WizardLayout';
 import ScenarioSwitcher, { getScenarioAccentColor, getScenarioColors } from '../components/ScenarioSwitcher';
 import {
-  LandIcon,
   ChartIcon,
   CurrencyIcon,
   ConstructionIcon,
-  ResidentialIcon,
 } from '../components/icons';
 // Static imports for constants only
 import { PROPERTIES, MOCK_VALUES } from '../features/sales-comparison';
 
 // Lazy-loaded feature components for code-splitting
 const SalesGrid = lazy(() => import('../features/sales-comparison').then(m => ({ default: m.SalesGrid })));
-const IncomeApproachGrid = lazy(() => import('../features/income-approach').then(m => ({ default: m.IncomeApproachGrid })));
+// IncomeApproachGrid is now used within IncomeApproachInstanceTabs
 const CostApproachGrid = lazy(() => import('../features/cost-approach').then(m => ({ default: m.CostApproachGrid })));
-const LandSalesGrid = lazy(() => import('../features/land-valuation').then(m => ({ default: m.LandSalesGrid })));
-const MultiFamilyGrid = lazy(() => import('../features/multi-family').then(m => ({ default: m.MultiFamilyGrid })));
+// LandSalesGrid is now used within SalesComparisonTabs
 const CostSegTab = lazy(() => import('../features/cost-segregation').then(m => ({ default: m.CostSegTab })));
+import SalesComparisonTabs from '../components/SalesComparisonTabs';
+import { IncomeApproachInstanceTabs } from '../components/IncomeApproachInstanceTabs';
 import { useWizard } from '../context/WizardContext';
 import { getGuidance, type GuidanceContent } from '../constants/guidance';
 import { Layers, Building, Wallet, HardHat, Info, AlertTriangle, CheckCircle2, Lightbulb, BookOpen } from 'lucide-react';
 import { useCelebration } from '../hooks/useCelebration';
 import { ScenarioCelebration } from '../components/ScenarioCelebration';
 import { ReconciliationSummary } from '../components/ReconciliationSummary';
+import { ValueReconciliationSummary } from '../components/ValueReconciliationSummary';
 import { ContextualMarketData } from '../components/ContextualMarketData';
 import { getVisibleComponents } from '../utils/componentVisibility';
 import { Loader2 } from 'lucide-react';
@@ -41,16 +41,9 @@ function GridLoader() {
 }
 
 // Approach definitions with color coding for navigation
-// NOTE: HBU has been moved to the Review page per plan
+// NOTE: Land Valuation is now a sub-tab under Sales Comparison
+// NOTE: Multi-Family is now handled via rentCompMode in Income Approach
 const APPROACH_CONFIG = {
-  land: {
-    id: 'land',
-    label: 'Land Valuation',
-    Icon: LandIcon,
-    color: '#84cc16', // lime
-    bgClass: 'bg-lime-50 dark:bg-lime-900/20',
-    borderClass: 'border-l-lime-400',
-  },
   sales: {
     id: 'sales',
     label: 'Sales Comparison',
@@ -75,14 +68,6 @@ const APPROACH_CONFIG = {
     bgClass: 'bg-orange-50 dark:bg-orange-900/20',
     borderClass: 'border-l-orange-400',
   },
-  multifamily: {
-    id: 'multifamily',
-    label: 'Multi-Family',
-    Icon: ResidentialIcon,
-    color: '#8b5cf6', // violet
-    bgClass: 'bg-violet-50 dark:bg-violet-900/20',
-    borderClass: 'border-l-violet-400',
-  },
   costseg: {
     id: 'costseg',
     label: 'Cost Segregation',
@@ -94,17 +79,19 @@ const APPROACH_CONFIG = {
 };
 
 // Map scenario approach names to tab IDs
-// NOTE: Market Analysis has been moved to Review page
+// Land Valuation -> sales (handled as sub-tab via SalesComparisonTabs)
+// Multi-Family -> income (handled via rentCompMode in RentComparableGrid)
 const APPROACH_NAME_TO_ID: Record<string, string> = {
-  'Land Valuation': 'land',
+  'Land Valuation': 'sales',
   'Sales Comparison': 'sales',
   'Income Approach': 'income',
   'Cost Approach': 'cost',
-  'Multi-Family Approach': 'multifamily',
+  'Multi-Family Approach': 'income',
 };
 
-// All possible tabs in display order (HBU and Market Analysis moved to Review page)
-const ALL_TABS = ['land', 'sales', 'multifamily', 'income', 'cost'];
+// All possible tabs in display order - streamlined per plan
+// Land is a sub-tab of Sales, Multi-Family is unified into Income
+const ALL_TABS = ['sales', 'income', 'cost'];
 
 export default function AnalysisPage() {
   const [activeTab, setActiveTab] = useState('sales');
@@ -394,6 +381,17 @@ export default function AnalysisPage() {
         totalUnits={5812} // TODO: Get from subject data
       />
 
+      {/* Value Reconciliation Summary for Mixed-Use Properties */}
+      {(state.propertyComponents || []).length > 0 && (
+        <ValueReconciliationSummary
+          scenarioId={activeScenario?.id}
+          onConfirm={(totalValue) => {
+            // Could save to state or trigger reconciliation action
+            console.log('Value reconciled:', totalValue);
+          }}
+        />
+      )}
+
       {/* Contextual Market Data - Changes based on active approach */}
       <ContextualMarketData
         activeApproach={getApproachName(activeTab)}
@@ -459,7 +457,7 @@ export default function AnalysisPage() {
             <div className="flex items-center gap-4">
               <h2 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
                 <span style={{ color: APPROACH_CONFIG.sales.color }}><ChartIcon className="w-5 h-5" /></span>
-                Sales Comparison Grid
+                Sales Comparison
               </h2>
               <span className="text-xs px-2 py-0.5 rounded-full bg-surface-3 dark:bg-elevation-subtle text-slate-600 dark:text-slate-200">
                 {activeScenario?.name}
@@ -492,23 +490,22 @@ export default function AnalysisPage() {
             </div>
           </div>
 
-          {/* Sales Grid */}
+          {/* Sales Comparison Tabs (Improved Sales / Land Sales) */}
+          {/* Land Sales sub-tab visibility is determined by component visibility logic */}
+          {/* It shows when: property is land, has excess/surplus land component, or cost approach needs land value */}
           <div className="flex-1 min-h-0">
-            <Suspense fallback={<GridLoader />}>
-              <SalesGrid
-                properties={PROPERTIES}
-                values={MOCK_VALUES}
-                analysisMode={analysisMode}
-                scenarioId={activeScenario?.id}
-                gridConfig={subjectData?.gridConfiguration}
-              />
-            </Suspense>
+            <SalesComparisonTabs
+              showLandSales={visibility.landSalesGrid}
+              analysisMode={analysisMode}
+              gridConfiguration={subjectData?.gridConfiguration}
+              scenarioId={activeScenario?.id}
+            />
           </div>
         </div>
       ) : activeTab === 'income' ? (
         <div className="absolute inset-0 flex flex-col">
           {/* Income Approach Header Bar */}
-          <div className="flex-shrink-0 bg-surface-1 dark:bg-elevation-1 border-b border-light-border dark:border-dark-border dark:border-dark-border px-6 py-3 flex items-center justify-between z-40 shadow-sm">
+          <div className="flex-shrink-0 bg-surface-1 dark:bg-elevation-1 border-b border-light-border dark:border-dark-border px-6 py-3 flex items-center justify-between z-40 shadow-sm">
             <div className="flex items-center gap-4">
               <h2 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
                 <Wallet className="w-5 h-5" style={{ color: APPROACH_CONFIG.income.color }} />
@@ -517,24 +514,36 @@ export default function AnalysisPage() {
               <span className="text-xs px-2 py-0.5 rounded-full bg-surface-3 dark:bg-elevation-subtle text-slate-600 dark:text-slate-200">
                 {activeScenario?.name}
               </span>
+              {/* Show component count if using component-based analysis */}
+              {(state.propertyComponents || []).filter(c => c.analysisConfig.incomeApproach).length > 0 && (
+                <span className="text-xs px-2 py-0.5 rounded-full bg-accent-teal-mint/10 text-accent-teal-mint dark:bg-teal-500/20 dark:text-teal-400">
+                  {(state.propertyComponents || []).filter(c => c.analysisConfig.incomeApproach).length} Components
+                </span>
+              )}
             </div>
           </div>
 
-          {/* Income Approach Grid */}
-          <div className="flex-1 min-h-0 overflow-auto">
-            <Suspense fallback={<GridLoader />}>
-              <IncomeApproachGrid
-                initialData={state.incomeApproachData}
-                onDataChange={setIncomeApproachData}
-                showGuidancePanel={true}
-                scenarioId={activeScenario?.id}
-                visibility={{
-                  rentComparableGrid: visibility.rentComparableGrid,
-                  expenseComparableGrid: visibility.expenseComparableGrid,
-                }}
-              />
-            </Suspense>
-          </div>
+          {/* Income Approach Instance Tabs - handles both single and multi-component */}
+          <IncomeApproachInstanceTabs
+            scenarioId={activeScenario?.id}
+            // Determine rent comp mode from property components or fallback to property type
+            rentCompMode={
+              // Check if any property component is residential with income enabled
+              (state.propertyComponents || []).some(c => 
+                c.category === 'residential' && c.analysisConfig.incomeApproach
+              ) ||
+              // Or if the main property type is residential multi-family
+              state.propertySubtype === 'duplex-fourplex' ||
+              state.propertySubtype === 'multifamily' ||
+              state.propertySubtype?.includes('apartment')
+                ? 'residential'
+                : 'commercial'
+            }
+            visibility={{
+              rentComparableGrid: visibility.rentComparableGrid,
+              expenseComparableGrid: visibility.expenseComparableGrid,
+            }}
+          />
         </div>
       ) : activeTab === 'cost' ? (
         <div className="absolute inset-0 flex flex-col">
@@ -555,50 +564,6 @@ export default function AnalysisPage() {
           <div className="flex-1 min-h-0 overflow-auto">
             <Suspense fallback={<GridLoader />}>
               <CostApproachGrid scenarioId={activeScenario?.id} />
-            </Suspense>
-          </div>
-        </div>
-      ) : activeTab === 'land' ? (
-        <div className="absolute inset-0 flex flex-col">
-          {/* Land Valuation Header Bar */}
-          <div className="flex-shrink-0 bg-surface-1 dark:bg-elevation-1 border-b border-light-border dark:border-dark-border dark:border-dark-border px-6 py-3 flex items-center justify-between z-40 shadow-sm">
-            <div className="flex items-center gap-4">
-              <h2 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
-                <span style={{ color: APPROACH_CONFIG.land.color }}><LandIcon className="w-5 h-5" /></span>
-                Land Valuation - Sales Comparison
-              </h2>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-surface-3 dark:bg-elevation-subtle text-slate-600 dark:text-slate-200">
-                {activeScenario?.name}
-              </span>
-            </div>
-          </div>
-
-          {/* Land Sales Grid */}
-          <div className="flex-1 min-h-0">
-            <Suspense fallback={<GridLoader />}>
-              <LandSalesGrid />
-            </Suspense>
-          </div>
-        </div>
-      ) : activeTab === 'multifamily' ? (
-        <div className="absolute inset-0 flex flex-col">
-          {/* Multi-Family Header Bar */}
-          <div className="flex-shrink-0 bg-surface-1 dark:bg-elevation-1 border-b border-light-border dark:border-dark-border dark:border-dark-border px-6 py-3 flex items-center justify-between z-40 shadow-sm">
-            <div className="flex items-center gap-4">
-              <h2 className="text-lg font-bold text-slate-800 dark:text-white flex items-center gap-2">
-                <span style={{ color: APPROACH_CONFIG.multifamily.color }}><ResidentialIcon className="w-5 h-5" /></span>
-                Multi-Family Rental Analysis
-              </h2>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-surface-3 dark:bg-elevation-subtle text-slate-600 dark:text-slate-200">
-                {activeScenario?.name}
-              </span>
-            </div>
-          </div>
-
-          {/* Multi-Family Grid */}
-          <div className="flex-1 min-h-0">
-            <Suspense fallback={<GridLoader />}>
-              <MultiFamilyGrid scenarioId={activeScenario?.id} />
             </Suspense>
           </div>
         </div>

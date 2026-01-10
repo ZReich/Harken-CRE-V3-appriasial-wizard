@@ -180,14 +180,24 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
     }
   }, [analysisMode, landValuationData?.concludedLandValue]);
 
-  // Calculate concluded value per SF
+  // Check if per-unit SF is unknown (use subjectData.perUnitSfUnknown or check unitMix sfSource)
+  const isSfUnknown = useMemo(() => {
+    // Check explicit flag first
+    if (subjectData?.perUnitSfUnknown) return true;
+    // Check if unit mix has unknown sfSource
+    if (subjectData?.unitMix?.some(u => u.sfSource === 'unknown')) return true;
+    return false;
+  }, [subjectData?.perUnitSfUnknown, subjectData?.unitMix]);
+  
+  // Calculate concluded value per SF (skip if SF is unknown)
   const concludedValuePsf = useMemo(() => {
+    if (isSfUnknown) return null; // Don't calculate $/SF when SF is unknown
     const subjectBldgSize = values['subject']?.['bldg_size_fact']?.value;
     if (concludedValue && typeof subjectBldgSize === 'number' && subjectBldgSize > 0) {
       return Math.round(concludedValue / subjectBldgSize);
     }
     return null;
-  }, [concludedValue, values]);
+  }, [concludedValue, values, isSfUnknown]);
   
   // Calculate concluded value per unit (for multi-family properties)
   const concludedValuePerUnit = useMemo(() => {
@@ -1093,7 +1103,11 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
         // USPAP-required transactional adjustments
         'property_rights', 'financing_terms', 'conditions_of_sale', 'expenditures_after_sale', 'market_conditions',
         // Common physical factors
-        'location', 'highest_best_use', 'year_built', 'effective_age', 'quality_condition', 'site_size_sf', 'building_size_sf'
+        'location', 'highest_best_use', 'year_built', 'effective_age', 'quality_condition', 'site_size_sf', 'building_size_sf',
+        // Residual/Improvement Analysis critical fields (must always show when mode is residual)
+        'subject_land_add_back', 'land_value', 'land_source', 'residual_value', 'residual_price_sf', 'weighting',
+        // Valuation section fields
+        'sales_value_sf'
       ]);
       
       filtered = filtered.filter(r => {
@@ -1514,15 +1528,18 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
             {/* Dual Metric Display - Shows both $/SF and $/Unit for multi-family */}
             {showDualMetrics && (
               <div className="grid grid-cols-2 gap-4">
-                <div className={`p-4 rounded-xl border-2 ${subjectData?.primaryValueDriver === 'price_per_sf' ? 'bg-harken-blue/5 border-harken-blue' : 'bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1 border-light-border dark:border-dark-border dark:border-dark-border'}`}>
+                <div className={`p-4 rounded-xl border-2 ${subjectData?.primaryValueDriver === 'price_per_sf' && !isSfUnknown ? 'bg-harken-blue/5 border-harken-blue' : 'bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1 border-light-border dark:border-dark-border dark:border-dark-border'}`}>
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-sm font-semibold text-slate-600 dark:text-slate-200">$/SF Building</span>
-                    {subjectData?.primaryValueDriver === 'price_per_sf' && (
+                    {subjectData?.primaryValueDriver === 'price_per_sf' && !isSfUnknown && (
                       <span className="px-2 py-0.5 bg-harken-blue text-white text-[10px] font-bold rounded">PRIMARY</span>
                     )}
+                    {isSfUnknown && (
+                      <span className="px-2 py-0.5 bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 text-[10px] font-medium rounded">SF Unknown</span>
+                    )}
                   </div>
-                  <div className={`text-2xl font-bold ${subjectData?.primaryValueDriver === 'price_per_sf' ? 'text-harken-blue' : 'text-slate-800 dark:text-white'}`}>
-                    {concludedValuePsf ? `$${concludedValuePsf.toLocaleString()}` : '-'}
+                  <div className={`text-2xl font-bold ${subjectData?.primaryValueDriver === 'price_per_sf' && !isSfUnknown ? 'text-harken-blue' : 'text-slate-800 dark:text-white'}`}>
+                    {isSfUnknown ? '—' : (concludedValuePsf ? `$${concludedValuePsf.toLocaleString()}` : '-')}
                   </div>
                 </div>
                 <div className={`p-4 rounded-xl border-2 ${subjectData?.primaryValueDriver === 'price_per_unit' ? 'bg-harken-blue/5 border-harken-blue' : 'bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1 border-light-border dark:border-dark-border dark:border-dark-border'}`}>

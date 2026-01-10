@@ -7,6 +7,7 @@ export { RiskAnalysisModal } from './components/RiskAnalysisModal';
 export { RentComparableGrid } from './components/RentComparableGrid';
 export { ExpenseComparableGrid } from './components/ExpenseComparableGrid';
 export { DCFProjectionTable } from './components/DCFProjectionTable';
+export { RentCompLinkingPanel } from './components/RentCompLinkingPanel';
 export type { 
   IncomeSectionType, 
   RevenueContextData, 

@@ -9,9 +9,15 @@ export interface LineItem {
   comments?: string;
   itemSqFt?: number; // Specific SF for this item
   
+  // SF Source tracking for unknown SF scenarios (per Ben's 7-plex example)
+  sfSource?: 'measured' | 'estimated' | 'unknown';
+  
   // USPAP / Commercial Specifics
   marketRentPerSf?: number; // Market Rent per SF for comparison (Gap analysis)
   leaseExpiry?: string; // Date string YYYY-MM-DD
+  
+  // Rent Comp Linking (for income line to rent comp connection)
+  linkedRentCompIds?: string[];
 }
 
 export interface IncomeData {
@@ -45,6 +51,7 @@ export interface ValuationData {
 export interface PropertyMeta {
   type: 'multifamily' | 'office' | 'retail' | 'industrial' | 'other';
   sqFt: number;
+  sfSource?: 'measured' | 'estimated' | 'unknown';  // Track SF certainty
   unitCount: number;
 }
 

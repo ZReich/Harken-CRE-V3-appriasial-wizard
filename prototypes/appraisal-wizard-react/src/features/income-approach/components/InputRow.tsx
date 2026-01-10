@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Trash2, Calendar, MessageSquare, X } from 'lucide-react';
+import { Trash2, Calendar, MessageSquare, X, ArrowRight, CheckCircle2 } from 'lucide-react';
 import type { LineItem } from '../types';
 
 interface InputRowProps {
@@ -11,6 +11,10 @@ interface InputRowProps {
   totalPropertySqFt?: number;
   effectiveGrossIncome?: number;
   onEditNotes?: (item: LineItem) => void;
+  /** Callback when [Comps →] button is clicked (for linking rent comparables) */
+  onLinkComps?: (item: LineItem) => void;
+  /** Number of linked rent comparables (to show indicator) */
+  linkedCompCount?: number;
 }
 
 export const InputRow: React.FC<InputRowProps> = ({
@@ -21,7 +25,9 @@ export const InputRow: React.FC<InputRowProps> = ({
   placeholder = "Item Name",
   totalPropertySqFt = 1,
   effectiveGrossIncome = 0,
-  onEditNotes
+  onEditNotes,
+  onLinkComps,
+  linkedCompCount = 0,
 }) => {
   // Removed internal isNoteOpen state as we are using parent modal
   const dateInputRef = useRef<HTMLInputElement>(null);
@@ -199,7 +205,32 @@ export const InputRow: React.FC<InputRowProps> = ({
         </div>
       )}
 
-      {/* 5. NOTES (Interactive Icon) */}
+      {/* 5a. COMPS BUTTON (For Rental Variant - Links to Rent Comparables) */}
+      {variant === 'rental' && onLinkComps && (
+        <button
+          onClick={() => onLinkComps(item)}
+          className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+            linkedCompCount > 0
+              ? 'bg-accent-teal-mint/10 text-accent-teal-mint hover:bg-accent-teal-mint/20 border border-accent-teal-mint/20'
+              : 'bg-surface-2 dark:bg-elevation-2 text-harken-gray-med dark:text-slate-400 hover:bg-harken-blue/10 hover:text-harken-blue dark:hover:text-cyan-400 border border-light-border dark:border-harken-gray'
+          }`}
+          title={linkedCompCount > 0 ? `${linkedCompCount} rent comps linked` : "Link rent comparables"}
+        >
+          {linkedCompCount > 0 ? (
+            <>
+              <CheckCircle2 size={14} className="text-accent-teal-mint" />
+              <span>{linkedCompCount}</span>
+            </>
+          ) : (
+            <>
+              <span>Comps</span>
+              <ArrowRight size={14} />
+            </>
+          )}
+        </button>
+      )}
+
+      {/* 5b. NOTES (Interactive Icon) */}
       <div className="relative w-full sm:w-auto hidden md:block">
         <button
           onClick={() => onEditNotes && onEditNotes(item)}

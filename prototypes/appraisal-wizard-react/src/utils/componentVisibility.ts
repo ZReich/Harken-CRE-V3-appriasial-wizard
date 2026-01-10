@@ -5,7 +5,7 @@
  * wizard configuration (property type, scenario, approaches selected).
  */
 
-import type { AppraisalScenario } from '../types';
+import type { AppraisalScenario, PropertyComponent } from '../types';
 
 // =================================================================
 // CONFIGURATION INTERFACE
@@ -17,6 +17,9 @@ export interface WizardConfig {
   propertyInterest: string;
   hasImprovements: boolean;
   activeScenario: AppraisalScenario | null;
+  
+  // Property Components (new component-based system)
+  propertyComponents?: PropertyComponent[];
   
   // Assignment context for smart visibility
   propertyStatus?: string;
@@ -39,15 +42,15 @@ export interface ComponentVisibility {
   dcfDetailedTable: boolean;
   directCapitalization: boolean;
   
-  // Multi-Family Approach components
-  multiFamilyGrid: boolean;
+  // Multi-Family is now unified into Income Approach via rentCompMode
+  // Visibility is determined by property type/components
   
-  // Sales Comparison components
+  // Sales Comparison components (includes Land as sub-tab)
   improvedSalesGrid: boolean;
   capRateExtraction: boolean;
   
   // Land / Cost Approach components
-  landSalesGrid: boolean;
+  landSalesGrid: boolean;  // Now a sub-tab within Sales Comparison
   costNewCalculation: boolean;
   depreciationAnalysis: boolean;
   entrepreneurialProfit: boolean;
@@ -61,6 +64,11 @@ export interface ComponentVisibility {
   marketRentTrends: boolean;
   marketSaleTrends: boolean;
   marketSupplyDemand: boolean;
+  
+  // Component-based visibility
+  hasPropertyComponents: boolean;  // NEW: indicates property components are configured
+  hasExcessLand: boolean;          // NEW: excess land component exists
+  hasMixedUse: boolean;            // NEW: multiple categories configured
 }
 
 // =================================================================
@@ -105,26 +113,41 @@ function hasApproach(scenario: AppraisalScenario | null, approachName: string): 
 export function getVisibleComponents(config: WizardConfig): ComponentVisibility {
   const { 
     propertyType, propertySubtype, propertyInterest, hasImprovements, activeScenario,
+    propertyComponents = [],
     propertyStatus, occupancyStatus, plannedChanges: _plannedChanges, hasActualRentRoll, hasActualExpenses
   } = config;
   
   // plannedChanges is available for future use in visibility logic
   void _plannedChanges;
   
-  const incomeApproachActive = hasApproach(activeScenario, 'income');
-  const salesComparisonActive = hasApproach(activeScenario, 'sales');
-  const costApproachActive = hasApproach(activeScenario, 'cost');
+  // === COMPONENT-BASED VISIBILITY ===
+  // Property components provide additional visibility signals
+  const hasPropertyComponents = propertyComponents.length > 0;
+  const hasExcessLand = propertyComponents.some(c => c.landClassification === 'excess');
+  const hasSurplusLand = propertyComponents.some(c => c.landClassification === 'surplus');
+  const categories = new Set(propertyComponents.map(c => c.category));
+  const hasMixedUse = categories.size > 1 || 
+    propertyComponents.some(c => c.analysisConfig.analysisType === 'contributory');
+  
+  // Get approaches from components if configured
+  const componentIncomeActive = propertyComponents.some(c => c.analysisConfig.incomeApproach);
+  const componentSalesActive = propertyComponents.some(c => c.analysisConfig.salesApproach);
+  const componentCostActive = propertyComponents.some(c => c.analysisConfig.costApproach);
+  
+  // Get approaches from scenario
+  const scenarioIncomeActive = hasApproach(activeScenario, 'income');
+  const scenarioSalesActive = hasApproach(activeScenario, 'sales');
+  const scenarioCostActive = hasApproach(activeScenario, 'cost');
   const landValuationActive = hasApproach(activeScenario, 'land');
-  const multiFamilyActive = hasApproach(activeScenario, 'multi-family');
+  
+  // Combine: approach is active if either scenario or components enable it
+  const incomeApproachActive = scenarioIncomeActive || componentIncomeActive;
+  const salesComparisonActive = scenarioSalesActive || componentSalesActive;
+  const costApproachActive = scenarioCostActive || componentCostActive;
   
   const isIncome = isIncomeProducing(propertyType, propertySubtype);
   const isLeasedFee = propertyInterest === 'leased_fee';
   const isLand = propertyType === 'land';
-  
-  // Check if this is a multi-family property
-  const isMultiFamily = propertySubtype === 'multifamily' || propertySubtype === '2-4unit' ||
-                        propertySubtype?.includes('multifamily') || propertySubtype?.includes('2-4unit') ||
-                        propertySubtype?.includes('apartment');
   
   const scenarioName = activeScenario?.name || 'As Is';
   const isAsIs = scenarioName === 'As Is';
@@ -174,15 +197,13 @@ export function getVisibleComponents(config: WizardConfig): ComponentVisibility 
     dcfDetailedTable: !!(incomeApproachActive && (isAsStabilized || isAsCompleted || isAsProposed)),
     directCapitalization: !!incomeApproachActive,
     
-    // Multi-Family Approach Components
-    multiFamilyGrid: !!(multiFamilyActive && isMultiFamily),
-    
-    // Sales Comparison Components
+    // Sales Comparison Components (Land is now a sub-tab)
     improvedSalesGrid: !!(salesComparisonActive && hasImprovements),
     capRateExtraction: !!(salesComparisonActive && incomeApproachActive),
     
     // Land / Cost Approach Components
-    landSalesGrid: !!(landValuationActive || costApproachActive || isLand),
+    // Show land sales grid if: land valuation active OR excess land component OR property is land
+    landSalesGrid: !!(landValuationActive || costApproachActive || isLand || hasExcessLand || hasSurplusLand),
     costNewCalculation: !!(costApproachActive && hasImprovements),
     depreciationAnalysis: !!(costApproachActive && isAsIs),
     entrepreneurialProfit: !!(costApproachActive && (isAsCompleted || isAsStabilized || isAsProposed)),
@@ -196,6 +217,11 @@ export function getVisibleComponents(config: WizardConfig): ComponentVisibility 
     marketRentTrends: !!incomeApproachActive,
     marketSaleTrends: !!salesComparisonActive,
     marketSupplyDemand: true, // Always useful
+    
+    // Component-based visibility flags
+    hasPropertyComponents,
+    hasExcessLand: hasExcessLand || hasSurplusLand,
+    hasMixedUse,
   };
 }
 

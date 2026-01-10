@@ -59,7 +59,6 @@ export default function WizardLayout({
     { path: '/template', label: 'Template' },
     { path: '/document-intake', label: 'Documents' },
     { path: '/setup', label: 'Setup' },
-    { path: '/subject-data', label: 'Subject Data' },
     { path: '/analysis', label: 'Analysis' },
     { path: '/review', label: 'Review' },
   ];

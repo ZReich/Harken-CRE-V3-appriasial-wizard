@@ -12,6 +12,7 @@ import { DCFProjectionTable } from './DCFProjectionTable';
 import { RentComparableGrid } from './RentComparableGrid';
 import { ExpenseComparableGrid } from './ExpenseComparableGrid';
 import { CapRateCalculator } from './CapRateCalculator';
+import { RentCompLinkingPanel } from './RentCompLinkingPanel';
 import { NotesEditorModal } from '../../../components/NotesEditorModal';
 import type { SalesCompComparable } from './CapRateCalculator';
 import { INITIAL_INCOME_APPROACH_STATE } from '../constants';
@@ -40,12 +41,28 @@ interface IncomeSubTabVisibility {
   expenseComparableGrid?: boolean;
 }
 
+/** Component-specific data passed from PropertyComponent */
+interface ComponentData {
+  id: string;
+  name: string;
+  category: 'commercial' | 'residential' | 'land';
+  propertyType: string;
+  squareFootage: number | null;
+  unitCount: number | null;
+  /** SF source - when 'unknown', skip $/SF displays */
+  sfSource?: 'measured' | 'estimated' | 'unknown';
+}
+
 interface IncomeApproachGridProps {
   initialData?: IncomeApproachState | null;
   onDataChange?: (data: IncomeApproachState) => void;
   showGuidancePanel?: boolean;
   scenarioId?: number;
   visibility?: IncomeSubTabVisibility;
+  /** Rent comparable mode - determines field configuration (commercial vs residential) */
+  rentCompMode?: 'commercial' | 'residential';
+  /** Component-specific data - overrides global state when provided */
+  componentData?: ComponentData;
 }
 
 export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
@@ -53,7 +70,9 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
   onDataChange,
   showGuidancePanel: _showGuidancePanel = true,
   scenarioId,
-  visibility = { rentComparableGrid: true, expenseComparableGrid: true }
+  visibility = { rentComparableGrid: true, expenseComparableGrid: true },
+  rentCompMode = 'commercial',
+  componentData,
 }) => {
   // showGuidancePanel is reserved for future use
   void _showGuidancePanel;
@@ -63,12 +82,73 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
   const activeScenario = getActiveScenario();
   const scenarioName = activeScenario?.name || 'As Is';
 
-  // Property type from WizardContext, not local state
-  const propertyType = (state.propertySubtype || state.propertyType || 'office') as PropertyMeta['type'];
+  // Property type: use component data if provided, otherwise fall back to global state
+  const propertyType = (
+    componentData?.propertyType || 
+    state.propertySubtype || 
+    state.propertyType || 
+    'office'
+  ) as PropertyMeta['type'];
 
   // --- State ---
   const [showChart, setShowChart] = useState(true);
   const [showCapRateCalculator, setShowCapRateCalculator] = useState(false);
+
+  // Rent comp linking state
+  const [linkingIncomeItem, setLinkingIncomeItem] = useState<LineItem | null>(null);
+
+  // Handle opening rent comp linking panel for an income line
+  const handleLinkComps = (item: LineItem) => {
+    setLinkingIncomeItem(item);
+  };
+
+  // Handle linking a rent comp to an income line
+  const handleLink = (incomeItemId: string, rentCompId: string) => {
+    setIncomeData(prev => ({
+      ...prev,
+      rentalIncome: prev.rentalIncome.map(item => {
+        if (item.id === incomeItemId) {
+          const currentLinks = item.linkedRentCompIds || [];
+          if (!currentLinks.includes(rentCompId)) {
+            return { ...item, linkedRentCompIds: [...currentLinks, rentCompId] };
+          }
+        }
+        return item;
+      }),
+    }));
+    // Update the linkingIncomeItem state to reflect the change
+    setLinkingIncomeItem(prev => {
+      if (prev && prev.id === incomeItemId) {
+        const currentLinks = prev.linkedRentCompIds || [];
+        if (!currentLinks.includes(rentCompId)) {
+          return { ...prev, linkedRentCompIds: [...currentLinks, rentCompId] };
+        }
+      }
+      return prev;
+    });
+  };
+
+  // Handle unlinking a rent comp from an income line
+  const handleUnlink = (incomeItemId: string, rentCompId: string) => {
+    setIncomeData(prev => ({
+      ...prev,
+      rentalIncome: prev.rentalIncome.map(item => {
+        if (item.id === incomeItemId) {
+          const currentLinks = item.linkedRentCompIds || [];
+          return { ...item, linkedRentCompIds: currentLinks.filter(id => id !== rentCompId) };
+        }
+        return item;
+      }),
+    }));
+    // Update the linkingIncomeItem state to reflect the change
+    setLinkingIncomeItem(prev => {
+      if (prev && prev.id === incomeItemId) {
+        const currentLinks = prev.linkedRentCompIds || [];
+        return { ...prev, linkedRentCompIds: currentLinks.filter(id => id !== rentCompId) };
+      }
+      return prev;
+    });
+  };
 
   // Sub-tab state for workflow navigation
   const [activeSubTab, setActiveSubTab] = useState<IncomeSubTab>('pro-forma');
@@ -87,11 +167,22 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
     });
   }, [visibility.rentComparableGrid, visibility.expenseComparableGrid]);
 
-  // Keep sqFt and unitCount editable locally, but initialize from Subject Data if available
+  // Keep sqFt and unitCount editable locally
+  // Priority: componentData > initialData > 0
   const [localPropertyMeta, setLocalPropertyMeta] = useState({
-    sqFt: initialData?.propertyMeta?.sqFt || 0,
-    unitCount: initialData?.propertyMeta?.unitCount || 0,
+    sqFt: componentData?.squareFootage || initialData?.propertyMeta?.sqFt || 0,
+    unitCount: componentData?.unitCount || initialData?.propertyMeta?.unitCount || 0,
   });
+
+  // Update local state when componentData changes (switching between component tabs)
+  useEffect(() => {
+    if (componentData) {
+      setLocalPropertyMeta({
+        sqFt: componentData.squareFootage || 0,
+        unitCount: componentData.unitCount || 0,
+      });
+    }
+  }, [componentData?.id, componentData?.squareFootage, componentData?.unitCount]);
 
   // Combine for display and calculations - memoized to avoid infinite loops in useEffect
   const propertyMeta: PropertyMeta = useMemo(() => ({
@@ -99,9 +190,21 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
     sqFt: localPropertyMeta.sqFt,
     unitCount: localPropertyMeta.unitCount,
   }), [propertyType, localPropertyMeta.sqFt, localPropertyMeta.unitCount]);
+  
+  // Check if SF is actually known (not 'unknown' source and value > 0)
+  const isSfKnown = useMemo(() => {
+    // If componentData explicitly says 'unknown', SF is not reliable
+    if (componentData?.sfSource === 'unknown') return false;
+    // If SF is 0 or null, it's not known
+    return localPropertyMeta.sqFt > 0;
+  }, [componentData?.sfSource, localPropertyMeta.sqFt]);
 
   // Initialize sqFt from Subject Data (improvements inventory) if available - runs once on mount
+  // Only applies when NO componentData is provided (fallback to global state)
   useEffect(() => {
+    // Skip if componentData is provided - use component's own data instead
+    if (componentData) return;
+    
     const parcels = state.improvementsInventory?.parcels;
     // Only initialize if sqFt is 0 (unset)
     if (parcels && parcels.length > 0) {
@@ -487,6 +590,7 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                   notes={rentCompNotes}
                   onCompsChange={setRentComparables}
                   onNotesChange={setRentCompNotes}
+                  rentCompMode={rentCompMode}
                 />
                 <div className="flex justify-end mt-4">
                   <button
@@ -537,7 +641,6 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                       <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Property Type</div>
                       <div className="font-black text-slate-800 dark:text-white capitalize text-lg leading-tight">
                         {propertyMeta.type}
-                        <span className="text-xs text-slate-400 font-normal ml-2">(from Setup)</span>
                       </div>
                     </div>
                   </div>
@@ -586,7 +689,12 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                   </div>
                   <div className="bg-surface-1 dark:bg-elevation-1 p-5 rounded-2xl shadow-sm border border-light-border dark:border-dark-border dark:border-dark-border flex flex-col justify-between">
                     <div className="text-xs font-bold text-slate-400 uppercase">Price / SF</div>
-                    <div className="text-2xl font-black text-slate-800 dark:text-white">${(directCapValue / safeSqFt).toFixed(2)}</div>
+                    <div className="text-2xl font-black text-slate-800 dark:text-white">
+                      {isSfKnown ? `$${(directCapValue / safeSqFt).toFixed(2)}` : '—'}
+                    </div>
+                    {!isSfKnown && (
+                      <div className="text-[10px] text-amber-600 dark:text-amber-400 mt-1">SF unknown</div>
+                    )}
                   </div>
                   <div className="bg-surface-1 dark:bg-elevation-1 p-5 rounded-2xl shadow-sm border border-light-border dark:border-dark-border dark:border-dark-border flex flex-col justify-between">
                     <div className="text-xs font-bold text-slate-400 uppercase">Expense Ratio</div>
@@ -653,6 +761,8 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                             onChange={(updated) => updateLineItem('rental', updated)}
                             onDelete={(id) => deleteLineItem('rental', id)}
                             onEditNotes={(item) => handleEditNotes('rental', item)}
+                            onLinkComps={handleLinkComps}
+                            linkedCompCount={item.linkedRentCompIds?.length || 0}
                           />
                         ))}
                       </div>
@@ -1081,6 +1191,18 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
           onClose={() => setActiveNoteParams(null)}
           onSave={handleSaveNotes}
           onInput={handleNoteInput}
+        />
+      )}
+
+      {/* RENT COMP LINKING PANEL */}
+      {linkingIncomeItem && (
+        <RentCompLinkingPanel
+          incomeItem={linkingIncomeItem}
+          rentComparables={rentComparables}
+          rentCompMode={rentCompMode}
+          onLink={handleLink}
+          onUnlink={handleUnlink}
+          onClose={() => setLinkingIncomeItem(null)}
         />
       )}
     </div>

@@ -11,6 +11,7 @@ import { handleMapAction } from './mapSlice';
 import { handleSuggestionAction } from './suggestionSlice';
 import { handleProgressAction } from './progressSlice';
 import { handleAnalysisAction } from './analysisSlice';
+import { handleComponentAction } from './componentSlice';
 
 // Re-export for convenience
 export { getInitialState, createDefaultState };
@@ -31,6 +32,7 @@ export function wizardReducer(state: WizardState, action: WizardAction): WizardS
     handleSuggestionAction,
     handleProgressAction,
     handleAnalysisAction,
+    handleComponentAction,
   ];
 
   let newState: WizardState | null = null;
