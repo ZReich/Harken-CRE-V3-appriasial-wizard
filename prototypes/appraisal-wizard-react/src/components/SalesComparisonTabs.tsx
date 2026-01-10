@@ -5,6 +5,7 @@
 import React, { useState, Suspense, lazy } from 'react';
 import { Loader2, BarChart3, TreeDeciduous } from 'lucide-react';
 import { PROPERTIES, MOCK_VALUES } from '../features/sales-comparison';
+import type { SalesGridConfiguration } from '../types';
 
 // Lazy load the grid components
 const SalesGrid = lazy(() => import('../features/sales-comparison').then(m => ({ default: m.SalesGrid })));
@@ -16,11 +17,7 @@ interface SalesComparisonTabsProps {
   /** Analysis mode (standard or residual) */
   analysisMode: 'standard' | 'residual';
   /** Grid configuration from subject data */
-  gridConfiguration?: {
-    gridType: string;
-    unitOfMeasure: string;
-    [key: string]: unknown;
-  };
+  gridConfiguration?: SalesGridConfiguration;
   /** Active scenario for context */
   scenarioId?: number;
 }

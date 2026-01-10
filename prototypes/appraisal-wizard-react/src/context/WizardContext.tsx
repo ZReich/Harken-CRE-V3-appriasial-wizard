@@ -681,8 +681,13 @@ export function WizardProvider({ children }: { children: ReactNode }) {
 
   // Property Component helpers
   const addPropertyComponent = useCallback((component: Omit<import('../types').PropertyComponent, 'id' | 'sortOrder'>) => {
-    dispatch({ type: 'ADD_PROPERTY_COMPONENT', payload: component });
-  }, []);
+    const fullComponent: import('../types').PropertyComponent = {
+      ...component,
+      id: `component_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+      sortOrder: (state.propertyComponents || []).length,
+    };
+    dispatch({ type: 'ADD_PROPERTY_COMPONENT', payload: fullComponent });
+  }, [state.propertyComponents]);
 
   const updatePropertyComponent = useCallback((id: string, updates: Partial<import('../types').PropertyComponent>) => {
     dispatch({ type: 'UPDATE_PROPERTY_COMPONENT', payload: { id, updates } });
@@ -716,7 +721,11 @@ export function WizardProvider({ children }: { children: ReactNode }) {
 
   // Income Approach Instance helpers
   const addIncomeApproachInstance = useCallback((instance: Omit<import('../types').IncomeApproachInstance, 'id'>) => {
-    dispatch({ type: 'ADD_INCOME_APPROACH_INSTANCE', payload: instance });
+    const fullInstance: import('../types').IncomeApproachInstance = {
+      ...instance,
+      id: `income_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+    };
+    dispatch({ type: 'ADD_INCOME_APPROACH_INSTANCE', payload: fullInstance });
   }, []);
 
   const updateIncomeApproachInstance = useCallback((id: string, updates: Partial<import('../types').IncomeApproachInstance>) => {

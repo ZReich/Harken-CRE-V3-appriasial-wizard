@@ -190,14 +190,14 @@ export const RESIDENTIAL_TRANSACTION_ROWS: RentGridRow[] = [
   { id: 'address', label: 'Address:', section: 'transaction', field: 'address' },
   { id: 'cityState', label: 'City:', section: 'transaction', field: 'cityStateZip' },
   { id: 'bedBath', label: 'Bed/Bath:', section: 'transaction', field: 'bedBath' },
-  { id: 'unitSF', label: 'Unit SF:', section: 'transaction', field: 'unitSF' },
+  { id: 'avgSfPerUnit', label: 'Unit SF:', section: 'transaction', field: 'avgSfPerUnit' },
   { id: 'condition', label: 'Condition:', section: 'transaction', field: 'condition' },
-  { id: 'rentPerMonth', label: 'Rent $/Month:', section: 'transaction', field: 'rentPerMonth' },
+  { id: 'rentPerUnit', label: 'Rent $/Month:', section: 'transaction', field: 'rentPerUnit' },
 ];
 
 export const RESIDENTIAL_QUALITATIVE_ROWS: RentGridRow[] = [
   { id: 'locationAdj', label: 'Location:', section: 'qualitative', field: 'locationAdj', removable: true },
-  { id: 'bedBathAdj', label: 'Bed/Bath:', section: 'qualitative', field: 'bedBathAdj', removable: true },
+  { id: 'unitMixAdj', label: 'Unit Mix:', section: 'qualitative', field: 'unitMixAdj', removable: true },
   { id: 'amenitiesAdj', label: 'Amenities:', section: 'qualitative', field: 'amenitiesAdj', removable: true },
   { id: 'parkingAdj', label: 'Parking:', section: 'qualitative', field: 'parkingAdj', removable: true },
   { id: 'conditionAdj', label: 'Condition:', section: 'qualitative', field: 'conditionAdj', removable: true },

@@ -1,5 +1,6 @@
 import React, { useState, useMemo, useCallback } from 'react';
 import { useWizard } from '../context/WizardContext';
+import type { ReconciliationData } from '../types';
 
 
 interface ReconciliationSummaryProps {
@@ -124,7 +125,14 @@ export const ReconciliationSummary: React.FC<ReconciliationSummaryProps> = ({
     prevWeightsRef.current = weights;
     
     // Get current reconciliation data from state (not from dependency)
-    const currentReconData = reconciliationData || { scenarioReconciliations: [] };
+    const defaultReconData: ReconciliationData = {
+      scenarioReconciliations: [],
+      exposurePeriod: null,
+      marketingTime: null,
+      exposureRationale: '',
+      certifications: [],
+    };
+    const currentReconData = reconciliationData ? { ...defaultReconData, ...reconciliationData } : defaultReconData;
     const existingRecons = currentReconData.scenarioReconciliations || [];
     const existingIndex = existingRecons.findIndex(r => r.scenarioId === scenarioId);
     

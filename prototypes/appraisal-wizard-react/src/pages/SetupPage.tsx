@@ -1022,7 +1022,7 @@ export default function SetupPage() {
         sortOrder: 0,
         analysisConfig: {
           salesApproach: true,
-          incomeApproach: context.propertyCategory === 'commercial' || isMultiFamilyProperty,
+          incomeApproach: context.propertyCategory === 'commercial' || isMultiFamilyProperty || false,
           costApproach: false,
           analysisType: 'full',
         },

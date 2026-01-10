@@ -133,24 +133,30 @@ export function ValueReconciliationSummary({
 
     // If no components, add a placeholder for the primary analysis
     if (items.length === 0 && state.incomeApproachData) {
-      // Get the concluded value from the main income approach
-      const approachConclusion = activeScenario?.approaches?.['Income Approach'];
-      if (approachConclusion?.concludedValue) {
+      // Get category from primary component or default to 'commercial'
+      const primaryComponent = state.propertyComponents?.find(c => c.isPrimary);
+      const category = primaryComponent?.category || 'commercial';
+      // Check if income approach is enabled for this scenario
+      const hasIncomeApproach = activeScenario?.approaches?.includes('Income Approach');
+      if (hasIncomeApproach) {
+        // Get concluded value from income approach data if available
+        // For now, use a placeholder - in production this would come from actual calculations
+        const concludedValue = 0; // Would be calculated from state.incomeApproachData
         items.push({
           id: 'primary',
           name: 'Subject Property',
-          category: state.propertyCategory || 'commercial',
+          category: category,
           type: 'primary',
           approach: 'Income Approach',
-          value: approachConclusion.concludedValue,
-          roundedValue: Math.round(approachConclusion.concludedValue / 1000) * 1000,
+          value: concludedValue,
+          roundedValue: Math.round(concludedValue / 1000) * 1000,
           methodology: 'Direct Capitalization',
         });
       }
     }
 
     return items;
-  }, [state.propertyComponents, state.incomeApproachInstances, state.incomeApproachData, state.propertyCategory, activeScenario]);
+  }, [state.propertyComponents, state.incomeApproachInstances, state.incomeApproachData, activeScenario]);
 
   // Calculate totals
   const totals = useMemo(() => {
