@@ -380,7 +380,7 @@ Write 4-5 paragraphs, approximately 400-500 words total.`,
 
 VALUATION DATA:
 Property Type: ${ctx.propertyType || 'Commercial'}
-Approaches Used: ${ctx.scenarios?.[0]?.approaches?.join(', ') || 'Sales Comparison, Income, Cost'}
+Approaches Used: ${ctx.applicableApproaches?.join(', ') || 'Sales Comparison, Income, Cost'}
 ${ctx.valuationData ? `
 Sales Comparison Approach: ${ctx.valuationData.salesValue ? '$' + ctx.valuationData.salesValue.toLocaleString() : 'N/A'}
 Income Approach: ${ctx.valuationData.incomeValue ? '$' + ctx.valuationData.incomeValue.toLocaleString() : 'N/A'}
@@ -836,7 +836,8 @@ Be specific with street names and geographic features when possible. Write 2 par
   
   sales_comparison: (ctx) => {
     // Determine scenario type for appropriate terminology
-    const scenarioName = ctx.scenarios?.[0]?.name || 'As Is';
+    // Context builder provides scenarioName from the active scenario
+    const scenarioName = ctx.scenarioName || 'As Is';
     const isProspective = scenarioName.toLowerCase().includes('prospective');
     const isStabilized = scenarioName.toLowerCase().includes('stabiliz');
     
@@ -873,7 +874,8 @@ Write 3-4 paragraphs, approximately 250-300 words.`;
 
   land_valuation: (ctx) => {
     // Determine if this is for Cost Approach land component or standalone land valuation
-    const isForCostApproach = ctx.scenarios?.[0]?.approaches?.includes('Cost Approach');
+    // Context builder provides isCostApplicable flag
+    const isForCostApproach = ctx.isCostApplicable || false;
     
     return `Write the Land Valuation section of an appraisal report.
 
@@ -913,7 +915,8 @@ Write 3-4 paragraphs, approximately 250-300 words.`;
   
   rent_comparable: (ctx) => {
     // Determine scenario for appropriate terminology
-    const scenarioName = ctx.scenarios?.[0]?.name || 'As Is';
+    // Context builder provides scenarioName from the active scenario
+    const scenarioName = ctx.scenarioName || 'As Is';
     const isProspective = scenarioName.toLowerCase().includes('prospective');
     const isStabilized = scenarioName.toLowerCase().includes('stabiliz');
     
@@ -948,7 +951,8 @@ Write 3 paragraphs, approximately 225-275 words.`;
   },
 
   expense_comparable: (ctx) => {
-    const scenarioName = ctx.scenarios?.[0]?.name || 'As Is';
+    // Context builder provides scenarioName from the active scenario
+    const scenarioName = ctx.scenarioName || 'As Is';
     const isStabilized = scenarioName.toLowerCase().includes('stabiliz');
     
     return `Write the Operating Expense Analysis section of an appraisal report (Income Approach).
@@ -980,7 +984,8 @@ Write 2-3 paragraphs, approximately 200-250 words.`;
   },
 
   multi_family: (ctx) => {
-    const scenarioName = ctx.scenarios?.[0]?.name || 'As Is';
+    // Context builder provides scenarioName from the active scenario
+    const scenarioName = ctx.scenarioName || 'As Is';
     const isProspective = scenarioName.toLowerCase().includes('prospective');
     const isStabilized = scenarioName.toLowerCase().includes('stabiliz');
     
@@ -1023,7 +1028,8 @@ Write 3-4 paragraphs, approximately 275-325 words.`;
   // =================================================================
   
   cost_approach: (ctx) => {
-    const scenarioName = ctx.scenarios?.[0]?.name || 'As Is';
+    // Context builder provides scenarioName from the active scenario
+    const scenarioName = ctx.scenarioName || 'As Is';
     const isProspective = scenarioName.toLowerCase().includes('prospective');
     const yearBuilt = ctx.improvementData?.yearBuilt;
     const currentYear = new Date().getFullYear();
@@ -1225,7 +1231,8 @@ Write 1-2 paragraphs, approximately 100-150 words.`,
   // =================================================================
   
   exposure: (ctx) => {
-    const scenarioName = ctx.scenarios?.[0]?.name || 'As Is';
+    // Context builder provides scenarioName from the active scenario
+    const scenarioName = ctx.scenarioName || 'As Is';
     const isProspective = scenarioName.toLowerCase().includes('prospective');
     
     return `Write the Exposure Time and Marketing Time section of an appraisal report.

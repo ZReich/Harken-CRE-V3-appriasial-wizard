@@ -1,6 +1,7 @@
 import React from 'react';
 import type { ContentBlock } from '../../../../types';
 import { ReportPageBase } from './ReportPageBase';
+import { sampleAppraisalData } from '../../../review/data/sampleAppraisalData';
 
 interface SummaryPageProps {
   content: ContentBlock[];
@@ -23,7 +24,7 @@ export const SummaryPage: React.FC<SummaryPageProps> = ({
   isEditing = false,
   onContentClick,
 }) => {
-  const summaryData = content[0]?.content as {
+  const rawContent = content[0]?.content as {
     propertyName?: string;
     address?: string;
     propertyType?: string;
@@ -43,6 +44,39 @@ export const SummaryPage: React.FC<SummaryPageProps> = ({
     }>;
     reconciliationWeights?: Record<string, number>;
   } | undefined;
+  
+  // Use sample data as fallback
+  const sample = sampleAppraisalData;
+  const hasWizardData = rawContent?.propertyName && rawContent.propertyName.length > 0;
+  
+  const summaryData = hasWizardData ? rawContent : {
+    propertyName: sample.property.name,
+    address: sample.property.fullAddress,
+    propertyType: sample.property.propertyType,
+    propertySubtype: sample.property.propertySubtype,
+    taxId: sample.property.taxId,
+    legalDescription: sample.property.legalDescription,
+    siteArea: `${sample.site.landArea} ${sample.site.landAreaUnit} (${sample.site.landAreaSF.toLocaleString()} SF)`,
+    zoningClass: `${sample.site.zoning} - ${sample.site.zoningDescription}`,
+    effectiveDate: sample.valuation.effectiveDate,
+    inspectionDate: sample.valuation.inspectionDate,
+    finalValue: sample.valuation.asIsValue,
+    finalValueFormatted: `$${sample.valuation.asIsValue.toLocaleString()}`,
+    scenarios: [{
+      name: 'As Is',
+      approaches: ['Sales Comparison', 'Income Approach', 'Cost Approach'],
+      approachValues: {
+        'sales-comparison': sample.valuation.salesComparisonValue,
+        'income-approach': sample.valuation.incomeApproachValue,
+        'cost-approach': sample.valuation.costApproachValue,
+      },
+    }],
+    reconciliationWeights: {
+      'sales-comparison': sample.reconciliation.salesComparisonWeight,
+      'income-approach': sample.reconciliation.incomeApproachWeight,
+      'cost-approach': sample.reconciliation.costApproachWeight,
+    },
+  };
 
   const formatDate = (dateStr?: string) => {
     if (!dateStr) return 'Not Specified';

@@ -16,9 +16,10 @@ import { TrendingUp, TrendingDown, ArrowUpRight, AlertTriangle } from 'lucide-re
 import type { SWOTAnalysisData } from '../../../../types';
 import { renderReportContent } from '../../../../utils/htmlRenderer';
 import { ReportPageBase } from './ReportPageBase';
+import { sampleAppraisalData } from '../../../review/data/sampleAppraisalData';
 
 interface SWOTPageProps {
-  data: SWOTAnalysisData;
+  data?: SWOTAnalysisData;
   pageNumber?: number;
 }
 
@@ -81,22 +82,19 @@ const Quadrant: React.FC<QuadrantProps> = ({
 };
 
 export const SWOTPage: React.FC<SWOTPageProps> = ({ data, pageNumber }) => {
-  if (!data) {
-    return (
-      <ReportPageBase
-        title="SWOT Analysis"
-        sidebarLabel="SWOT"
-        pageNumber={pageNumber}
-        sectionNumber={5}
-        sectionTitle="ANALYSIS"
-        contentPadding="p-10"
-      >
-        <p className="text-sm text-slate-500 italic">No SWOT analysis data available.</p>
-      </ReportPageBase>
-    );
-  }
+  // Use sample SWOT data as fallback
+  const sampleSwot = sampleAppraisalData.swot;
+  const hasWizardData = data && (data.strengths?.length > 0 || data.weaknesses?.length > 0);
+  
+  const swotData = hasWizardData ? data : {
+    strengths: sampleSwot.strengths,
+    weaknesses: sampleSwot.weaknesses,
+    opportunities: sampleSwot.opportunities,
+    threats: sampleSwot.threats,
+    summary: sampleSwot.summary,
+  };
 
-  const { strengths, weaknesses, opportunities, threats, summary } = data;
+  const { strengths, weaknesses, opportunities, threats, summary } = swotData;
   
   // Calculate counts for the summary
   const totalItems = strengths.length + weaknesses.length + opportunities.length + threats.length;

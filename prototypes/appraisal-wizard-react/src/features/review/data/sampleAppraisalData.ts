@@ -110,6 +110,15 @@ export const sampleAppraisalData = {
   },
 
   // =================================================================
+  // CLIENT INFORMATION
+  // =================================================================
+  client: {
+    name: 'First Security Bank of Missoula',
+    address: 'P.O. Box 4506, Missoula, Montana 59806',
+    contactName: 'Lending Department',
+  },
+
+  // =================================================================
   // VALUATION SUMMARY
   // =================================================================
   valuation: {
@@ -120,6 +129,9 @@ export const sampleAppraisalData = {
     asIsValue: 1750000,
     exposurePeriod: 'Less than 6 months',
     marketingTime: 'Less than 6 months',
+    effectiveDate: '2023-07-28',
+    inspectionDate: '2023-07-28',
+    reportDate: '2023-07-31',
   },
 
   // =================================================================

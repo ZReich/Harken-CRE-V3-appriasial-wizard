@@ -85,21 +85,27 @@ export const NarrativePage: React.FC<NarrativePageProps> = ({
         );
 
       case 'list':
-        const listContent = block.content as { items?: string[]; conditions?: string[] };
+        const listContent = block.content as { title?: string; items?: string[]; conditions?: string[] };
+        const listTitle = listContent?.title;
         const items = listContent?.items || listContent?.conditions || [];
         return (
-          <ul 
-            key={block.id}
-            className={`list-disc list-inside text-xs text-slate-700 space-y-1 mb-3 ${clickableClass}`}
-            onClick={() => isClickable && onContentClick?.(block.id)}
-          >
-            {items.map((item: string, i: number) => (
-              <li 
-                key={i}
-                dangerouslySetInnerHTML={{ __html: renderReportContent(item) }}
-              />
-            ))}
-          </ul>
+          <div key={block.id} className="mb-4">
+            {listTitle && (
+              <h4 className="text-sm font-semibold text-slate-800 mb-2">{listTitle}</h4>
+            )}
+            <ol 
+              className={`list-decimal list-inside text-xs text-slate-700 space-y-2 ${clickableClass}`}
+              onClick={() => isClickable && onContentClick?.(block.id)}
+            >
+              {items.map((item: string, i: number) => (
+                <li 
+                  key={i}
+                  className="pl-1"
+                  dangerouslySetInnerHTML={{ __html: renderReportContent(item) }}
+                />
+              ))}
+            </ol>
+          </div>
         );
 
       case 'table':

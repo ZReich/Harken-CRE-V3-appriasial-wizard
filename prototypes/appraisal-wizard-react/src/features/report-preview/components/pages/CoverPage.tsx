@@ -1,5 +1,6 @@
 import React from 'react';
 import type { ContentBlock, ReportPhoto } from '../../../../types';
+import { sampleAppraisalData } from '../../../review/data/sampleAppraisalData';
 
 interface CoverPageProps {
   content: ContentBlock[];
@@ -16,28 +17,49 @@ export const CoverPage: React.FC<CoverPageProps> = ({
   isEditing = false,
   onContentClick,
 }) => {
-  const coverData = content[0]?.content as {
+  const rawData = content[0]?.content as {
     propertyName?: string;
     address?: string;
     reportDate?: string;
     effectiveDate?: string;
     propertyType?: string;
   } | undefined;
+  
+  // Use sample data as fallback
+  const sample = sampleAppraisalData;
+  const hasWizardData = rawData?.propertyName && rawData.propertyName.length > 0;
+  
+  const coverData = hasWizardData ? rawData : {
+    propertyName: sample.property.name,
+    address: sample.property.fullAddress,
+    reportDate: sample.valuation.reportDate,
+    effectiveDate: sample.valuation.effectiveDate,
+    propertyType: sample.property.propertyType,
+  };
+  
+  // Use sample cover photo if none provided
+  const displayPhoto = coverPhoto || (sample.photos.length > 0 ? {
+    id: sample.photos[0].id,
+    url: sample.photos[0].url,
+    caption: sample.photos[0].caption,
+    category: 'exterior' as const,
+    sortOrder: 0,
+  } : undefined);
 
   return (
     <div className="w-full h-full relative bg-slate-900 text-white overflow-hidden">
       {/* Background photo */}
-      {coverPhoto && (
+      {displayPhoto && (
         <div 
           className="absolute inset-0 bg-cover bg-center"
-          style={{ backgroundImage: `url(${coverPhoto.url})` }}
+          style={{ backgroundImage: `url(${displayPhoto.url})` }}
         >
           <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/70 to-slate-900/30" />
         </div>
       )}
       
       {/* Default gradient background if no photo */}
-      {!coverPhoto && (
+      {!displayPhoto && (
         <div className="absolute inset-0 bg-gradient-to-br from-slate-800 via-slate-900 to-slate-950" />
       )}
 

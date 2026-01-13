@@ -1,5 +1,6 @@
 import React from 'react';
 import type { ContentBlock } from '../../../../types';
+import { sampleAppraisalData } from '../../../review/data/sampleAppraisalData';
 
 interface LetterPageProps {
   content: ContentBlock[];
@@ -13,7 +14,7 @@ export const LetterPage: React.FC<LetterPageProps> = ({
   isEditing = false,
   onContentClick,
 }) => {
-  const letterData = content[0]?.content as {
+  const rawData = content[0]?.content as {
     clientName?: string;
     propertyAddress?: string;
     effectiveDate?: string;
@@ -21,6 +22,19 @@ export const LetterPage: React.FC<LetterPageProps> = ({
     exposurePeriod?: number;
     marketingTime?: number;
   } | undefined;
+  
+  // Use sample data as fallback
+  const sample = sampleAppraisalData;
+  const hasWizardData = rawData?.propertyAddress && rawData.propertyAddress.length > 0;
+  
+  const letterData = hasWizardData ? rawData : {
+    clientName: sample.client.name,
+    propertyAddress: sample.property.fullAddress,
+    effectiveDate: sample.valuation.effectiveDate,
+    finalValue: sample.valuation.asIsValue,
+    exposurePeriod: sample.valuation.exposurePeriod,
+    marketingTime: sample.valuation.marketingTime,
+  };
 
   const formatCurrency = (value: number) => {
     return new Intl.NumberFormat('en-US', {

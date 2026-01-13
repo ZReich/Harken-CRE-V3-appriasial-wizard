@@ -764,11 +764,17 @@ function buildAssumptionsContent(_state: WizardState): ContentBlock[] {
 }
 
 function buildAreaAnalysisContent(state: WizardState): ContentBlock[] {
+  // Use wizard data or fall back to sample data
+  const sampleArea = sampleAppraisalData.areaAnalysis;
+  const hasWizardData = state.subjectData.areaDescription && state.subjectData.areaDescription.length > 10;
+  
   return [{
     id: 'area-analysis-content',
     type: 'paragraph',
     content: {
-      areaDescription: state.subjectData.areaDescription || '',
+      text: hasWizardData 
+        ? state.subjectData.areaDescription 
+        : `${sampleArea.regional}\n\n${sampleArea.marketConditions}`,
     },
     canSplit: true,
     keepWithNext: false,
@@ -778,13 +784,20 @@ function buildAreaAnalysisContent(state: WizardState): ContentBlock[] {
 }
 
 function buildNeighborhoodContent(state: WizardState): ContentBlock[] {
+  // Use wizard data or fall back to sample data
+  const sampleNeighborhood = sampleAppraisalData.areaAnalysis.neighborhood;
+  const hasWizardData = (state.subjectData.neighborhoodBoundaries && state.subjectData.neighborhoodBoundaries.length > 10) ||
+    (state.subjectData.neighborhoodCharacteristics && state.subjectData.neighborhoodCharacteristics.length > 10);
+  
   return [{
     id: 'neighborhood-content',
     type: 'paragraph',
-    content: {
+    content: hasWizardData ? {
       boundaries: state.subjectData.neighborhoodBoundaries || '',
       characteristics: state.subjectData.neighborhoodCharacteristics || '',
       location: state.subjectData.specificLocation || '',
+    } : {
+      text: sampleNeighborhood,
     },
     canSplit: true,
     keepWithNext: false,
@@ -794,10 +807,29 @@ function buildNeighborhoodContent(state: WizardState): ContentBlock[] {
 }
 
 function buildSiteAnalysisPages(state: WizardState): ContentBlock[][] {
-  return [[{
+  // Use wizard data or fall back to sample data
+  const sampleSite = sampleAppraisalData.site;
+  const sampleSiteDesc = sampleAppraisalData.siteDescription;
+  const hasWizardData = state.subjectData.siteArea && state.subjectData.siteArea.length > 0;
+  
+  // Narrative content
+  const narrativeBlock: ContentBlock = {
+    id: 'site-narrative-content',
+    type: 'paragraph',
+    content: {
+      text: state.subjectData.siteDescriptionNarrative || sampleSiteDesc.narrative,
+    },
+    canSplit: true,
+    keepWithNext: true,
+    keepWithPrevious: false,
+    minLinesIfSplit: 3,
+  };
+  
+  // Table content
+  const tableBlock: ContentBlock = {
     id: 'site-analysis-content',
     type: 'table',
-    content: {
+    content: hasWizardData ? {
       siteArea: state.subjectData.siteArea,
       siteAreaUnit: state.subjectData.siteAreaUnit,
       shape: state.subjectData.shape,
@@ -809,12 +841,24 @@ function buildSiteAnalysisPages(state: WizardState): ContentBlock[][] {
       easements: state.subjectData.easements,
       zoningClass: state.subjectData.zoningClass,
       zoningDescription: state.subjectData.zoningDescription,
+    } : {
+      'Site Area': `${sampleSite.landArea} ${sampleSite.landAreaUnit} (${sampleSite.landAreaSF.toLocaleString()} SF)`,
+      'Shape': sampleSite.shape,
+      'Frontage': sampleSite.frontage,
+      'Topography': sampleSite.topography,
+      'Zoning': `${sampleSite.zoning} - ${sampleSite.zoningDescription}`,
+      'Flood Zone': sampleSite.floodZone,
+      'Utilities': sampleSite.utilities.join(', '),
+      'Access': sampleSite.access,
+      'Easements': sampleSite.easements,
     },
     canSplit: true,
     keepWithNext: false,
     keepWithPrevious: false,
     minLinesIfSplit: 5,
-  }]];
+  };
+  
+  return [[narrativeBlock, tableBlock]];
 }
 
 function buildImprovementPages(state: WizardState): ContentBlock[][] {
@@ -822,39 +866,64 @@ function buildImprovementPages(state: WizardState): ContentBlock[][] {
   
   // Build improvement content from inventory
   const { improvementsInventory } = state;
+  const sampleImprovements = sampleAppraisalData.improvements;
   
-  improvementsInventory.parcels.forEach(parcel => {
-    parcel.buildings.forEach(building => {
-      pages.push([{
-        id: `building-${building.id}`,
-        type: 'table',
-        content: {
-          name: building.name,
-          yearBuilt: building.yearBuilt,
-          constructionType: building.constructionType,
-          constructionQuality: building.constructionQuality,
-          condition: building.condition,
-          areas: building.areas,
-          exteriorFeatures: building.exteriorFeatures,
-          mechanicalSystems: building.mechanicalSystems,
-        },
-        canSplit: true,
-        keepWithNext: false,
-        keepWithPrevious: false,
-        minLinesIfSplit: 5,
-      }]);
+  // Check if we have actual building data
+  const hasBuildings = improvementsInventory.parcels.some(p => p.buildings.length > 0);
+  
+  if (hasBuildings) {
+    improvementsInventory.parcels.forEach(parcel => {
+      parcel.buildings.forEach(building => {
+        pages.push([{
+          id: `building-${building.id}`,
+          type: 'table',
+          content: {
+            name: building.name,
+            yearBuilt: building.yearBuilt,
+            constructionType: building.constructionType,
+            constructionQuality: building.constructionQuality,
+            condition: building.condition,
+            areas: building.areas,
+            exteriorFeatures: building.exteriorFeatures,
+            mechanicalSystems: building.mechanicalSystems,
+          },
+          canSplit: true,
+          keepWithNext: false,
+          keepWithPrevious: false,
+          minLinesIfSplit: 5,
+        }]);
+      });
     });
-  });
+  } else {
+    // Use sample data for improvements
+    pages.push([{
+      id: 'building-sample',
+      type: 'table',
+      content: {
+        'Building Name': sampleAppraisalData.property.name,
+        'Year Built': sampleImprovements.yearBuilt,
+        'Effective Age': `${sampleImprovements.effectiveAge} years`,
+        'Remaining Economic Life': `${sampleImprovements.remainingLife} years`,
+        'Building Type': sampleImprovements.buildingType,
+        'Construction': sampleImprovements.construction,
+        'Gross Building Area': `${sampleImprovements.grossBuildingArea.toLocaleString()} SF`,
+        'Office Area': `${sampleImprovements.officeArea.toLocaleString()} SF`,
+        'Shop/Warehouse Area': `${sampleImprovements.shopArea.toLocaleString()} SF`,
+        'Mezzanine Area': `${sampleImprovements.mezzanineArea.toLocaleString()} SF`,
+        'Clear Height': `${sampleImprovements.clearHeight} feet`,
+        'Overhead Doors': sampleImprovements.overheadDoors,
+        'Quality': sampleImprovements.quality,
+        'Condition': sampleImprovements.condition,
+        'Site Coverage': `${sampleImprovements.siteCoverage}%`,
+      },
+      canSplit: true,
+      keepWithNext: false,
+      keepWithPrevious: false,
+      minLinesIfSplit: 5,
+    }]);
+  }
 
-  return pages.length > 0 ? pages : [[{
-    id: 'no-improvements',
-    type: 'paragraph',
-    content: { text: 'No improvements on site.' },
-    canSplit: false,
-    keepWithNext: false,
-    keepWithPrevious: false,
-    minLinesIfSplit: 0,
-  }]];
+  return pages;
 }
 
 function buildTaxesContent(state: WizardState): ContentBlock[] {
@@ -891,21 +960,40 @@ function buildOwnershipContent(state: WizardState): ContentBlock[] {
 
 function buildHBUContent(state: WizardState, type: 'as-vacant' | 'as-improved'): ContentBlock[] {
   const hbu = state.hbuAnalysis;
+  const sampleHbu = sampleAppraisalData.hbu;
+  
+  // Check if wizard has HBU data
+  const hasWizardData = type === 'as-vacant' 
+    ? (hbu?.asVacant?.legallyPermissible && hbu.asVacant.legallyPermissible.length > 10)
+    : (hbu?.asImproved?.conclusion && hbu.asImproved.conclusion.length > 10);
   
   // Get the appropriate analysis based on type
   let analysis = '';
-  if (type === 'as-vacant' && hbu?.asVacant) {
-    // Combine all the as-vacant sections
-    const sections = [
-      hbu.asVacant.legallyPermissible && `**Legally Permissible:** ${hbu.asVacant.legallyPermissible}`,
-      hbu.asVacant.physicallyPossible && `**Physically Possible:** ${hbu.asVacant.physicallyPossible}`,
-      hbu.asVacant.financiallyFeasible && `**Financially Feasible:** ${hbu.asVacant.financiallyFeasible}`,
-      hbu.asVacant.maximallyProductive && `**Maximally Productive:** ${hbu.asVacant.maximallyProductive}`,
-      hbu.asVacant.conclusion && `**Conclusion:** ${hbu.asVacant.conclusion}`,
-    ].filter(Boolean);
-    analysis = sections.join('\n\n');
-  } else if (type === 'as-improved' && hbu?.asImproved) {
-    analysis = hbu.asImproved.conclusion || '';
+  if (type === 'as-vacant') {
+    if (hasWizardData && hbu?.asVacant) {
+      const sections = [
+        hbu.asVacant.legallyPermissible && `<b>Legally Permissible:</b> ${hbu.asVacant.legallyPermissible}`,
+        hbu.asVacant.physicallyPossible && `<b>Physically Possible:</b> ${hbu.asVacant.physicallyPossible}`,
+        hbu.asVacant.financiallyFeasible && `<b>Financially Feasible:</b> ${hbu.asVacant.financiallyFeasible}`,
+        hbu.asVacant.maximallyProductive && `<b>Maximally Productive:</b> ${hbu.asVacant.maximallyProductive}`,
+        hbu.asVacant.conclusion && `<b>Conclusion:</b> ${hbu.asVacant.conclusion}`,
+      ].filter(Boolean);
+      analysis = sections.join('\n\n');
+    } else {
+      // Use sample data
+      analysis = `<b>Legally Permissible:</b> ${sampleHbu.asVacant.legallyPermissible}\n\n` +
+        `<b>Physically Possible:</b> ${sampleHbu.asVacant.physicallyPossible}\n\n` +
+        `<b>Financially Feasible:</b> ${sampleHbu.asVacant.financiallyFeasible}\n\n` +
+        `<b>Maximally Productive:</b> ${sampleHbu.asVacant.maximallyProductive}\n\n` +
+        `<b>Conclusion:</b> ${sampleHbu.asVacant.conclusion}`;
+    }
+  } else {
+    if (hasWizardData && hbu?.asImproved) {
+      analysis = hbu.asImproved.conclusion || '';
+    } else {
+      // Use sample data
+      analysis = `${sampleHbu.asImproved.analysis}\n\n<b>Conclusion:</b> ${sampleHbu.asImproved.conclusion}`;
+    }
   }
 
   return [{
@@ -913,7 +1001,7 @@ function buildHBUContent(state: WizardState, type: 'as-vacant' | 'as-improved'):
     type: 'paragraph',
     content: {
       type,
-      analysis,
+      text: analysis,
     },
     canSplit: true,
     keepWithNext: false,
@@ -1189,13 +1277,28 @@ function buildLandValuationPages(state: WizardState, _scenarioId: number): Conte
 }
 
 function buildReconciliationPages(state: WizardState): ContentBlock[][] {
+  const sampleRecon = sampleAppraisalData.reconciliation;
+  const sampleVal = sampleAppraisalData.valuation;
+  const hasWizardData = state.reconciliationData?.scenarioReconciliations && 
+    state.reconciliationData.scenarioReconciliations.length > 0;
+  
   return [[{
     id: 'reconciliation-content',
     type: 'paragraph',
-    content: {
+    content: hasWizardData ? {
       reconciliationData: state.reconciliationData,
       scenarios: state.scenarios,
       conclusions: state.analysisConclusions,
+    } : {
+      text: sampleRecon.narrative,
+      valueIndications: {
+        costApproach: { value: sampleVal.costApproachValue, weight: sampleRecon.costApproachWeight },
+        salesComparison: { value: sampleVal.salesComparisonValue, weight: sampleRecon.salesComparisonWeight },
+        incomeApproach: { value: sampleVal.incomeApproachValue, weight: sampleRecon.incomeApproachWeight },
+      },
+      finalValue: sampleVal.asIsValue,
+      exposurePeriod: sampleVal.exposurePeriod,
+      marketingTime: sampleVal.marketingTime,
     },
     canSplit: true,
     keepWithNext: false,
@@ -1279,27 +1382,44 @@ function buildQualificationsContent(_state: WizardState): ContentBlock[] {
 }
 
 function buildLimitingConditionsPages(_state: WizardState): ContentBlock[][] {
-  // Standard limiting conditions boilerplate
-  return [[{
-    id: 'limiting-conditions-content',
-    type: 'list',
-    content: {
-      conditions: [
-        'The appraiser assumes no responsibility for matters legal in nature...',
-        'The appraiser has made no survey of the property...',
-        // More conditions...
-      ],
-    },
-    canSplit: true,
-    keepWithNext: false,
-    keepWithPrevious: false,
-    minLinesIfSplit: 2,
-  }]];
+  // Use sample data for assumptions and limiting conditions
+  const sampleAssumptions = sampleAppraisalData.assumptions;
+  const sampleLimitingConditions = sampleAppraisalData.limitingConditions;
+  
+  return [
+    // Page 1: Assumptions
+    [{
+      id: 'assumptions-content',
+      type: 'list',
+      content: {
+        title: 'General Assumptions',
+        items: sampleAssumptions,
+      },
+      canSplit: true,
+      keepWithNext: false,
+      keepWithPrevious: false,
+      minLinesIfSplit: 2,
+    }],
+    // Page 2: Limiting Conditions
+    [{
+      id: 'limiting-conditions-content',
+      type: 'list',
+      content: {
+        title: 'Limiting Conditions',
+        items: sampleLimitingConditions,
+      },
+      canSplit: true,
+      keepWithNext: false,
+      keepWithPrevious: false,
+      minLinesIfSplit: 2,
+    }],
+  ];
 }
 
 function buildPhotoPages(state: WizardState): Partial<ReportPage>[] {
   const reportPhotos = state.reportPhotos;
   const stagingPhotos = state.stagingPhotos;
+  const samplePhotos = sampleAppraisalData.photos;
   
   // Combine assigned photos from reportPhotos and any assigned staging photos
   const allPhotos: Array<{ id: string; url: string; caption: string; slotId: string }> = [];
@@ -1331,6 +1451,18 @@ function buildPhotoPages(state: WizardState): Partial<ReportPage>[] {
           });
         }
       });
+  }
+  
+  // Use sample photos if none available
+  if (allPhotos.length === 0) {
+    samplePhotos.forEach((photo, idx) => {
+      allPhotos.push({
+        id: photo.id,
+        url: photo.url,
+        caption: photo.caption,
+        slotId: `sample-slot-${idx}`,
+      });
+    });
   }
   
   if (allPhotos.length === 0) {

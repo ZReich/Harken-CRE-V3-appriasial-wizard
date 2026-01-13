@@ -18,9 +18,10 @@ import { Users, Home, DollarSign, GraduationCap, Briefcase, TrendingUp, Trending
 import type { RadiusDemographics } from '../../../../types/api';
 import { generateStaticMapUrl } from '../../../../utils/mapCapture';
 import { ReportPageBase } from './ReportPageBase';
+import { sampleAppraisalData } from '../../../review/data/sampleAppraisalData';
 
 interface DemographicsPageProps {
-  data: RadiusDemographics[];
+  data?: RadiusDemographics[];
   source?: 'esri' | 'census' | 'mock' | string;
   asOfDate?: string;
   pageNumber?: number;
@@ -29,6 +30,43 @@ interface DemographicsPageProps {
   longitude?: number;
   mapImageUrl?: string;
   showMap?: boolean;
+}
+
+// Generate sample demographics data matching the RadiusDemographics structure
+function getSampleDemographicsData(): RadiusDemographics[] {
+  const sample = sampleAppraisalData.demographics;
+  return sample.radiusRings.map(ring => ({
+    radius: ring.radius,
+    population: {
+      current: ring.population,
+      projected5Year: Math.round(ring.population * 1.08),
+      annualGrowthRate: sample.populationGrowth,
+    },
+    households: {
+      current: ring.households,
+      averageSize: ring.avgHouseholdSize,
+    },
+    income: {
+      medianHousehold: ring.medianHouseholdIncome,
+      averageHousehold: Math.round(ring.medianHouseholdIncome * 1.25),
+      perCapita: Math.round(ring.medianHouseholdIncome / ring.avgHouseholdSize),
+    },
+    education: {
+      percentCollegeGraduates: 32.5,
+      percentGraduateDegree: 12.8,
+    },
+    employment: {
+      laborForce: Math.round(ring.population * 0.47),
+      unemploymentRate: 4.2,
+    },
+    housing: {
+      ownerOccupied: 64.5,
+      renterOccupied: 28.3,
+      vacancyRate: 7.2,
+      medianHomeValue: ring.medianHomeValue,
+    },
+    medianAge: ring.medianAge,
+  }) as unknown as RadiusDemographics);
 }
 
 // Formatting helpers
@@ -56,6 +94,12 @@ export const DemographicsOverviewPage: React.FC<DemographicsPageProps> = ({
   mapImageUrl,
   showMap = true,
 }) => {
+  // Use sample demographics data as fallback
+  const hasWizardData = data && data.length > 0;
+  const demoData = hasWizardData ? data : getSampleDemographicsData();
+  const effectiveLatitude = latitude || sampleAppraisalData.property.latitude;
+  const effectiveLongitude = longitude || sampleAppraisalData.property.longitude;
+  
   const sourceDisplay = source === 'esri' 
     ? 'ESRI Demographics' 
     : source === 'census' 
@@ -65,8 +109,8 @@ export const DemographicsOverviewPage: React.FC<DemographicsPageProps> = ({
   // Generate static map URL - larger size for the overview page
   const staticMapUrl = React.useMemo(() => {
     if (mapImageUrl) return mapImageUrl;
-    if (latitude && longitude) {
-      return generateStaticMapUrl(latitude, longitude, {
+    if (effectiveLatitude && effectiveLongitude) {
+      return generateStaticMapUrl(effectiveLatitude, effectiveLongitude, {
         width: 800,
         height: 500,
         zoom: 11,
@@ -74,11 +118,11 @@ export const DemographicsOverviewPage: React.FC<DemographicsPageProps> = ({
       });
     }
     return null;
-  }, [latitude, longitude, mapImageUrl]);
+  }, [effectiveLatitude, effectiveLongitude, mapImageUrl]);
 
   // Extract key metrics from data (use 3-mile radius as primary)
-  const primaryRadius = data?.find(d => d.radius === 3) || data?.[1] || data?.[0];
-  const hasData = data && data.length > 0;
+  const primaryRadius = demoData?.find(d => d.radius === 3) || demoData?.[1] || demoData?.[0];
+  const hasData = demoData && demoData.length > 0;
 
   return (
     <ReportPageBase
@@ -268,13 +312,17 @@ export const DemographicsDetailPage: React.FC<DemographicsPageProps> = ({
   asOfDate,
   pageNumber,
 }) => {
+  // Use sample demographics data as fallback
+  const hasWizardData = data && data.length > 0;
+  const demoData = hasWizardData ? data : getSampleDemographicsData();
+  
   const sourceDisplay = source === 'esri' 
     ? 'ESRI Demographics' 
     : source === 'census' 
       ? 'US Census Bureau ACS'
       : source;
 
-  if (!data || data.length === 0) {
+  if (!demoData || demoData.length === 0) {
     return null; // Don't render detail page without data
   }
 
@@ -294,7 +342,7 @@ export const DemographicsDetailPage: React.FC<DemographicsPageProps> = ({
             <th className="text-left py-2.5 px-4 font-semibold text-slate-700 border border-slate-200">
               Metric
             </th>
-            {data.map((d) => (
+            {demoData.map((d) => (
               <th 
                 key={d.radius} 
                 className="text-center py-2.5 px-4 font-semibold text-slate-700 border border-slate-200 w-[120px]"
@@ -307,13 +355,13 @@ export const DemographicsDetailPage: React.FC<DemographicsPageProps> = ({
         <tbody>
           {/* Population Section */}
           <tr className="bg-teal-50">
-            <td colSpan={data.length + 1} className="py-2 px-4 font-bold text-teal-800 border border-slate-200 text-xs uppercase tracking-wider">
+            <td colSpan={demoData.length + 1} className="py-2 px-4 font-bold text-teal-800 border border-slate-200 text-xs uppercase tracking-wider">
               Population
             </td>
           </tr>
           <tr className="hover:bg-slate-50">
             <td className="py-2 px-4 text-slate-700 border border-slate-200 pl-6">Current Population</td>
-            {data.map((d) => (
+            {demoData.map((d) => (
               <td key={d.radius} className="py-2 px-4 text-center font-semibold text-slate-800 border border-slate-200">
                 {formatPopulation(d.population.current)}
               </td>
@@ -321,7 +369,7 @@ export const DemographicsDetailPage: React.FC<DemographicsPageProps> = ({
           </tr>
           <tr className="hover:bg-slate-50">
             <td className="py-2 px-4 text-slate-700 border border-slate-200 pl-6">5-Year Projection</td>
-            {data.map((d) => (
+            {demoData.map((d) => (
               <td key={d.radius} className="py-2 px-4 text-center text-slate-700 border border-slate-200">
                 {formatPopulation(d.population.projected5Year)}
               </td>
@@ -329,7 +377,7 @@ export const DemographicsDetailPage: React.FC<DemographicsPageProps> = ({
           </tr>
           <tr className="hover:bg-slate-50">
             <td className="py-2 px-4 text-slate-700 border border-slate-200 pl-6">Annual Growth Rate</td>
-            {data.map((d) => (
+            {demoData.map((d) => (
               <td key={d.radius} className="py-2 px-4 text-center border border-slate-200">
                 <span className={`font-medium ${d.population.annualGrowthRate >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
                   {d.population.annualGrowthRate >= 0 ? '+' : ''}{formatPercentage(d.population.annualGrowthRate)}
@@ -340,13 +388,13 @@ export const DemographicsDetailPage: React.FC<DemographicsPageProps> = ({
 
           {/* Households Section */}
           <tr className="bg-violet-50">
-            <td colSpan={data.length + 1} className="py-2 px-4 font-bold text-violet-800 border border-slate-200 text-xs uppercase tracking-wider">
+            <td colSpan={demoData.length + 1} className="py-2 px-4 font-bold text-violet-800 border border-slate-200 text-xs uppercase tracking-wider">
               Households
             </td>
           </tr>
           <tr className="hover:bg-slate-50">
             <td className="py-2 px-4 text-slate-700 border border-slate-200 pl-6">Total Households</td>
-            {data.map((d) => (
+            {demoData.map((d) => (
               <td key={d.radius} className="py-2 px-4 text-center font-semibold text-slate-800 border border-slate-200">
                 {formatPopulation(d.households.current)}
               </td>
@@ -354,7 +402,7 @@ export const DemographicsDetailPage: React.FC<DemographicsPageProps> = ({
           </tr>
           <tr className="hover:bg-slate-50">
             <td className="py-2 px-4 text-slate-700 border border-slate-200 pl-6">Average Household Size</td>
-            {data.map((d) => (
+            {demoData.map((d) => (
               <td key={d.radius} className="py-2 px-4 text-center text-slate-700 border border-slate-200">
                 {d.households.averageSize.toFixed(2)}
               </td>
@@ -363,13 +411,13 @@ export const DemographicsDetailPage: React.FC<DemographicsPageProps> = ({
 
           {/* Income Section */}
           <tr className="bg-blue-50">
-            <td colSpan={data.length + 1} className="py-2 px-4 font-bold text-blue-800 border border-slate-200 text-xs uppercase tracking-wider">
+            <td colSpan={demoData.length + 1} className="py-2 px-4 font-bold text-blue-800 border border-slate-200 text-xs uppercase tracking-wider">
               Income
             </td>
           </tr>
           <tr className="hover:bg-slate-50">
             <td className="py-2 px-4 text-slate-700 border border-slate-200 pl-6">Median Household Income</td>
-            {data.map((d) => (
+            {demoData.map((d) => (
               <td key={d.radius} className="py-2 px-4 text-center font-semibold text-slate-800 border border-slate-200">
                 {formatCurrency(d.income.medianHousehold)}
               </td>
@@ -377,7 +425,7 @@ export const DemographicsDetailPage: React.FC<DemographicsPageProps> = ({
           </tr>
           <tr className="hover:bg-slate-50">
             <td className="py-2 px-4 text-slate-700 border border-slate-200 pl-6">Average Household Income</td>
-            {data.map((d) => (
+            {demoData.map((d) => (
               <td key={d.radius} className="py-2 px-4 text-center text-slate-700 border border-slate-200">
                 {formatCurrency(d.income.averageHousehold)}
               </td>
@@ -385,7 +433,7 @@ export const DemographicsDetailPage: React.FC<DemographicsPageProps> = ({
           </tr>
           <tr className="hover:bg-slate-50">
             <td className="py-2 px-4 text-slate-700 border border-slate-200 pl-6">Per Capita Income</td>
-            {data.map((d) => (
+            {demoData.map((d) => (
               <td key={d.radius} className="py-2 px-4 text-center text-slate-700 border border-slate-200">
                 {formatCurrency(d.income.perCapita)}
               </td>
@@ -394,13 +442,13 @@ export const DemographicsDetailPage: React.FC<DemographicsPageProps> = ({
 
           {/* Education Section */}
           <tr className="bg-amber-50">
-            <td colSpan={data.length + 1} className="py-2 px-4 font-bold text-amber-800 border border-slate-200 text-xs uppercase tracking-wider">
+            <td colSpan={demoData.length + 1} className="py-2 px-4 font-bold text-amber-800 border border-slate-200 text-xs uppercase tracking-wider">
               Education
             </td>
           </tr>
           <tr className="hover:bg-slate-50">
             <td className="py-2 px-4 text-slate-700 border border-slate-200 pl-6">College Graduates (Bachelor's+)</td>
-            {data.map((d) => (
+            {demoData.map((d) => (
               <td key={d.radius} className="py-2 px-4 text-center font-semibold text-slate-800 border border-slate-200">
                 {formatPercentage(d.education.percentCollegeGraduates)}
               </td>
@@ -408,7 +456,7 @@ export const DemographicsDetailPage: React.FC<DemographicsPageProps> = ({
           </tr>
           <tr className="hover:bg-slate-50">
             <td className="py-2 px-4 text-slate-700 border border-slate-200 pl-6">Graduate Degree</td>
-            {data.map((d) => (
+            {demoData.map((d) => (
               <td key={d.radius} className="py-2 px-4 text-center text-slate-700 border border-slate-200">
                 {formatPercentage(d.education.percentGraduateDegree)}
               </td>
@@ -416,16 +464,16 @@ export const DemographicsDetailPage: React.FC<DemographicsPageProps> = ({
           </tr>
 
           {/* Employment Section */}
-          {data[0]?.employment && (
+          {demoData[0]?.employment && (
             <>
               <tr className="bg-cyan-50">
-                <td colSpan={data.length + 1} className="py-2 px-4 font-bold text-cyan-800 border border-slate-200 text-xs uppercase tracking-wider">
+                <td colSpan={demoData.length + 1} className="py-2 px-4 font-bold text-cyan-800 border border-slate-200 text-xs uppercase tracking-wider">
                   Employment
                 </td>
               </tr>
               <tr className="hover:bg-slate-50">
                 <td className="py-2 px-4 text-slate-700 border border-slate-200 pl-6">Labor Force</td>
-                {data.map((d) => (
+                {demoData.map((d) => (
                   <td key={d.radius} className="py-2 px-4 text-center font-semibold text-slate-800 border border-slate-200">
                     {formatPopulation(d.employment?.laborForce || 0)}
                   </td>
@@ -433,7 +481,7 @@ export const DemographicsDetailPage: React.FC<DemographicsPageProps> = ({
               </tr>
               <tr className="hover:bg-slate-50">
                 <td className="py-2 px-4 text-slate-700 border border-slate-200 pl-6">Unemployment Rate</td>
-                {data.map((d) => (
+                {demoData.map((d) => (
                   <td key={d.radius} className="py-2 px-4 text-center border border-slate-200">
                     <span className={`font-medium ${(d.employment?.unemploymentRate || 0) < 5 ? 'text-emerald-600' : 'text-amber-600'}`}>
                       {formatPercentage(d.employment?.unemploymentRate || 0)}
@@ -447,13 +495,13 @@ export const DemographicsDetailPage: React.FC<DemographicsPageProps> = ({
       </table>
 
       {/* Employment by Industry (if available) */}
-      {data[data.length - 1]?.employmentByIndustry?.length > 0 && (
+      {demoData[demoData.length - 1]?.employmentByIndustry?.length > 0 && (
         <>
           <h2 className="text-sm font-bold text-slate-800 border-b border-slate-200 pb-2 mb-4 uppercase tracking-wider">
-            Employment by Industry ({data[data.length - 1].radius}-Mile Radius)
+            Employment by Industry ({demoData[demoData.length - 1].radius}-Mile Radius)
           </h2>
           <div className="grid grid-cols-2 gap-x-8 gap-y-2">
-            {data[data.length - 1].employmentByIndustry.slice(0, 12).map((industry, idx) => (
+            {demoData[demoData.length - 1].employmentByIndustry.slice(0, 12).map((industry, idx) => (
               <div key={idx} className="flex items-center gap-3">
                 <div className="flex-1">
                   <div className="flex items-center justify-between mb-1">
