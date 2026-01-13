@@ -1,3 +1,4 @@
+export { ReportPageBase } from './ReportPageBase';
 export { CoverPage } from './CoverPage';
 export { LetterPage } from './LetterPage';
 export { SummaryPage } from './SummaryPage';

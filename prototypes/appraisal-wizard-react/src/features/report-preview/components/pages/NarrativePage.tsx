@@ -1,6 +1,7 @@
 import React from 'react';
 import type { ContentBlock } from '../../../../types';
 import { renderReportContent } from '../../../../utils/htmlRenderer';
+import { ReportPageBase } from './ReportPageBase';
 
 interface NarrativePageProps {
   content: ContentBlock[];
@@ -21,14 +22,14 @@ export const NarrativePage: React.FC<NarrativePageProps> = ({
 }) => {
   const renderBlock = (block: ContentBlock, _index: number) => {
     const isClickable = isEditing && block.type !== 'image';
-    const clickableClass = isClickable ? 'cursor-pointer hover:bg-surface-2 rounded p-1 -m-1' : '';
+    const clickableClass = isClickable ? 'cursor-pointer hover:bg-slate-50 rounded p-1 -m-1' : '';
 
     switch (block.type) {
       case 'heading':
         return (
           <h3 
             key={block.id}
-            className={`text-lg font-semibold text-slate-800 mt-6 mb-3 ${clickableClass}`}
+            className={`text-base font-semibold text-slate-800 mt-4 mb-2 ${clickableClass}`}
             onClick={() => isClickable && onContentClick?.(block.id)}
             dangerouslySetInnerHTML={{ 
               __html: renderReportContent(String((block.content as { text?: string })?.text || '')) 
@@ -44,8 +45,7 @@ export const NarrativePage: React.FC<NarrativePageProps> = ({
           return (
             <div 
               key={block.id}
-              className={`text-sm text-slate-700 leading-relaxed mb-4 ${clickableClass}`}
-              style={{ lineHeight: '1.7' }}
+              className={`text-xs text-slate-700 leading-relaxed mb-3 ${clickableClass}`}
               onClick={() => isClickable && onContentClick?.(block.id)}
               dangerouslySetInnerHTML={{ __html: renderReportContent(paragraphContent) }}
             />
@@ -56,8 +56,7 @@ export const NarrativePage: React.FC<NarrativePageProps> = ({
           return (
             <div 
               key={block.id}
-              className={`text-sm text-slate-700 leading-relaxed mb-4 ${clickableClass}`}
-              style={{ lineHeight: '1.7' }}
+              className={`text-xs text-slate-700 leading-relaxed mb-3 ${clickableClass}`}
               onClick={() => isClickable && onContentClick?.(block.id)}
               dangerouslySetInnerHTML={{ __html: renderReportContent(String(paragraphContent.text)) }}
             />
@@ -68,14 +67,13 @@ export const NarrativePage: React.FC<NarrativePageProps> = ({
         return (
           <div 
             key={block.id}
-            className={`text-sm text-slate-700 leading-relaxed mb-4 ${clickableClass}`}
-            style={{ lineHeight: '1.7' }}
+            className={`text-xs text-slate-700 leading-relaxed mb-3 ${clickableClass}`}
             onClick={() => isClickable && onContentClick?.(block.id)}
           >
             {Object.entries(paragraphContent).map(([key, value]) => {
               if (!value || key.startsWith('_')) return null;
               return (
-                <p key={key} className="mb-2">
+                <p key={key} className="mb-1.5">
                   <span className="font-medium text-slate-600 capitalize">
                     {key.replace(/([A-Z])/g, ' $1').trim()}:
                   </span>{' '}
@@ -92,8 +90,7 @@ export const NarrativePage: React.FC<NarrativePageProps> = ({
         return (
           <ul 
             key={block.id}
-            className={`list-disc list-inside text-sm text-slate-700 space-y-2 mb-4 ${clickableClass}`}
-            style={{ lineHeight: '1.7' }}
+            className={`list-disc list-inside text-xs text-slate-700 space-y-1 mb-3 ${clickableClass}`}
             onClick={() => isClickable && onContentClick?.(block.id)}
           >
             {items.map((item: string, i: number) => (
@@ -110,19 +107,19 @@ export const NarrativePage: React.FC<NarrativePageProps> = ({
         return (
           <div 
             key={block.id}
-            className={`mb-6 ${clickableClass}`}
+            className={`mb-4 ${clickableClass}`}
             onClick={() => isClickable && onContentClick?.(block.id)}
           >
-            <table className="w-full text-sm border-collapse">
+            <table className="w-full text-xs border-collapse">
               <tbody>
                 {Object.entries(tableContent).map(([key, value]) => {
                   if (!value || key.startsWith('_') || typeof value === 'object') return null;
                   return (
-                    <tr key={key} className="border-b border-light-border hover:bg-surface-2">
-                      <td className="py-2 pr-4 text-slate-600 font-medium w-1/3 capitalize">
+                    <tr key={key} className="border-b border-slate-200 hover:bg-slate-50">
+                      <td className="py-1.5 pr-4 text-slate-600 font-medium w-1/3 capitalize">
                         {key.replace(/([A-Z])/g, ' $1').trim()}
                       </td>
-                      <td className="py-2 text-slate-800">
+                      <td className="py-1.5 text-slate-800">
                         {String(value)}
                       </td>
                     </tr>
@@ -138,18 +135,18 @@ export const NarrativePage: React.FC<NarrativePageProps> = ({
         return (
           <figure 
             key={block.id}
-            className={`mb-6 ${isEditing ? 'cursor-pointer ring-2 ring-transparent hover:ring-sky-300 rounded' : ''}`}
+            className={`mb-4 ${isEditing ? 'cursor-pointer ring-2 ring-transparent hover:ring-sky-300 rounded' : ''}`}
             onClick={() => isEditing && onContentClick?.(block.id)}
           >
             {imageContent?.url && (
               <img 
                 src={imageContent.url} 
                 alt={imageContent?.caption || 'Image'} 
-                className="w-full rounded-lg"
+                className="w-full rounded-lg max-h-48 object-cover"
               />
             )}
             {imageContent?.caption && (
-              <figcaption className="text-xs text-slate-500 text-center mt-2">
+              <figcaption className="text-[10px] text-slate-500 text-center mt-1">
                 {imageContent.caption}
               </figcaption>
             )}
@@ -160,10 +157,10 @@ export const NarrativePage: React.FC<NarrativePageProps> = ({
         return (
           <div 
             key={block.id}
-            className={`mb-6 bg-surface-2 rounded-lg p-4 ${clickableClass}`}
+            className={`mb-4 bg-slate-50 rounded-lg p-3 ${clickableClass}`}
             onClick={() => isClickable && onContentClick?.(block.id)}
           >
-            <div className="h-48 flex items-center justify-center text-slate-400">
+            <div className="h-32 flex items-center justify-center text-slate-400 text-xs">
               [Chart Placeholder]
             </div>
           </div>
@@ -174,47 +171,39 @@ export const NarrativePage: React.FC<NarrativePageProps> = ({
     }
   };
 
+  // Get sidebar label from sectionId
+  const getSidebarLabel = () => {
+    if (!sectionId) return title?.toUpperCase();
+    const labelMap: Record<string, string> = {
+      'property-description': 'PROPERTY',
+      'market-analysis': 'MARKET',
+      'highest-best-use': 'HBU',
+      'sales-comparison': 'SALES',
+      'income-approach': 'INCOME',
+      'cost-approach': 'COST',
+      'reconciliation': 'VALUE',
+    };
+    return labelMap[sectionId] || sectionId.toUpperCase().replace(/-/g, ' ');
+  };
+
   return (
-    <div className="w-full h-full bg-white flex flex-col">
-      {/* Page header */}
-      {title && (
-        <div className="px-16 pt-12 pb-4 border-b border-light-border">
-          <div className="flex items-center justify-between">
-            <h2 
-              className={`text-xl font-bold text-slate-800 ${
-                isEditing ? 'cursor-pointer hover:bg-surface-2 rounded px-2 -mx-2' : ''
-              }`}
-              onClick={() => isEditing && onContentClick?.(`${sectionId}-title`)}
-            >
-              {title}
-            </h2>
-            {pageNumber && (
-              <span className="text-sm text-slate-400">Page {pageNumber}</span>
-            )}
-          </div>
+    <ReportPageBase
+      title={title || 'Report Section'}
+      sidebarLabel={getSidebarLabel()}
+      pageNumber={pageNumber}
+      contentPadding="p-10"
+    >
+      {content.length === 0 ? (
+        <div className="h-full flex items-center justify-center text-slate-400">
+          <p className="text-xs">No content for this section</p>
+        </div>
+      ) : (
+        <div className="overflow-hidden">
+          {content.map((block, index) => renderBlock(block, index))}
         </div>
       )}
-
-      {/* Content area */}
-      <div className="flex-1 px-16 py-8 overflow-auto">
-        {content.length === 0 ? (
-          <div className="h-full flex items-center justify-center text-slate-400">
-            <p className="text-sm">No content for this section</p>
-          </div>
-        ) : (
-          content.map((block, index) => renderBlock(block, index))
-        )}
-      </div>
-
-      {/* Page footer */}
-      {!title && pageNumber && (
-        <div className="px-16 py-4 text-right">
-          <span className="text-sm text-slate-400">Page {pageNumber}</span>
-        </div>
-      )}
-    </div>
+    </ReportPageBase>
   );
 };
 
 export default NarrativePage;
-

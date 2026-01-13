@@ -16,6 +16,7 @@
 
 import React from 'react';
 import type { DCFProjectionPageData } from '../../../review/types';
+import { ReportPageBase } from './ReportPageBase';
 
 interface DCFProjectionPageProps {
   data: DCFProjectionPageData;
@@ -84,39 +85,14 @@ export const DCFProjectionPage: React.FC<DCFProjectionPageProps> = ({
   const totalPvCashFlows = yearlyProjections.reduce((sum, yr) => sum + yr.pvCashFlow, 0);
 
   return (
-    <div
-      className="bg-white shadow-lg overflow-hidden"
-      style={{
-        width: '8.5in',
-        minHeight: '11in',
-        padding: '0.5in',
-        boxSizing: 'border-box',
-      }}
+    <ReportPageBase
+      title="Discounted Cash Flow Analysis"
+      sidebarLabel="DCF"
+      pageNumber={pageNumber}
+      sectionNumber={6}
+      sectionTitle="VALUATION"
+      contentPadding="p-10"
     >
-      {/* Page Header */}
-      <div
-        className="flex items-center justify-between mb-6 pb-3 border-b-2"
-        style={{ borderColor: scenarioColor }}
-      >
-        <div>
-          <h2 className="text-xl font-bold text-slate-800">
-            Discounted Cash Flow Analysis
-          </h2>
-          <p className="text-sm text-slate-500">{scenarioName} Valuation</p>
-        </div>
-        <div className="text-right">
-          <span
-            className="inline-block px-3 py-1 rounded-full text-xs font-semibold text-white"
-            style={{ backgroundColor: scenarioColor }}
-          >
-            {scenarioName}
-          </span>
-          {pageNumber && (
-            <p className="text-xs text-slate-400 mt-1">Page {pageNumber}</p>
-          )}
-        </div>
-      </div>
-
       {/* Assumptions Section */}
       <div className="mb-6 p-4 bg-slate-50 rounded-lg">
         <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide mb-3">
@@ -277,7 +253,7 @@ export const DCFProjectionPage: React.FC<DCFProjectionPageProps> = ({
           Discounted Cash Flow Analysis - {scenarioName} - {holdingPeriod}-Year Holding Period
         </p>
       </div>
-    </div>
+    </ReportPageBase>
   );
 };
 

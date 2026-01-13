@@ -2,6 +2,8 @@ import React from 'react';
 import { MapPin } from 'lucide-react';
 import type { MapData } from '../../../../types';
 import { MARKER_COLORS } from '../../../../services/mapGenerationService';
+import { ReportPageBase } from './ReportPageBase';
+import { sampleAppraisalData } from '../../../review/data/sampleAppraisalData';
 
 interface IncomeGridPageProps {
   title?: string;
@@ -26,23 +28,29 @@ interface IncomeGridData {
   indicatedValue?: number;
 }
 
-const DEFAULT_INCOME_DATA: IncomeGridData = {
-  pgi: 120000,
-  vacancy: 6000,
-  egi: 114000,
-  expenses: {
-    propertyTaxes: 8500,
-    insurance: 3200,
-    utilities: 2400,
-    repairs: 4800,
-    management: 5700,
-    reserves: 2400,
-  },
-  totalExpenses: 27000,
-  noi: 87000,
-  capRate: 8.5,
-  indicatedValue: 1023529,
-};
+// Build default income data from sample appraisal
+function getSampleIncomeData(): IncomeGridData {
+  const income = sampleAppraisalData.incomeApproach;
+  return {
+    pgi: income.potentialGrossIncome,
+    vacancy: Math.round(income.potentialGrossIncome * (income.vacancyRate / 100)),
+    egi: income.effectiveGrossIncome,
+    expenses: {
+      propertyTaxes: Math.round(income.operatingExpenses * 0.45),
+      insurance: Math.round(income.operatingExpenses * 0.17),
+      utilities: Math.round(income.operatingExpenses * 0.13),
+      repairs: Math.round(income.operatingExpenses * 0.25),
+      management: Math.round(income.effectiveGrossIncome * 0.05),
+      reserves: Math.round(income.operatingExpenses * 0.10),
+    },
+    totalExpenses: income.operatingExpenses,
+    noi: income.netOperatingIncome,
+    capRate: income.capRate,
+    indicatedValue: income.valueConclusion,
+  };
+}
+
+const DEFAULT_INCOME_DATA: IncomeGridData = getSampleIncomeData();
 
 export const IncomeGridPage: React.FC<IncomeGridPageProps> = ({
   title = 'Income Approach',
@@ -64,22 +72,14 @@ export const IncomeGridPage: React.FC<IncomeGridPageProps> = ({
   };
 
   return (
-    <div className="w-full h-full bg-white flex flex-col">
-      {/* Page header */}
-      <div className="px-12 pt-8 pb-4 border-b border-light-border">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-xl font-bold text-slate-800">{title}</h2>
-            {scenarioName && (
-              <p className="text-sm text-harken-gray-med mt-1">{scenarioName}</p>
-            )}
-          </div>
-          {pageNumber && (
-            <span className="text-sm text-harken-gray-med">Page {pageNumber}</span>
-          )}
-        </div>
-      </div>
-
+    <ReportPageBase
+      title={title}
+      sidebarLabel="INC"
+      pageNumber={pageNumber}
+      sectionNumber={6}
+      sectionTitle="VALUATION"
+      contentPadding="p-10"
+    >
       {/* Map Section - Display rental comparables map if provided */}
       {mapData && mapData.imageUrl && (
         <div className="px-12 pt-4 pb-2">
@@ -255,7 +255,7 @@ export const IncomeGridPage: React.FC<IncomeGridPageProps> = ({
           </div>
         </div>
       </div>
-    </div>
+    </ReportPageBase>
   );
 };
 

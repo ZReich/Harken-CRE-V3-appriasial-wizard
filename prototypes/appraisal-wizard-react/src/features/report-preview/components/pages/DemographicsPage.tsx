@@ -17,6 +17,7 @@ import React from 'react';
 import { Users, Home, DollarSign, GraduationCap, Briefcase, TrendingUp, TrendingDown, MapPin } from 'lucide-react';
 import type { RadiusDemographics } from '../../../../types/api';
 import { generateStaticMapUrl } from '../../../../utils/mapCapture';
+import { ReportPageBase } from './ReportPageBase';
 
 interface DemographicsPageProps {
   data: RadiusDemographics[];
@@ -80,12 +81,14 @@ export const DemographicsOverviewPage: React.FC<DemographicsPageProps> = ({
   const hasData = data && data.length > 0;
 
   return (
-    <div className="bg-white w-[8.5in] min-h-[11in] p-[1in] shadow-lg mx-auto relative">
-      {/* Header */}
-      <h1 className="text-xl font-bold text-slate-800 border-b-2 border-[#0da1c7] pb-2 mb-5">
-        NEIGHBORHOOD DEMOGRAPHICS
-      </h1>
-
+    <ReportPageBase
+      title="Neighborhood Demographics"
+      sidebarLabel="DEMO"
+      pageNumber={pageNumber}
+      sectionNumber={4}
+      sectionTitle="DEMOGRAPHICS"
+      contentPadding="p-10"
+    >
       {/* Large Map Section */}
       {showMap && staticMapUrl && (
         <div className="relative mb-5">
@@ -238,8 +241,8 @@ export const DemographicsOverviewPage: React.FC<DemographicsPageProps> = ({
       )}
 
       {/* Source Attribution */}
-      <div className="absolute bottom-[1in] left-[1in] right-[1in]">
-        <div className="flex items-center justify-between text-xs text-slate-500 border-t border-slate-200 pt-2">
+      <div className="mt-auto pt-2 text-[9px] text-slate-500 border-t border-slate-200">
+        <div className="flex items-center justify-between">
           <p>
             Source: {sourceDisplay}{asOfDate && ` (as of ${new Date(asOfDate).toLocaleDateString()})`}
           </p>
@@ -250,14 +253,7 @@ export const DemographicsOverviewPage: React.FC<DemographicsPageProps> = ({
           )}
         </div>
       </div>
-
-      {/* Page Number */}
-      {pageNumber && (
-        <div className="absolute bottom-[0.5in] right-[1in]">
-          <span className="text-sm text-slate-400">{pageNumber}</span>
-        </div>
-      )}
-    </div>
+    </ReportPageBase>
   );
 };
 
@@ -283,12 +279,14 @@ export const DemographicsDetailPage: React.FC<DemographicsPageProps> = ({
   }
 
   return (
-    <div className="bg-white w-[8.5in] min-h-[11in] p-[1in] shadow-lg mx-auto relative">
-      {/* Header */}
-      <h1 className="text-xl font-bold text-slate-800 border-b-2 border-[#0da1c7] pb-2 mb-5">
-        NEIGHBORHOOD DEMOGRAPHICS - DETAIL
-      </h1>
-
+    <ReportPageBase
+      title="Neighborhood Demographics - Detail"
+      sidebarLabel="DEMO"
+      pageNumber={pageNumber}
+      sectionNumber={4}
+      sectionTitle="DEMOGRAPHICS"
+      contentPadding="p-10"
+    >
       {/* Main Demographics Table */}
       <table className="w-full text-sm border-collapse mb-6">
         <thead>
@@ -476,8 +474,8 @@ export const DemographicsDetailPage: React.FC<DemographicsPageProps> = ({
       )}
 
       {/* Source Attribution */}
-      <div className="absolute bottom-[1in] left-[1in] right-[1in]">
-        <div className="flex items-center justify-between text-xs text-slate-500 border-t border-slate-200 pt-2">
+      <div className="mt-auto pt-2 text-[9px] text-slate-500 border-t border-slate-200">
+        <div className="flex items-center justify-between">
           <p>
             Source: {sourceDisplay}{asOfDate && ` (as of ${new Date(asOfDate).toLocaleDateString()})`}
           </p>
@@ -488,14 +486,7 @@ export const DemographicsDetailPage: React.FC<DemographicsPageProps> = ({
           )}
         </div>
       </div>
-
-      {/* Page Number */}
-      {pageNumber && (
-        <div className="absolute bottom-[0.5in] right-[1in]">
-          <span className="text-sm text-slate-400">{pageNumber}</span>
-        </div>
-      )}
-    </div>
+    </ReportPageBase>
   );
 };
 

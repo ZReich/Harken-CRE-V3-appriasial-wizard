@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import type { ContentBlock } from '../../../../types';
 import { renderReportContent } from '../../../../utils/htmlRenderer';
+import { ReportPageBase } from './ReportPageBase';
+import { sampleAppraisalData } from '../../../review/data/sampleAppraisalData';
 
 interface AnalysisGridPageProps {
   content: ContentBlock[];
@@ -26,6 +28,14 @@ interface GridRow {
   isTotal?: boolean;
 }
 
+// Helper to format currency for compact display
+const formatCompact = (value: number): string => {
+  if (value >= 1000000) {
+    return `$${(value / 1000000).toFixed(2)}M`;
+  }
+  return `$${Math.round(value / 1000)}K`;
+};
+
 export const AnalysisGridPage: React.FC<AnalysisGridPageProps> = ({
   content,
   title,
@@ -39,129 +49,138 @@ export const AnalysisGridPage: React.FC<AnalysisGridPageProps> = ({
   const gridBlock = content.find(b => b.type === 'table');
   const narrativeBlocks = content.filter(b => b.type !== 'table');
 
-  // Sample columns for comparison grid
-  const defaultColumns: GridColumn[] = [
-    { key: 'element', label: 'Element of Comparison', width: '20%', align: 'left' },
-    { key: 'subject', label: 'Subject', width: '16%', align: 'center' },
-    { key: 'comp1', label: 'Comp 1', width: '16%', align: 'center' },
-    { key: 'comp2', label: 'Comp 2', width: '16%', align: 'center' },
-    { key: 'comp3', label: 'Comp 3', width: '16%', align: 'center' },
-    { key: 'comp4', label: 'Comp 4', width: '16%', align: 'center' },
-  ];
+  // Build columns dynamically based on number of comps
+  const comps = sampleAppraisalData.comparables;
+  const defaultColumns: GridColumn[] = useMemo(() => [
+    { key: 'element', label: 'Element', width: '25%', align: 'left' },
+    { key: 'subject', label: 'Subject', width: '15%', align: 'center' },
+    ...comps.map((_, i) => ({
+      key: `comp${i + 1}`,
+      label: `Sale ${i + 1}`,
+      width: `${60 / comps.length}%`,
+      align: 'center' as const,
+    })),
+  ], [comps]);
 
-  // Sample rows for demonstration
-  const sampleRows: GridRow[] = [
-    {
-      id: 'sale-price',
-      cells: { 
-        element: 'Sale Price', 
-        subject: '-', 
-        comp1: '$450,000', 
-        comp2: '$425,000', 
-        comp3: '$475,000', 
-        comp4: '$460,000' 
+  // Build rows from sample data
+  const sampleRows: GridRow[] = useMemo(() => {
+    const sample = sampleAppraisalData;
+    const subject = sample.property;
+    const improvements = sample.improvements;
+    const site = sample.site;
+    
+    // Build comp cells dynamically
+    const buildCompCells = (getValue: (comp: typeof comps[0], index: number) => string | number | null) => {
+      const cells: Record<string, string | number | null> = {};
+      comps.forEach((comp, i) => {
+        cells[`comp${i + 1}`] = getValue(comp, i);
+      });
+      return cells;
+    };
+    
+    return [
+      { 
+        id: 'sale-price', 
+        cells: { 
+          element: 'Sale Price', 
+          subject: '-',
+          ...buildCompCells(comp => formatCompact(comp.salePrice)),
+        } 
       },
-    },
-    {
-      id: 'price-sf',
-      cells: { 
-        element: 'Price/SF', 
-        subject: '-', 
-        comp1: '$125/SF', 
-        comp2: '$118/SF', 
-        comp3: '$132/SF', 
-        comp4: '$128/SF' 
+      { 
+        id: 'price-sf', 
+        cells: { 
+          element: 'Price/SF', 
+          subject: '-',
+          ...buildCompCells(comp => `$${comp.pricePerSF.toFixed(0)}`),
+        } 
       },
-    },
-    {
-      id: 'property-rights',
-      cells: { 
-        element: 'Property Rights', 
-        subject: 'Fee Simple', 
-        comp1: 'Fee Simple', 
-        comp2: 'Fee Simple', 
-        comp3: 'Fee Simple', 
-        comp4: 'Fee Simple' 
+      { 
+        id: 'property-rights', 
+        cells: { 
+          element: 'Prop. Rights', 
+          subject: 'Fee Simple',
+          ...buildCompCells(() => 'Fee Simple'),
+        } 
       },
-    },
-    {
-      id: 'financing',
-      cells: { 
-        element: 'Financing', 
-        subject: '-', 
-        comp1: 'Cash', 
-        comp2: 'Conventional', 
-        comp3: 'Cash', 
-        comp4: 'Cash' 
+      { 
+        id: 'financing', 
+        cells: { 
+          element: 'Financing', 
+          subject: '-',
+          ...buildCompCells((_, i) => i % 2 === 0 ? 'Cash' : 'Conv.'),
+        } 
       },
-    },
-    {
-      id: 'conditions-sale',
-      cells: { 
-        element: 'Conditions of Sale', 
-        subject: '-', 
-        comp1: 'Arms Length', 
-        comp2: 'Arms Length', 
-        comp3: 'Arms Length', 
-        comp4: 'Arms Length' 
+      { 
+        id: 'conditions-sale', 
+        cells: { 
+          element: 'Cond. of Sale', 
+          subject: '-',
+          ...buildCompCells(() => "Arm's Len."),
+        } 
       },
-    },
-    {
-      id: 'market-conditions',
-      cells: { 
-        element: 'Market Conditions', 
-        subject: '-', 
-        comp1: '0%', 
-        comp2: '+2%', 
-        comp3: '-1%', 
-        comp4: '0%' 
+      { 
+        id: 'market-conditions', 
+        cells: { 
+          element: 'Mkt. Cond.', 
+          subject: '-',
+          ...buildCompCells(() => '0%'),
+        } 
       },
-    },
-    {
-      id: 'location',
-      cells: { 
-        element: 'Location', 
-        subject: 'Good', 
-        comp1: 'Similar', 
-        comp2: 'Superior', 
-        comp3: 'Inferior', 
-        comp4: 'Similar' 
+      { 
+        id: 'location', 
+        cells: { 
+          element: 'Location', 
+          subject: subject.propertySubtype || 'Good',
+          ...buildCompCells(comp => comp.adjustments.location === 0 ? 'Similar' : 
+            comp.adjustments.location > 0 ? 'Inferior' : 'Superior'),
+        } 
       },
-    },
-    {
-      id: 'site-size',
-      cells: { 
-        element: 'Site Size', 
-        subject: '1.5 AC', 
-        comp1: '1.2 AC', 
-        comp2: '2.0 AC', 
-        comp3: '1.0 AC', 
-        comp4: '1.5 AC' 
+      { 
+        id: 'site-size', 
+        cells: { 
+          element: 'Site Size', 
+          subject: `${site.landArea} AC`,
+          ...buildCompCells(() => 'Similar'),
+        } 
       },
-    },
-    {
-      id: 'adjusted-price',
-      cells: { 
-        element: 'Adjusted Price', 
-        subject: '-', 
-        comp1: '$455,000', 
-        comp2: '$415,000', 
-        comp3: '$490,000', 
-        comp4: '$460,000' 
+      { 
+        id: 'building-size', 
+        cells: { 
+          element: 'Building Size', 
+          subject: `${improvements.grossBuildingArea.toLocaleString()} SF`,
+          ...buildCompCells(comp => `${comp.buildingSize.toLocaleString()} SF`),
+        } 
       },
-      isTotal: true,
-    },
-  ];
+      { 
+        id: 'year-built', 
+        cells: { 
+          element: 'Year Built', 
+          subject: String(improvements.yearBuilt),
+          ...buildCompCells(comp => String(comp.yearBuilt)),
+        } 
+      },
+      { 
+        id: 'adjusted-price', 
+        cells: { 
+          element: 'Adj. Price/SF', 
+          subject: '-',
+          ...buildCompCells(comp => `$${comp.adjustedPricePerSF.toFixed(0)}`),
+        }, 
+        isTotal: true 
+      },
+    ];
+  }, [comps]);
 
   const renderGrid = (columns: GridColumn[], rows: GridRow[]) => (
-    <div className="overflow-x-auto">
-      <table className="w-full text-sm border-collapse">
+    <div className="overflow-hidden rounded border border-slate-200">
+      <table className="w-full text-[10px] border-collapse">
         <thead>
           <tr className="bg-slate-800 text-white">
             {columns.map((col) => (
               <th 
                 key={col.key}
-                className={`px-3 py-2.5 font-semibold text-${col.align || 'left'}`}
+                className={`px-2 py-1.5 font-semibold text-${col.align || 'left'}`}
                 style={{ width: col.width }}
               >
                 {col.label}
@@ -174,15 +193,15 @@ export const AnalysisGridPage: React.FC<AnalysisGridPageProps> = ({
             <tr 
               key={row.id}
               className={`
-                border-b border-light-border 
-                ${row.isTotal ? 'bg-surface-3 font-semibold' : 'hover:bg-surface-2'}
-                ${isEditing ? 'cursor-pointer' : ''}
+                border-b border-slate-200 
+                ${row.isTotal ? 'bg-slate-100 font-semibold' : rowIndex % 2 === 0 ? 'bg-white' : 'bg-slate-50'}
+                ${isEditing ? 'cursor-pointer hover:bg-sky-50' : ''}
               `}
             >
               {columns.map((col, colIndex) => (
                 <td 
                   key={col.key}
-                  className={`px-3 py-2 text-${col.align || 'left'} ${
+                  className={`px-2 py-1 text-${col.align || 'left'} ${
                     col.key === 'element' ? 'font-medium text-slate-700' : 'text-slate-600'
                   }`}
                   onClick={() => isEditing && onCellClick?.(row.id, rowIndex, colIndex)}
@@ -197,77 +216,62 @@ export const AnalysisGridPage: React.FC<AnalysisGridPageProps> = ({
     </div>
   );
 
+  // Get sidebar label from sectionId
+  const getSidebarLabel = () => {
+    if (!sectionId) return 'ANALYSIS';
+    const labelMap: Record<string, string> = {
+      'sales-comparison': 'SALES',
+      'income-approach': 'INCOME',
+      'cost-approach': 'COST',
+    };
+    return labelMap[sectionId] || 'ANALYSIS';
+  };
+
   return (
-    <div className="w-full h-full bg-white flex flex-col">
-      {/* Page header */}
-      {title && (
-        <div className="px-12 pt-10 pb-4 border-b border-light-border">
-          <div className="flex items-center justify-between">
-            <h2 
-              className={`text-xl font-bold text-slate-800 ${
-                isEditing ? 'cursor-pointer hover:bg-surface-2 rounded px-2 -mx-2' : ''
+    <ReportPageBase
+      title={title || 'Analysis Grid'}
+      sidebarLabel={getSidebarLabel()}
+      pageNumber={pageNumber}
+      sectionNumber={6}
+      sectionTitle="VALUATION"
+      contentPadding="p-10"
+    >
+      {/* Narrative content before grid */}
+      {narrativeBlocks.length > 0 && (
+        <div className="mb-3">
+          {narrativeBlocks.map((block) => (
+            <div 
+              key={block.id}
+              className={`text-xs text-slate-700 leading-relaxed mb-2 ${
+                isEditing ? 'cursor-pointer hover:bg-slate-50 rounded p-1 -m-1' : ''
               }`}
-              onClick={() => isEditing && onContentClick?.(`${sectionId}-title`)}
+              onClick={() => isEditing && onContentClick?.(block.id)}
+              dangerouslySetInnerHTML={
+                typeof block.content === 'string' 
+                  ? { __html: renderReportContent(block.content) }
+                  : undefined
+              }
             >
-              {title}
-            </h2>
-            {pageNumber && (
-              <span className="text-sm text-slate-400">Page {pageNumber}</span>
-            )}
-          </div>
+              {typeof block.content !== 'string' && null}
+            </div>
+          ))}
         </div>
       )}
 
-      {/* Content area */}
-      <div className="flex-1 px-12 py-6 overflow-auto">
-        {/* Narrative content before grid */}
-        {narrativeBlocks.length > 0 && (
-          <div className="mb-6">
-            {narrativeBlocks.map((block) => (
-              <div 
-                key={block.id}
-                className={`text-sm text-slate-700 leading-relaxed mb-4 ${
-                  isEditing ? 'cursor-pointer hover:bg-surface-2 rounded p-1 -m-1' : ''
-                }`}
-                style={{ lineHeight: '1.7' }}
-                onClick={() => isEditing && onContentClick?.(block.id)}
-                dangerouslySetInnerHTML={
-                  typeof block.content === 'string' 
-                    ? { __html: renderReportContent(block.content) }
-                    : undefined
-                }
-              >
-                {typeof block.content !== 'string' && null}
-              </div>
-            ))}
-          </div>
-        )}
-
-        {/* Comparison Grid */}
-        <div 
-          className={`rounded-lg border border-light-border overflow-hidden ${
-            isEditing ? 'ring-2 ring-transparent hover:ring-sky-200' : ''
-          }`}
-          onClick={() => isEditing && gridBlock && onContentClick?.(gridBlock.id)}
-        >
-          {renderGrid(defaultColumns, sampleRows)}
-        </div>
-
-        {/* Grid legend/notes */}
-        <div className="mt-4 text-xs text-slate-500">
-          <p>Note: Adjustments are made to the comparable properties to account for differences from the subject property.</p>
-        </div>
+      {/* Comparison Grid */}
+      <div 
+        className={`${isEditing ? 'ring-2 ring-transparent hover:ring-sky-200 rounded' : ''}`}
+        onClick={() => isEditing && gridBlock && onContentClick?.(gridBlock.id)}
+      >
+        {renderGrid(defaultColumns, sampleRows)}
       </div>
 
-      {/* Page number (if no title shown) */}
-      {!title && pageNumber && (
-        <div className="px-12 py-4 text-right">
-          <span className="text-sm text-slate-400">Page {pageNumber}</span>
-        </div>
-      )}
-    </div>
+      {/* Grid legend/notes */}
+      <div className="mt-3 text-[9px] text-slate-500">
+        <p>Note: Adjustments are made to comparable properties to account for differences from the subject.</p>
+      </div>
+    </ReportPageBase>
   );
 };
 
 export default AnalysisGridPage;
-

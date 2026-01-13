@@ -14,6 +14,7 @@
  */
 
 import React from 'react';
+import { ReportPageBase } from './ReportPageBase';
 
 interface ZoningData {
   zoningCode?: string;
@@ -77,26 +78,14 @@ export const ZoningExhibitPage: React.FC<ZoningExhibitPageProps> = ({
   const conformance = getConformanceInfo(conformanceStatus);
 
   return (
-    <div
-      className="bg-white shadow-lg overflow-hidden"
-      style={{
-        width: '8.5in',
-        minHeight: '11in',
-        padding: '0.5in',
-        boxSizing: 'border-box',
-      }}
+    <ReportPageBase
+      title="Zoning Analysis"
+      sidebarLabel="ZONE"
+      pageNumber={pageNumber}
+      sectionNumber={2}
+      sectionTitle="PROPERTY"
+      contentPadding="p-10"
     >
-      {/* Page Header */}
-      <div className="flex items-center justify-between mb-6 pb-3 border-b-2 border-slate-200">
-        <div>
-          <h2 className="text-xl font-bold text-slate-800">Zoning Analysis</h2>
-          <p className="text-sm text-slate-500">{propertyAddress}</p>
-        </div>
-        {pageNumber && (
-          <span className="text-sm text-slate-400">Page {pageNumber}</span>
-        )}
-      </div>
-
       {/* Zoning Designation Header */}
       <div className="mb-6 p-4 bg-slate-50 rounded-lg">
         <div className="flex items-center justify-between">
@@ -279,7 +268,7 @@ export const ZoningExhibitPage: React.FC<ZoningExhibitPageProps> = ({
       <div className="mt-auto pt-4 text-center text-xs text-slate-400 border-t border-slate-100">
         <p>Zoning Analysis - {zoningCode || 'N/A'} - {propertyAddress}</p>
       </div>
-    </div>
+    </ReportPageBase>
   );
 };
 

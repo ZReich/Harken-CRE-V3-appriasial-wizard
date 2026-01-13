@@ -2,6 +2,8 @@ import React from 'react';
 import { MapPin } from 'lucide-react';
 import type { MapData } from '../../../../types';
 import { MARKER_COLORS } from '../../../../services/mapGenerationService';
+import { ReportPageBase } from './ReportPageBase';
+import { sampleAppraisalData } from '../../../review/data/sampleAppraisalData';
 
 interface ComparisonGridPageProps {
   approachType: 'sales' | 'income' | 'cost';
@@ -29,102 +31,58 @@ interface CompGridData {
   totalAdjustmentRow?: boolean;
 }
 
-// Default data for demonstration
-const DEFAULT_SALES_DATA: CompGridData = {
-  subject: {
-    address: '6907 Entryway Drive',
-    salePrice: '-',
-    pricePerSF: '-',
-    propertyRights: 'Fee Simple',
-    financing: '-',
-    conditionsOfSale: '-',
-    marketConditions: '-',
-    location: 'Good',
-    siteSize: '1.5 AC',
-    buildingSize: '10,000 SF',
-    yearBuilt: '2010',
-    condition: 'Good',
-  },
-  comparables: [
-    {
-      id: 'comp-1',
-      label: 'Sale 1',
+// Transform sample data into grid format
+function getSampleGridData(): CompGridData {
+  const sample = sampleAppraisalData;
+  
+  return {
+    subject: {
+      address: sample.property.fullAddress,
+      salePrice: '-',
+      pricePerSF: '-',
+      propertyRights: 'Fee Simple',
+      financing: '-',
+      conditionsOfSale: '-',
+      marketConditions: '-',
+      location: 'Subject',
+      siteSize: `${sample.site.landArea} AC`,
+      buildingSize: `${sample.improvements.grossBuildingArea.toLocaleString()} SF`,
+      yearBuilt: String(sample.improvements.yearBuilt),
+      condition: sample.improvements.condition,
+    },
+    comparables: sample.comparables.map((comp, index) => ({
+      id: comp.id,
+      label: `Sale ${index + 1}`,
       data: {
-        address: '123 Industrial Way',
-        salePrice: '$450,000',
-        pricePerSF: '$125/SF',
+        address: comp.address,
+        salePrice: `$${comp.salePrice.toLocaleString()}`,
+        pricePerSF: `$${comp.pricePerSF.toFixed(2)}/SF`,
         propertyRights: 'Fee Simple',
-        financing: 'Cash',
+        financing: index % 2 === 0 ? 'Cash' : 'Conventional',
         conditionsOfSale: 'Arms Length',
         marketConditions: '0%',
-        location: 'Similar',
-        siteSize: '1.2 AC',
-        buildingSize: '9,500 SF',
-        yearBuilt: '2008',
+        location: comp.adjustments.location === 0 ? 'Similar' : 
+                  comp.adjustments.location > 0 ? 'Inferior' : 'Superior',
+        siteSize: 'Similar',
+        buildingSize: `${comp.buildingSize.toLocaleString()} SF`,
+        yearBuilt: String(comp.yearBuilt),
         condition: 'Good',
       },
       adjustments: {
-        location: 0,
-        siteSize: 2500,
-        buildingSize: 5000,
-        yearBuilt: -2500,
-        condition: 0,
+        location: Math.round(comp.salePrice * (comp.adjustments.location / 100)),
+        siteSize: Math.round(comp.salePrice * (comp.adjustments.size / 100)),
+        buildingSize: 0,
+        yearBuilt: Math.round(comp.salePrice * (comp.adjustments.age / 100)),
+        condition: Math.round(comp.salePrice * (comp.adjustments.condition / 100)),
       },
-    },
-    {
-      id: 'comp-2',
-      label: 'Sale 2',
-      data: {
-        address: '456 Commerce Blvd',
-        salePrice: '$425,000',
-        pricePerSF: '$118/SF',
-        propertyRights: 'Fee Simple',
-        financing: 'Conventional',
-        conditionsOfSale: 'Arms Length',
-        marketConditions: '+2%',
-        location: 'Superior',
-        siteSize: '2.0 AC',
-        buildingSize: '11,000 SF',
-        yearBuilt: '2012',
-        condition: 'Average',
-      },
-      adjustments: {
-        location: -15000,
-        siteSize: -5000,
-        buildingSize: -10000,
-        yearBuilt: 2500,
-        condition: 5000,
-      },
-    },
-    {
-      id: 'comp-3',
-      label: 'Sale 3',
-      data: {
-        address: '789 Business Park',
-        salePrice: '$475,000',
-        pricePerSF: '$132/SF',
-        propertyRights: 'Fee Simple',
-        financing: 'Cash',
-        conditionsOfSale: 'Arms Length',
-        marketConditions: '-1%',
-        location: 'Inferior',
-        siteSize: '1.0 AC',
-        buildingSize: '8,500 SF',
-        yearBuilt: '2015',
-        condition: 'Excellent',
-      },
-      adjustments: {
-        location: 20000,
-        siteSize: 7500,
-        buildingSize: 15000,
-        yearBuilt: -7500,
-        condition: -10000,
-      },
-    },
-  ],
-  adjustmentRows: ['location', 'siteSize', 'buildingSize', 'yearBuilt', 'condition'],
-  totalAdjustmentRow: true,
-};
+    })),
+    adjustmentRows: ['location', 'siteSize', 'buildingSize', 'yearBuilt', 'condition'],
+    totalAdjustmentRow: true,
+  };
+}
+
+// Default data from sample appraisal
+const DEFAULT_SALES_DATA: CompGridData = getSampleGridData();
 
 const ROW_LABELS: Record<string, string> = {
   address: 'Property Address',
@@ -192,25 +150,21 @@ export const ComparisonGridPage: React.FC<ComparisonGridPageProps> = ({
   const dataRows = ['address', 'salePrice', 'pricePerSF', 'propertyRights', 'financing', 'conditionsOfSale', 'marketConditions'];
   const comparisonRows = ['location', 'siteSize', 'buildingSize', 'yearBuilt', 'condition'];
 
-  return (
-    <div className="w-full h-full bg-white flex flex-col">
-      {/* Page header */}
-      <div className="px-10 pt-8 pb-4 border-b border-light-border">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-xl font-bold text-slate-800">
-              {title || `${approachType === 'sales' ? 'Sales Comparison' : approachType === 'income' ? 'Income' : 'Cost'} Approach`}
-            </h2>
-            {scenarioName && (
-              <p className="text-sm text-harken-gray-med mt-1">{scenarioName}</p>
-            )}
-          </div>
-          {pageNumber && (
-            <span className="text-sm text-harken-gray-med">Page {pageNumber}</span>
-          )}
-        </div>
-      </div>
+  const getSidebarLabel = () => {
+    if (approachType === 'sales') return 'SALES';
+    if (approachType === 'income') return 'INCOME';
+    return 'COST';
+  };
 
+  return (
+    <ReportPageBase
+      title={title || `${approachType === 'sales' ? 'Sales Comparison' : approachType === 'income' ? 'Income' : 'Cost'} Approach`}
+      sidebarLabel={getSidebarLabel()}
+      pageNumber={pageNumber}
+      sectionNumber={6}
+      sectionTitle="VALUATION"
+      contentPadding="p-10"
+    >
       {/* Map Section - Display above grid if mapData is provided */}
       {mapData && mapData.imageUrl && (
         <div className="px-10 pt-4 pb-2">
@@ -370,27 +324,27 @@ export const ComparisonGridPage: React.FC<ComparisonGridPageProps> = ({
             <div className="text-center">
               <div className="text-xs text-harken-gray-med uppercase mb-1">Low</div>
               <div className="text-lg font-semibold text-slate-800">
-                $400,000
+                ${(sampleAppraisalData.valuation.salesComparisonValue * 0.95).toLocaleString(undefined, { maximumFractionDigits: 0 })}
               </div>
             </div>
             <div className="flex-1 h-px bg-slate-300" />
             <div className="text-center">
               <div className="text-xs text-harken-gray-med uppercase mb-1">Indicated Value</div>
               <div className="text-2xl font-bold text-sky-600">
-                $450,000
+                ${sampleAppraisalData.valuation.salesComparisonValue.toLocaleString()}
               </div>
             </div>
             <div className="flex-1 h-px bg-slate-300" />
             <div className="text-center">
               <div className="text-xs text-harken-gray-med uppercase mb-1">High</div>
               <div className="text-lg font-semibold text-slate-800">
-                $490,000
+                ${(sampleAppraisalData.valuation.salesComparisonValue * 1.05).toLocaleString(undefined, { maximumFractionDigits: 0 })}
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
+    </ReportPageBase>
   );
 };
 

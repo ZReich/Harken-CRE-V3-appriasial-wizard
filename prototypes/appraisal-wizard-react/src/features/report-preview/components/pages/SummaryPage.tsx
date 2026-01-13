@@ -1,5 +1,6 @@
 import React from 'react';
 import type { ContentBlock } from '../../../../types';
+import { ReportPageBase } from './ReportPageBase';
 
 interface SummaryPageProps {
   content: ContentBlock[];
@@ -59,7 +60,6 @@ export const SummaryPage: React.FC<SummaryPageProps> = ({
     { label: 'Property Type', value: summaryData?.propertyType || 'Not Specified' },
     { label: 'Property Subtype', value: summaryData?.propertySubtype || 'N/A' },
     { label: 'Tax ID / Parcel Number', value: summaryData?.taxId || 'Not Specified' },
-    { label: 'Legal Description', value: summaryData?.legalDescription || 'Not Specified' },
   ];
 
   const siteRows: SummaryRow[] = [
@@ -73,8 +73,8 @@ export const SummaryPage: React.FC<SummaryPageProps> = ({
   ];
 
   const renderTableSection = (sectionTitle: string, rows: SummaryRow[]) => (
-    <div className="mb-6">
-      <h4 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">
+    <div className="mb-4">
+      <h4 className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">
         {sectionTitle}
       </h4>
       <table className="w-full">
@@ -82,15 +82,15 @@ export const SummaryPage: React.FC<SummaryPageProps> = ({
           {rows.map((row, index) => (
             <tr 
               key={index} 
-              className={`border-b border-light-border ${
-                isEditing ? 'cursor-pointer hover:bg-surface-2' : ''
+              className={`border-b border-slate-200 ${
+                isEditing ? 'cursor-pointer hover:bg-slate-50' : ''
               }`}
               onClick={() => isEditing && onContentClick?.(`summary-${row.label}`)}
             >
-              <td className="py-2.5 pr-4 text-sm text-slate-600 w-1/3">
+              <td className="py-1.5 pr-4 text-xs text-slate-600 w-1/3">
                 {row.label}
               </td>
-              <td className={`py-2.5 text-sm ${
+              <td className={`py-1.5 text-xs ${
                 row.emphasized ? 'font-semibold text-slate-900' : 'text-slate-800'
               }`}>
                 {row.value}
@@ -103,82 +103,73 @@ export const SummaryPage: React.FC<SummaryPageProps> = ({
   );
 
   return (
-    <div className="w-full h-full bg-white flex flex-col">
-      {/* Page header */}
-      <div className="px-16 pt-12 pb-4 border-b border-light-border">
-        <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold text-slate-800">
-            {title || 'Summary of Appraisal'}
-          </h2>
-          {pageNumber && (
-            <span className="text-sm text-slate-400">Page {pageNumber}</span>
-          )}
-        </div>
-      </div>
+    <ReportPageBase
+      title={title || 'Summary of Appraisal'}
+      sidebarLabel="SUM"
+      pageNumber={pageNumber}
+      sectionNumber={1}
+      sectionTitle="SUMMARY"
+      contentPadding="p-10"
+    >
+      {renderTableSection('Property Identification', identificationRows)}
+      {renderTableSection('Site Information', siteRows)}
+      {renderTableSection('Key Dates', dateRows)}
 
-      {/* Content */}
-      <div className="flex-1 px-16 py-8 overflow-auto">
-        {renderTableSection('Property Identification', identificationRows)}
-        {renderTableSection('Site Information', siteRows)}
-        {renderTableSection('Key Dates', dateRows)}
-
-        {/* Scenario & Approaches */}
-        {summaryData?.scenarios && summaryData.scenarios.length > 0 && (
-          <div className="mb-6">
-            <h4 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">
-              Valuation Scenarios
-            </h4>
-            <div className="space-y-3">
-              {summaryData.scenarios.map((scenario, index) => (
-                <div key={index} className="bg-surface-2 rounded-lg p-4">
-                  <div className="font-medium text-slate-800 mb-2">{scenario.name}</div>
-                  <div className="flex flex-wrap gap-2">
-                    {scenario.approaches.map((approach, i) => {
-                      const value = scenario.approachValues?.[approach];
-                      const weight = summaryData.reconciliationWeights?.[approach];
-                      return (
-                        <div 
-                          key={i}
-                          className="px-3 py-2 bg-sky-100/30 text-sky-700 text-sm rounded-lg"
-                        >
-                          <div className="font-medium">{approach}</div>
-                          {value != null && value > 0 && (
-                            <div className="text-xs mt-1">
-                              ${value.toLocaleString()}
-                              {weight != null && weight > 0 && (
-                                <span className="text-sky-500 ml-1">({weight}%)</span>
-                              )}
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        )}
-
-        {/* Value Conclusions */}
-        <div className="mb-6">
-          <h4 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">
-            Value Conclusions
+      {/* Scenario & Approaches */}
+      {summaryData?.scenarios && summaryData.scenarios.length > 0 && (
+        <div className="mb-4">
+          <h4 className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">
+            Valuation Scenarios
           </h4>
-          <div className="bg-gradient-to-r from-slate-50 to-slate-100 rounded-lg p-6 text-center">
-            <p className="text-sm text-slate-500 mb-2">Final Market Value Estimate</p>
-            <p className="text-4xl font-bold text-slate-900">
-              {summaryData?.finalValueFormatted || (summaryData?.finalValue 
-                ? `$${summaryData.finalValue.toLocaleString()}` 
-                : 'To be determined')}
-            </p>
-            <p className="text-sm text-slate-500 mt-2">As of Effective Date</p>
+          <div className="space-y-2">
+            {summaryData.scenarios.map((scenario, index) => (
+              <div key={index} className="bg-slate-50 rounded-lg p-3">
+                <div className="font-medium text-slate-800 text-xs mb-1.5">{scenario.name}</div>
+                <div className="flex flex-wrap gap-1.5">
+                  {scenario.approaches.map((approach, i) => {
+                    const value = scenario.approachValues?.[approach];
+                    const weight = summaryData.reconciliationWeights?.[approach];
+                    return (
+                      <div 
+                        key={i}
+                        className="px-2 py-1.5 bg-sky-100/50 text-sky-700 text-[10px] rounded"
+                      >
+                        <div className="font-medium">{approach}</div>
+                        {value != null && value > 0 && (
+                          <div className="mt-0.5">
+                            ${value.toLocaleString()}
+                            {weight != null && weight > 0 && (
+                              <span className="text-sky-500 ml-0.5">({weight}%)</span>
+                            )}
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            ))}
           </div>
         </div>
+      )}
+
+      {/* Value Conclusions */}
+      <div className="mb-4">
+        <h4 className="text-[10px] font-semibold text-slate-500 uppercase tracking-wider mb-2">
+          Value Conclusions
+        </h4>
+        <div className="bg-gradient-to-r from-slate-50 to-slate-100 rounded-lg p-4 text-center">
+          <p className="text-[10px] text-slate-500 mb-1">Final Market Value Estimate</p>
+          <p className="text-2xl font-bold text-slate-900">
+            {summaryData?.finalValueFormatted || (summaryData?.finalValue 
+              ? `$${summaryData.finalValue.toLocaleString()}` 
+              : 'To be determined')}
+          </p>
+          <p className="text-[10px] text-slate-500 mt-1">As of Effective Date</p>
+        </div>
       </div>
-    </div>
+    </ReportPageBase>
   );
 };
 
 export default SummaryPage;
-

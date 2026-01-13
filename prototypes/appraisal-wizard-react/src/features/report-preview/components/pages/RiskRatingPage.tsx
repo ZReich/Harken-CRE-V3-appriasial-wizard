@@ -10,6 +10,7 @@
 
 import React from 'react';
 import type { RiskRatingData } from '../../../../types/api';
+import { ReportPageBase } from './ReportPageBase';
 
 interface RiskRatingPageProps {
   data: RiskRatingData;
@@ -27,29 +28,29 @@ const GRADE_CONFIG: Record<string, {
   riskLevel: string;
 }> = {
   'AAA': { 
-    bg: 'bg-accent-teal-mint-light', 
-    text: 'text-accent-teal-mint', 
-    border: 'border-accent-teal-mint',
-    lightBg: 'bg-accent-teal-mint-light',
-    barColor: 'bg-accent-teal-mint',
+    bg: 'bg-emerald-100', 
+    text: 'text-emerald-700', 
+    border: 'border-emerald-400',
+    lightBg: 'bg-emerald-50',
+    barColor: 'bg-emerald-500',
     description: 'Institutional Grade - Exceptional',
     riskLevel: 'Minimal Risk'
   },
   'AA': { 
-    bg: 'bg-accent-teal-mint-light', 
-    text: 'text-accent-teal-mint', 
-    border: 'border-accent-teal-mint',
-    lightBg: 'bg-accent-teal-mint-light',
-    barColor: 'bg-accent-teal-mint',
+    bg: 'bg-emerald-100', 
+    text: 'text-emerald-700', 
+    border: 'border-emerald-400',
+    lightBg: 'bg-emerald-50',
+    barColor: 'bg-emerald-500',
     description: 'High Quality - Very Low Risk',
     riskLevel: 'Very Low Risk'
   },
   'A': { 
-    bg: 'bg-accent-teal-mint-light', 
-    text: 'text-accent-teal-mint', 
-    border: 'border-accent-teal-mint',
-    lightBg: 'bg-accent-teal-mint-light',
-    barColor: 'bg-accent-teal-mint',
+    bg: 'bg-emerald-100', 
+    text: 'text-emerald-700', 
+    border: 'border-emerald-400',
+    lightBg: 'bg-emerald-50',
+    barColor: 'bg-emerald-500',
     description: 'Upper Medium Grade',
     riskLevel: 'Low Risk'
   },
@@ -63,47 +64,47 @@ const GRADE_CONFIG: Record<string, {
     riskLevel: 'Moderate Risk'
   },
   'BB': { 
-    bg: 'bg-accent-amber-gold-light', 
-    text: 'text-accent-amber-gold', 
-    border: 'border-accent-amber-gold',
-    lightBg: 'bg-accent-amber-gold-light',
-    barColor: 'bg-accent-amber-gold',
+    bg: 'bg-amber-100', 
+    text: 'text-amber-700', 
+    border: 'border-amber-400',
+    lightBg: 'bg-amber-50',
+    barColor: 'bg-amber-500',
     description: 'Speculative - Below Investment Grade',
     riskLevel: 'Elevated Risk'
   },
   'B': { 
-    bg: 'bg-accent-amber-gold-light', 
-    text: 'text-accent-amber-gold', 
-    border: 'border-accent-amber-gold',
-    lightBg: 'bg-accent-amber-gold-light',
-    barColor: 'bg-accent-amber-gold',
+    bg: 'bg-amber-100', 
+    text: 'text-amber-700', 
+    border: 'border-amber-400',
+    lightBg: 'bg-amber-50',
+    barColor: 'bg-amber-500',
     description: 'Highly Speculative',
     riskLevel: 'High Risk'
   },
   'CCC': { 
-    bg: 'bg-accent-red-light', 
-    text: 'text-harken-error', 
-    border: 'border-harken-error/20',
-    lightBg: 'bg-accent-red-light',
-    barColor: 'bg-harken-error',
+    bg: 'bg-red-100', 
+    text: 'text-red-700', 
+    border: 'border-red-400',
+    lightBg: 'bg-red-50',
+    barColor: 'bg-red-500',
     description: 'Substantial Risk',
     riskLevel: 'Substantial Risk'
   },
   'CC': { 
-    bg: 'bg-accent-red-light', 
-    text: 'text-harken-error', 
-    border: 'border-harken-error/20',
-    lightBg: 'bg-accent-red-light',
-    barColor: 'bg-harken-error',
+    bg: 'bg-red-100', 
+    text: 'text-red-700', 
+    border: 'border-red-400',
+    lightBg: 'bg-red-50',
+    barColor: 'bg-red-500',
     description: 'Extremely Speculative',
     riskLevel: 'Very High Risk'
   },
   'C': { 
-    bg: 'bg-accent-red-light', 
-    text: 'text-harken-error', 
-    border: 'border-harken-error/20',
-    lightBg: 'bg-accent-red-light',
-    barColor: 'bg-harken-error',
+    bg: 'bg-red-100', 
+    text: 'text-red-700', 
+    border: 'border-red-400',
+    lightBg: 'bg-red-50',
+    barColor: 'bg-red-500',
     description: 'Near Default Risk',
     riskLevel: 'Extreme Risk'
   },
@@ -113,68 +114,40 @@ const GRADE_CONFIG: Record<string, {
 const DIMENSION_DETAILS: Record<string, {
   label: string;
   fullName: string;
-  description: string;
-  interpretation: string;
 }> = {
   marketVolatility: {
     label: 'Market Volatility',
     fullName: 'Market Volatility (Beta)',
-    description: 'Measures price sensitivity relative to broader real estate market movements.',
-    interpretation: 'Higher scores indicate lower volatility and more stable value characteristics.',
   },
   liquidity: {
     label: 'Liquidity Risk',
     fullName: 'Liquidity Risk Assessment',
-    description: 'Evaluates the ease of converting the asset to cash without significant price concession.',
-    interpretation: 'Higher scores indicate stronger market depth and faster potential disposition.',
   },
   incomeStability: {
     label: 'Income Stability',
-    fullName: 'Income Stability (Yield Spread)',
-    description: 'Analyzes the predictability and durability of income streams.',
-    interpretation: 'Higher scores indicate more reliable and diversified income sources.',
+    fullName: 'Income Stability',
   },
   assetQuality: {
     label: 'Asset Quality',
-    fullName: 'Asset Quality Assessment',
-    description: 'Comprehensive assessment of physical characteristics and location quality.',
-    interpretation: 'Higher scores indicate superior construction, condition, and location attributes.',
+    fullName: 'Asset Quality',
   },
 };
 
 const RATING_SCALE = ['AAA', 'AA', 'A', 'BBB', 'BB', 'B', 'CCC', 'CC', 'C'];
 
-const METHODOLOGY_DISCLOSURE = `This Investment Risk Rating employs a proprietary analytical framework that integrates multiple data sources to provide an institutional-quality risk assessment. The methodology synthesizes:
-
-• Federal Reserve economic indicators (interest rates, inflation, GDP growth)
-• Regional and local market statistics (transaction velocity, pricing trends)
-• Property-specific characteristics (age, condition, construction quality)
-• Demographic and economic data (population trends, income levels, employment)
-• Income analysis metrics (cap rate spreads, occupancy patterns)
-
-The four risk dimensions are dynamically weighted based on property type, income-producing status, and prevailing market conditions. Scores are normalized relative to Metropolitan Statistical Area (MSA) benchmarks using z-score methodology, ensuring appropriate regional context.
-
-The composite rating translates quantitative scores into a letter-grade scale modeled after fixed-income credit ratings, providing a familiar framework for institutional investors and lenders.`;
-
-const USPAP_DISCLOSURE = `PROFESSIONAL STANDARDS DISCLOSURE
-
-This Investment Risk Rating is a supplementary analytical tool developed to support the appraiser's professional judgment. It does not replace the appraiser's value conclusion or the comprehensive analysis contained elsewhere in this report.
-
-The rating methodology has been reviewed by the appraiser and determined to incorporate reasonable data sources and analytical approaches for this assignment. The model inputs and outputs have been examined for consistency with market observations and property-specific factors.
-
-This rating is provided for informational purposes and should be interpreted in conjunction with the complete appraisal analysis. The rating reflects conditions as of the effective date of the appraisal and may not reflect subsequent market changes.
-
-The appraiser certifies that the use of this analytical tool complies with the Uniform Standards of Professional Appraisal Practice (USPAP) and applicable state regulations.`;
-
 export const RiskRatingPage: React.FC<RiskRatingPageProps> = ({ data, pageNumber }) => {
   if (!data) {
     return (
-      <div className="bg-white w-[8.5in] min-h-[11in] p-[1in] shadow-lg mx-auto">
-        <h1 className="text-xl font-bold text-slate-800 border-b-2 border-[#0da1c7] pb-2 mb-6">
-          INVESTMENT RISK ANALYSIS
-        </h1>
+      <ReportPageBase
+        title="Investment Risk Analysis"
+        sidebarLabel="RISK"
+        pageNumber={pageNumber}
+        sectionNumber={5}
+        sectionTitle="ANALYSIS"
+        contentPadding="p-10"
+      >
         <p className="text-sm text-slate-500 italic">No risk rating data available.</p>
-      </div>
+      </ReportPageBase>
     );
   }
 
@@ -194,51 +167,50 @@ export const RiskRatingPage: React.FC<RiskRatingPageProps> = ({ data, pageNumber
   const weightedContributions = dimensionData.map(d => ({
     ...d,
     contribution: (d.score * d.weight / totalWeight).toFixed(1),
-    percentOfTotal: ((d.score * d.weight / totalWeight) / overallScore * 100).toFixed(0),
   }));
 
   return (
-    <div className="bg-white w-[8.5in] min-h-[11in] p-[1in] shadow-lg mx-auto relative">
-      {/* Header */}
-      <h1 className="text-xl font-bold text-slate-800 border-b-2 border-[#0da1c7] pb-2 mb-4">
-        INVESTMENT RISK ANALYSIS
-      </h1>
-
+    <ReportPageBase
+      title="Investment Risk Analysis"
+      sidebarLabel="RISK"
+      pageNumber={pageNumber}
+      sectionNumber={5}
+      sectionTitle="ANALYSIS"
+      contentPadding="p-10"
+    >
       {/* Executive Summary Box */}
-      <div className="flex gap-6 mb-6">
+      <div className="flex gap-4 mb-4">
         {/* Rating Badge */}
-        <div className={`${gradeConfig.bg} ${gradeConfig.border} border-3 rounded-xl p-5 text-center flex-shrink-0`} style={{ minWidth: '140px' }}>
-          <div className={`text-4xl font-bold ${gradeConfig.text} mb-1`}>
+        <div className={`${gradeConfig.bg} ${gradeConfig.border} border-2 rounded-lg p-3 text-center flex-shrink-0`} style={{ minWidth: '100px' }}>
+          <div className={`text-3xl font-bold ${gradeConfig.text}`}>
             {overallGrade}
           </div>
-          <div className={`text-xs font-semibold ${gradeConfig.text} uppercase tracking-wide`}>
+          <div className={`text-[10px] font-semibold ${gradeConfig.text} uppercase tracking-wide`}>
             {gradeConfig.riskLevel}
           </div>
-          <div className="text-slate-600 mt-2 text-xs">
+          <div className="text-slate-600 mt-1 text-[10px]">
             Score: {overallScore}/100
           </div>
         </div>
 
         {/* Summary Text */}
         <div className="flex-1">
-          <p className="text-sm text-slate-700 leading-relaxed mb-3">
+          <p className="text-xs text-slate-700 leading-relaxed mb-2">
             This property has been assigned an <strong>{gradeConfig.description}</strong> rating 
-            based on comprehensive analysis of market, financial, and physical risk factors. This 
-            rating provides a standardized framework for evaluating investment quality, similar to 
-            bond credit ratings used in fixed-income markets.
+            based on comprehensive analysis of market, financial, and physical risk factors.
           </p>
-          <div className="text-xs text-slate-500">
-            <strong>Rating Classification:</strong> {gradeIndex <= 2 ? 'Investment Grade - Core/Core-Plus' : 
+          <div className="text-[10px] text-slate-500">
+            <strong>Classification:</strong> {gradeIndex <= 2 ? 'Investment Grade - Core/Core-Plus' : 
               gradeIndex <= 4 ? 'Investment Grade - Value-Add' : 'Speculative Grade - Opportunistic'}
           </div>
         </div>
       </div>
 
       {/* Rating Scale Visualization */}
-      <div className="mb-6 p-3 bg-surface-2 rounded-lg">
-        <div className="flex items-center justify-between text-xs text-slate-500 mb-1.5">
+      <div className="mb-4 p-2 bg-slate-50 rounded-lg">
+        <div className="flex items-center justify-between text-[10px] text-slate-500 mb-1">
           <span>Lower Risk</span>
-          <span className="font-medium text-slate-700">Rating Scale Position</span>
+          <span className="font-medium text-slate-700">Rating Scale</span>
           <span>Higher Risk</span>
         </div>
         <div className="flex items-center gap-0.5">
@@ -248,10 +220,10 @@ export const RiskRatingPage: React.FC<RiskRatingPageProps> = ({ data, pageNumber
             return (
               <div 
                 key={grade}
-                className={`flex-1 h-6 flex items-center justify-center text-xs font-bold ${
+                className={`flex-1 h-5 flex items-center justify-center text-[10px] font-bold ${
                   isCurrent 
                     ? `${config.bg} ${config.text} ${config.border} border-2 rounded` 
-                    : `${config.lightBg} ${config.text} opacity-50`
+                    : `${config.lightBg} ${config.text} opacity-40`
                 }`}
               >
                 {grade}
@@ -262,88 +234,87 @@ export const RiskRatingPage: React.FC<RiskRatingPageProps> = ({ data, pageNumber
       </div>
 
       {/* Four-Dimension Analysis */}
-      <h2 className="text-sm font-bold text-slate-800 uppercase tracking-wide border-b border-border-muted pb-1 mb-3">
+      <h2 className="text-xs font-bold text-slate-800 uppercase tracking-wide border-b border-slate-200 pb-1 mb-2">
         Risk Dimension Analysis
       </h2>
       
-      <table className="w-full text-xs border-collapse mb-4">
+      <table className="w-full text-[10px] border-collapse mb-3">
         <thead>
-          <tr className="bg-surface-3">
-            <th className="text-left py-2 px-2 font-semibold text-slate-700 border border-light-border">
+          <tr className="bg-slate-100">
+            <th className="text-left py-1.5 px-2 font-semibold text-slate-700 border border-slate-200">
               Dimension
             </th>
-            <th className="text-center py-2 px-2 font-semibold text-slate-700 border border-light-border w-16">
+            <th className="text-center py-1.5 px-2 font-semibold text-slate-700 border border-slate-200 w-14">
               Score
             </th>
-            <th className="text-center py-2 px-2 font-semibold text-slate-700 border border-light-border w-16">
+            <th className="text-center py-1.5 px-2 font-semibold text-slate-700 border border-slate-200 w-14">
               Weight
             </th>
-            <th className="text-center py-2 px-2 font-semibold text-slate-700 border border-light-border w-20">
-              Contribution
+            <th className="text-center py-1.5 px-2 font-semibold text-slate-700 border border-slate-200 w-16">
+              Contrib.
             </th>
-            <th className="text-left py-2 px-2 font-semibold text-slate-700 border border-light-border">
-              Assessment
+            <th className="text-left py-1.5 px-2 font-semibold text-slate-700 border border-slate-200 w-20">
+              Rating
             </th>
           </tr>
         </thead>
         <tbody>
           {weightedContributions.map((dim, idx) => (
-            <tr key={dim.key} className={idx % 2 === 0 ? 'bg-surface-1' : 'bg-surface-2'}>
-              <td className="py-2 px-2 border border-light-border">
-                <div className="font-medium text-slate-800">{dim.fullName}</div>
-                <div className="text-slate-500 mt-0.5">{dim.description}</div>
+            <tr key={dim.key} className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
+              <td className="py-1.5 px-2 border border-slate-200 font-medium text-slate-800">
+                {dim.fullName}
               </td>
-              <td className="py-2 px-2 text-center border border-light-border">
-                <div className="font-bold text-slate-800 text-sm">{dim.score}</div>
-                <div className="w-full bg-surface-4 rounded-full h-1.5 mt-1">
+              <td className="py-1.5 px-2 text-center border border-slate-200">
+                <div className="font-bold text-slate-800">{dim.score}</div>
+                <div className="w-full bg-slate-200 rounded-full h-1 mt-0.5">
                   <div 
-                    className={`h-1.5 rounded-full ${
-                      dim.score >= 80 ? 'bg-accent-teal-mint' :
+                    className={`h-1 rounded-full ${
+                      dim.score >= 80 ? 'bg-emerald-500' :
                       dim.score >= 60 ? 'bg-cyan-500' :
-                      dim.score >= 40 ? 'bg-accent-amber-gold' : 'bg-harken-error'
+                      dim.score >= 40 ? 'bg-amber-500' : 'bg-red-500'
                     }`}
                     style={{ width: `${dim.score}%` }}
                   />
                 </div>
               </td>
-              <td className="py-2 px-2 text-center font-medium text-slate-700 border border-light-border">
+              <td className="py-1.5 px-2 text-center font-medium text-slate-700 border border-slate-200">
                 {(dim.weight * 100).toFixed(0)}%
               </td>
-              <td className="py-2 px-2 text-center border border-light-border">
+              <td className="py-1.5 px-2 text-center border border-slate-200">
                 <span className="font-medium text-slate-800">{dim.contribution}</span>
-                <span className="text-slate-400 ml-1">pts</span>
+                <span className="text-slate-400 ml-0.5">pts</span>
               </td>
-              <td className="py-2 px-2 border border-light-border">
-                <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${
-                  dim.score >= 80 ? 'bg-accent-teal-mint-light text-accent-teal-mint' :
+              <td className="py-1.5 px-2 border border-slate-200">
+                <span className={`inline-block px-1.5 py-0.5 rounded text-[9px] font-medium ${
+                  dim.score >= 80 ? 'bg-emerald-100 text-emerald-700' :
                   dim.score >= 60 ? 'bg-cyan-100 text-cyan-700' :
-                  dim.score >= 40 ? 'bg-accent-amber-gold-light text-accent-amber-gold' : 'bg-accent-red-light text-harken-error'
+                  dim.score >= 40 ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'
                 }`}>
                   {dim.score >= 80 ? 'Strong' :
                    dim.score >= 60 ? 'Adequate' :
-                   dim.score >= 40 ? 'Moderate Risk' : 'Elevated Risk'}
+                   dim.score >= 40 ? 'Moderate' : 'Elevated'}
                 </span>
               </td>
             </tr>
           ))}
         </tbody>
         <tfoot>
-          <tr className="bg-surface-3 font-semibold">
-            <td className="py-2 px-2 border border-light-border text-slate-800">
+          <tr className="bg-slate-100 font-semibold">
+            <td className="py-1.5 px-2 border border-slate-200 text-slate-800">
               Composite Score
             </td>
-            <td className="py-2 px-2 text-center border border-light-border text-slate-800 text-sm">
+            <td className="py-1.5 px-2 text-center border border-slate-200 text-slate-800">
               {overallScore}
             </td>
-            <td className="py-2 px-2 text-center border border-light-border text-slate-700">
+            <td className="py-1.5 px-2 text-center border border-slate-200 text-slate-700">
               100%
             </td>
-            <td className="py-2 px-2 text-center border border-light-border text-slate-800">
+            <td className="py-1.5 px-2 text-center border border-slate-200 text-slate-800">
               {overallScore} pts
             </td>
-            <td className="py-2 px-2 border border-light-border">
-              <span className={`inline-block px-2 py-0.5 rounded text-xs font-bold ${gradeConfig.bg} ${gradeConfig.text}`}>
-                {overallGrade} Rating
+            <td className="py-1.5 px-2 border border-slate-200">
+              <span className={`inline-block px-1.5 py-0.5 rounded text-[9px] font-bold ${gradeConfig.bg} ${gradeConfig.text}`}>
+                {overallGrade}
               </span>
             </td>
           </tr>
@@ -352,47 +323,43 @@ export const RiskRatingPage: React.FC<RiskRatingPageProps> = ({ data, pageNumber
 
       {/* Weight Rationale */}
       {weightingRationale && (
-        <div className="bg-harken-gray-light rounded-lg p-3 mb-4">
-          <h3 className="font-semibold text-harken-gray text-xs uppercase tracking-wide mb-1">
+        <div className="bg-slate-100 rounded-lg p-2 mb-3">
+          <h3 className="font-semibold text-slate-700 text-[10px] uppercase tracking-wide mb-0.5">
             Dynamic Weight Calibration
           </h3>
-          <p className="text-xs text-harken-gray leading-relaxed">
+          <p className="text-[10px] text-slate-600 leading-relaxed">
             {weightingRationale}
           </p>
         </div>
       )}
 
       {/* Methodology Summary */}
-      <h2 className="text-sm font-bold text-slate-800 uppercase tracking-wide border-b border-border-muted pb-1 mb-2 mt-4">
+      <h2 className="text-xs font-bold text-slate-800 uppercase tracking-wide border-b border-slate-200 pb-1 mb-2">
         Analytical Methodology
       </h2>
-      <p className="text-xs text-slate-600 leading-relaxed mb-4 whitespace-pre-line">
-        {METHODOLOGY_DISCLOSURE}
+      <p className="text-[10px] text-slate-600 leading-relaxed mb-3">
+        This Investment Risk Rating employs a proprietary analytical framework integrating Federal Reserve 
+        economic indicators, regional market statistics, property-specific characteristics, and income 
+        analysis metrics. The four risk dimensions are dynamically weighted based on property type and 
+        market conditions. Scores are normalized using MSA benchmarks with z-score methodology.
       </p>
 
       {/* USPAP Disclosure */}
-      <div className="border border-border-muted rounded-lg p-3 text-xs text-slate-600 leading-relaxed">
-        <h3 className="font-bold text-slate-700 mb-2">Professional Standards Compliance</h3>
-        {USPAP_DISCLOSURE.split('\n\n').map((paragraph, idx) => (
-          <p key={idx} className={idx > 0 ? 'mt-2' : ''}>
-            {paragraph}
-          </p>
-        ))}
+      <div className="border border-slate-200 rounded-lg p-2 text-[10px] text-slate-600 leading-relaxed">
+        <h3 className="font-bold text-slate-700 mb-1">Professional Standards Compliance</h3>
+        <p>
+          This Investment Risk Rating is a supplementary analytical tool supporting the appraiser's 
+          professional judgment. It does not replace the value conclusion or comprehensive analysis 
+          contained elsewhere in this report. The rating reflects conditions as of the effective date 
+          and complies with USPAP and applicable state regulations.
+        </p>
       </div>
 
-      {/* Footer */}
-      <div className="absolute bottom-[0.75in] left-[1in] right-[1in] flex items-center justify-between text-xs text-slate-400">
-        <span>Rating generated: {new Date(generatedDate).toLocaleDateString()}</span>
-        <span>Proprietary Risk Analysis Framework</span>
+      {/* Generated Date Footer */}
+      <div className="mt-3 text-[9px] text-slate-400 text-center">
+        Rating generated: {new Date(generatedDate).toLocaleDateString()} | Proprietary Risk Analysis Framework
       </div>
-
-      {/* Page Number */}
-      {pageNumber && (
-        <div className="absolute bottom-[0.5in] right-[1in]">
-          <span className="text-sm text-slate-400">{pageNumber}</span>
-        </div>
-      )}
-    </div>
+    </ReportPageBase>
   );
 };
 

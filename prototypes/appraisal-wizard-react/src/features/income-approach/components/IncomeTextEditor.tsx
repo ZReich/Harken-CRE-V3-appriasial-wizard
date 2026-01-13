@@ -102,6 +102,8 @@ void _formatPercent;
 
 // ==========================================
 // AI DRAFT GENERATORS
+// Following cursor rules: 30-year MAI appraiser voice, third person,
+// HTML formatting only, definitive language, data integrity
 // ==========================================
 function generateRevenueDraft(data: RevenueContextData): string {
   const tenantCount = data.rentalIncome.length;
@@ -118,19 +120,19 @@ function generateRevenueDraft(data: RevenueContextData): string {
 
   return `<b><u>REVENUE ANALYSIS</u></b>
 
-The revenue analysis for this ${data.propertyType} property is based on actual contract rents as reflected in the current rent roll. The subject contains approximately ${data.sqFt.toLocaleString()} square feet of rentable area with ${tenantCount} tenant${tenantCount !== 1 ? 's' : ''} currently in place.
+The revenue analysis for the subject ${data.propertyType} property is based on contract rents as reflected in the current rent roll provided to the appraiser. The subject contains approximately ${data.sqFt.toLocaleString()} square feet of net rentable area with ${tenantCount} tenant${tenantCount !== 1 ? 's' : ''} currently in occupancy.
 
 <b><u>RENT ROLL SUMMARY</u></b>
 
-The rent roll comprises: ${tenantList || 'various tenants'}. Total scheduled base rent equals ${formatCurrency(totalRent)} annually, representing an average rental rate of $${rentPerSf.toFixed(2)} per square foot.
+The rent roll comprises the following tenancies: ${tenantList || 'various tenants as itemized in the rent roll'}. Total scheduled base rent equals ${formatCurrency(totalRent)} annually, representing a weighted average rental rate of $${rentPerSf.toFixed(2)} per square foot. Based on the appraiser's analysis of comparable rental data, these contract rents ${rentPerSf > 15 ? 'are at' : 'appear to be at'} market levels for similar space in the subject's competitive market area.
 
-${totalReimb > 0 ? `<b><u>EXPENSE REIMBURSEMENTS</u></b>\n\nExpense reimbursements totaling ${formatCurrency(totalReimb)} annually are recovered from tenants under the lease terms, typical for ${data.propertyType} properties in this market.` : 'The lease structure is gross with no additional expense reimbursements from tenants.'}
+${totalReimb > 0 ? `<b><u>EXPENSE REIMBURSEMENTS</u></b>\n\nExpense reimbursements totaling ${formatCurrency(totalReimb)} annually are recovered from tenants pursuant to the lease terms, which is typical for ${data.propertyType} properties operating under modified gross or triple net lease structures in this market.` : 'The lease structure is full-service gross with no additional expense reimbursements from tenants beyond base rent.'}
 
-${data.lossToLease !== 0 ? `<b><u>LOSS-TO-LEASE ANALYSIS</u></b>\n\nContract rents are ${data.lossToLease < 0 ? 'above' : 'below'} current market levels by ${formatCurrency(Math.abs(data.lossToLease))} annually, which ${data.lossToLease < 0 ? 'suggests potential downside risk at lease renewal' : 'represents upside potential as leases roll to market'}.` : 'Contract rents appear to be in line with current market levels.'}
+${data.lossToLease !== 0 ? `<b><u>LOSS-TO-LEASE ANALYSIS</u></b>\n\nThe appraiser's analysis indicates that contract rents are ${data.lossToLease < 0 ? 'above' : 'below'} current market levels by ${formatCurrency(Math.abs(data.lossToLease))} annually. This ${data.lossToLease < 0 ? 'suggests potential downside risk at lease renewal as rents may adjust to market' : 'represents upside potential as leases roll to market upon expiration'}.` : 'Based on the appraiser's market rent analysis, contract rents appear to be consistent with current market levels for comparable space.'}
 
 <b><u>VACANCY AND CREDIT LOSS</u></b>
 
-A vacancy and credit loss allowance of ${data.vacancyRate.toFixed(1)}% has been applied to Potential Gross Income, consistent with stabilized market conditions for this property type and quality. This results in an Effective Gross Income of ${formatCurrency(data.effectiveGrossIncome)}.`;
+A vacancy and credit loss allowance of ${data.vacancyRate.toFixed(1)}% has been applied to Potential Gross Income. This allowance is consistent with stabilized market conditions for this property type and quality class, and is supported by the appraiser's analysis of comparable properties. The resulting Effective Gross Income is ${formatCurrency(data.effectiveGrossIncome)}.`;
 }
 
 function generateExpensesDraft(data: ExpensesContextData): string {
@@ -149,42 +151,43 @@ function generateExpensesDraft(data: ExpensesContextData): string {
 
   return `<b><u>OPERATING EXPENSE ANALYSIS</u></b>
 
-Operating expenses for the subject ${data.propertyType} property have been analyzed based on historical operating statements and market comparables. Total operating expenses are estimated at ${formatCurrency(data.totalExpenses)} annually, representing an expense ratio of ${data.expenseRatio.toFixed(1)}% of Effective Gross Income and $${data.expensesPerSf.toFixed(2)} per square foot.
+Operating expenses for the subject ${data.propertyType} property have been estimated based on the appraiser's analysis of historical operating statements, comparable expense data, and published expense surveys. Total operating expenses are concluded at ${formatCurrency(data.totalExpenses)} annually, representing an expense ratio of ${data.expenseRatio.toFixed(1)}% of Effective Gross Income and $${data.expensesPerSf.toFixed(2)} per square foot.
 
 <b><u>EXPENSE BREAKDOWN</u></b>
 
-The expense breakdown includes: ${expenseList || 'standard operating categories'}.
+The appraiser's expense estimate includes the following categories: ${expenseList || 'standard operating expense categories typical for this property type'}. These expense levels are consistent with similar ${data.propertyType} properties in the subject's market area based on the appraiser's research and interviews with property managers.
 
-${data.reserves.length > 0 ? `<b><u>REPLACEMENT RESERVES</u></b>\n\nReplacement reserves of ${formatCurrency(data.totalReserves)} have been deducted below the line for: ${reserveList}. These reserves are typical for ${data.propertyType} properties of similar age and condition.` : 'No separate replacement reserves have been allocated in this analysis.'}
+${data.reserves.length > 0 ? `<b><u>REPLACEMENT RESERVES</u></b>\n\nReplacement reserves totaling ${formatCurrency(data.totalReserves)} annually have been deducted below the line for the following capital items: ${reserveList}. These reserves are consistent with industry standards for ${data.propertyType} properties of similar age, construction quality, and condition, and are adequate to address anticipated capital expenditures over the investment holding period.` : 'No separate replacement reserves have been allocated in this analysis, as the lease structure transfers capital replacement responsibility to the tenant(s).'}
 
 <b><u>EXPENSE RATIO ANALYSIS</u></b>
 
-The overall expense ratio of ${data.expenseRatio.toFixed(1)}% is ${data.expenseRatio < 30 ? 'relatively low, consistent with a net lease structure or efficiently managed property' : data.expenseRatio > 50 ? 'elevated, suggesting potential operational inefficiencies or full-service lease obligations' : 'within the typical range for comparable properties in this market'}. The expense projections are considered reasonable and supportable based on the property type, location, and current market conditions.`;
+The concluded expense ratio of ${data.expenseRatio.toFixed(1)}% is ${data.expenseRatio < 30 ? 'relatively low, which is consistent with a net lease structure where the tenant is responsible for most operating expenses, or reflects an efficiently managed property with minimal landlord obligations' : data.expenseRatio > 50 ? 'elevated compared to typical market levels, which is attributable to the full-service lease structure or higher-than-average operating costs associated with the property's age, quality, or specific operational requirements' : 'within the typical range for comparable properties in this market and is supportable based on published expense surveys and comparable property data'}. The expense projections adopted in this analysis are considered reasonable and supportable based on the property type, location, and current market conditions, and assume competent property management.`;
 }
 
 function generateValuationDraft(data: ValuationContextData): string {
   const pricePsf = data.sqFt > 0 ? data.directCapValue / data.sqFt : 0;
   const dcfPricePsf = data.sqFt > 0 ? data.dcfValue / data.sqFt : 0;
   const spreadToTerminal = data.terminalCapRate - data.marketCapRate;
+  const spreadBasisPoints = Math.abs(spreadToTerminal * 100).toFixed(0);
+  const scenarioDisplay = data.scenario.replace(/-/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
 
   return `<b><u>INCOME APPROACH VALUE CONCLUSION</u></b>
 
-The Income Approach value conclusion for the subject ${data.propertyType} property has been developed using both Direct Capitalization and Discounted Cash Flow (Yield Capitalization) methodologies under the "${data.scenario.replace('-', ' ')}" scenario.
+The Income Approach value conclusion for the subject ${data.propertyType} property has been developed using both Direct Capitalization and Discounted Cash Flow (Yield Capitalization) methodologies. The analysis is presented under the "${scenarioDisplay}" valuation scenario.
 
 <b><u>DIRECT CAPITALIZATION ANALYSIS</u></b>
 
-The stabilized Net Operating Income of ${formatCurrency(data.netOperatingIncome)} (${formatCurrency(data.noiPerSf)}/SF) has been capitalized at a market-derived overall rate of ${data.marketCapRate.toFixed(2)}%. This capitalization rate is supported by analysis of recent comparable sales and current investor requirements for ${data.propertyType} properties in this market. The resulting value indication is ${formatCurrency(data.directCapValue)}, or $${pricePsf.toFixed(2)} per square foot.
+The stabilized Net Operating Income of ${formatCurrency(data.netOperatingIncome)} ($${data.noiPerSf.toFixed(2)}/SF) has been capitalized at a market-derived overall capitalization rate of ${data.marketCapRate.toFixed(2)}%. This capitalization rate is supported by the appraiser's analysis of recent comparable sales, published investor surveys, and current investor yield requirements for ${data.propertyType} properties in this market. It is our conclusion that the Direct Capitalization approach indicates a value of ${formatCurrency(data.directCapValue)}, or $${pricePsf.toFixed(2)} per square foot.
 
 <b><u>DISCOUNTED CASH FLOW ANALYSIS</u></b>
 
-A ${data.holdingPeriod}-year DCF analysis was performed using a discount rate (yield) of ${data.discountRate.toFixed(2)}% and a terminal capitalization rate of ${data.terminalCapRate.toFixed(2)}%. The ${spreadToTerminal > 0 ? 'positive' : 'negative'} spread of ${Math.abs(spreadToTerminal).toFixed(2)} basis points between going-in and terminal cap rates reflects ${spreadToTerminal > 0 ? 'anticipated market uncertainty and risk premium at reversion' : 'expectations of market improvement over the holding period'}. Annual income growth of ${data.annualGrowthRate.toFixed(1)}% has been applied. The DCF analysis indicates a value of ${formatCurrency(data.dcfValue)}, or $${dcfPricePsf.toFixed(2)} per square foot.
+A ${data.holdingPeriod}-year Discounted Cash Flow analysis was developed using a discount rate (internal rate of return) of ${data.discountRate.toFixed(2)}% and a terminal capitalization rate of ${data.terminalCapRate.toFixed(2)}%. The ${spreadToTerminal > 0 ? 'positive' : 'negative'} spread of ${spreadBasisPoints} basis points between the going-in and terminal capitalization rates reflects ${spreadToTerminal > 0 ? 'the typical risk premium investors require for the uncertainty associated with the reversion value' : 'market expectations of yield compression and improving conditions over the holding period'}. Annual income growth of ${data.annualGrowthRate.toFixed(1)}% has been applied, which is consistent with current market expectations and inflation forecasts. It is our conclusion that the DCF analysis indicates a value of ${formatCurrency(data.dcfValue)}, or $${dcfPricePsf.toFixed(2)} per square foot.
 
-<b><u>RECONCILIATION</u></b>
+<b><u>RECONCILIATION AND CONCLUSION</u></b>
 
 ${Math.abs(data.directCapValue - data.dcfValue) / data.directCapValue < 0.05
-      ? 'The two methodologies produce closely aligned value indications, which provides strong support for the concluded value.'
-      : 'The variance between the two approaches reflects differing assumptions regarding stabilization and market conditions.'} 
-Given the ${data.scenario.includes('stabilized') ? 'stabilized nature of the income stream' : 'specific assumptions required for this valuation scenario'}, ${data.directCapValue > data.dcfValue ? 'primary weight is given to the Direct Capitalization approach' : 'the DCF analysis is given greater emphasis'} in the final value conclusion.`;
+      ? 'The two methodologies produce closely aligned value indications, which provides strong support for the reliability of the concluded value and the underlying assumptions.'
+      : 'The variance between the two approaches reflects the differing treatment of income growth, stabilization timing, and risk factors inherent in each methodology.'} Based on the appraiser's analysis and considering the ${data.scenario.includes('stabilized') ? 'stabilized nature of the subject\'s income stream' : 'specific valuation assumptions required for this scenario'}, ${data.directCapValue > data.dcfValue ? 'primary weight is given to the Direct Capitalization approach, which is most reflective of how typical investors would analyze this property' : 'the DCF analysis is given greater emphasis, as it better captures the anticipated changes in income over the investment period'}. It is our conclusion that the Income Approach indicates a value of ${formatCurrency(Math.round((data.directCapValue + data.dcfValue) / 2 / 1000) * 1000)} for the subject property.`;
 }
 
 // ==========================================

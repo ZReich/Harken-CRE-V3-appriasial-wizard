@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import type { WizardState, ReportPage, ContentBlock, TOCEntry } from '../../../types';
+import { sampleAppraisalData } from '../../review/data/sampleAppraisalData';
 // Constants imported for potential future use
 // import { BASE_REPORT_SECTIONS, APPROACH_SECTIONS, CLOSING_SECTIONS } from '../constants';
 
@@ -921,13 +922,68 @@ function buildHBUContent(state: WizardState, type: 'as-vacant' | 'as-improved'):
   }];
 }
 
-function buildCostApproachPages(_state: WizardState, scenarioId: number): ContentBlock[][] {
+function buildCostApproachPages(state: WizardState, scenarioId: number): ContentBlock[][] {
+  // Get building data from wizard or use sample data
+  const primaryBuilding = state.improvementsInventory?.parcels?.[0]?.buildings?.[0];
+  const costOverrides = state.costApproachBuildingCostData?.[scenarioId]?.[primaryBuilding?.id || ''];
+  const sampleCost = sampleAppraisalData.costApproach;
+  const sampleImprovements = sampleAppraisalData.improvements;
+  
+  // Check if we have actual wizard data
+  const hasWizardData = primaryBuilding != null && costOverrides != null;
+  
+  // Calculate building size
+  const buildingSize = primaryBuilding?.areas?.reduce((sum, a) => sum + (a.squareFootage || 0), 0)
+    || sampleImprovements.grossBuildingArea;
+  
+  // Build cost approach data
+  const costData = hasWizardData ? {
+    landValue: state.landValuationData?.concludedLandValue || sampleCost.landValue,
+    buildingSize,
+    costPerSF: costOverrides?.baseCostPsf || sampleCost.costPerSF,
+    replacementCostNew: (costOverrides?.baseCostPsf || sampleCost.costPerSF) * buildingSize,
+    physicalDepreciation: costOverrides?.depreciationPhysical || 0,
+    functionalObsolescence: costOverrides?.depreciationFunctional || 0,
+    externalObsolescence: costOverrides?.depreciationExternal || 0,
+    entrepreneurialIncentive: costOverrides?.entrepreneurialIncentive || 0,
+    yearBuilt: primaryBuilding?.yearBuilt || sampleImprovements.yearBuilt,
+    effectiveAge: costOverrides?.effectiveAge ?? sampleImprovements.effectiveAge,
+    economicLife: costOverrides?.economicLife || sampleImprovements.remainingLife + (sampleImprovements.effectiveAge || 0),
+    condition: primaryBuilding?.condition || sampleImprovements.condition,
+  } : {
+    landValue: sampleCost.landValue,
+    buildingSize: sampleImprovements.grossBuildingArea,
+    costPerSF: sampleCost.costPerSF,
+    replacementCostNew: sampleCost.replacementCostNew,
+    physicalDepreciation: sampleCost.physicalDepreciation,
+    functionalObsolescence: sampleCost.functionalObsolescence,
+    externalObsolescence: sampleCost.externalObsolescence,
+    entrepreneurialIncentive: 0,
+    yearBuilt: sampleImprovements.yearBuilt,
+    effectiveAge: sampleImprovements.effectiveAge,
+    economicLife: sampleImprovements.remainingLife + sampleImprovements.effectiveAge,
+    condition: sampleImprovements.condition,
+  };
+  
+  // Calculate depreciated value
+  const totalDepreciation = (costData.physicalDepreciation || 0) + 
+    (costData.functionalObsolescence || 0) + 
+    (costData.externalObsolescence || 0);
+  const depreciatedCost = costData.replacementCostNew * (1 - totalDepreciation / 100);
+  const valueConclusion = costData.landValue + depreciatedCost + (costData.entrepreneurialIncentive || 0);
+  
   return [[{
     id: `cost-approach-${scenarioId}`,
     type: 'table',
     content: {
       scenarioId,
-      // Cost approach data
+      ...costData,
+      totalDepreciation,
+      depreciatedCost,
+      valueConclusion: hasWizardData ? valueConclusion : sampleCost.valueConclusion,
+      siteImprovements: state.siteImprovements || [],
+      // Flag to indicate if using sample data
+      usingSampleData: !hasWizardData,
     },
     canSplit: true,
     keepWithNext: false,
@@ -938,18 +994,76 @@ function buildCostApproachPages(_state: WizardState, scenarioId: number): Conten
 
 function buildSalesComparisonPages(state: WizardState, scenarioId: number): ContentBlock[][] {
   const salesData = state.salesComparisonData;
+  const hasWizardData = salesData?.properties && salesData.properties.length > 0;
+  
+  // Use wizard data if available, otherwise fall back to sample data
+  const comparables = hasWizardData 
+    ? salesData.properties 
+    : sampleAppraisalData.comparables;
+  
+  // Transform sample comparables to grid format if using sample data
+  const gridComparables = hasWizardData ? comparables : comparables.map(comp => ({
+    id: comp.id,
+    label: comp.name,
+    data: {
+      address: comp.address,
+      salePrice: `$${comp.salePrice.toLocaleString()}`,
+      pricePerSF: `$${comp.pricePerSF.toFixed(2)}/SF`,
+      propertyRights: 'Fee Simple',
+      financing: 'Cash/Conventional',
+      conditionsOfSale: 'Arms Length',
+      marketConditions: '0%',
+      location: 'Similar',
+      siteSize: 'Similar',
+      buildingSize: `${comp.buildingSize.toLocaleString()} SF`,
+      yearBuilt: String(comp.yearBuilt),
+      condition: 'Good',
+    },
+    adjustments: comp.adjustments,
+  }));
+  
+  // Subject data from wizard or sample
+  const subjectBuilding = state.improvementsInventory?.parcels?.[0]?.buildings?.[0];
+  const subjectData = {
+    address: state.subjectData?.propertyName || sampleAppraisalData.property.name,
+    salePrice: '-',
+    pricePerSF: '-',
+    propertyRights: 'Fee Simple',
+    financing: '-',
+    conditionsOfSale: '-',
+    marketConditions: '-',
+    location: 'Subject',
+    siteSize: state.subjectData?.siteArea 
+      ? `${state.subjectData.siteArea} ${state.subjectData.siteAreaUnit || 'acres'}`
+      : `${sampleAppraisalData.site.landArea} acres`,
+    buildingSize: subjectBuilding?.areas?.reduce((sum, a) => sum + (a.squareFootage || 0), 0)
+      ? `${subjectBuilding.areas.reduce((sum, a) => sum + (a.squareFootage || 0), 0).toLocaleString()} SF`
+      : `${sampleAppraisalData.improvements.grossBuildingArea.toLocaleString()} SF`,
+    yearBuilt: String(subjectBuilding?.yearBuilt || sampleAppraisalData.improvements.yearBuilt),
+    condition: subjectBuilding?.condition || sampleAppraisalData.improvements.condition,
+  };
+  
+  // Value conclusion from wizard or sample
+  const concludedValue = salesData?.concludedValue ?? sampleAppraisalData.valuation.salesComparisonValue;
+  const buildingSize = subjectBuilding?.areas?.reduce((sum, a) => sum + (a.squareFootage || 0), 0) 
+    || sampleAppraisalData.improvements.grossBuildingArea;
+  const concludedValuePsf = salesData?.concludedValuePsf ?? (concludedValue / buildingSize);
   
   return [[{
     id: `sales-comparison-${scenarioId}`,
     type: 'table',
     content: {
       scenarioId,
+      subject: subjectData,
+      comparables: gridComparables,
       properties: salesData?.properties || [],
       values: salesData?.values || {},
-      reconciliationText: salesData?.reconciliationText || '',
+      reconciliationText: salesData?.reconciliationText || sampleAppraisalData.salesComparison.methodology,
       analysisMode: salesData?.analysisMode || 'standard',
-      concludedValue: salesData?.concludedValue ?? null,
-      concludedValuePsf: salesData?.concludedValuePsf ?? null,
+      concludedValue,
+      concludedValuePsf,
+      // Flag to indicate if using sample data (for UI indication)
+      usingSampleData: !hasWizardData,
     },
     canSplit: true,
     keepWithNext: false,
@@ -960,6 +1074,45 @@ function buildSalesComparisonPages(state: WizardState, scenarioId: number): Cont
 
 function buildIncomeApproachPages(state: WizardState, scenarioId: number): ContentBlock[][] {
   const incomeData = state.incomeApproachData;
+  const hasWizardData = incomeData?.valuationData?.noi != null && incomeData.valuationData.noi > 0;
+  
+  // Use wizard data if available, otherwise fall back to sample data
+  const sampleIncome = sampleAppraisalData.incomeApproach;
+  
+  // Build income grid data
+  const incomeGridData = hasWizardData ? {
+    pgi: incomeData?.incomeData?.totalPotentialIncome || 0,
+    vacancy: incomeData?.incomeData?.vacancyLoss || 0,
+    egi: incomeData?.incomeData?.effectiveGrossIncome || 0,
+    expenses: {
+      propertyTaxes: incomeData?.expenseData?.realEstateTaxes || 0,
+      insurance: incomeData?.expenseData?.insurance || 0,
+      utilities: incomeData?.expenseData?.utilities || 0,
+      repairs: incomeData?.expenseData?.repairsMaintenance || 0,
+      management: incomeData?.expenseData?.management || 0,
+      reserves: incomeData?.expenseData?.reserves || 0,
+    },
+    totalExpenses: incomeData?.expenseData?.totalExpenses || 0,
+    noi: incomeData?.valuationData?.noi || 0,
+    capRate: incomeData?.valuationData?.capRate || 0,
+    indicatedValue: incomeData?.valuationData?.indicatedValue || 0,
+  } : {
+    pgi: sampleIncome.potentialGrossIncome,
+    vacancy: Math.round(sampleIncome.potentialGrossIncome * (sampleIncome.vacancyRate / 100)),
+    egi: sampleIncome.effectiveGrossIncome,
+    expenses: {
+      propertyTaxes: Math.round(sampleIncome.operatingExpenses * 0.45),
+      insurance: Math.round(sampleIncome.operatingExpenses * 0.17),
+      utilities: Math.round(sampleIncome.operatingExpenses * 0.13),
+      repairs: Math.round(sampleIncome.operatingExpenses * 0.25),
+      management: Math.round(sampleIncome.effectiveGrossIncome * 0.05),
+      reserves: Math.round(sampleIncome.operatingExpenses * 0.10),
+    },
+    totalExpenses: sampleIncome.operatingExpenses,
+    noi: sampleIncome.netOperatingIncome,
+    capRate: sampleIncome.capRate,
+    indicatedValue: sampleIncome.valueConclusion,
+  };
   
   // Extract lease abstractions from rental income for dedicated exhibit
   const leaseAbstractions = incomeData?.incomeData?.rentalIncome
@@ -972,9 +1125,13 @@ function buildIncomeApproachPages(state: WizardState, scenarioId: number): Conte
     content: {
       scenarioId,
       incomeData,
+      incomeGridData,
+      methodology: sampleIncome.methodology,
       // Include narratives for PDF export
       rentCompNotes: incomeData?.rentCompNotes || '',
       expenseCompNotes: incomeData?.expenseCompNotes || '',
+      // Flag to indicate if using sample data
+      usingSampleData: !hasWizardData,
     },
     canSplit: true,
     keepWithNext: false,

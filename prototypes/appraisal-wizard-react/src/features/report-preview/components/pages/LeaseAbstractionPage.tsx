@@ -16,6 +16,7 @@
 
 import React from 'react';
 import type { LeaseAbstractionPageData } from '../../../review/types';
+import { ReportPageBase } from './ReportPageBase';
 
 interface LeaseAbstractionPageProps {
   data: LeaseAbstractionPageData;
@@ -147,28 +148,14 @@ export const LeaseAbstractionPage: React.FC<LeaseAbstractionPageProps> = ({
   const leaseTerm = calculateLeaseTerm(leaseStartDate, leaseEndDate);
 
   return (
-    <div
-      className="bg-white shadow-lg overflow-hidden"
-      style={{
-        width: '8.5in',
-        minHeight: '11in',
-        padding: '0.5in',
-        boxSizing: 'border-box',
-      }}
+    <ReportPageBase
+      title="Lease Abstraction"
+      sidebarLabel="LEASE"
+      pageNumber={pageNumber}
+      sectionNumber={6}
+      sectionTitle="INCOME"
+      contentPadding="p-10"
     >
-      {/* Page Header */}
-      <div className="flex items-center justify-between mb-6 pb-3 border-b-2 border-slate-200">
-        <div>
-          <h2 className="text-xl font-bold text-slate-800">
-            Lease Abstraction
-          </h2>
-          <p className="text-sm text-slate-500">{scenarioName} - Income Approach</p>
-        </div>
-        {pageNumber && (
-          <span className="text-sm text-slate-400">Page {pageNumber}</span>
-        )}
-      </div>
-
       {/* Tenant Header */}
       <div className="mb-6 p-4 bg-slate-50 rounded-lg">
         <div className="flex items-start justify-between">
@@ -364,7 +351,7 @@ export const LeaseAbstractionPage: React.FC<LeaseAbstractionPageProps> = ({
           Lease Abstraction - {tenantName} - {leaseType} Lease
         </p>
       </div>
-    </div>
+    </ReportPageBase>
   );
 };
 

@@ -64,8 +64,8 @@ export function AddendaPage({ selectedElement, onSelectElement }: AddendaPagePro
   return (
     <div className="bg-surface-1 shadow-lg rounded-lg overflow-hidden" style={{ minHeight: '11in', width: '8.5in' }}>
       <div className="grid grid-cols-[80px_1fr]" style={{ minHeight: '11in' }}>
-        {/* Green Sidebar */}
-        <div className="bg-accent-teal-mint text-white flex items-center justify-center relative">
+        {/* Teal Sidebar - matches report theme */}
+        <div className="text-white flex items-center justify-center relative" style={{ backgroundColor: '#0da1c7' }}>
           <div className="absolute top-8 text-center">
             <span className="text-xs font-bold tracking-wider">11</span>
           </div>
@@ -80,7 +80,7 @@ export function AddendaPage({ selectedElement, onSelectElement }: AddendaPagePro
         {/* Main Content */}
         <div className="p-10 relative">
           {/* Section Badge */}
-          <div className="absolute top-2 right-2 bg-accent-teal-mint text-white px-4 py-2 rounded text-xs font-semibold">
+          <div className="absolute top-2 right-2 text-white px-4 py-2 rounded text-xs font-semibold" style={{ backgroundColor: '#0da1c7' }}>
             ADDENDA
           </div>
 
@@ -100,11 +100,11 @@ export function AddendaPage({ selectedElement, onSelectElement }: AddendaPagePro
           ) : (
             <>
               {/* Summary */}
-              <div className="bg-accent-teal-mint-light border border-accent-teal-mint rounded-lg p-4 mb-6">
+              <div className="rounded-lg p-4 mb-6" style={{ backgroundColor: 'rgba(13, 161, 199, 0.1)', border: '1px solid #0da1c7' }}>
                 <div className="flex items-center justify-between">
                   <div>
-                    <span className="text-accent-teal-mint font-semibold">{includedCount}</span>
-                    <span className="text-accent-teal-mint text-sm ml-1">
+                    <span className="font-semibold" style={{ color: '#0da1c7' }}>{includedCount}</span>
+                    <span className="text-sm ml-1" style={{ color: '#0da1c7' }}>
                       of {documents.length} documents included in report
                     </span>
                   </div>
@@ -188,9 +188,10 @@ function DocumentRow({ document, isSelected, onSelect, onToggleInclude }: Docume
           }}
           className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-colors ${
             isIncluded 
-              ? 'bg-accent-teal-mint border-accent-teal-mint text-white' 
+              ? 'text-white' 
               : 'bg-surface-1 border-light-border text-harken-gray-med-lt hover:border-harken-gray-med'
           }`}
+          style={isIncluded ? { backgroundColor: '#0da1c7', borderColor: '#0da1c7' } : undefined}
         >
           {isIncluded && <Check className="w-4 h-4" />}
         </button>

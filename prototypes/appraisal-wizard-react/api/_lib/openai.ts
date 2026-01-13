@@ -168,26 +168,31 @@ FORMATTING:
 
 Write 2 paragraphs, approximately 150-175 words.`,
 
-  site_description: (ctx) => `Write a professional site description for an appraisal report.
+  site_description: (ctx) => `Write the Site Description section of an appraisal report.
 
+SITE DATA (from appraiser's inspection):
 Site Size: ${ctx.siteData?.siteSize || 'Not specified'}
 Shape: ${ctx.siteData?.shape || 'Not specified'}
 Topography: ${ctx.siteData?.topography || 'Not specified'}
 Utilities: ${ctx.siteData?.utilities || 'Not specified'}
 Zoning: ${ctx.siteData?.zoning || 'Not specified'}
 
-Include:
-- Physical characteristics (size, shape, topography)
-- Utility availability and adequacy
-- Access and frontage
-- Easements and encumbrances (general statement)
-- Environmental observations (general disclaimer)
-- Site suitability conclusion
+WRITING REQUIREMENTS:
+1. Begin with: <b><u>SITE DESCRIPTION</u></b>
+2. Write as a 30-year MAI-designated appraiser in third person
+3. Cover: physical characteristics (size, shape, topography), utility availability and adequacy, access and frontage, easements and encumbrances (general statement), environmental observations (general disclaimer), site suitability conclusion
+4. Use definitive language throughout
+5. Only describe data provided — do not fabricate details
+
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for headers
+- Flowing narrative paragraphs — no bullet points or markdown
 
 Write 2-3 paragraphs, approximately 150-200 words.`,
 
-  hbu_analysis: (ctx) => `Write a professional Highest and Best Use analysis conclusion for an appraisal report.
+  hbu_analysis: (ctx) => `Write the Highest and Best Use Analysis Conclusion section of an appraisal report.
 
+PROPERTY DATA:
 Property Type: ${ctx.propertyType || 'Commercial'}
 Subtype: ${ctx.propertySubtype || 'Not specified'}
 Zoning: ${ctx.siteData?.zoning || 'Not specified'}
@@ -195,184 +200,224 @@ Site Size: ${ctx.siteData?.siteSize || 'Not specified'}
 Building Size: ${ctx.improvementData?.buildingSize || 'Not specified'}
 Condition: ${ctx.improvementData?.condition || 'Not specified'}
 
-Write conclusions for both:
-1. Highest and Best Use As Vacant - summarizing the four tests (legally permissible, physically possible, financially feasible, maximally productive)
-2. Highest and Best Use As Improved - current use analysis
+WRITING REQUIREMENTS:
+1. Begin with: <b><u>HIGHEST AND BEST USE CONCLUSION</u></b>
+2. Write as a 30-year MAI-designated appraiser in third person
+3. Address both: HBU As Vacant (summarizing the four tests), HBU As Improved (current use analysis)
+4. Use definitive language — "it is our conclusion that" not "it may be concluded that"
+5. Be conclusive about the highest and best use determination
 
-Write 2-3 paragraphs, approximately 200-250 words. Be conclusive about the highest and best use determination.`,
-
-  hbu_legally_permissible: (ctx) => `Write the "Legally Permissible Uses" section of a Highest and Best Use analysis as a 30-year MAI appraiser would.
-
-PROPERTY DATA:
-- Zoning Classification: ${ctx.siteData?.zoning || 'Not specified'}
-- Property Type: ${ctx.propertyType || 'Commercial'}
-- Location: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
-- County: ${ctx.siteData?.county || 'Not specified'}
-
-Write a professional analysis addressing:
-1. Current zoning designation and permitted uses by right
-2. Conditional or special exception uses available
-3. Any deed restrictions, easements, or private covenants identified
-4. Compliance status of current improvements (conforming/non-conforming)
-
-Conclude definitively with legally permissible uses. Use proper appraisal terminology. Write 2 paragraphs, approximately 150 words.`,
-
-  hbu_physically_possible: (ctx) => `Write the "Physically Possible Uses" section of a Highest and Best Use analysis as a 30-year MAI appraiser would.
-
-SITE DATA:
-- Site Area: ${ctx.siteData?.siteSize || 'Not specified'}
-- Shape: ${ctx.siteData?.shape || 'Not specified'}
-- Topography: ${ctx.siteData?.topography || 'Not specified'}
-- Utilities: ${ctx.siteData?.utilities || 'Not specified'}
-- Flood Zone: Not specified
-- Frontage/Access: Adequate
-
-Write a professional analysis addressing:
-1. Site size adequacy for various development types
-2. Physical characteristics (shape, topography, soil conditions)
-3. Utility availability and capacity
-4. Flood zone implications
-5. Access and visibility considerations
-
-Conclude with physically possible uses given site constraints. Use proper appraisal terminology. Write 2 paragraphs, approximately 150 words.`,
-
-  hbu_financially_feasible: (ctx) => `Write the "Financially Feasible Uses" section of a Highest and Best Use analysis as a 30-year MAI appraiser would.
-
-MARKET DATA:
-- Property Type: ${ctx.propertyType || 'Commercial'}
-- Submarket Vacancy: ${ctx.marketData?.vacancyRate || 'Not specified'}
-- Market Trend: ${ctx.marketData?.marketTrend || 'Stable'}
-- Asking Rent: ${ctx.marketData?.rentalRate || 'Not specified'}
-- Cap Rate Range: ${ctx.marketData?.capRate || 'Not specified'}
-
-Write a professional analysis addressing:
-1. Current market demand for legally permissible and physically possible uses
-2. Supply/demand dynamics and absorption trends
-3. Achievable rents or sale prices relative to development costs
-4. Required returns and market cap rates
-5. Development timing considerations
-
-Conclude which uses would generate positive residual land value or adequate return. Use proper appraisal terminology including references to "residual land value," "development pro forma," and "market-derived returns." Write 2 paragraphs, approximately 150 words.`,
-
-  hbu_maximally_productive: (ctx) => `Write the "Maximally Productive Use" conclusion for Highest and Best Use As Vacant as a 30-year MAI appraiser would.
-
-SUMMARY DATA:
-- Property Type Context: ${ctx.propertyType || 'Commercial'}
-- Zoning: ${ctx.siteData?.zoning || 'Not specified'}
-- Site Size: ${ctx.siteData?.siteSize || 'Not specified'}
-- Location: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
-- Market Conditions: ${ctx.marketData?.marketTrend || 'Stable'}
-
-Write a definitive conclusion that:
-1. Synthesizes the legally permissible, physically possible, and financially feasible analyses
-2. Identifies the single use (or uses) that would result in the highest land value
-3. States the highest and best use conclusion clearly and definitively
-4. Briefly supports why this use is maximally productive over alternatives
-
-Use authoritative language like "Based on our analysis of the four tests of highest and best use, it is our conclusion that..." Write 2 paragraphs, approximately 150 words.`,
-
-  hbu_as_improved: (ctx) => `Write the "Highest and Best Use As Improved" analysis as a 30-year MAI appraiser would.
-
-IMPROVEMENT DATA:
-- Current Use: ${ctx.propertyType || 'Commercial'} - ${ctx.propertySubtype || 'Not specified'}
-- Building Size: ${ctx.improvementData?.buildingSize || 'Not specified'}
-- Year Built: ${ctx.improvementData?.yearBuilt || 'Not specified'}
-- Condition: ${ctx.improvementData?.condition || 'Not specified'}
-- Functional Utility: ${ctx.improvementData?.quality || 'Adequate'}
-
-Write a professional analysis addressing:
-1. Whether the improvements represent the highest and best use of the site as improved
-2. The "Ideal Improvement" test - do existing improvements approximate what would be built today?
-3. Analysis of alternatives: continue current use, renovate/convert, or demolish
-4. Contribution of improvements to overall property value
-
-Conclude definitively whether the current use should be continued. Reference concepts like "contribution value," "functional obsolescence," and "economic life remaining." Write 2 paragraphs, approximately 175 words.`,
-
-  market_analysis: (ctx) => `Write a comprehensive professional market analysis and outlook for an appraisal report as a 30-year MAI appraiser would.
-
-PROPERTY INFORMATION:
-- Property Type: ${ctx.propertyType || 'Commercial'}
-- Subtype: ${ctx.propertySubtype || 'Not specified'}
-- Location: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
-
-LOCAL MARKET DATA:
-- Vacancy Rate: ${ctx.marketData?.vacancyRate || 'Not specified'}
-- Market Trend: ${ctx.marketData?.marketTrend || 'Not specified'}
-- Average Rent: ${ctx.marketData?.averageRent || 'Not specified'}
-- Rent Growth: ${ctx.marketData?.rentGrowth || 'Not specified'}
-- Days on Market: ${ctx.marketData?.daysOnMarket || 'Not specified'}
-
-ECONOMIC INDICATORS (from Federal Reserve Economic Data):
-${ctx.gdpGrowth ? `- GDP Growth: ${ctx.gdpGrowth}%` : ''}
-${ctx.unemployment ? `- Unemployment Rate: ${ctx.unemployment}%` : ''}
-${ctx.inflation ? `- Inflation Rate: ${ctx.inflation}%` : ''}
-${ctx.interestRates ? `- Interest Rates: ${ctx.interestRates}%` : ''}
-
-DEMOGRAPHICS:
-${ctx.population ? `- Population: ${ctx.population.toLocaleString()}` : ''}
-${ctx.medianIncome ? `- Median Income: $${ctx.medianIncome.toLocaleString()}` : ''}
-${ctx.employmentRate ? `- Employment Rate: ${ctx.employmentRate}%` : ''}
-
-Write a comprehensive market analysis with the following structure:
-
-<b><u>ECONOMIC OVERVIEW</u></b>
-Begin with a paragraph discussing the broader economic conditions affecting the market. Reference the economic indicators provided (GDP growth, unemployment, inflation, interest rates). Explain how these macroeconomic factors are influencing commercial real estate demand, capitalization rates, and investment activity. Connect national/regional economic trends to local market performance.
-
-<b><u>LOCAL MARKET CONDITIONS</u></b>
-Analyze the specific ${ctx.propertyType || 'commercial'} market in ${ctx.siteData?.city || 'the subject area'}. Discuss:
-- Current supply and demand dynamics
-- Vacancy rates and absorption trends
-- Rental rate trends and growth patterns
-- New construction pipeline and competitive supply
-- Factors driving demand (employment growth, population trends, industry mix)
-
-<b><u>MARKET OUTLOOK</u></b>
-Provide a forward-looking analysis of market conditions. Discuss:
-- Short-term outlook (6-12 months) based on current indicators
-- Medium-term trends (1-3 years) considering economic forecasts
-- Factors that could positively or negatively impact values
-- Risk factors and opportunities in the current market
-- How interest rates and inflation are expected to affect cap rates and valuations
-
-Write as a senior MAI appraiser with deep market knowledge. Reference specific data points provided. Be balanced and objective - acknowledge both positive and negative factors. Conclude with a clear statement about whether the market is favorable, stable, or challenging for the subject property type.
-
-Write 4-5 paragraphs, approximately 400-500 words total. Use bold, underlined headers as shown above.`,
-
-  reconciliation: (ctx) => `Write a professional reconciliation and final value conclusion for an appraisal report.
-
-Property Type: ${ctx.propertyType || 'Commercial'}
-Approaches Used: ${ctx.scenarios?.[0]?.approaches?.join(', ') || 'Sales Comparison, Income, Cost'}
-
-${ctx.valuationData ? `
-Value Indications:
-- Sales Comparison Approach: ${ctx.valuationData.salesValue ? '$' + ctx.valuationData.salesValue.toLocaleString() : 'N/A'}
-- Income Approach: ${ctx.valuationData.incomeValue ? '$' + ctx.valuationData.incomeValue.toLocaleString() : 'N/A'}
-- Cost Approach: ${ctx.valuationData.costValue ? '$' + ctx.valuationData.costValue.toLocaleString() : 'N/A'}
-` : ''}
-
-Include:
-- Brief discussion of each approach's reliability for this property type
-- Rationale for weighting the approaches
-- Support for the final value conclusion
-- Reasonable exposure time estimate (general)
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for headers
+- Flowing narrative paragraphs — no bullet points or markdown
 
 Write 2-3 paragraphs, approximately 200-250 words.`,
 
-  improvement_description: (ctx) => `Write a professional improvement description for an appraisal report.
+  hbu_legally_permissible: (ctx) => `Write the Legally Permissible Uses section of a Highest and Best Use analysis.
 
+PROPERTY DATA (from appraiser's research):
+Zoning Classification: ${ctx.siteData?.zoning || 'Not specified'}
+Property Type: ${ctx.propertyType || 'Commercial'}
+Location: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
+County: ${ctx.siteData?.county || 'Not specified'}
+
+WRITING REQUIREMENTS:
+1. Begin with: <b><u>LEGALLY PERMISSIBLE USES</u></b>
+2. Write as a 30-year MAI-designated appraiser in third person
+3. Address: current zoning designation and permitted uses by right, conditional or special exception uses available, deed restrictions, easements, or private covenants identified, compliance status of current improvements (conforming/non-conforming/legal non-conforming)
+4. Use definitive language — "the zoning permits" not "the zoning may permit"
+5. Conclude with clear statement of legally permissible uses
+
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for headers
+- Flowing narrative paragraphs — no bullet points or markdown
+
+Write 2 paragraphs, approximately 150 words.`,
+
+  hbu_physically_possible: (ctx) => `Write the Physically Possible Uses section of a Highest and Best Use analysis.
+
+SITE DATA (from appraiser's inspection):
+Site Area: ${ctx.siteData?.siteSize || 'Not specified'}
+Shape: ${ctx.siteData?.shape || 'Not specified'}
+Topography: ${ctx.siteData?.topography || 'Not specified'}
+Utilities: ${ctx.siteData?.utilities || 'Available'}
+Flood Zone: ${ctx.siteData?.femaZone || 'Not specified'}
+Access: ${ctx.siteData?.accessQuality || 'Adequate'}
+
+WRITING REQUIREMENTS:
+1. Begin with: <b><u>PHYSICALLY POSSIBLE USES</u></b>
+2. Write as a 30-year MAI-designated appraiser in third person
+3. Address: site size adequacy for various development types, physical characteristics (shape, topography, soil conditions), utility availability and capacity, flood zone implications, access and visibility considerations
+4. Use definitive language — "the site can accommodate" not "the site may accommodate"
+5. Conclude with clear statement of physically possible uses given site constraints
+
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for headers
+- Flowing narrative paragraphs — no bullet points or markdown
+
+Write 2 paragraphs, approximately 150 words.`,
+
+  hbu_financially_feasible: (ctx) => `Write the Financially Feasible Uses section of a Highest and Best Use analysis.
+
+MARKET DATA (from appraiser's research):
+Property Type: ${ctx.propertyType || 'Commercial'}
+Submarket Vacancy: ${ctx.marketData?.vacancyRate || 'Not specified'}
+Market Trend: ${ctx.marketData?.marketTrend || 'Stable'}
+Asking Rent: ${ctx.marketData?.rentalRate || 'Not specified'}
+Cap Rate Range: ${ctx.marketData?.capRate || 'Not specified'}
+
+WRITING REQUIREMENTS:
+1. Begin with: <b><u>FINANCIALLY FEASIBLE USES</u></b>
+2. Write as a 30-year MAI-designated appraiser in third person
+3. Address: current market demand for legally permissible and physically possible uses, supply/demand dynamics and absorption trends, achievable rents or sale prices relative to development costs, required returns and market cap rates, development timing considerations
+4. Use proper terminology: "residual land value," "development pro forma," "market-derived returns"
+5. Conclude definitively which uses would generate positive residual land value or adequate return
+
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for headers
+- Flowing narrative paragraphs — no bullet points or markdown
+- Use definitive language throughout
+
+Write 2 paragraphs, approximately 150 words.`,
+
+  hbu_maximally_productive: (ctx) => `Write the Maximally Productive Use (HBU As Vacant Conclusion) section of a Highest and Best Use analysis.
+
+SUMMARY DATA:
+Property Type Context: ${ctx.propertyType || 'Commercial'}
+Zoning: ${ctx.siteData?.zoning || 'Not specified'}
+Site Size: ${ctx.siteData?.siteSize || 'Not specified'}
+Location: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
+Market Conditions: ${ctx.marketData?.marketTrend || 'Stable'}
+
+WRITING REQUIREMENTS:
+1. Begin with: <b><u>MAXIMALLY PRODUCTIVE USE - CONCLUSION AS VACANT</u></b>
+2. Write as a 30-year MAI-designated appraiser in third person
+3. Open with: "Based on our analysis of the four tests of highest and best use, it is our conclusion that..."
+4. Synthesize the legally permissible, physically possible, and financially feasible analyses
+5. Identify the single use (or uses) that would result in the highest land value
+6. State the highest and best use conclusion clearly and definitively
+7. Briefly support why this use is maximally productive over alternatives
+
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for headers
+- Flowing narrative paragraphs — no bullet points or markdown
+- Use authoritative, definitive language
+
+Write 2 paragraphs, approximately 150 words.`,
+
+  hbu_as_improved: (ctx) => `Write the Highest and Best Use As Improved section of a Highest and Best Use analysis.
+
+IMPROVEMENT DATA (from appraiser's inspection):
+Current Use: ${ctx.propertyType || 'Commercial'} - ${ctx.propertySubtype || 'Not specified'}
+Building Size: ${ctx.improvementData?.buildingSize || 'Not specified'}
+Year Built: ${ctx.improvementData?.yearBuilt || 'Not specified'}
+Condition: ${ctx.improvementData?.condition || 'Not specified'}
+Functional Utility: ${ctx.improvementData?.quality || 'Adequate'}
+
+WRITING REQUIREMENTS:
+1. Begin with: <b><u>HIGHEST AND BEST USE AS IMPROVED</u></b>
+2. Write as a 30-year MAI-designated appraiser in third person
+3. Address: whether improvements represent highest and best use of the site as improved, the "Ideal Improvement" test (do existing improvements approximate what would be built today?), analysis of alternatives (continue current use, renovate/convert, or demolish), contribution of improvements to overall property value
+4. Use proper terminology: "contribution value," "functional obsolescence," "economic life remaining"
+5. Conclude definitively whether the current use should be continued
+
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for headers
+- Flowing narrative paragraphs — no bullet points or markdown
+- Use authoritative, definitive language
+
+Write 2 paragraphs, approximately 175 words.`,
+
+  market_analysis: (ctx) => `Write a comprehensive Market Analysis and Outlook section for an appraisal report.
+
+PROPERTY DATA:
+Property Type: ${ctx.propertyType || 'Commercial'}
+Subtype: ${ctx.propertySubtype || 'Not specified'}
+Location: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
+
+LOCAL MARKET DATA:
+Vacancy Rate: ${ctx.marketData?.vacancyRate || 'Not specified'}
+Market Trend: ${ctx.marketData?.marketTrend || 'Not specified'}
+Average Rent: ${ctx.marketData?.averageRent || 'Not specified'}
+Rent Growth: ${ctx.marketData?.rentGrowth || 'Not specified'}
+Days on Market: ${ctx.marketData?.daysOnMarket || 'Not specified'}
+
+ECONOMIC INDICATORS:
+${ctx.gdpGrowth ? `GDP Growth: ${ctx.gdpGrowth}%` : ''}
+${ctx.unemployment ? `Unemployment Rate: ${ctx.unemployment}%` : ''}
+${ctx.inflation ? `Inflation Rate: ${ctx.inflation}%` : ''}
+${ctx.interestRates ? `Interest Rates: ${ctx.interestRates}%` : ''}
+
+DEMOGRAPHICS:
+${ctx.population ? `Population: ${ctx.population.toLocaleString()}` : ''}
+${ctx.medianIncome ? `Median Income: $${ctx.medianIncome.toLocaleString()}` : ''}
+${ctx.employmentRate ? `Employment Rate: ${ctx.employmentRate}%` : ''}
+
+WRITING REQUIREMENTS:
+1. Write as a 30-year MAI-designated appraiser in third person
+2. Use the following section structure with HTML headers:
+
+<b><u>ECONOMIC OVERVIEW</u></b>
+Discuss broader economic conditions affecting the market. Reference economic indicators provided (GDP growth, unemployment, inflation, interest rates). Explain how macroeconomic factors influence commercial real estate demand, capitalization rates, and investment activity.
+
+<b><u>LOCAL MARKET CONDITIONS</u></b>
+Analyze the specific ${ctx.propertyType || 'commercial'} market. Cover: current supply and demand dynamics, vacancy rates and absorption trends, rental rate trends and growth patterns, new construction pipeline and competitive supply, factors driving demand.
+
+<b><u>MARKET OUTLOOK</u></b>
+Provide forward-looking analysis. Cover: short-term outlook (6-12 months), medium-term trends (1-3 years), factors that could positively or negatively impact values, how interest rates and inflation affect cap rates and valuations.
+
+3. Conclude with definitive statement on whether market is favorable, stable, or challenging for subject property type
+
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for headers
+- Flowing narrative paragraphs — no bullet points or markdown
+- Reference specific data points provided
+- Be balanced and objective — acknowledge both positive and negative factors
+
+Write 4-5 paragraphs, approximately 400-500 words total.`,
+
+  reconciliation: (ctx) => `Write the Reconciliation and Final Value Conclusion section of an appraisal report.
+
+VALUATION DATA:
+Property Type: ${ctx.propertyType || 'Commercial'}
+Approaches Used: ${ctx.scenarios?.[0]?.approaches?.join(', ') || 'Sales Comparison, Income, Cost'}
+${ctx.valuationData ? `
+Sales Comparison Approach: ${ctx.valuationData.salesValue ? '$' + ctx.valuationData.salesValue.toLocaleString() : 'N/A'}
+Income Approach: ${ctx.valuationData.incomeValue ? '$' + ctx.valuationData.incomeValue.toLocaleString() : 'N/A'}
+Cost Approach: ${ctx.valuationData.costValue ? '$' + ctx.valuationData.costValue.toLocaleString() : 'N/A'}` : ''}
+
+WRITING REQUIREMENTS:
+1. Begin with: <b><u>RECONCILIATION AND FINAL VALUE CONCLUSION</u></b>
+2. Write as a 30-year MAI-designated appraiser in third person
+3. Cover: brief discussion of each approach's reliability for this property type, rationale for weighting the approaches, support for the final value conclusion, reasonable exposure time estimate
+4. Use definitive language — "it is our conclusion that the market value is" not "the value may be"
+5. Only include value figures that are provided
+
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for headers
+- Flowing narrative paragraphs — no bullet points or markdown
+
+Write 2-3 paragraphs, approximately 200-250 words.`,
+
+  improvement_description: (ctx) => `Write the Improvement Description section of an appraisal report.
+
+BUILDING DATA (from appraiser's inspection):
 Building Size: ${ctx.improvementData?.buildingSize || 'Not specified'}
 Year Built: ${ctx.improvementData?.yearBuilt || 'Not specified'}
 Construction Type: ${ctx.improvementData?.constructionType || 'Not specified'}
 Quality: ${ctx.improvementData?.quality || 'Not specified'}
 Condition: ${ctx.improvementData?.condition || 'Not specified'}
 
-Include:
-- General building description
-- Construction type and materials
-- Interior finish and layout
-- Mechanical systems overview
-- Condition assessment
-- Functional utility
+WRITING REQUIREMENTS:
+1. Begin with: <b><u>IMPROVEMENT DESCRIPTION</u></b>
+2. Write as a 30-year MAI-designated appraiser in third person
+3. Cover: general building description, construction type and materials, interior finish and layout, mechanical systems overview, condition assessment, functional utility
+4. Use definitive language throughout
+5. Only describe data provided — do not fabricate details
+
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for headers
+- Flowing narrative paragraphs — no bullet points or markdown
 
 Write 2-3 paragraphs, approximately 150-200 words.`,
 
@@ -380,23 +425,28 @@ Write 2-3 paragraphs, approximately 150-200 words.`,
   // SETUP & SUBJECT DATA PROMPTS
   // =================================================================
   
-  legal_description: (ctx) => `Write a professional legal description narrative for an appraisal report as a 30-year MAI appraiser would.
+  legal_description: (ctx) => `Write the Legal Description section of an appraisal report.
 
-LEGAL DESCRIPTION PROVIDED:
-${ctx.legalDescription || 'Not specified'}
+LEGAL DESCRIPTION DATA:
+Legal Description: ${ctx.legalDescription || 'Not specified'}
+Location: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
+County: ${ctx.siteData?.county || 'Not specified'}
+Site Size: ${ctx.siteData?.siteSize || 'Not specified'}
 
-PROPERTY LOCATION:
-- Address: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
-- County: ${ctx.siteData?.county || 'Not specified'}
-- Site Size: ${ctx.siteData?.siteSize || 'Not specified'}
+WRITING REQUIREMENTS:
+1. Begin with: <b><u>LEGAL DESCRIPTION</u></b>
+2. Write as a 30-year MAI-designated appraiser in third person
+3. Open with: "The legal description of the subject property is as follows:"
+4. Present the legal description in a clear, formatted manner
+5. Note that the appraiser has not verified the legal description and relies on competent sources
+6. Reference title documentation or other sources if applicable
 
-Write a brief narrative that:
-1. States "The legal description of the subject property is as follows:"
-2. Presents the legal description in a clear, formatted manner
-3. Notes that the appraiser has not verified the legal description and relies on competent sources
-4. References title documentation or other sources if applicable
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for headers
+- Flowing narrative — no bullet points or markdown
+- Only include the legal description if provided — do not fabricate
 
-Format with bold section header. Write 1-2 paragraphs, approximately 100-150 words.`,
+Write 1-2 paragraphs, approximately 100-150 words.`,
 
   site_notes: (ctx) => `Write the Site Analysis Notes section of an appraisal report.
 
@@ -467,24 +517,28 @@ FORMATTING:
 
 Write 2 paragraphs, approximately 150-200 words.`,
 
-  construction_description: (ctx) => `Write a professional construction description narrative for an appraisal report as a 30-year MAI appraiser would.
+  construction_description: (ctx) => `Write the Construction Description section of an appraisal report.
 
-BUILDING INFORMATION:
-- Year Built: ${ctx.improvementData?.yearBuilt || 'Not specified'}
-- Building Size: ${ctx.improvementData?.buildingSize || 'Not specified'} SF
-- Construction Type: ${ctx.improvementData?.constructionType || 'Not specified'}
-- Quality: ${ctx.improvementData?.quality || 'Not specified'}
-- Condition: ${ctx.improvementData?.condition || 'Not specified'}
+BUILDING DATA (from appraiser's inspection):
+Year Built: ${ctx.improvementData?.yearBuilt || 'Not specified'}
+Building Size: ${ctx.improvementData?.buildingSize || 'Not specified'} SF
+Construction Type: ${ctx.improvementData?.constructionType || 'Not specified'}
+Quality: ${ctx.improvementData?.quality || 'Not specified'}
+Condition: ${ctx.improvementData?.condition || 'Not specified'}
 
-Write a professional narrative describing:
-1. Structural system and framing type
-2. Foundation system
-3. Wall construction and materials
-4. Roof structure and covering
-5. Overall construction quality classification
-6. Age and condition assessment
+WRITING REQUIREMENTS:
+1. Begin with: <b><u>CONSTRUCTION DESCRIPTION</u></b>
+2. Write as a 30-year MAI-designated appraiser in third person
+3. Describe: structural system and framing type, foundation system, wall construction and materials, roof structure and covering, overall construction quality classification, age and condition assessment
+4. Use industry-standard construction terminology
+5. Only describe data provided — do not fabricate construction details
 
-Use industry-standard construction terminology. Write 2 paragraphs, approximately 150-200 words.`,
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for headers
+- Flowing narrative paragraphs — no bullet points or markdown
+- Use definitive language throughout
+
+Write 2 paragraphs, approximately 150-200 words.`,
 
   // =================================================================
   // UTILITY & INFRASTRUCTURE PROMPTS
@@ -780,183 +834,264 @@ Be specific with street names and geographic features when possible. Write 2 par
   // VALUATION APPROACH PROMPTS - SALES COMPARISON
   // =================================================================
   
-  sales_comparison: (ctx) => `Write the Sales Comparison Approach reconciliation narrative as a 30-year MAI appraiser would.
+  sales_comparison: (ctx) => {
+    // Determine scenario type for appropriate terminology
+    const scenarioName = ctx.scenarios?.[0]?.name || 'As Is';
+    const isProspective = scenarioName.toLowerCase().includes('prospective');
+    const isStabilized = scenarioName.toLowerCase().includes('stabiliz');
+    
+    return `Write the Sales Comparison Approach Reconciliation section of an appraisal report.
 
-SUBJECT PROPERTY:
-- Address: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
-- Property Type: ${ctx.propertyType || 'Commercial'}
-- Building Size: ${ctx.improvementData?.buildingSize || 'Not specified'} SF
+SUBJECT PROPERTY DATA:
+Location: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
+Property Type: ${ctx.propertyType || 'Commercial'}
+Building Size: ${ctx.improvementData?.buildingSize || 'Not specified'} SF
+Scenario: ${scenarioName}
 
 ${ctx.salesComps && ctx.salesComps.length > 0 ? `COMPARABLE SALES ANALYZED:
-${ctx.salesComps.map((c, i) => `- Sale ${i+1}: ${c.address || 'Address not specified'}, Sale Price: ${c.salePrice ? '$' + c.salePrice.toLocaleString() : 'Not specified'}${c.adjustedPrice ? `, Adjusted: $${c.adjustedPrice.toLocaleString()}` : ''}`).join('\n')}` : 'Comparable sales were analyzed for this property type.'}
+${ctx.salesComps.map((c, i) => `Sale ${i+1}: ${c.address || 'Address not specified'}, Sale Price: ${c.salePrice ? '$' + c.salePrice.toLocaleString() : 'Not specified'}${c.adjustedPrice ? `, Adjusted: $${c.adjustedPrice.toLocaleString()}` : ''}`).join('\n')}` : 'Comparable sales were analyzed for this property type.'}
 
-${ctx.valuationData?.salesValue ? `CONCLUDED VALUE: $${ctx.valuationData.salesValue.toLocaleString()}` : ''}
+${ctx.valuationData?.salesValue ? `CONCLUDED VALUE INDICATION: $${ctx.valuationData.salesValue.toLocaleString()}` : ''}
+${ctx.valuationData?.minSalesValue && ctx.valuationData?.maxSalesValue ? `ADJUSTED RANGE: $${ctx.valuationData.minSalesValue.toLocaleString()} to $${ctx.valuationData.maxSalesValue.toLocaleString()}` : ''}
 
-Write a professional narrative that:
-1. Begins with: <b><u>SALES COMPARISON APPROACH</u></b>
-2. States "The Sales Comparison Approach is based on the principle of substitution..."
-3. Discusses comparable selection criteria (location, size, age, quality, condition)
-4. Explains adjustment methodology (market-derived adjustments for key differences)
-5. Discusses the reconciliation process and weighting of comparables
-6. States the concluded value indication with confidence
-7. Notes this approach is reliable when adequate comparable data exists
+WRITING REQUIREMENTS:
+1. Begin with: <b><u>SALES COMPARISON APPROACH</u></b>
+2. Write as a 30-year MAI-designated appraiser in third person
+3. Open with: "The Sales Comparison Approach is based on the principle of substitution, which holds that a prudent buyer would pay no more for a property than the cost of acquiring a similar property with equivalent utility."
+4. Discuss: comparable selection criteria (location, size, age, quality, condition), market-derived adjustment methodology, reconciliation process and weighting of comparables
+5. ${isProspective ? 'Note that comparable sales were selected based on similarity to the subject as if complete and/or stabilized.' : 'Note comparables were selected based on similarity to the subject as of the effective date.'}
+6. State the concluded value indication definitively — "it is our conclusion that" not "the value may be"
+7. Comment on the reliability of this approach for the subject property type
 
-Format with bold section headers. Write 3-4 paragraphs, approximately 250-300 words. Use authoritative MAI-level language.`,
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for headers
+- Flowing narrative paragraphs — no bullet points or markdown
+- Only include values that are provided — do not fabricate figures
 
-  land_valuation: (ctx) => `Write a professional land valuation analysis narrative as a 30-year MAI appraiser would.
+Write 3-4 paragraphs, approximately 250-300 words.`;
+  },
 
-SUBJECT SITE:
-- Location: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
-- Site Size: ${ctx.siteData?.siteSize || 'Not specified'}
-- Zoning: ${ctx.siteData?.zoning || 'Not specified'}
-- Topography: ${ctx.siteData?.topography || 'Level'}
+  land_valuation: (ctx) => {
+    // Determine if this is for Cost Approach land component or standalone land valuation
+    const isForCostApproach = ctx.scenarios?.[0]?.approaches?.includes('Cost Approach');
+    
+    return `Write the Land Valuation section of an appraisal report.
 
-${ctx.landComps && ctx.landComps.length > 0 ? `LAND SALES ANALYZED:
-${ctx.landComps.map((c, i) => `- Sale ${i+1}: ${c.address || 'Not specified'}, ${c.pricePerAcre ? `$${c.pricePerAcre.toLocaleString()}/acre` : 'Price not specified'}${c.adjustedPricePerAcre ? `, Adjusted: $${c.adjustedPricePerAcre.toLocaleString()}/acre` : ''}`).join('\n')}` : 'Land sales were analyzed in the subject market area.'}
+SUBJECT SITE DATA:
+Location: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
+Site Size: ${ctx.siteData?.siteSize || 'Not specified'}
+Zoning: ${ctx.siteData?.zoning || 'Not specified'}
+Topography: ${ctx.siteData?.topography || 'Level'}
+Highest and Best Use As Vacant: ${ctx.propertyType || 'Commercial'} development
+
+${ctx.landComps && ctx.landComps.length > 0 ? `COMPARABLE LAND SALES ANALYZED:
+${ctx.landComps.map((c, i) => `Sale ${i+1}: ${c.address || 'Not specified'}, ${c.pricePerAcre ? `$${c.pricePerAcre.toLocaleString()}/acre` : 'Price not specified'}${c.adjustedPricePerAcre ? `, Adjusted: $${c.adjustedPricePerAcre.toLocaleString()}/acre` : ''}`).join('\n')}` : 'Comparable land sales were analyzed in the subject market area.'}
 
 ${ctx.valuationData?.landValue ? `CONCLUDED LAND VALUE: $${ctx.valuationData.landValue.toLocaleString()}` : ''}
 
-Write a professional narrative with sections:
-1. <b><u>LAND VALUATION - SALES COMPARISON APPROACH</u></b>
-2. State "Land value was estimated using the Sales Comparison Approach, the preferred method for vacant land..."
-3. Describe the local land market conditions
-4. Discuss comparable land sales analyzed
-5. Explain adjustments made for: size, location, topography, utilities, zoning
-6. Note after 30 years of appraising land, the adjustment methodology reflects market behavior
-7. Reconcile to a concluded land value per acre and total land value
-8. State this value represents the highest and best use as vacant
+WRITING REQUIREMENTS:
+1. Begin with: <b><u>LAND VALUATION</u></b>
+2. Write as a 30-year MAI-designated appraiser in third person
+3. Open with: "Land value was estimated using the Sales Comparison Approach, the preferred method for vacant land valuation when adequate comparable sales data exists."
+4. Describe local land market conditions (demand, absorption, price trends)
+5. Discuss comparable land sales selection criteria (location, size, zoning, utility availability)
+6. Explain adjustments for: property rights conveyed, financing terms, conditions of sale, market conditions (time), location, physical characteristics (size, shape, topography), utilities, zoning
+7. Reconcile to a concluded land value per unit (acre, SF, or front foot as appropriate) and total land value
+8. ${isForCostApproach ? 'Note this land value will be added to the depreciated improvement value in the Cost Approach.' : 'State this value represents the highest and best use as if vacant.'}
 
-Format with bold headers. Write 3-4 paragraphs, approximately 250-300 words.`,
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for headers
+- Flowing narrative paragraphs — no bullet points or markdown
+- Only include values that are provided — do not fabricate figures
+
+Write 3-4 paragraphs, approximately 250-300 words.`;
+  },
 
   // =================================================================
   // INCOME APPROACH PROMPTS
   // =================================================================
   
-  rent_comparable: (ctx) => `Write a professional market rent analysis narrative as a 30-year MAI appraiser would.
+  rent_comparable: (ctx) => {
+    // Determine scenario for appropriate terminology
+    const scenarioName = ctx.scenarios?.[0]?.name || 'As Is';
+    const isProspective = scenarioName.toLowerCase().includes('prospective');
+    const isStabilized = scenarioName.toLowerCase().includes('stabiliz');
+    
+    return `Write the Market Rent Analysis section of an appraisal report (Income Approach).
 
-SUBJECT PROPERTY:
-- Property Type: ${ctx.propertyType || 'Commercial'}
-- Building Size: ${ctx.improvementData?.buildingSize || 'Not specified'} SF
-- Location: ${ctx.siteData?.city || 'Not specified'}
+SUBJECT PROPERTY DATA:
+Property Type: ${ctx.propertyType || 'Commercial'}
+Building Size: ${ctx.improvementData?.buildingSize || 'Not specified'} SF
+Location: ${ctx.siteData?.city || 'Not specified'}
+Scenario: ${scenarioName}
 
-${ctx.rentComps && ctx.rentComps.length > 0 ? `RENTAL COMPARABLES:
-${ctx.rentComps.map((c, i) => `- Comp ${i+1}: ${c.address || 'Not specified'}${c.rentPerSf ? `, $${c.rentPerSf.toFixed(2)}/SF/yr` : ''}`).join('\n')}` : 'Market rental comparables were analyzed.'}
+${ctx.rentComps && ctx.rentComps.length > 0 ? `RENTAL COMPARABLES ANALYZED:
+${ctx.rentComps.map((c, i) => `Comp ${i+1}: ${c.address || 'Not specified'}${c.rentPerSf ? `, $${c.rentPerSf.toFixed(2)}/SF/yr` : ''}`).join('\n')}` : 'Market rental comparables were analyzed in the competitive market area.'}
 
-Write a professional narrative:
-1. <b><u>MARKET RENT ANALYSIS</u></b>
-2. State "In estimating market rent, I analyzed comparable rental properties in the subject's competitive market..."
-3. Describe current rental market conditions (vacancy, absorption, landlord/tenant market)
-4. Discuss rental comparables and selection criteria
-5. Explain adjustments for location, size, condition, amenities, lease structure
-6. Note typical lease terms in the market (NNN, modified gross, etc.)
-7. Reconcile to a market rent conclusion per SF annually and monthly
-8. State this represents the most probable rent from a knowledgeable tenant
+WRITING REQUIREMENTS:
+1. Begin with: <b><u>MARKET RENT ANALYSIS</u></b>
+2. Write as a 30-year MAI-designated appraiser in third person
+3. Open with: "In estimating market rent for the subject property, we analyzed comparable rental properties in the subject's competitive market area."
+4. Describe current rental market conditions (vacancy rates, absorption, landlord vs. tenant market dynamics)
+5. Discuss rental comparable selection criteria (location, size, age, quality, tenant profile)
+6. Explain adjustments for: location, size, condition, amenities, lease structure (NNN vs. gross vs. modified gross)
+7. Note typical lease terms in the market area
+8. ${isProspective || isStabilized ? 'State the market rent conclusion assumes the property is complete and available for occupancy.' : 'State this represents the most probable rent achievable from a knowledgeable tenant as of the effective date.'}
+9. Conclude with market rent per SF annually (and monthly if applicable)
 
-Draw on "30 years of experience in this market" for authority. Write 3 paragraphs, approximately 225-275 words.`,
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for headers
+- Flowing narrative paragraphs — no bullet points or markdown
+- Use definitive language throughout
 
-  expense_comparable: (ctx) => `Write a professional operating expense analysis narrative as a 30-year MAI appraiser would.
+Write 3 paragraphs, approximately 225-275 words.`;
+  },
 
-SUBJECT PROPERTY:
-- Property Type: ${ctx.propertyType || 'Commercial'}
-- Building Size: ${ctx.improvementData?.buildingSize || 'Not specified'} SF
+  expense_comparable: (ctx) => {
+    const scenarioName = ctx.scenarios?.[0]?.name || 'As Is';
+    const isStabilized = scenarioName.toLowerCase().includes('stabiliz');
+    
+    return `Write the Operating Expense Analysis section of an appraisal report (Income Approach).
 
-${ctx.expenseComps && ctx.expenseComps.length > 0 ? `EXPENSE COMPARABLES:
-${ctx.expenseComps.map((c, i) => `- Comp ${i+1}: ${c.address || 'Not specified'}${c.expenseRatio ? `, Expense Ratio: ${(c.expenseRatio * 100).toFixed(1)}%` : ''}`).join('\n')}` : 'Comparable operating expense data was analyzed.'}
+SUBJECT PROPERTY DATA:
+Property Type: ${ctx.propertyType || 'Commercial'}
+Building Size: ${ctx.improvementData?.buildingSize || 'Not specified'} SF
+Scenario: ${scenarioName}
 
-Write a professional narrative:
-1. <b><u>OPERATING EXPENSE ANALYSIS</u></b>
-2. State "Operating expenses were estimated based on comparable expense data and market surveys..."
-3. Discuss expense data sources (property managers, owners, published surveys)
-4. Break down major expense categories:
-   - Real Estate Taxes (based on current assessment)
-   - Insurance (market rates for similar properties)
-   - Utilities (if not tenant-paid)
-   - Repairs & Maintenance (typical expenditures for age/condition)
-   - Management Fee (market-standard percentage of EGI)
-   - Reserves for Replacement (appropriate allowance for capital items)
-5. Compare expense ratio to market (typically 25-40% of EGI for commercial)
-6. State expenses are at stabilized levels appropriate for market conditions
+${ctx.expenseComps && ctx.expenseComps.length > 0 ? `EXPENSE COMPARABLES ANALYZED:
+${ctx.expenseComps.map((c, i) => `Comp ${i+1}: ${c.address || 'Not specified'}${c.expenseRatio ? `, Expense Ratio: ${(c.expenseRatio * 100).toFixed(1)}%` : ''}`).join('\n')}` : 'Comparable operating expense data was analyzed from market sources.'}
 
-Draw on professional judgment from 30 years of experience. Write 2-3 paragraphs, approximately 200-250 words.`,
+WRITING REQUIREMENTS:
+1. Begin with: <b><u>OPERATING EXPENSE ANALYSIS</u></b>
+2. Write as a 30-year MAI-designated appraiser in third person
+3. Open with: "Operating expenses were estimated based on comparable expense data, published surveys, and interviews with property managers in the market area."
+4. Discuss expense data sources (BOMA, IREM, local property managers, actual operating statements)
+5. Address major expense categories in flowing narrative (not bullet points): real estate taxes, insurance, utilities (if landlord-paid), repairs and maintenance, management fee, reserves for replacement
+6. Compare the concluded expense ratio to market norms for this property type (reference typical ranges)
+7. ${isStabilized ? 'State expenses reflect stabilized operating levels assuming competent management.' : 'State expenses reflect current market conditions as of the effective date.'}
+8. Conclude definitively with total operating expenses and expense ratio adopted
 
-  multi_family: (ctx) => `Write a professional multi-family rental analysis narrative as a 30-year MAI appraiser would.
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for headers
+- Flowing narrative paragraphs — no bullet points or markdown
+- Use professional judgment language
 
-SUBJECT PROPERTY:
-- Property Type: Multi-Family ${ctx.propertySubtype || ''}
-- Location: ${ctx.siteData?.city || 'Not specified'}
-- Building Size: ${ctx.improvementData?.buildingSize || 'Not specified'} SF
+Write 2-3 paragraphs, approximately 200-250 words.`;
+  },
 
-Write a professional narrative:
-1. <b><u>MULTI-FAMILY RENTAL ANALYSIS</u></b>
-2. State "In developing the rental analysis for this multi-family property, I applied the methodology refined over 30 years..."
-3. Describe the multi-family market in the subject area
-4. Discuss vacancy rates, absorption, and rental trends
-5. Analyze rental comparables by unit type (studio, 1BR, 2BR, 3BR)
-6. Make adjustments for: location, unit size, amenities, age/condition, parking
-7. Reconcile to market rent per unit and per SF
-8. Discuss lease-up assumptions if applicable
-9. Calculate potential gross income and effective gross income
+  multi_family: (ctx) => {
+    const scenarioName = ctx.scenarios?.[0]?.name || 'As Is';
+    const isProspective = scenarioName.toLowerCase().includes('prospective');
+    const isStabilized = scenarioName.toLowerCase().includes('stabiliz');
+    
+    return `Write the Multi-Family Rental Analysis section of an appraisal report (Income Approach).
 
-Use multi-family specific terminology (unit mix, concessions, turnover, tenant profile). Write 3-4 paragraphs, approximately 275-325 words.`,
+SUBJECT PROPERTY DATA:
+Property Type: Multi-Family ${ctx.propertySubtype || 'Apartment'}
+Location: ${ctx.siteData?.city || 'Not specified'}
+Building Size: ${ctx.improvementData?.buildingSize || 'Not specified'} SF
+Year Built: ${ctx.improvementData?.yearBuilt || 'Not specified'}
+Scenario: ${scenarioName}
+
+WRITING REQUIREMENTS:
+1. Begin with: <b><u>MULTI-FAMILY RENTAL ANALYSIS</u></b>
+2. Write as a 30-year MAI-designated appraiser in third person
+3. Open with: "In developing the rental analysis for this multi-family property, we analyzed comparable rental communities in the subject's competitive market area."
+4. Describe the multi-family market: vacancy rates, absorption trends, rental rate growth, concession levels, tenant demographics
+5. Discuss rental comparable selection by unit type (studio, 1BR, 2BR, 3BR, etc.)
+6. Explain adjustments for: location, unit size and configuration, amenities (in-unit and community), age and condition, parking, views, floor level
+7. Reconcile to market rent per unit type and per SF
+8. ${isProspective || isStabilized ? 'Discuss lease-up assumptions, absorption period, and stabilized occupancy timeline.' : 'Note current occupancy and any rent loss from vacancy or collection loss.'}
+9. Calculate Potential Gross Income (PGI) and Effective Gross Income (EGI)
+
+TERMINOLOGY (use apartment-specific language):
+- Unit mix, bedroom count, floor plans
+- Concessions, rent specials, free rent periods
+- Turnover rate, tenant retention
+- Amenity package, community features
+- Per unit vs. per SF analysis
+
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for headers
+- Flowing narrative paragraphs — no bullet points or markdown
+
+Write 3-4 paragraphs, approximately 275-325 words.`;
+  },
 
   // =================================================================
   // COST APPROACH PROMPTS
   // =================================================================
   
-  cost_approach: (ctx) => `Write a professional Cost Approach narrative as a 30-year MAI appraiser would.
+  cost_approach: (ctx) => {
+    const scenarioName = ctx.scenarios?.[0]?.name || 'As Is';
+    const isProspective = scenarioName.toLowerCase().includes('prospective');
+    const yearBuilt = ctx.improvementData?.yearBuilt;
+    const currentYear = new Date().getFullYear();
+    const buildingAge = yearBuilt ? currentYear - parseInt(yearBuilt) : null;
+    const isNewConstruction = buildingAge !== null && buildingAge <= 5;
+    
+    return `Write the Cost Approach section of an appraisal report.
 
 PROPERTY DATA:
-- Property Type: ${ctx.propertyType || 'Commercial'}
-- Building Size: ${ctx.improvementData?.buildingSize || 'Not specified'} SF
-- Year Built: ${ctx.improvementData?.yearBuilt || 'Not specified'}
-- Construction Type: ${ctx.improvementData?.constructionType || 'Not specified'}
-- Condition: ${ctx.improvementData?.condition || 'Average'}
+Property Type: ${ctx.propertyType || 'Commercial'}
+Building Size: ${ctx.improvementData?.buildingSize || 'Not specified'} SF
+Year Built: ${ctx.improvementData?.yearBuilt || 'Not specified'}
+Construction Type: ${ctx.improvementData?.constructionType || 'Not specified'}
+Condition: ${ctx.improvementData?.condition || 'Average'}
+Scenario: ${scenarioName}
 
 ${ctx.replacementCostNew ? `Replacement Cost New: $${ctx.replacementCostNew.toLocaleString()}` : ''}
+${ctx.depreciation ? `Total Depreciation: $${ctx.depreciation.toLocaleString()}` : ''}
 ${ctx.valuationData?.landValue ? `Land Value: $${ctx.valuationData.landValue.toLocaleString()}` : ''}
+${ctx.entrepreneurialIncentive ? `Entrepreneurial Incentive: $${ctx.entrepreneurialIncentive.toLocaleString()}` : ''}
 ${ctx.valuationData?.costValue ? `Concluded Value: $${ctx.valuationData.costValue.toLocaleString()}` : ''}
 
-Write a professional narrative with sections:
-1. <b><u>COST APPROACH</u></b>
-2. State "The Cost Approach is based on the principle of substitution - a prudent investor would pay no more than the cost to acquire a similar site and construct improvements of equal utility."
-3. <b><u>LAND VALUE</u></b> - Reference the land value from the Land Valuation section
-4. <b><u>IMPROVEMENT COST ESTIMATE</u></b> - Explain the cost estimation method:
-   - Marshall & Swift Valuation Service cost data
-   - Adjusted for local market conditions and current construction costs
-   - Includes direct costs (materials, labor) and indirect costs (fees, financing, developer profit)
-5. <b><u>DEPRECIATION ANALYSIS</u></b>:
-   - Physical Depreciation (based on age, condition, effective age vs. economic life)
-   - Functional Obsolescence (if any design inadequacies or superadequacies)
-   - External Obsolescence (if location or market factors impact value)
-6. <b><u>VALUE INDICATION</u></b> - Depreciated improvement value + land value
-7. Note after 30 years, Cost Approach is most reliable for newer construction
+WRITING REQUIREMENTS:
+1. Begin with: <b><u>COST APPROACH</u></b>
+2. Write as a 30-year MAI-designated appraiser in third person
+3. Open with: "The Cost Approach is based on the principle of substitution, which holds that a prudent buyer would pay no more for a property than the cost to acquire a similar site and construct improvements of equal utility."
+4. Include sub-sections (as flowing narrative with inline bold headers):
+   - <b>Land Value:</b> Reference the land value from the Land Valuation analysis
+   - <b>Replacement Cost New:</b> Explain cost estimation methodology (Marshall & Swift, local contractor costs, or combination), adjusted for local market conditions, including direct costs (materials, labor) and indirect costs (architect, engineering, permits, financing, developer profit)
+   - <b>Depreciation:</b> Address physical depreciation (age-life method or breakdown), functional obsolescence (if any), external/economic obsolescence (if any)
+   - <b>Entrepreneurial Incentive:</b> If applicable, discuss developer profit expectations
+5. ${isProspective ? 'Note this represents the prospective value upon completion of construction.' : isNewConstruction ? 'Note this approach is particularly reliable given the recent construction date.' : 'Comment on the reliability of this approach given the building age.'}
+6. Conclude with the value indication definitively
 
-Write 4-5 paragraphs, approximately 300-350 words.`,
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for main header, <b>text</b> for inline sub-headers
+- Flowing narrative paragraphs — no bullet points or markdown
+- Only include values that are provided
 
-  cost_reconciliation: (ctx) => `Write a professional cost data reconciliation narrative as a 30-year MAI appraiser would.
+Write 4-5 paragraphs, approximately 300-350 words.`;
+  },
 
-PROPERTY TYPE: ${ctx.propertyType || 'Commercial'}
-BUILDING SIZE: ${ctx.improvementData?.buildingSize || 'Not specified'} SF
+  cost_reconciliation: (ctx) => `Write the Cost Data Reconciliation section of an appraisal report (Cost Approach).
 
-${ctx.replacementCostNew ? `Marshall & Swift Cost: $${ctx.replacementCostNew.toLocaleString()}` : ''}
+PROPERTY DATA:
+Property Type: ${ctx.propertyType || 'Commercial'}
+Building Size: ${ctx.improvementData?.buildingSize || 'Not specified'} SF
+Construction Type: ${ctx.improvementData?.constructionType || 'Not specified'}
+
+${ctx.replacementCostNew ? `Marshall & Swift Cost Estimate: $${ctx.replacementCostNew.toLocaleString()}` : ''}
 ${ctx.contractorCost ? `Contractor Cost/Bid: $${ctx.contractorCost.toLocaleString()}` : ''}
 
-Write a professional narrative:
-1. <b><u>COST DATA RECONCILIATION</u></b>
-2. Discuss the sources of cost data analyzed:
-   - Marshall & Swift Valuation Service (industry standard)
-   - Local contractor estimates or bids (if available)
-   - Recent construction costs for comparable projects
-3. Compare and reconcile differences between cost sources
-4. Explain any necessary adjustments for:
-   - Regional cost multipliers
-   - Current cost trends (inflation/deflation)
-   - Property-specific features
-   - Soft costs (architect, engineering, permits, financing, developer profit)
-5. Conclude with the final replacement cost new adopted
-6. State this reflects current market construction costs as of the effective date
+WRITING REQUIREMENTS:
+1. Begin with: <b><u>COST DATA RECONCILIATION</u></b>
+2. Write as a 30-year MAI-designated appraiser in third person
+3. Open with: "In developing the replacement cost estimate, we analyzed multiple sources of cost data to ensure reliability."
+4. Discuss cost data sources in flowing narrative: Marshall & Swift Valuation Service (industry standard), local contractor estimates or bids (if available), recent construction costs for comparable projects in the market area
+5. Compare and reconcile differences between cost sources, explaining any significant variances
+6. Address adjustments for: regional cost multipliers (current cost modifier), current cost trends (construction inflation/deflation), property-specific features (quality, complexity), soft costs (architect, engineering, permits, financing, developer profit/entrepreneurial incentive)
+7. Conclude definitively with the final replacement cost new adopted
+8. State this reflects current market construction costs as of the effective date
 
-Use authoritative language drawing on 30 years of cost estimation experience. Write 2-3 paragraphs, approximately 200-250 words.`,
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for headers
+- Flowing narrative paragraphs — no bullet points or markdown
+- Use definitive language throughout
+
+Write 2-3 paragraphs, approximately 200-250 words.`,
 
   // =================================================================
   // BUILDING COMPONENT PROMPTS
@@ -1063,45 +1198,69 @@ Write a comprehensive mechanical systems description with sections:
 
 Use HVAC and building systems terminology. Write 3-4 paragraphs, approximately 250-300 words.`,
 
-  depreciation_override: (ctx) => `Write a professional depreciation analysis rationale as a 30-year MAI appraiser would.
+  depreciation_override: (ctx) => `Write a Depreciation Override Rationale for an appraisal report.
 
 COMPONENT DATA:
-- Component Type: [Component being analyzed]
-- Building Year: ${ctx.improvementData?.yearBuilt || 'Not specified'}
-- Observed Condition: ${ctx.improvementData?.condition || 'Average'}
+Component Type: [Component being analyzed]
+Building Year: ${ctx.improvementData?.yearBuilt || 'Not specified'}
+Observed Condition: ${ctx.improvementData?.condition || 'Average'}
 
-Write a professional depreciation rationale:
-1. State "Based on inspection and analysis of the subject property..."
-2. Explain why the calculated depreciation was adjusted
-3. Reference observed condition, deferred maintenance, or superior maintenance
-4. Cite effective age vs. actual age considerations
-5. Note market evidence of value impact
-6. Conclude with the depreciation percentage adopted and supporting rationale
+WRITING REQUIREMENTS:
+1. Begin with: <b><u>DEPRECIATION ANALYSIS</u></b>
+2. Write as a 30-year MAI-designated appraiser in third person
+3. Open with: "Based on inspection and analysis of the subject property..."
+4. Explain why the calculated depreciation was adjusted from the age-life method
+5. Reference: observed condition, deferred maintenance or superior maintenance, effective age vs. actual age considerations, market evidence of value impact
+6. Conclude definitively with the depreciation percentage adopted and supporting rationale
 
-Draw on professional judgment and market experience. Write 1-2 paragraphs, approximately 100-150 words.`,
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for headers
+- Flowing narrative paragraphs — no bullet points or markdown
+- Use professional judgment and market experience language
+
+Write 1-2 paragraphs, approximately 100-150 words.`,
 
   // =================================================================
   // REVIEW & RECONCILIATION PROMPTS
   // =================================================================
   
-  exposure: (ctx) => `Write a professional exposure time and marketing time estimate as a 30-year MAI appraiser would.
+  exposure: (ctx) => {
+    const scenarioName = ctx.scenarios?.[0]?.name || 'As Is';
+    const isProspective = scenarioName.toLowerCase().includes('prospective');
+    
+    return `Write the Exposure Time and Marketing Time section of an appraisal report.
 
 PROPERTY DATA:
-- Property Type: ${ctx.propertyType || 'Commercial'}
-- Location: ${ctx.siteData?.city || 'Not specified'}
-${ctx.valuationData?.concludedValue ? `- Concluded Value: $${ctx.valuationData.concludedValue.toLocaleString()}` : ''}
+Property Type: ${ctx.propertyType || 'Commercial'}
+Location: ${ctx.siteData?.city || 'Not specified'}
+Market Trend: ${ctx.marketData?.marketTrend || 'Stable'}
+Scenario: ${scenarioName}
+${ctx.valuationData?.concludedValue ? `Concluded Value: $${ctx.valuationData.concludedValue.toLocaleString()}` : ''}
 
-Write a professional analysis with sections:
-1. <b><u>EXPOSURE TIME</u></b>
-2. Define: "Exposure time is the estimated length of time the property would have been offered for sale prior to the effective date..."
-3. Estimate: Based on market analysis, exposure time is estimated at [X] to [Y] months
-4. Support with: current market conditions, typical marketing periods for comparable properties, property value level
-5. <b><u>MARKETING TIME</u></b>
-6. Define: "Marketing time is the prospective time to sell after the effective date..."
-7. Estimate: Marketing time is estimated at [X] to [Y] months
-8. Support with: current buyer demand, available financing, property's competitive position
+WRITING REQUIREMENTS:
+1. Begin with: <b><u>EXPOSURE TIME AND MARKETING TIME</u></b>
+2. Write as a 30-year MAI-designated appraiser in third person
 
-Reference market participant interviews and comparable sales absorption. Write 2-3 paragraphs, approximately 200-250 words.`,
+3. <b>Exposure Time:</b>
+   - Define: "Exposure time is the estimated length of time the property interest being appraised would have been offered on the market prior to the hypothetical consummation of a sale at market value on the effective date of the appraisal."
+   - State a specific range (e.g., "6 to 12 months")
+   - Support with: current market conditions, typical marketing periods for comparable sales, property value level relative to market thresholds
+
+4. <b>Marketing Time:</b>
+   - Define: "Marketing time is the prospective time period from the effective date to sell the property at the concluded market value."
+   - State a specific range
+   - Support with: current buyer demand, available financing conditions, property's competitive position in the market
+
+5. ${isProspective ? 'Note these estimates assume the property is complete and available for sale.' : 'Note these estimates are based on current market conditions as of the effective date.'}
+6. Reference market participant interviews and comparable sales absorption data
+
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for main header, <b>text</b> for sub-headers
+- Flowing narrative paragraphs — no bullet points or markdown
+- Be specific with time estimates (do not leave as "[X] to [Y]" placeholders)
+
+Write 2-3 paragraphs, approximately 200-250 words.`;
+  },
 
   swot_summary_analysis: (ctx) => `Write a professional SWOT analysis summary narrative as a 30-year MAI appraiser would.
 

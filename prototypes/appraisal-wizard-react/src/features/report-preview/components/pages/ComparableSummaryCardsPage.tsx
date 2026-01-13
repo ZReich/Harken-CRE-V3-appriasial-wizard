@@ -16,6 +16,7 @@
 import React from 'react';
 import type { ComparableCardData, ComparableCardsPageData } from '../../../review/types';
 import { ComparableSummaryCard } from './ComparableSummaryCard';
+import { ReportPageBase } from './ReportPageBase';
 
 interface ComparableSummaryCardsPageProps {
   data: ComparableCardsPageData;
@@ -67,15 +68,23 @@ export const ComparableSummaryCardsPage: React.FC<ComparableSummaryCardsPageProp
   const startIndex = (pageNumber - 1) * cardsPerPage;
   const pageCards = comparables.slice(startIndex, startIndex + cardsPerPage);
 
+  const getSidebarLabel = () => {
+    switch (approachType) {
+      case 'land': return 'LAND SALES';
+      case 'sales': return 'SALES';
+      case 'rent': return 'RENT COMP';
+      default: return 'COMPARABLES';
+    }
+  };
+
   return (
-    <div
-      className="bg-white shadow-lg overflow-hidden"
-      style={{
-        width: '8.5in',
-        minHeight: '11in',
-        padding: '0.75in',
-        boxSizing: 'border-box',
-      }}
+    <ReportPageBase
+      title={getApproachTitle(approachType)}
+      sidebarLabel={getSidebarLabel()}
+      pageNumber={pageNumber}
+      sectionNumber={6}
+      sectionTitle="VALUATION"
+      contentPadding="p-10"
     >
       {/* Page Header */}
       <div className="flex items-center justify-between mb-6 pb-4 border-b-2" style={{ borderColor: scenarioColor }}>
@@ -180,7 +189,7 @@ export const ComparableSummaryCardsPage: React.FC<ComparableSummaryCardsPageProp
           {getApproachTitle(approachType)} - {scenarioName}
         </p>
       </div>
-    </div>
+    </ReportPageBase>
   );
 };
 
