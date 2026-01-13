@@ -494,6 +494,17 @@ export function ValueReconciliation() {
             </tbody>
           </table>
         </div>
+        
+        {/* Helper Message if No Concluded Values */}
+        {scenarios.some(s => getConcludedValue(s.id) === 0) && (
+          <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/30 border border-blue-200 dark:border-blue-800 rounded-lg flex items-start gap-3">
+            <Info className="w-5 h-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
+            <div className="text-sm text-blue-800 dark:text-blue-200">
+              <strong>Concluded values will calculate automatically</strong> once you assign reconciliation weights to each approach below. 
+              Use the <strong>"AI Suggest Weights"</strong> button for intelligent recommendations, or enter weights manually.
+            </div>
+          </div>
+        )}
       </div>
 
       {/* Reconciliation by Scenario */}
