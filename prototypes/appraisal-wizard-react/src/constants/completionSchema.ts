@@ -124,6 +124,10 @@ export const COMPLETION_SCHEMA: SectionSchema[] = [
       { id: 'improvements', label: 'Improvements', requiredFields: [
         'improvementsInventory.parcels[0].buildings[0].yearBuilt'
       ], weight: 2 },
+      // Demographics: requires demographics data to be loaded
+      { id: 'demographics', label: 'Demographics', requiredFields: [
+        'demographicsData.radiusAnalysis[0]'
+      ], weight: 1 },
       // Tax: requires transaction history (USPAP 3-year requirement)
       { id: 'tax', label: 'Tax & Ownership', requiredFields: [
         'subjectData.transactionHistory',
