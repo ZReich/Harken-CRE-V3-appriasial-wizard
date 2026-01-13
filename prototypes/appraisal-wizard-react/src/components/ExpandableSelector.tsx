@@ -276,24 +276,24 @@ export default function ExpandableSelector({
         </div>
       )}
 
-      <div className="max-h-64 overflow-y-auto py-1">
+      <div className="max-h-64 overflow-y-auto py-1 px-1">
         {/* Standard options */}
         {options.map((option) => (
           <button
             key={option}
             type="button"
             onClick={() => handleSelect(option)}
-            className={`w-full flex items-center justify-between px-4 py-2.5 text-left text-sm transition-colors ${
+            className={`w-full flex items-center justify-between px-4 py-2.5 text-left text-sm transition-all rounded-lg my-0.5 ${
               isSelected(option)
-                ? 'bg-harken-blue/10 text-harken-blue font-semibold'
-                : 'text-harken-gray dark:text-slate-300 hover:bg-accent-cyan/10 dark:hover:bg-accent-cyan/20'
+                ? 'bg-accent-cyan/10 text-accent-cyan font-semibold ring-1 ring-accent-cyan'
+                : 'text-harken-gray dark:text-slate-300 hover:ring-1 hover:ring-accent-cyan hover:text-accent-cyan'
             }`}
             role="option"
             aria-selected={isSelected(option)}
           >
             <span>{option}</span>
             {isSelected(option) && (
-              <Check className="w-4 h-4 text-harken-blue" />
+              <Check className="w-4 h-4 text-accent-cyan" />
             )}
           </button>
         ))}
@@ -309,10 +309,10 @@ export default function ExpandableSelector({
                 key={option}
                 type="button"
                 onClick={() => handleSelect(option)}
-                className={`w-full flex items-center justify-between px-4 py-2.5 text-left text-sm transition-colors ${
+                className={`w-full flex items-center justify-between px-4 py-2.5 text-left text-sm transition-all rounded-lg mx-1 my-0.5 ${
                   isSelected(option)
-                    ? 'bg-harken-blue/10 text-harken-blue font-semibold'
-                    : 'text-harken-gray dark:text-slate-300 hover:bg-accent-cyan/10 dark:hover:bg-accent-cyan/20'
+                    ? 'bg-accent-cyan/10 text-accent-cyan font-semibold ring-1 ring-accent-cyan'
+                    : 'text-harken-gray dark:text-slate-300 hover:ring-1 hover:ring-accent-cyan hover:text-accent-cyan'
                 }`}
                 role="option"
                 aria-selected={isSelected(option)}
@@ -322,7 +322,7 @@ export default function ExpandableSelector({
                   {option}
                 </span>
                 {isSelected(option) && (
-                  <Check className="w-4 h-4 text-harken-blue" />
+                  <Check className="w-4 h-4 text-accent-cyan" />
                 )}
               </button>
             ))}
