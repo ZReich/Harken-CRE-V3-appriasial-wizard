@@ -1,5 +1,6 @@
 import React from 'react';
 import type { ContentBlock } from '../../../../types';
+import { renderReportContent } from '../../../../utils/htmlRenderer';
 
 interface AnalysisGridPageProps {
   content: ContentBlock[];
@@ -228,9 +229,15 @@ export const AnalysisGridPage: React.FC<AnalysisGridPageProps> = ({
                 className={`text-sm text-slate-700 leading-relaxed mb-4 ${
                   isEditing ? 'cursor-pointer hover:bg-surface-2 rounded p-1 -m-1' : ''
                 }`}
+                style={{ lineHeight: '1.7' }}
                 onClick={() => isEditing && onContentClick?.(block.id)}
+                dangerouslySetInnerHTML={
+                  typeof block.content === 'string' 
+                    ? { __html: renderReportContent(block.content) }
+                    : undefined
+                }
               >
-                {typeof block.content === 'string' && <p>{block.content}</p>}
+                {typeof block.content !== 'string' && null}
               </div>
             ))}
           </div>

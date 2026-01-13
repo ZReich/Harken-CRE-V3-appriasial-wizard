@@ -1,5 +1,6 @@
 import React from 'react';
 import type { ContentBlock } from '../../../../types';
+import { renderReportContent } from '../../../../utils/htmlRenderer';
 
 interface NarrativePageProps {
   content: ContentBlock[];
@@ -29,38 +30,59 @@ export const NarrativePage: React.FC<NarrativePageProps> = ({
             key={block.id}
             className={`text-lg font-semibold text-slate-800 mt-6 mb-3 ${clickableClass}`}
             onClick={() => isClickable && onContentClick?.(block.id)}
-          >
-            {String((block.content as { text?: string })?.text || '')}
-          </h3>
+            dangerouslySetInnerHTML={{ 
+              __html: renderReportContent(String((block.content as { text?: string })?.text || '')) 
+            }}
+          />
         );
 
       case 'paragraph':
         const paragraphContent = block.content as Record<string, unknown>;
+        
+        // Check if it's a simple string or has text property
+        if (typeof paragraphContent === 'string') {
+          return (
+            <div 
+              key={block.id}
+              className={`text-sm text-slate-700 leading-relaxed mb-4 ${clickableClass}`}
+              style={{ lineHeight: '1.7' }}
+              onClick={() => isClickable && onContentClick?.(block.id)}
+              dangerouslySetInnerHTML={{ __html: renderReportContent(paragraphContent) }}
+            />
+          );
+        }
+        
+        if (paragraphContent?.text) {
+          return (
+            <div 
+              key={block.id}
+              className={`text-sm text-slate-700 leading-relaxed mb-4 ${clickableClass}`}
+              style={{ lineHeight: '1.7' }}
+              onClick={() => isClickable && onContentClick?.(block.id)}
+              dangerouslySetInnerHTML={{ __html: renderReportContent(String(paragraphContent.text)) }}
+            />
+          );
+        }
+        
+        // Render key-value pairs for structured content
         return (
           <div 
             key={block.id}
             className={`text-sm text-slate-700 leading-relaxed mb-4 ${clickableClass}`}
+            style={{ lineHeight: '1.7' }}
             onClick={() => isClickable && onContentClick?.(block.id)}
           >
-            {/* Render paragraph content based on what data is available */}
-            {typeof paragraphContent === 'string' ? (
-              <p>{paragraphContent}</p>
-            ) : paragraphContent?.text ? (
-              <p>{String(paragraphContent.text)}</p>
-            ) : (
-              // Render key-value pairs for structured content
-              Object.entries(paragraphContent).map(([key, value]) => {
-                if (!value || key.startsWith('_')) return null;
-                return (
-                  <p key={key} className="mb-2">
-                    <span className="font-medium text-slate-600 capitalize">
-                      {key.replace(/([A-Z])/g, ' $1').trim()}:
-                    </span>{' '}
-                    {String(value)}
-                  </p>
-                );
-              })
-            )}
+            {Object.entries(paragraphContent).map(([key, value]) => {
+              if (!value || key.startsWith('_')) return null;
+              return (
+                <p key={key} className="mb-2">
+                  <span className="font-medium text-slate-600 capitalize">
+                    {key.replace(/([A-Z])/g, ' $1').trim()}:
+                  </span>{' '}
+                  <span dangerouslySetInnerHTML={{ __html: renderReportContent(String(value)) }} />
+                </p>
+              );
+            })}
           </div>
         );
 
@@ -71,10 +93,14 @@ export const NarrativePage: React.FC<NarrativePageProps> = ({
           <ul 
             key={block.id}
             className={`list-disc list-inside text-sm text-slate-700 space-y-2 mb-4 ${clickableClass}`}
+            style={{ lineHeight: '1.7' }}
             onClick={() => isClickable && onContentClick?.(block.id)}
           >
             {items.map((item: string, i: number) => (
-              <li key={i}>{item}</li>
+              <li 
+                key={i}
+                dangerouslySetInnerHTML={{ __html: renderReportContent(item) }}
+              />
             ))}
           </ul>
         );

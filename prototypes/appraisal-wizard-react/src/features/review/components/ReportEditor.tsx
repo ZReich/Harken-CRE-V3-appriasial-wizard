@@ -2441,7 +2441,9 @@ function EditableElement({
   const mergedStyle = { ...style, ...appliedStyle };
   const [isEditing, setIsEditing] = useState(false);
   const [localContent, setLocalContent] = useState(content);
+  const [originalHeight, setOriginalHeight] = useState<number>(0);
   const inputRef = useRef<HTMLTextAreaElement>(null);
+  const displayRef = useRef<HTMLElement>(null);
 
   useEffect(() => {
     setLocalContent(content);
@@ -2450,11 +2452,17 @@ function EditableElement({
   useEffect(() => {
     if (isEditing && inputRef.current) {
       inputRef.current.focus();
-      inputRef.current.select();
+      // Select all text for easy replacement
+      inputRef.current.setSelectionRange(0, inputRef.current.value.length);
     }
   }, [isEditing]);
 
   const handleDoubleClick = () => {
+    // Capture the rendered height before switching to edit mode
+    if (displayRef.current) {
+      const rect = displayRef.current.getBoundingClientRect();
+      setOriginalHeight(Math.max(rect.height, 80)); // Minimum 80px
+    }
     setIsEditing(true);
   };
 
@@ -2466,7 +2474,8 @@ function EditableElement({
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
+    // Allow Shift+Enter for newlines in multiline content
+    if (e.key === 'Enter' && !e.shiftKey && localContent.split('\n').length <= 1) {
       e.preventDefault();
       handleBlur();
     }
@@ -2478,7 +2487,55 @@ function EditableElement({
 
   const isSelected = selectedElement === elementId;
 
+  // Helper to render HTML content safely - converts HTML tags to rendered elements
+  const renderFormattedContent = (text: string) => {
+    // Check if content has HTML tags
+    const hasHtml = /<[^>]+>/.test(text);
+    
+    if (hasHtml) {
+      // Sanitize and render HTML - convert common tags
+      // Note: For production, use DOMPurify
+      const sanitized = text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        // Now restore allowed tags
+        .replace(/&lt;b&gt;/gi, '<b>')
+        .replace(/&lt;\/b&gt;/gi, '</b>')
+        .replace(/&lt;strong&gt;/gi, '<strong>')
+        .replace(/&lt;\/strong&gt;/gi, '</strong>')
+        .replace(/&lt;u&gt;/gi, '<u>')
+        .replace(/&lt;\/u&gt;/gi, '</u>')
+        .replace(/&lt;i&gt;/gi, '<i>')
+        .replace(/&lt;\/i&gt;/gi, '</i>')
+        .replace(/&lt;em&gt;/gi, '<em>')
+        .replace(/&lt;\/em&gt;/gi, '</em>')
+        .replace(/&lt;br\s*\/?&gt;/gi, '<br/>')
+        .replace(/\n/g, '<br/>');
+      
+      return <span dangerouslySetInnerHTML={{ __html: sanitized }} />;
+    }
+    
+    // For plain text, convert newlines to <br> elements
+    const lines = text.split('\n');
+    if (lines.length === 1) {
+      return text;
+    }
+    
+    return lines.map((line, i) => (
+      <span key={i}>
+        {line}
+        {i < lines.length - 1 && <br />}
+      </span>
+    ));
+  };
+
   if (isEditing) {
+    // Calculate rows based on content length and newlines
+    const lineCount = localContent.split('\n').length;
+    const estimatedWrappedLines = Math.ceil(localContent.length / 80); // Rough estimate for wrapped lines
+    const calculatedRows = Math.max(3, lineCount, Math.ceil(estimatedWrappedLines / 2));
+    
     return (
       <textarea
         ref={inputRef}
@@ -2486,29 +2543,32 @@ function EditableElement({
         onChange={(e) => setLocalContent(e.target.value)}
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
-        className={`w-full border-2 border-[#0da1c7] rounded px-2 py-1 resize-none focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/50 ${className}`}
+        className={`w-full border-2 border-[#0da1c7] rounded px-2 py-2 resize-vertical focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/50 bg-white ${className}`}
         style={{
           ...mergedStyle,
-          minHeight: '2em',
-          height: 'auto',
+          minHeight: Math.max(originalHeight, 80),
+          fontFamily: 'inherit',
+          fontSize: 'inherit',
+          lineHeight: '1.6',
         }}
-        rows={Math.max(1, localContent.split('\n').length)}
+        rows={calculatedRows}
       />
     );
   }
 
   return (
     <Component
+      ref={displayRef as React.RefObject<HTMLParagraphElement>}
       onClick={() => onSelectElement(elementId)}
       onDoubleClick={handleDoubleClick}
       className={`cursor-pointer transition-all rounded px-1 -mx-1 ${isSelected
         ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5'
         : 'hover:bg-slate-100'
         } ${className}`}
-      style={mergedStyle}
+      style={{ ...mergedStyle, lineHeight: '1.6' }}
       title="Click to select, double-click to edit"
     >
-      {localContent}
+      {renderFormattedContent(localContent)}
     </Component>
   );
 }
@@ -2953,21 +3013,41 @@ function DraggableTextBlock({ block, selected, onSelect, onUpdate, onDelete }: D
           onChange={(e) => onUpdate({ content: e.target.value })}
           onBlur={handleBlur}
           placeholder="Enter your text here..."
-          className="w-full h-full p-2 border-2 border-[#0da1c7] rounded bg-white resize-none focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/30"
+          className="w-full p-2 border-2 border-[#0da1c7] rounded bg-white resize-vertical focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/30"
           style={{
             fontSize: block.fontSize,
             fontWeight: block.fontWeight,
             color: block.color,
             minHeight: block.height,
+            height: block.height,
+            lineHeight: '1.6',
           }}
         />
       ) : (
         <div
           className={`p-2 bg-white rounded border-2 h-full ${isDefaultText ? 'border-dashed border-slate-200 text-slate-500 italic' : 'border-solid border-slate-200'}`}
-          style={{ minHeight: block.height - 16 }}
-        >
-          {block.content}
-        </div>
+          style={{ minHeight: block.height - 16, lineHeight: '1.6' }}
+          dangerouslySetInnerHTML={{
+            __html: isDefaultText 
+              ? block.content 
+              : block.content
+                  .replace(/&/g, '&amp;')
+                  .replace(/</g, '&lt;')
+                  .replace(/>/g, '&gt;')
+                  .replace(/&lt;b&gt;/gi, '<b>')
+                  .replace(/&lt;\/b&gt;/gi, '</b>')
+                  .replace(/&lt;strong&gt;/gi, '<strong>')
+                  .replace(/&lt;\/strong&gt;/gi, '</strong>')
+                  .replace(/&lt;u&gt;/gi, '<u>')
+                  .replace(/&lt;\/u&gt;/gi, '</u>')
+                  .replace(/&lt;i&gt;/gi, '<i>')
+                  .replace(/&lt;\/i&gt;/gi, '</i>')
+                  .replace(/&lt;em&gt;/gi, '<em>')
+                  .replace(/&lt;\/em&gt;/gi, '</em>')
+                  .replace(/&lt;br\s*\/?&gt;/gi, '<br/>')
+                  .replace(/\n/g, '<br/>')
+          }}
+        />
       )}
 
       {/* Delete button */}
