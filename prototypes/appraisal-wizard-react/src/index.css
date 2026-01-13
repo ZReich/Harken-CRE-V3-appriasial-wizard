@@ -1220,30 +1220,28 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   animation: thumbnail-lift 0.2s ease-out forwards;
 }
 
-
 /* ============================================
-   LIGHT MODE FORCE OVERRIDE (REPORT PREVIEW)
+   LIGHT MODE FORCE OVERRIDE
    Ensures report preview pages maintain light mode
    styling even when the app is in dark mode.
-   Forces light mode colors for all states (base, hover, focus).
+   This forces all elements inside .light containers
+   to use light mode colors regardless of .dark class.
    ============================================ */
 .light,
-.light *,
-.light *:hover,
-.light *:focus {
+.light * {
   /* Force light mode surface colors */
   --color-surface-base: #f4f7f9 !important;
   --color-surface-1: #ffffff !important;
   --color-surface-2: #f8fafc !important;
   --color-surface-3: #f1f5f9 !important;
   --color-surface-4: #e2e8f0 !important;
-  --color-surface-hover: rgba(0,0,0,0.04) !important;
+  --color-surface-hover: rgba(0,0,0,0.03) !important;
   
   /* Force light mode elevation colors to match surface */
   --color-elevation-base: #f4f7f9 !important;
   --color-elevation-1: #ffffff !important;
   --color-elevation-2: #f8fafc !important;
-  --color-elevation-3: rgba(0,0,0,0.04) !important;
+  --color-elevation-3: rgba(0,0,0,0.03) !important;
   --color-elevation-subtle: #f1f5f9 !important;
   --color-elevation-muted: #e2e8f0 !important;
   
@@ -1252,81 +1250,4 @@ input[type="date"]::-webkit-calendar-picker-indicator:hover {
   --color-dark-border: #b8c4ce !important;
   --color-border-muted: #94a3b8 !important;
   --color-dark-border-muted: #94a3b8 !important;
-}
-
-/* Force hover backgrounds to light colors within .light containers */
-.dark .light *:hover {
-  --color-bg-hover: rgba(0,0,0,0.03) !important;
-}
-
-/* Direct background color overrides for hover states in report preview */
-.light .bg-elevation-3,
-.light .bg-elevation-2,
-.light .bg-elevation-1,
-.light [class*="hover:bg-elevation"]:hover,
-.light [class*="hover:bg-surface"]:hover {
-  background-color: #f8fafc !important;
-}
-
-/* ============================================
-   REPORT PAGE LIGHT MODE OVERRIDE
-   Forces all elements within report pages to use
-   light mode colors. Uses higher specificity to
-   override dark mode Tailwind classes.
-   ============================================ */
-.report-page-light-mode,
-.report-page-light-mode * {
-  /* Override ALL dark mode background colors */
-  background-color: inherit;
-}
-
-.report-page-light-mode .bg-surface-1,
-.report-page-light-mode .bg-surface-2,
-.report-page-light-mode .bg-surface-3 {
-  background-color: #ffffff !important;
-}
-
-.report-page-light-mode [class*='bg-elevation'] {
-  background-color: #ffffff !important;
-}
-
-.report-page-light-mode [class*='bg-harken-gray-light'] {
-  background-color: #f1f3f4 !important;
-}
-
-/* Force dark text colors in report pages */
-.report-page-light-mode [class*='text-slate-800'],
-.report-page-light-mode [class*='text-slate-900'] {
-  color: #1e293b !important;
-}
-
-.report-page-light-mode [class*='text-slate-700'] {
-  color: #334155 !important;
-}
-
-.report-page-light-mode [class*='text-slate-600'] {
-  color: #475569 !important;
-}
-
-.report-page-light-mode [class*='text-slate-500'] {
-  color: #64748b !important;
-}
-
-.report-page-light-mode [class*='text-white'] {
-  color: #1e293b !important;
-}
-
-/* Force light hover backgrounds */
-.report-page-light-mode *:hover {
-  background-color: inherit;
-}
-
-.report-page-light-mode [class*='hover:bg-surface']:hover,
-.report-page-light-mode [class*='hover:bg-elevation']:hover {
-  background-color: #f8fafc !important;
-}
-
-/* Force light borders */
-.report-page-light-mode [class*='border-dark-border'] {
-  border-color: #b8c4ce !important;
 }

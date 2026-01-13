@@ -110,17 +110,37 @@ export const ComparableMapCapture: React.FC<ComparableMapCaptureProps> = ({
       setCapturedImageUrl(imageUrl);
       setIsCaptured(true);
       
-      // Save to wizard state
+      // Save to wizard state with proper MapData structure
       dispatch({
         type: 'SET_APPROACH_MAP',
         payload: {
           approachType,
           map: {
             id: `${approachType}-map`,
-            type: approachType === 'land-sales' ? 'aerial' : 'street',
-            label: displayTitle,
+            type: approachType,
+            title: displayTitle,
+            source: 'generated' as const,
+            center: { lat: 0, lng: 0 }, // Placeholder - actual coords from map
+            zoom: 12,
+            mapType: 'hybrid' as const,
             imageUrl,
-            timestamp: new Date().toISOString(),
+            markers: comparables.map((comp, idx) => {
+              const markerType = approachType === 'land-sales' ? 'land-sale' as const
+                : approachType === 'rental-comps' ? 'rental' as const
+                : 'improved-sale' as const;
+              return {
+                id: comp.id,
+                lat: 0, // Placeholder - would come from geocoded address
+                lng: 0,
+                label: String(idx + 1),
+                type: markerType,
+                color: approachType === 'land-sales' ? '#f97316' : approachType === 'rental-comps' ? '#22c55e' : '#3b82f6',
+                number: idx + 1,
+                address: comp.address,
+              };
+            }),
+            capturedAt: new Date().toISOString(),
+            reportSections: [`${approachType}-section`],
           },
         },
       });

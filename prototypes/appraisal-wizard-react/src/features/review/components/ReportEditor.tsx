@@ -3297,13 +3297,10 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
   const sections = useMemo(() => {
     const dynamicSections: ReportSection[] = [...BASE_REPORT_SECTIONS];
 
-    // Add zoning and environmental exhibits if data exists
-    if (state.subjectData?.zoning?.zoningCode) {
-      dynamicSections.push({ ...ZONING_EXHIBIT_TEMPLATE });
-    }
-    if (state.subjectData?.environmental?.hasEnvironmentalIssues !== undefined) {
-      dynamicSections.push({ ...ENVIRONMENTAL_EXHIBIT_TEMPLATE });
-    }
+    // Add zoning and environmental exhibits (always available as exhibit pages)
+    // These will be populated if/when zoning and environmental data is collected
+    dynamicSections.push({ ...ZONING_EXHIBIT_TEMPLATE });
+    dynamicSections.push({ ...ENVIRONMENTAL_EXHIBIT_TEMPLATE });
 
     // For single scenario, use legacy approach (flat sections)
     // For multiple scenarios, use scenario-grouped sections
@@ -3330,26 +3327,8 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
         );
 
         // Add lease abstraction pages if income approach is enabled
-        if (scenario.approaches.includes('Income Approach')) {
-          // Get tenants from income data
-          const tenants = state.incomeData?.rentalIncome
-            ?.filter(item => item.tenantName && item.tenantName !== 'Vacant')
-            ?.map(item => ({ id: item.id, name: item.tenantName || 'Unknown Tenant' })) || [];
-
-          if (tenants.length > 0) {
-            const leaseSections = createLeaseAbstractionSections(
-              tenants,
-              `income-approach-${scenario.id}`
-            );
-            // Insert lease sections after the income approach section
-            const incomeIndex = scenarioSections.findIndex(s => s.id === `income-approach-${scenario.id}`);
-            if (incomeIndex !== -1) {
-              scenarioSections.splice(incomeIndex + 1, 0, ...leaseSections);
-            } else {
-              scenarioSections.push(...leaseSections);
-            }
-          }
-        }
+        // Note: Lease abstractions will be dynamically populated when tenant data is available
+        // from the IncomeApproachGrid component's state (managed separately)
 
         dynamicSections.push(...scenarioSections);
       });
@@ -3369,7 +3348,7 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
     dynamicSections.push(...CLOSING_REPORT_SECTIONS);
 
     return dynamicSections;
-  }, [scenarios, state.subjectData?.zoning?.zoningCode, state.subjectData?.environmental?.hasEnvironmentalIssues, state.incomeData?.rentalIncome]);
+  }, [scenarios]);
 
   const [reportSections, setReportSections] = useState<ReportSection[]>(sections);
   const [activeSectionId, setActiveSectionId] = useState<string | null>(null);

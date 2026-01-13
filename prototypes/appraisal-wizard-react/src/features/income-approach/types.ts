@@ -391,6 +391,9 @@ export interface IncomeApproachState {
   expenseComparables: ExpenseComp[];
   expenseCompNotes: string;
   
+  // Concluded values from rent comparables
+  concludedMarketRentPerSf?: number;
+  
   // Workflow tracking
   completedSubTabs: IncomeSubTab[];
 }
