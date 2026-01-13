@@ -84,6 +84,14 @@ export interface MontanaCadastralParcel {
 }
 
 // ==================== AI GENERATION ====================
+export interface SiteImprovementContext {
+  typeName: string;       // e.g., "Wood Fence", "Asphalt Paving"
+  quantity: number;
+  unit: string;           // 'SF' | 'LF' | 'EA' | 'LS'
+  yearInstalled?: number;
+  condition?: string;     // 'excellent' | 'good' | 'average' | 'fair' | 'poor'
+}
+
 export interface AIGenerationContext {
   propertyType?: string;
   propertySubtype?: string;
@@ -121,6 +129,8 @@ export interface AIGenerationContext {
     costValue?: number;
     concludedValue?: number;
   };
+  // Site Improvements Inventory
+  siteImprovements?: SiteImprovementContext[];
 }
 
 

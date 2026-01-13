@@ -250,6 +250,14 @@ export default function SubjectDataPage() {
         topography: wizardState.subjectData?.topography,
         shape: wizardState.subjectData?.shape,
       },
+      // Include site improvements inventory for AI drafts
+      siteImprovements: (wizardState.siteImprovements || []).map(imp => ({
+        typeName: imp.typeName,
+        quantity: imp.quantity,
+        unit: imp.unit,
+        yearInstalled: imp.yearInstalled ?? undefined,
+        condition: imp.condition,
+      })),
     };
   }, [wizardState]);
 

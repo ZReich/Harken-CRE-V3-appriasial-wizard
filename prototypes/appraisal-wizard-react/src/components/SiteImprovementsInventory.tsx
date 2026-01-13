@@ -48,11 +48,11 @@ import type { SiteImprovement, SiteImprovementCondition } from '../types';
 // =================================================================
 
 const CONDITION_OPTIONS: { value: SiteImprovementCondition; label: string; abbrev: string; color: string }[] = [
-  { value: 'excellent', label: 'Excellent', abbrev: 'Excl', color: 'bg-accent-teal-mint-light text-accent-teal-mint border-accent-teal-mint' },
-  { value: 'good', label: 'Good', abbrev: 'Good', color: 'bg-lime-100 text-lime-700 border-lime-300' },
-  { value: 'average', label: 'Average', abbrev: 'Avg', color: 'bg-harken-gray-light text-harken-gray border-light-border' },
-  { value: 'fair', label: 'Fair', abbrev: 'Fair', color: 'bg-accent-amber-gold-light text-accent-amber-gold border-accent-amber-gold' },
-  { value: 'poor', label: 'Poor', abbrev: 'Poor', color: 'bg-accent-red-light text-harken-error border-harken-error/20' },
+  { value: 'excellent', label: 'Excellent', abbrev: 'Excl', color: 'bg-accent-teal-mint-light dark:bg-accent-teal-mint/20 text-accent-teal-mint border-accent-teal-mint' },
+  { value: 'good', label: 'Good', abbrev: 'Good', color: 'bg-lime-100 dark:bg-lime-900/30 text-lime-700 dark:text-lime-400 border-lime-300 dark:border-lime-700' },
+  { value: 'average', label: 'Average', abbrev: 'Avg', color: 'bg-harken-gray-light dark:bg-slate-700 text-harken-gray dark:text-slate-200 border-light-border dark:border-slate-600' },
+  { value: 'fair', label: 'Fair', abbrev: 'Fair', color: 'bg-accent-amber-gold-light dark:bg-accent-amber-gold/20 text-accent-amber-gold border-accent-amber-gold' },
+  { value: 'poor', label: 'Poor', abbrev: 'Poor', color: 'bg-accent-red-light dark:bg-harken-error/20 text-harken-error border-harken-error/20' },
 ];
 
 const UNIT_OPTIONS: { value: 'SF' | 'LF' | 'EA' | 'LS'; label: string; fullName: string }[] = [
@@ -662,7 +662,7 @@ export default function SiteImprovementsInventory({
 
         {/* Quick Add Form (shown when type or custom form is active) */}
         {(selectedTypeId || showCustomForm) && (
-          <div className="p-3 bg-surface-1 rounded-lg border border-light-border dark:border-dark-border">
+          <div className="p-3 bg-surface-1 dark:bg-elevation-1 rounded-lg border border-light-border dark:border-dark-border">
             <div className="grid grid-cols-4 gap-3 mb-3">
               <div>
                 <label className="block text-xs font-medium text-harken-gray dark:text-slate-400 mb-1">Quantity</label>
@@ -716,7 +716,7 @@ export default function SiteImprovementsInventory({
                   disabled={!canAdd}
                   className={`w-full flex items-center justify-center gap-1.5 px-4 py-2 text-sm font-medium rounded-lg transition-colors ${canAdd
                     ? 'bg-harken-blue text-white hover:bg-harken-blue/90'
-                    : 'bg-harken-gray-light text-harken-gray-med cursor-not-allowed'
+                    : 'bg-harken-gray-light dark:bg-slate-700 text-harken-gray-med dark:text-slate-500 cursor-not-allowed'
                     }`}
                 >
                   <Plus size={14} />
@@ -751,10 +751,10 @@ export default function SiteImprovementsInventory({
       <div className="p-4">
         {/* Inventory Header */}
         {improvements.length > 0 && (
-          <div className="flex items-center justify-between mb-3 pb-2 border-b border-harken-gray-light">
+          <div className="flex items-center justify-between mb-3 pb-2 border-b border-harken-gray-light dark:border-dark-border">
             <div className="flex items-center gap-2 text-sm">
-              <Calculator size={14} className="text-harken-gray-med" />
-              <span className="font-medium text-harken-gray">Inventory ({totals.count} items)</span>
+              <Calculator size={14} className="text-harken-gray-med dark:text-slate-400" />
+              <span className="font-medium text-harken-gray dark:text-slate-200">Inventory ({totals.count} items)</span>
             </div>
             {totals.totalContributory > 0 && (
               <span className="text-sm text-harken-gray dark:text-slate-400">
@@ -822,10 +822,10 @@ export default function SiteImprovementsInventory({
 
                   {/* Depreciation */}
                   <div
-                    className={`px-2 py-0.5 text-xs font-medium rounded whitespace-nowrap cursor-help ${depreciationPct >= 75 ? 'bg-accent-red-light text-harken-error' :
-                      depreciationPct >= 50 ? 'bg-accent-amber-gold-light text-accent-amber-gold' :
-                        depreciationPct > 0 ? 'bg-lime-100 text-lime-700' :
-                          'bg-harken-gray-light text-harken-gray-med'
+                    className={`px-2 py-0.5 text-xs font-medium rounded whitespace-nowrap cursor-help ${depreciationPct >= 75 ? 'bg-accent-red-light dark:bg-harken-error/20 text-harken-error' :
+                      depreciationPct >= 50 ? 'bg-accent-amber-gold-light dark:bg-accent-amber-gold/20 text-accent-amber-gold' :
+                        depreciationPct > 0 ? 'bg-lime-100 dark:bg-lime-900/30 text-lime-700 dark:text-lime-400' :
+                          'bg-harken-gray-light dark:bg-slate-700 text-harken-gray-med dark:text-slate-400'
                       }`}
                     title={`Depreciation: ${depreciationPct}% | Economic Life: ${improvement.economicLife} yrs | Effective Age: ${improvement.effectiveAge} yrs`}
                   >
@@ -857,7 +857,7 @@ export default function SiteImprovementsInventory({
                         <div className="flex items-center gap-3">
                           <div className="text-sm">
                             <span className="text-slate-500 dark:text-slate-400">Depreciation:</span>
-                            <span className={`ml-2 font-semibold ${improvement.depreciationOverride !== undefined ? 'text-accent-amber-gold' : 'text-slate-700'}`}>
+                            <span className={`ml-2 font-semibold ${improvement.depreciationOverride !== undefined ? 'text-accent-amber-gold' : 'text-slate-700 dark:text-slate-200'}`}>
                               {improvement.depreciationOverride !== undefined ? improvement.depreciationOverride : depreciationPct}%
                             </span>
                             {improvement.depreciationOverride !== undefined && (

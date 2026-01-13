@@ -559,57 +559,99 @@ Write a professional analysis:
 
 Use proper legal and appraisal terminology. Write 1-2 paragraphs, approximately 100-150 words.`,
 
-  site_description_full: (ctx) => `Write a comprehensive professional site description for an appraisal report as a 30-year MAI appraiser would.
+  site_description_full: (ctx) => {
+    // Build site improvements list from inventory data
+    const formatSiteImprovements = () => {
+      if (!ctx.siteImprovements || ctx.siteImprovements.length === 0) {
+        return 'Per observation';
+      }
+      return ctx.siteImprovements
+        .map(imp => `${imp.typeName} (${imp.quantity.toLocaleString()} ${imp.unit}${imp.condition ? `, ${imp.condition} condition` : ''})`)
+        .join('; ');
+    };
 
-SITE CHARACTERISTICS:
-- Size: ${ctx.siteData?.siteSize || 'Not specified'}
-- Shape: ${ctx.siteData?.shape || 'Not specified'}
-- Topography: ${ctx.siteData?.topography || 'Not specified'}
-- Frontage: ${ctx.siteData?.frontage || 'Not specified'}
-- Access: ${ctx.siteData?.accessQuality || 'Not specified'}
-- Visibility: ${ctx.siteData?.visibility || 'Not specified'}
-- Zoning: ${ctx.siteData?.zoning || 'Not specified'}
+    return `Write the comprehensive Site Description section of an appraisal report.
+
+SUBJECT SITE DATA (from appraiser's inspection):
+Size: ${ctx.siteData?.siteSize || 'Not specified'}
+Shape: ${ctx.siteData?.shape || 'Not specified'}
+Topography: ${ctx.siteData?.topography || 'Not specified'}
+Frontage: ${ctx.siteData?.frontage || 'Not specified'}
+Access Quality: ${ctx.siteData?.accessQuality || 'Not specified'}
+Visibility: ${ctx.siteData?.visibility || 'Not specified'}
+Zoning: ${ctx.siteData?.zoning || 'Not specified'}
 
 UTILITIES:
-- Water: ${ctx.siteData?.waterSource || 'Municipal'}
-- Sewer: ${ctx.siteData?.sewerType || 'Municipal'}
-- Electric, Gas, Telecom: Available
+Water: ${ctx.siteData?.waterSource || 'Municipal'}
+Sewer: ${ctx.siteData?.sewerType || 'Municipal'}
+Electric, Gas, Telecom: Available
 
-SITE IMPROVEMENTS:
-- Paving: ${ctx.siteData?.pavingType || 'Asphalt'}
-- Fencing: ${ctx.siteData?.fencingType || 'Per observation'}
+SITE IMPROVEMENTS (from inventory — use EXACT types listed):
+${formatSiteImprovements()}
 
 FLOOD ZONE: ${ctx.siteData?.femaZone || 'Zone X'}
 
-Write a comprehensive site description with bold section headers:
-1. <b><u>SITE SIZE AND CONFIGURATION</u></b> - Dimensions, shape, and area
-2. <b><u>TOPOGRAPHY AND DRAINAGE</u></b> - Grade, drainage patterns
-3. <b><u>ACCESS AND VISIBILITY</u></b> - Frontage, ingress/egress, visibility analysis
-4. <b><u>UTILITIES</u></b> - All utility services and adequacy
-5. <b><u>SITE IMPROVEMENTS</u></b> - Paving, lighting, fencing, landscaping
-6. <b><u>FLOOD ZONE</u></b> - FEMA designation and implications
-7. <b><u>EASEMENTS</u></b> - Notable easements or statement that none adversely affect value
-8. <b><u>CONCLUSION</u></b> - Overall site suitability assessment
+WRITING REQUIREMENTS:
+1. Write as a 30-year MAI-designated appraiser in third person ("the appraiser" or "we")
+2. Use proper appraisal terminology: "subject site," "based on our inspection," "it is our conclusion that"
+3. Be definitive in conclusions — avoid hedging language like "may," "might," "could"
+4. Describe ONLY data provided above — do NOT invent, substitute, or fabricate details
 
-Write 4-6 paragraphs, approximately 350-450 words total. Use definitive professional language throughout.`,
+REQUIRED SECTIONS (use HTML headers <b><u>HEADER</u></b>):
+1. <b><u>SITE SIZE AND CONFIGURATION</u></b> — Dimensions, shape, and total area
+2. <b><u>TOPOGRAPHY AND DRAINAGE</u></b> — Grade characteristics, drainage adequacy
+3. <b><u>ACCESS AND VISIBILITY</u></b> — Frontage, ingress/egress, visibility from roadway
+4. <b><u>UTILITIES</u></b> — All utility services and adequacy assessment
+5. <b><u>SITE IMPROVEMENTS</u></b> — Describe ONLY improvements from inventory above (use exact type names — if "Wood Fence" is listed, write "wood fence" not "chain link")
+6. <b><u>FLOOD ZONE</u></b> — FEMA designation and flood insurance implications
+7. <b><u>EASEMENTS</u></b> — Notable easements or "no adverse easements were identified"
+8. <b><u>CONCLUSION</u></b> — Definitive statement on site suitability for current use
 
-  site_improvements: (ctx) => `Write a professional site improvements description for an appraisal report as a 30-year MAI appraiser would.
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for headers, no markdown
+- Flowing narrative paragraphs — no bullet points
+- Reference USPAP methodology implicitly
 
-SITE IMPROVEMENTS:
-- Paving: ${ctx.siteData?.pavingType || 'Asphalt paving'}
-- Fencing: ${ctx.siteData?.fencingType || 'Chain link perimeter fence'}
-- Property Type: ${ctx.propertyType || 'Commercial'}
+Write 4-6 paragraphs, approximately 350-450 words total.`;
+  },
 
-Write a professional description:
-1. Describe paving areas (parking, circulation, loading areas)
-2. Note paving condition and adequacy
-3. Describe fencing type, coverage, and condition
-4. Mention exterior lighting for safety and security
-5. Note any landscaping or yard improvements
-6. Assess overall condition and functional adequacy
-7. State whether improvements are typical for the property type
+  site_improvements: (ctx) => {
+    // Build site improvements list from inventory data
+    const formatSiteImprovements = () => {
+      if (!ctx.siteImprovements || ctx.siteImprovements.length === 0) {
+        return 'No site improvements inventory provided';
+      }
+      return ctx.siteImprovements
+        .map(imp => `${imp.typeName}: ${imp.quantity.toLocaleString()} ${imp.unit}${imp.yearInstalled ? `, installed ${imp.yearInstalled}` : ''}${imp.condition ? `, ${imp.condition} condition` : ''}`)
+        .join('\n');
+    };
 
-Use professional terminology. Write 2 paragraphs, approximately 150-175 words.`,
+    return `Write the Site Improvements section of an appraisal report.
+
+SUBJECT PROPERTY SITE IMPROVEMENTS (from appraiser's inventory):
+${formatSiteImprovements()}
+
+PROPERTY TYPE: ${ctx.propertyType || 'Commercial'}
+
+WRITING REQUIREMENTS:
+1. Begin with: <b><u>SITE IMPROVEMENTS</u></b>
+2. Write as a 30-year MAI-designated appraiser in third person ("the appraiser observed" or "we noted")
+3. Describe ONLY the site improvements listed above — do NOT substitute, invent, or add improvements not in the inventory
+4. For each improvement, address:
+   - Type and extent (using the EXACT type names provided, e.g., if "Wood Fence" is listed, write "wood fence" not "chain link")
+   - Quantity and coverage area
+   - Observed condition and remaining useful life assessment
+   - Functional adequacy for the property type
+5. Conclude with a definitive statement on whether site improvements are consistent with market expectations for this property type and contribute positively to utility and marketability
+
+FORMATTING:
+- Use HTML only: <b><u>HEADER</u></b> for section header
+- Write flowing narrative paragraphs — no bullet points or markdown
+- Be definitive — avoid "may," "might," "could possibly"
+- Reference "based on our inspection" or "it is our conclusion that"
+
+Write 2 paragraphs, approximately 150-175 words total.`;
+  },
 
   property_boundaries: (ctx) => `Write a professional property boundaries description for an appraisal report as a 30-year MAI appraiser would.
 

@@ -61,7 +61,55 @@
 3. **The Code:** (Optimized, bespoke, production-ready, utilizing existing libraries).
 
 
-## 6. DEBUGGING & TESTING PROTOCOL (AUTO-TRIGGER ON BUG FIXES)
+## 6. AI APPRAISAL DRAFT GENERATION PROTOCOL
+
+When generating or modifying AI prompts for appraisal report text generation, follow these standards:
+
+### VOICE & PERSONA
+- **Role:** Senior MAI-designated commercial real estate appraiser with 30 years of experience writing USPAP-compliant reports.
+- **Tone:** Professional, authoritative, definitive. Output should read like it came from a Tier 1 national appraisal firm.
+- **Perspective:** Third person ("the appraiser" or "we"), never first person.
+
+### REQUIRED TERMINOLOGY
+Use proper appraisal vocabulary:
+- "subject property," "highest and best use," "legally permissible," "physically possible," "financially feasible," "maximally productive"
+- "the four tests of highest and best use" when applicable
+- "based on our analysis," "market evidence supports," "it is our conclusion that"
+- Industry abbreviations: SF, PSF, NNN, GBA, NRA
+- Reference USPAP Standards Rule 1-3 concepts implicitly through proper methodology
+
+### WRITING STYLE
+- **Definitive conclusions** — avoid hedging language like "may," "might," "could possibly"
+- **Factual and objective** — no speculation
+- **Concise but thorough** — no filler words
+- **Do not include dollar values** unless explicitly provided in context
+
+### FORMATTING RULES (CRITICAL)
+- Use ONLY HTML formatting — NEVER markdown syntax
+- Bold headers: `<b><u>HEADER TEXT</u></b>` (NOT `**text**` or `__text__`)
+- Bold inline: `<b>text</b>`
+- Underline: `<u>text</u>`
+- Line breaks: `\n`
+- **FORBIDDEN:** asterisks (`*`), underscores (`_`), hashtags (`#`), markdown bullets (`- ` or `* `)
+- Write flowing narrative paragraphs, not bullet lists
+
+### DATA INTEGRITY
+- ONLY describe data that is provided in the context
+- DO NOT invent, substitute, or fabricate property details
+- If data is missing, use "Not specified" or omit that element
+- Explicitly instruct AI not to substitute provided values (e.g., if user entered "Wood Fence," AI must not write "chain link fence")
+
+### PROMPT STRUCTURE
+Each section prompt should include:
+1. Clear section identifier and purpose
+2. All relevant context data interpolated from `ctx`
+3. Specific content requirements (what to include)
+4. Word count / paragraph guidance
+5. Explicit instruction to use provided data only
+
+---
+
+## 7. DEBUGGING & TESTING PROTOCOL (AUTO-TRIGGER ON BUG FIXES)
 - **Trigger:** If task involves broken UI, rendering issues, state bugs, console errors, failed tests, or "not working" symptoms → switch to/enforce Debug Mode immediately.
 - **Core Flow (Strict, Autonomous Loops):**
   1. **Reproduce & Inspect (Frontend Focus):**

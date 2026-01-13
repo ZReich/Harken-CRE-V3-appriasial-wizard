@@ -157,6 +157,14 @@ export interface RiskRatingResponse {
 }
 
 // ==================== AI GENERATION ====================
+export interface SiteImprovementContext {
+  typeName: string;       // e.g., "Wood Fence", "Asphalt Paving"
+  quantity: number;
+  unit: string;           // 'SF' | 'LF' | 'EA' | 'LS'
+  yearInstalled?: number;
+  condition?: string;     // 'excellent' | 'good' | 'average' | 'fair' | 'poor'
+}
+
 export interface AIGenerationContext {
   propertyType?: string;
   propertySubtype?: string;
@@ -268,6 +276,8 @@ export interface AIGenerationContext {
   aadt?: number;
   // Legal Description
   legalDescription?: string;
+  // Site Improvements Inventory
+  siteImprovements?: SiteImprovementContext[];
 }
 
 export interface AIGenerationRequest {
