@@ -188,16 +188,16 @@ const BuildingTypeSelector: FC<BuildingTypeSelectorProps> = ({
           flex items-center gap-2 px-3 py-1.5 rounded-lg text-sm font-medium
           transition-all cursor-pointer
           ${isInherited 
-            ? 'bg-harken-gray-light text-harken-gray border border-light-border' 
+            ? 'bg-surface-1 dark:bg-elevation-1 text-harken-gray dark:text-slate-300 border border-light-border dark:border-dark-border' 
             : 'bg-[#0da1c7]/10 text-[#0da1c7] border border-[#0da1c7]/30'
           }
-          ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#0da1c7]/20'}
+          ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-[#0da1c7]/20 hover:border-[#0da1c7]/40 hover:text-[#0da1c7]'}
         `}
       >
         <Icon className="w-4 h-4" />
         <span className="truncate max-w-[180px]">{label}</span>
         {isInherited && (
-          <span className="text-xs text-harken-gray-med ml-1">(Inherited)</span>
+          <span className="text-xs text-harken-gray-med dark:text-slate-400 ml-1">(Inherited)</span>
         )}
         <ChevronDown className="w-3.5 h-3.5 ml-1" />
       </button>

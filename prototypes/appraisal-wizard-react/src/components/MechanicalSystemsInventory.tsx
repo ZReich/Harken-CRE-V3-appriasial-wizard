@@ -509,8 +509,8 @@ export default function MechanicalSystemsInventory({
             onClick={() => setShowPhotoPanel(!showPhotoPanel)}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
               showPhotoPanel
-                ? 'bg-harken-blue text-white'
-                : 'bg-surface-3 dark:bg-elevation-subtle text-slate-600 hover:bg-surface-4 dark:hover:bg-elevation-muted'
+                ? 'bg-accent-cyan text-white'
+                : 'bg-surface-1 dark:bg-elevation-1 text-harken-gray dark:text-slate-300 border border-light-border dark:border-dark-border hover:bg-accent-cyan/10 hover:text-accent-cyan hover:border-accent-cyan'
             }`}
           >
             <Camera className="w-3.5 h-3.5" />
