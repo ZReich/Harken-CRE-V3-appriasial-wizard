@@ -719,7 +719,7 @@ function BuildingCard({
                         onClick={() => onUpdate({ constructionClass: cls.value })}
                         className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 text-sm font-medium transition-all ${isSelected
                           ? 'border-accent-cyan bg-accent-cyan/10 text-accent-cyan'
-                          : 'border-light-border dark:border-dark-border bg-surface-1 dark:bg-elevation-1 text-harken-gray dark:text-slate-300 hover:border-light-border dark:hover:border-harken-gray'
+                          : 'border-light-border dark:border-dark-border bg-surface-1 dark:bg-elevation-1 text-harken-gray dark:text-slate-300 hover:border-accent-cyan hover:text-accent-cyan'
                           }`}
                       >
                         <IconComponent className="w-4 h-4" />
