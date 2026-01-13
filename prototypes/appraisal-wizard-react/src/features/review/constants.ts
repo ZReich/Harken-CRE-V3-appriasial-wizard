@@ -1,4 +1,5 @@
-import type { ReviewTab, ReportSection } from './types';
+import type { ReviewTab, ReportSection, ScenarioType } from './types';
+import { SCENARIO_COLORS } from './types';
 
 // =================================================================
 // REVIEW TABS
@@ -381,3 +382,411 @@ export const CLOSING_REPORT_SECTIONS: ReportSection[] = [
   },
 ];
 
+// =================================================================
+// SCENARIO SECTION TEMPLATES
+// =================================================================
+// These templates are cloned for each active scenario (As Is, As Completed, As Stabilized)
+
+/**
+ * Creates a scenario header section for the sidebar
+ */
+export function createScenarioHeader(scenarioId: number, scenarioName: ScenarioType): ReportSection {
+  return {
+    id: `scenario-header-${scenarioId}`,
+    label: `${scenarioName.toUpperCase()} VALUATION`,
+    type: 'section',
+    enabled: true,
+    expanded: true,
+    fields: [],
+    isScenarioHeader: true,
+    scenarioId,
+    scenarioName,
+    scenarioColor: SCENARIO_COLORS[scenarioName],
+  };
+}
+
+/**
+ * Template for Land Valuation sections within a scenario
+ */
+export const LAND_VALUATION_TEMPLATE: Omit<ReportSection, 'id' | 'scenarioId' | 'scenarioName'> = {
+  label: 'Land Valuation',
+  type: 'analysis-grid',
+  sectionNumber: 'L',
+  enabled: true,
+  expanded: false,
+  fields: [
+    { id: 'land_methodology', label: 'Methodology', enabled: true },
+    { id: 'land_grid', label: 'Adjustment Grid', enabled: true },
+    { id: 'land_conclusion', label: 'Land Value Conclusion', enabled: true },
+  ],
+  requiresApproach: APPROACH_NAMES.LAND,
+};
+
+/**
+ * Template for Sales Comparison sections within a scenario
+ */
+export const SALES_COMPARISON_TEMPLATE: Omit<ReportSection, 'id' | 'scenarioId' | 'scenarioName'> = {
+  label: 'Sales Comparison Approach',
+  type: 'analysis-grid',
+  sectionNumber: 'S',
+  enabled: true,
+  expanded: false,
+  fields: [
+    { id: 'sales_methodology', label: 'Methodology', enabled: true },
+    { id: 'sales_grid', label: 'Adjustment Grid', enabled: true },
+    { id: 'sales_conclusion', label: 'Sales Value Conclusion', enabled: true },
+  ],
+  requiresApproach: APPROACH_NAMES.SALES,
+  allowInlinePhotos: true,
+  photoSlots: [
+    { id: 'sales_comp_1', position: 'inline', aspectRatio: '4/3', label: 'Comparable 1' },
+    { id: 'sales_comp_2', position: 'inline', aspectRatio: '4/3', label: 'Comparable 2' },
+    { id: 'sales_comp_3', position: 'inline', aspectRatio: '4/3', label: 'Comparable 3' },
+  ],
+};
+
+/**
+ * Template for Income Approach sections within a scenario
+ */
+export const INCOME_APPROACH_TEMPLATE: Omit<ReportSection, 'id' | 'scenarioId' | 'scenarioName'> = {
+  label: 'Income Approach',
+  type: 'analysis-grid',
+  sectionNumber: 'I',
+  enabled: true,
+  expanded: false,
+  fields: [
+    { id: 'income_methodology', label: 'Methodology', enabled: true },
+    { id: 'income_rent_grid', label: 'Rent Comparable Grid', enabled: true },
+    { id: 'income_proforma', label: 'Pro-Forma Analysis', enabled: true },
+    { id: 'income_dcf', label: 'DCF Projections', enabled: true },
+    { id: 'income_conclusion', label: 'Income Value Conclusion', enabled: true },
+  ],
+  requiresApproach: APPROACH_NAMES.INCOME,
+};
+
+/**
+ * Template for Cost Approach sections within a scenario
+ */
+export const COST_APPROACH_TEMPLATE: Omit<ReportSection, 'id' | 'scenarioId' | 'scenarioName'> = {
+  label: 'Cost Approach',
+  type: 'analysis-grid',
+  sectionNumber: 'C',
+  enabled: true,
+  expanded: false,
+  fields: [
+    { id: 'cost_land', label: 'Land Value', enabled: true },
+    { id: 'cost_replacement', label: 'Replacement Cost', enabled: true },
+    { id: 'cost_depreciation', label: 'Depreciation', enabled: true },
+    { id: 'cost_conclusion', label: 'Cost Value Conclusion', enabled: true },
+  ],
+  requiresApproach: APPROACH_NAMES.COST,
+};
+
+/**
+ * Template for Scenario Reconciliation section
+ */
+export const SCENARIO_RECONCILIATION_TEMPLATE: Omit<ReportSection, 'id' | 'scenarioId' | 'scenarioName'> = {
+  label: 'Scenario Reconciliation',
+  type: 'scenario-reconciliation',
+  enabled: true,
+  expanded: false,
+  fields: [
+    { id: 'recon_weights', label: 'Approach Weighting', enabled: true },
+    { id: 'recon_conclusion', label: 'Scenario Value Conclusion', enabled: true },
+  ],
+};
+
+// =================================================================
+// COMPARABLE PAGE TEMPLATES
+// =================================================================
+
+/**
+ * Template for comparable summary cards page (3 comps per page - ROVE style)
+ */
+export const COMPARABLE_CARDS_PAGE_TEMPLATE: Omit<ReportSection, 'id' | 'scenarioId' | 'scenarioName' | 'comparableType'> = {
+  label: 'Comparable Summary',
+  type: 'comparable-cards',
+  enabled: true,
+  expanded: false,
+  fields: [
+    { id: 'card_photo', label: 'Photo Thumbnail', enabled: true },
+    { id: 'card_address', label: 'Address', enabled: true },
+    { id: 'card_metrics', label: 'Key Metrics', enabled: true },
+    { id: 'card_narrative', label: 'Brief Description', enabled: true },
+  ],
+};
+
+/**
+ * Template for individual comparable detail page (optional - institutional mode)
+ */
+export const COMPARABLE_DETAIL_PAGE_TEMPLATE: Omit<ReportSection, 'id' | 'scenarioId' | 'comparableId' | 'comparableType'> = {
+  label: 'Comparable Detail',
+  type: 'comparable-detail',
+  enabled: true,
+  expanded: false,
+  fields: [
+    { id: 'detail_photo', label: 'Large Photo', enabled: true },
+    { id: 'detail_address', label: 'Full Address', enabled: true },
+    { id: 'detail_transaction', label: 'Transaction Data', enabled: true },
+    { id: 'detail_property', label: 'Property Details', enabled: true },
+    { id: 'detail_narrative', label: 'Extended Comments', enabled: true },
+  ],
+  allowInlinePhotos: true,
+  photoSlots: [
+    { id: 'comp_main', position: 'header', aspectRatio: '16/9', label: 'Main Photo' },
+    { id: 'comp_secondary', position: 'inline', aspectRatio: '4/3', label: 'Additional Photo' },
+  ],
+};
+
+/**
+ * Template for comparable location map page
+ */
+export const COMPARABLE_MAP_PAGE_TEMPLATE: Omit<ReportSection, 'id' | 'scenarioId' | 'mapImageUrl' | 'comparableType'> = {
+  label: 'Comparable Location Map',
+  type: 'comparable-map',
+  enabled: true,
+  expanded: false,
+  fields: [
+    { id: 'map_image', label: 'Map Image', enabled: true },
+    { id: 'map_legend', label: 'Legend', enabled: true },
+  ],
+};
+
+// =================================================================
+// LEASE & DCF TEMPLATES
+// =================================================================
+
+/**
+ * Template for lease abstraction page
+ */
+export const LEASE_ABSTRACTION_TEMPLATE: Omit<ReportSection, 'id' | 'leaseId'> = {
+  label: 'Lease Abstraction',
+  type: 'lease-abstraction',
+  enabled: true,
+  expanded: false,
+  fields: [
+    { id: 'lease_tenant', label: 'Tenant Information', enabled: true },
+    { id: 'lease_premises', label: 'Premises Details', enabled: true },
+    { id: 'lease_rent', label: 'Rent Schedule', enabled: true },
+    { id: 'lease_escalations', label: 'Escalations', enabled: true },
+    { id: 'lease_options', label: 'Options & TI', enabled: true },
+  ],
+};
+
+/**
+ * Template for DCF projection page
+ */
+export const DCF_PROJECTION_TEMPLATE: Omit<ReportSection, 'id' | 'scenarioId' | 'scenarioName'> = {
+  label: 'DCF Analysis',
+  type: 'dcf-projection',
+  enabled: true,
+  expanded: false,
+  fields: [
+    { id: 'dcf_assumptions', label: 'Assumptions', enabled: true },
+    { id: 'dcf_projections', label: '10-Year Projections', enabled: true },
+    { id: 'dcf_reversion', label: 'Reversion Calculation', enabled: true },
+    { id: 'dcf_pv', label: 'Present Value Summary', enabled: true },
+    { id: 'dcf_sensitivity', label: 'Sensitivity Matrix', enabled: true },
+  ],
+};
+
+// =================================================================
+// EXHIBIT TEMPLATES
+// =================================================================
+
+/**
+ * Template for zoning exhibit page
+ */
+export const ZONING_EXHIBIT_TEMPLATE: ReportSection = {
+  id: 'zoning-exhibit',
+  label: 'Zoning Analysis',
+  type: 'zoning-exhibit',
+  enabled: true,
+  expanded: false,
+  fields: [
+    { id: 'zoning_designation', label: 'Zoning Designation', enabled: true },
+    { id: 'zoning_uses', label: 'Permitted Uses', enabled: true },
+    { id: 'zoning_bulk', label: 'Bulk Regulations', enabled: true },
+    { id: 'zoning_conformance', label: 'Conformance Status', enabled: true },
+  ],
+};
+
+/**
+ * Template for environmental exhibit page
+ */
+export const ENVIRONMENTAL_EXHIBIT_TEMPLATE: ReportSection = {
+  id: 'environmental-exhibit',
+  label: 'Environmental Summary',
+  type: 'environmental-exhibit',
+  enabled: true,
+  expanded: false,
+  fields: [
+    { id: 'env_status', label: 'Environmental Status', enabled: true },
+    { id: 'env_phase1', label: 'Phase I/II References', enabled: true },
+    { id: 'env_flood', label: 'Flood Zone', enabled: true },
+    { id: 'env_hazards', label: 'Hazard Disclosures', enabled: true },
+  ],
+};
+
+// =================================================================
+// SECTION GENERATION UTILITIES
+// =================================================================
+
+/**
+ * Creates a complete set of sections for a scenario
+ */
+export function createScenarioSections(
+  scenarioId: number,
+  scenarioName: ScenarioType,
+  enabledApproaches: string[]
+): ReportSection[] {
+  const sections: ReportSection[] = [];
+  const color = SCENARIO_COLORS[scenarioName];
+  
+  // Scenario header
+  sections.push(createScenarioHeader(scenarioId, scenarioName));
+  
+  // Land Valuation (if applicable)
+  if (enabledApproaches.includes(APPROACH_NAMES.LAND)) {
+    sections.push({
+      ...LAND_VALUATION_TEMPLATE,
+      id: `land-valuation-${scenarioId}`,
+      scenarioId,
+      scenarioName,
+      scenarioColor: color,
+    });
+    
+    // Land comparable cards page
+    sections.push({
+      ...COMPARABLE_CARDS_PAGE_TEMPLATE,
+      id: `land-cards-${scenarioId}`,
+      label: 'Land Comparable Summary',
+      scenarioId,
+      scenarioName,
+      comparableType: 'land',
+      parentSectionId: `land-valuation-${scenarioId}`,
+    });
+    
+    // Land location map
+    sections.push({
+      ...COMPARABLE_MAP_PAGE_TEMPLATE,
+      id: `land-map-${scenarioId}`,
+      label: 'Land Sales Location Map',
+      scenarioId,
+      comparableType: 'land',
+      parentSectionId: `land-valuation-${scenarioId}`,
+    });
+  }
+  
+  // Sales Comparison (if applicable)
+  if (enabledApproaches.includes(APPROACH_NAMES.SALES)) {
+    sections.push({
+      ...SALES_COMPARISON_TEMPLATE,
+      id: `sales-comparison-${scenarioId}`,
+      scenarioId,
+      scenarioName,
+      scenarioColor: color,
+    });
+    
+    // Sales comparable cards page
+    sections.push({
+      ...COMPARABLE_CARDS_PAGE_TEMPLATE,
+      id: `sales-cards-${scenarioId}`,
+      label: 'Sales Comparable Summary',
+      scenarioId,
+      scenarioName,
+      comparableType: 'improved',
+      parentSectionId: `sales-comparison-${scenarioId}`,
+    });
+    
+    // Sales location map
+    sections.push({
+      ...COMPARABLE_MAP_PAGE_TEMPLATE,
+      id: `sales-map-${scenarioId}`,
+      label: 'Sales Comp Location Map',
+      scenarioId,
+      comparableType: 'improved',
+      parentSectionId: `sales-comparison-${scenarioId}`,
+    });
+  }
+  
+  // Income Approach (if applicable)
+  if (enabledApproaches.includes(APPROACH_NAMES.INCOME)) {
+    sections.push({
+      ...INCOME_APPROACH_TEMPLATE,
+      id: `income-approach-${scenarioId}`,
+      scenarioId,
+      scenarioName,
+      scenarioColor: color,
+    });
+    
+    // Rent comparable cards page
+    sections.push({
+      ...COMPARABLE_CARDS_PAGE_TEMPLATE,
+      id: `rent-cards-${scenarioId}`,
+      label: 'Rent Comparable Summary',
+      scenarioId,
+      scenarioName,
+      comparableType: 'rent',
+      parentSectionId: `income-approach-${scenarioId}`,
+    });
+    
+    // Rent location map
+    sections.push({
+      ...COMPARABLE_MAP_PAGE_TEMPLATE,
+      id: `rent-map-${scenarioId}`,
+      label: 'Rent Comp Location Map',
+      scenarioId,
+      comparableType: 'rent',
+      parentSectionId: `income-approach-${scenarioId}`,
+    });
+    
+    // DCF projection pages (added under income approach)
+    sections.push({
+      ...DCF_PROJECTION_TEMPLATE,
+      id: `dcf-${scenarioId}`,
+      scenarioId,
+      scenarioName,
+      parentSectionId: `income-approach-${scenarioId}`,
+    });
+  }
+  
+  // Cost Approach (if applicable)
+  if (enabledApproaches.includes(APPROACH_NAMES.COST)) {
+    sections.push({
+      ...COST_APPROACH_TEMPLATE,
+      id: `cost-approach-${scenarioId}`,
+      scenarioId,
+      scenarioName,
+      scenarioColor: color,
+    });
+  }
+  
+  // Scenario reconciliation
+  sections.push({
+    ...SCENARIO_RECONCILIATION_TEMPLATE,
+    id: `reconciliation-${scenarioId}`,
+    label: `${scenarioName} Reconciliation`,
+    scenarioId,
+    scenarioName,
+    scenarioColor: color,
+  });
+  
+  return sections;
+}
+
+/**
+ * Creates lease abstraction sections for all tenants
+ */
+export function createLeaseAbstractionSections(
+  tenants: Array<{ id: string; name: string }>,
+  parentSectionId: string
+): ReportSection[] {
+  return tenants.map((tenant) => ({
+    ...LEASE_ABSTRACTION_TEMPLATE,
+    id: `lease-${tenant.id}`,
+    label: `Lease: ${tenant.name}`,
+    leaseId: tenant.id,
+    parentSectionId,
+  }));
+}

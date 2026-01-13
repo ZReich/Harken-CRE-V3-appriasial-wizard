@@ -1071,6 +1071,8 @@ export interface SubjectData {
   licenseNumber: string;
   licenseState: string;
   licenseExpiration: string;
+  additionalCertifications: string;
+  appraisalAssistance: string;
   
   // Assignment Context (from Setup - drives scenario/visibility logic)
   propertyStatus?: 'existing' | 'under_construction' | 'proposed' | 'recently_completed';

@@ -79,7 +79,7 @@ function SuccessScreen({ onCreateAnother, onViewReport }: { onCreateAnother: () 
     <div className="flex items-center justify-center h-full">
       <div className="text-center animate-fade-in">
         <div className="mb-6">
-          <svg className="w-32 h-32 mx-auto text-accent-teal-mint" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg className="w-32 h-32 mx-auto text-[#0da1c7]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
           </svg>
         </div>
@@ -120,7 +120,7 @@ function ReadyToPreviewScreen({
       <div className="text-center animate-fade-in max-w-lg">
         {/* Animated Checkmark */}
         <div className="mb-8 relative">
-          <div className="w-32 h-32 mx-auto bg-gradient-to-br from-accent-teal-mint to-accent-teal-mint-hover rounded-full flex items-center justify-center shadow-xl shadow-green-200">
+          <div className="w-32 h-32 mx-auto bg-gradient-to-br from-[#0da1c7] to-[#0b8fb0] rounded-full flex items-center justify-center shadow-xl shadow-[#0da1c7]/30">
             <CheckCircle className="w-16 h-16 text-white" strokeWidth={2.5} />
           </div>
           <div className="absolute -top-2 -right-2 w-12 h-12 bg-accent-amber-gold rounded-full flex items-center justify-center shadow-lg animate-bounce">
@@ -238,7 +238,8 @@ function ReportPreviewMode({
           </button>
           <button
             onClick={onFinalize}
-            className="flex items-center gap-2 px-5 py-2 bg-gradient-to-r from-accent-teal-mint to-accent-teal-mint-hover text-white rounded-lg hover:shadow-lg transition-all font-semibold"
+            className="flex items-center gap-2 px-5 py-2 text-white rounded-lg hover:shadow-lg transition-all font-semibold hover:brightness-110"
+            style={{ backgroundColor: '#0da1c7' }}
           >
             <FileCheck size={16} />
             Generate Final PDF
@@ -799,9 +800,9 @@ We considered alternative uses including renovation, conversion to alternative u
               Analyze interest rates, economic growth, employment trends, and their impact on the real estate market.
             </p>
           </div>
-          <div className="bg-accent-teal-mint-light dark:bg-accent-teal-mint/10 border-l-4 border-accent-teal-mint p-4 rounded">
-            <h4 className="font-semibold text-sm text-accent-teal-mint dark:text-accent-teal-mint mb-1">Market Data</h4>
-            <p className="text-xs text-accent-teal-mint dark:text-accent-teal-mint">
+          <div className="bg-[#0da1c7]/10 dark:bg-[#0da1c7]/10 border-l-4 border-[#0da1c7] p-4 rounded">
+            <h4 className="font-semibold text-sm text-[#0da1c7] dark:text-[#0da1c7] mb-1">Market Data</h4>
+            <p className="text-xs text-[#0da1c7] dark:text-[#0da1c7]">
               Reference comparable sales and rental data to understand market conditions and pricing trends.
             </p>
           </div>
@@ -827,9 +828,9 @@ We considered alternative uses including renovation, conversion to alternative u
 
       {activeTab === 'swot' && (
         <>
-          <div className="bg-accent-teal-mint-light dark:bg-accent-teal-mint/10 border-l-4 border-accent-teal-mint p-4 rounded mb-4">
-            <h4 className="font-semibold text-sm text-accent-teal-mint dark:text-accent-teal-mint mb-1">Strategic Analysis</h4>
-            <p className="text-xs text-accent-teal-mint dark:text-accent-teal-mint">
+          <div className="bg-[#0da1c7]/10 dark:bg-[#0da1c7]/10 border-l-4 border-[#0da1c7] p-4 rounded mb-4">
+            <h4 className="font-semibold text-sm text-[#0da1c7] dark:text-[#0da1c7] mb-1">Strategic Analysis</h4>
+            <p className="text-xs text-[#0da1c7] dark:text-[#0da1c7]">
               SWOT analysis provides a framework for evaluating the subject property's competitive position in the market.
             </p>
           </div>
@@ -870,9 +871,9 @@ We considered alternative uses including renovation, conversion to alternative u
 
       {activeTab === 'cost-seg' && (
         <>
-          <div className="bg-accent-teal-mint-light dark:bg-accent-teal-mint/10 border-l-4 border-accent-teal-mint p-4 rounded mb-4">
-            <h4 className="font-semibold text-sm text-accent-teal-mint dark:text-accent-teal-mint mb-1">Depreciation Classes</h4>
-            <p className="text-xs text-accent-teal-mint dark:text-accent-teal-mint">
+          <div className="bg-[#0da1c7]/10 dark:bg-[#0da1c7]/10 border-l-4 border-[#0da1c7] p-4 rounded mb-4">
+            <h4 className="font-semibold text-sm text-[#0da1c7] dark:text-[#0da1c7] mb-1">Depreciation Classes</h4>
+            <p className="text-xs text-[#0da1c7] dark:text-[#0da1c7]">
               <strong>5-Year:</strong> Personal property (carpet, fixtures, equipment)<br/>
               <strong>15-Year:</strong> Land improvements (parking, landscaping, sidewalks)<br/>
               <strong>39-Year:</strong> Building structure (foundation, walls, roof)
@@ -1308,13 +1309,13 @@ We considered alternative uses including renovation, conversion to alternative u
         return (
           <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
             {/* Info Banner */}
-            <div className="bg-accent-teal-mint-light dark:bg-accent-teal-mint/10 border border-accent-teal-mint-light dark:border-accent-teal-mint rounded-xl p-4 flex items-start gap-3">
-              <Info className="text-accent-teal-mint dark:text-accent-teal-mint shrink-0 mt-0.5" size={18} />
+            <div className="bg-[#0da1c7]/10 dark:bg-[#0da1c7]/10 border border-[#0da1c7]/20 dark:border-[#0da1c7] rounded-xl p-4 flex items-start gap-3">
+              <Info className="text-[#0da1c7] dark:text-[#0da1c7] shrink-0 mt-0.5" size={18} />
               <div>
-                <p className="text-sm font-semibold text-accent-teal-mint dark:text-accent-teal-mint">
+                <p className="text-sm font-semibold text-[#0da1c7] dark:text-[#0da1c7]">
                   Cost Segregation Analysis
                 </p>
-                <p className="text-xs text-accent-teal-mint dark:text-accent-teal-mint mt-1">
+                <p className="text-xs text-[#0da1c7] dark:text-[#0da1c7] mt-1">
                   Accelerate depreciation deductions by reclassifying building components into 
                   shorter recovery periods (5, 15, and 39 years) per IRS guidelines.
                 </p>

@@ -24,6 +24,15 @@ const SCENARIO_COLORS: Record<string, {
     inactiveText: 'text-slate-600 dark:text-slate-400',
     dot: 'bg-harken-blue',
   },
+  'As Proposed': {
+    accent: '#f59e0b',
+    activeBg: 'bg-amber-50 dark:bg-amber-900/20',
+    activeBorder: 'border-amber-500 dark:border-amber-500',
+    activeText: 'text-amber-700 dark:text-amber-400',
+    inactiveBg: 'bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1',
+    inactiveText: 'text-slate-600 dark:text-slate-400',
+    dot: 'bg-amber-500',
+  },
   'As Completed': {
     accent: '#2fc4b2',
     activeBg: 'bg-accent-teal-mint-light dark:bg-accent-teal-mint/10',

@@ -65,7 +65,7 @@ const Quadrant: React.FC<QuadrantProps> = ({
 export const SWOTPage: React.FC<SWOTPageProps> = ({ data, pageNumber }) => {
   if (!data) {
     return (
-      <div className="bg-surface-1 w-[8.5in] min-h-[11in] p-[1in] shadow-lg mx-auto">
+      <div className="bg-white w-[8.5in] min-h-[11in] p-[1in] shadow-lg mx-auto">
         <h1 className="text-xl font-bold text-slate-800 border-b-2 border-[#0da1c7] pb-2 mb-6">
           SWOT ANALYSIS
         </h1>
@@ -82,7 +82,7 @@ export const SWOTPage: React.FC<SWOTPageProps> = ({ data, pageNumber }) => {
   const negativeItems = weaknesses.length + threats.length;
 
   return (
-    <div className="bg-surface-1 w-[8.5in] min-h-[11in] p-[1in] shadow-lg mx-auto relative">
+    <div className="bg-white w-[8.5in] min-h-[11in] p-[1in] shadow-lg mx-auto relative">
       {/* Header */}
       <h1 className="text-xl font-bold text-slate-800 border-b-2 border-[#0da1c7] pb-2 mb-6">
         SWOT ANALYSIS
@@ -99,7 +99,7 @@ export const SWOTPage: React.FC<SWOTPageProps> = ({ data, pageNumber }) => {
         {/* Stats Bar */}
         {totalItems > 0 && (
           <div className="mt-4 flex items-center gap-4 text-xs">
-            <div className="flex items-center gap-1.5 px-2 py-1 bg-surface-3 dark:bg-elevation-subtle rounded">
+            <div className="flex items-center gap-1.5 px-2 py-1 bg-surface-3 rounded">
               <span className="text-slate-500">Total Factors:</span>
               <span className="font-semibold text-slate-700">{totalItems}</span>
             </div>
@@ -173,7 +173,7 @@ export const SWOTPage: React.FC<SWOTPageProps> = ({ data, pageNumber }) => {
       </div>
 
       {/* Matrix Legend */}
-      <div className="bg-surface-2 dark:bg-elevation-2 rounded-lg p-3 mb-6 border border-light-border dark:border-dark-border">
+      <div className="bg-surface-2 rounded-lg p-3 mb-6 border border-light-border">
         <div className="grid grid-cols-2 gap-4 text-xs text-slate-600">
           <div>
             <span className="font-semibold text-slate-700">Internal Factors:</span>{' '}
@@ -188,7 +188,7 @@ export const SWOTPage: React.FC<SWOTPageProps> = ({ data, pageNumber }) => {
 
       {/* Summary Section */}
       {summary && (
-        <div className="bg-gradient-to-r from-[#0da1c7]/5 to-transparent border-l-4 border-[#0da1c7] pl-4 py-3">
+        <div className="bg-gradient-to-r from-[#0da1c7]/5 to-transparent[#0da1c7]/10 border-l-4 border-[#0da1c7] pl-4 py-3">
           <h2 className="text-sm font-semibold text-slate-800 mb-2">
             Analysis Summary
           </h2>

@@ -37,7 +37,16 @@
 
 import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
 import { useWizard } from '../../../context/WizardContext';
-import { BASE_REPORT_SECTIONS, APPROACH_REPORT_SECTIONS, CLOSING_REPORT_SECTIONS } from '../constants';
+import { 
+  BASE_REPORT_SECTIONS, 
+  APPROACH_REPORT_SECTIONS, 
+  CLOSING_REPORT_SECTIONS,
+  createScenarioSections,
+  createLeaseAbstractionSections,
+  ZONING_EXHIBIT_TEMPLATE,
+  ENVIRONMENTAL_EXHIBIT_TEMPLATE,
+} from '../constants';
+import type { ScenarioType } from '../types';
 import { sampleAppraisalData } from '../data/sampleAppraisalData';
 import type { ReportSection, PropertyTabId, ElementStyles, InlinePhotoPlacement, PhotoSlotConfig } from '../types';
 import { useReportState, type ReportState, type ReportStateActions } from '../../report-preview/hooks/useReportState';
@@ -146,26 +155,68 @@ function SortableSectionItem({
     zIndex: isDragging ? 1000 : undefined,
   };
 
+  // Scenario color mapping for multi-scenario reports
+  const scenarioColorMap = {
+    blue: { bg: '#3b82f6', bgLight: 'rgba(59, 130, 246, 0.1)', bgLighter: 'rgba(59, 130, 246, 0.15)' },
+    green: { bg: '#22c55e', bgLight: 'rgba(34, 197, 94, 0.1)', bgLighter: 'rgba(34, 197, 94, 0.15)' },
+    purple: { bg: '#a855f7', bgLight: 'rgba(168, 85, 247, 0.1)', bgLighter: 'rgba(168, 85, 247, 0.15)' },
+  };
+
+  // Use scenario color if available, otherwise default teal
+  const accentColor = section.scenarioColor 
+    ? scenarioColorMap[section.scenarioColor].bg 
+    : '#0da1c7';
+  const bgColor = section.scenarioColor
+    ? scenarioColorMap[section.scenarioColor].bgLight
+    : 'rgba(13, 161, 199, 0.1)';
+  const bgColorActive = section.scenarioColor
+    ? scenarioColorMap[section.scenarioColor].bgLighter
+    : 'rgba(13, 161, 199, 0.15)';
+
+  // Scenario header sections get special styling
+  const isScenarioHeader = section.isScenarioHeader;
+
   return (
     <div ref={setNodeRef} style={style}>
-      {/* Section Row - Pill Style */}
-      <div
-        className={`flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer transition-all ${section.enabled
-          ? activeSectionId === section.id
-            ? 'bg-accent-cyan/15 border-l-4 border-accent-cyan'
-            : 'bg-accent-cyan/10 border-l-4 border-accent-cyan/50 hover:bg-accent-cyan/15'
-          : 'bg-harken-gray-light dark:bg-elevation-1/50 border-l-4 border-transparent opacity-60 hover:opacity-80'
+      {/* Scenario Header - Bold with full background */}
+      {isScenarioHeader ? (
+        <div
+          className="flex items-center gap-3 px-4 py-3 rounded-lg cursor-pointer transition-all mt-4 first:mt-0"
+          style={{ 
+            backgroundColor: accentColor,
+            borderLeft: `4px solid ${accentColor}`,
+          }}
+        >
+          <span className="flex-1 text-sm font-bold text-white tracking-wide">
+            {section.label}
+          </span>
+          {/* Scenario indicator dot */}
+          <span className="w-2 h-2 rounded-full bg-white/80" />
+        </div>
+      ) : (
+        /* Regular Section Row - Pill Style */
+        <div
+          className={`flex items-center gap-3 px-4 py-2.5 rounded-lg cursor-pointer transition-all ${
+            section.parentSectionId ? 'ml-4' : ''
           }`}
-      >
+          style={{
+            backgroundColor: section.enabled
+              ? (activeSectionId === section.id ? bgColorActive : bgColor)
+              : '#f1f5f9',
+            borderLeft: section.enabled 
+              ? `4px solid ${activeSectionId === section.id ? accentColor : accentColor + '80'}`
+              : '4px solid transparent',
+            opacity: section.enabled ? 1 : 0.6,
+          }}
+        >
         {/* Drag Handle */}
         <button
           {...attributes}
           {...listeners}
-          className={`p-1 rounded cursor-grab active:cursor-grabbing transition-all ${
-            section.enabled
-              ? 'text-accent-cyan/50 hover:text-accent-cyan hover:bg-accent-cyan/10'
-              : 'text-harken-gray-med hover:bg-harken-gray-med-lt dark:hover:bg-elevation-3'
-          }`}
+          className="p-1 rounded cursor-grab active:cursor-grabbing transition-all hover:opacity-80"
+          style={{
+            color: section.enabled ? accentColor + '80' : '#64748b',
+          }}
           title="Drag to reorder"
         >
           <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -180,10 +231,10 @@ function SortableSectionItem({
               e.stopPropagation();
               onToggleExpand(section.id);
             }}
-            className={`p-0.5 rounded transition-all ${section.enabled
-              ? 'text-accent-cyan hover:bg-accent-cyan/20'
-              : 'text-harken-gray-med hover:bg-harken-gray-med-lt dark:hover:bg-elevation-3'
-              } ${section.expanded ? 'rotate-90' : ''}`}
+            className={`p-0.5 rounded transition-all hover:opacity-80 ${section.expanded ? 'rotate-90' : ''}`}
+            style={{
+              color: section.enabled ? accentColor : '#64748b',
+            }}
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -200,12 +251,13 @@ function SortableSectionItem({
               onScrollToSection(section.id);
             }
           }}
-          className={`flex-1 text-sm transition-colors ${section.enabled
-            ? activeSectionId === section.id
-              ? 'text-accent-cyan font-semibold'
-              : 'text-harken-dark dark:text-white font-medium'
-            : 'text-harken-gray-med'
-            }`}
+          className="flex-1 text-sm transition-colors"
+          style={{
+            color: section.enabled
+              ? (activeSectionId === section.id ? accentColor : '#1e293b')
+              : '#64748b',
+            fontWeight: section.enabled ? (activeSectionId === section.id ? 600 : 500) : 400,
+          }}
         >
           {section.label}
         </span>
@@ -216,31 +268,33 @@ function SortableSectionItem({
             e.stopPropagation();
             onToggleSection(section.id);
           }}
-          className={`w-2 h-2 rounded-full flex-shrink-0 transition-colors ${section.enabled ? 'bg-accent-teal-mint hover:bg-accent-teal-mint-hover' : 'bg-harken-gray-med hover:bg-harken-gray-med'}`}
+          style={{ backgroundColor: section.enabled ? accentColor : '#94a3b8' }}
+          className="w-2 h-2 rounded-full flex-shrink-0 transition-colors hover:opacity-80"
           title={section.enabled ? 'Click to disable section' : 'Click to enable section'}
         />
       </div>
+      )}
 
-      {/* Fields - Dot Indicator Style */}
-      {section.expanded && section.fields.length > 0 && (
-        <div className="ml-12 mt-1 space-y-0.5 pb-2">
+      {/* Fields - Dot Indicator Style (not for scenario headers) */}
+      {!isScenarioHeader && section.expanded && section.fields.length > 0 && (
+        <div className={`mt-1 space-y-0.5 pb-2 ${section.parentSectionId ? 'ml-16' : 'ml-12'}`}>
           {section.fields.map((field) => (
             <div
               key={field.id}
               onClick={() => onToggleField(section.id, field.id)}
-              className={`flex items-center gap-2.5 px-3 py-1.5 rounded-md cursor-pointer transition-all ${field.enabled
-                ? 'bg-accent-cyan/5 hover:bg-accent-cyan/10'
-                : 'bg-transparent hover:bg-harken-gray-light dark:hover:bg-elevation-3/50'
-                }`}
+              className="flex items-center gap-2.5 px-3 py-1.5 rounded-md cursor-pointer transition-all"
+              style={{
+                backgroundColor: field.enabled ? bgColor : 'transparent',
+              }}
             >
               {/* Dot Indicator */}
               <span
-                className={`w-2 h-2 rounded-full flex-shrink-0 transition-colors ${field.enabled ? 'bg-accent-cyan' : 'bg-harken-gray-med'
-                  }`}
+                style={{ backgroundColor: field.enabled ? accentColor : '#94a3b8' }}
+                className="w-2 h-2 rounded-full flex-shrink-0 transition-colors"
               />
               {/* Field Label */}
               <span
-                className={`text-xs transition-colors ${field.enabled ? 'text-harken-gray dark:text-slate-300' : 'text-harken-gray-med'
+                className={`text-xs transition-colors ${field.enabled ? 'text-slate-600' : 'text-slate-500'
                   }`}
               >
                 {field.label}
@@ -346,7 +400,7 @@ function PhotoSlot({ photo, placeholder, aspectRatio = 'auto', className = '', o
   if (photo?.url) {
     return (
       <div
-        className={`relative overflow-hidden rounded-lg cursor-pointer group ${aspectClasses[aspectRatio]} ${className} ${selected ? 'ring-2 ring-accent-cyan' : ''}`}
+        className={`relative overflow-hidden rounded-lg cursor-pointer group ${aspectClasses[aspectRatio]} ${className} ${selected ? 'ring-2 ring-[#0da1c7]' : ''}`}
         onClick={onSelect}
         onDoubleClick={onDoubleClick}
       >
@@ -371,11 +425,11 @@ function PhotoSlot({ photo, placeholder, aspectRatio = 'auto', className = '', o
 
   return (
     <div
-      className={`bg-gradient-to-br from-harken-gray-light to-harken-gray-med-lt flex items-center justify-center rounded-lg cursor-pointer ${aspectClasses[aspectRatio]} ${className} ${selected ? 'ring-2 ring-accent-cyan' : ''}`}
+      className={`bg-gradient-to-br from-slate-100 to-slate-200 flex items-center justify-center rounded-lg cursor-pointer ${aspectClasses[aspectRatio]} ${className} ${selected ? 'ring-2 ring-[#0da1c7]' : ''}`}
       onClick={onSelect}
       onDoubleClick={onDoubleClick}
     >
-      <div className="text-center text-harken-gray-med p-4">
+      <div className="text-center text-slate-500 p-4">
         <svg className="w-10 h-10 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
         </svg>
@@ -398,10 +452,10 @@ interface ReportPageWrapperProps {
 
 function ReportPageWrapper({ section, pageNumber, children, sidebarLabel }: ReportPageWrapperProps) {
   return (
-    <div className="bg-surface-1 shadow-lg rounded-lg overflow-hidden" style={{ minHeight: '11in', width: '8.5in' }}>
+    <div className="shadow-lg rounded-lg overflow-hidden" style={{ minHeight: '11in', width: '8.5in', backgroundColor: '#ffffff' }}>
       <div className="grid grid-cols-[80px_1fr]" style={{ minHeight: '11in' }}>
         {/* Green Sidebar */}
-        <div className="bg-accent-teal-mint text-white flex items-center justify-center relative">
+        <div className="bg-[#0da1c7] text-white flex items-center justify-center relative">
           <span
             className="text-4xl font-bold tracking-widest"
             style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }}
@@ -415,7 +469,7 @@ function ReportPageWrapper({ section, pageNumber, children, sidebarLabel }: Repo
           {children}
 
           {/* Page Footer */}
-          <div className="absolute bottom-4 right-8 text-xs text-harken-gray-med flex items-center gap-4">
+          <div className="absolute bottom-4 right-8 text-xs text-slate-500 flex items-center gap-4">
             <span>ROVE Valuations</span>
             <span>|</span>
             <span>Page {pageNumber}</span>
@@ -465,18 +519,18 @@ function CoverPageReal({
   const effectiveDate = subjectData?.effectiveDate || fallbackData.assignment.effectiveDate;
 
   return (
-    <div className="bg-surface-1 shadow-lg rounded-lg overflow-hidden" style={{ minHeight: '11in', width: '8.5in' }}>
+    <div className="bg-white shadow-lg rounded-lg overflow-hidden" style={{ minHeight: '11in', width: '8.5in' }}>
       <div className="flex flex-col h-full" style={{ minHeight: '11in' }}>
         {/* Header with logo */}
         <div className="p-8 pb-4 flex justify-between items-start">
           <div
             onClick={() => onSelectElement('cover_logo')}
-            className={`cursor-pointer transition-all ${selectedElement === 'cover_logo' ? 'ring-2 ring-accent-cyan rounded' : ''}`}
+            className={`cursor-pointer transition-all ${selectedElement === 'cover_logo' ? 'ring-2 ring-[#0da1c7] rounded' : ''}`}
           >
-            <div className="text-2xl font-bold text-accent-teal-mint tracking-tight">ROVE</div>
-            <div className="text-sm text-harken-gray-med">VALUATIONS</div>
+            <div className="text-2xl font-bold text-[#0da1c7] tracking-tight">ROVE</div>
+            <div className="text-sm text-slate-500">VALUATIONS</div>
           </div>
-          <div className="text-right text-sm text-harken-gray-med">
+          <div className="text-right text-sm text-slate-500">
             <div>Commercial Appraisal Report</div>
           </div>
         </div>
@@ -491,7 +545,7 @@ function CoverPageReal({
               onSelectElement={onSelectElement}
               onContentChange={handleContentChange}
               as="h1"
-              className="text-4xl font-light text-accent-teal-mint leading-tight mb-2"
+              className="text-4xl font-light text-[#0da1c7] leading-tight mb-2"
               appliedStyle={getStyle('cover_title')}
             />
           )}
@@ -503,7 +557,7 @@ function CoverPageReal({
               onSelectElement={onSelectElement}
               onContentChange={handleContentChange}
               as="p"
-              className="text-xl text-harken-gray"
+              className="text-xl text-slate-600"
               appliedStyle={getStyle('cover_address')}
             />
           )}
@@ -515,7 +569,7 @@ function CoverPageReal({
             className="flex-1 mx-8 mb-4"
             onClick={() => onSelectElement('cover_photo')}
           >
-            <div className={`h-full rounded-lg overflow-hidden ${selectedElement === 'cover_photo' ? 'ring-2 ring-accent-cyan' : ''}`}>
+            <div className={`h-full rounded-lg overflow-hidden ${selectedElement === 'cover_photo' ? 'ring-2 ring-[#0da1c7]' : ''}`}>
               {coverPhoto ? (
                 <img
                   src={coverPhoto.url}
@@ -523,8 +577,8 @@ function CoverPageReal({
                   className="w-full h-full object-cover"
                 />
               ) : (
-                <div className="w-full h-full bg-gradient-to-br from-harken-gray-med-lt to-harken-gray-med-lt flex items-center justify-center">
-                  <div className="text-center text-harken-gray-med">
+                <div className="w-full h-full bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center">
+                  <div className="text-center text-slate-500">
                     <svg className="w-16 h-16 mx-auto mb-2 opacity-50" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                     </svg>
@@ -538,18 +592,18 @@ function CoverPageReal({
 
         {/* Footer Info - conditionally rendered */}
         {isVisible('cover_footer') && (
-          <div className="bg-accent-teal-mint text-white px-8 py-6">
+          <div className="bg-[#0da1c7] text-white px-8 py-6">
             <div className="grid grid-cols-3 gap-6 text-sm">
               <div>
-                <div className="text-accent-teal-mint-light text-xs uppercase mb-1">Property Type</div>
+                <div className="text-[#0da1c7]-light text-xs uppercase mb-1">Property Type</div>
                 <div className="font-medium">{fallbackData.property.propertySubtype}</div>
               </div>
               <div>
-                <div className="text-accent-teal-mint-light text-xs uppercase mb-1">Effective Date</div>
+                <div className="text-[#0da1c7]-light text-xs uppercase mb-1">Effective Date</div>
                 <div className="font-medium">{effectiveDate}</div>
               </div>
               <div>
-                <div className="text-accent-teal-mint-light text-xs uppercase mb-1">Final Value</div>
+                <div className="text-[#0da1c7]-light text-xs uppercase mb-1">Final Value</div>
                 <div className="font-medium text-lg">${fallbackData.valuation.asIsValue.toLocaleString()}</div>
               </div>
             </div>
@@ -589,7 +643,7 @@ function LetterPage({ selectedElement, onSelectElement, onContentChange, editedC
         {/* Client Information - conditionally rendered */}
         {isVisible('letter_client') && (
           <div className="mb-8">
-            <div className="text-sm text-harken-gray-med mb-6">{reportDate}</div>
+            <div className="text-sm text-slate-500 mb-6">{reportDate}</div>
 
             <div className="mb-6">
               <EditableElement
@@ -599,7 +653,7 @@ function LetterPage({ selectedElement, onSelectElement, onContentChange, editedC
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
                 as="div"
-                className="font-semibold text-harken-dark"
+                className="font-semibold text-slate-800"
                 appliedStyle={getStyle('letter_client')}
               />
               <EditableElement
@@ -609,12 +663,12 @@ function LetterPage({ selectedElement, onSelectElement, onContentChange, editedC
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
                 as="div"
-                className="text-sm text-harken-gray"
+                className="text-sm text-slate-600"
                 appliedStyle={getStyle('letter_client_address')}
               />
             </div>
 
-            <div className="text-sm text-harken-gray mb-6">
+            <div className="text-sm text-slate-600 mb-6">
               <span className="font-semibold">RE: </span>
               Appraisal of {propertyName}
             </div>
@@ -623,7 +677,7 @@ function LetterPage({ selectedElement, onSelectElement, onContentChange, editedC
 
         {/* Letter Body - conditionally rendered */}
         {isVisible('letter_body') && (
-          <div className="text-sm text-harken-gray leading-relaxed space-y-4">
+          <div className="text-sm text-slate-600 leading-relaxed space-y-4">
             <EditableElement
               elementId="letter_greeting"
               content={getContent('letter_greeting', 'Dear Client:')}
@@ -662,20 +716,20 @@ function LetterPage({ selectedElement, onSelectElement, onContentChange, editedC
 
         {/* Value Conclusion - conditionally rendered */}
         {isVisible('letter_value') && (
-          <div className="text-center py-6 bg-harken-gray-light rounded-lg my-6">
-            <div className="text-sm text-harken-gray-med uppercase mb-2">Market Value Conclusion</div>
-            <div className="text-4xl font-bold text-accent-teal-mint">${fallbackData.valuation.asIsValue.toLocaleString()}</div>
+          <div className="text-center py-6 bg-slate-100 rounded-lg my-6">
+            <div className="text-sm text-slate-500 uppercase mb-2">Market Value Conclusion</div>
+            <div className="text-4xl font-bold text-[#0da1c7]">${fallbackData.valuation.asIsValue.toLocaleString()}</div>
           </div>
         )}
 
         {/* Signature - conditionally rendered */}
         {isVisible('letter_signature') && (
-          <div className="text-sm text-harken-gray leading-relaxed">
+          <div className="text-sm text-slate-600 leading-relaxed">
             <p>Respectfully submitted,</p>
             <div className="mt-8">
               <div className="font-semibold">{subjectData?.inspectorName || fallbackData.assignment.appraiser}</div>
-              <div className="text-harken-gray">{subjectData?.inspectorLicense || fallbackData.assignment.appraiserLicense}</div>
-              <div className="text-harken-gray">{fallbackData.assignment.appraiserCompany}</div>
+              <div className="text-slate-600">{subjectData?.inspectorLicense || fallbackData.assignment.appraiserLicense}</div>
+              <div className="text-slate-600">{fallbackData.assignment.appraiserCompany}</div>
             </div>
           </div>
         )}
@@ -747,25 +801,25 @@ function ExecutiveSummaryPage({ selectedElement, onSelectElement, subjectData, i
     <ReportPageWrapper section={{ id: 'summary', label: 'Executive Summary', enabled: true, expanded: false, fields: [], type: 'summary-table' }} pageNumber={2} sidebarLabel="01">
       <div className="p-10">
         {/* Section Badge */}
-        <div className="absolute top-6 right-8 bg-accent-teal-mint text-white px-4 py-2 rounded text-xs font-semibold">
+        <div className="absolute top-6 right-8 bg-[#0da1c7] text-white px-4 py-2 rounded text-xs font-semibold">
           SECTION 1 • SUMMARY
         </div>
 
-        <h2 className="text-2xl font-light text-harken-dark mb-8 mt-8">Executive Summary</h2>
+        <h2 className="text-2xl font-light text-slate-800 mb-8 mt-8">Executive Summary</h2>
 
         {/* Property Summary Table - conditionally rendered */}
         {isVisible('exec_property') && (
           <div
             onClick={() => onSelectElement('summary_property')}
-            className={`mb-8 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'summary_property' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-harken-gray-light'}`}
+            className={`mb-8 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'summary_property' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-slate-100'}`}
           >
-            <h3 className="text-sm font-semibold text-harken-gray-med uppercase tracking-wider mb-4">Property Identification</h3>
+            <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Property Identification</h3>
             <table className="w-full text-sm">
               <tbody>
                 {summaryRows.map((row, idx) => (
-                  <tr key={idx} className="border-b border-harken-gray-light">
-                    <td className="py-2 pr-4 text-harken-gray w-1/3">{row.label}</td>
-                    <td className="py-2 text-harken-dark font-medium">{row.value}</td>
+                  <tr key={idx} className="border-b border-slate-400-light">
+                    <td className="py-2 pr-4 text-slate-600 w-1/3">{row.label}</td>
+                    <td className="py-2 text-slate-800 font-medium">{row.value}</td>
                   </tr>
                 ))}
               </tbody>
@@ -777,15 +831,15 @@ function ExecutiveSummaryPage({ selectedElement, onSelectElement, subjectData, i
         {isVisible('exec_values') && (
           <div
             onClick={() => onSelectElement('summary_values')}
-            className={`p-4 -m-4 rounded cursor-pointer ${selectedElement === 'summary_values' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-harken-gray-light'}`}
+            className={`p-4 -m-4 rounded cursor-pointer ${selectedElement === 'summary_values' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-slate-100'}`}
           >
-            <h3 className="text-sm font-semibold text-harken-gray-med uppercase tracking-wider mb-4">Value Conclusions</h3>
+            <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Value Conclusions</h3>
             <table className="w-full text-sm">
               <tbody>
                 {valueRows.map((row, idx) => (
-                  <tr key={idx} className={`border-b border-harken-gray-light ${row.emphasized ? 'bg-accent-teal-mint-light' : ''}`}>
-                    <td className={`py-2 pr-4 w-1/2 ${row.emphasized ? 'font-semibold text-accent-teal-mint' : 'text-harken-gray'}`}>{row.label}</td>
-                    <td className={`py-2 text-right ${row.emphasized ? 'font-bold text-accent-teal-mint text-xl' : 'text-harken-dark font-medium'}`}>{row.value}</td>
+                  <tr key={idx} className={`border-b border-slate-400-light ${row.emphasized ? 'bg-[#0da1c7]/10' : ''}`}>
+                    <td className={`py-2 pr-4 w-1/2 ${row.emphasized ? 'font-semibold text-[#0da1c7]' : 'text-slate-600'}`}>{row.label}</td>
+                    <td className={`py-2 text-right ${row.emphasized ? 'font-bold text-[#0da1c7] text-xl' : 'text-slate-800 font-medium'}`}>{row.value}</td>
                   </tr>
                 ))}
               </tbody>
@@ -795,7 +849,7 @@ function ExecutiveSummaryPage({ selectedElement, onSelectElement, subjectData, i
 
         {/* Key Dates - conditionally rendered */}
         {isVisible('exec_dates') && (
-          <div className="mt-6 text-sm text-harken-gray-med">
+          <div className="mt-6 text-sm text-slate-500">
             <span>Effective Date: {effectiveDate}</span>
             <span className="mx-2">|</span>
             <span>Inspection: {inspectionDate}</span>
@@ -886,19 +940,19 @@ function PropertyDescriptionPage({
   return (
     <ReportPageWrapper section={{ id: 'property', label: 'Property Description', enabled: true, expanded: false, fields: [], type: 'narrative' }} pageNumber={3} sidebarLabel="02">
       <div className="p-10">
-        <div className="absolute top-6 right-8 bg-accent-teal-mint text-white px-4 py-2 rounded text-xs font-semibold">
+        <div className="absolute top-6 right-8 bg-[#0da1c7] text-white px-4 py-2 rounded text-xs font-semibold">
           SECTION 2 • PROPERTY
         </div>
 
-        <h2 className="text-2xl font-light text-harken-dark mb-6 mt-8">Property Description</h2>
+        <h2 className="text-2xl font-light text-slate-800 mb-6 mt-8">Property Description</h2>
 
         {/* Area/Neighborhood Description */}
         {(areaDescription || neighborhoodCharacteristics) && (
           <div
             onClick={() => onSelectElement('property_area')}
-            className={`mb-6 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'property_area' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-harken-gray-light'}`}
+            className={`mb-6 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'property_area' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-slate-100'}`}
           >
-            <h3 className="text-lg font-semibold text-harken-dark mb-3">Area & Neighborhood</h3>
+            <h3 className="text-lg font-semibold text-slate-800 mb-3">Area & Neighborhood</h3>
             {areaDescription && (
               <EditableElement
                 elementId="property_area_description"
@@ -907,7 +961,7 @@ function PropertyDescriptionPage({
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
                 as="p"
-                className="text-harken-gray text-sm leading-relaxed mb-3"
+                className="text-slate-600 text-sm leading-relaxed mb-3"
                 appliedStyle={getStyle('property_area_description')}
               />
             )}
@@ -919,7 +973,7 @@ function PropertyDescriptionPage({
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
                 as="p"
-                className="text-harken-gray text-sm leading-relaxed"
+                className="text-slate-600 text-sm leading-relaxed"
                 appliedStyle={getStyle('property_neighborhood')}
               />
             )}
@@ -962,29 +1016,29 @@ function PropertyDescriptionPage({
         {isVisible('prop_site') && (
           <div
             onClick={() => onSelectElement('property_site')}
-            className={`mb-6 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'property_site' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-harken-gray-light'}`}
+            className={`mb-6 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'property_site' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-slate-100'}`}
           >
-            <h3 className="text-lg font-semibold text-harken-dark mb-3">Site Description</h3>
+            <h3 className="text-lg font-semibold text-slate-800 mb-3">Site Description</h3>
             <div className="grid grid-cols-2 gap-4 text-sm mb-4">
               <div>
-                <span className="text-harken-gray-med">Land Area:</span>
-                <span className="ml-2 text-harken-dark">{siteArea} {siteAreaUnit}</span>
+                <span className="text-slate-500">Land Area:</span>
+                <span className="ml-2 text-slate-800">{siteArea} {siteAreaUnit}</span>
               </div>
               <div>
-                <span className="text-harken-gray-med">Shape:</span>
-                <span className="ml-2 text-harken-dark">{shape}</span>
+                <span className="text-slate-500">Shape:</span>
+                <span className="ml-2 text-slate-800">{shape}</span>
               </div>
               <div>
-                <span className="text-harken-gray-med">Frontage:</span>
-                <span className="ml-2 text-harken-dark">{frontage}</span>
+                <span className="text-slate-500">Frontage:</span>
+                <span className="ml-2 text-slate-800">{frontage}</span>
               </div>
               <div>
-                <span className="text-harken-gray-med">Topography:</span>
-                <span className="ml-2 text-harken-dark">{topography}</span>
+                <span className="text-slate-500">Topography:</span>
+                <span className="ml-2 text-slate-800">{topography}</span>
               </div>
               <div className="col-span-2">
-                <span className="text-harken-gray-med">Utilities:</span>
-                <span className="ml-2 text-harken-dark">{utilities}</span>
+                <span className="text-slate-500">Utilities:</span>
+                <span className="ml-2 text-slate-800">{utilities}</span>
               </div>
             </div>
             {/* Site Description Narrative */}
@@ -996,7 +1050,7 @@ function PropertyDescriptionPage({
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
                 as="p"
-                className="text-harken-gray text-sm leading-relaxed mt-4"
+                className="text-slate-600 text-sm leading-relaxed mt-4"
                 appliedStyle={getStyle('property_site_narrative')}
               />
             )}
@@ -1007,16 +1061,16 @@ function PropertyDescriptionPage({
         {isVisible('prop_improvements') && (
           <div
             onClick={() => onSelectElement('property_improvements')}
-            className={`p-4 -m-4 rounded cursor-pointer ${selectedElement === 'property_improvements' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-harken-gray-light'}`}
+            className={`p-4 -m-4 rounded cursor-pointer ${selectedElement === 'property_improvements' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-slate-100'}`}
           >
-            <h3 className="text-lg font-semibold text-harken-dark mb-3">Improvements</h3>
+            <h3 className="text-lg font-semibold text-slate-800 mb-3">Improvements</h3>
             <div className="grid grid-cols-2 gap-4 text-sm">
-              <div><span className="text-harken-gray-med">Year Built:</span><span className="ml-2 text-harken-dark">{yearBuilt}</span></div>
-              <div><span className="text-harken-gray-med">Building Type:</span><span className="ml-2 text-harken-dark">{buildingType}</span></div>
-              <div><span className="text-harken-gray-med">Gross Building Area:</span><span className="ml-2 text-harken-dark">{typeof grossBuildingArea === 'number' ? grossBuildingArea.toLocaleString() : grossBuildingArea} SF</span></div>
-              <div><span className="text-harken-gray-med">Construction:</span><span className="ml-2 text-harken-dark">{construction}</span></div>
-              <div><span className="text-harken-gray-med">Condition:</span><span className="ml-2 text-harken-dark">{condition}</span></div>
-              <div><span className="text-harken-gray-med">Quality:</span><span className="ml-2 text-harken-dark">{quality}</span></div>
+              <div><span className="text-slate-500">Year Built:</span><span className="ml-2 text-slate-800">{yearBuilt}</span></div>
+              <div><span className="text-slate-500">Building Type:</span><span className="ml-2 text-slate-800">{buildingType}</span></div>
+              <div><span className="text-slate-500">Gross Building Area:</span><span className="ml-2 text-slate-800">{typeof grossBuildingArea === 'number' ? grossBuildingArea.toLocaleString() : grossBuildingArea} SF</span></div>
+              <div><span className="text-slate-500">Construction:</span><span className="ml-2 text-slate-800">{construction}</span></div>
+              <div><span className="text-slate-500">Condition:</span><span className="ml-2 text-slate-800">{condition}</span></div>
+              <div><span className="text-slate-500">Quality:</span><span className="ml-2 text-slate-800">{quality}</span></div>
             </div>
           </div>
         )}
@@ -1024,7 +1078,7 @@ function PropertyDescriptionPage({
         {/* Inline Photos - Interior/Detail Position */}
         {hasInlinePhotos && photoSlots && availablePhotos && (
           <div className="mt-8">
-            <h3 className="text-lg font-semibold text-harken-dark mb-4">Interior & Detail Photos</h3>
+            <h3 className="text-lg font-semibold text-slate-800 mb-4">Interior & Detail Photos</h3>
             <InlinePhotoGrid
               slots={photoSlots}
               placements={photoPlacements || []}
@@ -1078,17 +1132,17 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
   return (
     <ReportPageWrapper section={{ id: 'hbu', label: 'Highest & Best Use', enabled: true, expanded: false, fields: [], type: 'narrative' }} pageNumber={4} sidebarLabel="03">
       <div className="p-10">
-        <div className="absolute top-6 right-8 bg-accent-teal-mint text-white px-4 py-2 rounded text-xs font-semibold">
+        <div className="absolute top-6 right-8 bg-[#0da1c7] text-white px-4 py-2 rounded text-xs font-semibold">
           SECTION 3 • HBU
         </div>
 
-        <h2 className="text-2xl font-light text-harken-dark mb-6 mt-8">Highest and Best Use Analysis</h2>
+        <h2 className="text-2xl font-light text-slate-800 mb-6 mt-8">Highest and Best Use Analysis</h2>
 
         <div className="mb-8">
-          <h3 className="text-lg font-semibold text-accent-teal-mint mb-4">As Vacant</h3>
-          <div className="space-y-4 text-sm text-harken-gray">
+          <h3 className="text-lg font-semibold text-[#0da1c7] mb-4">As Vacant</h3>
+          <div className="space-y-4 text-sm text-slate-600">
             <div>
-              <h4 className="font-semibold text-harken-dark mb-1">Legally Permissible</h4>
+              <h4 className="font-semibold text-slate-800 mb-1">Legally Permissible</h4>
               <EditableElement
                 elementId="hbu_legally_permissible"
                 content={getContent('hbu_legally_permissible', asVacant.legallyPermissible)}
@@ -1096,12 +1150,12 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
                 as="p"
-                className="text-harken-gray"
+                className="text-slate-600"
                 appliedStyle={getStyle('hbu_legally_permissible')}
               />
             </div>
             <div>
-              <h4 className="font-semibold text-harken-dark mb-1">Physically Possible</h4>
+              <h4 className="font-semibold text-slate-800 mb-1">Physically Possible</h4>
               <EditableElement
                 elementId="hbu_physically_possible"
                 content={getContent('hbu_physically_possible', asVacant.physicallyPossible)}
@@ -1109,12 +1163,12 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
                 as="p"
-                className="text-harken-gray"
+                className="text-slate-600"
                 appliedStyle={getStyle('hbu_physically_possible')}
               />
             </div>
             <div>
-              <h4 className="font-semibold text-harken-dark mb-1">Financially Feasible</h4>
+              <h4 className="font-semibold text-slate-800 mb-1">Financially Feasible</h4>
               <EditableElement
                 elementId="hbu_financially_feasible"
                 content={getContent('hbu_financially_feasible', asVacant.financiallyFeasible)}
@@ -1122,12 +1176,12 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
                 as="p"
-                className="text-harken-gray"
+                className="text-slate-600"
                 appliedStyle={getStyle('hbu_financially_feasible')}
               />
             </div>
             <div>
-              <h4 className="font-semibold text-harken-dark mb-1">Maximally Productive</h4>
+              <h4 className="font-semibold text-slate-800 mb-1">Maximally Productive</h4>
               <EditableElement
                 elementId="hbu_maximally_productive"
                 content={getContent('hbu_maximally_productive', asVacant.maximallyProductive)}
@@ -1135,12 +1189,12 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
                 as="p"
-                className="text-harken-gray"
+                className="text-slate-600"
                 appliedStyle={getStyle('hbu_maximally_productive')}
               />
             </div>
-            <div className="bg-accent-teal-mint-light p-4 rounded-lg">
-              <h4 className="font-semibold text-accent-teal-mint">Conclusion (As Vacant)</h4>
+            <div className="bg-[#0da1c7]/10 p-4 rounded-lg">
+              <h4 className="font-semibold text-[#0da1c7]">Conclusion (As Vacant)</h4>
               <EditableElement
                 elementId="hbu_vacant_conclusion"
                 content={getContent('hbu_vacant_conclusion', asVacant.conclusion)}
@@ -1148,7 +1202,7 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
                 as="p"
-                className="text-accent-teal-mint"
+                className="text-[#0da1c7]"
                 appliedStyle={getStyle('hbu_vacant_conclusion')}
               />
             </div>
@@ -1156,8 +1210,8 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
         </div>
 
         <div>
-          <h3 className="text-lg font-semibold text-accent-teal-mint mb-4">As Improved</h3>
-          <div className="space-y-4 text-sm text-harken-gray">
+          <h3 className="text-lg font-semibold text-[#0da1c7] mb-4">As Improved</h3>
+          <div className="space-y-4 text-sm text-slate-600">
             <EditableElement
               elementId="hbu_improved_analysis"
               content={getContent('hbu_improved_analysis', asImproved.analysis)}
@@ -1165,11 +1219,11 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
               onSelectElement={onSelectElement}
               onContentChange={handleContentChange}
               as="p"
-              className="text-harken-gray"
+              className="text-slate-600"
               appliedStyle={getStyle('hbu_improved_analysis')}
             />
-            <div className="bg-accent-teal-mint-light p-4 rounded-lg">
-              <h4 className="font-semibold text-accent-teal-mint">Conclusion (As Improved)</h4>
+            <div className="bg-[#0da1c7]/10 p-4 rounded-lg">
+              <h4 className="font-semibold text-[#0da1c7]">Conclusion (As Improved)</h4>
               <EditableElement
                 elementId="hbu_improved_conclusion"
                 content={getContent('hbu_improved_conclusion', asImproved.conclusion)}
@@ -1177,7 +1231,7 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
                 as="p"
-                className="text-accent-teal-mint"
+                className="text-[#0da1c7]"
                 appliedStyle={getStyle('hbu_improved_conclusion')}
               />
             </div>
@@ -1220,15 +1274,15 @@ function MarketAnalysisPage({ selectedElement, onSelectElement, onContentChange,
   return (
     <ReportPageWrapper section={{ id: 'market-analysis', label: 'Market Analysis', enabled: true, expanded: false, fields: [], type: 'narrative' }} pageNumber={5} sidebarLabel="02C">
       <div className="p-10">
-        <div className="absolute top-6 right-8 bg-accent-teal-mint text-white px-4 py-2 rounded text-xs font-semibold">
+        <div className="absolute top-6 right-8 bg-[#0da1c7] text-white px-4 py-2 rounded text-xs font-semibold">
           SECTION 2C • MARKET
         </div>
 
-        <h2 className="text-2xl font-light text-harken-dark mb-6 mt-8">Market Analysis</h2>
+        <h2 className="text-2xl font-light text-slate-800 mb-6 mt-8">Market Analysis</h2>
 
-        <div className="space-y-6 text-sm text-harken-gray">
+        <div className="space-y-6 text-sm text-slate-600">
           <div>
-            <h3 className="text-lg font-semibold text-harken-dark mb-3">Market Cycle Stage</h3>
+            <h3 className="text-lg font-semibold text-slate-800 mb-3">Market Cycle Stage</h3>
             <EditableElement
               elementId="market_cycle"
               content={getContent('market_cycle', defaultMarketCycle)}
@@ -1236,13 +1290,13 @@ function MarketAnalysisPage({ selectedElement, onSelectElement, onContentChange,
               onSelectElement={onSelectElement}
               onContentChange={handleContentChange}
               as="p"
-              className="text-harken-gray"
+              className="text-slate-600"
               appliedStyle={getStyle('market_cycle')}
             />
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold text-harken-dark mb-3">Supply & Demand</h3>
+            <h3 className="text-lg font-semibold text-slate-800 mb-3">Supply & Demand</h3>
             <EditableElement
               elementId="market_supply_demand"
               content={getContent('market_supply_demand', defaultSupplyDemand)}
@@ -1250,13 +1304,13 @@ function MarketAnalysisPage({ selectedElement, onSelectElement, onContentChange,
               onSelectElement={onSelectElement}
               onContentChange={handleContentChange}
               as="p"
-              className="text-harken-gray"
+              className="text-slate-600"
               appliedStyle={getStyle('market_supply_demand')}
             />
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold text-harken-dark mb-3">Market Trends</h3>
+            <h3 className="text-lg font-semibold text-slate-800 mb-3">Market Trends</h3>
             <EditableElement
               elementId="market_trends"
               content={getContent('market_trends', defaultMarketTrends)}
@@ -1264,7 +1318,7 @@ function MarketAnalysisPage({ selectedElement, onSelectElement, onContentChange,
               onSelectElement={onSelectElement}
               onContentChange={handleContentChange}
               as="p"
-              className="text-harken-gray"
+              className="text-slate-600"
               appliedStyle={getStyle('market_trends')}
             />
           </div>
@@ -1272,7 +1326,7 @@ function MarketAnalysisPage({ selectedElement, onSelectElement, onContentChange,
           {/* Market Narrative from Wizard */}
           {marketNarrative && (
             <div>
-              <h3 className="text-lg font-semibold text-harken-dark mb-3">Market Outlook & Analysis</h3>
+              <h3 className="text-lg font-semibold text-slate-800 mb-3">Market Outlook & Analysis</h3>
               <EditableElement
                 elementId="market_narrative"
                 content={getContent('market_narrative', marketNarrative)}
@@ -1280,7 +1334,7 @@ function MarketAnalysisPage({ selectedElement, onSelectElement, onContentChange,
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
                 as="p"
-                className="text-harken-gray"
+                className="text-slate-600"
                 appliedStyle={getStyle('market_narrative')}
               />
             </div>
@@ -1339,18 +1393,18 @@ function SalesComparisonPage({ selectedElement, onSelectElement, onContentChange
   return (
     <ReportPageWrapper section={{ id: 'sales-comparison', label: 'Sales Comparison', enabled: true, expanded: false, fields: [], type: 'analysis-grid' }} pageNumber={5} sidebarLabel="04">
       <div className="p-8">
-        <div className="absolute top-6 right-8 bg-accent-teal-mint text-white px-4 py-2 rounded text-xs font-semibold">
+        <div className="absolute top-6 right-8 bg-[#0da1c7] text-white px-4 py-2 rounded text-xs font-semibold">
           SECTION 4 • SALES
         </div>
 
-        <h2 className="text-xl font-light text-harken-dark mb-4 mt-8">Sales Comparison Approach</h2>
+        <h2 className="text-xl font-light text-slate-800 mb-4 mt-8">Sales Comparison Approach</h2>
 
-        <p className="text-sm text-harken-gray mb-6">{data.salesComparison.methodology}</p>
+        <p className="text-sm text-slate-600 mb-6">{data.salesComparison.methodology}</p>
 
         {/* Comparison Grid */}
         <div
           onClick={() => onSelectElement('sales_grid')}
-          className={`rounded cursor-pointer ${selectedElement === 'sales_grid' ? 'ring-2 ring-accent-cyan' : ''}`}
+          className={`rounded cursor-pointer ${selectedElement === 'sales_grid' ? 'ring-2 ring-[#0da1c7]' : ''}`}
         >
           <table className="w-full text-xs border-collapse">
             <thead>
@@ -1364,9 +1418,9 @@ function SalesComparisonPage({ selectedElement, onSelectElement, onContentChange
             </thead>
             <tbody>
               {/* Photo Row */}
-              <tr className="border-b border-light-border">
-                <td className="px-2 py-2 font-medium text-harken-gray">Photo</td>
-                <td className="px-2 py-2 text-center bg-surface-2 dark:bg-elevation-2">
+              <tr className="border-b border-slate-200">
+                <td className="px-2 py-2 font-medium text-slate-600">Photo</td>
+                <td className="px-2 py-2 text-center bg-slate-50">
                   <div className="w-20 h-14 mx-auto rounded overflow-hidden">
                     <img src={data.photos[0]?.url} alt="Subject" className="w-full h-full object-cover" />
                   </div>
@@ -1381,63 +1435,63 @@ function SalesComparisonPage({ selectedElement, onSelectElement, onContentChange
               </tr>
 
               {/* Data Rows */}
-              <tr className="border-b border-harken-gray-light">
-                <td className="px-2 py-1.5 font-medium text-harken-gray">Address</td>
-                <td className="px-2 py-1.5 text-center bg-surface-2 dark:bg-elevation-2 text-xs">{data.property.address}</td>
+              <tr className="border-b border-slate-400-light">
+                <td className="px-2 py-1.5 font-medium text-slate-600">Address</td>
+                <td className="px-2 py-1.5 text-center bg-slate-50 text-xs text-slate-800">{data.property.address}</td>
                 {data.comparables.map(comp => (
-                  <td key={comp.id} className="px-2 py-1.5 text-center text-xs">{comp.address}</td>
+                  <td key={comp.id} className="px-2 py-1.5 text-center text-xs text-slate-800">{comp.address}</td>
                 ))}
               </tr>
-              <tr className="border-b border-harken-gray-light">
-                <td className="px-2 py-1.5 font-medium text-harken-gray">Sale Date</td>
-                <td className="px-2 py-1.5 text-center bg-surface-2 dark:bg-elevation-2">-</td>
+              <tr className="border-b border-slate-400-light">
+                <td className="px-2 py-1.5 font-medium text-slate-600">Sale Date</td>
+                <td className="px-2 py-1.5 text-center bg-slate-50 text-slate-500">-</td>
                 {data.comparables.map(comp => (
-                  <td key={comp.id} className="px-2 py-1.5 text-center">{comp.saleDate}</td>
+                  <td key={comp.id} className="px-2 py-1.5 text-center text-slate-800">{comp.saleDate}</td>
                 ))}
               </tr>
-              <tr className="border-b border-harken-gray-light">
-                <td className="px-2 py-1.5 font-medium text-harken-gray">Sale Price</td>
-                <td className="px-2 py-1.5 text-center bg-surface-2 dark:bg-elevation-2">-</td>
+              <tr className="border-b border-slate-400-light">
+                <td className="px-2 py-1.5 font-medium text-slate-600">Sale Price</td>
+                <td className="px-2 py-1.5 text-center bg-slate-50 text-slate-500">-</td>
                 {data.comparables.map(comp => (
-                  <td key={comp.id} className="px-2 py-1.5 text-center">${comp.salePrice.toLocaleString()}</td>
+                  <td key={comp.id} className="px-2 py-1.5 text-center text-slate-800">${comp.salePrice.toLocaleString()}</td>
                 ))}
               </tr>
-              <tr className="border-b border-harken-gray-light">
-                <td className="px-2 py-1.5 font-medium text-harken-gray">Building Size</td>
-                <td className="px-2 py-1.5 text-center bg-surface-2 dark:bg-elevation-2">{data.improvements.grossBuildingArea.toLocaleString()} SF</td>
+              <tr className="border-b border-slate-400-light">
+                <td className="px-2 py-1.5 font-medium text-slate-600">Building Size</td>
+                <td className="px-2 py-1.5 text-center bg-slate-50 text-slate-800">{data.improvements.grossBuildingArea.toLocaleString()} SF</td>
                 {data.comparables.map(comp => (
-                  <td key={comp.id} className="px-2 py-1.5 text-center">{comp.buildingSize.toLocaleString()} SF</td>
+                  <td key={comp.id} className="px-2 py-1.5 text-center text-slate-800">{comp.buildingSize.toLocaleString()} SF</td>
                 ))}
               </tr>
-              <tr className="border-b border-harken-gray-light">
-                <td className="px-2 py-1.5 font-medium text-harken-gray">Price/SF</td>
-                <td className="px-2 py-1.5 text-center bg-surface-2 dark:bg-elevation-2">-</td>
+              <tr className="border-b border-slate-400-light">
+                <td className="px-2 py-1.5 font-medium text-slate-600">Price/SF</td>
+                <td className="px-2 py-1.5 text-center bg-slate-50 text-slate-500">-</td>
                 {data.comparables.map(comp => (
-                  <td key={comp.id} className="px-2 py-1.5 text-center">${comp.pricePerSF.toFixed(2)}</td>
+                  <td key={comp.id} className="px-2 py-1.5 text-center text-slate-800">${comp.pricePerSF.toFixed(2)}</td>
                 ))}
               </tr>
-              <tr className="border-b border-harken-gray-light">
-                <td className="px-2 py-1.5 font-medium text-harken-gray">Year Built</td>
-                <td className="px-2 py-1.5 text-center bg-surface-2 dark:bg-elevation-2">{data.improvements.yearBuilt}</td>
+              <tr className="border-b border-slate-400-light">
+                <td className="px-2 py-1.5 font-medium text-slate-600">Year Built</td>
+                <td className="px-2 py-1.5 text-center bg-slate-50 text-slate-800">{data.improvements.yearBuilt}</td>
                 {data.comparables.map(comp => (
-                  <td key={comp.id} className="px-2 py-1.5 text-center">{comp.yearBuilt}</td>
+                  <td key={comp.id} className="px-2 py-1.5 text-center text-slate-800">{comp.yearBuilt}</td>
                 ))}
               </tr>
 
               {/* Adjustments */}
-              <tr className="bg-surface-3 dark:bg-elevation-subtle">
+              <tr className="bg-slate-100">
                 <td colSpan={2 + data.comparables.length} className="px-2 py-1 font-semibold text-xs text-slate-600 uppercase">Adjustments</td>
               </tr>
               {['location', 'size', 'quality', 'age', 'condition'].map(adj => (
-                <tr key={adj} className="border-b border-harken-gray-light">
-                  <td className="px-2 py-1.5 font-medium text-harken-gray capitalize">{adj}</td>
-                  <td className="px-2 py-1.5 text-center bg-surface-2 dark:bg-elevation-2">-</td>
+                <tr key={adj} className="border-b border-slate-400-light">
+                  <td className="px-2 py-1.5 font-medium text-slate-600 capitalize">{adj}</td>
+                  <td className="px-2 py-1.5 text-center bg-slate-50 text-slate-500">-</td>
                   {data.comparables.map(comp => {
                     const val = comp.adjustments[adj as keyof typeof comp.adjustments] || 0;
                     return (
                       <td key={comp.id} className="px-2 py-1.5 text-center">
-                        {val === 0 ? '-' : (
-                          <span className={val > 0 ? 'text-green-600' : 'text-harken-error'}>
+                        {val === 0 ? <span className="text-slate-500">-</span> : (
+                          <span className={val > 0 ? 'text-green-600' : 'text-red-600'}>
                             {val > 0 ? '+' : ''}{val}%
                           </span>
                         )}
@@ -1446,14 +1500,14 @@ function SalesComparisonPage({ selectedElement, onSelectElement, onContentChange
                   })}
                 </tr>
               ))}
-              <tr className="bg-surface-4 dark:bg-elevation-muted font-semibold">
-                <td className="px-2 py-1.5 text-harken-dark">Net Adjustment</td>
-                <td className="px-2 py-1.5 text-center bg-surface-3 dark:bg-elevation-subtle">-</td>
+              <tr className="bg-slate-200 font-semibold">
+                <td className="px-2 py-1.5 text-slate-800">Net Adjustment</td>
+                <td className="px-2 py-1.5 text-center bg-slate-100 text-slate-500">-</td>
                 {data.comparables.map(comp => {
                   const total = comp.adjustments.total;
                   return (
                     <td key={comp.id} className="px-2 py-1.5 text-center">
-                      <span className={total > 0 ? 'text-green-600' : total < 0 ? 'text-harken-error' : ''}>
+                      <span className={total > 0 ? 'text-green-600' : total < 0 ? 'text-red-600' : 'text-slate-800'}>
                         {total > 0 ? '+' : ''}{total}%
                       </span>
                     </td>
@@ -1474,7 +1528,7 @@ function SalesComparisonPage({ selectedElement, onSelectElement, onContentChange
         {/* Sales Comparison Reconciliation Narrative */}
         {reconciliationNarrative && (
           <div className="mt-6">
-            <h3 className="text-lg font-semibold text-harken-dark mb-3">Sales Comparison Analysis</h3>
+            <h3 className="text-lg font-semibold text-slate-800 mb-3">Sales Comparison Analysis</h3>
             <EditableElement
               elementId="sales_reconciliation_narrative"
               content={getContent('sales_reconciliation_narrative', reconciliationNarrative)}
@@ -1482,22 +1536,22 @@ function SalesComparisonPage({ selectedElement, onSelectElement, onContentChange
               onSelectElement={onSelectElement}
               onContentChange={handleContentChange}
               as="p"
-              className="text-harken-gray text-sm leading-relaxed"
+              className="text-slate-600 text-sm leading-relaxed"
               appliedStyle={getStyle('sales_reconciliation_narrative')}
             />
           </div>
         )}
 
         {/* Value Conclusion */}
-        <div className="mt-6 p-4 bg-gradient-to-r from-accent-teal-mint-light to-accent-teal-mint-light rounded-lg">
+        <div className="mt-6 p-4 bg-gradient-to-r from-[#0da1c7]/10 to-[#0da1c7]/10 rounded-lg">
           <div className="flex items-center justify-between">
             <div>
-              <h4 className="font-semibold text-accent-teal-mint mb-1">Sales Comparison Value Indication</h4>
-              <p className="text-sm text-accent-teal-mint">Based on adjusted price range of ${Math.min(...data.comparables.map(c => c.adjustedPricePerSF)).toFixed(2)} - ${Math.max(...data.comparables.map(c => c.adjustedPricePerSF)).toFixed(2)}/SF</p>
+              <h4 className="font-semibold text-[#0da1c7] mb-1">Sales Comparison Value Indication</h4>
+              <p className="text-sm text-[#0da1c7]">Based on adjusted price range of ${Math.min(...data.comparables.map(c => c.adjustedPricePerSF)).toFixed(2)} - ${Math.max(...data.comparables.map(c => c.adjustedPricePerSF)).toFixed(2)}/SF</p>
             </div>
             <div className="text-right">
-              <div className="text-3xl font-bold text-accent-teal-mint">${(concludedValue ?? data.valuation.salesComparisonValue).toLocaleString()}</div>
-              <div className="text-sm text-accent-teal-mint">${((concludedValue ?? data.valuation.salesComparisonValue) / data.improvements.grossBuildingArea).toFixed(2)}/SF</div>
+              <div className="text-3xl font-bold text-[#0da1c7]">${(concludedValue ?? data.valuation.salesComparisonValue).toLocaleString()}</div>
+              <div className="text-sm text-[#0da1c7]">${((concludedValue ?? data.valuation.salesComparisonValue) / data.improvements.grossBuildingArea).toFixed(2)}/SF</div>
             </div>
           </div>
         </div>
@@ -1527,51 +1581,51 @@ function IncomeApproachPage({ selectedElement, onSelectElement, onContentChange,
   return (
     <ReportPageWrapper section={{ id: 'income', label: 'Income Approach', enabled: true, expanded: false, fields: [], type: 'analysis-grid' }} pageNumber={6} sidebarLabel="05">
       <div className="p-10">
-        <div className="absolute top-6 right-8 bg-accent-teal-mint text-white px-4 py-2 rounded text-xs font-semibold">
+        <div className="absolute top-6 right-8 bg-[#0da1c7] text-white px-4 py-2 rounded text-xs font-semibold">
           SECTION 5 • INCOME
         </div>
 
-        <h2 className="text-2xl font-light text-harken-dark mb-4 mt-8">Income Approach</h2>
+        <h2 className="text-2xl font-light text-slate-800 mb-4 mt-8">Income Approach</h2>
 
-        <p className="text-sm text-harken-gray mb-6">{data.incomeApproach.methodology}</p>
+        <p className="text-sm text-slate-600 mb-6">{data.incomeApproach.methodology}</p>
 
         <div
           onClick={() => onSelectElement('income_analysis')}
-          className={`p-4 -m-4 rounded cursor-pointer ${selectedElement === 'income_analysis' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-harken-gray-light'}`}
+          className={`p-4 -m-4 rounded cursor-pointer ${selectedElement === 'income_analysis' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-slate-100'}`}
         >
           <table className="w-full text-sm">
             <tbody>
-              <tr className="border-b border-light-border">
-                <td className="py-2 text-harken-gray">Building Area</td>
-                <td className="py-2 text-right font-medium">{data.improvements.grossBuildingArea.toLocaleString()} SF</td>
+              <tr className="border-b border-slate-200">
+                <td className="py-2 text-slate-600">Building Area</td>
+                <td className="py-2 text-right font-medium text-slate-800">{data.improvements.grossBuildingArea.toLocaleString()} SF</td>
               </tr>
-              <tr className="border-b border-light-border">
-                <td className="py-2 text-harken-gray">Market Rent (per SF)</td>
-                <td className="py-2 text-right font-medium">${data.incomeApproach.marketRentPerSF.toFixed(2)}</td>
+              <tr className="border-b border-slate-200">
+                <td className="py-2 text-slate-600">Market Rent (per SF)</td>
+                <td className="py-2 text-right font-medium text-slate-800">${data.incomeApproach.marketRentPerSF.toFixed(2)}</td>
               </tr>
-              <tr className="border-b border-light-border">
-                <td className="py-2 text-harken-gray font-semibold">Potential Gross Income</td>
-                <td className="py-2 text-right font-semibold">${data.incomeApproach.potentialGrossIncome.toLocaleString()}</td>
+              <tr className="border-b border-slate-200">
+                <td className="py-2 text-slate-600 font-semibold">Potential Gross Income</td>
+                <td className="py-2 text-right font-semibold text-slate-800">${data.incomeApproach.potentialGrossIncome.toLocaleString()}</td>
               </tr>
-              <tr className="border-b border-light-border">
-                <td className="py-2 text-harken-gray">Less: Vacancy & Collection Loss ({data.incomeApproach.vacancyRate}%)</td>
-                <td className="py-2 text-right font-medium text-harken-error">-${(data.incomeApproach.potentialGrossIncome * data.incomeApproach.vacancyRate / 100).toLocaleString()}</td>
+              <tr className="border-b border-slate-200">
+                <td className="py-2 text-slate-600">Less: Vacancy & Collection Loss ({data.incomeApproach.vacancyRate}%)</td>
+                <td className="py-2 text-right font-medium text-red-600">-${(data.incomeApproach.potentialGrossIncome * data.incomeApproach.vacancyRate / 100).toLocaleString()}</td>
               </tr>
-              <tr className="border-b border-light-border bg-harken-gray-light">
-                <td className="py-2 text-harken-gray font-semibold">Effective Gross Income</td>
-                <td className="py-2 text-right font-semibold">${data.incomeApproach.effectiveGrossIncome.toLocaleString()}</td>
+              <tr className="border-b border-slate-200 bg-slate-100">
+                <td className="py-2 text-slate-600 font-semibold">Effective Gross Income</td>
+                <td className="py-2 text-right font-semibold text-slate-800">${data.incomeApproach.effectiveGrossIncome.toLocaleString()}</td>
               </tr>
-              <tr className="border-b border-light-border">
-                <td className="py-2 text-harken-gray">Less: Operating Expenses ({data.incomeApproach.expenseRatio}%)</td>
-                <td className="py-2 text-right font-medium text-harken-error">-${data.incomeApproach.operatingExpenses.toLocaleString()}</td>
+              <tr className="border-b border-slate-200">
+                <td className="py-2 text-slate-600">Less: Operating Expenses ({data.incomeApproach.expenseRatio}%)</td>
+                <td className="py-2 text-right font-medium text-red-600">-${data.incomeApproach.operatingExpenses.toLocaleString()}</td>
               </tr>
-              <tr className="bg-accent-teal-mint-light border-b-2 border-accent-teal-mint">
-                <td className="py-3 text-accent-teal-mint font-bold">Net Operating Income</td>
-                <td className="py-3 text-right font-bold text-accent-teal-mint text-lg">${data.incomeApproach.netOperatingIncome.toLocaleString()}</td>
+              <tr className="bg-[#0da1c7]/10 border-b-2 border-[#0da1c7]">
+                <td className="py-3 text-[#0da1c7] font-bold">Net Operating Income</td>
+                <td className="py-3 text-right font-bold text-[#0da1c7] text-lg">${data.incomeApproach.netOperatingIncome.toLocaleString()}</td>
               </tr>
-              <tr className="border-b border-light-border">
-                <td className="py-2 text-harken-gray">Capitalization Rate</td>
-                <td className="py-2 text-right font-medium">{data.incomeApproach.capRate.toFixed(1)}%</td>
+              <tr className="border-b border-slate-200">
+                <td className="py-2 text-slate-600">Capitalization Rate</td>
+                <td className="py-2 text-right font-medium text-slate-800">{data.incomeApproach.capRate.toFixed(1)}%</td>
               </tr>
             </tbody>
           </table>
@@ -1579,7 +1633,7 @@ function IncomeApproachPage({ selectedElement, onSelectElement, onContentChange,
           {/* Rent Comparable Analysis Narrative */}
           {rentCompNotes && (
             <div className="mt-6">
-              <h3 className="text-sm font-semibold text-harken-gray-med uppercase tracking-wider mb-2">Rent Comparable Analysis</h3>
+              <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-2">Rent Comparable Analysis</h3>
               <EditableElement
                 elementId="income_rent_narrative"
                 content={getContent('income_rent_narrative', rentCompNotes)}
@@ -1587,7 +1641,7 @@ function IncomeApproachPage({ selectedElement, onSelectElement, onContentChange,
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
                 as="p"
-                className="text-harken-gray text-sm leading-relaxed"
+                className="text-slate-600 text-sm leading-relaxed"
                 appliedStyle={getStyle('income_rent_narrative')}
               />
             </div>
@@ -1596,7 +1650,7 @@ function IncomeApproachPage({ selectedElement, onSelectElement, onContentChange,
           {/* Expense Comparable Analysis Narrative */}
           {expenseCompNotes && (
             <div className="mt-4">
-              <h3 className="text-sm font-semibold text-harken-gray-med uppercase tracking-wider mb-2">Expense Analysis</h3>
+              <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-2">Expense Analysis</h3>
               <EditableElement
                 elementId="income_expense_narrative"
                 content={getContent('income_expense_narrative', expenseCompNotes)}
@@ -1604,15 +1658,15 @@ function IncomeApproachPage({ selectedElement, onSelectElement, onContentChange,
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
                 as="p"
-                className="text-harken-gray text-sm leading-relaxed"
+                className="text-slate-600 text-sm leading-relaxed"
                 appliedStyle={getStyle('income_expense_narrative')}
               />
             </div>
           )}
 
-          <div className="mt-6 p-4 bg-gradient-to-r from-accent-teal-mint-light to-accent-teal-mint-light rounded-lg text-center">
-            <div className="text-sm text-accent-teal-mint mb-1">Income Approach Value Indication</div>
-            <div className="text-3xl font-bold text-accent-teal-mint">${data.incomeApproach.valueConclusion.toLocaleString()}</div>
+          <div className="mt-6 p-4 bg-gradient-to-r from-[#0da1c7]/10 to-[#0da1c7]/10 rounded-lg text-center">
+            <div className="text-sm text-[#0da1c7] mb-1">Income Approach Value Indication</div>
+            <div className="text-3xl font-bold text-[#0da1c7]">${data.incomeApproach.valueConclusion.toLocaleString()}</div>
           </div>
         </div>
       </div>
@@ -1645,15 +1699,15 @@ The land value of $${data.costApproach.landValue.toLocaleString()} was derived f
   return (
     <ReportPageWrapper section={{ id: 'cost', label: 'Cost Approach', enabled: true, expanded: false, fields: [], type: 'analysis-grid' }} pageNumber={7} sidebarLabel="06">
       <div className="p-10">
-        <div className="absolute top-6 right-8 bg-accent-teal-mint text-white px-4 py-2 rounded text-xs font-semibold">
+        <div className="absolute top-6 right-8 bg-[#0da1c7] text-white px-4 py-2 rounded text-xs font-semibold">
           SECTION 6 • COST
         </div>
 
-        <h2 className="text-2xl font-light text-harken-dark mb-6 mt-8">Cost Approach</h2>
+        <h2 className="text-2xl font-light text-slate-800 mb-6 mt-8">Cost Approach</h2>
 
         {/* Methodology Narrative */}
         <div className="mb-6">
-          <h3 className="text-sm font-semibold text-harken-gray-med uppercase tracking-wider mb-3">Methodology</h3>
+          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Methodology</h3>
           <EditableElement
             elementId="cost_methodology"
             content={getContent('cost_methodology', defaultCostMethodology)}
@@ -1661,54 +1715,54 @@ The land value of $${data.costApproach.landValue.toLocaleString()} was derived f
             onSelectElement={onSelectElement}
             onContentChange={handleContentChange}
             as="div"
-            className="text-sm text-harken-gray leading-relaxed whitespace-pre-wrap"
+            className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap"
             appliedStyle={getStyle('cost_methodology')}
           />
         </div>
 
         {/* Cost Breakdown Table */}
         <div className="mb-6">
-          <h3 className="text-sm font-semibold text-harken-gray-med uppercase tracking-wider mb-3">Cost Summary</h3>
+          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Cost Summary</h3>
           <div
             onClick={() => onSelectElement('cost_table')}
-            className={`p-4 bg-surface-1 rounded-lg border border-light-border cursor-pointer ${selectedElement === 'cost_table' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-harken-gray-light'}`}
+            className={`p-4 bg-white rounded-lg border border-slate-200 cursor-pointer ${selectedElement === 'cost_table' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-slate-100'}`}
           >
             <table className="w-full text-sm">
               <tbody>
-                <tr className="border-b border-light-border bg-harken-gray-light">
-                  <td className="py-2 px-3 text-harken-gray font-semibold">Land Value</td>
-                  <td className="py-2 px-3 text-right font-semibold">${data.costApproach.landValue.toLocaleString()}</td>
+                <tr className="border-b border-slate-200 bg-slate-100">
+                  <td className="py-2 px-3 text-slate-600 font-semibold">Land Value</td>
+                  <td className="py-2 px-3 text-right font-semibold text-slate-800">${data.costApproach.landValue.toLocaleString()}</td>
                 </tr>
-                <tr className="border-b border-light-border">
-                  <td className="py-2 px-3 text-harken-gray">Building Area</td>
-                  <td className="py-2 px-3 text-right font-medium">{data.improvements.grossBuildingArea.toLocaleString()} SF</td>
+                <tr className="border-b border-slate-200">
+                  <td className="py-2 px-3 text-slate-600">Building Area</td>
+                  <td className="py-2 px-3 text-right font-medium text-slate-800">{data.improvements.grossBuildingArea.toLocaleString()} SF</td>
                 </tr>
-                <tr className="border-b border-light-border">
-                  <td className="py-2 px-3 text-harken-gray">Replacement Cost New (per SF)</td>
-                  <td className="py-2 px-3 text-right font-medium">${data.costApproach.costPerSF.toFixed(2)}</td>
+                <tr className="border-b border-slate-200">
+                  <td className="py-2 px-3 text-slate-600">Replacement Cost New (per SF)</td>
+                  <td className="py-2 px-3 text-right font-medium text-slate-800">${data.costApproach.costPerSF.toFixed(2)}</td>
                 </tr>
-                <tr className="border-b border-light-border bg-harken-gray-light">
-                  <td className="py-2 px-3 text-harken-gray font-semibold">Replacement Cost New</td>
-                  <td className="py-2 px-3 text-right font-semibold">${data.costApproach.replacementCostNew.toLocaleString()}</td>
+                <tr className="border-b border-slate-200 bg-slate-100">
+                  <td className="py-2 px-3 text-slate-600 font-semibold">Replacement Cost New</td>
+                  <td className="py-2 px-3 text-right font-semibold text-slate-800">${data.costApproach.replacementCostNew.toLocaleString()}</td>
                 </tr>
-                <tr className="border-b border-light-border">
-                  <td className="py-2 px-3 text-harken-gray">Less: Physical Depreciation</td>
-                  <td className="py-2 px-3 text-right font-medium text-harken-error">-${data.costApproach.physicalDepreciation.toLocaleString()}</td>
+                <tr className="border-b border-slate-200">
+                  <td className="py-2 px-3 text-slate-600">Less: Physical Depreciation</td>
+                  <td className="py-2 px-3 text-right font-medium text-red-600">-${data.costApproach.physicalDepreciation.toLocaleString()}</td>
                 </tr>
-                <tr className="border-b border-light-border">
-                  <td className="py-2 px-3 text-harken-gray">Less: Functional Obsolescence</td>
-                  <td className="py-2 px-3 text-right font-medium text-harken-error">-${data.costApproach.functionalObsolescence.toLocaleString()}</td>
+                <tr className="border-b border-slate-200">
+                  <td className="py-2 px-3 text-slate-600">Less: Functional Obsolescence</td>
+                  <td className="py-2 px-3 text-right font-medium text-red-600">-${data.costApproach.functionalObsolescence.toLocaleString()}</td>
                 </tr>
-                <tr className="border-b border-light-border">
-                  <td className="py-2 px-3 text-harken-gray">Less: External Obsolescence</td>
-                  <td className="py-2 px-3 text-right font-medium text-harken-error">-${data.costApproach.externalObsolescence.toLocaleString()}</td>
+                <tr className="border-b border-slate-200">
+                  <td className="py-2 px-3 text-slate-600">Less: External Obsolescence</td>
+                  <td className="py-2 px-3 text-right font-medium text-red-600">-${data.costApproach.externalObsolescence.toLocaleString()}</td>
                 </tr>
-                <tr className="border-b border-light-border bg-harken-gray-light">
-                  <td className="py-2 px-3 text-harken-gray font-semibold">Depreciated Cost of Improvements</td>
-                  <td className="py-2 px-3 text-right font-semibold">${data.costApproach.depreciatedCost.toLocaleString()}</td>
+                <tr className="border-b border-slate-200 bg-slate-100">
+                  <td className="py-2 px-3 text-slate-600 font-semibold">Depreciated Cost of Improvements</td>
+                  <td className="py-2 px-3 text-right font-semibold text-slate-800">${data.costApproach.depreciatedCost.toLocaleString()}</td>
                 </tr>
-                <tr className="border-b border-light-border">
-                  <td className="py-2 px-3 text-harken-gray">Plus: Site Improvements</td>
+                <tr className="border-b border-slate-200">
+                  <td className="py-2 px-3 text-slate-600">Plus: Site Improvements</td>
                   <td className="py-2 px-3 text-right font-medium text-green-600">+${data.costApproach.siteImprovements.toLocaleString()}</td>
                 </tr>
               </tbody>
@@ -1717,15 +1771,167 @@ The land value of $${data.costApproach.landValue.toLocaleString()} was derived f
         </div>
 
         {/* Value Conclusion */}
-        <div className="p-5 bg-gradient-to-r from-accent-teal-mint-light to-accent-teal-mint-light rounded-lg border border-accent-teal-mint-light">
+        <div className="p-5 bg-gradient-to-r from-[#0da1c7]/10 to-[#0da1c7]/10 rounded-lg border border-[#0da1c7]/20">
           <div className="flex items-center justify-between">
             <div>
-              <div className="text-sm text-accent-teal-mint font-medium mb-1">Cost Approach Value Indication</div>
-              <div className="text-3xl font-bold text-accent-teal-mint">${data.costApproach.valueConclusion.toLocaleString()}</div>
+              <div className="text-sm text-[#0da1c7] font-medium mb-1">Cost Approach Value Indication</div>
+              <div className="text-3xl font-bold text-[#0da1c7]">${data.costApproach.valueConclusion.toLocaleString()}</div>
             </div>
             <div className="text-right">
-              <div className="text-xs text-accent-teal-mint uppercase">Rounded</div>
-              <div className="text-lg font-semibold text-accent-teal-mint">${(Math.round(data.costApproach.valueConclusion / 5000) * 5000).toLocaleString()}</div>
+              <div className="text-xs text-[#0da1c7] uppercase">Rounded</div>
+              <div className="text-lg font-semibold text-[#0da1c7]">${(Math.round(data.costApproach.valueConclusion / 5000) * 5000).toLocaleString()}</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ReportPageWrapper>
+  );
+}
+
+// Land Valuation Page
+function LandValuationPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, landValuationData }: {
+  selectedElement: string | null;
+  onSelectElement: (id: string) => void;
+  onContentChange?: (elementId: string, content: string) => void;
+  editedContent?: Record<string, string>;
+  getAppliedStyle?: (elementId: string) => React.CSSProperties;
+  landValuationData?: import('../../../types').LandValuationData;
+}) {
+  const handleContentChange = onContentChange || (() => { });
+  const getContent = (id: string, defaultVal: string) => editedContent?.[id] ?? defaultVal;
+  const getStyle = (id: string) => getAppliedStyle?.(id) || {};
+
+  // Get narrative from wizard state
+  const landNarrative = landValuationData?.reconciliationText || '';
+  const landComps = landValuationData?.landComps || [];
+  const subjectAcreage = landValuationData?.subjectAcreage || 0;
+  const concludedPricePerAcre = landValuationData?.concludedPricePerAcre || 0;
+  const concludedLandValue = landValuationData?.concludedLandValue || 0;
+
+  return (
+    <ReportPageWrapper section={{ id: 'land-valuation', label: 'Land Valuation', enabled: true, expanded: false, fields: [], type: 'analysis-grid' }} pageNumber={8} sidebarLabel="08">
+      <div className="p-10">
+        <div className="absolute top-6 right-8 bg-lime-600 text-white px-4 py-2 rounded text-xs font-semibold">
+          SECTION 8 • LAND
+        </div>
+
+        <h2 className="text-2xl font-light text-slate-800 mb-6 mt-8">Land Valuation</h2>
+
+        {/* Methodology */}
+        <div className="mb-6">
+          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Methodology</h3>
+          <p className="text-sm text-slate-600 leading-relaxed">
+            The land value is estimated using the Sales Comparison Approach, analyzing recent sales of comparable 
+            vacant land parcels in the subject market area. Adjustments are made for differences in location, 
+            size, zoning, topography, and other relevant characteristics.
+          </p>
+        </div>
+
+        {/* Land Comparables Grid */}
+        {landComps.length > 0 && (
+          <div className="mb-6">
+            <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-3">Land Sales Analysis</h3>
+            <div
+              onClick={() => onSelectElement('land_grid')}
+              className={`rounded cursor-pointer ${selectedElement === 'land_grid' ? 'ring-2 ring-[#0da1c7]' : ''}`}
+            >
+              <table className="w-full text-xs border-collapse">
+                <thead>
+                  <tr className="bg-lime-800 text-white">
+                    <th className="px-2 py-2 text-left font-semibold">Element</th>
+                    <th className="px-2 py-2 text-center font-semibold bg-lime-700">Subject</th>
+                    {landComps.map((comp, idx) => (
+                      <th key={comp.id} className="px-2 py-2 text-center font-semibold">Comp {idx + 1}</th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr className="border-b border-slate-200">
+                    <td className="px-2 py-1.5 font-medium text-slate-600">Address</td>
+                    <td className="px-2 py-1.5 text-center bg-slate-50 text-xs text-slate-800">Subject Site</td>
+                    {landComps.map(comp => (
+                      <td key={comp.id} className="px-2 py-1.5 text-center text-xs text-slate-800">{comp.address}</td>
+                    ))}
+                  </tr>
+                  <tr className="border-b border-slate-200">
+                    <td className="px-2 py-1.5 font-medium text-slate-600">Sale Date</td>
+                    <td className="px-2 py-1.5 text-center bg-slate-50 text-slate-500">-</td>
+                    {landComps.map(comp => (
+                      <td key={comp.id} className="px-2 py-1.5 text-center text-slate-800">{comp.saleDate}</td>
+                    ))}
+                  </tr>
+                  <tr className="border-b border-slate-200">
+                    <td className="px-2 py-1.5 font-medium text-slate-600">Sale Price</td>
+                    <td className="px-2 py-1.5 text-center bg-slate-50 text-slate-500">-</td>
+                    {landComps.map(comp => (
+                      <td key={comp.id} className="px-2 py-1.5 text-center text-slate-800">${comp.salePrice.toLocaleString()}</td>
+                    ))}
+                  </tr>
+                  <tr className="border-b border-slate-200">
+                    <td className="px-2 py-1.5 font-medium text-slate-600">Acreage</td>
+                    <td className="px-2 py-1.5 text-center bg-slate-50 text-slate-800">{subjectAcreage.toFixed(2)} AC</td>
+                    {landComps.map(comp => (
+                      <td key={comp.id} className="px-2 py-1.5 text-center text-slate-800">{comp.acreage.toFixed(2)} AC</td>
+                    ))}
+                  </tr>
+                  <tr className="border-b border-slate-200">
+                    <td className="px-2 py-1.5 font-medium text-slate-600">Price/Acre</td>
+                    <td className="px-2 py-1.5 text-center bg-slate-50 text-slate-500">-</td>
+                    {landComps.map(comp => (
+                      <td key={comp.id} className="px-2 py-1.5 text-center text-slate-800">${comp.pricePerAcre.toLocaleString()}/AC</td>
+                    ))}
+                  </tr>
+                  <tr className="border-b border-slate-200">
+                    <td className="px-2 py-1.5 font-medium text-slate-600">Zoning</td>
+                    <td className="px-2 py-1.5 text-center bg-slate-50 text-slate-800">Subject Zoning</td>
+                    {landComps.map(comp => (
+                      <td key={comp.id} className="px-2 py-1.5 text-center text-slate-800">{comp.zoning}</td>
+                    ))}
+                  </tr>
+                  <tr className="bg-lime-800 text-white font-semibold">
+                    <td className="px-2 py-2">Adj. Price/Acre</td>
+                    <td className="px-2 py-2 text-center bg-lime-700">-</td>
+                    {landComps.map(comp => (
+                      <td key={comp.id} className="px-2 py-2 text-center">${comp.adjustedPricePerAcre.toLocaleString()}/AC</td>
+                    ))}
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* Land Valuation Narrative */}
+        {landNarrative && (
+          <div className="mb-6">
+            <h3 className="text-lg font-semibold text-slate-800 mb-3">Land Valuation Analysis</h3>
+            <EditableElement
+              elementId="land_valuation_narrative"
+              content={getContent('land_valuation_narrative', landNarrative)}
+              selectedElement={selectedElement}
+              onSelectElement={onSelectElement}
+              onContentChange={handleContentChange}
+              as="p"
+              className="text-slate-600 text-sm leading-relaxed"
+              appliedStyle={getStyle('land_valuation_narrative')}
+            />
+          </div>
+        )}
+
+        {/* Value Conclusion */}
+        <div className="p-5 bg-gradient-to-r from-lime-50 to-lime-100 rounded-lg border border-lime-200">
+          <div className="flex items-center justify-between">
+            <div>
+              <div className="text-sm text-lime-700 font-medium mb-1">Land Value Indication</div>
+              <div className="text-3xl font-bold text-lime-700">
+                {concludedLandValue > 0 ? `$${concludedLandValue.toLocaleString()}` : 'Pending'}
+              </div>
+            </div>
+            <div className="text-right">
+              <div className="text-xs text-lime-600 uppercase">Per Acre</div>
+              <div className="text-lg font-semibold text-lime-700">
+                {concludedPricePerAcre > 0 ? `$${concludedPricePerAcre.toLocaleString()}` : '-'}
+              </div>
             </div>
           </div>
         </div>
@@ -1761,45 +1967,45 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
   return (
     <ReportPageWrapper section={{ id: 'reconciliation', label: 'Reconciliation', enabled: true, expanded: false, fields: [], type: 'narrative' }} pageNumber={8} sidebarLabel="07">
       <div className="p-10">
-        <div className="absolute top-6 right-8 bg-accent-teal-mint text-white px-4 py-2 rounded text-xs font-semibold">
+        <div className="absolute top-6 right-8 bg-[#0da1c7] text-white px-4 py-2 rounded text-xs font-semibold">
           SECTION 7 • VALUE
         </div>
 
-        <h2 className="text-2xl font-light text-harken-dark mb-6 mt-8">Reconciliation of Value</h2>
+        <h2 className="text-2xl font-light text-slate-800 mb-6 mt-8">Reconciliation of Value</h2>
 
         {/* Value Indications Grid */}
         <div
           onClick={() => onSelectElement('recon_approaches')}
-          className={`mb-6 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'recon_approaches' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-harken-gray-light'}`}
+          className={`mb-6 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'recon_approaches' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-slate-100'}`}
         >
-          <h3 className="text-sm font-semibold text-harken-gray-med uppercase tracking-wider mb-4">Value Indications</h3>
+          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Value Indications</h3>
           <div className="grid grid-cols-3 gap-4">
-            <div className="bg-harken-gray-light rounded-lg p-4 text-center">
-              <div className="text-xs text-harken-gray-med uppercase mb-1">Cost Approach</div>
-              <div className="text-xl font-bold text-harken-dark">${data.valuation.costApproachValue.toLocaleString()}</div>
-              <div className="text-sm text-harken-gray-med mt-1">Weight: {data.reconciliation.costApproachWeight}%</div>
+            <div className="bg-slate-100 rounded-lg p-4 text-center">
+              <div className="text-xs text-slate-500 uppercase mb-1">Cost Approach</div>
+              <div className="text-xl font-bold text-slate-800">${data.valuation.costApproachValue.toLocaleString()}</div>
+              <div className="text-sm text-slate-500 mt-1">Weight: {data.reconciliation.costApproachWeight}%</div>
             </div>
-            <div className="bg-accent-teal-mint-light rounded-lg p-4 text-center border-2 border-accent-teal-mint-light">
-              <div className="text-xs text-accent-teal-mint uppercase mb-1">Sales Comparison</div>
-              <div className="text-xl font-bold text-accent-teal-mint">${data.valuation.salesComparisonValue.toLocaleString()}</div>
-              <div className="text-sm text-accent-teal-mint mt-1">Weight: {data.reconciliation.salesComparisonWeight}%</div>
+            <div className="bg-[#0da1c7]/10 rounded-lg p-4 text-center border-2 border-[#0da1c7]/20">
+              <div className="text-xs text-[#0da1c7] uppercase mb-1">Sales Comparison</div>
+              <div className="text-xl font-bold text-[#0da1c7]">${data.valuation.salesComparisonValue.toLocaleString()}</div>
+              <div className="text-sm text-[#0da1c7] mt-1">Weight: {data.reconciliation.salesComparisonWeight}%</div>
             </div>
-            <div className="bg-harken-gray-light rounded-lg p-4 text-center">
-              <div className="text-xs text-harken-gray-med uppercase mb-1">Income Approach</div>
-              <div className="text-xl font-bold text-harken-dark">${data.valuation.incomeApproachValue.toLocaleString()}</div>
-              <div className="text-sm text-harken-gray-med mt-1">Weight: {data.reconciliation.incomeApproachWeight}%</div>
+            <div className="bg-slate-100 rounded-lg p-4 text-center">
+              <div className="text-xs text-slate-500 uppercase mb-1">Income Approach</div>
+              <div className="text-xl font-bold text-slate-800">${data.valuation.incomeApproachValue.toLocaleString()}</div>
+              <div className="text-sm text-slate-500 mt-1">Weight: {data.reconciliation.incomeApproachWeight}%</div>
             </div>
           </div>
         </div>
 
         {/* Analysis Section - Restructured for readability */}
         <div className="mb-6">
-          <h3 className="text-sm font-semibold text-harken-gray-med uppercase tracking-wider mb-4">Analysis</h3>
+          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Analysis</h3>
 
           {/* Value Range Summary */}
           <div
             onClick={() => onSelectElement('recon_range')}
-            className={`mb-4 p-4 bg-surface-2 dark:bg-elevation-2 rounded-lg border-l-4 border-slate-400 cursor-pointer ${selectedElement === 'recon_range' ? 'ring-2 ring-accent-cyan' : 'hover:bg-surface-3 dark:hover:bg-elevation-subtle'}`}
+            className={`mb-4 p-4 bg-slate-50 rounded-lg border-l-4 border-slate-400 cursor-pointer ${selectedElement === 'recon_range' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-slate-100'}`}
           >
             <h4 className="text-sm font-semibold text-slate-700 mb-2">Value Range & Correlation</h4>
             <ul className="text-sm text-slate-600 space-y-1">
@@ -1826,11 +2032,11 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
           {/* Sales Comparison Approach */}
           <div
             onClick={() => onSelectElement('recon_sales')}
-            className={`mb-4 p-4 bg-accent-teal-mint-light rounded-lg border-l-4 border-accent-teal-mint cursor-pointer ${selectedElement === 'recon_sales' ? 'ring-2 ring-accent-cyan' : 'hover:bg-accent-teal-mint-light'}`}
+            className={`mb-4 p-4 bg-[#0da1c7]/10 rounded-lg border-l-4 border-[#0da1c7] cursor-pointer ${selectedElement === 'recon_sales' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-[#0da1c7]/10'}`}
           >
-            <h4 className="text-sm font-semibold text-accent-teal-mint mb-2">
+            <h4 className="text-sm font-semibold text-[#0da1c7] mb-2">
               Sales Comparison Approach
-              <span className="ml-2 px-2 py-0.5 bg-accent-teal-mint-light text-accent-teal-mint rounded text-xs font-medium">
+              <span className="ml-2 px-2 py-0.5 bg-[#0da1c7]/10 text-[#0da1c7] rounded text-xs font-medium">
                 {data.reconciliation.salesComparisonWeight}% Weight — Primary
               </span>
             </h4>
@@ -1841,7 +2047,7 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
               onSelectElement={onSelectElement}
               onContentChange={handleContentChange}
               as="p"
-              className="text-sm text-accent-teal-mint leading-relaxed"
+              className="text-sm text-[#0da1c7] leading-relaxed"
               appliedStyle={getStyle('recon_sales_text')}
             />
           </div>
@@ -1849,7 +2055,7 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
           {/* Income Approach */}
           <div
             onClick={() => onSelectElement('recon_income')}
-            className={`mb-4 p-4 bg-blue-50 rounded-lg border-l-4 border-blue-400 cursor-pointer ${selectedElement === 'recon_income' ? 'ring-2 ring-accent-cyan' : 'hover:bg-blue-100'}`}
+            className={`mb-4 p-4 bg-blue-50 rounded-lg border-l-4 border-blue-400 cursor-pointer ${selectedElement === 'recon_income' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-blue-100'}`}
           >
             <h4 className="text-sm font-semibold text-blue-800 mb-2">
               Income Approach
@@ -1872,7 +2078,7 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
           {/* Cost Approach */}
           <div
             onClick={() => onSelectElement('recon_cost')}
-            className={`mb-4 p-4 bg-accent-amber-gold-light rounded-lg border-l-4 border-amber-400 cursor-pointer ${selectedElement === 'recon_cost' ? 'ring-2 ring-accent-cyan' : 'hover:bg-amber-100'}`}
+            className={`mb-4 p-4 bg-accent-amber-gold-light rounded-lg border-l-4 border-amber-400 cursor-pointer ${selectedElement === 'recon_cost' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-amber-100'}`}
           >
             <h4 className="text-sm font-semibold text-amber-800 mb-2">
               Cost Approach
@@ -1896,7 +2102,7 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
           {reconciliationNarrative && (
             <div
               onClick={() => onSelectElement('recon_narrative')}
-              className={`mb-4 p-4 bg-purple-50 rounded-lg border-l-4 border-purple-400 cursor-pointer ${selectedElement === 'recon_narrative' ? 'ring-2 ring-accent-cyan' : 'hover:bg-purple-100'}`}
+              className={`mb-4 p-4 bg-purple-50 rounded-lg border-l-4 border-purple-400 cursor-pointer ${selectedElement === 'recon_narrative' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-purple-100'}`}
             >
               <h4 className="text-sm font-semibold text-purple-800 mb-2">Reconciliation Analysis</h4>
               <EditableElement
@@ -1915,9 +2121,9 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
           {/* Final Conclusion */}
           <div
             onClick={() => onSelectElement('recon_conclusion')}
-            className={`p-4 bg-harken-gray-light rounded-lg border-l-4 border-harken-gray cursor-pointer ${selectedElement === 'recon_conclusion' ? 'ring-2 ring-accent-cyan' : 'hover:bg-harken-gray-med-lt'}`}
+            className={`p-4 bg-slate-100 rounded-lg border-l-4 border-slate-400 cursor-pointer ${selectedElement === 'recon_conclusion' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-slate-200'}`}
           >
-            <h4 className="text-sm font-semibold text-harken-gray mb-2">Conclusion</h4>
+            <h4 className="text-sm font-semibold text-slate-600 mb-2">Conclusion</h4>
             <EditableElement
               elementId="recon_final"
               content={getContent('recon_final', `Based on the foregoing analysis and reconciliation, it is my opinion that the market value of the subject property, as of the effective date of appraisal, is $${data.valuation.asIsValue.toLocaleString()}.`)}
@@ -1925,7 +2131,7 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
               onSelectElement={onSelectElement}
               onContentChange={handleContentChange}
               as="p"
-              className="text-sm text-harken-gray leading-relaxed font-medium"
+              className="text-sm text-slate-600 leading-relaxed font-medium"
               appliedStyle={getStyle('recon_final')}
             />
           </div>
@@ -1934,7 +2140,7 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
           {exposureRationale && (
             <div
               onClick={() => onSelectElement('exposure_rationale')}
-              className={`mt-4 p-4 bg-surface-2 dark:bg-elevation-2 rounded-lg border-l-4 border-slate-400 cursor-pointer ${selectedElement === 'exposure_rationale' ? 'ring-2 ring-accent-cyan' : 'hover:bg-surface-3 dark:hover:bg-elevation-subtle'}`}
+              className={`mt-4 p-4 bg-slate-50 rounded-lg border-l-4 border-slate-400 cursor-pointer ${selectedElement === 'exposure_rationale' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-slate-100'}`}
             >
               <h4 className="text-sm font-semibold text-slate-700 mb-2">Exposure & Marketing Time</h4>
               <EditableElement
@@ -1952,7 +2158,7 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
         </div>
 
         {/* Final Value Banner */}
-        <div className="p-6 bg-gradient-to-r from-accent-teal-mint to-accent-teal-mint-hover rounded-lg text-center text-white">
+        <div className="p-6 bg-gradient-to-r from-[#0da1c7] to-[#0b8fb0] rounded-lg text-center text-white">
           <div className="text-sm uppercase tracking-wider mb-2 opacity-80">Final Market Value Conclusion</div>
           <div className="text-4xl font-bold mb-2">${data.valuation.asIsValue.toLocaleString()}</div>
           <div className="text-sm opacity-80">As of {data.assignment.effectiveDate}</div>
@@ -1983,11 +2189,11 @@ function PhotoExhibitsPage({
   return (
     <ReportPageWrapper section={{ id: 'exhibits', label: 'Photo Exhibits', enabled: true, expanded: false, fields: [], type: 'photo-grid' }} pageNumber={9} sidebarLabel="08">
       <div className="p-10">
-        <div className="absolute top-6 right-8 bg-accent-teal-mint text-white px-4 py-2 rounded text-xs font-semibold">
+        <div className="absolute top-6 right-8 bg-[#0da1c7] text-white px-4 py-2 rounded text-xs font-semibold">
           EXHIBITS
         </div>
 
-        <h2 className="text-2xl font-light text-harken-dark mb-6 mt-8">Subject Property Photos</h2>
+        <h2 className="text-2xl font-light text-slate-800 mb-6 mt-8">Subject Property Photos</h2>
 
         <div className="grid grid-cols-2 gap-4">
           {photos.map((photo) => (
@@ -2042,20 +2248,20 @@ function TOCPage({
   return (
     <ReportPageWrapper section={{ id: 'toc', label: 'Table of Contents', enabled: true, expanded: false, fields: [], type: 'toc' }} pageNumber={2} sidebarLabel="">
       <div className="p-12">
-        <h2 className="text-3xl font-light text-accent-teal-mint mb-12 mt-8">Table of Contents</h2>
+        <h2 className="text-3xl font-light text-[#0da1c7] mb-12 mt-8">Table of Contents</h2>
 
         <div
           onClick={() => onSelectElement('toc_entries')}
-          className={`space-y-0 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'toc_entries' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-harken-gray-light'}`}
+          className={`space-y-0 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'toc_entries' ? 'ring-2 ring-[#0da1c7] bg-cyan-50' : 'hover:bg-slate-100'}`}
         >
           {tocEntries.map((entry, idx) => (
             <div
               key={idx}
-              className="flex items-baseline border-b border-dotted border-light-border py-3 group"
+              className="flex items-baseline border-b border-dotted border-slate-300 py-3 group"
             >
-              <span className="text-harken-dark font-medium flex-shrink-0">{entry.title}</span>
-              <span className="flex-1 border-b border-dotted border-light-border mx-3" style={{ marginBottom: '0.3em' }}></span>
-              <span className="text-harken-gray font-mono text-sm flex-shrink-0">{entry.page}</span>
+              <span className="text-slate-800 font-medium flex-shrink-0">{entry.title}</span>
+              <span className="flex-1 border-b border-dotted border-slate-300 mx-3" style={{ marginBottom: '0.3em' }}></span>
+              <span className="text-slate-500 font-mono text-sm flex-shrink-0">{entry.page}</span>
             </div>
           ))}
         </div>
@@ -2095,19 +2301,19 @@ function AssumptionsPage({ selectedElement, onSelectElement }: {
   return (
     <ReportPageWrapper section={{ id: 'assumptions', label: 'Assumptions', enabled: true, expanded: false, fields: [], type: 'narrative' }} pageNumber={10} sidebarLabel="09">
       <div className="p-10">
-        <div className="absolute top-6 right-8 bg-accent-teal-mint text-white px-4 py-2 rounded text-xs font-semibold">
+        <div className="absolute top-6 right-8 bg-[#0da1c7] text-white px-4 py-2 rounded text-xs font-semibold">
           ASSUMPTIONS
         </div>
 
-        <h2 className="text-2xl font-light text-harken-dark mb-6 mt-8">Assumptions and Limiting Conditions</h2>
+        <h2 className="text-2xl font-light text-slate-800 mb-6 mt-8">Assumptions and Limiting Conditions</h2>
 
         {/* Assumptions */}
         <div
           onClick={() => onSelectElement('assumptions_list')}
-          className={`mb-8 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'assumptions_list' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-harken-gray-light'}`}
+          className={`mb-8 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'assumptions_list' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-slate-100'}`}
         >
-          <h3 className="text-sm font-semibold text-harken-gray-med uppercase tracking-wider mb-4">General Assumptions</h3>
-          <ol className="list-decimal list-outside ml-5 space-y-3 text-sm text-harken-gray leading-relaxed">
+          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">General Assumptions</h3>
+          <ol className="list-decimal list-outside ml-5 space-y-3 text-sm text-slate-600 leading-relaxed">
             {data.assumptions.map((assumption, idx) => (
               <li key={idx}>{assumption}</li>
             ))}
@@ -2117,10 +2323,10 @@ function AssumptionsPage({ selectedElement, onSelectElement }: {
         {/* Limiting Conditions */}
         <div
           onClick={() => onSelectElement('limiting_conditions')}
-          className={`p-4 -m-4 rounded cursor-pointer ${selectedElement === 'limiting_conditions' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-harken-gray-light'}`}
+          className={`p-4 -m-4 rounded cursor-pointer ${selectedElement === 'limiting_conditions' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-slate-100'}`}
         >
-          <h3 className="text-sm font-semibold text-harken-gray-med uppercase tracking-wider mb-4">Limiting Conditions</h3>
-          <ol className="list-decimal list-outside ml-5 space-y-3 text-sm text-harken-gray leading-relaxed">
+          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Limiting Conditions</h3>
+          <ol className="list-decimal list-outside ml-5 space-y-3 text-sm text-slate-600 leading-relaxed">
             {data.limitingConditions.map((condition, idx) => (
               <li key={idx}>{condition}</li>
             ))}
@@ -2150,17 +2356,17 @@ function CertificationPage({ selectedElement, onSelectElement, subjectData }: {
   return (
     <ReportPageWrapper section={{ id: 'certification', label: 'Certification', enabled: true, expanded: false, fields: [], type: 'narrative' }} pageNumber={11} sidebarLabel="10">
       <div className="p-10">
-        <div className="absolute top-6 right-8 bg-accent-teal-mint text-white px-4 py-2 rounded text-xs font-semibold">
+        <div className="absolute top-6 right-8 bg-[#0da1c7] text-white px-4 py-2 rounded text-xs font-semibold">
           CERTIFICATION
         </div>
 
-        <h2 className="text-2xl font-light text-harken-dark mb-6 mt-8">Appraiser's Certification</h2>
+        <h2 className="text-2xl font-light text-slate-800 mb-6 mt-8">Appraiser's Certification</h2>
 
         <div
           onClick={() => onSelectElement('certification_intro')}
-          className={`mb-6 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'certification_intro' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-harken-gray-light'}`}
+          className={`mb-6 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'certification_intro' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-slate-100'}`}
         >
-          <p className="text-sm text-harken-gray leading-relaxed">
+          <p className="text-sm text-slate-600 leading-relaxed">
             I certify that, to the best of my knowledge and belief:
           </p>
         </div>
@@ -2168,9 +2374,9 @@ function CertificationPage({ selectedElement, onSelectElement, subjectData }: {
         {/* Certifications List */}
         <div
           onClick={() => onSelectElement('certifications_list')}
-          className={`mb-8 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'certifications_list' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-harken-gray-light'}`}
+          className={`mb-8 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'certifications_list' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-slate-100'}`}
         >
-          <ol className="list-decimal list-outside ml-5 space-y-3 text-sm text-harken-gray leading-relaxed">
+          <ol className="list-decimal list-outside ml-5 space-y-3 text-sm text-slate-600 leading-relaxed">
             {fallbackData.certifications.map((cert, idx) => (
               <li key={idx}>{cert}</li>
             ))}
@@ -2180,21 +2386,21 @@ function CertificationPage({ selectedElement, onSelectElement, subjectData }: {
         {/* Signature Block */}
         <div
           onClick={() => onSelectElement('signature_block')}
-          className={`mt-12 p-6 border-2 border-light-border rounded-lg ${selectedElement === 'signature_block' ? 'ring-2 ring-accent-cyan bg-accent-cyan/5' : 'hover:bg-harken-gray-light'}`}
+          className={`mt-12 p-6 border-2 border-slate-200 rounded-lg ${selectedElement === 'signature_block' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-slate-100'}`}
         >
           <div className="grid grid-cols-2 gap-8">
             <div>
-              <div className="border-b-2 border-harken-gray-med pb-2 mb-2 h-16"></div>
-              <div className="text-sm font-semibold text-harken-dark">{appraiserName}</div>
-              <div className="text-xs text-harken-gray">{appraiserLicense}</div>
-              <div className="text-xs text-harken-gray mt-2">Date: {reportDate}</div>
+              <div className="border-b-2 border-slate-400-med pb-2 mb-2 h-16"></div>
+              <div className="text-sm font-semibold text-slate-800">{appraiserName}</div>
+              <div className="text-xs text-slate-600">{appraiserLicense}</div>
+              <div className="text-xs text-slate-600 mt-2">Date: {reportDate}</div>
             </div>
             <div>
               <div className="text-center">
-                <div className="text-2xl font-bold text-accent-teal-mint mb-2">ROVE</div>
-                <div className="text-sm text-harken-gray">{fallbackData.assignment.appraiserCompany}</div>
-                <div className="text-xs text-harken-gray-med mt-1">{fallbackData.assignment.appraiserAddress}</div>
-                <div className="text-xs text-harken-gray-med">{fallbackData.assignment.appraiserPhone}</div>
+                <div className="text-2xl font-bold text-[#0da1c7] mb-2">ROVE</div>
+                <div className="text-sm text-slate-600">{fallbackData.assignment.appraiserCompany}</div>
+                <div className="text-xs text-slate-500 mt-1">{fallbackData.assignment.appraiserAddress}</div>
+                <div className="text-xs text-slate-500">{fallbackData.assignment.appraiserPhone}</div>
               </div>
             </div>
           </div>
@@ -2280,7 +2486,7 @@ function EditableElement({
         onChange={(e) => setLocalContent(e.target.value)}
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
-        className={`w-full border-2 border-accent-cyan rounded px-2 py-1 resize-none focus:outline-none focus:ring-2 focus:ring-accent-cyan/50 ${className}`}
+        className={`w-full border-2 border-[#0da1c7] rounded px-2 py-1 resize-none focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/50 ${className}`}
         style={{
           ...mergedStyle,
           minHeight: '2em',
@@ -2296,8 +2502,8 @@ function EditableElement({
       onClick={() => onSelectElement(elementId)}
       onDoubleClick={handleDoubleClick}
       className={`cursor-pointer transition-all rounded px-1 -mx-1 ${isSelected
-        ? 'ring-2 ring-accent-cyan bg-accent-cyan/5'
-        : 'hover:bg-harken-gray-light'
+        ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5'
+        : 'hover:bg-slate-100'
         } ${className}`}
       style={mergedStyle}
       title="Click to select, double-click to edit"
@@ -2343,7 +2549,7 @@ function PropertiesPanel({ selectedElement, elementStyles, elementContent, onSty
   if (!selectedElement) {
     return (
       <div className="h-full flex items-center justify-center text-center p-8">
-        <div className="text-harken-gray-med dark:text-slate-400">
+        <div className="text-slate-500">
           <svg className="w-12 h-12 mx-auto mb-3 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
           </svg>
@@ -2357,11 +2563,11 @@ function PropertiesPanel({ selectedElement, elementStyles, elementContent, onSty
   return (
     <div className="h-full flex flex-col">
       {/* Header with Save Status */}
-      <div className="p-4 border-b border-light-border dark:border-dark-border bg-harken-gray-light dark:bg-elevation-1">
+      <div className="p-4 border-b border-slate-200 bg-slate-100">
         <div className="flex items-center justify-between">
           <div>
-            <div className="text-sm font-bold text-harken-dark dark:text-white">Element Properties</div>
-            <div className="text-xs text-harken-gray-med mt-1 font-mono">{selectedElement}</div>
+            <div className="text-sm font-bold text-slate-800">Element Properties</div>
+            <div className="text-xs text-slate-500 mt-1 font-mono">{selectedElement}</div>
           </div>
           {isDirty && (
             <div className="flex items-center gap-2">
@@ -2373,7 +2579,7 @@ function PropertiesPanel({ selectedElement, elementStyles, elementContent, onSty
         {isDirty && onSave && (
           <button
             onClick={onSave}
-            className="mt-3 w-full py-2 bg-accent-cyan text-white rounded-lg text-sm font-medium hover:bg-accent-cyan-hover transition-colors flex items-center justify-center gap-2"
+            className="mt-3 w-full py-2 bg-[#0da1c7] text-white rounded-lg text-sm font-medium hover:bg-[#0da1c7]-hover transition-colors flex items-center justify-center gap-2"
           >
             <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
@@ -2384,14 +2590,14 @@ function PropertiesPanel({ selectedElement, elementStyles, elementContent, onSty
       </div>
 
       {/* Tabs */}
-      <div className="flex border-b border-light-border dark:border-dark-border">
+      <div className="flex border-b border-slate-200">
         {tabs.map((tab) => (
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
             className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${activeTab === tab.id
-              ? 'text-accent-cyan border-b-2 border-accent-cyan'
-              : 'text-harken-gray-med dark:text-slate-400 hover:text-harken-gray dark:hover:text-white'
+              ? 'text-[#0da1c7] border-b-2 border-[#0da1c7]'
+              : 'text-slate-500 hover:text-slate-600'
               }`}
           >
             {tab.label}
@@ -2405,14 +2611,14 @@ function PropertiesPanel({ selectedElement, elementStyles, elementContent, onSty
           <>
             {/* Typography */}
             <div>
-              <h4 className="text-xs font-bold text-harken-gray-med uppercase tracking-wider mb-3">Typography</h4>
+              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Typography</h4>
               <div className="space-y-3">
                 <div>
-                  <label className="block text-xs font-medium text-harken-gray dark:text-slate-400 mb-1">Font Family</label>
+                  <label className="block text-xs font-medium text-slate-600 mb-1">Font Family</label>
                   <select
                     value={elementStyles.fontFamily || 'Montserrat'}
                     onChange={(e) => onStyleChange({ fontFamily: e.target.value })}
-                    className="w-full border border-light-border dark:border-harken-gray rounded px-3 py-2 text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent bg-surface-1 dark:bg-elevation-1 text-harken-dark dark:text-white"
+                    className="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white text-slate-800"
                   >
                     <option value="Montserrat">Montserrat</option>
                     <option value="Georgia">Georgia</option>
@@ -2421,20 +2627,20 @@ function PropertiesPanel({ selectedElement, elementStyles, elementContent, onSty
                   </select>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-harken-gray mb-1">Font Size (px)</label>
+                  <label className="block text-xs font-medium text-slate-600 mb-1">Font Size (px)</label>
                   <input
                     type="number"
                     value={elementStyles.fontSize || 14}
                     onChange={(e) => onStyleChange({ fontSize: parseInt(e.target.value) })}
-                    className="w-full border border-light-border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent"
+                    className="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-harken-gray mb-1">Font Weight</label>
+                  <label className="block text-xs font-medium text-slate-600 mb-1">Font Weight</label>
                   <select
                     value={elementStyles.fontWeight || 'normal'}
                     onChange={(e) => onStyleChange({ fontWeight: e.target.value })}
-                    className="w-full border border-light-border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent"
+                    className="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
                   >
                     <option value="normal">Normal</option>
                     <option value="500">Medium</option>
@@ -2447,21 +2653,21 @@ function PropertiesPanel({ selectedElement, elementStyles, elementContent, onSty
 
             {/* Colors */}
             <div>
-              <h4 className="text-xs font-bold text-harken-gray-med uppercase tracking-wider mb-3">Colors</h4>
+              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Colors</h4>
               <div>
-                <label className="block text-xs font-medium text-harken-gray mb-1">Text Color</label>
+                <label className="block text-xs font-medium text-slate-600 mb-1">Text Color</label>
                 <div className="flex gap-2">
                   <input
                     type="color"
                     value={elementStyles.color || '#1c3643'}
                     onChange={(e) => onStyleChange({ color: e.target.value })}
-                    className="w-10 h-10 border border-light-border rounded cursor-pointer"
+                    className="w-10 h-10 border border-slate-200 rounded cursor-pointer"
                   />
                   <input
                     type="text"
                     value={elementStyles.color || '#1c3643'}
                     onChange={(e) => onStyleChange({ color: e.target.value })}
-                    className="flex-1 border border-light-border dark:border-harken-gray rounded px-3 py-2 text-sm font-mono focus:ring-2 focus:ring-accent-cyan focus:border-transparent bg-surface-1 dark:bg-elevation-1 text-harken-dark dark:text-white"
+                    className="flex-1 border border-slate-200 rounded px-3 py-2 text-sm font-mono focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white text-slate-800"
                   />
                 </div>
               </div>
@@ -2469,15 +2675,15 @@ function PropertiesPanel({ selectedElement, elementStyles, elementContent, onSty
 
             {/* Alignment */}
             <div>
-              <h4 className="text-xs font-bold text-harken-gray-med uppercase tracking-wider mb-3">Alignment</h4>
+              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Alignment</h4>
               <div className="flex gap-2">
                 {(['left', 'center', 'right'] as const).map((align) => (
                   <button
                     key={align}
                     onClick={() => onStyleChange({ textAlign: align })}
                     className={`flex-1 py-2 border rounded text-sm capitalize transition-all ${elementStyles.textAlign === align
-                      ? 'border-accent-cyan bg-accent-cyan/10 text-accent-cyan'
-                      : 'border-light-border dark:border-harken-gray hover:border-harken-gray-med dark:hover:border-harken-gray'
+                      ? 'border-[#0da1c7] bg-[#0da1c7]/10 text-[#0da1c7]'
+                      : 'border-slate-200 hover:border-slate-400-med'
                       }`}
                   >
                     {align}
@@ -2490,17 +2696,17 @@ function PropertiesPanel({ selectedElement, elementStyles, elementContent, onSty
 
         {activeTab === 'content' && (
           <div>
-            <h4 className="text-xs font-bold text-harken-gray-med uppercase tracking-wider mb-3">Content</h4>
+            <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Content</h4>
             <textarea
               value={localContent}
               onChange={(e) => setLocalContent(e.target.value)}
               onBlur={() => selectedElement && onContentChange(selectedElement, localContent)}
               placeholder="Edit the content of this element..."
-              className="w-full border border-light-border rounded px-3 py-2 text-sm min-h-[200px] focus:ring-2 focus:ring-accent-cyan focus:border-transparent"
+              className="w-full border border-slate-200 rounded px-3 py-2 text-sm min-h-[200px] focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
             />
             <button
               onClick={() => selectedElement && onContentChange(selectedElement, localContent)}
-              className="mt-3 w-full py-2 bg-accent-cyan text-white rounded text-sm font-medium hover:bg-accent-cyan-hover transition-colors"
+              className="mt-3 w-full py-2 bg-[#0da1c7] text-white rounded text-sm font-medium hover:bg-[#0da1c7]-hover transition-colors"
             >
               Apply Changes
             </button>
@@ -2510,34 +2716,34 @@ function PropertiesPanel({ selectedElement, elementStyles, elementContent, onSty
         {activeTab === 'advanced' && (
           <>
             <div>
-              <h4 className="text-xs font-bold text-harken-gray-med uppercase tracking-wider mb-3">Spacing</h4>
+              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Spacing</h4>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-medium text-harken-gray mb-1">Margin Top</label>
+                  <label className="block text-xs font-medium text-slate-600 mb-1">Margin Top</label>
                   <input
                     type="number"
                     value={elementStyles.marginTop || 0}
                     onChange={(e) => onStyleChange({ marginTop: parseInt(e.target.value) })}
-                    className="w-full border border-light-border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent"
+                    className="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-harken-gray mb-1">Margin Bottom</label>
+                  <label className="block text-xs font-medium text-slate-600 mb-1">Margin Bottom</label>
                   <input
                     type="number"
                     value={elementStyles.marginBottom || 0}
                     onChange={(e) => onStyleChange({ marginBottom: parseInt(e.target.value) })}
-                    className="w-full border border-light-border rounded px-3 py-2 text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent"
+                    className="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
                   />
                 </div>
               </div>
             </div>
 
             <div>
-              <h4 className="text-xs font-bold text-harken-gray-med uppercase tracking-wider mb-3">Actions</h4>
+              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Actions</h4>
               <button
                 onClick={onDeleteElement}
-                className="w-full py-2 bg-harken-error text-white rounded text-sm font-medium hover:bg-harken-error transition-colors"
+                className="w-full py-2 bg-red-500 text-white rounded text-sm font-medium hover:bg-red-500 transition-colors"
               >
                 Delete Element
               </button>
@@ -2716,7 +2922,7 @@ function DraggableTextBlock({ block, selected, onSelect, onUpdate, onDelete }: D
 
     return (
       <div
-        className="absolute w-3 h-3 bg-accent-cyan border-2 border-white rounded-sm shadow-sm hover:bg-accent-cyan-hover z-10"
+        className="absolute w-3 h-3 bg-[#0da1c7] border-2 border-white rounded-sm shadow-sm hover:bg-[#0da1c7]-hover z-10"
         style={{ ...positionStyles[position], cursor }}
         onMouseDown={(e) => handleResizeStart(e, position)}
       />
@@ -2726,7 +2932,7 @@ function DraggableTextBlock({ block, selected, onSelect, onUpdate, onDelete }: D
   return (
     <div
       ref={blockRef}
-      className={`absolute z-50 ${isEditing ? '' : 'cursor-move'} ${selected ? 'ring-2 ring-accent-cyan ring-offset-1' : ''}`}
+      className={`absolute z-50 ${isEditing ? '' : 'cursor-move'} ${selected ? 'ring-2 ring-[#0da1c7] ring-offset-1' : ''}`}
       style={{
         left: block.x,
         top: block.y,
@@ -2747,7 +2953,7 @@ function DraggableTextBlock({ block, selected, onSelect, onUpdate, onDelete }: D
           onChange={(e) => onUpdate({ content: e.target.value })}
           onBlur={handleBlur}
           placeholder="Enter your text here..."
-          className="w-full h-full p-2 border-2 border-accent-cyan rounded bg-surface-1 resize-none focus:outline-none focus:ring-2 focus:ring-accent-cyan/30"
+          className="w-full h-full p-2 border-2 border-[#0da1c7] rounded bg-white resize-none focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/30"
           style={{
             fontSize: block.fontSize,
             fontWeight: block.fontWeight,
@@ -2757,7 +2963,7 @@ function DraggableTextBlock({ block, selected, onSelect, onUpdate, onDelete }: D
         />
       ) : (
         <div
-          className={`p-2 bg-surface-1 rounded border-2 h-full ${isDefaultText ? 'border-dashed border-light-border text-harken-gray-med italic' : 'border-solid border-light-border'}`}
+          className={`p-2 bg-white rounded border-2 h-full ${isDefaultText ? 'border-dashed border-slate-200 text-slate-500 italic' : 'border-solid border-slate-200'}`}
           style={{ minHeight: block.height - 16 }}
         >
           {block.content}
@@ -2768,7 +2974,7 @@ function DraggableTextBlock({ block, selected, onSelect, onUpdate, onDelete }: D
       {selected && !isEditing && (
         <button
           onClick={(e) => { e.stopPropagation(); onDelete(); }}
-          className="absolute -top-3 -right-3 w-6 h-6 bg-harken-error text-white rounded-full text-xs flex items-center justify-center hover:bg-harken-error shadow-md z-20"
+          className="absolute -top-3 -right-3 w-6 h-6 bg-red-500 text-white rounded-full text-xs flex items-center justify-center hover:bg-red-500 shadow-md z-20"
         >
           ×
         </button>
@@ -3086,23 +3292,84 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
     onReportStateChange?.(reportState, reportActions);
   }, [reportState, reportActions, onReportStateChange]);
 
-  // Build dynamic sections based on selected approaches
+  // Build dynamic sections based on selected approaches and scenarios
+  // This now creates scenario-grouped sections for multi-scenario reports
   const sections = useMemo(() => {
-    const usedApproaches = new Set<string>();
-    scenarios.forEach((s) => s.approaches.forEach((a) => usedApproaches.add(a)));
-
     const dynamicSections: ReportSection[] = [...BASE_REPORT_SECTIONS];
 
-    Object.entries(APPROACH_REPORT_SECTIONS).forEach(([approach, section]) => {
-      if (usedApproaches.has(approach)) {
-        dynamicSections.push({ ...section });
-      }
-    });
+    // Add zoning and environmental exhibits if data exists
+    if (state.subjectData?.zoning?.zoningCode) {
+      dynamicSections.push({ ...ZONING_EXHIBIT_TEMPLATE });
+    }
+    if (state.subjectData?.environmental?.hasEnvironmentalIssues !== undefined) {
+      dynamicSections.push({ ...ENVIRONMENTAL_EXHIBIT_TEMPLATE });
+    }
+
+    // For single scenario, use legacy approach (flat sections)
+    // For multiple scenarios, use scenario-grouped sections
+    const hasMultipleScenarios = scenarios.length > 1;
+
+    if (hasMultipleScenarios) {
+      // === MULTI-SCENARIO MODE ===
+      // Create scenario groups with color coding (As Is=blue, Completed=green, Stabilized=purple)
+      scenarios.forEach((scenario) => {
+        // Map scenario name to ScenarioType - handle common variations
+        let scenarioType: ScenarioType = 'As Is';
+        const lowerName = scenario.name.toLowerCase();
+        if (lowerName.includes('completed') || lowerName.includes('prospective')) {
+          scenarioType = 'As Completed';
+        } else if (lowerName.includes('stabilized')) {
+          scenarioType = 'As Stabilized';
+        }
+
+        // Generate all sections for this scenario
+        const scenarioSections = createScenarioSections(
+          scenario.id,
+          scenarioType,
+          scenario.approaches
+        );
+
+        // Add lease abstraction pages if income approach is enabled
+        if (scenario.approaches.includes('Income Approach')) {
+          // Get tenants from income data
+          const tenants = state.incomeData?.rentalIncome
+            ?.filter(item => item.tenantName && item.tenantName !== 'Vacant')
+            ?.map(item => ({ id: item.id, name: item.tenantName || 'Unknown Tenant' })) || [];
+
+          if (tenants.length > 0) {
+            const leaseSections = createLeaseAbstractionSections(
+              tenants,
+              `income-approach-${scenario.id}`
+            );
+            // Insert lease sections after the income approach section
+            const incomeIndex = scenarioSections.findIndex(s => s.id === `income-approach-${scenario.id}`);
+            if (incomeIndex !== -1) {
+              scenarioSections.splice(incomeIndex + 1, 0, ...leaseSections);
+            } else {
+              scenarioSections.push(...leaseSections);
+            }
+          }
+        }
+
+        dynamicSections.push(...scenarioSections);
+      });
+    } else {
+      // === SINGLE SCENARIO MODE (legacy) ===
+      // Use flat section structure for backwards compatibility
+      const usedApproaches = new Set<string>();
+      scenarios.forEach((s) => s.approaches.forEach((a) => usedApproaches.add(a)));
+
+      Object.entries(APPROACH_REPORT_SECTIONS).forEach(([approach, section]) => {
+        if (usedApproaches.has(approach)) {
+          dynamicSections.push({ ...section });
+        }
+      });
+    }
 
     dynamicSections.push(...CLOSING_REPORT_SECTIONS);
 
     return dynamicSections;
-  }, [scenarios]);
+  }, [scenarios, state.subjectData?.zoning?.zoningCode, state.subjectData?.environmental?.hasEnvironmentalIssues, state.incomeData?.rentalIncome]);
 
   const [reportSections, setReportSections] = useState<ReportSection[]>(sections);
   const [activeSectionId, setActiveSectionId] = useState<string | null>(null);
@@ -3319,7 +3586,7 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
       height: 80,
       fontSize: 14,
       fontWeight: 'normal',
-      color: 'var(--harken-dark)',
+      color: '#1e293b',
       pageId: targetPageId,
     };
     setTextBlocks((prev) => [...prev, newBlock]);
@@ -3520,6 +3787,8 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
         return <IncomeApproachPage {...commonProps} incomeApproachData={state.incomeApproachData} />;
       case 'cost-approach':
         return <CostApproachPage {...commonProps} />;
+      case 'land-valuation':
+        return <LandValuationPage {...commonProps} landValuationData={state.landValuationData} />;
       case 'reconciliation':
         return <ReconciliationPage {...commonProps} reconciliationData={state.reconciliationData} />;
       case 'assumptions':
@@ -3535,8 +3804,8 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
         return (
           <ReportPageWrapper section={section} pageNumber={pageIndex + 1}>
             <div className="p-10">
-              <h2 className="text-2xl font-light text-harken-dark mb-6 mt-8">{section.label}</h2>
-              <div className="text-harken-gray-med text-sm">
+              <h2 className="text-2xl font-light text-slate-800 mb-6 mt-8">{section.label}</h2>
+              <div className="text-slate-500 text-sm">
                 Content for {section.label} will be displayed here based on wizard data.
               </div>
             </div>
@@ -3546,12 +3815,12 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
   };
 
   return (
-    <div className="h-full flex bg-harken-gray-light dark:bg-elevation-1">
+    <div className="h-full flex bg-slate-100">
       {/* Left Panel: Section Tree */}
-      <div className="w-80 bg-surface-1 dark:bg-elevation-1 border-r border-light-border dark:border-dark-border flex flex-col flex-shrink-0">
-        <div className="px-6 py-4 border-b border-light-border dark:border-dark-border">
-          <h3 className="font-bold text-harken-dark dark:text-white">Report Pages</h3>
-          <p className="text-xs text-harken-gray-med dark:text-slate-400 mt-1">Click to toggle • Arrow to expand</p>
+      <div className="w-80 bg-white border-r border-slate-200 flex flex-col flex-shrink-0">
+        <div className="px-6 py-4 border-b border-slate-200">
+          <h3 className="font-bold text-slate-800">Report Pages</h3>
+          <p className="text-xs text-slate-500 mt-1">Click to toggle • Arrow to expand</p>
         </div>
         <div className="flex-1 overflow-auto py-4 px-4">
           <SectionTree
@@ -3568,20 +3837,20 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
 
       {/* Center Panel: Preview */}
       <div className="flex-1 flex flex-col min-w-0">
-        <div className="p-4 bg-surface-1 dark:bg-elevation-1 border-b border-light-border dark:border-dark-border flex items-center justify-between">
+        <div className="p-4 bg-white border-b border-slate-200 flex items-center justify-between">
           <div>
-            <div className="font-bold text-harken-dark dark:text-white">Report Preview</div>
-            <div className="text-xs text-harken-gray-med dark:text-slate-400">{sampleAppraisalData.property.name}</div>
+            <div className="font-bold text-slate-800">Report Preview</div>
+            <div className="text-xs text-slate-500">{sampleAppraisalData.property.name}</div>
           </div>
           <div className="flex items-center gap-4">
             {/* Panel Style Toggle */}
-            <div className="flex items-center gap-2 border-r border-light-border dark:border-dark-border pr-4">
+            <div className="flex items-center gap-2 border-r border-slate-200 pr-4">
               <button
                 onClick={() => setUseSimplifiedPanel(!useSimplifiedPanel)}
                 className="px-3 py-1.5 text-xs font-medium rounded-lg border transition-all"
                 style={{
-                  backgroundColor: useSimplifiedPanel ? 'var(--accent-cyan)' : 'transparent',
-                  borderColor: useSimplifiedPanel ? 'var(--accent-cyan)' : 'var(--border-default)',
+                  backgroundColor: useSimplifiedPanel ? '#0da1c7' : 'transparent',
+                  borderColor: useSimplifiedPanel ? '#0da1c7' : 'var(--border-default)',
                   color: useSimplifiedPanel ? 'white' : 'var(--text-muted)'
                 }}
                 title="Toggle between simplified and 3-tab panel design"
@@ -3590,24 +3859,24 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
               </button>
             </div>
             {/* Undo/Redo buttons */}
-            <div className="flex items-center gap-1 border-r border-light-border dark:border-dark-border pr-4">
+            <div className="flex items-center gap-1 border-r border-slate-200 pr-4">
               <button
                 onClick={undoContent}
                 disabled={!canUndo}
-                className="p-2 rounded hover:bg-harken-gray-light dark:hover:bg-elevation-3 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                className="p-2 rounded hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                 title="Undo (Ctrl+Z)"
               >
-                <svg className="w-5 h-5 text-harken-gray dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6" />
                 </svg>
               </button>
               <button
                 onClick={redoContent}
                 disabled={!canRedo}
-                className="p-2 rounded hover:bg-harken-gray-light dark:hover:bg-elevation-3 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
+                className="p-2 rounded hover:bg-slate-100 disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
                 title="Redo (Ctrl+Shift+Z)"
               >
-                <svg className="w-5 h-5 text-harken-gray dark:text-slate-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 10H11a8 8 0 00-8 8v2M21 10l-6 6m6-6l-6-6" />
                 </svg>
               </button>
@@ -3615,7 +3884,7 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
 
             {/* Auto-save indicator */}
             {autoSaveState.isEnabled && (
-              <div className="flex items-center gap-2 text-xs text-harken-gray-med dark:text-slate-400">
+              <div className="flex items-center gap-2 text-xs text-slate-500">
                 {autoSaveState.isSaving ? (
                   <>
                     <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
@@ -3623,7 +3892,7 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
                   </>
                 ) : autoSaveState.lastSaved ? (
                   <>
-                    <div className="w-2 h-2 bg-accent-teal-mint rounded-full" />
+                    <div className="w-2 h-2 bg-[#0da1c7] rounded-full" />
                     Auto-saved {new Date(autoSaveState.lastSaved).toLocaleTimeString()}
                   </>
                 ) : null}
@@ -3631,7 +3900,8 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
             )}
             <button
               onClick={handleAddTextBlock}
-              className="px-4 py-2 bg-gradient-to-r from-accent-cyan to-accent-cyan-hover text-white text-sm font-semibold rounded-lg flex items-center gap-2 hover:shadow-md transition-shadow"
+              className="px-4 py-2 text-white text-sm font-semibold rounded-lg flex items-center gap-2 hover:shadow-md transition-shadow hover:brightness-110"
+              style={{ backgroundColor: '#0da1c7' }}
             >
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
@@ -3640,7 +3910,7 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
             </button>
           </div>
         </div>
-        <div ref={previewRef} className="flex-1 overflow-auto p-8 bg-harken-gray-med/30 dark:bg-elevation-1/50 relative">
+        <div ref={previewRef} className="flex-1 overflow-auto p-8 bg-slate-400/30 relative">
           <div className="report-preview-content space-y-8 flex flex-col items-center">
             {reportSections
               .filter((s) => s.enabled)
@@ -3667,7 +3937,7 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
       </div>
 
       {/* Right Panel: Properties */}
-      <div className="w-96 bg-surface-1 dark:bg-elevation-1 border-l border-light-border dark:border-dark-border flex-shrink-0">
+      <div className="w-96 bg-white border-l border-slate-200 flex-shrink-0">
         {useSimplifiedPanel ? (
           <PropertiesPanelSimplified
             selectedElement={selectedElement}

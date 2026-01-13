@@ -481,7 +481,7 @@ export function PropertyComponentPanel({
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 placeholder='e.g., "Upstairs Apartments", "Retail Space"'
-                className="w-full px-4 py-3 rounded-lg border border-light-border dark:border-harken-gray bg-white dark:bg-elevation-2 text-harken-gray dark:text-slate-100 placeholder:text-harken-gray-light focus:border-harken-blue focus:ring-2 focus:ring-harken-blue/20 outline-none transition-all"
+                className="w-full px-4 py-3 rounded-lg border border-light-border dark:border-harken-gray bg-white dark:bg-elevation-2 text-harken-dark dark:text-white placeholder:text-harken-gray-med focus:border-harken-blue focus:ring-2 focus:ring-harken-blue/20 outline-none transition-all"
               />
               <p className="mt-1.5 text-xs text-harken-gray-med dark:text-slate-400">
                 Use a descriptive name that clearly identifies this portion of the property
@@ -539,7 +539,7 @@ export function PropertyComponentPanel({
                 <label className="block text-sm font-medium text-harken-gray dark:text-slate-200 mb-3">
                   Property Type <span className="text-harken-error">*</span>
                 </label>
-                <div className="grid grid-cols-2 gap-2 max-h-48 overflow-y-auto p-1">
+                <div className="grid grid-cols-2 gap-2">
                   {availablePropertyTypes.map((type) => {
                     const isSelected = propertyType === type.id;
                     const styles = CATEGORY_BUTTON_STYLES[category];
@@ -593,7 +593,7 @@ export function PropertyComponentPanel({
                           value={acreage ?? ''}
                           onChange={(e) => handleAcreageChange(e.target.value ? Number(e.target.value) : null)}
                           placeholder="e.g., 2.5"
-                          className="w-full px-3 py-2.5 rounded-lg border border-light-border dark:border-harken-gray bg-white dark:bg-elevation-2 text-harken-gray dark:text-slate-100 placeholder:text-harken-gray-light focus:border-harken-blue focus:ring-2 focus:ring-harken-blue/20 outline-none transition-all"
+                          className="w-full px-3 py-2.5 rounded-lg border border-light-border dark:border-harken-gray bg-white dark:bg-elevation-2 text-harken-dark dark:text-white placeholder:text-harken-gray-med focus:border-harken-blue focus:ring-2 focus:ring-harken-blue/20 outline-none transition-all"
                         />
                       </div>
                       <div>
@@ -605,7 +605,7 @@ export function PropertyComponentPanel({
                           value={squareFootage ?? ''}
                           onChange={(e) => handleSfChange(e.target.value ? Number(e.target.value) : null)}
                           placeholder="e.g., 108,900"
-                          className="w-full px-3 py-2.5 rounded-lg border border-light-border dark:border-harken-gray bg-white dark:bg-elevation-2 text-harken-gray dark:text-slate-100 placeholder:text-harken-gray-light focus:border-harken-blue focus:ring-2 focus:ring-harken-blue/20 outline-none transition-all"
+                          className="w-full px-3 py-2.5 rounded-lg border border-light-border dark:border-harken-gray bg-white dark:bg-elevation-2 text-harken-dark dark:text-white placeholder:text-harken-gray-med focus:border-harken-blue focus:ring-2 focus:ring-harken-blue/20 outline-none transition-all"
                         />
                       </div>
                     </div>
@@ -625,7 +625,7 @@ export function PropertyComponentPanel({
                         value={squareFootage ?? ''}
                         onChange={(e) => setSquareFootage(e.target.value ? Number(e.target.value) : null)}
                         placeholder="e.g., 1,200"
-                        className="w-full px-3 py-2.5 rounded-lg border border-light-border dark:border-harken-gray bg-white dark:bg-elevation-2 text-harken-gray dark:text-slate-100 placeholder:text-harken-gray-light focus:border-harken-blue focus:ring-2 focus:ring-harken-blue/20 outline-none transition-all"
+                        className="w-full px-3 py-2.5 rounded-lg border border-light-border dark:border-harken-gray bg-white dark:bg-elevation-2 text-harken-dark dark:text-white placeholder:text-harken-gray-med focus:border-harken-blue focus:ring-2 focus:ring-harken-blue/20 outline-none transition-all"
                       />
                     </div>
                     
@@ -640,7 +640,7 @@ export function PropertyComponentPanel({
                           value={unitCount ?? ''}
                           onChange={(e) => setUnitCount(e.target.value ? Number(e.target.value) : null)}
                           placeholder="e.g., 4"
-                          className="w-full px-3 py-2.5 rounded-lg border border-light-border dark:border-harken-gray bg-white dark:bg-elevation-2 text-harken-gray dark:text-slate-100 placeholder:text-harken-gray-light focus:border-harken-blue focus:ring-2 focus:ring-harken-blue/20 outline-none transition-all"
+                          className="w-full px-3 py-2.5 rounded-lg border border-light-border dark:border-harken-gray bg-white dark:bg-elevation-2 text-harken-dark dark:text-white placeholder:text-harken-gray-med focus:border-harken-blue focus:ring-2 focus:ring-harken-blue/20 outline-none transition-all"
                         />
                       </div>
                     )}

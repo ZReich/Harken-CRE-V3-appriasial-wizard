@@ -68,7 +68,7 @@ export default function WizardHeader({
 
   return (
     <div
-      className={`bg-harken-gray-light dark:bg-elevation-1 border-b border-light-border dark:border-dark-border ${isFullscreen ? 'py-2 px-6' : 'py-3 px-8'
+      className={`bg-white dark:bg-elevation-1 border-b border-light-border dark:border-dark-border ${isFullscreen ? 'py-2 px-6' : 'py-3 px-8'
         }`}
       style={themeAccent ? { borderBottomColor: `${themeAccent}20` } : undefined}
     >
@@ -110,16 +110,6 @@ export default function WizardHeader({
             >
               {title}
             </h1>
-            <span
-              className="px-3 py-1 rounded-md text-xs font-semibold"
-              style={themeAccent
-                ? { backgroundColor: `${themeAccent}15`, color: themeAccent }
-                : undefined
-              }
-              {...(!themeAccent && { className: 'px-3 py-1 rounded-md text-xs font-semibold bg-blue-100 text-blue-800' })}
-            >
-              In Progress
-            </span>
           </div>
           {!isFullscreen && (
             <p className="text-sm text-harken-gray dark:text-slate-400">{subtitle}</p>
@@ -128,33 +118,36 @@ export default function WizardHeader({
 
         {/* Center Controls */}
         <div className="flex items-center gap-3">
-          {/* Guidance/Values/Preview Toggle */}
+          {/* Guidance/Values/Preview Toggle - Clean segmented control */}
           {hasGuidance && (
-            <div className="flex items-center bg-harken-gray-light dark:bg-elevation-1/50 rounded-lg p-1 border border-light-border dark:border-harken-gray shadow-inner">
+            <div className="flex items-center rounded-lg border border-light-border dark:border-dark-border overflow-hidden">
               <button
-                className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200 ${guidanceMode === 'guidance'
-                  ? 'bg-surface-1 dark:bg-[#1c3643] text-[#0da1c7] dark:text-cyan-400 shadow-md ring-1 ring-black/5'
-                  : 'text-harken-gray dark:text-slate-400 hover:text-harken-dark dark:hover:text-white'
+                className={`px-4 py-2 text-sm font-medium transition-all duration-150 ${guidanceMode === 'guidance'
+                  ? 'text-white'
+                  : 'bg-white dark:bg-elevation-1 text-harken-gray-med dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-elevation-2 hover:text-harken-dark dark:hover:text-white'
                   }`}
+                style={guidanceMode === 'guidance' ? { backgroundColor: '#0da1c7' } : undefined}
                 onClick={() => onGuidanceModeChange?.('guidance')}
               >
                 Guidance
               </button>
               <button
-                className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200 ${guidanceMode === 'values'
-                  ? 'bg-surface-1 dark:bg-[#1c3643] text-[#0da1c7] dark:text-cyan-400 shadow-md ring-1 ring-black/5'
-                  : 'text-harken-gray dark:text-slate-400 hover:text-harken-dark dark:hover:text-white'
+                className={`px-4 py-2 text-sm font-medium transition-all duration-150 border-l border-light-border dark:border-dark-border ${guidanceMode === 'values'
+                  ? 'text-white'
+                  : 'bg-white dark:bg-elevation-1 text-harken-gray-med dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-elevation-2 hover:text-harken-dark dark:hover:text-white'
                   }`}
+                style={guidanceMode === 'values' ? { backgroundColor: '#0da1c7' } : undefined}
                 onClick={() => onGuidanceModeChange?.('values')}
               >
                 Values
               </button>
               {showPreviewMode && (
                 <button
-                  className={`px-3 py-1.5 text-sm font-medium rounded-md transition-all duration-200 flex items-center gap-1.5 ${guidanceMode === 'preview'
-                    ? 'bg-surface-1 dark:bg-[#1c3643] text-[#0da1c7] dark:text-cyan-400 shadow-md ring-1 ring-black/5'
-                    : 'text-harken-gray dark:text-slate-400 hover:text-harken-dark dark:hover:text-white'
+                  className={`px-4 py-2 text-sm font-medium transition-all duration-150 border-l border-light-border dark:border-dark-border flex items-center gap-1.5 ${guidanceMode === 'preview'
+                    ? 'text-white'
+                    : 'bg-white dark:bg-elevation-1 text-harken-gray-med dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-elevation-2 hover:text-harken-dark dark:hover:text-white'
                     }`}
+                  style={guidanceMode === 'preview' ? { backgroundColor: '#0da1c7' } : undefined}
                   onClick={() => onGuidanceModeChange?.('preview')}
                   title="Live preview of how photos will appear in the report"
                 >
@@ -166,11 +159,11 @@ export default function WizardHeader({
                 </button>
               )}
               <button
-                className="ml-2 px-2.5 py-1 text-xs font-semibold text-harken-gray-med dark:text-slate-400 hover:text-harken-dark dark:hover:text-white uppercase tracking-wider"
+                className="px-3 py-2 text-xs font-semibold text-harken-gray-med dark:text-slate-400 hover:text-harken-dark dark:hover:text-white uppercase tracking-wider border-l border-light-border dark:border-dark-border bg-white dark:bg-elevation-1 hover:bg-slate-100 dark:hover:bg-elevation-2 transition-colors"
                 onClick={onToggleGuidance}
                 title={isGuidanceVisible ? 'Hide panel' : 'Show panel'}
               >
-                {isGuidanceVisible ? 'Hide' : 'Show'}
+                {isGuidanceVisible ? 'HIDE' : 'SHOW'}
               </button>
             </div>
           )}

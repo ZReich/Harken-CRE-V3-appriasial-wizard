@@ -173,8 +173,8 @@ export const AnalysisGridPage: React.FC<AnalysisGridPageProps> = ({
             <tr 
               key={row.id}
               className={`
-                border-b border-light-border dark:border-dark-border 
-                ${row.isTotal ? 'bg-surface-3 dark:bg-elevation-subtle font-semibold' : 'hover:bg-surface-2 dark:bg-elevation-2'}
+                border-b border-light-border 
+                ${row.isTotal ? 'bg-surface-3 font-semibold' : 'hover:bg-surface-2'}
                 ${isEditing ? 'cursor-pointer' : ''}
               `}
             >
@@ -197,14 +197,14 @@ export const AnalysisGridPage: React.FC<AnalysisGridPageProps> = ({
   );
 
   return (
-    <div className="w-full h-full bg-surface-1 flex flex-col">
+    <div className="w-full h-full bg-white flex flex-col">
       {/* Page header */}
       {title && (
-        <div className="px-12 pt-10 pb-4 border-b border-light-border dark:border-dark-border">
+        <div className="px-12 pt-10 pb-4 border-b border-light-border">
           <div className="flex items-center justify-between">
             <h2 
               className={`text-xl font-bold text-slate-800 ${
-                isEditing ? 'cursor-pointer hover:bg-surface-2 dark:bg-elevation-2 rounded px-2 -mx-2' : ''
+                isEditing ? 'cursor-pointer hover:bg-surface-2 rounded px-2 -mx-2' : ''
               }`}
               onClick={() => isEditing && onContentClick?.(`${sectionId}-title`)}
             >
@@ -226,7 +226,7 @@ export const AnalysisGridPage: React.FC<AnalysisGridPageProps> = ({
               <div 
                 key={block.id}
                 className={`text-sm text-slate-700 leading-relaxed mb-4 ${
-                  isEditing ? 'cursor-pointer hover:bg-surface-2 dark:bg-elevation-2 rounded p-1 -m-1' : ''
+                  isEditing ? 'cursor-pointer hover:bg-surface-2 rounded p-1 -m-1' : ''
                 }`}
                 onClick={() => isEditing && onContentClick?.(block.id)}
               >
@@ -238,7 +238,7 @@ export const AnalysisGridPage: React.FC<AnalysisGridPageProps> = ({
 
         {/* Comparison Grid */}
         <div 
-          className={`rounded-lg border border-light-border dark:border-dark-border overflow-hidden ${
+          className={`rounded-lg border border-light-border overflow-hidden ${
             isEditing ? 'ring-2 ring-transparent hover:ring-sky-200' : ''
           }`}
           onClick={() => isEditing && gridBlock && onContentClick?.(gridBlock.id)}

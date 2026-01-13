@@ -20,7 +20,7 @@ export const NarrativePage: React.FC<NarrativePageProps> = ({
 }) => {
   const renderBlock = (block: ContentBlock, _index: number) => {
     const isClickable = isEditing && block.type !== 'image';
-    const clickableClass = isClickable ? 'cursor-pointer hover:bg-surface-2 dark:bg-elevation-2 rounded p-1 -m-1' : '';
+    const clickableClass = isClickable ? 'cursor-pointer hover:bg-surface-2 rounded p-1 -m-1' : '';
 
     switch (block.type) {
       case 'heading':
@@ -92,7 +92,7 @@ export const NarrativePage: React.FC<NarrativePageProps> = ({
                 {Object.entries(tableContent).map(([key, value]) => {
                   if (!value || key.startsWith('_') || typeof value === 'object') return null;
                   return (
-                    <tr key={key} className="border-b border-light-border dark:border-dark-border">
+                    <tr key={key} className="border-b border-light-border hover:bg-surface-2">
                       <td className="py-2 pr-4 text-slate-600 font-medium w-1/3 capitalize">
                         {key.replace(/([A-Z])/g, ' $1').trim()}
                       </td>
@@ -134,7 +134,7 @@ export const NarrativePage: React.FC<NarrativePageProps> = ({
         return (
           <div 
             key={block.id}
-            className={`mb-6 bg-surface-2 dark:bg-elevation-2 rounded-lg p-4 ${clickableClass}`}
+            className={`mb-6 bg-surface-2 rounded-lg p-4 ${clickableClass}`}
             onClick={() => isClickable && onContentClick?.(block.id)}
           >
             <div className="h-48 flex items-center justify-center text-slate-400">
@@ -149,14 +149,14 @@ export const NarrativePage: React.FC<NarrativePageProps> = ({
   };
 
   return (
-    <div className="w-full h-full bg-surface-1 flex flex-col">
+    <div className="w-full h-full bg-white flex flex-col">
       {/* Page header */}
       {title && (
-        <div className="px-16 pt-12 pb-4 border-b border-light-border dark:border-dark-border">
+        <div className="px-16 pt-12 pb-4 border-b border-light-border">
           <div className="flex items-center justify-between">
             <h2 
               className={`text-xl font-bold text-slate-800 ${
-                isEditing ? 'cursor-pointer hover:bg-surface-2 dark:bg-elevation-2 rounded px-2 -mx-2' : ''
+                isEditing ? 'cursor-pointer hover:bg-surface-2 rounded px-2 -mx-2' : ''
               }`}
               onClick={() => isEditing && onContentClick?.(`${sectionId}-title`)}
             >

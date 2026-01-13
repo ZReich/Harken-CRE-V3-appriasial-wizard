@@ -1,4 +1,5 @@
 import { useMemo } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useWizard } from '../context/WizardContext';
 import { COMPLETION_SCHEMA, shouldTrackProgress } from '../constants/completionSchema';
 import ProgressCircle from './ProgressCircle';
@@ -9,11 +10,11 @@ interface ProgressStepperProps {
 }
 
 export default function ProgressStepper({ currentPhase, pages }: ProgressStepperProps) {
+  const navigate = useNavigate();
   const { getSectionCompletion } = useWizard();
 
-  // Force full page navigation to work around react-router issues
   const handleNavigate = (path: string) => {
-    window.location.href = path;
+    navigate(path);
   };
 
   // Get completion data for each section

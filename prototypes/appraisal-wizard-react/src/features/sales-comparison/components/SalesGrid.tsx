@@ -26,7 +26,8 @@ import {
 } from 'lucide-react';
 import { NotesEditorModal } from '../../../components/NotesEditorModal';
 import { OverridePopover, OverrideBadge, type OverrideData } from '../../../components/OverridePopover';
-import { Property, GridRowData, PropertyValues, ComparisonValue, Section, GridRowCategory } from '../types';
+import { AdjustmentExplanationPopover } from '../../../components/AdjustmentExplanationPopover';
+import { Property, GridRowData, PropertyValues, ComparisonValue, Section, GridRowCategory, AdjustmentExplanation } from '../types';
 import { PropertyCard } from './PropertyCard';
 import { INITIAL_ROWS, SECTIONS } from '../constants';
 import EnhancedTextArea from '../../../components/EnhancedTextArea';
@@ -74,6 +75,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
   );
   const [activePopover, setActivePopover] = useState<{ rowId: string, propId: string, field: 'value' | 'adjustment' } | null>(null);
   const [activeOverridePopover, setActiveOverridePopover] = useState<{ rowKey: string, propId: string } | null>(null);
+  const [activeExplanationPopover, setActiveExplanationPopover] = useState<{ rowKey: string, propId: string } | null>(null);
   const [hiddenSections, setHiddenSections] = useState<Set<string>>(new Set());
   const [confirmDelete, setConfirmDelete] = useState<{ isOpen: boolean; sectionId: string; sectionTitle: string } | null>(null);
   const [notesEditor, setNotesEditor] = useState<{ isOpen: boolean; propId: string; propName: string; rowKey: string } | null>(null);
@@ -614,6 +616,40 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
     setActiveOverridePopover(null);
   };
 
+  // Save adjustment explanation for USPAP compliance
+  const saveExplanation = (propId: string, rowKey: string, explanation: AdjustmentExplanation) => {
+    setValues(prev => ({
+      ...prev,
+      [propId]: {
+        ...prev[propId],
+        [rowKey]: {
+          ...prev[propId]?.[rowKey],
+          explanation: {
+            ...explanation,
+            updatedAt: new Date().toISOString()
+          }
+        }
+      }
+    }));
+    setActiveExplanationPopover(null);
+  };
+
+  // Clear adjustment explanation
+  const clearExplanation = (propId: string, rowKey: string) => {
+    setValues(prev => {
+      const updated = { ...prev };
+      if (updated[propId]?.[rowKey]) {
+        const { explanation: _, ...rest } = updated[propId][rowKey];
+        updated[propId] = {
+          ...updated[propId],
+          [rowKey]: rest
+        };
+      }
+      return updated;
+    });
+    setActiveExplanationPopover(null);
+  };
+
   // Get the display value for a field (considering overrides)
   const getDisplayValue = (propId: string, rowKey: string, row: GridRowData): { 
     value: number | string | null; 
@@ -678,9 +714,11 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
   };
 
   // Qualitative Chip Component - click to cycle through values
-  const QualitativeChip = ({ propId, rowKey }: { propId: string, rowKey: string }) => {
+  const QualitativeChip = ({ propId, rowKey, rowLabel }: { propId: string, rowKey: string, rowLabel: string }) => {
     const currentValue = values[propId]?.[rowKey];
     const flag = currentValue?.flag || 'similar';
+    const hasExplanation = !!currentValue?.explanation?.text;
+    const isExplanationOpen = activeExplanationPopover?.rowKey === rowKey && activeExplanationPopover?.propId === propId;
 
     const handleClick = () => {
       const next = cycleQualitativeValue(flag);
@@ -688,7 +726,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
         ...prev,
         [propId]: {
           ...prev[propId],
-          [rowKey]: { value: next.value, flag: next.flag }
+          [rowKey]: { ...prev[propId]?.[rowKey], value: next.value, flag: next.flag }
         }
       }));
     };
@@ -697,32 +735,72 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
     const isInf = flag === 'inferior';
     const baseClass = `inline-flex items-center gap-1 rounded-full px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide border shadow-sm transition-all cursor-pointer select-none active:scale-95`;
 
-    if (isSup) return (
-      <span
-        onClick={handleClick}
-        className={`${baseClass} bg-accent-teal-mint-light text-accent-teal-mint border-accent-teal-mint hover:bg-accent-teal-mint-light hover:border-accent-teal-mint`}
-        title="Click to change"
-      >
-        <ArrowUpRight className="w-3 h-3" /> SUP
-      </span>
-    );
-    if (isInf) return (
-      <span
-        onClick={handleClick}
-        className={`${baseClass} bg-accent-red-light text-harken-error border-harken-error/20 hover:bg-accent-red-light hover:border-harken-error`}
-        title="Click to change"
-      >
-        <ArrowDownRight className="w-3 h-3" /> INF
-      </span>
-    );
+    const renderChip = () => {
+      if (isSup) return (
+        <span
+          onClick={handleClick}
+          className={`${baseClass} bg-accent-teal-mint-light text-accent-teal-mint border-accent-teal-mint hover:bg-accent-teal-mint-light hover:border-accent-teal-mint`}
+          title="Click to change"
+        >
+          <ArrowUpRight className="w-3 h-3" /> SUP
+        </span>
+      );
+      if (isInf) return (
+        <span
+          onClick={handleClick}
+          className={`${baseClass} bg-accent-red-light text-harken-error border-harken-error/20 hover:bg-accent-red-light hover:border-harken-error`}
+          title="Click to change"
+        >
+          <ArrowDownRight className="w-3 h-3" /> INF
+        </span>
+      );
+      return (
+        <span
+          onClick={handleClick}
+          className={`${baseClass} bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1 text-slate-500 dark:text-slate-400 border-light-border dark:border-dark-border dark:border-harken-gray hover:bg-surface-3 dark:hover:bg-elevation-subtle hover:border-border-muted dark:hover:border-dark-border-muted`}
+          title="Click to change"
+        >
+          <Minus className="w-3 h-3" /> SIM
+        </span>
+      );
+    };
+
     return (
-      <span
-        onClick={handleClick}
-        className={`${baseClass} bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1 text-slate-500 dark:text-slate-400 border-light-border dark:border-dark-border dark:border-harken-gray hover:bg-surface-3 dark:hover:bg-elevation-subtle hover:border-border-muted dark:hover:border-dark-border-muted`}
-        title="Click to change"
-      >
-        <Minus className="w-3 h-3" /> SIM
-      </span>
+      <div className="flex items-center gap-1 group/chip relative">
+        {renderChip()}
+        
+        {/* Explanation Icon Button */}
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            setActiveExplanationPopover(isExplanationOpen ? null : { rowKey, propId });
+          }}
+          className={`p-1 rounded transition-all flex-shrink-0 ${
+            hasExplanation 
+              ? 'text-harken-blue bg-harken-blue/10 hover:bg-harken-blue/20' 
+              : 'text-slate-300 hover:text-slate-500 dark:hover:text-slate-300 opacity-0 group-hover/chip:opacity-100'
+          }`}
+          title={hasExplanation ? 'Edit explanation' : 'Add explanation'}
+        >
+          <MessageSquare className={`w-3 h-3 ${hasExplanation ? 'fill-current' : ''}`} />
+        </button>
+        
+        {/* Explanation Popover */}
+        {isExplanationOpen && (
+          <AdjustmentExplanationPopover
+            currentExplanation={currentValue?.explanation}
+            adjustmentValue={0}
+            compName={getPropertyName(propId)}
+            rowLabel={rowLabel}
+            flag={flag as 'superior' | 'inferior' | 'similar'}
+            onSave={(explanation) => saveExplanation(propId, rowKey, explanation)}
+            onClear={() => clearExplanation(propId, rowKey)}
+            onClose={() => setActiveExplanationPopover(null)}
+            position="left"
+          />
+        )}
+      </div>
     );
   };
 
@@ -915,19 +993,60 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
   const renderQuantitativeCell = (propId: string, row: GridRowData, valObj: ComparisonValue) => {
     const numericValue = typeof valObj.value === 'number' ? valObj.value : 0;
     const isOpen = activePopover?.rowId === row.id && activePopover?.propId === propId;
+    const hasExplanation = !!valObj.explanation?.text;
+    const isLargeAdjustment = Math.abs(numericValue) >= 0.15; // 15%+
+    const needsExplanation = isLargeAdjustment && !hasExplanation;
+    const isExplanationOpen = activeExplanationPopover?.rowKey === row.key && activeExplanationPopover?.propId === propId;
+    const currentFlag: 'superior' | 'inferior' | 'similar' = numericValue < 0 ? 'superior' : numericValue > 0 ? 'inferior' : 'similar';
 
     const getStatusLabel = (val: number) => val > 0 ? 'INF' : val < 0 ? 'SUP' : 'SIM';
 
     return (
-      <div className="flex items-center w-full relative">
+      <div className="flex items-center w-full relative group/cell gap-1">
         <AdjustmentBadge
-          flag={numericValue < 0 ? 'superior' : numericValue > 0 ? 'inferior' : 'similar'}
+          flag={currentFlag}
           value={numericValue}
           onClick={() => {
             setActivePopover(isOpen ? null : { rowId: row.id, propId, field: 'value' });
             setCustomInputValue('');
           }}
         />
+        
+        {/* Explanation Icon Button */}
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            setActiveExplanationPopover(isExplanationOpen ? null : { rowKey: row.key, propId });
+          }}
+          className={`p-1 rounded transition-all flex-shrink-0 ${
+            hasExplanation 
+              ? 'text-harken-blue bg-harken-blue/10 hover:bg-harken-blue/20' 
+              : needsExplanation
+                ? 'text-amber-500 bg-amber-50 dark:bg-amber-900/20 animate-pulse'
+                : 'text-slate-300 hover:text-slate-500 dark:hover:text-slate-300 opacity-0 group-hover/cell:opacity-100'
+          }`}
+          title={hasExplanation ? 'Edit explanation' : needsExplanation ? 'Explanation required (>15% adjustment)' : 'Add explanation'}
+        >
+          <MessageSquare className={`w-3 h-3 ${hasExplanation ? 'fill-current' : ''}`} />
+        </button>
+        
+        {/* Explanation Popover */}
+        {isExplanationOpen && (
+          <AdjustmentExplanationPopover
+            currentExplanation={valObj.explanation}
+            adjustmentValue={numericValue}
+            compName={getPropertyName(propId)}
+            rowLabel={row.label}
+            flag={currentFlag}
+            onSave={(explanation) => saveExplanation(propId, row.key, explanation)}
+            onClear={() => clearExplanation(propId, row.key)}
+            onClose={() => setActiveExplanationPopover(null)}
+            position="left"
+          />
+        )}
+        
+        {/* Adjustment Value Popover */}
         {isOpen && (
           <div className="adjustment-popover absolute top-full left-0 mt-2 w-48 bg-surface-1 dark:bg-elevation-1 rounded-xl shadow-2xl border border-light-border dark:border-dark-border dark:border-dark-border z-[200] overflow-hidden">
             {/* Mode Toggle Header */}
@@ -1117,11 +1236,20 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
         // Check if row key matches a field in the grid configuration
         if (configFieldIds.has(r.key)) return true;
         
-        // For quantitative category, check transactional fields
-        if (r.category === 'quantitative' && transactionalFieldIds.has(r.key)) return true;
+        // Always show cap rate extraction rows - critical for income approach support
+        if (r.category === 'cap_rate_extraction') return true;
         
-        // For qualitative category, check physical fields
-        if (r.category === 'qualitative' && physicalFieldIds.has(r.key)) return true;
+        // Always show quantitative adjustment rows - critical for paired sales analysis
+        if (r.category === 'quantitative') return true;
+        
+        // Always show qualitative characteristic rows - critical for comparison analysis
+        if (r.category === 'qualitative') return true;
+        
+        // For transaction category, check transactional fields
+        if (r.category === 'transaction' && transactionalFieldIds.has(r.key)) return true;
+        
+        // For physical category, check physical fields
+        if (r.category === 'physical' && physicalFieldIds.has(r.key)) return true;
         
         // Default: show rows that don't have a specific field mapping
         // (Custom rows, notes, etc.)
@@ -1372,7 +1500,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                                 ) : section.id === 'quantitative' && prop.type !== 'subject'
                                   ? renderQuantitativeCell(prop.id, row, values[prop.id]?.[row.key] || { value: 0 })
                                   : section.id === 'qualitative' && prop.type !== 'subject'
-                                    ? <QualitativeChip propId={prop.id} rowKey={row.key} />
+                                    ? <QualitativeChip propId={prop.id} rowKey={row.key} rowLabel={row.label} />
                                     : (() => {
                                       // Get display value considering overrides
                                       const displayData = getDisplayValue(prop.id, row.key, row);

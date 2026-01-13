@@ -1,6 +1,7 @@
-import React, { useState, useRef } from 'react';
-import { Trash2, Calendar, MessageSquare, X, ArrowRight, CheckCircle2 } from 'lucide-react';
+import React, { useRef, useEffect, useMemo } from 'react';
+import { Trash2, Calendar, MessageSquare, CheckCircle2, FileText, Users, AlertCircle } from 'lucide-react';
 import type { LineItem } from '../types';
+import { getGapStatus, calculateRentGap, type GapStatus } from '../hooks/useRentRollPrefill';
 
 interface InputRowProps {
   item: LineItem;
@@ -11,10 +12,10 @@ interface InputRowProps {
   totalPropertySqFt?: number;
   effectiveGrossIncome?: number;
   onEditNotes?: (item: LineItem) => void;
-  /** Callback when [Comps →] button is clicked (for linking rent comparables) */
-  onLinkComps?: (item: LineItem) => void;
-  /** Number of linked rent comparables (to show indicator) */
-  linkedCompCount?: number;
+  /** Callback when Lease Abstract button is clicked (for opening lease drawer) */
+  onEditLease?: (item: LineItem) => void;
+  /** Concluded market rent per SF from Step 1 Rent Comps - auto-fills MKT/SF if not set */
+  concludedMarketRentPerSf?: number;
 }
 
 export const InputRow: React.FC<InputRowProps> = ({
@@ -26,12 +27,17 @@ export const InputRow: React.FC<InputRowProps> = ({
   totalPropertySqFt = 1,
   effectiveGrossIncome = 0,
   onEditNotes,
-  onLinkComps,
-  linkedCompCount = 0,
+  onEditLease,
+  concludedMarketRentPerSf = 0,
 }) => {
-  // Removed internal isNoteOpen state as we are using parent modal
   const dateInputRef = useRef<HTMLInputElement>(null);
-  // const [isNoteOpen, setIsNoteOpen] = useState(false); // we are using parent modal
+
+  // Auto-fill MKT/SF from concluded rent (Step 1) if not already set
+  useEffect(() => {
+    if (variant === 'rental' && concludedMarketRentPerSf > 0 && !item.marketRentPerSf) {
+      onChange({ ...item, marketRentPerSf: concludedMarketRentPerSf });
+    }
+  }, [concludedMarketRentPerSf]); // Only run when concluded rent changes, not on every render
 
   const handleAnnualChange = (val: string) => {
     const annual = parseFloat(val) || 0;
@@ -51,13 +57,58 @@ export const InputRow: React.FC<InputRowProps> = ({
   const percentEgi = effectiveGrossIncome > 0 ? (item.amount / effectiveGrossIncome) * 100 : 0;
   const costPerSf = totalPropertySqFt > 0 ? item.amount / totalPropertySqFt : 0;
 
+  // Gap analysis for rental variant
+  const gapStatus: GapStatus = useMemo(() => {
+    if (variant !== 'rental') return 'unknown';
+    return getGapStatus(contractRentPerSf, item.marketRentPerSf);
+  }, [variant, contractRentPerSf, item.marketRentPerSf]);
+
+  const gapPercentage = useMemo(() => {
+    if (variant !== 'rental' || !item.marketRentPerSf) return 0;
+    return calculateRentGap(contractRentPerSf, item.marketRentPerSf);
+  }, [variant, contractRentPerSf, item.marketRentPerSf]);
+
+  // Gap status styling using Harken color scheme
+  const getGapStyles = (status: GapStatus): { bg: string; text: string; label: string } => {
+    switch (status) {
+      case 'above':
+        return {
+          bg: 'bg-accent-teal-mint/15 border-accent-teal-mint/30',
+          text: 'text-accent-teal-mint',
+          label: 'At/Above Market'
+        };
+      case 'below':
+        return {
+          bg: 'bg-accent-amber-gold/15 border-accent-amber-gold/30',
+          text: 'text-accent-amber-gold',
+          label: 'Below Market'
+        };
+      case 'at_market':
+        return {
+          bg: 'bg-harken-gray-light border-harken-gray-med-lt',
+          text: 'text-harken-gray',
+          label: 'Near Market'
+        };
+      case 'unknown':
+      default:
+        return {
+          bg: 'bg-harken-gray-light/50 border-harken-gray-med-lt',
+          text: 'text-harken-gray-med',
+          label: 'No Market Data'
+        };
+    }
+  };
+
+  const gapStyles = getGapStyles(gapStatus);
+
   // Helper styles for big inputs - matches SetupPage input patterns
-  const inputContainerClass = "relative bg-surface-1 dark:bg-elevation-1 rounded-lg border border-light-border dark:border-harken-gray focus-within:ring-2 focus-within:ring-[#0da1c7] focus-within:border-transparent transition-all duration-200";
-  const inputBaseClass = "w-full bg-transparent border-none outline-none text-harken-gray dark:text-slate-200 font-semibold px-3 py-2.5 text-sm placeholder:text-harken-gray-med";
+  // Container has static border; focus indicated by underline only (no background bleed)
+  const inputContainerClass = "relative bg-surface-1 dark:bg-elevation-1 rounded-lg border border-light-border dark:border-harken-gray";
+  const inputBaseClass = "w-full bg-transparent border-none outline-none text-harken-gray dark:text-slate-200 font-semibold px-3 py-2.5 text-sm placeholder:text-harken-gray-med focus:shadow-[inset_0_-2px_0_0_#0da1c7]";
   const labelClass = "block text-[10px] font-bold text-harken-gray-med dark:text-slate-500 uppercase tracking-wide px-3 pt-1.5 leading-none";
 
   return (
-    <div className="group relative flex flex-col sm:flex-row items-start sm:items-center gap-3 py-3 border-b border-light-border dark:border-dark-border dark:border-dark-border last:border-0 hover:bg-surface-1/50 dark:hover:bg-elevation-3/50 transition-colors p-2 rounded-xl z-0 hover:z-10">
+    <div className="group relative flex flex-col sm:flex-row items-start sm:items-center gap-3 py-3 border-b border-light-border dark:border-dark-border dark:border-dark-border last:border-0 hover:bg-surface-1/50 dark:hover:bg-elevation-3/50 transition-colors p-2 rounded-xl">
 
       {/* 1. NAME COLUMN */}
       <div className="flex-grow w-full sm:w-auto min-w-[150px]">
@@ -73,7 +124,44 @@ export const InputRow: React.FC<InputRowProps> = ({
         </div>
       </div>
 
-      {/* 1b. LEASE EXPIRY - For Rental Variant (separate column, not nested) */}
+      {/* 1a. UNIT COUNT BADGE - For multi-family grouped entries */}
+      {variant === 'rental' && item.unitCount && item.unitCount > 0 && (
+        <div className="flex items-center gap-2 flex-shrink-0">
+          <div className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg bg-harken-blue/10 border border-harken-blue/20">
+            <Users size={14} className="text-harken-blue" />
+            <span className="text-xs font-bold text-harken-blue">
+              {item.unitCount} unit{item.unitCount !== 1 ? 's' : ''}
+            </span>
+          </div>
+          {/* Vacancy indicator */}
+          {item.vacantUnits !== undefined && item.vacantUnits > 0 && (
+            <div className="flex items-center gap-1 px-2 py-1 rounded-lg bg-harken-error/10 border border-harken-error/20">
+              <AlertCircle size={12} className="text-harken-error" />
+              <span className="text-xs font-semibold text-harken-error">
+                {item.vacantUnits} vacant
+              </span>
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* 1b. GAP ANALYSIS CHIP - For rental variant with market rent data */}
+      {variant === 'rental' && item.itemSqFt && item.itemSqFt > 0 && (
+        <div className={`flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg border ${gapStyles.bg} flex-shrink-0`}>
+          <div className={`w-2 h-2 rounded-full ${
+            gapStatus === 'above' ? 'bg-accent-teal-mint' :
+            gapStatus === 'below' ? 'bg-accent-amber-gold' :
+            'bg-harken-gray-med'
+          }`} />
+          <span className={`text-xs font-semibold ${gapStyles.text}`}>
+            {gapStatus === 'unknown' ? 'No Mkt' : 
+             gapStatus === 'at_market' ? 'MKT' :
+             `${gapPercentage >= 0 ? '+' : ''}${gapPercentage.toFixed(1)}%`}
+          </span>
+        </div>
+      )}
+
+      {/* 1c. LEASE EXPIRY - For Rental Variant (separate column, not nested) */}
       {variant === 'rental' && (
         <div className={`w-36 flex-shrink-0 ${inputContainerClass}`}>
           <label className={labelClass}>Lease Expiry</label>
@@ -205,32 +293,32 @@ export const InputRow: React.FC<InputRowProps> = ({
         </div>
       )}
 
-      {/* 5a. COMPS BUTTON (For Rental Variant - Links to Rent Comparables) */}
-      {variant === 'rental' && onLinkComps && (
+      {/* 5. LEASE ABSTRACT BUTTON (For Rental Variant - Opens full lease abstraction drawer) */}
+      {variant === 'rental' && onEditLease && (
         <button
-          onClick={() => onLinkComps(item)}
+          onClick={() => onEditLease(item)}
           className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
-            linkedCompCount > 0
-              ? 'bg-accent-teal-mint/10 text-accent-teal-mint hover:bg-accent-teal-mint/20 border border-accent-teal-mint/20'
+            item.leaseAbstraction
+              ? 'bg-accent-indigo/10 text-accent-indigo hover:bg-accent-indigo/20 border border-accent-indigo/20'
               : 'bg-surface-2 dark:bg-elevation-2 text-harken-gray-med dark:text-slate-400 hover:bg-harken-blue/10 hover:text-harken-blue dark:hover:text-cyan-400 border border-light-border dark:border-harken-gray'
           }`}
-          title={linkedCompCount > 0 ? `${linkedCompCount} rent comps linked` : "Link rent comparables"}
+          title={item.leaseAbstraction ? "Edit lease abstraction" : "Add lease abstraction"}
         >
-          {linkedCompCount > 0 ? (
+          {item.leaseAbstraction ? (
             <>
-              <CheckCircle2 size={14} className="text-accent-teal-mint" />
-              <span>{linkedCompCount}</span>
+              <CheckCircle2 size={14} className="text-accent-indigo" />
+              <span>Lease</span>
             </>
           ) : (
             <>
-              <span>Comps</span>
-              <ArrowRight size={14} />
+              <FileText size={14} />
+              <span>Lease</span>
             </>
           )}
         </button>
       )}
 
-      {/* 5b. NOTES (Interactive Icon) */}
+      {/* 5c. NOTES (Interactive Icon) */}
       <div className="relative w-full sm:w-auto hidden md:block">
         <button
           onClick={() => onEditNotes && onEditNotes(item)}

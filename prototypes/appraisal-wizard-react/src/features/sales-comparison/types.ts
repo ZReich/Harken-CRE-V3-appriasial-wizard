@@ -42,6 +42,19 @@ export interface OverrideData {
   overriddenAt?: string;
 }
 
+/**
+ * Per-adjustment explanation for USPAP compliance
+ * Allows appraisers to document rationale for each specific adjustment
+ */
+export interface AdjustmentExplanation {
+  /** The explanation text (supports rich text HTML) */
+  text: string;
+  /** Timestamp when explanation was last updated */
+  updatedAt?: string;
+  /** Optional: data source reference (e.g., "Paired sales analysis", "MLS data") */
+  dataSource?: 'paired_sales' | 'mls_data' | 'market_study' | 'appraiser_judgment' | 'cost_data' | 'other';
+}
+
 export interface ComparisonValue {
   value: string | number | null;
   adjustment?: number;
@@ -49,6 +62,8 @@ export interface ComparisonValue {
   unit?: 'percent' | 'dollar';
   /** Override data for calculated fields that have been manually adjusted */
   override?: OverrideData;
+  /** Per-adjustment explanation for USPAP compliance */
+  explanation?: AdjustmentExplanation;
 }
 
 export type PropertyValues = Record<string, Record<string, ComparisonValue>>;

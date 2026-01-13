@@ -193,7 +193,7 @@ export const ComparisonGridPage: React.FC<ComparisonGridPageProps> = ({
   const comparisonRows = ['location', 'siteSize', 'buildingSize', 'yearBuilt', 'condition'];
 
   return (
-    <div className="w-full h-full bg-surface-1 flex flex-col">
+    <div className="w-full h-full bg-white flex flex-col">
       {/* Page header */}
       <div className="px-10 pt-8 pb-4 border-b border-light-border">
         <div className="flex items-center justify-between">
@@ -214,9 +214,9 @@ export const ComparisonGridPage: React.FC<ComparisonGridPageProps> = ({
       {/* Map Section - Display above grid if mapData is provided */}
       {mapData && mapData.imageUrl && (
         <div className="px-10 pt-4 pb-2">
-          <div className="border border-light-border dark:border-dark-border rounded-lg overflow-hidden bg-surface-1">
+          <div className="border border-light-border rounded-lg overflow-hidden bg-white">
             {/* Map Header */}
-            <div className="flex items-center justify-between px-4 py-2 bg-surface-2 dark:bg-elevation-2 border-b border-light-border dark:border-dark-border">
+            <div className="flex items-center justify-between px-4 py-2 bg-surface-2 border-b border-light-border">
               <div className="flex items-center gap-2">
                 <MapPin className="w-4 h-4 text-slate-500" />
                 <span className="font-semibold text-sm text-slate-700">{mapData.title}</span>
@@ -268,7 +268,7 @@ export const ComparisonGridPage: React.FC<ComparisonGridPageProps> = ({
             </thead>
             <tbody>
               {/* Transaction Data Section */}
-              <tr className="bg-surface-3 dark:bg-elevation-subtle">
+              <tr className="bg-surface-3">
                 <td colSpan={2 + data.comparables.length} className="px-3 py-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">
                   Transaction Data
                 </td>
@@ -276,13 +276,13 @@ export const ComparisonGridPage: React.FC<ComparisonGridPageProps> = ({
               {dataRows.map((rowKey) => (
                 <tr 
                   key={rowKey}
-                  className={`border-b border-light-border dark:border-dark-border ${isEditing ? 'hover:bg-surface-2 dark:bg-elevation-2 cursor-pointer' : ''}`}
+                  className={`border-b border-light-border ${isEditing ? 'hover:bg-surface-2 cursor-pointer' : ''}`}
                 >
                   <td className="px-3 py-2 font-medium text-slate-700">
                     {ROW_LABELS[rowKey] || rowKey}
                   </td>
                   <td 
-                    className="px-3 py-2 text-center bg-surface-2 dark:bg-elevation-2 text-slate-800"
+                    className="px-3 py-2 text-center bg-surface-2 text-slate-800"
                     onClick={() => isEditing && onCellClick?.(rowKey, 'subject')}
                   >
                     {formatValue(data.subject[rowKey])}
@@ -300,7 +300,7 @@ export const ComparisonGridPage: React.FC<ComparisonGridPageProps> = ({
               ))}
 
               {/* Physical Comparison Section */}
-              <tr className="bg-surface-3 dark:bg-elevation-subtle">
+              <tr className="bg-surface-3">
                 <td colSpan={2 + data.comparables.length} className="px-3 py-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">
                   Physical Adjustments
                 </td>
@@ -308,12 +308,12 @@ export const ComparisonGridPage: React.FC<ComparisonGridPageProps> = ({
               {comparisonRows.map((rowKey) => (
                 <tr 
                   key={rowKey}
-                  className={`border-b border-light-border dark:border-dark-border ${isEditing ? 'hover:bg-surface-2 dark:bg-elevation-2 cursor-pointer' : ''}`}
+                  className={`border-b border-light-border ${isEditing ? 'hover:bg-surface-2 cursor-pointer' : ''}`}
                 >
                   <td className="px-3 py-2 font-medium text-slate-700">
                     {ROW_LABELS[rowKey] || rowKey}
                   </td>
-                  <td className="px-3 py-2 text-center bg-surface-2 dark:bg-elevation-2 text-slate-800">
+                  <td className="px-3 py-2 text-center bg-surface-2 text-slate-800">
                     {formatValue(data.subject[rowKey])}
                   </td>
                   {data.comparables.map(comp => (
@@ -332,9 +332,9 @@ export const ComparisonGridPage: React.FC<ComparisonGridPageProps> = ({
               {/* Total Adjustments */}
               {data.totalAdjustmentRow && (
                 <>
-                  <tr className="bg-surface-4 dark:bg-elevation-muted font-semibold">
+                  <tr className="bg-surface-4 font-semibold">
                     <td className="px-3 py-2 text-slate-800">Net Adjustment</td>
-                    <td className="px-3 py-2 text-center bg-surface-3 dark:bg-elevation-subtle">-</td>
+                    <td className="px-3 py-2 text-center bg-surface-3 text-slate-600">-</td>
                     {data.comparables.map(comp => {
                       const total = calculateTotalAdjustment(comp.adjustments);
                       return (

@@ -52,7 +52,7 @@ export const DemographicsPage: React.FC<DemographicsPageProps> = ({
 
   if (!data || data.length === 0) {
     return (
-      <div className="bg-surface-1 w-[8.5in] min-h-[11in] p-[1in] shadow-lg mx-auto">
+      <div className="bg-white w-[8.5in] min-h-[11in] p-[1in] shadow-lg mx-auto">
         <h1 className="text-xl font-bold text-slate-800 border-b-2 border-[#0da1c7] pb-2 mb-6">
           NEIGHBORHOOD DEMOGRAPHICS
         </h1>
@@ -62,7 +62,7 @@ export const DemographicsPage: React.FC<DemographicsPageProps> = ({
   }
 
   return (
-    <div className="bg-surface-1 w-[8.5in] min-h-[11in] p-[1in] shadow-lg mx-auto relative">
+    <div className="bg-white w-[8.5in] min-h-[11in] p-[1in] shadow-lg mx-auto relative">
       {/* Header */}
       <h1 className="text-xl font-bold text-slate-800 border-b-2 border-[#0da1c7] pb-2 mb-4">
         NEIGHBORHOOD DEMOGRAPHICS
@@ -71,7 +71,7 @@ export const DemographicsPage: React.FC<DemographicsPageProps> = ({
       {/* Radius Ring Map */}
       {showMap && (mapImageUrl || (latitude && longitude)) && (
         <div className="mb-6">
-          <div className="relative rounded-lg overflow-hidden border border-light-border dark:border-dark-border">
+          <div className="relative rounded-lg overflow-hidden border border-light-border">
             {mapImageUrl ? (
               <img 
                 src={mapImageUrl} 
@@ -80,13 +80,13 @@ export const DemographicsPage: React.FC<DemographicsPageProps> = ({
                 style={{ maxHeight: '280px', objectFit: 'cover' }}
               />
             ) : (
-              <div className="w-full h-[280px] bg-surface-3 dark:bg-elevation-subtle flex items-center justify-center">
+              <div className="w-full h-[280px] bg-surface-3 flex items-center justify-center">
                 <span className="text-slate-400 text-sm">Map image not available</span>
               </div>
             )}
             
             {/* Map Legend Overlay */}
-            <div className="absolute bottom-2 left-2 bg-surface-1/95 rounded px-3 py-1.5 text-xs shadow-sm border border-light-border dark:border-dark-border">
+            <div className="absolute bottom-2 left-2 bg-surface-1/95 rounded px-3 py-1.5 text-xs shadow-sm border border-light-border">
               <div className="flex items-center gap-4">
                 <div className="flex items-center gap-1">
                   <div className="w-3 h-3 rounded-full border-2 border-[#0da1c7]" 
@@ -116,14 +116,14 @@ export const DemographicsPage: React.FC<DemographicsPageProps> = ({
       {/* Main Demographics Table */}
       <table className="w-full text-sm border-collapse mb-6">
         <thead>
-          <tr className="bg-surface-3 dark:bg-elevation-subtle">
-            <th className="text-left py-2 px-3 font-semibold text-slate-700 border border-light-border dark:border-dark-border">
+          <tr className="bg-surface-3">
+            <th className="text-left py-2 px-3 font-semibold text-slate-700 border border-light-border">
               Metric
             </th>
             {data.map((d) => (
               <th 
                 key={d.radius} 
-                className="text-center py-2 px-3 font-semibold text-slate-700 border border-light-border dark:border-dark-border"
+                className="text-center py-2 px-3 font-semibold text-slate-700 border border-light-border"
               >
                 {d.radius} Mile{d.radius > 1 ? 's' : ''}
               </th>
@@ -133,30 +133,30 @@ export const DemographicsPage: React.FC<DemographicsPageProps> = ({
         <tbody>
           {/* Population Section */}
           <tr className="bg-[#0da1c7]/10">
-            <td colSpan={data.length + 1} className="py-1.5 px-3 font-semibold text-slate-700 border border-light-border dark:border-dark-border text-xs uppercase tracking-wide">
+            <td colSpan={data.length + 1} className="py-1.5 px-3 font-semibold text-slate-700 border border-light-border text-xs uppercase tracking-wide">
               Population
             </td>
           </tr>
           <tr>
-            <td className="py-1.5 px-3 text-slate-600 border border-light-border dark:border-dark-border pl-6">Current Population</td>
+            <td className="py-1.5 px-3 text-slate-600 border border-light-border pl-6">Current Population</td>
             {data.map((d) => (
-              <td key={d.radius} className="py-1.5 px-3 text-center font-medium text-slate-800 border border-light-border dark:border-dark-border">
+              <td key={d.radius} className="py-1.5 px-3 text-center font-medium text-slate-800 border border-light-border">
                 {formatPopulation(d.population.current)}
               </td>
             ))}
           </tr>
           <tr>
-            <td className="py-1.5 px-3 text-slate-600 border border-light-border dark:border-dark-border pl-6">5-Year Projection</td>
+            <td className="py-1.5 px-3 text-slate-600 border border-light-border pl-6">5-Year Projection</td>
             {data.map((d) => (
-              <td key={d.radius} className="py-1.5 px-3 text-center text-slate-700 border border-light-border dark:border-dark-border">
+              <td key={d.radius} className="py-1.5 px-3 text-center text-slate-700 border border-light-border">
                 {formatPopulation(d.population.projected5Year)}
               </td>
             ))}
           </tr>
           <tr>
-            <td className="py-1.5 px-3 text-slate-600 border border-light-border dark:border-dark-border pl-6">Annual Growth Rate</td>
+            <td className="py-1.5 px-3 text-slate-600 border border-light-border pl-6">Annual Growth Rate</td>
             {data.map((d) => (
-              <td key={d.radius} className="py-1.5 px-3 text-center text-slate-700 border border-light-border dark:border-dark-border">
+              <td key={d.radius} className="py-1.5 px-3 text-center text-slate-700 border border-light-border">
                 <span className={d.population.annualGrowthRate >= 0 ? 'text-accent-teal-mint' : 'text-harken-error'}>
                   {d.population.annualGrowthRate >= 0 ? '+' : ''}{formatPercentage(d.population.annualGrowthRate)}
                 </span>
@@ -166,22 +166,22 @@ export const DemographicsPage: React.FC<DemographicsPageProps> = ({
 
           {/* Households Section */}
           <tr className="bg-[#0da1c7]/10">
-            <td colSpan={data.length + 1} className="py-1.5 px-3 font-semibold text-slate-700 border border-light-border dark:border-dark-border text-xs uppercase tracking-wide">
+            <td colSpan={data.length + 1} className="py-1.5 px-3 font-semibold text-slate-700 border border-light-border text-xs uppercase tracking-wide">
               Households
             </td>
           </tr>
           <tr>
-            <td className="py-1.5 px-3 text-slate-600 border border-light-border dark:border-dark-border pl-6">Total Households</td>
+            <td className="py-1.5 px-3 text-slate-600 border border-light-border pl-6">Total Households</td>
             {data.map((d) => (
-              <td key={d.radius} className="py-1.5 px-3 text-center font-medium text-slate-800 border border-light-border dark:border-dark-border">
+              <td key={d.radius} className="py-1.5 px-3 text-center font-medium text-slate-800 border border-light-border">
                 {formatPopulation(d.households.current)}
               </td>
             ))}
           </tr>
           <tr>
-            <td className="py-1.5 px-3 text-slate-600 border border-light-border dark:border-dark-border pl-6">Average Household Size</td>
+            <td className="py-1.5 px-3 text-slate-600 border border-light-border pl-6">Average Household Size</td>
             {data.map((d) => (
-              <td key={d.radius} className="py-1.5 px-3 text-center text-slate-700 border border-light-border dark:border-dark-border">
+              <td key={d.radius} className="py-1.5 px-3 text-center text-slate-700 border border-light-border">
                 {d.households.averageSize.toFixed(2)}
               </td>
             ))}
@@ -189,30 +189,30 @@ export const DemographicsPage: React.FC<DemographicsPageProps> = ({
 
           {/* Income Section */}
           <tr className="bg-[#0da1c7]/10">
-            <td colSpan={data.length + 1} className="py-1.5 px-3 font-semibold text-slate-700 border border-light-border dark:border-dark-border text-xs uppercase tracking-wide">
+            <td colSpan={data.length + 1} className="py-1.5 px-3 font-semibold text-slate-700 border border-light-border text-xs uppercase tracking-wide">
               Income
             </td>
           </tr>
           <tr>
-            <td className="py-1.5 px-3 text-slate-600 border border-light-border dark:border-dark-border pl-6">Median Household Income</td>
+            <td className="py-1.5 px-3 text-slate-600 border border-light-border pl-6">Median Household Income</td>
             {data.map((d) => (
-              <td key={d.radius} className="py-1.5 px-3 text-center font-medium text-slate-800 border border-light-border dark:border-dark-border">
+              <td key={d.radius} className="py-1.5 px-3 text-center font-medium text-slate-800 border border-light-border">
                 {formatCurrency(d.income.medianHousehold)}
               </td>
             ))}
           </tr>
           <tr>
-            <td className="py-1.5 px-3 text-slate-600 border border-light-border dark:border-dark-border pl-6">Average Household Income</td>
+            <td className="py-1.5 px-3 text-slate-600 border border-light-border pl-6">Average Household Income</td>
             {data.map((d) => (
-              <td key={d.radius} className="py-1.5 px-3 text-center text-slate-700 border border-light-border dark:border-dark-border">
+              <td key={d.radius} className="py-1.5 px-3 text-center text-slate-700 border border-light-border">
                 {formatCurrency(d.income.averageHousehold)}
               </td>
             ))}
           </tr>
           <tr>
-            <td className="py-1.5 px-3 text-slate-600 border border-light-border dark:border-dark-border pl-6">Per Capita Income</td>
+            <td className="py-1.5 px-3 text-slate-600 border border-light-border pl-6">Per Capita Income</td>
             {data.map((d) => (
-              <td key={d.radius} className="py-1.5 px-3 text-center text-slate-700 border border-light-border dark:border-dark-border">
+              <td key={d.radius} className="py-1.5 px-3 text-center text-slate-700 border border-light-border">
                 {formatCurrency(d.income.perCapita)}
               </td>
             ))}
@@ -220,22 +220,22 @@ export const DemographicsPage: React.FC<DemographicsPageProps> = ({
 
           {/* Education Section */}
           <tr className="bg-[#0da1c7]/10">
-            <td colSpan={data.length + 1} className="py-1.5 px-3 font-semibold text-slate-700 border border-light-border dark:border-dark-border text-xs uppercase tracking-wide">
+            <td colSpan={data.length + 1} className="py-1.5 px-3 font-semibold text-slate-700 border border-light-border text-xs uppercase tracking-wide">
               Education
             </td>
           </tr>
           <tr>
-            <td className="py-1.5 px-3 text-slate-600 border border-light-border dark:border-dark-border pl-6">College Graduates (Bachelor's+)</td>
+            <td className="py-1.5 px-3 text-slate-600 border border-light-border pl-6">College Graduates (Bachelor's+)</td>
             {data.map((d) => (
-              <td key={d.radius} className="py-1.5 px-3 text-center font-medium text-slate-800 border border-light-border dark:border-dark-border">
+              <td key={d.radius} className="py-1.5 px-3 text-center font-medium text-slate-800 border border-light-border">
                 {formatPercentage(d.education.percentCollegeGraduates)}
               </td>
             ))}
           </tr>
           <tr>
-            <td className="py-1.5 px-3 text-slate-600 border border-light-border dark:border-dark-border pl-6">Graduate Degree</td>
+            <td className="py-1.5 px-3 text-slate-600 border border-light-border pl-6">Graduate Degree</td>
             {data.map((d) => (
-              <td key={d.radius} className="py-1.5 px-3 text-center text-slate-700 border border-light-border dark:border-dark-border">
+              <td key={d.radius} className="py-1.5 px-3 text-center text-slate-700 border border-light-border">
                 {formatPercentage(d.education.percentGraduateDegree)}
               </td>
             ))}
@@ -245,22 +245,22 @@ export const DemographicsPage: React.FC<DemographicsPageProps> = ({
           {data[0]?.employment && (
             <>
               <tr className="bg-[#0da1c7]/10">
-                <td colSpan={data.length + 1} className="py-1.5 px-3 font-semibold text-slate-700 border border-light-border dark:border-dark-border text-xs uppercase tracking-wide">
+                <td colSpan={data.length + 1} className="py-1.5 px-3 font-semibold text-slate-700 border border-light-border text-xs uppercase tracking-wide">
                   Employment
                 </td>
               </tr>
               <tr>
-                <td className="py-1.5 px-3 text-slate-600 border border-light-border dark:border-dark-border pl-6">Labor Force</td>
+                <td className="py-1.5 px-3 text-slate-600 border border-light-border pl-6">Labor Force</td>
                 {data.map((d) => (
-                  <td key={d.radius} className="py-1.5 px-3 text-center font-medium text-slate-800 border border-light-border dark:border-dark-border">
+                  <td key={d.radius} className="py-1.5 px-3 text-center font-medium text-slate-800 border border-light-border">
                     {formatPopulation(d.employment?.laborForce || 0)}
                   </td>
                 ))}
               </tr>
               <tr>
-                <td className="py-1.5 px-3 text-slate-600 border border-light-border dark:border-dark-border pl-6">Unemployment Rate</td>
+                <td className="py-1.5 px-3 text-slate-600 border border-light-border pl-6">Unemployment Rate</td>
                 {data.map((d) => (
-                  <td key={d.radius} className="py-1.5 px-3 text-center text-slate-700 border border-light-border dark:border-dark-border">
+                  <td key={d.radius} className="py-1.5 px-3 text-center text-slate-700 border border-light-border">
                     {formatPercentage(d.employment?.unemploymentRate || 0)}
                   </td>
                 ))}
@@ -273,7 +273,7 @@ export const DemographicsPage: React.FC<DemographicsPageProps> = ({
       {/* Employment by Industry (if available) */}
       {data[data.length - 1]?.employmentByIndustry?.length > 0 && (
         <>
-          <h2 className="text-sm font-semibold text-slate-800 border-b border-border-muted dark:border-dark-border-muted pb-1 mb-3 uppercase tracking-wide">
+          <h2 className="text-sm font-semibold text-slate-800 border-b border-border-muted pb-1 mb-3 uppercase tracking-wide">
             Employment by Industry ({data[data.length - 1].radius}-Mile Radius)
           </h2>
           <div className="grid grid-cols-2 gap-x-6 gap-y-2 mb-6">
@@ -284,7 +284,7 @@ export const DemographicsPage: React.FC<DemographicsPageProps> = ({
                     <span className="text-xs text-slate-600">{industry.industry}</span>
                     <span className="text-xs font-medium text-slate-800">{formatPercentage(industry.percentage)}</span>
                   </div>
-                  <div className="w-full bg-surface-4 dark:bg-elevation-muted rounded-full h-1.5">
+                  <div className="w-full bg-surface-4 rounded-full h-1.5">
                     <div 
                       className="bg-[#0da1c7] rounded-full h-1.5"
                       style={{ width: `${Math.min(industry.percentage * 4, 100)}%` }}
@@ -299,7 +299,7 @@ export const DemographicsPage: React.FC<DemographicsPageProps> = ({
 
       {/* Source Attribution */}
       <div className="absolute bottom-[1in] left-[1in] right-[1in]">
-        <div className="flex items-center justify-between text-xs text-slate-500 border-t border-light-border dark:border-dark-border pt-2">
+        <div className="flex items-center justify-between text-xs text-slate-500 border-t border-light-border pt-2">
           <p>
             Source: {sourceDisplay}{asOfDate && ` (as of ${new Date(asOfDate).toLocaleDateString()})`}
           </p>

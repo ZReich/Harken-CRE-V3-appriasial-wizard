@@ -228,12 +228,12 @@ export default function TemplatePage() {
             {/* Appraisal Option */}
             <button
               onClick={() => handleReportTypeSelect('appraisal')}
-              className={`relative p-5 border-2 rounded-xl text-left transition-all hover:border-[#0da1c7]/50 dark:hover:border-cyan-400/50 flex items-start gap-4 ${reportType === 'appraisal'
+              className={`relative p-5 border-2 rounded-xl text-left transition-all hover:border-[#0da1c7] hover:shadow-lg hover:shadow-[#0da1c7]/10 dark:hover:border-cyan-400 dark:hover:shadow-cyan-400/10 flex items-start gap-4 ${reportType === 'appraisal'
                 ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-cyan-500/10'
-                : 'border-light-border dark:border-harken-gray bg-harken-gray-light dark:bg-elevation-1/50'
+                : 'border-light-border dark:border-harken-gray bg-white dark:bg-elevation-1'
                 }`}
             >
-              <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${reportType === 'appraisal' ? 'bg-[#0da1c7] text-white' : 'bg-harken-gray-med-lt dark:bg-dark-input text-harken-gray-med dark:text-slate-400'
+              <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${reportType === 'appraisal' ? 'bg-[#0da1c7] text-white' : 'bg-[#0da1c7]/10 dark:bg-cyan-500/20 text-[#0da1c7] dark:text-cyan-400'
                 }`}>
                 <ScaleIcon className="w-6 h-6" />
               </div>
@@ -253,12 +253,12 @@ export default function TemplatePage() {
             {/* Evaluation Option */}
             <button
               onClick={() => handleReportTypeSelect('evaluation')}
-              className={`relative p-5 border-2 rounded-xl text-left transition-all hover:border-[#0da1c7]/50 dark:hover:border-cyan-400/50 flex items-start gap-4 ${reportType === 'evaluation'
+              className={`relative p-5 border-2 rounded-xl text-left transition-all hover:border-[#0da1c7] hover:shadow-lg hover:shadow-[#0da1c7]/10 dark:hover:border-cyan-400 dark:hover:shadow-cyan-400/10 flex items-start gap-4 ${reportType === 'evaluation'
                 ? 'border-[#0da1c7] bg-[#0da1c7]/5 dark:bg-cyan-500/10'
-                : 'border-light-border dark:border-harken-gray bg-harken-gray-light dark:bg-elevation-1/50'
+                : 'border-light-border dark:border-harken-gray bg-white dark:bg-elevation-1'
                 }`}
             >
-              <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${reportType === 'evaluation' ? 'bg-[#0da1c7] text-white' : 'bg-harken-gray-med-lt dark:bg-dark-input text-harken-gray-med dark:text-slate-400'
+              <div className={`w-12 h-12 rounded-lg flex items-center justify-center flex-shrink-0 ${reportType === 'evaluation' ? 'bg-[#0da1c7] text-white' : 'bg-[#0da1c7]/10 dark:bg-cyan-500/20 text-[#0da1c7] dark:text-cyan-400'
                 }`}>
                 <ClipboardCheckIcon className="w-6 h-6" />
               </div>
@@ -292,12 +292,12 @@ export default function TemplatePage() {
                 </p>
               </div>
 
-              <div className="flex items-center gap-1 bg-harken-gray-med-lt dark:bg-elevation-1 rounded-lg p-1 self-start">
+              <div className="flex items-center gap-2 border border-light-border dark:border-dark-border rounded-lg p-1 self-start bg-white dark:bg-elevation-1">
                 <button
                   onClick={() => setActiveTab('system')}
                   className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${activeTab === 'system'
-                    ? 'bg-surface-1 dark:bg-dark-input text-[#1c3643] dark:text-white shadow-sm'
-                    : 'text-harken-gray dark:text-slate-400 hover:text-harken-dark dark:hover:text-white'
+                    ? 'bg-[#0da1c7] text-white shadow-sm'
+                    : 'text-harken-gray dark:text-slate-400 hover:text-harken-dark dark:hover:text-white hover:bg-harken-gray-light/50 dark:hover:bg-elevation-2'
                     }`}
                 >
                   System Templates
@@ -305,8 +305,8 @@ export default function TemplatePage() {
                 <button
                   onClick={() => setActiveTab('custom')}
                   className={`px-4 py-2 rounded-md text-sm font-medium transition-colors flex items-center gap-2 ${activeTab === 'custom'
-                    ? 'bg-surface-1 dark:bg-dark-input text-[#1c3643] dark:text-white shadow-sm'
-                    : 'text-harken-gray dark:text-slate-400 hover:text-harken-dark dark:hover:text-white'
+                    ? 'bg-[#0da1c7] text-white shadow-sm'
+                    : 'text-harken-gray dark:text-slate-400 hover:text-harken-dark dark:hover:text-white hover:bg-harken-gray-light/50 dark:hover:bg-elevation-2'
                     }`}
                 >
                   <Star className="w-4 h-4" />
@@ -553,8 +553,8 @@ export default function TemplatePage() {
                 onClick={handleContinue}
                 disabled={!selected}
                 className={`px-8 py-3 rounded-lg font-semibold flex items-center gap-2 mx-auto transition-all ${selected
-                  ? 'bg-[#0da1c7] text-white hover:bg-[#0b8fb0]'
-                  : 'bg-harken-gray-med-lt dark:bg-elevation-1 text-harken-gray-med dark:text-slate-500 cursor-not-allowed'
+                  ? 'bg-[#0da1c7] text-white hover:bg-[#0b8fb0] shadow-md'
+                  : 'bg-white dark:bg-elevation-1 border-2 border-light-border dark:border-dark-border text-harken-gray-med dark:text-slate-500 cursor-not-allowed opacity-60'
                   }`}
               >
                 Continue to Document Intake

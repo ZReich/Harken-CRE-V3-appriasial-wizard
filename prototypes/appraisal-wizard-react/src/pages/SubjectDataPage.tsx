@@ -516,13 +516,14 @@ export default function SubjectDataPage() {
       eastBoundary,
       westBoundary,
     });
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- wizardState.subjectData?.address intentionally omitted to prevent infinite loop
   }, [areaDescription, neighborhoodBoundaries, neighborhoodCharacteristics, specificLocation,
     acres, squareFeet, shape, frontage, topography, environmental, easements,
     zoningClass, zoningDescription, zoningConformance,
     waterSource, sewerType, electricProvider, naturalGas, telecom,
     femaZone, femaMapPanel, femaMapDate, floodInsuranceRequired,
     siteDescriptionNarrative, northBoundary, southBoundary, eastBoundary, westBoundary,
-    setSubjectData, wizardState.subjectData?.address]);
+    setSubjectData]);
 
   // Photos state with metadata support
   const [photos, setPhotos] = useState<Record<string, PhotoData | null>>({});

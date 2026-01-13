@@ -934,12 +934,12 @@ export default function DocumentIntakePage() {
       <p className="text-sm text-harken-gray-med mb-6">AI-powered processing</p>
 
       {/* Tab Navigation */}
-      <div className="flex gap-1 p-1 bg-harken-gray-light dark:bg-elevation-1 rounded-lg mb-6 w-full overflow-hidden">
+      <div className="flex gap-2 p-1 border border-light-border dark:border-dark-border rounded-lg mb-6 w-full overflow-hidden bg-white dark:bg-elevation-1">
         <button
           onClick={() => setActiveTab('documents')}
           className={`flex-1 flex items-center justify-center gap-1 px-1 py-1.5 rounded-md text-xs font-semibold transition-all ${activeTab === 'documents'
-            ? 'bg-surface-1 dark:bg-dark-input text-[#0da1c7] dark:text-cyan-400 shadow-sm'
-            : 'text-harken-gray dark:text-slate-400 hover:text-harken-dark dark:hover:text-white'
+            ? 'bg-[#0da1c7] text-white shadow-sm'
+            : 'text-harken-gray dark:text-slate-400 hover:text-harken-dark dark:hover:text-white hover:bg-harken-gray-light/50 dark:hover:bg-elevation-2'
             }`}
         >
           <FileText className="w-3.5 h-3.5 flex-shrink-0" />
@@ -948,14 +948,14 @@ export default function DocumentIntakePage() {
         <button
           onClick={() => setActiveTab('photos')}
           className={`flex-1 flex items-center justify-center gap-1 px-1 py-1.5 rounded-md text-xs font-semibold transition-all ${activeTab === 'photos'
-            ? 'bg-surface-1 dark:bg-dark-input text-[#0da1c7] dark:text-cyan-400 shadow-sm'
-            : 'text-harken-gray dark:text-slate-400 hover:text-harken-dark dark:hover:text-white'
+            ? 'bg-[#0da1c7] text-white shadow-sm'
+            : 'text-harken-gray dark:text-slate-400 hover:text-harken-dark dark:hover:text-white hover:bg-harken-gray-light/50 dark:hover:bg-elevation-2'
             }`}
         >
           <Camera className="w-3.5 h-3.5 flex-shrink-0" />
           <span className="truncate">Photos</span>
           {stagingPhotos.length > 0 && (
-            <span className="ml-auto px-1.5 py-0.5 bg-[#0da1c7] text-white text-[9px] font-bold rounded-full flex-shrink-0">
+            <span className="ml-auto px-1.5 py-0.5 bg-white/20 text-white text-[9px] font-bold rounded-full flex-shrink-0">
               {stagingPhotos.length}
             </span>
           )}
@@ -1125,8 +1125,8 @@ export default function DocumentIntakePage() {
                 />
 
                 <div className={`transition-transform duration-300 ${isDragging ? 'scale-110' : ''}`}>
-                  <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-harken-gray-light to-harken-gray-light dark:from-harken-dark dark:to-harken-dark flex items-center justify-center border border-light-border dark:border-harken-gray shadow-sm">
-                    <Upload className={`w-8 h-8 transition-colors ${isDragging ? 'text-[#0da1c7]' : 'text-harken-gray-med dark:text-slate-500'}`} />
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-2xl bg-gradient-to-br from-[#0da1c7]/10 to-[#0da1c7]/5 dark:from-cyan-500/20 dark:to-cyan-500/10 flex items-center justify-center border border-[#0da1c7]/20 dark:border-cyan-400/20 shadow-sm">
+                    <Upload className={`w-8 h-8 transition-colors ${isDragging ? 'text-[#0da1c7]' : 'text-[#0da1c7]/70 dark:text-cyan-400/70'}`} />
                   </div>
                   <p className="text-lg font-semibold text-harken-dark dark:text-slate-200 mb-1">
                     {isDragging ? 'Drop files here' : 'Drop all your documents here'}

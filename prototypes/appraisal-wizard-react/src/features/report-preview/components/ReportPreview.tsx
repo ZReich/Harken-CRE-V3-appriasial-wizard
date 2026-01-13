@@ -270,15 +270,21 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
     return (
       <div
         key={page.id}
-        className="flex-shrink-0 bg-surface-1 shadow-lg rounded-lg overflow-hidden"
+        className="flex-shrink-0 shadow-lg rounded-lg overflow-hidden report-page-container"
         style={{
           width: `${612 * (zoom / 100)}px`,
           height: `${792 * (zoom / 100)}px`,
+          backgroundColor: '#ffffff',
         }}
       >
+        {/* Force light mode for report pages - they represent printed documents */}
         <div
-          className="w-[612px] h-[792px] origin-top-left"
-          style={{ transform: `scale(${zoom / 100})` }}
+          className="w-[612px] h-[792px] origin-top-left report-page-light-mode"
+          style={{ 
+            transform: `scale(${zoom / 100})`,
+            backgroundColor: '#ffffff',
+            color: '#1c3643',
+          }}
         >
           {pageComponent}
         </div>

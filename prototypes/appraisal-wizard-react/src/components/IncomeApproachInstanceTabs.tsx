@@ -186,8 +186,8 @@ export function IncomeApproachInstanceTabs({
 
   return (
     <div className="flex flex-col h-full">
-      {/* Instance tabs */}
-      <div className="flex items-center gap-2 px-4 py-2 bg-surface-1 dark:bg-elevation-1 border-b border-light-border dark:border-harken-gray overflow-x-auto">
+      {/* Instance tabs - transparent background, tabs stand out on their own */}
+      <div className="flex items-center gap-2 px-6 py-3 overflow-x-auto">
         {incomeInstances.map((instance) => {
           const component = incomeComponents.find(c => c.id === instance.componentId);
           const category = component?.category || 'commercial';
@@ -200,18 +200,18 @@ export function IncomeApproachInstanceTabs({
               key={instance.id}
               onClick={() => setActiveInstanceId(instance.id)}
               className={`
-                flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition-all
-                whitespace-nowrap border
+                flex items-center gap-2 px-4 py-2.5 rounded-xl text-sm font-semibold transition-all
+                whitespace-nowrap shadow-sm
                 ${isActive
-                  ? `${colors.active} ${colors.border}`
-                  : `${colors.inactive} border-transparent`
+                  ? `${colors.active} ${colors.border} border shadow-md`
+                  : `bg-white dark:bg-elevation-2 ${colors.inactive} border border-light-border dark:border-harken-gray hover:shadow-md`
                 }
               `}
             >
               <Icon className="w-4 h-4" />
               <span>{instance.componentName}</span>
               {instance.analysisType === 'contributory' && (
-                <span className="text-[10px] px-1.5 py-0.5 rounded bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300">
+                <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 font-medium">
                   Contributory
                 </span>
               )}

@@ -410,6 +410,21 @@ export function useReportBuilder(
           });
         });
       }
+
+      // Land Valuation
+      if (isSectionVisible(`land-${scenario.id}`) && scenario.approaches.includes('Land Valuation')) {
+        addTocEntry(`land-${scenario.id}`, `${scenarioPrefix}Land Valuation`);
+        const landPages = buildLandValuationPages(wizardState, scenario.id);
+        landPages.forEach((content, i) => {
+          addPage({
+            id: `land-page-${scenario.id}-${i}`,
+            layout: i === 0 ? 'narrative' : 'analysis-grid',
+            sectionId: `land-${scenario.id}`,
+            title: i === 0 ? `${scenarioPrefix}Land Valuation` : undefined,
+            content,
+          });
+        });
+      }
     });
 
     // =================================================================
@@ -628,14 +643,76 @@ function buildSummaryPages(state: WizardState): ContentBlock[][] {
 }
 
 function buildPurposeContent(state: WizardState): ContentBlock[] {
+  // Format property status for display
+  const formatPropertyStatus = (status?: string): string => {
+    const statusMap: Record<string, string> = {
+      'existing': 'Existing / Completed',
+      'under_construction': 'Under Construction',
+      'proposed': 'Proposed / Not Yet Started',
+      'recently_completed': 'Recently Completed',
+    };
+    return status ? statusMap[status] || status : '';
+  };
+
+  // Format loan purpose for display
+  const formatLoanPurpose = (purpose?: string): string => {
+    const purposeMap: Record<string, string> = {
+      'purchase': 'Purchase Financing',
+      'refinance': 'Refinance',
+      'construction': 'Construction Loan',
+      'bridge': 'Bridge / Interim Financing',
+      'internal': 'Internal / Portfolio Review',
+    };
+    return purpose ? purposeMap[purpose] || purpose : '';
+  };
+
+  // Format planned changes for display
+  const formatPlannedChanges = (changes?: string): string => {
+    const changesMap: Record<string, string> = {
+      'none': 'No Planned Changes',
+      'minor': 'Minor Repairs/Updates',
+      'major': 'Major Renovation or Expansion',
+      'change_of_use': 'Change of Use / Conversion',
+    };
+    return changes ? changesMap[changes] || changes : '';
+  };
+
+  // Format occupancy status for display
+  const formatOccupancyStatus = (status?: string): string => {
+    const statusMap: Record<string, string> = {
+      'stabilized': 'Stabilized (>90% Occupied)',
+      'lease_up': 'In Lease-Up Phase',
+      'vacant': 'Vacant or Under-Occupied',
+      'not_applicable': 'N/A (Owner-Occupied)',
+    };
+    return status ? statusMap[status] || status : '';
+  };
+
+  // Build content object, only including fields that have values
+  const content: Record<string, string> = {
+    'Purpose of Appraisal': state.subjectData.appraisalPurpose || 'To estimate market value',
+    'Intended Users': state.subjectData.intendedUsers || 'Client and lender',
+    'Property Interest Appraised': state.subjectData.propertyInterest || 'Fee Simple',
+  };
+
+  // Add assignment conditions if they have values
+  if (state.subjectData.propertyStatus) {
+    content['Property Status'] = formatPropertyStatus(state.subjectData.propertyStatus);
+  }
+  if (state.subjectData.loanPurpose) {
+    content['Loan Purpose'] = formatLoanPurpose(state.subjectData.loanPurpose);
+  }
+  if (state.subjectData.plannedChanges && state.subjectData.plannedChanges !== 'none') {
+    content['Planned Changes'] = formatPlannedChanges(state.subjectData.plannedChanges);
+  }
+  if (state.subjectData.occupancyStatus && state.subjectData.occupancyStatus !== 'not_applicable') {
+    content['Occupancy Status'] = formatOccupancyStatus(state.subjectData.occupancyStatus);
+  }
+
   return [{
     id: 'purpose-content',
     type: 'paragraph',
-    content: {
-      purpose: state.subjectData.appraisalPurpose || 'To estimate market value',
-      intendedUsers: state.subjectData.intendedUsers || 'Client and lender',
-      propertyInterest: state.subjectData.propertyInterest || 'Fee Simple',
-    },
+    content,
     canSplit: true,
     keepWithNext: false,
     keepWithPrevious: false,
@@ -859,12 +936,68 @@ function buildSalesComparisonPages(state: WizardState, scenarioId: number): Cont
 function buildIncomeApproachPages(state: WizardState, scenarioId: number): ContentBlock[][] {
   const incomeData = state.incomeApproachData;
   
-  return [[{
+  // Extract lease abstractions from rental income for dedicated exhibit
+  const leaseAbstractions = incomeData?.incomeData?.rentalIncome
+    ?.filter(item => item.leaseAbstraction)
+    ?.map(item => item.leaseAbstraction) || [];
+  
+  const pages: ContentBlock[][] = [[{
     id: `income-approach-${scenarioId}`,
     type: 'table',
     content: {
       scenarioId,
       incomeData,
+      // Include narratives for PDF export
+      rentCompNotes: incomeData?.rentCompNotes || '',
+      expenseCompNotes: incomeData?.expenseCompNotes || '',
+    },
+    canSplit: true,
+    keepWithNext: false,
+    keepWithPrevious: false,
+    minLinesIfSplit: 5,
+  }]];
+  
+  // Add lease abstractions as a separate exhibit if any exist
+  if (leaseAbstractions.length > 0) {
+    pages.push([{
+      id: `lease-abstractions-${scenarioId}`,
+      type: 'table',
+      content: {
+        scenarioId,
+        leaseAbstractions,
+        sectionTitle: 'Lease Abstract Summary',
+        // Summary statistics
+        totalLeasedSf: leaseAbstractions.reduce((sum, la) => sum + (la?.leasedSqFt || 0), 0),
+        totalAnnualRent: leaseAbstractions.reduce((sum, la) => sum + (la?.currentBaseRent || 0), 0),
+        avgRentPerSf: leaseAbstractions.length > 0 
+          ? leaseAbstractions.reduce((sum, la) => sum + (la?.currentBaseRent || 0), 0) / 
+            leaseAbstractions.reduce((sum, la) => sum + (la?.leasedSqFt || 0), 0)
+          : 0,
+      },
+      canSplit: true,
+      keepWithNext: false,
+      keepWithPrevious: false,
+      minLinesIfSplit: 5,
+    }]);
+  }
+  
+  return pages;
+}
+
+function buildLandValuationPages(state: WizardState, _scenarioId: number): ContentBlock[][] {
+  const landData = state.landValuationData;
+  
+  return [[{
+    id: `land-valuation-${_scenarioId}`,
+    type: 'table',
+    content: {
+      scenarioId: _scenarioId,
+      landComps: landData?.landComps || [],
+      subjectAcreage: landData?.subjectAcreage || 0,
+      concludedPricePerAcre: landData?.concludedPricePerAcre ?? null,
+      concludedLandValue: landData?.concludedLandValue ?? null,
+      // Include narrative for PDF export
+      reconciliationText: landData?.reconciliationText || '',
     },
     canSplit: true,
     keepWithNext: false,
@@ -890,14 +1023,58 @@ function buildReconciliationPages(state: WizardState): ContentBlock[][] {
 }
 
 function buildCertificationContent(state: WizardState): ContentBlock[] {
+  // Format inspection type for display
+  const formatInspectionType = (type?: string): string => {
+    const typeMap: Record<string, string> = {
+      'interior_exterior': 'Interior & Exterior Inspection',
+      'exterior_only': 'Exterior Only Inspection',
+      'desktop': 'Desktop / No Inspection',
+    };
+    return type ? typeMap[type] || type : 'Interior & Exterior Inspection';
+  };
+
+  // Build certification content with inspection details
+  const content: Record<string, unknown> = {
+    // Inspection Information
+    'Inspection Type': formatInspectionType(state.subjectData.inspectionType),
+    'Inspection Date': state.subjectData.inspectionDate || 'Not specified',
+    'Personal Inspection': state.subjectData.personalInspection ? 'Yes' : 'No',
+  };
+
+  // Add inspector details if a different inspector performed the inspection
+  if (!state.subjectData.personalInspection && state.subjectData.inspectorName) {
+    content['Inspector Name'] = state.subjectData.inspectorName;
+    if (state.subjectData.inspectorLicense) {
+      content['Inspector License'] = state.subjectData.inspectorLicense;
+    }
+  }
+
+  // License information
+  content['License Number'] = state.subjectData.licenseNumber || 'Not specified';
+  content['License State'] = state.subjectData.licenseState || 'Not specified';
+  if (state.subjectData.licenseExpiration) {
+    content['License Expiration'] = state.subjectData.licenseExpiration;
+  }
+
+  // Professional assistance disclosure (USPAP requirement)
+  if (state.subjectData.appraisalAssistance) {
+    content['Professional Assistance'] = state.subjectData.appraisalAssistance;
+  }
+
+  // Additional certifications
+  if (state.subjectData.additionalCertifications) {
+    content['Additional Certifications'] = state.subjectData.additionalCertifications;
+  }
+
+  // Standard certifications from reconciliation (if any)
+  if (state.reconciliationData?.certifications && state.reconciliationData.certifications.length > 0) {
+    content['Selected Certifications'] = state.reconciliationData.certifications;
+  }
+
   return [{
     id: 'certification-content',
     type: 'paragraph',
-    content: {
-      certifications: state.reconciliationData?.certifications || [],
-      licenseNumber: state.subjectData.licenseNumber,
-      licenseState: state.subjectData.licenseState,
-    },
+    content,
     canSplit: false,
     keepWithNext: false,
     keepWithPrevious: false,

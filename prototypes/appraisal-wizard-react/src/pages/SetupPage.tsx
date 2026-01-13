@@ -783,11 +783,11 @@ export default function SetupPage() {
   });
   const [inspectorName, setInspectorName] = useState(() => wizardState.subjectData?.inspectorName || '');
   const [inspectorLicense, setInspectorLicense] = useState(() => wizardState.subjectData?.inspectorLicense || '');
-  const [appraisalAssistance, setAppraisalAssistance] = useState('');
+  const [appraisalAssistance, setAppraisalAssistance] = useState(() => wizardState.subjectData?.appraisalAssistance || '');
 
   // Certifications state - declare early so it can be used in sync useEffect
   const [certificationAcknowledged, setCertificationAcknowledged] = useState(() => wizardState.subjectData?.certificationAcknowledged || false);
-  const [additionalCertifications, setAdditionalCertifications] = useState('');
+  const [additionalCertifications, setAdditionalCertifications] = useState(() => wizardState.subjectData?.additionalCertifications || '');
   const [licenseNumber, setLicenseNumber] = useState(() => wizardState.subjectData?.licenseNumber || '');
   const [licenseState, setLicenseState] = useState(() => wizardState.subjectData?.licenseState || '');
   const [licenseExpiration, setLicenseExpiration] = useState(() => wizardState.subjectData?.licenseExpiration || '');
@@ -816,6 +816,8 @@ export default function SetupPage() {
       licenseNumber,
       licenseState,
       licenseExpiration,
+      additionalCertifications,
+      appraisalAssistance,
       // Assignment Context (drives visibility logic)
       propertyStatus: context.propertyStatus as 'existing' | 'under_construction' | 'proposed' | 'recently_completed' | undefined,
       occupancyStatus: context.occupancyStatus as 'stabilized' | 'lease_up' | 'vacant' | 'not_applicable' | undefined,
@@ -825,7 +827,7 @@ export default function SetupPage() {
   }, [address, dates, propertyName, legalDescription, taxId, context.appraisalPurpose,
     context.intendedUsers, context.propertyInterest, inspectorName, inspectorLicense,
     inspectionType, personalInspection, certificationAcknowledged, licenseNumber, licenseState, licenseExpiration,
-    context.propertyStatus, context.occupancyStatus, context.plannedChanges,
+    additionalCertifications, appraisalAssistance, context.propertyStatus, context.occupancyStatus, context.plannedChanges,
     context.loanPurpose, setSubjectData]);
 
   // Pre-fill from extracted data on mount

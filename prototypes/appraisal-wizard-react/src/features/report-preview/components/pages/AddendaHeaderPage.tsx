@@ -12,7 +12,7 @@ export const AddendaHeaderPage: React.FC<AddendaHeaderPageProps> = ({
   pageNumber,
 }) => {
   return (
-    <div className="w-full h-full bg-surface-1 flex flex-col items-center justify-center">
+    <div className="w-full h-full bg-white flex flex-col items-center justify-center">
       {/* Decorative element top */}
       <div className="w-24 h-1 bg-slate-800 mb-12" />
       

@@ -40,6 +40,8 @@ interface RentComparableGridProps {
   rentCompMode?: RentCompMode;
   /** Component ID for linking to income approach instances */
   componentId?: string;
+  /** Callback when concluded market rent changes - flows to Pro Forma MKT/SF */
+  onConcludedRentChange?: (rentPerSf: number) => void;
 }
 
 export const RentComparableGrid: React.FC<RentComparableGridProps> = ({
@@ -49,6 +51,7 @@ export const RentComparableGrid: React.FC<RentComparableGridProps> = ({
   onNotesChange,
   rentCompMode = 'commercial',
   componentId,
+  onConcludedRentChange,
 }) => {
   const { state: wizardState } = useWizard();
   const { propertyType, propertySubtype, scenarios, activeScenarioId } = wizardState;
@@ -408,6 +411,13 @@ export const RentComparableGrid: React.FC<RentComparableGridProps> = ({
   const weightedAvgRent = similarComps.length > 0
     ? similarComps.reduce((acc, c) => acc + c.nnnRentPerSf, 0) / similarComps.length
     : averageRentPerSf;
+
+  // Notify parent when concluded market rent changes (flows to Pro Forma MKT/SF)
+  React.useEffect(() => {
+    if (onConcludedRentChange && weightedAvgRent > 0) {
+      onConcludedRentChange(weightedAvgRent);
+    }
+  }, [weightedAvgRent, onConcludedRentChange]);
 
   // Prepare map data - check if subject and comps have coordinates
   const hasSubjectCoords = SUBJECT_RENT_PROPERTY.lat !== undefined && SUBJECT_RENT_PROPERTY.lng !== undefined;

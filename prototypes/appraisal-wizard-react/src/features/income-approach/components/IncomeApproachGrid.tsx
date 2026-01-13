@@ -1,6 +1,6 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { Plus, Wallet, PieChart, Activity, Check, LayoutGrid, Home, Warehouse, Store, TrendingUp, DollarSign, CalendarRange, ArrowRightLeft, Table2, ChevronDown, ChevronUp, FileText, Receipt, Calculator, CheckCircle2 } from 'lucide-react';
-import type { IncomeData, ExpenseData, LineItem, FinancialSummary, PropertyMeta, ValuationData, IncomeApproachState, IncomeSubTab } from '../types';
+import type { IncomeData, ExpenseData, LineItem, FinancialSummary, PropertyMeta, ValuationData, IncomeApproachState, IncomeSubTab, LeaseAbstraction } from '../types';
 import type { RentComp } from '../rentTypes';
 import type { ExpenseComp } from '../expenseTypes';
 import { IncomeTextEditor } from './IncomeTextEditor';
@@ -12,11 +12,12 @@ import { DCFProjectionTable } from './DCFProjectionTable';
 import { RentComparableGrid } from './RentComparableGrid';
 import { ExpenseComparableGrid } from './ExpenseComparableGrid';
 import { CapRateCalculator } from './CapRateCalculator';
-import { RentCompLinkingPanel } from './RentCompLinkingPanel';
+import { LeaseAbstractionDrawer } from './LeaseAbstractionDrawer';
 import { NotesEditorModal } from '../../../components/NotesEditorModal';
 import type { SalesCompComparable } from './CapRateCalculator';
 import { INITIAL_INCOME_APPROACH_STATE } from '../constants';
 import { useWizard } from '../../../context/WizardContext';
+import { useRentRollPrefill } from '../hooks/useRentRollPrefill';
 // Import Sales Comparison mock data for Cap Rate Calculator pre-population
 import { MOCK_VALUES as SALES_COMP_VALUES } from '../../sales-comparison/constants';
 
@@ -94,60 +95,33 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
   const [showChart, setShowChart] = useState(true);
   const [showCapRateCalculator, setShowCapRateCalculator] = useState(false);
 
-  // Rent comp linking state
-  const [linkingIncomeItem, setLinkingIncomeItem] = useState<LineItem | null>(null);
+  // Lease abstraction drawer state
+  const [editingLeaseItem, setEditingLeaseItem] = useState<LineItem | null>(null);
 
-  // Handle opening rent comp linking panel for an income line
-  const handleLinkComps = (item: LineItem) => {
-    setLinkingIncomeItem(item);
+  // Handle opening lease abstraction drawer for an income line
+  const handleEditLease = (item: LineItem) => {
+    setEditingLeaseItem(item);
   };
 
-  // Handle linking a rent comp to an income line
-  const handleLink = (incomeItemId: string, rentCompId: string) => {
+  // Handle saving lease abstraction
+  const handleSaveLease = (abstraction: LeaseAbstraction) => {
     setIncomeData(prev => ({
       ...prev,
       rentalIncome: prev.rentalIncome.map(item => {
-        if (item.id === incomeItemId) {
-          const currentLinks = item.linkedRentCompIds || [];
-          if (!currentLinks.includes(rentCompId)) {
-            return { ...item, linkedRentCompIds: [...currentLinks, rentCompId] };
-          }
+        if (item.id === abstraction.lineItemId) {
+          return {
+            ...item,
+            leaseAbstraction: abstraction,
+            // Sync key fields from abstraction back to LineItem
+            name: abstraction.tenantName || item.name,
+            itemSqFt: abstraction.leasedSqFt || item.itemSqFt,
+            amount: abstraction.currentBaseRent || item.amount,
+            leaseExpiry: abstraction.leaseEndDate || item.leaseExpiry,
+          };
         }
         return item;
       }),
     }));
-    // Update the linkingIncomeItem state to reflect the change
-    setLinkingIncomeItem(prev => {
-      if (prev && prev.id === incomeItemId) {
-        const currentLinks = prev.linkedRentCompIds || [];
-        if (!currentLinks.includes(rentCompId)) {
-          return { ...prev, linkedRentCompIds: [...currentLinks, rentCompId] };
-        }
-      }
-      return prev;
-    });
-  };
-
-  // Handle unlinking a rent comp from an income line
-  const handleUnlink = (incomeItemId: string, rentCompId: string) => {
-    setIncomeData(prev => ({
-      ...prev,
-      rentalIncome: prev.rentalIncome.map(item => {
-        if (item.id === incomeItemId) {
-          const currentLinks = item.linkedRentCompIds || [];
-          return { ...item, linkedRentCompIds: currentLinks.filter(id => id !== rentCompId) };
-        }
-        return item;
-      }),
-    }));
-    // Update the linkingIncomeItem state to reflect the change
-    setLinkingIncomeItem(prev => {
-      if (prev && prev.id === incomeItemId) {
-        const currentLinks = prev.linkedRentCompIds || [];
-        return { ...prev, linkedRentCompIds: currentLinks.filter(id => id !== rentCompId) };
-      }
-      return prev;
-    });
   };
 
   // Sub-tab state for workflow navigation
@@ -245,6 +219,39 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
     initialData?.incomeData || INITIAL_INCOME_APPROACH_STATE.incomeData
   );
 
+  // === RENT ROLL PREFILL FROM SETUP ===
+  // Track whether prefill has been applied (prevents re-applying on every render)
+  const hasPrefillApplied = useRef(false);
+  
+  // Get prefill data from Setup's unitMix
+  const { prefillItems, hasPrefillData } = useRentRollPrefill({
+    unitMix: state.subjectData?.unitMix,
+    perUnitSfUnknown: state.subjectData?.perUnitSfUnknown,
+    totalBuildingSf: state.subjectData?.totalBuildingSf,
+    totalUnitCount: state.subjectData?.totalUnitCount,
+  });
+
+  // Apply prefill when:
+  // 1. We have prefill data from Setup
+  // 2. Current rental income is empty (or only has default placeholder)
+  // 3. We haven't already applied prefill
+  useEffect(() => {
+    if (
+      hasPrefillData &&
+      !hasPrefillApplied.current &&
+      (incomeData.rentalIncome.length === 0 ||
+        (incomeData.rentalIncome.length === 1 && 
+         incomeData.rentalIncome[0].amount === 0 && 
+         !incomeData.rentalIncome[0].name))
+    ) {
+      setIncomeData(prev => ({
+        ...prev,
+        rentalIncome: prefillItems,
+      }));
+      hasPrefillApplied.current = true;
+    }
+  }, [hasPrefillData, prefillItems]); // Only run when prefill data changes
+
   const [expenseData, setExpenseData] = useState<ExpenseData>(
     initialData?.expenseData || INITIAL_INCOME_APPROACH_STATE.expenseData
   );
@@ -265,6 +272,11 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
   );
   const [expenseCompNotes, setExpenseCompNotes] = useState(
     initialData?.expenseCompNotes || ''
+  );
+
+  // Concluded market rent from Step 1 Rent Comps - auto-fills MKT/SF in Pro Forma
+  const [concludedMarketRentPerSf, setConcludedMarketRentPerSf] = useState<number>(
+    initialData?.concludedMarketRentPerSf || 0
   );
 
   const [isRiskModalOpen, setIsRiskModalOpen] = useState(false);
@@ -309,11 +321,12 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
         rentCompNotes,
         expenseComparables,
         expenseCompNotes,
+        concludedMarketRentPerSf,
         // Workflow tracking
         completedSubTabs: Array.from(completedSubTabs),
       });
     }
-  }, [propertyMeta, incomeData, expenseData, valuationData, onDataChange, rentComparables, rentCompNotes, expenseComparables, expenseCompNotes, completedSubTabs]);
+  }, [propertyMeta, incomeData, expenseData, valuationData, onDataChange, rentComparables, rentCompNotes, expenseComparables, expenseCompNotes, completedSubTabs, concludedMarketRentPerSf]);
 
   // --- Calculations ---
   const summary = useMemo<FinancialSummary>(() => {
@@ -591,6 +604,7 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                   onCompsChange={setRentComparables}
                   onNotesChange={setRentCompNotes}
                   rentCompMode={rentCompMode}
+                  onConcludedRentChange={setConcludedMarketRentPerSf}
                 />
                 <div className="flex justify-end mt-4">
                   <button
@@ -761,8 +775,8 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
                             onChange={(updated) => updateLineItem('rental', updated)}
                             onDelete={(id) => deleteLineItem('rental', id)}
                             onEditNotes={(item) => handleEditNotes('rental', item)}
-                            onLinkComps={handleLinkComps}
-                            linkedCompCount={item.linkedRentCompIds?.length || 0}
+                            onEditLease={handleEditLease}
+                            concludedMarketRentPerSf={concludedMarketRentPerSf}
                           />
                         ))}
                       </div>
@@ -1194,15 +1208,15 @@ export const IncomeApproachGrid: React.FC<IncomeApproachGridProps> = ({
         />
       )}
 
-      {/* RENT COMP LINKING PANEL */}
-      {linkingIncomeItem && (
-        <RentCompLinkingPanel
-          incomeItem={linkingIncomeItem}
-          rentComparables={rentComparables}
-          rentCompMode={rentCompMode}
-          onLink={handleLink}
-          onUnlink={handleUnlink}
-          onClose={() => setLinkingIncomeItem(null)}
+      {/* LEASE ABSTRACTION DRAWER */}
+      {editingLeaseItem && (
+        <LeaseAbstractionDrawer
+          isOpen={!!editingLeaseItem}
+          onClose={() => setEditingLeaseItem(null)}
+          lineItem={editingLeaseItem}
+          onSave={handleSaveLease}
+          propertyType={propertyType}
+          totalPropertySqFt={propertyMeta.sqFt}
         />
       )}
     </div>

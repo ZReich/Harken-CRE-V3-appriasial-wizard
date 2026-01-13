@@ -92,6 +92,8 @@ export function createDefaultState(): WizardState {
       licenseNumber: '',
       licenseState: '',
       licenseExpiration: '',
+      additionalCertifications: '',
+      appraisalAssistance: '',
       // Assignment Context
       propertyStatus: undefined,
       occupancyStatus: undefined,
