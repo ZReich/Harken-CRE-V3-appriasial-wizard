@@ -346,11 +346,11 @@ export function ValueReconciliation() {
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <div className="bg-white/10 dark:bg-white/5 rounded-lg p-3 backdrop-blur-sm">
+          <div className="bg-white/20 dark:bg-white/15 rounded-lg p-3 backdrop-blur-sm border border-white/30 dark:border-white/20">
             <div className="text-xs text-white/75 mb-1">Property Type</div>
             <div className="font-semibold">{state.propertyType || 'Commercial'}</div>
           </div>
-          <div className="bg-white/10 dark:bg-white/5 rounded-lg p-3 backdrop-blur-sm">
+          <div className="bg-white/20 dark:bg-white/15 rounded-lg p-3 backdrop-blur-sm border border-white/30 dark:border-white/20">
             <div className="text-xs text-white/75 mb-1">Valuation Scenarios</div>
             <div className="font-semibold">{scenarios.length} scenario{scenarios.length !== 1 ? 's' : ''}</div>
           </div>
