@@ -28,12 +28,12 @@ export const LetterPage: React.FC<LetterPageProps> = ({
   const hasWizardData = rawData?.propertyAddress && rawData.propertyAddress.length > 0;
   
   const letterData = hasWizardData ? rawData : {
-    clientName: sample.client.name,
+    clientName: sample.assignment.client,
     propertyAddress: sample.property.fullAddress,
-    effectiveDate: sample.valuation.effectiveDate,
+    effectiveDate: sample.assignment.effectiveDate,
     finalValue: sample.valuation.asIsValue,
-    exposurePeriod: sample.valuation.exposurePeriod,
-    marketingTime: sample.valuation.marketingTime,
+    exposurePeriod: 6,  // months
+    marketingTime: 6,   // months
   };
 
   const formatCurrency = (value: number) => {

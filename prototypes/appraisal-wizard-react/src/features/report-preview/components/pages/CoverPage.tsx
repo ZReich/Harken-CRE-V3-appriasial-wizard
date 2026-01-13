@@ -32,8 +32,8 @@ export const CoverPage: React.FC<CoverPageProps> = ({
   const coverData = hasWizardData ? rawData : {
     propertyName: sample.property.name,
     address: sample.property.fullAddress,
-    reportDate: sample.valuation.reportDate,
-    effectiveDate: sample.valuation.effectiveDate,
+    reportDate: sample.assignment.reportDate,
+    effectiveDate: sample.assignment.effectiveDate,
     propertyType: sample.property.propertyType,
   };
   

@@ -1084,31 +1084,57 @@ function buildSalesComparisonPages(state: WizardState, scenarioId: number): Cont
   const salesData = state.salesComparisonData;
   const hasWizardData = salesData?.properties && salesData.properties.length > 0;
   
-  // Use wizard data if available, otherwise fall back to sample data
-  const comparables = hasWizardData 
-    ? salesData.properties 
-    : sampleAppraisalData.comparables;
+  // Use sample data when no wizard data
+  const sampleComps = sampleAppraisalData.comparables;
   
-  // Transform sample comparables to grid format if using sample data
-  const gridComparables = hasWizardData ? comparables : comparables.map(comp => ({
-    id: comp.id,
-    label: comp.name,
-    data: {
-      address: comp.address,
-      salePrice: `$${comp.salePrice.toLocaleString()}`,
-      pricePerSF: `$${comp.pricePerSF.toFixed(2)}/SF`,
-      propertyRights: 'Fee Simple',
-      financing: 'Cash/Conventional',
-      conditionsOfSale: 'Arms Length',
-      marketConditions: '0%',
-      location: 'Similar',
-      siteSize: 'Similar',
-      buildingSize: `${comp.buildingSize.toLocaleString()} SF`,
-      yearBuilt: String(comp.yearBuilt),
-      condition: 'Good',
-    },
-    adjustments: comp.adjustments,
-  }));
+  // Transform comparables to grid format
+  const gridComparables = hasWizardData 
+    ? salesData.properties.filter(p => p.type === 'comp').map((prop, idx) => {
+        // Get values from the values object if available
+        const propValues = salesData.values?.[prop.id] || {};
+        const getValue = (key: string): string => {
+          const val = propValues[key];
+          return val?.value != null ? String(val.value) : '-';
+        };
+        return {
+          id: prop.id || `comp-${idx}`,
+          label: prop.name || `Sale ${idx + 1}`,
+          data: {
+            address: prop.address || '',
+            salePrice: prop.salePrice ? `$${prop.salePrice.toLocaleString()}` : '-',
+            pricePerSF: getValue('pricePerSF'),
+            propertyRights: getValue('propertyRights') || 'Fee Simple',
+            financing: getValue('financing') || 'Cash/Conventional',
+            conditionsOfSale: getValue('conditionsOfSale') || 'Arms Length',
+            marketConditions: getValue('marketConditions') || '0%',
+            location: getValue('location') || 'Similar',
+            siteSize: getValue('siteSize') || 'Similar',
+            buildingSize: getValue('buildingSize') || '-',
+            yearBuilt: getValue('yearBuilt') || '-',
+            condition: getValue('condition') || 'Good',
+          },
+          adjustments: {},
+        };
+      })
+    : sampleComps.map(comp => ({
+        id: comp.id,
+        label: comp.name,
+        data: {
+          address: comp.address,
+          salePrice: `$${comp.salePrice.toLocaleString()}`,
+          pricePerSF: `$${comp.pricePerSF.toFixed(2)}/SF`,
+          propertyRights: 'Fee Simple',
+          financing: 'Cash/Conventional',
+          conditionsOfSale: 'Arms Length',
+          marketConditions: '0%',
+          location: 'Similar',
+          siteSize: 'Similar',
+          buildingSize: `${comp.buildingSize.toLocaleString()} SF`,
+          yearBuilt: String(comp.yearBuilt),
+          condition: 'Good',
+        },
+        adjustments: comp.adjustments,
+      }));
   
   // Subject data from wizard or sample
   const subjectBuilding = state.improvementsInventory?.parcels?.[0]?.buildings?.[0];
@@ -1162,28 +1188,38 @@ function buildSalesComparisonPages(state: WizardState, scenarioId: number): Cont
 
 function buildIncomeApproachPages(state: WizardState, scenarioId: number): ContentBlock[][] {
   const incomeData = state.incomeApproachData;
-  const hasWizardData = incomeData?.valuationData?.noi != null && incomeData.valuationData.noi > 0;
+  // Check if wizard has income data by looking at valuationData.marketCapRate
+  const hasWizardData = incomeData?.valuationData?.marketCapRate != null && incomeData.valuationData.marketCapRate > 0;
   
   // Use wizard data if available, otherwise fall back to sample data
   const sampleIncome = sampleAppraisalData.incomeApproach;
   
+  // Calculate values from wizard income data if available
+  const wizardPgi = incomeData?.incomeData?.rentalIncome?.reduce((sum, r) => sum + (r.amount || 0), 0) || 0;
+  const wizardVacancy = wizardPgi * ((incomeData?.incomeData?.vacancyRate || 5) / 100);
+  const wizardEgi = wizardPgi - wizardVacancy;
+  const wizardExpenses = incomeData?.expenseData?.expenses?.reduce((sum, e) => sum + (e.amount || 0), 0) || 0;
+  const wizardNoi = wizardEgi - wizardExpenses;
+  const wizardCapRate = incomeData?.valuationData?.marketCapRate || 0;
+  const wizardIndicatedValue = wizardCapRate > 0 ? Math.round(wizardNoi / (wizardCapRate / 100)) : 0;
+  
   // Build income grid data
   const incomeGridData = hasWizardData ? {
-    pgi: incomeData?.incomeData?.totalPotentialIncome || 0,
-    vacancy: incomeData?.incomeData?.vacancyLoss || 0,
-    egi: incomeData?.incomeData?.effectiveGrossIncome || 0,
+    pgi: wizardPgi,
+    vacancy: wizardVacancy,
+    egi: wizardEgi,
     expenses: {
-      propertyTaxes: incomeData?.expenseData?.realEstateTaxes || 0,
-      insurance: incomeData?.expenseData?.insurance || 0,
-      utilities: incomeData?.expenseData?.utilities || 0,
-      repairs: incomeData?.expenseData?.repairsMaintenance || 0,
-      management: incomeData?.expenseData?.management || 0,
-      reserves: incomeData?.expenseData?.reserves || 0,
+      propertyTaxes: 0,
+      insurance: 0,
+      utilities: 0,
+      repairs: 0,
+      management: 0,
+      reserves: 0,
     },
-    totalExpenses: incomeData?.expenseData?.totalExpenses || 0,
-    noi: incomeData?.valuationData?.noi || 0,
-    capRate: incomeData?.valuationData?.capRate || 0,
-    indicatedValue: incomeData?.valuationData?.indicatedValue || 0,
+    totalExpenses: wizardExpenses,
+    noi: wizardNoi,
+    capRate: wizardCapRate,
+    indicatedValue: wizardIndicatedValue,
   } : {
     pgi: sampleIncome.potentialGrossIncome,
     vacancy: Math.round(sampleIncome.potentialGrossIncome * (sampleIncome.vacancyRate / 100)),

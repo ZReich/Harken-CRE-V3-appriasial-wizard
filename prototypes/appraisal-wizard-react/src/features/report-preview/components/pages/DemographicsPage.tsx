@@ -35,7 +35,8 @@ interface DemographicsPageProps {
 // Generate sample demographics data matching the RadiusDemographics structure
 function getSampleDemographicsData(): RadiusDemographics[] {
   const sample = sampleAppraisalData.demographics;
-  return sample.radiusRings.map(ring => ({
+  type DemoRing = typeof sample.radiusRings[0];
+  return sample.radiusRings.map((ring: DemoRing) => ({
     radius: ring.radius,
     population: {
       current: ring.population,
@@ -97,8 +98,8 @@ export const DemographicsOverviewPage: React.FC<DemographicsPageProps> = ({
   // Use sample demographics data as fallback
   const hasWizardData = data && data.length > 0;
   const demoData = hasWizardData ? data : getSampleDemographicsData();
-  const effectiveLatitude = latitude || sampleAppraisalData.property.latitude;
-  const effectiveLongitude = longitude || sampleAppraisalData.property.longitude;
+  const effectiveLatitude = latitude || (sampleAppraisalData.property as { latitude?: number }).latitude || 45.7833;
+  const effectiveLongitude = longitude || (sampleAppraisalData.property as { longitude?: number }).longitude || -108.5007;
   
   const sourceDisplay = source === 'esri' 
     ? 'ESRI Demographics' 
@@ -527,7 +528,7 @@ export const DemographicsDetailPage: React.FC<DemographicsPageProps> = ({
           <p>
             Source: {sourceDisplay}{asOfDate && ` (as of ${new Date(asOfDate).toLocaleDateString()})`}
           </p>
-          {data[0]?.isApproximate && (
+          {demoData[0]?.isApproximate && (
             <p className="text-amber-600 italic">
               * Radius data approximated from county-level statistics
             </p>

@@ -139,15 +139,10 @@ const RATING_SCALE = ['AAA', 'AA', 'A', 'BBB', 'BB', 'B', 'CCC', 'CC', 'C'];
 export const RiskRatingPage: React.FC<RiskRatingPageProps> = ({ data, pageNumber }) => {
   // Use sample risk rating data as fallback
   const sampleRisk = sampleAppraisalData.riskRating;
-  const hasWizardData = data && data.overallRating;
+  const hasWizardData = data && data.overallGrade;
   
-  const riskData: RiskRatingData = hasWizardData ? data : {
-    overallRating: sampleRisk.overallRating,
-    dimensions: sampleRisk.dimensions,
-    investmentCharacteristics: sampleRisk.investmentCharacteristics,
-    methodology: sampleRisk.methodology,
-    confidenceLevel: sampleRisk.confidenceLevel,
-  };
+  // Create compatible risk data structure
+  const riskData = hasWizardData ? data : null;
   
   if (!riskData) {
     return (
@@ -164,17 +159,12 @@ export const RiskRatingPage: React.FC<RiskRatingPageProps> = ({ data, pageNumber
     );
   }
 
-  // Extract rating details from sample structure or wizard data
-  const overallGrade = riskData.overallRating || 'BBB';
-  const overallScore = 72; // Default score for BBB rating
-  const dimensions = riskData.dimensions || {
-    marketVolatility: { score: 70, weight: 25, grade: 'BBB' },
-    liquidity: { score: 75, weight: 25, grade: 'A' },
-    incomeStability: { score: 68, weight: 30, grade: 'BBB' },
-    assetQuality: { score: 74, weight: 20, grade: 'A' },
-  };
-  const weightingRationale = riskData.methodology || 'Standard commercial property risk assessment methodology';
-  const generatedDate = new Date().toISOString();
+  // Extract rating details from wizard data or sample
+  const overallGrade = riskData?.overallGrade || sampleRisk.overallRating;
+  const overallScore = riskData?.overallScore || 78;
+  const dimensions = riskData?.dimensions || sampleRisk.dimensions;
+  const weightingRationale = riskData?.weightingRationale || sampleRisk.methodology;
+  const generatedDate = riskData?.generatedDate || new Date().toISOString();
   
   const gradeConfig = GRADE_CONFIG[overallGrade] || GRADE_CONFIG['BBB'];
   const gradeIndex = RATING_SCALE.indexOf(overallGrade);

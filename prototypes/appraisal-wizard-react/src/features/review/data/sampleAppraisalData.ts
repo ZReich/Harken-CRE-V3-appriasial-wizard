@@ -50,6 +50,8 @@ export const sampleAppraisalData = {
     ownerOfRecord: 'Bauer Development LLC',
     propertyType: 'Light Industrial',
     propertySubtype: 'Shop with Office',
+    latitude: 45.7833,
+    longitude: -108.5007,
   },
 
   // =================================================================
@@ -384,6 +386,93 @@ For this analysis, we have utilized the Direct Capitalization method, which invo
     'I have made a personal inspection of the property that is the subject of this report.',
     'No one provided significant real property appraisal assistance to the person signing this certification.',
   ],
+
+  // =================================================================
+  // SWOT ANALYSIS
+  // =================================================================
+  swot: {
+    strengths: [
+      'New construction (2023) with no deferred maintenance',
+      'Excellent location in established industrial area',
+      'Modern pre-engineered steel construction with good clear heights',
+      'Flexible shop/office layout suitable for multiple uses',
+      'Good highway access and visibility',
+    ],
+    weaknesses: [
+      'Private well and septic system (not public utilities)',
+      'Single-tenant owner-occupied building (no income diversification)',
+      'Limited on-site parking for larger operations',
+    ],
+    opportunities: [
+      'Strong market fundamentals with low vacancy rates',
+      'Growing regional economy and business formation',
+      'Potential for building expansion on remaining land area',
+      'Rising rental rates support income potential',
+    ],
+    threats: [
+      'Economic sensitivity to energy sector fluctuations',
+      'Rising interest rates may impact investment market',
+      'Potential for competing new construction in area',
+    ],
+    summary: 'The subject property demonstrates strong competitive positioning with its new construction, excellent location, and functional design. While some limitations exist regarding utilities and tenant diversification, the overall risk profile is favorable given current market conditions.',
+  },
+
+  // =================================================================
+  // RISK RATING
+  // =================================================================
+  riskRating: {
+    overallRating: 'A',
+    confidenceLevel: 85,
+    methodology: 'Risk assessment based on market conditions, property characteristics, location factors, and investment quality indicators.',
+    dimensions: {
+      marketVolatility: { score: 72, weight: 25, grade: 'BBB' },
+      liquidity: { score: 78, weight: 25, grade: 'A' },
+      incomeStability: { score: 75, weight: 30, grade: 'A' },
+      assetQuality: { score: 82, weight: 20, grade: 'AA' },
+    },
+    investmentCharacteristics: {
+      propertyQuality: 'Institutional Grade',
+      marketPosition: 'Primary Market - Secondary Submarket',
+      tenantProfile: 'Owner-Occupied',
+      leaseStructure: 'N/A - Owner-Occupied',
+    },
+  },
+
+  // =================================================================
+  // DEMOGRAPHICS
+  // =================================================================
+  demographics: {
+    populationGrowth: 1.2,
+    radiusRings: [
+      {
+        radius: 1,
+        population: 8542,
+        households: 3425,
+        medianHouseholdIncome: 68500,
+        medianAge: 38.2,
+        avgHouseholdSize: 2.49,
+        medianHomeValue: 285000,
+      },
+      {
+        radius: 3,
+        population: 42650,
+        households: 17215,
+        medianHouseholdIncome: 72400,
+        medianAge: 36.8,
+        avgHouseholdSize: 2.48,
+        medianHomeValue: 315000,
+      },
+      {
+        radius: 5,
+        population: 98420,
+        households: 39850,
+        medianHouseholdIncome: 69800,
+        medianAge: 37.5,
+        avgHouseholdSize: 2.47,
+        medianHomeValue: 295000,
+      },
+    ],
+  },
 
   // =================================================================
   // PHOTOS

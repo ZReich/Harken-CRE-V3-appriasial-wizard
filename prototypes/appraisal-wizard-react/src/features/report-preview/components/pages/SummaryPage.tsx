@@ -58,8 +58,8 @@ export const SummaryPage: React.FC<SummaryPageProps> = ({
     legalDescription: sample.property.legalDescription,
     siteArea: `${sample.site.landArea} ${sample.site.landAreaUnit} (${sample.site.landAreaSF.toLocaleString()} SF)`,
     zoningClass: `${sample.site.zoning} - ${sample.site.zoningDescription}`,
-    effectiveDate: sample.valuation.effectiveDate,
-    inspectionDate: sample.valuation.inspectionDate,
+    effectiveDate: sample.assignment.effectiveDate,
+    inspectionDate: sample.assignment.inspectionDate,
     finalValue: sample.valuation.asIsValue,
     finalValueFormatted: `$${sample.valuation.asIsValue.toLocaleString()}`,
     scenarios: [{
@@ -69,13 +69,13 @@ export const SummaryPage: React.FC<SummaryPageProps> = ({
         'sales-comparison': sample.valuation.salesComparisonValue,
         'income-approach': sample.valuation.incomeApproachValue,
         'cost-approach': sample.valuation.costApproachValue,
-      },
+      } as Record<string, number | null>,
     }],
     reconciliationWeights: {
       'sales-comparison': sample.reconciliation.salesComparisonWeight,
       'income-approach': sample.reconciliation.incomeApproachWeight,
       'cost-approach': sample.reconciliation.costApproachWeight,
-    },
+    } as Record<string, number>,
   };
 
   const formatDate = (dateStr?: string) => {
