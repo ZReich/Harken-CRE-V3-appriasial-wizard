@@ -110,6 +110,15 @@ export const BASE_REPORT_SECTIONS: ReportSection[] = [
     fields: [{ id: 'toc_auto', label: 'Auto-generated TOC', enabled: true }],
   },
   {
+    id: 'toc-2',
+    label: 'Table of Contents (Continued)',
+    type: 'toc',
+    enabled: true,
+    expanded: false,
+    fields: [],
+    parentSectionId: 'toc', // Links to parent TOC section
+  },
+  {
     id: 'executive-summary',
     label: 'Executive Summary',
     type: 'summary-table',

@@ -2388,13 +2388,18 @@ function PhotoExhibitsPage({
   );
 }
 
-// Table of Contents Page
+// Table of Contents Page - Supports pagination (page 1 and page 2)
+// Page 1: First 12 entries + aerial photo
+// Page 2: Remaining entries (no photo)
+const MAX_TOC_ENTRIES_PAGE_1 = 12;
+
 function TOCPage({
   selectedElement,
   onSelectElement,
   enabledSections,
   onOpenPhotoEditor,
   getPhotoEdits,
+  pageIndex = 0, // 0 = first page, 1 = second page (continued)
 }: {
   selectedElement: string | null;
   onSelectElement: (id: string) => void;
@@ -2404,27 +2409,46 @@ function TOCPage({
   getAppliedStyle?: (elementId: string) => React.CSSProperties;
   onOpenPhotoEditor?: (photo: PhotoData) => void;
   getPhotoEdits?: (photoId: string) => PhotoEdits | undefined;
+  pageIndex?: number;
 }) {
-  // Build TOC entries from enabled sections
+  // Build TOC entries from enabled sections (exclude cover, toc, and toc-2)
   const tocEntries = enabledSections
-    .filter(s => s.enabled && s.id !== 'cover' && s.id !== 'toc')
+    .filter(s => s.enabled && s.id !== 'cover' && s.id !== 'toc' && s.id !== 'toc-2')
     .map((section, idx) => ({
       title: section.label,
       page: idx + 2, // Cover is 1, then content starts
     }));
 
+  // Split entries between pages
+  const isFirstPage = pageIndex === 0;
+  const entriesForThisPage = isFirstPage
+    ? tocEntries.slice(0, MAX_TOC_ENTRIES_PAGE_1)
+    : tocEntries.slice(MAX_TOC_ENTRIES_PAGE_1);
+
+  // Don't render second page if there are no entries for it
+  if (!isFirstPage && entriesForThisPage.length === 0) {
+    return null;
+  }
+
   const aerialPhoto = sampleAppraisalData.photos.find(p => p.category === 'aerial');
+  const pageTitle = isFirstPage ? 'Table of Contents' : 'Table of Contents (Continued)';
+  const sectionId = isFirstPage ? 'toc' : 'toc-2';
+  const pageNumber = isFirstPage ? 2 : 3;
 
   return (
-    <ReportPageWrapper section={{ id: 'toc', label: 'Table of Contents', enabled: true, expanded: false, fields: [], type: 'toc' }} pageNumber={2} sidebarLabel="">
+    <ReportPageWrapper 
+      section={{ id: sectionId, label: pageTitle, enabled: true, expanded: false, fields: [], type: 'toc' }} 
+      pageNumber={pageNumber} 
+      sidebarLabel=""
+    >
       <div className="p-12">
-        <h2 className="text-3xl font-light text-[#0da1c7] mb-12 mt-8">Table of Contents</h2>
+        <h2 className="text-3xl font-light text-[#0da1c7] mb-12 mt-8">{pageTitle}</h2>
 
         <div
-          onClick={() => onSelectElement('toc_entries')}
-          className={`space-y-0 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'toc_entries' ? 'ring-2 ring-[#0da1c7] bg-cyan-50' : 'hover:bg-slate-100'}`}
+          onClick={() => onSelectElement(`toc_entries_${pageIndex}`)}
+          className={`space-y-0 p-4 -m-4 rounded cursor-pointer ${selectedElement === `toc_entries_${pageIndex}` ? 'ring-2 ring-[#0da1c7] bg-cyan-50' : 'hover:bg-slate-100'}`}
         >
-          {tocEntries.map((entry, idx) => (
+          {entriesForThisPage.map((entry, idx) => (
             <div
               key={idx}
               className="flex items-baseline border-b border-dotted border-slate-300 py-3 group"
@@ -2436,23 +2460,25 @@ function TOCPage({
           ))}
         </div>
 
-        {/* Photo of Subject */}
-        <div className="mt-12">
-          <PhotoSlot
-            photo={aerialPhoto}
-            placeholder="Aerial View"
-            aspectRatio="16/9"
-            selected={selectedElement === 'toc_photo'}
-            onSelect={() => onSelectElement('toc_photo')}
-            onDoubleClick={() => aerialPhoto && onOpenPhotoEditor?.({
-              id: aerialPhoto.id || 'toc-aerial',
-              url: aerialPhoto.url,
-              caption: aerialPhoto.caption,
-              category: aerialPhoto.category,
-            })}
-            edits={getPhotoEdits?.(aerialPhoto?.id || 'toc-aerial')}
-          />
-        </div>
+        {/* Photo of Subject - only on first page */}
+        {isFirstPage && (
+          <div className="mt-12">
+            <PhotoSlot
+              photo={aerialPhoto}
+              placeholder="Aerial View"
+              aspectRatio="16/9"
+              selected={selectedElement === 'toc_photo'}
+              onSelect={() => onSelectElement('toc_photo')}
+              onDoubleClick={() => aerialPhoto && onOpenPhotoEditor?.({
+                id: aerialPhoto.id || 'toc-aerial',
+                url: aerialPhoto.url,
+                caption: aerialPhoto.caption,
+                category: aerialPhoto.category,
+              })}
+              edits={getPhotoEdits?.(aerialPhoto?.id || 'toc-aerial')}
+            />
+          </div>
+        )}
       </div>
     </ReportPageWrapper>
   );
@@ -4361,7 +4387,9 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
       case 'cover':
         return <CoverPageReal {...commonProps} subjectData={state.subjectData} reconciliationData={state.reconciliationData} coverPhoto={state.coverPhoto} />;
       case 'toc':
-        return <TOCPage {...photoProps} enabledSections={reportSections} />;
+        return <TOCPage {...photoProps} enabledSections={reportSections} pageIndex={0} />;
+      case 'toc-2':
+        return <TOCPage {...photoProps} enabledSections={reportSections} pageIndex={1} />;
       case 'letter':
         return <LetterPage {...commonProps} subjectData={state.subjectData} />;
       case 'executive-summary':
