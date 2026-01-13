@@ -414,7 +414,7 @@ export function RiskRatingPanel({
 
             {/* Rating Scale Visualization */}
             <div className="bg-surface-2 dark:bg-elevation-2 rounded-xl p-4">
-              <div className="flex items-center justify-between text-xs text-slate-500 mb-2">
+              <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400 mb-2">
                 <span>Lower Risk</span>
                 <span>Higher Risk</span>
               </div>
@@ -422,13 +422,26 @@ export function RiskRatingPanel({
                 {RATING_SCALE.map((grade) => {
                   const config = GRADE_CONFIG[grade];
                   const isCurrent = grade === data.overallGrade;
+                  
+                  // Get dark mode friendly backgrounds
+                  let darkBg = 'dark:bg-elevation-3';
+                  if (grade === 'AAA' || grade === 'AA' || grade === 'A') {
+                    darkBg = 'dark:bg-accent-teal-mint/20';
+                  } else if (grade === 'BBB') {
+                    darkBg = 'dark:bg-cyan-500/20';
+                  } else if (grade === 'BB' || grade === 'B') {
+                    darkBg = 'dark:bg-accent-amber-gold/20';
+                  } else {
+                    darkBg = 'dark:bg-red-500/20';
+                  }
+                  
                   return (
                     <div 
                       key={grade}
                       className={`flex-1 h-8 flex items-center justify-center rounded text-xs font-bold transition-all ${
                         isCurrent 
                           ? `${config.bg} ${config.text} ${config.border} border-2 scale-110 shadow-md z-10` 
-                          : `${config.lightBg} ${config.text} opacity-60`
+                          : `${config.lightBg} ${darkBg} ${config.text} opacity-60 dark:opacity-100`
                       }`}
                     >
                       {grade}
