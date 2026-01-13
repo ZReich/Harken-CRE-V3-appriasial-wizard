@@ -307,9 +307,9 @@ export default function ImprovementsInventory() {
       )}
 
       {validation.isValid && totalSF > 0 && (
-        <div className="flex items-center gap-3 bg-green-50 border border-green-200 rounded-xl p-4">
-          <CheckCircle2 className="w-5 h-5 text-green-500 flex-shrink-0" />
-          <span className="text-sm font-medium text-green-800">All improvements data is complete and valid</span>
+        <div className="flex items-center gap-3 bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-xl p-4">
+          <CheckCircle2 className="w-5 h-5 text-green-500 dark:text-green-400 flex-shrink-0" />
+          <span className="text-sm font-medium text-green-800 dark:text-green-300">All improvements data is complete and valid</span>
         </div>
       )}
 
@@ -456,13 +456,13 @@ function ParcelCard({
       </div>
 
       {isExpanded && (
-        <div className="px-6 py-5 border-t border-harken-gray-light space-y-6">
+        <div className="px-6 py-5 border-t border-light-border dark:border-dark-border space-y-6">
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-harken-gray mb-1.5 flex items-center gap-2">
+              <label className="block text-xs font-medium text-harken-gray dark:text-slate-400 mb-1.5 flex items-center gap-2">
                 Tax ID / Parcel Number
                 {isTaxIdSynced && (
-                  <span className="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-normal">From Setup</span>
+                  <span className="text-[10px] bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 px-1.5 py-0.5 rounded font-normal">From Setup</span>
                 )}
               </label>
               <input
@@ -470,15 +470,15 @@ function ParcelCard({
                 value={parcel.parcelNumber}
                 onChange={(e) => onUpdate({ parcelNumber: e.target.value })}
                 placeholder="e.g., 12-345-678"
-                className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent ${isTaxIdSynced ? 'border-blue-200 bg-blue-50' : 'border-light-border'
+                className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white ${isTaxIdSynced ? 'border-blue-200 dark:border-blue-700 bg-blue-50 dark:bg-blue-900/20' : 'border-light-border dark:border-harken-gray'
                   }`}
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-harken-gray mb-1.5 flex items-center gap-2">
+              <label className="block text-xs font-medium text-harken-gray dark:text-slate-400 mb-1.5 flex items-center gap-2">
                 Situs Address
                 {isAddressSynced && (
-                  <span className="text-[10px] bg-blue-100 text-blue-700 px-1.5 py-0.5 rounded font-normal">From Setup</span>
+                  <span className="text-[10px] bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 px-1.5 py-0.5 rounded font-normal">From Setup</span>
                 )}
               </label>
               <input
@@ -486,7 +486,7 @@ function ParcelCard({
                 value={parcel.address || ''}
                 onChange={(e) => onUpdate({ address: e.target.value })}
                 placeholder="Street address"
-                className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent ${isAddressSynced ? 'border-blue-200 bg-blue-50' : 'border-light-border'
+                className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white ${isAddressSynced ? 'border-blue-200 dark:border-blue-700 bg-blue-50 dark:bg-blue-900/20' : 'border-light-border dark:border-harken-gray'
                   }`}
               />
             </div>
@@ -719,7 +719,7 @@ function BuildingCard({
                         onClick={() => onUpdate({ constructionClass: cls.value })}
                         className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 text-sm font-medium transition-all ${isSelected
                           ? 'border-accent-cyan bg-accent-cyan/10 text-accent-cyan'
-                          : 'border-light-border bg-surface-1 text-harken-gray hover:border-light-border'
+                          : 'border-light-border dark:border-dark-border bg-surface-1 dark:bg-elevation-1 text-harken-gray dark:text-slate-300 hover:border-light-border dark:hover:border-harken-gray'
                           }`}
                       >
                         <IconComponent className="w-4 h-4" />
@@ -729,7 +729,7 @@ function BuildingCard({
                   })}
                 </div>
                 {building.constructionClass && (
-                  <p className="text-xs text-slate-500 mt-1">
+                  <p className="text-xs text-slate-500 dark:text-slate-400 mt-1">
                     {CONSTRUCTION_CLASSES.find(c => c.value === building.constructionClass)?.description}
                   </p>
                 )}
@@ -742,9 +742,9 @@ function BuildingCard({
               </div>
 
               {/* Building Heights */}
-              <div className="bg-harken-gray-light rounded-xl p-4 space-y-4">
+              <div className="bg-harken-gray-light dark:bg-elevation-2 rounded-xl p-4 space-y-4">
                 <div className="flex items-center justify-between">
-                  <h5 className="text-sm font-semibold text-harken-dark flex items-center gap-2">
+                  <h5 className="text-sm font-semibold text-harken-dark dark:text-white flex items-center gap-2">
                     <Ruler className="w-4 h-4 text-accent-cyan" />
                     Building Heights
                   </h5>
@@ -753,23 +753,23 @@ function BuildingCard({
 
                 <div className="grid grid-cols-3 gap-3">
                   <div>
-                    <label className="block text-xs font-medium text-harken-gray mb-1.5">Eave Height</label>
+                    <label className="block text-xs font-medium text-harken-gray dark:text-slate-400 mb-1.5">Eave Height</label>
                     <div className="flex items-center gap-2">
-                      <input type="text" inputMode="decimal" value={building.eaveHeight ?? ''} onChange={(e) => { const val = e.target.value.replace(/[^0-9.]/g, ''); onUpdate({ eaveHeight: val ? Number(val) : null }); }} placeholder="24" className="w-full px-3 py-2 border border-light-border dark:border-harken-gray rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan dark:focus:ring-cyan-400 focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white" />
+                      <input type="text" inputMode="decimal" value={building.eaveHeight ?? ''} onChange={(e) => { const val = e.target.value.replace(/[^0-9.]/g, ''); onUpdate({ eaveHeight: val ? Number(val) : null }); }} placeholder="24" className="w-full px-3 py-2 border border-light-border dark:border-dark-border rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan dark:focus:ring-cyan-400 focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white" />
                       <span className="text-xs font-medium text-harken-gray-med dark:text-slate-400">ft</span>
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-harken-gray mb-1.5">Clear Height *</label>
+                    <label className="block text-xs font-medium text-harken-gray dark:text-slate-400 mb-1.5">Clear Height *</label>
                     <div className="flex items-center gap-2">
-                      <input type="text" inputMode="decimal" value={building.clearHeight ?? ''} onChange={(e) => { const val = e.target.value.replace(/[^0-9.]/g, ''); onUpdate({ clearHeight: val ? Number(val) : null }); }} placeholder="22" className="w-full px-3 py-2 border border-light-border dark:border-harken-gray rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan dark:focus:ring-cyan-400 focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white" />
+                      <input type="text" inputMode="decimal" value={building.clearHeight ?? ''} onChange={(e) => { const val = e.target.value.replace(/[^0-9.]/g, ''); onUpdate({ clearHeight: val ? Number(val) : null }); }} placeholder="22" className="w-full px-3 py-2 border border-light-border dark:border-dark-border rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan dark:focus:ring-cyan-400 focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white" />
                       <span className="text-xs font-medium text-harken-gray-med dark:text-slate-400">ft</span>
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-harken-gray mb-1.5">Ridge Height</label>
+                    <label className="block text-xs font-medium text-harken-gray dark:text-slate-400 mb-1.5">Ridge Height</label>
                     <div className="flex items-center gap-2">
-                      <input type="text" inputMode="decimal" value={building.ridgeHeight ?? ''} onChange={(e) => { const val = e.target.value.replace(/[^0-9.]/g, ''); onUpdate({ ridgeHeight: val ? Number(val) : null }); }} placeholder="32" className="w-full px-3 py-2 border border-light-border dark:border-harken-gray rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan dark:focus:ring-cyan-400 focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white" />
+                      <input type="text" inputMode="decimal" value={building.ridgeHeight ?? ''} onChange={(e) => { const val = e.target.value.replace(/[^0-9.]/g, ''); onUpdate({ ridgeHeight: val ? Number(val) : null }); }} placeholder="32" className="w-full px-3 py-2 border border-light-border dark:border-dark-border rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan dark:focus:ring-cyan-400 focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white" />
                       <span className="text-xs font-medium text-harken-gray-med dark:text-slate-400">ft</span>
                     </div>
                   </div>
@@ -777,13 +777,13 @@ function BuildingCard({
 
                 {/* Building Configuration */}
                 <div>
-                  <label className="block text-xs font-medium text-harken-gray mb-2">Building Configuration</label>
+                  <label className="block text-xs font-medium text-harken-gray dark:text-slate-400 mb-2">Building Configuration</label>
                   <div className="flex flex-wrap gap-2">
                     {BUILDING_CONFIGS.map((config) => {
                       const Icon = config.Icon;
                       const isSelected = building.buildingConfiguration === config.value;
                       return (
-                        <button key={config.value} type="button" onClick={() => onUpdate({ buildingConfiguration: config.value as ImprovementBuilding['buildingConfiguration'] })} className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 text-sm font-medium transition-all ${isSelected ? 'border-accent-cyan bg-accent-cyan/10 text-accent-cyan' : 'border-light-border bg-surface-1 text-harken-gray hover:border-accent-cyan/50'}`}>
+                        <button key={config.value} type="button" onClick={() => onUpdate({ buildingConfiguration: config.value as ImprovementBuilding['buildingConfiguration'] })} className={`flex items-center gap-2 px-4 py-2 rounded-lg border-2 text-sm font-medium transition-all ${isSelected ? 'border-accent-cyan bg-accent-cyan/10 text-accent-cyan' : 'border-light-border dark:border-dark-border bg-surface-1 dark:bg-elevation-1 text-harken-gray dark:text-slate-300 hover:border-accent-cyan/50'}`}>
                           <Icon className="w-4 h-4" />
                           {config.label}
                         </button>
@@ -794,20 +794,20 @@ function BuildingCard({
 
                 {/* Variable Height Zones */}
                 {building.buildingConfiguration === 'variable' && (
-                  <div className="bg-surface-1 border border-light-border rounded-xl p-4">
+                  <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-4">
                     <div className="flex items-center justify-between mb-3">
                       <div>
                         <div className="text-sm font-semibold text-harken-dark dark:text-white">Height Zones</div>
-                        <div className="text-xs text-harken-gray-med mt-0.5">Use zones when clear height differs across bays/areas.</div>
+                        <div className="text-xs text-harken-gray-med dark:text-slate-400 mt-0.5">Use zones when clear height differs across bays/areas.</div>
                       </div>
-                      <button type="button" onClick={() => { const zones = building.heightZones || []; const newZone = { id: `zone-${Date.now()}`, label: `Zone ${zones.length + 1}`, clearHeight: null, eaveHeight: null, ridgeHeight: null }; onUpdate({ heightZones: [...zones, newZone] }); }} className="px-3 py-1.5 rounded-lg bg-surface-1 border border-light-border text-xs font-semibold text-harken-gray hover:bg-harken-gray-light transition-all">
+                      <button type="button" onClick={() => { const zones = building.heightZones || []; const newZone = { id: `zone-${Date.now()}`, label: `Zone ${zones.length + 1}`, clearHeight: null, eaveHeight: null, ridgeHeight: null }; onUpdate({ heightZones: [...zones, newZone] }); }} className="px-3 py-1.5 rounded-lg bg-surface-1 dark:bg-elevation-2 border border-light-border dark:border-dark-border text-xs font-semibold text-harken-gray dark:text-slate-300 hover:bg-harken-gray-light dark:hover:bg-elevation-3 transition-all">
                         + Add Zone
                       </button>
                     </div>
 
-                    <div className="overflow-x-auto border border-light-border rounded-lg">
+                    <div className="overflow-x-auto border border-light-border dark:border-dark-border rounded-lg">
                       <table className="min-w-full text-sm">
-                        <thead className="bg-harken-gray-light dark:bg-elevation-1 border-b border-light-border dark:border-harken-gray">
+                        <thead className="bg-harken-gray-light dark:bg-elevation-2 border-b border-light-border dark:border-dark-border">
                           <tr className="text-left text-xs font-semibold text-harken-gray dark:text-slate-400">
                             <th className="px-4 py-3 w-48">Zone</th>
                             <th className="px-4 py-3 w-32">Clear (ft) *</th>
@@ -816,17 +816,17 @@ function BuildingCard({
                             <th className="px-4 py-3 w-16"></th>
                           </tr>
                         </thead>
-                        <tbody className="divide-y divide-harken-gray-light">
+                        <tbody className="divide-y divide-harken-gray-light dark:divide-dark-border bg-surface-1 dark:bg-elevation-1">
                           {(building.heightZones || []).length === 0 ? (
-                            <tr><td colSpan={5} className="px-4 py-6 text-center text-harken-gray-med text-sm">No zones added. Click &quot;+ Add Zone&quot; to create height zones.</td></tr>
+                            <tr><td colSpan={5} className="px-4 py-6 text-center text-harken-gray-med dark:text-slate-400 text-sm">No zones added. Click &quot;+ Add Zone&quot; to create height zones.</td></tr>
                           ) : (
                             (building.heightZones || []).map((zone, zoneIndex) => (
-                              <tr key={zone.id} onClick={() => setActiveZoneIndex(zoneIndex)} className={`cursor-pointer transition-all ${activeZoneIndex === zoneIndex ? 'bg-accent-cyan/5 ring-2 ring-inset ring-accent-cyan' : 'hover:bg-harken-gray-light'}`}>
-                                <td className="px-4 py-2"><input type="text" className="w-full px-3 py-2 border border-light-border rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent" placeholder="e.g., Warehouse" value={zone.label} onFocus={() => setActiveZoneIndex(zoneIndex)} onChange={(e) => { const zones = [...(building.heightZones || [])]; zones[zoneIndex] = { ...zones[zoneIndex], label: e.target.value }; onUpdate({ heightZones: zones }); }} /></td>
-                                <td className="px-4 py-2"><input type="text" inputMode="decimal" className="w-full px-3 py-2 border border-light-border rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent" placeholder="22" value={zone.clearHeight ?? ''} onFocus={() => setActiveZoneIndex(zoneIndex)} onChange={(e) => { const zones = [...(building.heightZones || [])]; const val = e.target.value.replace(/[^0-9.]/g, ''); zones[zoneIndex] = { ...zones[zoneIndex], clearHeight: val ? parseFloat(val) : null }; onUpdate({ heightZones: zones }); }} /></td>
-                                <td className="px-4 py-2"><input type="text" inputMode="decimal" className="w-full px-3 py-2 border border-light-border rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent" placeholder="24" value={zone.eaveHeight ?? ''} onFocus={() => setActiveZoneIndex(zoneIndex)} onChange={(e) => { const zones = [...(building.heightZones || [])]; const val = e.target.value.replace(/[^0-9.]/g, ''); zones[zoneIndex] = { ...zones[zoneIndex], eaveHeight: val ? parseFloat(val) : null }; onUpdate({ heightZones: zones }); }} /></td>
-                                <td className="px-4 py-2"><input type="text" inputMode="decimal" className="w-full px-3 py-2 border border-light-border rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent" placeholder="32" value={zone.ridgeHeight ?? ''} onFocus={() => setActiveZoneIndex(zoneIndex)} onChange={(e) => { const zones = [...(building.heightZones || [])]; const val = e.target.value.replace(/[^0-9.]/g, ''); zones[zoneIndex] = { ...zones[zoneIndex], ridgeHeight: val ? parseFloat(val) : null }; onUpdate({ heightZones: zones }); }} /></td>
-                                <td className="px-4 py-2 text-right"><button type="button" onClick={(e) => { e.stopPropagation(); const zones = (building.heightZones || []).filter((_, i) => i !== zoneIndex); onUpdate({ heightZones: zones }); if (activeZoneIndex === zoneIndex) setActiveZoneIndex(null); }} className="p-2 rounded-lg border border-light-border bg-surface-1 text-harken-gray-med hover:bg-accent-red-light hover:border-harken-error/30 hover:text-harken-error transition-all"><Trash2 className="w-4 h-4" /></button></td>
+                              <tr key={zone.id} onClick={() => setActiveZoneIndex(zoneIndex)} className={`cursor-pointer transition-all ${activeZoneIndex === zoneIndex ? 'bg-accent-cyan/5 ring-2 ring-inset ring-accent-cyan' : 'hover:bg-harken-gray-light dark:hover:bg-elevation-2'}`}>
+                                <td className="px-4 py-2"><input type="text" className="w-full px-3 py-2 border border-light-border dark:border-dark-border rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white" placeholder="e.g., Warehouse" value={zone.label} onFocus={() => setActiveZoneIndex(zoneIndex)} onChange={(e) => { const zones = [...(building.heightZones || [])]; zones[zoneIndex] = { ...zones[zoneIndex], label: e.target.value }; onUpdate({ heightZones: zones }); }} /></td>
+                                <td className="px-4 py-2"><input type="text" inputMode="decimal" className="w-full px-3 py-2 border border-light-border dark:border-dark-border rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white" placeholder="22" value={zone.clearHeight ?? ''} onFocus={() => setActiveZoneIndex(zoneIndex)} onChange={(e) => { const zones = [...(building.heightZones || [])]; const val = e.target.value.replace(/[^0-9.]/g, ''); zones[zoneIndex] = { ...zones[zoneIndex], clearHeight: val ? parseFloat(val) : null }; onUpdate({ heightZones: zones }); }} /></td>
+                                <td className="px-4 py-2"><input type="text" inputMode="decimal" className="w-full px-3 py-2 border border-light-border dark:border-dark-border rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white" placeholder="24" value={zone.eaveHeight ?? ''} onFocus={() => setActiveZoneIndex(zoneIndex)} onChange={(e) => { const zones = [...(building.heightZones || [])]; const val = e.target.value.replace(/[^0-9.]/g, ''); zones[zoneIndex] = { ...zones[zoneIndex], eaveHeight: val ? parseFloat(val) : null }; onUpdate({ heightZones: zones }); }} /></td>
+                                <td className="px-4 py-2"><input type="text" inputMode="decimal" className="w-full px-3 py-2 border border-light-border dark:border-dark-border rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white" placeholder="32" value={zone.ridgeHeight ?? ''} onFocus={() => setActiveZoneIndex(zoneIndex)} onChange={(e) => { const zones = [...(building.heightZones || [])]; const val = e.target.value.replace(/[^0-9.]/g, ''); zones[zoneIndex] = { ...zones[zoneIndex], ridgeHeight: val ? parseFloat(val) : null }; onUpdate({ heightZones: zones }); }} /></td>
+                                <td className="px-4 py-2 text-right"><button type="button" onClick={(e) => { e.stopPropagation(); const zones = (building.heightZones || []).filter((_, i) => i !== zoneIndex); onUpdate({ heightZones: zones }); if (activeZoneIndex === zoneIndex) setActiveZoneIndex(null); }} className="p-2 rounded-lg border border-light-border dark:border-dark-border bg-surface-1 dark:bg-elevation-1 text-harken-gray-med hover:bg-accent-red-light hover:border-harken-error/30 hover:text-harken-error transition-all"><Trash2 className="w-4 h-4" /></button></td>
                               </tr>
                             ))
                           )}
@@ -846,7 +846,7 @@ function BuildingCard({
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {HEIGHT_PRESETS.map((preset) => (
-                      <button key={preset.label} type="button" onClick={() => applyHeightPreset(preset)} disabled={building.buildingConfiguration === 'variable' && activeZoneIndex === null} className={`px-3 py-1.5 rounded-full bg-surface-1 border text-xs font-medium transition-all ${building.buildingConfiguration === 'variable' && activeZoneIndex === null ? 'border-light-border text-harken-gray-med cursor-not-allowed' : 'border-light-border text-harken-gray hover:bg-accent-cyan/5 hover:border-accent-cyan/30 hover:text-accent-cyan'}`}>
+                      <button key={preset.label} type="button" onClick={() => applyHeightPreset(preset)} disabled={building.buildingConfiguration === 'variable' && activeZoneIndex === null} className={`px-3 py-1.5 rounded-full bg-surface-1 dark:bg-elevation-1 border text-xs font-medium transition-all ${building.buildingConfiguration === 'variable' && activeZoneIndex === null ? 'border-light-border dark:border-dark-border text-harken-gray-med dark:text-slate-500 cursor-not-allowed' : 'border-light-border dark:border-dark-border text-harken-gray dark:text-slate-300 hover:bg-accent-cyan/5 hover:border-accent-cyan/30 hover:text-accent-cyan'}`}>
                         {preset.label} ({preset.eave}&apos;/{preset.clear}&apos;/{preset.ridge}&apos;)
                       </button>
                     ))}
@@ -1012,10 +1012,10 @@ function AgeEconomicLifeSection({ building, actualAge, remainingLife, depreciati
   return (
     <div className="space-y-4">
       <div className="grid grid-cols-4 gap-3">
-        <div><label className="block text-xs font-medium text-harken-gray mb-1.5">Actual Age</label><div className="flex items-center gap-2"><input type="text" value={actualAge !== null ? actualAge : ''} readOnly placeholder="Auto" className="w-full px-3 py-2 border border-light-border dark:border-harken-gray rounded-lg text-sm bg-harken-gray-light dark:bg-elevation-1 text-harken-gray dark:text-slate-200" /><span className="text-xs text-harken-gray-med dark:text-slate-400">yrs</span></div></div>
-        <div><label className="block text-xs font-medium text-harken-gray mb-1.5">Effective Age</label><div className="flex items-center gap-2"><input type="number" value={building.effectiveAge ?? ''} onChange={(e) => onUpdate({ effectiveAge: e.target.value ? Number(e.target.value) : undefined })} placeholder={actualAge !== null ? `Suggest: ${actualAge}` : 'Enter'} min="0" className="w-full px-3 py-2 border border-light-border rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent" /><span className="text-xs text-harken-gray-med dark:text-slate-400">yrs</span></div></div>
-        <div><label className="block text-xs font-medium text-harken-gray mb-1.5">Total Economic Life</label><div className="flex items-center gap-2"><input type="number" value={building.totalEconomicLife ?? 50} onChange={(e) => onUpdate({ totalEconomicLife: e.target.value ? Number(e.target.value) : 50 })} min="1" className="w-full px-3 py-2 border border-light-border rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent" /><span className="text-xs text-harken-gray-med dark:text-slate-400">yrs</span></div></div>
-        <div><label className="block text-xs font-medium text-harken-gray mb-1.5">Remaining Life</label><div className="flex items-center gap-2"><input type="text" value={remainingLife !== null ? remainingLife : ''} readOnly placeholder="Auto" className="w-full px-3 py-2 border border-light-border dark:border-harken-gray rounded-lg text-sm bg-harken-gray-light dark:bg-elevation-1 text-harken-gray dark:text-slate-200" /><span className="text-xs text-harken-gray-med dark:text-slate-400">yrs</span></div></div>
+        <div><label className="block text-xs font-medium text-harken-gray dark:text-slate-400 mb-1.5">Actual Age</label><div className="flex items-center gap-2"><input type="text" value={actualAge !== null ? actualAge : ''} readOnly placeholder="Auto" className="w-full px-3 py-2 border border-light-border dark:border-dark-border rounded-lg text-sm bg-harken-gray-light dark:bg-elevation-2 text-harken-gray dark:text-slate-200" /><span className="text-xs text-harken-gray-med dark:text-slate-400">yrs</span></div></div>
+        <div><label className="block text-xs font-medium text-harken-gray dark:text-slate-400 mb-1.5">Effective Age</label><div className="flex items-center gap-2"><input type="number" value={building.effectiveAge ?? ''} onChange={(e) => onUpdate({ effectiveAge: e.target.value ? Number(e.target.value) : undefined })} placeholder={actualAge !== null ? `Suggest: ${actualAge}` : 'Enter'} min="0" className="w-full px-3 py-2 border border-light-border dark:border-dark-border rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white" /><span className="text-xs text-harken-gray-med dark:text-slate-400">yrs</span></div></div>
+        <div><label className="block text-xs font-medium text-harken-gray dark:text-slate-400 mb-1.5">Total Economic Life</label><div className="flex items-center gap-2"><input type="number" value={building.totalEconomicLife ?? 50} onChange={(e) => onUpdate({ totalEconomicLife: e.target.value ? Number(e.target.value) : 50 })} min="1" className="w-full px-3 py-2 border border-light-border dark:border-dark-border rounded-lg text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white" /><span className="text-xs text-harken-gray-med dark:text-slate-400">yrs</span></div></div>
+        <div><label className="block text-xs font-medium text-harken-gray dark:text-slate-400 mb-1.5">Remaining Life</label><div className="flex items-center gap-2"><input type="text" value={remainingLife !== null ? remainingLife : ''} readOnly placeholder="Auto" className="w-full px-3 py-2 border border-light-border dark:border-dark-border rounded-lg text-sm bg-harken-gray-light dark:bg-elevation-2 text-harken-gray dark:text-slate-200" /><span className="text-xs text-harken-gray-med dark:text-slate-400">yrs</span></div></div>
       </div>
 
       <div className="p-4 bg-surface-1 dark:bg-elevation-1 border-2 border-accent-cyan/20 rounded-xl">
@@ -1028,18 +1028,18 @@ function AgeEconomicLifeSection({ building, actualAge, remainingLife, depreciati
         </div>
       </div>
 
-      <button type="button" onClick={() => setShowCalculator(!showCalculator)} className="w-full flex items-center justify-between p-3 bg-harken-gray-light hover:bg-harken-gray-light rounded-xl border border-light-border transition-colors">
+      <button type="button" onClick={() => setShowCalculator(!showCalculator)} className="w-full flex items-center justify-between p-3 bg-harken-gray-light dark:bg-elevation-2 hover:bg-harken-gray-light dark:hover:bg-elevation-3 rounded-xl border border-light-border dark:border-dark-border transition-colors">
         <div className="flex items-center gap-2"><Calculator className="w-5 h-5 text-accent-cyan" /><span className="font-medium text-harken-gray dark:text-slate-200">Need help? Use the Effective Age Calculator</span></div>
         <ChevronDown className={`w-5 h-5 text-harken-gray-med transition-transform ${showCalculator ? 'rotate-180' : ''}`} />
       </button>
 
       {showCalculator && (
         <div className="mt-3 p-5 bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl shadow-sm space-y-5">
-          <div><label className="block text-sm font-semibold text-harken-dark mb-2">1. Construction Quality - Sets Economic Life</label><div className="grid grid-cols-3 gap-3">{qualityOptions.map((opt) => (<button key={opt.value} type="button" onClick={() => setCalcQuality(opt.value)} className={`p-3 rounded-lg border-2 text-center transition-all ${calcQuality === opt.value ? 'border-accent-cyan bg-accent-cyan/10' : 'border-light-border hover:border-light-border'}`}><span className="block font-medium text-harken-dark dark:text-white">{opt.label}</span><span className="block text-xs text-harken-gray-med dark:text-slate-400">{opt.desc}</span></button>))}</div></div>
-          <div><label className="block text-sm font-semibold text-harken-dark mb-2">2. Current Condition - Adjusts Effective Age</label><div className="grid grid-cols-5 gap-2">{conditionOptions.map((opt) => (<button key={opt.value} type="button" onClick={() => setCalcCondition(opt.value)} className={`p-2 rounded-lg border-2 text-center transition-all ${calcCondition === opt.value ? 'border-accent-cyan bg-accent-cyan/10' : 'border-light-border hover:border-light-border'}`}><span className="block font-medium text-sm text-harken-dark dark:text-white">{opt.label}</span><span className={`block text-xs ${opt.color}`}>{formatAdjustment(opt.adjustment)}</span></button>))}</div></div>
-          <div><label className="block text-sm font-semibold text-harken-dark mb-2">3. Remodeling Impact - Further Adjustment</label><div className="grid grid-cols-4 gap-2">{remodelOptions.map((opt) => (<button key={opt.value} type="button" onClick={() => setCalcRemodel(opt.value)} className={`p-2 rounded-lg border-2 text-center transition-all ${calcRemodel === opt.value ? 'border-accent-cyan bg-accent-cyan/10' : 'border-light-border hover:border-light-border'}`}><span className="block font-medium text-sm text-harken-dark dark:text-white">{opt.label}</span><span className={`block text-xs ${opt.color}`}>{formatAdjustment(opt.adjustment)}</span></button>))}</div></div>
-          <div className="bg-accent-cyan/5 rounded-xl p-4 border border-accent-cyan/20">
-            <div className="grid grid-cols-3 gap-4 text-center"><div><p className="text-xs text-harken-gray-med uppercase mb-1">Economic Life</p><p className="text-xl font-bold text-harken-dark dark:text-white">{calcEconomicLife !== null ? calcEconomicLife : '--'}</p><p className="text-xs text-harken-gray-med">years</p></div><div><p className="text-xs text-harken-gray-med uppercase mb-1">Effective Age</p><p className="text-xl font-bold text-accent-cyan">{calcEffectiveAge !== null ? calcEffectiveAge : '--'}</p><p className="text-xs text-harken-gray-med">years</p></div><div><p className="text-xs text-harken-gray-med uppercase mb-1">Depreciation</p><p className="text-xl font-bold text-harken-dark dark:text-white">{calcDepreciation !== null ? `${calcDepreciation}%` : '--%'}</p></div></div>
+          <div><label className="block text-sm font-semibold text-harken-dark dark:text-white mb-2">1. Construction Quality - Sets Economic Life</label><div className="grid grid-cols-3 gap-3">{qualityOptions.map((opt) => (<button key={opt.value} type="button" onClick={() => setCalcQuality(opt.value)} className={`p-3 rounded-lg border-2 text-center transition-all ${calcQuality === opt.value ? 'border-accent-cyan bg-accent-cyan/10' : 'border-light-border dark:border-dark-border bg-surface-1 dark:bg-elevation-1 hover:border-light-border dark:hover:border-harken-gray'}`}><span className="block font-medium text-harken-dark dark:text-white">{opt.label}</span><span className="block text-xs text-harken-gray-med dark:text-slate-400">{opt.desc}</span></button>))}</div></div>
+          <div><label className="block text-sm font-semibold text-harken-dark dark:text-white mb-2">2. Current Condition - Adjusts Effective Age</label><div className="grid grid-cols-5 gap-2">{conditionOptions.map((opt) => (<button key={opt.value} type="button" onClick={() => setCalcCondition(opt.value)} className={`p-2 rounded-lg border-2 text-center transition-all ${calcCondition === opt.value ? 'border-accent-cyan bg-accent-cyan/10' : 'border-light-border dark:border-dark-border bg-surface-1 dark:bg-elevation-1 hover:border-light-border dark:hover:border-harken-gray'}`}><span className="block font-medium text-sm text-harken-dark dark:text-white">{opt.label}</span><span className={`block text-xs ${opt.color}`}>{formatAdjustment(opt.adjustment)}</span></button>))}</div></div>
+          <div><label className="block text-sm font-semibold text-harken-dark dark:text-white mb-2">3. Remodeling Impact - Further Adjustment</label><div className="grid grid-cols-4 gap-2">{remodelOptions.map((opt) => (<button key={opt.value} type="button" onClick={() => setCalcRemodel(opt.value)} className={`p-2 rounded-lg border-2 text-center transition-all ${calcRemodel === opt.value ? 'border-accent-cyan bg-accent-cyan/10' : 'border-light-border dark:border-dark-border bg-surface-1 dark:bg-elevation-1 hover:border-light-border dark:hover:border-harken-gray'}`}><span className="block font-medium text-sm text-harken-dark dark:text-white">{opt.label}</span><span className={`block text-xs ${opt.color}`}>{formatAdjustment(opt.adjustment)}</span></button>))}</div></div>
+          <div className="bg-accent-cyan/5 dark:bg-accent-cyan/10 rounded-xl p-4 border border-accent-cyan/20">
+            <div className="grid grid-cols-3 gap-4 text-center"><div><p className="text-xs text-harken-gray-med dark:text-slate-400 uppercase mb-1">Economic Life</p><p className="text-xl font-bold text-harken-dark dark:text-white">{calcEconomicLife !== null ? calcEconomicLife : '--'}</p><p className="text-xs text-harken-gray-med dark:text-slate-400">years</p></div><div><p className="text-xs text-harken-gray-med dark:text-slate-400 uppercase mb-1">Effective Age</p><p className="text-xl font-bold text-accent-cyan">{calcEffectiveAge !== null ? calcEffectiveAge : '--'}</p><p className="text-xs text-harken-gray-med dark:text-slate-400">years</p></div><div><p className="text-xs text-harken-gray-med dark:text-slate-400 uppercase mb-1">Depreciation</p><p className="text-xl font-bold text-harken-dark dark:text-white">{calcDepreciation !== null ? `${calcDepreciation}%` : '--%'}</p></div></div>
             <button type="button" onClick={applyCalculatedValues} disabled={calcEconomicLife === null || calcEffectiveAge === null} className="mt-4 w-full py-2.5 bg-accent-cyan text-white rounded-lg font-medium hover:bg-accent-cyan-hover transition-colors disabled:opacity-50 disabled:cursor-not-allowed">Apply These Values</button>
           </div>
         </div>
@@ -1092,7 +1092,7 @@ function AreaCard({ area, canRemove, effectivePropertyType, onUpdate, onRemove }
             onClick={() => onUpdate({ hasMeasuredSF: true })}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 text-xs font-medium transition-all ${hasMeasuredSF
               ? 'border-accent-cyan bg-accent-cyan/10 text-accent-cyan'
-              : 'border-light-border bg-surface-1 text-harken-gray-med hover:border-light-border'
+              : 'border-light-border dark:border-dark-border bg-surface-1 dark:bg-elevation-1 text-harken-gray-med dark:text-slate-400 hover:border-light-border dark:hover:border-harken-gray'
               }`}
           >
             <Ruler className="w-3.5 h-3.5" />
@@ -1102,8 +1102,8 @@ function AreaCard({ area, canRemove, effectivePropertyType, onUpdate, onRemove }
             type="button"
             onClick={() => onUpdate({ hasMeasuredSF: false, squareFootage: null })}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg border-2 text-xs font-medium transition-all ${!hasMeasuredSF
-              ? 'border-accent-amber-gold bg-accent-amber-gold-light text-accent-amber-gold'
-              : 'border-light-border bg-surface-1 text-harken-gray-med hover:border-light-border'
+              ? 'border-accent-amber-gold bg-accent-amber-gold-light dark:bg-accent-amber-gold/20 text-accent-amber-gold'
+              : 'border-light-border dark:border-dark-border bg-surface-1 dark:bg-elevation-1 text-harken-gray-med dark:text-slate-400 hover:border-light-border dark:hover:border-harken-gray'
               }`}
           >
             <EyeOff className="w-3.5 h-3.5" />
