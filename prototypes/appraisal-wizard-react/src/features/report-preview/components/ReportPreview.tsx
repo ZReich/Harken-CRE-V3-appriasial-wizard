@@ -174,7 +174,15 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
         case 'letter':
           return <LetterPage content={page.content} title={page.title} {...commonProps} />;
         case 'toc':
-          return <TOCPage entries={toc} title={page.title} {...commonProps} />;
+          return (
+            <TOCPage 
+              entries={toc} 
+              title={page.title} 
+              pageIndex={(page as unknown as { tocPageIndex?: number }).tocPageIndex || 0}
+              totalTocPages={(page as unknown as { totalTocPages?: number }).totalTocPages || 1}
+              {...commonProps} 
+            />
+          );
         case 'summary-table':
           return <SummaryPage content={page.content} title={page.title} {...commonProps} />;
         case 'narrative':

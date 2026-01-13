@@ -91,15 +91,13 @@ export function useReportBuilder(
     }
 
     // =================================================================
-    // 3. TABLE OF CONTENTS (placeholder - populated after all pages)
+    // 3. TABLE OF CONTENTS (placeholder - pages added after all entries known)
     // =================================================================
-    addPage({
-      id: 'toc-page',
-      layout: 'toc',
-      sectionId: 'toc',
-      title: 'Table of Contents',
-      content: [],
-    });
+    // TOC pages will be inserted here after we know how many entries there are
+    const tocPageInsertIndex = pages.length;
+    const tocStartPageNumber = currentPageNumber;
+    // Reserve space for at least one TOC page
+    currentPageNumber += 1;
 
     // =================================================================
     // 4. SUMMARY OF APPRAISAL
@@ -562,6 +560,51 @@ export function useReportBuilder(
       // Comp detail pages (if any)
       // ... additional addenda items
     }
+
+    // =================================================================
+    // FINAL STEP: Generate TOC pages now that we know all entries
+    // =================================================================
+    const MAX_TOC_ENTRIES_PER_PAGE = 22;
+    const totalTocEntries = tocEntries.length + tocEntries.reduce((sum, e) => sum + (e.children?.length || 0), 0);
+    const numTocPages = Math.ceil(totalTocEntries / MAX_TOC_ENTRIES_PER_PAGE);
+    
+    // If we need more than 1 TOC page, adjust page numbers for all subsequent pages
+    if (numTocPages > 1) {
+      const additionalPages = numTocPages - 1;
+      // Update page numbers in pages array
+      for (let i = tocPageInsertIndex; i < pages.length; i++) {
+        if (pages[i].pageNumber) {
+          pages[i].pageNumber = (pages[i].pageNumber as number) + additionalPages;
+        }
+      }
+      // Update TOC entry page numbers
+      tocEntries.forEach(entry => {
+        entry.pageNumber += additionalPages;
+      });
+      // Update section page map
+      Object.keys(sectionPageMap).forEach(key => {
+        sectionPageMap[key] += additionalPages;
+      });
+      currentPageNumber += additionalPages;
+    }
+    
+    // Insert TOC pages at the reserved position
+    const tocPages: ReportPage[] = [];
+    for (let i = 0; i < numTocPages; i++) {
+      tocPages.push({
+        id: `toc-page-${i}`,
+        layout: 'toc',
+        sectionId: 'toc',
+        title: 'Table of Contents',
+        pageNumber: tocStartPageNumber + i,
+        content: [],
+        tocPageIndex: i,
+        totalTocPages: numTocPages,
+      } as ReportPage & { tocPageIndex: number; totalTocPages: number });
+    }
+    
+    // Insert TOC pages at the correct position
+    pages.splice(tocPageInsertIndex, 0, ...tocPages);
 
     return {
       pages,
