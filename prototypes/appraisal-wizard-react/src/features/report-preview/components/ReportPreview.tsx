@@ -23,6 +23,8 @@ import {
   AnalysisGridPage,
   AddendaHeaderPage,
   DemographicsPage,
+  DemographicsOverviewPage,
+  DemographicsDetailPage,
   EconomicContextPage,
   SWOTPage,
   RiskRatingPage,
@@ -213,6 +215,7 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
           );
         }
         case 'demographics': {
+          // Legacy single-page demographics
           const demoContent = page.content?.[0]?.content as { 
             demographics?: import('../../../types').DemographicsData;
             latitude?: number;
@@ -225,6 +228,38 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
               asOfDate={demoContent?.demographics?.dataPullDate}
               latitude={demoContent?.latitude}
               longitude={demoContent?.longitude}
+              pageNumber={page.pageNumber}
+            />
+          );
+        }
+        case 'demographics-overview': {
+          // Page 1: Large map + key demographic highlights
+          const demoContent = page.content?.[0]?.content as { 
+            demographics?: import('../../../types').DemographicsData;
+            latitude?: number;
+            longitude?: number;
+          };
+          return (
+            <DemographicsOverviewPage
+              data={demoContent?.demographics?.radiusAnalysis ?? []}
+              source={demoContent?.demographics?.dataSource}
+              asOfDate={demoContent?.demographics?.dataPullDate}
+              latitude={demoContent?.latitude}
+              longitude={demoContent?.longitude}
+              pageNumber={page.pageNumber}
+            />
+          );
+        }
+        case 'demographics-detail': {
+          // Page 2: Detailed data tables
+          const demoContent = page.content?.[0]?.content as { 
+            demographics?: import('../../../types').DemographicsData;
+          };
+          return (
+            <DemographicsDetailPage
+              data={demoContent?.demographics?.radiusAnalysis ?? []}
+              source={demoContent?.demographics?.dataSource}
+              asOfDate={demoContent?.demographics?.dataPullDate}
               pageNumber={page.pageNumber}
             />
           );
