@@ -6,7 +6,8 @@
  * rather than only in the addendum. Supports drag-drop and click-to-assign.
  */
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { Image, Plus, X, Crop, RotateCw } from 'lucide-react';
 import type { PhotoSlotConfig, InlinePhotoPlacement, PhotoAspectRatio } from '../types';
 import type { ReportPhotoData } from '../../../types';
@@ -75,17 +76,51 @@ function PhotoPickerModal({
   categoryFilter,
   slotLabel,
 }: PhotoPickerModalProps) {
-  if (!isOpen) return null;
+  // Use portal to render at document root - avoids scrolling/positioning issues
+  const [portalRoot, setPortalRoot] = useState<HTMLElement | null>(null);
+
+  useEffect(() => {
+    setPortalRoot(document.body);
+  }, []);
+
+  // Handle escape key to close
+  useEffect(() => {
+    if (!isOpen) return;
+    
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    
+    document.addEventListener('keydown', handleEscape);
+    // Prevent body scroll when modal is open
+    document.body.style.overflow = 'hidden';
+    
+    return () => {
+      document.removeEventListener('keydown', handleEscape);
+      document.body.style.overflow = '';
+    };
+  }, [isOpen, onClose]);
+
+  if (!isOpen || !portalRoot) return null;
 
   const filteredPhotos = categoryFilter
     ? photos.filter(p => p.category?.toLowerCase().includes(categoryFilter.toLowerCase()))
     : photos;
 
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div className="bg-surface-1 dark:bg-elevation-2 rounded-xl shadow-2xl max-w-3xl w-full max-h-[80vh] flex flex-col">
+  const modalContent = (
+    <div 
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-sm"
+      onClick={(e) => {
+        // Close when clicking backdrop
+        if (e.target === e.currentTarget) onClose();
+      }}
+    >
+      <div 
+        className="bg-surface-1 dark:bg-elevation-2 rounded-xl shadow-2xl max-w-3xl w-full mx-4 max-h-[80vh] flex flex-col"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
-        <div className="flex items-center justify-between px-6 py-4 border-b border-light-border dark:border-dark-border">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-light-border dark:border-dark-border flex-shrink-0">
           <div>
             <h3 className="text-lg font-semibold text-harken-dark dark:text-white">
               Select Photo
@@ -105,7 +140,7 @@ function PhotoPickerModal({
         </div>
 
         {/* Photo Grid */}
-        <div className="flex-1 overflow-auto p-6">
+        <div className="flex-1 overflow-auto p-6 min-h-0">
           {filteredPhotos.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-12 text-harken-gray-med">
               <Image className="w-12 h-12 mb-4 opacity-50" />
@@ -113,6 +148,9 @@ function PhotoPickerModal({
                 {categoryFilter
                   ? `No ${categoryFilter} photos available`
                   : 'No photos available'}
+              </p>
+              <p className="text-xs mt-2 text-harken-gray-med-lt">
+                Upload photos in the Documents step to use them here
               </p>
             </div>
           ) : (
@@ -150,7 +188,7 @@ function PhotoPickerModal({
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-4 border-t border-light-border dark:border-dark-border flex justify-end">
+        <div className="px-6 py-4 border-t border-light-border dark:border-dark-border flex justify-end flex-shrink-0">
           <button
             onClick={onClose}
             className="px-4 py-2 rounded-lg text-sm font-medium text-harken-gray hover:bg-harken-gray-light dark:hover:bg-elevation-3 transition-colors"
@@ -161,6 +199,9 @@ function PhotoPickerModal({
       </div>
     </div>
   );
+
+  // Use portal to render at document root
+  return createPortal(modalContent, portalRoot);
 }
 
 // =================================================================
