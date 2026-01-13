@@ -333,25 +333,25 @@ export function ValueReconciliation() {
   return (
     <div className="max-w-6xl mx-auto space-y-6 animate-fade-in">
       {/* Summary Header Card - Simplified */}
-      <div className="bg-gradient-to-r from-[#4db8d1] to-[#7fcce0] rounded-xl p-8 text-white shadow-lg">
+      <div className="bg-gradient-to-r from-accent-cyan to-accent-cyan-hover dark:from-accent-cyan/90 dark:to-accent-cyan-hover/80 rounded-xl p-8 text-white shadow-lg">
         <div className="flex items-center justify-between mb-6">
           <div>
             <h2 className="text-3xl font-bold mb-2">{propertyName}</h2>
-            <p className="text-blue-100">{propertyLocation}</p>
+            <p className="text-cyan-50">{propertyLocation}</p>
           </div>
           <div className="text-right">
-            <div className="text-sm opacity-90 mb-1">Primary Value Conclusion</div>
+            <div className="text-sm text-white/90 mb-1">Primary Value Conclusion</div>
             <div className="text-4xl font-bold">{formatCurrency(getConcludedValue(scenarios[0]?.id || 1))}</div>
-            <div className="text-sm opacity-75 mt-1">{scenarios[0]?.effectiveDate || 'Effective Date TBD'}</div>
+            <div className="text-sm text-white/75 mt-1">{scenarios[0]?.effectiveDate || 'Effective Date TBD'}</div>
           </div>
         </div>
         <div className="grid grid-cols-2 gap-4">
-          <div className="bg-surface-1/10 rounded-lg p-3 backdrop-blur-sm">
-            <div className="text-xs opacity-75 mb-1">Property Type</div>
+          <div className="bg-white/10 dark:bg-white/5 rounded-lg p-3 backdrop-blur-sm">
+            <div className="text-xs text-white/75 mb-1">Property Type</div>
             <div className="font-semibold">{state.propertyType || 'Commercial'}</div>
           </div>
-          <div className="bg-surface-1/10 rounded-lg p-3 backdrop-blur-sm">
-            <div className="text-xs opacity-75 mb-1">Valuation Scenarios</div>
+          <div className="bg-white/10 dark:bg-white/5 rounded-lg p-3 backdrop-blur-sm">
+            <div className="text-xs text-white/75 mb-1">Valuation Scenarios</div>
             <div className="font-semibold">{scenarios.length} scenario{scenarios.length !== 1 ? 's' : ''}</div>
           </div>
         </div>
@@ -365,14 +365,14 @@ export function ValueReconciliation() {
         <div className="overflow-x-auto">
           <table className="w-full border-collapse">
             <thead>
-              <tr className="bg-gradient-to-r from-harken-gray-light to-harken-gray-light dark:from-harken-dark dark:to-harken-gray">
-                <th className="text-left px-4 py-3 font-semibold text-harken-gray dark:text-slate-200 border-b-2 border-light-border dark:border-harken-gray"></th>
+              <tr className="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-elevation-2 dark:to-elevation-3">
+                <th className="text-left px-4 py-3 font-semibold text-harken-gray dark:text-slate-200 border-b-2 border-light-border dark:border-dark-border"></th>
                 {scenarios.map((s, idx) => (
                   <th
                     key={s.id}
-                    className="text-center px-4 py-3 font-semibold text-harken-dark dark:text-white border-b-2 border-light-border dark:border-harken-gray"
+                    className="text-center px-4 py-3 font-semibold text-harken-dark dark:text-white border-b-2 border-light-border dark:border-dark-border"
                   >
-                    <span className={idx === 0 ? 'text-blue-600' : idx === 1 ? 'text-green-600' : 'text-purple-600'}>
+                    <span className={idx === 0 ? 'text-blue-600 dark:text-blue-400' : idx === 1 ? 'text-green-600 dark:text-green-400' : 'text-purple-600 dark:text-purple-400'}>
                       {s.name}
                     </span>
                   </th>
@@ -504,7 +504,7 @@ export function ValueReconciliation() {
           </h3>
           <button
             onClick={handleSuggestWeights}
-            className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-[#4db8d1] to-[#7fcce0] rounded-lg hover:from-[#3da8c1] hover:to-[#6fc0d4] flex items-center gap-2 transition-all shadow-sm"
+            className="px-4 py-2 text-sm font-medium text-white bg-gradient-to-r from-accent-cyan to-accent-cyan-hover hover:from-accent-cyan-hover hover:to-accent-cyan dark:from-accent-cyan dark:to-accent-cyan-hover rounded-lg flex items-center gap-2 transition-all shadow-sm"
           >
             <Sparkles className="w-4 h-4" />
             AI Suggest Weights
