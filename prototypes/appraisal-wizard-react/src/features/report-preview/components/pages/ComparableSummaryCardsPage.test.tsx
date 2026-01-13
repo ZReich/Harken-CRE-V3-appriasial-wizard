@@ -33,7 +33,8 @@ describe('ComparableSummaryCardsPage', () => {
     it('should render page header with approach title', () => {
       render(<ComparableSummaryCardsPage data={createPageData(1)} />);
       
-      expect(screen.getByText('Improved Sales Comparison')).toBeInTheDocument();
+      // Title appears twice: in ReportPageBase header and component's own header
+      expect(screen.getAllByText('Improved Sales Comparison').length).toBeGreaterThanOrEqual(1);
       expect(screen.getByText('As Is Valuation')).toBeInTheDocument();
     });
 
@@ -148,7 +149,8 @@ describe('ComparableSummaryCardsPage', () => {
       };
       render(<ComparableSummaryCardsPage data={landData} />);
       
-      expect(screen.getByText('Land Sales Comparison')).toBeInTheDocument();
+      // Title appears twice: in ReportPageBase header and component's own header
+      expect(screen.getAllByText('Land Sales Comparison').length).toBeGreaterThanOrEqual(1);
     });
   });
 
@@ -169,7 +171,8 @@ describe('ComparableSummaryCardsPage', () => {
       };
       render(<ComparableSummaryCardsPage data={rentData} />);
       
-      expect(screen.getByText('Rent Comparable Analysis')).toBeInTheDocument();
+      // Title appears twice: in ReportPageBase header and component's own header
+      expect(screen.getAllByText('Rent Comparable Analysis').length).toBeGreaterThanOrEqual(1);
     });
   });
 });

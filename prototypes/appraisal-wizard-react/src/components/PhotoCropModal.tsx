@@ -289,7 +289,7 @@ export function PhotoCropModal({
             <button
               onClick={handleApplyCrop}
               disabled={!completedCrop || isProcessing}
-              className="px-5 py-2.5 text-sm font-bold text-white bg-gradient-to-r from-accent-teal-mint to-[#0da1c7] rounded-lg hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2"
+              className="px-5 py-2.5 text-sm font-medium text-white bg-[#0da1c7] rounded-lg hover:bg-[#0890a8] disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
             >
               {isProcessing ? (
                 <>

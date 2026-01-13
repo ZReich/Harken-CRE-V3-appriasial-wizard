@@ -35,7 +35,7 @@
  * @see DEVELOPER_GUIDE.md for architecture decisions
  */
 
-import { useState, useMemo, useRef, useCallback, useEffect } from 'react';
+import { useState, useMemo, useRef, useCallback, useEffect, createContext, useContext } from 'react';
 import { useWizard } from '../../../context/WizardContext';
 import { 
   BASE_REPORT_SECTIONS, 
@@ -340,6 +340,7 @@ function SortableSectionItem({
                 value={noteText}
                 onChange={(e) => setNoteText(e.target.value)}
                 placeholder="Add a note for this section..."
+                style={{ color: '#0f172a', backgroundColor: '#ffffff' }}
                 className="w-full h-20 text-xs p-2 border border-slate-200 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/30 focus:border-[#0da1c7]"
               />
               <div className="flex gap-2 mt-2">
@@ -589,6 +590,14 @@ function PhotoSlot({ photo, placeholder, aspectRatio = 'auto', className = '', o
 // DATA-DRIVEN REPORT PAGE COMPONENTS
 // =================================================================
 
+// Grid Context for sharing grid settings across all pages
+interface GridContextType {
+  showGrid: boolean;
+  gridSize: number;
+}
+
+const GridContext = createContext<GridContextType>({ showGrid: false, gridSize: 16 });
+
 interface ReportPageWrapperProps {
   section: ReportSection;
   pageNumber: number;
@@ -597,6 +606,8 @@ interface ReportPageWrapperProps {
 }
 
 function ReportPageWrapper({ section, pageNumber, children, sidebarLabel }: ReportPageWrapperProps) {
+  const { showGrid, gridSize } = useContext(GridContext);
+  
   return (
     <div className="shadow-lg rounded-lg overflow-hidden" style={{ minHeight: '11in', width: '8.5in', backgroundColor: '#ffffff' }}>
       <div className="grid grid-cols-[80px_1fr]" style={{ minHeight: '11in' }}>
@@ -612,6 +623,19 @@ function ReportPageWrapper({ section, pageNumber, children, sidebarLabel }: Repo
 
         {/* Content */}
         <div className="relative">
+          {/* Per-Page Grid Overlay */}
+          {showGrid && (
+            <div 
+              className="absolute inset-0 pointer-events-none z-30"
+              style={{
+                backgroundImage: `
+                  linear-gradient(to right, rgba(13,161,199,0.12) 1px, transparent 1px),
+                  linear-gradient(to bottom, rgba(13,161,199,0.12) 1px, transparent 1px)
+                `,
+                backgroundSize: `${gridSize}px ${gridSize}px`,
+              }}
+            />
+          )}
           {children}
 
           {/* Page Footer */}
@@ -2180,9 +2204,9 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
             onClick={() => onSelectElement('recon_sales')}
             className={`mb-4 p-4 bg-[#0da1c7]/10 rounded-lg border-l-4 border-[#0da1c7] cursor-pointer ${selectedElement === 'recon_sales' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-[#0da1c7]/10'}`}
           >
-            <h4 className="text-sm font-semibold text-[#0da1c7] mb-2">
+            <h4 className="text-sm font-semibold text-slate-900 mb-2">
               Sales Comparison Approach
-              <span className="ml-2 px-2 py-0.5 bg-[#0da1c7]/10 text-[#0da1c7] rounded text-xs font-medium">
+              <span className="ml-2 px-2 py-0.5 bg-[#0da1c7]/20 text-slate-900 rounded text-xs font-medium">
                 {data.reconciliation.salesComparisonWeight}% Weight — Primary
               </span>
             </h4>
@@ -2193,7 +2217,7 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
               onSelectElement={onSelectElement}
               onContentChange={handleContentChange}
               as="p"
-              className="text-sm text-[#0da1c7] leading-relaxed"
+              className="text-sm text-slate-800 leading-relaxed"
               appliedStyle={getStyle('recon_sales_text')}
             />
           </div>
@@ -2203,9 +2227,9 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
             onClick={() => onSelectElement('recon_income')}
             className={`mb-4 p-4 bg-blue-50 rounded-lg border-l-4 border-blue-400 cursor-pointer ${selectedElement === 'recon_income' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-blue-100'}`}
           >
-            <h4 className="text-sm font-semibold text-blue-800 mb-2">
+            <h4 className="text-sm font-semibold text-slate-900 mb-2">
               Income Approach
-              <span className="ml-2 px-2 py-0.5 bg-blue-200 text-blue-700 rounded text-xs font-medium">
+              <span className="ml-2 px-2 py-0.5 bg-blue-200 text-blue-900 rounded text-xs font-medium">
                 {data.reconciliation.incomeApproachWeight}% Weight — Secondary
               </span>
             </h4>
@@ -2216,7 +2240,7 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
               onSelectElement={onSelectElement}
               onContentChange={handleContentChange}
               as="p"
-              className="text-sm text-blue-700 leading-relaxed"
+              className="text-sm text-slate-800 leading-relaxed"
               appliedStyle={getStyle('recon_income_text')}
             />
           </div>
@@ -2226,9 +2250,9 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
             onClick={() => onSelectElement('recon_cost')}
             className={`mb-4 p-4 bg-accent-amber-gold-light rounded-lg border-l-4 border-amber-400 cursor-pointer ${selectedElement === 'recon_cost' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-amber-100'}`}
           >
-            <h4 className="text-sm font-semibold text-amber-800 mb-2">
+            <h4 className="text-sm font-semibold text-slate-900 mb-2">
               Cost Approach
-              <span className="ml-2 px-2 py-0.5 bg-amber-200 text-accent-amber-gold rounded text-xs font-medium">
+              <span className="ml-2 px-2 py-0.5 bg-amber-200 text-amber-900 rounded text-xs font-medium">
                 {data.reconciliation.costApproachWeight}% Weight — Supporting
               </span>
             </h4>
@@ -2239,7 +2263,7 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
               onSelectElement={onSelectElement}
               onContentChange={handleContentChange}
               as="p"
-              className="text-sm text-accent-amber-gold leading-relaxed"
+              className="text-sm text-slate-800 leading-relaxed"
               appliedStyle={getStyle('recon_cost_text')}
             />
           </div>
@@ -2720,6 +2744,146 @@ function EditableElement({
 }
 
 // =================================================================
+// ALIGNMENT GUIDE TYPES
+// =================================================================
+
+interface AlignmentGuide {
+  type: 'horizontal' | 'vertical';
+  position: number; // x for vertical, y for horizontal
+  start: number;
+  end: number;
+}
+
+// Alignment detection threshold (in pixels)
+const ALIGNMENT_THRESHOLD = 5;
+
+function calculateAlignments(
+  draggingBlock: TextBlock,
+  otherBlocks: TextBlock[],
+  pageOffset: { x: number; y: number }
+): { guides: AlignmentGuide[]; snapX: number | null; snapY: number | null } {
+  const guides: AlignmentGuide[] = [];
+  let snapX: number | null = null;
+  let snapY: number | null = null;
+
+  // Current block edges and center
+  const left = draggingBlock.x;
+  const right = draggingBlock.x + draggingBlock.width;
+  const centerX = draggingBlock.x + draggingBlock.width / 2;
+  const top = draggingBlock.y;
+  const bottom = draggingBlock.y + draggingBlock.height;
+  const centerY = draggingBlock.y + draggingBlock.height / 2;
+
+  for (const other of otherBlocks) {
+    if (other.id === draggingBlock.id) continue;
+
+    // Other block edges and center
+    const otherLeft = other.x;
+    const otherRight = other.x + other.width;
+    const otherCenterX = other.x + other.width / 2;
+    const otherTop = other.y;
+    const otherBottom = other.y + other.height;
+    const otherCenterY = other.y + other.height / 2;
+
+    // Check vertical alignments (left, right, center)
+    const verticalChecks = [
+      { pos: otherLeft, check: left, type: 'left-left' },
+      { pos: otherLeft, check: right, type: 'left-right' },
+      { pos: otherRight, check: left, type: 'right-left' },
+      { pos: otherRight, check: right, type: 'right-right' },
+      { pos: otherCenterX, check: centerX, type: 'center-center' },
+    ];
+
+    for (const v of verticalChecks) {
+      if (Math.abs(v.pos - v.check) < ALIGNMENT_THRESHOLD) {
+        guides.push({
+          type: 'vertical',
+          position: v.pos + pageOffset.x,
+          start: Math.min(top, otherTop) + pageOffset.y,
+          end: Math.max(bottom, otherBottom) + pageOffset.y,
+        });
+        // Snap logic: calculate the adjustment needed
+        if (snapX === null) {
+          if (v.type.startsWith('left')) {
+            snapX = v.pos - left;
+          } else if (v.type.startsWith('right')) {
+            snapX = v.pos - right;
+          } else {
+            snapX = v.pos - centerX;
+          }
+        }
+      }
+    }
+
+    // Check horizontal alignments (top, bottom, center)
+    const horizontalChecks = [
+      { pos: otherTop, check: top, type: 'top-top' },
+      { pos: otherTop, check: bottom, type: 'top-bottom' },
+      { pos: otherBottom, check: top, type: 'bottom-top' },
+      { pos: otherBottom, check: bottom, type: 'bottom-bottom' },
+      { pos: otherCenterY, check: centerY, type: 'center-center' },
+    ];
+
+    for (const h of horizontalChecks) {
+      if (Math.abs(h.pos - h.check) < ALIGNMENT_THRESHOLD) {
+        guides.push({
+          type: 'horizontal',
+          position: h.pos + pageOffset.y,
+          start: Math.min(left, otherLeft) + pageOffset.x,
+          end: Math.max(right, otherRight) + pageOffset.x,
+        });
+        // Snap logic
+        if (snapY === null) {
+          if (h.type.startsWith('top')) {
+            snapY = h.pos - top;
+          } else if (h.type.startsWith('bottom')) {
+            snapY = h.pos - bottom;
+          } else {
+            snapY = h.pos - centerY;
+          }
+        }
+      }
+    }
+  }
+
+  return { guides, snapX, snapY };
+}
+
+// =================================================================
+// ALIGNMENT GUIDES RENDERER
+// =================================================================
+
+function AlignmentGuidesOverlay({ guides }: { guides: AlignmentGuide[] }) {
+  if (guides.length === 0) return null;
+
+  return (
+    <div className="absolute inset-0 pointer-events-none z-[100]">
+      {guides.map((guide, idx) => (
+        <div
+          key={`${guide.type}-${guide.position}-${idx}`}
+          className="absolute bg-[#ff6b6b]"
+          style={
+            guide.type === 'vertical'
+              ? {
+                  left: guide.position,
+                  top: guide.start,
+                  width: 1,
+                  height: guide.end - guide.start,
+                }
+              : {
+                  top: guide.position,
+                  left: guide.start,
+                  height: 1,
+                  width: guide.end - guide.start,
+                }
+          }
+        />
+      ))}
+    </div>
+  );
+}
+
+// =================================================================
 // DRAGGABLE TEXT BLOCK COMPONENT
 // =================================================================
 
@@ -2731,9 +2895,23 @@ interface DraggableTextBlockProps {
   onDelete: () => void;
   showGrid?: boolean;
   gridSize?: number;
+  allBlocks?: TextBlock[];
+  onAlignmentGuidesChange?: (guides: AlignmentGuide[]) => void;
+  pageOffset?: { x: number; y: number };
 }
 
-function DraggableTextBlock({ block, selected, onSelect, onUpdate, onDelete, showGrid = false, gridSize = 16 }: DraggableTextBlockProps) {
+function DraggableTextBlock({ 
+  block, 
+  selected, 
+  onSelect, 
+  onUpdate, 
+  onDelete, 
+  showGrid = false, 
+  gridSize = 16,
+  allBlocks = [],
+  onAlignmentGuidesChange,
+  pageOffset = { x: 0, y: 0 }
+}: DraggableTextBlockProps) {
   // Helper to snap value to grid
   const snapToGrid = (value: number): number => {
     if (!showGrid) return value;
@@ -2780,13 +2958,34 @@ function DraggableTextBlock({ block, selected, onSelect, onUpdate, onDelete, sho
     });
   };
 
-  // Handle dragging
+  // Handle dragging with alignment guides
   useEffect(() => {
     if (!isDragging) return;
 
     const handleMouseMove = (e: MouseEvent) => {
-      const newX = snapToGrid(e.clientX - dragStart.x);
-      const newY = snapToGrid(e.clientY - dragStart.y);
+      let newX = e.clientX - dragStart.x;
+      let newY = e.clientY - dragStart.y;
+      
+      // Calculate alignments with other blocks
+      if (allBlocks.length > 1 && onAlignmentGuidesChange) {
+        const tempBlock = { ...block, x: newX, y: newY };
+        const { guides, snapX, snapY } = calculateAlignments(tempBlock, allBlocks, pageOffset);
+        
+        // Apply snap if within threshold
+        if (snapX !== null) {
+          newX += snapX;
+        }
+        if (snapY !== null) {
+          newY += snapY;
+        }
+        
+        onAlignmentGuidesChange(guides);
+      }
+      
+      // Apply grid snapping after alignment snapping
+      newX = snapToGrid(newX);
+      newY = snapToGrid(newY);
+      
       onUpdate({
         x: newX,
         y: newY,
@@ -2795,6 +2994,8 @@ function DraggableTextBlock({ block, selected, onSelect, onUpdate, onDelete, sho
 
     const handleMouseUp = () => {
       setIsDragging(false);
+      // Clear alignment guides on mouse up
+      onAlignmentGuidesChange?.([]);
     };
 
     document.addEventListener('mousemove', handleMouseMove);
@@ -2805,7 +3006,7 @@ function DraggableTextBlock({ block, selected, onSelect, onUpdate, onDelete, sho
       document.removeEventListener('mouseup', handleMouseUp);
     };
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDragging, dragStart, onUpdate, showGrid, gridSize]);
+  }, [isDragging, dragStart, onUpdate, showGrid, gridSize, allBlocks, onAlignmentGuidesChange, pageOffset, block]);
 
   // Handle resizing
   useEffect(() => {
@@ -3203,6 +3404,9 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
   // Grid overlay and snap-to-grid state
   const [showGrid, setShowGrid] = useState(false);
   const [gridSize] = useState(16); // 16px grid
+  
+  // Alignment guides for drag operations
+  const [alignmentGuides, setAlignmentGuides] = useState<AlignmentGuide[]>([]);
 
   // Zoom state
   const [zoomLevel, setZoomLevel] = useState(100); // percentage
@@ -4412,49 +4616,42 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
           ref={previewRef} 
           className="flex-1 overflow-auto p-8 bg-slate-400/30 relative"
         >
-          {/* Grid Overlay */}
-          {showGrid && (
+          <GridContext.Provider value={{ showGrid, gridSize }}>
             <div 
-              className="absolute inset-0 pointer-events-none z-40"
+              className="report-preview-content space-y-8 flex flex-col items-center"
               style={{
-                backgroundImage: `
-                  linear-gradient(to right, rgba(13,161,199,0.08) 1px, transparent 1px),
-                  linear-gradient(to bottom, rgba(13,161,199,0.08) 1px, transparent 1px)
-                `,
-                backgroundSize: `${gridSize}px ${gridSize}px`,
+                transform: `scale(${zoomLevel / 100})`,
+                transformOrigin: 'top center',
               }}
-            />
-          )}
-          <div 
-            className="report-preview-content space-y-8 flex flex-col items-center"
-            style={{
-              transform: `scale(${zoomLevel / 100})`,
-              transformOrigin: 'top center',
-            }}
-          >
-            {visibleSections
-              .filter((s) => s.enabled)
-              .map((section, idx) => (
-                <div key={section.id} id={`page_${section.id}`} className="relative">
-                  {renderPage(section, idx)}
-                  {/* Text blocks for this page */}
-                  {textBlocks
-                    .filter((b) => b.pageId === section.id)
-                    .map((block) => (
-                      <DraggableTextBlock
-                        key={block.id}
-                        block={block}
-                        selected={selectedElement === block.id}
-                        onSelect={() => setSelectedElement(block.id)}
-                        onUpdate={(updates) => handleUpdateTextBlock(block.id, updates)}
-                        onDelete={() => handleDeleteTextBlock(block.id)}
-                        showGrid={showGrid}
-                        gridSize={gridSize}
-                      />
-                    ))}
-                </div>
-              ))}
-          </div>
+            >
+              {visibleSections
+                .filter((s) => s.enabled)
+                .map((section, idx) => (
+                  <div key={section.id} id={`page_${section.id}`} className="relative">
+                    {renderPage(section, idx)}
+                    {/* Text blocks for this page */}
+                    {textBlocks
+                      .filter((b) => b.pageId === section.id)
+                      .map((block) => (
+                        <DraggableTextBlock
+                          key={block.id}
+                          block={block}
+                          selected={selectedElement === block.id}
+                          onSelect={() => setSelectedElement(block.id)}
+                          onUpdate={(updates) => handleUpdateTextBlock(block.id, updates)}
+                          onDelete={() => handleDeleteTextBlock(block.id)}
+                          showGrid={showGrid}
+                          gridSize={gridSize}
+                          allBlocks={textBlocks.filter((b) => b.pageId === section.id)}
+                          onAlignmentGuidesChange={setAlignmentGuides}
+                        />
+                      ))}
+                  </div>
+                ))}
+            </div>
+            {/* Alignment Guides Overlay */}
+            <AlignmentGuidesOverlay guides={alignmentGuides} />
+          </GridContext.Provider>
         </div>
       </div>
 
