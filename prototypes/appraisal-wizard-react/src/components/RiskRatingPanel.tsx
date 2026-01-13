@@ -314,7 +314,7 @@ export function RiskRatingPanel({
       {/* Main Rating Card */}
       <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl border border-light-border dark:border-dark-border dark:border-dark-border overflow-hidden">
         {/* Header */}
-        <div className="px-6 py-4 border-b border-light-border dark:border-dark-border bg-gradient-to-r from-slate-50 to-white">
+        <div className="px-6 py-4 border-b border-light-border dark:border-dark-border bg-gradient-to-r from-slate-50 to-white dark:from-elevation-2 dark:to-elevation-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
               <div className="p-2.5 bg-gradient-to-br from-gradient-action-start to-gradient-action-end rounded-xl shadow-sm">
@@ -328,7 +328,7 @@ export function RiskRatingPanel({
             <div className="flex items-center gap-2">
               <button
                 onClick={() => setShowMethodology(!showMethodology)}
-                className="text-xs text-harken-blue hover:text-harken-blue/80 flex items-center gap-1 px-3 py-1.5 rounded-lg hover:bg-harken-blue/5 transition-colors"
+                className="text-xs text-harken-blue hover:text-harken-blue/80 dark:text-accent-cyan dark:hover:text-accent-cyan/80 flex items-center gap-1 px-3 py-1.5 rounded-lg hover:bg-harken-blue/5 dark:hover:bg-accent-cyan/10 transition-colors"
               >
                 <Info className="w-3.5 h-3.5" />
                 Methodology
@@ -339,12 +339,12 @@ export function RiskRatingPanel({
 
         {/* Methodology Explainer */}
         {showMethodology && (
-          <div className="px-6 py-4 bg-gradient-to-r from-harken-blue/5 to-transparent border-b border-light-border dark:border-dark-border">
+          <div className="px-6 py-4 bg-gradient-to-r from-harken-blue/5 to-transparent dark:from-accent-cyan/10 dark:to-transparent border-b border-light-border dark:border-dark-border">
             <h4 className="font-semibold text-slate-800 dark:text-white mb-3 flex items-center gap-2">
-              <Scale className="w-4 h-4 text-harken-blue" />
+              <Scale className="w-4 h-4 text-harken-blue dark:text-accent-cyan" />
               Risk Assessment Framework
             </h4>
-            <p className="text-sm text-slate-600 leading-relaxed mb-4">
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mb-4">
               Our Investment Risk Rating applies institutional-grade analytics to evaluate commercial real estate 
               risk using a framework inspired by fixed-income credit ratings. The methodology synthesizes 
               multiple quantitative and qualitative factors across four critical dimensions to produce a 
@@ -352,8 +352,8 @@ export function RiskRatingPanel({
             </p>
             <div className="grid grid-cols-2 gap-3 text-xs">
               <div className="flex items-start gap-2">
-                <div className="w-5 h-5 rounded-full bg-harken-blue/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-harken-blue font-bold">1</span>
+                <div className="w-5 h-5 rounded-full bg-harken-blue/10 dark:bg-accent-cyan/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-harken-blue dark:text-accent-cyan font-bold">1</span>
                 </div>
                 <div>
                   <span className="font-medium text-slate-700 dark:text-slate-200">Multi-Source Data Integration</span>
@@ -361,8 +361,8 @@ export function RiskRatingPanel({
                 </div>
               </div>
               <div className="flex items-start gap-2">
-                <div className="w-5 h-5 rounded-full bg-harken-blue/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-harken-blue font-bold">2</span>
+                <div className="w-5 h-5 rounded-full bg-harken-blue/10 dark:bg-accent-cyan/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-harken-blue dark:text-accent-cyan font-bold">2</span>
                 </div>
                 <div>
                   <span className="font-medium text-slate-700 dark:text-slate-200">Dynamic Weight Calibration</span>
@@ -370,8 +370,8 @@ export function RiskRatingPanel({
                 </div>
               </div>
               <div className="flex items-start gap-2">
-                <div className="w-5 h-5 rounded-full bg-harken-blue/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-harken-blue font-bold">3</span>
+                <div className="w-5 h-5 rounded-full bg-harken-blue/10 dark:bg-accent-cyan/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-harken-blue dark:text-accent-cyan font-bold">3</span>
                 </div>
                 <div>
                   <span className="font-medium text-slate-700 dark:text-slate-200">Z-Score Normalization</span>
@@ -379,8 +379,8 @@ export function RiskRatingPanel({
                 </div>
               </div>
               <div className="flex items-start gap-2">
-                <div className="w-5 h-5 rounded-full bg-harken-blue/10 flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-harken-blue font-bold">4</span>
+                <div className="w-5 h-5 rounded-full bg-harken-blue/10 dark:bg-accent-cyan/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+                  <span className="text-harken-blue dark:text-accent-cyan font-bold">4</span>
                 </div>
                 <div>
                   <span className="font-medium text-slate-700 dark:text-slate-200">Composite Scoring</span>
@@ -406,7 +406,7 @@ export function RiskRatingPanel({
                 <div className={`text-sm font-semibold ${gradeConfig.text} mb-2`}>
                   {gradeConfig.description}
                 </div>
-                <div className="text-slate-600 text-sm font-medium">
+                <div className="text-slate-600 dark:text-slate-400 text-sm font-medium">
                   Composite Score: {data.overallScore} / 100
                 </div>
               </div>
@@ -447,12 +447,12 @@ export function RiskRatingPanel({
           </div>
 
           {/* Investor Profile */}
-          <div className={`${gradeConfig.lightBg} rounded-xl p-4 mb-6 border ${gradeConfig.border} border-opacity-30`}>
+          <div className={`${gradeConfig.lightBg} dark:bg-elevation-2 rounded-xl p-4 mb-6 border ${gradeConfig.border} border-opacity-30 dark:border-opacity-20`}>
             <h4 className="font-semibold text-slate-800 dark:text-white mb-2 flex items-center gap-2">
-              <Target className="w-4 h-4 text-slate-600" />
+              <Target className="w-4 h-4 text-slate-600 dark:text-slate-400" />
               Investor Profile Match
             </h4>
-            <p className="text-sm text-slate-600 leading-relaxed">
+            <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
               {gradeConfig.investorProfile}
             </p>
           </div>
@@ -529,16 +529,16 @@ export function RiskRatingPanel({
                   {/* Expanded Content */}
                   {isExpanded && (
                     <div className="px-4 pb-4 border-t border-light-border dark:border-dark-border">
-                      <p className="text-sm text-slate-600 leading-relaxed mt-3 mb-4">
+                      <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed mt-3 mb-4">
                         {config.description}
                       </p>
                       <div className="grid grid-cols-3 gap-2">
                         {config.factors.map((factor, idx) => {
                           const FactorIcon = factor.icon;
                           return (
-                            <div key={idx} className="bg-surface-1 dark:bg-elevation-1 rounded-lg p-3 border border-light-border dark:border-dark-border dark:border-harken-gray">
+                            <div key={idx} className="bg-surface-1 dark:bg-elevation-1 rounded-lg p-3 border border-light-border dark:border-dark-border">
                               <FactorIcon className="w-4 h-4 text-slate-400 mb-1" />
-                              <span className="text-xs text-slate-600">{factor.label}</span>
+                              <span className="text-xs text-slate-600 dark:text-slate-400">{factor.label}</span>
                             </div>
                           );
                         })}
@@ -552,12 +552,12 @@ export function RiskRatingPanel({
 
           {/* Weighting Rationale */}
           {data.weightingRationale && (
-            <div className="mt-6 p-4 bg-gradient-to-r from-slate-50 to-white rounded-xl border border-light-border dark:border-dark-border">
-              <h4 className="font-medium text-slate-700 mb-2 flex items-center gap-2">
+            <div className="mt-6 p-4 bg-gradient-to-r from-slate-50 to-white dark:from-elevation-2 dark:to-elevation-2 rounded-xl border border-light-border dark:border-dark-border">
+              <h4 className="font-medium text-slate-700 dark:text-slate-200 mb-2 flex items-center gap-2">
                 <Scale className="w-4 h-4 text-slate-500 dark:text-slate-400" />
                 Dynamic Weight Rationale
               </h4>
-              <p className="text-sm text-slate-600 leading-relaxed">{data.weightingRationale}</p>
+              <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">{data.weightingRationale}</p>
             </div>
           )}
         </div>
@@ -567,7 +567,7 @@ export function RiskRatingPanel({
       <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl border border-light-border dark:border-dark-border dark:border-dark-border overflow-hidden">
         <button
           onClick={() => setShowDisclosure(!showDisclosure)}
-          className="w-full px-6 py-4 flex items-center justify-between hover:bg-surface-2 dark:bg-elevation-2 transition-colors"
+          className="w-full px-6 py-4 flex items-center justify-between hover:bg-surface-2 dark:hover:bg-elevation-2 transition-colors"
         >
           <div className="flex items-center gap-3">
             <Info className="w-5 h-5 text-slate-400" />
@@ -581,7 +581,7 @@ export function RiskRatingPanel({
         </button>
         {showDisclosure && (
           <div className="px-6 pb-6 border-t border-light-border dark:border-dark-border">
-            <p className="text-xs text-slate-600 leading-relaxed mt-4 whitespace-pre-line">
+            <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed mt-4 whitespace-pre-line">
               {RISK_RATING_DISCLOSURE}
             </p>
           </div>
