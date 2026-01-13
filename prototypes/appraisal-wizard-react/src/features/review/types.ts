@@ -70,7 +70,7 @@ export interface InlinePhotoPlacement {
 export interface ReportSection {
   id: string;
   label: string;
-  type: 'cover' | 'section' | 'toc' | 'letter' | 'summary-table' | 'narrative' | 'analysis-grid' | 'photo-grid' | 'map' | 'document' | 'addenda-header' | 'addenda-list' | 'risk-rating' | 'demographics' | 'economic-context' | 'swot' | 'comparable-cards' | 'comparable-detail' | 'comparable-map' | 'lease-abstraction' | 'dcf-projection' | 'zoning-exhibit' | 'environmental-exhibit' | 'scenario-reconciliation';
+  type: 'cover' | 'section' | 'toc' | 'letter' | 'summary-table' | 'narrative' | 'analysis-grid' | 'photo-grid' | 'map' | 'document' | 'addenda-header' | 'addenda-list' | 'risk-rating' | 'demographics' | 'demographics-overview' | 'demographics-detail' | 'economic-context' | 'swot' | 'comparable-cards' | 'comparable-detail' | 'comparable-map' | 'lease-abstraction' | 'dcf-projection' | 'zoning-exhibit' | 'environmental-exhibit' | 'scenario-reconciliation';
   sectionNumber?: string;
   enabled: boolean;
   expanded: boolean;

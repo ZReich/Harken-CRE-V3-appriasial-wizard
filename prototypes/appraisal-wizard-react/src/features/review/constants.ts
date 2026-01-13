@@ -157,10 +157,22 @@ export const BASE_REPORT_SECTIONS: ReportSection[] = [
     ],
   },
   {
-    id: 'demographics',
+    id: 'demographics-overview',
     label: 'Neighborhood Demographics',
-    type: 'demographics',
+    type: 'demographics-overview',
     sectionNumber: '02A',
+    enabled: true,
+    expanded: false,
+    fields: [
+      { id: 'demo_map', label: 'Radius Ring Map', enabled: true },
+      { id: 'demo_highlights', label: 'Key Highlights', enabled: true },
+    ],
+  },
+  {
+    id: 'demographics-detail',
+    label: 'Demographics Detail',
+    type: 'demographics-detail',
+    sectionNumber: '02A-2',
     enabled: true,
     expanded: false,
     fields: [
