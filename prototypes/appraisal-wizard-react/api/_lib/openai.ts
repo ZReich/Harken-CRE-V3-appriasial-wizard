@@ -63,84 +63,110 @@ Additional guidelines:
 type PromptGenerator = (ctx: AIGenerationContext) => string;
 
 export const SECTION_PROMPTS: Record<string, PromptGenerator> = {
-  area_description: (ctx) => `Write a professional area/regional description for an appraisal report.
+  area_description: (ctx) => `Write the Area/Regional Description section of an appraisal report.
 
-Property Location: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
-Property Type: ${ctx.propertyType || 'Commercial'}
-
-Include:
-- General description of the metropolitan/regional area
-- Key economic drivers and employment base
-- Population trends and demographics (general)
-- Transportation access and infrastructure
-- Overall market conditions
-
-Write 2-3 paragraphs, approximately 150-200 words.`,
-
-  neighborhood_description: (ctx) => `Write a professional neighborhood description for an appraisal report.
-
-Property Location: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
-Property Type: ${ctx.propertyType || 'Commercial'}
-Zoning: ${ctx.siteData?.zoning || 'Not specified'}
-
-Include:
-- Description of the immediate neighborhood boundaries
-- Predominant land uses
-- Development patterns and trends
-- Compatibility of uses
-- Access and visibility
-- Neighborhood stage (growth, stability, decline)
-
-Write 2-3 paragraphs, approximately 150-200 words.`,
-
-  neighborhood_boundaries: (ctx) => `Write a professional neighborhood boundaries section for an appraisal report.
-
-Property Location: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
-Property Type: ${ctx.propertyType || 'Commercial'}
+SUBJECT PROPERTY DATA:
+Location: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
 County: ${ctx.siteData?.county || 'Not specified'}
+Property Type: ${ctx.propertyType || 'Commercial'}
 
-Describe the neighborhood boundaries using the following format:
-- North: [specific street, landmark, or geographic feature]
-- South: [specific street, landmark, or geographic feature]
-- East: [specific street, landmark, or geographic feature]
-- West: [specific street, landmark, or geographic feature]
+WRITING REQUIREMENTS:
+1. Begin with: <b><u>AREA DESCRIPTION</u></b>
+2. Write as a 30-year MAI-designated appraiser in third person ("the appraiser" or "we")
+3. Cover: metropolitan/regional area description, key economic drivers and employment base, population trends, transportation infrastructure, overall market conditions
+4. Use definitive language — avoid "may," "might," "could"
+5. Reference "based on our market analysis" or "it is our conclusion that"
 
-Then provide a brief summary of why these boundaries define the competitive market area for similar properties.
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for headers
+- Flowing narrative paragraphs — no bullet points or markdown
+- Be factual and objective
 
-Write with specific detail as a 30-year MAI appraiser would, using local knowledge and landmarks. Write 2 paragraphs, approximately 150-200 words.`,
+Write 2-3 paragraphs, approximately 150-200 words.`,
 
-  neighborhood_characteristics: (ctx) => `Write a professional neighborhood characteristics analysis for an appraisal report.
+  neighborhood_description: (ctx) => `Write the Neighborhood Description section of an appraisal report.
 
-Property Location: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
+SUBJECT PROPERTY DATA:
+Location: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
+Property Type: ${ctx.propertyType || 'Commercial'}
+Zoning: ${ctx.siteData?.zoning || 'Not specified'}
+
+WRITING REQUIREMENTS:
+1. Begin with: <b><u>NEIGHBORHOOD DESCRIPTION</u></b>
+2. Write as a 30-year MAI-designated appraiser in third person
+3. Cover: immediate neighborhood boundaries, predominant land uses, development patterns and trends, compatibility of uses, access and visibility, neighborhood life cycle stage (growth, stability, decline)
+4. Use definitive conclusions — no hedging language
+5. Reference "based on our inspection" or "it is our observation that"
+
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for headers
+- Flowing narrative paragraphs — no bullet points or markdown
+- Be factual and objective
+
+Write 2-3 paragraphs, approximately 150-200 words.`,
+
+  neighborhood_boundaries: (ctx) => `Write the Neighborhood Boundaries section of an appraisal report.
+
+SUBJECT PROPERTY DATA:
+Location: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
+County: ${ctx.siteData?.county || 'Not specified'}
+Property Type: ${ctx.propertyType || 'Commercial'}
+
+WRITING REQUIREMENTS:
+1. Begin with: <b><u>NEIGHBORHOOD BOUNDARIES</u></b>
+2. Write as a 30-year MAI-designated appraiser in third person
+3. Define boundaries using cardinal directions (North, South, East, West) with specific streets, landmarks, or geographic features
+4. Explain why these boundaries define the competitive market area for similar properties
+5. Use definitive language — "the neighborhood is bounded by" not "the neighborhood may be bounded by"
+
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for headers
+- Write boundaries as flowing narrative, NOT as bullet points
+- Example: "The neighborhood is bounded on the north by Main Street, on the south by the railroad corridor, on the east by Highway 93, and on the west by the Clark Fork River."
+
+Write 2 paragraphs, approximately 150-200 words.`,
+
+  neighborhood_characteristics: (ctx) => `Write the Neighborhood Characteristics section of an appraisal report.
+
+SUBJECT PROPERTY DATA:
+Location: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
 Property Type: ${ctx.propertyType || 'Commercial'}
 Property Subtype: ${ctx.propertySubtype || 'Not specified'}
 Zoning: ${ctx.siteData?.zoning || 'Not specified'}
 
-Include:
-- Predominant land uses and development patterns
-- Age and condition of existing development
-- Access and transportation (highways, arterials, public transit)
-- Available amenities (retail, restaurants, services)
-- Factors positively and negatively affecting property values
-- Neighborhood life cycle stage (growth, stability, decline)
+WRITING REQUIREMENTS:
+1. Begin with: <b><u>NEIGHBORHOOD CHARACTERISTICS</u></b>
+2. Write as a 30-year MAI-designated appraiser in third person
+3. Cover: predominant land uses and development patterns, age and condition of existing development, access and transportation infrastructure, available amenities, factors positively and negatively affecting property values, neighborhood life cycle stage
+4. Use definitive conclusions — "the neighborhood is characterized by" not "the neighborhood may be characterized by"
+5. Reference "based on our inspection and market analysis"
 
-Write as a 30-year MAI appraiser would, with specific observations about the market area. Write 2-3 paragraphs, approximately 200-250 words.`,
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for headers
+- Flowing narrative paragraphs — no bullet points or markdown
+- Be specific with observations about the market area
 
-  specific_location: (ctx) => `Write a professional specific location description for an appraisal report.
+Write 2-3 paragraphs, approximately 200-250 words.`,
 
-Property Location: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
+  specific_location: (ctx) => `Write the Specific Location section of an appraisal report.
+
+SUBJECT PROPERTY DATA:
+Location: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
 Property Type: ${ctx.propertyType || 'Commercial'}
 Property Subtype: ${ctx.propertySubtype || 'Not specified'}
 
-Include:
-- Precise location description (street name, block, subdivision)
-- Proximity to major arterials and highways (with distances)
-- Nearby landmarks and points of reference
-- Access characteristics (frontage, ingress/egress)
-- Visibility from major roads
-- Surrounding property uses
+WRITING REQUIREMENTS:
+1. Begin with: <b><u>SPECIFIC LOCATION</u></b>
+2. Write as a 30-year MAI-designated appraiser in third person
+3. Provide precise location description including: street name and block, proximity to major arterials and highways (with approximate distances), nearby landmarks and points of reference, access characteristics (frontage, ingress/egress), visibility from major roads, surrounding property uses
+4. Write with enough detail that a reader unfamiliar with the area could locate the property
+5. Use definitive language — "the subject is located" not "the subject may be located"
 
-Write as a 30-year MAI appraiser would, with enough detail that a reader unfamiliar with the area could locate the property. Write 2 paragraphs, approximately 150-175 words.`,
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for headers
+- Flowing narrative paragraphs — no bullet points or markdown
+
+Write 2 paragraphs, approximately 150-175 words.`,
 
   site_description: (ctx) => `Write a professional site description for an appraisal report.
 
@@ -372,57 +398,74 @@ Write a brief narrative that:
 
 Format with bold section header. Write 1-2 paragraphs, approximately 100-150 words.`,
 
-  site_notes: (ctx) => `Write professional site analysis notes for an appraisal report as a 30-year MAI appraiser would.
+  site_notes: (ctx) => `Write the Site Analysis Notes section of an appraisal report.
 
-SITE CHARACTERISTICS:
-- Site Size: ${ctx.siteData?.siteSize || 'Not specified'}
-- Shape: ${ctx.siteData?.shape || 'Not specified'}
-- Topography: ${ctx.siteData?.topography || 'Not specified'}
-- Frontage: ${ctx.siteData?.frontage || 'Not specified'}
-- Access: ${ctx.siteData?.accessQuality || 'Not specified'}
+SUBJECT SITE DATA (from appraiser's inspection):
+Site Size: ${ctx.siteData?.siteSize || 'Not specified'}
+Shape: ${ctx.siteData?.shape || 'Not specified'}
+Topography: ${ctx.siteData?.topography || 'Not specified'}
+Frontage: ${ctx.siteData?.frontage || 'Not specified'}
+Access Quality: ${ctx.siteData?.accessQuality || 'Not specified'}
 
-Write professional observations about:
-1. Any unique or noteworthy site characteristics
-2. Factors that enhance or detract from site utility
-3. Development constraints or opportunities
-4. Competitive advantages of the site
+WRITING REQUIREMENTS:
+1. Begin with: <b><u>SITE ANALYSIS</u></b>
+2. Write as a 30-year MAI-designated appraiser in third person
+3. Address: unique or noteworthy site characteristics, factors that enhance or detract from site utility, development constraints or opportunities, competitive advantages of the site
+4. Use definitive language — "the site presents" not "the site may present"
+5. Conclude with overall site utility assessment
 
-Use professional appraisal terminology. Write 1-2 paragraphs, approximately 100-150 words.`,
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for headers
+- Flowing narrative paragraphs — no bullet points or markdown
+- Only describe data provided above — do not fabricate details
 
-  zoning_description: (ctx) => `Write a professional zoning analysis for an appraisal report as a 30-year MAI appraiser would.
+Write 1-2 paragraphs, approximately 100-150 words.`,
 
-ZONING INFORMATION:
-- Classification: ${ctx.siteData?.zoning || 'Not specified'}
-- Conforming Status: ${ctx.siteData?.zoningConforming ? 'Conforming' : 'To be verified'}
-- Location: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.county || 'Not specified'} County
+  zoning_description: (ctx) => `Write the Zoning Analysis section of an appraisal report.
 
-Write a professional analysis addressing:
-1. Current zoning classification and jurisdiction
-2. Permitted uses by right under the current zoning
-3. Conditional or special exception uses available
-4. Compliance status of existing improvements (conforming/non-conforming/legal non-conforming)
-5. Any relevant setback, parking, or density requirements
-6. Impact on property utility and marketability
+ZONING DATA (from appraiser's research):
+Classification: ${ctx.siteData?.zoning || 'Not specified'}
+Conforming Status: ${ctx.siteData?.zoningConforming ? 'Conforming' : 'To be verified'}
+Jurisdiction: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.county || 'Not specified'} County
 
-Reference that zoning verification should be confirmed with local authorities for transaction purposes. Use proper appraisal terminology. Write 2 paragraphs, approximately 150-200 words.`,
+WRITING REQUIREMENTS:
+1. Begin with: <b><u>ZONING ANALYSIS</u></b>
+2. Write as a 30-year MAI-designated appraiser in third person
+3. Address: current zoning classification and jurisdiction, permitted uses by right, conditional or special exception uses available, compliance status of existing improvements (conforming/non-conforming/legal non-conforming), relevant setback, parking, or density requirements, impact on property utility and marketability
+4. Use definitive language — "the subject is zoned" not "the subject may be zoned"
+5. Note that zoning verification should be confirmed with local authorities for transaction purposes
 
-  transaction_history: (ctx) => `Write a USPAP-compliant transaction history analysis as a 30-year MAI appraiser would.
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for headers
+- Flowing narrative paragraphs — no bullet points or markdown
 
-TRANSACTION DATA:
-- Last Sale Date: ${ctx.lastSaleDate || 'Not specified'}
-- Last Sale Price: ${ctx.lastSalePrice || 'Not specified'}
-- Current Owner: Per public records
-${ctx.transactionHistory ? `\n\nADDITIONAL HISTORY:\n${ctx.transactionHistory}` : ''}
+Write 2 paragraphs, approximately 150-200 words.`,
 
-Write a professional analysis that:
-1. Begins with: "USPAP Standards Rule 1-5 requires analysis of all sales and transfers within three years of the effective date."
-2. Documents the last transaction (date, price, parties if available)
-3. Analyzes whether the transaction was arms-length
-4. Notes any non-arms-length considerations (family transfer, foreclosure, etc.)
-5. Explains how prior sales do/do not impact current value opinion
-6. States if no sales occurred within the three-year lookback period
+  transaction_history: (ctx) => `Write the Transaction History section of an appraisal report.
 
-Be specific with dates and prices when available. Write 2 paragraphs, approximately 150-200 words.`,
+TRANSACTION DATA (from public records):
+Last Sale Date: ${ctx.lastSaleDate || 'Not specified'}
+Last Sale Price: ${ctx.lastSalePrice || 'Not specified'}
+Current Owner: Per public records
+${ctx.transactionHistory ? `Additional History: ${ctx.transactionHistory}` : ''}
+
+WRITING REQUIREMENTS:
+1. Begin with: <b><u>TRANSACTION HISTORY</u></b>
+2. Write as a 30-year MAI-designated appraiser in third person
+3. Open with: "USPAP Standards Rule 1-5 requires analysis of all sales and transfers within three years of the effective date."
+4. Document the last transaction (date, price, parties if available)
+5. Analyze definitively whether the transaction was arms-length
+6. Note any non-arms-length considerations (family transfer, foreclosure, REO, short sale)
+7. Explain how prior sales do or do not impact current value opinion
+8. If no sales occurred within three years, state that explicitly
+
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for headers
+- Flowing narrative paragraphs — no bullet points
+- Be specific with dates and prices when available
+- Only describe data provided — do not fabricate transaction details
+
+Write 2 paragraphs, approximately 150-200 words.`,
 
   construction_description: (ctx) => `Write a professional construction description narrative for an appraisal report as a 30-year MAI appraiser would.
 
@@ -447,117 +490,178 @@ Use industry-standard construction terminology. Write 2 paragraphs, approximatel
   // UTILITY & INFRASTRUCTURE PROMPTS
   // =================================================================
   
-  water_source: (ctx) => `Write a professional water service analysis for an appraisal report as a 30-year MAI appraiser would.
+  water_source: (ctx) => `Write the Water Service section of an appraisal report.
 
-WATER SERVICE:
-${ctx.siteData?.waterSource || 'Municipal water available'}
+WATER SERVICE DATA:
+Service Type: ${ctx.siteData?.waterSource || 'Municipal water available'}
+Property Type: ${ctx.propertyType || 'Commercial'}
+Location: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
 
-PROPERTY TYPE: ${ctx.propertyType || 'Commercial'}
-LOCATION: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
+WRITING REQUIREMENTS:
+1. Begin with: <b><u>WATER SERVICE</u></b>
+2. Write as a 30-year MAI-designated appraiser in third person
+3. Identify water service provider and type (municipal, private well, shared system)
+4. State adequacy for current and anticipated uses
+5. For commercial properties, address fire suppression capability
+6. Conclude definitively — "no deficiencies were observed" not "no deficiencies appear to exist"
 
-Write a brief professional analysis:
-1. Identify the water service provider and type (municipal, well, shared)
-2. Note adequacy for current and anticipated uses
-3. Mention fire suppression capability if applicable for commercial properties
-4. State that no deficiencies were observed that would adversely affect utility
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for headers
+- Flowing narrative — no bullet points
 
-Use authoritative language. Write 1 paragraph, approximately 75-100 words.`,
+Write 1 paragraph, approximately 75-100 words.`,
 
-  sewer_type: (ctx) => `Write a professional sanitary sewer service analysis for an appraisal report as a 30-year MAI appraiser would.
+  sewer_type: (ctx) => `Write the Sanitary Sewer Service section of an appraisal report.
 
-SEWER SERVICE:
-${ctx.siteData?.sewerType || 'Municipal sanitary sewer available'}
+SEWER SERVICE DATA:
+Service Type: ${ctx.siteData?.sewerType || 'Municipal sanitary sewer available'}
+Property Type: ${ctx.propertyType || 'Commercial'}
+Location: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
 
-PROPERTY TYPE: ${ctx.propertyType || 'Commercial'}
-LOCATION: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
+WRITING REQUIREMENTS:
+1. Begin with: <b><u>SANITARY SEWER</u></b>
+2. Write as a 30-year MAI-designated appraiser in third person
+3. Identify sewer service type (municipal, septic system, package treatment plant)
+4. Note connection status and system adequacy for the property type
+5. Conclude definitively — "no deficiencies were observed" not "no deficiencies appear to exist"
 
-Write a brief professional analysis:
-1. Identify the sewer service type (municipal, septic, package plant)
-2. Note connection status and adequacy
-3. State system capacity is appropriate for the property type
-4. Confirm no deficiencies observed that would affect utility or value
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for headers
+- Flowing narrative — no bullet points
 
-Use authoritative language. Write 1 paragraph, approximately 75-100 words.`,
+Write 1 paragraph, approximately 75-100 words.`,
 
-  electric: (ctx) => `Write a professional electric service analysis for an appraisal report as a 30-year MAI appraiser would.
+  electric: (ctx) => `Write the Electric Service section of an appraisal report.
 
-ELECTRIC SERVICE:
-${ctx.siteData?.electricProvider || 'Electric service available from local utility'}
+ELECTRIC SERVICE DATA:
+Provider: ${ctx.siteData?.electricProvider || 'Local utility provider'}
+Property Type: ${ctx.propertyType || 'Commercial'}
+Location: ${ctx.siteData?.city || 'Not specified'}
 
-PROPERTY TYPE: ${ctx.propertyType || 'Commercial'}
-LOCATION: ${ctx.siteData?.city || 'Not specified'}
+WRITING REQUIREMENTS:
+1. Begin with: <b><u>ELECTRIC SERVICE</u></b>
+2. Write as a 30-year MAI-designated appraiser in third person
+3. Identify electric service provider
+4. Note service type (overhead/underground) and phase (single-phase/three-phase) if known
+5. State capacity is adequate for ${ctx.propertyType || 'commercial'} use
+6. Conclude definitively — "no deficiencies were observed"
 
-Write a brief professional analysis:
-1. Identify the electric service provider
-2. Note service type (overhead/underground) and phase (single/three-phase)
-3. State capacity appears adequate for ${ctx.propertyType || 'commercial'} use
-4. Confirm no electrical deficiencies observed
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for headers
+- Flowing narrative — no bullet points
 
-Use authoritative language. Write 1 paragraph, approximately 75-100 words.`,
+Write 1 paragraph, approximately 75-100 words.`,
 
-  natural_gas: (ctx) => `Write a professional natural gas service analysis for an appraisal report as a 30-year MAI appraiser would.
+  natural_gas: (ctx) => `Write the Natural Gas Service section of an appraisal report.
 
-NATURAL GAS SERVICE:
-${ctx.siteData?.naturalGas || 'Natural gas available'}
+NATURAL GAS DATA:
+Availability: ${ctx.siteData?.naturalGas || 'Natural gas available'}
+Property Type: ${ctx.propertyType || 'Commercial'}
 
-PROPERTY TYPE: ${ctx.propertyType || 'Commercial'}
+WRITING REQUIREMENTS:
+1. Begin with: <b><u>NATURAL GAS</u></b>
+2. Write as a 30-year MAI-designated appraiser in third person
+3. Confirm natural gas availability and connection status
+4. State service is adequate for heating and any process requirements
+5. Note this is typical for the market area
 
-Write a brief professional analysis:
-1. Confirm natural gas availability and connection status
-2. Note utility provider if known
-3. State service is adequate for heating and process needs
-4. Mention this is typical for the market area
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for headers
+- Flowing narrative — no bullet points
 
-Use authoritative language. Write 1 paragraph, approximately 50-75 words.`,
+Write 1 paragraph, approximately 50-75 words.`,
 
-  telecom: (ctx) => `Write a professional telecommunications analysis for an appraisal report as a 30-year MAI appraiser would.
+  telecom: (ctx) => `Write the Telecommunications section of an appraisal report.
 
-PROPERTY TYPE: ${ctx.propertyType || 'Commercial'}
-LOCATION: ${ctx.siteData?.city || 'Not specified'}
+TELECOMMUNICATIONS DATA:
+Property Type: ${ctx.propertyType || 'Commercial'}
+Location: ${ctx.siteData?.city || 'Not specified'}
 
-Write a brief professional analysis:
-1. Confirm telecommunications availability (phone, internet, cable)
-2. Note multiple provider options are typically available in the area
-3. State fiber optic and high-speed internet service is available
-4. Confirm infrastructure supports modern business communications requirements
+WRITING REQUIREMENTS:
+1. Begin with: <b><u>TELECOMMUNICATIONS</u></b>
+2. Write as a 30-year MAI-designated appraiser in third person
+3. Confirm telecommunications availability (telephone, internet, cable)
+4. Note multiple provider options in the area
+5. Address fiber optic and high-speed internet availability
+6. State infrastructure supports modern business communications requirements
 
-Use authoritative language. Write 1 paragraph, approximately 75-100 words.`,
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for headers
+- Flowing narrative — no bullet points
 
-  flood_zone: (ctx) => `Write a professional FEMA flood zone determination for an appraisal report as a 30-year MAI appraiser would.
+Write 1 paragraph, approximately 75-100 words.`,
 
-FLOOD ZONE DATA:
-- FEMA Zone: ${ctx.siteData?.femaZone || 'Zone X'}
-- Location: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.county || 'Not specified'} County
+  storm_drainage: (ctx) => `Write the Storm Drainage section of an appraisal report.
 
-Write a professional flood zone analysis:
-1. State "According to the Federal Emergency Management Agency (FEMA) Flood Insurance Rate Map..."
-2. Identify the specific flood zone designation
-3. Explain what the zone designation means (Zone X = minimal risk, Zone A = 100-year floodplain, etc.)
-4. State flood insurance requirements based on zone (required for Special Flood Hazard Areas, optional for Zone X)
-5. Note this is subject to FEMA map revisions
-6. Conclude with impact on property marketability
+STORM DRAINAGE DATA:
+Property Type: ${ctx.propertyType || 'Commercial'}
+Topography: ${ctx.siteData?.topography || 'Not specified'}
+Location: ${ctx.siteData?.city || 'Not specified'}
 
-Use proper FEMA terminology. Write 2 paragraphs, approximately 125-150 words.`,
+WRITING REQUIREMENTS:
+1. Begin with: <b><u>STORM DRAINAGE</u></b>
+2. Write as a 30-year MAI-designated appraiser in third person
+3. Describe storm water management system (municipal storm sewer, on-site retention, natural drainage)
+4. Note adequacy for the site and property type
+5. Address any retention/detention requirements if applicable
+6. State no drainage deficiencies were observed during inspection
+
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for headers
+- Flowing narrative — no bullet points
+
+Write 1 paragraph, approximately 75-100 words.`,
+
+  flood_zone: (ctx) => `Write the Flood Zone Determination section of an appraisal report.
+
+FLOOD ZONE DATA (from FEMA research):
+FEMA Zone: ${ctx.siteData?.femaZone || 'Zone X'}
+Location: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.county || 'Not specified'} County
+
+WRITING REQUIREMENTS:
+1. Begin with: <b><u>FLOOD ZONE DETERMINATION</u></b>
+2. Write as a 30-year MAI-designated appraiser in third person
+3. State "According to the Federal Emergency Management Agency (FEMA) Flood Insurance Rate Map..."
+4. Identify the specific flood zone designation
+5. Explain what the zone designation means (Zone X = minimal flood risk outside 500-year floodplain, Zone A/AE = 100-year floodplain, etc.)
+6. State flood insurance requirements (required for Special Flood Hazard Areas, optional for Zone X)
+7. Note this determination is subject to FEMA map revisions
+8. Conclude with definitive statement on impact to property marketability
+
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for headers
+- Flowing narrative paragraphs — no bullet points
+- Use proper FEMA terminology
+
+Write 2 paragraphs, approximately 125-150 words.`,
 
   // =================================================================
   // SITE DESCRIPTION PROMPTS
   // =================================================================
   
-  easements: (ctx) => `Write a professional easements and encumbrances analysis for an appraisal report as a 30-year MAI appraiser would.
+  easements: (ctx) => `Write the Easements and Encumbrances section of an appraisal report.
 
-PROPERTY LOCATION: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
-SITE SIZE: ${ctx.siteData?.siteSize || 'Not specified'}
-${ctx.siteData?.easements ? `\n\nEASEMENT INFORMATION:\n${ctx.siteData.easements}` : ''}
+EASEMENT DATA (from title review):
+Location: ${ctx.siteData?.city || 'Not specified'}, ${ctx.siteData?.state || 'Not specified'}
+Site Size: ${ctx.siteData?.siteSize || 'Not specified'}
+${ctx.siteData?.easements ? `Identified Easements: ${ctx.siteData.easements}` : 'Easements: Per title review'}
 
-Write a professional analysis:
-1. State "Based on our title review and inspection..."
-2. Identify any recorded easements (utility, access, drainage)
-3. Assess whether easements adversely impact site utility or value
-4. Note typical utility easements along property boundaries are customary
-5. State if no unusual or adverse easements were identified
-6. Reference that complete title review is recommended for transaction purposes
+WRITING REQUIREMENTS:
+1. Begin with: <b><u>EASEMENTS AND ENCUMBRANCES</u></b>
+2. Write as a 30-year MAI-designated appraiser in third person
+3. State "Based on our title review and inspection..."
+4. Identify any recorded easements (utility, access, drainage, conservation)
+5. Assess definitively whether easements adversely impact site utility or value
+6. Note that typical utility easements along property boundaries are customary and do not adversely affect value
+7. State conclusion: "No unusual or adverse easements were identified" OR describe impact if adverse
+8. Reference that complete title review is recommended for transaction purposes
 
-Use proper legal and appraisal terminology. Write 1-2 paragraphs, approximately 100-150 words.`,
+FORMATTING:
+- HTML only: <b><u>HEADER</u></b> for headers
+- Flowing narrative paragraphs — no bullet points
+- Use proper legal and appraisal terminology
+
+Write 1-2 paragraphs, approximately 100-150 words.`,
 
   site_description_full: (ctx) => {
     // Build site improvements list from inventory data

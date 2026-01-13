@@ -56,6 +56,7 @@ import { useUndoRedo } from '../../report-preview/hooks/useUndoRedo';
 import { RecoveryDialog } from '../../report-preview/components/dialogs';
 import { PhotoEditorDialog, type PhotoData, type PhotoEdits } from './PhotoEditorDialog';
 import { PropertiesPanelSimplified } from './PropertiesPanelSimplified';
+import { FindReplacePanel, type SearchResult } from './FindReplacePanel';
 // Report page components for connected data display
 import { RiskRatingPage } from '../../report-preview/components/pages/RiskRatingPage';
 import { DemographicsPage, DemographicsOverviewPage, DemographicsDetailPage } from '../../report-preview/components/pages/DemographicsPage';
@@ -82,6 +83,8 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 // Animation styles
 import './reportEditorAnimations.css';
+// Icons for toolbar
+import { AlignLeft, AlignCenter, AlignRight, Grid3x3, Square, ZoomIn, ZoomOut, RotateCcw, StickyNote, Search as SearchIcon } from 'lucide-react';
 
 // =================================================================
 // TYPES
@@ -98,6 +101,10 @@ interface TextBlock {
   fontWeight: string;
   color: string;
   pageId: string;
+  textAlign?: 'left' | 'center' | 'right';
+  showBorder?: boolean;
+  borderColor?: string;
+  borderWidth?: number;
 }
 
 interface ElementContent {
@@ -119,6 +126,9 @@ interface SectionTreeProps {
   onScrollToSection: (sectionId: string) => void;
   onReorderSections: (oldIndex: number, newIndex: number) => void;
   activeSectionId: string | null;
+  sectionNotes?: Record<string, string>;
+  onNoteChange?: (sectionId: string, note: string) => void;
+  hiddenSections?: Array<{ id: string; label: string; reason: string }>;
 }
 
 // Sortable Section Item Component
@@ -129,6 +139,8 @@ interface SortableSectionItemProps {
   onToggleExpand: (sectionId: string) => void;
   onScrollToSection: (sectionId: string) => void;
   activeSectionId: string | null;
+  sectionNote?: string;
+  onNoteChange?: (sectionId: string, note: string) => void;
 }
 
 function SortableSectionItem({
@@ -138,7 +150,13 @@ function SortableSectionItem({
   onToggleExpand,
   onScrollToSection,
   activeSectionId,
+  sectionNote,
+  onNoteChange,
 }: SortableSectionItemProps) {
+  const [noteOpen, setNoteOpen] = useState(false);
+  const [noteText, setNoteText] = useState(sectionNote || '');
+  const noteInputRef = useRef<HTMLTextAreaElement>(null);
+
   const {
     attributes,
     listeners,
@@ -147,6 +165,29 @@ function SortableSectionItem({
     transition,
     isDragging,
   } = useSortable({ id: section.id });
+
+  // Focus note input when opening
+  useEffect(() => {
+    if (noteOpen && noteInputRef.current) {
+      noteInputRef.current.focus();
+    }
+  }, [noteOpen]);
+
+  // Sync local note with prop
+  useEffect(() => {
+    setNoteText(sectionNote || '');
+  }, [sectionNote]);
+
+  const handleSaveNote = () => {
+    onNoteChange?.(section.id, noteText);
+    setNoteOpen(false);
+  };
+
+  const handleDeleteNote = () => {
+    setNoteText('');
+    onNoteChange?.(section.id, '');
+    setNoteOpen(false);
+  };
 
   const style = {
     transform: CSS.Transform.toString(transform),
@@ -262,6 +303,65 @@ function SortableSectionItem({
           {section.label}
         </span>
 
+        {/* Note icon */}
+        <div className="relative">
+          <button
+            onClick={(e) => {
+              e.stopPropagation();
+              setNoteOpen(!noteOpen);
+            }}
+            className={`p-1 rounded transition-colors ${
+              sectionNote ? 'text-amber-500 hover:bg-amber-50' : 'text-slate-300 hover:text-slate-400 hover:bg-slate-50'
+            }`}
+            title={sectionNote ? 'View note' : 'Add note'}
+          >
+            <StickyNote size={14} className={sectionNote ? 'fill-amber-100' : ''} />
+          </button>
+          
+          {/* Note Popover */}
+          {noteOpen && (
+            <div 
+              className="absolute right-0 top-8 z-50 w-64 bg-white rounded-lg shadow-xl border border-slate-200 p-3"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-xs font-semibold text-slate-600">Section Note</span>
+                <button
+                  onClick={() => setNoteOpen(false)}
+                  className="p-1 hover:bg-slate-100 rounded text-slate-400"
+                >
+                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                  </svg>
+                </button>
+              </div>
+              <textarea
+                ref={noteInputRef}
+                value={noteText}
+                onChange={(e) => setNoteText(e.target.value)}
+                placeholder="Add a note for this section..."
+                className="w-full h-20 text-xs p-2 border border-slate-200 rounded-md resize-none focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/30 focus:border-[#0da1c7]"
+              />
+              <div className="flex gap-2 mt-2">
+                <button
+                  onClick={handleSaveNote}
+                  className="flex-1 px-3 py-1.5 text-xs font-semibold bg-[#0da1c7] text-white rounded-md hover:bg-[#0da1c7]/90 transition-colors"
+                >
+                  Save
+                </button>
+                {sectionNote && (
+                  <button
+                    onClick={handleDeleteNote}
+                    className="px-3 py-1.5 text-xs font-medium text-red-500 hover:bg-red-50 rounded-md transition-colors"
+                  >
+                    Delete
+                  </button>
+                )}
+              </div>
+            </div>
+          )}
+        </div>
+
         {/* Enable/Disable toggle */}
         <button
           onClick={(e) => {
@@ -315,7 +415,11 @@ function SectionTree({
   onScrollToSection,
   onReorderSections,
   activeSectionId,
+  sectionNotes,
+  onNoteChange,
+  hiddenSections,
 }: SectionTreeProps) {
+  const [hiddenExpanded, setHiddenExpanded] = useState(false);
   const sensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: {
@@ -337,27 +441,69 @@ function SectionTree({
   };
 
   return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragEnd={handleDragEnd}
-    >
-      <SortableContext items={sections.map(s => s.id)} strategy={verticalListSortingStrategy}>
-        <div className="space-y-1.5">
-          {sections.map((section) => (
-            <SortableSectionItem
-              key={section.id}
-              section={section}
-              onToggleSection={onToggleSection}
-              onToggleField={onToggleField}
-              onToggleExpand={onToggleExpand}
-              onScrollToSection={onScrollToSection}
-              activeSectionId={activeSectionId}
-            />
-          ))}
+    <div className="space-y-2">
+      <DndContext
+        sensors={sensors}
+        collisionDetection={closestCenter}
+        onDragEnd={handleDragEnd}
+      >
+        <SortableContext items={sections.map(s => s.id)} strategy={verticalListSortingStrategy}>
+          <div className="space-y-1.5">
+            {sections.map((section) => (
+              <SortableSectionItem
+                key={section.id}
+                section={section}
+                onToggleSection={onToggleSection}
+                onToggleField={onToggleField}
+                onToggleExpand={onToggleExpand}
+                onScrollToSection={onScrollToSection}
+                activeSectionId={activeSectionId}
+                sectionNote={sectionNotes?.[section.id]}
+                onNoteChange={onNoteChange}
+              />
+            ))}
+          </div>
+        </SortableContext>
+      </DndContext>
+
+      {/* Hidden Sections Indicator */}
+      {hiddenSections && hiddenSections.length > 0 && (
+        <div className="border-t border-slate-200 pt-3 mt-3">
+          <button
+            onClick={() => setHiddenExpanded(!hiddenExpanded)}
+            className="flex items-center gap-2 w-full px-3 py-2 rounded-lg bg-amber-50 text-amber-700 hover:bg-amber-100 transition-colors"
+          >
+            <svg 
+              className={`w-4 h-4 transition-transform ${hiddenExpanded ? 'rotate-90' : ''}`} 
+              fill="none" 
+              stroke="currentColor" 
+              viewBox="0 0 24 24"
+            >
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+            </svg>
+            <span className="text-xs font-semibold">
+              Hidden Sections ({hiddenSections.length})
+            </span>
+          </button>
+          
+          {hiddenExpanded && (
+            <div className="mt-2 space-y-1 pl-4">
+              {hiddenSections.map((section) => (
+                <div 
+                  key={section.id}
+                  className="flex items-center gap-2 px-3 py-1.5 text-xs text-slate-500"
+                >
+                  <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />
+                  <span className="font-medium text-slate-600">{section.label}</span>
+                  <span className="text-slate-400">—</span>
+                  <span className="text-slate-400 italic">{section.reason}</span>
+                </div>
+              ))}
+            </div>
+          )}
         </div>
-      </SortableContext>
-    </DndContext>
+      )}
+    </div>
   );
 }
 
@@ -2583,9 +2729,16 @@ interface DraggableTextBlockProps {
   onSelect: () => void;
   onUpdate: (updates: Partial<TextBlock>) => void;
   onDelete: () => void;
+  showGrid?: boolean;
+  gridSize?: number;
 }
 
-function DraggableTextBlock({ block, selected, onSelect, onUpdate, onDelete }: DraggableTextBlockProps) {
+function DraggableTextBlock({ block, selected, onSelect, onUpdate, onDelete, showGrid = false, gridSize = 16 }: DraggableTextBlockProps) {
+  // Helper to snap value to grid
+  const snapToGrid = (value: number): number => {
+    if (!showGrid) return value;
+    return Math.round(value / gridSize) * gridSize;
+  };
   const [isEditing, setIsEditing] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [isResizing, setIsResizing] = useState<string | null>(null); // 'se', 'sw', 'ne', 'nw', 'e', 'w', 's', 'n'
@@ -2632,9 +2785,11 @@ function DraggableTextBlock({ block, selected, onSelect, onUpdate, onDelete }: D
     if (!isDragging) return;
 
     const handleMouseMove = (e: MouseEvent) => {
+      const newX = snapToGrid(e.clientX - dragStart.x);
+      const newY = snapToGrid(e.clientY - dragStart.y);
       onUpdate({
-        x: e.clientX - dragStart.x,
-        y: e.clientY - dragStart.y,
+        x: newX,
+        y: newY,
       });
     };
 
@@ -2649,7 +2804,8 @@ function DraggableTextBlock({ block, selected, onSelect, onUpdate, onDelete }: D
       document.removeEventListener('mousemove', handleMouseMove);
       document.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isDragging, dragStart, onUpdate]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isDragging, dragStart, onUpdate, showGrid, gridSize]);
 
   // Handle resizing
   useEffect(() => {
@@ -2879,6 +3035,50 @@ function DraggableTextBlock({ block, selected, onSelect, onUpdate, onDelete }: D
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
               </svg>
             </button>
+            <div className="w-px h-5 bg-slate-600 mx-1" />
+            {/* Alignment Buttons */}
+            <button
+              type="button"
+              onMouseDown={(e) => { e.preventDefault(); applyFormat('justifyLeft'); onUpdate({ textAlign: 'left' }); }}
+              className={`w-7 h-7 flex items-center justify-center rounded transition-colors ${
+                block.textAlign === 'left' || !block.textAlign ? 'bg-[#0da1c7] text-white' : 'hover:bg-slate-700 text-white'
+              }`}
+              title="Align Left"
+            >
+              <AlignLeft size={14} />
+            </button>
+            <button
+              type="button"
+              onMouseDown={(e) => { e.preventDefault(); applyFormat('justifyCenter'); onUpdate({ textAlign: 'center' }); }}
+              className={`w-7 h-7 flex items-center justify-center rounded transition-colors ${
+                block.textAlign === 'center' ? 'bg-[#0da1c7] text-white' : 'hover:bg-slate-700 text-white'
+              }`}
+              title="Align Center"
+            >
+              <AlignCenter size={14} />
+            </button>
+            <button
+              type="button"
+              onMouseDown={(e) => { e.preventDefault(); applyFormat('justifyRight'); onUpdate({ textAlign: 'right' }); }}
+              className={`w-7 h-7 flex items-center justify-center rounded transition-colors ${
+                block.textAlign === 'right' ? 'bg-[#0da1c7] text-white' : 'hover:bg-slate-700 text-white'
+              }`}
+              title="Align Right"
+            >
+              <AlignRight size={14} />
+            </button>
+            <div className="w-px h-5 bg-slate-600 mx-1" />
+            {/* Border Toggle */}
+            <button
+              type="button"
+              onMouseDown={(e) => { e.preventDefault(); onUpdate({ showBorder: !block.showBorder }); }}
+              className={`w-7 h-7 flex items-center justify-center rounded transition-colors ${
+                block.showBorder ? 'bg-[#0da1c7] text-white' : 'hover:bg-slate-700 text-white'
+              }`}
+              title="Toggle Border"
+            >
+              <Square size={14} />
+            </button>
           </div>
           {/* ContentEditable Editor */}
           <div
@@ -2895,13 +3095,27 @@ function DraggableTextBlock({ block, selected, onSelect, onUpdate, onDelete }: D
               color: block.color,
               minHeight: block.height,
               lineHeight: '1.6',
+              textAlign: block.textAlign || 'left',
             }}
           />
         </div>
       ) : (
         <div
-          className={`p-2 bg-white rounded border-2 h-full ${isDefaultText ? 'border-dashed border-slate-200 text-slate-500 italic' : 'border-solid border-slate-200'}`}
-          style={{ minHeight: block.height - 16, lineHeight: '1.6' }}
+          className={`p-2 bg-white rounded h-full ${
+            isDefaultText 
+              ? 'border-2 border-dashed border-slate-200 text-slate-500 italic' 
+              : block.showBorder 
+                ? '' 
+                : 'border-2 border-solid border-slate-200'
+          }`}
+          style={{ 
+            minHeight: block.height - 16, 
+            lineHeight: '1.6',
+            textAlign: block.textAlign || 'left',
+            border: block.showBorder && !isDefaultText
+              ? `${block.borderWidth || 2}px solid ${block.borderColor || '#1c3643'}`
+              : undefined,
+          }}
           dangerouslySetInnerHTML={{
             __html: isDefaultText 
               ? block.content 
@@ -2985,6 +3199,24 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
   const previewRef = useRef<HTMLDivElement>(null);
   const [selectedElement, setSelectedElement] = useState<string | null>(null);
   const [textBlocks, setTextBlocks] = useState<TextBlock[]>([]);
+  
+  // Grid overlay and snap-to-grid state
+  const [showGrid, setShowGrid] = useState(false);
+  const [gridSize] = useState(16); // 16px grid
+
+  // Zoom state
+  const [zoomLevel, setZoomLevel] = useState(100); // percentage
+
+  // Find/Replace state
+  const [findReplaceOpen, setFindReplaceOpen] = useState(false);
+  const [searchResults, setSearchResults] = useState<SearchResult[]>([]);
+  const [currentMatchIndex, setCurrentMatchIndex] = useState(0);
+
+  // Section notes state (internal only - not exported)
+  const [sectionNotes, setSectionNotes] = useState<Record<string, string>>({});
+
+  // AI loading state
+  const [isAILoading, setIsAILoading] = useState(false);
 
   // Photo editor state
   const [photoEditorOpen, setPhotoEditorOpen] = useState(false);
@@ -3251,6 +3483,36 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
         e.preventDefault();
         onSaveDraft?.();
       }
+
+      // Zoom controls: Ctrl++ / Ctrl+= for zoom in
+      if ((e.ctrlKey || e.metaKey) && (e.key === '+' || e.key === '=')) {
+        e.preventDefault();
+        setZoomLevel(z => Math.min(150, z + 10));
+      }
+
+      // Ctrl+- for zoom out
+      if ((e.ctrlKey || e.metaKey) && e.key === '-') {
+        e.preventDefault();
+        setZoomLevel(z => Math.max(50, z - 10));
+      }
+
+      // Ctrl+0 for reset zoom
+      if ((e.ctrlKey || e.metaKey) && e.key === '0') {
+        e.preventDefault();
+        setZoomLevel(100);
+      }
+
+      // Ctrl+G for grid toggle
+      if ((e.ctrlKey || e.metaKey) && e.key === 'g') {
+        e.preventDefault();
+        setShowGrid(g => !g);
+      }
+
+      // Ctrl+F for find/replace
+      if ((e.ctrlKey || e.metaKey) && e.key === 'f') {
+        e.preventDefault();
+        setFindReplaceOpen(true);
+      }
     };
 
     document.addEventListener('keydown', handleKeyDown);
@@ -3324,6 +3586,35 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
 
   const [reportSections, setReportSections] = useState<ReportSection[]>(sections);
   const [activeSectionId, setActiveSectionId] = useState<string | null>(null);
+
+  // Compute hidden sections (sections hidden due to missing data or approach not selected)
+  const hiddenSections = useMemo(() => {
+    const hidden: Array<{ id: string; label: string; reason: string }> = [];
+
+    // Check data-dependent sections
+    sections.forEach(section => {
+      // Demographics requires data
+      if (section.id === 'demographics' && !state.demographicsData) {
+        hidden.push({ id: section.id, label: section.label, reason: 'No demographics data collected' });
+      }
+      // SWOT Analysis requires completion
+      if (section.id === 'swot' && (!state.swotAnalysis || Object.keys(state.swotAnalysis).length === 0)) {
+        hidden.push({ id: section.id, label: section.label, reason: 'SWOT analysis not completed' });
+      }
+      // Risk Rating requires generation
+      if (section.id === 'risk-rating' && !state.riskRating) {
+        hidden.push({ id: section.id, label: section.label, reason: 'Risk rating not generated' });
+      }
+    });
+
+    return hidden;
+  }, [sections, state.demographicsData, state.swotAnalysis, state.riskRating]);
+
+  // Filter out hidden sections from visible list
+  const visibleSections = useMemo(() => {
+    const hiddenIds = new Set(hiddenSections.map(s => s.id));
+    return reportSections.filter(s => !hiddenIds.has(s.id));
+  }, [reportSections, hiddenSections]);
 
   // Sync section visibility with report state
   useEffect(() => {
@@ -3547,6 +3838,10 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
       fontWeight: 'normal',
       color: '#1e293b',
       pageId: targetPageId,
+      textAlign: 'left',
+      showBorder: false,
+      borderColor: '#1c3643',
+      borderWidth: 2,
     };
     setTextBlocks((prev) => [...prev, newBlock]);
     setSelectedElement(newBlock.id);
@@ -3571,6 +3866,186 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
     setSelectedElement(null);
     // Remove from custom content
     reportActions.setCustomContent(`textBlock:${blockId}`, null);
+  }, [reportActions]);
+
+  // Find/Replace handlers
+  const handleSearch = useCallback((term: string, caseSensitive: boolean): SearchResult[] => {
+    if (!term) {
+      setSearchResults([]);
+      return [];
+    }
+
+    const results: SearchResult[] = [];
+    const searchFlags = caseSensitive ? 'g' : 'gi';
+    const regex = new RegExp(term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), searchFlags);
+
+    // Search in custom content (edited text)
+    Object.keys(reportState.customContent || {}).forEach(elementId => {
+      const content = reportState.customContent[elementId];
+      if (typeof content === 'string') {
+        let match;
+        let matchIndex = 0;
+        while ((match = regex.exec(content)) !== null) {
+          results.push({
+            elementId,
+            matchIndex,
+            startIndex: match.index,
+            endIndex: match.index + match[0].length,
+            context: content.substring(Math.max(0, match.index - 20), match.index + match[0].length + 20),
+          });
+          matchIndex++;
+        }
+      }
+    });
+
+    // Search in text blocks
+    textBlocks.forEach(block => {
+      const plainText = block.content.replace(/<[^>]+>/g, ''); // Strip HTML
+      let match;
+      let matchIndex = 0;
+      while ((match = regex.exec(plainText)) !== null) {
+        results.push({
+          elementId: block.id,
+          matchIndex,
+          startIndex: match.index,
+          endIndex: match.index + match[0].length,
+          context: plainText.substring(Math.max(0, match.index - 20), match.index + match[0].length + 20),
+        });
+        matchIndex++;
+      }
+    });
+
+    setSearchResults(results);
+    setCurrentMatchIndex(0);
+    return results;
+  }, [reportState.customContent, textBlocks]);
+
+  const handleReplace = useCallback((term: string, replacement: string, all = false): number => {
+    if (!term) return 0;
+
+    let replaceCount = 0;
+    const searchFlags = 'g'; // Always global for replace
+
+    // Replace in custom content
+    Object.keys(reportState.customContent || {}).forEach(elementId => {
+      const content = reportState.customContent[elementId];
+      if (typeof content === 'string' && content.includes(term)) {
+        if (all) {
+          const regex = new RegExp(term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), searchFlags);
+          const matches = content.match(regex);
+          if (matches) {
+            replaceCount += matches.length;
+            reportActions.setCustomContent(elementId, content.replace(regex, replacement));
+          }
+        } else if (replaceCount === 0) {
+          // Replace first occurrence only
+          const index = content.indexOf(term);
+          if (index !== -1) {
+            replaceCount = 1;
+            const newContent = content.substring(0, index) + replacement + content.substring(index + term.length);
+            reportActions.setCustomContent(elementId, newContent);
+          }
+        }
+      }
+    });
+
+    // Replace in text blocks
+    textBlocks.forEach(block => {
+      const plainText = block.content.replace(/<[^>]+>/g, '');
+      if (plainText.includes(term)) {
+        if (all) {
+          const regex = new RegExp(term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), searchFlags);
+          const matches = block.content.match(regex);
+          if (matches) {
+            replaceCount += matches.length;
+            handleUpdateTextBlock(block.id, { content: block.content.replace(regex, replacement) });
+          }
+        } else if (replaceCount === 0) {
+          const index = block.content.indexOf(term);
+          if (index !== -1) {
+            replaceCount = 1;
+            const newContent = block.content.substring(0, index) + replacement + block.content.substring(index + term.length);
+            handleUpdateTextBlock(block.id, { content: newContent });
+          }
+        }
+      }
+    });
+
+    return replaceCount;
+  }, [reportState.customContent, textBlocks, reportActions, handleUpdateTextBlock]);
+
+  const handleNavigateToMatch = useCallback((result: SearchResult) => {
+    // Select the element
+    setSelectedElement(result.elementId);
+    
+    // Scroll to the element
+    const element = document.getElementById(`page_${result.elementId}`) || 
+                    document.querySelector(`[data-element-id="${result.elementId}"]`);
+    if (element) {
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+  }, []);
+
+  // Section notes handlers
+  const handleNoteChange = useCallback((sectionId: string, note: string) => {
+    setSectionNotes(prev => {
+      if (!note) {
+        // Delete the note
+        const { [sectionId]: _, ...rest } = prev;
+        return rest;
+      }
+      return { ...prev, [sectionId]: note };
+    });
+  }, []);
+
+  // AI generation handlers
+  const handleAIRewrite = useCallback(async (elementId: string, currentText: string): Promise<string> => {
+    setIsAILoading(true);
+    try {
+      // Simulate AI call - in production, this would call an actual AI service
+      // For now, we'll return a mock response after a delay
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Create a professionally rewritten version
+      const rewrittenText = `Based on our thorough analysis and in accordance with USPAP Standards, ${currentText.trim()}. This determination reflects our professional assessment of the subject property and current market conditions.`;
+      
+      // Update the content
+      reportActions.setCustomContent(elementId, rewrittenText);
+      return rewrittenText;
+    } finally {
+      setIsAILoading(false);
+    }
+  }, [reportActions]);
+
+  const handleAIExpand = useCallback(async (elementId: string, currentText: string): Promise<string> => {
+    setIsAILoading(true);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Create an expanded version
+      const expandedText = `${currentText.trim()}\n\nThis conclusion is further supported by our comprehensive analysis of comparable properties in the immediate market area. The subject property's location, physical characteristics, and current market conditions have all been carefully considered in reaching this determination. Our research indicates that these factors are consistent with the broader market trends observed in similar property types within this submarket.`;
+      
+      reportActions.setCustomContent(elementId, expandedText);
+      return expandedText;
+    } finally {
+      setIsAILoading(false);
+    }
+  }, [reportActions]);
+
+  const handleAIShorten = useCallback(async (elementId: string, currentText: string): Promise<string> => {
+    setIsAILoading(true);
+    try {
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      
+      // Create a shortened version by taking first sentence or truncating
+      const sentences = currentText.split(/[.!?]+/).filter(s => s.trim());
+      const shortenedText = sentences.slice(0, Math.min(2, sentences.length)).join('. ').trim() + '.';
+      
+      reportActions.setCustomContent(elementId, shortenedText);
+      return shortenedText;
+    } finally {
+      setIsAILoading(false);
+    }
   }, [reportActions]);
 
   // Photo editing handlers
@@ -3819,13 +4294,16 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
         </div>
         <div className="flex-1 overflow-auto py-4 px-4">
           <SectionTree
-            sections={reportSections}
+            sections={visibleSections}
             onToggleSection={handleToggleSection}
             onToggleField={handleToggleField}
             onToggleExpand={handleToggleExpand}
             onScrollToSection={handleScrollToSection}
             onReorderSections={handleReorderSections}
             activeSectionId={activeSectionId}
+            sectionNotes={sectionNotes}
+            onNoteChange={handleNoteChange}
+            hiddenSections={hiddenSections}
           />
         </div>
       </div>
@@ -3888,14 +4366,73 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
               </svg>
               Add Text Block
             </button>
+            <button
+              onClick={() => setShowGrid(!showGrid)}
+              className={`px-4 py-2 text-sm font-semibold rounded-lg flex items-center gap-2 transition-all ${
+                showGrid
+                  ? 'bg-[#0da1c7] text-white'
+                  : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
+              }`}
+              title="Toggle Snap Grid"
+            >
+              <Grid3x3 size={16} />
+              Grid
+            </button>
+            
+            {/* Zoom Controls */}
+            <div className="flex items-center gap-1 bg-white rounded-lg border border-slate-200 p-1">
+              <button
+                onClick={() => setZoomLevel(z => Math.max(50, z - 10))}
+                className="p-1.5 hover:bg-slate-100 rounded transition-colors"
+                title="Zoom Out (Ctrl+-)"
+              >
+                <ZoomOut size={16} className="text-slate-600" />
+              </button>
+              <span className="text-xs font-medium text-slate-600 w-12 text-center">
+                {zoomLevel}%
+              </span>
+              <button
+                onClick={() => setZoomLevel(z => Math.min(150, z + 10))}
+                className="p-1.5 hover:bg-slate-100 rounded transition-colors"
+                title="Zoom In (Ctrl++)"
+              >
+                <ZoomIn size={16} className="text-slate-600" />
+              </button>
+              <button
+                onClick={() => setZoomLevel(100)}
+                className="p-1.5 hover:bg-slate-100 rounded transition-colors"
+                title="Reset Zoom (Ctrl+0)"
+              >
+                <RotateCcw size={14} className="text-slate-500" />
+              </button>
+            </div>
           </div>
         </div>
         <div 
           ref={previewRef} 
           className="flex-1 overflow-auto p-8 bg-slate-400/30 relative"
         >
-          <div className="report-preview-content space-y-8 flex flex-col items-center">
-            {reportSections
+          {/* Grid Overlay */}
+          {showGrid && (
+            <div 
+              className="absolute inset-0 pointer-events-none z-40"
+              style={{
+                backgroundImage: `
+                  linear-gradient(to right, rgba(13,161,199,0.08) 1px, transparent 1px),
+                  linear-gradient(to bottom, rgba(13,161,199,0.08) 1px, transparent 1px)
+                `,
+                backgroundSize: `${gridSize}px ${gridSize}px`,
+              }}
+            />
+          )}
+          <div 
+            className="report-preview-content space-y-8 flex flex-col items-center"
+            style={{
+              transform: `scale(${zoomLevel / 100})`,
+              transformOrigin: 'top center',
+            }}
+          >
+            {visibleSections
               .filter((s) => s.enabled)
               .map((section, idx) => (
                 <div key={section.id} id={`page_${section.id}`} className="relative">
@@ -3911,6 +4448,8 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
                         onSelect={() => setSelectedElement(block.id)}
                         onUpdate={(updates) => handleUpdateTextBlock(block.id, updates)}
                         onDelete={() => handleDeleteTextBlock(block.id)}
+                        showGrid={showGrid}
+                        gridSize={gridSize}
                       />
                     ))}
                 </div>
@@ -3926,10 +4465,31 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
           elementStyles={elementStyles}
           elementContent={elementContent}
           onStyleChange={(styles) => selectedElement && handleStyleChange(selectedElement, styles)}
-          onContentChange={handleContentChange}
           onDeleteElement={handleDeleteElement}
           isDirty={reportState.isDirty}
           onSave={onSaveDraft}
+          textBlockData={
+            selectedElement?.startsWith('text-block-')
+              ? (() => {
+                  const block = textBlocks.find(b => b.id === selectedElement);
+                  return block ? {
+                    showBorder: block.showBorder,
+                    borderColor: block.borderColor,
+                    borderWidth: block.borderWidth,
+                    textAlign: block.textAlign,
+                  } : undefined;
+                })()
+              : undefined
+          }
+          onTextBlockUpdate={
+            selectedElement?.startsWith('text-block-')
+              ? (updates) => handleUpdateTextBlock(selectedElement, updates)
+              : undefined
+          }
+          onAIRewrite={handleAIRewrite}
+          onAIExpand={handleAIExpand}
+          onAIShorten={handleAIShorten}
+          isAILoading={isAILoading}
         />
       </div>
 
@@ -3959,6 +4519,18 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
           caption: p.caption,
           category: p.category,
         })) || []}
+      />
+
+      {/* Find/Replace Panel */}
+      <FindReplacePanel
+        isOpen={findReplaceOpen}
+        onClose={() => setFindReplaceOpen(false)}
+        onSearch={handleSearch}
+        onReplace={handleReplace}
+        onNavigateToMatch={handleNavigateToMatch}
+        searchResults={searchResults}
+        currentMatchIndex={currentMatchIndex}
+        onCurrentMatchChange={setCurrentMatchIndex}
       />
     </div>
   );
