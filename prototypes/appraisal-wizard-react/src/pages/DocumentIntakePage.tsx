@@ -29,6 +29,11 @@ import {
   FileText,
   Building2,
   Droplets,
+  Home,
+  Sofa,
+  Trees,
+  Route,
+  Image,
   type LucideIcon,
 } from 'lucide-react';
 import BulkPhotoDropZone from '../components/BulkPhotoDropZone';
@@ -55,6 +60,90 @@ const ICON_MAP: Record<string, LucideIcon> = {
   'droplets': Droplets,
   'building-2': Building2,
 };
+
+// ==========================================
+// PHOTO CATEGORIES CONFIGURATION
+// ==========================================
+interface PhotoSlot {
+  id: string;
+  label: string;
+  description?: string;
+  recommended?: boolean;
+}
+
+interface PhotoCategory {
+  id: string;
+  label: string;
+  Icon: React.FC<{ className?: string }>;
+  description: string;
+  slots: PhotoSlot[];
+  reportPages?: string;
+}
+
+const photoCategories: PhotoCategory[] = [
+  {
+    id: 'exterior',
+    label: 'Exterior',
+    Icon: Home,
+    description: 'Building exterior elevations',
+    reportPages: 'Subject Photos',
+    slots: [
+      { id: 'ext_front', label: 'Front Elevation', description: 'Primary street-facing view', recommended: true },
+      { id: 'ext_rear', label: 'Rear Elevation', description: 'Back of building', recommended: true },
+      { id: 'ext_side_1', label: 'Side Elevation (Left)', description: 'Left side of building' },
+      { id: 'ext_side_2', label: 'Side Elevation (Right)', description: 'Right side of building' },
+      { id: 'ext_additional_1', label: 'Additional Exterior', description: 'Extra exterior view' },
+      { id: 'ext_additional_2', label: 'Additional Exterior', description: 'Extra exterior view' },
+    ],
+  },
+  {
+    id: 'interior',
+    label: 'Interior',
+    Icon: Sofa,
+    description: 'Interior spaces and finishes',
+    reportPages: 'Subject Photos',
+    slots: [
+      { id: 'int_lobby', label: 'Lobby/Reception', description: 'Main entrance or reception area' },
+      { id: 'int_office', label: 'Typical Office', description: 'Representative office space', recommended: true },
+      { id: 'int_conference', label: 'Conference Room', description: 'Meeting/conference space' },
+      { id: 'int_shop', label: 'Shop/Warehouse', description: 'Shop or warehouse space if applicable', recommended: true },
+      { id: 'int_bathroom', label: 'Bathroom', description: 'Representative bathroom' },
+      { id: 'int_mechanical', label: 'Mechanical Room', description: 'HVAC or mechanical systems' },
+      { id: 'int_mezzanine', label: 'Mezzanine', description: 'Mezzanine level if present' },
+      { id: 'int_kitchen', label: 'Kitchen/Break Room', description: 'Kitchen or break room area' },
+      { id: 'int_additional_1', label: 'Additional Interior', description: 'Extra interior view' },
+      { id: 'int_additional_2', label: 'Additional Interior', description: 'Extra interior view' },
+      { id: 'int_additional_3', label: 'Additional Interior', description: 'Extra interior view' },
+      { id: 'int_additional_4', label: 'Additional Interior', description: 'Extra interior view' },
+    ],
+  },
+  {
+    id: 'site',
+    label: 'Site',
+    Icon: Trees,
+    description: 'Site improvements, parking, and yard areas',
+    reportPages: 'Subject Photos',
+    slots: [
+      { id: 'site_parking', label: 'Parking Area', description: 'Main parking lot or area', recommended: true },
+      { id: 'site_yard_n', label: 'Yard/Storage (North)', description: 'Yard facing north' },
+      { id: 'site_yard_s', label: 'Yard/Storage (South)', description: 'Yard facing south' },
+      { id: 'site_yard_e', label: 'Yard/Storage (East)', description: 'Yard facing east' },
+      { id: 'site_yard_w', label: 'Yard/Storage (West)', description: 'Yard facing west' },
+    ],
+  },
+  {
+    id: 'street',
+    label: 'Street Scene',
+    Icon: Route,
+    description: 'Views of the street and neighborhood',
+    reportPages: 'Subject Photos',
+    slots: [
+      { id: 'street_east', label: 'Street View Facing East', description: 'View looking east from property', recommended: true },
+      { id: 'street_west', label: 'Street View Facing West', description: 'View looking west from property', recommended: true },
+    ],
+  },
+];
+
 import {
   classifyAndExtract,
   extractDocumentData,
@@ -384,6 +473,15 @@ export default function DocumentIntakePage() {
   const [photos, setPhotos] = useState<Record<string, PhotoData | null>>({});
   const [showCoverPhotoPicker, setShowCoverPhotoPicker] = useState(false);
 
+  // Photo categories expanded state
+  const [expandedCategories, setExpandedCategories] = useState<Record<string, boolean>>(() => {
+    // Start with exterior expanded by default
+    return { exterior: true };
+  });
+
+  // Refs for file inputs per slot
+  const slotFileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
+
   // Crop modal state
   const [cropModalOpen, setCropModalOpen] = useState(false);
   const [cropImageUrl, setCropImageUrl] = useState<string | null>(null);
@@ -562,6 +660,42 @@ export default function DocumentIntakePage() {
       setDraggedPhotoData(null);
     }
   }, [draggedPhotoData, handleAssignStagingPhoto]);
+
+  // Toggle photo category expansion
+  const toggleCategory = useCallback((categoryId: string) => {
+    setExpandedCategories(prev => ({
+      ...prev,
+      [categoryId]: !prev[categoryId],
+    }));
+  }, []);
+
+  // Handle slot file input change
+  const handleSlotFileChange = useCallback((slotId: string, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      handlePhotoUpload(slotId, file);
+    }
+    // Reset input so same file can be selected again
+    e.target.value = '';
+  }, [handlePhotoUpload]);
+
+  // Remove photo from slot
+  const handleRemovePhoto = useCallback((slotId: string) => {
+    setPhotos(prev => {
+      const updated = { ...prev };
+      // Revoke the object URL to free memory
+      if (updated[slotId]?.preview) {
+        URL.revokeObjectURL(updated[slotId]!.preview);
+      }
+      updated[slotId] = null;
+      return updated;
+    });
+  }, []);
+
+  // Get uploaded count for a category
+  const getUploadedCount = useCallback((category: PhotoCategory) => {
+    return category.slots.filter(slot => photos[slot.id]).length;
+  }, [photos]);
 
   // Handle file drop
   const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
@@ -1255,15 +1389,189 @@ export default function DocumentIntakePage() {
                 onDragEnd={handlePhotoDragEnd}
               />
 
+              {/* Photo Stats Summary */}
+              <div className="bg-gradient-to-r from-[#0da1c7]/10 to-[#4db8d1]/5 border border-[#0da1c7]/20 rounded-xl p-4 mb-6">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-lg bg-[#0da1c7]/20 flex items-center justify-center">
+                      <Camera className="w-5 h-5 text-[#0da1c7]" />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-harken-dark dark:text-white">Subject Property Photos</p>
+                      <p className="text-sm text-harken-gray dark:text-slate-400">
+                        {Object.values(photos).filter(Boolean).length} of{' '}
+                        {photoCategories.reduce((sum, c) => sum + c.slots.length, 0)} photos uploaded
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex gap-2 text-xs">
+                    {photoCategories.map(cat => {
+                      const CatIcon = cat.Icon;
+                      return (
+                        <div
+                          key={cat.id}
+                          className={`px-2 py-1 rounded-full flex items-center gap-1 ${getUploadedCount(cat) > 0
+                            ? 'bg-accent-teal-mint-light text-accent-teal-mint dark:bg-teal-900/30 dark:text-teal-400'
+                            : 'bg-harken-gray-light text-harken-gray dark:bg-elevation-1 dark:text-slate-400'
+                            }`}
+                        >
+                          <CatIcon className="w-3 h-3" />
+                          <span>{getUploadedCount(cat)}/{cat.slots.length}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Photo Categories Grid */}
+              <div className="space-y-4 mb-6">
+                {photoCategories.map((category) => (
+                  <div
+                    key={category.id}
+                    className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl shadow-sm overflow-hidden"
+                  >
+                    {/* Category Header */}
+                    <button
+                      onClick={() => toggleCategory(category.id)}
+                      className="w-full px-6 py-4 flex items-center justify-between hover:bg-harken-gray-light dark:hover:bg-elevation-3/50 transition-colors"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="w-10 h-10 rounded-lg bg-[#0da1c7]/10 flex items-center justify-center">
+                          <category.Icon className="w-5 h-5 text-[#0da1c7]" />
+                        </div>
+                        <div className="text-left">
+                          <h3 className="font-bold text-harken-dark dark:text-white">{category.label}</h3>
+                          <p className="text-sm text-harken-gray dark:text-slate-400">{category.description}</p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-3">
+                        <span className={`px-2 py-0.5 rounded-full text-xs font-medium ${getUploadedCount(category) > 0
+                          ? 'bg-accent-teal-mint-light text-accent-teal-mint dark:bg-teal-900/30 dark:text-teal-400'
+                          : 'bg-harken-gray-light text-harken-gray dark:bg-elevation-1 dark:text-slate-400'
+                          }`}>
+                          {getUploadedCount(category)}/{category.slots.length}
+                        </span>
+                        {category.reportPages && (
+                          <span className="text-xs text-harken-gray-med dark:text-slate-500">
+                            {category.reportPages}
+                          </span>
+                        )}
+                        <ChevronDown className={`w-5 h-5 text-harken-gray-med transition-transform ${expandedCategories[category.id] ? 'rotate-180' : ''
+                          }`} />
+                      </div>
+                    </button>
+
+                    {/* Category Content */}
+                    {expandedCategories[category.id] && (
+                      <div className="border-t border-harken-gray-light dark:border-dark-border p-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                          {category.slots.map((slot) => {
+                            const photo = photos[slot.id];
+
+                            return (
+                              <div
+                                key={slot.id}
+                                className={`border-2 rounded-xl p-4 transition-all ${
+                                  photo
+                                    ? 'border-accent-teal-mint/30 dark:border-teal-900/50 bg-accent-teal-mint-light/30 dark:bg-teal-900/10'
+                                    : slot.recommended
+                                      ? 'border-[#0da1c7]/30 dark:border-[#0da1c7]/50 bg-[#0da1c7]/5 dark:bg-[#0da1c7]/10'
+                                      : 'border-light-border dark:border-dark-border hover:border-[#0da1c7]/40'
+                                }`}
+                              >
+                                {/* Slot Header */}
+                                <div className="flex items-start justify-between gap-2 mb-3">
+                                  <div className="flex-1">
+                                    <div className="flex items-center gap-2 mb-1">
+                                      <p className="text-sm font-medium text-harken-dark dark:text-white">{slot.label}</p>
+                                      {slot.recommended && !photo && (
+                                        <span className="px-1.5 py-0.5 bg-accent-amber-gold-light text-accent-amber-gold text-[10px] font-medium rounded">
+                                          Recommended
+                                        </span>
+                                      )}
+                                    </div>
+                                    {slot.description && (
+                                      <p className="text-xs text-harken-gray dark:text-slate-400">{slot.description}</p>
+                                    )}
+                                  </div>
+                                  {photo && (
+                                    <button
+                                      onClick={() => handleRemovePhoto(slot.id)}
+                                      className="p-1 text-harken-gray-med hover:text-harken-error hover:bg-accent-red-light dark:hover:bg-accent-red-light rounded transition-colors"
+                                      title="Remove photo"
+                                    >
+                                      <X className="w-4 h-4" />
+                                    </button>
+                                  )}
+                                </div>
+
+                                {photo ? (
+                                  <div className="space-y-3">
+                                    {/* Photo Preview */}
+                                    <div className="relative group">
+                                      <img
+                                        src={photo.preview}
+                                        alt={slot.label}
+                                        className="w-full h-32 object-cover rounded-lg"
+                                      />
+                                      {/* Overlay with Preview and Crop buttons */}
+                                      <div className="absolute inset-0 flex items-center justify-center gap-2 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity rounded-lg">
+                                        <button
+                                          onClick={() => handleReCropPhoto(slot.id, photo)}
+                                          className="flex items-center gap-1.5 px-3 py-1.5 bg-surface-1/90 rounded-full text-sm font-medium text-harken-dark dark:text-white hover:bg-surface-1 transition-colors"
+                                          title="Re-crop photo"
+                                        >
+                                          <Eye className="w-4 h-4" />
+                                          Crop
+                                        </button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                ) : isAutoCropping && cropTargetSlotId === slot.id ? (
+                                  // Auto-cropping loading state
+                                  <div className="border-2 border-dashed border-[#0da1c7] rounded-lg p-6 text-center bg-[#0da1c7]/10 dark:bg-[#0da1c7]/20">
+                                    <Loader2 className="w-8 h-8 mx-auto mb-2 text-[#0da1c7] animate-spin" />
+                                    <p className="text-xs text-[#0da1c7] font-medium">
+                                      Auto-cropping...
+                                    </p>
+                                    <p className="text-[10px] text-harken-gray mt-1">
+                                      Optimizing for real estate
+                                    </p>
+                                  </div>
+                                ) : (
+                                  <label className="block border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-all border-light-border dark:border-dark-border hover:border-[#0da1c7] hover:bg-[#0da1c7]/5 dark:hover:bg-[#0da1c7]/10">
+                                    <input
+                                      ref={(el) => { slotFileInputRefs.current[slot.id] = el; }}
+                                      type="file"
+                                      accept="image/*"
+                                      className="hidden"
+                                      onChange={(e) => handleSlotFileChange(slot.id, e)}
+                                    />
+                                    <Image className="w-8 h-8 mx-auto mb-2 text-harken-gray-med" />
+                                    <p className="text-xs text-harken-gray">
+                                      Click or drag to upload
+                                    </p>
+                                  </label>
+                                )}
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+
               {/* Info about assigning photos later */}
               {stagingPhotos.length > 0 && (
-                <div className="bg-accent-amber-gold-light dark:bg-amber-900/20 border border-accent-amber-gold dark:border-amber-700/50 rounded-xl p-4 flex items-start gap-3">
+                <div className="bg-accent-amber-gold-light dark:bg-amber-900/20 border border-accent-amber-gold dark:border-amber-700/50 rounded-xl p-4 flex items-start gap-3 mb-6">
                   <AlertCircle className="w-5 h-5 text-accent-amber-gold dark:text-amber-500 flex-shrink-0 mt-0.5" />
                   <div>
                     <p className="text-sm font-medium text-accent-amber-gold dark:text-amber-400">Photos ready for assignment</p>
                     <p className="text-sm text-amber-700 dark:text-amber-500/80 mt-1">
-                      You can accept the AI suggestions above, or assign photos to specific slots
-                      in the Subject Property → Photos & Maps section.
+                      You can accept the AI suggestions above, or drag them to specific slots below.
                     </p>
                   </div>
                 </div>

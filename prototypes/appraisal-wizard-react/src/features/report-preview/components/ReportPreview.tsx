@@ -213,12 +213,18 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
           );
         }
         case 'demographics': {
-          const demoContent = page.content?.[0]?.content as { demographics?: import('../../../types').DemographicsData };
+          const demoContent = page.content?.[0]?.content as { 
+            demographics?: import('../../../types').DemographicsData;
+            latitude?: number;
+            longitude?: number;
+          };
           return (
             <DemographicsPage
               data={demoContent?.demographics?.radiusAnalysis ?? []}
               source={demoContent?.demographics?.dataSource}
               asOfDate={demoContent?.demographics?.dataPullDate}
+              latitude={demoContent?.latitude}
+              longitude={demoContent?.longitude}
               pageNumber={page.pageNumber}
             />
           );

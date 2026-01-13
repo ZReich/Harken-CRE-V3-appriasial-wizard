@@ -2574,248 +2574,6 @@ function EditableElement({
 }
 
 // =================================================================
-// PROPERTIES PANEL COMPONENT
-// =================================================================
-
-interface PropertiesPanelProps {
-  selectedElement: string | null;
-  elementStyles: ElementStyles;
-  elementContent: ElementContent;
-  onStyleChange: (styles: Partial<ElementStyles>) => void;
-  onContentChange: (elementId: string, content: string) => void;
-  onDeleteElement: () => void;
-  isDirty?: boolean;
-  onSave?: () => void;
-}
-
-function PropertiesPanel({ selectedElement, elementStyles, elementContent, onStyleChange, onContentChange, onDeleteElement, isDirty, onSave }: PropertiesPanelProps) {
-  const [activeTab, setActiveTab] = useState<PropertyTabId>('design');
-  const [localContent, setLocalContent] = useState('');
-
-  useEffect(() => {
-    if (selectedElement && elementContent[selectedElement]) {
-      setLocalContent(elementContent[selectedElement].text);
-    } else {
-      setLocalContent('');
-    }
-  }, [selectedElement, elementContent]);
-
-  const tabs: { id: PropertyTabId; label: string }[] = [
-    { id: 'design', label: 'Design' },
-    { id: 'content', label: 'Content' },
-    { id: 'advanced', label: 'Advanced' },
-  ];
-
-  if (!selectedElement) {
-    return (
-      <div className="h-full flex items-center justify-center text-center p-8">
-        <div className="text-slate-500">
-          <svg className="w-12 h-12 mx-auto mb-3 opacity-30" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" />
-          </svg>
-          <p className="text-sm font-medium mb-2">No Element Selected</p>
-          <p className="text-xs opacity-75">Click on any element in the preview to edit its properties</p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="h-full flex flex-col">
-      {/* Header with Save Status */}
-      <div className="p-4 border-b border-slate-200 bg-slate-100">
-        <div className="flex items-center justify-between">
-          <div>
-            <div className="text-sm font-bold text-slate-800">Element Properties</div>
-            <div className="text-xs text-slate-500 mt-1 font-mono">{selectedElement}</div>
-          </div>
-          {isDirty && (
-            <div className="flex items-center gap-2">
-              <span className="text-xs text-accent-amber-gold font-medium">Unsaved</span>
-              <div className="w-2 h-2 bg-accent-amber-gold-light0 rounded-full animate-pulse" />
-            </div>
-          )}
-        </div>
-        {isDirty && onSave && (
-          <button
-            onClick={onSave}
-            className="mt-3 w-full py-2 bg-[#0da1c7] text-white rounded-lg text-sm font-medium hover:bg-[#0da1c7]-hover transition-colors flex items-center justify-center gap-2"
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 7H5a2 2 0 00-2 2v9a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-3m-1 4l-3 3m0 0l-3-3m3 3V4" />
-            </svg>
-            Save Draft
-          </button>
-        )}
-      </div>
-
-      {/* Tabs */}
-      <div className="flex border-b border-slate-200">
-        {tabs.map((tab) => (
-          <button
-            key={tab.id}
-            onClick={() => setActiveTab(tab.id)}
-            className={`flex-1 px-4 py-3 text-sm font-medium transition-colors ${activeTab === tab.id
-              ? 'text-[#0da1c7] border-b-2 border-[#0da1c7]'
-              : 'text-slate-500 hover:text-slate-600'
-              }`}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Content */}
-      <div className="flex-1 overflow-auto p-4 space-y-6">
-        {activeTab === 'design' && (
-          <>
-            {/* Typography */}
-            <div>
-              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Typography</h4>
-              <div className="space-y-3">
-                <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">Font Family</label>
-                  <select
-                    value={elementStyles.fontFamily || 'Montserrat'}
-                    onChange={(e) => onStyleChange({ fontFamily: e.target.value })}
-                    className="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white text-slate-800"
-                  >
-                    <option value="Montserrat">Montserrat</option>
-                    <option value="Georgia">Georgia</option>
-                    <option value="Arial">Arial</option>
-                    <option value="Times New Roman">Times New Roman</option>
-                  </select>
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">Font Size (px)</label>
-                  <input
-                    type="number"
-                    value={elementStyles.fontSize || 14}
-                    onChange={(e) => onStyleChange({ fontSize: parseInt(e.target.value) })}
-                    className="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">Font Weight</label>
-                  <select
-                    value={elementStyles.fontWeight || 'normal'}
-                    onChange={(e) => onStyleChange({ fontWeight: e.target.value })}
-                    className="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
-                  >
-                    <option value="normal">Normal</option>
-                    <option value="500">Medium</option>
-                    <option value="600">Semibold</option>
-                    <option value="700">Bold</option>
-                  </select>
-                </div>
-              </div>
-            </div>
-
-            {/* Colors */}
-            <div>
-              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Colors</h4>
-              <div>
-                <label className="block text-xs font-medium text-slate-600 mb-1">Text Color</label>
-                <div className="flex gap-2">
-                  <input
-                    type="color"
-                    value={elementStyles.color || '#1c3643'}
-                    onChange={(e) => onStyleChange({ color: e.target.value })}
-                    className="w-10 h-10 border border-slate-200 rounded cursor-pointer"
-                  />
-                  <input
-                    type="text"
-                    value={elementStyles.color || '#1c3643'}
-                    onChange={(e) => onStyleChange({ color: e.target.value })}
-                    className="flex-1 border border-slate-200 rounded px-3 py-2 text-sm font-mono focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent bg-white text-slate-800"
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Alignment */}
-            <div>
-              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Alignment</h4>
-              <div className="flex gap-2">
-                {(['left', 'center', 'right'] as const).map((align) => (
-                  <button
-                    key={align}
-                    onClick={() => onStyleChange({ textAlign: align })}
-                    className={`flex-1 py-2 border rounded text-sm capitalize transition-all ${elementStyles.textAlign === align
-                      ? 'border-[#0da1c7] bg-[#0da1c7]/10 text-[#0da1c7]'
-                      : 'border-slate-200 hover:border-slate-400-med'
-                      }`}
-                  >
-                    {align}
-                  </button>
-                ))}
-              </div>
-            </div>
-          </>
-        )}
-
-        {activeTab === 'content' && (
-          <div>
-            <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Content</h4>
-            <textarea
-              value={localContent}
-              onChange={(e) => setLocalContent(e.target.value)}
-              onBlur={() => selectedElement && onContentChange(selectedElement, localContent)}
-              placeholder="Edit the content of this element..."
-              className="w-full border border-slate-200 rounded px-3 py-2 text-sm min-h-[200px] focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
-            />
-            <button
-              onClick={() => selectedElement && onContentChange(selectedElement, localContent)}
-              className="mt-3 w-full py-2 bg-[#0da1c7] text-white rounded text-sm font-medium hover:bg-[#0da1c7]-hover transition-colors"
-            >
-              Apply Changes
-            </button>
-          </div>
-        )}
-
-        {activeTab === 'advanced' && (
-          <>
-            <div>
-              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Spacing</h4>
-              <div className="grid grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">Margin Top</label>
-                  <input
-                    type="number"
-                    value={elementStyles.marginTop || 0}
-                    onChange={(e) => onStyleChange({ marginTop: parseInt(e.target.value) })}
-                    className="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs font-medium text-slate-600 mb-1">Margin Bottom</label>
-                  <input
-                    type="number"
-                    value={elementStyles.marginBottom || 0}
-                    onChange={(e) => onStyleChange({ marginBottom: parseInt(e.target.value) })}
-                    className="w-full border border-slate-200 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-[#0da1c7] focus:border-transparent"
-                  />
-                </div>
-              </div>
-            </div>
-
-            <div>
-              <h4 className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">Actions</h4>
-              <button
-                onClick={onDeleteElement}
-                className="w-full py-2 bg-red-500 text-white rounded text-sm font-medium hover:bg-red-500 transition-colors"
-              >
-                Delete Element
-              </button>
-            </div>
-          </>
-        )}
-      </div>
-    </div>
-  );
-}
-
-// =================================================================
 // DRAGGABLE TEXT BLOCK COMPONENT
 // =================================================================
 
@@ -2833,7 +2591,7 @@ function DraggableTextBlock({ block, selected, onSelect, onUpdate, onDelete }: D
   const [isResizing, setIsResizing] = useState<string | null>(null); // 'se', 'sw', 'ne', 'nw', 'e', 'w', 's', 'n'
   const [dragStart, setDragStart] = useState({ x: 0, y: 0, width: 0, height: 0, blockX: 0, blockY: 0 });
   const blockRef = useRef<HTMLDivElement>(null);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const editorRef = useRef<HTMLDivElement>(null);
 
   // Default placeholder text
   const DEFAULT_TEXT = 'New text block - double-click to edit';
@@ -2951,19 +2709,66 @@ function DraggableTextBlock({ block, selected, onSelect, onUpdate, onDelete }: D
     }
   };
 
-  // Focus and select all text when entering edit mode
+  // Focus editor when entering edit mode
   useEffect(() => {
-    if (isEditing && textareaRef.current) {
-      textareaRef.current.focus();
-      textareaRef.current.select();
+    if (isEditing && editorRef.current) {
+      editorRef.current.focus();
+      // Select all content
+      const range = document.createRange();
+      range.selectNodeContents(editorRef.current);
+      const selection = window.getSelection();
+      selection?.removeAllRanges();
+      selection?.addRange(range);
     }
   }, [isEditing]);
 
-  const handleBlur = () => {
+  // Handle blur - save content
+  const handleBlur = (e: React.FocusEvent) => {
+    // Don't blur if clicking on toolbar buttons
+    const relatedTarget = e.relatedTarget as HTMLElement;
+    if (relatedTarget?.closest('[data-toolbar]')) {
+      return;
+    }
     setIsEditing(false);
     // If user cleared all text, restore default placeholder
-    if (!block.content.trim()) {
-      onUpdate({ content: DEFAULT_TEXT });
+    if (editorRef.current) {
+      const newContent = editorRef.current.innerHTML;
+      if (!newContent.trim() || newContent === '<br>') {
+        onUpdate({ content: DEFAULT_TEXT });
+      }
+    }
+  };
+
+  // Format text using execCommand
+  const applyFormat = (command: string) => {
+    document.execCommand(command, false);
+    editorRef.current?.focus();
+  };
+
+  // Handle content input in contentEditable
+  const handleInput = () => {
+    if (editorRef.current) {
+      onUpdate({ content: editorRef.current.innerHTML });
+    }
+  };
+
+  // Keyboard shortcut handling for formatting
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.ctrlKey || e.metaKey) {
+      switch (e.key.toLowerCase()) {
+        case 'b':
+          e.preventDefault();
+          applyFormat('bold');
+          break;
+        case 'i':
+          e.preventDefault();
+          applyFormat('italic');
+          break;
+        case 'u':
+          e.preventDefault();
+          applyFormat('underline');
+          break;
+      }
     }
   };
 
@@ -2992,6 +2797,7 @@ function DraggableTextBlock({ block, selected, onSelect, onUpdate, onDelete }: D
   return (
     <div
       ref={blockRef}
+      data-text-block="true"
       className={`absolute z-50 ${isEditing ? '' : 'cursor-move'} ${selected ? 'ring-2 ring-[#0da1c7] ring-offset-1' : ''}`}
       style={{
         left: block.x,
@@ -3007,22 +2813,75 @@ function DraggableTextBlock({ block, selected, onSelect, onUpdate, onDelete }: D
       onDoubleClick={handleDoubleClick}
     >
       {isEditing ? (
-        <textarea
-          ref={textareaRef}
-          value={block.content}
-          onChange={(e) => onUpdate({ content: e.target.value })}
-          onBlur={handleBlur}
-          placeholder="Enter your text here..."
-          className="w-full p-2 border-2 border-[#0da1c7] rounded bg-white resize-vertical focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/30"
-          style={{
-            fontSize: block.fontSize,
-            fontWeight: block.fontWeight,
-            color: block.color,
-            minHeight: block.height,
-            height: block.height,
-            lineHeight: '1.6',
-          }}
-        />
+        <div className="relative">
+          {/* Formatting Toolbar */}
+          <div 
+            data-toolbar="true"
+            className="absolute -top-9 left-0 flex items-center gap-0.5 bg-slate-800 rounded-t-lg px-1 py-1 shadow-lg z-30"
+          >
+            <button
+              type="button"
+              onMouseDown={(e) => { e.preventDefault(); applyFormat('bold'); }}
+              className="w-7 h-7 flex items-center justify-center rounded hover:bg-slate-700 text-white font-bold text-sm transition-colors"
+              title="Bold (Ctrl+B)"
+            >
+              B
+            </button>
+            <button
+              type="button"
+              onMouseDown={(e) => { e.preventDefault(); applyFormat('italic'); }}
+              className="w-7 h-7 flex items-center justify-center rounded hover:bg-slate-700 text-white italic text-sm transition-colors"
+              title="Italic (Ctrl+I)"
+            >
+              I
+            </button>
+            <button
+              type="button"
+              onMouseDown={(e) => { e.preventDefault(); applyFormat('underline'); }}
+              className="w-7 h-7 flex items-center justify-center rounded hover:bg-slate-700 text-white underline text-sm transition-colors"
+              title="Underline (Ctrl+U)"
+            >
+              U
+            </button>
+            <div className="w-px h-5 bg-slate-600 mx-1" />
+            <button
+              type="button"
+              onMouseDown={(e) => { e.preventDefault(); applyFormat('strikeThrough'); }}
+              className="w-7 h-7 flex items-center justify-center rounded hover:bg-slate-700 text-white line-through text-sm transition-colors"
+              title="Strikethrough"
+            >
+              S
+            </button>
+            <button
+              type="button"
+              onMouseDown={(e) => { e.preventDefault(); applyFormat('removeFormat'); }}
+              className="w-7 h-7 flex items-center justify-center rounded hover:bg-slate-700 text-white text-xs transition-colors"
+              title="Clear Formatting"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          {/* ContentEditable Editor */}
+          <div
+            ref={editorRef}
+            contentEditable
+            suppressContentEditableWarning
+            onInput={handleInput}
+            onBlur={handleBlur}
+            onKeyDown={handleKeyDown}
+            className="w-full p-2 border-2 border-[#0da1c7] rounded bg-white focus:outline-none focus:ring-2 focus:ring-[#0da1c7]/30 overflow-auto"
+            style={{
+              fontSize: block.fontSize,
+              fontWeight: block.fontWeight,
+              color: block.color,
+              minHeight: block.height,
+              lineHeight: '1.6',
+            }}
+            dangerouslySetInnerHTML={{ __html: isDefaultText ? '' : block.content }}
+          />
+        </div>
       ) : (
         <div
           className={`p-2 bg-white rounded border-2 h-full ${isDefaultText ? 'border-dashed border-slate-200 text-slate-500 italic' : 'border-solid border-slate-200'}`}
@@ -3030,22 +2889,7 @@ function DraggableTextBlock({ block, selected, onSelect, onUpdate, onDelete }: D
           dangerouslySetInnerHTML={{
             __html: isDefaultText 
               ? block.content 
-              : block.content
-                  .replace(/&/g, '&amp;')
-                  .replace(/</g, '&lt;')
-                  .replace(/>/g, '&gt;')
-                  .replace(/&lt;b&gt;/gi, '<b>')
-                  .replace(/&lt;\/b&gt;/gi, '</b>')
-                  .replace(/&lt;strong&gt;/gi, '<strong>')
-                  .replace(/&lt;\/strong&gt;/gi, '</strong>')
-                  .replace(/&lt;u&gt;/gi, '<u>')
-                  .replace(/&lt;\/u&gt;/gi, '</u>')
-                  .replace(/&lt;i&gt;/gi, '<i>')
-                  .replace(/&lt;\/i&gt;/gi, '</i>')
-                  .replace(/&lt;em&gt;/gi, '<em>')
-                  .replace(/&lt;\/em&gt;/gi, '</em>')
-                  .replace(/&lt;br\s*\/?&gt;/gi, '<br/>')
-                  .replace(/\n/g, '<br/>')
+              : block.content || ''
           }}
         />
       )}
@@ -3097,8 +2941,6 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
   // Use the centralized report state hook for persistence
   const [reportState, reportActions] = useReportState();
 
-  // Feature flag for simplified properties panel
-  const [useSimplifiedPanel, setUseSimplifiedPanel] = useState(true); // Default to new design
 
   // Generate a stable report ID based on property info
   const reportId = useMemo(() =>
@@ -3864,6 +3706,8 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
             data={state.demographicsData?.radiusAnalysis ?? []}
             source={state.demographicsData?.dataSource}
             asOfDate={state.demographicsData?.dataPullDate}
+            latitude={state.subjectData?.coordinates?.latitude}
+            longitude={state.subjectData?.coordinates?.longitude}
             pageNumber={pageIndex + 1}
           />
         );
@@ -3916,7 +3760,18 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
   };
 
   return (
-    <div className="h-full flex bg-slate-100">
+    <div 
+      className="h-full flex bg-slate-100"
+      onClick={(e) => {
+        // Deselect text blocks when clicking anywhere outside of them
+        const clickedOnTextBlock = (e.target as HTMLElement).closest('[data-text-block]');
+        const clickedOnPropertiesPanel = (e.target as HTMLElement).closest('.w-96');
+        // Only deselect if not clicking on a text block or the properties panel
+        if (!clickedOnTextBlock && !clickedOnPropertiesPanel && selectedElement?.startsWith('text-block-')) {
+          setSelectedElement(null);
+        }
+      }}
+    >
       {/* Left Panel: Section Tree */}
       <div className="w-80 bg-white border-r border-slate-200 flex flex-col flex-shrink-0">
         <div className="px-6 py-4 border-b border-slate-200">
@@ -3944,21 +3799,6 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
             <div className="text-xs text-slate-500">{sampleAppraisalData.property.name}</div>
           </div>
           <div className="flex items-center gap-4">
-            {/* Panel Style Toggle */}
-            <div className="flex items-center gap-2 border-r border-slate-200 pr-4">
-              <button
-                onClick={() => setUseSimplifiedPanel(!useSimplifiedPanel)}
-                className="px-3 py-1.5 text-xs font-medium rounded-lg border transition-all"
-                style={{
-                  backgroundColor: useSimplifiedPanel ? '#0da1c7' : 'transparent',
-                  borderColor: useSimplifiedPanel ? '#0da1c7' : 'var(--border-default)',
-                  color: useSimplifiedPanel ? 'white' : 'var(--text-muted)'
-                }}
-                title="Toggle between simplified and 3-tab panel design"
-              >
-                {useSimplifiedPanel ? 'Simplified Panel' : '3-Tab Panel'}
-              </button>
-            </div>
             {/* Undo/Redo buttons */}
             <div className="flex items-center gap-1 border-r border-slate-200 pr-4">
               <button
@@ -4011,7 +3851,10 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
             </button>
           </div>
         </div>
-        <div ref={previewRef} className="flex-1 overflow-auto p-8 bg-slate-400/30 relative">
+        <div 
+          ref={previewRef} 
+          className="flex-1 overflow-auto p-8 bg-slate-400/30 relative"
+        >
           <div className="report-preview-content space-y-8 flex flex-col items-center">
             {reportSections
               .filter((s) => s.enabled)
@@ -4039,29 +3882,16 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
 
       {/* Right Panel: Properties */}
       <div className="w-96 bg-white border-l border-slate-200 flex-shrink-0">
-        {useSimplifiedPanel ? (
-          <PropertiesPanelSimplified
-            selectedElement={selectedElement}
-            elementStyles={elementStyles}
-            elementContent={elementContent}
-            onStyleChange={(styles) => selectedElement && handleStyleChange(selectedElement, styles)}
-            onContentChange={handleContentChange}
-            onDeleteElement={handleDeleteElement}
-            isDirty={reportState.isDirty}
-            onSave={onSaveDraft}
-          />
-        ) : (
-          <PropertiesPanel
-            selectedElement={selectedElement}
-            elementStyles={elementStyles}
-            elementContent={elementContent}
-            onStyleChange={(styles) => selectedElement && handleStyleChange(selectedElement, styles)}
-            onContentChange={handleContentChange}
-            onDeleteElement={handleDeleteElement}
-            isDirty={reportState.isDirty}
-            onSave={onSaveDraft}
-          />
-        )}
+        <PropertiesPanelSimplified
+          selectedElement={selectedElement}
+          elementStyles={elementStyles}
+          elementContent={elementContent}
+          onStyleChange={(styles) => selectedElement && handleStyleChange(selectedElement, styles)}
+          onContentChange={handleContentChange}
+          onDeleteElement={handleDeleteElement}
+          isDirty={reportState.isDirty}
+          onSave={onSaveDraft}
+        />
       </div>
 
       {/* Recovery Dialog */}

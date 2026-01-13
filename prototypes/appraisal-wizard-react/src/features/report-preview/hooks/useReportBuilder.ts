@@ -199,6 +199,9 @@ export function useReportBuilder(
           type: 'demographics',
           content: {
             demographics: wizardState.demographicsData,
+            // Pass coordinates for static map generation
+            latitude: wizardState.subjectData?.coordinates?.latitude,
+            longitude: wizardState.subjectData?.coordinates?.longitude,
           },
           canSplit: false,
           keepWithNext: false,

@@ -1,18 +1,22 @@
 /**
  * Demographics Page Component
  * 
- * Displays neighborhood demographics data in a clean table format
- * for the appraisal report. Shows data for 1, 3, and 5 mile radii.
+ * Displays neighborhood demographics data in a professional report format.
+ * Features a side-by-side layout with radius ring map and key demographic highlights,
+ * followed by detailed data tables.
  * 
  * Features:
- * - Static radius ring map at top (for PDF embedding)
+ * - Static radius ring map (auto-captured from wizard or via Static Maps API)
+ * - Key Demographic Highlights panel alongside map
  * - Demographics data table with population, income, education, employment
  * - Employment by industry breakdown
  * - Data source attribution
  */
 
 import React from 'react';
+import { Users, Home, DollarSign, GraduationCap, Briefcase, TrendingUp, TrendingDown, MapPin } from 'lucide-react';
 import type { RadiusDemographics } from '../../../../types/api';
+import { generateStaticMapUrl } from '../../../../utils/mapCapture';
 
 interface DemographicsPageProps {
   data: RadiusDemographics[];
@@ -31,6 +35,11 @@ const formatPopulation = (value: number) => value.toLocaleString('en-US');
 const formatCurrency = (value: number) => 
   new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', maximumFractionDigits: 0 }).format(value);
 const formatPercentage = (value: number) => `${value.toFixed(1)}%`;
+const formatCompact = (value: number) => {
+  if (value >= 1000000) return `${(value / 1000000).toFixed(1)}M`;
+  if (value >= 1000) return `${(value / 1000).toFixed(1)}K`;
+  return value.toLocaleString('en-US');
+};
 
 
 export const DemographicsPage: React.FC<DemographicsPageProps> = ({
@@ -50,6 +59,23 @@ export const DemographicsPage: React.FC<DemographicsPageProps> = ({
       ? 'US Census Bureau ACS'
       : source;
 
+  // Generate static map URL if we have coordinates but no image
+  const staticMapUrl = React.useMemo(() => {
+    if (mapImageUrl) return mapImageUrl;
+    if (latitude && longitude) {
+      return generateStaticMapUrl(latitude, longitude, {
+        width: 640,
+        height: 400,
+        zoom: 11,
+        mapType: 'hybrid',
+      });
+    }
+    return null;
+  }, [latitude, longitude, mapImageUrl]);
+
+  // Extract key metrics from data (use 3-mile radius as primary)
+  const primaryRadius = data?.find(d => d.radius === 3) || data?.[1] || data?.[0];
+
   if (!data || data.length === 0) {
     return (
       <div className="bg-white w-[8.5in] min-h-[11in] p-[1in] shadow-lg mx-auto">
@@ -68,46 +94,155 @@ export const DemographicsPage: React.FC<DemographicsPageProps> = ({
         NEIGHBORHOOD DEMOGRAPHICS
       </h1>
 
-      {/* Radius Ring Map */}
-      {showMap && (mapImageUrl || (latitude && longitude)) && (
-        <div className="mb-6">
-          <div className="relative rounded-lg overflow-hidden border border-light-border">
-            {mapImageUrl ? (
+      {/* Side-by-Side: Map + Key Highlights */}
+      {showMap && staticMapUrl && (
+        <div className="grid grid-cols-2 gap-4 mb-5">
+          {/* Left: Radius Ring Map */}
+          <div className="relative">
+            <div className="rounded-lg overflow-hidden border border-slate-200 shadow-sm">
               <img 
-                src={mapImageUrl} 
+                src={staticMapUrl} 
                 alt="Demographics radius map showing 1, 3, and 5 mile rings around subject property"
                 className="w-full h-auto"
-                style={{ maxHeight: '280px', objectFit: 'cover' }}
+                style={{ height: '260px', objectFit: 'cover' }}
               />
-            ) : (
-              <div className="w-full h-[280px] bg-surface-3 flex items-center justify-center">
-                <span className="text-slate-400 text-sm">Map image not available</span>
+              
+              {/* Map Legend Overlay */}
+              <div className="absolute bottom-2 left-2 bg-white/95 rounded px-2.5 py-1.5 text-[10px] shadow-sm border border-slate-200">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-1">
+                    <div className="w-2.5 h-2.5 rounded-full" 
+                         style={{ backgroundColor: '#2fc4b2', border: '1.5px solid #059669' }} />
+                    <span className="text-slate-600">1 Mi</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-2.5 h-2.5 rounded-full" 
+                         style={{ backgroundColor: '#3b82f6', border: '1.5px solid #2563eb' }} />
+                    <span className="text-slate-600">3 Mi</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-2.5 h-2.5 rounded-full" 
+                         style={{ backgroundColor: '#8b5cf6', border: '1.5px solid #7c3aed' }} />
+                    <span className="text-slate-600">5 Mi</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-2.5 h-2.5 rounded-full bg-red-600 border border-white" />
+                    <span className="text-slate-600">Subject</span>
+                  </div>
+                </div>
               </div>
-            )}
+            </div>
+          </div>
+
+          {/* Right: Key Demographic Highlights */}
+          <div className="bg-gradient-to-br from-slate-50 to-slate-100 rounded-lg border border-slate-200 p-4">
+            <h2 className="text-xs font-bold text-slate-700 uppercase tracking-wider mb-3 flex items-center gap-1.5">
+              <MapPin className="w-3.5 h-3.5 text-[#0da1c7]" />
+              Key Demographic Highlights
+            </h2>
             
-            {/* Map Legend Overlay */}
-            <div className="absolute bottom-2 left-2 bg-surface-1/95 rounded px-3 py-1.5 text-xs shadow-sm border border-light-border">
-              <div className="flex items-center gap-4">
-                <div className="flex items-center gap-1">
-                  <div className="w-3 h-3 rounded-full border-2 border-[#0da1c7]" 
-                       style={{ backgroundColor: 'rgba(13, 161, 199, 0.35)' }} />
-                  <span className="text-slate-600">1 Mile</span>
+            {/* Metrics Grid */}
+            <div className="grid grid-cols-2 gap-3">
+              {/* Population */}
+              <div className="bg-white rounded-lg p-2.5 border border-slate-200 shadow-sm">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <Users className="w-3.5 h-3.5 text-[#2fc4b2]" />
+                  <span className="text-[10px] font-medium text-slate-500 uppercase">Population</span>
                 </div>
-                <div className="flex items-center gap-1">
-                  <div className="w-3 h-3 rounded-full border-2 border-[#0da1c7]" 
-                       style={{ backgroundColor: 'rgba(13, 161, 199, 0.25)' }} />
-                  <span className="text-slate-600">3 Miles</span>
+                <div className="text-lg font-bold text-slate-800">
+                  {formatCompact(primaryRadius?.population.current || 0)}
                 </div>
-                <div className="flex items-center gap-1">
-                  <div className="w-3 h-3 rounded-full border-2 border-[#0da1c7]" 
-                       style={{ backgroundColor: 'rgba(13, 161, 199, 0.15)' }} />
-                  <span className="text-slate-600">5 Miles</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  <div className="w-3 h-3 rounded-full bg-harken-error border-2 border-white" />
-                  <span className="text-slate-600">Subject</span>
+                <div className="flex items-center gap-1 mt-0.5">
+                  {(primaryRadius?.population.annualGrowthRate || 0) >= 0 ? (
+                    <TrendingUp className="w-3 h-3 text-emerald-500" />
+                  ) : (
+                    <TrendingDown className="w-3 h-3 text-red-500" />
+                  )}
+                  <span className={`text-[10px] font-medium ${
+                    (primaryRadius?.population.annualGrowthRate || 0) >= 0 ? 'text-emerald-600' : 'text-red-600'
+                  }`}>
+                    {(primaryRadius?.population.annualGrowthRate || 0) >= 0 ? '+' : ''}
+                    {formatPercentage(primaryRadius?.population.annualGrowthRate || 0)}/yr
+                  </span>
                 </div>
               </div>
+
+              {/* Median Income */}
+              <div className="bg-white rounded-lg p-2.5 border border-slate-200 shadow-sm">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <DollarSign className="w-3.5 h-3.5 text-[#3b82f6]" />
+                  <span className="text-[10px] font-medium text-slate-500 uppercase">Median Income</span>
+                </div>
+                <div className="text-lg font-bold text-slate-800">
+                  {formatCurrency(primaryRadius?.income.medianHousehold || 0)}
+                </div>
+                <div className="text-[10px] text-slate-500 mt-0.5">
+                  Per capita: {formatCurrency(primaryRadius?.income.perCapita || 0)}
+                </div>
+              </div>
+
+              {/* Households */}
+              <div className="bg-white rounded-lg p-2.5 border border-slate-200 shadow-sm">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <Home className="w-3.5 h-3.5 text-[#8b5cf6]" />
+                  <span className="text-[10px] font-medium text-slate-500 uppercase">Households</span>
+                </div>
+                <div className="text-lg font-bold text-slate-800">
+                  {formatCompact(primaryRadius?.households.current || 0)}
+                </div>
+                <div className="text-[10px] text-slate-500 mt-0.5">
+                  Avg size: {primaryRadius?.households.averageSize.toFixed(1)}
+                </div>
+              </div>
+
+              {/* Education */}
+              <div className="bg-white rounded-lg p-2.5 border border-slate-200 shadow-sm">
+                <div className="flex items-center gap-1.5 mb-1">
+                  <GraduationCap className="w-3.5 h-3.5 text-amber-500" />
+                  <span className="text-[10px] font-medium text-slate-500 uppercase">College Grads</span>
+                </div>
+                <div className="text-lg font-bold text-slate-800">
+                  {formatPercentage(primaryRadius?.education.percentCollegeGraduates || 0)}
+                </div>
+                <div className="text-[10px] text-slate-500 mt-0.5">
+                  Graduate+: {formatPercentage(primaryRadius?.education.percentGraduateDegree || 0)}
+                </div>
+              </div>
+
+              {/* Employment Rate - Full Width */}
+              {primaryRadius?.employment && (
+                <div className="col-span-2 bg-white rounded-lg p-2.5 border border-slate-200 shadow-sm">
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center gap-1.5">
+                      <Briefcase className="w-3.5 h-3.5 text-[#0da1c7]" />
+                      <span className="text-[10px] font-medium text-slate-500 uppercase">Employment</span>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <div className="text-center">
+                        <div className="text-sm font-bold text-slate-800">
+                          {formatCompact(primaryRadius.employment.laborForce)}
+                        </div>
+                        <div className="text-[9px] text-slate-500">Labor Force</div>
+                      </div>
+                      <div className="text-center">
+                        <div className={`text-sm font-bold ${
+                          primaryRadius.employment.unemploymentRate < 5 ? 'text-emerald-600' : 'text-amber-600'
+                        }`}>
+                          {formatPercentage(primaryRadius.employment.unemploymentRate)}
+                        </div>
+                        <div className="text-[9px] text-slate-500">Unemployment</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* 3-Mile Radius Indicator */}
+            <div className="mt-2 text-center">
+              <span className="text-[9px] text-slate-400 uppercase tracking-wider">
+                Based on 3-mile radius analysis
+              </span>
             </div>
           </div>
         </div>
