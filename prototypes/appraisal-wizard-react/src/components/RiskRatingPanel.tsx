@@ -423,27 +423,32 @@ export function RiskRatingPanel({
                   const config = GRADE_CONFIG[grade];
                   const isCurrent = grade === data.overallGrade;
                   
-                  // Get backgrounds for non-current grades (both light and dark mode)
+                  // Get backgrounds and text colors for non-current grades (both light and dark mode)
                   let lightBg = 'bg-slate-100';
                   let darkBg = 'dark:bg-elevation-3';
+                  let lightTextColor = 'text-slate-600';
                   let darkTextColor = 'dark:text-slate-300';
                   
                   if (grade === 'AAA' || grade === 'AA' || grade === 'A') {
                     lightBg = 'bg-accent-teal-mint-light/40';
                     darkBg = 'dark:bg-accent-teal-mint/20';
-                    darkTextColor = 'dark:text-accent-teal-mint';
+                    lightTextColor = 'text-accent-teal-mint-hover';
+                    darkTextColor = 'dark:text-accent-teal-mint-light';
                   } else if (grade === 'BBB') {
                     lightBg = 'bg-cyan-100/40';
                     darkBg = 'dark:bg-cyan-500/20';
-                    darkTextColor = 'dark:text-cyan-400';
+                    lightTextColor = 'text-cyan-600';
+                    darkTextColor = 'dark:text-cyan-300';
                   } else if (grade === 'BB' || grade === 'B') {
                     lightBg = 'bg-accent-amber-gold-light/40';
                     darkBg = 'dark:bg-accent-amber-gold/20';
-                    darkTextColor = 'dark:text-accent-amber-gold';
+                    lightTextColor = 'text-accent-amber-gold-hover';
+                    darkTextColor = 'dark:text-accent-amber-gold-light';
                   } else {
                     lightBg = 'bg-red-100/40';
                     darkBg = 'dark:bg-red-500/20';
-                    darkTextColor = 'dark:text-red-400';
+                    lightTextColor = 'text-red-600';
+                    darkTextColor = 'dark:text-red-300';
                   }
                   
                   return (
@@ -452,7 +457,7 @@ export function RiskRatingPanel({
                       className={`flex-1 h-8 flex items-center justify-center rounded text-xs font-bold transition-all ${
                         isCurrent 
                           ? `${config.bg} ${config.text} ${config.border} border-2 scale-110 shadow-md z-10` 
-                          : `${lightBg} ${darkBg} ${config.text} ${darkTextColor} opacity-60 dark:opacity-100`
+                          : `${lightBg} ${darkBg} ${lightTextColor} ${darkTextColor} opacity-60 dark:opacity-100`
                       }`}
                     >
                       {grade}
