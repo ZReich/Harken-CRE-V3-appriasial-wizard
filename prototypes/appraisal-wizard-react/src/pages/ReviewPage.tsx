@@ -851,9 +851,9 @@ We considered alternative uses including renovation, conversion to alternative u
               Similar to bond credit ratings (AAA to C), this system evaluates investment quality across four dimensions.
             </p>
           </div>
-          <div className="bg-indigo-50 dark:bg-indigo-900/30 border-l-4 border-indigo-400 p-4 rounded mb-4">
-            <h4 className="font-semibold text-sm text-indigo-900 dark:text-indigo-200 mb-1">Four Risk Dimensions</h4>
-            <p className="text-xs text-indigo-800 dark:text-indigo-300">
+          <div className="bg-accent-teal-mint-light/50 dark:bg-accent-cyan/10 border-l-4 border-accent-teal-mint dark:border-accent-cyan p-4 rounded mb-4">
+            <h4 className="font-semibold text-sm text-slate-800 dark:text-white mb-1">Four Risk Dimensions</h4>
+            <p className="text-xs text-slate-700 dark:text-slate-300">
               <strong>Market Volatility:</strong> Price variance vs market<br/>
               <strong>Liquidity:</strong> Days on market, absorption<br/>
               <strong>Income Stability:</strong> Cap rate vs risk-free rate<br/>
@@ -1275,13 +1275,13 @@ We considered alternative uses including renovation, conversion to alternative u
         return (
           <div className="max-w-4xl mx-auto space-y-6 animate-fade-in">
             {/* Info Banner */}
-            <div className="bg-indigo-50 dark:bg-indigo-900/30 border border-indigo-200 dark:border-indigo-800 rounded-xl p-4 flex items-start gap-3">
-              <Info className="text-indigo-600 dark:text-indigo-400 shrink-0 mt-0.5" size={18} />
+            <div className="bg-accent-teal-mint-light/50 dark:bg-accent-cyan/10 border border-accent-teal-mint dark:border-accent-cyan/30 rounded-xl p-4 flex items-start gap-3">
+              <Info className="text-accent-teal-mint dark:text-accent-cyan shrink-0 mt-0.5" size={18} />
               <div>
-                <p className="text-sm font-semibold text-indigo-900 dark:text-indigo-200">
+                <p className="text-sm font-semibold text-slate-800 dark:text-white">
                   Investment Risk Rating ("Bond Rating for Buildings")
                 </p>
-                <p className="text-xs text-indigo-800 dark:text-indigo-300 mt-1">
+                <p className="text-xs text-slate-700 dark:text-slate-300 mt-1">
                   This proprietary rating system evaluates the property across four risk dimensions 
                   using Wall Street-style methodology. The rating helps banks and investors assess 
                   investment quality at a glance.
