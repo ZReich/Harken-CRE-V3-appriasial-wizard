@@ -99,8 +99,8 @@ export function createDefaultState(): WizardState {
       occupancyStatus: undefined,
       plannedChanges: undefined,
       loanPurpose: undefined,
-      // Coordinates
-      coordinates: undefined,
+      // Coordinates - sample data for demo (Missoula, MT area) - enables demographics map in report preview
+      coordinates: { latitude: 46.8721, longitude: -113.9940 },
       // Cadastral data
       cadastralData: undefined,
     },
