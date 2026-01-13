@@ -2175,7 +2175,9 @@ export type PageLayout =
   | 'addenda-header'  // Section divider page
   // CBRE Parity - New layouts
   | 'risk-rating'     // Investment Risk Rating page
-  | 'demographics'    // Neighborhood Demographics page
+  | 'demographics'    // Neighborhood Demographics page (legacy single-page)
+  | 'demographics-overview' // Demographics overview with large map + highlights
+  | 'demographics-detail'   // Demographics detail with data tables
   | 'economic-context' // Economic Context with charts
   | 'swot';           // SWOT Analysis page
 
@@ -2235,7 +2237,7 @@ export interface SectionBoundary {
 // =================================================================
 
 /** Types of content blocks in the report */
-export type ContentBlockType = 'heading' | 'paragraph' | 'table' | 'image' | 'photo-grid' | 'list' | 'chart' | 'risk-rating' | 'demographics' | 'economic' | 'swot';
+export type ContentBlockType = 'heading' | 'paragraph' | 'table' | 'image' | 'photo-grid' | 'list' | 'chart' | 'risk-rating' | 'demographics' | 'demographics-overview' | 'demographics-detail' | 'economic' | 'swot';
 
 /** Content block for report sections */
 export interface ContentBlock {

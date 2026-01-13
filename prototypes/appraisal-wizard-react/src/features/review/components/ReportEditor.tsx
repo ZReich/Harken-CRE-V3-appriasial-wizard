@@ -58,7 +58,7 @@ import { PhotoEditorDialog, type PhotoData, type PhotoEdits } from './PhotoEdito
 import { PropertiesPanelSimplified } from './PropertiesPanelSimplified';
 // Report page components for connected data display
 import { RiskRatingPage } from '../../report-preview/components/pages/RiskRatingPage';
-import { DemographicsPage } from '../../report-preview/components/pages/DemographicsPage';
+import { DemographicsPage, DemographicsOverviewPage, DemographicsDetailPage } from '../../report-preview/components/pages/DemographicsPage';
 import { EconomicContextPage } from '../../report-preview/components/pages/EconomicContextPage';
 import { SWOTPage } from '../../report-preview/components/pages/SWOTPage';
 import { AddendaPage } from './AddendaPage';
@@ -3717,6 +3717,7 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
           />
         ) : null;
       case 'demographics':
+        // Legacy single-page support
         return (
           <DemographicsPage
             data={state.demographicsData?.radiusAnalysis ?? []}
@@ -3724,6 +3725,28 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
             asOfDate={state.demographicsData?.dataPullDate}
             latitude={state.subjectData?.coordinates?.latitude}
             longitude={state.subjectData?.coordinates?.longitude}
+            pageNumber={pageIndex + 1}
+          />
+        );
+      case 'demographics-overview':
+        // Page 1: Large map + key demographic highlights
+        return (
+          <DemographicsOverviewPage
+            data={state.demographicsData?.radiusAnalysis ?? []}
+            source={state.demographicsData?.dataSource}
+            asOfDate={state.demographicsData?.dataPullDate}
+            latitude={state.subjectData?.coordinates?.latitude}
+            longitude={state.subjectData?.coordinates?.longitude}
+            pageNumber={pageIndex + 1}
+          />
+        );
+      case 'demographics-detail':
+        // Page 2: Detailed data tables
+        return (
+          <DemographicsDetailPage
+            data={state.demographicsData?.radiusAnalysis ?? []}
+            source={state.demographicsData?.dataSource}
+            asOfDate={state.demographicsData?.dataPullDate}
             pageNumber={pageIndex + 1}
           />
         );

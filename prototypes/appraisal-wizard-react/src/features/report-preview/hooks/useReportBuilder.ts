@@ -186,17 +186,20 @@ export function useReportBuilder(
 
     // =================================================================
     // 8.1 NEIGHBORHOOD DEMOGRAPHICS (Plan Part 6.1)
+    // Split into 2 pages: Overview (map + highlights) and Detail (tables)
     // =================================================================
     if (isSectionVisible('demographics') && wizardState.demographicsData && wizardState.demographicsData.radiusAnalysis?.length > 0) {
       addTocEntry('demographics', 'Neighborhood Demographics', 2);
+      
+      // Page 1: Demographics Overview (large map + key highlights)
       addPage({
-        id: 'demographics-page',
-        layout: 'demographics',
+        id: 'demographics-overview-page',
+        layout: 'demographics-overview',
         sectionId: 'demographics',
         title: 'Neighborhood Demographics',
         content: [{
-          id: 'demographics-content',
-          type: 'demographics',
+          id: 'demographics-overview-content',
+          type: 'demographics-overview',
           content: {
             demographics: wizardState.demographicsData,
             // Pass coordinates for static map generation
@@ -204,8 +207,27 @@ export function useReportBuilder(
             longitude: wizardState.subjectData?.coordinates?.longitude,
           },
           canSplit: false,
-          keepWithNext: false,
+          keepWithNext: true,
           keepWithPrevious: false,
+          minLinesIfSplit: 0,
+        }],
+      });
+      
+      // Page 2: Demographics Detail (data tables)
+      addPage({
+        id: 'demographics-detail-page',
+        layout: 'demographics-detail',
+        sectionId: 'demographics',
+        title: 'Neighborhood Demographics - Detail',
+        content: [{
+          id: 'demographics-detail-content',
+          type: 'demographics-detail',
+          content: {
+            demographics: wizardState.demographicsData,
+          },
+          canSplit: false,
+          keepWithNext: false,
+          keepWithPrevious: true,
           minLinesIfSplit: 0,
         }],
       });
