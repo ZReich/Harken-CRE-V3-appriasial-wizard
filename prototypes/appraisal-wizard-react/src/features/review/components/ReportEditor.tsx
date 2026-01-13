@@ -2709,18 +2709,22 @@ function DraggableTextBlock({ block, selected, onSelect, onUpdate, onDelete }: D
     }
   };
 
-  // Focus editor when entering edit mode
+  // Focus editor and set initial content when entering edit mode
   useEffect(() => {
     if (isEditing && editorRef.current) {
+      // Set initial content only when entering edit mode
+      editorRef.current.innerHTML = isDefaultText ? '' : block.content;
       editorRef.current.focus();
-      // Select all content
+      // Move cursor to end of content
       const range = document.createRange();
       range.selectNodeContents(editorRef.current);
+      range.collapse(false); // false = collapse to end
       const selection = window.getSelection();
       selection?.removeAllRanges();
       selection?.addRange(range);
     }
-  }, [isEditing]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isEditing]); // Only run when isEditing changes, not when content changes
 
   // Handle blur - save content
   const handleBlur = (e: React.FocusEvent) => {
@@ -2741,7 +2745,20 @@ function DraggableTextBlock({ block, selected, onSelect, onUpdate, onDelete }: D
 
   // Format text using execCommand
   const applyFormat = (command: string) => {
+    // Ensure we have a selection in the editor
+    const selection = window.getSelection();
+    if (!selection || selection.rangeCount === 0) {
+      editorRef.current?.focus();
+      return;
+    }
+    
+    // Execute the command
     document.execCommand(command, false);
+    
+    // After formatting, sync content and refocus
+    if (editorRef.current) {
+      onUpdate({ content: editorRef.current.innerHTML });
+    }
     editorRef.current?.focus();
   };
 
@@ -2879,7 +2896,6 @@ function DraggableTextBlock({ block, selected, onSelect, onUpdate, onDelete }: D
               minHeight: block.height,
               lineHeight: '1.6',
             }}
-            dangerouslySetInnerHTML={{ __html: isDefaultText ? '' : block.content }}
           />
         </div>
       ) : (

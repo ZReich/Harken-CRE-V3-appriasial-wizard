@@ -82,7 +82,47 @@ export const DemographicsPage: React.FC<DemographicsPageProps> = ({
         <h1 className="text-xl font-bold text-slate-800 border-b-2 border-[#0da1c7] pb-2 mb-6">
           NEIGHBORHOOD DEMOGRAPHICS
         </h1>
-        <p className="text-sm text-slate-500 italic">No demographics data available.</p>
+        
+        {/* Show map even without data if we have coordinates */}
+        {showMap && staticMapUrl && (
+          <div className="mb-6">
+            <div className="rounded-lg overflow-hidden border border-slate-200 shadow-sm">
+              <img 
+                src={staticMapUrl} 
+                alt="Demographics radius map showing 1, 3, and 5 mile rings around subject property"
+                className="w-full h-auto"
+                style={{ height: '300px', objectFit: 'cover' }}
+              />
+              
+              {/* Map Legend Overlay */}
+              <div className="absolute bottom-2 left-2 bg-white/95 rounded px-2.5 py-1.5 text-[10px] shadow-sm border border-slate-200">
+                <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-1">
+                    <div className="w-2.5 h-2.5 rounded-full" 
+                         style={{ backgroundColor: '#2fc4b2', border: '1.5px solid #059669' }} />
+                    <span className="text-slate-600">1 Mi</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-2.5 h-2.5 rounded-full" 
+                         style={{ backgroundColor: '#3b82f6', border: '1.5px solid #2563eb' }} />
+                    <span className="text-slate-600">3 Mi</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-2.5 h-2.5 rounded-full" 
+                         style={{ backgroundColor: '#8b5cf6', border: '1.5px solid #7c3aed' }} />
+                    <span className="text-slate-600">5 Mi</span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <div className="w-2.5 h-2.5 rounded-full bg-red-600 border border-white" />
+                    <span className="text-slate-600">Subject</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+        
+        <p className="text-sm text-slate-500 italic">No demographics data available. Visit the Subject Data section to load demographics.</p>
       </div>
     );
   }
