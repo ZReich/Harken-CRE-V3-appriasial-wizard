@@ -559,14 +559,14 @@ export function ValueReconciliation() {
         )}
 
         {/* Scenario Tabs */}
-        <div className="flex gap-2 mb-6 border-b border-light-border dark:border-harken-gray">
+        <div className="flex gap-2 mb-6 border-b border-light-border dark:border-dark-border">
           {scenarios.map((s, idx) => (
             <button
               key={s.id}
               onClick={() => setActiveScenarioIndex(idx)}
               className={`px-4 py-2 text-sm font-medium -mb-px transition-colors ${idx === activeScenarioIndex
-                  ? 'text-blue-600 dark:text-cyan-400 border-b-2 border-blue-600 dark:border-cyan-400 font-semibold'
-                  : 'text-harken-gray-med dark:text-slate-400 hover:text-harken-gray dark:hover:text-harken-gray-light'
+                  ? 'text-accent-cyan dark:text-accent-cyan border-b-2 border-accent-cyan dark:border-accent-cyan font-semibold'
+                  : 'text-harken-gray-med dark:text-slate-400 hover:text-accent-cyan-hover dark:hover:text-accent-cyan hover:border-b-2 hover:border-accent-cyan-hover/30 dark:hover:border-accent-cyan/30'
                 }`}
             >
               {s.name}
