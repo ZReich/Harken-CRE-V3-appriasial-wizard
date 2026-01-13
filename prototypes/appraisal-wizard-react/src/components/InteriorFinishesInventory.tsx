@@ -523,8 +523,8 @@ export default function InteriorFinishesInventory({
                 }}
                 className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all ${
                   selectedCategory === cat.id
-                    ? 'bg-harken-blue text-white border-harken-blue'
-                    : 'bg-surface-1 text-harken-gray border-light-border hover:border-harken-blue hover:text-harken-blue'
+                    ? 'bg-accent-cyan text-white border-accent-cyan'
+                    : 'bg-surface-1 dark:bg-elevation-1 text-harken-gray dark:text-slate-300 border-light-border dark:border-dark-border hover:border-accent-cyan hover:text-accent-cyan'
                 }`}
               >
                 {cat.label}
@@ -549,8 +549,8 @@ export default function InteriorFinishesInventory({
                       onClick={() => handleTypeSelect(type.id)}
                       className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all flex items-center gap-1 ${
                         selectedTypeId === type.id && !showCustomForm
-                          ? 'bg-harken-blue text-white border-harken-blue'
-                          : 'bg-surface-1 text-harken-gray border-light-border hover:border-harken-blue hover:text-harken-blue'
+                          ? 'bg-accent-cyan text-white border-accent-cyan'
+                          : 'bg-surface-1 dark:bg-elevation-1 text-harken-gray dark:text-slate-300 border-light-border dark:border-dark-border hover:border-accent-cyan hover:text-accent-cyan'
                       }`}
                     >
                       {type.isPrimary && <CheckCircle2 size={12} className="text-green-500" />}
@@ -582,8 +582,8 @@ export default function InteriorFinishesInventory({
                           onClick={() => handleTypeSelect(type.id)}
                           className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all flex items-center gap-1 ${
                             selectedTypeId === type.id && !showCustomForm
-                              ? 'bg-harken-blue text-white border-harken-blue'
-                              : 'bg-surface-1 text-harken-gray border-light-border hover:border-harken-blue hover:text-harken-blue'
+                              ? 'bg-accent-cyan text-white border-accent-cyan'
+                              : 'bg-surface-1 dark:bg-elevation-1 text-harken-gray dark:text-slate-300 border-light-border dark:border-dark-border hover:border-accent-cyan hover:text-accent-cyan'
                           }`}
                         >
                           {isCustom && <Star size={12} className="text-accent-amber-gold" />}
@@ -611,8 +611,8 @@ export default function InteriorFinishesInventory({
                         onClick={() => handleTypeSelect(type.id)}
                         className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all flex items-center gap-1 ${
                           selectedTypeId === type.id && !showCustomForm
-                            ? 'bg-harken-blue text-white border-harken-blue'
-                            : 'bg-surface-1 text-harken-gray border-light-border hover:border-harken-blue hover:text-harken-blue'
+                            ? 'bg-accent-cyan text-white border-accent-cyan'
+                            : 'bg-surface-1 dark:bg-elevation-1 text-harken-gray dark:text-slate-300 border-light-border dark:border-dark-border hover:border-accent-cyan hover:text-accent-cyan'
                         }`}
                       >
                         {isCustom && <Star size={12} className="text-accent-amber-gold" />}
@@ -636,8 +636,8 @@ export default function InteriorFinishesInventory({
               }}
               className={`px-3 py-1.5 text-sm font-medium rounded-lg border transition-all flex items-center gap-1 ${
                 showCustomForm
-                  ? 'bg-harken-blue text-white border-harken-blue'
-                  : 'bg-surface-1 text-harken-gray border-light-border hover:border-harken-blue hover:text-harken-blue'
+                  ? 'bg-accent-cyan text-white border-accent-cyan'
+                  : 'bg-surface-1 dark:bg-elevation-1 text-harken-gray dark:text-slate-300 border-light-border dark:border-dark-border hover:border-accent-cyan hover:text-accent-cyan'
               }`}
             >
               <Plus size={12} />
