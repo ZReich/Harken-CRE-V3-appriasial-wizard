@@ -3173,6 +3173,7 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
   interface ContentHistory {
     editedContent: Record<string, unknown>;
     styling: Record<string, React.CSSProperties>;
+    sectionOrder: string[]; // Track section ordering for undo/redo
     timestamp: number;
   }
 
@@ -3183,7 +3184,7 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
     redo: redoContentInternal,
     canUndo,
     canRedo,
-  } = useUndoRedo<ContentHistory>({ editedContent: {}, styling: {}, timestamp: Date.now() });
+  } = useUndoRedo<ContentHistory>({ editedContent: {}, styling: {}, sectionOrder: [], timestamp: Date.now() });
 
   // Ref to track if we're applying undo/redo (to prevent infinite loops)
   const isApplyingUndoRedo = useRef(false);
@@ -3191,6 +3192,7 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
   const lastPushedStateRef = useRef<string>('');
 
   // Update history when report state changes (but not from undo/redo operations)
+  // Note: Section order changes are tracked separately in handleReorderSections
   useEffect(() => {
     if (isApplyingUndoRedo.current) return;
 
@@ -3205,6 +3207,7 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
       setContentHistory({
         editedContent: reportState.customContent,
         styling: reportState.styling,
+        sectionOrder: [], // Section order tracked separately via handleReorderSections
         timestamp: Date.now(),
       }, { merge: true });
     }
@@ -3240,10 +3243,41 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
       reportActions.setElementStyle(id, styles);
     });
 
+    // Apply section order if present
+    if (contentHistoryState.sectionOrder && contentHistoryState.sectionOrder.length > 0) {
+      setReportSections(prev => {
+        // Create a map for quick lookup
+        const sectionMap = new Map(prev.map(s => [s.id, s]));
+        // Reorder based on saved order, keeping any sections not in the saved order at the end
+        const reordered: ReportSection[] = [];
+        const usedIds = new Set<string>();
+        
+        contentHistoryState.sectionOrder.forEach(id => {
+          const section = sectionMap.get(id);
+          if (section) {
+            reordered.push(section);
+            usedIds.add(id);
+          }
+        });
+        
+        // Add any new sections that weren't in the saved order
+        prev.forEach(s => {
+          if (!usedIds.has(s.id)) {
+            reordered.push(s);
+          }
+        });
+        
+        // Also update the report state
+        reportActions.reorderSections(reordered.map(s => s.id));
+        return reordered;
+      });
+    }
+
     // Update our tracking ref
     lastPushedStateRef.current = JSON.stringify({
       customContent: contentHistoryState.editedContent,
       styling: contentHistoryState.styling,
+      sectionOrder: contentHistoryState.sectionOrder,
     });
 
     isApplyingUndoRedo.current = false;
@@ -3409,13 +3443,21 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
 
   // Handle section reordering from drag-drop
   const handleReorderSections = useCallback((oldIndex: number, newIndex: number) => {
+    // Push current state to history before making the change
+    setContentHistory({
+      editedContent: reportState.customContent || {},
+      styling: reportState.styling || {},
+      sectionOrder: reportSections.map(s => s.id),
+      timestamp: Date.now(),
+    });
+    
     setReportSections((prev) => {
       const reordered = arrayMove(prev, oldIndex, newIndex);
       // Persist the new order to report state
       reportActions.reorderSections(reordered.map(s => s.id));
       return reordered;
     });
-  }, [reportActions]);
+  }, [reportActions, reportState.customContent, reportState.styling, reportSections, setContentHistory]);
 
   // Track which page is currently visible in the scroll area using Intersection Observer
   useEffect(() => {
