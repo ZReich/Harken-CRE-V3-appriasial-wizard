@@ -48,7 +48,17 @@ import {
 } from '../constants';
 import type { ScenarioType } from '../types';
 import { sampleAppraisalData } from '../data/sampleAppraisalData';
-import type { ReportSection, PropertyTabId, ElementStyles, InlinePhotoPlacement, PhotoSlotConfig } from '../types';
+import type { 
+  ReportSection, 
+  PropertyTabId, 
+  ElementStyles, 
+  InlinePhotoPlacement, 
+  PhotoSlotConfig,
+  ComparableCardsPageData,
+  ComparableCardData,
+  ComparableMapData,
+  DCFProjectionPageData,
+} from '../types';
 import { useReportState, type ReportState, type ReportStateActions } from '../../report-preview/hooks/useReportState';
 import { InlinePhotoGrid } from './InlinePhotoSlot';
 import { useAutoSave, useAutoSaveRecovery } from '../../report-preview/hooks/useAutoSave';
@@ -62,6 +72,12 @@ import { RiskRatingPage } from '../../report-preview/components/pages/RiskRating
 import { DemographicsPage, DemographicsOverviewPage, DemographicsDetailPage } from '../../report-preview/components/pages/DemographicsPage';
 import { EconomicContextPage } from '../../report-preview/components/pages/EconomicContextPage';
 import { SWOTPage } from '../../report-preview/components/pages/SWOTPage';
+import { ReportPageBase } from '../../report-preview/components/pages/ReportPageBase';
+import { ComparableSummaryCardsPage } from '../../report-preview/components/pages/ComparableSummaryCardsPage';
+import { ComparableLocationMapPage } from '../../report-preview/components/pages/ComparableLocationMapPage';
+import { DCFProjectionPage } from '../../report-preview/components/pages/DCFProjectionPage';
+import { ComparisonGridPage } from '../../report-preview/components/pages/ComparisonGridPage';
+import { IncomeGridPage } from '../../report-preview/components/pages/IncomeGridPage';
 import { AddendaPage } from './AddendaPage';
 // Drag-drop reordering
 import {
@@ -1853,18 +1869,31 @@ function IncomeApproachPage({ selectedElement, onSelectElement, onContentChange,
 }
 
 // Cost Approach Page
-function CostApproachPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, pageNumber }: {
+function CostApproachPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, pageNumber, valueMultiplier }: {
   selectedElement: string | null;
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
   editedContent?: Record<string, string>;
   getAppliedStyle?: (elementId: string) => React.CSSProperties;
   pageNumber?: number;
+  valueMultiplier?: number;
 }) {
   const handleContentChange = onContentChange || (() => { });
   const getContent = (id: string, defaultVal: string) => editedContent?.[id] ?? defaultVal;
   const getStyle = (id: string) => getAppliedStyle?.(id) || {};
   const data = sampleAppraisalData;
+  const mult = valueMultiplier ?? 1;
+
+  const adjusted = {
+    ...data,
+    costApproach: {
+      ...data.costApproach,
+      landValue: Math.round(data.costApproach.landValue * mult),
+      replacementCostNew: Math.round(data.costApproach.replacementCostNew * mult),
+      depreciatedCost: Math.round(data.costApproach.depreciatedCost * mult),
+      valueConclusion: Math.round(data.costApproach.valueConclusion * mult),
+    },
+  };
 
   // Default AI draft for cost approach methodology
   const defaultCostMethodology = `The Cost Approach is based on the principle of substitution, which states that a prudent buyer would pay no more for a property than the cost to acquire a similar site and construct improvements of equivalent utility. This approach is particularly applicable to the subject property given its recent construction date of ${data.improvements.yearBuilt}.
@@ -1873,7 +1902,7 @@ The replacement cost new was estimated using the Marshall Valuation Service, a n
 
 Physical depreciation was calculated using the age-life method. Given the building's age and condition, physical depreciation is estimated at ${((data.costApproach.physicalDepreciation / data.costApproach.replacementCostNew) * 100).toFixed(1)}% of replacement cost new. No functional or external obsolescence was identified in our analysis.
 
-The land value of $${data.costApproach.landValue.toLocaleString()} was derived from the sales comparison approach to land valuation, utilizing recent sales of comparable vacant industrial sites in the subject market area.`;
+The land value of $${adjusted.costApproach.landValue.toLocaleString()} was derived from the sales comparison approach to land valuation, utilizing recent sales of comparable vacant industrial sites in the subject market area.`;
 
   return (
     <ReportPageWrapper section={{ id: 'cost', label: 'Cost Approach', enabled: true, expanded: false, fields: [], type: 'analysis-grid' }} pageNumber={pageNumber ?? 7} sidebarLabel="06">
@@ -1910,7 +1939,7 @@ The land value of $${data.costApproach.landValue.toLocaleString()} was derived f
               <tbody>
                 <tr className="border-b border-slate-200 bg-slate-100">
                   <td className="py-2 px-3 text-slate-600 font-semibold">Land Value</td>
-                  <td className="py-2 px-3 text-right font-semibold text-slate-800">${data.costApproach.landValue.toLocaleString()}</td>
+                  <td className="py-2 px-3 text-right font-semibold text-slate-800">${adjusted.costApproach.landValue.toLocaleString()}</td>
                 </tr>
                 <tr className="border-b border-slate-200">
                   <td className="py-2 px-3 text-slate-600">Building Area</td>
@@ -1922,7 +1951,7 @@ The land value of $${data.costApproach.landValue.toLocaleString()} was derived f
                 </tr>
                 <tr className="border-b border-slate-200 bg-slate-100">
                   <td className="py-2 px-3 text-slate-600 font-semibold">Replacement Cost New</td>
-                  <td className="py-2 px-3 text-right font-semibold text-slate-800">${data.costApproach.replacementCostNew.toLocaleString()}</td>
+                  <td className="py-2 px-3 text-right font-semibold text-slate-800">${adjusted.costApproach.replacementCostNew.toLocaleString()}</td>
                 </tr>
                 <tr className="border-b border-slate-200">
                   <td className="py-2 px-3 text-slate-600">Less: Physical Depreciation</td>
@@ -1938,7 +1967,7 @@ The land value of $${data.costApproach.landValue.toLocaleString()} was derived f
                 </tr>
                 <tr className="border-b border-slate-200 bg-slate-100">
                   <td className="py-2 px-3 text-slate-600 font-semibold">Depreciated Cost of Improvements</td>
-                  <td className="py-2 px-3 text-right font-semibold text-slate-800">${data.costApproach.depreciatedCost.toLocaleString()}</td>
+                  <td className="py-2 px-3 text-right font-semibold text-slate-800">${adjusted.costApproach.depreciatedCost.toLocaleString()}</td>
                 </tr>
                 <tr className="border-b border-slate-200">
                   <td className="py-2 px-3 text-slate-600">Plus: Site Improvements</td>
@@ -1954,11 +1983,11 @@ The land value of $${data.costApproach.landValue.toLocaleString()} was derived f
           <div className="flex items-center justify-between">
             <div>
               <div className="text-sm text-[#0da1c7] font-medium mb-1">Cost Approach Value Indication</div>
-              <div className="text-3xl font-bold text-[#0da1c7]">${data.costApproach.valueConclusion.toLocaleString()}</div>
+              <div className="text-3xl font-bold text-[#0da1c7]">${adjusted.costApproach.valueConclusion.toLocaleString()}</div>
             </div>
             <div className="text-right">
               <div className="text-xs text-[#0da1c7] uppercase">Rounded</div>
-              <div className="text-lg font-semibold text-[#0da1c7]">${(Math.round(data.costApproach.valueConclusion / 5000) * 5000).toLocaleString()}</div>
+              <div className="text-lg font-semibold text-[#0da1c7]">${(Math.round(adjusted.costApproach.valueConclusion / 5000) * 5000).toLocaleString()}</div>
             </div>
           </div>
         </div>
@@ -4425,6 +4454,298 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
     return result;
   }, [reportState.fieldVisibility]);
 
+  // =================================================================
+  // SCENARIO REPORT PREVIEW HELPERS (Scenario pages must never hit Generic placeholder)
+  // =================================================================
+  const getScenarioMultiplier = useCallback((scenarioName?: string) => {
+    const name = (scenarioName || '').toLowerCase();
+    if (name.includes('completed')) return 1.15;
+    if (name.includes('stabilized')) return 1.08;
+    return 1.0; // As Is
+  }, []);
+
+  const buildScenarioComparableCardsData = useCallback((section: ReportSection): ComparableCardsPageData => {
+    const scenarioId = section.scenarioId ?? 1;
+    const scenarioName = section.scenarioName ?? 'As Is';
+    const mult = getScenarioMultiplier(scenarioName);
+
+    const comparableType = section.comparableType ?? 'improved';
+    const approachType: ComparableCardsPageData['approachType'] =
+      comparableType === 'rent' ? 'rent' : comparableType === 'land' ? 'land' : 'sales';
+
+    const subjectCityStateZip = `${sampleAppraisalData.property.city}, ${sampleAppraisalData.property.state} ${sampleAppraisalData.property.zip}`;
+
+    const buildImprovedComps = (): ComparableCardData[] => {
+      return sampleAppraisalData.comparables.slice(0, 3).map((c) => ({
+        id: c.id,
+        type: 'improved',
+        photoUrl: c.photoUrl,
+        address: c.address,
+        cityStateZip: subjectCityStateZip,
+        saleDate: c.saleDate,
+        salePrice: Math.round(c.salePrice * mult),
+        pricePerUnit: Number((c.pricePerSF * mult).toFixed(2)),
+        unitLabel: 'SF',
+        size: c.buildingSize,
+        sizeLabel: 'SF',
+        yearBuilt: c.yearBuilt,
+        propertyType: 'Industrial',
+        narrative: 'Comparable sale selected for location, utility, and overall similarity to the subject.',
+        netAdjustment: c.adjustments.total,
+        adjustedValue: Math.round(c.salePrice * (1 + c.adjustments.total / 100) * mult),
+      }));
+    };
+
+    const buildRentComps = (): ComparableCardData[] => {
+      const base = sampleAppraisalData.incomeApproach.marketRentPerSF;
+      const bumps = [-0.75, -0.25, 0.50];
+      return bumps.map((b, idx) => ({
+        id: `rent-comp-${scenarioId}-${idx + 1}`,
+        type: 'rent',
+        photoUrl: sampleAppraisalData.photos.find((p) => p.category === 'exterior')?.url,
+        address: `Rent Comparable ${idx + 1} — ${sampleAppraisalData.property.city}`,
+        cityStateZip: subjectCityStateZip,
+        saleDate: sampleAppraisalData.assignment.effectiveDate,
+        pricePerUnit: Number(((base + b) * mult).toFixed(2)),
+        unitLabel: 'SF',
+        size: Math.round(sampleAppraisalData.improvements.grossBuildingArea * (0.85 + idx * 0.1)),
+        sizeLabel: 'SF',
+        yearBuilt: sampleAppraisalData.improvements.yearBuilt - (idx + 1),
+        propertyType: 'Industrial',
+        narrative: 'Rental comparable adjusted for size, location, and lease structure.',
+        netAdjustment: idx === 0 ? -5 : idx === 1 ? 0 : 3,
+      }));
+    };
+
+    const buildLandComps = (): ComparableCardData[] => {
+      const subjectAc = sampleAppraisalData.site.landArea;
+      const baseLandValue = sampleAppraisalData.valuation.landValue;
+      const basePpa = baseLandValue / Math.max(subjectAc, 0.01);
+      const acres = [1.25, 1.65, 2.10];
+      const ppaBumps = [-0.08, 0.0, 0.06];
+      return acres.map((ac, idx) => ({
+        id: `land-comp-${scenarioId}-${idx + 1}`,
+        type: 'land',
+        photoUrl: sampleAppraisalData.photos.find((p) => p.category === 'aerial')?.url,
+        address: `Land Comparable ${idx + 1} — ${sampleAppraisalData.property.city}`,
+        cityStateZip: subjectCityStateZip,
+        saleDate: sampleAppraisalData.assignment.effectiveDate,
+        salePrice: Math.round(basePpa * (1 + ppaBumps[idx]) * ac * mult),
+        pricePerUnit: Math.round(basePpa * (1 + ppaBumps[idx]) * mult),
+        unitLabel: 'Acre',
+        size: ac,
+        sizeLabel: 'Acres',
+        propertyType: 'Industrial Land',
+        narrative: 'Vacant industrial land sale adjusted to reflect subject zoning/utility and location.',
+        netAdjustment: Math.round(ppaBumps[idx] * 100),
+        adjustedValue: Math.round(basePpa * ac * mult),
+      }));
+    };
+
+    const comparables =
+      comparableType === 'rent' ? buildRentComps() : comparableType === 'land' ? buildLandComps() : buildImprovedComps();
+
+    return {
+      approachType,
+      scenarioId,
+      scenarioName,
+      comparables,
+    };
+  }, [getScenarioMultiplier]);
+
+  const buildScenarioComparableMapData = useCallback((section: ReportSection): ComparableMapData => {
+    const scenarioId = section.scenarioId ?? 1;
+    const scenarioName = section.scenarioName ?? 'As Is';
+    const comparableType = section.comparableType ?? 'improved';
+    const approachType: ComparableMapData['approachType'] =
+      comparableType === 'rent' ? 'rent' : comparableType === 'land' ? 'land' : 'sales';
+
+    const subjectLat = sampleAppraisalData.property.latitude;
+    const subjectLng = sampleAppraisalData.property.longitude;
+
+    // Deterministic "fake" coordinates around the subject for demo rendering
+    const offsets = [
+      { lat: 0.012, lng: -0.008 },
+      { lat: -0.009, lng: 0.011 },
+      { lat: 0.006, lng: 0.016 },
+    ];
+
+    const cards = buildScenarioComparableCardsData(section).comparables.slice(0, 3);
+
+    return {
+      approachType,
+      scenarioId,
+      imageUrl: '',
+      subjectPin: {
+        lat: subjectLat,
+        lng: subjectLng,
+        address: sampleAppraisalData.property.fullAddress,
+      },
+      comparablePins: cards.map((c, idx) => ({
+        id: c.id,
+        number: idx + 1,
+        lat: subjectLat + offsets[idx].lat,
+        lng: subjectLng + offsets[idx].lng,
+        address: c.address,
+      })),
+    };
+  }, [buildScenarioComparableCardsData]);
+
+  const buildScenarioSalesGridData = useCallback((scenarioName?: string) => {
+    const mult = getScenarioMultiplier(scenarioName);
+    const subject = sampleAppraisalData;
+    return {
+      subject: {
+        address: subject.property.fullAddress,
+        salePrice: '-',
+        pricePerSF: '-',
+        propertyRights: 'Fee Simple',
+        financing: '-',
+        conditionsOfSale: '-',
+        marketConditions: '-',
+        location: 'Subject',
+        siteSize: `${subject.site.landArea} AC`,
+        buildingSize: `${subject.improvements.grossBuildingArea.toLocaleString()} SF`,
+        yearBuilt: String(subject.improvements.yearBuilt),
+        condition: subject.improvements.condition,
+      },
+      comparables: subject.comparables.slice(0, 3).map((c, index) => ({
+        id: c.id,
+        label: `Sale ${index + 1}`,
+        data: {
+          address: c.address,
+          salePrice: `$${Math.round(c.salePrice * mult).toLocaleString()}`,
+          pricePerSF: `$${(c.pricePerSF * mult).toFixed(2)}/SF`,
+          propertyRights: 'Fee Simple',
+          financing: index % 2 === 0 ? 'Cash' : 'Conventional',
+          conditionsOfSale: 'Arms Length',
+          marketConditions: '0%',
+          location: c.adjustments.location === 0 ? 'Similar' : c.adjustments.location > 0 ? 'Inferior' : 'Superior',
+          siteSize: 'Similar',
+          buildingSize: `${c.buildingSize.toLocaleString()} SF`,
+          yearBuilt: String(c.yearBuilt),
+          condition: 'Good',
+        },
+        adjustments: {
+          location: Math.round(c.salePrice * mult * (c.adjustments.location / 100)),
+          siteSize: Math.round(c.salePrice * mult * (c.adjustments.size / 100)),
+          buildingSize: 0,
+          yearBuilt: Math.round(c.salePrice * mult * (c.adjustments.age / 100)),
+          condition: Math.round(c.salePrice * mult * (c.adjustments.condition / 100)),
+        },
+      })),
+      adjustmentRows: ['location', 'siteSize', 'buildingSize', 'yearBuilt', 'condition'],
+      totalAdjustmentRow: true,
+    };
+  }, [getScenarioMultiplier]);
+
+  const buildScenarioIncomeGridData = useCallback((scenarioName?: string) => {
+    const mult = getScenarioMultiplier(scenarioName);
+    const income = sampleAppraisalData.incomeApproach;
+    const pgi = Math.round(income.potentialGrossIncome * mult);
+    const vacancy = Math.round(pgi * (income.vacancyRate / 100));
+    const egi = pgi - vacancy;
+    const expensesTotal = Math.round(income.operatingExpenses * mult);
+    const noi = Math.round(income.netOperatingIncome * mult);
+    const indicatedValue = Math.round(income.valueConclusion * mult);
+    return {
+      pgi,
+      vacancy,
+      egi,
+      expenses: {
+        propertyTaxes: Math.round(expensesTotal * 0.45),
+        insurance: Math.round(expensesTotal * 0.17),
+        utilities: Math.round(expensesTotal * 0.13),
+        repairs: Math.round(expensesTotal * 0.25),
+        management: Math.round(egi * 0.05),
+        reserves: Math.round(expensesTotal * 0.10),
+      },
+      totalExpenses: expensesTotal,
+      noi,
+      capRate: income.capRate,
+      indicatedValue,
+    };
+  }, [getScenarioMultiplier]);
+
+  const buildScenarioDCFData = useCallback((section: ReportSection): DCFProjectionPageData => {
+    const scenarioId = section.scenarioId ?? 1;
+    const scenarioName = section.scenarioName ?? 'As Is';
+    const mult = getScenarioMultiplier(scenarioName);
+
+    const holdingPeriod = 10;
+    const discountRate = scenarioName.toLowerCase().includes('completed') ? 9.25 : scenarioName.toLowerCase().includes('stabilized') ? 9.75 : 10.25;
+    const terminalCapRate = scenarioName.toLowerCase().includes('completed') ? 7.25 : scenarioName.toLowerCase().includes('stabilized') ? 7.5 : 7.75;
+    const annualGrowthRate = scenarioName.toLowerCase().includes('stabilized') ? 3.25 : 3.0;
+
+    const baseNoi = sampleAppraisalData.incomeApproach.netOperatingIncome * mult;
+    const yearlyProjections = Array.from({ length: holdingPeriod }).map((_, i) => {
+      const year = i + 1;
+      const noi = Math.round(baseNoi * Math.pow(1 + annualGrowthRate / 100, i));
+      const pvFactor = 1 / Math.pow(1 + discountRate / 100, year);
+      const pvCashFlow = Math.round(noi * pvFactor);
+      return { year, noi, pvFactor, pvCashFlow };
+    });
+
+    const lastNoi = yearlyProjections[yearlyProjections.length - 1]?.noi ?? 0;
+    const reversionValue = Math.round(lastNoi / (terminalCapRate / 100));
+    const pvReversionFactor = 1 / Math.pow(1 + discountRate / 100, holdingPeriod);
+    const pvReversion = Math.round(reversionValue * pvReversionFactor);
+    const totalPresentValue = Math.round(yearlyProjections.reduce((sum, y) => sum + y.pvCashFlow, 0) + pvReversion);
+
+    return {
+      scenarioId,
+      scenarioName,
+      holdingPeriod,
+      discountRate,
+      terminalCapRate,
+      annualGrowthRate,
+      yearlyProjections,
+      reversionValue,
+      pvReversion,
+      totalPresentValue,
+    };
+  }, [getScenarioMultiplier]);
+
+  const buildScenarioLandValuationData = useCallback((scenarioName?: string): import('../../../types').LandValuationData => {
+    const mult = getScenarioMultiplier(scenarioName);
+    const subjectAcreage = sampleAppraisalData.site.landArea;
+    const concludedLandValue = Math.round(sampleAppraisalData.valuation.landValue * mult);
+    const concludedPricePerAcre = Math.round(concludedLandValue / Math.max(subjectAcreage, 0.01));
+
+    const basePpa = sampleAppraisalData.valuation.landValue / Math.max(subjectAcreage, 0.01);
+    const acres = [1.25, 1.65, 2.10];
+    const ppaBumps = [-0.08, 0.0, 0.06];
+
+    const landComps = acres.map((ac, idx) => {
+      const pricePerAcre = Math.round(basePpa * (1 + ppaBumps[idx]) * mult);
+      const salePrice = Math.round(pricePerAcre * ac);
+      const adjustedPricePerAcre = Math.round(basePpa * mult);
+      return {
+        id: `land-sale-${idx + 1}`,
+        address: `Land Sale ${idx + 1} — ${sampleAppraisalData.property.city}`,
+        saleDate: sampleAppraisalData.assignment.effectiveDate,
+        salePrice,
+        acreage: ac,
+        pricePerAcre,
+        zoning: sampleAppraisalData.site.zoning,
+        adjustments: {
+          location: ppaBumps[idx] * 100,
+          size: 0,
+          zoning: 0,
+        },
+        adjustedPricePerAcre,
+      };
+    });
+
+    return {
+      landComps,
+      subjectAcreage,
+      concludedPricePerAcre,
+      concludedLandValue,
+      reconciliationText: `Market evidence supports a land value indication of approximately $${concludedPricePerAcre.toLocaleString()} per acre, applied to ${subjectAcreage.toFixed(2)} acres, for a concluded land value of $${concludedLandValue.toLocaleString()} (${scenarioName || 'As Is'} scenario).`,
+    };
+  }, [getScenarioMultiplier]);
+
   // Render the appropriate page component
   // pageIndex here is the position in the rendered visibleSections array (0-indexed)
   // We pass pageIndex + 1 as the dynamic page number (1-indexed for display)
@@ -4450,6 +4771,178 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
       onOpenPhotoEditor: handleOpenPhotoEditor,
       getPhotoEdits,
     };
+
+    // Scenario pages (dynamic IDs/types) — must not fall through to Generic placeholder
+    if (section.isScenarioHeader) {
+      const scenarioName = section.scenarioName ?? (section.label.replace(' VALUATION', '') || 'As Is');
+      const mult = getScenarioMultiplier(scenarioName);
+      const deltaPct = Math.round((mult - 1) * 100);
+      const subtitle =
+        mult === 1 ? 'Baseline valuation (As Is)' : `Scenario uplift applied: +${deltaPct}%`;
+
+      return (
+        <ReportPageBase
+          title={section.label}
+          sidebarLabel="VALUATION"
+          pageNumber={dynamicPageNumber}
+          sectionNumber={6}
+          sectionTitle="VALUATION"
+          contentPadding="p-10"
+        >
+          <div className="mt-2 text-sm text-slate-600">{subtitle}</div>
+
+          <div className="mt-6 grid grid-cols-3 gap-4">
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+              <div className="text-xs text-slate-500 uppercase tracking-wide">Scenario</div>
+              <div className="mt-1 text-xl font-semibold text-slate-800">{scenarioName}</div>
+            </div>
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+              <div className="text-xs text-slate-500 uppercase tracking-wide">Multiplier</div>
+              <div className="mt-1 text-xl font-semibold text-slate-800">{mult.toFixed(2)}×</div>
+            </div>
+            <div className="rounded-lg border border-slate-200 bg-slate-50 p-4">
+              <div className="text-xs text-slate-500 uppercase tracking-wide">Implied Value (Sales)</div>
+              <div className="mt-1 text-xl font-semibold text-slate-800">
+                ${(Math.round(sampleAppraisalData.valuation.salesComparisonValue * mult)).toLocaleString()}
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-6 text-xs text-slate-500">
+            Scenario pages below render from the same report-preview components used elsewhere; when wizard data is missing, sample data is shown.
+          </div>
+        </ReportPageBase>
+      );
+    }
+
+    if (section.type === 'comparable-cards') {
+      const cardsData = buildScenarioComparableCardsData(section);
+      return (
+        <ComparableSummaryCardsPage
+          data={cardsData}
+          pageNumber={1}
+          reportPageNumber={dynamicPageNumber}
+          totalPages={1}
+        />
+      );
+    }
+
+    if (section.type === 'comparable-map') {
+      const mapData = buildScenarioComparableMapData(section);
+      return (
+        <ComparableLocationMapPage
+          data={mapData}
+          pageNumber={dynamicPageNumber}
+          scenarioName={section.scenarioName}
+        />
+      );
+    }
+
+    if (section.type === 'dcf-projection') {
+      return <DCFProjectionPage data={buildScenarioDCFData(section)} pageNumber={dynamicPageNumber} />;
+    }
+
+    if (section.type === 'scenario-reconciliation') {
+      const scenarioName = section.scenarioName ?? 'As Is';
+      const mult = getScenarioMultiplier(scenarioName);
+      const values = [
+        { key: 'Sales Comparison', value: Math.round(sampleAppraisalData.valuation.salesComparisonValue * mult) },
+        { key: 'Income Approach', value: Math.round(sampleAppraisalData.valuation.incomeApproachValue * mult) },
+        { key: 'Cost Approach', value: Math.round(sampleAppraisalData.valuation.costApproachValue * mult) },
+        { key: 'Land Valuation', value: Math.round(sampleAppraisalData.valuation.landValue * mult) },
+      ];
+
+      const scenarioRecon = state.reconciliationData?.scenarioReconciliations?.find((r) => r.scenarioId === section.scenarioId);
+      const weights = scenarioRecon?.weights || { 'Sales Comparison': 50, 'Income Approach': 30, 'Cost Approach': 20 };
+
+      const concluded = values.reduce((sum, v) => {
+        const w = weights[v.key] ?? 0;
+        return sum + (v.value * w) / 100;
+      }, 0);
+
+      return (
+        <ReportPageBase
+          title={`${scenarioName} Reconciliation`}
+          sidebarLabel="RECON"
+          pageNumber={dynamicPageNumber}
+          sectionNumber={7}
+          sectionTitle="VALUE"
+          contentPadding="p-10"
+        >
+          <div className="text-sm text-slate-600 mb-4">
+            Weighted reconciliation of indicated values by approach. Values shown reflect scenario multiplier.
+          </div>
+
+          <div className="border border-slate-200 rounded-lg overflow-hidden mb-5">
+            <table className="w-full text-sm">
+              <thead className="bg-slate-100">
+                <tr>
+                  <th className="px-4 py-2 text-left font-semibold text-slate-700">Approach</th>
+                  <th className="px-4 py-2 text-right font-semibold text-slate-700">Indication</th>
+                  <th className="px-4 py-2 text-right font-semibold text-slate-700">Weight</th>
+                </tr>
+              </thead>
+              <tbody>
+                {values.map((row) => (
+                  <tr key={row.key} className="border-t border-slate-200">
+                    <td className="px-4 py-2 text-slate-800">{row.key}</td>
+                    <td className="px-4 py-2 text-right font-medium text-slate-800">${row.value.toLocaleString()}</td>
+                    <td className="px-4 py-2 text-right text-slate-600">{(weights[row.key] ?? 0)}%</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div className="p-4 bg-gradient-to-r from-[#0da1c7]/10 to-[#0da1c7]/10 rounded-lg border border-[#0da1c7]/20">
+            <div className="text-xs text-[#0da1c7] uppercase tracking-wider mb-1">Concluded Value (weighted)</div>
+            <div className="text-3xl font-bold text-[#0da1c7]">${Math.round(concluded / 5000) * 5000}</div>
+            {scenarioRecon?.comments && (
+              <div className="mt-3 text-xs text-slate-700 leading-relaxed whitespace-pre-wrap">{scenarioRecon.comments}</div>
+            )}
+          </div>
+        </ReportPageBase>
+      );
+    }
+
+    // Scenario approach pages (dynamic IDs)
+    if (section.id.startsWith('sales-comparison-')) {
+      return (
+        <ComparisonGridPage
+          approachType="sales"
+          title="Sales Comparison Approach"
+          pageNumber={dynamicPageNumber}
+          scenarioId={section.scenarioId}
+          scenarioName={section.scenarioName}
+          data={buildScenarioSalesGridData(section.scenarioName)}
+        />
+      );
+    }
+
+    if (section.id.startsWith('income-approach-')) {
+      return (
+        <IncomeGridPage
+          title="Income Approach"
+          pageNumber={dynamicPageNumber}
+          scenarioId={section.scenarioId}
+          scenarioName={section.scenarioName}
+          data={buildScenarioIncomeGridData(section.scenarioName)}
+        />
+      );
+    }
+
+    if (section.id.startsWith('cost-approach-')) {
+      return <CostApproachPage {...commonProps} valueMultiplier={getScenarioMultiplier(section.scenarioName)} />;
+    }
+
+    if (section.id.startsWith('land-valuation-')) {
+      return (
+        <LandValuationPage
+          {...commonProps}
+          landValuationData={buildScenarioLandValuationData(section.scenarioName)}
+        />
+      );
+    }
 
     switch (section.id) {
       case 'cover':

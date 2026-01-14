@@ -20,7 +20,10 @@ import { ReportPageBase } from './ReportPageBase';
 
 interface ComparableSummaryCardsPageProps {
   data: ComparableCardsPageData;
+  /** Internal page index for cards pagination (1-based within the comparable-cards section) */
   pageNumber?: number;
+  /** Report page number for footer/sidebar (keeps ReportEditor numbering correct) */
+  reportPageNumber?: number;
   totalPages?: number;
   onCardClick?: (id: string) => void;
 }
@@ -57,6 +60,7 @@ const getScenarioColor = (scenarioName: string): string => {
 export const ComparableSummaryCardsPage: React.FC<ComparableSummaryCardsPageProps> = ({
   data,
   pageNumber = 1,
+  reportPageNumber,
   totalPages = 1,
   onCardClick,
 }) => {
@@ -81,7 +85,7 @@ export const ComparableSummaryCardsPage: React.FC<ComparableSummaryCardsPageProp
     <ReportPageBase
       title={getApproachTitle(approachType)}
       sidebarLabel={getSidebarLabel()}
-      pageNumber={pageNumber}
+      pageNumber={reportPageNumber ?? pageNumber}
       sectionNumber={6}
       sectionTitle="VALUATION"
       contentPadding="p-10"
