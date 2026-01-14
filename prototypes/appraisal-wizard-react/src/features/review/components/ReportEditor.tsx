@@ -785,7 +785,7 @@ function CoverPageReal({
 }
 
 // Letter of Transmittal Page
-function LetterPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, subjectData, fieldVisibility }: {
+function LetterPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, subjectData, fieldVisibility, pageNumber }: {
   selectedElement: string | null;
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
@@ -793,6 +793,7 @@ function LetterPage({ selectedElement, onSelectElement, onContentChange, editedC
   getAppliedStyle?: (elementId: string) => React.CSSProperties;
   subjectData?: import('../../../types').SubjectData;
   fieldVisibility?: Record<string, boolean>;
+  pageNumber?: number;
 }) {
   const fallbackData = sampleAppraisalData;
   const handleContentChange = onContentChange || (() => { });
@@ -808,7 +809,7 @@ function LetterPage({ selectedElement, onSelectElement, onContentChange, editedC
   const reportDate = subjectData?.reportDate || fallbackData.assignment.reportDate;
 
   return (
-    <ReportPageWrapper section={{ id: 'letter', label: 'Letter of Transmittal', enabled: true, expanded: false, fields: [], type: 'letter' }} pageNumber={1}>
+    <ReportPageWrapper section={{ id: 'letter', label: 'Letter of Transmittal', enabled: true, expanded: false, fields: [], type: 'letter' }} pageNumber={pageNumber ?? 1}>
       <div className="p-12">
         {/* Client Information - conditionally rendered */}
         {isVisible('letter_client') && (
@@ -909,7 +910,7 @@ function LetterPage({ selectedElement, onSelectElement, onContentChange, editedC
 }
 
 // Executive Summary Page
-function ExecutiveSummaryPage({ selectedElement, onSelectElement, subjectData, improvementsInventory, reconciliationData, fieldVisibility }: {
+function ExecutiveSummaryPage({ selectedElement, onSelectElement, subjectData, improvementsInventory, reconciliationData, fieldVisibility, pageNumber }: {
   selectedElement: string | null;
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
@@ -919,6 +920,7 @@ function ExecutiveSummaryPage({ selectedElement, onSelectElement, subjectData, i
   improvementsInventory?: import('../../../types').ImprovementsInventory;
   reconciliationData?: import('../../../types').ReconciliationData | null;
   fieldVisibility?: Record<string, boolean>;
+  pageNumber?: number;
 }) {
   const fallbackData = sampleAppraisalData;
   
@@ -968,7 +970,7 @@ function ExecutiveSummaryPage({ selectedElement, onSelectElement, subjectData, i
   ];
 
   return (
-    <ReportPageWrapper section={{ id: 'summary', label: 'Executive Summary', enabled: true, expanded: false, fields: [], type: 'summary-table' }} pageNumber={2} sidebarLabel="01">
+    <ReportPageWrapper section={{ id: 'summary', label: 'Executive Summary', enabled: true, expanded: false, fields: [], type: 'summary-table' }} pageNumber={pageNumber ?? 2} sidebarLabel="01">
       <div className="p-10">
         {/* Section Badge */}
         <div className="absolute top-6 right-8 bg-[#0da1c7] text-white px-4 py-2 rounded text-xs font-semibold">
@@ -1040,6 +1042,7 @@ function PropertyDescriptionPage({
   subjectData, 
   improvementsInventory, 
   fieldVisibility,
+  pageNumber,
   // Inline photo placement props
   photoSlots,
   photoPlacements,
@@ -1057,6 +1060,7 @@ function PropertyDescriptionPage({
   subjectData?: import('../../../types').SubjectData;
   improvementsInventory?: import('../../../types').ImprovementsInventory;
   fieldVisibility?: Record<string, boolean>;
+  pageNumber?: number;
   // Inline photo placement props
   photoSlots?: PhotoSlotConfig[];
   photoPlacements?: InlinePhotoPlacement[];
@@ -1108,7 +1112,7 @@ function PropertyDescriptionPage({
   const quality = primaryBuilding?.constructionQuality || fallbackData.improvements.quality;
 
   return (
-    <ReportPageWrapper section={{ id: 'property', label: 'Property Description', enabled: true, expanded: false, fields: [], type: 'narrative' }} pageNumber={3} sidebarLabel="02">
+    <ReportPageWrapper section={{ id: 'property', label: 'Property Description', enabled: true, expanded: false, fields: [], type: 'narrative' }} pageNumber={pageNumber ?? 3} sidebarLabel="02">
       <div className="p-10">
         <div className="absolute top-6 right-8 bg-[#0da1c7] text-white px-4 py-2 rounded text-xs font-semibold">
           SECTION 2 • PROPERTY
@@ -1268,7 +1272,7 @@ function PropertyDescriptionPage({
 }
 
 // HBU Page
-function HBUPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, hbuAnalysis, fieldVisibility }: {
+function HBUPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, hbuAnalysis, fieldVisibility, pageNumber }: {
   selectedElement: string | null;
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
@@ -1276,6 +1280,7 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
   getAppliedStyle?: (elementId: string) => React.CSSProperties;
   hbuAnalysis?: import('../../../types').HBUAnalysis;
   fieldVisibility?: Record<string, boolean>;
+  pageNumber?: number;
 }) {
   const fallbackData = sampleAppraisalData;
   const handleContentChange = onContentChange || (() => { });
@@ -1300,7 +1305,7 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
   };
 
   return (
-    <ReportPageWrapper section={{ id: 'hbu', label: 'Highest & Best Use', enabled: true, expanded: false, fields: [], type: 'narrative' }} pageNumber={4} sidebarLabel="03">
+    <ReportPageWrapper section={{ id: 'hbu', label: 'Highest & Best Use', enabled: true, expanded: false, fields: [], type: 'narrative' }} pageNumber={pageNumber ?? 4} sidebarLabel="03">
       <div className="p-10">
         <div className="absolute top-6 right-8 bg-[#0da1c7] text-white px-4 py-2 rounded text-xs font-semibold">
           SECTION 3 • HBU
@@ -1413,7 +1418,7 @@ function HBUPage({ selectedElement, onSelectElement, onContentChange, editedCont
 }
 
 // Market Analysis Page
-function MarketAnalysisPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, marketAnalysis, fieldVisibility }: {
+function MarketAnalysisPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, marketAnalysis, fieldVisibility, pageNumber }: {
   selectedElement: string | null;
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
@@ -1421,6 +1426,7 @@ function MarketAnalysisPage({ selectedElement, onSelectElement, onContentChange,
   getAppliedStyle?: (elementId: string) => React.CSSProperties;
   marketAnalysis?: import('../../../types').MarketAnalysisData;
   fieldVisibility?: Record<string, boolean>;
+  pageNumber?: number;
 }) {
   const handleContentChange = onContentChange || (() => { });
   const getContent = (id: string, defaultVal: string) => editedContent?.[id] ?? defaultVal;
@@ -1442,7 +1448,7 @@ function MarketAnalysisPage({ selectedElement, onSelectElement, onContentChange,
     marketAnalysis?.marketTrends?.overallTrend === 'declining' ? 'Declining' : 'Stable';
 
   return (
-    <ReportPageWrapper section={{ id: 'market-analysis', label: 'Market Analysis', enabled: true, expanded: false, fields: [], type: 'narrative' }} pageNumber={5} sidebarLabel="02C">
+    <ReportPageWrapper section={{ id: 'market-analysis', label: 'Market Analysis', enabled: true, expanded: false, fields: [], type: 'narrative' }} pageNumber={pageNumber ?? 5} sidebarLabel="02C">
       <div className="p-10">
         <div className="absolute top-6 right-8 bg-[#0da1c7] text-white px-4 py-2 rounded text-xs font-semibold">
           SECTION 2C • MARKET
@@ -1543,13 +1549,14 @@ function MarketAnalysisPage({ selectedElement, onSelectElement, onContentChange,
 }
 
 // Sales Comparison Page with Photos
-function SalesComparisonPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, salesComparisonData }: {
+function SalesComparisonPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, salesComparisonData, pageNumber }: {
   selectedElement: string | null;
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
   editedContent?: Record<string, string>;
   getAppliedStyle?: (elementId: string) => React.CSSProperties;
   salesComparisonData?: import('../../../types').SalesComparisonData;
+  pageNumber?: number;
 }) {
   const data = sampleAppraisalData;
   const handleContentChange = onContentChange || (() => { });
@@ -1561,7 +1568,7 @@ function SalesComparisonPage({ selectedElement, onSelectElement, onContentChange
   const concludedValue = salesComparisonData?.concludedValue;
 
   return (
-    <ReportPageWrapper section={{ id: 'sales-comparison', label: 'Sales Comparison', enabled: true, expanded: false, fields: [], type: 'analysis-grid' }} pageNumber={5} sidebarLabel="04">
+    <ReportPageWrapper section={{ id: 'sales-comparison', label: 'Sales Comparison', enabled: true, expanded: false, fields: [], type: 'analysis-grid' }} pageNumber={pageNumber ?? 5} sidebarLabel="04">
       <div className="p-8">
         <div className="absolute top-6 right-8 bg-[#0da1c7] text-white px-4 py-2 rounded text-xs font-semibold">
           SECTION 4 • SALES
@@ -1731,13 +1738,14 @@ function SalesComparisonPage({ selectedElement, onSelectElement, onContentChange
 }
 
 // Income Approach Page
-function IncomeApproachPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, incomeApproachData }: {
+function IncomeApproachPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, incomeApproachData, pageNumber }: {
   selectedElement: string | null;
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
   editedContent?: Record<string, string>;
   getAppliedStyle?: (elementId: string) => React.CSSProperties;
   incomeApproachData?: import('../../../features/income-approach/types').IncomeApproachState | null;
+  pageNumber?: number;
 }) {
   const data = sampleAppraisalData;
   const handleContentChange = onContentChange || (() => { });
@@ -1749,7 +1757,7 @@ function IncomeApproachPage({ selectedElement, onSelectElement, onContentChange,
   const expenseCompNotes = incomeApproachData?.expenseCompNotes || '';
 
   return (
-    <ReportPageWrapper section={{ id: 'income', label: 'Income Approach', enabled: true, expanded: false, fields: [], type: 'analysis-grid' }} pageNumber={6} sidebarLabel="05">
+    <ReportPageWrapper section={{ id: 'income', label: 'Income Approach', enabled: true, expanded: false, fields: [], type: 'analysis-grid' }} pageNumber={pageNumber ?? 6} sidebarLabel="05">
       <div className="p-10">
         <div className="absolute top-6 right-8 bg-[#0da1c7] text-white px-4 py-2 rounded text-xs font-semibold">
           SECTION 5 • INCOME
@@ -1845,12 +1853,13 @@ function IncomeApproachPage({ selectedElement, onSelectElement, onContentChange,
 }
 
 // Cost Approach Page
-function CostApproachPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle }: {
+function CostApproachPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, pageNumber }: {
   selectedElement: string | null;
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
   editedContent?: Record<string, string>;
   getAppliedStyle?: (elementId: string) => React.CSSProperties;
+  pageNumber?: number;
 }) {
   const handleContentChange = onContentChange || (() => { });
   const getContent = (id: string, defaultVal: string) => editedContent?.[id] ?? defaultVal;
@@ -1867,7 +1876,7 @@ Physical depreciation was calculated using the age-life method. Given the buildi
 The land value of $${data.costApproach.landValue.toLocaleString()} was derived from the sales comparison approach to land valuation, utilizing recent sales of comparable vacant industrial sites in the subject market area.`;
 
   return (
-    <ReportPageWrapper section={{ id: 'cost', label: 'Cost Approach', enabled: true, expanded: false, fields: [], type: 'analysis-grid' }} pageNumber={7} sidebarLabel="06">
+    <ReportPageWrapper section={{ id: 'cost', label: 'Cost Approach', enabled: true, expanded: false, fields: [], type: 'analysis-grid' }} pageNumber={pageNumber ?? 7} sidebarLabel="06">
       <div className="p-10">
         <div className="absolute top-6 right-8 bg-[#0da1c7] text-white px-4 py-2 rounded text-xs font-semibold">
           SECTION 6 • COST
@@ -1959,13 +1968,14 @@ The land value of $${data.costApproach.landValue.toLocaleString()} was derived f
 }
 
 // Land Valuation Page
-function LandValuationPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, landValuationData }: {
+function LandValuationPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, landValuationData, pageNumber }: {
   selectedElement: string | null;
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
   editedContent?: Record<string, string>;
   getAppliedStyle?: (elementId: string) => React.CSSProperties;
   landValuationData?: import('../../../types').LandValuationData;
+  pageNumber?: number;
 }) {
   const handleContentChange = onContentChange || (() => { });
   const getContent = (id: string, defaultVal: string) => editedContent?.[id] ?? defaultVal;
@@ -1979,7 +1989,7 @@ function LandValuationPage({ selectedElement, onSelectElement, onContentChange, 
   const concludedLandValue = landValuationData?.concludedLandValue || 0;
 
   return (
-    <ReportPageWrapper section={{ id: 'land-valuation', label: 'Land Valuation', enabled: true, expanded: false, fields: [], type: 'analysis-grid' }} pageNumber={8} sidebarLabel="08">
+    <ReportPageWrapper section={{ id: 'land-valuation', label: 'Land Valuation', enabled: true, expanded: false, fields: [], type: 'analysis-grid' }} pageNumber={pageNumber ?? 8} sidebarLabel="08">
       <div className="p-10">
         <div className="absolute top-6 right-8 bg-lime-600 text-white px-4 py-2 rounded text-xs font-semibold">
           SECTION 8 • LAND
@@ -2111,13 +2121,14 @@ function LandValuationPage({ selectedElement, onSelectElement, onContentChange, 
 }
 
 // Reconciliation Page
-function ReconciliationPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, reconciliationData }: {
+function ReconciliationPage({ selectedElement, onSelectElement, onContentChange, editedContent, getAppliedStyle, reconciliationData, pageNumber }: {
   selectedElement: string | null;
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
   editedContent?: Record<string, string>;
   getAppliedStyle?: (elementId: string) => React.CSSProperties;
   reconciliationData?: import('../../../types').ReconciliationData | null;
+  pageNumber?: number;
 }) {
   const data = sampleAppraisalData;
   const handleContentChange = onContentChange || (() => { });
@@ -2135,7 +2146,7 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
   const spread = ((maxValue - minValue) / minValue * 100).toFixed(1);
 
   return (
-    <ReportPageWrapper section={{ id: 'reconciliation', label: 'Reconciliation', enabled: true, expanded: false, fields: [], type: 'narrative' }} pageNumber={8} sidebarLabel="07">
+    <ReportPageWrapper section={{ id: 'reconciliation', label: 'Reconciliation', enabled: true, expanded: false, fields: [], type: 'narrative' }} pageNumber={pageNumber ?? 8} sidebarLabel="07">
       <div className="p-10">
         <div className="absolute top-6 right-8 bg-[#0da1c7] text-white px-4 py-2 rounded text-xs font-semibold">
           SECTION 7 • VALUE
@@ -2344,6 +2355,7 @@ function PhotoExhibitsPage({
   onSelectElement,
   onOpenPhotoEditor,
   getPhotoEdits,
+  pageNumber,
 }: {
   selectedElement: string | null;
   onSelectElement: (id: string) => void;
@@ -2352,12 +2364,13 @@ function PhotoExhibitsPage({
   getAppliedStyle?: (elementId: string) => React.CSSProperties;
   onOpenPhotoEditor?: (photo: PhotoData) => void;
   getPhotoEdits?: (photoId: string) => PhotoEdits | undefined;
+  pageNumber?: number;
 }) {
   const data = sampleAppraisalData;
   const photos = data.photos.slice(0, 6);
 
   return (
-    <ReportPageWrapper section={{ id: 'exhibits', label: 'Photo Exhibits', enabled: true, expanded: false, fields: [], type: 'photo-grid' }} pageNumber={9} sidebarLabel="08">
+    <ReportPageWrapper section={{ id: 'exhibits', label: 'Photo Exhibits', enabled: true, expanded: false, fields: [], type: 'photo-grid' }} pageNumber={pageNumber ?? 9} sidebarLabel="08">
       <div className="p-10">
         <div className="absolute top-6 right-8 bg-[#0da1c7] text-white px-4 py-2 rounded text-xs font-semibold">
           EXHIBITS
@@ -2388,18 +2401,17 @@ function PhotoExhibitsPage({
   );
 }
 
-// Table of Contents Page - Supports pagination (page 1 and page 2)
-// Page 1: First 12 entries + aerial photo
-// Page 2: Remaining entries (no photo)
-const MAX_TOC_ENTRIES_PAGE_1 = 12;
+// Table of Contents Page - Dynamic pagination (1-3 pages based on section count)
+// Each page holds up to 20 entries. No photo - more space for entries.
+// Page numbers update dynamically when sections are reordered.
+const ENTRIES_PER_TOC_PAGE = 20;
 
 function TOCPage({
   selectedElement,
   onSelectElement,
   enabledSections,
-  onOpenPhotoEditor,
-  getPhotoEdits,
-  pageIndex = 0, // 0 = first page, 1 = second page (continued)
+  pageIndex = 0, // 0 = first page, 1 = second page, 2 = third page
+  pageNumber, // Dynamic page number passed from parent
 }: {
   selectedElement: string | null;
   onSelectElement: (id: string) => void;
@@ -2410,30 +2422,48 @@ function TOCPage({
   onOpenPhotoEditor?: (photo: PhotoData) => void;
   getPhotoEdits?: (photoId: string) => PhotoEdits | undefined;
   pageIndex?: number;
+  pageNumber: number;
 }) {
-  // Build TOC entries from enabled sections (exclude cover, toc, and toc-2)
-  const tocEntries = enabledSections
-    .filter(s => s.enabled && s.id !== 'cover' && s.id !== 'toc' && s.id !== 'toc-2')
-    .map((section, idx) => ({
+  // IDs that should not appear as TOC entries (cover and TOC pages themselves)
+  const tocExcludedIds = new Set(['cover', 'toc', 'toc-2', 'toc-3']);
+  
+  // Get all enabled sections in their current order
+  const allEnabledSections = enabledSections.filter(s => s.enabled);
+  
+  // Build page number map - each enabled section gets a sequential page number
+  const pageNumberMap = new Map<string, number>();
+  allEnabledSections.forEach((section, index) => {
+    pageNumberMap.set(section.id, index + 1); // Pages are 1-indexed
+  });
+  
+  // Build TOC entries (exclude cover and TOC pages themselves)
+  const tocEntries = allEnabledSections
+    .filter(s => !tocExcludedIds.has(s.id))
+    .map(section => ({
+      id: section.id,
       title: section.label,
-      page: idx + 2, // Cover is 1, then content starts
+      page: pageNumberMap.get(section.id) || 0,
     }));
 
-  // Split entries between pages
-  const isFirstPage = pageIndex === 0;
-  const entriesForThisPage = isFirstPage
-    ? tocEntries.slice(0, MAX_TOC_ENTRIES_PAGE_1)
-    : tocEntries.slice(MAX_TOC_ENTRIES_PAGE_1);
+  // Calculate which entries belong on this TOC page
+  const startIndex = pageIndex * ENTRIES_PER_TOC_PAGE;
+  const entriesForThisPage = tocEntries.slice(startIndex, startIndex + ENTRIES_PER_TOC_PAGE);
 
-  // Don't render second page if there are no entries for it
-  if (!isFirstPage && entriesForThisPage.length === 0) {
+  // Don't render if no entries for this page
+  if (entriesForThisPage.length === 0) {
     return null;
   }
 
-  const aerialPhoto = sampleAppraisalData.photos.find(p => p.category === 'aerial');
-  const pageTitle = isFirstPage ? 'Table of Contents' : 'Table of Contents (Continued)';
-  const sectionId = isFirstPage ? 'toc' : 'toc-2';
-  const pageNumber = isFirstPage ? 2 : 3;
+  // Calculate total TOC pages for "continued" logic
+  const totalTocPages = Math.ceil(tocEntries.length / ENTRIES_PER_TOC_PAGE);
+  const isFirstPage = pageIndex === 0;
+  const isLastPage = pageIndex === totalTocPages - 1;
+  
+  const pageTitle = isFirstPage 
+    ? 'Table of Contents' 
+    : 'Table of Contents (Continued)';
+  
+  const sectionId = pageIndex === 0 ? 'toc' : pageIndex === 1 ? 'toc-2' : 'toc-3';
 
   return (
     <ReportPageWrapper 
@@ -2442,42 +2472,46 @@ function TOCPage({
       sidebarLabel=""
     >
       <div className="p-12">
-        <h2 className="text-3xl font-light text-[#0da1c7] mb-12 mt-8">{pageTitle}</h2>
+        <h2 className="text-3xl font-light text-[#0da1c7] mb-6 mt-4">{pageTitle}</h2>
+
+        {isFirstPage && (
+          <p className="text-xs text-slate-600 mb-4">
+            The following sections are included in this appraisal report:
+          </p>
+        )}
 
         <div
           onClick={() => onSelectElement(`toc_entries_${pageIndex}`)}
-          className={`space-y-0 p-4 -m-4 rounded cursor-pointer ${selectedElement === `toc_entries_${pageIndex}` ? 'ring-2 ring-[#0da1c7] bg-cyan-50' : 'hover:bg-slate-100'}`}
+          className={`space-y-0 p-3 -m-3 rounded cursor-pointer ${
+            selectedElement === `toc_entries_${pageIndex}` 
+              ? 'ring-2 ring-[#0da1c7] bg-cyan-50' 
+              : 'hover:bg-slate-50'
+          }`}
         >
-          {entriesForThisPage.map((entry, idx) => (
+          {entriesForThisPage.map((entry) => (
             <div
-              key={idx}
-              className="flex items-baseline border-b border-dotted border-slate-300 py-3 group"
+              key={entry.id}
+              className="flex items-baseline border-b border-dotted border-slate-300 py-2 group"
             >
-              <span className="text-slate-800 font-medium flex-shrink-0">{entry.title}</span>
-              <span className="flex-1 border-b border-dotted border-slate-300 mx-3" style={{ marginBottom: '0.3em' }}></span>
-              <span className="text-slate-500 font-mono text-sm flex-shrink-0">{entry.page}</span>
+              <span className="text-slate-800 font-medium flex-shrink-0 text-sm">
+                {entry.title}
+              </span>
+              <span 
+                className="flex-1 border-b border-dotted border-slate-300 mx-3" 
+                style={{ marginBottom: '0.3em' }}
+              />
+              <span className="text-slate-500 font-mono text-sm flex-shrink-0 tabular-nums w-6 text-right">
+                {entry.page}
+              </span>
             </div>
           ))}
         </div>
 
-        {/* Photo of Subject - only on first page */}
-        {isFirstPage && (
-          <div className="mt-12">
-            <PhotoSlot
-              photo={aerialPhoto}
-              placeholder="Aerial View"
-              aspectRatio="16/9"
-              selected={selectedElement === 'toc_photo'}
-              onSelect={() => onSelectElement('toc_photo')}
-              onDoubleClick={() => aerialPhoto && onOpenPhotoEditor?.({
-                id: aerialPhoto.id || 'toc-aerial',
-                url: aerialPhoto.url,
-                caption: aerialPhoto.caption,
-                category: aerialPhoto.category,
-              })}
-              edits={getPhotoEdits?.(aerialPhoto?.id || 'toc-aerial')}
-            />
-          </div>
+        {/* Show continuation indicator if not last page */}
+        {!isLastPage && (
+          <p className="text-xs text-slate-400 mt-6 text-center italic">
+            Continued on next page...
+          </p>
         )}
       </div>
     </ReportPageWrapper>
@@ -2485,17 +2519,18 @@ function TOCPage({
 }
 
 // Assumptions & Limiting Conditions Page
-function AssumptionsPage({ selectedElement, onSelectElement }: {
+function AssumptionsPage({ selectedElement, onSelectElement, pageNumber }: {
   selectedElement: string | null;
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
   editedContent?: Record<string, string>;
   getAppliedStyle?: (elementId: string) => React.CSSProperties;
+  pageNumber?: number;
 }) {
   const data = sampleAppraisalData;
 
   return (
-    <ReportPageWrapper section={{ id: 'assumptions', label: 'Assumptions', enabled: true, expanded: false, fields: [], type: 'narrative' }} pageNumber={10} sidebarLabel="09">
+    <ReportPageWrapper section={{ id: 'assumptions', label: 'Assumptions', enabled: true, expanded: false, fields: [], type: 'narrative' }} pageNumber={pageNumber ?? 10} sidebarLabel="09">
       <div className="p-10">
         <div className="absolute top-6 right-8 bg-[#0da1c7] text-white px-4 py-2 rounded text-xs font-semibold">
           ASSUMPTIONS
@@ -2534,13 +2569,14 @@ function AssumptionsPage({ selectedElement, onSelectElement }: {
 }
 
 // Certification Page
-function CertificationPage({ selectedElement, onSelectElement, subjectData }: {
+function CertificationPage({ selectedElement, onSelectElement, subjectData, pageNumber }: {
   selectedElement: string | null;
   onSelectElement: (id: string) => void;
   onContentChange?: (elementId: string, content: string) => void;
   editedContent?: Record<string, string>;
   getAppliedStyle?: (elementId: string) => React.CSSProperties;
   subjectData?: import('../../../types').SubjectData;
+  pageNumber?: number;
 }) {
   const fallbackData = sampleAppraisalData;
 
@@ -2550,7 +2586,7 @@ function CertificationPage({ selectedElement, onSelectElement, subjectData }: {
   const reportDate = subjectData?.reportDate || fallbackData.assignment.reportDate;
 
   return (
-    <ReportPageWrapper section={{ id: 'certification', label: 'Certification', enabled: true, expanded: false, fields: [], type: 'narrative' }} pageNumber={11} sidebarLabel="10">
+    <ReportPageWrapper section={{ id: 'certification', label: 'Certification', enabled: true, expanded: false, fields: [], type: 'narrative' }} pageNumber={pageNumber ?? 11} sidebarLabel="10">
       <div className="p-10">
         <div className="absolute top-6 right-8 bg-[#0da1c7] text-white px-4 py-2 rounded text-xs font-semibold">
           CERTIFICATION
@@ -3837,8 +3873,34 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
       }
     });
 
+    // Dynamic TOC page hiding based on content section count
+    const tocExcludedIds = new Set(['cover', 'toc', 'toc-2', 'toc-3']);
+    const contentSectionCount = reportSections.filter(s => 
+      s.enabled && !tocExcludedIds.has(s.id)
+    ).length;
+    
+    const ENTRIES_PER_TOC_PAGE = 20;
+    const requiredTocPages = Math.max(1, Math.ceil(contentSectionCount / ENTRIES_PER_TOC_PAGE));
+    
+    // Hide toc-2 if only 1 page needed
+    if (requiredTocPages < 2) {
+      hidden.push({ 
+        id: 'toc-2', 
+        label: 'Table of Contents (Continued)', 
+        reason: `${contentSectionCount} sections fit on 1 TOC page` 
+      });
+    }
+    // Hide toc-3 if only 1-2 pages needed
+    if (requiredTocPages < 3) {
+      hidden.push({ 
+        id: 'toc-3', 
+        label: 'Table of Contents (Continued)', 
+        reason: `${contentSectionCount} sections fit on 2 TOC pages` 
+      });
+    }
+
     return hidden;
-  }, [sections, state.demographicsData, state.swotAnalysis, state.riskRating]);
+  }, [sections, reportSections, state.demographicsData, state.swotAnalysis, state.riskRating]);
 
   // Filter out hidden sections from visible list
   const visibleSections = useMemo(() => {
@@ -4364,9 +4426,14 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
   }, [reportState.fieldVisibility]);
 
   // Render the appropriate page component
+  // pageIndex here is the position in the rendered visibleSections array (0-indexed)
+  // We pass pageIndex + 1 as the dynamic page number (1-indexed for display)
   const renderPage = (section: ReportSection, pageIndex: number) => {
     // Get field visibility for this section
     const fieldVisibility = getFieldVisibilityForSection(section.id);
+    
+    // Dynamic page number: 1-indexed position in the visible sections
+    const dynamicPageNumber = pageIndex + 1;
     
     const commonProps = {
       selectedElement,
@@ -4375,6 +4442,7 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
       editedContent,
       getAppliedStyle: getElementStyle,
       fieldVisibility,
+      pageNumber: dynamicPageNumber,
     };
 
     const photoProps = {
@@ -4387,9 +4455,11 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
       case 'cover':
         return <CoverPageReal {...commonProps} subjectData={state.subjectData} reconciliationData={state.reconciliationData} coverPhoto={state.coverPhoto} />;
       case 'toc':
-        return <TOCPage {...photoProps} enabledSections={reportSections} pageIndex={0} />;
+        return <TOCPage {...photoProps} enabledSections={visibleSections} pageIndex={0} pageNumber={dynamicPageNumber} />;
       case 'toc-2':
-        return <TOCPage {...photoProps} enabledSections={reportSections} pageIndex={1} />;
+        return <TOCPage {...photoProps} enabledSections={visibleSections} pageIndex={1} pageNumber={dynamicPageNumber} />;
+      case 'toc-3':
+        return <TOCPage {...photoProps} enabledSections={visibleSections} pageIndex={2} pageNumber={dynamicPageNumber} />;
       case 'letter':
         return <LetterPage {...commonProps} subjectData={state.subjectData} />;
       case 'executive-summary':

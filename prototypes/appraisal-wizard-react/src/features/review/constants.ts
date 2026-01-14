@@ -116,7 +116,16 @@ export const BASE_REPORT_SECTIONS: ReportSection[] = [
     enabled: true,
     expanded: false,
     fields: [],
-    parentSectionId: 'toc', // Links to parent TOC section
+    parentSectionId: 'toc',
+  },
+  {
+    id: 'toc-3',
+    label: 'Table of Contents (Continued)',
+    type: 'toc',
+    enabled: true,
+    expanded: false,
+    fields: [],
+    parentSectionId: 'toc',
   },
   {
     id: 'executive-summary',
