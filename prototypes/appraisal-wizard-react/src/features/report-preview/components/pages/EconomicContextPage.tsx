@@ -10,12 +10,23 @@ import type { EconomicIndicators } from '../../../../types';
 import EconomicChart from '../../../../components/EconomicChart';
 import type { ChartStyle } from '../../../../components/ChartStyleSelector';
 import { ReportPageBase } from './ReportPageBase';
+import { sampleAppraisalData } from '../../../review/data/sampleAppraisalData';
 
 interface EconomicContextPageProps {
   data: EconomicIndicators | null;
   pageNumber?: number;
   chartStyle?: ChartStyle;
 }
+
+// Sample economic data for fallback display
+const sampleEconomicData: EconomicIndicators = {
+  federalFundsRate: sampleAppraisalData.economicIndicators.federalFundsRate,
+  treasury10Y: sampleAppraisalData.economicIndicators.treasury10Y,
+  inflation: sampleAppraisalData.economicIndicators.inflation,
+  gdpGrowth: sampleAppraisalData.economicIndicators.gdpGrowth,
+  source: sampleAppraisalData.economicIndicators.source,
+  asOfDate: sampleAppraisalData.economicIndicators.asOfDate,
+};
 
 // Formatting helper
 const formatRate = (value: number) => `${value.toFixed(2)}%`;
@@ -47,22 +58,9 @@ export const EconomicContextPage: React.FC<EconomicContextPageProps> = ({
   pageNumber,
   chartStyle = 'gradient',
 }) => {
-  if (!data) {
-    return (
-      <ReportPageBase
-        title="Economic Context"
-        sidebarLabel="ECON"
-        pageNumber={pageNumber}
-        sectionNumber={3}
-        sectionTitle="MARKET"
-        contentPadding="p-10"
-      >
-        <p className="text-sm text-slate-500 italic">No economic data available.</p>
-      </ReportPageBase>
-    );
-  }
-
-  const { federalFundsRate, treasury10Y, inflation, gdpGrowth, asOfDate } = data;
+  // Use sample data as fallback when no wizard data is available
+  const displayData = data || sampleEconomicData;
+  const { federalFundsRate, treasury10Y, inflation, gdpGrowth, asOfDate } = displayData;
 
   const indicators = [
     { 
@@ -87,7 +85,7 @@ export const EconomicContextPage: React.FC<EconomicContextPageProps> = ({
     },
   ];
 
-  const hasHistory = data.federalFundsRate.history || data.treasury10Y.history || data.inflation.history || data.gdpGrowth.history;
+  const hasHistory = displayData.federalFundsRate.history || displayData.treasury10Y.history || displayData.inflation.history || displayData.gdpGrowth.history;
 
   return (
     <ReportPageBase
@@ -149,11 +147,11 @@ export const EconomicContextPage: React.FC<EconomicContextPageProps> = ({
             Historical Trends
           </h2>
           <div className="grid grid-cols-2 gap-3 mb-4">
-            {data.federalFundsRate.history && (
+            {displayData.federalFundsRate.history && (
               <div className="rounded-lg p-2 bg-slate-50 border border-slate-200">
                 <h3 className="text-[10px] font-semibold text-slate-800 mb-1">Federal Funds Rate</h3>
                 <EconomicChart
-                  data={data.federalFundsRate.history}
+                  data={displayData.federalFundsRate.history}
                   chartStyle={chartStyle}
                   title="Federal Funds Rate"
                   color="#0da1c7"
@@ -164,11 +162,11 @@ export const EconomicContextPage: React.FC<EconomicContextPageProps> = ({
                 />
               </div>
             )}
-            {data.treasury10Y.history && (
+            {displayData.treasury10Y.history && (
               <div className="rounded-lg p-2 bg-slate-50 border border-slate-200">
                 <h3 className="text-[10px] font-semibold text-slate-800 mb-1">10-Year Treasury</h3>
                 <EconomicChart
-                  data={data.treasury10Y.history}
+                  data={displayData.treasury10Y.history}
                   chartStyle={chartStyle}
                   title="10-Year Treasury"
                   color="#0da1c7"
@@ -179,11 +177,11 @@ export const EconomicContextPage: React.FC<EconomicContextPageProps> = ({
                 />
               </div>
             )}
-            {data.inflation.history && (
+            {displayData.inflation.history && (
               <div className="rounded-lg p-2 bg-slate-50 border border-slate-200">
                 <h3 className="text-[10px] font-semibold text-slate-800 mb-1">Inflation (CPI)</h3>
                 <EconomicChart
-                  data={data.inflation.history}
+                  data={displayData.inflation.history}
                   chartStyle={chartStyle}
                   title="Inflation"
                   color="#0da1c7"
@@ -194,11 +192,11 @@ export const EconomicContextPage: React.FC<EconomicContextPageProps> = ({
                 />
               </div>
             )}
-            {data.gdpGrowth.history && (
+            {displayData.gdpGrowth.history && (
               <div className="rounded-lg p-2 bg-slate-50 border border-slate-200">
                 <h3 className="text-[10px] font-semibold text-slate-800 mb-1">GDP Growth</h3>
                 <EconomicChart
-                  data={data.gdpGrowth.history}
+                  data={displayData.gdpGrowth.history}
                   chartStyle={chartStyle}
                   title="GDP Growth"
                   color="#0da1c7"
@@ -231,7 +229,7 @@ export const EconomicContextPage: React.FC<EconomicContextPageProps> = ({
 
       {/* Source Attribution */}
       <div className="mt-auto pt-2 text-[9px] text-slate-400">
-        Source: {data.source || 'Federal Reserve Economic Data (FRED)'}
+        Source: {displayData.source || 'Federal Reserve Economic Data (FRED)'}
         {asOfDate && ` (as of ${new Date(asOfDate).toLocaleDateString()})`}
       </div>
     </ReportPageBase>

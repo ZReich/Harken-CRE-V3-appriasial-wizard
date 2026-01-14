@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/380</span>
+                <span class='fraction'>0/362</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/380</span>
+                <span class='fraction'>0/362</span>
             </div>
         
             
@@ -425,43 +425,7 @@
 <a name='L360'></a><a href='#L360'>360</a>
 <a name='L361'></a><a href='#L361'>361</a>
 <a name='L362'></a><a href='#L362'>362</a>
-<a name='L363'></a><a href='#L363'>363</a>
-<a name='L364'></a><a href='#L364'>364</a>
-<a name='L365'></a><a href='#L365'>365</a>
-<a name='L366'></a><a href='#L366'>366</a>
-<a name='L367'></a><a href='#L367'>367</a>
-<a name='L368'></a><a href='#L368'>368</a>
-<a name='L369'></a><a href='#L369'>369</a>
-<a name='L370'></a><a href='#L370'>370</a>
-<a name='L371'></a><a href='#L371'>371</a>
-<a name='L372'></a><a href='#L372'>372</a>
-<a name='L373'></a><a href='#L373'>373</a>
-<a name='L374'></a><a href='#L374'>374</a>
-<a name='L375'></a><a href='#L375'>375</a>
-<a name='L376'></a><a href='#L376'>376</a>
-<a name='L377'></a><a href='#L377'>377</a>
-<a name='L378'></a><a href='#L378'>378</a>
-<a name='L379'></a><a href='#L379'>379</a>
-<a name='L380'></a><a href='#L380'>380</a>
-<a name='L381'></a><a href='#L381'>381</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<a name='L363'></a><a href='#L363'>363</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -962,34 +926,16 @@
 <span class="cstat-no" title="statement not covered" >const RATING_SCALE = ['AAA', 'AA', 'A', 'BBB', 'BB', 'B', 'CCC', 'CC', 'C'];</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >export const RiskRatingPage: React.FC&lt;RiskRatingPageProps&gt; = ({ data, pageNumber }) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >  // Use sample risk rating data as fallback</span>
+<span class="cstat-no" title="statement not covered" >  // Use sample risk rating data as fallback when no wizard data</span>
 <span class="cstat-no" title="statement not covered" >  const sampleRisk = sampleAppraisalData.riskRating;</span>
 <span class="cstat-no" title="statement not covered" >  const hasWizardData = data &amp;&amp; data.overallGrade;</span>
 <span class="cstat-no" title="statement not covered" >  </span>
-<span class="cstat-no" title="statement not covered" >  // Create compatible risk data structure</span>
-<span class="cstat-no" title="statement not covered" >  const riskData = hasWizardData ? data : null;</span>
-<span class="cstat-no" title="statement not covered" >  </span>
-<span class="cstat-no" title="statement not covered" >  if (!riskData) {</span>
-<span class="cstat-no" title="statement not covered" >    return (</span>
-<span class="cstat-no" title="statement not covered" >      &lt;ReportPageBase</span>
-<span class="cstat-no" title="statement not covered" >        title="Investment Risk Analysis"</span>
-<span class="cstat-no" title="statement not covered" >        sidebarLabel="RISK"</span>
-<span class="cstat-no" title="statement not covered" >        pageNumber={pageNumber}</span>
-<span class="cstat-no" title="statement not covered" >        sectionNumber={5}</span>
-<span class="cstat-no" title="statement not covered" >        sectionTitle="ANALYSIS"</span>
-<span class="cstat-no" title="statement not covered" >        contentPadding="p-10"</span>
-<span class="cstat-no" title="statement not covered" >      &gt;</span>
-<span class="cstat-no" title="statement not covered" >        &lt;p className="text-sm text-slate-500 italic"&gt;No risk rating data available.&lt;/p&gt;</span>
-<span class="cstat-no" title="statement not covered" >      &lt;/ReportPageBase&gt;</span>
-<span class="cstat-no" title="statement not covered" >    );</span>
-<span class="cstat-no" title="statement not covered" >  }</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >  // Extract rating details from wizard data or sample</span>
-<span class="cstat-no" title="statement not covered" >  const overallGrade = riskData?.overallGrade || sampleRisk.overallRating;</span>
-<span class="cstat-no" title="statement not covered" >  const overallScore = riskData?.overallScore || 78;</span>
-<span class="cstat-no" title="statement not covered" >  const dimensions = riskData?.dimensions || sampleRisk.dimensions;</span>
-<span class="cstat-no" title="statement not covered" >  const weightingRationale = riskData?.weightingRationale || sampleRisk.methodology;</span>
-<span class="cstat-no" title="statement not covered" >  const generatedDate = riskData?.generatedDate || new Date().toISOString();</span>
+<span class="cstat-no" title="statement not covered" >  // Extract rating details from wizard data or use sample data</span>
+<span class="cstat-no" title="statement not covered" >  const overallGrade = hasWizardData ? data.overallGrade : sampleRisk.overallRating;</span>
+<span class="cstat-no" title="statement not covered" >  const overallScore = hasWizardData ? (data.overallScore || 78) : 78;</span>
+<span class="cstat-no" title="statement not covered" >  const dimensions = hasWizardData ? data.dimensions : sampleRisk.dimensions;</span>
+<span class="cstat-no" title="statement not covered" >  const weightingRationale = hasWizardData ? data.weightingRationale : sampleRisk.methodology;</span>
+<span class="cstat-no" title="statement not covered" >  const generatedDate = hasWizardData ? data.generatedDate : new Date().toISOString();</span>
 <span class="cstat-no" title="statement not covered" >  </span>
 <span class="cstat-no" title="statement not covered" >  const gradeConfig = GRADE_CONFIG[overallGrade] || GRADE_CONFIG['BBB'];</span>
 <span class="cstat-no" title="statement not covered" >  const gradeIndex = RATING_SCALE.indexOf(overallGrade);</span>
@@ -1018,27 +964,27 @@
 <span class="cstat-no" title="statement not covered" >      contentPadding="p-10"</span>
 <span class="cstat-no" title="statement not covered" >    &gt;</span>
 <span class="cstat-no" title="statement not covered" >      {/* Executive Summary Box */}</span>
-<span class="cstat-no" title="statement not covered" >      &lt;div className="flex gap-4 mb-4"&gt;</span>
+<span class="cstat-no" title="statement not covered" >      &lt;div className="flex gap-5 mb-6"&gt;</span>
 <span class="cstat-no" title="statement not covered" >        {/* Rating Badge */}</span>
-<span class="cstat-no" title="statement not covered" >        &lt;div className={`${gradeConfig.bg} ${gradeConfig.border} border-2 rounded-lg p-3 text-center flex-shrink-0`} style={{ minWidth: '100px' }}&gt;</span>
-<span class="cstat-no" title="statement not covered" >          &lt;div className={`text-3xl font-bold ${gradeConfig.text}`}&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;div className={`${gradeConfig.bg} ${gradeConfig.border} border-2 rounded-lg p-4 text-center flex-shrink-0`} style={{ minWidth: '120px' }}&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;div className={`text-4xl font-bold ${gradeConfig.text}`}&gt;</span>
 <span class="cstat-no" title="statement not covered" >            {overallGrade}</span>
 <span class="cstat-no" title="statement not covered" >          &lt;/div&gt;</span>
-<span class="cstat-no" title="statement not covered" >          &lt;div className={`text-[10px] font-semibold ${gradeConfig.text} uppercase tracking-wide`}&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;div className={`text-xs font-semibold ${gradeConfig.text} uppercase tracking-wide`}&gt;</span>
 <span class="cstat-no" title="statement not covered" >            {gradeConfig.riskLevel}</span>
 <span class="cstat-no" title="statement not covered" >          &lt;/div&gt;</span>
-<span class="cstat-no" title="statement not covered" >          &lt;div className="text-slate-600 mt-1 text-[10px]"&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;div className="text-slate-600 mt-1 text-xs"&gt;</span>
 <span class="cstat-no" title="statement not covered" >            Score: {overallScore}/100</span>
 <span class="cstat-no" title="statement not covered" >          &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >        &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >        {/* Summary Text */}</span>
 <span class="cstat-no" title="statement not covered" >        &lt;div className="flex-1"&gt;</span>
-<span class="cstat-no" title="statement not covered" >          &lt;p className="text-xs text-slate-700 leading-relaxed mb-2"&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;p className="text-sm text-slate-700 leading-relaxed mb-3"&gt;</span>
 <span class="cstat-no" title="statement not covered" >            This property has been assigned an &lt;strong&gt;{gradeConfig.description}&lt;/strong&gt; rating </span>
 <span class="cstat-no" title="statement not covered" >            based on comprehensive analysis of market, financial, and physical risk factors.</span>
 <span class="cstat-no" title="statement not covered" >          &lt;/p&gt;</span>
-<span class="cstat-no" title="statement not covered" >          &lt;div className="text-[10px] text-slate-500"&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;div className="text-xs text-slate-500"&gt;</span>
 <span class="cstat-no" title="statement not covered" >            &lt;strong&gt;Classification:&lt;/strong&gt; {gradeIndex &lt;= 2 ? 'Investment Grade - Core/Core-Plus' : </span>
 <span class="cstat-no" title="statement not covered" >              gradeIndex &lt;= 4 ? 'Investment Grade - Value-Add' : 'Speculative Grade - Opportunistic'}</span>
 <span class="cstat-no" title="statement not covered" >          &lt;/div&gt;</span>
@@ -1046,20 +992,20 @@
 <span class="cstat-no" title="statement not covered" >      &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >      {/* Rating Scale Visualization */}</span>
-<span class="cstat-no" title="statement not covered" >      &lt;div className="mb-4 p-2 bg-slate-50 rounded-lg"&gt;</span>
-<span class="cstat-no" title="statement not covered" >        &lt;div className="flex items-center justify-between text-[10px] text-slate-500 mb-1"&gt;</span>
+<span class="cstat-no" title="statement not covered" >      &lt;div className="mb-6 p-3 bg-slate-50 rounded-lg"&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;div className="flex items-center justify-between text-xs text-slate-500 mb-2"&gt;</span>
 <span class="cstat-no" title="statement not covered" >          &lt;span&gt;Lower Risk&lt;/span&gt;</span>
 <span class="cstat-no" title="statement not covered" >          &lt;span className="font-medium text-slate-700"&gt;Rating Scale&lt;/span&gt;</span>
 <span class="cstat-no" title="statement not covered" >          &lt;span&gt;Higher Risk&lt;/span&gt;</span>
 <span class="cstat-no" title="statement not covered" >        &lt;/div&gt;</span>
-<span class="cstat-no" title="statement not covered" >        &lt;div className="flex items-center gap-0.5"&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;div className="flex items-center gap-1"&gt;</span>
 <span class="cstat-no" title="statement not covered" >          {RATING_SCALE.map((grade) =&gt; {</span>
 <span class="cstat-no" title="statement not covered" >            const config = GRADE_CONFIG[grade];</span>
 <span class="cstat-no" title="statement not covered" >            const isCurrent = grade === overallGrade;</span>
 <span class="cstat-no" title="statement not covered" >            return (</span>
 <span class="cstat-no" title="statement not covered" >              &lt;div </span>
 <span class="cstat-no" title="statement not covered" >                key={grade}</span>
-<span class="cstat-no" title="statement not covered" >                className={`flex-1 h-5 flex items-center justify-center text-[10px] font-bold ${</span>
+<span class="cstat-no" title="statement not covered" >                className={`flex-1 h-7 flex items-center justify-center text-xs font-bold ${</span>
 <span class="cstat-no" title="statement not covered" >                  isCurrent </span>
 <span class="cstat-no" title="statement not covered" >                    ? `${config.bg} ${config.text} ${config.border} border-2 rounded` </span>
 <span class="cstat-no" title="statement not covered" >                    : `${config.lightBg} ${config.text} opacity-40`</span>
@@ -1073,26 +1019,26 @@
 <span class="cstat-no" title="statement not covered" >      &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >      {/* Four-Dimension Analysis */}</span>
-<span class="cstat-no" title="statement not covered" >      &lt;h2 className="text-xs font-bold text-slate-800 uppercase tracking-wide border-b border-slate-200 pb-1 mb-2"&gt;</span>
+<span class="cstat-no" title="statement not covered" >      &lt;h2 className="text-sm font-bold text-slate-800 uppercase tracking-wide border-b border-slate-200 pb-2 mb-4"&gt;</span>
 <span class="cstat-no" title="statement not covered" >        Risk Dimension Analysis</span>
 <span class="cstat-no" title="statement not covered" >      &lt;/h2&gt;</span>
 <span class="cstat-no" title="statement not covered" >      </span>
-<span class="cstat-no" title="statement not covered" >      &lt;table className="w-full text-[10px] border-collapse mb-3"&gt;</span>
+<span class="cstat-no" title="statement not covered" >      &lt;table className="w-full text-xs border-collapse mb-5"&gt;</span>
 <span class="cstat-no" title="statement not covered" >        &lt;thead&gt;</span>
 <span class="cstat-no" title="statement not covered" >          &lt;tr className="bg-slate-100"&gt;</span>
-<span class="cstat-no" title="statement not covered" >            &lt;th className="text-left py-1.5 px-2 font-semibold text-slate-700 border border-slate-200"&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;th className="text-left py-2.5 px-3 font-semibold text-slate-700 border border-slate-200"&gt;</span>
 <span class="cstat-no" title="statement not covered" >              Dimension</span>
 <span class="cstat-no" title="statement not covered" >            &lt;/th&gt;</span>
-<span class="cstat-no" title="statement not covered" >            &lt;th className="text-center py-1.5 px-2 font-semibold text-slate-700 border border-slate-200 w-14"&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;th className="text-center py-2.5 px-3 font-semibold text-slate-700 border border-slate-200 w-16"&gt;</span>
 <span class="cstat-no" title="statement not covered" >              Score</span>
 <span class="cstat-no" title="statement not covered" >            &lt;/th&gt;</span>
-<span class="cstat-no" title="statement not covered" >            &lt;th className="text-center py-1.5 px-2 font-semibold text-slate-700 border border-slate-200 w-14"&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;th className="text-center py-2.5 px-3 font-semibold text-slate-700 border border-slate-200 w-16"&gt;</span>
 <span class="cstat-no" title="statement not covered" >              Weight</span>
 <span class="cstat-no" title="statement not covered" >            &lt;/th&gt;</span>
-<span class="cstat-no" title="statement not covered" >            &lt;th className="text-center py-1.5 px-2 font-semibold text-slate-700 border border-slate-200 w-16"&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;th className="text-center py-2.5 px-3 font-semibold text-slate-700 border border-slate-200 w-20"&gt;</span>
 <span class="cstat-no" title="statement not covered" >              Contrib.</span>
 <span class="cstat-no" title="statement not covered" >            &lt;/th&gt;</span>
-<span class="cstat-no" title="statement not covered" >            &lt;th className="text-left py-1.5 px-2 font-semibold text-slate-700 border border-slate-200 w-20"&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;th className="text-left py-2.5 px-3 font-semibold text-slate-700 border border-slate-200 w-24"&gt;</span>
 <span class="cstat-no" title="statement not covered" >              Rating</span>
 <span class="cstat-no" title="statement not covered" >            &lt;/th&gt;</span>
 <span class="cstat-no" title="statement not covered" >          &lt;/tr&gt;</span>
@@ -1100,14 +1046,14 @@
 <span class="cstat-no" title="statement not covered" >        &lt;tbody&gt;</span>
 <span class="cstat-no" title="statement not covered" >          {weightedContributions.map((dim, idx) =&gt; (</span>
 <span class="cstat-no" title="statement not covered" >            &lt;tr key={dim.key} className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}&gt;</span>
-<span class="cstat-no" title="statement not covered" >              &lt;td className="py-1.5 px-2 border border-slate-200 font-medium text-slate-800"&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;td className="py-2.5 px-3 border border-slate-200 font-medium text-slate-800"&gt;</span>
 <span class="cstat-no" title="statement not covered" >                {dim.fullName}</span>
 <span class="cstat-no" title="statement not covered" >              &lt;/td&gt;</span>
-<span class="cstat-no" title="statement not covered" >              &lt;td className="py-1.5 px-2 text-center border border-slate-200"&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;td className="py-2.5 px-3 text-center border border-slate-200"&gt;</span>
 <span class="cstat-no" title="statement not covered" >                &lt;div className="font-bold text-slate-800"&gt;{dim.score}&lt;/div&gt;</span>
-<span class="cstat-no" title="statement not covered" >                &lt;div className="w-full bg-slate-200 rounded-full h-1 mt-0.5"&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;div className="w-full bg-slate-200 rounded-full h-1.5 mt-1"&gt;</span>
 <span class="cstat-no" title="statement not covered" >                  &lt;div </span>
-<span class="cstat-no" title="statement not covered" >                    className={`h-1 rounded-full ${</span>
+<span class="cstat-no" title="statement not covered" >                    className={`h-1.5 rounded-full ${</span>
 <span class="cstat-no" title="statement not covered" >                      dim.score &gt;= 80 ? 'bg-emerald-500' :</span>
 <span class="cstat-no" title="statement not covered" >                      dim.score &gt;= 60 ? 'bg-cyan-500' :</span>
 <span class="cstat-no" title="statement not covered" >                      dim.score &gt;= 40 ? 'bg-amber-500' : 'bg-red-500'</span>
@@ -1116,15 +1062,15 @@
 <span class="cstat-no" title="statement not covered" >                  /&gt;</span>
 <span class="cstat-no" title="statement not covered" >                &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >              &lt;/td&gt;</span>
-<span class="cstat-no" title="statement not covered" >              &lt;td className="py-1.5 px-2 text-center font-medium text-slate-700 border border-slate-200"&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;td className="py-2.5 px-3 text-center font-medium text-slate-700 border border-slate-200"&gt;</span>
 <span class="cstat-no" title="statement not covered" >                {(dim.weight * 100).toFixed(0)}%</span>
 <span class="cstat-no" title="statement not covered" >              &lt;/td&gt;</span>
-<span class="cstat-no" title="statement not covered" >              &lt;td className="py-1.5 px-2 text-center border border-slate-200"&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;td className="py-2.5 px-3 text-center border border-slate-200"&gt;</span>
 <span class="cstat-no" title="statement not covered" >                &lt;span className="font-medium text-slate-800"&gt;{dim.contribution}&lt;/span&gt;</span>
 <span class="cstat-no" title="statement not covered" >                &lt;span className="text-slate-400 ml-0.5"&gt;pts&lt;/span&gt;</span>
 <span class="cstat-no" title="statement not covered" >              &lt;/td&gt;</span>
-<span class="cstat-no" title="statement not covered" >              &lt;td className="py-1.5 px-2 border border-slate-200"&gt;</span>
-<span class="cstat-no" title="statement not covered" >                &lt;span className={`inline-block px-1.5 py-0.5 rounded text-[9px] font-medium ${</span>
+<span class="cstat-no" title="statement not covered" >              &lt;td className="py-2.5 px-3 border border-slate-200"&gt;</span>
+<span class="cstat-no" title="statement not covered" >                &lt;span className={`inline-block px-2 py-1 rounded text-xs font-medium ${</span>
 <span class="cstat-no" title="statement not covered" >                  dim.score &gt;= 80 ? 'bg-emerald-100 text-emerald-700' :</span>
 <span class="cstat-no" title="statement not covered" >                  dim.score &gt;= 60 ? 'bg-cyan-100 text-cyan-700' :</span>
 <span class="cstat-no" title="statement not covered" >                  dim.score &gt;= 40 ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'</span>
@@ -1139,20 +1085,20 @@
 <span class="cstat-no" title="statement not covered" >        &lt;/tbody&gt;</span>
 <span class="cstat-no" title="statement not covered" >        &lt;tfoot&gt;</span>
 <span class="cstat-no" title="statement not covered" >          &lt;tr className="bg-slate-100 font-semibold"&gt;</span>
-<span class="cstat-no" title="statement not covered" >            &lt;td className="py-1.5 px-2 border border-slate-200 text-slate-800"&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;td className="py-2.5 px-3 border border-slate-200 text-slate-800"&gt;</span>
 <span class="cstat-no" title="statement not covered" >              Composite Score</span>
 <span class="cstat-no" title="statement not covered" >            &lt;/td&gt;</span>
-<span class="cstat-no" title="statement not covered" >            &lt;td className="py-1.5 px-2 text-center border border-slate-200 text-slate-800"&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;td className="py-2.5 px-3 text-center border border-slate-200 text-slate-800"&gt;</span>
 <span class="cstat-no" title="statement not covered" >              {overallScore}</span>
 <span class="cstat-no" title="statement not covered" >            &lt;/td&gt;</span>
-<span class="cstat-no" title="statement not covered" >            &lt;td className="py-1.5 px-2 text-center border border-slate-200 text-slate-700"&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;td className="py-2.5 px-3 text-center border border-slate-200 text-slate-700"&gt;</span>
 <span class="cstat-no" title="statement not covered" >              100%</span>
 <span class="cstat-no" title="statement not covered" >            &lt;/td&gt;</span>
-<span class="cstat-no" title="statement not covered" >            &lt;td className="py-1.5 px-2 text-center border border-slate-200 text-slate-800"&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;td className="py-2.5 px-3 text-center border border-slate-200 text-slate-800"&gt;</span>
 <span class="cstat-no" title="statement not covered" >              {overallScore} pts</span>
 <span class="cstat-no" title="statement not covered" >            &lt;/td&gt;</span>
-<span class="cstat-no" title="statement not covered" >            &lt;td className="py-1.5 px-2 border border-slate-200"&gt;</span>
-<span class="cstat-no" title="statement not covered" >              &lt;span className={`inline-block px-1.5 py-0.5 rounded text-[9px] font-bold ${gradeConfig.bg} ${gradeConfig.text}`}&gt;</span>
+<span class="cstat-no" title="statement not covered" >            &lt;td className="py-2.5 px-3 border border-slate-200"&gt;</span>
+<span class="cstat-no" title="statement not covered" >              &lt;span className={`inline-block px-2 py-1 rounded text-xs font-bold ${gradeConfig.bg} ${gradeConfig.text}`}&gt;</span>
 <span class="cstat-no" title="statement not covered" >                {overallGrade}</span>
 <span class="cstat-no" title="statement not covered" >              &lt;/span&gt;</span>
 <span class="cstat-no" title="statement not covered" >            &lt;/td&gt;</span>
@@ -1162,21 +1108,21 @@
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >      {/* Weight Rationale */}</span>
 <span class="cstat-no" title="statement not covered" >      {weightingRationale &amp;&amp; (</span>
-<span class="cstat-no" title="statement not covered" >        &lt;div className="bg-slate-100 rounded-lg p-2 mb-3"&gt;</span>
-<span class="cstat-no" title="statement not covered" >          &lt;h3 className="font-semibold text-slate-700 text-[10px] uppercase tracking-wide mb-0.5"&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;div className="bg-slate-100 rounded-lg p-4 mb-5"&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;h3 className="font-semibold text-slate-700 text-xs uppercase tracking-wide mb-1"&gt;</span>
 <span class="cstat-no" title="statement not covered" >            Dynamic Weight Calibration</span>
 <span class="cstat-no" title="statement not covered" >          &lt;/h3&gt;</span>
-<span class="cstat-no" title="statement not covered" >          &lt;p className="text-[10px] text-slate-600 leading-relaxed"&gt;</span>
+<span class="cstat-no" title="statement not covered" >          &lt;p className="text-xs text-slate-600 leading-relaxed"&gt;</span>
 <span class="cstat-no" title="statement not covered" >            {weightingRationale}</span>
 <span class="cstat-no" title="statement not covered" >          &lt;/p&gt;</span>
 <span class="cstat-no" title="statement not covered" >        &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >      )}</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >      {/* Methodology Summary */}</span>
-<span class="cstat-no" title="statement not covered" >      &lt;h2 className="text-xs font-bold text-slate-800 uppercase tracking-wide border-b border-slate-200 pb-1 mb-2"&gt;</span>
+<span class="cstat-no" title="statement not covered" >      &lt;h2 className="text-sm font-bold text-slate-800 uppercase tracking-wide border-b border-slate-200 pb-2 mb-3"&gt;</span>
 <span class="cstat-no" title="statement not covered" >        Analytical Methodology</span>
 <span class="cstat-no" title="statement not covered" >      &lt;/h2&gt;</span>
-<span class="cstat-no" title="statement not covered" >      &lt;p className="text-[10px] text-slate-600 leading-relaxed mb-3"&gt;</span>
+<span class="cstat-no" title="statement not covered" >      &lt;p className="text-xs text-slate-600 leading-relaxed mb-5"&gt;</span>
 <span class="cstat-no" title="statement not covered" >        This Investment Risk Rating employs a proprietary analytical framework integrating Federal Reserve </span>
 <span class="cstat-no" title="statement not covered" >        economic indicators, regional market statistics, property-specific characteristics, and income </span>
 <span class="cstat-no" title="statement not covered" >        analysis metrics. The four risk dimensions are dynamically weighted based on property type and </span>
@@ -1184,8 +1130,8 @@
 <span class="cstat-no" title="statement not covered" >      &lt;/p&gt;</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >      {/* USPAP Disclosure */}</span>
-<span class="cstat-no" title="statement not covered" >      &lt;div className="border border-slate-200 rounded-lg p-2 text-[10px] text-slate-600 leading-relaxed"&gt;</span>
-<span class="cstat-no" title="statement not covered" >        &lt;h3 className="font-bold text-slate-700 mb-1"&gt;Professional Standards Compliance&lt;/h3&gt;</span>
+<span class="cstat-no" title="statement not covered" >      &lt;div className="border border-slate-200 rounded-lg p-4 text-xs text-slate-600 leading-relaxed"&gt;</span>
+<span class="cstat-no" title="statement not covered" >        &lt;h3 className="font-bold text-slate-700 mb-2"&gt;Professional Standards Compliance&lt;/h3&gt;</span>
 <span class="cstat-no" title="statement not covered" >        &lt;p&gt;</span>
 <span class="cstat-no" title="statement not covered" >          This Investment Risk Rating is a supplementary analytical tool supporting the appraiser's </span>
 <span class="cstat-no" title="statement not covered" >          professional judgment. It does not replace the value conclusion or comprehensive analysis </span>
@@ -1195,7 +1141,7 @@
 <span class="cstat-no" title="statement not covered" >      &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >      {/* Generated Date Footer */}</span>
-<span class="cstat-no" title="statement not covered" >      &lt;div className="mt-3 text-[9px] text-slate-400 text-center"&gt;</span>
+<span class="cstat-no" title="statement not covered" >      &lt;div className="mt-4 text-xs text-slate-400 text-center"&gt;</span>
 <span class="cstat-no" title="statement not covered" >        Rating generated: {new Date(generatedDate).toLocaleDateString()} | Proprietary Risk Analysis Framework</span>
 <span class="cstat-no" title="statement not covered" >      &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >    &lt;/ReportPageBase&gt;</span>
@@ -1210,7 +1156,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-01-14T17:38:08.422Z
+                at 2026-01-14T18:22:35.878Z
             </div>
         <script src="../../../../../prettify.js"></script>
         <script>

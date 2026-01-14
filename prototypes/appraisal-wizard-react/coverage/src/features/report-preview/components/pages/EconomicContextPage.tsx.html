@@ -25,7 +25,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>0/241</span>
+                <span class='fraction'>0/239</span>
             </div>
         
             
@@ -46,7 +46,7 @@
             <div class='fl pad1y space-right2'>
                 <span class="strong">0% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>0/241</span>
+                <span class='fraction'>0/239</span>
             </div>
         
             
@@ -302,11 +302,7 @@
 <a name='L237'></a><a href='#L237'>237</a>
 <a name='L238'></a><a href='#L238'>238</a>
 <a name='L239'></a><a href='#L239'>239</a>
-<a name='L240'></a><a href='#L240'>240</a>
-<a name='L241'></a><a href='#L241'>241</a>
-<a name='L242'></a><a href='#L242'>242</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<a name='L240'></a><a href='#L240'>240</a></td><td class="line-coverage quiet"><span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
@@ -557,12 +553,23 @@
 <span class="cstat-no" title="statement not covered" >import EconomicChart from '../../../../components/EconomicChart';</span>
 <span class="cstat-no" title="statement not covered" >import type { ChartStyle } from '../../../../components/ChartStyleSelector';</span>
 <span class="cstat-no" title="statement not covered" >import { ReportPageBase } from './ReportPageBase';</span>
+<span class="cstat-no" title="statement not covered" >import { sampleAppraisalData } from '../../../review/data/sampleAppraisalData';</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >interface EconomicContextPageProps {</span>
 <span class="cstat-no" title="statement not covered" >  data: EconomicIndicators | null;</span>
 <span class="cstat-no" title="statement not covered" >  pageNumber?: number;</span>
 <span class="cstat-no" title="statement not covered" >  chartStyle?: ChartStyle;</span>
 <span class="cstat-no" title="statement not covered" >}</span>
+<span class="cstat-no" title="statement not covered" ></span>
+<span class="cstat-no" title="statement not covered" >// Sample economic data for fallback display</span>
+<span class="cstat-no" title="statement not covered" >const sampleEconomicData: EconomicIndicators = {</span>
+<span class="cstat-no" title="statement not covered" >  federalFundsRate: sampleAppraisalData.economicIndicators.federalFundsRate,</span>
+<span class="cstat-no" title="statement not covered" >  treasury10Y: sampleAppraisalData.economicIndicators.treasury10Y,</span>
+<span class="cstat-no" title="statement not covered" >  inflation: sampleAppraisalData.economicIndicators.inflation,</span>
+<span class="cstat-no" title="statement not covered" >  gdpGrowth: sampleAppraisalData.economicIndicators.gdpGrowth,</span>
+<span class="cstat-no" title="statement not covered" >  source: sampleAppraisalData.economicIndicators.source,</span>
+<span class="cstat-no" title="statement not covered" >  asOfDate: sampleAppraisalData.economicIndicators.asOfDate,</span>
+<span class="cstat-no" title="statement not covered" >};</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >// Formatting helper</span>
 <span class="cstat-no" title="statement not covered" >const formatRate = (value: number) =&gt; `${value.toFixed(2)}%`;</span>
@@ -594,22 +601,9 @@
 <span class="cstat-no" title="statement not covered" >  pageNumber,</span>
 <span class="cstat-no" title="statement not covered" >  chartStyle = 'gradient',</span>
 <span class="cstat-no" title="statement not covered" >}) =&gt; {</span>
-<span class="cstat-no" title="statement not covered" >  if (!data) {</span>
-<span class="cstat-no" title="statement not covered" >    return (</span>
-<span class="cstat-no" title="statement not covered" >      &lt;ReportPageBase</span>
-<span class="cstat-no" title="statement not covered" >        title="Economic Context"</span>
-<span class="cstat-no" title="statement not covered" >        sidebarLabel="ECON"</span>
-<span class="cstat-no" title="statement not covered" >        pageNumber={pageNumber}</span>
-<span class="cstat-no" title="statement not covered" >        sectionNumber={3}</span>
-<span class="cstat-no" title="statement not covered" >        sectionTitle="MARKET"</span>
-<span class="cstat-no" title="statement not covered" >        contentPadding="p-10"</span>
-<span class="cstat-no" title="statement not covered" >      &gt;</span>
-<span class="cstat-no" title="statement not covered" >        &lt;p className="text-sm text-slate-500 italic"&gt;No economic data available.&lt;/p&gt;</span>
-<span class="cstat-no" title="statement not covered" >      &lt;/ReportPageBase&gt;</span>
-<span class="cstat-no" title="statement not covered" >    );</span>
-<span class="cstat-no" title="statement not covered" >  }</span>
-<span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >  const { federalFundsRate, treasury10Y, inflation, gdpGrowth, asOfDate } = data;</span>
+<span class="cstat-no" title="statement not covered" >  // Use sample data as fallback when no wizard data is available</span>
+<span class="cstat-no" title="statement not covered" >  const displayData = data || sampleEconomicData;</span>
+<span class="cstat-no" title="statement not covered" >  const { federalFundsRate, treasury10Y, inflation, gdpGrowth, asOfDate } = displayData;</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >  const indicators = [</span>
 <span class="cstat-no" title="statement not covered" >    { </span>
@@ -634,7 +628,7 @@
 <span class="cstat-no" title="statement not covered" >    },</span>
 <span class="cstat-no" title="statement not covered" >  ];</span>
 <span class="cstat-no" title="statement not covered" ></span>
-<span class="cstat-no" title="statement not covered" >  const hasHistory = data.federalFundsRate.history || data.treasury10Y.history || data.inflation.history || data.gdpGrowth.history;</span>
+<span class="cstat-no" title="statement not covered" >  const hasHistory = displayData.federalFundsRate.history || displayData.treasury10Y.history || displayData.inflation.history || displayData.gdpGrowth.history;</span>
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >  return (</span>
 <span class="cstat-no" title="statement not covered" >    &lt;ReportPageBase</span>
@@ -696,11 +690,11 @@
 <span class="cstat-no" title="statement not covered" >            Historical Trends</span>
 <span class="cstat-no" title="statement not covered" >          &lt;/h2&gt;</span>
 <span class="cstat-no" title="statement not covered" >          &lt;div className="grid grid-cols-2 gap-3 mb-4"&gt;</span>
-<span class="cstat-no" title="statement not covered" >            {data.federalFundsRate.history &amp;&amp; (</span>
+<span class="cstat-no" title="statement not covered" >            {displayData.federalFundsRate.history &amp;&amp; (</span>
 <span class="cstat-no" title="statement not covered" >              &lt;div className="rounded-lg p-2 bg-slate-50 border border-slate-200"&gt;</span>
 <span class="cstat-no" title="statement not covered" >                &lt;h3 className="text-[10px] font-semibold text-slate-800 mb-1"&gt;Federal Funds Rate&lt;/h3&gt;</span>
 <span class="cstat-no" title="statement not covered" >                &lt;EconomicChart</span>
-<span class="cstat-no" title="statement not covered" >                  data={data.federalFundsRate.history}</span>
+<span class="cstat-no" title="statement not covered" >                  data={displayData.federalFundsRate.history}</span>
 <span class="cstat-no" title="statement not covered" >                  chartStyle={chartStyle}</span>
 <span class="cstat-no" title="statement not covered" >                  title="Federal Funds Rate"</span>
 <span class="cstat-no" title="statement not covered" >                  color="#0da1c7"</span>
@@ -711,11 +705,11 @@
 <span class="cstat-no" title="statement not covered" >                /&gt;</span>
 <span class="cstat-no" title="statement not covered" >              &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >            )}</span>
-<span class="cstat-no" title="statement not covered" >            {data.treasury10Y.history &amp;&amp; (</span>
+<span class="cstat-no" title="statement not covered" >            {displayData.treasury10Y.history &amp;&amp; (</span>
 <span class="cstat-no" title="statement not covered" >              &lt;div className="rounded-lg p-2 bg-slate-50 border border-slate-200"&gt;</span>
 <span class="cstat-no" title="statement not covered" >                &lt;h3 className="text-[10px] font-semibold text-slate-800 mb-1"&gt;10-Year Treasury&lt;/h3&gt;</span>
 <span class="cstat-no" title="statement not covered" >                &lt;EconomicChart</span>
-<span class="cstat-no" title="statement not covered" >                  data={data.treasury10Y.history}</span>
+<span class="cstat-no" title="statement not covered" >                  data={displayData.treasury10Y.history}</span>
 <span class="cstat-no" title="statement not covered" >                  chartStyle={chartStyle}</span>
 <span class="cstat-no" title="statement not covered" >                  title="10-Year Treasury"</span>
 <span class="cstat-no" title="statement not covered" >                  color="#0da1c7"</span>
@@ -726,11 +720,11 @@
 <span class="cstat-no" title="statement not covered" >                /&gt;</span>
 <span class="cstat-no" title="statement not covered" >              &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >            )}</span>
-<span class="cstat-no" title="statement not covered" >            {data.inflation.history &amp;&amp; (</span>
+<span class="cstat-no" title="statement not covered" >            {displayData.inflation.history &amp;&amp; (</span>
 <span class="cstat-no" title="statement not covered" >              &lt;div className="rounded-lg p-2 bg-slate-50 border border-slate-200"&gt;</span>
 <span class="cstat-no" title="statement not covered" >                &lt;h3 className="text-[10px] font-semibold text-slate-800 mb-1"&gt;Inflation (CPI)&lt;/h3&gt;</span>
 <span class="cstat-no" title="statement not covered" >                &lt;EconomicChart</span>
-<span class="cstat-no" title="statement not covered" >                  data={data.inflation.history}</span>
+<span class="cstat-no" title="statement not covered" >                  data={displayData.inflation.history}</span>
 <span class="cstat-no" title="statement not covered" >                  chartStyle={chartStyle}</span>
 <span class="cstat-no" title="statement not covered" >                  title="Inflation"</span>
 <span class="cstat-no" title="statement not covered" >                  color="#0da1c7"</span>
@@ -741,11 +735,11 @@
 <span class="cstat-no" title="statement not covered" >                /&gt;</span>
 <span class="cstat-no" title="statement not covered" >              &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >            )}</span>
-<span class="cstat-no" title="statement not covered" >            {data.gdpGrowth.history &amp;&amp; (</span>
+<span class="cstat-no" title="statement not covered" >            {displayData.gdpGrowth.history &amp;&amp; (</span>
 <span class="cstat-no" title="statement not covered" >              &lt;div className="rounded-lg p-2 bg-slate-50 border border-slate-200"&gt;</span>
 <span class="cstat-no" title="statement not covered" >                &lt;h3 className="text-[10px] font-semibold text-slate-800 mb-1"&gt;GDP Growth&lt;/h3&gt;</span>
 <span class="cstat-no" title="statement not covered" >                &lt;EconomicChart</span>
-<span class="cstat-no" title="statement not covered" >                  data={data.gdpGrowth.history}</span>
+<span class="cstat-no" title="statement not covered" >                  data={displayData.gdpGrowth.history}</span>
 <span class="cstat-no" title="statement not covered" >                  chartStyle={chartStyle}</span>
 <span class="cstat-no" title="statement not covered" >                  title="GDP Growth"</span>
 <span class="cstat-no" title="statement not covered" >                  color="#0da1c7"</span>
@@ -778,7 +772,7 @@
 <span class="cstat-no" title="statement not covered" ></span>
 <span class="cstat-no" title="statement not covered" >      {/* Source Attribution */}</span>
 <span class="cstat-no" title="statement not covered" >      &lt;div className="mt-auto pt-2 text-[9px] text-slate-400"&gt;</span>
-<span class="cstat-no" title="statement not covered" >        Source: {data.source || 'Federal Reserve Economic Data (FRED)'}</span>
+<span class="cstat-no" title="statement not covered" >        Source: {displayData.source || 'Federal Reserve Economic Data (FRED)'}</span>
 <span class="cstat-no" title="statement not covered" >        {asOfDate &amp;&amp; ` (as of ${new Date(asOfDate).toLocaleDateString()})`}</span>
 <span class="cstat-no" title="statement not covered" >      &lt;/div&gt;</span>
 <span class="cstat-no" title="statement not covered" >    &lt;/ReportPageBase&gt;</span>
@@ -793,7 +787,7 @@
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2026-01-14T17:38:08.422Z
+                at 2026-01-14T18:22:35.878Z
             </div>
         <script src="../../../../../prettify.js"></script>
         <script>

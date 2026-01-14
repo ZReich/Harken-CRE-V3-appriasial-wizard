@@ -1113,20 +1113,20 @@ function PropertyDescriptionPage({
 
   return (
     <ReportPageWrapper section={{ id: 'property', label: 'Property Description', enabled: true, expanded: false, fields: [], type: 'narrative' }} pageNumber={pageNumber ?? 3} sidebarLabel="02">
-      <div className="p-10">
-        <div className="absolute top-6 right-8 bg-[#0da1c7] text-white px-4 py-2 rounded text-xs font-semibold">
+      <div className="p-6">
+        <div className="absolute top-4 right-6 bg-[#0da1c7] text-white px-3 py-1.5 rounded text-xs font-semibold">
           SECTION 2 • PROPERTY
         </div>
 
-        <h2 className="text-2xl font-light text-slate-800 mb-6 mt-8">Property Description</h2>
+        <h2 className="text-xl font-light text-slate-800 mb-4 mt-6">Property Description</h2>
 
         {/* Area/Neighborhood Description */}
         {(areaDescription || neighborhoodCharacteristics) && (
           <div
             onClick={() => onSelectElement('property_area')}
-            className={`mb-6 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'property_area' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-slate-100'}`}
+            className={`mb-4 p-3 -m-3 rounded cursor-pointer ${selectedElement === 'property_area' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-slate-100'}`}
           >
-            <h3 className="text-lg font-semibold text-slate-800 mb-3">Area & Neighborhood</h3>
+            <h3 className="text-sm font-semibold text-slate-800 mb-2">Area & Neighborhood</h3>
             {areaDescription && (
               <EditableElement
                 elementId="property_area_description"
@@ -1135,7 +1135,7 @@ function PropertyDescriptionPage({
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
                 as="p"
-                className="text-slate-600 text-sm leading-relaxed mb-3"
+                className="text-slate-600 text-xs leading-relaxed mb-2"
                 appliedStyle={getStyle('property_area_description')}
               />
             )}
@@ -1147,7 +1147,7 @@ function PropertyDescriptionPage({
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
                 as="p"
-                className="text-slate-600 text-sm leading-relaxed"
+                className="text-slate-600 text-xs leading-relaxed"
                 appliedStyle={getStyle('property_neighborhood')}
               />
             )}
@@ -1156,7 +1156,7 @@ function PropertyDescriptionPage({
 
         {/* Inline Photos - Header Position */}
         {hasInlinePhotos && photoSlots && availablePhotos && (
-          <div className="mb-8">
+          <div className="mb-4">
             <InlinePhotoGrid
               slots={photoSlots}
               placements={photoPlacements || []}
@@ -1173,7 +1173,7 @@ function PropertyDescriptionPage({
 
         {/* Legacy Photos Grid - conditionally rendered when no inline photo config */}
         {!hasInlinePhotos && isVisible('prop_photos') && (
-          <div className="grid grid-cols-3 gap-4 mb-8">
+          <div className="grid grid-cols-3 gap-3 mb-4">
             {exteriorPhotos.map((photo) => (
               <PhotoSlot
                 key={photo.id}
@@ -1190,10 +1190,10 @@ function PropertyDescriptionPage({
         {isVisible('prop_site') && (
           <div
             onClick={() => onSelectElement('property_site')}
-            className={`mb-6 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'property_site' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-slate-100'}`}
+            className={`mb-4 p-3 -m-3 rounded cursor-pointer ${selectedElement === 'property_site' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-slate-100'}`}
           >
-            <h3 className="text-lg font-semibold text-slate-800 mb-3">Site Description</h3>
-            <div className="grid grid-cols-2 gap-4 text-sm mb-4">
+            <h3 className="text-sm font-semibold text-slate-800 mb-2">Site Description</h3>
+            <div className="grid grid-cols-2 gap-2 text-xs mb-3">
               <div>
                 <span className="text-slate-500">Land Area:</span>
                 <span className="ml-2 text-slate-800">{siteArea} {siteAreaUnit}</span>
@@ -1224,7 +1224,7 @@ function PropertyDescriptionPage({
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
                 as="p"
-                className="text-slate-600 text-sm leading-relaxed mt-4"
+                className="text-slate-600 text-xs leading-relaxed mt-2"
                 appliedStyle={getStyle('property_site_narrative')}
               />
             )}
@@ -1235,10 +1235,10 @@ function PropertyDescriptionPage({
         {isVisible('prop_improvements') && (
           <div
             onClick={() => onSelectElement('property_improvements')}
-            className={`p-4 -m-4 rounded cursor-pointer ${selectedElement === 'property_improvements' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-slate-100'}`}
+            className={`p-3 -m-3 rounded cursor-pointer ${selectedElement === 'property_improvements' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-slate-100'}`}
           >
-            <h3 className="text-lg font-semibold text-slate-800 mb-3">Improvements</h3>
-            <div className="grid grid-cols-2 gap-4 text-sm">
+            <h3 className="text-sm font-semibold text-slate-800 mb-2">Improvements</h3>
+            <div className="grid grid-cols-2 gap-2 text-xs">
               <div><span className="text-slate-500">Year Built:</span><span className="ml-2 text-slate-800">{yearBuilt}</span></div>
               <div><span className="text-slate-500">Building Type:</span><span className="ml-2 text-slate-800">{buildingType}</span></div>
               <div><span className="text-slate-500">Gross Building Area:</span><span className="ml-2 text-slate-800">{typeof grossBuildingArea === 'number' ? grossBuildingArea.toLocaleString() : grossBuildingArea} SF</span></div>
@@ -1251,8 +1251,8 @@ function PropertyDescriptionPage({
 
         {/* Inline Photos - Interior/Detail Position */}
         {hasInlinePhotos && photoSlots && availablePhotos && (
-          <div className="mt-8">
-            <h3 className="text-lg font-semibold text-slate-800 mb-4">Interior & Detail Photos</h3>
+          <div className="mt-4">
+            <h3 className="text-sm font-semibold text-slate-800 mb-2">Interior & Detail Photos</h3>
             <InlinePhotoGrid
               slots={photoSlots}
               placements={photoPlacements || []}
@@ -2147,54 +2147,54 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
 
   return (
     <ReportPageWrapper section={{ id: 'reconciliation', label: 'Reconciliation', enabled: true, expanded: false, fields: [], type: 'narrative' }} pageNumber={pageNumber ?? 8} sidebarLabel="07">
-      <div className="p-10">
-        <div className="absolute top-6 right-8 bg-[#0da1c7] text-white px-4 py-2 rounded text-xs font-semibold">
+      <div className="p-6">
+        <div className="absolute top-4 right-6 bg-[#0da1c7] text-white px-3 py-1.5 rounded text-xs font-semibold">
           SECTION 7 • VALUE
         </div>
 
-        <h2 className="text-2xl font-light text-slate-800 mb-6 mt-8">Reconciliation of Value</h2>
+        <h2 className="text-xl font-light text-slate-800 mb-4 mt-6">Reconciliation of Value</h2>
 
         {/* Value Indications Grid */}
         <div
           onClick={() => onSelectElement('recon_approaches')}
-          className={`mb-6 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'recon_approaches' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-slate-100'}`}
+          className={`mb-4 p-3 -m-3 rounded cursor-pointer ${selectedElement === 'recon_approaches' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-slate-100'}`}
         >
-          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Value Indications</h3>
-          <div className="grid grid-cols-3 gap-4">
-            <div className="bg-slate-100 rounded-lg p-4 text-center">
-              <div className="text-xs text-slate-500 uppercase mb-1">Cost Approach</div>
-              <div className="text-xl font-bold text-slate-800">${data.valuation.costApproachValue.toLocaleString()}</div>
-              <div className="text-sm text-slate-500 mt-1">Weight: {data.reconciliation.costApproachWeight}%</div>
+          <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Value Indications</h3>
+          <div className="grid grid-cols-3 gap-3">
+            <div className="bg-slate-100 rounded-lg p-3 text-center">
+              <div className="text-[10px] text-slate-500 uppercase mb-0.5">Cost Approach</div>
+              <div className="text-lg font-bold text-slate-800">${data.valuation.costApproachValue.toLocaleString()}</div>
+              <div className="text-xs text-slate-500">Weight: {data.reconciliation.costApproachWeight}%</div>
             </div>
-            <div className="bg-[#0da1c7]/10 rounded-lg p-4 text-center border-2 border-[#0da1c7]/20">
-              <div className="text-xs text-[#0da1c7] uppercase mb-1">Sales Comparison</div>
-              <div className="text-xl font-bold text-[#0da1c7]">${data.valuation.salesComparisonValue.toLocaleString()}</div>
-              <div className="text-sm text-[#0da1c7] mt-1">Weight: {data.reconciliation.salesComparisonWeight}%</div>
+            <div className="bg-[#0da1c7]/10 rounded-lg p-3 text-center border-2 border-[#0da1c7]/20">
+              <div className="text-[10px] text-[#0da1c7] uppercase mb-0.5">Sales Comparison</div>
+              <div className="text-lg font-bold text-[#0da1c7]">${data.valuation.salesComparisonValue.toLocaleString()}</div>
+              <div className="text-xs text-[#0da1c7]">Weight: {data.reconciliation.salesComparisonWeight}%</div>
             </div>
-            <div className="bg-slate-100 rounded-lg p-4 text-center">
-              <div className="text-xs text-slate-500 uppercase mb-1">Income Approach</div>
-              <div className="text-xl font-bold text-slate-800">${data.valuation.incomeApproachValue.toLocaleString()}</div>
-              <div className="text-sm text-slate-500 mt-1">Weight: {data.reconciliation.incomeApproachWeight}%</div>
+            <div className="bg-slate-100 rounded-lg p-3 text-center">
+              <div className="text-[10px] text-slate-500 uppercase mb-0.5">Income Approach</div>
+              <div className="text-lg font-bold text-slate-800">${data.valuation.incomeApproachValue.toLocaleString()}</div>
+              <div className="text-xs text-slate-500">Weight: {data.reconciliation.incomeApproachWeight}%</div>
             </div>
           </div>
         </div>
 
-        {/* Analysis Section - Restructured for readability */}
-        <div className="mb-6">
-          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Analysis</h3>
+        {/* Analysis Section - Condensed for print */}
+        <div className="mb-4">
+          <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-3">Analysis</h3>
 
           {/* Value Range Summary */}
           <div
             onClick={() => onSelectElement('recon_range')}
-            className={`mb-4 p-4 bg-slate-50 rounded-lg border-l-4 border-slate-400 cursor-pointer ${selectedElement === 'recon_range' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-slate-100'}`}
+            className={`mb-3 p-3 bg-slate-50 rounded-lg border-l-3 border-slate-400 cursor-pointer ${selectedElement === 'recon_range' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-slate-100'}`}
           >
-            <h4 className="text-sm font-semibold text-slate-700 mb-2">Value Range & Correlation</h4>
-            <ul className="text-sm text-slate-600 space-y-1">
-              <li className="flex items-start gap-2">
+            <h4 className="text-xs font-semibold text-slate-700 mb-1">Value Range & Correlation</h4>
+            <ul className="text-xs text-slate-600 space-y-0.5">
+              <li className="flex items-start gap-1.5">
                 <span className="text-slate-400 mt-0.5">•</span>
                 <span>Range: ${minValue.toLocaleString()} to ${maxValue.toLocaleString()} ({spread}% spread)</span>
               </li>
-              <li className="flex items-start gap-2">
+              <li className="flex items-start gap-1.5">
                 <span className="text-slate-400 mt-0.5">•</span>
                 <EditableElement
                   elementId="recon_correlation"
@@ -2203,7 +2203,7 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
                   onSelectElement={onSelectElement}
                   onContentChange={handleContentChange}
                   as="span"
-                  className="text-sm"
+                  className="text-xs"
                   appliedStyle={getStyle('recon_correlation')}
                 />
               </li>
@@ -2213,22 +2213,22 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
           {/* Sales Comparison Approach */}
           <div
             onClick={() => onSelectElement('recon_sales')}
-            className={`mb-4 p-4 bg-[#0da1c7]/10 rounded-lg border-l-4 border-[#0da1c7] cursor-pointer ${selectedElement === 'recon_sales' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-[#0da1c7]/10'}`}
+            className={`mb-3 p-3 bg-[#0da1c7]/10 rounded-lg border-l-3 border-[#0da1c7] cursor-pointer ${selectedElement === 'recon_sales' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-[#0da1c7]/10'}`}
           >
-            <h4 className="text-sm font-semibold text-slate-900 mb-2">
+            <h4 className="text-xs font-semibold text-slate-900 mb-1">
               Sales Comparison Approach
-              <span className="ml-2 px-2 py-0.5 bg-[#0da1c7]/20 text-slate-900 rounded text-xs font-medium">
+              <span className="ml-2 px-1.5 py-0.5 bg-[#0da1c7]/20 text-slate-900 rounded text-[10px] font-medium">
                 {data.reconciliation.salesComparisonWeight}% Weight — Primary
               </span>
             </h4>
             <EditableElement
               elementId="recon_sales_text"
-              content={getContent('recon_sales_text', 'Greatest weight is placed on the Sales Comparison Approach as buyers and sellers in the local market typically rely on direct comparisons to similar properties when making purchase decisions. The comparable sales utilized in our analysis were verified transactions of similar properties that required only moderate adjustments. Market participants consistently cite sales comparison as their primary valuation methodology for this property type.')}
+              content={getContent('recon_sales_text', 'Greatest weight is placed on the Sales Comparison Approach as buyers and sellers in the local market typically rely on direct comparisons to similar properties when making purchase decisions.')}
               selectedElement={selectedElement}
               onSelectElement={onSelectElement}
               onContentChange={handleContentChange}
               as="p"
-              className="text-sm text-slate-800 leading-relaxed"
+              className="text-xs text-slate-800 leading-relaxed"
               appliedStyle={getStyle('recon_sales_text')}
             />
           </div>
@@ -2236,22 +2236,22 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
           {/* Income Approach */}
           <div
             onClick={() => onSelectElement('recon_income')}
-            className={`mb-4 p-4 bg-blue-50 rounded-lg border-l-4 border-blue-400 cursor-pointer ${selectedElement === 'recon_income' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-blue-100'}`}
+            className={`mb-3 p-3 bg-blue-50 rounded-lg border-l-3 border-blue-400 cursor-pointer ${selectedElement === 'recon_income' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-blue-100'}`}
           >
-            <h4 className="text-sm font-semibold text-slate-900 mb-2">
+            <h4 className="text-xs font-semibold text-slate-900 mb-1">
               Income Approach
-              <span className="ml-2 px-2 py-0.5 bg-blue-200 text-blue-900 rounded text-xs font-medium">
+              <span className="ml-2 px-1.5 py-0.5 bg-blue-200 text-blue-900 rounded text-[10px] font-medium">
                 {data.reconciliation.incomeApproachWeight}% Weight — Secondary
               </span>
             </h4>
             <EditableElement
               elementId="recon_income_text"
-              content={getContent('recon_income_text', 'The Income Approach is given secondary consideration. While the subject is owner-occupied rather than leased, investors in this market would consider income potential as part of their purchase analysis. The capitalization rate applied was derived from market transactions and supported by investor surveys. The resulting value indication provides good support for the Sales Comparison conclusion.')}
+              content={getContent('recon_income_text', 'The Income Approach is given secondary consideration. The capitalization rate applied was derived from market transactions and supported by investor surveys.')}
               selectedElement={selectedElement}
               onSelectElement={onSelectElement}
               onContentChange={handleContentChange}
               as="p"
-              className="text-sm text-slate-800 leading-relaxed"
+              className="text-xs text-slate-800 leading-relaxed"
               appliedStyle={getStyle('recon_income_text')}
             />
           </div>
@@ -2259,22 +2259,22 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
           {/* Cost Approach */}
           <div
             onClick={() => onSelectElement('recon_cost')}
-            className={`mb-4 p-4 bg-accent-amber-gold-light rounded-lg border-l-4 border-amber-400 cursor-pointer ${selectedElement === 'recon_cost' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-amber-100'}`}
+            className={`mb-3 p-3 bg-accent-amber-gold-light rounded-lg border-l-3 border-amber-400 cursor-pointer ${selectedElement === 'recon_cost' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-amber-100'}`}
           >
-            <h4 className="text-sm font-semibold text-slate-900 mb-2">
+            <h4 className="text-xs font-semibold text-slate-900 mb-1">
               Cost Approach
-              <span className="ml-2 px-2 py-0.5 bg-amber-200 text-amber-900 rounded text-xs font-medium">
+              <span className="ml-2 px-1.5 py-0.5 bg-amber-200 text-amber-900 rounded text-[10px] font-medium">
                 {data.reconciliation.costApproachWeight}% Weight — Supporting
               </span>
             </h4>
             <EditableElement
               elementId="recon_cost_text"
-              content={getContent('recon_cost_text', 'The Cost Approach is given least weight, despite the subject being new construction with minimal depreciation. While the Cost Approach accurately reflects the replacement cost of the improvements, it does not directly capture market dynamics including investor preferences and market conditions. Nevertheless, the Cost Approach provides an excellent check on the other approaches and demonstrates that the subject improvements represent a well-designed, efficiently constructed facility.')}
+              content={getContent('recon_cost_text', 'The Cost Approach is given least weight. While it accurately reflects replacement cost, it does not directly capture market dynamics.')}
               selectedElement={selectedElement}
               onSelectElement={onSelectElement}
               onContentChange={handleContentChange}
               as="p"
-              className="text-sm text-slate-800 leading-relaxed"
+              className="text-xs text-slate-800 leading-relaxed"
               appliedStyle={getStyle('recon_cost_text')}
             />
           </div>
@@ -2283,9 +2283,9 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
           {reconciliationNarrative && (
             <div
               onClick={() => onSelectElement('recon_narrative')}
-              className={`mb-4 p-4 bg-purple-50 rounded-lg border-l-4 border-purple-400 cursor-pointer ${selectedElement === 'recon_narrative' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-purple-100'}`}
+              className={`mb-3 p-3 bg-purple-50 rounded-lg border-l-3 border-purple-400 cursor-pointer ${selectedElement === 'recon_narrative' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-purple-100'}`}
             >
-              <h4 className="text-sm font-semibold text-purple-800 mb-2">Reconciliation Analysis</h4>
+              <h4 className="text-xs font-semibold text-purple-800 mb-1">Reconciliation Analysis</h4>
               <EditableElement
                 elementId="recon_narrative"
                 content={getContent('recon_narrative', reconciliationNarrative)}
@@ -2293,7 +2293,7 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
                 as="p"
-                className="text-sm text-purple-700 leading-relaxed"
+                className="text-xs text-purple-700 leading-relaxed"
                 appliedStyle={getStyle('recon_narrative')}
               />
             </div>
@@ -2302,9 +2302,9 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
           {/* Final Conclusion */}
           <div
             onClick={() => onSelectElement('recon_conclusion')}
-            className={`p-4 bg-slate-100 rounded-lg border-l-4 border-slate-400 cursor-pointer ${selectedElement === 'recon_conclusion' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-slate-200'}`}
+            className={`p-3 bg-slate-100 rounded-lg border-l-3 border-slate-400 cursor-pointer ${selectedElement === 'recon_conclusion' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-slate-200'}`}
           >
-            <h4 className="text-sm font-semibold text-slate-600 mb-2">Conclusion</h4>
+            <h4 className="text-xs font-semibold text-slate-600 mb-1">Conclusion</h4>
             <EditableElement
               elementId="recon_final"
               content={getContent('recon_final', `Based on the foregoing analysis and reconciliation, it is my opinion that the market value of the subject property, as of the effective date of appraisal, is $${data.valuation.asIsValue.toLocaleString()}.`)}
@@ -2312,7 +2312,7 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
               onSelectElement={onSelectElement}
               onContentChange={handleContentChange}
               as="p"
-              className="text-sm text-slate-600 leading-relaxed font-medium"
+              className="text-xs text-slate-600 leading-relaxed font-medium"
               appliedStyle={getStyle('recon_final')}
             />
           </div>
@@ -2321,9 +2321,9 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
           {exposureRationale && (
             <div
               onClick={() => onSelectElement('exposure_rationale')}
-              className={`mt-4 p-4 bg-slate-50 rounded-lg border-l-4 border-slate-400 cursor-pointer ${selectedElement === 'exposure_rationale' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-slate-100'}`}
+              className={`mt-3 p-3 bg-slate-50 rounded-lg border-l-3 border-slate-400 cursor-pointer ${selectedElement === 'exposure_rationale' ? 'ring-2 ring-[#0da1c7]' : 'hover:bg-slate-100'}`}
             >
-              <h4 className="text-sm font-semibold text-slate-700 mb-2">Exposure & Marketing Time</h4>
+              <h4 className="text-xs font-semibold text-slate-700 mb-1">Exposure & Marketing Time</h4>
               <EditableElement
                 elementId="exposure_rationale"
                 content={getContent('exposure_rationale', exposureRationale)}
@@ -2331,7 +2331,7 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
                 onSelectElement={onSelectElement}
                 onContentChange={handleContentChange}
                 as="p"
-                className="text-sm text-slate-700 leading-relaxed"
+                className="text-xs text-slate-700 leading-relaxed"
                 appliedStyle={getStyle('exposure_rationale')}
               />
             </div>
@@ -2339,10 +2339,10 @@ function ReconciliationPage({ selectedElement, onSelectElement, onContentChange,
         </div>
 
         {/* Final Value Banner */}
-        <div className="p-6 bg-gradient-to-r from-[#0da1c7] to-[#0b8fb0] rounded-lg text-center text-white">
-          <div className="text-sm uppercase tracking-wider mb-2 opacity-80">Final Market Value Conclusion</div>
-          <div className="text-4xl font-bold mb-2">${data.valuation.asIsValue.toLocaleString()}</div>
-          <div className="text-sm opacity-80">As of {data.assignment.effectiveDate}</div>
+        <div className="p-3 bg-gradient-to-r from-[#0da1c7] to-[#0b8fb0] rounded-lg text-center text-white">
+          <div className="text-xs uppercase tracking-wider mb-1 opacity-80">Final Market Value Conclusion</div>
+          <div className="text-2xl font-bold mb-1">${data.valuation.asIsValue.toLocaleString()}</div>
+          <div className="text-xs opacity-80">As of {data.assignment.effectiveDate}</div>
         </div>
       </div>
     </ReportPageWrapper>
@@ -2531,20 +2531,20 @@ function AssumptionsPage({ selectedElement, onSelectElement, pageNumber }: {
 
   return (
     <ReportPageWrapper section={{ id: 'assumptions', label: 'Assumptions', enabled: true, expanded: false, fields: [], type: 'narrative' }} pageNumber={pageNumber ?? 10} sidebarLabel="09">
-      <div className="p-10">
-        <div className="absolute top-6 right-8 bg-[#0da1c7] text-white px-4 py-2 rounded text-xs font-semibold">
+      <div className="p-6">
+        <div className="absolute top-4 right-6 bg-[#0da1c7] text-white px-3 py-1.5 rounded text-xs font-semibold">
           ASSUMPTIONS
         </div>
 
-        <h2 className="text-2xl font-light text-slate-800 mb-6 mt-8">Assumptions and Limiting Conditions</h2>
+        <h2 className="text-xl font-light text-slate-800 mb-4 mt-6">Assumptions and Limiting Conditions</h2>
 
         {/* Assumptions */}
         <div
           onClick={() => onSelectElement('assumptions_list')}
-          className={`mb-8 p-4 -m-4 rounded cursor-pointer ${selectedElement === 'assumptions_list' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-slate-100'}`}
+          className={`mb-4 p-3 -m-3 rounded cursor-pointer ${selectedElement === 'assumptions_list' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-slate-100'}`}
         >
-          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">General Assumptions</h3>
-          <ol className="list-decimal list-outside ml-5 space-y-3 text-sm text-slate-600 leading-relaxed">
+          <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">General Assumptions</h3>
+          <ol className="list-decimal list-outside ml-4 space-y-1.5 text-xs text-slate-600 leading-relaxed">
             {data.assumptions.map((assumption, idx) => (
               <li key={idx}>{assumption}</li>
             ))}
@@ -2554,10 +2554,10 @@ function AssumptionsPage({ selectedElement, onSelectElement, pageNumber }: {
         {/* Limiting Conditions */}
         <div
           onClick={() => onSelectElement('limiting_conditions')}
-          className={`p-4 -m-4 rounded cursor-pointer ${selectedElement === 'limiting_conditions' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-slate-100'}`}
+          className={`p-3 -m-3 rounded cursor-pointer ${selectedElement === 'limiting_conditions' ? 'ring-2 ring-[#0da1c7] bg-[#0da1c7]/5' : 'hover:bg-slate-100'}`}
         >
-          <h3 className="text-sm font-semibold text-slate-500 uppercase tracking-wider mb-4">Limiting Conditions</h3>
-          <ol className="list-decimal list-outside ml-5 space-y-3 text-sm text-slate-600 leading-relaxed">
+          <h3 className="text-xs font-semibold text-slate-500 uppercase tracking-wider mb-2">Limiting Conditions</h3>
+          <ol className="list-decimal list-outside ml-4 space-y-1.5 text-xs text-slate-600 leading-relaxed">
             {data.limitingConditions.map((condition, idx) => (
               <li key={idx}>{condition}</li>
             ))}

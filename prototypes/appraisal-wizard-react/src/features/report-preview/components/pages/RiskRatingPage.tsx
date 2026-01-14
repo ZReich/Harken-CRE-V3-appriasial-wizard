@@ -137,34 +137,16 @@ const DIMENSION_DETAILS: Record<string, {
 const RATING_SCALE = ['AAA', 'AA', 'A', 'BBB', 'BB', 'B', 'CCC', 'CC', 'C'];
 
 export const RiskRatingPage: React.FC<RiskRatingPageProps> = ({ data, pageNumber }) => {
-  // Use sample risk rating data as fallback
+  // Use sample risk rating data as fallback when no wizard data
   const sampleRisk = sampleAppraisalData.riskRating;
   const hasWizardData = data && data.overallGrade;
   
-  // Create compatible risk data structure
-  const riskData = hasWizardData ? data : null;
-  
-  if (!riskData) {
-    return (
-      <ReportPageBase
-        title="Investment Risk Analysis"
-        sidebarLabel="RISK"
-        pageNumber={pageNumber}
-        sectionNumber={5}
-        sectionTitle="ANALYSIS"
-        contentPadding="p-10"
-      >
-        <p className="text-sm text-slate-500 italic">No risk rating data available.</p>
-      </ReportPageBase>
-    );
-  }
-
-  // Extract rating details from wizard data or sample
-  const overallGrade = riskData?.overallGrade || sampleRisk.overallRating;
-  const overallScore = riskData?.overallScore || 78;
-  const dimensions = riskData?.dimensions || sampleRisk.dimensions;
-  const weightingRationale = riskData?.weightingRationale || sampleRisk.methodology;
-  const generatedDate = riskData?.generatedDate || new Date().toISOString();
+  // Extract rating details from wizard data or use sample data
+  const overallGrade = hasWizardData ? data.overallGrade : sampleRisk.overallRating;
+  const overallScore = hasWizardData ? (data.overallScore || 78) : 78;
+  const dimensions = hasWizardData ? data.dimensions : sampleRisk.dimensions;
+  const weightingRationale = hasWizardData ? data.weightingRationale : sampleRisk.methodology;
+  const generatedDate = hasWizardData ? data.generatedDate : new Date().toISOString();
   
   const gradeConfig = GRADE_CONFIG[overallGrade] || GRADE_CONFIG['BBB'];
   const gradeIndex = RATING_SCALE.indexOf(overallGrade);

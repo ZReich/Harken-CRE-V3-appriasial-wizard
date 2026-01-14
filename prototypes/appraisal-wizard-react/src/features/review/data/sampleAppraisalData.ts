@@ -475,6 +475,128 @@ For this analysis, we have utilized the Direct Capitalization method, which invo
   },
 
   // =================================================================
+  // ECONOMIC INDICATORS
+  // =================================================================
+  economicIndicators: {
+    federalFundsRate: {
+      current: 5.33,
+      history: [
+        { date: '2024-01', value: 5.33 },
+        { date: '2023-12', value: 5.33 },
+        { date: '2023-11', value: 5.33 },
+        { date: '2023-10', value: 5.33 },
+        { date: '2023-09', value: 5.33 },
+        { date: '2023-08', value: 5.33 },
+        { date: '2023-07', value: 5.25 },
+        { date: '2023-06', value: 5.08 },
+        { date: '2023-05', value: 5.08 },
+        { date: '2023-04', value: 4.83 },
+        { date: '2023-03', value: 4.58 },
+        { date: '2023-02', value: 4.33 },
+      ],
+    },
+    treasury10Y: {
+      current: 4.25,
+      history: [
+        { date: '2024-01', value: 4.25 },
+        { date: '2023-12', value: 3.88 },
+        { date: '2023-11', value: 4.47 },
+        { date: '2023-10', value: 4.93 },
+        { date: '2023-09', value: 4.57 },
+        { date: '2023-08', value: 4.11 },
+        { date: '2023-07', value: 3.96 },
+        { date: '2023-06', value: 3.81 },
+        { date: '2023-05', value: 3.57 },
+        { date: '2023-04', value: 3.44 },
+        { date: '2023-03', value: 3.47 },
+        { date: '2023-02', value: 3.92 },
+      ],
+    },
+    inflation: {
+      current: 3.40,
+      trend: 'falling' as const,
+      history: [
+        { date: '2024-01', value: 3.40 },
+        { date: '2023-12', value: 3.35 },
+        { date: '2023-11', value: 3.14 },
+        { date: '2023-10', value: 3.24 },
+        { date: '2023-09', value: 3.70 },
+        { date: '2023-08', value: 3.67 },
+        { date: '2023-07', value: 3.18 },
+        { date: '2023-06', value: 2.97 },
+        { date: '2023-05', value: 4.05 },
+        { date: '2023-04', value: 4.93 },
+        { date: '2023-03', value: 4.98 },
+        { date: '2023-02', value: 6.04 },
+      ],
+    },
+    gdpGrowth: {
+      current: 2.90,
+      trend: 'stable' as const,
+      history: [
+        { date: '2024-Q1', value: 2.90 },
+        { date: '2023-Q4', value: 3.30 },
+        { date: '2023-Q3', value: 4.90 },
+        { date: '2023-Q2', value: 2.10 },
+        { date: '2023-Q1', value: 2.00 },
+        { date: '2022-Q4', value: 2.60 },
+        { date: '2022-Q3', value: 3.20 },
+        { date: '2022-Q2', value: -0.60 },
+      ],
+    },
+    source: 'Federal Reserve Economic Data (FRED)',
+    asOfDate: '2024-01-15',
+  },
+
+  // =================================================================
+  // MARKET ANALYSIS
+  // =================================================================
+  marketAnalysis: {
+    marketOverview: `The Billings industrial market continues to demonstrate strong fundamentals with sustained demand and limited new supply. As of the effective date of this appraisal, the market exhibits positive momentum across key metrics including occupancy, rental rates, and transaction activity.
+
+The regional economy has proven resilient, supported by diverse employment sectors including healthcare, energy, agriculture, and logistics. Population growth in the Billings MSA has remained positive, averaging 1.2% annually over the past five years, which continues to drive demand for commercial and industrial space.`,
+    
+    supplyAnalysis: `The industrial inventory in the greater Billings area totals approximately 8.5 million square feet across various building types including warehouse, manufacturing, flex, and light industrial. The Harnish Trade Center area, where the subject is located, represents one of the most active submarkets with modern inventory concentrated in the west end of Billings.
+
+New construction activity has been measured, with approximately 150,000 square feet of speculative and build-to-suit industrial deliveries over the trailing twelve months. The pipeline for new development remains modest, which should support continued absorption of existing inventory.`,
+    
+    demandAnalysis: `Demand for quality industrial space in the Billings market remains robust, driven by several factors:
+• Growth in e-commerce and logistics requiring regional distribution facilities
+• Expansion of local manufacturing and processing operations
+• Healthcare sector growth requiring support and logistics space
+• Energy sector activity supporting oilfield services and equipment storage
+
+Net absorption over the past twelve months totaled approximately 125,000 square feet, maintaining a healthy balance between supply and demand. Most absorption has been concentrated in the modern inventory segment (buildings less than 20 years old), indicating tenant preference for efficient, functional space.`,
+    
+    vacancyRates: {
+      current: 4.8,
+      historical: [
+        { year: 2023, rate: 4.8 },
+        { year: 2022, rate: 5.2 },
+        { year: 2021, rate: 6.1 },
+        { year: 2020, rate: 7.8 },
+        { year: 2019, rate: 5.5 },
+      ],
+    },
+    
+    rentalRates: {
+      currentNNN: 8.50,
+      currentGross: 12.00,
+      trend: 'Increasing',
+      priorYearNNN: 7.75,
+      priorYearGross: 11.25,
+    },
+    
+    outlook: `The near-term outlook for the Billings industrial market is positive. Key factors supporting this assessment include:
+• Low vacancy rates providing landlord leverage
+• Limited speculative construction preventing oversupply
+• Diverse economic base reducing single-sector dependence
+• Strategic transportation access supporting logistics demand
+
+We anticipate continued modest rental rate growth of 2-4% annually and stable capitalization rates over the projection period. The primary risk factor remains exposure to energy sector volatility, although economic diversification has reduced this dependency compared to prior cycles.`,
+  },
+
+  // =================================================================
   // PHOTOS
   // =================================================================
   photos: [
