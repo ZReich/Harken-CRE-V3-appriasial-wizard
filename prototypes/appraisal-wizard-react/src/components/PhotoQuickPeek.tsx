@@ -27,7 +27,7 @@ export const PhotoQuickPeek: React.FC<PhotoQuickPeekProps> = ({
   // Calculate position relative to anchor element
   const updatePosition = useCallback(() => {
     if (!anchorElement) return;
-    
+
     const rect = anchorElement.getBoundingClientRect();
     const previewWidth = 420;
     const previewHeight = 320;
@@ -75,7 +75,7 @@ export const PhotoQuickPeek: React.FC<PhotoQuickPeekProps> = ({
   // Handle window resize
   useEffect(() => {
     if (!isVisible) return;
-    
+
     const handleResize = () => updatePosition();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
@@ -83,37 +83,36 @@ export const PhotoQuickPeek: React.FC<PhotoQuickPeekProps> = ({
 
   if (!isVisible || !anchorElement) return null;
 
-  const formattedDate = photo.takenDate 
+  const formattedDate = photo.takenDate
     ? new Date(photo.takenDate).toLocaleDateString('en-US', {
-        month: 'long',
-        day: 'numeric',
-        year: 'numeric'
-      })
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric'
+    })
     : '';
 
   return createPortal(
     <div
       ref={containerRef}
-      className={`fixed z-50 transition-all duration-200 ease-out ${
-        isAnimating ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
-      }`}
+      className={`fixed z-50 transition-all duration-200 ease-out ${isAnimating ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+        }`}
       style={{
         top: position.top,
         left: position.left,
         transformOrigin: position.placement === 'right' ? 'left center' : 'right center',
       }}
-      onMouseEnter={() => {}} // Keep preview open when hovering over it
+      onMouseEnter={() => { }} // Keep preview open when hovering over it
       onMouseLeave={onClose}
     >
       {/* Preview Card */}
-      <div 
+      <div
         className="w-[400px] bg-surface-1 rounded-xl shadow-2xl border border-light-border overflow-hidden"
         style={{
           boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.25)',
         }}
       >
         {/* Mini Report Header */}
-        <div className="bg-[#1E4A3F] text-white px-4 py-2">
+        <div className="bg-slate-800 dark:bg-slate-900 text-white px-4 py-2 border-b-2 border-harken-blue">
           <h4 className="text-sm font-semibold">Subject Property Photos</h4>
         </div>
 
