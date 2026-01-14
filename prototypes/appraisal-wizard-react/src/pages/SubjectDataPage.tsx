@@ -98,7 +98,7 @@ const tabs = [
   { id: 'improvements', label: 'Improvements', Icon: BuildingIcon },
   { id: 'demographics', label: 'Demographics', Icon: UsersIcon },
   { id: 'tax', label: 'Tax & Ownership', Icon: TaxIcon },
-  { id: 'photos', label: 'Photos & Maps', Icon: PhotoIcon },
+  { id: 'photos', label: 'Photos', Icon: PhotoIcon },
   { id: 'exhibits', label: 'Exhibits & Docs', Icon: DocumentIcon },
 ];
 
@@ -524,7 +524,7 @@ export default function SubjectDataPage() {
       eastBoundary,
       westBoundary,
     });
-  // eslint-disable-next-line react-hooks/exhaustive-deps -- wizardState.subjectData?.address intentionally omitted to prevent infinite loop
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- wizardState.subjectData?.address intentionally omitted to prevent infinite loop
   }, [areaDescription, neighborhoodBoundaries, neighborhoodCharacteristics, specificLocation,
     acres, squareFeet, shape, frontage, topography, environmental, easements,
     zoningClass, zoningDescription, zoningConformance,
@@ -2297,13 +2297,13 @@ function PhotosContent({
   const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const photoSlotRefs = useRef<Record<string, HTMLDivElement | null>>({});
   const fileInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
-  
+
   // Crop modal state
   const [cropModalOpen, setCropModalOpen] = useState(false);
   const [cropImageUrl, setCropImageUrl] = useState<string | null>(null);
   const [cropTargetSlotId, setCropTargetSlotId] = useState<string | null>(null);
   const [pendingOriginalFile, setPendingOriginalFile] = useState<File | null>(null);
-  
+
   // Handle opening crop modal for existing photo
   const handleOpenCropModal = useCallback((slotId: string, photo: PhotoData) => {
     setCropImageUrl(photo.preview);
@@ -2311,30 +2311,30 @@ function PhotosContent({
     setPendingOriginalFile(photo.file || null);
     setCropModalOpen(true);
   }, []);
-  
+
   // Handle crop completion - accepts both blob and crop data
   const handleCropComplete = useCallback((croppedBlob: Blob, cropData?: { x: number; y: number; width: number; height: number }) => {
     if (!cropTargetSlotId) return;
-    
+
     // Create a new file from the cropped blob
     const fileName = pendingOriginalFile?.name || `cropped-${Date.now()}.jpg`;
     const croppedFile = new File([croppedBlob], fileName, { type: 'image/jpeg' });
-    
+
     // Upload the cropped file
     onUpload(cropTargetSlotId, croppedFile);
-    
+
     // Store crop data for potential re-cropping (could be saved to wizard state)
     if (cropData) {
       console.log('Photo cropped with data:', cropData);
     }
-    
+
     // Clean up
     setCropModalOpen(false);
     setCropImageUrl(null);
     setCropTargetSlotId(null);
     setPendingOriginalFile(null);
   }, [cropTargetSlotId, pendingOriginalFile, onUpload]);
-  
+
   // Handle crop cancel
   const handleCropCancel = useCallback(() => {
     // If there was a pending file for new upload, discard it
@@ -2343,45 +2343,45 @@ function PhotosContent({
     setCropTargetSlotId(null);
     setPendingOriginalFile(null);
   }, []);
-  
+
   // State for auto-crop processing
   const [isAutoCropping, setIsAutoCropping] = useState(false);
-  
+
   // Handle file upload with AI auto-crop
   const handleFileUploadWithCrop = useCallback(async (slotId: string, file: File) => {
     if (enableCropOnUpload) {
       try {
         setIsAutoCropping(true);
         setCropTargetSlotId(slotId);
-        
+
         // Detect category from slot ID for smarter cropping
         const category = slotId.includes('exterior') ? 'exterior' as const
           : slotId.includes('interior') ? 'interior' as const
-          : slotId.includes('aerial') ? 'aerial' as const
-          : slotId.includes('street') ? 'street' as const
-          : detectCategoryFromFilename(file.name);
-        
+            : slotId.includes('aerial') ? 'aerial' as const
+              : slotId.includes('street') ? 'street' as const
+                : detectCategoryFromFilename(file.name);
+
         // Auto-crop the image using AI-driven smart crop
         const { croppedFile, cropData, originalFile } = await autoCropImage(file, {
           category,
           targetAspectRatio: 16 / 9, // Default to landscape for real estate
         });
-        
+
         // Upload the auto-cropped file immediately
         onUpload(slotId, croppedFile);
-        
+
         // Store original for manual re-crop if user wants to adjust
         setPendingOriginalFile(originalFile);
-        
+
         // Log the auto-crop for debugging
         console.log(`Auto-cropped ${file.name} with ${Math.round(cropData.confidence * 100)}% confidence (${cropData.aspectRatioLabel})`);
-        
+
         setIsAutoCropping(false);
         setCropTargetSlotId(null);
       } catch (error) {
         console.error('Auto-crop failed, falling back to manual crop:', error);
         setIsAutoCropping(false);
-        
+
         // Fallback to manual crop modal
         const previewUrl = URL.createObjectURL(file);
         setCropImageUrl(previewUrl);
@@ -2916,30 +2916,7 @@ function PhotosContent({
         </div>
       ))}
 
-      {/* Auto-Generate Maps */}
-      <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
-        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-light-border dark:border-harken-gray pb-3 mb-4 flex items-center gap-2">
-          <MapPin className="w-5 h-5 text-harken-blue" />
-          Maps
-        </h3>
-        <p className="text-sm text-harken-gray mb-4">
-          Generate maps automatically from the property address.
-        </p>
-        <div className="flex flex-wrap gap-3">
-          <button className="px-4 py-2 border border-harken-blue text-harken-blue rounded-lg text-sm font-medium hover:bg-harken-blue/10 flex items-center gap-2">
-            <MapPin className="w-4 h-4" />
-            Generate Location Map
-          </button>
-          <button className="px-4 py-2 border border-harken-blue text-harken-blue rounded-lg text-sm font-medium hover:bg-harken-blue/10 flex items-center gap-2">
-            <Building2 className="w-4 h-4" />
-            Generate Aerial View
-          </button>
-          <button className="px-4 py-2 border border-harken-blue text-harken-blue rounded-lg text-sm font-medium hover:bg-harken-blue/10 flex items-center gap-2">
-            <FileCheck className="w-4 h-4" />
-            Generate Flood Map
-          </button>
-        </div>
-      </div>
+
 
       {/* Photo Quick Peek Preview */}
       {showQuickPeek && photos[showQuickPeek] && (() => {
@@ -2965,7 +2942,7 @@ function PhotosContent({
           />
         );
       })()}
-      
+
       {/* Photo Crop Modal */}
       {cropModalOpen && cropImageUrl && (
         <PhotoCropModal
