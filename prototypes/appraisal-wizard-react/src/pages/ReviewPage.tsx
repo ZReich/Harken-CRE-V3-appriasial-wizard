@@ -728,6 +728,16 @@ We considered alternative uses including renovation, conversion to alternative u
           />
         ))}
       </nav>
+      
+      {/* Report Review Button - Quick access to full report editor */}
+      <button
+        onClick={() => setShowPreviewMode(true)}
+        className="w-full mt-4 px-4 py-3 rounded-lg text-sm flex items-center gap-3 transition-all border border-[#0da1c7]/30 bg-[#0da1c7]/10 hover:bg-[#0da1c7]/20 text-[#0da1c7] font-medium"
+      >
+        <FileText className="w-5 h-5" />
+        Report Review
+      </button>
+      
       <SectionProgressSummary completion={sectionCompletion} />
     </div>
   );
