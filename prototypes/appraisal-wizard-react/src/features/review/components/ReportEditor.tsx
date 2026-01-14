@@ -4907,6 +4907,8 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
 
     // Scenario approach pages (dynamic IDs)
     if (section.id.startsWith('sales-comparison-')) {
+      const mult = getScenarioMultiplier(section.scenarioName);
+      const concluded = Math.round(sampleAppraisalData.valuation.salesComparisonValue * mult);
       return (
         <ComparisonGridPage
           approachType="sales"
@@ -4915,6 +4917,9 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
           scenarioId={section.scenarioId}
           scenarioName={section.scenarioName}
           data={buildScenarioSalesGridData(section.scenarioName)}
+          methodologyText={sampleAppraisalData.salesComparison.methodology}
+          narrativeText={'Comparable sales were analyzed and adjusted for market-supported differences. Final selection of the indicated value reflects greatest emphasis on overall comparability and reliability of verified data.'}
+          concludedValue={concluded}
         />
       );
     }
@@ -4927,6 +4932,8 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
           scenarioId={section.scenarioId}
           scenarioName={section.scenarioName}
           data={buildScenarioIncomeGridData(section.scenarioName)}
+          methodologyText={sampleAppraisalData.incomeApproach.methodology}
+          narrativeText={'Market rent, stabilized occupancy, and operating expenses were derived from market evidence and applied to a stabilized operating statement. Value was estimated via direct capitalization and supported by sensitivity considerations.'}
         />
       );
     }

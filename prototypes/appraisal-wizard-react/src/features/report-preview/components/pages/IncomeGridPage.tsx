@@ -11,6 +11,10 @@ interface IncomeGridPageProps {
   scenarioId?: number;
   scenarioName?: string;
   data?: IncomeGridData;
+  /** Optional: Methodology narrative shown above the income analysis */
+  methodologyText?: string;
+  /** Optional: Additional narrative/notes shown below */
+  narrativeText?: string;
   isEditing?: boolean;
   onCellClick?: (row: string, col: string) => void;
   /** Optional map data for rental comparables display */
@@ -57,6 +61,8 @@ export const IncomeGridPage: React.FC<IncomeGridPageProps> = ({
   pageNumber,
   scenarioName,
   data = DEFAULT_INCOME_DATA,
+  methodologyText,
+  narrativeText,
   isEditing = false,
   onCellClick,
   mapData,
@@ -80,6 +86,54 @@ export const IncomeGridPage: React.FC<IncomeGridPageProps> = ({
       sectionTitle="VALUATION"
       contentPadding="p-10"
     >
+      {/* Methodology */}
+      {methodologyText && (
+        <div className="px-12 pt-10">
+          <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide mb-2">
+            Methodology
+          </h3>
+          <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">
+            {methodologyText}
+          </p>
+        </div>
+      )}
+
+      {/* Photo strip (subject + rental comps) */}
+      <div className="px-12 pt-6 pb-2">
+        <div className="grid grid-cols-4 gap-3">
+          <div className="col-span-1">
+            <div className="text-xs text-slate-500 uppercase tracking-wide mb-2">Subject</div>
+            <div className="w-full h-24 rounded-lg overflow-hidden border border-slate-200 bg-white">
+              <img
+                src={
+                  sampleAppraisalData.photos.find((p) => p.category === 'cover')?.url ||
+                  sampleAppraisalData.photos.find((p) => p.category === 'exterior')?.url ||
+                  sampleAppraisalData.photos[0]?.url
+                }
+                alt="Subject"
+                className="w-full h-full object-cover"
+              />
+            </div>
+          </div>
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="col-span-1">
+              <div className="text-xs text-slate-500 uppercase tracking-wide mb-2">Rent Comp {i + 1}</div>
+              <div className="w-full h-24 rounded-lg overflow-hidden border border-slate-200 bg-white">
+                <img
+                  src={
+                    sampleAppraisalData.photos.filter((p) => p.category === 'exterior')[i]?.url ||
+                    sampleAppraisalData.photos.find((p) => p.category === 'exterior')?.url ||
+                    sampleAppraisalData.photos[0]?.url
+                  }
+                  alt={`Rent comp ${i + 1}`}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
       {/* Map Section - Display rental comparables map if provided */}
       {mapData && mapData.imageUrl && (
         <div className="px-12 pt-4 pb-2">
@@ -254,6 +308,13 @@ export const IncomeGridPage: React.FC<IncomeGridPageProps> = ({
             </div>
           </div>
         </div>
+
+        {narrativeText && (
+          <div className="mt-8 p-4 bg-slate-50 rounded-lg border border-slate-200">
+            <h4 className="text-sm font-semibold text-slate-800 mb-2">Narrative & Notes</h4>
+            <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">{narrativeText}</p>
+          </div>
+        )}
       </div>
     </ReportPageBase>
   );

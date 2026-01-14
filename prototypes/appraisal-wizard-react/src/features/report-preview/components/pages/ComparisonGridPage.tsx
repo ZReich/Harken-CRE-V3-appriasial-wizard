@@ -13,6 +13,12 @@ interface ComparisonGridPageProps {
   scenarioId?: number;
   scenarioName?: string;
   data?: CompGridData;
+  /** Optional: Methodology narrative shown above the grid */
+  methodologyText?: string;
+  /** Optional: Notes / reconciliation narrative shown below the grid */
+  narrativeText?: string;
+  /** Optional: Value conclusion shown in a banner */
+  concludedValue?: number;
   isEditing?: boolean;
   onCellClick?: (row: string, col: string) => void;
   /** Optional map data for display above the grid */
@@ -107,6 +113,9 @@ export const ComparisonGridPage: React.FC<ComparisonGridPageProps> = ({
   pageNumber,
   scenarioName,
   data = DEFAULT_SALES_DATA,
+  methodologyText,
+  narrativeText,
+  concludedValue,
   isEditing = false,
   onCellClick,
   mapData,
@@ -165,6 +174,18 @@ export const ComparisonGridPage: React.FC<ComparisonGridPageProps> = ({
       sectionTitle="VALUATION"
       contentPadding="p-10"
     >
+      {/* Methodology */}
+      {methodologyText && (
+        <div className="mb-4">
+          <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide mb-2">
+            Methodology
+          </h3>
+          <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">
+            {methodologyText}
+          </p>
+        </div>
+      )}
+
       {/* Map Section - Display above grid if mapData is provided */}
       {mapData && mapData.imageUrl && (
         <div className="px-10 pt-4 pb-2">
@@ -221,6 +242,40 @@ export const ComparisonGridPage: React.FC<ComparisonGridPageProps> = ({
               </tr>
             </thead>
             <tbody>
+              {/* Photos Row (matches wizard grid UX) */}
+              <tr className="border-b border-light-border">
+                <td className="px-3 py-2 font-medium text-slate-700 bg-white">Photo</td>
+                <td className="px-3 py-2 text-center bg-surface-2">
+                  <div className="w-24 h-16 mx-auto rounded overflow-hidden border border-slate-200 bg-white">
+                    <img
+                      src={
+                        sampleAppraisalData.photos.find((p) => p.category === 'cover')?.url ||
+                        sampleAppraisalData.photos.find((p) => p.category === 'exterior')?.url ||
+                        sampleAppraisalData.photos[0]?.url
+                      }
+                      alt="Subject"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                </td>
+                {data.comparables.map((comp) => {
+                  const photoUrl =
+                    sampleAppraisalData.comparables.find((c) => c.id === comp.id)?.photoUrl ||
+                    sampleAppraisalData.photos.find((p) => p.category === 'exterior')?.url;
+                  return (
+                    <td key={comp.id} className="px-3 py-2 text-center bg-white">
+                      <div className="w-24 h-16 mx-auto rounded overflow-hidden border border-slate-200 bg-white">
+                        {photoUrl ? (
+                          <img src={photoUrl} alt={comp.label} className="w-full h-full object-cover" />
+                        ) : (
+                          <div className="w-full h-full bg-slate-50" />
+                        )}
+                      </div>
+                    </td>
+                  );
+                })}
+              </tr>
+
               {/* Transaction Data Section */}
               <tr className="bg-surface-3">
                 <td colSpan={2 + data.comparables.length} className="px-3 py-1.5 text-xs font-semibold text-slate-600 uppercase tracking-wider">
@@ -313,6 +368,14 @@ export const ComparisonGridPage: React.FC<ComparisonGridPageProps> = ({
           </table>
         </div>
 
+        {/* Notes / Narrative */}
+        {narrativeText && (
+          <div className="mt-5">
+            <h4 className="font-semibold text-slate-800 mb-2">Narrative</h4>
+            <p className="text-sm text-slate-600 leading-relaxed whitespace-pre-wrap">{narrativeText}</p>
+          </div>
+        )}
+
         {/* Conclusion section */}
         <div className="mt-6 p-4 bg-harken-gray-light rounded-lg border border-light-border">
           <h4 className="font-semibold text-slate-800 mb-2">Value Indication</h4>
@@ -324,21 +387,21 @@ export const ComparisonGridPage: React.FC<ComparisonGridPageProps> = ({
             <div className="text-center">
               <div className="text-xs text-harken-gray-med uppercase mb-1">Low</div>
               <div className="text-lg font-semibold text-slate-800">
-                ${(sampleAppraisalData.valuation.salesComparisonValue * 0.95).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                ${(((concludedValue ?? sampleAppraisalData.valuation.salesComparisonValue) * 0.95)).toLocaleString(undefined, { maximumFractionDigits: 0 })}
               </div>
             </div>
             <div className="flex-1 h-px bg-slate-300" />
             <div className="text-center">
               <div className="text-xs text-harken-gray-med uppercase mb-1">Indicated Value</div>
               <div className="text-2xl font-bold text-sky-600">
-                ${sampleAppraisalData.valuation.salesComparisonValue.toLocaleString()}
+                ${Math.round((concludedValue ?? sampleAppraisalData.valuation.salesComparisonValue) / 5000) * 5000}
               </div>
             </div>
             <div className="flex-1 h-px bg-slate-300" />
             <div className="text-center">
               <div className="text-xs text-harken-gray-med uppercase mb-1">High</div>
               <div className="text-lg font-semibold text-slate-800">
-                ${(sampleAppraisalData.valuation.salesComparisonValue * 1.05).toLocaleString(undefined, { maximumFractionDigits: 0 })}
+                ${(((concludedValue ?? sampleAppraisalData.valuation.salesComparisonValue) * 1.05)).toLocaleString(undefined, { maximumFractionDigits: 0 })}
               </div>
             </div>
           </div>
