@@ -193,27 +193,27 @@ export const RiskRatingPage: React.FC<RiskRatingPageProps> = ({ data, pageNumber
       contentPadding="p-10"
     >
       {/* Executive Summary Box */}
-      <div className="flex gap-4 mb-4">
+      <div className="flex gap-5 mb-6">
         {/* Rating Badge */}
-        <div className={`${gradeConfig.bg} ${gradeConfig.border} border-2 rounded-lg p-3 text-center flex-shrink-0`} style={{ minWidth: '100px' }}>
-          <div className={`text-3xl font-bold ${gradeConfig.text}`}>
+        <div className={`${gradeConfig.bg} ${gradeConfig.border} border-2 rounded-lg p-4 text-center flex-shrink-0`} style={{ minWidth: '120px' }}>
+          <div className={`text-4xl font-bold ${gradeConfig.text}`}>
             {overallGrade}
           </div>
-          <div className={`text-[10px] font-semibold ${gradeConfig.text} uppercase tracking-wide`}>
+          <div className={`text-xs font-semibold ${gradeConfig.text} uppercase tracking-wide`}>
             {gradeConfig.riskLevel}
           </div>
-          <div className="text-slate-600 mt-1 text-[10px]">
+          <div className="text-slate-600 mt-1 text-xs">
             Score: {overallScore}/100
           </div>
         </div>
 
         {/* Summary Text */}
         <div className="flex-1">
-          <p className="text-xs text-slate-700 leading-relaxed mb-2">
+          <p className="text-sm text-slate-700 leading-relaxed mb-3">
             This property has been assigned an <strong>{gradeConfig.description}</strong> rating 
             based on comprehensive analysis of market, financial, and physical risk factors.
           </p>
-          <div className="text-[10px] text-slate-500">
+          <div className="text-xs text-slate-500">
             <strong>Classification:</strong> {gradeIndex <= 2 ? 'Investment Grade - Core/Core-Plus' : 
               gradeIndex <= 4 ? 'Investment Grade - Value-Add' : 'Speculative Grade - Opportunistic'}
           </div>
@@ -221,20 +221,20 @@ export const RiskRatingPage: React.FC<RiskRatingPageProps> = ({ data, pageNumber
       </div>
 
       {/* Rating Scale Visualization */}
-      <div className="mb-4 p-2 bg-slate-50 rounded-lg">
-        <div className="flex items-center justify-between text-[10px] text-slate-500 mb-1">
+      <div className="mb-6 p-3 bg-slate-50 rounded-lg">
+        <div className="flex items-center justify-between text-xs text-slate-500 mb-2">
           <span>Lower Risk</span>
           <span className="font-medium text-slate-700">Rating Scale</span>
           <span>Higher Risk</span>
         </div>
-        <div className="flex items-center gap-0.5">
+        <div className="flex items-center gap-1">
           {RATING_SCALE.map((grade) => {
             const config = GRADE_CONFIG[grade];
             const isCurrent = grade === overallGrade;
             return (
               <div 
                 key={grade}
-                className={`flex-1 h-5 flex items-center justify-center text-[10px] font-bold ${
+                className={`flex-1 h-7 flex items-center justify-center text-xs font-bold ${
                   isCurrent 
                     ? `${config.bg} ${config.text} ${config.border} border-2 rounded` 
                     : `${config.lightBg} ${config.text} opacity-40`
@@ -248,26 +248,26 @@ export const RiskRatingPage: React.FC<RiskRatingPageProps> = ({ data, pageNumber
       </div>
 
       {/* Four-Dimension Analysis */}
-      <h2 className="text-xs font-bold text-slate-800 uppercase tracking-wide border-b border-slate-200 pb-1 mb-2">
+      <h2 className="text-sm font-bold text-slate-800 uppercase tracking-wide border-b border-slate-200 pb-2 mb-4">
         Risk Dimension Analysis
       </h2>
       
-      <table className="w-full text-[10px] border-collapse mb-3">
+      <table className="w-full text-xs border-collapse mb-5">
         <thead>
           <tr className="bg-slate-100">
-            <th className="text-left py-1.5 px-2 font-semibold text-slate-700 border border-slate-200">
+            <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border border-slate-200">
               Dimension
             </th>
-            <th className="text-center py-1.5 px-2 font-semibold text-slate-700 border border-slate-200 w-14">
+            <th className="text-center py-2.5 px-3 font-semibold text-slate-700 border border-slate-200 w-16">
               Score
             </th>
-            <th className="text-center py-1.5 px-2 font-semibold text-slate-700 border border-slate-200 w-14">
+            <th className="text-center py-2.5 px-3 font-semibold text-slate-700 border border-slate-200 w-16">
               Weight
             </th>
-            <th className="text-center py-1.5 px-2 font-semibold text-slate-700 border border-slate-200 w-16">
+            <th className="text-center py-2.5 px-3 font-semibold text-slate-700 border border-slate-200 w-20">
               Contrib.
             </th>
-            <th className="text-left py-1.5 px-2 font-semibold text-slate-700 border border-slate-200 w-20">
+            <th className="text-left py-2.5 px-3 font-semibold text-slate-700 border border-slate-200 w-24">
               Rating
             </th>
           </tr>
@@ -275,14 +275,14 @@ export const RiskRatingPage: React.FC<RiskRatingPageProps> = ({ data, pageNumber
         <tbody>
           {weightedContributions.map((dim, idx) => (
             <tr key={dim.key} className={idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}>
-              <td className="py-1.5 px-2 border border-slate-200 font-medium text-slate-800">
+              <td className="py-2.5 px-3 border border-slate-200 font-medium text-slate-800">
                 {dim.fullName}
               </td>
-              <td className="py-1.5 px-2 text-center border border-slate-200">
+              <td className="py-2.5 px-3 text-center border border-slate-200">
                 <div className="font-bold text-slate-800">{dim.score}</div>
-                <div className="w-full bg-slate-200 rounded-full h-1 mt-0.5">
+                <div className="w-full bg-slate-200 rounded-full h-1.5 mt-1">
                   <div 
-                    className={`h-1 rounded-full ${
+                    className={`h-1.5 rounded-full ${
                       dim.score >= 80 ? 'bg-emerald-500' :
                       dim.score >= 60 ? 'bg-cyan-500' :
                       dim.score >= 40 ? 'bg-amber-500' : 'bg-red-500'
@@ -291,15 +291,15 @@ export const RiskRatingPage: React.FC<RiskRatingPageProps> = ({ data, pageNumber
                   />
                 </div>
               </td>
-              <td className="py-1.5 px-2 text-center font-medium text-slate-700 border border-slate-200">
+              <td className="py-2.5 px-3 text-center font-medium text-slate-700 border border-slate-200">
                 {(dim.weight * 100).toFixed(0)}%
               </td>
-              <td className="py-1.5 px-2 text-center border border-slate-200">
+              <td className="py-2.5 px-3 text-center border border-slate-200">
                 <span className="font-medium text-slate-800">{dim.contribution}</span>
                 <span className="text-slate-400 ml-0.5">pts</span>
               </td>
-              <td className="py-1.5 px-2 border border-slate-200">
-                <span className={`inline-block px-1.5 py-0.5 rounded text-[9px] font-medium ${
+              <td className="py-2.5 px-3 border border-slate-200">
+                <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
                   dim.score >= 80 ? 'bg-emerald-100 text-emerald-700' :
                   dim.score >= 60 ? 'bg-cyan-100 text-cyan-700' :
                   dim.score >= 40 ? 'bg-amber-100 text-amber-700' : 'bg-red-100 text-red-700'
@@ -314,20 +314,20 @@ export const RiskRatingPage: React.FC<RiskRatingPageProps> = ({ data, pageNumber
         </tbody>
         <tfoot>
           <tr className="bg-slate-100 font-semibold">
-            <td className="py-1.5 px-2 border border-slate-200 text-slate-800">
+            <td className="py-2.5 px-3 border border-slate-200 text-slate-800">
               Composite Score
             </td>
-            <td className="py-1.5 px-2 text-center border border-slate-200 text-slate-800">
+            <td className="py-2.5 px-3 text-center border border-slate-200 text-slate-800">
               {overallScore}
             </td>
-            <td className="py-1.5 px-2 text-center border border-slate-200 text-slate-700">
+            <td className="py-2.5 px-3 text-center border border-slate-200 text-slate-700">
               100%
             </td>
-            <td className="py-1.5 px-2 text-center border border-slate-200 text-slate-800">
+            <td className="py-2.5 px-3 text-center border border-slate-200 text-slate-800">
               {overallScore} pts
             </td>
-            <td className="py-1.5 px-2 border border-slate-200">
-              <span className={`inline-block px-1.5 py-0.5 rounded text-[9px] font-bold ${gradeConfig.bg} ${gradeConfig.text}`}>
+            <td className="py-2.5 px-3 border border-slate-200">
+              <span className={`inline-block px-2 py-1 rounded text-xs font-bold ${gradeConfig.bg} ${gradeConfig.text}`}>
                 {overallGrade}
               </span>
             </td>
@@ -337,21 +337,21 @@ export const RiskRatingPage: React.FC<RiskRatingPageProps> = ({ data, pageNumber
 
       {/* Weight Rationale */}
       {weightingRationale && (
-        <div className="bg-slate-100 rounded-lg p-2 mb-3">
-          <h3 className="font-semibold text-slate-700 text-[10px] uppercase tracking-wide mb-0.5">
+        <div className="bg-slate-100 rounded-lg p-4 mb-5">
+          <h3 className="font-semibold text-slate-700 text-xs uppercase tracking-wide mb-1">
             Dynamic Weight Calibration
           </h3>
-          <p className="text-[10px] text-slate-600 leading-relaxed">
+          <p className="text-xs text-slate-600 leading-relaxed">
             {weightingRationale}
           </p>
         </div>
       )}
 
       {/* Methodology Summary */}
-      <h2 className="text-xs font-bold text-slate-800 uppercase tracking-wide border-b border-slate-200 pb-1 mb-2">
+      <h2 className="text-sm font-bold text-slate-800 uppercase tracking-wide border-b border-slate-200 pb-2 mb-3">
         Analytical Methodology
       </h2>
-      <p className="text-[10px] text-slate-600 leading-relaxed mb-3">
+      <p className="text-xs text-slate-600 leading-relaxed mb-5">
         This Investment Risk Rating employs a proprietary analytical framework integrating Federal Reserve 
         economic indicators, regional market statistics, property-specific characteristics, and income 
         analysis metrics. The four risk dimensions are dynamically weighted based on property type and 
@@ -359,8 +359,8 @@ export const RiskRatingPage: React.FC<RiskRatingPageProps> = ({ data, pageNumber
       </p>
 
       {/* USPAP Disclosure */}
-      <div className="border border-slate-200 rounded-lg p-2 text-[10px] text-slate-600 leading-relaxed">
-        <h3 className="font-bold text-slate-700 mb-1">Professional Standards Compliance</h3>
+      <div className="border border-slate-200 rounded-lg p-4 text-xs text-slate-600 leading-relaxed">
+        <h3 className="font-bold text-slate-700 mb-2">Professional Standards Compliance</h3>
         <p>
           This Investment Risk Rating is a supplementary analytical tool supporting the appraiser's 
           professional judgment. It does not replace the value conclusion or comprehensive analysis 
@@ -370,7 +370,7 @@ export const RiskRatingPage: React.FC<RiskRatingPageProps> = ({ data, pageNumber
       </div>
 
       {/* Generated Date Footer */}
-      <div className="mt-3 text-[9px] text-slate-400 text-center">
+      <div className="mt-4 text-xs text-slate-400 text-center">
         Rating generated: {new Date(generatedDate).toLocaleDateString()} | Proprietary Risk Analysis Framework
       </div>
     </ReportPageBase>
