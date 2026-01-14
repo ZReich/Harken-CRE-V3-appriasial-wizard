@@ -112,7 +112,7 @@ export const PhotoQuickPeek: React.FC<PhotoQuickPeekProps> = ({
         }}
       >
         {/* Mini Report Header */}
-        <div className="bg-slate-800 dark:bg-slate-900 text-white px-4 py-2 border-b-2 border-harken-blue">
+        <div className="bg-surface-2 dark:bg-elevation-2 text-harken-dark dark:text-white px-4 py-2 border-b border-light-border dark:border-dark-border">
           <h4 className="text-sm font-semibold">Subject Property Photos</h4>
         </div>
 

@@ -120,7 +120,7 @@ export const PhotoLivePreview: React.FC<PhotoLivePreviewProps> = ({
         style={{ boxShadow: '0 4px 20px rgba(0,0,0,0.08)' }}
       >
         {/* Rove Header Bar */}
-        <div className="bg-slate-800 dark:bg-slate-900 text-white px-3 py-2 flex-shrink-0 border-b-2 border-harken-blue">
+        <div className="bg-surface-2 dark:bg-elevation-2 text-harken-dark dark:text-white px-3 py-2 flex-shrink-0 border-b border-light-border dark:border-dark-border">
           <h4 className="text-xs font-semibold truncate">{activePage.title}</h4>
         </div>
 
@@ -131,8 +131,8 @@ export const PhotoLivePreview: React.FC<PhotoLivePreviewProps> = ({
               <div
                 key={id}
                 className={`rounded overflow-hidden flex flex-col ${photo
-                    ? 'bg-surface-3 dark:bg-elevation-subtle'
-                    : 'bg-surface-2 dark:bg-elevation-2 border border-dashed border-light-border dark:border-dark-border'
+                  ? 'bg-surface-3 dark:bg-elevation-subtle'
+                  : 'bg-surface-2 dark:bg-elevation-2 border border-dashed border-light-border dark:border-dark-border'
                   }`}
               >
                 <div className="flex-1 min-h-0 relative">
@@ -180,8 +180,8 @@ export const PhotoLivePreview: React.FC<PhotoLivePreviewProps> = ({
           onClick={() => setCurrentPage(Math.max(0, currentPage - 1))}
           disabled={currentPage === 0}
           className={`p-1.5 rounded-lg transition-colors ${currentPage === 0
-              ? 'text-harken-gray-med cursor-not-allowed'
-              : 'text-harken-gray hover:bg-harken-gray-light'
+            ? 'text-harken-gray-med cursor-not-allowed'
+            : 'text-harken-gray hover:bg-harken-gray-light'
             }`}
         >
           <ChevronLeft className="w-4 h-4" />
@@ -197,8 +197,8 @@ export const PhotoLivePreview: React.FC<PhotoLivePreviewProps> = ({
                 key={idx}
                 onClick={() => setCurrentPage(idx)}
                 className={`w-2 h-2 rounded-full transition-colors ${idx === currentPage
-                    ? 'bg-[#0da1c7]'
-                    : 'bg-harken-gray-med-lt hover:bg-harken-gray-med-lt'
+                  ? 'bg-[#0da1c7]'
+                  : 'bg-harken-gray-med-lt hover:bg-harken-gray-med-lt'
                   }`}
               />
             ))}
@@ -209,8 +209,8 @@ export const PhotoLivePreview: React.FC<PhotoLivePreviewProps> = ({
           onClick={() => setCurrentPage(Math.min(pages.length - 1, currentPage + 1))}
           disabled={currentPage === pages.length - 1}
           className={`p-1.5 rounded-lg transition-colors ${currentPage === pages.length - 1
-              ? 'text-harken-gray-med cursor-not-allowed'
-              : 'text-harken-gray hover:bg-harken-gray-light'
+            ? 'text-harken-gray-med cursor-not-allowed'
+            : 'text-harken-gray hover:bg-harken-gray-light'
             }`}
         >
           <ChevronRight className="w-4 h-4" />
