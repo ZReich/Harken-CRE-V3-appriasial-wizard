@@ -2826,7 +2826,7 @@ function PhotosContent({
                               {enableCropOnUpload && (
                                 <button
                                   onClick={() => handleOpenCropModal(slot.id, photo)}
-                                  className="flex items-center gap-1.5 px-3 py-1.5 bg-surface-1/90 rounded-full text-sm font-medium text-harken-dark dark:text-white hover:bg-surface-1 transition-colors"
+                                  className="flex items-center gap-1.5 px-3 py-1.5 bg-white/90 dark:bg-slate-900/90 border border-slate-200 dark:border-harken-blue/50 rounded-full text-sm font-medium text-slate-700 dark:text-harken-blue hover:bg-white dark:hover:border-harken-blue dark:hover:bg-slate-900 transition-colors shadow-sm backdrop-blur-sm"
                                   title="Crop photo"
                                 >
                                   <Crop className="w-4 h-4" />
@@ -2837,7 +2837,7 @@ function PhotosContent({
                               {onPreviewPhoto && (
                                 <button
                                   onClick={() => onPreviewPhoto(slot.id, photo)}
-                                  className="flex items-center gap-1.5 px-3 py-1.5 bg-surface-1/90 rounded-full text-sm font-medium text-harken-dark dark:text-white hover:bg-surface-1 transition-colors"
+                                  className="flex items-center gap-1.5 px-3 py-1.5 bg-white/90 dark:bg-slate-900/90 border border-slate-200 dark:border-harken-blue/50 rounded-full text-sm font-medium text-slate-700 dark:text-harken-blue hover:bg-white dark:hover:border-harken-blue dark:hover:bg-slate-900 transition-colors shadow-sm backdrop-blur-sm"
                                   title="Preview in report"
                                 >
                                   <Eye className="w-4 h-4" />
