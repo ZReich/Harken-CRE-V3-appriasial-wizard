@@ -2356,7 +2356,7 @@ export default function SetupPage() {
               onChange={(e) => setDates({ ...dates, inspectionDate: e.target.value })}
               className="w-full px-3 py-2 border border-light-border rounded-lg text-sm focus:ring-2 focus:ring-harken-blue focus:border-transparent bg-blue-50 border-blue-200 dark:bg-elevation-1 dark:border-harken-gray dark:text-slate-400"
             />
-            <p className="text-xs text-blue-600 mt-1">Synced with Assignment Basics &gt; Key Dates</p>
+            <p className="text-xs text-harken-blue mt-1">Synced with Assignment Basics &gt; Key Dates</p>
           </div>
           <div>
             <label className="block text-sm font-medium text-harken-gray dark:text-slate-200 mb-2">Did you personally inspect the property?</label>
