@@ -13,9 +13,11 @@
  * - Scale bar and north arrow (visual only)
  */
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import type { ComparableMapData } from '../../../review/types';
 import { ReportPageBase } from './ReportPageBase';
+import { calculateBoundsZoom, generateStaticMapUrl, MARKER_COLORS } from '../../../../services/mapGenerationService';
+import type { MapMarker, MapMarkerType } from '../../../../types';
 
 interface ComparableLocationMapPageProps {
   data: ComparableMapData;
@@ -58,6 +60,83 @@ export const ComparableLocationMapPage: React.FC<ComparableLocationMapPageProps>
   const scenarioColor = getScenarioColor(scenarioId);
   const title = getApproachTitle(approachType);
 
+  const approachMarkerType = useMemo(() => {
+    if (approachType === 'land') return 'land-sale';
+    if (approachType === 'rent') return 'rental';
+    return 'improved-sale';
+  }, [approachType]);
+
+  // If no captured image, generate a Google Static Maps URL (if VITE_GOOGLE_MAPS_API_KEY is configured).
+  // This makes map pages "built-in" and not dependent on manual capture.
+  const generatedImageUrl = useMemo(() => {
+    if (imageUrl) return imageUrl;
+
+    const markers: MapMarker[] = [
+      {
+        id: 'subject',
+        lat: subjectPin.lat,
+        lng: subjectPin.lng,
+        label: 'Subject',
+        type: 'subject',
+        color: MARKER_COLORS.subject,
+        address: subjectPin.address,
+      },
+      ...comparablePins.map((p) => ({
+        id: p.id,
+        lat: p.lat,
+        lng: p.lng,
+        label: `Comp ${p.number}`,
+        type: approachMarkerType as MapMarkerType,
+        color: MARKER_COLORS[approachMarkerType as MapMarkerType],
+        number: p.number,
+        address: p.address,
+      })),
+    ];
+
+    const { center, zoom } = calculateBoundsZoom(markers);
+
+    const url = generateStaticMapUrl({
+      center,
+      zoom,
+      markers,
+      mapType: 'roadmap',
+      size: { width: 1000, height: 700 },
+    });
+
+    if (url) return url;
+
+    // Fallback: lightweight schematic map SVG with pins when no API key is configured.
+    const pinDots = comparablePins
+      .map((p, idx) => {
+        const x = 220 + idx * 180;
+        const y = 210 + ((idx % 2) * 140);
+        return `<circle cx="${x}" cy="${y}" r="14" fill="${scenarioColor}" /><text x="${x}" y="${y + 5}" text-anchor="middle" font-size="12" fill="white" font-family="Arial" font-weight="700">${p.number}</text>`;
+      })
+      .join('');
+
+    const svg = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="1000" height="700" viewBox="0 0 1000 700">
+        <defs>
+          <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0%" stop-color="#f1f5f9" />
+            <stop offset="100%" stop-color="#e2e8f0" />
+          </linearGradient>
+        </defs>
+        <rect width="1000" height="700" fill="url(#bg)" />
+        <rect x="60" y="60" width="880" height="520" rx="18" fill="white" stroke="#cbd5e1" />
+        <path d="M120 420 C 260 260, 420 500, 560 320 C 700 140, 820 280, 900 220" fill="none" stroke="#94a3b8" stroke-width="6" stroke-linecap="round" opacity="0.7"/>
+        <circle cx="160" cy="240" r="16" fill="${MARKER_COLORS.subject}" />
+        <text x="160" y="246" text-anchor="middle" font-size="12" fill="white" font-family="Arial" font-weight="700">S</text>
+        ${pinDots}
+        <text x="500" y="635" text-anchor="middle" font-size="14" fill="#64748b" font-family="Arial">
+          Map preview (configure VITE_GOOGLE_MAPS_API_KEY to render a real static map)
+        </text>
+      </svg>
+    `.trim();
+
+    return `data:image/svg+xml;base64,${btoa(svg)}`;
+  }, [approachMarkerType, approachType, comparablePins, imageUrl, scenarioColor, subjectPin.address, subjectPin.lat, subjectPin.lng]);
+
   const getSidebarLabel = () => {
     switch (approachType) {
       case 'land': return 'LAND MAP';
@@ -81,9 +160,9 @@ export const ComparableLocationMapPage: React.FC<ComparableLocationMapPageProps>
         className="relative bg-slate-100 rounded-lg overflow-hidden mb-4"
         style={{ height: '6.5in' }}
       >
-        {imageUrl ? (
+        {generatedImageUrl ? (
           <img
-            src={imageUrl}
+            src={generatedImageUrl}
             alt={title}
             className="w-full h-full object-contain"
           />

@@ -77,6 +77,40 @@ export const IncomeGridPage: React.FC<IncomeGridPageProps> = ({
     return `${value.toFixed(2)}%`;
   };
 
+  const scenarioMult = (() => {
+    const name = (scenarioName || '').toLowerCase();
+    if (name.includes('completed')) return 1.15;
+    if (name.includes('stabilized')) return 1.08;
+    return 1.0;
+  })();
+
+  const rentComps = [
+    {
+      label: 'Rent Comp 1',
+      address: `West End Industrial — ${sampleAppraisalData.property.city}`,
+      sizeSf: Math.round(sampleAppraisalData.improvements.grossBuildingArea * 0.9),
+      yearBuilt: sampleAppraisalData.improvements.yearBuilt - 3,
+      rentPsf: (sampleAppraisalData.incomeApproach.marketRentPerSF - 0.75) * scenarioMult,
+      notes: 'Slightly inferior clear height; minor positive location.',
+    },
+    {
+      label: 'Rent Comp 2',
+      address: `Shiloh Corridor — ${sampleAppraisalData.property.city}`,
+      sizeSf: Math.round(sampleAppraisalData.improvements.grossBuildingArea * 1.05),
+      yearBuilt: sampleAppraisalData.improvements.yearBuilt - 2,
+      rentPsf: (sampleAppraisalData.incomeApproach.marketRentPerSF - 0.25) * scenarioMult,
+      notes: 'Similar utility; supported lease structure.',
+    },
+    {
+      label: 'Rent Comp 3',
+      address: `Harnish Trade Center — ${sampleAppraisalData.property.city}`,
+      sizeSf: Math.round(sampleAppraisalData.improvements.grossBuildingArea * 0.95),
+      yearBuilt: sampleAppraisalData.improvements.yearBuilt - 1,
+      rentPsf: (sampleAppraisalData.incomeApproach.marketRentPerSF + 0.5) * scenarioMult,
+      notes: 'Slightly superior finish; minor downward adjustment applied.',
+    },
+  ];
+
   return (
     <ReportPageBase
       title={title}
@@ -131,6 +165,65 @@ export const IncomeGridPage: React.FC<IncomeGridPageProps> = ({
               </div>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* Rent Comparable Grid (this is the missing “grid view” justification) */}
+      <div className="px-12 pt-4">
+        <h3 className="text-sm font-semibold text-slate-700 uppercase tracking-wide mb-2">
+          Rent Comparable Grid
+        </h3>
+        <div className="border border-light-border rounded-lg overflow-hidden bg-white">
+          <table className="w-full text-xs">
+            <thead className="bg-slate-800 text-white">
+              <tr>
+                <th className="px-3 py-2 text-left font-semibold w-[140px]">Comparable</th>
+                <th className="px-3 py-2 text-left font-semibold">Location</th>
+                <th className="px-3 py-2 text-right font-semibold w-[110px]">Size (SF)</th>
+                <th className="px-3 py-2 text-right font-semibold w-[90px]">Year</th>
+                <th className="px-3 py-2 text-right font-semibold w-[110px]">Rent (PSF)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr className="bg-surface-3">
+                <td className="px-3 py-2 font-semibold text-slate-700 uppercase tracking-wider text-[10px]" colSpan={5}>
+                  Subject
+                </td>
+              </tr>
+              <tr className="border-t border-light-border">
+                <td className="px-3 py-2 font-medium text-slate-700">Subject</td>
+                <td className="px-3 py-2 text-slate-600">{sampleAppraisalData.property.fullAddress}</td>
+                <td className="px-3 py-2 text-right text-slate-700">{sampleAppraisalData.improvements.grossBuildingArea.toLocaleString()}</td>
+                <td className="px-3 py-2 text-right text-slate-700">{sampleAppraisalData.improvements.yearBuilt}</td>
+                <td className="px-3 py-2 text-right font-semibold text-slate-800">
+                  ${((sampleAppraisalData.incomeApproach.marketRentPerSF ?? 0) * scenarioMult).toFixed(2)}
+                </td>
+              </tr>
+              <tr className="bg-surface-3">
+                <td className="px-3 py-2 font-semibold text-slate-700 uppercase tracking-wider text-[10px]" colSpan={5}>
+                  Rent Comparables
+                </td>
+              </tr>
+              {rentComps.map((c, idx) => (
+                <tr key={c.label} className={`border-t border-light-border ${idx % 2 === 0 ? 'bg-white' : 'bg-slate-50'}`}>
+                  <td className="px-3 py-2 font-medium text-slate-700">{c.label}</td>
+                  <td className="px-3 py-2 text-slate-600">
+                    <div className="font-medium text-slate-700">{c.address}</div>
+                    <div className="text-[10px] text-slate-500">{c.notes}</div>
+                  </td>
+                  <td className="px-3 py-2 text-right text-slate-700">{c.sizeSf.toLocaleString()}</td>
+                  <td className="px-3 py-2 text-right text-slate-700">{c.yearBuilt}</td>
+                  <td className="px-3 py-2 text-right font-semibold text-slate-800">${c.rentPsf.toFixed(2)}</td>
+                </tr>
+              ))}
+              <tr className="bg-slate-100 border-t border-light-border">
+                <td className="px-3 py-2 font-semibold text-slate-700" colSpan={4}>Selected Market Rent (PSF)</td>
+                <td className="px-3 py-2 text-right font-bold text-sky-600">
+                  ${((sampleAppraisalData.incomeApproach.marketRentPerSF ?? 0) * scenarioMult).toFixed(2)}
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
