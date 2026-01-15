@@ -3226,8 +3226,8 @@ function ExhibitsContent(_props: ExhibitsProps) {
         </div>
       )}
 
-      {/* Empty State if no documents */}
-      {!hasIntakeDocuments && (
+      {/* Empty State if no documents AT ALL (Intake or Custom) */}
+      {!hasIntakeDocuments && customExhibits.length === 0 && (
         <div className="bg-harken-gray-light dark:bg-elevation-1/50 border border-light-border dark:border-dark-border rounded-xl p-8 text-center">
           <FileText className="w-12 h-12 text-harken-gray-med-lt dark:text-slate-500 mx-auto mb-3" />
           <h3 className="text-lg font-medium text-harken-dark dark:text-slate-200 mb-2">No Documents Uploaded</h3>
@@ -3251,8 +3251,8 @@ function ExhibitsContent(_props: ExhibitsProps) {
 
         {/* Uploaded Custom Exhibits - styled like Document Intake */}
         {customExhibits.length > 0 && (
-          <div className="space-y-3 mb-4">
-            <div className="flex items-center justify-between">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-4">
+            <div className="lg:col-span-2 flex items-center justify-between mb-2">
               <p className="text-sm font-medium text-harken-dark dark:text-slate-200">
                 Uploaded Exhibits ({customExhibits.length})
               </p>
