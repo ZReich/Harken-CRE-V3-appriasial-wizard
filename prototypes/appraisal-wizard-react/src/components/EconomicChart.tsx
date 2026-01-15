@@ -45,13 +45,14 @@ interface EconomicChartProps {
 // Format date for display
 const formatDate = (dateStr: string) => {
   const date = new Date(dateStr);
-  return date.toLocaleDateString('en-US', { month: 'short', year: '2-digit' });
+  // Display just the year since we're showing annual data
+  return date.toLocaleDateString('en-US', { year: 'numeric' });
 };
 
 // Custom tooltip
-const CustomTooltip = ({ active, payload, label, unit }: { 
-  active?: boolean; 
-  payload?: Array<{ value: number }>; 
+const CustomTooltip = ({ active, payload, label, unit }: {
+  active?: boolean;
+  payload?: Array<{ value: number }>;
   label?: string;
   unit?: string;
 }) => {
@@ -96,8 +97,8 @@ export function EconomicChart({
   const labelColor = textColor || '#64748b';
   if (!rawData || rawData.length === 0) {
     return (
-      <div 
-        className="flex items-center justify-center text-slate-400" 
+      <div
+        className="flex items-center justify-center text-slate-400"
         style={{ height }}
       >
         No data available
@@ -108,7 +109,7 @@ export function EconomicChart({
   // Reverse data so time flows left-to-right (oldest → newest)
   // FRED API returns data in descending order (newest first)
   const data = [...rawData].reverse();
-  
+
   // Current value is now the last element (rightmost on chart)
   const currentValue = data[data.length - 1]?.value;
   const minValue = Math.min(...data.map(d => d.value));
@@ -138,9 +139,9 @@ export function EconomicChart({
               </filter>
             </defs>
             {showAxis && (
-              <XAxis 
-                dataKey="date" 
-                tickFormatter={formatDate} 
+              <XAxis
+                dataKey="date"
+                tickFormatter={formatDate}
                 tick={{ fontSize: 10, fill: textColor || chartColors.axis }}
                 axisLine={false}
                 tickLine={false}
@@ -174,11 +175,11 @@ export function EconomicChart({
           <div className="w-24 h-12">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={sparklineData}>
-                <Line 
-                  type="monotone" 
-                  dataKey="value" 
-                  stroke={primaryColor} 
-                  strokeWidth={1.5} 
+                <Line
+                  type="monotone"
+                  dataKey="value"
+                  stroke={primaryColor}
+                  strokeWidth={1.5}
                   dot={false}
                 />
               </LineChart>
@@ -228,9 +229,9 @@ export function EconomicChart({
             <ReferenceLine y={minValue + third * 2} stroke={chartColors.positive} strokeDasharray="3 3" strokeOpacity={0.5} />
             <ReferenceLine y={minValue + third} stroke={chartColors.quaternary} strokeDasharray="3 3" strokeOpacity={0.5} />
             {showAxis && (
-              <XAxis 
-                dataKey="date" 
-                tickFormatter={formatDate} 
+              <XAxis
+                dataKey="date"
+                tickFormatter={formatDate}
                 tick={{ fontSize: 10, fill: chartColors.axis }}
                 axisLine={false}
                 tickLine={false}
@@ -276,9 +277,9 @@ export function EconomicChart({
               </filter>
             </defs>
             {showAxis && (
-              <XAxis 
-                dataKey="date" 
-                tickFormatter={formatDate} 
+              <XAxis
+                dataKey="date"
+                tickFormatter={formatDate}
                 tick={{ fontSize: 10, fill: chartColors.axis }}
                 axisLine={false}
                 tickLine={false}
@@ -309,16 +310,16 @@ export function EconomicChart({
           <p className="text-xl font-bold text-slate-800 dark:text-white">{currentValue?.toFixed(2)}{unit}</p>
         </div>
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart 
-            data={divergingData} 
+          <BarChart
+            data={divergingData}
             layout="vertical"
             margin={{ top: 45, right: 20, left: 60, bottom: 20 }}
           >
             {showAxis && (
-              <YAxis 
-                dataKey="date" 
+              <YAxis
+                dataKey="date"
                 type="category"
-                tickFormatter={formatDate} 
+                tickFormatter={formatDate}
                 tick={{ fontSize: 10, fill: chartColors.axis }}
                 axisLine={false}
                 tickLine={false}
@@ -329,8 +330,8 @@ export function EconomicChart({
             <Tooltip content={<CustomTooltip unit={unit} />} />
             <Bar dataKey="deviation" radius={[0, 4, 4, 0]}>
               {divergingData.map((entry, index) => (
-                <Cell 
-                  key={`cell-${index}`} 
+                <Cell
+                  key={`cell-${index}`}
                   fill={entry.deviation >= 0 ? chartColors.positive : chartColors.negative}
                   fillOpacity={0.8}
                 />
