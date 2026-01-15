@@ -21,7 +21,7 @@ interface ExpandableSelectorProps {
 const categoryColors: Record<string, { bg: string; border: string; text: string }> = {
   default: { bg: 'bg-harken-gray-light dark:bg-elevation-2', border: 'border-light-border dark:border-dark-border', text: 'text-harken-gray dark:text-slate-300' },
   site: { bg: 'bg-accent-teal-mint-light dark:bg-accent-teal-mint/20', border: 'border-accent-teal-mint-light dark:border-accent-teal-mint/30', text: 'text-accent-teal-mint' },
-  structure: { bg: 'bg-blue-50 dark:bg-blue-900/20', border: 'border-blue-200 dark:border-blue-700', text: 'text-blue-700 dark:text-blue-400' },
+  structure: { bg: 'bg-surface-1 dark:bg-elevation-1', border: 'border-accent-cyan dark:border-accent-cyan/60', text: 'text-accent-cyan' },
   systems: { bg: 'bg-accent-amber-gold-light dark:bg-accent-amber-gold/20', border: 'border-accent-amber-gold-light dark:border-accent-amber-gold/30', text: 'text-accent-amber-gold' },
   interior: { bg: 'bg-purple-50 dark:bg-purple-900/20', border: 'border-purple-200 dark:border-purple-700', text: 'text-purple-700 dark:text-purple-400' },
   market: { bg: 'bg-rose-50 dark:bg-rose-900/20', border: 'border-rose-200 dark:border-rose-700', text: 'text-rose-700 dark:text-rose-400' },
@@ -96,7 +96,7 @@ export default function ExpandableSelector({
   const allCustomOptions = [...new Set([...(externalCustomOptions || []), ...localCustomOptions])];
 
   // Normalize value to array for multi-select
-  const selectedValues: string[] = multiple 
+  const selectedValues: string[] = multiple
     ? (Array.isArray(value) ? value : (value ? [value] : []))
     : (Array.isArray(value) ? value : (value ? [value] : []));
 
@@ -145,7 +145,7 @@ export default function ExpandableSelector({
     const handleClickOutside = (event: MouseEvent) => {
       const target = event.target as Node;
       if (
-        containerRef.current && 
+        containerRef.current &&
         !containerRef.current.contains(target) &&
         dropdownRef.current &&
         !dropdownRef.current.contains(target)
@@ -202,16 +202,16 @@ export default function ExpandableSelector({
   const handleAddCustom = () => {
     if (customValue.trim()) {
       const trimmedValue = customValue.trim();
-      
+
       // Save to localStorage for future use
       saveCustomOption(id, trimmedValue);
       setLocalCustomOptions(prev => [...prev, trimmedValue]);
-      
+
       // Notify parent if callback provided
       if (onCustomAdd) {
         onCustomAdd(trimmedValue, category);
       }
-      
+
       // Add to selection
       if (multiple) {
         onChange([...selectedValues.filter(v => v !== 'Type My Own'), trimmedValue]);
@@ -233,7 +233,7 @@ export default function ExpandableSelector({
 
   const getDisplayText = () => {
     if (!hasSelection && !hasCustomValue) return null;
-    
+
     const displayCount = selectedValues.filter(v => v !== 'Type My Own').length;
     if (displayCount === 0) return null;
     if (displayCount === 1) {
@@ -283,11 +283,10 @@ export default function ExpandableSelector({
             key={option}
             type="button"
             onClick={() => handleSelect(option)}
-            className={`w-full flex items-center justify-between px-4 py-2.5 text-left text-sm transition-all rounded-lg my-0.5 ${
-              isSelected(option)
+            className={`w-full flex items-center justify-between px-4 py-2.5 text-left text-sm transition-all rounded-lg my-0.5 ${isSelected(option)
                 ? 'bg-accent-cyan/10 text-accent-cyan font-semibold ring-1 ring-accent-cyan'
                 : 'text-harken-gray dark:text-slate-300 hover:ring-1 hover:ring-accent-cyan hover:text-accent-cyan'
-            }`}
+              }`}
             role="option"
             aria-selected={isSelected(option)}
           >
@@ -309,11 +308,10 @@ export default function ExpandableSelector({
                 key={option}
                 type="button"
                 onClick={() => handleSelect(option)}
-                className={`w-full flex items-center justify-between px-4 py-2.5 text-left text-sm transition-all rounded-lg mx-1 my-0.5 ${
-                  isSelected(option)
+                className={`w-full flex items-center justify-between px-4 py-2.5 text-left text-sm transition-all rounded-lg mx-1 my-0.5 ${isSelected(option)
                     ? 'bg-accent-cyan/10 text-accent-cyan font-semibold ring-1 ring-accent-cyan'
                     : 'text-harken-gray dark:text-slate-300 hover:ring-1 hover:ring-accent-cyan hover:text-accent-cyan'
-                }`}
+                  }`}
                 role="option"
                 aria-selected={isSelected(option)}
               >
@@ -369,15 +367,13 @@ export default function ExpandableSelector({
         ref={buttonRef}
         type="button"
         onClick={() => setIsExpanded(!isExpanded)}
-        className={`w-full flex items-center justify-between gap-2 px-4 ${
-          compact ? 'py-2' : 'py-2.5'
-        } rounded-xl border ${
-          isExpanded
+        className={`w-full flex items-center justify-between gap-2 px-4 ${compact ? 'py-2' : 'py-2.5'
+          } rounded-xl border ${isExpanded
             ? 'border-harken-blue bg-surface-1 dark:bg-elevation-1 shadow-md ring-2 ring-harken-blue'
             : hasSelection || hasCustomValue
-            ? `${colors.border} ${colors.bg}`
-            : 'border-light-border dark:border-dark-border bg-surface-1 dark:bg-elevation-1 hover:border-accent-cyan/50 dark:hover:border-accent-cyan/50'
-        } transition-all duration-200`}
+              ? `${colors.border} ${colors.bg}`
+              : 'border-light-border dark:border-dark-border bg-surface-1 dark:bg-elevation-1 hover:border-accent-cyan/50 dark:hover:border-accent-cyan/50'
+          } transition-all duration-200`}
         aria-expanded={isExpanded}
         aria-controls={`options-${id}`}
       >
@@ -393,9 +389,8 @@ export default function ExpandableSelector({
             </span>
           )}
           <ChevronDown
-            className={`w-4 h-4 text-harken-gray-med transition-transform duration-200 ${
-              isExpanded ? 'rotate-180' : ''
-            }`}
+            className={`w-4 h-4 text-harken-gray-med transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''
+              }`}
           />
         </div>
       </button>
@@ -425,12 +420,12 @@ export function YearSelector({
 }: YearSelectorProps) {
   const currentYear = new Date().getFullYear();
   const years: string[] = [];
-  
+
   if (includeNA) {
     years.push('N/A');
     years.push('Not remodeled');
   }
-  
+
   for (let y = currentYear + 5; y >= 1900; y--) {
     years.push(y.toString());
   }

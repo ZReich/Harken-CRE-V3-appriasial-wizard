@@ -419,7 +419,7 @@ function ParcelCard({
   return (
     <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-2xl overflow-hidden shadow-sm">
       <div
-        className="px-6 py-4 flex items-center justify-between cursor-pointer hover:bg-harken-gray-light transition-colors border-l-4 border-accent-cyan"
+        className="px-6 py-4 flex items-center justify-between cursor-pointer transition-colors border-l-4 border-accent-cyan"
         onClick={onToggle}
       >
         <div className="flex items-center gap-4">
@@ -462,7 +462,7 @@ function ParcelCard({
               <label className="block text-xs font-medium text-harken-gray dark:text-slate-400 mb-1.5 flex items-center gap-2">
                 Tax ID / Parcel Number
                 {isTaxIdSynced && (
-                  <span className="text-[10px] bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 px-1.5 py-0.5 rounded font-normal">From Setup</span>
+                  <span className="text-[10px] bg-accent-cyan/10 dark:bg-accent-cyan/20 text-accent-cyan dark:text-cyan-400 px-1.5 py-0.5 rounded font-normal">From Setup</span>
                 )}
               </label>
               <input
@@ -470,15 +470,15 @@ function ParcelCard({
                 value={parcel.parcelNumber}
                 onChange={(e) => onUpdate({ parcelNumber: e.target.value })}
                 placeholder="e.g., 12-345-678"
-                className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white ${isTaxIdSynced ? 'border-blue-200 dark:border-blue-700 bg-blue-50 dark:bg-blue-900/20' : 'border-light-border dark:border-harken-gray'
+                className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white ${isTaxIdSynced ? 'border-accent-cyan dark:border-accent-cyan/60' : 'border-light-border dark:border-harken-gray'
                   }`}
               />
             </div>
             <div>
               <label className="block text-xs font-medium text-harken-gray dark:text-slate-400 mb-1.5 flex items-center gap-2">
-                Situs Address
+                Site Address
                 {isAddressSynced && (
-                  <span className="text-[10px] bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 px-1.5 py-0.5 rounded font-normal">From Setup</span>
+                  <span className="text-[10px] bg-accent-cyan/10 dark:bg-accent-cyan/20 text-accent-cyan dark:text-cyan-400 px-1.5 py-0.5 rounded font-normal">From Setup</span>
                 )}
               </label>
               <input
@@ -486,7 +486,7 @@ function ParcelCard({
                 value={parcel.address || ''}
                 onChange={(e) => onUpdate({ address: e.target.value })}
                 placeholder="Street address"
-                className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white ${isAddressSynced ? 'border-blue-200 dark:border-blue-700 bg-blue-50 dark:bg-blue-900/20' : 'border-light-border dark:border-harken-gray'
+                className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white ${isAddressSynced ? 'border-accent-cyan dark:border-accent-cyan/60' : 'border-light-border dark:border-harken-gray'
                   }`}
               />
             </div>
@@ -496,7 +496,7 @@ function ParcelCard({
             <label className="block text-xs font-medium text-harken-gray dark:text-slate-400 mb-1.5 flex items-center gap-2">
               Legal Description
               {isLegalDescSynced && (
-                <span className="text-[10px] bg-blue-100 text-blue-700 dark:bg-blue-900/40 dark:text-blue-300 px-1.5 py-0.5 rounded font-normal">From Setup</span>
+                <span className="text-[10px] bg-accent-cyan/10 dark:bg-accent-cyan/20 text-accent-cyan dark:text-cyan-400 px-1.5 py-0.5 rounded font-normal">From Setup</span>
               )}
             </label>
             <input
@@ -504,7 +504,7 @@ function ParcelCard({
               value={parcel.legalDescription || ''}
               onChange={(e) => onUpdate({ legalDescription: e.target.value })}
               placeholder="e.g., Lot 1, Block 2, Canyon Creek Industrial Park"
-              className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white ${isLegalDescSynced ? 'border-blue-200 bg-blue-50 dark:border-blue-700 dark:bg-blue-900/20' : 'border-light-border dark:border-harken-gray'
+              className={`w-full px-4 py-2.5 border rounded-xl text-sm focus:ring-2 focus:ring-accent-cyan focus:border-transparent bg-surface-1 dark:bg-elevation-1 dark:text-white ${isLegalDescSynced ? 'border-accent-cyan dark:border-accent-cyan/60' : 'border-light-border dark:border-harken-gray'
                 }`}
             />
           </div>
@@ -641,7 +641,7 @@ function BuildingCard({
 
   return (
     <div className="bg-harken-gray-light dark:bg-elevation-1/50 border border-light-border dark:border-dark-border rounded-xl overflow-hidden">
-      <div className="px-4 py-3 flex items-center justify-between cursor-pointer hover:bg-harken-gray-light dark:hover:bg-elevation-3 transition-colors" onClick={onToggle}>
+      <div className="px-4 py-3 flex items-center justify-between cursor-pointer transition-colors" onClick={onToggle}>
         <div className="flex items-center gap-3">
           {isExpanded ? <ChevronDown className="w-4 h-4 text-harken-gray-med" /> : <ChevronRight className="w-4 h-4 text-harken-gray-med" />}
           <div className="w-8 h-8 rounded-lg bg-harken-dark/10 dark:bg-elevation-1 flex items-center justify-center">
