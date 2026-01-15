@@ -6,12 +6,12 @@
  */
 
 import { useState, useEffect } from 'react';
-import { 
-  TrendingUp, 
+import {
+  TrendingUp,
   TrendingDown,
   Minus,
-  Loader2, 
-  AlertCircle, 
+  Loader2,
+  AlertCircle,
   RefreshCw,
   BarChart3,
   Percent,
@@ -50,16 +50,15 @@ function IndicatorCard({ title, icon, series, chartStyle, color, unit = '%' }: I
           <div className="p-1.5 rounded-lg bg-surface-3 dark:bg-elevation-subtle" style={{ color }}>
             {icon}
           </div>
-          <span className="font-medium text-slate-700 text-sm">{title}</span>
+          <span className="font-medium text-slate-700 dark:text-slate-200 text-sm">{title}</span>
         </div>
         <div className="flex items-center gap-2">
           <span className="text-lg font-bold text-slate-800 dark:text-white">
             {formatRate(series.current)}
           </span>
           {change !== 0 && (
-            <span className={`flex items-center gap-0.5 text-xs ${
-              change > 0 ? 'text-accent-teal-mint' : 'text-harken-error'
-            }`}>
+            <span className={`flex items-center gap-0.5 text-xs ${change > 0 ? 'text-accent-teal-mint' : 'text-harken-error'
+              }`}>
               {change > 0 ? <TrendingUp className="w-3 h-3" /> : <TrendingDown className="w-3 h-3" />}
               {Math.abs(change).toFixed(2)}
             </span>
@@ -85,10 +84,9 @@ function IndicatorCard({ title, icon, series, chartStyle, color, unit = '%' }: I
       <div className="px-4 py-2 bg-surface-2 dark:bg-elevation-2 border-t border-light-border dark:border-dark-border flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
         <span>
           Trend: {' '}
-          <span className={`font-medium ${
-            trend === 'rising' ? 'text-accent-teal-mint' : 
-            trend === 'falling' ? 'text-harken-error' : 'text-slate-600'
-          }`}>
+          <span className={`font-medium ${trend === 'rising' ? 'text-accent-teal-mint' :
+              trend === 'falling' ? 'text-harken-error' : 'text-slate-600'
+            }`}>
             {trend.charAt(0).toUpperCase() + trend.slice(1)}
           </span>
         </span>
@@ -98,10 +96,10 @@ function IndicatorCard({ title, icon, series, chartStyle, color, unit = '%' }: I
   );
 }
 
-export function EconomicIndicatorsPanel({ 
+export function EconomicIndicatorsPanel({
   className = '',
   onDataLoaded,
-  onChartStyleChange 
+  onChartStyleChange
 }: EconomicIndicatorsPanelProps) {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -115,7 +113,7 @@ export function EconomicIndicatorsPanel({
 
     try {
       const response = await getEconomicIndicators();
-      
+
       if (response.success && response.data) {
         setData(response.data);
         setAsOfDate(response.asOfDate);
@@ -252,12 +250,12 @@ export function EconomicIndicatorsPanel({
 
       {/* Summary Card */}
       <div className="bg-surface-2 dark:bg-elevation-2 rounded-xl border border-light-border dark:border-dark-border p-4">
-        <h4 className="font-medium text-slate-700 mb-2">Economic Context Summary</h4>
-        <p className="text-sm text-slate-600 leading-relaxed">
-          Current economic conditions show the Federal Funds Rate at {formatRate(data.federalFundsRate.current)}, 
-          with the 10-Year Treasury yield at {formatRate(data.treasury10Y.current)}. 
-          Year-over-year inflation stands at {formatRate(data.inflation.current, 1)}, 
-          and GDP growth is {formatRate(data.gdpGrowth.current, 1)}. 
+        <h4 className="font-medium text-slate-700 dark:text-slate-200 mb-2">Economic Context Summary</h4>
+        <p className="text-sm text-slate-600 dark:text-slate-300 leading-relaxed">
+          Current economic conditions show the Federal Funds Rate at {formatRate(data.federalFundsRate.current)},
+          with the 10-Year Treasury yield at {formatRate(data.treasury10Y.current)}.
+          Year-over-year inflation stands at {formatRate(data.inflation.current, 1)},
+          and GDP growth is {formatRate(data.gdpGrowth.current, 1)}.
           These indicators inform cap rate analysis and investment risk assessment for the subject property.
         </p>
       </div>
