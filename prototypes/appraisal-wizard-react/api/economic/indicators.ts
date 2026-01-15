@@ -39,12 +39,12 @@ export default async function handler(
 
   try {
     // Fetch all economic indicators in parallel
-    // Fetching annual data ('a') for the last 11 years (Current + 10 history)
+    // Fetching annual data ('a') for the last 21 years (Current + 20 history) to ensure robust chart history
     const [fedFunds, treasury, cpi, gdp] = await Promise.all([
-      getFredData(FRED_SERIES.FEDERAL_FUNDS_RATE, 11, 'a'),
-      getFredData(FRED_SERIES.TREASURY_10Y, 11, 'a'),
-      getFredData(FRED_SERIES.CPI, 11, 'a'),
-      getFredData(FRED_SERIES.GDP, 11, 'a'),
+      getFredData(FRED_SERIES.FEDERAL_FUNDS_RATE, 21, 'a'),
+      getFredData(FRED_SERIES.TREASURY_10Y, 21, 'a'),
+      getFredData(FRED_SERIES.CPI, 21, 'a'),
+      getFredData(FRED_SERIES.GDP, 21, 'a'),
     ]);
 
     // Debug logging
@@ -80,15 +80,15 @@ export default async function handler(
       data: {
         federalFundsRate: {
           current: fedFunds.observations[0]?.value || 0,
-          history: fedFunds.observations.slice(0, 10),
+          history: fedFunds.observations.slice(0, 20),
         },
         treasury10Y: {
           current: treasury.observations[0]?.value || 0,
-          history: treasury.observations.slice(0, 10),
+          history: treasury.observations.slice(0, 20),
         },
         inflation: {
           current: Math.round(inflationRate * 100) / 100,
-          history: cpi.observations.slice(0, 10).map((obs, i) => {
+          history: cpi.observations.slice(0, 20).map((obs, i) => {
             const prevIdx = i + 1;
             const prevValue = cpi.observations[prevIdx]?.value;
             // Only calculate if we have previous year data
@@ -104,7 +104,7 @@ export default async function handler(
         },
         gdpGrowth: {
           current: Math.round(gdpGrowth * 100) / 100,
-          history: gdp.observations.slice(0, 10).map((obs, i) => {
+          history: gdp.observations.slice(0, 20).map((obs, i) => {
             const prevIdx = i + 1;
             const prevValue = gdp.observations[prevIdx]?.value;
             // Only calculate if we have previous year data
@@ -134,6 +134,3 @@ export default async function handler(
     });
   }
 }
-
-
-
