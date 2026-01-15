@@ -2,37 +2,76 @@
  * AddendaPage Component
  * 
  * Displays uploaded documents in the report preview as an Addenda section.
- * Shows document list with classification, source info, and toggle for inclusion.
+ * Renders actual document content:
+ * - Images are rendered full size (fit to page)
+ * - PDFs are rendered with a 2-up layout (2 document pages per report page)
+ * 
+ * Uses pdfjs-dist for client-side PDF rendering.
  */
 
-import { FileText, Eye, Check, X } from 'lucide-react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { useWizard } from '../../../context/WizardContext';
 import type { UploadedDocument } from '../../../types';
+import * as pdfjsLib from 'pdfjs-dist';
 
-// Helper to format document type labels
-function formatDocumentType(docType?: string): string {
-  const typeLabels: Record<string, string> = {
-    cadastral: 'Cadastral / County Records',
-    engagement: 'Engagement Letter',
-    sale: 'Sale Agreement',
-    lease: 'Lease Agreement',
-    rentroll: 'Rent Roll',
-    survey: 'Survey / Plat Map',
-    tax_return: 'Tax Return',
-    financial_statement: 'Financial Statement',
-    deed: 'Property Deed',
-    flood_map: 'FEMA Flood Map',
-    tax_assessment: 'Tax Assessment',
-    unknown: 'Document',
-  };
-  return typeLabels[docType || 'unknown'] || docType || 'Document';
-}
+// Define styles for the report page to match exactly the dimensions required
+const PAGE_WIDTH_IN = 8.5;
+const PAGE_HEIGHT_IN = 11;
 
-// Helper to format file size
-function formatFileSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
-  if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-  return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
+// Styles
+const styles = {
+  pageContainer: {
+    minHeight: '11in',
+    width: '8.5in',
+    backgroundColor: '#ffffff',
+    position: 'relative' as const,
+    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
+    borderRadius: '0.5rem',
+    overflow: 'hidden',
+    marginBottom: '2rem', // Spacing between pages in the editor
+  },
+  sidebar: {
+    backgroundColor: '#0da1c7',
+    color: 'white',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative' as const,
+  },
+  sidebarText: {
+    transform: 'rotate(-90deg)',
+    whiteSpace: 'nowrap' as const,
+    fontSize: '0.875rem',
+    fontWeight: 500,
+    letterSpacing: '0.05em',
+    width: '200px',
+    textAlign: 'center' as const,
+  },
+  pageNumber: {
+    position: 'absolute' as const,
+    top: '2rem',
+    textAlign: 'center' as const,
+    fontSize: '0.75rem',
+    fontWeight: 700,
+    letterSpacing: '0.05em',
+  },
+  badge: {
+    position: 'absolute' as const,
+    top: '0.5rem',
+    right: '0.5rem',
+    backgroundColor: '#0da1c7',
+    color: 'white',
+    padding: '0.25rem 1rem',
+    borderRadius: '0.25rem',
+    fontSize: '0.75rem',
+    fontWeight: 600,
+  }
+};
+
+interface ExtendedUploadedDocument extends UploadedDocument {
+  file?: File;
+  preview?: string;
+  url?: string;
 }
 
 interface AddendaPageProps {
@@ -41,179 +80,306 @@ interface AddendaPageProps {
 }
 
 export function AddendaPage({ selectedElement, onSelectElement }: AddendaPageProps) {
-  const { state, dispatch } = useWizard();
-  const documents = state.uploadedDocuments || [];
+  const { state } = useWizard();
+  // Filter for docs that are explicitly NOT excluded (true or undefined means included)
+  const documents = useMemo(() =>
+    (state.uploadedDocuments || []).filter(d => d.includeInReport !== false) as ExtendedUploadedDocument[],
+    [state.uploadedDocuments]);
 
-  // Toggle document inclusion in report
-  const toggleDocumentInclusion = (docId: string) => {
-    const doc = documents.find(d => d.id === docId);
-    if (doc) {
-      dispatch({
-        type: 'UPDATE_UPLOADED_DOCUMENT',
-        payload: {
-          id: docId,
-          updates: { includeInReport: !doc.includeInReport },
-        },
-      });
-    }
-  };
-
-  // Count included documents
-  const includedCount = documents.filter(d => d.includeInReport !== false).length;
+  // If no documents, render a single placeholder page
+  if (documents.length === 0) {
+    return (
+      <AddendaPageLayout title="Supporting Documents">
+        <div className="flex flex-col items-center justify-center h-full text-slate-400">
+          <p className="mb-2">No documents included in addenda.</p>
+          <p className="text-xs">Upload documents in the "Exhibits" section.</p>
+        </div>
+      </AddendaPageLayout>
+    );
+  }
 
   return (
-    <div className="bg-surface-1 shadow-lg rounded-lg overflow-hidden" style={{ minHeight: '11in', width: '8.5in' }}>
-      <div className="grid grid-cols-[80px_1fr]" style={{ minHeight: '11in' }}>
-        {/* Teal Sidebar - matches report theme */}
-        <div className="text-white flex items-center justify-center relative" style={{ backgroundColor: '#0da1c7' }}>
-          <div className="absolute top-8 text-center">
-            <span className="text-xs font-bold tracking-wider">11</span>
+    <>
+      {documents.map((doc, index) => (
+        <DocumentRenderer
+          key={doc.id}
+          document={doc}
+          docIndex={index}
+          totalDocs={documents.length}
+        />
+      ))}
+    </>
+  );
+}
+
+// ==========================================
+// Layout Shell
+// ==========================================
+
+interface AddendaPageLayoutProps {
+  children: React.ReactNode;
+  title?: string;
+  subTitle?: string;
+}
+
+function AddendaPageLayout({ children, title, subTitle }: AddendaPageLayoutProps) {
+  return (
+    <div style={styles.pageContainer}>
+      <div className="grid grid-cols-[80px_1fr] h-full" style={{ minHeight: '11in' }}>
+        {/* Sidebar */}
+        <div style={styles.sidebar}>
+          <div style={styles.pageNumber}>
+            <span>ADDENDA</span>
           </div>
-          <div
-            className="transform -rotate-90 whitespace-nowrap text-sm font-medium tracking-wider"
-            style={{ width: '200px', textAlign: 'center' }}
-          >
-            ADDENDA
+          <div style={styles.sidebarText}>
+            SUPPORTING DOCUMENTS
           </div>
         </div>
 
         {/* Main Content */}
-        <div className="p-10 relative">
-          {/* Section Badge */}
-          <div className="absolute top-2 right-2 text-white px-4 py-2 rounded text-xs font-semibold" style={{ backgroundColor: '#0da1c7' }}>
+        <div className="relative p-8 h-full flex flex-col">
+          {/* Header Badge */}
+          <div style={styles.badge}>
             ADDENDA
           </div>
 
-          <h2 className="text-2xl font-light text-harken-gray mb-2 mt-8">Supporting Documents</h2>
-          <p className="text-sm text-harken-gray-med mb-6">
-            The following documents were provided in connection with this appraisal assignment.
-          </p>
-
-          {documents.length === 0 ? (
-            <div className="text-center py-12 bg-harken-gray-light rounded-lg border border-light-border">
-              <FileText className="w-12 h-12 text-harken-gray-med mx-auto mb-3" />
-              <p className="text-harken-gray-med">No documents have been uploaded.</p>
-              <p className="text-sm text-harken-gray-med mt-1">
-                Upload documents in the Document Intake section to include them in the report.
-              </p>
+          {/* Header Content */}
+          {(title || subTitle) && (
+            <div className="mb-6 mt-4 border-b border-slate-200 pb-4">
+              {title && <h2 className="text-2xl font-light text-harken-gray mb-1">{title}</h2>}
+              {subTitle && <div className="text-sm font-medium text-slate-500">{subTitle}</div>}
             </div>
+          )}
+
+          {/* Body */}
+          <div className="flex-1 min-h-0">
+            {children}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ==========================================
+// Document Renderer (Dispatcher)
+// ==========================================
+
+function DocumentRenderer({ document, docIndex, totalDocs }: { document: ExtendedUploadedDocument, docIndex: number, totalDocs: number }) {
+  const isPdf = document.type === 'application/pdf' || document.name.toLowerCase().endsWith('.pdf');
+  const isImage = document.type.startsWith('image/') || /\.(jpg|jpeg|png|webp)$/i.test(document.name);
+
+  if (isPdf) {
+    return <PdfDocumentResolver document={document} docIndex={docIndex} />;
+  }
+
+  if (isImage) {
+    return (
+      <AddendaPageLayout
+        title={docIndex === 0 ? "Supporting Documents" : undefined}
+        subTitle={`${document.name} (${document.documentType})`}
+      >
+        <div className="w-full h-full flex items-center justify-center p-4">
+          {document.preview || document.url ? (
+            <img
+              src={document.preview || document.url}
+              alt={document.name}
+              className="max-w-full max-h-[800px] object-contain shadow-sm border border-slate-100"
+            />
           ) : (
-            <>
-              {/* Summary */}
-              <div className="rounded-lg p-4 mb-6" style={{ backgroundColor: 'rgba(13, 161, 199, 0.1)', border: '1px solid #0da1c7' }}>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <span className="font-semibold" style={{ color: '#0da1c7' }}>{includedCount}</span>
-                    <span className="text-sm ml-1" style={{ color: '#0da1c7' }}>
-                      of {documents.length} documents included in report
-                    </span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Documents Grid */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                {documents.map((doc) => (
-                  <DocumentCard
-                    key={doc.id}
-                    document={doc}
-                    isSelected={selectedElement === `doc-${doc.id}`}
-                    onSelect={() => onSelectElement(`doc-${doc.id}`)}
-                    onToggleInclude={() => toggleDocumentInclusion(doc.id)}
-                  />
-                ))}
-              </div>
-
-              {/* Footer Note */}
-              <div className="mt-6 text-xs text-harken-gray-med text-center">
-                Documents marked for inclusion will appear in the final report addenda.
-                <br />
-                Original documents are available upon request.
-              </div>
-            </>
+            <div className="text-red-400">Image source not available</div>
           )}
         </div>
+      </AddendaPageLayout>
+    );
+  }
+
+  // Fallback for unknown types
+  return (
+    <AddendaPageLayout title={document.name}>
+      <div className="p-4 border border-dashed border-slate-300 rounded bg-slate-50 text-center">
+        <p>Preview not available for this file type.</p>
+        <p className="text-xs text-slate-500 mt-1">{document.name}</p>
       </div>
-    </div>
+    </AddendaPageLayout>
   );
 }
 
-// Individual document card
-interface DocumentCardProps {
-  document: UploadedDocument;
-  isSelected: boolean;
-  onSelect: () => void;
-  onToggleInclude: () => void;
+// ==========================================
+// PDF Resolver & Renderer
+// ==========================================
+
+function PdfDocumentResolver({ document, docIndex }: { document: ExtendedUploadedDocument, docIndex: number }) {
+  const [numPages, setNumPages] = useState<number | null>(null);
+  const [pdfDoc, setPdfDoc] = useState<any>(null);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const loadPdf = async () => {
+      try {
+        // Initialize worker
+        const pdfjsWorker = await import('pdfjs-dist/build/pdf.worker.min.mjs?url');
+        pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker.default;
+
+        // Get source
+        const src = document.file ? await document.file.arrayBuffer() : (document.url || document.preview);
+
+        if (!src) throw new Error("No PDF source available");
+
+        const loadingTask = pdfjsLib.getDocument(document.file ? { data: src } : src);
+        const pdf = await loadingTask.promise;
+
+        if (isMounted) {
+          setPdfDoc(pdf);
+          setNumPages(pdf.numPages);
+        }
+      } catch (err: any) {
+        console.error("PDF Load Error:", err);
+        if (isMounted) setError(err.message || "Failed to load PDF");
+      }
+    };
+
+    loadPdf();
+
+    return () => { isMounted = false; };
+  }, [document]);
+
+  if (error) {
+    return (
+      <AddendaPageLayout title={document.name} subTitle="Error Loading Document">
+        <div className="text-red-500 p-4">{error}</div>
+      </AddendaPageLayout>
+    );
+  }
+
+  if (!numPages || !pdfDoc) {
+    return (
+      <AddendaPageLayout title={document.name}>
+        <div className="flex items-center justify-center h-64">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#0da1c7]"></div>
+          <span className="ml-3 text-slate-500">Processing document...</span>
+        </div>
+      </AddendaPageLayout>
+    );
+  }
+
+  // Calculate layout pages (2 PDF pages per Report Page)
+  const reportPageCount = Math.ceil(numPages / 2);
+  const pages = [];
+
+  for (let i = 0; i < reportPageCount; i++) {
+    const pageIndex1 = (i * 2) + 1; // 1-based index
+    const pageIndex2 = (i * 2) + 2;
+
+    pages.push(
+      <AddendaPageLayout
+        key={`pdf-group-${i}`}
+        // Only show main title on the very first page of the Addenda section (conceptually)
+        // Check local demand: user might want title on every doc start.
+        title={i === 0 ? "Supporting Documents" : undefined}
+        subTitle={`${document.name} - Page ${pageIndex1}${pageIndex2 <= numPages ? ` & ${pageIndex2}` : ''}`}
+      >
+        <div className="flex flex-col gap-8 h-full pt-2">
+          {/* Top Page (Page N) */}
+          <div className="flex-1 flex flex-col min-h-0 border border-slate-200 shadow-sm bg-slate-50 overflow-hidden relative">
+            <PdfPageCanvas pdfDoc={pdfDoc} pageNumber={pageIndex1} />
+            <div className="absolute bottom-2 right-2 bg-white/80 px-2 py-0.5 text-[10px] rounded text-slate-500">
+              Page {pageIndex1}
+            </div>
+          </div>
+
+          {/* Bottom Page (Page N+1) - Only if exists */}
+          {pageIndex2 <= numPages && (
+            <div className="flex-1 flex flex-col min-h-0 border border-slate-200 shadow-sm bg-slate-50 overflow-hidden relative">
+              <PdfPageCanvas pdfDoc={pdfDoc} pageNumber={pageIndex2} />
+              <div className="absolute bottom-2 right-2 bg-white/80 px-2 py-0.5 text-[10px] rounded text-slate-500">
+                Page {pageIndex2}
+              </div>
+            </div>
+          )}
+
+          {/* Spacer if odd number of pages to keep top page sized correctly */}
+          {pageIndex2 > numPages && (
+            <div className="flex-1 opacity-0 pointer-events-none"></div>
+          )}
+        </div>
+      </AddendaPageLayout>
+    );
+  }
+
+  return <>{pages}</>;
 }
 
-function DocumentCard({ document, isSelected, onSelect, onToggleInclude }: DocumentCardProps) {
-  const isIncluded = document.includeInReport !== false;
-  const hasExtractedData = document.extractedData && Object.keys(document.extractedData).length > 0;
+// ==========================================
+// Low-Level Canvas Renderer
+// ==========================================
+
+function PdfPageCanvas({ pdfDoc, pageNumber }: { pdfDoc: any, pageNumber: number }) {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let renderTask: any = null;
+
+    const render = async () => {
+      if (!canvasRef.current || !containerRef.current || !pdfDoc) return;
+
+      try {
+        const page = await pdfDoc.getPage(pageNumber);
+
+        // Calculate scale to fit container width
+        // We want high quality, so we render at 2x and scale down with CSS
+        const containerWidth = containerRef.current.clientWidth;
+        const containerHeight = containerRef.current.clientHeight;
+
+        // Get natural aspect ratio
+        const initialViewport = page.getViewport({ scale: 1.0 });
+        const aspectRatio = initialViewport.width / initialViewport.height;
+
+        // Determine best scale to fit containment
+        // We want to fit within the container bounds
+        // Usually width-constrained
+        const scale = (containerWidth * 2) / initialViewport.width; // 2x density
+
+        const viewport = page.getViewport({ scale });
+
+        const canvas = canvasRef.current;
+        const context = canvas.getContext('2d');
+        if (!context) return;
+
+        canvas.width = viewport.width;
+        canvas.height = viewport.height;
+
+        // Render
+        renderTask = page.render({
+          canvasContext: context,
+          viewport,
+        });
+
+        await renderTask.promise;
+      } catch (err: any) {
+        if (err.name !== 'RenderingCancelledException') {
+          console.error(`Error rendering page ${pageNumber}`, err);
+        }
+      }
+    };
+
+    render();
+
+    return () => {
+      if (renderTask) renderTask.cancel();
+    };
+  }, [pdfDoc, pageNumber]);
 
   return (
-    <div
-      className={`border rounded-lg p-3 cursor-pointer transition-all hover:shadow-md ${isSelected
-          ? 'bg-blue-50 border-[#0da1c7] ring-1 ring-[#0da1c7]'
-          : 'bg-white border-light-border hover:border-harken-gray-med'
-        }`}
-      onClick={onSelect}
-    >
-      <div className="flex items-start justify-between gap-3">
-        {/* Icon & Details */}
-        <div className="flex items-start gap-3 flex-1 min-w-0">
-          <div className="p-2 bg-harken-gray-light rounded-lg flex-shrink-0">
-            <FileText className="w-6 h-6 text-harken-gray-med" />
-          </div>
-
-          <div className="min-w-0">
-            <div className="text-sm font-medium text-harken-dark truncate" title={document.name}>
-              {document.name}
-            </div>
-
-            <div className="flex flex-wrap items-center gap-2 mt-1">
-              <span className="inline-flex px-1.5 py-0.5 rounded text-[10px] font-medium bg-harken-gray-light text-harken-gray border border-gray-200">
-                {formatDocumentType(document.documentType)}
-              </span>
-              <span className="text-[10px] text-harken-gray-med">
-                {formatFileSize(document.size)}
-              </span>
-            </div>
-
-            {/* Status Indicator */}
-            <div className="mt-2 flex items-center gap-2">
-              {document.status === 'extracted' ? (
-                <span className="inline-flex items-center gap-1 text-[10px] font-medium text-green-600">
-                  <Check className="w-3 h-3" />
-                  Processed
-                </span>
-              ) : document.status === 'error' ? (
-                <span className="inline-flex items-center gap-1 text-[10px] font-medium text-harken-error">
-                  <X className="w-3 h-3" />
-                  Error
-                </span>
-              ) : null}
-            </div>
-          </div>
-        </div>
-
-        {/* Include Toggle */}
-        <button
-          type="button"
-          onClick={(e) => {
-            e.stopPropagation();
-            onToggleInclude();
-          }}
-          className={`flex-shrink-0 w-6 h-6 rounded border-2 flex items-center justify-center transition-colors ${isIncluded
-              ? 'bg-[#0da1c7] border-[#0da1c7] text-white'
-              : 'bg-white border-light-border text-transparent hover:border-harken-gray-med'
-            }`}
-          title={isIncluded ? "Included in report" : "Click to include"}
-        >
-          <Check className="w-3.5 h-3.5" />
-        </button>
-      </div>
+    <div ref={containerRef} className="w-full h-full flex items-center justify-center p-2">
+      <canvas
+        ref={canvasRef}
+        className="max-w-full max-h-full shadow-sm object-contain"
+        style={{ width: 'auto', height: 'auto' }}
+      />
     </div>
   );
 }
-
-export default AddendaPage;
