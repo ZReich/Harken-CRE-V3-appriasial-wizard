@@ -12,12 +12,8 @@ import {
   Minus,
   Loader2,
   AlertCircle,
-  RefreshCw,
-  BarChart3,
-  Percent,
-  DollarSign,
-  Activity
-} from 'lucide-react';
+import { TrendingUp, TrendingDown, Target, Activity, Flame, DollarSign, Minus, Loader2, AlertCircle, RefreshCw, BarChart3, Percent } from 'lucide-react';
+import { useThemeColors } from '../hooks/useThemeColors';
 import { getEconomicIndicators, formatRate, getTrend } from '../services/economicService';
 import EconomicChart from './EconomicChart';
 import ChartStyleSelector, { type ChartStyle } from './ChartStyleSelector';
@@ -38,22 +34,24 @@ interface IndicatorCardProps {
   unit?: string;
 }
 
-function IndicatorCard({ title, icon, series, chartStyle, color, unit = '%' }: IndicatorCardProps) {
+const IndicatorCard = ({ title, series, icon, color, chartStyle, unit = '%' }: { title: string; series: any; icon: React.ReactNode; color: string; chartStyle: any; unit?: string }) => {
+  const colors = useThemeColors();
   const trend = getTrend(series.history);
-  const previousValue = series.history[1]?.value;
-  const change = previousValue ? series.current - previousValue : 0;
+  const change = series.history && series.history.length > 1
+    ? series.current - series.history[1].value
+    : 0;
 
   return (
-    <div className="bg-surface-1 dark:bg-elevation-1 rounded-xl border border-light-border dark:border-dark-border dark:border-dark-border overflow-hidden">
-      <div className="px-4 py-3 border-b border-light-border dark:border-dark-border flex items-center justify-between">
+    <div className="p-4 rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col h-full">
+      <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <div className="p-1.5 rounded-lg bg-surface-3 dark:bg-elevation-subtle" style={{ color }}>
             {icon}
           </div>
-          <span className="font-medium text-slate-700 dark:text-slate-200 text-sm">{title}</span>
+          <span className="font-medium text-sm" style={{ color: colors.text.primary }}>{title}</span>
         </div>
         <div className="flex items-center gap-2">
-          <span className="text-lg font-bold text-slate-800 dark:text-white">
+          <span className="text-lg font-bold" style={{ color: colors.text.primary }}>
             {formatRate(series.current)}
           </span>
           {change !== 0 && (

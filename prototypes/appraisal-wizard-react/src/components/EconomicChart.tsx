@@ -24,7 +24,7 @@ import {
   Cell,
 } from 'recharts';
 import type { ChartStyle } from './ChartStyleSelector';
-import { useChartColors } from '../hooks/useThemeColors';
+import { useThemeColors, useChartColors } from '../hooks/useThemeColors';
 
 interface DataPoint {
   date: string;
@@ -90,11 +90,13 @@ export function EconomicChart({
   showAxis = true,
   textColor,
 }: EconomicChartProps) {
+  const colors = useThemeColors();
   const chartColors = useChartColors();
   // Use provided color or default to theme-aware primary
   const primaryColor = color || chartColors.primary;
-  // Use provided text color or default
-  const labelColor = textColor || '#64748b';
+  // Use theme-aware text colors
+  const textPrimary = colors.text.primary;
+  const textSecondary = colors.text.secondary;
   if (!rawData || rawData.length === 0) {
     return (
       <div
@@ -120,8 +122,8 @@ export function EconomicChart({
     return (
       <div className="relative">
         <div className="absolute top-0 right-0 text-right">
-          <span className="text-2xl font-bold text-slate-800 dark:text-white">{currentValue?.toFixed(2)}{unit}</span>
-          <p className="text-xs text-slate-500 dark:text-slate-400">{title}</p>
+          <span className="text-2xl font-bold" style={{ color: textPrimary }}>{currentValue?.toFixed(2)}{unit}</span>
+          <p className="text-xs" style={{ color: textSecondary }}>{title}</p>
         </div>
         <ResponsiveContainer width="100%" height={height}>
           <AreaChart data={data} margin={{ top: 40, right: 80, left: 0, bottom: 0 }}>
@@ -142,7 +144,7 @@ export function EconomicChart({
               <XAxis
                 dataKey="date"
                 tickFormatter={formatDate}
-                tick={{ fontSize: 10, fill: textColor || chartColors.axis || labelColor }}
+                tick={{ fontSize: 10, fill: textColor || chartColors.axis || textSecondary }}
                 axisLine={false}
                 tickLine={false}
               />
