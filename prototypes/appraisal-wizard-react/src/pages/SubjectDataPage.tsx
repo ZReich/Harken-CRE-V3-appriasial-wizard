@@ -187,7 +187,7 @@ const photoCategories: PhotoCategory[] = [
 export type { PhotoData } from '../types';
 
 export default function SubjectDataPage() {
-  const { state: wizardState, setSubjectData, setSiteImprovements, setReportPhotos } = useWizard();
+  const { state: wizardState, setSubjectData, setSiteImprovements, setReportPhotos, addUploadedDocument } = useWizard();
   const [activeTab, setActiveTab] = useState('location');
 
   // Location tab state - initialize from WizardContext
@@ -624,14 +624,14 @@ export default function SubjectDataPage() {
 
     // Sync to WizardContext for Report Preview
     // We create a proper UploadedDocument object
-    const newDoc: import('../types').UploadedDocument = {
+    const newDoc = {
       id: slotId.startsWith('exhibit_') ? slotId : `exhibit_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
       file,
       name: file.name,
       size: file.size,
       type: file.type,
       documentType: 'unknown', // Custom exhibits are generic by default
-      status: 'ready',
+      status: 'extracted' as const,
       includeInReport: true,
       uploadDate: new Date().toISOString(),
       slotId: 'custom_exhibit', // Mark as custom
