@@ -54,6 +54,7 @@ interface WizardContextValue {
   setExtractedData: (slotId: string, data: ExtractedData) => void;
   getExtractedField: (slotId: string, field: string) => string | undefined;
   addUploadedDocument: (doc: UploadedDocument) => void;
+  updateUploadedDocument: (id: string, updates: Partial<UploadedDocument>) => void;
 
   // Document field source tracking helpers
   applyDocumentExtractedData: (documentId: string, documentName: string, documentType: string, fields: Record<string, { value: string; confidence: number }>) => void;
@@ -285,6 +286,10 @@ export function WizardProvider({ children }: { children: ReactNode }) {
 
   const addUploadedDocument = useCallback((doc: UploadedDocument) => {
     dispatch({ type: 'ADD_UPLOADED_DOCUMENT', payload: doc });
+  }, []);
+
+  const updateUploadedDocument = useCallback((id: string, updates: Partial<UploadedDocument>) => {
+    dispatch({ type: 'UPDATE_UPLOADED_DOCUMENT', payload: { id, updates } });
   }, []);
 
   // Document field source tracking helpers
@@ -714,7 +719,7 @@ export function WizardProvider({ children }: { children: ReactNode }) {
   }, [state.propertyComponents]);
 
   const getExcessLandComponents = useCallback(() => {
-    return (state.propertyComponents || []).filter(c => 
+    return (state.propertyComponents || []).filter(c =>
       c.landClassification === 'excess' || c.landClassification === 'surplus'
     );
   }, [state.propertyComponents]);
@@ -905,6 +910,7 @@ export function WizardProvider({ children }: { children: ReactNode }) {
         setExtractedData,
         getExtractedField,
         addUploadedDocument,
+        updateUploadedDocument,
         // Document field source tracking
         applyDocumentExtractedData,
         getFieldSource,

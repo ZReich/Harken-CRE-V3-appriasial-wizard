@@ -204,6 +204,7 @@ function DocumentRenderer({ document, docIndex, totalDocs }: { document: Uploade
 // ==========================================
 
 function PdfDocumentResolver({ document, docIndex }: { document: UploadedDocument, docIndex: number }) {
+  const { updateUploadedDocument } = useWizard();
   const [numPages, setNumPages] = useState<number | null>(null);
   const [pdfDoc, setPdfDoc] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
@@ -228,6 +229,7 @@ function PdfDocumentResolver({ document, docIndex }: { document: UploadedDocumen
         if (isMounted) {
           setPdfDoc(pdf);
           setNumPages(pdf.numPages);
+          setError(null); // Clear error on success
         }
       } catch (err: any) {
         console.error("PDF Load Error:", err);
@@ -240,10 +242,51 @@ function PdfDocumentResolver({ document, docIndex }: { document: UploadedDocumen
     return () => { isMounted = false; };
   }, [document]);
 
+  const handleReupload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      const newPreview = URL.createObjectURL(file);
+
+      updateUploadedDocument(document.id, {
+        file,
+        preview: newPreview
+      });
+
+      // Force reset local state to ensure loading indicator shows immediately
+      setPdfDoc(null);
+      setNumPages(null);
+      setError(null);
+    }
+  };
+
   if (error) {
     return (
       <AddendaPageLayout title={document.name} subTitle="Error Loading Document">
-        <div className="text-red-500 p-4">{error}</div>
+        <div className="flex flex-col items-center justify-center p-8 text-center h-[500px] border-2 border-dashed border-red-100 rounded-lg bg-red-50/10">
+          <div className="text-red-500 font-medium mb-2 text-lg">Unable to View Document</div>
+          <p className="text-sm text-slate-500 mb-6 max-w-md">
+            The document source is missing from the current session (likely due to a page refresh).
+            Please reload the file to view it.
+          </p>
+
+          <input
+            type="file"
+            accept="application/pdf"
+            className="hidden"
+            id={`reload-${document.id}`}
+            onChange={handleReupload}
+          />
+          <label
+            htmlFor={`reload-${document.id}`}
+            className="px-6 py-2.5 bg-[#0da1c7] text-white font-medium rounded-lg hover:bg-[#0b8fb0] cursor-pointer shadow-sm transition-colors flex items-center gap-2"
+          >
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" /><polyline points="17 8 12 3 7 8" /><line x1="12" x2="12" y1="3" y2="15" /></svg>
+            Reload PDF to View
+          </label>
+          <p className="mt-4 text-xs text-slate-400">
+            (This won't create a duplicate, just restores the view)
+          </p>
+        </div>
       </AddendaPageLayout>
     );
   }
