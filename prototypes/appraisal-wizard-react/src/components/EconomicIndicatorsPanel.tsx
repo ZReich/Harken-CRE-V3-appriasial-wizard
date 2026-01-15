@@ -85,7 +85,7 @@ function IndicatorCard({ title, icon, series, chartStyle, color, unit = '%' }: I
         <span>
           Trend: {' '}
           <span className={`font-medium ${trend === 'rising' ? 'text-accent-teal-mint' :
-              trend === 'falling' ? 'text-harken-error' : 'text-slate-600'
+            trend === 'falling' ? 'text-harken-error' : 'text-slate-600'
             }`}>
             {trend.charAt(0).toUpperCase() + trend.slice(1)}
           </span>
