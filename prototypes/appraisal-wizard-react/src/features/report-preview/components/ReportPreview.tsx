@@ -81,23 +81,52 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
     }
   }, [totalPages, onPageChange, currentPage]);
 
+  const handleZoomUpdate = useCallback((newZoom: number) => {
+    const container = pagesContainerRef.current;
+    if (!container) {
+      setZoom(newZoom);
+      return;
+    }
+
+    // Capture current relative position (center of viewport)
+    const scrollTop = container.scrollTop;
+    const viewportHeight = container.clientHeight;
+    const scrollHeight = container.scrollHeight;
+
+    // Relative position of the center of the viewport (0 to 1)
+    const relativeCenter = (scrollTop + viewportHeight / 2) / scrollHeight;
+
+    setZoom(newZoom);
+
+    // Use requestAnimationFrame to wait for the browser to recalculate layout after React render
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        if (pagesContainerRef.current) {
+          const newScrollHeight = pagesContainerRef.current.scrollHeight;
+          const newScrollTop = (relativeCenter * newScrollHeight) - (viewportHeight / 2);
+          pagesContainerRef.current.scrollTop = newScrollTop;
+        }
+      });
+    });
+  }, []);
+
   const handleZoomIn = useCallback(() => {
     const currentIndex = ZOOM_LEVELS.indexOf(zoom);
     if (currentIndex < ZOOM_LEVELS.length - 1) {
-      setZoom(ZOOM_LEVELS[currentIndex + 1]);
+      handleZoomUpdate(ZOOM_LEVELS[currentIndex + 1]);
     }
-  }, [zoom]);
+  }, [zoom, handleZoomUpdate]);
 
   const handleZoomOut = useCallback(() => {
     const currentIndex = ZOOM_LEVELS.indexOf(zoom);
     if (currentIndex > 0) {
-      setZoom(ZOOM_LEVELS[currentIndex - 1]);
+      handleZoomUpdate(ZOOM_LEVELS[currentIndex - 1]);
     }
-  }, [zoom]);
+  }, [zoom, handleZoomUpdate]);
 
   const handleZoomChange = useCallback((e: React.ChangeEvent<HTMLSelectElement>) => {
-    setZoom(Number(e.target.value));
-  }, []);
+    handleZoomUpdate(Number(e.target.value));
+  }, [handleZoomUpdate]);
 
   const toggleFullscreen = useCallback(() => {
     if (!document.fullscreenElement) {
@@ -178,16 +207,14 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
     return () => observer.disconnect();
   }, [pages.length, handlePageChange]);
 
-  // Scroll to page when currentPage changes (explicitly) or zoom changes
+  // Scroll to page when currentPage changes (explicitly)
   useEffect(() => {
-    const zoomChanged = lastZoomRef.current !== zoom;
-
-    if (zoomChanged || shouldScrollRef.current) {
+    if (shouldScrollRef.current) {
       if (pagesContainerRef.current && pages.length > 0) {
         const pageElement = pagesContainerRef.current.children[currentPage - 1] as HTMLElement;
         if (pageElement) {
           pageElement.scrollIntoView({
-            behavior: zoomChanged ? 'auto' : 'smooth',
+            behavior: 'smooth',
             block: 'start'
           });
         }
