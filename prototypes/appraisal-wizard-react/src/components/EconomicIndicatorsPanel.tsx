@@ -6,12 +6,6 @@
  */
 
 import { useState, useEffect } from 'react';
-import {
-  TrendingUp,
-  TrendingDown,
-  Minus,
-  Loader2,
-  AlertCircle,
 import { TrendingUp, TrendingDown, Target, Activity, Flame, DollarSign, Minus, Loader2, AlertCircle, RefreshCw, BarChart3, Percent } from 'lucide-react';
 import { useThemeColors } from '../hooks/useThemeColors';
 import { getEconomicIndicators, formatRate, getTrend } from '../services/economicService';
