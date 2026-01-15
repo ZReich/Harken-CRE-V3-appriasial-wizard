@@ -60,18 +60,26 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
   const [showThumbnails, setShowThumbnails] = useState(true);
   const containerRef = useRef<HTMLDivElement>(null);
   const pagesContainerRef = useRef<HTMLDivElement>(null);
+  const lastZoomRef = useRef(zoom);
+  const shouldScrollRef = useRef(false);
 
   const currentPage = controlledPage ?? internalPage;
   const totalPages = pages.length;
 
-  const handlePageChange = useCallback((page: number) => {
+  const handlePageChange = useCallback((page: number, fromScroll = false) => {
     const clampedPage = Math.max(1, Math.min(page, totalPages));
+    if (clampedPage === currentPage) return;
+
     if (onPageChange) {
       onPageChange(clampedPage);
     } else {
       setInternalPage(clampedPage);
     }
-  }, [totalPages, onPageChange]);
+
+    if (!fromScroll) {
+      shouldScrollRef.current = true;
+    }
+  }, [totalPages, onPageChange, currentPage]);
 
   const handleZoomIn = useCallback(() => {
     const currentIndex = ZOOM_LEVELS.indexOf(zoom);
@@ -143,15 +151,51 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [currentPage, totalPages, handlePageChange, handleZoomIn, handleZoomOut]);
 
-  // Scroll to page when currentPage changes
+  // Track visible page to update currentPage during scroll
   useEffect(() => {
-    if (pagesContainerRef.current && pages.length > 0) {
-      const pageElement = pagesContainerRef.current.children[currentPage - 1] as HTMLElement;
-      if (pageElement) {
-        pageElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const container = pagesContainerRef.current;
+    if (!container || pages.length === 0) return;
+
+    const observerOptions = {
+      root: container,
+      rootMargin: '-10% 0px -70% 0px', // Trigger when page is in the upper part of view
+      threshold: 0,
+    };
+
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const index = Array.from(container.children).indexOf(entry.target);
+          if (index !== -1) {
+            handlePageChange(index + 1, true);
+          }
+        }
+      });
+    }, observerOptions);
+
+    Array.from(container.children).forEach((child) => observer.observe(child));
+
+    return () => observer.disconnect();
+  }, [pages.length, handlePageChange]);
+
+  // Scroll to page when currentPage changes (explicitly) or zoom changes
+  useEffect(() => {
+    const zoomChanged = lastZoomRef.current !== zoom;
+
+    if (zoomChanged || shouldScrollRef.current) {
+      if (pagesContainerRef.current && pages.length > 0) {
+        const pageElement = pagesContainerRef.current.children[currentPage - 1] as HTMLElement;
+        if (pageElement) {
+          pageElement.scrollIntoView({
+            behavior: zoomChanged ? 'auto' : 'smooth',
+            block: 'start'
+          });
+        }
       }
+      shouldScrollRef.current = false;
     }
-  }, [currentPage, pages.length]);
+    lastZoomRef.current = zoom;
+  }, [currentPage, zoom, pages.length]);
 
   const handleContentClick = useCallback((blockId: string) => {
     if (mode === 'select' || mode === 'text-edit') {
@@ -175,12 +219,12 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
           return <LetterPage content={page.content} title={page.title} {...commonProps} />;
         case 'toc':
           return (
-            <TOCPage 
-              entries={toc} 
-              title={page.title} 
+            <TOCPage
+              entries={toc}
+              title={page.title}
               pageIndex={(page as unknown as { tocPageIndex?: number }).tocPageIndex || 0}
               totalTocPages={(page as unknown as { totalTocPages?: number }).totalTocPages || 1}
-              {...commonProps} 
+              {...commonProps}
             />
           );
         case 'summary-table':
@@ -224,7 +268,7 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
         }
         case 'demographics': {
           // Legacy single-page demographics
-          const demoContent = page.content?.[0]?.content as { 
+          const demoContent = page.content?.[0]?.content as {
             demographics?: import('../../../types').DemographicsData;
             latitude?: number;
             longitude?: number;
@@ -242,7 +286,7 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
         }
         case 'demographics-overview': {
           // Page 1: Large map + key demographic highlights
-          const demoContent = page.content?.[0]?.content as { 
+          const demoContent = page.content?.[0]?.content as {
             demographics?: import('../../../types').DemographicsData;
             latitude?: number;
             longitude?: number;
@@ -260,7 +304,7 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
         }
         case 'demographics-detail': {
           // Page 2: Detailed data tables
-          const demoContent = page.content?.[0]?.content as { 
+          const demoContent = page.content?.[0]?.content as {
             demographics?: import('../../../types').DemographicsData;
           };
           return (
@@ -329,7 +373,7 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
         {/* Force light mode for report pages - they represent printed documents */}
         <div
           className="w-[612px] h-[792px] origin-top-left report-page-light-mode"
-          style={{ 
+          style={{
             transform: `scale(${zoom / 100})`,
             backgroundColor: '#ffffff',
             color: '#1c3643',
