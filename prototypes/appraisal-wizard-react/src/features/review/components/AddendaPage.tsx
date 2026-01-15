@@ -68,12 +68,6 @@ const styles = {
   }
 };
 
-interface ExtendedUploadedDocument extends UploadedDocument {
-  file?: File;
-  preview?: string;
-  url?: string;
-}
-
 interface AddendaPageProps {
   selectedElement: string | null;
   onSelectElement: (id: string | null) => void;
@@ -83,7 +77,7 @@ export function AddendaPage({ selectedElement, onSelectElement }: AddendaPagePro
   const { state } = useWizard();
   // Filter for docs that are explicitly NOT excluded (true or undefined means included)
   const documents = useMemo(() =>
-    (state.uploadedDocuments || []).filter(d => d.includeInReport !== false) as ExtendedUploadedDocument[],
+    (state.uploadedDocuments || []).filter(d => d.includeInReport !== false),
     [state.uploadedDocuments]);
 
   // If no documents, render a single placeholder page
@@ -165,7 +159,7 @@ function AddendaPageLayout({ children, title, subTitle }: AddendaPageLayoutProps
 // Document Renderer (Dispatcher)
 // ==========================================
 
-function DocumentRenderer({ document, docIndex, totalDocs }: { document: ExtendedUploadedDocument, docIndex: number, totalDocs: number }) {
+function DocumentRenderer({ document, docIndex, totalDocs }: { document: UploadedDocument, docIndex: number, totalDocs: number }) {
   const isPdf = document.type === 'application/pdf' || document.name.toLowerCase().endsWith('.pdf');
   const isImage = document.type.startsWith('image/') || /\.(jpg|jpeg|png|webp)$/i.test(document.name);
 
@@ -209,7 +203,7 @@ function DocumentRenderer({ document, docIndex, totalDocs }: { document: Extende
 // PDF Resolver & Renderer
 // ==========================================
 
-function PdfDocumentResolver({ document, docIndex }: { document: ExtendedUploadedDocument, docIndex: number }) {
+function PdfDocumentResolver({ document, docIndex }: { document: UploadedDocument, docIndex: number }) {
   const [numPages, setNumPages] = useState<number | null>(null);
   const [pdfDoc, setPdfDoc] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);

@@ -635,7 +635,7 @@ export default function SubjectDataPage() {
       includeInReport: true,
       uploadDate: new Date().toISOString(),
       slotId: 'custom_exhibit', // Mark as custom
-      preview: file.type.startsWith('image/') ? URL.createObjectURL(file) : undefined
+      preview: URL.createObjectURL(file)
     };
 
     console.log('[SubjectDataPage] Adding custom exhibit to context:', newDoc);

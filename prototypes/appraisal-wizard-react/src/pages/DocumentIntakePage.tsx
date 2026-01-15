@@ -548,16 +548,16 @@ export default function DocumentIntakePage() {
   // Handle crop completion
   const handleCropComplete = useCallback((croppedBlob: Blob, cropData?: { x: number; y: number; width: number; height: number }) => {
     if (!cropTargetSlotId) return;
-    
+
     const fileName = pendingOriginalFile?.name || `cropped-${Date.now()}.jpg`;
     const croppedFile = new File([croppedBlob], fileName, { type: 'image/jpeg' });
-    
+
     handleDirectPhotoUpload(cropTargetSlotId, croppedFile);
-    
+
     if (cropData) {
       console.log('Photo cropped with data:', cropData);
     }
-    
+
     setCropModalOpen(false);
     setCropImageUrl(null);
     setCropTargetSlotId(null);
@@ -577,31 +577,31 @@ export default function DocumentIntakePage() {
     try {
       setIsAutoCropping(true);
       setCropTargetSlotId(slotId);
-      
+
       // Detect category from slot ID for smarter cropping
       const category = slotId.includes('exterior') ? 'exterior' as const
         : slotId.includes('interior') ? 'interior' as const
-        : slotId.includes('aerial') ? 'aerial' as const
-        : slotId.includes('street') ? 'street' as const
-        : detectCategoryFromFilename(file.name);
-      
+          : slotId.includes('aerial') ? 'aerial' as const
+            : slotId.includes('street') ? 'street' as const
+              : detectCategoryFromFilename(file.name);
+
       // Auto-crop the image using AI-driven smart crop
       const { croppedFile, cropData, originalFile } = await autoCropImage(file, {
         category,
         targetAspectRatio: 16 / 9,
       });
-      
+
       handleDirectPhotoUpload(slotId, croppedFile);
       setPendingOriginalFile(originalFile);
-      
+
       console.log(`Auto-cropped ${file.name} with ${Math.round(cropData.confidence * 100)}% confidence`);
-      
+
       setIsAutoCropping(false);
       setCropTargetSlotId(null);
     } catch (error) {
       console.error('Auto-crop failed, falling back to manual crop:', error);
       setIsAutoCropping(false);
-      
+
       // Fallback to manual crop modal
       const previewUrl = URL.createObjectURL(file);
       setCropImageUrl(previewUrl);
@@ -1006,6 +1006,8 @@ export default function DocumentIntakePage() {
           name: doc.file.name,
           size: doc.file.size,
           type: doc.file.type,
+          file: doc.file,
+          preview: URL.createObjectURL(doc.file),
           slotId: doc.classification?.documentType || 'unknown',
           status: 'extracted',
           extractedData: doc.extraction?.data,
@@ -1472,13 +1474,12 @@ export default function DocumentIntakePage() {
                             return (
                               <div
                                 key={slot.id}
-                                className={`border-2 rounded-xl p-4 transition-all ${
-                                  photo
+                                className={`border-2 rounded-xl p-4 transition-all ${photo
                                     ? 'border-accent-teal-mint/30 dark:border-teal-900/50 bg-accent-teal-mint-light/30 dark:bg-teal-900/10'
                                     : slot.recommended
                                       ? 'border-[#0da1c7]/30 dark:border-[#0da1c7]/50 bg-[#0da1c7]/5 dark:bg-[#0da1c7]/10'
                                       : 'border-light-border dark:border-dark-border hover:border-[#0da1c7]/40'
-                                }`}
+                                  }`}
                               >
                                 {/* Slot Header */}
                                 <div className="flex items-start justify-between gap-2 mb-3">

@@ -143,7 +143,7 @@ export interface ExteriorFeatures {
   walls?: string[];
   windows?: string[];
   description?: string;
-  
+
   // Detailed format (for cost segregation and asset quality)
   foundationDetails?: ComponentDetail[];
   roofDetails?: ComponentDetail[];
@@ -163,7 +163,7 @@ export interface InteriorFeatures {
   plumbing?: string[];
   lighting?: string[];
   description?: string;
-  
+
   // Detailed format (for cost segregation and asset quality)
   ceilingDetails?: ComponentDetail[];
   flooringDetails?: ComponentDetail[];
@@ -184,7 +184,7 @@ export interface MechanicalSystems {
   sprinkler?: string[];
   elevators?: string[];
   description?: string;
-  
+
   // Detailed format (for cost segregation and asset quality)
   electricalDetails?: ComponentDetail[];
   heatingDetails?: ComponentDetail[];
@@ -286,7 +286,7 @@ export interface ImprovementBuilding {
   constructionDescription?: string;
   heightZones?: HeightZone[];
   areas: ImprovementArea[];
-  
+
   /**
    * M&S Property Type Override (Tier 2)
    * If set, overrides the wizard-level default property type for this building.
@@ -294,7 +294,7 @@ export interface ImprovementBuilding {
    * When null/undefined, inherits from Setup page's msOccupancyCode property type.
    */
   propertyTypeOverride?: string;
-  
+
   /**
    * M&S Occupancy Code Override (Tier 3)
    * If set, overrides the wizard-level default occupancy code for this building.
@@ -302,7 +302,7 @@ export interface ImprovementBuilding {
    * When null/undefined, inherits from Setup page's msOccupancyCode.
    */
   msOccupancyCodeOverride?: string;
-  
+
   /**
    * Cost Segregation Details (Per-Building)
    * Only populated when Cost Segregation is enabled in wizard setup.
@@ -335,24 +335,24 @@ export interface SiteImprovement {
   typeId: string;              // References SiteImprovementType from marshallSwift.ts
   typeName: string;            // Display label
   description: string;         // Additional notes
-  
+
   // Quantity
   quantity: number;
   unit: 'SF' | 'LF' | 'EA' | 'LS';
-  
+
   // Age-Life Data
   yearInstalled: number | null;
   condition: SiteImprovementCondition;
   economicLife: number;        // From M&S defaults, user-adjustable
   effectiveAge: number;        // Calculated or override
   effectiveAgeOverride: boolean;
-  
+
   // Cost (populated in Cost Approach)
   costPerUnit?: number;
   replacementCostNew?: number;
   depreciationPercent?: number;
   contributoryValue?: number;
-  
+
   // Depreciation Override
   depreciationOverride?: number;       // User-specified depreciation % (overrides calculated)
   depreciationOverrideReason?: string; // Narrative explaining the override rationale
@@ -381,26 +381,26 @@ export interface CostSegComponent {
   componentId: string;           // Reference to ComponentClassification in costSegregation.ts
   label: string;                 // Human-readable label
   category: 'building-structure' | 'building-component' | 'site-improvement' | 'personal-property' | 'tenant-improvement';
-  
+
   // Depreciation Classification
   depreciationClass: DepreciationClass;
   depreciationClassOverride?: DepreciationClass;   // User override
   overrideReason?: string;                         // Justification for override
-  
+
   // Cost Data
   cost: number;                  // Allocated cost for this component
   percentOfTotal: number;        // Percentage of total project cost
-  
+
   // Source Tracking
   buildingId?: string;           // If building-specific
   buildingName?: string;         // Building name for display (per-building cost seg)
   sourceType: 'allocation' | 'inventory' | 'manual';  // How this was determined
-  
+
   // Age-Life (for component-level depreciation)
   yearPlacedInService?: number;  // When component was placed in service
   economicLife?: number;         // Total economic life in years
   effectiveAge?: number;         // Effective age for depreciation
-  
+
   // Flags
   isTenantImprovement: boolean;
   isLandImprovement: boolean;
@@ -452,27 +452,27 @@ export interface CostSegAnalysis {
   id: string;
   propertyId: string;
   analysisDate: string;
-  
+
   // Property Info
   propertyName: string;
   propertyAddress: string;
   occupancyCode: string;
   isResidential: boolean;        // Determines 27.5 vs 39-year real property
-  
+
   // Source Data
   totalProjectCost: number;      // Total acquisition or construction cost
   landValue: number;             // Land value (not depreciable)
   totalImprovementCost: number;  // totalProjectCost - landValue
   totalBuildingCost: number;     // Building improvements only
   totalSiteImprovementCost: number;  // Site improvements (15-year)
-  
+
   // Components
   components: CostSegComponent[];
-  
+
   // Summaries
   classSummary: DepreciationClassSummary[];
   buildingSystems: BuildingSystemSummary[];
-  
+
   // Key Results (convenience properties)
   summary: {
     fiveYear: { total: number; percent: number };
@@ -481,20 +481,20 @@ export interface CostSegAnalysis {
     twentySevenFiveYear: { total: number; percent: number };
     thirtyNineYear: { total: number; percent: number };
   };
-  
+
   // Depreciation Schedule
   depreciationSchedule: DepreciationYearProjection[];
-  
+
   // Tax Benefit Summary
   firstYearDepreciation: number;
   acceleratedBenefit: number;    // Additional depreciation vs. straight 39-year
-  
+
   // Methodology & Compliance
   methodology: 'detailed-engineering' | 'cost-estimate';
   methodologyDescription: string;
   preparedBy?: string;
   preparedDate?: string;
-  
+
   // Override Tracking
   hasManualOverrides: boolean;
   overrideCount: number;
@@ -507,12 +507,12 @@ export interface CostSegConfig {
   // Tax Year Settings
   taxYear: number;
   bonusDepreciationPercent: number;  // 100%, 80%, 60%, etc. based on tax year
-  
+
   // Property Settings
   isNewConstruction: boolean;        // Affects bonus depreciation eligibility
   acquisitionDate?: string;
   placedInServiceDate: string;
-  
+
   // Analysis Options
   includeSiteImprovements: boolean;
   includeDepreciationSchedule: boolean;
@@ -545,9 +545,9 @@ export interface CostSegSystemRefinement {
   systemType: 'electrical' | 'plumbing' | 'hvac' | 'fire-protection' | 'elevators' | 'roofing' | 'structural';
   systemLabel: string;              // e.g., "Electrical System"
   totalSystemCost: number;          // From appraisal data (M&S, mechanicalSystems, etc.)
-  
+
   refinements: CostSegRefinementLine[];
-  
+
   // Validation tracking
   totalAllocated: number;           // Sum of refinement amounts
   isFullyAllocated: boolean;        // totalAllocated === totalSystemCost
@@ -563,7 +563,7 @@ export interface CostSegRefinementLine {
   depreciationClass: DepreciationClass;
   amount: number;
   allocationMethod: 'measured' | 'percentage' | 'engineering-estimate';
-  
+
   // Measurement support (for IRS documentation)
   measurements?: {
     quantity: number;
@@ -571,10 +571,10 @@ export interface CostSegRefinementLine {
     costPerUnit?: number;
     notes: string;
   };
-  
+
   // Photo documentation
   linkedPhotoIds?: string[];        // Links to report photos
-  
+
   // IRS support
   irsAssetClass?: string;           // e.g., "Asset Class 00.11"
   justification?: string;           // Reasoning for classification
@@ -591,13 +591,13 @@ export interface CostSegSupplementalItem {
   category: 'personal-property' | 'land-improvement' | 'tenant-improvement' | 'specialty-equipment';
   depreciationClass: DepreciationClass;
   cost: number;
-  
+
   // Documentation
   linkedPhotoIds?: string[];
   notes?: string;
   vendor?: string;
   invoiceDate?: string;
-  
+
   // Building association (optional)
   buildingId?: string;
 }
@@ -609,13 +609,13 @@ export interface CostSegSupplementalItem {
 export interface CostSegBuildingDetails {
   enabled: boolean;
   placedInServiceDate?: string;
-  
+
   // System refinements (breaking down big systems from appraisal)
   systemRefinements: CostSegSystemRefinement[];
-  
+
   // Supplemental items (things not in appraisal at all)
   supplementalItems: CostSegSupplementalItem[];
-  
+
   // Component overrides (rare - if you disagree with auto-classification)
   componentOverrides?: {
     [componentId: string]: {
@@ -623,7 +623,7 @@ export interface CostSegBuildingDetails {
       reason: string;
     };
   };
-  
+
   // Site visit compliance
   siteVisitDate?: string;
   siteVisitNotes?: string;
@@ -656,13 +656,13 @@ export interface CostSegAuditRisk {
   personalPropertyPercent: number;
   landImprovementPercent: number;
   realPropertyPercent: number;
-  
+
   flags: {
     type: 'warning' | 'info' | 'success';
     message: string;
     recommendation?: string;
   }[];
-  
+
   recommendations: string[];
   score: number;  // 0-100, higher = lower risk
 }
@@ -675,7 +675,7 @@ export interface CostSegBenchmark {
   propertyType: string;             // 'office', 'retail', 'restaurant', etc.
   buildingSizeCategory: string;     // '0-50K SF', '50-150K SF', etc.
   qualityClass?: string;            // 'Class A', 'Class B', 'Class C'
-  
+
   typicalRanges: {
     fiveYearMin: number;
     fiveYearMax: number;
@@ -684,7 +684,7 @@ export interface CostSegBenchmark {
     thirtyNineYearMin: number;
     thirtyNineYearMax: number;
   };
-  
+
   source: string;                   // 'CSSI Industry Study 2024', etc.
   notes?: string;
 }
@@ -697,7 +697,7 @@ export interface CostSegBuildingBreakdown {
   buildingId: string;
   buildingName: string;
   totalBuildingCost: number;
-  
+
   // Summary by depreciation class
   fiveYearTotal: number;
   fiveYearPercent: number;
@@ -709,12 +709,12 @@ export interface CostSegBuildingBreakdown {
   twentySevenFiveYearPercent: number;
   thirtyNineYearTotal: number;
   thirtyNineYearPercent: number;
-  
+
   // Line items grouped by category (for detail tables)
   personalPropertyItems: CostSegLineItem[];   // 5-year, 7-year
   landImprovementItems: CostSegLineItem[];    // 15-year
   realPropertyItems: CostSegLineItem[];       // 27.5-year, 39-year
-  
+
   // Building systems valuation (CSSI format)
   buildingSystems: BuildingSystemValuation[];
 }
@@ -739,17 +739,17 @@ export interface CostSegReportMetadata {
   companyName: string;
   propertyAddress: string;
   reportDate: string;
-  
+
   // Study Info  
   siteVisitDate: string;
   inspectorName: string;
   siteVisitNotes: string;
-  
+
   // Preparer Info (from firm settings)
   preparerName: string;
   preparerCredentials: string;
   firmName: string;
-  
+
   // Certification
   certificationDate: string;
   certifiedBy: string;
@@ -763,21 +763,21 @@ export interface CostSegFullAnalysis {
   propertyName: string;
   propertyAddress: string;
   analysisDate: string;
-  
+
   // All buildings analyzed
   buildings: CostSegBuildingBreakdown[];
-  
+
   // Property-level totals
   totalProjectCost: number;
   totalFiveYear: number;
   totalFifteenYear: number;
   totalThirtyNineYear: number;
-  
+
   // Tax benefit calculations
   firstYearDepreciation: number;
   acceleratedBenefit: number;
   presentValueSavings: number;
-  
+
   // Report metadata
   metadata?: CostSegReportMetadata;
 }
@@ -808,6 +808,10 @@ export interface UploadedDocument {
   includeInReport?: boolean;
   documentType?: string; // AI-classified document type
   classificationConfidence?: number;
+  file?: File;
+  preview?: string;
+  url?: string;
+  uploadDate?: string;
 }
 
 // =================================================================
@@ -955,7 +959,7 @@ export interface CostApproachOverrides {
   depreciationPhysical?: number;
   depreciationFunctional?: number;
   depreciationExternal?: number;
-  
+
   // Contractor Cost Comparison
   contractorCost?: number;                         // Actual contractor cost/bid
   contractorSource?: 'bid' | 'invoice' | 'estimate'; // Source type
@@ -988,23 +992,23 @@ export interface SubjectData {
   address: SubjectAddress;
   taxId: string;
   legalDescription: string;
-  
+
   // Key dates
   reportDate: string;
   inspectionDate: string;
   effectiveDate: string;
-  
+
   // Sale history (USPAP requirement)
   lastSaleDate: string;
   lastSalePrice: string;
   transactionHistory: string;
-  
+
   // Location & Area (Subject Data page - Location tab)
   areaDescription: string;
   neighborhoodBoundaries: string;
   neighborhoodCharacteristics: string;
   specificLocation: string;
-  
+
   // Site Details (Subject Data page - Site tab)
   siteArea: string;        // Acres or square feet
   siteAreaUnit: 'acres' | 'sqft';
@@ -1016,7 +1020,7 @@ export interface SubjectData {
   zoningClass: string;
   zoningDescription: string;
   zoningConforming: boolean;
-  
+
   // Utilities (expanded)
   waterSource: string;
   waterProvider: string;  // Provider name (e.g., "City of Bozeman")
@@ -1024,48 +1028,48 @@ export interface SubjectData {
   electricProvider: string;
   naturalGas: string;
   telecom: string;
-  
+
   // Storm Drainage & Fire Protection (site-level)
   stormDrainage: string;           // Adequacy: 'adequate' | 'limited' | 'poor' | 'unknown'
   stormDrainageNotes: string;
   fireHydrantDistance: string;     // '<500ft' | '500-1000ft' | '>1000ft' | 'none' | 'unknown'
-  
+
   // Access & Visibility
   approachType: string;
   accessQuality: string;
   visibility: string;
   truckAccess: string;
-  
+
   // Site Improvements
   pavingType: string;
   fencingType: string;
   yardStorage: string;
   landscaping: string;
-  
+
   // Flood Zone (enhanced)
   femaZone: string;
   femaMapPanel: string;
   femaMapDate: string;
   floodInsuranceRequired: string;
-  
+
   // Site Description Narrative
   siteDescriptionNarrative: string;
-  
+
   // Convenience fields (computed from other fields or legacy)
   utilities?: string;    // Combined utilities description
   floodZone?: string;    // Alias for femaZone
-  
+
   // Purpose & Scope (Setup page - Purpose tab)
   appraisalPurpose: string;
   intendedUsers: string;
   propertyInterest: string;
-  
+
   // Inspection (Setup page - Inspection tab)
   inspectorName: string;
   inspectorLicense: string;
   inspectionType: string;
   personalInspection: boolean; // true = appraiser inspected personally, false = contract inspector
-  
+
   // Certifications (Setup page - Certifications tab)
   certificationAcknowledged: boolean;
   licenseNumber: string;
@@ -1073,29 +1077,29 @@ export interface SubjectData {
   licenseExpiration: string;
   additionalCertifications: string;
   appraisalAssistance: string;
-  
+
   // Assignment Context (from Setup - drives scenario/visibility logic)
   propertyStatus?: 'existing' | 'under_construction' | 'proposed' | 'recently_completed';
   occupancyStatus?: 'stabilized' | 'lease_up' | 'vacant' | 'not_applicable';
   plannedChanges?: 'none' | 'minor' | 'major' | 'change_of_use';
   loanPurpose?: 'purchase' | 'refinance' | 'construction' | 'bridge' | 'internal';
-  
+
   // Coordinates (for demographics lookup)
   coordinates?: {
     latitude: number;
     longitude: number;
   };
-  
+
   // CBRE Parity - Enhanced data fields
   cadastralData?: CadastralData;
   demographicsData?: DemographicsData;
   economicIndicators?: EconomicIndicators;
   swotAnalysis?: SWOTAnalysisData;
   riskRating?: RiskRatingData;
-  
+
   // Cost Segregation
   costSegregationEnabled?: boolean;
-  
+
   // Property Boundaries (Site Details)
   northBoundary?: string;
   southBoundary?: string;
@@ -1103,7 +1107,7 @@ export interface SubjectData {
   westBoundary?: string;
   // Drawn property boundary polygon coordinates
   propertyBoundaryCoordinates?: Array<{ lat: number; lng: number }>;
-  
+
   // Traffic Data (Site Details - External Integration)
   trafficData?: {
     aadt?: number;           // Annual Average Daily Traffic
@@ -1114,10 +1118,10 @@ export interface SubjectData {
     source?: string;
     lastUpdated?: string;
   };
-  
+
   // Building Permits (External Integration)
   buildingPermits?: BuildingPermit[];
-  
+
   // Multi-Family specific fields (populated when propertyType is multifamily)
   totalUnitCount?: number;
   totalRoomCount?: number;        // For hotels/motels
@@ -1129,7 +1133,7 @@ export interface SubjectData {
   // Unknown SF support - when per-unit SF is unknown, use total building SF
   perUnitSfUnknown?: boolean;
   totalBuildingSf?: number;
-  
+
   // Grid Configuration (determined by Setup page)
   gridConfiguration?: SalesGridConfiguration;
 }
@@ -1271,14 +1275,14 @@ export interface RiskDimensionScore {
 export interface RiskRatingData {
   overallGrade: RiskGrade;
   overallScore: number;    // 0-100
-  
+
   dimensions: {
     marketVolatility: RiskDimensionScore;
     liquidity: RiskDimensionScore;
     incomeStability: RiskDimensionScore;
     assetQuality: RiskDimensionScore;
   };
-  
+
   weightingRationale: string;
   generatedDate: string;
   dataAsOfDate?: string;
@@ -1293,13 +1297,13 @@ export interface RiskRatingData {
  * Grid type taxonomy for Sales Comparison variants.
  * All share the same underlying methodology with different field configurations.
  */
-export type SalesGridType = 
-  | 'retail_office' 
-  | 'medical_office' 
+export type SalesGridType =
+  | 'retail_office'
+  | 'medical_office'
   | 'industrial'
-  | 'land_sf' 
-  | 'land_acre' 
-  | 'multi_family' 
+  | 'land_sf'
+  | 'land_acre'
+  | 'multi_family'
   | 'residential'
   | 'hotel_motel'
   | 'mobile_home_park'
@@ -1309,7 +1313,7 @@ export type SalesGridType =
  * Unit of measurement for grid calculations.
  * Determines how values are displayed and calculated.
  */
-export type UnitOfMeasure = 
+export type UnitOfMeasure =
   | 'sf_building'   // Price per SF of building
   | 'sf_land'       // Price per SF of land
   | 'acre'          // Price per acre
@@ -1385,17 +1389,17 @@ export interface PropertyComponent {
   category: 'residential' | 'commercial' | 'land';
   propertyType: string;                              // e.g., 'retail', 'multifamily', 'vacant-land'
   msOccupancyCode: string | null;                    // M&S classification
-  
+
   // Size allocation
   squareFootage: number | null;
   sfSource: 'measured' | 'estimated' | 'unknown';    // Track SF certainty
-  
+
   // Multi-family specific
   unitCount?: number;
   unitMix?: MultiFamilyUnitMix[];
   perUnitSfUnknown?: boolean;            // When true, use totalBuildingSf instead of per-unit avgSF
   totalBuildingSf?: number;               // Total building SF when per-unit is unknown
-  
+
   // Component classification (per resolved decision #3)
   landClassification: 'standard' | 'excess' | 'surplus';
   // - 'standard': Normal component (not land-specific)
@@ -1403,7 +1407,7 @@ export interface PropertyComponent {
   // - 'surplus': Cannot be sold separately → Contributory value adjustment
   isPrimary: boolean;
   sortOrder: number;
-  
+
   // Analysis configuration
   analysisConfig: {
     salesApproach: boolean;
@@ -1438,17 +1442,17 @@ export interface IncomeApproachInstance {
   componentId: string;
   componentName: string;
   analysisType: 'full' | 'contributory';
-  
+
   // Income data
   incomeLineItems: IncomeLineItem[];
   incomeData: import('../features/income-approach/types').IncomeData;
   expenseData: import('../features/income-approach/types').ExpenseData;
   valuationData: import('../features/income-approach/types').ValuationData;
-  
+
   // Linked rent comparables
   rentComparables: RentComp[];
   rentCompMode: 'commercial' | 'residential';        // Determines field config
-  
+
   // Concluded value
   concludedValue: number | null;
 }
@@ -1460,17 +1464,17 @@ export interface IncomeApproachInstance {
 export interface RentComp {
   id: string;
   address: string;
-  
+
   // Common fields
   saleDate?: string;
   distance?: number;
-  
+
   // Commercial mode fields ($/SF/Year)
   rentPerSF?: number;
   buildingSF?: number;
   leaseType?: 'NNN' | 'Gross' | 'Modified Gross';
   tiAllowance?: number;
-  
+
   // Residential mode fields ($/Month)
   rentPerMonth?: number;
   bedrooms?: number;
@@ -1479,11 +1483,11 @@ export interface RentComp {
   amenities?: string[];
   parking?: string;
   utilities?: string;
-  
+
   // Adjustments
   adjustments: Record<string, number>;
   adjustedRent?: number;
-  
+
   // Linking
   linkedIncomeLineIds?: string[];
 }
@@ -1686,70 +1690,70 @@ export interface WizardState {
   template: string | null;
   propertyType: string | null;
   propertySubtype: string | null;
-  
+
   // M&S Classification (3-tier hierarchy)
   msOccupancyCode: string | null;
-  
+
   // Property Components (Mixed-Use Architecture)
   // Replaces single propertyType with component-based model
   propertyComponents: PropertyComponent[];
   activeComponentId: string | null;
-  
+
   // Multiple Income Approach Instances
   incomeApproachInstances: IncomeApproachInstance[];
-  
+
   // Reconciliation data per scenario (component-aware)
   scenarioReconciliations: ScenarioReconciliationSummary[];
-  
+
   // Scenarios
   scenarios: AppraisalScenario[];
   activeScenarioId: number;
-  
+
   // Subject Property Data (centralized)
   subjectData: SubjectData;
-  
+
   // Improvements
   improvementsInventory: ImprovementsInventory;
-  
+
   // Site Improvements (M&S Section 66)
   siteImprovements: SiteImprovement[];
-  
+
   // Cost Approach Building Selections (per scenario)
   costApproachBuildingSelections: Record<number, string[]>;
-  
+
   // Cost Approach Building Cost Overrides (per scenario, per building)
   // Stores user modifications to cost data without modifying source building inventory
   costApproachBuildingCostData: Record<number, Record<string, CostApproachOverrides>>;
-  
+
   // Extracted Document Data
   extractedData: Record<string, ExtractedData>;
   uploadedDocuments: UploadedDocument[];
-  
+
   // Document Field Source Tracking
   documentFieldSources: Record<string, ExtractedFieldSource>;
-  
+
   // Field Suggestions (Accept/Reject UI) - supports multiple values per field
   fieldSuggestions: Record<string, FieldSuggestion[]>;
   acceptedFields: Record<string, FieldSuggestionSource>;
-  
+
   // Owners
   owners: Owner[];
-  
+
   // Income Approach Data
   incomeApproachData: import('../features/income-approach/types').IncomeApproachState | null;
-  
+
   // Analysis Approach Conclusions (for progress tracking)
   analysisConclusions: AnalysisConclusions;
-  
+
   // Reconciliation Data
   reconciliationData: ReconciliationData | null;
-  
+
   // Photo Staging (for bulk upload)
   stagingPhotos: StagingPhoto[];
-  
+
   // Cover Photo (for report title page)
   coverPhoto?: CoverPhotoData;
-  
+
   // CBRE Parity - Enhanced Data Fields (Plan Part 9)
   demographicsData?: DemographicsData;
   economicIndicators?: EconomicIndicators;
@@ -1762,29 +1766,29 @@ export interface WizardState {
     noi?: number;
     occupancy?: number;
   };
-  
+
   // Sales Comparison, Land Valuation, Photos, HBU - Data Flow Connections
   salesComparisonData?: SalesComparisonData;
   landValuationData?: LandValuationData;
   reportPhotos?: ReportPhotosData;
   hbuAnalysis?: HBUAnalysis;
-  
+
   // Maps - Subject property maps and approach comparable maps
   subjectMaps: MapData[];
   approachMaps: Record<string, MapData>; // Key: approach type (improved-sales, land-sales, rental-comps)
-  
+
   // Navigation
   currentPage: string;
   subjectActiveTab: string;
   isFullscreen: boolean;
-  
+
   // Progress Tracking
   pageTabs: Record<string, PageTabState>;
   sectionCompletedAt: Record<string, string | null>;
   scenarioCompletions: ScenarioCompletionState[];
   allScenariosCompletedAt: string | null;
   celebration: CelebrationState;
-  
+
   // Metadata
   lastModified: string;
 }
@@ -2465,7 +2469,7 @@ export interface AppraisalTemplate {
   updatedAt: string;
   isPublic: boolean;
   tags: string[];
-  
+
   // Template Configuration
   config: {
     defaultPropertyType: string | null;
@@ -2478,7 +2482,7 @@ export interface AppraisalTemplate {
     photoRequirements: PhotoRequirement[];
     addendaConfig: AddendaItem[];
   };
-  
+
   // Usage stats
   timesUsed: number;
   lastUsed: string | null;
@@ -2580,35 +2584,35 @@ export interface MapData {
   type: MapType;
   title: string;
   description?: string;
-  
+
   // Source configuration
   source: 'generated' | 'uploaded' | 'drawn';
-  
+
   // Location data
   center: {
     lat: number;
     lng: number;
   };
   zoom: number;
-  
+
   // Map styling
   mapType: 'satellite' | 'roadmap' | 'hybrid';
-  
+
   // Generated image (for PDF export)
   imageUrl?: string;      // Static map URL or uploaded image
   imageData?: string;     // Base64 for embedded
-  
+
   // Boundaries/Annotations
   boundaries?: GeoJsonFeature[];
   annotations?: MapAnnotation[];
-  
+
   // Markers (for comparable maps)
   markers: MapMarker[];
-  
+
   // Metadata
   capturedAt?: string;
   capturedBy?: string;
-  
+
   // Report placement
   reportSections: string[];
 }
