@@ -209,8 +209,8 @@ export function EconomicChart({
     return (
       <div className="relative" style={{ height }}>
         <div className="absolute top-2 left-2 z-10">
-          <p className="text-xs text-slate-500 dark:text-slate-400">{title}</p>
-          <p className="text-xl font-bold text-slate-800 dark:text-white">{currentValue?.toFixed(2)}{unit}</p>
+          <p className="text-xs" style={{ color: textSecondary }}>{title}</p>
+          <p className="text-xl font-bold" style={{ color: textPrimary }}>{currentValue?.toFixed(2)}{unit}</p>
         </div>
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={data} margin={{ top: 50, right: 0, left: 0, bottom: 20 }}>
