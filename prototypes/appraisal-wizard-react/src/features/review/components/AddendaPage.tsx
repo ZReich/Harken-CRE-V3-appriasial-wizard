@@ -69,7 +69,7 @@ export function AddendaPage({ selectedElement, onSelectElement }: AddendaPagePro
           <div className="absolute top-8 text-center">
             <span className="text-xs font-bold tracking-wider">11</span>
           </div>
-          <div 
+          <div
             className="transform -rotate-90 whitespace-nowrap text-sm font-medium tracking-wider"
             style={{ width: '200px', textAlign: 'center' }}
           >
@@ -111,40 +111,17 @@ export function AddendaPage({ selectedElement, onSelectElement }: AddendaPagePro
                 </div>
               </div>
 
-              {/* Documents Table */}
-              <div className="border border-light-border rounded-lg overflow-hidden">
-                <table className="w-full">
-                  <thead>
-                    <tr className="bg-harken-gray-light border-b border-light-border">
-                      <th className="text-left px-4 py-3 text-xs font-semibold text-harken-gray uppercase tracking-wider">
-                        Include
-                      </th>
-                      <th className="text-left px-4 py-3 text-xs font-semibold text-harken-gray uppercase tracking-wider">
-                        Document
-                      </th>
-                      <th className="text-left px-4 py-3 text-xs font-semibold text-harken-gray uppercase tracking-wider">
-                        Type
-                      </th>
-                      <th className="text-left px-4 py-3 text-xs font-semibold text-harken-gray uppercase tracking-wider">
-                        Size
-                      </th>
-                      <th className="text-left px-4 py-3 text-xs font-semibold text-harken-gray uppercase tracking-wider">
-                        Status
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="divide-y divide-harken-gray-med-lt">
-                    {documents.map((doc) => (
-                      <DocumentRow
-                        key={doc.id}
-                        document={doc}
-                        isSelected={selectedElement === `doc-${doc.id}`}
-                        onSelect={() => onSelectElement(`doc-${doc.id}`)}
-                        onToggleInclude={() => toggleDocumentInclusion(doc.id)}
-                      />
-                    ))}
-                  </tbody>
-                </table>
+              {/* Documents Grid */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {documents.map((doc) => (
+                  <DocumentCard
+                    key={doc.id}
+                    document={doc}
+                    isSelected={selectedElement === `doc-${doc.id}`}
+                    onSelect={() => onSelectElement(`doc-${doc.id}`)}
+                    onToggleInclude={() => toggleDocumentInclusion(doc.id)}
+                  />
+                ))}
               </div>
 
               {/* Footer Note */}
@@ -161,106 +138,81 @@ export function AddendaPage({ selectedElement, onSelectElement }: AddendaPagePro
   );
 }
 
-// Individual document row
-interface DocumentRowProps {
+// Individual document card
+interface DocumentCardProps {
   document: UploadedDocument;
   isSelected: boolean;
   onSelect: () => void;
   onToggleInclude: () => void;
 }
 
-function DocumentRow({ document, isSelected, onSelect, onToggleInclude }: DocumentRowProps) {
+function DocumentCard({ document, isSelected, onSelect, onToggleInclude }: DocumentCardProps) {
   const isIncluded = document.includeInReport !== false;
   const hasExtractedData = document.extractedData && Object.keys(document.extractedData).length > 0;
 
   return (
-    <tr 
-      className={`hover:bg-harken-gray-light cursor-pointer transition-colors ${isSelected ? 'bg-blue-50' : ''}`}
+    <div
+      className={`border rounded-lg p-3 cursor-pointer transition-all hover:shadow-md ${isSelected
+          ? 'bg-blue-50 border-[#0da1c7] ring-1 ring-[#0da1c7]'
+          : 'bg-white border-light-border hover:border-harken-gray-med'
+        }`}
       onClick={onSelect}
     >
-      {/* Include Toggle */}
-      <td className="px-4 py-3">
+      <div className="flex items-start justify-between gap-3">
+        {/* Icon & Details */}
+        <div className="flex items-start gap-3 flex-1 min-w-0">
+          <div className="p-2 bg-harken-gray-light rounded-lg flex-shrink-0">
+            <FileText className="w-6 h-6 text-harken-gray-med" />
+          </div>
+
+          <div className="min-w-0">
+            <div className="text-sm font-medium text-harken-dark truncate" title={document.name}>
+              {document.name}
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2 mt-1">
+              <span className="inline-flex px-1.5 py-0.5 rounded text-[10px] font-medium bg-harken-gray-light text-harken-gray border border-gray-200">
+                {formatDocumentType(document.documentType)}
+              </span>
+              <span className="text-[10px] text-harken-gray-med">
+                {formatFileSize(document.size)}
+              </span>
+            </div>
+
+            {/* Status Indicator */}
+            <div className="mt-2 flex items-center gap-2">
+              {document.status === 'extracted' ? (
+                <span className="inline-flex items-center gap-1 text-[10px] font-medium text-green-600">
+                  <Check className="w-3 h-3" />
+                  Processed
+                </span>
+              ) : document.status === 'error' ? (
+                <span className="inline-flex items-center gap-1 text-[10px] font-medium text-harken-error">
+                  <X className="w-3 h-3" />
+                  Error
+                </span>
+              ) : null}
+            </div>
+          </div>
+        </div>
+
+        {/* Include Toggle */}
         <button
           type="button"
           onClick={(e) => {
             e.stopPropagation();
             onToggleInclude();
           }}
-          className={`w-6 h-6 rounded border-2 flex items-center justify-center transition-colors ${
-            isIncluded 
-              ? 'text-white' 
-              : 'bg-surface-1 border-light-border text-harken-gray-med-lt hover:border-harken-gray-med'
-          }`}
-          style={isIncluded ? { backgroundColor: '#0da1c7', borderColor: '#0da1c7' } : undefined}
+          className={`flex-shrink-0 w-6 h-6 rounded border-2 flex items-center justify-center transition-colors ${isIncluded
+              ? 'bg-[#0da1c7] border-[#0da1c7] text-white'
+              : 'bg-white border-light-border text-transparent hover:border-harken-gray-med'
+            }`}
+          title={isIncluded ? "Included in report" : "Click to include"}
         >
-          {isIncluded && <Check className="w-4 h-4" />}
+          <Check className="w-3.5 h-3.5" />
         </button>
-      </td>
-
-      {/* Document Name */}
-      <td className="px-4 py-3">
-        <div className="flex items-center gap-2">
-          <FileText className="w-4 h-4 text-harken-gray-med flex-shrink-0" />
-          <div>
-            <div className="text-sm font-medium text-harken-dark">{document.name}</div>
-            {document.slotId && (
-              <div className="text-xs text-harken-gray-med">{document.slotId}</div>
-            )}
-          </div>
-        </div>
-      </td>
-
-      {/* Document Type */}
-      <td className="px-4 py-3">
-        <span className="inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-harken-gray-light text-harken-gray">
-          {formatDocumentType(document.documentType)}
-        </span>
-      </td>
-
-      {/* Size */}
-      <td className="px-4 py-3 text-sm text-harken-gray-med">
-        {formatFileSize(document.size)}
-      </td>
-
-      {/* Status */}
-      <td className="px-4 py-3">
-        <div className="flex items-center gap-2">
-          {document.status === 'extracted' ? (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-700">
-              <Check className="w-3 h-3" />
-              Processed
-            </span>
-          ) : document.status === 'error' ? (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-accent-red-light text-harken-error">
-              <X className="w-3 h-3" />
-              Error
-            </span>
-          ) : document.status === 'processing' ? (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-yellow-100 text-yellow-700">
-              Processing...
-            </span>
-          ) : (
-            <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-xs font-medium bg-harken-gray-light text-harken-gray">
-              Pending
-            </span>
-          )}
-          
-          {hasExtractedData && (
-            <button
-              type="button"
-              onClick={(e) => {
-                e.stopPropagation();
-                // Could show a modal with extracted data
-              }}
-              className="p-1 text-harken-gray-med hover:text-harken-gray transition-colors"
-              title="View extracted data"
-            >
-              <Eye className="w-4 h-4" />
-            </button>
-          )}
-        </div>
-      </td>
-    </tr>
+      </div>
+    </div>
   );
 }
 

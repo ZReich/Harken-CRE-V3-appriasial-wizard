@@ -618,8 +618,28 @@ export default function SubjectDataPage() {
   }, [photos, wizardState.coverPhoto?.id, setReportPhotos]);
 
   const handleExhibitUpload = (slotId: string, file: File) => {
+    // Update local state (legacy, but might be used elsewhere)
     setExhibits(prev => ({ ...prev, [slotId]: { file, name: file.name } }));
     setIncludeInReport(prev => ({ ...prev, [slotId]: true }));
+
+    // Sync to WizardContext for Report Preview
+    // We create a proper UploadedDocument object
+    const newDoc: import('../types').UploadedDocument = {
+      id: slotId.startsWith('exhibit_') ? slotId : `exhibit_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`,
+      file,
+      name: file.name,
+      size: file.size,
+      type: file.type,
+      documentType: 'unknown', // Custom exhibits are generic by default
+      status: 'ready',
+      includeInReport: true,
+      uploadDate: new Date().toISOString(),
+      slotId: 'custom_exhibit', // Mark as custom
+      preview: file.type.startsWith('image/') ? URL.createObjectURL(file) : undefined
+    };
+
+    console.log('[SubjectDataPage] Adding custom exhibit to context:', newDoc);
+    addUploadedDocument(newDoc);
   };
 
   const removeExhibit = (slotId: string) => {
@@ -3060,7 +3080,7 @@ interface CustomExhibit {
 }
 
 // Props note: exhibits, includeInReport, setIncludeInReport, onUpload, onRemove are available via ExhibitsProps for future features
-function ExhibitsContent(_props: ExhibitsProps) {
+function ExhibitsContent({ onUpload }: ExhibitsProps) {
   const { state: wizardState } = useWizard();
   const [customExhibits, setCustomExhibits] = useState<CustomExhibit[]>([]);
   const [isDragOver, setIsDragOver] = useState(false);
@@ -3139,6 +3159,11 @@ function ExhibitsContent(_props: ExhibitsProps) {
     });
 
     setCustomExhibits(prev => [...prev, ...newExhibits]);
+
+    // Sync to parent/context
+    newExhibits.forEach(exhibit => {
+      onUpload(exhibit.id, exhibit.file);
+    });
   };
 
   // Remove custom exhibit
