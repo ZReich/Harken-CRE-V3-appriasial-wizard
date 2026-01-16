@@ -100,7 +100,7 @@ import { CSS } from '@dnd-kit/utilities';
 // Animation styles
 import './reportEditorAnimations.css';
 // Icons for toolbar
-import { AlignLeft, AlignCenter, AlignRight, Grid3x3, Square, ZoomIn, ZoomOut, RotateCcw, StickyNote, Search as SearchIcon } from 'lucide-react';
+import { AlignLeft, AlignCenter, AlignRight, Grid3x3, Square, ZoomIn, ZoomOut, RotateCcw, StickyNote, Search as SearchIcon, List, ListOrdered, Undo2, Redo2 } from 'lucide-react';
 
 // =================================================================
 // TYPES
@@ -3360,6 +3360,42 @@ function DraggableTextBlock({
               <AlignRight size={14} />
             </button>
             <div className="w-px h-5 bg-slate-600 mx-1" />
+            {/* List Buttons */}
+            <button
+              type="button"
+              onMouseDown={(e) => { e.preventDefault(); applyFormat('insertUnorderedList'); }}
+              className="w-7 h-7 flex items-center justify-center rounded hover:bg-slate-700 text-white transition-colors"
+              title="Bullet List"
+            >
+              <List size={14} />
+            </button>
+            <button
+              type="button"
+              onMouseDown={(e) => { e.preventDefault(); applyFormat('insertOrderedList'); }}
+              className="w-7 h-7 flex items-center justify-center rounded hover:bg-slate-700 text-white transition-colors"
+              title="Numbered List"
+            >
+              <ListOrdered size={14} />
+            </button>
+            <div className="w-px h-5 bg-slate-600 mx-1" />
+            {/* Undo/Redo */}
+            <button
+              type="button"
+              onMouseDown={(e) => { e.preventDefault(); applyFormat('undo'); }}
+              className="w-7 h-7 flex items-center justify-center rounded hover:bg-slate-700 text-white transition-colors"
+              title="Undo (Ctrl+Z)"
+            >
+              <Undo2 size={14} />
+            </button>
+            <button
+              type="button"
+              onMouseDown={(e) => { e.preventDefault(); applyFormat('redo'); }}
+              className="w-7 h-7 flex items-center justify-center rounded hover:bg-slate-700 text-white transition-colors"
+              title="Redo (Ctrl+Y)"
+            >
+              <Redo2 size={14} />
+            </button>
+            <div className="w-px h-5 bg-slate-600 mx-1" />
             {/* Border Toggle */}
             <button
               type="button"
@@ -3393,7 +3429,7 @@ function DraggableTextBlock({
         </div>
       ) : (
         <div
-          className={`p-2 bg-white rounded h-full ${
+          className={`text-block-content p-2 bg-white rounded h-full ${
             isDefaultText 
               ? 'border-2 border-dashed border-slate-200 text-slate-500 italic' 
               : block.showBorder 

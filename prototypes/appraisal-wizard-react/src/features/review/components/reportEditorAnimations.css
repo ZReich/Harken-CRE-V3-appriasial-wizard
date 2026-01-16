@@ -440,6 +440,61 @@ select:focus-visible {
 }
 
 /* =================================================================
+   TEXT BLOCK RICH TEXT - List Alignment Fix
+   ================================================================= */
+
+/* Ensure bullets and numbers move with text alignment */
+[data-text-block] ul,
+[data-text-block] ol,
+.text-block-content ul,
+.text-block-content ol {
+  list-style-position: inside;
+  padding-left: 0;
+  margin-left: 0;
+}
+
+/* When left-aligned, add proper indentation */
+[data-text-block] ul[style*="text-align: left"],
+[data-text-block] ol[style*="text-align: left"],
+[data-text-block][style*="text-align: left"] ul,
+[data-text-block][style*="text-align: left"] ol {
+  padding-left: 1.5em;
+}
+
+/* Center alignment - bullets center with text */
+[data-text-block] ul[style*="text-align: center"],
+[data-text-block] ol[style*="text-align: center"],
+[data-text-block][style*="text-align: center"] ul,
+[data-text-block][style*="text-align: center"] ol {
+  text-align: center;
+}
+
+/* Right alignment - bullets move to right with text */
+[data-text-block] ul[style*="text-align: right"],
+[data-text-block] ol[style*="text-align: right"],
+[data-text-block][style*="text-align: right"] ul,
+[data-text-block][style*="text-align: right"] ol {
+  text-align: right;
+}
+
+/* Ensure list items properly inherit alignment */
+[data-text-block] li {
+  display: list-item;
+}
+
+/* ContentEditable list styling */
+[contenteditable="true"] ul,
+[contenteditable="true"] ol {
+  list-style-position: inside;
+  padding-left: 0;
+  margin: 0.5em 0;
+}
+
+[contenteditable="true"] li {
+  margin: 0.25em 0;
+}
+
+/* =================================================================
    PRINT STYLES - Hide UI Elements
    ================================================================= */
 
