@@ -183,15 +183,15 @@ export const ContextualMarketData: React.FC<ContextualMarketDataProps> = ({
   const getApproachTheme = (approach: string) => {
     switch (approach) {
       case 'Sales Comparison':
-        return { bg: 'bg-cyan-50', border: 'border-cyan-200', accent: 'text-cyan-700' };
+        return { bg: 'bg-cyan-50 dark:bg-cyan-950/30', border: 'border-cyan-200 dark:border-cyan-800/50', accent: 'text-cyan-700 dark:text-cyan-400' };
       case 'Income Approach':
-        return { bg: 'bg-green-50', border: 'border-green-200', accent: 'text-green-700' };
+        return { bg: 'bg-green-50 dark:bg-green-950/30', border: 'border-green-200 dark:border-green-800/50', accent: 'text-green-700 dark:text-green-400' };
       case 'Cost Approach':
-        return { bg: 'bg-orange-50', border: 'border-orange-200', accent: 'text-orange-700' };
+        return { bg: 'bg-orange-50 dark:bg-orange-950/30', border: 'border-orange-200 dark:border-orange-800/50', accent: 'text-orange-700 dark:text-orange-400' };
       case 'Land Valuation':
-        return { bg: 'bg-lime-50', border: 'border-lime-200', accent: 'text-lime-700' };
+        return { bg: 'bg-lime-50 dark:bg-lime-950/30', border: 'border-lime-200 dark:border-lime-800/50', accent: 'text-lime-700 dark:text-lime-400' };
       default:
-        return { bg: 'bg-surface-2 dark:bg-elevation-2', border: 'border-light-border dark:border-dark-border', accent: 'text-slate-700' };
+        return { bg: 'bg-surface-2 dark:bg-elevation-2', border: 'border-light-border dark:border-dark-border', accent: 'text-slate-700 dark:text-slate-300' };
     }
   };
 
@@ -231,7 +231,7 @@ export const ContextualMarketData: React.FC<ContextualMarketDataProps> = ({
           return (
             <div 
               key={index}
-              className="flex items-start gap-3 p-2 rounded-lg hover:bg-surface-2 dark:bg-elevation-2 transition-colors"
+              className="flex items-start gap-3 p-2 rounded-lg hover:bg-surface-2 dark:hover:bg-elevation-2 transition-colors"
             >
               <div className={`p-1.5 rounded-lg ${theme.bg}`}>
                 <Icon size={14} className={theme.accent} />
@@ -244,11 +244,11 @@ export const ContextualMarketData: React.FC<ContextualMarketDataProps> = ({
                   </span>
                   <TrendIcon trend={metric.trend} />
                 </div>
-                <div className="text-sm font-bold text-slate-800 truncate">
+                <div className="text-sm font-bold text-slate-800 dark:text-white truncate">
                   {metric.value}
                 </div>
                 {metric.subValue && (
-                  <div className="text-xs text-harken-gray-med">
+                  <div className="text-xs text-harken-gray-med dark:text-slate-400">
                     {metric.subValue}
                   </div>
                 )}

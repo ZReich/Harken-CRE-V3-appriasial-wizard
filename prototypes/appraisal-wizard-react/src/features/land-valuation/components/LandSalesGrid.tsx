@@ -466,7 +466,7 @@ export const LandSalesGrid: React.FC = () => {
     );
   };
 
-  // Overall Comparability Chip - click to cycle (styled for blue background)
+  // Overall Comparability Chip - click to cycle (softer colors for dark mode)
   const OverallChip = ({ comp }: { comp: LandComp }) => {
     const currentValue = comp.overallComparability;
     
@@ -482,7 +482,7 @@ export const LandSalesGrid: React.FC = () => {
     if (isSup) return (
       <span 
         onClick={handleClick} 
-        className={`${baseClass} bg-accent-teal-mint-light0 text-white border-accent-teal-mint hover:bg-accent-teal-mint-hover`}
+        className={`${baseClass} bg-emerald-600 dark:bg-emerald-700/80 text-white border-emerald-500 dark:border-emerald-600 hover:bg-emerald-700 dark:hover:bg-emerald-600`}
         title="Click to change"
       >
         <ArrowUpRight className="w-3.5 h-3.5" /> Superior
@@ -491,7 +491,7 @@ export const LandSalesGrid: React.FC = () => {
     if (isInf) return (
       <span 
         onClick={handleClick} 
-        className={`${baseClass} bg-harken-error text-white border-harken-error hover:bg-harken-error`}
+        className={`${baseClass} bg-rose-600 dark:bg-rose-700/80 text-white border-rose-500 dark:border-rose-600 hover:bg-rose-700 dark:hover:bg-rose-600`}
         title="Click to change"
       >
         <ArrowDownRight className="w-3.5 h-3.5" /> Inferior
@@ -500,7 +500,7 @@ export const LandSalesGrid: React.FC = () => {
     return (
       <span 
         onClick={handleClick} 
-        className={`${baseClass} bg-surface-1/20 text-white border-white/40 hover:bg-surface-1/30`}
+        className={`${baseClass} bg-slate-500/50 dark:bg-slate-600/50 text-white border-slate-400 dark:border-slate-500 hover:bg-slate-500/70 dark:hover:bg-slate-600/70`}
         title="Click to change"
       >
         <Minus className="w-3.5 h-3.5" /> Similar
@@ -790,7 +790,7 @@ export const LandSalesGrid: React.FC = () => {
               </div>
             </div>
             {/* Subject Info - solid light blue background */}
-            <div className="p-2 flex-1 flex flex-col gap-0.5 bg-sky-50 dark:bg-[#0f1f3a] border-r border-light-border dark:border-dark-border dark:border-dark-border">
+            <div className="p-2 flex-1 flex flex-col gap-0.5 bg-sky-50 dark:bg-cyan-950/30 border-r border-light-border dark:border-dark-border dark:border-dark-border">
               <h3 className="font-bold text-slate-800 dark:text-white text-xs leading-tight line-clamp-1" title={SUBJECT_PROPERTY.address}>
                 {SUBJECT_PROPERTY.address.split(',')[0]}
               </h3>
@@ -857,42 +857,49 @@ export const LandSalesGrid: React.FC = () => {
           </div>
 
           {/* Transaction Data Rows */}
-          {transactionRows.map(row => (
-            <React.Fragment key={row.id}>
-              {/* Label Column - Never scrolls horizontally */}
-              <div 
-                className="sticky left-0 z-[60] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border flex items-center justify-between px-2 py-1.5 group bg-surface-1 dark:bg-elevation-1"
-                style={{ width: LABEL_COL_WIDTH, transform: 'translateZ(0)' }}
-              >
-                <span className="text-xs font-medium text-slate-600 dark:text-slate-400 truncate">{row.label}</span>
-                <button
-                  onClick={() => handleDeleteRow(row.id, 'transaction')}
-                  className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-accent-red-light dark:hover:bg-accent-red-light text-slate-300 hover:text-harken-error transition-all"
-                  title={`Remove ${row.label}`}
-                >
-                  <Trash2 className="w-3 h-3" />
-                </button>
-              </div>
-              
-              {/* Subject Column - Never scrolls horizontally */}
-              <div 
-                className="sticky left-[160px] z-[55] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none bg-sky-50 dark:bg-[#0f1f3a]"
-                style={{ width: SUBJECT_COL_WIDTH, transform: 'translateZ(0)' }}
-              >
-                <span className="font-medium text-slate-700 dark:text-slate-200">{getSubjectTransactionValue(row.id)}</span>
-              </div>
-              
-              {/* Comp Columns */}
-              {comps.map(comp => (
+          {transactionRows.map((row, rowIndex) => {
+            const isEvenRow = rowIndex % 2 === 0;
+            const zebraLabel = isEvenRow ? 'bg-white dark:bg-elevation-1' : 'bg-slate-50/70 dark:bg-elevation-2/50';
+            const zebraSubject = isEvenRow ? 'bg-cyan-50/50 dark:bg-cyan-950/20' : 'bg-cyan-100/50 dark:bg-cyan-900/25';
+            const zebraComp = isEvenRow ? 'bg-white dark:bg-elevation-1' : 'bg-slate-50/70 dark:bg-elevation-2/50';
+            
+            return (
+              <React.Fragment key={row.id}>
+                {/* Label Column - Never scrolls horizontally */}
                 <div 
-                  key={`${row.id}-${comp.id}`} 
-                  className="border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs bg-surface-1 dark:bg-elevation-1"
+                  className={`sticky left-0 z-[60] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border flex items-center justify-between px-2 py-1.5 group ${zebraLabel}`}
+                  style={{ width: LABEL_COL_WIDTH, transform: 'translateZ(0)', backgroundColor: 'inherit' }}
                 >
-                  <span className="font-medium text-slate-600 dark:text-slate-200">{getTransactionValue(comp, row.id)}</span>
+                  <span className="text-xs font-medium text-slate-600 dark:text-slate-400 truncate">{row.label}</span>
+                  <button
+                    onClick={() => handleDeleteRow(row.id, 'transaction')}
+                    className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-accent-red-light dark:hover:bg-accent-red-light text-slate-300 hover:text-harken-error transition-all"
+                    title={`Remove ${row.label}`}
+                  >
+                    <Trash2 className="w-3 h-3" />
+                  </button>
                 </div>
-              ))}
-            </React.Fragment>
-          ))}
+                
+                {/* Subject Column - Never scrolls horizontally */}
+                <div 
+                  className={`sticky left-[160px] z-[55] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none ${zebraSubject}`}
+                  style={{ width: SUBJECT_COL_WIDTH, transform: 'translateZ(0)', backgroundColor: 'inherit' }}
+                >
+                  <span className="font-medium text-slate-700 dark:text-slate-200">{getSubjectTransactionValue(row.id)}</span>
+                </div>
+                
+                {/* Comp Columns */}
+                {comps.map(comp => (
+                  <div 
+                    key={`${row.id}-${comp.id}`} 
+                    className={`relative z-[1] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs ${zebraComp}`}
+                  >
+                    <span className="font-medium text-slate-600 dark:text-slate-200">{getTransactionValue(comp, row.id)}</span>
+                  </div>
+                ))}
+              </React.Fragment>
+            );
+          })}
 
           {/* Add Element Button for Transaction Section - in Elements column */}
           <div 
@@ -921,45 +928,52 @@ export const LandSalesGrid: React.FC = () => {
           </div>
 
           {/* Transaction Adjustment Rows */}
-          {adjustmentRows.map(row => (
-            <React.Fragment key={row.id}>
-              {/* Label Column - Never scrolls horizontally */}
-              <div 
-                className={`sticky left-0 z-[60] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border flex items-center justify-between px-2 py-1.5 group ${
-                  row.id === 'adjPriceAcre' ? 'border-t-2 border-t-slate-800 dark:border-t-slate-600 bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1' : 'bg-surface-1 dark:bg-elevation-1'
-                }`}
-                style={{ width: LABEL_COL_WIDTH, transform: 'translateZ(0)' }}
-              >
-                <span className={`text-xs truncate ${
-                  row.id === 'adjPriceAcre' ? 'font-black text-slate-900 uppercase' : 'font-medium text-slate-600'
-                }`}>{row.label}</span>
-                <button
-                  onClick={() => handleDeleteRow(row.id, 'adjustments')}
-                  className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-accent-red-light text-slate-300 hover:text-harken-error transition-all"
-                  title={`Remove ${row.label}`}
-                >
-                  <Trash2 className="w-3 h-3" />
-                </button>
-              </div>
-              
-              {/* Subject Column - Never scrolls horizontally */}
-              <div 
-                className={`sticky left-[160px] z-[55] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none ${
-                  row.id === 'adjPriceAcre' ? 'border-t-2 border-t-slate-800 dark:border-t-slate-600 bg-blue-100 dark:bg-blue-900/30' : 'bg-sky-50 dark:bg-[#0f1f3a]'
-                }`}
-                style={{ width: SUBJECT_COL_WIDTH, transform: 'translateZ(0)' }}
-              >
-                <span className="font-medium text-slate-700 dark:text-slate-200">{getSubjectAdjustmentValue(row.id)}</span>
-              </div>
-              
-              {/* Comp Columns */}
-              {comps.map(comp => (
+          {adjustmentRows.map((row, rowIndex) => {
+            const isEvenRow = rowIndex % 2 === 0;
+            const isTotalRow = row.id === 'adjPriceAcre';
+            const zebraLabel = isTotalRow 
+              ? 'border-t-2 border-t-slate-800 dark:border-t-slate-600 bg-surface-2 dark:bg-elevation-2' 
+              : (isEvenRow ? 'bg-white dark:bg-elevation-1' : 'bg-slate-50/70 dark:bg-elevation-2/50');
+            const zebraSubject = isTotalRow 
+              ? 'border-t-2 border-t-slate-800 dark:border-t-slate-600 bg-blue-100 dark:bg-blue-900/30' 
+              : (isEvenRow ? 'bg-cyan-50/50 dark:bg-cyan-950/20' : 'bg-cyan-100/50 dark:bg-cyan-900/25');
+            const zebraComp = isTotalRow 
+              ? 'border-t-2 border-t-slate-800 bg-surface-2 dark:bg-elevation-2' 
+              : (isEvenRow ? 'bg-white dark:bg-elevation-1' : 'bg-slate-50/70 dark:bg-elevation-2/50');
+            
+            return (
+              <React.Fragment key={row.id}>
+                {/* Label Column - Never scrolls horizontally */}
                 <div 
-                  key={`${row.id}-${comp.id}`} 
-                  className={`border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs bg-surface-1 dark:bg-elevation-1 ${
-                    row.id === 'adjPriceAcre' ? 'border-t-2 border-t-slate-800 bg-surface-2 dark:bg-elevation-2' : ''
-                  }`}
+                  className={`sticky left-0 z-[60] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border flex items-center justify-between px-2 py-1.5 group ${zebraLabel}`}
+                  style={{ width: LABEL_COL_WIDTH, transform: 'translateZ(0)', backgroundColor: 'inherit' }}
                 >
+                  <span className={`text-xs truncate ${
+                    isTotalRow ? 'font-black text-slate-900 dark:text-white uppercase' : 'font-medium text-slate-600 dark:text-slate-400'
+                  }`}>{row.label}</span>
+                  <button
+                    onClick={() => handleDeleteRow(row.id, 'adjustments')}
+                    className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-accent-red-light text-slate-300 hover:text-harken-error transition-all"
+                    title={`Remove ${row.label}`}
+                  >
+                    <Trash2 className="w-3 h-3" />
+                  </button>
+                </div>
+                
+                {/* Subject Column - Never scrolls horizontally */}
+                <div 
+                  className={`sticky left-[160px] z-[55] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none ${zebraSubject}`}
+                  style={{ width: SUBJECT_COL_WIDTH, transform: 'translateZ(0)', backgroundColor: 'inherit' }}
+                >
+                  <span className="font-medium text-slate-700 dark:text-slate-200">{getSubjectAdjustmentValue(row.id)}</span>
+                </div>
+                
+                {/* Comp Columns */}
+                {comps.map(comp => (
+                  <div 
+                    key={`${row.id}-${comp.id}`} 
+                    className={`relative z-[1] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs ${zebraComp}`}
+                  >
                   {row.id === 'marketCond' ? (
                     <MarketCondChip comp={comp} />
                   ) : row.id === 'adjustment' ? (
@@ -1025,7 +1039,8 @@ export const LandSalesGrid: React.FC = () => {
                 </div>
               ))}
             </React.Fragment>
-          ))}
+            );
+          })}
 
           {/* Add Element Button for Adjustments Section - in Elements column */}
           <div 
@@ -1035,7 +1050,7 @@ export const LandSalesGrid: React.FC = () => {
             <AddElementButton section="adjustments" />
           </div>
           <div 
-            className="sticky left-[160px] z-[55] shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none bg-sky-50 dark:bg-[#0f1f3a]"
+            className="sticky left-[160px] z-[55] shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none bg-sky-50 dark:bg-cyan-950/30"
             style={{ width: SUBJECT_COL_WIDTH }}
           ></div>
           {comps.map(comp => (
@@ -1054,42 +1069,49 @@ export const LandSalesGrid: React.FC = () => {
           </div>
 
           {/* Qualitative Adjustment Rows */}
-          {qualitativeRows.map(row => (
-            <React.Fragment key={row.id}>
-              {/* Label Column - Never scrolls horizontally */}
-              <div 
-                className="sticky left-0 z-[60] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border flex items-center justify-between px-2 py-1.5 group bg-surface-1 dark:bg-elevation-1"
-                style={{ width: LABEL_COL_WIDTH, transform: 'translateZ(0)' }}
-              >
-                <span className="text-xs font-medium text-slate-600 dark:text-slate-400 truncate">{row.label}</span>
-                <button
-                  onClick={() => handleDeleteRow(row.id, 'qualitative')}
-                  className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-accent-red-light dark:hover:bg-accent-red-light text-slate-300 hover:text-harken-error transition-all"
-                  title={`Remove ${row.label}`}
-                >
-                  <Trash2 className="w-3 h-3" />
-                </button>
-              </div>
-              
-              {/* Subject Column - Never scrolls horizontally */}
-              <div 
-                className="sticky left-[160px] z-[55] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none bg-sky-50 dark:bg-[#0f1f3a]"
-                style={{ width: SUBJECT_COL_WIDTH, transform: 'translateZ(0)' }}
-              >
-                <span className="font-medium text-slate-700 dark:text-slate-200">{getSubjectQualitativeValue(row.id)}</span>
-              </div>
-              
-              {/* Comp Columns */}
-              {comps.map(comp => (
+          {qualitativeRows.map((row, rowIndex) => {
+            const isEvenRow = rowIndex % 2 === 0;
+            const zebraLabel = isEvenRow ? 'bg-white dark:bg-elevation-1' : 'bg-slate-50/70 dark:bg-elevation-2/50';
+            const zebraSubject = isEvenRow ? 'bg-cyan-50/50 dark:bg-cyan-950/20' : 'bg-cyan-100/50 dark:bg-cyan-900/25';
+            const zebraComp = isEvenRow ? 'bg-white dark:bg-elevation-1' : 'bg-slate-50/70 dark:bg-elevation-2/50';
+            
+            return (
+              <React.Fragment key={row.id}>
+                {/* Label Column - Never scrolls horizontally */}
                 <div 
-                  key={`${row.id}-${comp.id}`} 
-                  className="border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs bg-surface-1 dark:bg-elevation-1"
+                  className={`sticky left-0 z-[60] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border flex items-center justify-between px-2 py-1.5 group ${zebraLabel}`}
+                  style={{ width: LABEL_COL_WIDTH, transform: 'translateZ(0)', backgroundColor: 'inherit' }}
                 >
-                  <AdjustmentChip compId={comp.id} rowId={row.field || row.id} />
+                  <span className="text-xs font-medium text-slate-600 dark:text-slate-400 truncate">{row.label}</span>
+                  <button
+                    onClick={() => handleDeleteRow(row.id, 'qualitative')}
+                    className="opacity-0 group-hover:opacity-100 p-0.5 rounded hover:bg-accent-red-light dark:hover:bg-accent-red-light text-slate-300 hover:text-harken-error transition-all"
+                    title={`Remove ${row.label}`}
+                  >
+                    <Trash2 className="w-3 h-3" />
+                  </button>
                 </div>
-              ))}
-            </React.Fragment>
-          ))}
+                
+                {/* Subject Column - Never scrolls horizontally */}
+                <div 
+                  className={`sticky left-[160px] z-[55] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none ${zebraSubject}`}
+                  style={{ width: SUBJECT_COL_WIDTH, transform: 'translateZ(0)', backgroundColor: 'inherit' }}
+                >
+                  <span className="font-medium text-slate-700 dark:text-slate-200">{getSubjectQualitativeValue(row.id)}</span>
+                </div>
+                
+                {/* Comp Columns */}
+                {comps.map(comp => (
+                  <div 
+                    key={`${row.id}-${comp.id}`} 
+                    className={`relative z-[1] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs ${zebraComp}`}
+                  >
+                    <AdjustmentChip compId={comp.id} rowId={row.field || row.id} />
+                  </div>
+                ))}
+              </React.Fragment>
+            );
+          })}
 
           {/* Add Element Button for Qualitative Section - in Elements column */}
           <div 
@@ -1106,30 +1128,30 @@ export const LandSalesGrid: React.FC = () => {
             <div key={`add-qual-${comp.id}`} className="bg-surface-1 dark:bg-elevation-1"></div>
           ))}
 
-          {/* ========== OVERALL COMPARABILITY FOOTER ========== */}
+{/* ========== OVERALL COMPARABILITY FOOTER ========== */}
           <div className="col-span-full relative z-[50] mt-4"></div>
-          
+
           {/* Label Column - Never scrolls horizontally */}
-          <div 
-            className="sticky left-0 z-[60] bg-accent-cyan border-b border-accent-cyan p-3 flex items-center"
+          <div
+            className="sticky left-0 z-[60] bg-slate-700 dark:bg-slate-800/80 border-b border-slate-600 dark:border-slate-700 p-3 flex items-center"
             style={{ width: LABEL_COL_WIDTH, transform: 'translateZ(0)' }}
           >
             <span className="text-xs font-bold text-white uppercase tracking-wide">Overall Comparability</span>
           </div>
-          
+
           {/* Subject Column - Never scrolls horizontally */}
-          <div 
-            className="sticky left-[160px] z-[55] bg-accent-cyan border-b border-accent-cyan p-3 flex items-center justify-center shadow-[4px_0_16px_rgba(0,0,0,0.15)]"
+          <div
+            className="sticky left-[160px] z-[55] bg-slate-700 dark:bg-slate-800/80 border-b border-slate-600 dark:border-slate-700 p-3 flex items-center justify-center shadow-[4px_0_16px_rgba(0,0,0,0.15)]"
             style={{ width: SUBJECT_COL_WIDTH, transform: 'translateZ(0)' }}
           >
             <span className="text-xs font-bold text-white">N/A</span>
           </div>
-          
+
           {/* Comp Columns */}
           {comps.map(comp => (
-            <div 
-              key={`overall-${comp.id}`} 
-              className="bg-accent-cyan border-b border-accent-cyan p-2 flex items-center justify-center"
+            <div
+              key={`overall-${comp.id}`}
+              className="bg-slate-700 dark:bg-slate-800/80 border-b border-slate-600 dark:border-slate-700 p-2 flex items-center justify-center"
             >
               <OverallChip comp={comp} />
             </div>

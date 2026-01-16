@@ -812,8 +812,8 @@ export default function EnhancedTextArea({
             <ToolbarButton icon={<ListOrdered className="w-4 h-4" />} onClick={() => execCommand('insertOrderedList')} title="Numbered List" active={formatState.orderedList} />
           </div>
 
-          {/* AI Draft */}
-          <div className="flex items-center gap-2 px-2">
+          {/* AI Draft - Pushed to right */}
+          <div className="flex items-center gap-2 px-2 ml-auto">
             <button
               type="button"
               onClick={generateAI}
@@ -835,7 +835,7 @@ export default function EnhancedTextArea({
           </div>
 
           {/* Fullscreen Toggle */}
-          <div className="ml-auto">
+          <div>
             <ToolbarButton 
               icon={isFullscreen ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />} 
               onClick={toggleFullscreen} 

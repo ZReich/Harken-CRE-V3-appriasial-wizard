@@ -119,6 +119,7 @@ export function createDefaultState(): WizardState {
     incomeApproachData: null,
     analysisConclusions: { conclusions: [] },
     reconciliationData: null,
+    salesComparisonDataByComponent: {},
     stagingPhotos: [],
     // Maps
     subjectMaps: [],

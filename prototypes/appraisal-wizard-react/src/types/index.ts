@@ -1600,6 +1600,8 @@ export interface SalesComparisonData {
   concludedValuePsf: number | null;
 }
 
+export type SalesComparisonDataByComponent = Record<string, SalesComparisonData>;
+
 // =================================================================
 // LAND VALUATION DATA (for land sales grid persistence)
 // =================================================================
@@ -1808,6 +1810,7 @@ export interface WizardState {
 
   // Sales Comparison, Land Valuation, Photos, HBU - Data Flow Connections
   salesComparisonData?: SalesComparisonData;
+  salesComparisonDataByComponent?: SalesComparisonDataByComponent;
   landValuationData?: LandValuationData;
   reportPhotos?: ReportPhotosData;
   hbuAnalysis?: HBUAnalysis;
@@ -1890,6 +1893,7 @@ export type WizardAction =
   | { type: 'SET_RISK_RATING'; payload: RiskRatingData }
   // Sales Comparison, Land Valuation, Photos, HBU, Market Analysis Actions
   | { type: 'SET_SALES_COMPARISON_DATA'; payload: SalesComparisonData }
+  | { type: 'SET_SALES_COMPARISON_DATA_FOR_COMPONENT'; payload: { componentId: string; data: SalesComparisonData } }
   | { type: 'SET_LAND_VALUATION_DATA'; payload: LandValuationData }
   | { type: 'SET_REPORT_PHOTOS'; payload: ReportPhotosData }
   | { type: 'SET_HBU_ANALYSIS'; payload: HBUAnalysis }

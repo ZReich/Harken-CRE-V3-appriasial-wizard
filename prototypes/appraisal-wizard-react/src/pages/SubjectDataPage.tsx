@@ -48,6 +48,7 @@ import TrafficDataCard from '../components/TrafficDataCard';
 import BuildingPermitsCard from '../components/BuildingPermitsCard';
 import MapGeneratorPanel from '../components/MapGeneratorPanel';
 import BoundaryDrawingTool from '../components/BoundaryDrawingTool';
+import { MapAnnotationEditor } from '../components/maps';
 import EnhancedTextArea from '../components/EnhancedTextArea';
 import WizardGuidancePanel from '../components/WizardGuidancePanel';
 import DemographicsPanel from '../components/DemographicsPanel';
@@ -1551,6 +1552,91 @@ function ComponentLandAllocationSection({ totalAcres, siteUnit }: { totalAcres: 
   );
 }
 
+/**
+ * Site Map Annotation Section
+ * Allows users to add callouts, labels, and annotations to site maps
+ */
+function SiteMapAnnotationSection() {
+  const { getSubjectMaps, updateMapAnnotations } = useWizard();
+  const [selectedMapId, setSelectedMapId] = useState<string | null>(null);
+  
+  const subjectMaps = getSubjectMaps();
+  const mapsWithImages = subjectMaps.filter(m => m.imageUrl || m.imageData);
+  
+  // Select first map by default
+  useEffect(() => {
+    if (!selectedMapId && mapsWithImages.length > 0) {
+      setSelectedMapId(mapsWithImages[0].id);
+    }
+  }, [mapsWithImages, selectedMapId]);
+  
+  const selectedMap = mapsWithImages.find(m => m.id === selectedMapId);
+  
+  // If no maps with images, show placeholder
+  if (mapsWithImages.length === 0) {
+    return (
+      <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white border-b-2 border-light-border dark:border-harken-gray pb-3 mb-4 flex items-center gap-2">
+          <Map className="w-5 h-5 text-harken-blue" />
+          Site Map Annotations
+        </h3>
+        <div className="flex flex-col items-center justify-center py-12 text-harken-gray-med dark:text-slate-400">
+          <Map className="w-12 h-12 mb-4 opacity-50" />
+          <p className="text-sm font-medium mb-1">No Maps Available</p>
+          <p className="text-xs text-center max-w-sm">
+            Generate maps using the Map Generator above, then return here to add callouts and annotations.
+          </p>
+        </div>
+      </div>
+    );
+  }
+  
+  return (
+    <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
+      <div className="flex items-center justify-between border-b-2 border-light-border dark:border-harken-gray pb-3 mb-4">
+        <h3 className="text-lg font-bold text-harken-dark dark:text-white flex items-center gap-2">
+          <Map className="w-5 h-5 text-harken-blue" />
+          Site Map Annotations
+        </h3>
+        
+        {/* Map selector if multiple maps */}
+        {mapsWithImages.length > 1 && (
+          <select
+            value={selectedMapId || ''}
+            onChange={(e) => setSelectedMapId(e.target.value)}
+            className="px-3 py-1.5 text-sm border border-light-border dark:border-harken-gray rounded-lg bg-surface-1 dark:bg-elevation-2 text-harken-dark dark:text-white focus:ring-2 focus:ring-harken-blue focus:border-transparent"
+          >
+            {mapsWithImages.map((map) => (
+              <option key={map.id} value={map.id}>
+                {map.title || map.type}
+              </option>
+            ))}
+          </select>
+        )}
+      </div>
+      
+      <p className="text-sm text-harken-gray-med dark:text-slate-400 mb-4">
+        Click the <span className="font-medium text-harken-blue">edit button</span> to add callouts, labels, and annotations to your map. 
+        These will appear in your final report.
+      </p>
+      
+      {selectedMap && (
+        <MapAnnotationEditor
+          annotations={selectedMap.annotations || []}
+          onAnnotationsChange={(annotations) => {
+            updateMapAnnotations(selectedMap.id, annotations);
+          }}
+          mapImageUrl={selectedMap.imageUrl || selectedMap.imageData}
+          isEditable={true}
+          width="100%"
+          height={450}
+          className="rounded-lg overflow-hidden"
+        />
+      )}
+    </div>
+  );
+}
+
 function SiteContent({
   propertyType,
   acres, setAcres, squareFeet, setSquareFeet,
@@ -1817,6 +1903,9 @@ Overall, the site is well-suited for its current use and presents no significant
           height={350}
         />
       </div>
+
+      {/* Site Map Annotation - Add callouts and labels to maps */}
+      <SiteMapAnnotationSection />
 
       {/* External Data Integration - Traffic & Permits */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">

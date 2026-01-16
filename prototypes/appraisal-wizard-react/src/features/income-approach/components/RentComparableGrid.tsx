@@ -302,7 +302,7 @@ export const RentComparableGrid: React.FC<RentComparableGridProps> = ({
     );
   };
 
-  // Overall Comparability Chip - click to cycle (matching SalesGrid pattern)
+  // Overall Comparability Chip - click to cycle (softer colors for dark mode)
   const OverallChip = ({ comp }: { comp: RentComp }) => {
     const currentValue = comp.overallComparability;
     
@@ -318,7 +318,7 @@ export const RentComparableGrid: React.FC<RentComparableGridProps> = ({
     if (isSup) return (
       <span 
         onClick={handleClick} 
-        className={`${baseClass} bg-accent-teal-mint text-white border-accent-teal-mint hover:bg-accent-teal-mint`}
+        className={`${baseClass} bg-emerald-600 dark:bg-emerald-700/80 text-white border-emerald-500 dark:border-emerald-600 hover:bg-emerald-700 dark:hover:bg-emerald-600`}
         title="Click to change"
       >
         <ArrowUpRight className="w-3.5 h-3.5" /> Superior
@@ -327,7 +327,7 @@ export const RentComparableGrid: React.FC<RentComparableGridProps> = ({
     if (isInf) return (
       <span 
         onClick={handleClick} 
-        className={`${baseClass} bg-harken-error text-white border-harken-error hover:bg-harken-error`}
+        className={`${baseClass} bg-rose-600 dark:bg-rose-700/80 text-white border-rose-500 dark:border-rose-600 hover:bg-rose-700 dark:hover:bg-rose-600`}
         title="Click to change"
       >
         <ArrowDownRight className="w-3.5 h-3.5" /> Inferior
@@ -336,7 +336,7 @@ export const RentComparableGrid: React.FC<RentComparableGridProps> = ({
     return (
       <span 
         onClick={handleClick} 
-        className={`${baseClass} bg-surface-1/20 text-white border-white/40 hover:bg-surface-1/30`}
+        className={`${baseClass} bg-slate-500/50 dark:bg-slate-600/50 text-white border-slate-400 dark:border-slate-500 hover:bg-slate-500/70 dark:hover:bg-slate-600/70`}
         title="Click to change"
       >
         <Minus className="w-3.5 h-3.5" /> Similar
@@ -520,7 +520,7 @@ export const RentComparableGrid: React.FC<RentComparableGridProps> = ({
                 SUBJECT
               </div>
             </div>
-            <div className="p-2 flex-1 flex flex-col gap-0.5 bg-sky-50 dark:bg-[#0f1f3a] border-r border-light-border dark:border-dark-border dark:border-dark-border">
+            <div className="p-2 flex-1 flex flex-col gap-0.5 bg-sky-50 dark:bg-cyan-950/30 border-r border-light-border dark:border-dark-border dark:border-dark-border">
               <h3 className="font-bold text-slate-800 dark:text-white text-xs leading-tight line-clamp-1" title={SUBJECT_RENT_PROPERTY.address}>
                 {SUBJECT_RENT_PROPERTY.address.split(',')[0]}
               </h3>
@@ -603,7 +603,7 @@ export const RentComparableGrid: React.FC<RentComparableGridProps> = ({
               </div>
               
               <div 
-                className="sticky left-[160px] z-[55] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs bg-sky-50 dark:bg-[#0f1f3a] shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none"
+                className="sticky left-[160px] z-[55] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs bg-sky-50 dark:bg-cyan-950/30 shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none"
                 style={{ width: SUBJECT_COL_WIDTH }}
               >
                 <span className="font-medium text-slate-700 dark:text-slate-200">{getSubjectTransactionValue(row.id)}</span>
@@ -664,7 +664,7 @@ export const RentComparableGrid: React.FC<RentComparableGridProps> = ({
               </div>
               
               <div 
-                className="sticky left-[160px] z-[55] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs bg-sky-50 dark:bg-[#0f1f3a] shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none"
+                className="sticky left-[160px] z-[55] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs bg-sky-50 dark:bg-cyan-950/30 shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none"
                 style={{ width: SUBJECT_COL_WIDTH }}
               >
                 <span className="font-medium text-slate-700 dark:text-slate-200">{getSubjectQualitativeValue(row.id)}</span>
@@ -696,27 +696,27 @@ export const RentComparableGrid: React.FC<RentComparableGridProps> = ({
             <div key={`add-qual-${comp.id}`} className="bg-surface-1 dark:bg-elevation-1"></div>
           ))}
 
-          {/* ========== OVERALL COMPARABILITY FOOTER ========== */}
+{/* ========== OVERALL COMPARABILITY FOOTER ========== */}
           <div className="col-span-full relative z-[50] mt-4"></div>
-          
-          <div 
-            className="sticky left-0 z-[60] bg-harken-blue border-b border-harken-blue p-3 flex items-center"
+
+          <div
+            className="sticky left-0 z-[60] bg-slate-700 dark:bg-slate-800/80 border-b border-slate-600 dark:border-slate-700 p-3 flex items-center"
             style={{ width: LABEL_COL_WIDTH, transform: 'translateZ(0)' }}
           >
             <span className="text-xs font-bold text-white uppercase tracking-wide">Overall Comparability</span>
           </div>
-          
-          <div 
-            className="sticky left-[160px] z-[55] bg-harken-blue border-b border-harken-blue p-3 flex items-center justify-center shadow-[4px_0_16px_rgba(0,0,0,0.15)]"
+
+          <div
+            className="sticky left-[160px] z-[55] bg-slate-700 dark:bg-slate-800/80 border-b border-slate-600 dark:border-slate-700 p-3 flex items-center justify-center shadow-[4px_0_16px_rgba(0,0,0,0.15)]"
             style={{ width: SUBJECT_COL_WIDTH }}
           >
             <span className="text-xs font-bold text-white">N/A</span>
           </div>
-          
+
           {comps.map(comp => (
-            <div 
-              key={`overall-${comp.id}`} 
-              className="bg-harken-blue border-b border-harken-blue p-2 flex items-center justify-center"
+            <div
+              key={`overall-${comp.id}`}
+              className="bg-slate-700 dark:bg-slate-800/80 border-b border-slate-600 dark:border-slate-700 p-2 flex items-center justify-center"
             >
               <OverallChip comp={comp} />
             </div>

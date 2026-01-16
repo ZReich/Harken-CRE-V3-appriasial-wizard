@@ -47,6 +47,19 @@ export function handleAnalysisAction(
         ...state,
         salesComparisonData: action.payload,
       };
+    case 'SET_SALES_COMPARISON_DATA_FOR_COMPONENT': {
+      const { componentId, data } = action.payload;
+      const nextByComponent = {
+        ...(state.salesComparisonDataByComponent || {}),
+        [componentId]: data,
+      };
+      return {
+        ...state,
+        salesComparisonDataByComponent: nextByComponent,
+        // Keep legacy salesComparisonData in sync for primary component
+        salesComparisonData: componentId === 'primary' ? data : state.salesComparisonData,
+      };
+    }
 
     case 'SET_LAND_VALUATION_DATA':
       return {

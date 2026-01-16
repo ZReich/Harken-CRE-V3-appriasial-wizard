@@ -158,6 +158,8 @@ interface WizardContextValue {
   // Sales Comparison, Land Valuation, Photos, HBU, Market Analysis helpers
   setSalesComparisonData: (data: import('../types').SalesComparisonData) => void;
   getSalesComparisonData: () => import('../types').SalesComparisonData | undefined;
+  setSalesComparisonDataForComponent: (componentId: string, data: import('../types').SalesComparisonData) => void;
+  getSalesComparisonDataForComponent: (componentId: string) => import('../types').SalesComparisonData | undefined;
   setLandValuationData: (data: import('../types').LandValuationData) => void;
   getLandValuationData: () => import('../types').LandValuationData | undefined;
   setReportPhotos: (data: import('../types').ReportPhotosData) => void;
@@ -182,6 +184,9 @@ interface WizardContextValue {
   setApproachMap: (approachType: string, map: MapData) => void;
   removeApproachMap: (approachType: string) => void;
   getApproachMap: (approachType: string) => MapData | undefined;
+
+  // Map annotation helpers
+  updateMapAnnotations: (mapId: string, annotations: import('../types').MapAnnotation[]) => void;
 
   // Derived state
   hasImprovements: boolean; // True if property type is not 'land'
@@ -783,6 +788,14 @@ export function WizardProvider({ children }: { children: ReactNode }) {
     return state.salesComparisonData;
   }, [state.salesComparisonData]);
 
+  const setSalesComparisonDataForComponent = useCallback((componentId: string, data: import('../types').SalesComparisonData) => {
+    dispatch({ type: 'SET_SALES_COMPARISON_DATA_FOR_COMPONENT', payload: { componentId, data } });
+  }, []);
+
+  const getSalesComparisonDataForComponent = useCallback((componentId: string) => {
+    return state.salesComparisonDataByComponent?.[componentId];
+  }, [state.salesComparisonDataByComponent]);
+
   // Land Valuation helpers
   const setLandValuationData = useCallback((data: import('../types').LandValuationData) => {
     dispatch({ type: 'SET_LAND_VALUATION_DATA', payload: data });
@@ -858,6 +871,23 @@ export function WizardProvider({ children }: { children: ReactNode }) {
   const getApproachMap = useCallback((approachType: string): MapData | undefined => {
     return state.approachMaps?.[approachType];
   }, [state.approachMaps]);
+
+  // Update annotations for a specific map (works for both subject and approach maps)
+  const updateMapAnnotations = useCallback((mapId: string, annotations: import('../types').MapAnnotation[]) => {
+    // Check if it's a subject map
+    const subjectMap = state.subjectMaps?.find(m => m.id === mapId);
+    if (subjectMap) {
+      dispatch({ type: 'UPDATE_SUBJECT_MAP', payload: { id: mapId, updates: { annotations } } });
+      return;
+    }
+    
+    // Check if it's an approach map
+    const approachEntry = Object.entries(state.approachMaps || {}).find(([, map]) => map.id === mapId);
+    if (approachEntry) {
+      const [approachType, map] = approachEntry;
+      dispatch({ type: 'SET_APPROACH_MAP', payload: { approachType, map: { ...map, annotations } } });
+    }
+  }, [state.subjectMaps, state.approachMaps]);
 
   // ================================================================
   // BUILDING TYPE HELPERS
@@ -1019,6 +1049,8 @@ export function WizardProvider({ children }: { children: ReactNode }) {
         // Sales Comparison, Land Valuation, Photos, HBU, Market Analysis
         setSalesComparisonData,
         getSalesComparisonData,
+        setSalesComparisonDataForComponent,
+        getSalesComparisonDataForComponent,
         setLandValuationData,
         getLandValuationData,
         setReportPhotos,
@@ -1041,6 +1073,7 @@ export function WizardProvider({ children }: { children: ReactNode }) {
         setApproachMap,
         removeApproachMap,
         getApproachMap,
+        updateMapAnnotations,
         // Derived state
         hasImprovements,
       }}

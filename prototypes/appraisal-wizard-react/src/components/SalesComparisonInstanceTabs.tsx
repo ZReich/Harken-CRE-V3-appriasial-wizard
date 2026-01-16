@@ -8,6 +8,8 @@ import React, { useState, useMemo, Suspense, lazy, useRef, useEffect } from 'rea
 import { Loader2, TrendingUp, Building, Home, TreeDeciduous, Plus, X } from 'lucide-react';
 import { useWizard } from '../context/WizardContext';
 import type { PropertyComponent } from '../types';
+import { determineGridConfiguration } from '../constants/gridConfigurations';
+import type { PropertyValues, Property } from '../features/sales-comparison';
 
 // Lazy load the SalesComparisonTabs
 const SalesComparisonTabs = lazy(() =>
@@ -17,6 +19,8 @@ const SalesComparisonTabs = lazy(() =>
 interface SalesComparisonInstanceTabsProps {
   /** Active scenario ID */
   scenarioId?: number;
+  /** Analysis mode (standard or improvement/residual) */
+  analysisMode?: 'standard' | 'residual';
 }
 
 // Loading fallback for lazy-loaded grids
@@ -63,6 +67,7 @@ const CATEGORY_COLORS: Record<string, {
 
 export function SalesComparisonInstanceTabs({
   scenarioId,
+  analysisMode = 'standard',
 }: SalesComparisonInstanceTabsProps) {
   const { state } = useWizard();
 
@@ -89,6 +94,40 @@ export function SalesComparisonInstanceTabs({
   // Get active component
   const activeComponent = salesComponents.find((c) => c.id === activeComponentId);
 
+  const activeGridConfiguration = useMemo(() => {
+    if (!activeComponent) {
+      return state.subjectData?.gridConfiguration;
+    }
+    const landAllocation = activeComponent.landAllocation;
+    const hasLandAcres = typeof landAllocation?.acres === 'number';
+    const hasLandSf = typeof landAllocation?.squareFeet === 'number';
+    const subjectSiteSize = state.subjectData?.siteArea
+      ? parseFloat(state.subjectData.siteArea)
+      : undefined;
+    const subjectSiteUnit = state.subjectData?.siteAreaUnit === 'sqft' ? 'sf' : 'acres';
+    const siteSize = hasLandAcres
+      ? (landAllocation?.acres ?? undefined)
+      : hasLandSf
+        ? (landAllocation?.squareFeet ?? undefined)
+        : subjectSiteSize;
+    const siteUnit = hasLandAcres ? 'acres' : hasLandSf ? 'sf' : subjectSiteUnit;
+    return determineGridConfiguration(
+      activeComponent.category,
+      activeComponent.propertyType,
+      activeComponent.msOccupancyCode,
+      siteSize,
+      siteUnit
+    );
+  }, [activeComponent, state.subjectData?.gridConfiguration, state.subjectData?.siteArea, state.subjectData?.siteAreaUnit]);
+
+  const activeSalesData = useMemo(() => {
+    if (!activeComponentId) return undefined;
+    return (
+      state.salesComparisonDataByComponent?.[activeComponentId] ||
+      (activeComponentId === 'primary' ? state.salesComparisonData : undefined)
+    );
+  }, [activeComponentId, state.salesComparisonDataByComponent, state.salesComparisonData]);
+
   // Determine if active component should default to Land Sales tab
   const shouldDefaultToLandSales =
     activeComponent?.landClassification === 'excess' ||
@@ -100,7 +139,11 @@ export function SalesComparisonInstanceTabs({
     return (
       <div className="flex-1 min-h-0 overflow-auto">
         <Suspense fallback={<GridLoader />}>
-          <SalesComparisonTabs scenarioId={scenarioId} />
+          <SalesComparisonTabs 
+            scenarioId={scenarioId}
+            analysisMode={analysisMode}
+            gridConfiguration={state.subjectData?.gridConfiguration}
+          />
         </Suspense>
       </div>
     );
@@ -186,6 +229,7 @@ export function SalesComparisonInstanceTabs({
           <Suspense fallback={<GridLoader />}>
             <SalesComparisonTabs
               scenarioId={scenarioId}
+              analysisMode={analysisMode}
               componentContext={{
                 id: activeComponent.id,
                 name: activeComponent.name,
@@ -195,6 +239,9 @@ export function SalesComparisonInstanceTabs({
                 landClassification: activeComponent.landClassification,
               }}
               defaultToLandSales={shouldDefaultToLandSales}
+            gridConfiguration={activeGridConfiguration}
+            properties={activeSalesData?.properties as unknown as Property[] | undefined}
+            values={activeSalesData?.values as unknown as PropertyValues | undefined}
             />
           </Suspense>
         ) : (

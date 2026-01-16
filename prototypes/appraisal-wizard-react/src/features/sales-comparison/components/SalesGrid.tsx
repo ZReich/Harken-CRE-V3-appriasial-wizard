@@ -49,13 +49,40 @@ interface SalesGridProps {
   onDeleteProperty?: (propertyId: string) => void;
   /** Grid configuration - determines visible fields and calculation methods */
   gridConfig?: SalesGridConfiguration;
+  componentId?: string;
+  componentCategory?: string | null;
+  componentSubtype?: string | null;
 }
 
 
-export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initialValues, analysisMode = 'standard', scenarioId, onDeleteProperty, gridConfig }) => {
+export const SalesGrid: React.FC<SalesGridProps> = ({
+  properties,
+  values: initialValues,
+  analysisMode = 'standard',
+  scenarioId,
+  onDeleteProperty,
+  gridConfig,
+  componentId,
+  componentCategory,
+  componentSubtype,
+}) => {
 
-  const { setApproachConclusion, setSalesComparisonData, state: wizardState } = useWizard();
-  const { propertyType, propertySubtype, scenarios, activeScenarioId, salesComparisonData, landValuationData, subjectData } = wizardState;
+  const {
+    setApproachConclusion,
+    setSalesComparisonData,
+    setSalesComparisonDataForComponent,
+    state: wizardState,
+  } = useWizard();
+  const {
+    propertyType,
+    propertySubtype,
+    scenarios,
+    activeScenarioId,
+    salesComparisonData,
+    salesComparisonDataByComponent,
+    landValuationData,
+    subjectData,
+  } = wizardState;
   
   // Use grid config from props, or fall back to wizard state, or use a default
   const activeGridConfig = gridConfig || subjectData?.gridConfiguration;
@@ -66,12 +93,15 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [rows, setRows] = useState<GridRowData[]>(INITIAL_ROWS);
   const [sections] = useState<Section[]>(SECTIONS);
+  const activeSalesData = componentId
+    ? salesComparisonDataByComponent?.[componentId]
+    : salesComparisonData;
   // Load values from context if available, otherwise use initial values from props
   const [values, setValues] = useState<PropertyValues>(
-    salesComparisonData?.values ? (salesComparisonData.values as unknown as PropertyValues) : initialValues
+    activeSalesData?.values ? (activeSalesData.values as unknown as PropertyValues) : initialValues
   );
   const [reconciliationText, setReconciliationText] = useState(
-    salesComparisonData?.reconciliationText ?? ""
+    activeSalesData?.reconciliationText ?? ""
   );
   const [activePopover, setActivePopover] = useState<{ rowId: string, propId: string, field: 'value' | 'adjustment' } | null>(null);
   const [activeOverridePopover, setActiveOverridePopover] = useState<{ rowKey: string, propId: string } | null>(null);
@@ -80,6 +110,14 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
   const [confirmDelete, setConfirmDelete] = useState<{ isOpen: boolean; sectionId: string; sectionTitle: string } | null>(null);
   const [notesEditor, setNotesEditor] = useState<{ isOpen: boolean; propId: string; propName: string; rowKey: string } | null>(null);
   const [notesContent, setNotesContent] = useState<string>('');
+
+  useEffect(() => {
+    const nextValues = activeSalesData?.values
+      ? (activeSalesData.values as unknown as PropertyValues)
+      : initialValues;
+    setValues(nextValues);
+    setReconciliationText(activeSalesData?.reconciliationText ?? "");
+  }, [componentId, initialValues, activeSalesData?.values, activeSalesData?.reconciliationText]);
   
   // List of calculated fields that can be overridden
   const OVERRIDABLE_CALCULATED_FIELDS = [
@@ -238,8 +276,22 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
       concludedValue,
       concludedValuePsf,
     };
-    setSalesComparisonData(dataToSave);
-  }, [values, reconciliationText, analysisMode, concludedValue, concludedValuePsf, properties, setSalesComparisonData]);
+    if (componentId) {
+      setSalesComparisonDataForComponent(componentId, dataToSave);
+    } else {
+      setSalesComparisonData(dataToSave);
+    }
+  }, [
+    values,
+    reconciliationText,
+    analysisMode,
+    concludedValue,
+    concludedValuePsf,
+    properties,
+    componentId,
+    setSalesComparisonData,
+    setSalesComparisonDataForComponent,
+  ]);
 
   // Handle clicking outside to close dropdowns
   useEffect(() => {
@@ -264,8 +316,8 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
     // Filter elements based on current context
     const filteredElements = filterElements({
       section: normalizedSection,
-      propertyType: propertyType,
-      subtype: propertySubtype,
+      propertyType: componentCategory ?? propertyType,
+      subtype: componentSubtype ?? propertySubtype,
       approach: 'sales_comparison',
       scenario: currentScenario,
       excludeKeys: currentRowKeys
@@ -1334,7 +1386,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
 
       {/* SCROLLABLE AREA - Contains grid and reconciliation */}
       {/* SCROLLABLE AREA - Contains grid and reconciliation */}
-      <div ref={scrollContainerRef} className="flex-1 overflow-auto custom-scrollbar relative bg-surface-1 dark:bg-elevation-1" style={{ isolation: 'isolate' }}>
+      <div ref={scrollContainerRef} className="sales-grid-scroll-container flex-1 overflow-auto custom-scrollbar relative bg-surface-1 dark:bg-elevation-1" style={{ isolation: 'isolate' }}>
         {/* Horizontal Scroll Indicator - logic kept for zone scrolling, visual hidden */}
         <HorizontalScrollIndicator scrollContainerRef={scrollContainerRef} stickyTop={120} rightOffset={ACTION_COL_WIDTH} hideIndicator={true} />
 
@@ -1397,7 +1449,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                   >
                     <div
                       className={`sticky left-0 w-fit px-4 py-2 font-bold text-xs uppercase tracking-widest flex items-center gap-2 ${hasResidualRows
-                        ? 'text-purple-700 dark:text-purple-300'
+                        ? 'text-slate-700 dark:text-slate-200'
                         : 'text-slate-700 dark:text-slate-200'
                         } ${hasResidualRows ? 'bg-purple-50 dark:bg-purple-900/10' : 'bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1'}`}
                       style={{ zIndex: 51 }}
@@ -1416,8 +1468,14 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                   </div>
 
                   {/* Section Rows */}
-                  {visibleRows.filter(r => r.category === section.id).map(row => {
+                  {visibleRows.filter(r => r.category === section.id).map((row, rowIndex) => {
                     const isResidualRow = row.mode === 'residual';
+                    const isEvenRow = rowIndex % 2 === 0;
+                    
+                    // Zebra stripe backgrounds for better row tracking
+                    const zebraLight = isEvenRow ? 'bg-white dark:bg-elevation-1' : 'bg-slate-50/50 dark:bg-elevation-2/30';
+                    const zebraResidual = isEvenRow ? 'bg-purple-50 dark:bg-purple-900/10' : 'bg-purple-100/50 dark:bg-purple-900/20';
+                    
                     return (
                       <React.Fragment key={row.id}>
                         {/* Label Column - Sticky Left, never scrolls horizontally */}
@@ -1425,19 +1483,20 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                           className={`sticky left-0 z-[60] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border/50 flex items-center justify-between px-2 py-1.5 group ${row.key === 'total_value'
                             ? 'border-t-2 border-t-slate-800 dark:border-t-slate-600 bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1'
                             : isResidualRow
-                              ? 'border-purple-200 dark:border-purple-800 bg-purple-50 dark:bg-[#1e1b2e]'
-                              : 'bg-surface-1 dark:bg-elevation-1'
+                              ? `border-purple-200 dark:border-purple-800 ${zebraResidual}`
+                              : zebraLight
                             }`}
                           style={{
                             width: LABEL_COL_WIDTH,
-                            transform: 'translateZ(0)'
+                            transform: 'translateZ(0)',
+                            backgroundColor: 'inherit'
                           }}
                         >
                           <span className={`text-xs truncate ${row.key === 'total_value'
-                            ? 'font-black text-slate-900 uppercase'
+                            ? 'font-black text-slate-900 dark:text-white uppercase'
                             : isResidualRow
-                              ? 'font-semibold text-purple-700'
-                              : 'font-medium text-slate-600'
+                              ? 'font-semibold text-slate-700 dark:text-slate-200'
+                              : 'font-medium text-slate-600 dark:text-slate-400'
                             }`}>{row.label}</span>
                           <button
                             onClick={() => removeRow(row.id)}
@@ -1457,12 +1516,33 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                             const hasNotes = noteText.trim() !== '' &&
                               !noteText.toLowerCase().includes('click to');
 
-                            // Determine background color based on row type and property type
+                            // Determine background color based on row type, property type, and zebra striping
                             const bgClass = (() => {
-                              if (row.key === 'total_value') return 'bg-surface-2 dark:bg-elevation-2 dark:bg-elevation-1';
-                              if (prop.type === 'subject') return isResidualRow ? 'bg-purple-50 dark:bg-[#1e1b2e]' : 'bg-[#eff6ff] dark:bg-[#0f1f3a]';
-                              if (isResidualRow) return 'bg-purple-50 dark:bg-purple-900/10';
-                              return 'bg-surface-1 dark:bg-elevation-1';
+                              if (row.key === 'total_value') return 'bg-surface-2 dark:bg-elevation-2';
+                              
+                              // Subject column - subtle teal/cyan tint, still with zebra
+                              if (prop.type === 'subject') {
+                                if (isResidualRow) {
+                                  return isEvenRow 
+                                    ? 'bg-purple-50 dark:bg-purple-950/40' 
+                                    : 'bg-purple-100/60 dark:bg-purple-900/30';
+                                }
+                                return isEvenRow 
+                                  ? 'bg-cyan-50/50 dark:bg-cyan-950/20' 
+                                  : 'bg-cyan-100/40 dark:bg-cyan-900/15';
+                              }
+                              
+                              // Residual/improvement analysis rows
+                              if (isResidualRow) {
+                                return isEvenRow 
+                                  ? 'bg-purple-50 dark:bg-purple-900/10' 
+                                  : 'bg-purple-100/50 dark:bg-purple-900/20';
+                              }
+                              
+                              // Standard rows with zebra striping
+                              return isEvenRow 
+                                ? 'bg-white dark:bg-elevation-1' 
+                                : 'bg-slate-50/50 dark:bg-elevation-2/30';
                             })();
 
                             return (
@@ -1470,7 +1550,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                                 key={`${row.id}-${prop.id}`}
                                 className={`border-r border-b border-light-border dark:border-dark-border dark:border-dark-border/50 p-2 flex items-center text-xs ${prop.type === 'subject'
                                   ? 'z-[55] shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none'
-                                  : ''
+                                  : 'relative z-[1]'
                                   } ${row.key === 'total_value'
                                     ? 'border-t-2 border-t-slate-800 dark:border-t-slate-600 font-bold'
                                     : isResidualRow
@@ -1482,7 +1562,8 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                                     left: LABEL_COL_WIDTH,
                                     width: SUBJECT_COL_WIDTH,
                                     position: 'sticky' as const,
-                                    transform: 'translateZ(0)'
+                                    transform: 'translateZ(0)',
+                                    backgroundColor: 'inherit'
                                   }
                                   : {}
                                 }
@@ -1490,8 +1571,8 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                               >
                                 {isNotesRow ? (
                                   <div className="flex items-center gap-1.5 w-full">
-                                    <MessageSquare className={`w-3 h-3 flex-shrink-0 ${hasNotes ? 'text-harken-blue' : 'text-slate-300'}`} />
-                                    <span className={`truncate ${hasNotes ? 'text-slate-700' : 'text-slate-400 italic'}`}>
+                                    <MessageSquare className={`w-3 h-3 flex-shrink-0 ${hasNotes ? 'text-harken-blue' : 'text-slate-300 dark:text-slate-500'}`} />
+                                    <span className={`truncate ${hasNotes ? 'text-slate-700 dark:text-slate-200' : 'text-slate-400 dark:text-slate-500 italic'}`}>
                                       {hasNotes
                                         ? (noteText.length > 30 ? noteText.substring(0, 30) + '...' : noteText)
                                         : 'Click to add notes'}
@@ -1531,7 +1612,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({ properties, values: initia
                                             : isOverridden
                                               ? 'font-semibold text-amber-700 dark:text-amber-400'
                                               : isResidualRow
-                                                ? 'font-semibold text-purple-700'
+                                                ? 'font-semibold text-slate-700 dark:text-slate-200'
                                                 : isAutoCalcCapRate || isLinkedLandValue
                                                   ? 'font-semibold text-harken-blue'
                                                   : 'font-medium'

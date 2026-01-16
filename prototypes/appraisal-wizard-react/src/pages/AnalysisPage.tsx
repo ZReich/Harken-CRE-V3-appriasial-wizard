@@ -472,7 +472,7 @@ export default function AnalysisPage() {
                   onClick={() => setAnalysisMode('standard')}
                   className={`px-3 py-1.5 text-xs font-semibold rounded-md flex items-center gap-2 transition-all ${analysisMode === 'standard'
                       ? 'bg-surface-1 dark:bg-dark-input text-slate-800 dark:text-white shadow-sm'
-                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-harken-gray-light'
+                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white'
                     }`}
                 >
                   <Layers className="w-3.5 h-3.5" />
@@ -482,7 +482,7 @@ export default function AnalysisPage() {
                   onClick={() => setAnalysisMode('residual')}
                   className={`px-3 py-1.5 text-xs font-semibold rounded-md flex items-center gap-2 transition-all ${analysisMode === 'residual'
                       ? 'bg-purple-600 text-white shadow-sm'
-                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-harken-gray-light'
+                      : 'text-slate-500 dark:text-slate-400 hover:text-slate-700 dark:hover:text-white'
                     }`}
                 >
                   <Building className="w-3.5 h-3.5" />
@@ -498,6 +498,7 @@ export default function AnalysisPage() {
           <div className="flex-1 min-h-0">
             <SalesComparisonInstanceTabs
               scenarioId={activeScenario?.id}
+              analysisMode={analysisMode}
             />
           </div>
         </div>

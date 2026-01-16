@@ -304,7 +304,7 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
                 SUBJECT
               </div>
             </div>
-            <div className="p-2 flex-1 flex flex-col gap-0.5 bg-sky-50 dark:bg-[#0f1f3a] border-r border-light-border dark:border-dark-border dark:border-dark-border">
+            <div className="p-2 flex-1 flex flex-col gap-0.5 bg-sky-50 dark:bg-cyan-950/30 border-r border-light-border dark:border-dark-border dark:border-dark-border">
               <h3 className="font-bold text-slate-800 dark:text-white text-xs leading-tight line-clamp-1" title={SUBJECT_EXPENSE_PROPERTY.address}>
                 {SUBJECT_EXPENSE_PROPERTY.address.split(',')[0]}
               </h3>
@@ -395,7 +395,7 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
               </div>
               
               <div 
-                className="sticky left-[160px] z-[55] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs bg-sky-50 dark:bg-[#0f1f3a] shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none"
+                className="sticky left-[160px] z-[55] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs bg-sky-50 dark:bg-cyan-950/30 shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none"
                 style={{ width: SUBJECT_COL_WIDTH }}
               >
                 <span className="font-medium text-slate-700 dark:text-slate-200">{getSubjectPropertyValue(row.id, row.format)}</span>
@@ -462,7 +462,7 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
               
               <div 
                 className={`sticky left-[160px] z-[55] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none ${
-                  row.id === 'totalExpensesPerSf' ? 'border-t-2 border-t-slate-800 dark:border-t-slate-600 bg-blue-100 dark:bg-blue-900/30' : 'bg-sky-50 dark:bg-[#0f1f3a]'
+                  row.id === 'totalExpensesPerSf' ? 'border-t-2 border-t-slate-800 dark:border-t-slate-600 bg-blue-100 dark:bg-blue-900/30' : 'bg-sky-50 dark:bg-cyan-950/30'
                 }`}
                 style={{ width: SUBJECT_COL_WIDTH }}
               >
@@ -496,7 +496,7 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
             <AddElementButton section="expense" />
           </div>
           <div 
-            className="sticky left-[160px] z-[55] bg-sky-50 dark:bg-[#0f1f3a] shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none"
+            className="sticky left-[160px] z-[55] bg-sky-50 dark:bg-cyan-950/30 shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none"
             style={{ width: SUBJECT_COL_WIDTH }}
           ></div>
           {comps.map(comp => (
@@ -525,7 +525,7 @@ export const ExpenseComparableGrid: React.FC<ExpenseComparableGridProps> = ({
               </div>
               
               <div 
-                className="sticky left-[160px] z-[55] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs bg-sky-50 dark:bg-[#0f1f3a] shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none"
+                className="sticky left-[160px] z-[55] border-r border-b border-light-border dark:border-dark-border dark:border-dark-border p-2 flex items-center justify-center text-xs bg-sky-50 dark:bg-cyan-950/30 shadow-[4px_0_16px_rgba(0,0,0,0.05)] dark:shadow-none"
                 style={{ width: SUBJECT_COL_WIDTH }}
               >
                 <span className="font-bold text-slate-700 dark:text-slate-200">{getSubjectPropertyValue(row.id, row.format)}</span>

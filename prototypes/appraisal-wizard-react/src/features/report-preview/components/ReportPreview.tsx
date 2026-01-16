@@ -12,7 +12,8 @@ import {
   Edit3,
   Download,
 } from 'lucide-react';
-import type { ReportPage, TOCEntry, EditorMode } from '../../../types';
+import type { ReportPage, TOCEntry, EditorMode, MapAnnotation, MapData } from '../../../types';
+import { MapAnnotationEditor } from '../../../components/maps';
 import {
   CoverPage,
   LetterPage,
@@ -41,6 +42,10 @@ interface ReportPreviewProps {
   onElementSelect?: (elementId: string, pageIndex: number) => void;
   onExportPDF?: () => void;
   showSidebar?: boolean;
+  /** Map data for annotation support */
+  maps?: MapData[];
+  /** Callback when map annotations change */
+  onMapAnnotationsChange?: (mapId: string, annotations: MapAnnotation[]) => void;
 }
 
 export const ReportPreview: React.FC<ReportPreviewProps> = ({
@@ -53,6 +58,8 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
   onElementSelect,
   onExportPDF,
   showSidebar = true,
+  maps = [],
+  onMapAnnotationsChange,
 }) => {
   const [internalPage, setInternalPage] = useState(1);
   const [zoom, setZoom] = useState(75);
@@ -362,16 +369,41 @@ export const ReportPreview: React.FC<ReportPreviewProps> = ({
             />
           );
         }
-        case 'map-page':
+        case 'map-page': {
+          // Find the map data for this page
+          const mapContent = page.content?.[0]?.content as { mapId?: string; mapType?: string };
+          const mapId = mapContent?.mapId || page.id;
+          const mapData = maps.find(m => m.id === mapId);
+          const isEditing = mode === 'select' || mode === 'text-edit';
+          
           return (
-            <div className="w-full h-full bg-surface-1 flex items-center justify-center">
-              <div className="text-harken-gray-med">
-                <FileText size={48} className="mx-auto mb-4" />
-                <p className="text-sm">Map Page</p>
-                <p className="text-xs mt-1">{page.title}</p>
-              </div>
+            <div className="w-full h-full bg-surface-1 relative">
+              {mapData?.imageUrl ? (
+                <MapAnnotationEditor
+                  annotations={mapData.annotations || []}
+                  onAnnotationsChange={(annotations) => {
+                    onMapAnnotationsChange?.(mapId, annotations);
+                  }}
+                  mapImageUrl={mapData.imageUrl}
+                  isEditable={isEditing}
+                  width="100%"
+                  height="100%"
+                  className="w-full h-full"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center">
+                  <div className="text-harken-gray-med text-center">
+                    <FileText size={48} className="mx-auto mb-4" />
+                    <p className="text-sm font-medium">{page.title || 'Map Page'}</p>
+                    <p className="text-xs mt-1 text-slate-400">
+                      Upload a map image or generate from location data
+                    </p>
+                  </div>
+                </div>
+              )}
             </div>
           );
+        }
         case 'document':
           return (
             <div className="w-full h-full bg-surface-1 flex items-center justify-center">

@@ -74,7 +74,7 @@ export default function WizardHeader({
     >
       {/* Scenario Switcher Row (if provided) */}
       {scenarioSwitcher && !isFullscreen && (
-        <div className="mb-3 pb-3 border-b border-light-border/50">
+        <div className="mb-3 pb-3 border-b border-light-border/50 dark:border-slate-600/50">
           {scenarioSwitcher}
         </div>
       )}

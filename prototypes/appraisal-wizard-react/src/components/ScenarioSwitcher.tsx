@@ -102,7 +102,7 @@ export default function ScenarioSwitcher({ className = '' }: ScenarioSwitcherPro
       <span className="text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide mr-2">
         Scenario:
       </span>
-      <div className="flex items-center gap-1.5 bg-surface-3/80 dark:bg-elevation-subtle/80 rounded-lg p-1 border border-light-border dark:border-dark-border dark:border-dark-border">
+      <div className="flex items-center gap-1.5 bg-surface-3/80 dark:bg-elevation-subtle/80 rounded-lg p-1 border border-light-border dark:border-slate-600">
         {scenarios.map((scenario) => {
           const isActive = scenario.id === activeScenarioId;
           const colors = getScenarioColors(scenario.name);

@@ -5,6 +5,7 @@
 import React, { useState, Suspense, lazy } from 'react';
 import { Loader2, BarChart3, TreeDeciduous } from 'lucide-react';
 import { PROPERTIES, MOCK_VALUES } from '../features/sales-comparison';
+import type { Property, PropertyValues } from '../features/sales-comparison';
 import type { SalesGridConfiguration } from '../types';
 
 // Lazy load the grid components
@@ -34,6 +35,10 @@ interface SalesComparisonTabsProps {
   scenarioId?: number;
   /** Component context for per-component grids */
   componentContext?: ComponentContext;
+  /** Optional per-component properties data */
+  properties?: Property[];
+  /** Optional per-component values data */
+  values?: PropertyValues;
   /** Default to Land Sales tab instead of Improved Sales */
   defaultToLandSales?: boolean;
 }
@@ -56,6 +61,8 @@ export function SalesComparisonTabs({
   gridConfiguration,
   scenarioId,
   componentContext,
+  properties,
+  values,
   defaultToLandSales = false,
 }: SalesComparisonTabsProps) {
   // Default to land tab if specified (for excess/surplus land components)
@@ -119,11 +126,14 @@ export function SalesComparisonTabs({
         <Suspense fallback={<GridLoader />}>
           {activeSubTab === 'improved' ? (
             <SalesGrid 
-              properties={PROPERTIES}
-              values={MOCK_VALUES}
+              properties={properties ?? PROPERTIES}
+              values={values ?? MOCK_VALUES}
               analysisMode={analysisMode}
               scenarioId={scenarioId}
               gridConfig={gridConfiguration}
+              componentId={componentContext?.id}
+              componentCategory={componentContext?.category}
+              componentSubtype={componentContext?.propertyType}
             />
           ) : (
             <LandSalesGrid />

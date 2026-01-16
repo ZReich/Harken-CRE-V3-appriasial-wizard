@@ -36,7 +36,7 @@ export default function ProgressStepper({ currentPhase, pages }: ProgressStepper
   }, [pages, getSectionCompletion]);
 
   return (
-      <div className="w-full bg-surface-1 dark:bg-elevation-1 border-b border-light-border dark:border-slate-800 transition-colors duration-300">
+      <div className="w-full bg-surface-1 dark:bg-elevation-1 border-b border-light-border dark:border-slate-600 transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex items-center justify-between relative">
 
