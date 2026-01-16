@@ -3200,6 +3200,39 @@ function DraggableTextBlock({
       return;
     }
     
+    // Special handling for bullet lists to fix multi-line selection issue
+    // When text is separated by <br> tags, insertUnorderedList only affects the first line
+    // We manually convert each line into a list item
+    if (command === 'insertUnorderedList' && editorRef.current) {
+      const range = selection.getRangeAt(0);
+      const selectedContent = range.cloneContents();
+      const tempDiv = document.createElement('div');
+      tempDiv.appendChild(selectedContent);
+      const html = tempDiv.innerHTML;
+      
+      // Check if selection contains <br> tags (indicating multiple lines not in a list)
+      // and is not already a list
+      if ((html.includes('<br>') || html.includes('<BR>')) && 
+          !html.includes('<li>') && !html.includes('<ul>')) {
+        // Split by <br> tags and create list items
+        const lines = html.split(/<br\s*\/?>/gi).filter(line => line.trim() !== '');
+        if (lines.length > 1) {
+          const listItems = lines.map(line => `<li>${line}</li>`).join('');
+          const listHtml = `<ul>${listItems}</ul>`;
+          
+          // Delete the selected content and insert the list
+          range.deleteContents();
+          const listFragment = document.createRange().createContextualFragment(listHtml);
+          range.insertNode(listFragment);
+          
+          // Sync content
+          onUpdate({ content: editorRef.current.innerHTML });
+          editorRef.current?.focus();
+          return;
+        }
+      }
+    }
+    
     // Execute the command
     document.execCommand(command, false);
     
