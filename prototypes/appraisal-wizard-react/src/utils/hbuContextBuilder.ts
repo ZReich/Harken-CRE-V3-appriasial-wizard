@@ -258,6 +258,7 @@ export function buildEnhancedContextForAI(
     const baseContext = formatContextForAPI(hbuContext);
     
     const { subjectData, swotAnalysis, salesComparisonData, landValuationData, 
+            salesComparisonDataByComponent, activeComponentId,
             incomeApproachData, marketAnalysis, reconciliationData, costApproachBuildingCostData,
             activeScenarioId, analysisConclusions, scenarios, demographicsData, 
             economicIndicators, riskRating } = state;
@@ -369,15 +370,20 @@ export function buildEnhancedContextForAI(
       roadClassification: traffic.roadClassification || null,
     } : {};
     
+    const componentId = activeComponentId || 'primary';
+    const scenarioId = activeScenarioId ?? 1;
+    const activeSalesData =
+      salesComparisonDataByComponent?.[componentId]?.[scenarioId] ||
+      (componentId === 'primary' ? salesComparisonData : undefined);
     // FIX #21: Extract Sales Comparison comps with adjusted prices
-    const salesComps = salesComparisonData?.properties
+    const salesComps = activeSalesData?.properties
       ?.filter(p => p && p.type === 'comp' && p.address) // FIX #43: Filter nulls/incomplete
       .map(p => ({
         id: p.id,
         address: p.address,
         salePrice: p.salePrice || 0,
         saleDate: p.saleDate || null,
-        adjustedPrice: calculateAdjustedPrice(p.id, salesComparisonData.values), // FIX #21
+        adjustedPrice: calculateAdjustedPrice(p.id, activeSalesData.values), // FIX #21
       })) || [];
     
     // FIX #22: Extract Land Valuation comps with sale dates

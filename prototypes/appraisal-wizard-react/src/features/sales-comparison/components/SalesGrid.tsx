@@ -93,8 +93,9 @@ export const SalesGrid: React.FC<SalesGridProps> = ({
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [rows, setRows] = useState<GridRowData[]>(INITIAL_ROWS);
   const [sections] = useState<Section[]>(SECTIONS);
+  const scenarioKey = scenarioId ?? 0;
   const activeSalesData = componentId
-    ? salesComparisonDataByComponent?.[componentId]
+    ? salesComparisonDataByComponent?.[componentId]?.[scenarioKey]
     : salesComparisonData;
   // Load values from context if available, otherwise use initial values from props
   const [values, setValues] = useState<PropertyValues>(
@@ -220,14 +221,22 @@ export const SalesGrid: React.FC<SalesGridProps> = ({
     }
   }, [analysisMode, landValuationData?.concludedLandValue]);
 
-  // Check if per-unit SF is unknown (use subjectData.perUnitSfUnknown or check unitMix sfSource)
+  const componentUnitMix = componentId
+    ? wizardState.propertyComponents.find(c => c.id === componentId)?.unitMix
+    : subjectData?.unitMix;
+  const componentUnitCount = componentId
+    ? wizardState.propertyComponents.find(c => c.id === componentId)?.unitCount
+    : subjectData?.totalUnitCount;
+  const componentPerUnitSfUnknown = componentId
+    ? wizardState.propertyComponents.find(c => c.id === componentId)?.perUnitSfUnknown
+    : subjectData?.perUnitSfUnknown;
+
+  // Check if per-unit SF is unknown (use component or subject data)
   const isSfUnknown = useMemo(() => {
-    // Check explicit flag first
-    if (subjectData?.perUnitSfUnknown) return true;
-    // Check if unit mix has unknown sfSource
-    if (subjectData?.unitMix?.some(u => u.sfSource === 'unknown')) return true;
+    if (componentPerUnitSfUnknown) return true;
+    if (componentUnitMix?.some(u => u.sfSource === 'unknown')) return true;
     return false;
-  }, [subjectData?.perUnitSfUnknown, subjectData?.unitMix]);
+  }, [componentPerUnitSfUnknown, componentUnitMix]);
   
   // Calculate concluded value per SF (skip if SF is unknown)
   const concludedValuePsf = useMemo(() => {
@@ -241,12 +250,12 @@ export const SalesGrid: React.FC<SalesGridProps> = ({
   
   // Calculate concluded value per unit (for multi-family properties)
   const concludedValuePerUnit = useMemo(() => {
-    const unitCount = subjectData?.totalUnitCount;
+    const unitCount = componentUnitCount;
     if (concludedValue && typeof unitCount === 'number' && unitCount > 0) {
       return Math.round(concludedValue / unitCount);
     }
     return null;
-  }, [concludedValue, subjectData?.totalUnitCount]);
+  }, [concludedValue, componentUnitCount]);
   
   // Determine if we should show dual metrics (both $/SF and $/unit)
   const showDualMetrics = activeGridConfig?.gridType === 'multi_family' || 
@@ -277,7 +286,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({
       concludedValuePsf,
     };
     if (componentId) {
-      setSalesComparisonDataForComponent(componentId, dataToSave);
+      setSalesComparisonDataForComponent(componentId, scenarioKey, dataToSave);
     } else {
       setSalesComparisonData(dataToSave);
     }
@@ -289,6 +298,7 @@ export const SalesGrid: React.FC<SalesGridProps> = ({
     concludedValuePsf,
     properties,
     componentId,
+    scenarioKey,
     setSalesComparisonData,
     setSalesComparisonDataForComponent,
   ]);

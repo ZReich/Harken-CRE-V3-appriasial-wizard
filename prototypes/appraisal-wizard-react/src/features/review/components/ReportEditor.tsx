@@ -5042,8 +5042,14 @@ export function ReportEditor({ onSaveDraft, onReportStateChange }: ReportEditorP
             pageNumber={pageIndex + 1}
           />
         ) : null;
-      case 'sales-comparison':
-        return <SalesComparisonPage {...commonProps} salesComparisonData={state.salesComparisonData} />;
+      case 'sales-comparison': {
+        const activeComponentId = state.activeComponentId || 'primary';
+        const scenarioId = state.activeScenarioId ?? 1;
+        const salesComparisonData =
+          state.salesComparisonDataByComponent?.[activeComponentId]?.[scenarioId] ||
+          (activeComponentId === 'primary' ? state.salesComparisonData : undefined);
+        return <SalesComparisonPage {...commonProps} salesComparisonData={salesComparisonData} />;
+      }
       case 'income-approach':
         return <IncomeApproachPage {...commonProps} incomeApproachData={state.incomeApproachData} />;
       case 'cost-approach':

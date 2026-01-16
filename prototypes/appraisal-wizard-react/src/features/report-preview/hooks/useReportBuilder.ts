@@ -1124,7 +1124,10 @@ function buildCostApproachPages(state: WizardState, scenarioId: number): Content
 }
 
 function buildSalesComparisonPages(state: WizardState, scenarioId: number): ContentBlock[][] {
-  const salesData = state.salesComparisonData;
+  const activeComponentId = state.activeComponentId || 'primary';
+  const salesData =
+    state.salesComparisonDataByComponent?.[activeComponentId]?.[scenarioId] ||
+    (activeComponentId === 'primary' ? state.salesComparisonData : undefined);
   const hasWizardData = salesData?.properties && salesData.properties.length > 0;
   
   // Use sample data when no wizard data

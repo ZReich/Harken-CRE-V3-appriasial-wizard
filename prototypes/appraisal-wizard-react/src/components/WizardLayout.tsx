@@ -96,13 +96,35 @@ export default function WizardLayout({
     }
     // Default: navigate to next phase
     if (phase < 6) {
-      navigate(pages[phase].path);
+      const targetPath = pages[phase].path;
+      const hardNavigatePaths = new Set(['/subject-data', '/analysis', '/review']);
+      const shouldHardNavigate =
+        hardNavigatePaths.has(targetPath) ||
+        hardNavigatePaths.has(window.location.pathname);
+
+      if (shouldHardNavigate) {
+        window.location.assign(targetPath);
+        return;
+      }
+
+      navigate(targetPath);
     }
   };
 
   const handlePrevious = () => {
     if (phase > 1) {
-      navigate(pages[phase - 2].path);
+      const targetPath = pages[phase - 2].path;
+      const hardNavigatePaths = new Set(['/subject-data', '/analysis', '/review']);
+      const shouldHardNavigate =
+        hardNavigatePaths.has(targetPath) ||
+        hardNavigatePaths.has(window.location.pathname);
+
+      if (shouldHardNavigate) {
+        window.location.assign(targetPath);
+        return;
+      }
+
+      navigate(targetPath);
     }
   };
 

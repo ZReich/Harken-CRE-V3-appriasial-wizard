@@ -158,8 +158,8 @@ interface WizardContextValue {
   // Sales Comparison, Land Valuation, Photos, HBU, Market Analysis helpers
   setSalesComparisonData: (data: import('../types').SalesComparisonData) => void;
   getSalesComparisonData: () => import('../types').SalesComparisonData | undefined;
-  setSalesComparisonDataForComponent: (componentId: string, data: import('../types').SalesComparisonData) => void;
-  getSalesComparisonDataForComponent: (componentId: string) => import('../types').SalesComparisonData | undefined;
+  setSalesComparisonDataForComponent: (componentId: string, scenarioId: number, data: import('../types').SalesComparisonData) => void;
+  getSalesComparisonDataForComponent: (componentId: string, scenarioId: number) => import('../types').SalesComparisonData | undefined;
   setLandValuationData: (data: import('../types').LandValuationData) => void;
   getLandValuationData: () => import('../types').LandValuationData | undefined;
   setReportPhotos: (data: import('../types').ReportPhotosData) => void;
@@ -788,12 +788,12 @@ export function WizardProvider({ children }: { children: ReactNode }) {
     return state.salesComparisonData;
   }, [state.salesComparisonData]);
 
-  const setSalesComparisonDataForComponent = useCallback((componentId: string, data: import('../types').SalesComparisonData) => {
-    dispatch({ type: 'SET_SALES_COMPARISON_DATA_FOR_COMPONENT', payload: { componentId, data } });
+  const setSalesComparisonDataForComponent = useCallback((componentId: string, scenarioId: number, data: import('../types').SalesComparisonData) => {
+    dispatch({ type: 'SET_SALES_COMPARISON_DATA_FOR_COMPONENT', payload: { componentId, scenarioId, data } });
   }, []);
 
-  const getSalesComparisonDataForComponent = useCallback((componentId: string) => {
-    return state.salesComparisonDataByComponent?.[componentId];
+  const getSalesComparisonDataForComponent = useCallback((componentId: string, scenarioId: number) => {
+    return state.salesComparisonDataByComponent?.[componentId]?.[scenarioId];
   }, [state.salesComparisonDataByComponent]);
 
   // Land Valuation helpers

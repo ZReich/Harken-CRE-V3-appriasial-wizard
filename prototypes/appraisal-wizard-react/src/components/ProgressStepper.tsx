@@ -14,6 +14,16 @@ export default function ProgressStepper({ currentPhase, pages }: ProgressStepper
   const { getSectionCompletion } = useWizard();
 
   const handleNavigate = (path: string) => {
+    const hardNavigatePaths = new Set(['/subject-data', '/analysis', '/review']);
+    const shouldHardNavigate =
+      hardNavigatePaths.has(path) ||
+      hardNavigatePaths.has(window.location.pathname);
+
+    if (shouldHardNavigate) {
+      window.location.assign(path);
+      return;
+    }
+
     navigate(path);
   };
 
@@ -36,7 +46,7 @@ export default function ProgressStepper({ currentPhase, pages }: ProgressStepper
   }, [pages, getSectionCompletion]);
 
   return (
-      <div className="w-full bg-surface-1 dark:bg-elevation-1 border-b border-light-border dark:border-slate-600 transition-colors duration-300">
+      <div className="w-full bg-surface-1 dark:bg-elevation-1 border-b border-light-border dark:border-slate-600 transition-colors duration-300 sticky top-0 z-[999999] pointer-events-auto">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
         <div className="flex items-center justify-between relative">
 
@@ -59,8 +69,8 @@ export default function ProgressStepper({ currentPhase, pages }: ProgressStepper
                 key={path}
                 className={`flex items-center ${idx < pages.length - 1 ? 'flex-1' : ''} group`}
               >
-                {/* Step Item */}
-                <div className="flex items-center gap-3 relative bg-surface-1 dark:bg-elevation-1 pr-2">
+                {/* Step Item - ensure clickability with explicit pointer-events */}
+                <div className="flex items-center gap-3 relative z-10 bg-surface-1 dark:bg-elevation-1 pr-2 pointer-events-auto">
                   <ProgressCircle
                     phaseNum={phaseNum}
                     completion={completion}

@@ -48,10 +48,13 @@ export function handleAnalysisAction(
         salesComparisonData: action.payload,
       };
     case 'SET_SALES_COMPARISON_DATA_FOR_COMPONENT': {
-      const { componentId, data } = action.payload;
+      const { componentId, scenarioId, data } = action.payload;
       const nextByComponent = {
         ...(state.salesComparisonDataByComponent || {}),
-        [componentId]: data,
+        [componentId]: {
+          ...(state.salesComparisonDataByComponent?.[componentId] || {}),
+          [scenarioId]: data,
+        },
       };
       return {
         ...state,

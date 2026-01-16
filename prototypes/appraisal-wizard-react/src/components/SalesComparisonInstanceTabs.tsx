@@ -69,7 +69,7 @@ export function SalesComparisonInstanceTabs({
   scenarioId,
   analysisMode = 'standard',
 }: SalesComparisonInstanceTabsProps) {
-  const { state } = useWizard();
+  const { state, setActiveComponent } = useWizard();
 
   // Track active component tab
   const [activeComponentId, setActiveComponentId] = useState<string | null>(null);
@@ -122,11 +122,16 @@ export function SalesComparisonInstanceTabs({
 
   const activeSalesData = useMemo(() => {
     if (!activeComponentId) return undefined;
+    const scenarioKey = scenarioId ?? 0;
     return (
-      state.salesComparisonDataByComponent?.[activeComponentId] ||
+      state.salesComparisonDataByComponent?.[activeComponentId]?.[scenarioKey] ||
       (activeComponentId === 'primary' ? state.salesComparisonData : undefined)
     );
-  }, [activeComponentId, state.salesComparisonDataByComponent, state.salesComparisonData]);
+  }, [activeComponentId, scenarioId, state.salesComparisonDataByComponent, state.salesComparisonData]);
+
+  useEffect(() => {
+    setActiveComponent(activeComponentId);
+  }, [activeComponentId, setActiveComponent]);
 
   // Determine if active component should default to Land Sales tab
   const shouldDefaultToLandSales =
