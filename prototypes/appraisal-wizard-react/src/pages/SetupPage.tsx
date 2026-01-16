@@ -1022,6 +1022,7 @@ export default function SetupPage() {
         landClassification: 'standard',
         isPrimary: true,
         sortOrder: 0,
+        includeDetailedImprovements: true, // Primary components get full improvements
         analysisConfig: {
           salesApproach: true,
           incomeApproach: context.propertyCategory === 'commercial' || isMultiFamilyProperty || false,

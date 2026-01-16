@@ -902,12 +902,28 @@ export interface ScenarioReconciliation {
   comments: string;
 }
 
+/**
+ * Combined sale discount configuration.
+ * Applied when selling multiple components together as a package.
+ */
+export interface CombinedSaleDiscount {
+  enabled: boolean;
+  percentage: number;           // Default 10%
+  rationale: string;            // Explanation for the discount
+}
+
 export interface ReconciliationData {
   scenarioReconciliations: ScenarioReconciliation[];
   exposurePeriod: number | null;
   marketingTime: number | null;
   exposureRationale: string;
   certifications: string[]; // IDs of selected certifications
+
+  // Display mode for component values in report
+  displayMode: 'combined' | 'individual' | 'both';
+
+  // Combined sale discount (sum of parts typically higher than combined)
+  combinedSaleDiscount?: CombinedSaleDiscount;
 }
 
 // =================================================================
@@ -1368,7 +1384,7 @@ export interface MultiFamilyUnitMix {
   unitType: 'studio' | '1br' | '2br' | '3br' | '4br+';
   count: number;
   avgSF: number | null;                              // null = unknown SF
-  sfSource: 'measured' | 'estimated' | 'unknown';    // Track SF certainty
+  sfSource: 'measured' | 'estimated' | 'unknown' | 'county_records';    // Track SF certainty
   bedrooms: number;
   bathrooms: number;
   avgRent?: number;  // Monthly rent for income analysis
@@ -1377,6 +1393,23 @@ export interface MultiFamilyUnitMix {
 // =================================================================
 // PROPERTY COMPONENT TYPES (Mixed-Use Architecture)
 // =================================================================
+
+/**
+ * Land allocation configuration for property components.
+ * Allows allocating a portion of the total site to a specific component.
+ */
+export interface LandAllocation {
+  acres: number | null;
+  squareFeet: number | null;
+  allocationMethod: 'measured' | 'estimated' | 'county_records';
+  shape?: string;
+  frontage?: string;
+  // Excess land specific fields
+  accessType?: 'separate' | 'shared' | 'easement' | 'none';
+  hasUtilities?: boolean;
+  hasLegalAccess?: boolean;
+  notes?: string;
+}
 
 /**
  * Property Component for mixed-use properties.
@@ -1392,13 +1425,16 @@ export interface PropertyComponent {
 
   // Size allocation
   squareFootage: number | null;
-  sfSource: 'measured' | 'estimated' | 'unknown';    // Track SF certainty
+  sfSource: 'measured' | 'estimated' | 'unknown' | 'county_records';    // Track SF certainty
 
   // Multi-family specific
   unitCount?: number;
   unitMix?: MultiFamilyUnitMix[];
   perUnitSfUnknown?: boolean;            // When true, use totalBuildingSf instead of per-unit avgSF
   totalBuildingSf?: number;               // Total building SF when per-unit is unknown
+
+  // Land allocation for this component
+  landAllocation?: LandAllocation;
 
   // Component classification (per resolved decision #3)
   landClassification: 'standard' | 'excess' | 'surplus';
@@ -1407,6 +1443,9 @@ export interface PropertyComponent {
   // - 'surplus': Cannot be sold separately → Contributory value adjustment
   isPrimary: boolean;
   sortOrder: number;
+
+  // Skip detailed improvements toggle (for simple/contributory components)
+  includeDetailedImprovements: boolean;  // Default true for primary, false for contributory
 
   // Analysis configuration
   analysisConfig: {
@@ -2555,12 +2594,31 @@ export interface MapMarker {
 /**
  * Annotation on a map (labels, arrows, callouts).
  */
+/**
+ * Style configuration for map annotations.
+ * Uses Harken-blue (#0da1c7) as default color scheme.
+ */
+export interface MapAnnotationStyle {
+  backgroundColor?: string;     // Default: harken-blue (#0da1c7)
+  textColor?: string;           // Default: white
+  lineColor?: string;           // Default: harken-blue (#0da1c7)
+  lineWidth?: number;           // Default: 2
+  fontSize?: 'sm' | 'md' | 'lg'; // Default: 'md'
+}
+
+/**
+ * Annotation on a map (labels, arrows, callouts, boundaries).
+ * Enhanced to support callouts with separate anchor and label positions,
+ * and polygon/line shapes for boundary drawing.
+ */
 export interface MapAnnotation {
   id: string;
-  type: 'label' | 'boundary' | 'arrow' | 'callout';
-  content: string;
-  position: { lat: number; lng: number };
-  style?: Record<string, string>;
+  type: 'label' | 'boundary' | 'arrow' | 'callout' | 'rectangle' | 'polygon' | 'line';
+  content?: string;                                    // Text content for labels/callouts
+  position: { lat: number; lng: number };              // Anchor point (arrow tip for callouts)
+  labelPosition?: { lat: number; lng: number };        // Position of label box (for callouts)
+  coordinates?: Array<{ lat: number; lng: number }>;   // Points for lines/polygons/boundaries
+  style?: MapAnnotationStyle;
 }
 
 /**

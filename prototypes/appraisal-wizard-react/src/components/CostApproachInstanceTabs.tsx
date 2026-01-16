@@ -1,31 +1,22 @@
 /**
- * IncomeApproachInstanceTabs.tsx
- * Manages multiple Income Approach instances per property component.
+ * CostApproachInstanceTabs.tsx
+ * Manages multiple Cost Approach instances per property component.
  * Part of the Mixed-Use Property Architecture.
- * 
- * Components with incomeApproach enabled automatically appear as tabs - 
- * no manual "Add" step required (matching Sales Comparison UX pattern).
  */
 
 import React, { useState, useMemo, Suspense, lazy, useEffect } from 'react';
-import { Loader2, Wallet, Building, Home } from 'lucide-react';
+import { Loader2, HardHat, Building, Home, TreeDeciduous } from 'lucide-react';
 import { useWizard } from '../context/WizardContext';
+import type { PropertyComponent } from '../types';
 
-// Lazy load the IncomeApproachGrid
-const IncomeApproachGrid = lazy(() => 
-  import('../features/income-approach').then(m => ({ default: m.IncomeApproachGrid }))
+// Lazy load the CostApproachGrid
+const CostApproachGrid = lazy(() =>
+  import('../features/cost-approach').then((m) => ({ default: m.CostApproachGrid }))
 );
 
-interface IncomeApproachInstanceTabsProps {
+interface CostApproachInstanceTabsProps {
   /** Active scenario ID */
   scenarioId?: number;
-  /** Visibility configuration */
-  visibility?: {
-    rentComparableGrid?: boolean;
-    expenseComparableGrid?: boolean;
-  };
-  /** Default rent comp mode when no property components exist */
-  rentCompMode?: 'commercial' | 'residential';
 }
 
 // Loading fallback for lazy-loaded grids
@@ -33,8 +24,8 @@ function GridLoader() {
   return (
     <div className="flex-1 flex items-center justify-center bg-surface-2 dark:bg-elevation-2/50 min-h-[400px]">
       <div className="flex flex-col items-center gap-3">
-        <Loader2 className="w-8 h-8 text-[#22c55e] animate-spin" />
-        <p className="text-sm text-slate-500 dark:text-slate-400">Loading income analysis...</p>
+        <Loader2 className="w-8 h-8 text-amber-500 animate-spin" />
+        <p className="text-sm text-slate-500 dark:text-slate-400">Loading cost approach...</p>
       </div>
     </div>
   );
@@ -44,6 +35,7 @@ function GridLoader() {
 const CATEGORY_ICONS: Record<string, React.ComponentType<{ className?: string }>> = {
   commercial: Building,
   residential: Home,
+  land: TreeDeciduous,
 };
 
 // Category colors for tabs
@@ -69,49 +61,40 @@ const CATEGORY_COLORS: Record<string, {
   },
 };
 
-export function IncomeApproachInstanceTabs({
+export function CostApproachInstanceTabs({
   scenarioId,
-  visibility = { rentComparableGrid: true, expenseComparableGrid: true },
-  rentCompMode = 'commercial',
-}: IncomeApproachInstanceTabsProps) {
-  const { state, setIncomeApproachData } = useWizard();
-  
-  // Track active component tab (not instance - components auto-appear)
+}: CostApproachInstanceTabsProps) {
+  const { state } = useWizard();
+
+  // Track active component tab
   const [activeComponentId, setActiveComponentId] = useState<string | null>(null);
-  
-  // Get property components that have income approach enabled
-  const incomeComponents = useMemo(() => {
+
+  // Get property components that have cost approach enabled
+  const costComponents = useMemo(() => {
     return (state.propertyComponents || []).filter(
-      comp => comp.analysisConfig.incomeApproach
+      (comp) => comp.analysisConfig.costApproach
     );
   }, [state.propertyComponents]);
 
   // Set initial active component if not set
   useEffect(() => {
-    if (!activeComponentId && incomeComponents.length > 0) {
-      setActiveComponentId(incomeComponents[0].id);
+    if (!activeComponentId && costComponents.length > 0) {
+      setActiveComponentId(costComponents[0].id);
     }
-  }, [incomeComponents, activeComponentId]);
+  }, [costComponents, activeComponentId]);
 
-  // If no components have income approach, show default grid
-  const showDefaultGrid = incomeComponents.length === 0;
+  // If no components have cost approach, show default grid
+  const showDefaultGrid = costComponents.length === 0;
 
   // Get active component
-  const activeComponent = incomeComponents.find(c => c.id === activeComponentId);
+  const activeComponent = costComponents.find((c) => c.id === activeComponentId);
 
-  // If showing default grid (no components with income approach)
+  // If showing default grid (no components with cost approach)
   if (showDefaultGrid) {
     return (
       <div className="flex-1 min-h-0 overflow-auto">
         <Suspense fallback={<GridLoader />}>
-          <IncomeApproachGrid
-            initialData={state.incomeApproachData}
-            onDataChange={setIncomeApproachData}
-            showGuidancePanel={true}
-            scenarioId={scenarioId}
-            visibility={visibility}
-            rentCompMode={rentCompMode}
-          />
+          <CostApproachGrid scenarioId={scenarioId} />
         </Suspense>
       </div>
     );
@@ -119,11 +102,11 @@ export function IncomeApproachInstanceTabs({
 
   return (
     <div className="flex flex-col h-full">
-      {/* Component tabs - shows when multiple components have income approach */}
-      {incomeComponents.length > 1 && (
+      {/* Component tabs - shows when multiple components have cost approach */}
+      {costComponents.length > 1 && (
         <div className="flex items-center gap-2 px-6 py-3 overflow-x-auto border-b border-light-border dark:border-harken-gray/30">
-          {incomeComponents.map((component) => {
-            const Icon = CATEGORY_ICONS[component.category] || Wallet;
+          {costComponents.map((component) => {
+            const Icon = CATEGORY_ICONS[component.category] || HardHat;
             const colors = CATEGORY_COLORS[component.category] || CATEGORY_COLORS.commercial;
             const isActive = activeComponentId === component.id;
 
@@ -143,11 +126,6 @@ export function IncomeApproachInstanceTabs({
               >
                 <Icon className="w-4 h-4" />
                 <span>{component.name}</span>
-                {component.analysisConfig.analysisType === 'contributory' && (
-                  <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-slate-100 text-slate-600 dark:bg-slate-700/50 dark:text-slate-300 font-medium">
-                    Contributory
-                  </span>
-                )}
                 {component.isPrimary && (
                   <span className="text-[10px] px-1.5 py-0.5 rounded-full bg-harken-blue/10 text-harken-blue dark:bg-cyan-900/30 dark:text-cyan-300 font-medium">
                     Primary
@@ -160,10 +138,10 @@ export function IncomeApproachInstanceTabs({
       )}
 
       {/* Single component header when only one component */}
-      {incomeComponents.length === 1 && activeComponent && (
+      {costComponents.length === 1 && activeComponent && (
         <div className="flex items-center gap-3 px-6 py-3 border-b border-light-border dark:border-harken-gray/30">
           {(() => {
-            const Icon = CATEGORY_ICONS[activeComponent.category] || Wallet;
+            const Icon = CATEGORY_ICONS[activeComponent.category] || HardHat;
             const colors = CATEGORY_COLORS[activeComponent.category] || CATEGORY_COLORS.commercial;
             return (
               <>
@@ -175,7 +153,7 @@ export function IncomeApproachInstanceTabs({
                     {activeComponent.name}
                   </h3>
                   <p className="text-xs text-harken-gray-med dark:text-slate-400 capitalize">
-                    {activeComponent.category} • {activeComponent.propertyType?.replace(/-/g, ' ') || 'Property'}
+                    {activeComponent.category} • {activeComponent.propertyType.replace(/-/g, ' ')}
                     {activeComponent.squareFootage && (
                       <span> • {activeComponent.squareFootage.toLocaleString()} SF</span>
                     )}
@@ -191,28 +169,21 @@ export function IncomeApproachInstanceTabs({
       <div className="flex-1 min-h-0 overflow-auto">
         {activeComponent ? (
           <Suspense fallback={<GridLoader />}>
-            <IncomeApproachGrid
-              initialData={state.incomeApproachData}
-              onDataChange={setIncomeApproachData}
-              showGuidancePanel={true}
+            <CostApproachGrid
               scenarioId={scenarioId}
-              visibility={visibility}
-              rentCompMode={activeComponent.category === 'residential' ? 'residential' : 'commercial'}
-              componentData={{
+              componentContext={{
                 id: activeComponent.id,
                 name: activeComponent.name,
                 category: activeComponent.category,
-                propertyType: activeComponent.propertyType || 'office',
+                propertyType: activeComponent.propertyType,
                 squareFootage: activeComponent.squareFootage,
-                unitCount: activeComponent.unitCount ?? null,
-                sfSource: activeComponent.sfSource,
               }}
             />
           </Suspense>
         ) : (
           <div className="flex items-center justify-center h-full">
             <p className="text-sm text-harken-gray-med dark:text-slate-400">
-              Select a component to view its income analysis.
+              Select a component to view its cost approach.
             </p>
           </div>
         )}
@@ -221,4 +192,4 @@ export function IncomeApproachInstanceTabs({
   );
 }
 
-export default IncomeApproachInstanceTabs;
+export default CostApproachInstanceTabs;

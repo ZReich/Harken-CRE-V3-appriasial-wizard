@@ -51,7 +51,7 @@ interface ComponentData {
   squareFootage: number | null;
   unitCount: number | null;
   /** SF source - when 'unknown', skip $/SF displays */
-  sfSource?: 'measured' | 'estimated' | 'unknown';
+  sfSource?: 'measured' | 'estimated' | 'unknown' | 'county_records';
 }
 
 interface IncomeApproachGridProps {

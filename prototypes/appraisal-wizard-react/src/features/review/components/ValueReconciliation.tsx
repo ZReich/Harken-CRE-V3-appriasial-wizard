@@ -293,6 +293,7 @@ export function ValueReconciliation() {
       marketingTime: marketingMin ? parseInt(marketingMin) : null,
       exposureRationale,
       certifications: selectedCertifications,
+      displayMode: 'combined', // Default to combined display
     });
   }, [reconciliations, exposureMin, marketingMin, exposureRationale, selectedCertifications, setReconciliationData]);
 

@@ -19,6 +19,7 @@ import {
   Merge,
 } from 'lucide-react';
 import type { PropertyComponent, MultiFamilyUnitMix, MultiFamilyCalculationMethod } from '../types';
+import { MapPin } from 'lucide-react';
 import { PROPERTY_CATEGORIES, getPropertyTypesByCategory, type PropertyCategory } from '../constants/marshallSwift';
 import {
   getContextualTips,
@@ -195,8 +196,12 @@ export function PropertyComponentPanel({
   // Size allocation state
   const [squareFootage, setSquareFootage] = useState<number | null>(null);
   const [acreage, setAcreage] = useState<number | null>(null);
-  const [sfSource, setSfSource] = useState<'measured' | 'estimated' | 'unknown'>('unknown');
+  const [sfSource, setSfSource] = useState<'measured' | 'estimated' | 'unknown' | 'county_records'>('unknown');
   const [unitCount, setUnitCount] = useState<number | null>(null);
+  
+  
+  // Improvements toggle
+  const [includeDetailedImprovements, setIncludeDetailedImprovements] = useState(true);
   
   // Multi-family Unit Mix state (for Income Approach)
   const [unitMix, setUnitMix] = useState<MultiFamilyUnitMix[]>(DEFAULT_UNIT_MIX);
@@ -312,6 +317,8 @@ export function PropertyComponentPanel({
       } else {
         setAcreage(null);
       }
+      // Improvements toggle
+      setIncludeDetailedImprovements(editingComponent.includeDetailedImprovements ?? true);
     } else if (isOpen) {
       // New component - reset form
       setName('');
@@ -333,8 +340,10 @@ export function PropertyComponentPanel({
       setCalculationMethod('per_unit');
       setPerUnitSfUnknown(false);
       setTotalBuildingSf(0);
+      // Improvements toggle - default to true for primary (first component), false otherwise
+      setIncludeDetailedImprovements(existingComponentCount === 0);
     }
-  }, [isOpen, editingComponent]);
+  }, [isOpen, editingComponent, existingComponentCount]);
 
   // Reset property type when category changes
   useEffect(() => {
@@ -379,6 +388,9 @@ export function PropertyComponentPanel({
       ? unitMix.reduce((acc, u) => acc + (u.count * (u.avgSF || 0)), 0)
       : (shouldIncludeUnitMix && perUnitSfUnknown ? totalBuildingSf : squareFootage);
 
+    // Land allocation is now handled in Site Details page, preserve existing if editing
+    const existingLandAllocation = editingComponent?.landAllocation;
+
     const component: PropertyComponent = {
       id: editingComponent?.id || `comp_${Date.now()}`,
       name: name.trim(),
@@ -391,9 +403,11 @@ export function PropertyComponentPanel({
       unitMix: shouldIncludeUnitMix ? unitMix : undefined,
       perUnitSfUnknown: shouldIncludeUnitMix ? perUnitSfUnknown : undefined,
       totalBuildingSf: shouldIncludeUnitMix && perUnitSfUnknown ? totalBuildingSf : undefined,
+      landAllocation: existingLandAllocation, // Preserved from existing; edited in Site Details
       landClassification,
       isPrimary: editingComponent?.isPrimary || existingComponentCount === 0,
       sortOrder: editingComponent?.sortOrder || existingComponentCount,
+      includeDetailedImprovements,
       analysisConfig: {
         salesApproach,
         incomeApproach,
@@ -652,13 +666,14 @@ export function PropertyComponentPanel({
                   <label className="block text-xs text-harken-gray-med dark:text-slate-400 mb-2">
                     How was size determined?
                   </label>
-                  <div className="grid grid-cols-3 gap-2">
-                    {(['measured', 'estimated', 'unknown'] as const).map((source) => {
+                  <div className="grid grid-cols-2 gap-2">
+                    {(['measured', 'estimated', 'unknown', 'county_records'] as const).map((source) => {
                       const isSelected = sfSource === source;
                       const labels: Record<typeof source, string> = {
                         measured: 'Measured',
                         estimated: 'Estimated', 
-                        unknown: 'Unknown'
+                        unknown: 'Unknown',
+                        county_records: 'County Records'
                       };
                       return (
                         <button
@@ -677,6 +692,16 @@ export function PropertyComponentPanel({
                     })}
                   </div>
                 </div>
+              </div>
+            )}
+
+            {/* Land Allocation Note - allocation happens in Site Details */}
+            {category && propertyType && (
+              <div className="flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800/50 border border-light-border/50 dark:border-harken-gray/30 animate-fade-in">
+                <MapPin className="w-4 h-4 text-harken-gray-med dark:text-slate-400 shrink-0" />
+                <p className="text-xs text-harken-gray-med dark:text-slate-400">
+                  <span className="font-medium text-harken-gray dark:text-slate-300">Land allocation</span> for this component can be configured in Step 4 (Site Details) after entering the total site area.
+                </p>
               </div>
             )}
 
@@ -886,6 +911,33 @@ export function PropertyComponentPanel({
                   <span className="text-xs">At least one approach should be enabled</span>
                 </div>
               )}
+            </div>
+
+            {/* Include Detailed Improvements Toggle */}
+            <div className="flex items-center justify-between p-4 rounded-xl bg-slate-50 dark:bg-slate-800/50 border border-light-border/50 dark:border-harken-gray/30">
+              <div className="flex-1 pr-4">
+                <label className="block text-sm font-medium text-harken-gray dark:text-slate-200">
+                  Include detailed improvements
+                </label>
+                <p className="text-xs text-harken-gray-med dark:text-slate-400 mt-0.5">
+                  {includeDetailedImprovements 
+                    ? 'Full improvement descriptions will be collected for this component.' 
+                    : 'Skip to analysis sections (for simple or contributory components).'}
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIncludeDetailedImprovements(!includeDetailedImprovements)}
+                className={`relative w-11 h-6 rounded-full transition-colors ${
+                  includeDetailedImprovements 
+                    ? 'bg-harken-blue dark:bg-cyan-500' 
+                    : 'bg-harken-gray-light dark:bg-slate-600'
+                }`}
+              >
+                <span className={`absolute top-0.5 w-5 h-5 rounded-full bg-white shadow transition-transform ${
+                  includeDetailedImprovements ? 'left-[22px]' : 'left-0.5'
+                }`} />
+              </button>
             </div>
           </div>
         </div>

@@ -16,6 +16,8 @@ const CostApproachGrid = lazy(() => import('../features/cost-approach').then(m =
 // LandSalesGrid is now used within SalesComparisonTabs
 const CostSegTab = lazy(() => import('../features/cost-segregation').then(m => ({ default: m.CostSegTab })));
 import SalesComparisonTabs from '../components/SalesComparisonTabs';
+import { SalesComparisonInstanceTabs } from '../components/SalesComparisonInstanceTabs';
+import { CostApproachInstanceTabs } from '../components/CostApproachInstanceTabs';
 import { IncomeApproachInstanceTabs } from '../components/IncomeApproachInstanceTabs';
 import { useWizard } from '../context/WizardContext';
 import { getGuidance, type GuidanceContent } from '../constants/guidance';
@@ -491,13 +493,10 @@ export default function AnalysisPage() {
           </div>
 
           {/* Sales Comparison Tabs (Improved Sales / Land Sales) */}
-          {/* Land Sales sub-tab visibility is determined by component visibility logic */}
-          {/* It shows when: property is land, has excess/surplus land component, or cost approach needs land value */}
+          {/* Uses instance tabs when property components have sales approach enabled */}
+          {/* Otherwise falls back to default SalesComparisonTabs */}
           <div className="flex-1 min-h-0">
-            <SalesComparisonTabs
-              showLandSales={visibility.landSalesGrid}
-              analysisMode={analysisMode}
-              gridConfiguration={subjectData?.gridConfiguration}
+            <SalesComparisonInstanceTabs
               scenarioId={activeScenario?.id}
             />
           </div>
@@ -560,11 +559,9 @@ export default function AnalysisPage() {
             </div>
           </div>
 
-          {/* Cost Approach Grid */}
+          {/* Cost Approach Grid - Uses instance tabs when components have cost approach */}
           <div className="flex-1 min-h-0 overflow-auto">
-            <Suspense fallback={<GridLoader />}>
-              <CostApproachGrid scenarioId={activeScenario?.id} />
-            </Suspense>
+            <CostApproachInstanceTabs scenarioId={activeScenario?.id} />
           </div>
         </div>
       ) : activeTab === 'costseg' ? (

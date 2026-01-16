@@ -11,15 +11,31 @@ import type { SalesGridConfiguration } from '../types';
 const SalesGrid = lazy(() => import('../features/sales-comparison').then(m => ({ default: m.SalesGrid })));
 const LandSalesGrid = lazy(() => import('../features/land-valuation').then(m => ({ default: m.LandSalesGrid })));
 
+/**
+ * Component context for per-component sales grids
+ */
+interface ComponentContext {
+  id: string;
+  name: string;
+  category: 'residential' | 'commercial' | 'land';
+  propertyType: string;
+  squareFootage?: number | null;
+  landClassification?: 'standard' | 'excess' | 'surplus';
+}
+
 interface SalesComparisonTabsProps {
   /** Whether to show the Land Sales sub-tab */
-  showLandSales: boolean;
+  showLandSales?: boolean;
   /** Analysis mode (standard or residual) */
-  analysisMode: 'standard' | 'residual';
+  analysisMode?: 'standard' | 'residual';
   /** Grid configuration from subject data */
   gridConfiguration?: SalesGridConfiguration;
   /** Active scenario for context */
   scenarioId?: number;
+  /** Component context for per-component grids */
+  componentContext?: ComponentContext;
+  /** Default to Land Sales tab instead of Improved Sales */
+  defaultToLandSales?: boolean;
 }
 
 // Loading fallback for lazy-loaded grids
@@ -35,12 +51,17 @@ function GridLoader() {
 }
 
 export function SalesComparisonTabs({
-  showLandSales,
-  analysisMode,
+  showLandSales = true,
+  analysisMode = 'standard',
   gridConfiguration,
   scenarioId,
+  componentContext,
+  defaultToLandSales = false,
 }: SalesComparisonTabsProps) {
-  const [activeSubTab, setActiveSubTab] = useState<'improved' | 'land'>('improved');
+  // Default to land tab if specified (for excess/surplus land components)
+  const [activeSubTab, setActiveSubTab] = useState<'improved' | 'land'>(
+    defaultToLandSales ? 'land' : 'improved'
+  );
 
   // Sub-tab configuration
   const subTabs = [

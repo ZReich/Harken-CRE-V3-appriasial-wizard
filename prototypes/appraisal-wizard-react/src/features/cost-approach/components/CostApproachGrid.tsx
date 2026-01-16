@@ -8,6 +8,17 @@ import EnhancedTextArea from '../../../components/EnhancedTextArea';
 import { ValueScenario } from '../types';
 import { useWizard } from '../../../context/WizardContext';
 
+/**
+ * Component context for per-component cost grids
+ */
+interface ComponentContext {
+  id: string;
+  name: string;
+  category: 'residential' | 'commercial' | 'land';
+  propertyType: string;
+  squareFootage?: number | null;
+}
+
 interface CostApproachGridProps {
   onValueChange?: (value: number) => void;
   onScenarioChange?: (scenario: 'As Is' | 'As Completed' | 'As Stabilized') => void;
@@ -15,6 +26,8 @@ interface CostApproachGridProps {
   landValueFromLandSection?: number;
   onNavigateToLand?: () => void;
   scenarioId?: number;
+  // Component context for per-component grids
+  componentContext?: ComponentContext;
 }
 
 export const CostApproachGrid: React.FC<CostApproachGridProps> = ({

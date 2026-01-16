@@ -476,15 +476,120 @@ export default function EnhancedTextArea({
   const wordCount = text ? text.split(/\s+/).length : 0;
   const charCount = text.length;
 
+  // Track formatting state for active button highlighting
+  const [formatState, setFormatState] = useState({
+    bold: false,
+    italic: false,
+    underline: false,
+    unorderedList: false,
+    orderedList: false,
+    alignLeft: true,
+    alignCenter: false,
+    alignRight: false,
+  });
+
+  // Update formatting state based on current selection
+  const updateFormatState = useCallback(() => {
+    const isAlignCenter = document.queryCommandState('justifyCenter');
+    const isAlignRight = document.queryCommandState('justifyRight');
+    const isAlignJustify = document.queryCommandState('justifyFull');
+    
+    // If no explicit alignment is detected, default to left
+    // This prevents false positives
+    const isAlignLeft = document.queryCommandState('justifyLeft') || 
+                        (!isAlignCenter && !isAlignRight && !isAlignJustify);
+    
+    setFormatState({
+      bold: document.queryCommandState('bold'),
+      italic: document.queryCommandState('italic'),
+      underline: document.queryCommandState('underline'),
+      unorderedList: document.queryCommandState('insertUnorderedList'),
+      orderedList: document.queryCommandState('insertOrderedList'),
+      alignLeft: isAlignLeft && !isAlignCenter && !isAlignRight,
+      alignCenter: isAlignCenter,
+      alignRight: isAlignRight,
+    });
+  }, []);
+
+  // Listen for selection changes to update format state
+  useEffect(() => {
+    const handleSelectionChange = () => {
+      if (editorRef.current && document.activeElement === editorRef.current) {
+        updateFormatState();
+      }
+    };
+    
+    document.addEventListener('selectionchange', handleSelectionChange);
+    return () => document.removeEventListener('selectionchange', handleSelectionChange);
+  }, [updateFormatState]);
+
+  // Store selection range to restore after button click
+  const savedSelectionRef = useRef<Range | null>(null);
+  
+  // Save current selection
+  const saveSelection = useCallback(() => {
+    const selection = window.getSelection();
+    if (selection && selection.rangeCount > 0 && editorRef.current?.contains(selection.anchorNode)) {
+      savedSelectionRef.current = selection.getRangeAt(0).cloneRange();
+    }
+  }, []);
+  
+  // Save selection on mouse/key up within editor (before potential button click)
+  const handleEditorMouseUp = useCallback(() => {
+    saveSelection();
+  }, [saveSelection]);
+
   // Execute formatting command
   const execCommand = useCallback((command: string, value: string | undefined = undefined) => {
-    document.execCommand(command, false, value);
-    editorRef.current?.focus();
-    // Update parent state
-    if (editorRef.current) {
-      onChange(editorRef.current.innerHTML);
+    const editor = editorRef.current;
+    if (!editor) return;
+    
+    // Ensure editor is focused first
+    editor.focus();
+    
+    // Restore saved selection
+    const selection = window.getSelection();
+    if (savedSelectionRef.current && selection) {
+      try {
+        selection.removeAllRanges();
+        selection.addRange(savedSelectionRef.current);
+      } catch (e) {
+        // Selection might be invalid, that's ok
+      }
     }
-  }, [onChange]);
+    
+    // For list commands, if there's no selection, place cursor at end
+    const isListCommand = command === 'insertUnorderedList' || command === 'insertOrderedList';
+    
+    if (isListCommand && (!selection || selection.rangeCount === 0 || selection.isCollapsed)) {
+      // If editor is empty, add a zero-width space to have something to work with
+      if (!editor.textContent || editor.textContent.trim() === '') {
+        editor.innerHTML = '<br>';
+        const range = document.createRange();
+        range.selectNodeContents(editor);
+        range.collapse(false);
+        selection?.removeAllRanges();
+        selection?.addRange(range);
+      }
+    }
+    
+    // Execute the command
+    document.execCommand(command, false, value);
+    
+    // For list commands, ensure left alignment is applied
+    if (isListCommand) {
+      document.execCommand('justifyLeft', false, undefined);
+    }
+    
+    // Save the new selection state
+    saveSelection();
+    
+    // Update format state after command
+    setTimeout(updateFormatState, 10);
+    
+    // Update parent state
+    onChange(editor.innerHTML);
+  }, [onChange, updateFormatState, saveSelection]);
 
   // Handle editor input
   const handleInput = useCallback(() => {
@@ -594,15 +699,62 @@ export default function EnhancedTextArea({
     setIsFullscreen(prev => !prev);
   }, []);
 
-  // Close fullscreen on Escape
+  // Calculate fullscreen positioning to account for sidebars
+  const [fullscreenStyle, setFullscreenStyle] = useState<React.CSSProperties>({});
+  
+  useEffect(() => {
+    if (isFullscreen) {
+      // Find the guidance sidebar (typically has data attribute or specific class)
+      const rightSidebar = document.querySelector('aside') as HTMLElement;
+      const leftSidebar = document.querySelector('[class*="sidebar"]') as HTMLElement;
+      
+      // Calculate available width
+      const viewportWidth = window.innerWidth;
+      const rightSidebarWidth = rightSidebar ? rightSidebar.offsetWidth : 0;
+      const leftSidebarWidth = leftSidebar ? leftSidebar.offsetWidth : 0;
+      
+      // Calculate center point of the available content area
+      const availableWidth = viewportWidth - rightSidebarWidth - leftSidebarWidth;
+      const contentCenterX = leftSidebarWidth + (availableWidth / 2);
+      
+      // Use 90% of available width, max 1200px
+      const modalWidth = Math.min(availableWidth * 0.9, 1200);
+      
+      setFullscreenStyle({
+        position: 'fixed',
+        top: '50%',
+        left: `${contentCenterX}px`,
+        transform: 'translate(-50%, -50%)',
+        width: `${modalWidth}px`,
+        height: '85vh',
+        maxHeight: '85vh',
+        zIndex: 50,
+      });
+    }
+  }, [isFullscreen]);
+
+  // Close fullscreen on Escape and handle resize
   useEffect(() => {
     const handleEscape = (e: KeyboardEvent) => {
       if (e.key === 'Escape' && isFullscreen) {
         setIsFullscreen(false);
       }
     };
+    
+    const handleResize = () => {
+      if (isFullscreen) {
+        // Trigger recalculation
+        setIsFullscreen(false);
+        setTimeout(() => setIsFullscreen(true), 0);
+      }
+    };
+    
     window.addEventListener('keydown', handleEscape);
-    return () => window.removeEventListener('keydown', handleEscape);
+    window.addEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('keydown', handleEscape);
+      window.removeEventListener('resize', handleResize);
+    };
   }, [isFullscreen]);
 
   const minHeight = propMinHeight || rows * 28;
@@ -616,14 +768,10 @@ export default function EnhancedTextArea({
       
       <div 
         className={`relative ${isFullscreen 
-          ? 'fixed top-1/2 left-1/2 z-50 bg-surface-1 dark:bg-elevation-1 rounded-2xl shadow-2xl p-8 flex flex-col w-[90vw] max-w-6xl overflow-hidden' 
+          ? 'bg-surface-1 dark:bg-elevation-1 rounded-2xl shadow-2xl p-8 flex flex-col overflow-hidden' 
           : ''
         }`}
-        style={isFullscreen ? { 
-          height: '85vh', 
-          maxHeight: '85vh',
-          transform: 'translate(-50%, -50%)'
-        } : undefined}
+        style={isFullscreen ? fullscreenStyle : undefined}
       >
         {/* Label Row */}
         <div className="flex items-center justify-between mb-2">
@@ -646,22 +794,22 @@ export default function EnhancedTextArea({
 
           {/* Text Formatting */}
           <div className="flex items-center gap-0.5 px-2 border-r border-light-border dark:border-harken-gray">
-            <ToolbarButton icon={<Bold className="w-4 h-4" />} onClick={() => execCommand('bold')} title="Bold (Ctrl+B)" />
-            <ToolbarButton icon={<Italic className="w-4 h-4" />} onClick={() => execCommand('italic')} title="Italic (Ctrl+I)" />
-            <ToolbarButton icon={<Underline className="w-4 h-4" />} onClick={() => execCommand('underline')} title="Underline (Ctrl+U)" />
+            <ToolbarButton icon={<Bold className="w-4 h-4" />} onClick={() => execCommand('bold')} title="Bold (Ctrl+B)" active={formatState.bold} />
+            <ToolbarButton icon={<Italic className="w-4 h-4" />} onClick={() => execCommand('italic')} title="Italic (Ctrl+I)" active={formatState.italic} />
+            <ToolbarButton icon={<Underline className="w-4 h-4" />} onClick={() => execCommand('underline')} title="Underline (Ctrl+U)" active={formatState.underline} />
           </div>
 
           {/* Alignment */}
           <div className="flex items-center gap-0.5 px-2 border-r border-light-border dark:border-harken-gray">
-            <ToolbarButton icon={<AlignLeft className="w-4 h-4" />} onClick={() => execCommand('justifyLeft')} title="Align Left" />
-            <ToolbarButton icon={<AlignCenter className="w-4 h-4" />} onClick={() => execCommand('justifyCenter')} title="Align Center" />
-            <ToolbarButton icon={<AlignRight className="w-4 h-4" />} onClick={() => execCommand('justifyRight')} title="Align Right" />
+            <ToolbarButton icon={<AlignLeft className="w-4 h-4" />} onClick={() => execCommand('justifyLeft')} title="Align Left" active={formatState.alignLeft} />
+            <ToolbarButton icon={<AlignCenter className="w-4 h-4" />} onClick={() => execCommand('justifyCenter')} title="Align Center" active={formatState.alignCenter} />
+            <ToolbarButton icon={<AlignRight className="w-4 h-4" />} onClick={() => execCommand('justifyRight')} title="Align Right" active={formatState.alignRight} />
           </div>
 
           {/* Lists */}
           <div className="flex items-center gap-0.5 px-2 border-r border-light-border dark:border-harken-gray">
-            <ToolbarButton icon={<List className="w-4 h-4" />} onClick={() => execCommand('insertUnorderedList')} title="Bullet List" />
-            <ToolbarButton icon={<ListOrdered className="w-4 h-4" />} onClick={() => execCommand('insertOrderedList')} title="Numbered List" />
+            <ToolbarButton icon={<List className="w-4 h-4" />} onClick={() => execCommand('insertUnorderedList')} title="Bullet List" active={formatState.unorderedList} />
+            <ToolbarButton icon={<ListOrdered className="w-4 h-4" />} onClick={() => execCommand('insertOrderedList')} title="Numbered List" active={formatState.orderedList} />
           </div>
 
           {/* AI Draft */}
@@ -705,6 +853,8 @@ export default function EnhancedTextArea({
           onInput={handleInput}
           onFocus={() => setIsFocused(true)}
           onBlur={() => setIsFocused(false)}
+          onMouseUp={handleEditorMouseUp}
+          onKeyUp={saveSelection}
           data-placeholder={placeholder}
           className={`
             w-full border border-light-border dark:border-harken-gray border-t-0 rounded-b-xl bg-surface-1 dark:bg-elevation-1
@@ -774,6 +924,22 @@ export default function EnhancedTextArea({
         [contenteditable]:focus:empty:before {
           content: '';
         }
+        [contenteditable] ul {
+          list-style-type: disc;
+          padding-left: 1.5rem;
+          margin: 0.5rem 0;
+          text-align: left;
+        }
+        [contenteditable] ol {
+          list-style-type: decimal;
+          padding-left: 1.5rem;
+          margin: 0.5rem 0;
+          text-align: left;
+        }
+        [contenteditable] li {
+          margin: 0.25rem 0;
+          text-align: left;
+        }
         .animate-fade-in {
           animation: fadeIn 0.3s ease-out;
         }
@@ -803,13 +969,18 @@ function ToolbarButton({
   return (
     <button
       type="button"
-      onClick={onClick}
+      // Use onMouseDown with preventDefault to prevent focus loss from editor
+      onMouseDown={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        onClick();
+      }}
       title={title}
       className={`
-        w-8 h-8 flex items-center justify-center rounded-md transition-colors
+        w-8 h-8 flex items-center justify-center rounded-md transition-all cursor-pointer
         ${active 
-          ? 'bg-[#0da1c7] text-white' 
-          : 'text-harken-gray-med hover:text-harken-gray hover:bg-harken-gray-light'
+          ? 'bg-[#0da1c7]/20 text-[#0da1c7] ring-2 ring-[#0da1c7] ring-offset-1 ring-offset-surface-1 dark:ring-offset-elevation-1' 
+          : 'text-harken-gray-med hover:text-harken-gray hover:bg-harken-gray-light dark:hover:bg-elevation-2'
         }
       `}
     >

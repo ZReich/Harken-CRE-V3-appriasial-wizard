@@ -143,6 +143,11 @@ interface WizardContextValue {
   getIncomeEnabledComponents: () => import('../types').PropertyComponent[];
   getExcessLandComponents: () => import('../types').PropertyComponent[];
 
+  // Land allocation helpers
+  getTotalAllocatedLand: () => number;
+  getRemainingUnallocatedLand: () => number;
+  getComponentsWithLandAllocation: () => import('../types').PropertyComponent[];
+
   // Income Approach Instance helpers
   addIncomeApproachInstance: (instance: Omit<import('../types').IncomeApproachInstance, 'id'>) => void;
   updateIncomeApproachInstance: (id: string, updates: Partial<import('../types').IncomeApproachInstance>) => void;
@@ -724,6 +729,26 @@ export function WizardProvider({ children }: { children: ReactNode }) {
     );
   }, [state.propertyComponents]);
 
+  // Land allocation helpers
+  const getTotalAllocatedLand = useCallback(() => {
+    return (state.propertyComponents || []).reduce((sum, comp) => 
+      sum + (comp.landAllocation?.acres || 0), 0);
+  }, [state.propertyComponents]);
+
+  const getRemainingUnallocatedLand = useCallback(() => {
+    const totalSiteAcres = parseFloat(state.subjectData?.siteArea || '0');
+    const siteUnit = state.subjectData?.siteAreaUnit || 'acres';
+    // Convert SF to acres if needed (siteAreaUnit is 'sqft' not 'sf')
+    const totalAcres = siteUnit === 'sqft' ? totalSiteAcres / 43560 : totalSiteAcres;
+    return totalAcres - getTotalAllocatedLand();
+  }, [state.subjectData?.siteArea, state.subjectData?.siteAreaUnit, getTotalAllocatedLand]);
+
+  const getComponentsWithLandAllocation = useCallback(() => {
+    return (state.propertyComponents || []).filter(c => 
+      c.landAllocation && (c.landAllocation.acres || c.landAllocation.squareFeet)
+    );
+  }, [state.propertyComponents]);
+
   // Income Approach Instance helpers
   const addIncomeApproachInstance = useCallback((instance: Omit<import('../types').IncomeApproachInstance, 'id'>) => {
     const fullInstance: import('../types').IncomeApproachInstance = {
@@ -981,6 +1006,10 @@ export function WizardProvider({ children }: { children: ReactNode }) {
         getPrimaryComponent,
         getIncomeEnabledComponents,
         getExcessLandComponents,
+        // Land allocation helpers
+        getTotalAllocatedLand,
+        getRemainingUnallocatedLand,
+        getComponentsWithLandAllocation,
         // Income Approach Instance helpers
         addIncomeApproachInstance,
         updateIncomeApproachInstance,

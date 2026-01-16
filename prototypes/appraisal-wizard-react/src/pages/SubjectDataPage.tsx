@@ -43,6 +43,7 @@ import WizardLayout from '../components/WizardLayout';
 import ImprovementsInventory from '../components/ImprovementsInventory';
 import SiteImprovementsInventory from '../components/SiteImprovementsInventory';
 import BoundaryFieldsCard from '../components/BoundaryFieldsCard';
+import { ComponentLandAllocationCard, LandAllocationSummary } from '../components/ComponentLandAllocationCard';
 import TrafficDataCard from '../components/TrafficDataCard';
 import BuildingPermitsCard from '../components/BuildingPermitsCard';
 import MapGeneratorPanel from '../components/MapGeneratorPanel';
@@ -187,8 +188,24 @@ const photoCategories: PhotoCategory[] = [
 export type { PhotoData } from '../types';
 
 export default function SubjectDataPage() {
-  const { state: wizardState, setSubjectData, setSiteImprovements, setReportPhotos, addUploadedDocument } = useWizard();
+  const { state: wizardState, setSubjectData, setSiteImprovements, setReportPhotos, addUploadedDocument, getPropertyComponents } = useWizard();
   const [activeTab, setActiveTab] = useState('location');
+
+  // Check if any component needs detailed improvements
+  // If all components have includeDetailedImprovements: false, skip the tab
+  const shouldShowImprovementsTab = useMemo(() => {
+    const components = getPropertyComponents();
+    // If no components defined, show the tab (traditional single-property flow)
+    if (components.length === 0) return true;
+    // Show if ANY component needs detailed improvements
+    return components.some(c => c.includeDetailedImprovements !== false);
+  }, [getPropertyComponents]);
+
+  // Filter tabs based on component configuration
+  const visibleTabs = useMemo(() => {
+    if (shouldShowImprovementsTab) return tabs;
+    return tabs.filter(tab => tab.id !== 'improvements');
+  }, [shouldShowImprovementsTab]);
 
   // Location tab state - initialize from WizardContext
   // Auto-populate city/county from address entered in Setup phase
@@ -662,10 +679,10 @@ export default function SubjectDataPage() {
     }
   }, [sectionCompletion, checkAndTriggerCelebration]);
 
-  // Smart continue logic
+  // Smart continue logic - uses visibleTabs to respect skip improvements setting
   const { handleContinue } = useSmartContinue({
     sectionId: 'subjectData',
-    tabs: tabs.map(t => t.id),
+    tabs: visibleTabs.map(t => t.id),
     activeTab,
     setActiveTab,
     currentPhase: 4,
@@ -684,7 +701,7 @@ export default function SubjectDataPage() {
         {wizardState.propertyType ? `${wizardState.propertyType} • ${wizardState.propertySubtype || 'General'}` : 'Commercial • Industrial'}
       </p>
       <nav className="space-y-1">
-        {tabs.map((tab) => (
+        {visibleTabs.map((tab) => (
           <SidebarTab
             key={tab.id}
             id={tab.id}
@@ -1461,6 +1478,79 @@ const FLOOD_INSURANCE_OPTIONS = [
   { value: 'unknown', label: 'Unknown' },
 ];
 
+/**
+ * Component Land Allocation Section
+ * Shows land allocation cards for ALL property components
+ * Allows users to allocate portions of total site acreage to each component
+ * This is the PRIMARY location for entering land allocation data (moved from Setup)
+ */
+function ComponentLandAllocationSection({ totalAcres, siteUnit }: { totalAcres: number; siteUnit: 'acres' | 'sf' }) {
+  const { getPropertyComponents } = useWizard();
+  const allComponents = getPropertyComponents();
+
+  // Only show if there are property components defined
+  if (allComponents.length === 0) {
+    return null;
+  }
+
+  // Convert total to acres for display
+  const displayTotalAcres = siteUnit === 'sf' ? totalAcres / 43560 : totalAcres;
+  const hasSiteArea = totalAcres > 0;
+
+  return (
+    <div className="bg-surface-1 dark:bg-elevation-1 border border-light-border dark:border-dark-border rounded-xl p-6 shadow-sm">
+      <div className="flex items-center gap-3 border-b-2 border-light-border dark:border-harken-gray pb-3 mb-4">
+        <div className="w-8 h-8 rounded-lg bg-lime-100 dark:bg-lime-500/20 flex items-center justify-center">
+          <MapPin className="w-4 h-4 text-lime-600 dark:text-lime-400" />
+        </div>
+        <div>
+          <h3 className="text-lg font-bold text-harken-dark dark:text-white">
+            Component Land Allocation
+          </h3>
+          <p className="text-xs text-harken-gray-med dark:text-slate-400">
+            Allocate site acreage to each property component
+          </p>
+        </div>
+      </div>
+
+      {!hasSiteArea ? (
+        // No site area entered yet - show prompt
+        <div className="flex items-start gap-3 p-4 rounded-lg bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800">
+          <AlertTriangle className="w-5 h-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
+          <div>
+            <p className="text-sm font-medium text-amber-800 dark:text-amber-200">
+              Enter total site area first
+            </p>
+            <p className="text-xs text-amber-700 dark:text-amber-300 mt-1">
+              Please enter the total site area above before allocating land to components. 
+              The primary component's land will auto-calculate as the remainder after allocating to other components.
+            </p>
+          </div>
+        </div>
+      ) : (
+        <>
+          <p className="text-sm text-harken-gray-med dark:text-slate-400 mb-4">
+            Your total site is <span className="font-semibold text-harken-dark dark:text-white">{displayTotalAcres.toFixed(3)} acres</span>. 
+            Allocate acreage to each component below. The primary component receives the remaining land automatically.
+          </p>
+
+          <div className="space-y-4">
+            {/* Summary Card */}
+            <LandAllocationSummary totalSiteAcres={displayTotalAcres} siteUnit="acres" />
+
+            {/* Individual Component Cards - Show ALL components (full-width for proper toolbar layout) */}
+            <div className="space-y-4">
+              {allComponents.map((component) => (
+                <ComponentLandAllocationCard key={component.id} component={component} />
+              ))}
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
 function SiteContent({
   propertyType,
   acres, setAcres, squareFeet, setSquareFeet,
@@ -1687,6 +1777,12 @@ Overall, the site is well-suited for its current use and presents no significant
           />
         </div>
       </div>
+
+      {/* Component Land Allocation */}
+      <ComponentLandAllocationSection
+        totalAcres={parseFloat(acres) || 0}
+        siteUnit={acres ? 'acres' : 'sf'}
+      />
 
       {/* Property Boundaries with Map Preview */}
       <BoundaryFieldsCard

@@ -42,7 +42,7 @@ export interface RentComp {
   unitCount?: number;                    // Number of units
   bedBath?: string;                      // e.g., "2BR/1BA"
   avgSfPerUnit?: number;                 // Average SF per unit
-  sfSource?: 'measured' | 'estimated' | 'unknown';  // SF certainty (unknown SF support)
+  sfSource?: 'measured' | 'estimated' | 'unknown' | 'county_records';  // SF certainty (unknown SF support)
   rentPerUnit?: number;                  // Monthly rent per unit
   rentPerSf?: number;                    // Calculated rent per SF
   
@@ -83,7 +83,7 @@ export interface SubjectRentProperty {
   cityState: string;
   hbuUse: string;
   sizeSfBldg: number;
-  sfSource?: 'measured' | 'estimated' | 'unknown';  // SF certainty (unknown SF support)
+  sfSource?: 'measured' | 'estimated' | 'unknown' | 'county_records';  // SF certainty (unknown SF support)
   condition: string;
   yearBuilt?: number;
   propertyType?: string;

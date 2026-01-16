@@ -131,6 +131,7 @@ export const ReconciliationSummary: React.FC<ReconciliationSummaryProps> = ({
       marketingTime: null,
       exposureRationale: '',
       certifications: [],
+      displayMode: 'combined',
     };
     const currentReconData = reconciliationData ? { ...defaultReconData, ...reconciliationData } : defaultReconData;
     const existingRecons = currentReconData.scenarioReconciliations || [];

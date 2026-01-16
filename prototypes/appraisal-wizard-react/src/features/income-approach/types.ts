@@ -233,7 +233,7 @@ export interface LineItem {
   itemSqFt?: number; // Specific SF for this item
   
   // SF Source tracking for unknown SF scenarios (per Ben's 7-plex example)
-  sfSource?: 'measured' | 'estimated' | 'unknown';
+  sfSource?: 'measured' | 'estimated' | 'unknown' | 'county_records';
   
   // USPAP / Commercial Specifics
   marketRentPerSf?: number; // Market Rent per SF for comparison (Gap analysis)
@@ -288,7 +288,7 @@ export interface ValuationData {
 export interface PropertyMeta {
   type: 'multifamily' | 'office' | 'retail' | 'industrial' | 'other';
   sqFt: number;
-  sfSource?: 'measured' | 'estimated' | 'unknown';  // Track SF certainty
+  sfSource?: 'measured' | 'estimated' | 'unknown' | 'county_records';  // Track SF certainty
   unitCount: number;
 }
 
