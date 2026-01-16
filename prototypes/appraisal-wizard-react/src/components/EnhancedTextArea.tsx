@@ -882,8 +882,10 @@ export default function EnhancedTextArea({
 
         {/* AI Preview */}
         {aiPreview.isVisible && (
-          <div className="mt-3 p-4 bg-accent-teal-mint-light border border-accent-teal-mint rounded-xl animate-fade-in">
-            <div className="flex items-center justify-between mb-3">
+          <div className={`mt-3 p-4 bg-accent-teal-mint-light border border-accent-teal-mint rounded-xl animate-fade-in ${
+            isFullscreen ? 'max-h-[40vh] flex flex-col' : ''
+          }`}>
+            <div className="flex items-center justify-between mb-3 flex-shrink-0">
               <span className="text-xs font-semibold text-accent-teal-mint flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5" />
                 AI Generated Draft
@@ -905,9 +907,13 @@ export default function EnhancedTextArea({
                 </button>
               </div>
             </div>
-            <p className="text-sm text-harken-gray leading-relaxed whitespace-pre-wrap">
-              {aiPreview.content}
-            </p>
+            <div className={`${isFullscreen ? 'overflow-y-auto flex-1 pr-2' : ''}`}>
+              <p className={`text-sm text-harken-gray leading-relaxed whitespace-pre-wrap ${
+                isFullscreen ? 'text-base' : ''
+              }`}>
+                {aiPreview.content}
+              </p>
+            </div>
           </div>
         )}
 
